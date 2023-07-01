@@ -1,0 +1,8 @@
+Version 2.2.17 - Iqaluit
+-------------------------------
+Added some PHP7+ syntax & behaviors (incidental, not global)
+Deploy some method return-type declarations to conform to PHP8.1 (at least)
+Deploy some variable type-casts to conform to PHP8.1 (at least)
+Use later versions of Smarty & PHPMailer, to conform to PHP8+
+Fix several misnamed variables
+Fix several typos
