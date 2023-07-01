@@ -7,12 +7,12 @@ $(function() {
   $(document).on('click', '#runbtn', function(ev) {
     // get the data
     ev.preventDefault();
-    cms_confirm('{lang('confirm_runusertag')|strip|escape:'quotes'}').done(function() {
+    cms_confirm("{lang('confirm_runusertag')|strip|escape:'quotes'}").done(function() {
       var code = $('#udtcode').val();
       if( code.length == 0 ) {
-        var d = '{lang('noudtcode')}';
+        var d = '{lang("noudtcode")}';
         txt = '<div class="pageerrorcontainer"><ul class="pageerror">' + d + '<\/ul><\/div>';
-        $('#edit_userplugin_result').html( txt );
+        $('#edit_userplugin_result').html(txt);
         return false;
       }
       var data = $('#edit_userplugin').find('input:not([type="submit"]), select, textarea').serializeArray();
@@ -58,10 +58,10 @@ $(function() {
       var txt = '';
       if( r == 'Success' ) {
         txt = '<div class="pagemcontainer"><span class="close-warning"></span><p class="pagemessage">' + d + '<\/p><\/div>';
-        $('[name=cancel]').fadeOut();
-        $('[name=cancel]').val('{lang("close")}');
-        $('[name=cancel]').button('option','label','{lang("close")}');
-        $('[name=cancel]').fadeIn();
+        $('[name="cancel"]').fadeOut();
+        $('[name="cancel"]').val('{lang("close")}');
+        $('[name="cancel"]').button('option','label','{lang("close")}');
+        $('[name="cancel"]').fadeIn();
       }
       else {
         txt = '<div class="pageerrorcontainer"><ul class="pageerror">' + d + '<\/ul><\/div>';

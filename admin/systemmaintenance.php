@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: supportinfo.php 4216 2007-10-06 19:28:55Z wishy $
+#$Id$
 $CMS_ADMIN_PAGE = 1;
 
 //
@@ -37,7 +37,7 @@ if (!$access) {
 
 include_once("header.php");
 
-define('CMS_BASE', dirname(dirname(__FILE__)));
+define('CMS_BASE', dirname(__DIR__));
 require_once cms_join_path(CMS_BASE, 'lib', 'test.functions.php');
 
 
@@ -76,9 +76,9 @@ $smarty->assign("nonseqcount", count($nonseqtables));
 
 function MakeCommaList($tables)
 {
-  $out = "";
+  $out = '';
   foreach ($tables as $table) {
-    if ($out != "") $out .= " ,";
+    if ($out) $out .= ' ,';
     $out .= "`" . $table . "`";
   }
   return $out;

@@ -1,10 +1,10 @@
 <script type="text/javascript">
 $(function() {
-  $('a.del_cat').click(function(ev){
+  $('a.del_cat').on('click', function(ev) {
     var self = $(this);
     ev.preventDefault();
-    cms_confirm('{$mod->Lang('areyousure')|escape:'javascript'}').done(function(){
-      window.location = self.attr('href');
+    cms_confirm("{$mod->Lang('areyousure')|escape:'javascript'}").done(function() {
+      window.location.href = self.attr('href');
     });
   });
 });

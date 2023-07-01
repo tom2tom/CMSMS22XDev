@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: supportinfo.php 4216 2007-10-06 19:28:55Z wishy $
+#$Id$
 
 $CMS_ADMIN_PAGE=1;
 
@@ -34,14 +34,14 @@ return;
 
 include_once("header.php");
 
-define('CMS_BASE', dirname(dirname(__FILE__)));
+define('CMS_BASE', dirname(__DIR__));
 require_once cms_join_path(CMS_BASE, 'lib', 'test.functions.php');
 
 
 function installerHelpLanguage( $lang, $default_null=null )
 {
-        if( (!is_null($default_null)) && ($default_null == $lang) ) return '';
-        return substr($lang, 0, 2);
+	if( (!is_null($default_null)) && ($default_null == $lang) ) return '';
+	return substr($lang, 0, 2);
 }
 
 function systeminfo_lang($params, $smarty)

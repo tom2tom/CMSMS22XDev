@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: News.module.php 2114 2005-11-04 21:51:13Z wishy $
+#$Id$
 
 final class news_ops
 {
@@ -30,7 +30,7 @@ private static $_cached_fieldvals;
 public static function get_categories($id,$params,$returnid=-1)
 {
     $tmp = self::get_all_categories();
-    if( isset($tmp) && !count($tmp) ) return;
+    if( isset($tmp) && !count($tmp) ) return [];
 
     $catinfo = array();
     if( !isset($params['category']) || $params['category'] == '' ) {
@@ -58,7 +58,7 @@ public static function get_categories($id,$params,$returnid=-1)
     unset($tmp);
 
     $cat_count = isset($catinfo) ? count($catinfo) : '';
-    if( !$cat_count ) return;
+    if( !$cat_count ) return [];
 
     $cat_ids = array();
     for( $i = 0, $n = count($catinfo); $i < $n; $i++ ) {
@@ -119,7 +119,6 @@ public static function get_categories($id,$params,$returnid=-1)
     return $items;
 }
 
-
 public static function get_all_categories()
 {
     if( !self::$_categories_loaded ) {
@@ -131,7 +130,6 @@ public static function get_all_categories()
     }
     return self::$_cached_categories;
 }
-
 
 public static function get_category_list()
 {
@@ -147,7 +145,6 @@ public static function get_category_list()
     return $categorylist;
 }
 
-
 public static function get_category_names_by_id()
 {
     self::get_all_categories();
@@ -161,7 +158,6 @@ public static function get_category_names_by_id()
     return $list;
 }
 
-
 public static function get_category_name_from_id($id)
 {
     self::get_all_categories();
@@ -173,8 +169,8 @@ public static function get_category_name_from_id($id)
             }
         }
     }
+    return '';
 }
-
 
 public static function get_fielddefs($publiconly = TRUE)
 {
@@ -196,13 +192,11 @@ public static function get_fielddefs($publiconly = TRUE)
     return self::$_cached_fielddefs;
 }
 
-
-public static function &get_field_from_row($row)
+public static function get_field_from_row($row)
 {
-    $res = null;
-    if( !isset($row['id']) ) return $res;
+    if( !isset($row['id']) ) return null; // no object
 
-    $res = new news_field;
+    $res = new news_field();
     foreach( $row as $key => $value ) {
         switch( $key ) {
         case 'id':
@@ -219,8 +213,7 @@ public static function &get_field_from_row($row)
     return $res;
 }
 
-
-public static function fill_article_from_formparams(news_article &$news,$params,$handle_uploads = FALSE,$handle_deletes = FALSE)
+public static function fill_article_from_formparams(news_article $news,$params,$handle_uploads = FALSE,$handle_deletes = FALSE)
 {
     foreach( $params as $key => $value ) {
         switch( $key ) {
@@ -275,11 +268,10 @@ public static function fill_article_from_formparams(news_article &$news,$params,
     return $news;
 }
 
-
-static private function &get_article_from_row($row,$get_fields = 'PUBLIC')
+private static function get_article_from_row($row,$get_fields = 'PUBLIC')
 {
-    if( !is_array($row) ) return;
-    $article = new news_article;
+    if( !is_array($row) ) return null; // no object
+    $article = new news_article();
     foreach( $row as $key => $value ) {
         switch( $key ) {
         case 'news_id':
@@ -291,11 +283,11 @@ static private function &get_article_from_row($row,$get_fields = 'PUBLIC')
             break;
 
         case 'news_title':
-            $article->title = $value;
+            $article->title = $value; // TODO rigorously sanitize potentially untrusted content
             break;
 
         case 'news_data':
-            $article->content = $value;
+            $article->content = $value; // TODO rigorously sanitize potentially untrusted content
             break;
 
         case 'news_date':
@@ -303,7 +295,7 @@ static private function &get_article_from_row($row,$get_fields = 'PUBLIC')
             break;
 
         case 'summary':
-            $article->summary = $value;
+            $article->summary = $value; // TODO rigorously sanitize potentially untrusted content
 
         case 'start_time':
             $article->startdate = $value;
@@ -330,7 +322,7 @@ static private function &get_article_from_row($row,$get_fields = 'PUBLIC')
             break;
 
         case 'news_extra':
-            $article->extra = $value;
+            $article->extra = $value; // TODO rigorously sanitize potentially untrusted content
             break;
 
         case 'news_url':
@@ -352,7 +344,7 @@ static private function &get_article_from_row($row,$get_fields = 'PUBLIC')
     return $article;
 }
 
-static public function &get_latest_article($for_display = TRUE)
+public static function get_latest_article($for_display = TRUE)
 {
     $db = CmsApp::get_instance()->GetDb();
     $now = $db->DbTimeStamp(time());
@@ -365,21 +357,19 @@ static public function &get_latest_article($for_display = TRUE)
     return self::get_article_from_row($row,($for_display)?'PUBLIC':'ALL');
 }
 
-
-static public function &get_article_by_id($article_id,$for_display = TRUE,$allow_expired = FALSE)
+public static function get_article_by_id($article_id,$for_display = TRUE,$allow_expired = FALSE)
 {
     $db = CmsApp::Get_instance()->GetDb();
     $query = 'SELECT mn.*, mnc.news_category_name FROM '.CMS_DB_PREFIX.'module_news mn
-              LEFT OUTER JOIN '.CMS_DB_PREFIX.'module_news_categories mnc ON mnc.news_category_id = mn.news_category_id
-              WHERE status = \'published\' AND news_id = ?
-              AND ('.$db->ifNull('start_time',$db->DbTimeStamp(1)).' < NOW())';
+LEFT OUTER JOIN '.CMS_DB_PREFIX.'module_news_categories mnc ON mnc.news_category_id = mn.news_category_id
+WHERE status = \'published\' AND news_id = ?
+AND ('.$db->ifNull('start_time',$db->DbTimeStamp(1)).' < NOW())';
     if( !$allow_expired ) {
         $query .= 'AND (('.$db->ifNull('end_time',$db->DbTimeStamp(1)).' = '.$db->DbTimeStamp(1).') OR (end_time > NOW()))';
     }
     $row = $db->GetRow($query, array($article_id));
 
-    $res = null;
-    if( !$row ) return $res;
+    if( !$row ) return null; // no object
 
     return self::get_article_from_row($row,($for_display)?'PUBLIC':'ALL');
 }
@@ -395,7 +385,7 @@ public static function preloadFieldData($ids)
         if( is_array(self::$_cached_fieldvals) && isset(self::$_cached_fieldvals[$n]) ) continue;
         $tmp[] = $n;
     }
-    if( !is_array($tmp) || !count($tmp) ) return;
+    if( !count($tmp) ) return;
     sort($tmp);
     $idlist = array_unique($tmp);
 
@@ -418,11 +408,11 @@ public static function preloadFieldData($ids)
 
         self::$_cached_fieldvals[$news_id] = array();
         foreach( $fielddefs as $field ) {
-            $obj = new news_field;
+            $obj = new news_field();
             foreach( $field as $k => $v ) {
                 $obj->$k = $v;
             }
-            $obj->value = null;
+            $obj->value = null; // mixed unset value
             self::$_cached_fieldvals[$news_id][$field['id']] = $obj;
         }
     }
@@ -440,24 +430,23 @@ public static function preloadFieldData($ids)
 
 public static function get_fields($news_id,$public_only = true,$filled_only = FALSE)
 {
-    if( $news_id <= 0 ) return;
+    if( $news_id <= 0 ) return [];
     $fd = self::get_fielddefs();
-    if( !count($fd) ) return;
+    if( !count($fd) ) return [];
 
     $results = array();
     foreach( $fd as $field ) {
-        $obj = null;
         if( isset(self::$_cached_fieldvals[$news_id][$field['id']]) ) {
             $obj = self::$_cached_fieldvals[$news_id][$field['id']];
         }
         else {
             // data for this field must not have been preloaded.
             // means there is no value, so just build one
-            $obj = new news_field;
+            $obj = new news_field();
             foreach( $field as $k => $v ) {
                 $obj->$k = $v;
             }
-            $obj->value = null;
+            $obj->value = null; // mixed unset value
         }
         $results[$field['name']] = $obj;
     }
@@ -472,6 +461,70 @@ public static function get_fields($news_id,$public_only = true,$filled_only = FA
     */
     return $results;
 }
+
+/**
+ * Munge risky content of the supplied string.
+ * Intended for application to relevant untrusted values prior to their display in a page.
+ * Handles php-start tags, script tags, js executables, '`' chars which would
+ * be a problem in pages, templates, but TODO some might be ok in UDT content
+ * in a textarea element?
+ * Entitized content is interpreted, but not (url-, rawurl-, base64-) encoded content.
+ * Does not deal with image-file content. Inline <svg/> will be handled anyway.
+ * @internal
+ * @since 2.2.18
+ * @see https://portswigger.net/web-security/cross-site-scripting/cheat-sheet
+ * @see https://owasp.org/www-community/xss-filter-evasion-cheatsheet
+ * @see http://www.bioinformatics.org/phplabware/internal_utilities/htmLawed/index.php
+ *
+ * @param string $val input value, may be empty or null
+ * @return string
+ */
+public static function execSpecialize($val)
+{
+    if (!$val) return (string)$val;
+
+    $flags = ENT_NOQUOTES | ENT_SUBSTITUTE | ENT_XHTML; // OR ENT_HTML5 ?
+    $tmp = html_entity_decode($val, $flags, 'UTF-8');
+    if ($tmp === $val) {
+        $revert = false;
+    } else {
+        $revert = true;
+        $val = $tmp;
+    }
+    // munge start-PHP tags
+    $val = preg_replace(['/<\s*\?\s*php/i', '/<\s*\?\s*=/', '/<\s*\?(\s|\n)/'], ['&#60;&#63;php', '&#60;&#63;=', '&#60;&#63; '], $val);
+    //TODO maybe disable SmartyBC-supported {php}{/php}
+    //$val = preg_replace('~\{/?php\}~i', '', $val); but with current smarty delim's
+    $val = str_replace('`', '&#96;', $val);
+    $val = preg_replace_callback_array([
+         // script tags like <script or <script> or <script X> X = e.g. 'defer'
+        '/<\s*(scrip)t([^>]*)(>?)/i' => function($matches) {
+            return '&#60;'.$matches[1].'&#116;'.($matches[2] ? ' '.trim($matches[2]) : '').($matches[3] ? '&#62;' : '');
+        },
+        // explicit script
+        '/jav(.+?)(scrip)t\s*:\s*(.+)?/i' => function($matches) {
+            if ($matches[3]) {
+                return 'ja&#118;'.trim($matches[1]).$matches[2].'&#116;&#58;'.strtr($matches[3], ['(' => '&#40;', ')' => '&#41;']);
+            }
+            return $matches[0];
+        },
+        // inline scripts like on*="dostuff" or on*=dostuff (TODO others e.g. FSCommand(), seekSegmentTime() @ http://help.dottoro.com)
+        // TODO invalidly processes non-event-related patterns like ontopofold='smoky'
+        '/\b(on[\w.:\-]{4,})\s*=\s*(["\']?.+?["\']?)/i' => function($matches) {
+            return $matches[1].'&#61;'.strtr($matches[2], ['"' => '&#34;', "'" => '&#39;', '(' => '&#40;', ')' => '&#41;']);
+        },
+        // embeds
+        '/(embe)(d)/i' => function($matches) {
+            return $matches[1].'&#'.ord($matches[2]).';';
+        },
+        ], $val);
+
+    if ($revert) {
+        return htmlentities($val, $flags, 'UTF-8', false);
+    }
+    return $val;
+}
+
 } // end of class
 
 #

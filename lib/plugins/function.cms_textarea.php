@@ -24,7 +24,7 @@ function smarty_function_cms_textarea($params, $smarty)
   $out = CmsFormUtils::create_textarea($params);
   if( isset($params['assign']) ) {
     $smarty->assign(trim($params['assign']),$out);
-    return;
+    return '';
   }
   return $out;
 }

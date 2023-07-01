@@ -43,7 +43,7 @@ $nls['locale']['en_CY'] = 'en_CY,en_CY.utf8,en_CY.utf-8,en_CY.UTF-8,en_CY@pound,
 $nls['encoding']['en_CY'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['en_CY'] = array(dirname(__FILE__).'/en_CY/admin.inc.php');
+$nls['file']['en_CY'] = array(__DIR__.'/en_CY/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

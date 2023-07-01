@@ -70,23 +70,23 @@
           {if $indent}{repeat string='-&nbsp;&nbsp;' times=$row.depth-2}{/if}
           {* the tooltip *}
           {capture assign='tooltip_pageinfo'}{strip}
-            <strong>{$mod->Lang('prompt_content_id')}:</strong> {$row.id}<br/>
-            <strong>{$mod->Lang('prompt_title')}:</strong> {$row.title|escape}<br/>
-            <strong>{$mod->Lang('prompt_name')}:</strong> {$row.menutext|escape}<br/>
-            {if isset($row.alias)}<strong>{$mod->Lang('prompt_alias')}:</strong> {$row.alias}<br/>{/if}
-            {if $row.secure}<strong>{$mod->Lang('prompt_secure')}:</strong> {$mod->Lang('yes')}<br/>{/if}
-            <strong>{$mod->Lang('prompt_cachable')}:</strong> {if $row.cachable}{$mod->Lang('yes')}{else}{$mod->Lang('no')}{/if}<br/>
-            <strong>{$mod->Lang('prompt_showinmenu')}:</strong> {if $row.showinmenu}{$mod->Lang('yes')}{else}{$mod->Lang('no')}{/if}<br/>
+            <strong>{$mod->Lang('prompt_content_id')}:</strong> {$row.id}<br />
+            <strong>{$mod->Lang('prompt_title')}:</strong> {$row.title|escape}<br />
+            <strong>{$mod->Lang('prompt_name')}:</strong> {$row.menutext|escape}<br />
+            {if isset($row.alias)}<strong>{$mod->Lang('prompt_alias')}:</strong> {$row.alias}<br />{/if}
+            {if $row.secure}<strong>{$mod->Lang('prompt_secure')}:</strong> {$mod->Lang('yes')}<br />{/if}
+            <strong>{$mod->Lang('prompt_cachable')}:</strong> {if $row.cachable}{$mod->Lang('yes')}{else}{$mod->Lang('no')}{/if}<br />
+            <strong>{$mod->Lang('prompt_showinmenu')}:</strong> {if $row.showinmenu}{$mod->Lang('yes')}{else}{$mod->Lang('no')}{/if}<br />
             <strong>{lang('wantschildren')}:</strong> {if $row.wantschildren|default:1}{$mod->Lang('yes')}{else}{$mod->Lang('no')}{/if}
           {/strip}{/capture}
 
-          <a href="{cms_action_url action='admin_editcontent' content_id=$row.id}" class="page_edit tooltip" accesskey="e" data-cms-content='{$row.id}' data-cms-description='{$tooltip_pageinfo|cms_htmlentities}'>{$row.page|default:''}</a>
+          <a href="{cms_action_url action='admin_editcontent' content_id=$row.id}" class="page_edit tooltip" accesskey="e" data-cms-content="{$row.id}" data-cms-description="{$tooltip_pageinfo|adjust:'cms_htmlentities'}">{$row.page|default:''}</a>
         {else}
           {if isset($row.lock)}
             {capture assign='tooltip_lockinfo'}{strip}
-          {if $row.can_steal}<strong>{$mod->Lang('locked_steal')}:</strong><br/>{/if}
-          <strong>{$mod->Lang('locked_by')}:</strong> {$row.lockuser}<br/>
-          <strong>{$mod->Lang('locked_since')}:</strong> {$row.lock.created|localedate_format:'%x H:i'}<br/>
+          {if $row.can_steal}<strong>{$mod->Lang('locked_steal')}:</strong><br />{/if}
+          <strong>{$mod->Lang('locked_by')}:</strong> {$row.lockuser}<br />
+          <strong>{$mod->Lang('locked_since')}:</strong> {$row.lock.created|localedate_format:'%x H:i'}<br />
           {if $row.lock.expires < $smarty.now}
             <span style="color: red;"><strong>{$mod->Lang('lock_expired')}:</strong> {$row.lock.expires|relative_time}</span>
           {else}
@@ -94,9 +94,9 @@
                   {/if}<br/>
             {/strip}{/capture}
             {if !$row.can_steal}
-              <span class="tooltip" data-cms-description='{$tooltip_lockinfo|htmlentities}'>{$row.page}</span>
+              <span class="tooltip" data-cms-description="{$tooltip_lockinfo|adjust:'htmlentities'}">{$row.page}</span>
             {else}
-              <a href="{cms_action_url action='admin_editcontent' content_id=$row.id}" class="page_edit tooltip steal_lock" accesskey="e" data-cms-content='{$row.id}' data-cms-description='{$tooltip_lockinfo|htmlentities}'>{$row.page}</a>
+              <a href="{cms_action_url action='admin_editcontent' content_id=$row.id}" class="page_edit tooltip steal_lock" accesskey="e" data-cms-content="{$row.id}" data-cms-description="{$tooltip_lockinfo|adjust:'htmlentities'}">{$row.page}</a>
             {/if}
           {else}
             {$row.page}
@@ -126,13 +126,13 @@
         {$row.friendlyname}
       {elseif $column == 'owner'}
             {capture assign='tooltip_ownerinfo'}{strip}
-          <strong>{$mod->Lang('prompt_created')}:</strong> {$row.created|localedate_format:'%x H:i'}<br/>
-          <strong>{$mod->Lang('prompt_lastmodified')}:</strong> {$row.lastmodified|localedate_format:'%x H:i'}<br/>
+          <strong>{$mod->Lang('prompt_created')}:</strong> {$row.created|localedate_format:'%x H:i'}<br />
+          <strong>{$mod->Lang('prompt_lastmodified')}:</strong> {$row.lastmodified|localedate_format:'%x H:i'}<br />
           {if isset($row.lastmodifiedby)}
-            <strong>{$mod->Lang('prompt_lastmodifiedby')}:</strong> {$row.lastmodifiedby}<br/>
+            <strong>{$mod->Lang('prompt_lastmodifiedby')}:</strong> {$row.lastmodifiedby}<br />
           {/if}
         {/strip}{/capture}
-        <span class="tooltip" data-cms-description='{$tooltip_ownerinfo|htmlentities}'>{$row.owner}</span>
+        <span class="tooltip" data-cms-description="{$tooltip_ownerinfo|adjust:'htmlentities'}">{$row.owner}</span>
       {elseif $column == 'active'}
         {if $row.active == 'inactive'}
           <a href="{cms_action_url action='defaultadmin' setactive=$row.id}" class="page_setactive" accesskey="a">
@@ -199,7 +199,7 @@
       {elseif $column == 'multiselect'}
         {if $row.multiselect != ''}
           <label class="invisible" for="multicontent-{$row.id}">{$mod->Lang('prompt_multiselect_toggle')}</label>
-          <input type="checkbox" id="multicontent-{$row.id}" class="multicontent" name="{$actionid}multicontent[]" value="{$row.id}" title="{$mod->Lang('prompt_multiselect_toggle')}"/>
+          <input type="checkbox" id="multicontent-{$row.id}" class="multicontent" name="{$actionid}multicontent[]" value="{$row.id}" title="{$mod->Lang('prompt_multiselect_toggle')}" />
         {/if}
       {else}
         {* unknown column *}
@@ -217,7 +217,7 @@
       {if $column == 'expand' or $column == 'hier' or $column == 'icon1' or $column == 'view' or $column == 'copy' or $column == 'edit' or $column == 'delete'}
             <span title="{$mod->Lang("coltitle_{$column}")}">&nbsp;</span>{* no column header *}
       {elseif $column == 'multiselect'}
-        <input type="checkbox" id="selectall" value="1" title="{$mod->Lang('select_all')}"/>
+        <input type="checkbox" id="selectall" value="1" title="{$mod->Lang('select_all')}" />
       {elseif $column == 'page'}
         <span title="{$coltitle_page}">{$colhdr_page}</span>
       {else}
@@ -259,7 +259,7 @@
         <select name="{$actionid}multiaction" id="multiaction">
           {html_options options=$bulk_options}
         </select>
-        <input type="submit" id="multisubmit" name="{$actionid}multisubmit" accesskey="s" value="{$mod->Lang('submit')}"/>
+        <input type="submit" id="multisubmit" name="{$actionid}multisubmit" accesskey="s" value="{$mod->Lang('submit')}" />
       </div>
     {/if}
   </div>

@@ -3,19 +3,19 @@
 	<ul class="cf">
 		<li class="help">
 		{if isset($module_help_url)}
-			<a href="{$module_help_url}" title="{'module_help'|lang}">{'module_help'|lang}</a>
+			<a href="{$module_help_url}" title="{lang('module_help')}">{lang('module_help')}</a>
 		{else}
-			<a href="https://docs.cmsmadesimple.org/" rel="external" title="{'documentation'|lang}">{'documentation'|lang}</a>
+			<a href="https://docs.cmsmadesimple.org/" rel="external" title="{lang('documentation')}">{lang('documentation')}</a>
 		{/if}
 		</li>
-                {if isset($myaccount)}
+		{if isset($myaccount)}
 		<li class="settings">
-			<a href="myaccount.php?{$secureparam}" title="{'myaccount'|lang}">{'myaccount'|lang}</a>
+			<a href="myaccount.php?{$secureparam}" title="{lang('myaccount')}">{lang('myaccount')}</a>
 		</li>
-                {/if}
+		{/if}
 		{if isset($marks)}
 		<li class="favorites open">
-			<a href="listbookmarks.php?{$secureparam}" title="{'bookmarks'|lang}">{'bookmarks'|lang}</a>
+			<a href="listbookmarks.php?{$secureparam}" title="{lang('bookmarks')}">{lang('bookmarks')}</a>
 		</li>
 		{/if}
 		{$my_alerts=$theme->get_my_alerts()}
@@ -29,29 +29,29 @@
 			{/if}
 		{/if}
 		<li class="view-site">
-			<a href="{root_url}/index.php" rel="external" target="_blank" title="{'viewsite'|lang}">{'viewsite'|lang}</a>
+			<a href="{root_url}/index.php" rel="external" target="_blank" title="{lang('viewsite')}">{lang('viewsite')}</a>
 		</li>
 		<li class="logout">
-			<a href="logout.php?{$secureparam}" title="{'logout'|lang}" {if isset($is_sitedown)}onclick="return confirm('{'maintenance_warning'|lang|escape:'javascript'}')"{/if}>{'logout'|lang}</a>
+			<a href="logout.php?{$secureparam}" title="{lang('logout')}" {if isset($is_sitedown)}onclick="return confirm('{lang("maintenance_warning")|escape:"javascript"}');"{/if}>{lang('logout')}</a>
 		</li>
 	</ul>
 </div>
 {if isset($marks)}
-<div class="dialog invisible" role="dialog" title="{'bookmarks'|lang}">
-  	{if is_array($marks) && count($marks) > 0}
-      <h3>{'user_created'|lang}</h3>
-      <ul>
-      {foreach $marks as $mark}
-         <li><a{if $mark->bookmark_id > 0} class="bookmark"{/if} href="{$mark->url}" title="{$mark->title}">{$mark->title}</a></li>
-      {/foreach}
-      </ul>
-   	{/if}
-    <h3>{'help'|lang}</h3>
-    <ul>
-      <li><a rel="external" class="external" href="https://docs.cmsmadesimple.org" title="{'documentation'|lang}">{'documentation'|lang}</a></li>
-      <li><a rel="external" class="external" href="https://forum.cmsmadesimple.org" title="{'forums'|lang}">{'forums'|lang}</a></li>
-      <li><a rel="external" class="external" href="https://www.cmsmadesimple.org/support/documentation/chat/">{'chat'|lang}</a></li>
-    </ul>
+<div class="dialog invisible" role="dialog" title="{lang('bookmarks')}">
+	{if is_array($marks) && count($marks) > 0}
+	<h3>{lang('user_created')}</h3>
+	<ul>
+	{foreach $marks as $mark}
+		<li><a{if $mark->bookmark_id > 0} class="bookmark"{/if} href="{$mark->url}" title="{$mark->title}">{$mark->title}</a></li>
+	{/foreach}
+	</ul>
+	{/if}
+	<h3>{lang('help')}</h3>
+	<ul>
+		<li><a rel="external" class="external" href="https://docs.cmsmadesimple.org" title="{lang('documentation')}">{lang('documentation')}</a></li>
+		<li><a rel="external" class="external" href="https://forum.cmsmadesimple.org" title="{lang('forums')}">{lang('forums')}</a></li>
+		<li><a rel="external" class="external" href="https://www.cmsmadesimple.org/support/documentation/chat/">{lang('chat')}</a></li>
+	</ul>
 </div>
 {/if}
 
@@ -59,21 +59,21 @@
 <!-- alerts go here -->
 <div id="alert-dialog" class="alert-dialog" role="dialog" title="{lang('alerts')}" style="display: none;">
   <ul>
-    {foreach $my_alerts as $one}
+	{foreach $my_alerts as $one}
 	<li class="alert-box" data-alert-name="{$one->get_prefname()}">
   	<div class="alert-head ui-corner-all {if $one->priority == '_high'}ui-state-error red{elseif $one->priority == '_normal'}ui-state-highlight orange{else}ui-state-highlightblue{/if}">
-	   {$icon=$one->get_icon()}
-	   {if $icon}
-		 <img class="alert-icon ui-icon" alt="" src="{$icon}" title="{lang('remove_alert')}"/>
-	   {else}
-		 <span class="alert-icon ui-icon {if $one->priority != '_low'}ui-icon-alert{else}ui-icon-info{/if}" title="{lang('remove_alert')}"></span>
-	   {/if}
-	   <span class="alert-title">{$one->get_title()|default:lang('alert')}</span>
-	   <span class="alert-remove ui-icon ui-icon-close" title="{lang('remove_alert')}"></span>
-	   <div class="alert-msg">{$one->get_message()}</div>
+	{$icon=$one->get_icon()}
+	{if $icon}
+		<img class="alert-icon ui-icon" alt="" src="{$icon}" title="{lang('remove_alert')}" />
+	{else}
+		<span class="alert-icon ui-icon {if $one->priority != '_low'}ui-icon-alert{else}ui-icon-info{/if}" title="{lang('remove_alert')}"></span>
+	{/if}
+		<span class="alert-title">{$one->get_title()|default:lang('alert')}</span>
+		<span class="alert-remove ui-icon ui-icon-close" title="{lang('remove_alert')}"></span>
+		<div class="alert-msg">{$one->get_message()}</div>
 	</div>
 	</li>
-    {/foreach}
+	{/foreach}
   </ul>
   <div id="alert-noalerts" class="information" style="display: none;">{lang('info_noalerts')}</div>
 </div>

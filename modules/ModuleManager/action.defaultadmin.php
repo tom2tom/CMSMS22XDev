@@ -98,26 +98,26 @@ echo $this->EndTabHeaders();
 echo $this->StartTabContent();
 if( $this->CheckPermission('Modify Modules') ) {
     echo $this->StartTab('installed',$params);
-    include(dirname(__FILE__).'/function.admin_installed.php');
+    include(__DIR__.'/function.admin_installed.php');
     echo $this->EndTab();
 
     if( $connection_ok ) {
         echo $this->StartTab('newversions',$params);
-        include(dirname(__FILE__).'/function.newversionstab.php');
+        include(__DIR__.'/function.newversionstab.php');
         echo $this->EndTab();
 
         echo $this->StartTab('search',$params);
-        include(dirname(__FILE__).'/function.search.php');
+        include(__DIR__.'/function.search.php');
         echo $this->EndTab();
 
         echo $this->StartTab('modules',$params);
-        include(dirname(__FILE__).'/function.admin_modules_tab.php');
+        include(__DIR__.'/function.admin_modules_tab.php');
         echo $this->EndTab();
     }
 }
 if( $this->CheckPermission('Modify Site Preferences') ) {
     echo $this->StartTab('prefs',$params);
-    include(dirname(__FILE__).'/function.admin_prefs_tab.php');
+    include(__DIR__.'/function.admin_prefs_tab.php');
     echo $this->EndTab();
 }
 echo $this->EndTabContent();

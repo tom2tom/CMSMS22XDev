@@ -150,6 +150,7 @@ namespace CMSMS\Database {
         {
             if( $key == 'query_time_total' ) return $this->query_time_total;
             if( $key == 'query_count' ) return $this->_query_count;
+            return null; // no value for unrecognised property
         }
 
         /**
@@ -284,9 +285,9 @@ namespace CMSMS\Database {
          * @param array Any additional parameters required by placeholders in the $sql statement.
          * @return \CMSMS\Database\ResultSet
          */
-        public function SelectLimit( $sql, $nrows = -1, $offset = -1, $inputarr = null )
+        public function SelectLimit( $sql, $nrows = -1, $offset = -1, $inputarr = [] )
         {
-            $limit = null;
+            $limit = '';
             $nrows = (int) $nrows;
             $offset = (int) $offset;
             if( $nrows >= 0 || $offset >= 0 ) {
@@ -320,8 +321,7 @@ namespace CMSMS\Database {
                     }
                     $sql .= $sqlarr[$i];
                     if ($i+1 != sizeof($sqlarr)) {
-                        $false = null;
-                        return $false;
+                        return null; // no recordset object
                     }
                 }
             }
@@ -338,7 +338,7 @@ namespace CMSMS\Database {
          * @param array $inputarr Any parameters marked as placeholders in the SQL statement.
          * @return \CMSMS\Database\ResultSet
          */
-        public function Execute($sql, $inputarr = null)
+        public function Execute($sql, $inputarr = [])
         {
             $rs = $this->SelectLimit($sql, -1, -1, $inputarr );
             return $rs;
@@ -351,10 +351,10 @@ namespace CMSMS\Database {
          * @param array $inputarr Any parameters marked as placeholders in the SQL statement.
          * @return array An associative array of matched results.
          */
-        public function GetArray($sql, $inputarr = null)
+        public function GetArray($sql, $inputarr = [])
         {
             $result = $this->SelectLimit( $sql, -1, -1, $inputarr );
-            if( !$result ) return;
+            if( !$result ) return [];
             $data = $result->GetArray();
             return $data;
         }
@@ -366,7 +366,7 @@ namespace CMSMS\Database {
          * @param array $inputarr Any parameters marked as placeholders in the SQL statement.
          * @return array
          */
-        public function GetAll($sql, $inputarr = null)
+        public function GetAll($sql, $inputarr = [])
         {
             return $this->GetArray($sql, $inputarr);
         }
@@ -381,9 +381,9 @@ namespace CMSMS\Database {
          * @param bool $force_array Force each element of the output to be an associative array.
          * @param bool $first2cols Only output the first 2 columns in an associative array.  Does not work with force_array.
          */
-        public function GetAssoc( $sql, $inputarr = null, $force_array = false, $first2cols = false )
+        public function GetAssoc( $sql, $inputarr = [], $force_array = false, $first2cols = false )
         {
-            $data = null;
+            $data = [];
             $result = $this->SelectLimit($sql, -1, -1, $inputarr );
             if( $result ) $data = $result->GetAssoc($force_array,$first2cols);
             return $data;
@@ -398,13 +398,12 @@ namespace CMSMS\Database {
          * @param bool $trim Optionally trim the output results.
          * @return array A single flat array of results, one entry per row matched.
          */
-        public function GetCol($sql, $inputarr = null, $trim = false)
+        public function GetCol($sql, $inputarr = [], $trim = false)
         {
-            $data = null;
+            $data = [];
             $result = $this->SelectLimit($sql, -1, -1, $inputarr);
             if ($result) {
-                $data = [];
-                $key = null;
+                $key = '';
                 while (!$result->EOF) {
                     $row = $result->Fields();
                     if( !$key ) $key = array_keys($row)[0];
@@ -423,12 +422,12 @@ namespace CMSMS\Database {
          * @param array $inputarr Any parameters marked as placeholders in the SQL statement.
          * @return array An associative array representing a single resultset row.
          */
-        public function GetRow($sql, $inputarr = null)
+        public function GetRow($sql, $inputarr = [])
         {
             $nrows = 1;
             if( stripos( $sql, 'LIMIT' ) !== FALSE ) $nrows = -1;
             $rs = $this->SelectLimit( $sql, $nrows, -1, $inputarr );
-            if( !$rs ) return FALSE;
+            if( !$rs ) return [];
             return $rs->Fields();
         }
 
@@ -439,7 +438,7 @@ namespace CMSMS\Database {
          * @param array $inputarr Any parameters marked as placeholders in the SQL statement.
          * @return mixed
          */
-        public function GetOne($sql, $inputarr = null)
+        public function GetOne($sql, $inputarr = [])
         {
             $res = $this->Getrow( $sql, $inputarr );
             if( !$res ) return FALSE;
@@ -550,15 +549,15 @@ namespace CMSMS\Database {
         }
 
         /**
-         * A convenience method for converting a database specific string representing a date and time
-         * into a unix timestamp.
+         * A convenience method for converting a database specific string
+         * representing a date and time to a unix timestamp.
          *
          * @param string $str
          * @return int
          */
         public function UnixTimeStamp($str)
         {
-            return strtotime($str);
+            return ($str) ? strtotime($str) : 0;
         }
 
         /**
@@ -647,7 +646,7 @@ namespace CMSMS\Database {
          *
          * @param callable $debug_handler
          */
-        public function SetDebugCallback(callable $debug_handler = null)
+        public function SetDebugCallback($debug_handler = null)
         {
             $this->_debug_cb = $debug_handler;
         }
@@ -766,4 +765,4 @@ namespace CMSMS\Database {
      */
     class DatabaseConnectionException extends \Exception {}
 
-} // end of Namespace
+} // end namespace

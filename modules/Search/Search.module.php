@@ -16,9 +16,9 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: News.module.php 2114 2005-11-04 21:51:13Z wishy $
+#$Id$
 
-include_once(dirname(__FILE__) . '/PorterStemmer.class.php');
+include_once(__DIR__ . '/PorterStemmer.class.php');
 
 define( "NON_INDEXABLE_CONTENT", "<!-- pageAttribute: NotSearchable -->" );
 
@@ -35,7 +35,7 @@ class Search extends CMSModule
     private function load_tools()
     {
         if( !$this->_tools_loaded ) {
-            $fn = dirname(__FILE__).'/search.tools.php';
+            $fn = __DIR__.'/search.tools.php';
             include_once($fn);
             $this->_tools_loaded = true;
         }
@@ -55,7 +55,7 @@ class Search extends CMSModule
     public function GetHelp($lang='en_US') { return $this->Lang('help'); }
     public function GetAuthor() { return 'Ted Kulp'; }
     public function GetAuthorEmail() { return 'ted@cmsmadesimple.org'; }
-    public function GetChangeLog() { return @file_get_contents(dirname(__FILE__).'/changelog.inc'); }
+    public function GetChangeLog() { return @file_get_contents(__DIR__.'/changelog.inc'); }
     public function GetEventDescription( $eventname ) { return $this->lang('eventdesc-' . $eventname); }
     public function GetEventHelp( $eventname ) { return $this->lang('eventhelp-' . $eventname); }
 
@@ -125,7 +125,7 @@ class Search extends CMSModule
      the \$entry->module and \$entry->modulerecord fields in \$entry
       ie: {if \$entry->module == 'News'}{News action='detail' article_id=\$entry->modulerecord detailpage='News'}
 
-     For content pages the module is 'content' and modulerecord the page id. 
+     For content pages the module is 'content' and modulerecord the page id.
   *}
   {/foreach}
 </ul>
@@ -158,7 +158,7 @@ EOT;
         return search_StemPhrase($this,$phrase);
     }
 
-    public function AddWords($module = 'Search', $id = -1, $attr = '', $content = '', $expires = NULL)
+    public function AddWords($module = 'Search', $id = -1, $attr = '', $content = '', $expires = NULL) // mixed timestamp or null
     {
         $this->load_tools();
         return search_AddWords($this,$module,$id,$attr,$content,$expires);
@@ -215,6 +215,7 @@ EOT;
     {
         $mod = cms_utils::get_module('Search');
         if( is_object($mod) ) return $mod->Lang('type_'.$str);
+        return '';
     }
 
     public static function reset_page_type_defaults(CmsLayoutTemplateType $type)
@@ -222,15 +223,15 @@ EOT;
         if( $type->get_originator() != 'Search' ) throw new CmsLogicException('Cannot reset contents for this template type');
 
         $mod = cms_utils::get_module('Search');
-        if( !is_object($mod) ) return;
+        if( !is_object($mod) ) return '';
         switch( $type->get_name() ) {
         case 'searchform':
             return $mod->GetSearchHtmlTemplate();
         case 'searchresults':
             return $mod->GetResultsHtmlTemplate();
         }
+        return '';
     }
 }
-
 
 ?>

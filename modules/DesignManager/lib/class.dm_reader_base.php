@@ -21,22 +21,23 @@
 
 abstract class dm_reader_base
 {
-  private $_suggested_name;
-  private $_suggested_description;
+  private $_filename;
+  private $_suggested_name = '';
+  private $_suggested_description = '';
 
   public function __construct($filename)
   {
-    $this->_filename = $filename;
+    $this->_filename = (string)$filename;
   }
 
   public function set_suggested_name($name)
   {
-    if( $name ) $this->_suggested_name = $name;
+    if( $name ) $this->_suggested_name = (string)$name;
   }
 
   public function set_suggested_description($description)
   {
-    if( $description ) $this->_suggested_description = $description;
+    if( $description ) $this->_suggested_description = (string)$description;
   }
 
   public function get_filename()

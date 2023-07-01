@@ -32,7 +32,7 @@ class microtiny_utils
    *
    * @internal
    */
-  public static function WYSIWYGGenerateHeader($selector=null, $css_name='')
+  public static function WYSIWYGGenerateHeader($selector='', $css_name='')
   {
       static $first_time = true;
 
@@ -47,7 +47,7 @@ class microtiny_utils
 
       // get the cssname that we're going to use (either passed in, or from profile)
       try {
-          $profile = null;
+          $profile = [];
           if( $frontend ) {
               $profile = microtiny_profile::load(MicroTiny::PROFILE_FRONTEND);
           }
@@ -55,9 +55,9 @@ class microtiny_utils
               $profile = microtiny_profile::load(MicroTiny::PROFILE_ADMIN);
           }
 
-          if( !$profile['allowcssoverride'] ) {
-              // not allowwing override
-              $css_name = null;
+          if( empty($profile['allowcssoverride']) ) {
+              // not allowing override
+              $css_name = '';
               $css_id = (int) $profile['dfltstylesheet'];
               if( $css_id > 0 ) $css_name = $css_id;
           }
@@ -75,7 +75,7 @@ class microtiny_utils
           }
           catch( Exception $e ) {
               // couldn't load the stylesheet for some reason.
-              $css_name = null;
+              $css_name = '';
           }
       }
 
@@ -108,7 +108,7 @@ class microtiny_utils
       return $output;
   }
 
-  private static function _save_static_config($fn, $frontend=false, $selector = NULL, $css_name = '', $languageid='')
+  private static function _save_static_config($fn, $frontend=false, $selector='', $css_name='', $languageid='')
   {
     if( !$fn ) return;
     $configcontent = self::_generate_config($frontend, $selector, $css_name, $languageid);
@@ -125,7 +125,7 @@ class microtiny_utils
    * @param string A2 Languageid
    * @return string
    */
-  private static function _generate_config($frontend=false, $selector = null, $css_name = null, $languageid="en")
+  private static function _generate_config($frontend=false, $selector='', $css_name='', $languageid="en")
   {
       $ajax_url = function($url) {
           return str_replace('&amp;','&',$url).'&showtemplate=false';
@@ -157,7 +157,6 @@ class microtiny_utils
       if( $selector ) $tpl_ob->assign('mt_selector',$selector);
 
       try {
-          $profile = null;
           if( $frontend ) {
               $profile = microtiny_profile::load(MicroTiny::PROFILE_FRONTEND);
           }

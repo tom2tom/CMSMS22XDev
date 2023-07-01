@@ -1,20 +1,25 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+{capture assign='sitename'}{sitename}{/capture}
 <html>
 	<head>
 		<meta charset="{$encoding}" />
-		<title>{'logintitle'|lang} - {sitename}</title>
+		<title>{lang('logintitle',$sitename)}</title>
 		<base href="{$config.admin_url}/" />
-		<meta name="generator" content="CMS Made Simple - Copyright (C) 2004-2014 - All rights reserved" />
+		<meta name="generator" content="CMS Made Simple - Copyright (C) 2004-2023. All rights reserved." />
 		<meta name="robots" content="noindex, nofollow" />
+		<meta name="referrer" content="origin" />
 		<meta name="viewport" content="initial-scale=1.0 maximum-scale=1.0 user-scalable=no" />
-		<meta name="HandheldFriendly" content="True"/>
-		<link rel="shortcut icon" href="{$config.admin_url}/themes/OneEleven/images/favicon/cmsms-favicon.ico"/>
-		<link rel="stylesheet" href="loginstyle.php" />
-		<!-- learn IE html5 -->
+		<meta name="HandheldFriendly" content="True" />
+		<link href="themes/OneEleven/images/favicon/cmsms-favicon.ico" rel="shortcut icon" />
+		<!-- custom jQueryUI 1.12.1 styling See link in JQUI stylesheet for color reference //-->
+		<link href="themes/OneEleven/css/default-cmsms/jquery-ui-1.12.1.custom.min.css" rel="stylesheet" />
+		<link href="loginstyle.php" rel="stylesheet" />
+		<!-- teach IE html5 -->
 		<!--[if lt IE 9]>
-		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<script type="text/javascript" src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
-		{cms_jquery exclude="jquery.ui.nestedSortable-1.3.4.js,jquery.json-2.2.js" append="`$config.admin_url`/themes/OneEleven/includes/login.js"}
+		{cms_jquery include_css=0 exclude="cms_admin,cms_dirtyform,cms_lock,cms_hiersel,cms_autorefresh,cms_filepicker,nestedSortable,json"}
+		<script type="text/javascript" src="themes/OneEleven/includes/login.js"></script>
 	</head>
 	<body id="login">
 		<div id="wrapper">
@@ -23,45 +28,45 @@
 					<div class="logo">
 						<img src="{$config.admin_url}/themes/OneEleven/images/layout/cmsms_login_logo.png" width="180" height="36" alt="CMS Made Simple&trade;" />
 					</div>
-					<div class="info-wrapper open">
-					<aside class="info">
-					<h2>{'login_info_title'|lang}</h2>
-						<p>{'login_info'|lang}</p>
-							{'login_info_params'|lang}
+					<div class="info-wrapper">
+						<aside class="info">
+							<h2>{lang('login_info_title')}</h2>
+							<p>{lang('login_info')}</p>
+							{lang('login_info_params')}
 							<p><strong>({$smarty.server.HTTP_HOST})</strong></p>
-						<p class="warning">{'warn_admin_ipandcookies'|lang}</p>
-					</aside>
-					<a href="#" title="{'open'|lang}/{'close'|lang}" class="toggle-info">{'open'|lang}/{'close'|lang}</a>
+							<p class="warning">{lang('warn_admin_ipandcookies')}</p>
+						</aside>
+						<a href="#" title="{lang('open')}/{lang('close')}" class="toggle-info">{lang('open')}/{lang('close')}</a>
 					</div>
 					<header>
-						<h1>{'logintitle'|lang}</h1>
+						<h1>{lang('logintitle',$sitename)}</h1>
 					</header>
 					<form method="post" action="login.php">
 						<fieldset>
 						{$usernamefld='username'}
 						{if isset($smarty.get.forgotpw)}{$usernamefld='forgottenusername'}{/if}
-							<label for="lbusername">{'username'|lang}</label>
-							<input id="lbusername"{if !isset($smarty.post.lbusername)} class="focus"{/if} placeholder="{'username'|lang}" name="{$usernamefld}" type="text" size="15" value="" autofocus="autofocus" />
+							<label for="lbusername">{lang('username')}</label>
+							<input id="lbusername"{if !isset($smarty.post.lbusername)} class="focus"{/if} placeholder="{lang('username')}" name="{$usernamefld}" type="text" size="15" value="" autofocus="autofocus" />
 						{if isset($smarty.get.forgotpw) && !empty($smarty.get.forgotpw)}
 							<input type="hidden" name="forgotpwform" value="1" />
 						{/if}
 						{if !isset($smarty.get.forgotpw) && empty($smarty.get.forgotpw)}
-							<label for="lbpassword">{'password'|lang}</label>
-							<input id="lbpassword"{if !isset($smarty.post.lbpassword) or isset($error)} class="focus"{/if} placeholder="{'password'|lang}" name="password" type="password" size="15" maxlength="100"/>
+							<label for="lbpassword">{lang('password')}</label>
+							<input id="lbpassword"{if !isset($smarty.post.lbpassword) or isset($error)} class="focus"{/if} placeholder="{lang('password')}" name="password" type="password" size="15" maxlength="100"/>
 						{/if}
 						{if isset($changepwhash) && !empty($changepwhash)}
-							<label for="lbpasswordagain">{'passwordagain'|lang}</label>
-							<input id="lbpasswordagain"  name="passwordagain" type="password" size="15" placeholder="{'passwordagain'|lang}" maxlength="100" />
+							<label for="lbpasswordagain">{lang('passwordagain')}</label>
+							<input id="lbpasswordagain"  name="passwordagain" type="password" size="15" placeholder="{lang('passwordagain')}" maxlength="100" />
 							<input type="hidden" name="forgotpwchangeform" value="1" />
 							<input type="hidden" name="changepwhash" value="{$changepwhash}" />
 						{/if}
-							<input class="loginsubmit" name="loginsubmit" type="submit" value="{'submit'|lang}" />
-							<input class="loginsubmit" name="logincancel" type="submit" value="{'cancel'|lang}" />
+							<input class="loginsubmit" name="loginsubmit" type="submit" value="{lang('submit')}" />
+							<input class="loginsubmit" name="logincancel" type="submit" value="{lang('cancel')}" />
 						</fieldset>
 					</form>
 					{if isset($smarty.get.forgotpw) && !empty($smarty.get.forgotpw)}
 						<div class="message warning">
-							{'forgotpwprompt'|lang}
+							{lang('forgotpwprompt')}
 						</div>
 					{/if}
 					{if isset($error)}
@@ -81,11 +86,11 @@
 					{/if}
 					{if isset($changepwhash) && !empty($changepwhash)}
 						<div class="warning message">
-							{'passwordchange'|lang}
+							{lang('passwordchange')}
 						</div>
-					{/if} <a href="{root_url}" title="{'goto'|lang} {sitename}"> <img class="goback" width="16" height="16" src="{$config.admin_url}/themes/OneEleven/images/layout/goback.png" alt="{'goto'|lang} {sitename}" /> </a>
+					{/if} <a href="{root_url}" title="{lang('goto')} {sitename}"> <img class="goback" width="16" height="16" src="{$config.admin_url}/themes/OneEleven/images/layout/goback.png" alt="{lang('goto')} {sitename}" /> </a>
 					<p class="forgotpw">
-						<a href="login.php?forgotpw=1">{'lostpw'|lang}</a>
+						<a href="login.php?forgotpw=1">{lang('lostpw')}</a>
 					</p>
 				</div>
 				<footer>

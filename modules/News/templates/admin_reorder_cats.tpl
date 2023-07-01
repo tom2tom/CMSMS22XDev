@@ -2,7 +2,7 @@
 function parseTree(ul)
 {
   var tags = [];
-  ul.children('li').each(function(){
+  ul.children('li').each(function() {
      var subtree = $(this).children('ul');
      if( subtree.size() > 0 ) {
        tags.push([$(this).attr('id'), parseTree(subtree)]);
@@ -14,7 +14,7 @@ function parseTree(ul)
 }
 
 $(function() {
-  $(document).on('click','[name={$actionid}submit]',function(){
+  $(document).on('click','[name="{$actionid}submit"]',function() {
     var tree = $.toJSON(parseTree($('ul.sortable')));
     $('#submit_data').val(tree);
   });
@@ -30,7 +30,7 @@ $(function() {
     tolerance: 'pointer',
     listType: 'ul',
     toleranceElement: '> div'
-  })
+  });
 });
 </script>
 

@@ -49,7 +49,7 @@ $nls['locale']['ro_RO'] = 'ro_RO,ro_RO.utf8,ro_RO.UTF-8,ro_RO.utf-8,romanian,Rom
 $nls['encoding']['ro_RO'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['ro_RO'] = array(dirname(__FILE__).'/ro_RO/admin.inc.php');
+$nls['file']['ro_RO'] = array(__DIR__.'/ro_RO/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

@@ -91,9 +91,9 @@ final class cms_module_smarty_plugin_manager
 	/**
 	 * Get the single allowed instance of this class
 	 */
-	public static function &get_instance()
+	public static function get_instance()
 	{
-		if( !self::$_instance ) self::$_instance = new cms_module_smarty_plugin_manager();
+		if( !self::$_instance ) self::$_instance = new self();
 		return self::$_instance;
 	}
 
@@ -152,7 +152,7 @@ final class cms_module_smarty_plugin_manager
 	public static function load_plugin($name,$type)
 	{
 		$row = self::get_instance()->find($name,$type);
-		if( !is_array($row) ) return;
+		if( !is_array($row) ) return [];
 
 		// load the module
 		$module = cms_utils::get_module($row['module']);
@@ -167,7 +167,7 @@ final class cms_module_smarty_plugin_manager
 				else {
 					// an array with only one item?
 					audit('','cms_module_smarty_plugin_manager','Cannot load plugin '.$row['name'].' from module '.$row['module'].' because of errors in the callback');
-					return;
+					return [];
 				}
 			}
 			else if( startswith($row['callback'],'::') ) {

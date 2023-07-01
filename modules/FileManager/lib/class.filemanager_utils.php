@@ -34,7 +34,7 @@ final class filemanager_utils
         if( strpos($name,'..') !== false ) return FALSE;
         if( $name[0] == '.' || $name[0] == ' ' ) return FALSE;
 	      if( endswith( $name, '.' ) ) return FALSE;
-  
+
         $ext = strtolower(substr(strrchr($name, '.'), 1));
         if( startswith($ext,'php') || endswith($ext,'php') ) return FALSE;
 
@@ -87,10 +87,10 @@ final class filemanager_utils
         $advancedmode = filemanager_utils::check_advanced_mode();
 
         $prefix = CMS_ROOT_PATH;
-        if( $path === '/' ) $path = null;
+        if( $path === '/' ) $path = '';
         $path = self::join_path($prefix,$path);
         $rpath = realpath($path);
-        if( $rpath === FALSE ) return false;
+        if( !$rpath ) return false;
 
         if (!$advancedmode) {
             // uploading in 'non advanced mode', path has to start with the upload dir.
@@ -136,7 +136,7 @@ final class filemanager_utils
     public static function join_path()
     {
         $args = func_get_args();
-        if( count($args) < 1 ) return;
+        if( count($args) < 1 ) return '';
         if( count($args) < 2 ) return $args[0];
 
         $args2 = array();
@@ -195,14 +195,14 @@ final class filemanager_utils
         $advancedmode = self::check_advanced_mode();
         $filemod = cms_utils::get_module('FileManager');
         $showhiddenfiles=$filemod->GetPreference('showhiddenfiles','1');
-        $result=array();
+        $result = array();
         $config = \cms_config::get_instance();
 
         // convert the cwd into a real path... slightly different for advanced mode.
         $realpath = self::join_path($config['root_path'],$path);
 
         $dir=@opendir($realpath);
-        if (!$dir) return false;
+        if (!$dir) return [];
         while ($file=readdir($dir)) {
             if ($file=='.') continue;
             if ($file=='..') {
@@ -304,7 +304,6 @@ final class filemanager_utils
 
     public static function mime_content_type($filename)
     {
-        $mime_type = null;
         if( version_compare(phpversion(),'5.3','ge') && function_exists('finfo_open') ) {
             $fh = finfo_open(FILEINFO_MIME_TYPE);
             if( $fh ) {
@@ -429,7 +428,7 @@ final class filemanager_utils
         // now get a simple list of all of the directories we have 'write' access to.
         function fmutils_get_dirs($startdir,$prefix = '/') {
             $res = array();
-            if( !is_dir($startdir) ) return;
+            if( !is_dir($startdir) ) return [];
 
             global $showhiddenfiles;
             $dh = opendir($startdir);
@@ -463,7 +462,7 @@ final class filemanager_utils
         return $output;
     }
 
-    public static function create_thumbnail($src, $dest = null, $force = FALSE)
+    public static function create_thumbnail($src, $dest = '', $force = FALSE)
     {
         if( !file_exists($src) ) return FALSE;
         if( !$dest ) {
@@ -473,7 +472,7 @@ final class filemanager_utils
         }
 
         if( !$force && (file_exists($dest) && !is_writable($dest) ) ) return FALSE;
-        
+
         $info = getimagesize($src);
         if( !$info || !isset($info['mime']) ) return FALSE;
 
@@ -489,7 +488,7 @@ final class filemanager_utils
         imagesavealpha($i_dest,TRUE);
         imagecopyresampled($i_dest,$i_src,0,0,0,0,$width,$height,imagesx($i_src),imagesy($i_src));
 
-        $res = null;
+        $res = false;
         switch( $info['mime'] ) {
         case 'image/gif':
             $res = imagegif($i_dest,$dest);

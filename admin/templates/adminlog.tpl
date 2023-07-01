@@ -1,22 +1,22 @@
 <script type="text/javascript">
 $(function() {
-  $('#clearlog').click(function(ev){
-     ev.preventDefault();
-     var _hr = $(this).attr('href');
-     cms_confirm('{$sysmain_confirmclearlog|escape:'javascript'}').done(function(){
-         window.location.href = _hr;
-     })
-  })
-  $('#pagesel').change(function(){
-     $(this).closest('form').submit();
-  })
-  $('#toggle_filters').click(function(){
+  $('#clearlog').on('click', function(ev) {
+    ev.preventDefault();
+    var _hr = $(this).attr('href');
+    cms_confirm("{$sysmain_confirmclearlog|escape:'javascript'}").done(function() {
+      window.location.href = _hr;
+    });
+  });
+  $('#pagesel').on('change', function() {
+    $(this).closest('form').trigger('submit');
+  });
+  $('#toggle_filters').on('click', function() {
     $('#adminlog_filters').dialog({
       modal: true,
       width: 'auto'
     });
   });
-})
+});
 </script>
 
 <div class="pagecontainer">
@@ -76,7 +76,7 @@ $(function() {
     <table class="pagetable">
       <thead>
       <tr>
-        <th>{'ip_addr'|lang}</th>
+        <th>{lang('ip_addr')}</th>
         <th>{$languser}</th>
         <th>{$langitemid}</th>
         <th>{$langitemname}</th>

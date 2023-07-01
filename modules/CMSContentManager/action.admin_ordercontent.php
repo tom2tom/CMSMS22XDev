@@ -64,7 +64,7 @@ if( isset($params['orderlist']) && $params['orderlist'] != '' ) {
     function ordercontent_create_flatlist($tree,$parent_id = -1)
     {
         $data = array();
-        $cur_parent = null;
+        $cur_parent = 0;
         $order = 1;
         foreach( $tree as &$node ) {
             if( is_string($node) ) {

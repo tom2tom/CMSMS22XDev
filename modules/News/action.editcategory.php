@@ -6,7 +6,7 @@ $this->SetCurrentTab('categories');
 if (isset($params['cancel'])) $this->RedirectToAdminTab('','','admin_settings');
 
 $catid = '';
-$row = null;
+$row = [];
 $name = '';
 $parentid = -1;
 if( isset($params['catid']) ) {

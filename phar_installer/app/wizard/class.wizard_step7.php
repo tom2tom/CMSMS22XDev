@@ -33,7 +33,7 @@ class wizard_step7 extends wizard_step
         $nlsdir = "$destdir/lib/nls";
         $pattern = "$nlsdir/*nls.php";
         $files = glob($pattern);
-        if( !is_array($files) || count($files) == 0 ) throw new Exception(lang('error_internal',750));
+        if( !is_array($files) || count($files) == 0 ) throw new Exception(lang('error_internal',710));
 
         foreach( $files as &$one ) {
             $fn = basename($one);
@@ -47,7 +47,7 @@ class wizard_step7 extends wizard_step
         $this->message(lang('install_dummyindexhtml'));
 
         $destdir = get_app()->get_destdir();
-        if( !$destdir ) throw new Exception(lang('error_internal',751));
+        if( !$destdir ) throw new Exception(lang('error_internal',711));
         $archive = get_app()->get_archive();
         $phardata = new PharData($archive);
         $archive = basename($archive);
@@ -66,12 +66,12 @@ class wizard_step7 extends wizard_step
     {
         $languages = array('en_US');
         $siteinfo = $this->get_wizard()->get_data('siteinfo');
-        if(is_array($siteinfo) && is_array($siteinfo['languages']) && count($siteinfo['languages']) ) $languages = array_merge($languages,$siteinfo['languages']);
+        if( is_array($siteinfo) && is_array($siteinfo['languages']) && count($siteinfo['languages']) ) $languages = array_merge($languages,$siteinfo['languages']);
         if( is_array($langlist) && count($langlist) ) $languages = array_merge($languages,$langlist);
         $languages = array_unique($languages);
 
         $destdir = get_app()->get_destdir();
-        if( !$destdir ) throw new Exception(lang('error_internal',601));
+        if( !$destdir ) throw new Exception(lang('error_internal',720));
         $archive = get_app()->get_archive();
 
         $this->message(lang('install_extractfiles'));
@@ -94,11 +94,11 @@ class wizard_step7 extends wizard_step
         $app = get_app();
         $app_config = $app->get_config();
         $upgrade_dir =  $app->get_appdir().'/upgrade';
-        if( !is_dir($upgrade_dir) ) throw new Exception(lang('error_internal',710));
+        if( !is_dir($upgrade_dir) ) throw new Exception(lang('error_internal',730));
         $destdir = $app->get_destdir();
-        if( !$destdir ) throw new Exception(lang('error_internal',711));
+        if( !$destdir ) throw new Exception(lang('error_internal',731));
 
-        $version_info = $this->get_wizard()->get_data('version_info');
+        $version_info = $this->get_wizard()->get_data('version_info'); // populated only for refreshes & upgrades
         $versions = utils::get_upgrade_versions();
         if( is_array($versions) && count($versions) ) {
             $this->message(lang('cleaning_files'));
@@ -109,7 +109,7 @@ class wizard_step7 extends wizard_step
                 // check the to version info
                 $manifest = new manifest_reader("$upgrade_dir/$one_version");
                 if( $one_version != $manifest->to_version() ) {
-                    throw new Exception(lang('error_internal',712));
+                    throw new Exception(lang('error_internal',732));
                 }
 
                 // delete all 'deleted' files
@@ -181,7 +181,7 @@ class wizard_step7 extends wizard_step
         try {
             switch( $action ) {
             case 'upgrade':
-                $tmp = $wiz->get_data('version_info'); // valid only for upgrades
+                $tmp = $wiz->get_data('version_info'); // populated only for refreshes & upgrades
                 if( is_array($tmp) && count($tmp) ) {
                     $languages = $this->detect_languages();
                     $this->do_manifests();
@@ -189,7 +189,7 @@ class wizard_step7 extends wizard_step
                     break;
                 }
                 else {
-                    throw new Exception(lang('error_internal',703));
+                    throw new Exception(lang('error_internal',753));
                 }
                 // no break here
             case 'freshen':
@@ -200,7 +200,7 @@ class wizard_step7 extends wizard_step
                 $this->do_files();
                 break;
             default:
-                throw new Exception(lang('error_internal',705));
+                throw new Exception(lang('error_internal',755));
             }
 
             // create index.html files in directories.

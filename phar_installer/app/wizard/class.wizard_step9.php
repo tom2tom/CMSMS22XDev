@@ -52,20 +52,19 @@ class wizard_step9 extends wizard_step
         $this->message(lang('msg_clearedcache'));
 
         // write protect config.php
-        @chmod("$destdir/config.php",0444);
+        @chmod("$destdir/config.php",0444); // TODO 0440 better
 
-        // todo: write history
+        audit('','CMSMS version '.CMS_VERSION,'Upgraded');
 
         // set the finished message.
         if( $app->has_custom_destdir() || !$app->in_phar() ) {
             $this->set_block_html('bottom_nav',lang('finished_custom_upgrade_msg'));
         }
         else {
-            $url = $app->get_root_url();
-            $admin_url = $url;
-            if( !endswith($url,'/') ) $admin_url .= '/';
-            $admin_url .= 'admin';
-            $this->set_block_html('bottom_nav',lang('finished_upgrade_msg', $url, $admin_url));
+            $root_url = $app->get_root_url();
+            if( endswith($root_url,'/') ) $root_url = rtrim($root_url,' /');
+            $admin_url = $root_url.'/admin';
+            $this->set_block_html('bottom_nav',lang('finished_upgrade_msg', $root_url, $admin_url));
         }
     }
 
@@ -97,27 +96,32 @@ class wizard_step9 extends wizard_step
         }
 
         // write protect config.php
-        @chmod("$destdir/config.php",0444);
+        @chmod("$destdir/config.php",0444); // TODO 0440 better
 
         $root_url = $app->get_root_url();
-        if( !endswith($root_url,'/') ) $root_url .= '/';
-        $admin_url = $root_url.'admin';
+        if( endswith($root_url,'/') ) $root_url = rtrim($root_url,' /');
+        $admin_url = $root_url.'/admin';
         $adminacct = $this->get_wizard()->get_data('adminaccount');
 
-        if( is_array($adminacct) && isset($adminacct['emailaccountinfo']) && $adminacct['emailaccountinfo'] && isset($adminacct['emailaddr']) && $adminacct['emailaddr'] ) {
+        if( is_array($adminacct) && !empty($adminacct['emailaccountinfo']) && !empty($adminacct['emailaddr']) ) {
             try {
                 $mailer = new cms_mailer();
+//              $mailer->SetFrom(some mailto:...); //help to avoid spam tagging
+                $mailer->SetFromName(lang('emailsender')); //ditto
                 $mailer->AddAddress($adminacct['emailaddr']);
                 $mailer->SetSubject(lang('email_accountinfo_subject'));
                 if( $app->in_phar() ) {
                     $body = lang('email_accountinfo_message',
-                                 $adminacct['username'],$adminacct['password'],
-                                 $destdir, $root_url);
+                                 $root_url,
+                                 $destdir,
+                                 $adminacct['username'],
+                                 $admin_url);
                 }
                 else {
                     $body = lang('email_accountinfo_message_exp',
-                                 $adminacct['username'],$adminacct['password'],
-                                 $destdir);
+                                 $root_url,
+                                 $adminacct['username'],
+                                 $admin_url);
                 }
                 $body = html_entity_decode($body, ENT_QUOTES);
                 $mailer->SetBody($body);
@@ -125,7 +129,7 @@ class wizard_step9 extends wizard_step
                     $this->message(lang('send_admin_email'));
                 }
                 else {
-                    $this->error(lang('error_sendingmail'));
+                    $this->error(lang('error_sendingmail').': '.$mailer->GetErrorInfo());
                 }
             }
             catch( Exception $e ) {
@@ -136,7 +140,7 @@ class wizard_step9 extends wizard_step
 
         // todo: set initial preferences.
 
-        // todo: write history
+        audit('','CMSMS version '.CMS_VERSION,'Installed');
 
         cmsms()->clear_cached_files();
         $this->message(lang('msg_clearedcache'));
@@ -164,31 +168,30 @@ class wizard_step9 extends wizard_step
         // create tmp directories
         $app = get_app();
         $destdir = $app->get_destdir();
-        if( !$destdir ) throw new Exception(lang('error_internal',901));
+        if( !$destdir ) throw new Exception(lang('error_internal',903));
         $this->message(lang('install_createtmpdirs'));
         @mkdir($destdir.'/tmp/cache',0777,TRUE);
         @mkdir($destdir.'/tmp/templates_c',0777,TRUE);
 
         // write protect config.php
-        @chmod("$destdir/config.php",0444);
+        @chmod("$destdir/config.php",0444); // TODO 0440 better
 
         // clear the cache
         $this->connect_to_cmsms($destdir);
         cmsms()->clear_cached_files();
         $this->message(lang('msg_clearedcache'));
 
-        // todo: write history
+        audit('','CMSMS version '.CMS_VERSION,'Refreshed');
 
         // set the finished message.
         if( $app->has_custom_destdir() ) {
             $this->set_block_html('bottom_nav',lang('finished_custom_freshen_msg'));
         }
         else {
-            $url = $app->get_root_url();
-            $admin_url = $url;
-            if( !endswith($url,'/') ) $admin_url .= '/';
-            $admin_url .= 'admin';
-            $this->set_block_html('bottom_nav',lang('finished_freshen_msg', $url, $admin_url ));
+            $root_url = $app->get_root_url();
+            if( endswith($root_url,'/') ) $root_url = rtrim($root_url,' /');
+            $admin_url = $root_url.'/admin';
+            $this->set_block_html('bottom_nav',lang('finished_freshen_msg', $root_url, $admin_url ));
         }
     }
 
@@ -199,12 +202,13 @@ class wizard_step9 extends wizard_step
             // this loads the standard CMSMS stuff, except smarty cuz it's already done.
             // we do this here because both upgrade and install stuff needs it.
             // NOTE in this connection, we don't disable database loading
-            global $CMS_INSTALL_PAGE, $DONT_LOAD_SMARTY, $CMS_VERSION, $CMS_PHAR_INSTALLER;
+            global $CMS_INSTALL_PAGE, $DONT_LOAD_SMARTY, $CMS_VERSION;
             $CMS_INSTALL_PAGE = 1;
             $DONT_LOAD_SMARTY = 1;
             $CMS_VERSION = $app->get_dest_version();
             if( $app->in_phar() ) {
-                $CMS_PHAR_INSTALLER = 1; //TODO unused anywhere
+                global $CMS_PHAR_INSTALLER;
+                $CMS_PHAR_INSTALLER = 1; //TODO used only to block core Smarty use c.f. $DONT_LOAD_SMARTY
             }
             // setup and initialize the cmsms API's
             // note DONT_LOAD_DB and DONT_LOAD_SMARTY are used.
@@ -224,7 +228,7 @@ class wizard_step9 extends wizard_step
     {
         $app = get_app();
         $destdir = $app->get_destdir();
-        if( !$destdir ) throw new Exception(lang('error_internal',903));
+        if( !$destdir ) throw new Exception(lang('error_internal',911));
 
         $wiz = $this->get_wizard();
         // display the template right off the bat.
@@ -238,13 +242,13 @@ class wizard_step9 extends wizard_step
             $action = $wiz->get_data('action');
             switch( $action ) {
              case 'upgrade':
-                 $tmp = $wiz->get_data('version_info'); //valid only for upgrades
+                 $tmp = $wiz->get_data('version_info'); // populated only for refreshes & upgrades
                  if( is_array($tmp) && count($tmp) ) {
                      $this->do_upgrade($tmp);
                      break;
                  }
                  else {
-                     throw new Exception(lang('error_internal',908));
+                     throw new Exception(lang('error_internal',920));
                  }
                  //no break here
              case 'freshen':
@@ -254,7 +258,7 @@ class wizard_step9 extends wizard_step
                  $this->do_install();
                  break;
              default:
-                 throw new Exception(lang('error_internal',910));
+                 throw new Exception(lang('error_internal',921));
             }
 
             // clear the session.

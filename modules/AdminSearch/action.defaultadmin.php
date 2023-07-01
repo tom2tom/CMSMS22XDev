@@ -27,7 +27,7 @@ if( !$this->VisibleToAdminUser() ) exit;
 //echo $this->StartTabContent();
 if( $this->can_search() ) {
   //echo $this->StartTab('search', $params);
-  include(dirname(__FILE__).'/function.admin_search_tab.php');
+  include(__DIR__.'/function.admin_search_tab.php');
   //echo $this->EndTab();
 }
 

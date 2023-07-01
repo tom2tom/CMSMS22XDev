@@ -3,7 +3,7 @@
 {extends file='wizard_step.tpl'}
 
 {block name='logic'}
-    {$subtitle = 'title_step5'|tr}
+    {$subtitle = tr('title_step5')}
     {$current_step = '5'}
 {/block}
 
@@ -11,12 +11,12 @@
 
 <div class="installer-form">
 {wizard_form_start}
-    <p>{'info_adminaccount'|tr}</p>
+    <p>{tr('info_adminaccount')}</p>
 
     <fieldset>
         <div class="row form-row">
             <div class="four-col">
-                <label>{'username'|tr}</label>
+                <label>{tr('username')}</label>
             </div>
             <div class="eight-col">
                 <input class="form-field required full-width" type="text" name="username" required="required" />
@@ -27,7 +27,7 @@
         </div>
         <div class="row form-row">
             <div class="four-col">
-                <label>{'emailaddr'|tr}</label>
+                <label>{tr('emailaddr')}</label>
             </div>
             <div class="eight-col">
             {if 1}
@@ -42,7 +42,7 @@
         </div>
         <div class="row form-row">
             <div class="four-col">
-                <label>{'password'|tr}</label>
+                <label>{tr('password')}</label>
             </div>
             <div class="eight-col">
                 <input class="form-field required full-width" type="password" name="password" required="required" autocomplete="off" />
@@ -53,7 +53,7 @@
         </div>
         <div class="row form-row">
             <div class="four-col">
-                <label>{'repeatpw'|tr}</label>
+                <label>{tr('repeatpw')}</label>
             </div>
             <div class="eight-col">
                 <input class="form-field required full-width" type="password" name="repeatpw" required ="required" autocomplete="off" />
@@ -65,7 +65,7 @@
         {if $verbose}
         <div class="row form-row">
             <div class="four-col">
-                <label>{'saltpasswords'|tr}</label>
+                <label>{tr('saltpasswords')}</label>
             </div>
             <div class="eight-col">
                 <select name="saltpw" class="form-field">
@@ -76,7 +76,7 @@
         {/if}
         <div class="row form-row">
             <div class="four-col">
-                <label>{'emailaccountinfo'|tr}</label>
+                <label>{tr('emailaccountinfo')}</label>
             </div>
             <div class="eight-col">
                 <select id="emailacctinfo" name="emailaccountinfo" class="form-field">
@@ -84,9 +84,10 @@
                 </select>
             </div>
         </div>
+        <div class="message yellow">{tr('warn_email')}</div>
     </fieldset>
     <div id="bottom_nav">
-        <input class="action-button positive" type="submit" name="next" value="{'next'|tr} &rarr;" />
+        <input class="action-button positive" type="submit" name="next" value="{tr('next')} &rarr;" />
     </div>
 
 {wizard_form_end}

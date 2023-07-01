@@ -22,7 +22,7 @@ function smarty_function_sitename($params, $smarty)
 
 	if( isset($params['assign']) ) {
         $smarty->assign(trim($params['assign']),$result);
-        return;
+        return '';
     }
 	return $result;
 }

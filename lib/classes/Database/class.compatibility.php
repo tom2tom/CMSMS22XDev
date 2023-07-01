@@ -63,7 +63,7 @@ namespace CMSMS\Database {
          */
         public static function init(\cms_config $config)
         {
-            $spec = new ConnectionSpec;
+            $spec = new ConnectionSpec();
             $spec->type = (isset($config['dbms'])) ? $config['dbms'] : ((isset($config['type'])) ? $config['type'] : 'mysqli');
             $spec->host = $config['db_hostname'];
             $spec->username = $config['db_username'];
@@ -110,7 +110,7 @@ namespace CMSMS\Database {
 } // end of namespace
 
 namespace {
-    // root namespace stuff
+    // global namespace stuff
 
     /**
      * A constant to assist with date and time flags in the data dictionary.

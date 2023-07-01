@@ -51,7 +51,7 @@ $nls['locale']['cs_CZ'] = 'cs_CZ.utf8,cs_CZ.utf-8,cs_CZ.UTF-8,cs_CZ,czech,Czech_
 $nls['encoding']['cs_CZ'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['cs_CZ'] = array(dirname(__FILE__).'/cs_CZ/admin.inc.php');
+$nls['file']['cs_CZ'] = array(__DIR__.'/cs_CZ/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

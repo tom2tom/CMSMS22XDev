@@ -29,7 +29,7 @@ if( is_object($search) ) {
     $search->DeleteWords($this->GetName(),$articleid,'article');
   }
   else if( $status == 'published' ) {
-    $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_news WHERE news_id = ?';;
+    $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_news WHERE news_id = ?';
     $article = $db->GetRow($query,array($articleid));
     if( !$article ) return;
 

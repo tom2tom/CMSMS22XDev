@@ -41,7 +41,7 @@ $nls['locale']['kz_KZ'] = 'kk_KZ,kk_KZ.utf-8,kk_KZ.UTF-8,kk_KZ.PT154,kazakh';
 $nls['encoding']['kz_KZ'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['kz_KZ'] = array(dirname(__FILE__).'/kz_KZ/admin.inc.php');
+$nls['file']['kz_KZ'] = array(__DIR__.'/kz_KZ/admin.inc.php');
 
 #Language setting for HTML area
 $nls['htmlarea']['kz_KZ'] = 'en';

@@ -50,7 +50,7 @@ class dm_design_reader extends dm_reader_base
     private function _scan()
     {
         $in = array();
-        $cur_key = null;
+        $cur_key = '';
 
         $__get_in = function() use ($in) {
             if( ($n = count($in)) ) {
@@ -219,7 +219,7 @@ class dm_design_reader extends dm_reader_base
                         if( $in ) {
                             array_pop($in);
                         }
-                        $cur_key = null;
+                        $cur_key = '';
                         break;
                     }
                 }

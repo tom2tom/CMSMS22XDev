@@ -1,16 +1,16 @@
 <?php
 
-final class AdminSearch_tools 
+final class AdminSearch_tools
 {
   private function __construct() {}
 
   public static function get_slave_classes()
   {
     $key = __CLASS__.'slaves'.get_userid(FALSE);
-    $results = null;
+    $results = [];
     $data =  cms_cache_handler::get_instance()->get($key);
     if( !$data ) {
-      // cache needs refreshing.    
+      // cache needs refreshing.
       $results = array();
 
       // get module results.
@@ -27,7 +27,7 @@ final class AdminSearch_tools
 	    foreach( $classlist as $class_name ) {
 	      if( !class_exists($class_name) ) continue;
 	      if( !is_subclass_of($class_name,'AdminSearch_slave') ) continue;
-	      $obj = new $class_name;
+	      $obj = new $class_name();
 	      if( !is_object($obj) ) continue;
         if( !$obj->check_permission()) continue;
 

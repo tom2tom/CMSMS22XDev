@@ -24,12 +24,12 @@ function smarty_function_cms_lang_info($params, $smarty)
 		$lang = trim($params['lang']);
 	}
 	$info = CmsNlsOperations::get_language_info($lang);
-	if( !$info ) return;
+	if( !$info ) return '';
 
 	if( isset($params['assign']) )
     {
 		$smarty->assign($params['assign'],$info);
-		return;
+		return '';
     }
 	
 	return $info;

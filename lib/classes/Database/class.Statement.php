@@ -70,7 +70,7 @@ abstract class Statement
      * @param Connection $conn The database connection
      * @param string $sql The SQL query
      */
-    public function __construct(Connection $conn,$sql = null)
+    public function __construct(Connection $conn,$sql = '')
     {
         $this->_conn = $conn;
         $this->_sql = $sql;
@@ -90,6 +90,7 @@ abstract class Statement
         case 'sql':
             return $this->_sql;
         }
+        return null; // no value for unrecognised property
     }
 
     /**
@@ -139,7 +140,7 @@ abstract class Statement
      * @param string $col The column name.  If not specified, all columns will be returned.
      * @return mixed
      */
-    abstract public function Fields($col = null);
+    abstract public function Fields($col = '');
 
     /**
      * Execute the query

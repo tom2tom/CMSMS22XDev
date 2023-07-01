@@ -1,12 +1,10 @@
 <script type="text/javascript">
 $(function() {
-    $(document).on('click', '#submit', function(){
-        return confirm('{lang('confirm_edituser')|escape:'javascript'}');
+    $(document).on('click', '#submit', function() {
+        return confirm("{lang('confirm_edituser')|escape:'javascript'}");{*TODO cms_confirm().done(returnttrue).fail(returnfalse)*}
     });
-
-    //{if $manage_users == true}
-
-    $('#copyusersettings').change(function () {
+    {if $manage_users}
+    $('#copyusersettings').on('change', function() {
         var v = $(this).val();
         if (v == -1) {
              $('#clearusersettings').prop('disabled', false);
@@ -15,7 +13,7 @@ $(function() {
          }
      });
 
-     $('#clearusersettings').click(function () {
+     $('#clearusersettings').on('click', function () {
          $('#copyusersettings').val(-1);
 
          var v = $(this).prop('checked');
@@ -25,8 +23,7 @@ $(function() {
              $('#copyusersettings').prop('disabled', false);
          }
     });
-    //{/if}
-
+    {/if}
 });
 </script>
 <div class="pagecontainer">

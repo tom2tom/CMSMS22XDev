@@ -12,7 +12,7 @@ class utils
 
     private function __construct() {}
 
-    static public function redirect($to)
+    public static function redirect($to)
     {
         $_SERVER['PHP_SELF'] = null;
         $schema = $_SERVER['SERVER_PORT'] == '443' ? 'https' : 'http';

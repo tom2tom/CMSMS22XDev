@@ -18,22 +18,22 @@ $(function() {
         // Register an event with an element.
         $viewport.observator.register(event_name, inputs.eq(i));
         // Attach a handler to that event for the element.
-        inputs.eq(i).bind(event_name, function(event, $viewport, value) {
+        inputs.eq(i).on(event_name, function(event, $viewport, value) {
           $(this).val(Math.floor(value));
         })
-        // Attach a handler for the built-in jQuery change event, handler
-        // which read user input and apply it to relevent viewport object.
-        .change(event_name, function(event) {
+        // Attach a handler for the jQuery change event
+        // which reads user input and applies it to relevent viewport object.
+        .on('change', function(event) {
           var event_name = event.data;
           $viewport.$image.scale_proportion_locked = $viewport.$container.parent('.pane').find('.coords input:checkbox').is(':checked');
           $viewport.observator.set_property(event_name,$(this).val());
         });
       }
       $('#natsize').html($viewport.$image.originalWidth+' x '+$viewport.$image.originalHeight);
-   }
- })
+    }
+  })
  // React on all viewport events.
- .bind('jrac_events', function(event, $viewport) {
+ .on('jrac_events', function(event, $viewport) {
    var inputs = $('table#coords input:text');
    if($viewport.observator.crop_consistent()) {
      inputs.removeClass('invalid');

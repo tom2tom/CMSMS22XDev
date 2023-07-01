@@ -16,7 +16,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
 #
-#$Id: class.module.inc.php 7061 2011-05-28 18:48:04Z calguy1000 $
+#$Id$
 
 /**
  * This file contains the base module class for all CMSMS modules.
@@ -159,7 +159,7 @@ abstract class CMSModule
             return CmsApp::get_instance()->GetDb();
         }
 
-        return null;
+        return null; // no value for unrecognised property
     }
 
     /**
@@ -433,7 +433,7 @@ abstract class CMSModule
     }
 
     /**
-     * Returns a translatable name of the module.  For modulues who's names can
+     * Returns a translatable name of the module.  For modules whose name can
      * probably be translated into another language (like News)
      *
      * @abstract
@@ -547,7 +547,7 @@ abstract class CMSModule
 
     /**
      * Method to sanitize all entries in a hash
-     * This method is called by the module api to clean incomming parameters in the frontend.
+     * This method is called by the module api to clean incoming parameters in the frontend.
      * It uses the map created with the SetParameterType() method in the module api.
      *
      * @internal
@@ -702,7 +702,7 @@ abstract class CMSModule
      * @see CreateParameter
      * @final
      * @deprecated
-     * @param bool $flag Indicaties whether unknown params should be restricted.
+     * @param bool $flag Indicates whether unknown params should be restricted.
      */
     final public function RestrictUnknownParams($flag = true)
     {
@@ -836,24 +836,24 @@ abstract class CMSModule
      */
 
     /**
-     * Returns the cms->config object as a reference
+     * Returns the cms->config object
      *
      * @final
      * @return \cms_config
      * @deprecated
      */
-    final public function &GetConfig()
+    final public function GetConfig()
     {
         return \cms_config::get_instance();
     }
 
     /**
-     * Returns the cms->db object as a reference
+     * Returns the cms->db object
      *
      * @final
      * @return \CMSMS\Database\Connection object
      */
-    final public function &GetDb()
+    final public function GetDb()
     {
         return CmsApp::get_instance()->GetDb();
     }
@@ -889,7 +889,7 @@ abstract class CMSModule
     /**
      * Return a value for a module generated content block type.
      *
-     * This mehod is called from a {content_module} tag, when the content edit form is being edited.
+     * This method is called from a {content_module} tag, when the content edit form is being edited.
      *
      * Given input parameters (i.e: via _POST or _REQUEST), this method
      * will extract a value for the given content block information.
@@ -907,13 +907,13 @@ abstract class CMSModule
      */
     function GetContentBlockFieldValue($blockName,$blockParams,$inputParams,ContentBase $content_obj)
     {
-        return FALSE;
+        return '';
     }
 
     /**
      * Validate the value for a module generated content block type.
      *
-     * This mehod is called from a {content_module} tag, when the content edit form is being validated.
+     * This method is called from a {content_module} tag, when the content edit form is being validated.
      *
      * This method can be overridden if the module is providing content
      * block types to the CMSMS content objects.
@@ -984,7 +984,7 @@ abstract class CMSModule
      */
     public function Install()
     {
-        $filename = dirname(dirname(__DIR__)) . '/modules/'.$this->GetName().'/method.install.php';
+        $filename = dirname(__DIR__,2) . '/modules/'.$this->GetName().'/method.install.php';
         if (@is_file($filename)) {
             $gCms = CmsApp::get_instance();
             $db = $gCms->GetDb();
@@ -1027,7 +1027,7 @@ abstract class CMSModule
      */
     public function Uninstall()
     {
-        $filename = dirname(dirname(__DIR__)) . '/modules/'.$this->GetName().'/method.uninstall.php';
+        $filename = dirname(__DIR__,2) . '/modules/'.$this->GetName().'/method.uninstall.php';
         if (@is_file($filename)) {
             $gCms = CmsApp::get_instance();
             $db = $gCms->GetDb();
@@ -1084,7 +1084,7 @@ abstract class CMSModule
 
     /**
      * Function to perform any upgrade procedures. This is mostly used to for
-     * updating databsae tables, but can do other duties as well. It should
+     * updating database tables, but can do other duties as well. It should
      * return a string message if there is a failure. Returning nothing (FALSE)
      * will allow the upgrade procedure to proceed. Upgrades should have a path
      * so that they can be upgraded from more than one version back.  While not
@@ -1099,7 +1099,7 @@ abstract class CMSModule
      */
     public function Upgrade($oldversion, $newversion)
     {
-        $filename = dirname(dirname(__DIR__)) . '/modules/'.$this->GetName().'/method.upgrade.php';
+        $filename = dirname(__DIR__,2) . '/modules/'.$this->GetName().'/method.upgrade.php';
         if (@is_file($filename)) {
             $gCms = CmsApp::get_instance();
             $db = $gCms->GetDb();
@@ -1200,7 +1200,7 @@ abstract class CMSModule
      */
     public function GetAdminMenuItems()
     {
-        if( !$this->VisibleToAdminUser() ) return;
+        if( !$this->VisibleToAdminUser() ) return [];
 
         $out = array();
         $out[] = CmsAdminMenuItem::from_module($this);
@@ -1336,14 +1336,14 @@ abstract class CMSModule
      * Returns header code specific to this WYSIWYG
      *
      * @abstract
-     * @param string $selector (optional) The id of the element that is being initialized, if null the WYSIWYG module should assume the selector
+     * @param string $selector (optional) The id of the element that is being initialized, if empty, the WYSIWYG module should assume the selector
      *   to be textarea.<ModuleName>.
      * @param string $cssname (optional) The name of the CMSMS stylesheet to associate with the wysiwyg editor for additional styling.
-     *   if elementid is not null then the cssname is only used for the specific element.  WYSIWYG modules may not obey the cssname paramter
+     *   if selector is not null then the cssname is only used for the specific element.  WYSIWYG modules may not obey the cssname paramter
      *   depending on their settings and capabilities.
      * @return string
      */
-    public function WYSIWYGGenerateHeader($selector = null,$cssname = null)
+    public function WYSIWYGGenerateHeader($selector = '',$cssname = '')
     {
         return '';
     }
@@ -1376,7 +1376,8 @@ abstract class CMSModule
     public function DoAction($name, $id, $params, $returnid='')
     {
         if( $returnid == '' ) {
-            $errors = $messages = null;
+            $errors = [];
+            $messages = [];
             if( isset($params['__activetab']) ) $this->SetCurrentTab(trim(cleanValue($params['__activetab'])));
             $e_key = $this->GetName().'_errors';
             $m_key = $this->GetName().'_messages';
@@ -1418,8 +1419,8 @@ abstract class CMSModule
      * @param string $name The action name
      * @param string $id The action identifier
      * @param array  $params The action params
-     * @param int $returnid The current page id.  Empty for admin requests.
-     * @param Smarty_Internal_Template $smarty The current smarty template object.
+     * @param mixed $returnid The current page id. Int | empty string for admin requests.
+     * @param Smarty_Internal_Template $smarty The current smarty template object. (not actually NULL)
      * @return string The action output.
      */
     final public function DoActionBase($name, $id, $params, $returnid='', $smarty = NULL)
@@ -1513,7 +1514,7 @@ abstract class CMSModule
         $result='<a class="'.$classname.'"';
         if ($href!='') $result.=' href="'.$href.'"';
         $result.='>'.$linktext.'<span';
-        if ($forcewidth!="" && is_numeric($forcewidth)) $result.=' style="width:'.$forcewidth.'px"';
+        if ($forcewidth && is_numeric($forcewidth)) $result.=' style="width:'.$forcewidth.'px"';
         $result.='>'.htmlentities($helptext)."</span></a>\n";
         return $result;
     }
@@ -2065,7 +2066,7 @@ abstract class CMSModule
      * @return string
      */
 
-    function CreateInputDataList($id, $name, $value='', $items = NULL, $size='10', $maxlength='255', $addttext='')
+    function CreateInputDataList($id, $name, $value='', $items=[], $size='10', $maxlength='255', $addttext='')
     {
         $this->_loadFormMethods();
         return cms_module_CreateInputDataList($this, $id, $name, $value, $items, $size, $maxlength, $addttext);
@@ -2396,13 +2397,13 @@ abstract class CMSModule
      * @param string $module The required module name.
      * @return CMSModule The module object, or FALSE
      */
-    static public function &GetModuleInstance($module)
+    public static function GetModuleInstance($module)
     {
         return cms_utils::get_module($module);
     }
 
     /**
-     * Returns an array of modulenames with the specified capability
+     * Returns an array of module names with the specified capability
      * and which are installed and enabled, of course
      *
      * @final
@@ -2914,13 +2915,13 @@ abstract class CMSModule
 
 
     /**
-     * Create's a new permission for use by the module.
+     * Creates a new permission for use by the module.
      *
      * @final
      * @param string $permission_name Name of the permission to create
      * @param string $permission_text Description of the permission
      */
-    final public function CreatePermission($permission_name, $permission_text = null)
+    final public function CreatePermission($permission_name, $permission_text = '')
     {
         try {
             if( !$permission_text ) $permission_text = $permission_name;
@@ -3022,7 +3023,7 @@ abstract class CMSModule
      */
     final public function ListPreferencesByPrefix($prefix)
     {
-        if( !$prefix ) return;
+        if( !$prefix ) return [];
         $prefix = $this->GetName().'_mapi_pref_'.$prefix;
         $tmp = cms_siteprefs::list_by_prefix($prefix);
         if( is_array($tmp) && count($tmp) ) {
@@ -3034,6 +3035,7 @@ abstract class CMSModule
             }
             return $tmp;
         }
+        return [];
     }
 
 
@@ -3088,8 +3090,8 @@ abstract class CMSModule
      */
     public function DoEvent( $originator, $eventname, &$params )
     {
-        if ($originator != '' && $eventname != '') {
-            $filename = dirname(dirname(__DIR__)) . '/modules/'.$this->GetName().'/event.'
+        if ($originator && $eventname) {
+            $filename = dirname(__DIR__,2) . '/modules/'.$this->GetName().'/event.'
                 . $originator . "." . $eventname . '.php';
 
             if (@is_file($filename)) {
@@ -3098,7 +3100,7 @@ abstract class CMSModule
                 $config = $gCms->GetConfig();
                 $smarty = $gCms->GetSmarty();
 
-                include($filename);
+                include $filename;
             }
         }
     }

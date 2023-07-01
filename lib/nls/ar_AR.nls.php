@@ -54,7 +54,7 @@ $nls['encoding']['ar_AR'] = 'UTF-8';
 $nls['direction']['ar_AR'] = 'rtl';
 
 #Location of the file(s)
-$nls['file']['ar_AR'] = array(dirname(__FILE__).'/ar_AR/admin.inc.php');
+$nls['file']['ar_AR'] = array(__DIR__.'/ar_AR/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

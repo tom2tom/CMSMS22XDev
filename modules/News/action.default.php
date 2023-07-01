@@ -1,7 +1,6 @@
 <?php
 if (!isset($gCms)) exit;
 
-$template = null;
 if (isset($params['summarytemplate'])) {
     $template = trim($params['summarytemplate']);
 }
@@ -242,9 +241,9 @@ if( !$tpl_ob->IsCached() ) {
                 }
             }
             $onerow->id = $row['news_id'];
-            $onerow->title = $row['news_title'];
-            $onerow->content = $row['news_data'];
-            $str = (string)$row['summary'];
+            $onerow->title = $row['news_title'] ? news_ops::execSpecialize($row['news_title']) : (string)$row['news_title'];
+            $onerow->content = $row['news_data'] ? news_ops::execSpecialize($row['news_data']) : (string)$row['news_data'];
+            $str = $row['summary'] ? news_ops::execSpecialize($row['summary']) : (string)$row['summary'];
             if( $str ) {
                 if( preg_match('/^\s*<br ?\/?>\s*$/',$str) ) {
                     $onerow->summary = '';
@@ -256,7 +255,7 @@ if( !$tpl_ob->IsCached() ) {
             else {
                 $onerow->summary = '';
             }
-            if( FALSE == empty($row['news_extra']) ) $onerow->extra = $row['news_extra'];
+            if( !empty($row['news_extra']) ) $onerow->extra = news_ops::execSpecialize($row['news_extra']); // TODO CHECK FORMAT
             $onerow->postdate = $row['news_date'];
             $onerow->startdate = $row['start_time'];
             $onerow->enddate = $row['end_time'];
@@ -267,7 +266,7 @@ if( !$tpl_ob->IsCached() ) {
             //
             // Handle the custom fields
             //
-            $onerow->fields = news_ops::get_fields($row['news_id'],TRUE);
+            $onerow->fields = news_ops::get_fields($row['news_id'],TRUE); //TODO sanitize untrusted content
             $onerow->fieldsbyname = $onerow->fields; // dumb, I know.
             $onerow->file_location = $gCms->config['uploads_url'].'/news/id'.$row['news_id'];
 

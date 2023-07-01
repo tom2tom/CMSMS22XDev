@@ -175,7 +175,7 @@ abstract class Job
         $module = ModuleOperations::get_instance()->get_module_instance(self::MODULE_NAME);
         if( !$module ) throw new \LogicException('Cannot delete a job... the CmsJobMgr module is not available');
         $module->delete_job($this);
-        $this->_id = null;
+        $this->_id = 0;
     }
 
     /**

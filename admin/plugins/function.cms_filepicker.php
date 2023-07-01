@@ -2,10 +2,10 @@
 function smarty_function_cms_filepicker($params,$template)
 {
     $filepicker = \cms_utils::get_filepicker_module();
-    if( !$filepicker ) return;
+    if( !$filepicker ) return '';
 
     $name = trim(get_parameter_value($params,'name'));
-    if( !$name ) return;
+    if( !$name ) return '';
     $profile_name = trim(get_parameter_value($params,'profile'));
     $prefix = trim(get_parameter_value($params,'prefix'));
     $value = trim(get_parameter_value($params,'value'));
@@ -29,6 +29,7 @@ function smarty_function_cms_filepicker($params,$template)
     $out = $filepicker->get_html( $prefix.$name, $value, $profile, $required );
     if( isset($params['assign']) ) {
         $template->assign( $params['assign'], $out );
+        return '';
     } else {
         return $out;
     }

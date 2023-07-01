@@ -7,7 +7,7 @@
 
 <script type="text/javascript">
 $(function() {
-  $('#{$actionid}cancel').click(function() {
+  $('#{$actionid}cancel').on('click', function() {
     $(this).closest('form').attr('novalidate','novalidate');
   });
 });

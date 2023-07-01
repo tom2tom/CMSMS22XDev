@@ -65,8 +65,8 @@ class wizard_step1 extends wizard_step
                 if( file_exists("$dir/function.cms_selflink.php") ) return FALSE;
                 break;
 
-            case 'install':
-                if( is_dir("$dir/schemas") ) return FALSE;
+            case 'installer':
+                if( is_dir("$dir/app") ) return FALSE;
                 break;
 
             case 'tmp':
@@ -101,7 +101,7 @@ class wizard_step1 extends wizard_step
         };
 
         $_get_annotation = function($dir) {
-            if( !is_dir($dir) || !is_readable($dir) ) return;
+            if( !is_dir($dir) || !is_readable($dir) ) return '';
             $bn = basename($dir);
             if( $bn != 'lib' && is_file("$dir/version.php" ) ) {
                 @include("$dir/version.php"); // defines in this file can throw notices
@@ -114,12 +114,13 @@ class wizard_step1 extends wizard_step
             if( is_dir("$dir/app") && is_file("$dir/app/class.cms_install.php") ) {
                 return "CMSMS installation assistant";
             }
+            return '';
         };
 
         $_find_dirs = function($start,$depth = 0) use( &$_find_dirs, &$_get_annotation, $_is_valid_dir ) {
             if( !is_readable( $start ) ) return [];
             $dh = opendir($start);
-            if( !$dh ) return;
+            if( !$dh ) return [];
             $out = array();
             while( ($file = readdir($dh)) !== FALSE ) {
                 if( $file == '.' || $file == '..' ) continue;

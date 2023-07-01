@@ -20,7 +20,7 @@ class langtools
 
   public static function get_instance()
   {
-    if( !is_object(self::$_instance) ) self::$_instance = new self();
+    if( !self::$_instance ) self::$_instance = new self();
     return self::$_instance;
   }
 
@@ -47,7 +47,7 @@ class langtools
       $tmp2 = explode(';q=',$tmp[$i],2);
       if( $tmp2[0] == '' || $tmp2[0] == '*' ) continue;
       $priority = 1;
-      if( isset($tmp2[1]) && $tmp2[1] != '' ) $priority = floatval($tmp2[1]);
+      if( !empty($tmp2[1]) ) $priority = floatval($tmp2[1]);
       $out[] = array('lang'=>$tmp2[0],'priority'=>$priority);
     }
 
@@ -77,7 +77,7 @@ class langtools
    */
   final public function get_available_languages()
   {
-    die('not implemented');
+    throw new Exception('not implemented: '.__METHOD__);
   }
 
 
@@ -192,10 +192,10 @@ class langtools
     $request = request::get();
     $session = session::get();
 
-    // get the users preferred language.
-    $lang = null;
+    // get the user's preferred language.
+    $lang = '';
     if( isset($request['curlang']) ) $lang = $request['curlang']; // it's stored in the get (or post)
-    if( !$lang && isset($session['current_language']) )	$lang = $session['current_language']; // it's stored in the session
+    if( !$lang && isset($session['current_language']) ) $lang = $session['current_language']; // it's stored in the session
     if( !$lang ) $lang = $this->match_browser_lang(); // not set anywhere. get it from the browser.
 
     // match available languages.
@@ -247,16 +247,15 @@ class langtools
    * Get a hash of languages suitable for display in a dropdown
    *
    * @virtual
-   * @returns a hash
+   * @returns array maybe empty
    */
   public function get_language_list($langs)
   {
-    $outp = null;
+    $outp = [];
     foreach( $langs as $one ) {
       $tmp = nls()->find($one);
       if( !is_object($tmp) ) continue;
 
-      if( !is_array($outp) ) $outp = array();
       $outp[$one] = $tmp->display();
     }
     return $outp;

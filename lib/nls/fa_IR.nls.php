@@ -44,7 +44,7 @@ $nls['encoding']['fa_IR'] = 'UTF-8';
 $nls['direction']['fa_IR'] = 'rtl';
 
 #Location of the file(s)
-$nls['file']['fa_IR'] = array(dirname(__FILE__).'/fa_IR/admin.inc.php');
+$nls['file']['fa_IR'] = array(__DIR__.'/fa_IR/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

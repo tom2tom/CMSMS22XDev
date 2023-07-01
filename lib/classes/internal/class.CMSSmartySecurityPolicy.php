@@ -16,11 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: content.functions.php 6863 2011-01-18 02:34:48Z calguy1000 $
-
-/**
- * @package CMS
- */
+#$Id$
 
 /**
  * Generic smarty security policy.
@@ -33,23 +29,32 @@
 final class CMSSmartySecurityPolicy extends Smarty_Security
 {
     public $smarty; // used by ancestor, prevent undeclared property
-
+/* overrides useful?
+    public $allow_constants;
+    public $php_functions;
+    public $php_modifiers;
+    public $streams;
+    public $secure_dir;
+    public $static_classes;
+*/
     public function __construct($smarty)
     {
         parent::__construct($smarty);
 //Smarty 2,3 only $this->php_handling = Smarty::PHP_REMOVE;
         $this->secure_dir = null; // don't trust anywhere not explicitly whitelisted
-        $this->php_modifiers = [];  // allow any php function TODO consider same as php_functions (breaker)
+        $this->php_modifiers = [];  // allow any php function BUT any such modifier deprecated since 4.3.0 TODO consider same as php_functions (breaker)
         $this->streams = null; // no usable streams
 //Smarty 2,3 only $this->allow_php_tag = false;
         $gCms = CmsApp::get_instance();
-        if($gCms->is_frontend_request() ) {
-            // some permissive settings
-            $this->static_classes = []; // allow all classes' static method-calls
-            $this->php_functions = []; // allow any php functions
+        if( $gCms->is_frontend_request() ) {
             $this->allow_constants = false; // prohibit php const's (2.2.16) prob (2.2.17) >> true when permissive, false otherwise
             $config = $gCms->GetConfig();
-            if( !$config['permissive_smarty'] ) {
+            if( $config['permissive_smarty'] ) {
+                // some permissive settings
+                $this->static_classes = []; // allow all classes' static method-calls
+                $this->php_functions = []; // allow any php functions
+            }
+            else {
                 $this->static_classes = null; // no class static-method calls
                 // allow most methods that do modification of data to be displayed.
                 // e.g. string searches, array searches, string comparison, formatting, sorting, etc.
@@ -64,10 +69,11 @@ final class CMSSmartySecurityPolicy extends Smarty_Security
                     'implode','in_array','is_array','is_dir','is_email','is_file','is_object','is_string','isset',
                     'json_decode','json_encode',
                     'ksort',
-                    'lang','locale_ftime', //TODO lang irrelevant for frontend use?
+                    'lang','locale_ftime', //lang for when admin realm enabled for frontend
                     'max','min',
                     'nl2br','number_format',
                     'print_r',
+                    'rawurlencode',
                     'shuffle','sizeof','sort','startswith','str_replace','strcasecmp','strcmp','strftime','CMSMS\strftime','strlen','strpos','strtolower','strtotime','strtoupper','substr',
                     'time',
                     'trim','ltrim','rtrim', //since 2.2.17
@@ -77,9 +83,9 @@ final class CMSSmartySecurityPolicy extends Smarty_Security
             }
         }
         else {
+            $this->allow_constants = true;
             $this->php_functions = []; // allow any php function
             $this->static_classes = []; // allow any static-method call (Smarty default)
-            $this->allow_constants = true;
         }
     }
 } // end of class

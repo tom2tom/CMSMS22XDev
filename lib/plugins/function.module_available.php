@@ -38,7 +38,7 @@ function smarty_cms_function_module_available($params, $smarty)
 	if( isset($params['assign']) )
     {
 		$smarty->assign(trim($params['assign']),$out);
-		return;
+		return '';
     }
 	return $out;
 }

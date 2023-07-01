@@ -3,7 +3,7 @@
 function smarty_function_cms_admin_user($params,$template)
 {
   $smarty = $template->smarty;
-  $out = null;
+  $out = '';
 
   if( cmsms()->test_state(CmsApp::STATE_ADMIN_PAGE) ) {
       $uid = (int)get_parameter_value($params,'uid');
@@ -34,7 +34,7 @@ function smarty_function_cms_admin_user($params,$template)
 
   if( isset($params['assign']) ) {
     $smarty->assign($params['assign'],$out);
-    return;
+    return '';
   }
   return $out;
 }

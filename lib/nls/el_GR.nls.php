@@ -48,7 +48,7 @@ $nls['locale']['el_GR'] = 'el_GR,el_GR.utf8,el_GR.utf-8,el_GR.UTF-8,greek,Greek_
 $nls['encoding']['el_GR'] = "UTF-8";
 
 #Location of the file(s)
-$nls['file']['el_GR'] = array(dirname(__FILE__).'/el_GR/admin.inc.php');
+$nls['file']['el_GR'] = array(__DIR__.'/el_GR/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

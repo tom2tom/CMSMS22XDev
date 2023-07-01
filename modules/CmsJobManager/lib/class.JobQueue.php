@@ -20,7 +20,7 @@ final class JobQueue
 
         $sql = 'SELECT * FROM '.\CmsJobManager::table_name().' WHERE created < UNIX_TIMESTAMP() ORDER BY created ASC LIMIT ?';
         $list = $db->GetArray($sql,array($limit));
-        if( !is_array($list) || count($list) == 0 ) return;
+        if( !is_array($list) || count($list) == 0 ) return [];
 
         $out = [];
         foreach( $list as $row ) {
@@ -37,6 +37,7 @@ final class JobQueue
         return $out;
     }
 
+    // TODO mixed return bool|array ?
     public static function get_jobs($check_only = fALSE)
     {
         $db = \CmsApp::get_instance()->GetDb();
@@ -47,7 +48,7 @@ final class JobQueue
 
         $sql = 'SELECT * FROM '.\CmsJobManager::table_name().' WHERE start < UNIX_TIMESTAMP() AND created < UNIX_TIMESTAMP() ORDER BY errors ASC,created ASC LIMIT ?';
         $list = $db->GetArray($sql,array($limit));
-        if( !is_array($list) || count($list) == 0 ) return;
+        if( !is_array($list) || count($list) == 0 ) return FALSE;
         if( $check_only ) return TRUE;
 
         $out = [];

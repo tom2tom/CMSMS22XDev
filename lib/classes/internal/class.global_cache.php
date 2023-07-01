@@ -19,7 +19,7 @@ class global_cache
     public static function get($type)
     {
         // if( !isset(self::$_types[$type]) ) throw new \LogicException('Unknown type '.$type);
-        if( !isset(self::$_types[$type]) ) return;
+        if( !isset(self::$_types[$type]) ) return null; // no object
         if( !is_array(self::$_cache) ) self::_load();
 
         if( !isset(self::$_cache[$type]) ) {
@@ -59,7 +59,7 @@ class global_cache
 
     private static function _get_driver()
     {
-        static $_driver = null;
+        static $_driver = null; // unset
         if( !$_driver ) {
             $_driver = new \cms_filecache_driver(array('lifetime'=>self::TIMEOUT,'autocleaning'=>1,'group'=>__CLASS__));
         }

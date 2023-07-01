@@ -29,11 +29,11 @@
 /**
  * @access private
  */
-function cms_module_RedirectToAdmin(&$modinstance, $page, $params=array())
+function cms_module_RedirectToAdmin($modinstance, $page, $params=array())
 {
     $urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
     $url = $page.$urlext;
-  
+
   $recursive_fix = function($arr) use (&$recursive_fix)
   {
     $ret = [];
@@ -51,23 +51,23 @@ function cms_module_RedirectToAdmin(&$modinstance, $page, $params=array())
         }
       }
     }
-    
+
     return $ret;
   };
-  
+
   if( count($params) )
   {
     $url .=  '&' . http_build_query( $recursive_fix($params) );
   }
-    
-  
+
+
     redirect($url);
 }
 
 /**
  * @access private
  */
-function cms_module_Redirect(&$modinstance, $id, $action, $returnid='', $params=array(), $inline=false)
+function cms_module_Redirect($modinstance, $id, $action, $returnid='', $params=array(), $inline=false)
 {
 	$name = $modinstance->GetName();
 
@@ -79,7 +79,7 @@ function cms_module_Redirect(&$modinstance, $id, $action, $returnid='', $params=
 
 	$text = '';
 	if ($returnid != '') {
-        $contentops = ContentOperations::get_instance();
+		$contentops = ContentOperations::get_instance();
 		$content = $contentops->LoadContentFromId($returnid);
 		if( !is_object($content) ) {
 			// no destination content object
@@ -104,9 +104,9 @@ function cms_module_Redirect(&$modinstance, $id, $action, $returnid='', $params=
 		$text .= '&'.$id.'returnid='.$returnid;
 	}
 	else {
-	    $text .= '&'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+		$text .= '&'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 	}
-  
+
   $recursive_fix = function($arr, $id) use (&$recursive_fix)
   {
     $ret = [];
@@ -124,16 +124,16 @@ function cms_module_Redirect(&$modinstance, $id, $action, $returnid='', $params=
         }
       }
     }
-    
+
     return $ret;
   };
-  
+
   if( count($params) )
   {
     $text .=  '&' . http_build_query( $recursive_fix($params, $id) );
   }
-  
-	redirect($text);
+
+  redirect($text);
 }
 
 ?>

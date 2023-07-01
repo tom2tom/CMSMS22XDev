@@ -23,8 +23,8 @@
 			<br />
 		</div>
 		<div class="pageoverflow">
-			<p class="pagetext"><label for="sitename">{'sitename'|lang}:</label></p>
-			<p class="pageinput"><input type="text" id="sitename" class="pagesmalltextarea" name="sitename" size="30" value="{$sitename}" />&nbsp;{cms_help key2='siteprefs_sitename' title='sitename'|lang}</p>
+			<p class="pagetext"><label for="sitename">{lang('sitename')}:</label></p>
+			<p class="pageinput"><input type="text" id="sitename" class="pagesmalltextarea" name="sitename" size="30" value="{$sitename}" />&nbsp;{cms_help key2='siteprefs_sitename' title=lang('sitename')}</p>
 		</div>
 		<div class="pageoverflow">
 			<p class="pagetext"><label for="frontendlang">{lang('frontendlang')}:</label></p>
@@ -288,10 +288,10 @@ $(function() {
   });
   $(document).on('click','#testsend', function(e) {
     $('#testpopup').dialog('close');
-    $(this).closest('form').submit();
+    $(this).closest('form').trigger('submit');
   });
 
-  $('#mailer').change(function() {
+  $('#mailer').on('change', function() {
     on_mailer();
   });
   on_mailer();
@@ -474,7 +474,7 @@ $(function() {
 		</div>
 
 		<fieldset>
-			<legend>{'browser_cache_settings'|lang}:&nbsp;</legend>
+			<legend>{lang('browser_cache_settings')}:&nbsp;</legend>
 				<div class="pageoverflow">
 					<p class="pagetext"><label for="allow_browser_cache">{lang('allow_browser_cache')}:</label></p>
 					<p class="pageinput">
@@ -486,23 +486,23 @@ $(function() {
 				<div class="pageoverflow">
 					<p class="pagetext"><label for="browser_expiry">{lang('browser_cache_expiry')}:</label></p>
 					<p class="pageinput">
-						<input type="text" id="browser_expiry" name="browser_cache_expiry" value="{$browser_cache_expiry}" size="6" maxlength="10"/>
+						<input type="text" id="browser_expiry" name="browser_cache_expiry" value="{$browser_cache_expiry}" size="6" maxlength="10" />
 						&nbsp;{cms_help key2='settings_browsercache_expiry' title=lang('browser_cache_expiry')}
 					</p>
 				</div>
 		</fieldset>
 
 		<fieldset>
-			<legend>{'server_cache_settings'|lang}:&nbsp;</legend>
+			<legend>{lang('server_cache_settings')}:&nbsp;</legend>
 				<div class="pageoverflow">
-					<p class="pagetext"><label for="autoclearcache2">{'autoclearcache2'|lang}:</label></p>
+					<p class="pagetext"><label for="autoclearcache2">{lang('autoclearcache2')}:</label></p>
 					<p class="pageinput">
-						<input id="autoclearcache2" type="text" name="auto_clear_cache_age" size="4" value="{$auto_clear_cache_age}" maxlength="4"/>&nbsp;{cms_help key2='settings_autoclearcache' title='autoclearcache2'|lang}
+						<input id="autoclearcache2" type="text" name="auto_clear_cache_age" size="4" value="{$auto_clear_cache_age}" maxlength="4" />&nbsp;{cms_help key2='settings_autoclearcache' title=lang('autoclearcache2')}
 					</p>
 				</div>
 		</fieldset>
 		<fieldset>
-			<legend>{'general_operation_settings'|lang}:&nbsp;</legend>
+			<legend>{lang('general_operation_settings')}:&nbsp;</legend>
 				<div class="pageoverflow">
 					<p class="pagetext"><label for="umask">{lang('global_umask')}:</label></p>
 					<p class="pageinput">

@@ -38,10 +38,10 @@ if( !function_exists('__cms_function_output_var') ) {
         }
     }
 
-    function __cms_function_output_var($key,$val,$ptype = null,$depth = 0) {
+    function __cms_function_output_var($key,$val,$ptype = '',$depth = 0) {
         // this outputs something similar to json, but with type information, and indentation
         $type = gettype($val);
-        $out = null;
+        $out = '';
         $depth_str = '&nbsp;&nbsp;&nbsp;';
         $acc = __cms_function_output_accessor($ptype,$key,$depth);
         if( is_object($val) ) {
@@ -85,13 +85,13 @@ function smarty_cms_function_get_template_vars($params, $smarty)
 	$tpl_vars = $smarty->getTemplateVars();
 	$str = '<pre>';
 	foreach( $tpl_vars as $key => $value ) {
-        $str .= __cms_function_output_var($key,$value);
-    }
-    $str .= '</pre>';
+		$str .= __cms_function_output_var($key,$value);
+	}
+	$str .= '</pre>';
 	if( isset($params['assign']) ){
-	    $smarty->assign(trim($params['assign']),$str);
-	    return;
-    }
+		$smarty->assign(trim($params['assign']),$str);
+		return '';
+	}
 	return $str;
 }
 

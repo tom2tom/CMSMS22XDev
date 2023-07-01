@@ -87,13 +87,13 @@ final class imageEditor
 	public static function getMime($path){
 		$info = getimagesize($path);
 		if (!$info) {
-			return false;
+			return '';
 		}
 		$mime = image_type_to_mime_type($info[2]);
 		if($mime != image_type_to_mime_type(IMAGETYPE_JPEG)
 			&& $mime != image_type_to_mime_type(IMAGETYPE_GIF)
 			&& $mime != image_type_to_mime_type(IMAGETYPE_PNG)){
-			return false;
+			return '';
 		}
 		return $mime;
 	}
@@ -108,7 +108,7 @@ final class imageEditor
 	public static function getWidth($path){
 		$info = getimagesize($path);
 		if (!$info) {
-			return false;
+			return 0;
 		}
 		return $info[0];
 	}
@@ -137,7 +137,7 @@ final class imageEditor
 			return imagecreatefrompng($path);
 		}
 
-		return NULL;
+		return NULL; // no image for unsupported filetype
 	}
 
 	/**
@@ -146,7 +146,7 @@ final class imageEditor
 	 * @param image instance of the image
 	 * @param path the path of the file
 	 * @param mimeType the mimetype of the image
-     * @return bool
+	 * @return bool
 	 **/
 	public static function save($image, $path, $mimeType){
 		if ($mimeType == image_type_to_mime_type(IMAGETYPE_JPEG)) {
@@ -157,6 +157,7 @@ final class imageEditor
 			imagesavealpha($image, true);
 			return imagepng($image, $path);
 		}
+		return false;
 	}
 }
 ?>

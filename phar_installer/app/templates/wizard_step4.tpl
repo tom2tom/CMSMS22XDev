@@ -2,7 +2,7 @@
 
 {extends file='wizard_step.tpl'}
 {block name='logic'}
-    {$subtitle = 'title_step4'|tr}
+    {$subtitle = tr('title_step4')}
     {$current_step = '4'}
 {/block}
 
@@ -10,15 +10,15 @@
 
 <div class="installer-form">
 {wizard_form_start}
-
-    <h3>{'prompt_dbinfo'|tr}</h3>
-    <p>{'info_dbinfo'|tr}</p>
+{if $action != 'freshen'}
+    <h3>{tr('prompt_dbinfo')}</h3>
+    <p>{tr('info_dbinfo')}</p>
 
     <fieldset>
         {if $verbose}
         <div class="row form-row">
             <div class="four-col">
-                <label>{'prompt_dbtype'|tr}</label>
+                <label>{tr('prompt_dbtype')}</label>
             </div>
             <div class="eight-col">
                 <select class="form-field" name="dbtype">
@@ -29,7 +29,7 @@
         {/if}
         <div class="row form-row">
             <div class="four-col">
-                <label>{'prompt_dbhost'|tr}</label>
+                <label>{tr('prompt_dbhost')}</label>
             </div>
             <div class="eight-col">
                 <input class="form-field required full-width" type="text" name="dbhost" value="{$config.dbhost}" required="required" />
@@ -40,7 +40,7 @@
         </div>
         <div class="row form-row">
             <div class="four-col">
-                <label>{'prompt_dbname'|tr}</label>
+                <label>{tr('prompt_dbname')}</label>
             </div>
             <div class="eight-col">
                 <input class="form-field required full-width" type="text" name="dbname" value="{$config.dbname}" required="required" />
@@ -51,7 +51,7 @@
         </div>
         <div class="row form-row">
             <div class="four-col">
-                <label>{'prompt_dbuser'|tr}</label>
+                <label>{tr('prompt_dbuser')}</label>
             </div>
             <div class="eight-col">
                 <input class="form-field required full-width" type="text" name="dbuser" value="{$config.dbuser}" autocomplete="off" required="required" />
@@ -62,7 +62,7 @@
         </div>
         <div class="row form-row">
             <div class="four-col">
-                <label>{'prompt_dbpass'|tr}</label>
+                <label>{tr('prompt_dbpass')}</label>
             </div>
             <div class="eight-col">
                 <input class="form-field required full-width" type="password" name="dbpass" value="" autocomplete="off" required="required" />
@@ -74,7 +74,7 @@
         {if $verbose}
         <div class="row form-row">
             <div class="four-col">
-                <label>{'prompt_dbport'|tr}</label>
+                <label>{tr('prompt_dbport')}</label>
             </div>
             <div class="eight-col">
                 <input class="form-field full-width" type="text" name="dbport" value="{$config.dbport}" />
@@ -82,7 +82,7 @@
         </div>
         <div class="row form-row">
             <div class="four-col">
-                <label>{'prompt_dbprefix'|tr}</label>
+                <label>{tr('prompt_dbprefix')}</label>
             </div>
             <div class="eight-col">
                 <input class="form-field full-width" type="text" name="dbprefix" value="{$config.dbprefix}" />
@@ -90,25 +90,24 @@
         </div>
         {/if}
     </fieldset>
-
-    <h3>{'prompt_timezone'|tr}</h3>
-    <p>{'info_timezone'|tr}</p>
+{/if}
+    <h3>{tr('prompt_timezone')}</h3>
+    <p>{tr('info_timezone')}</p>
 
     <div class="row form-row">
-        <label class="visuallyhidden">{'prompt_timezone'|tr}</label>
+        <label class="visuallyhidden">{tr('prompt_timezone')}</label>
         <select class="form-field" name="timezone">
             {html_options options=$timezones selected=$config.timezone}
         </select>
     </div>
 
     {if $verbose}
-
-    <h3>{'prompt_queryvar'|tr}</h3>
-    <p class="info">{'info_queryvar'|tr}</p>
+    <h3>{tr('prompt_queryvar')}</h3>
+    <p class="info">{tr('info_queryvar')}</p>
 
     <div class="row form-row">
         <div class="four-col">
-            <label>{'prompt_queryvar'|tr}</label>
+            <label>{tr('prompt_queryvar')}</label>
         </div>
         <div class="eight-col">
             <input class="form-field" type="text" name="query_var" value="{$config.query_var}" />
@@ -117,11 +116,11 @@
     {/if}
 
     {if $verbose and $action == 'install'}
-    <h3>{'prompt_installcontent'|tr}</h3>
-    <p>{'info_installcontent'|tr}</p>
+    <h3>{tr('prompt_installcontent')}</h3>
+    <p>{tr('info_installcontent')}</p>
 
     <div class="row form-row">
-        <label>{'prompt_installcontent'|tr}</label>
+        <label>{tr('prompt_installcontent')}</label>
         <select class="form-field" name="samplecontent">
             {html_options options=$yesno selected=$config.samplecontent}
         </select>
@@ -129,7 +128,7 @@
     {/if}
 
     <div id="bottom_nav">
-    <input class="action-button positive" type="submit" name="next" value="{'next'|tr} &rarr;" />
+    <input class="action-button positive" type="submit" name="next" value="{tr('next')} &rarr;" />
     </div>
 
 {wizard_form_end}

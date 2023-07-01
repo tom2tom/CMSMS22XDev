@@ -324,7 +324,7 @@ class cms_http_request
         $this->cookies      = array();
         $this->_cookies     = array();
         $this->headerArray  = array();
-        $this->proxy        = null;
+        $this->proxy        = null; // mixed bool|int|string|array|resource
 
         // Set the config details
         $this->debug        = FALSE;
@@ -336,7 +336,7 @@ class cms_http_request
         $this->username     = '';
         $this->password     = '';
         $this->redirect     = FALSE;
-        $this->result       = null;
+        $this->result       = null; // mixed
 
         // Set the cookie and agent defaults
         $this->nextToken    = '';

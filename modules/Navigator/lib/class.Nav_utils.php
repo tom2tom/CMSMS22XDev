@@ -33,11 +33,11 @@
 #
 #-------------------------------------------------------------------------
 #END_LICENSE
-#$Id: News.module.php 2114 2005-11-04 21:51:13Z wishy $
+#$Id$
 
 final class Nav_utils
 {
-    private static $_excludes;
+    private static $_excludes = null; // a.k.a. unset
     private function __construct() {}
 
     public static function set_excludes($data)
@@ -54,7 +54,7 @@ final class Nav_utils
 
     public static function clear_excludes()
     {
-        self::$_excludes = null;
+        self::$_excludes = null; // a.k.a. unset
     }
 
     public static function is_excluded($alias)
@@ -68,15 +68,15 @@ final class Nav_utils
 
     public static function fill_node(cms_content_tree $node,$deep,$nlevels,$show_all,$collapse = FALSE,$depth = 0)
     {
-        if( !is_object($node) ) return;
+        if( !is_object($node) ) return null; // no object
         $gCms = CmsApp::get_instance();
         $hm = $gCms->GetHierarchyManager();
         $content = $node->getContent(TRUE,TRUE);
         if( is_object($content) ) {
-            if( !$content->Active() ) return;
-            if( !$content->ShowInMenu() && !$show_all ) return;
+            if( !$content->Active() ) return null;
+            if( !$content->ShowInMenu() && !$show_all ) return null;
 
-            $obj = new NavigatorNode;
+            $obj = new NavigatorNode();
             $obj->id = $content->Id();
             $obj->url = $content->GetURL();
             $obj->accesskey = $content->AccessKey();
@@ -135,7 +135,7 @@ final class Nav_utils
             }
 
             // load all the children ... just to see if we have children that 'could' be displayed
-            $children = null;
+            $children = [];
             if( $node->has_children() ) {
                 $children = $node->getChildren($deep,$show_all);
                 if( is_array($children) && count($children) ) {
@@ -165,6 +165,7 @@ final class Nav_utils
 
             return $obj;
         }
+        return null; // no object
     }
 } // end of class
 

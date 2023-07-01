@@ -232,9 +232,9 @@ else if (isset($_GET["toggleactive"])) {
 
 include_once ('header.php');
 
-if (false == empty($error)) echo $themeObject->ShowErrors('<ul class="error">' . $error . '</ul>');
+if (!empty($error)) echo $themeObject->ShowErrors('<ul class="error">' . $error . '</ul>');
 if (isset($_GET["message"])) $message = preg_replace('/\</', '', $_GET['message']);
-if (false == empty($message)) echo '<div class="pagemcontainer"><p class="pagemessage">' . $message . '</p></div>';
+if (!empty($message)) echo '<div class="pagemcontainer"><p class="pagemessage">' . $message . '</p></div>';
 
 $out      = array();
 $offset   = ((int)$page - 1) * $limit;
@@ -246,7 +246,7 @@ foreach ($userlist as $one) {
 }
 
 foreach ($userlist as &$oneuser) {
-    $oneuser->access_to_user = 1;
+    $oneuser->access_to_user = 1; // lazily-used class property only used in template as proxy for editable
 
     if ($userops->UserInGroup($oneuser->id, 1) && !$userops->UserInGroup($userid, 1)) $oneuser->access_to_user = 0;
     $oneuser->pagecount = $userops->CountPageOwnershipById($oneuser->id);

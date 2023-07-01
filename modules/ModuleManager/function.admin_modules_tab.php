@@ -95,7 +95,7 @@ if( $data ) {
   $size = count($data);
 
   // check for permissions
-  $moduledir = dirname(dirname(dirname(__FILE__))).DIRECTORY_SEPARATOR."modules";
+  $moduledir = dirname(__DIR__,2).DIRECTORY_SEPARATOR."modules";
   $writable = is_writable( $moduledir );
 
   // build the table

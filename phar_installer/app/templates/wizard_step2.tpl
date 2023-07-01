@@ -2,7 +2,7 @@
 
 {extends file='wizard_step.tpl'}
 {block name='logic'}
-    {$title = 'title_step2'|tr}
+    {$title = tr('title_step2')}
     {$current_step = '2'}
 {/block}
 {block name='contents'}
@@ -21,16 +21,16 @@ $(function() {
 
 <div class="installer-form">
   {wizard_form_start}
-  {$label='install'|tr}
+  {$label=tr('install')}
 
   {if $nofiles}
-    <div class="message blue">{'step2_nofiles'|tr}</div>
+    <div class="message blue">{tr('step2_nofiles')}</div>
   {/if}
 
   {if !isset($cmsms_info)}
-    <div class="message blue">{'step2_nocmsms'|tr}</div>
+    <div class="message blue">{tr('step2_nocmsms')}</div>
     {if !$install_empty_dir}
-    <div class="message yellow">{'step2_install_dirnotempty2'|tr}
+    <div class="message yellow">{tr('step2_install_dirnotempty2')}
       {if !empty($existing_files)}
       <ul>
         {foreach $existing_files as $one}
@@ -44,33 +44,33 @@ $(function() {
     {* its an upgrade or freshen *}
     {if isset($cmsms_info.error_status)}
       {if $cmsms_info.error_status == 'too_old'}
-        <div class="message red">{'step2_cmsmsfoundnoupgrade'|tr}</div>
+        <div class="message red">{tr('step2_cmsmsfoundnoupgrade')}</div>
       {elseif $cmsms_info.error_status == 'same_ver'}
-        <div class="message red">{'step2_errorsamever'|tr}</div>
+        <div class="message blue">{tr('step2_errorsamever')}</div>
       {elseif $cmsms_info.error_status == 'too_new'}
-        <div class="message red">{'step2_errortoonew'|tr}</div>
+        <div class="message red">{tr('step2_errortoonew')}</div>
       {else}
-        <div class="message red">{'step2_errorother'|tr}</div>
+        <div class="message red">{tr('step2_errorother')}</div>
       {/if}
     {else}
-      <div class="message yellow">{'step2_cmsmsfound'|tr}</div>
+      <div class="message yellow">{tr('step2_cmsmsfound')}</div>
     {/if}
 
     <ul class="existing-info no-list no-padding">
-      <li class="row"><div class="six-col">{'step2_pwd'|tr}:</div><div class="six-col"><span class="label blue"><i class="icon-folder-open"></i> {$pwd}</span></div></li>
-      <li class="row"><div class="six-col">{'step2_version'|tr}:</div><div class="six-col"><span class="label blue"><i class="icon-info"></i> {$cmsms_info.version} <em>({$cmsms_info.version_name})</em></span></div></li>
-      <li class="row"><div class="six-col">{'step2_schemaver'|tr}:</div><div class="six-col"><span class="label blue"><i class="icon-stack"></i> {$cmsms_info.schema_version}</span></div></li>
-      <li class="row"><div class="six-col">{'step2_installdate'|tr}:</div><div class="six-col"><span class="label blue"><i class="icon-calendar"></i> {$cmsms_info.mtime|localedate_format:'j %h Y'}</span></div></li>
+      <li class="row"><div class="six-col">{tr('step2_pwd')}:</div><div class="six-col"><span class="label blue"><i class="icon-folder-open"></i> {$pwd}</span></div></li>
+      <li class="row"><div class="six-col">{tr('step2_version')}:</div><div class="six-col"><span class="label blue"><i class="icon-info"></i> {$cmsms_info.version} <em>({$cmsms_info.version_name})</em></span></div></li>
+      <li class="row"><div class="six-col">{tr('step2_schemaver')}:</div><div class="six-col"><span class="label blue"><i class="icon-stack"></i> {$cmsms_info.schema_version}</span></div></li>
+      <li class="row"><div class="six-col">{tr('step2_installdate')}:</div><div class="six-col"><span class="label blue"><i class="icon-calendar"></i> {$cmsms_info.mtime|localedate_format:'j %h Y'}</span></div></li>
     </ul>
 
     {if isset($cmsms_info.noupgrade)}
-      <div class="message yellow">{'step2_minupgradever'|tr:$config.min_upgrade_version}</div>
+      <div class="message yellow">{tr('step2_minupgradever',$config.min_upgrade_version)}</div>
     {else}
-      {$label='upgrade'|tr}
+      {$label=tr('upgrade')}
       {if !empty($upgrade_info)}
         <div class="message blue icon">
           <i class="icon-info message-icon"></i>
-          <div class="content"><strong>{'step2_hdr_upgradeinfo'|tr}</strong><br />{'step2_info_upgradeinfo'|tr}</div>
+          <div class="content"><strong>{tr('step2_hdr_upgradeinfo')}</strong><br />{tr('step2_info_upgradeinfo')}</div>
         </div>
         <ul id="upgrade_info" class="no-list">
           {foreach $upgrade_info as $ver => $data}
@@ -78,12 +78,12 @@ $(function() {
             <div class="four-col">{$ver}</div>
             <div class="four-col">
               {if $data.readme}
-              <div class="label green link" data-content="r{$data@iteration}"><i class="icon-info"></i> {'readme_uc'|tr}</div>
+              <div class="label green link" data-content="r{$data@iteration}"><i class="icon-info"></i> {tr('readme_uc')}</div>
               {/if}
             </div>
             <div class="four-col">
               {if $data.changelog}
-              <div class="label blue link" data-content="c{$data@iteration}"><i class="icon-info"></i> {'changelog_uc'|tr}</div>
+              <div class="label blue link" data-content="c{$data@iteration}"><i class="icon-info"></i> {tr('changelog_uc')}</div>
               {/if}
             </div>
           </li>
@@ -92,21 +92,21 @@ $(function() {
       {/if}
     {/if}
     {if isset($cmsms_info.error_status) && $cmsms_info.error_status == 'same_ver'}
-    <div class="message yellow">{'step2_info_freshen'|tr:$cmsms_info.config.db_prefix}</div>
+    <div class="message blue">{tr('step2_info_freshen',$cmsms_info.config.db_prefix)}</div>
     {/if}
   {/if}
 
   <div id="bottom_nav">
     {if !isset($cmsms_info)}
       {if isset($retry_url)}
-      {* <a class="action-button orange" href="{$retry_url}" title="{'retry'|tr}">{'retry'|tr} <i class="icon-loop"></i></a> *}
-      <a onClick="window.location.reload();" class="action-button orange" title="{'retry'|tr}">{'retry'|tr} <i class="icon-loop"></i></a>
+      {* <a class="action-button orange" href="{$retry_url}" title="{tr('retry')}">{tr('retry')} <i class="icon-loop"></i></a> *}
+      <a onClick="window.location.reload();" class="action-button orange" title="{tr('retry')}">{tr('retry')} <i class="icon-loop"></i></a>
       {/if}
-      <input class="action-button positive" id="install" type="submit" name="install" value="{'install'|tr}" />
+      <input class="action-button positive" id="install" type="submit" name="install" value="{tr('install')}" />
     {elseif !isset($cmsms_info.error_status)}
-      <input class="action-button positive" id="upgrade" type="submit" name="upgrade" value="{'upgrade'|tr} &rarr;" />
+      <input class="action-button positive" id="upgrade" type="submit" name="upgrade" value="{tr('upgrade')} &rarr;" />
     {elseif $cmsms_info.error_status == 'same_ver'}
-      <input class="action-button positive" id="freshen" type="submit" name="freshen" value="{'freshen'|tr} &rarr;" />
+      <input class="action-button positive" id="freshen" type="submit" name="freshen" value="{tr('freshen')} &rarr;" />
     {/if}
   </div>
 
@@ -117,12 +117,12 @@ $(function() {
   {if isset($upgrade_info)}
     {foreach $upgrade_info as $ver => $data}
       {if $data.readme}
-      <div id="r{$data@iteration}" title="{'readme_uc'|tr}: {$ver}">
+      <div id="r{$data@iteration}" title="{tr('readme_uc')}: {$ver}">
         <div class="bigtext">{$data.readme}</div>
       </div>
       {/if}
       {if $data.changelog}
-        <div id="c{$data@iteration}" title="{'changelog_uc'|tr}: {$ver}">
+        <div id="c{$data@iteration}" title="{tr('changelog_uc')}: {$ver}">
           <div class="bigtext">{$data.changelog}</div>
         </div>
       {/if}

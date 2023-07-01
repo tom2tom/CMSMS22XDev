@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: class.global.inc.php 6939 2011-03-06 00:12:54Z calguy1000 $
+#$Id$
 
 /**
  * A class and utilities for working with site preferences.
@@ -61,7 +61,7 @@ final class cms_siteprefs
 	{
 		$db = CmsApp::get_instance()->GetDb();
 
-		if( !$db ) return;
+		if( !$db ) return [];
 		$query = 'SELECT sitepref_name,sitepref_value FROM '.CMS_DB_PREFIX.'siteprefs';
 		$dbr = $db->GetArray($query);
 		if( is_array($dbr) ) {
@@ -72,6 +72,7 @@ final class cms_siteprefs
 			}
             return $_prefs;
 		}
+		return [];
 	}
 
 	/**
@@ -151,11 +152,12 @@ final class cms_siteprefs
 	 */
 	public static function list_by_prefix($prefix)
 	{
-		if( !$prefix ) return;
+		if( !$prefix ) return [];
 		$query = 'SELECT sitepref_name FROM '.CMS_DB_PREFIX.'siteprefs WHERE sitepref_name LIKE ?';
 		$db = CmsApp::get_instance()->GetDb();
 		$dbr = $db->GetCol($query,array($prefix.'%'));
 		if( is_array($dbr) && count($dbr) ) return $dbr;
+		return [];
 	}
 } // end of class
 

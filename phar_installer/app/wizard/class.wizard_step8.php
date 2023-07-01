@@ -27,7 +27,7 @@ class wizard_step8 extends wizard_step
 
     private function db_connect($destconfig)
     {
-        $spec = new ConnectionSpec;
+        $spec = new ConnectionSpec();
         if( isset($destconfig['dbms']) ) {
             $spec->type = $destconfig['dbms'];
             $spec->host = $destconfig['db_hostname'];
@@ -63,12 +63,13 @@ class wizard_step8 extends wizard_step
     {
         if( is_file("$destdir/lib/include.php") ) {
             $app = get_app();
-            global $CMS_INSTALL_PAGE, $DONT_LOAD_DB, $DONT_LOAD_SMARTY, $CMS_VERSION, $CMS_PHAR_INSTALLER;
+            global $CMS_INSTALL_PAGE, $DONT_LOAD_DB, $DONT_LOAD_SMARTY, $CMS_VERSION;
             $CMS_INSTALL_PAGE = 1;
             $DONT_LOAD_DB = 1;
             $DONT_LOAD_SMARTY = 1;
             if( $app->in_phar() ) {
-                $CMS_PHAR_INSTALLER = 1; //TODO unused anywhere
+                global $CMS_PHAR_INSTALLER;
+                $CMS_PHAR_INSTALLER = 1; //TODO used only to block core Smarty use c.f. $DONT_LOAD_SMARTY
             }
             if( empty($CMS_VERSION) ) {
                 $CMS_VERSION = $app->get_dest_version(); // default value
@@ -94,16 +95,16 @@ class wizard_step8 extends wizard_step
 
         try {
             $destdir = $app->get_destdir();
-            if( !$destdir ) throw new Exception(lang('error_internal',700));
+            if( !$destdir ) throw new Exception(lang('error_internal',800));
 
             $adminaccount = $wiz->get_data('adminaccount');
-            if( !$adminaccount ) throw new Exception(lang('error_internal',701));
+            if( !$adminaccount ) throw new Exception(lang('error_internal',801));
 
             $destconfig = $wiz->get_data('config');
-            if( !$destconfig ) throw new Exception(lang('error_internal',703));
+            if( !$destconfig ) throw new Exception(lang('error_internal',803));
 
             $siteinfo = $wiz->get_data('siteinfo');
-            if( !$siteinfo ) throw new Exception(lang('error_internal',704));
+            if( !$siteinfo ) throw new Exception(lang('error_internal',804));
 
             $this->write_config();
             $this->connect_to_cmsms($destdir);
@@ -117,15 +118,15 @@ class wizard_step8 extends wizard_step
             if( !defined('CMS_ADODB_DT') ) define('CMS_ADODB_DT','DT');
 
             global $admin_user; //global var used downstream
-            $admin_user = null;
+            $admin_user = null; // no object
 //          $db_prefix = CMS_DB_PREFIX;
             $dir = $app->get_appdir().'/install';
-            if( !is_dir($dir) ) throw new Exception(lang('error_internal',705));
+            if( !is_dir($dir) ) throw new Exception(lang('error_internal',805));
 
             // install the schema
             $this->message(lang('install_schema'));
             $fn = $dir.'/schema.php';
-            if( !file_exists($fn) ) throw new Exception(lang('error_internal',706));
+            if( !file_exists($fn) ) throw new Exception(lang('error_internal',806));
 
             global $CMS_INSTALL_DROP_TABLES, $CMS_INSTALL_CREATE_TABLES;
             $CMS_INSTALL_DROP_TABLES=1; // TODO only for upgrades
@@ -174,17 +175,17 @@ class wizard_step8 extends wizard_step
     {
         $app = get_app();
         $destdir = $app->get_destdir();
-        if( !$destdir ) throw new Exception(lang('error_internal',711));
+        if( !$destdir ) throw new Exception(lang('error_internal',811));
 
         $destconfig = $this->get_wizard()->get_data('config');
-        if( !$destconfig ) throw new Exception(lang('error_internal',712));
+        if( !$destconfig ) throw new Exception(lang('error_internal',812));
 
         // get the list of all available versions that this upgrader knows about
         $dir =  $app->get_appdir().'/upgrade';
-        if( !is_dir($dir) ) throw new Exception(lang('error_internal',713));
+        if( !is_dir($dir) ) throw new Exception(lang('error_internal',813));
 
         $dh = opendir($dir);
-        if( !$dh ) throw new Exception(lang('error_internal',714));
+        if( !$dh ) throw new Exception(lang('error_internal',814));
         $versions = array();
         while( ($file = readdir($dh)) !== false ) {
             if( $file == '.' || $file == '..' ) continue;
@@ -193,13 +194,14 @@ class wizard_step8 extends wizard_step
         closedir($dh);
         if( count($versions) > 1) usort($versions,'version_compare');
 
-        global $CMS_INSTALL_PAGE, $DONT_LOAD_DB, $DONT_LOAD_SMARTY, $CMS_VERSION, $CMS_PHAR_INSTALLER;
+        global $CMS_INSTALL_PAGE, $DONT_LOAD_DB, $DONT_LOAD_SMARTY, $CMS_VERSION;
         $CMS_INSTALL_PAGE = 1;
         $DONT_LOAD_DB = 1;
         $DONT_LOAD_SMARTY = 1;
         $CMS_VERSION = $app->get_dest_version();
         if( $app->in_phar() ) {
-            $CMS_PHAR_INSTALLER = 1; //TODO unused anywhere
+            global $CMS_PHAR_INSTALLER;
+            $CMS_PHAR_INSTALLER = 1; //TODO used only to block core Smarty use c.f.$DONT_LOAD_SMARTY
         }
 
         // setup and initialize the CMSMS API's
@@ -256,10 +258,10 @@ class wizard_step8 extends wizard_step
     private function write_config()
     {
         $destconfig = $this->get_wizard()->get_data('config');
-        if( !$destconfig ) throw new Exception(lang('error_internal',700));
+        if( !$destconfig ) throw new Exception(lang('error_internal',820));
 
         $destdir = get_app()->get_destdir();
-        if( !$destdir ) throw new Exception(lang('error_internal',703));
+        if( !$destdir ) throw new Exception(lang('error_internal',823));
 
         // create new config file.
         // this step has to go here.... as config file has to exist in step9
@@ -290,10 +292,11 @@ class wizard_step8 extends wizard_step
         $CMS_INSTALL_PAGE = 1;
         // get the system config instance, without fully connecting to cmsms
         $fp = $destdir.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR;
-        require $fp.'misc.functions.php';
-        require $fp.'classes'.DIRECTORY_SEPARATOR.'class.CmsApp.php';
-        require $fp.'classes'.DIRECTORY_SEPARATOR.'class.cms_config.php';
-        require $fp.'autoloader.php';
+        // during an upgrade, these inclusions might already have been loaded, then cached by PHP
+        require_once $fp.'misc.functions.php';
+        require_once $fp.'classes'.DIRECTORY_SEPARATOR.'class.CmsApp.php';
+        require_once $fp.'classes'.DIRECTORY_SEPARATOR.'class.cms_config.php';
+        require_once $fp.'autoloader.php';
         $config = cms_config::get_instance();
         $config->merge($newconfig);
         if( !defined('CONFIG_FILE_LOCATION') ) {
@@ -319,13 +322,13 @@ class wizard_step8 extends wizard_step
             $action = $wiz->get_data('action');
             switch( $action ) {
                 case 'upgrade':
-                    $tmp = $wiz->get_data('version_info'); //valid only for upgrades
+                    $tmp = $wiz->get_data('version_info'); // populated only for refreshes & upgrades
                     if( is_array($tmp) && count($tmp) ) {
                         $this->do_upgrade($tmp);
                         break;
                     }
                     else {
-                        throw new Exception(lang('error_internal',908));
+                        throw new Exception(lang('error_internal',840));
                     }
                     //no break here
                 case 'freshen':
@@ -335,7 +338,7 @@ class wizard_step8 extends wizard_step
                     $this->do_install();
                     break;
                 default:
-                    throw new Exception(lang('error_internal',910));
+                    throw new Exception(lang('error_internal',841));
             }
         }
         catch( Exception $e ) {

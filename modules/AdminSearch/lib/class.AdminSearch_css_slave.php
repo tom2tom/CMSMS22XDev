@@ -36,7 +36,7 @@ final class AdminSearch_css_slave extends AdminSearch_slave
         return $_mod;
     }
 
-    private function get_css_match_info(\CmsLayoutStylesheet $css, &$mod)
+    private function get_css_match_info(\CmsLayoutStylesheet $css, $mod)
     {
 
         $one = $css->get_id();

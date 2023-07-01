@@ -93,7 +93,7 @@ final class ReduceAdminlogTask implements CmsRegularTask
         $sql = "SELECT * FROM $table WHERE timestamp >= ? ORDER BY timestamp ASC";
         $dbr = $db->Execute($sql,array($mintime));
 
-        $prev = null;
+        $prev = [];
         while( $dbr && !$dbr->EOF() ) {
             $row = $dbr->fields;
             if( $prev && $this->is_same($prev,$row) ) {

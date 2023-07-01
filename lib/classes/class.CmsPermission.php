@@ -17,7 +17,7 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-#$Id: class.user.inc.php 8109 2012-06-24 20:14:56Z calguy1000 $
+#$Id$
 
 /**
  * Class and utilities for working with permissions.
@@ -70,6 +70,7 @@ final class CmsPermission
 	{
 		if( !in_array($key,self::$_keys) ) throw new CmsInvalidDataException($key.' is not a valid key for a CmsPermission Object');
 		if( isset($this->_data[$key]) ) return $this->_data[$key];
+		return null; // no value for urecognised key
 	}
 
 	/**
@@ -171,7 +172,7 @@ WHERE permission_name = ?';
 	 * @param string $name
 	 * @return CmsPermission
 	 */
-	public static function &load($name)
+	public static function load($name)
 	{
 		if( is_array(self::$_perm_map) ) {
 			if( (int)$name <= 0 ) {
@@ -182,7 +183,7 @@ WHERE permission_name = ?';
 		}
 
 		$db = CmsApp::get_instance()->GetDb();
-		$row = null;
+		$row = [];
 		if( (int)$name > 0 ) {
 			$query = 'SELECT * FROM '.CMS_DB_PREFIX.'permissions WHERE permission_id = ?';
 			$row = $db->GetRow($query,array((int)$name));

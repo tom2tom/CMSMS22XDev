@@ -16,7 +16,7 @@ function smarty_function_file_url($params, $template)
         $dir = $dir.'/'.$add_dir;
         if( !is_dir($dir) || !is_readable($dir) ) {
             trigger_error("file_url plugin: dir=$add_dir invalid directory name specified");
-            return '';
+            return ''; // useless here
         }
     }
 

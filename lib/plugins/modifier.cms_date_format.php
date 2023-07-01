@@ -5,20 +5,20 @@
  * Name:     cms_date_format<br>
  * Purpose:  format a supplied date-time string using PHP date() or strftime()-replacment
  * Input:<br>
- *          - string: input date string
+ *          - datevar: input timestamp or date-time string
  *          - format: strftime()-compatible or date()-compatible format for output
- *          - default_date: default date if $string is empty
+ *          - default_date: default date if $datevar is empty
  *
  * @link http://www.smarty.net/manual/en/language.modifier.date.format.php date_format (Smarty online manual)
  * @author Monte Ohrt <monte at ohrt dot com>
- * @param mixed $string       input date/time, a UNIX timestamp or other format supported by PHP strtotime()
+ * @param mixed $datevar      input date/time, a UNIX timestamp or string in a format supported by strtotime()
  * @param string $format      strftime()- or date()-compatible format for output
- * @param mixed $default_date default date if $string is empty
+ * @param mixed $default_date default date if $datevar is empty
  * @return string | void
  *
  * Modified by Tapio Löytty <stikki@cmsmadesimple.org>
  */
-function smarty_modifier_cms_date_format($string, $format = '', $default_date = '')
+function smarty_modifier_cms_date_format($datevar, $format = '', $default_date = '')
 {
 	if($format == '') {
 		$format = get_site_preference('defaultdateformat');
@@ -33,12 +33,12 @@ function smarty_modifier_cms_date_format($string, $format = '', $default_date = 
 
 	if (strpos($format, '%') !== false) {
 		require_once __DIR__.DIRECTORY_SEPARATOR.'modifier.localedate_format.php';
-		$out = smarty_modifier_localedate_format($string, $format, $default_date);
+		$out = smarty_modifier_localedate_format($datevar, $format, $default_date);
 	} else {
 		$fn = cms_join_path(SMARTY_PLUGINS_DIR, 'modifier.date_format.php');
 		if (!is_file($fn)) exit;
 		include_once $fn;
-		$out = smarty_modifier_date_format($string, $format, $default_date);
+		$out = smarty_modifier_date_format($datevar, $format, $default_date);
 	}
 	return $out;
 }

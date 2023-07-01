@@ -11,15 +11,15 @@ echo $this->EndTabHeaders();
 echo $this->StartTabContent();
 
 echo $this->StartTab('categories', $params);
-include(dirname(__FILE__).'/function.admin_categoriestab.php');
+include(__DIR__.'/function.admin_categoriestab.php');
 echo $this->EndTab();
 
 echo $this->StartTab('customfields', $params);
-include(dirname(__FILE__).'/function.admin_customfieldstab.php');
+include(__DIR__.'/function.admin_customfieldstab.php');
 echo $this->EndTab();
 
 echo $this->StartTab('options', $params);
-include(dirname(__FILE__).'/function.admin_optionstab.php');
+include(__DIR__.'/function.admin_optionstab.php');
 echo $this->EndTab();
 
 echo $this->EndTabContent();

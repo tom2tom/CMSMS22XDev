@@ -1,5 +1,6 @@
 <ul>
 <li>1.50.4 - Conform to CMSMS2 content-tree arrangements.</li>
+<li>1.8.5 - Fix a minor issue with cached templates.</li>
 <li>1.8 - Adds the breadcrumbs action, and the {cms_breadcrumbs} tag.</li>
 <li>1.7 - Adds the possibility to cache menumanager output to a cache file, this will remove a bunch of queries from mostly static sites. Fixes to childrenof parameter.</li>
 <li>1.6.3 - Adds usage column.</li>

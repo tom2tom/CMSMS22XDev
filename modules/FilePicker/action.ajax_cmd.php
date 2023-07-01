@@ -15,7 +15,7 @@ try {
     $cwd = strip_tags(get_parameter_value($_POST,'cwd'));
 
     // get the profile.
-    $profile = null;
+    $profile = null; // no object
     if( $sig ) $profile = TemporaryProfileStorage::get($sig);
     if( !$profile ) $profile = $this->get_default_profile();
 

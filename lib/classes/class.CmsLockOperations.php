@@ -121,12 +121,12 @@ final class CmsLockOperations
   /**
    * Delete any locks that have expired.
    *
-   * @param int $expires Delete locks older than this date (if not specified current time will be used).
+   * @param int $expires Delete locks older than this timestamp (if not specified current time will be used).
    * @param string $type The type of locks to delete.  If not specified any locks can be deleted.
    */
-  private static function delete_expired($expires = null,$type = null)
+  private static function delete_expired($expires = 0, $type = '')
   {
-    if( $expires == null ) $expires == time();
+    if( $expires == 0 ) $expires == time();
     $db = CmsApp::get_instance()->GetDb();
     $query = 'DELETE FROM '.CMS_DB_PREFIX.CmsLock::LOCK_TABLE.' WHERE expires < ?';
     $parms = array($expires);
@@ -147,7 +147,7 @@ final class CmsLockOperations
     $db = CmsApp::get_instance()->GetDb();
     $query = 'SELECT * FROM '.CMS_DB_PREFIX.CmsLock::LOCK_TABLE.' WHERE type = ?';
     $tmp = $db->GetArray($query,array($type));
-    if( !is_array($tmp) || count($tmp) == 0 ) return;
+    if( !is_array($tmp) || count($tmp) == 0 ) return [];
 
     $locks = array();
     foreach( $tmp as $row ) {
@@ -162,7 +162,7 @@ final class CmsLockOperations
    *
    * @param string $type An optional type name.
    */
-  public static function delete_for_user($type = null)
+  public static function delete_for_user($type = '')
   {
     $uid = get_userid(FALSE);
     $db = CmsApp::get_instance()->GetDb();

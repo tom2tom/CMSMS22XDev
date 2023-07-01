@@ -61,7 +61,7 @@ class cms_mailer
       $this->reset();
       $regdone = true;
     } else {
-      $this->_mailer = null;
+      $this->_mailer = null; // no object
       //TODO handle error more-publicly e.g. throw
       audit('', 'cms_mailer', 'PHPMailer-autoload registration failed');
     }
@@ -81,7 +81,7 @@ class cms_mailer
     if( method_exists($this->_mailer, $method) ) {
       return call_user_func_array([$this->_mailer,$method], $args);
     }
-    return null;
+    return null; //nothing to call
   }
 
   /**
@@ -106,7 +106,7 @@ class cms_mailer
     if( property_exists($this->_mailer, $name) ) {
       return $this->_mailer->$name;
     }
-    return null;
+    return null; // no value for unrecognised property
   }
 
   /**

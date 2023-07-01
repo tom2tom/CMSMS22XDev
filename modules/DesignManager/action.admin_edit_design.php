@@ -27,10 +27,10 @@ if( isset($params['cancel']) ) {
   $this->RedirectToAdminTab();
 }
 
-$design = null;
+$design = null; // no object
 try {
     if( !isset($params['design']) || $params['design'] == '' ) {
-        $design= new CmsLayoutCollection;
+        $design= new CmsLayoutCollection();
         $design->set_name('New Design');
     }
     else {

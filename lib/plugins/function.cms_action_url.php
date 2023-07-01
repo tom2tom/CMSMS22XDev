@@ -22,8 +22,8 @@ function smarty_cms_function_cms_action_url($params, $smarty)
     $module = $smarty->getTemplateVars('actionmodule');
     $returnid = $smarty->getTemplateVars('returnid');
     $mid = $smarty->getTemplateVars('actionid');
-    $action = null;
-    $assign = null;
+    $action = '';
+    $assign = '';
     $forjs  = 0;
 
     $actionparms = array();
@@ -55,7 +55,7 @@ function smarty_cms_function_cms_action_url($params, $smarty)
 
     // validate params
     $gCms = CmsApp::get_instance();
-    if( $module == '' ) return;
+    if( $module == '' ) return '';
     if( $gCms->test_state(CmsApp::STATE_ADMIN_PAGE) && $returnid == '' ) {
         if( $mid == '' ) $mid = 'm1_';
         if( $action == '' ) $action = 'defaultadmin';
@@ -64,27 +64,27 @@ function smarty_cms_function_cms_action_url($params, $smarty)
         if( $mid == '' ) $mid = 'cntnt01';
         if( $action == '' ) $action = 'default';
         if( $returnid == '' ) {
-	    $returnid = \cms_utils::get_current_pageid();
-	    if( $returnid < 1 ) {
-            	$contentops = $gCms->GetContentOperations();
-            	$returnid = $contentops->GetDefaultContent();
-	    }
+            $returnid = \cms_utils::get_current_pageid();
+            if( $returnid < 1 ) {
+                $contentops = $gCms->GetContentOperations();
+                $returnid = $contentops->GetDefaultContent();
+            }
         }
     }
-    if( $action == '' ) return;
+    if( $action == '' ) return '';
 
     $obj = cms_utils::get_module($module);
-    if( !$obj ) return;
+    if( !$obj ) return '';
 
     $url = $obj->create_url($mid,$action,$returnid,$actionparms);
-    if( !$url ) return;
+    if( !$url ) return '';
 
     if( $forjs ) {
         $url = str_replace('&amp;','&',$url);
     }
     if( $assign ) {
         $smarty->assign($assign,$url);
-        return;
+        return '';
     }
     return $url;
 }

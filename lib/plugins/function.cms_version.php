@@ -23,7 +23,7 @@ function smarty_function_cms_version($params, $smarty) {
 	if( isset($params['assign']) )
 	{
 		$smarty->assign(trim($params['assign']),$CMS_VERSION);
-		return;
+		return '';
 	}
 	
 	return $CMS_VERSION;

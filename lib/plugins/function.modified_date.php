@@ -36,7 +36,7 @@ function smarty_function_modified_date($params, $smarty)
 
 		if( isset($params['assign']) ) {
 			$smarty->assign($params['assign'],$str);
-			return;
+			return '';
 		}
 		return $str;
 	}

@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: class.global.inc.php 6939 2011-03-06 00:12:54Z calguy1000 $
+#$Id$
 
 /**
  * A class to perform advanced queries on the layout stylesheets.
@@ -166,13 +166,12 @@ class CmsLayoutStylesheetQuery extends CmsDbQueryBase
 	 * @throws CmsLogicException
      * @return CmsLayoutStylesheet
      */
-    public function &GetObject()
+    public function GetObject()
     {
         $this->execute();
         if( !$this->_rs ) throw new CmsLogicException('Cannot get stylesheet from invalid stylesheet query object');
         $id = (int) $this->fields['id'];
-        $obj = CmsLayoutStylesheet::load($id);
-        return $obj;
+        return CmsLayoutStylesheet::load($id);
     }
 
 	/**

@@ -6,7 +6,7 @@ $('#tpl_selall').cmsms_checkall();
 
 <div class="row">
   <div class="pageoptions options-menu half">
-    {if $has_add_right}
+    {if $has_add_right && !empty($list_types)}
       <a id="addtemplate" accesskey="a" title="{$mod->Lang('create_template')}">{admin_icon icon='newobject.gif' alt=$mod->Lang('create_template')}&nbsp;{$mod->Lang('create_template')}</a>&nbsp;&nbsp;
     {/if}
     <a id="edittplfilter" accesskey="f" title="{$mod->Lang('prompt_editfilter')}">{admin_icon icon='view.gif' alt=$mod->Lang('prompt_editfilter')}&nbsp;{$mod->Lang('filter')}</a>&nbsp;&nbsp;
@@ -59,11 +59,12 @@ $('#tpl_selall').cmsms_checkall();
       {/if}
       {cms_action_url action='admin_delete_template' tpl=$template->get_id() assign='delete_tpl'}
 
-        {* template id, and template name columns *}
-        {if !$template->locked()}
+      {* template id, and template name columns *}
+      {$type_id=$template->get_type_id()|default:0}
+      {if !$template->locked()}
         <td><a href="{$edit_tpl}" data-tpl-id="{$template->get_id()}" class="edit_tpl tooltip" title="{$mod->Lang('edit_template')}" data-cms-description='{$tpl_tooltip}'>{$template->get_id()}</a></td>
-            <td></td>
-        <td><a href="{$edit_tpl}" data-tpl-id="{$template->get_type_id()}" class="edit_tpl tooltip" title="{$mod->Lang('edit_template')}" data-cms-description='{$tpl_tooltip}'>{$template->get_name()}</a></td>
+        <td></td>
+        <td><a href="{$edit_tpl}" data-tpl-id="{$type_id}" class="edit_tpl tooltip" title="{$mod->Lang('edit_template')}" data-cms-description='{$tpl_tooltip}'>{$template->get_name()}</a></td>
       {else}
         <td>{$template->get_id()}</td>
         <td>{admin_icon icon='warning.gif' title=$mod->Lang('title_locked')}</td>
@@ -72,9 +73,8 @@ $('#tpl_selall').cmsms_checkall();
 
       {* template type column *}
       <td>
-        {$type_id=$template->get_type_id()}
         {include file='module_file_tpl:DesignManager;admin_defaultadmin_tpltype_tooltip.tpl' assign='tpltype_tooltip'}
-        <span class="tooltip" data-cms-description='{$tpltype_tooltip}'>{$list_types.$type_id}</span>
+        {if !empty($list_types)}<span class="tooltip" data-cms-description='{$tpltype_tooltip}'>{$list_types.$type_id}</span>{/if}
       </td>
 
       {* filename column *}
@@ -105,7 +105,7 @@ $('#tpl_selall').cmsms_checkall();
 
       {* default column *}
       <td>
-        {$the_type=$list_all_types.$type_id}
+        {if !empty($list_all_types.$type_id)}{$the_type=$list_all_types.$type_id}
         {if $the_type->get_dflt_flag()}
           {if $template->get_type_dflt()}
         {admin_icon icon='true.gif' title=$mod->Lang('prompt_dflt_tpl')}
@@ -114,7 +114,7 @@ $('#tpl_selall').cmsms_checkall();
           {/if}
         {else}
           <span title="{$mod->Lang('prompt_title_na')}">{$mod->Lang('prompt_na')}</span>
-        {/if}
+        {/if}{/if}
       </td>
 
       {* edit/copy iconsm, or steal icons *}
@@ -136,7 +136,7 @@ $('#tpl_selall').cmsms_checkall();
       {* delete column *}
       <td>
          {if !$template->get_type_dflt() && !$template->locked()}
-          {if $template->get_owner_id() == get_userid() || $manage_templates}
+          {if ($manage_templates || $template->get_owner_id() == $userid)}
         <a href="{$delete_tpl}" title="{$mod->Lang('delete_template')}">{admin_icon icon='delete.gif' title=$mod->Lang('delete_template')}</a>
           {/if}
         {/if}
@@ -144,7 +144,7 @@ $('#tpl_selall').cmsms_checkall();
 
       {* checkbox column *}
       <td>
-        {if !$template->locked() && ($template->get_owner_id() == get_userid() || $manage_templates) }
+        {if (!$template->locked() && ($manage_templates || $template->get_owner_id() == $userid))}
           <input type="checkbox" class="tpl_select" name="{$actionid}tpl_select[]" value="{$template->get_id()}" title="{$mod->Lang('title_tpl_bulk')}"/>
         {/if}
       </td>

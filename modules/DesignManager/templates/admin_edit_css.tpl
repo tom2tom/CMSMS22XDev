@@ -15,7 +15,7 @@ $(function() {
       $('#form_editcss').lockManager({
         type: 'stylesheet',
         oid: {$css_id|default:0},
-        uid: {get_userid(FALSE)},
+        uid: {$userid},
         lock_timeout: {$lock_timeout|default:0},
         lock_refresh: {$lock_refresh|default:0},
         error_handler: function(err) {
@@ -25,36 +25,36 @@ $(function() {
             // we lost the lock on this stylesheet... make sure we can't save anything.
             // and display a nice message.
         console.debug('lost lock handler');
-            $('[name$=cancel]').fadeOut().val('{$mod->Lang("cancel")}').fadeIn();
+            $('[name$="cancel"]').fadeOut().val('{$mod->Lang("cancel")}').fadeIn();
             $('#form_editcss').dirtyForm('option','dirty',false);
             $('#submitbtn, #applybtn').prop('disabled',true);
             $('#submitbtn, #applybtn').button({ 'disabled' : true });
             $('.lock-warning').removeClass('hidden-item');
-            cms_alert('{$mod->Lang('msg_lostlock')|escape:'javascript'}');
+            cms_alert("{$mod->Lang('msg_lostlock')|escape:'javascript'}");
         }
       });
     }
 
-    $(document).on('cmsms_textchange',function(event){
+    $(document).on('cmsms_textchange',function(event) {
         // editor textchange, set the form dirty.
         $('#form_editcss').dirtyForm('option','dirty',true);
     });
 
-    $(document).on('click','[name$=apply],[name$=submit]',function(){
+    $(document).on('click','[name$="apply"],[name$="submit"]',function() {
         $('#form_editcss').dirtyForm('option','dirty',false);
     });
 
-    $(document).on('click', '#submitbtn, #cancelbtn, #importbtn, #exportbtn', function(ev){
+    $(document).on('click', '#submitbtn, #cancelbtn, #importbtn, #exportbtn', function(ev) {
        if( ! do_locking ) return;
 
        // unlock the item, and submit the form
        var self = this;
        ev.preventDefault();
        var form = $(this).closest('form');
-       $('#form_editcss').lockManager('unlock').done(function(){
+       $('#form_editcss').lockManager('unlock').done(function() {
            var el = $('<input type="hidden"/>');
            el.attr('name',$(self).attr('name')).val($(self).val()).appendTo(form);
-           form.submit();
+           form.trigger('submit');
        });
     });
 
@@ -88,7 +88,7 @@ $(function() {
 
             $('#cancelbtn').button('option','label','{$mod->Lang('cancel')}');
             $('#tpl_modified_cont').hide();
-            $('#content').focus();
+            $('#content').trigger('focus');
         });
     });
 
@@ -100,7 +100,7 @@ $(function() {
         });
     }
 
-    $('#mediaquery').keyup(function(e) {
+    $('#mediaquery').on('keyup',function(e) {
         if ($('#mediaquery').val() !== '') {
             $('.media-type:checkbox').prop({
                 disabled: true,
@@ -116,7 +116,7 @@ $(function() {
 
 {$get_lock = $css->get_lock()}
 {capture assign='disable'}
-    {if isset($get_lock) && ({get_userid(false)} != $get_lock.uid)}disabled="disabled"{/if}
+{if (isset($get_lock) && ($userid != $get_lock.uid))} disabled="disabled"{/if}
 {/capture}
 
 {*
@@ -138,17 +138,17 @@ $(function() {
     <div class="grid_6">
         <div class="pageoverflow">
             <p class="pageinput">
-                <input type="submit" id="submitbtn" name="{$actionid}submit" value="{$mod->Lang('submit')}"{$disable|strip}/>
-                <input type="submit" id="cancelbtn" name="{$actionid}cancel" value="{$mod->Lang('cancel')}"/>
+                <input type="submit" id="submitbtn" name="{$actionid}submit" value="{$mod->Lang('submit')}" {$disable|strip} />
+                <input type="submit" id="cancelbtn" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
                 {if $css->get_id()}
-                <input type="submit" id="applybtn" name="{$actionid}apply" value="{$mod->Lang('apply')}"{$disable|strip}/>
+                <input type="submit" id="applybtn" name="{$actionid}apply" value="{$mod->Lang('apply')}" {$disable|strip} />
                 {/if}
             </p>
         </div>
         <div class="pageoverflow">
             <p class="pagetext"><label for="css_name">*{$mod->Lang('prompt_name')}:</label>&nbsp;{cms_help key2=help_stylesheet_name title=$mod->Lang('prompt_name')}</p>
             <p class="pageinput">
-                <input id="css_name" type="text" name="{$actionid}name" size="50" maxlength="90" value="{$css->get_name()}" placeholder="{$mod->Lang('new_stylesheet')}"/>
+                <input id="css_name" type="text" name="{$actionid}name" size="50" maxlength="90" value="{$css->get_name()}" placeholder="{$mod->Lang('new_stylesheet')}" />
             </p>
         </div>
     </div>{* column *}
@@ -246,9 +246,9 @@ $(function() {
     <p class="pagetext">{$mod->Lang('prompt_cssfile')}:</p>
     <p class="pageinput">
         {if $css->has_content_file()}
-            <input type="submit" id="importbtn" name="{$actionid}import" value="{$mod->Lang('import')}"/>
+            <input type="submit" id="importbtn" name="{$actionid}import" value="{$mod->Lang('import')}" />
         {else}
-            <input type="submit" id="exportbtn" name="{$actionid}export" value="{$mod->Lang('export')}"/>
+            <input type="submit" id="exportbtn" name="{$actionid}export" value="{$mod->Lang('export')}" />
         {/if}
     </p>
   </div>

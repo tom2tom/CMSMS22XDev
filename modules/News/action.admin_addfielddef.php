@@ -40,7 +40,7 @@ if (isset($params['submit'])) {
 
     if( !$error ) {
         $max = $db->GetOne('SELECT max(item_order) + 1 FROM ' . CMS_DB_PREFIX . 'module_news_fielddefs');
-        if( $max == null ) $max = 1;
+        if( $max == null ) $max = 1; //sql return value null
 
         $extra = array('options'=>$arr_options);
         $query = 'INSERT INTO '.CMS_DB_PREFIX.'module_news_fielddefs (name, type, max_length, item_order, create_date, modified_date, public, extra) VALUES (?,?,?,?,?,?,?,?)';

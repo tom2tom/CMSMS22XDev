@@ -45,7 +45,7 @@ final class bulkcontentoperations
 	 * @param string $module Name of module, defaults to "core"
 	 * @return void
 	 */
-	static public function register_function($label,$name,$module='core')
+	public static function register_function($label,$name,$module='core')
 	{
       if( empty($name) || empty($label) ) return FALSE;
 
@@ -60,7 +60,7 @@ final class bulkcontentoperations
 	 *                                  with a horizontal line.
 	 * @return array The list of operations
 	 */
-	static public function get_operation_list($separate_modules = true)
+	public static function get_operation_list($separate_modules = true)
     {
 		$tmpc = array();
 		$tmpm = array();

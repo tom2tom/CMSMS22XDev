@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: content.functions.php 6863 2011-01-18 02:34:48Z calguy1000 $
+#$Id$
 
 /**
  * @package CMS
@@ -46,10 +46,10 @@ class CmsTemplateResource extends CMS_Fixed_Resource_Custom
 		return parent::buildUniqueResourceName($smarty,$resource_name,$is_config).'--'.$this->_section;
 	}
 
-	private function &get_template($name)
+	private function get_template($name)
 	{
 		$obj = CmsLayoutTemplate::load($name);
-		$ret = new StdClass;
+		$ret = new stdClass();
 		$ret->modified = $obj->get_modified();
 		$ret->content = $obj->get_content();
 		return $ret;

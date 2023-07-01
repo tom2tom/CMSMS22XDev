@@ -19,7 +19,7 @@ $outdir = $rootdir.'/out';
 $systmpdir = sys_get_temp_dir().'/'.basename(__FILE__,'php').getmypid();
 //TODO update these lists, per the following variables
 //do not skip class.cms_config.php or Smarty files like smarty_internal_method*config.php
-$exclude_patterns = array('/\.svn\//','/^ext\//','/^build\/.*/','/.*~$/','/tmp\/.*/','/\.\#.*/','/\#.*/','/^out\//','/^README*TXT/');
+$exclude_patterns = array('/\.svn\//','/^ext\//','/^build\/.*/','/.*~$/','/tmp\/.*/','/\.\#.*/','/\#.*/','/^out\//','/^README*TXT/i');
 $exclude_from_zip = array('*~','tmp/','.#*','#*'.'*.bak');
 $src_excludes = array('/\/phar_installer\//','/\/config\.php$/', '/\/find-mime$/', '/\/installer\//', '/^\/tmp\/.*/', '/^#.*/', '/^\/scripts\/.*/', '/\.git/', '/\.svn/', '/svn-.*/',
                       '/^\/tests\/.*/', '/^\/build\/.*/', '/^\.htaccess/', '/\.svn/', '/^config\.php$/','/.*~$/', '/\.\#.*/', '/\#.*/', '/.*\.bak/');
@@ -344,8 +344,11 @@ function cleanup_source_files()
 
 function get_version_php($startdir)
 {
-    if( file_exists("$startdir/version.php") ) return "$startdir/version.php";
-    if( file_exists("$startdir/lib/version.php") ) return "$startdir/lib/version.php";
+    $fp = "$startdir/version.php";
+    if( file_exists($fp) ) return $fp;
+    $fp = "$startdir/lib/version.php";
+    if( file_exists($fp) ) return $fp;
+    return '';
 }
 
 function create_checksum_dat()
@@ -576,7 +579,7 @@ try {
             $outfile = "$outdir/$basename.zip";
 
             echo "INFO: zipping phar file into $outfile\n";
-            $arch = new ZipArchive;
+            $arch = new ZipArchive();
             $arch->open($outfile,ZipArchive::OVERWRITE | ZipArchive::CREATE );
             $arch->addFile($infile,basename($infile));
             $arch->setExternalAttributesName(basename($infile), ZipArchive::OPSYS_UNIX, 0644 << 16);

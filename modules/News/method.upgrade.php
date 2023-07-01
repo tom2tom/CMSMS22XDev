@@ -3,7 +3,6 @@ if (!isset($gCms)) exit;
 $db = $this->GetDb();
 
 if( version_compare($oldversion,'2.50') < 0 ) {
-    $uid = null;
     if( cmsms()->test_state(CmsApp::STATE_INSTALL) ) {
         $uid = 1; // hardcode to first user
     } else {
@@ -47,6 +46,7 @@ if( version_compare($oldversion,'2.50') < 0 ) {
             $mod->DeleteTemplate($tplname);
         }
         catch( \CmsInvalidDataException $e ) {
+            //nothing here
         }
 
   };
@@ -64,10 +64,10 @@ if( version_compare($oldversion,'2.50') < 0 ) {
 
       $uquery = 'UPDATE '.CMS_DB_PREFIX.'module_news_categories SET item_order = ? WHERE news_category_id = ?';
       if( is_array($categories) && count($categories) ) {
-          $prev_parent = null;
+          $prev_parent = 0;
           $item_order = 0;
           foreach( $categories as $row ) {
-              $parent = $row['parent_id'];
+              $parent = (int)$row['parent_id'];
               if( $parent != $prev_parent ) $item_order = 0;
               $item_order++;
               $db->Execute($uquery,array($item_order,$row['news_category_id']));

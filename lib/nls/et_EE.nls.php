@@ -46,7 +46,7 @@ $nls['locale']['et_EE'] = 'et_EE,et_EE.utf-8,et_EE.UTF-8,et_EE.iso885915,et_EE.u
 $nls['encoding']['et_EE'] = "UTF-8";
 
 #Location of the file(s)
-$nls['file']['et_EE'] = array(dirname(__FILE__).'/et_EE/admin.inc.php');
+$nls['file']['et_EE'] = array(__DIR__.'/et_EE/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

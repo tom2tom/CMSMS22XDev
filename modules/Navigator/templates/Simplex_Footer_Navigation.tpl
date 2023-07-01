@@ -2,7 +2,7 @@
 
 {$main_id = ' id=\'footer-menu\''}
 {function do_footer_class}
-    {if count($classes) > 0} class='{implode(' ',$classes)}'{/if}
+{if count($classes) > 0} class="{' '|adjust:'implode':$classes}"{/if}
 {/function}
 
 {function name='Simplex_footer_menu' depth='1'}
@@ -13,17 +13,17 @@
             {* setup classes for the anchor and list item *}
             {$list_class = []}
             {$href_class = []}
-    
+
             {if $node->current || $node->parent}
                 {* this is the current page *}
                 {$list_class[] = 'current'}
                 {$href_class[] = 'current'}
             {/if}
-    
+
             {if $node->children_exist}
                 {$list_class[] = 'parent'}
             {/if}
-    
+
             {* build the menu item node *}
             {if $node->type == 'sectionheader'}
                 {$list_class[] = 'sectionheader'}
@@ -34,7 +34,7 @@
                 </li>
             {else if $node->type == 'separator'}
                 {$list_class[] = 'separator'}
-                <li{do_footer_class classes=$list_class}'><hr class='separator'/></li>
+                <li{do_footer_class classes=$list_class}><hr class='separator'/></li>
             {else}
                 {* regular item *}
                 <li{do_footer_class classes=$list_class}>

@@ -43,11 +43,11 @@ function listudt_summarize($str,$numwords,$ets='...')
     return $tmp;
 }
 
-if (FALSE == empty($_GET['message'])) echo $themeObject->ShowMessage(lang($_GET['message']));
+if (!empty($_GET['message'])) echo $themeObject->ShowMessage(lang($_GET['message']));
 
 $list = UserTagOperations::get_instance()->ListUserTags();
-$tags = null;
-if( count($list) ) {
+$tags = [];
+if( $list && is_array($list) ) {
     foreach( $list as $id => $label ) {
         $tag = UserTagOperations::get_instance()->GetUserTag($id);
         $rec = array();

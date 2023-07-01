@@ -15,7 +15,7 @@
 
 <script>
  var ajax_url = '{$ajax_url}';
- //var clickthru_msg = '{$mod->Lang('warn_clickthru')|escape:'javascript'}';
+ //var clickthru_msg = '{$mod->Lang("warn_clickthru")|escape:"javascript"}';
  {if isset($saved_search.slaves) && in_array(-1,$saved_search.slaves)}
  var sel_all = 1;
  {/if}
@@ -23,7 +23,7 @@
  $(document).on('click','#searchbtn',function(){
    var l = $('#filter_box :checkbox.filter_toggle:checked').length;
    if( l == 0 ) {
-     cms_alert('{$mod->Lang('error_select_slave')|escape:'javascript'}');
+     cms_alert("$mod->Lang('error_select_slave')|escape:'javascript'}");
    } else {
      $('#searchresults').html('');
    }
@@ -40,7 +40,7 @@
 <div class="pageoverflow">
   <p class="pagetext"><label for="searchtext">{$mod->Lang('search_text')}:</label></p>
   <p class="pageinput">
-    <input id="searchtext" type="text" name="{$actionid}search_text" value="{$saved_search.search_text|default:''|cms_escape}" size="80" maxlength="80" id="searchtext"/>
+    <input id="searchtext" type="text" name="{$actionid}search_text" value="{$saved_search.search_text|default:''|cms_escape}" size="80" maxlength="80" id="searchtext" />
   </p>
 </div>
 <div class="pageoverflow">

@@ -1,7 +1,6 @@
 <?php
 if (!isset($gCms)) exit;
 
-$uid = null;
 if( cmsms()->test_state(CmsApp::STATE_INSTALL) ) {
   $uid = 1; // hardcode to first user
 } else {
@@ -25,7 +24,7 @@ catch( CmsException $e ) {
 }
 
 try {
-  $fn = cms_join_path(dirname(__FILE__),'templates','simple_navigation.tpl');
+  $fn = cms_join_path(__DIR__,'templates','simple_navigation.tpl');
   if( file_exists( $fn ) ) {
     $template = @file_get_contents($fn);
     $tpl = new CmsLayoutTemplate();

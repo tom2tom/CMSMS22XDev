@@ -1,4 +1,4 @@
-{if $ajax == 0}
+{if empty($ajax)}
 <script type="text/javascript">
 //<![CDATA[
 function cms_CMloadUrl(link, lang) {
@@ -102,8 +102,8 @@ $(function() {
     // we're gonna confirm stealing this lock.
     e.preventDefault();
     var self = $(this);
-    var url = $(this).attr('href') + '{$actionid}steal=1';
     cms_confirm("{$mod->Lang('confirm_steal_lock')|escape:'javascript'}").done(function() {
+      var url = self.attr('href') + '{$actionid}steal=1';
       window.location.href = url;
     });
   });
@@ -122,14 +122,14 @@ $(function() {
       type: 'content',
       oid: content_id
     };
-    var ok = false;
+//    var ok = false;
     opts[cms_data.secure_param_name] = cms_data.user_key;
     $.ajax({
       url: url,
       data: opts,
       success: function(data, textStatus, jqXHR) {}
     }).done(function(data) {
-      if (data.status == 'success') {
+      if (data.status === 'success') {
         if (data.locked) {
           // gotta display a message.
           ev.preventDefault();
@@ -140,7 +140,7 @@ $(function() {
   });
 
   // filter dialog
-  $('#filter_type').change(function() {
+  $('#filter_type').on('change', function() {
     var map = {
       'DESIGN_ID': '#filter_design',
       'TEMPLATE_ID': '#filter_template',
@@ -160,7 +160,7 @@ $(function() {
       buttons: {
         "{$mod->Lang('submit')|escape:'javascript'}": function() {
           $(this).dialog('close');
-          $('#myoptions_form').submit();
+          $('#myoptions_form').trigger('submit');
         },
         "{$mod->Lang('cancel')|escape:'javascript'}": function() {
           $(this).dialog('close');
@@ -181,7 +181,7 @@ $(function() {
 
   // go to page on option change
   $(document).on('change', '#{$actionid}curpage', function() {
-    $(this).closest('form').submit();
+    $(this).closest('form').trigger('submit');
   });
 
   $(document).ajaxComplete(function() {
@@ -193,7 +193,7 @@ $(function() {
     var self = $(this);
     ev.preventDefault();
     cms_confirm("{$mod->Lang('confirm_clearlocks')|escape:'javascript'}").done(function() {
-      window.location = self.attr('href');
+      window.location.href = self.attr('href');
     });
   });
 
@@ -207,7 +207,7 @@ $(function() {
         opt: 'check',
         type: 'content'
       };
-      var ok = false;
+//      var ok = false;
       opts[cms_data.secure_param_name] = cms_data.user_key;
       $.ajax({
         url: url,
@@ -228,7 +228,7 @@ $(function() {
 </script>
 
 	<div id="useroptions" style="display: none;" title="{$mod->Lang('title_userpageoptions')}">
-    {form_start action='defaultadmin' id='myoptions_form'}
+	{form_start action='defaultadmin' id='myoptions_form'}
 		<div class="c_full cf">
 			<input type="hidden" name="{$actionid}setoptions" value="1"/>
 			<label class="grid_4">{$mod->Lang('prompt_pagelimit')}:</label>

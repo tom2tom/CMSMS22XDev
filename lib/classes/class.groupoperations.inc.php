@@ -59,9 +59,9 @@ final class GroupOperations
 	 *
 	 * @return GroupOperations
 	 */
-	public static function &get_instance()
+	public static function get_instance()
 	{
-		if( !is_object(self::$_instance) ) self::$_instance = new GroupOperations();
+		if( !self::$_instance ) self::$_instance = new self();
 		return self::$_instance;
 	}
 
@@ -72,8 +72,7 @@ final class GroupOperations
 	 */
 	public function LoadGroups()
 	{
-		$list = Group::load_all();
-		return $list;
+		return Group::load_all();
 	}
 
 	/**
@@ -83,7 +82,7 @@ final class GroupOperations
 	 * @return mixed The group if found. If it's not found, then false
 	 * @deprecated
 	 */
-	public function &LoadGroupByID($id)
+	public function LoadGroupByID($id)
 	{
 		return Group::load($id);
 	}

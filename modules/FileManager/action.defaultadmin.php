@@ -25,7 +25,7 @@ if( \filemanager_utils::can_do_advanced() && $this->GetPreference('advancedmode'
 $tmp_path_parts = explode('/',$path);
 $path_parts = [];
 for( $i = 0; $i < count($tmp_path_parts); $i++ ) {
-    $obj = new StdClass;
+    $obj = new stdClass();
     if( !$tmp_path_parts[$i] ) continue;
     $obj->name = $tmp_path_parts[$i];
     if( $obj->name == '::top::' ) {
@@ -45,5 +45,5 @@ $smarty->assign('path',$path);
 $smarty->assign('path_parts',$path_parts);
 echo $this->ProcessTemplate('fmpath.tpl');
 
-include(dirname(__FILE__)."/uploadview.php");
-include(dirname(__FILE__)."/action.admin_fileview.php"); // this is also an action.
+include(__DIR__."/uploadview.php");
+include(__DIR__."/action.admin_fileview.php"); // this is also an action.

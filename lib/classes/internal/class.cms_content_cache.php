@@ -60,17 +60,18 @@ final class cms_content_cache
 	/**
 	 * @ignore
 	 */
-	private static $_alias_map;
+	private static $_alias_map; //array or unset/null
 
 	/**
 	 * @ignore
 	 */
-	private static $_id_map;
+	private static $_id_map; //array or unset/null
 
 	/**
 	 * @ignore
 	 */
-	private static $_content_cache;
+	private static $_content_cache; //array or unset/null
+
 
 	/**
 	 * @ignore
@@ -89,31 +90,31 @@ final class cms_content_cache
 	private function __construct()
 	{
 		if( !CmsApp::get_instance()->is_frontend_request() ) return;
-        debug_buffer('cms_content_cache: begin load needed content objects');
-		$content_ids = null;
+		debug_buffer('cms_content_cache: begin load needed content objects');
+		$content_ids = [];
 		$deep = FALSE;
 		$this->_key = 'pc'.md5($_SERVER['REQUEST_URI'].serialize($_GET));
 		if( ($data = cms_cache_handler::get_instance()->get($this->_key,__CLASS__)) ) {
 			list($lastmtime,$deep,$content_ids) = unserialize($data);
 			if( $lastmtime < ContentOperations::get_instance()->GetLastContentModification() ) {
-				$deep = null;
-				$content_ids = null;
+				$deep = FALSE;
+				$content_ids = [];
 			}
 		}
-		if( is_array($content_ids) && count($content_ids) ) {
+		if( $content_ids ) {
 			$this->_preload_cache = $content_ids;
 			$contentops = ContentOperations::get_instance();
-			$tmp = $contentops->LoadChildren(null,$deep,false,$content_ids);
+			$tmp = $contentops->LoadChildren(0,$deep,false,$content_ids);
 		}
-        debug_buffer('cms_content_cache: end loading needed content objects');
+		debug_buffer('cms_content_cache: end loading needed content objects');
 	}
 
 	/**
 	 * @ignore
 	 */
-	public static function &get_instance()
+	public static function get_instance()
 	{
-		if( !is_object(self::$_instance) ) self::$_instance = new cms_content_cache();
+		if( !is_object(self::$_instance) ) self::$_instance = new self();
 		return self::$_instance;
 	}
 
@@ -137,7 +138,7 @@ final class cms_content_cache
 			}
 
 			if( $dirty ) {
-                $ndeep = array();
+				$ndeep = array();
 				$deep = FALSE;
 				foreach( $list as $one ) {
 					$obj = self::get_content($one);
@@ -145,11 +146,11 @@ final class cms_content_cache
 					$tmp = $obj->Properties();
 					if( is_array($tmp) && count($tmp) ) {
 						$deep = TRUE;
-                        $ndeep[] = $one;
+						$ndeep[] = $one;
 						break;
 					}
 				}
-                $deep = ($deep && count($ndeep) > (count($list) / 4)) ? TRUE : FALSE;
+				$deep = ($deep && count($ndeep) > (count($list) / 4)) ? TRUE : FALSE;
 				$tmp = array(time(),$deep,$list);
 				cms_cache_handler::get_instance()->set($this->_key,serialize($tmp),__CLASS__);
 			}
@@ -159,9 +160,9 @@ final class cms_content_cache
 	/**
 	 * @ignore
 	 */
-	private static function &get_content_obj($hash)
+	private static function get_content_obj($hash)
 	{
-		$res = null;
+		$res = null; // no object
 		if( self::$_content_cache ) {
 			if( isset(self::$_content_cache[$hash]) ) $res = self::$_content_cache[$hash];
 		}
@@ -178,13 +179,12 @@ final class cms_content_cache
    * @param mixed Unique identifier
    * @return ContentBase The contentBase object, or null.
    */
-  public static function &get_content($identifier)
+  public static function get_content($identifier)
   {
-	  $res = null;
 	  $hash = self::content_exists($identifier);
 	  if( $hash === FALSE ) {
 		  // content doesn't exist...
-          return $res;
+		  return null; // no object
 	  }
 
 	  return self::get_content_obj($hash);
@@ -229,7 +229,7 @@ final class cms_content_cache
    * @param ContentBase The content object.
    * @return bool
    */
-  private static function _add_content($id,$alias,ContentBase& $obj)
+  private static function _add_content($id,$alias,ContentBase $obj)
   {
     if( !$id) return FALSE;
     if( !self::$_alias_map ) self::$_alias_map = array();
@@ -251,7 +251,7 @@ final class cms_content_cache
    * @param ContentBase The content object.
    * @return bool
    */
-  public static function add_content($id,$alias,ContentBase& $obj)
+  public static function add_content($id,$alias,ContentBase $obj)
   {
 	  self::_add_content($id,$alias,$obj);
   }

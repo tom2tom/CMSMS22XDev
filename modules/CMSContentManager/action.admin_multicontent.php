@@ -39,11 +39,9 @@ if( !isset($gCms) ) exit;
 // init
 //
 $this->SetCurrentTab('pages');
-$multiaction = null;
-$multicontent = null;
-$module = null;
-$bulkaction = null;
-$pages = null;
+$multiaction = '';
+$multicontent = [];
+//$pages = null;
 
 
 //

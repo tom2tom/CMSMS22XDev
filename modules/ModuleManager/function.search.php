@@ -44,16 +44,16 @@ if( FALSE == can_admin_upload() ) {
 }
 
 // see if there are saved results
-$search_data = null;
+$search_data = [];
 $term = '';
 $advanced = 0;
 if( isset($_SESSION['modmgr_search']) ) $search_data = unserialize($_SESSION['modmgr_search']);
-if( isset($_SESSION['modmgr_searchterm']) ) $term = $_SESSION['modmgr_searchterm'];
-if( isset($_SESSION['modmgr_searchadv']) ) $advanced = $_SESSION['modmgr_searchadv'];
+if( isset($_SESSION['modmgr_searchterm']) ) $term = (string)$_SESSION['modmgr_searchterm'];
+if( isset($_SESSION['modmgr_searchadv']) ) $advanced = (int)$_SESSION['modmgr_searchadv'];
 
 $clear_search = function() use (&$search_data) {
     unset($_SESSION['modmgr_search']);
-    $search_data = null;
+    $search_data = [];
 };
 
 // get the modules that are already installed
@@ -87,7 +87,6 @@ if( isset($params['submit']) ) {
         $moduledir = $config['root_path'].DIRECTORY_SEPARATOR.'modules';
         $writable = is_writable($moduledir);
 
-        $search_data = array();
         for( $i = 0; $i < count($res); $i++ ) {
             $row =& $res[$i];
             $obj = new stdClass();
@@ -171,7 +170,7 @@ if( isset($params['submit']) ) {
     }
 }
 
-if( is_array($search_data) ) $smarty->assign('search_data',$search_data);
+if( $search_data ) $smarty->assign('search_data',$search_data);
 $smarty->assign('term',$term);
 $smarty->assign('advanced',$advanced);
 $smarty->assign('formstart',$this->CreateFormStart($id,'defaultadmin','','post','',false,'',array('__activetab'=>'search')));

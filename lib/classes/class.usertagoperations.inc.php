@@ -17,7 +17,7 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-#$Id: class.bookmark.inc.php 2746 2006-05-09 01:18:15Z wishy $
+#$Id$
 
 /**
  * Usertag related functions.
@@ -50,12 +50,12 @@ final class UserTagOperations
 	protected function __construct() {}
 
 	/**
-	 * Get a reference to thie only allowed instance of this class
+	 * Get the only allowed instance of this class
 	 * @return UserTagOperations
 	 */
-	public static function &get_instance()
+	public static function get_instance()
 	{
-		if( !isset(self::$_instance) ) self::$_instance = new UserTagOperations();
+		if( !self::$_instance ) self::$_instance = new self();
 		return self::$_instance;
 	}
 
@@ -67,7 +67,7 @@ final class UserTagOperations
 	public function __call($name,$arguments)
 	{
 		$this->LoadUserTags();
-		if( !isset($this->_cache[$name]) ) return;
+		if( !isset($this->_cache[$name]) ) return null; // no result
 
 		// it's a UDT alright
 		$this->CallUserTag($name,$arguments);
@@ -79,18 +79,18 @@ final class UserTagOperations
 	 */
 	public static function setup()
 	{
-		$obj = new \CMSMS\internal\global_cachable(__CLASS__,function(){
+		$obj = new \CMSMS\internal\global_cachable(__CLASS__,function() {
 			$db = CmsApp::get_instance()->GetDb();
 
+			$out = array();
 			$query = 'SELECT * FROM '.CMS_DB_PREFIX.'userplugins'.' ORDER BY userplugin_name';
 			$data = $db->GetArray($query);
 			if( is_array($data) ) {
-				$out = array();
 				foreach( $data as $row ) {
 					$out[$row['userplugin_name']] = $row;
 				}
-				return $out;
 			}
+			return $out;
 		});
 		\CMSMS\internal\global_cache::add_cachable($obj);
 	}
@@ -115,32 +115,32 @@ final class UserTagOperations
 		foreach( $this->_cache as $tagname => $row ) {
 			if( $name == $row['userplugin_id'] ) return $row;
 		}
+		return [];
 	}
 
 	/**
 	 * Retrieve the body of a user defined tag
 	 *
 	 * @param string $name User defined tag name
-	 * @return string|false
+	 * @return array maybe empty
 	 */
 	function GetUserTag( $name )
 	{
-		$row = $this->_get_from_cache($name);
-		return $row;
+		return $this->_get_from_cache($name);
 	}
 
 	/**
 	 * Test if a user defined tag with a specific name exists
 	 *
 	 * @param string $name User defined tag name
-	 * @return string|false
+	 * @return string maybe empty
 	 * @since 1.10
 	 */
 	function UserTagExists($name)
 	{
 		$row = $this->_get_from_cache($name);
 		if( is_array($row) ) return $name;
-		return false;
+		return '';
 	}
 
 
@@ -260,7 +260,7 @@ final class UserTagOperations
 	function ListUserTags()
 	{
 		$this->LoadUserTags();
-		if( !$this->_cache || !count( $this->_cache  ) ) return;
+		if( !$this->_cache || !count( $this->_cache  ) ) return [];
 		$plugins = array();
 		foreach( $this->_cache as $key => $row ) {
 			$plugins[$row['userplugin_id']] = $row['userplugin_name'];
@@ -298,7 +298,7 @@ final class UserTagOperations
 	function CreateTagFunction($name)
 	{
 		$row = $this->_get_from_cache($name);
-		if( !$row ) return;
+		if( !$row ) return '';
 		$functionname = 'cms_user_tag_'.$name;
 		if( !function_exists($functionname) ) {
 			if( startswith($row['code'],'<?php') ) $row['code'] = substr($row['code'],5);

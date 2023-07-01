@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: class.bookmark.inc.php 2746 2006-05-09 01:18:15Z wishy $
+#$Id$
 
 /**
  * This file contains classes and constants for working with system and user defined events.
@@ -48,7 +48,7 @@ final class Events
 	 * @param string $modulename The name of the module that is sending the event
 	 * @param string $eventname The name of the event
 	 */
-	static public function CreateEvent( $modulename, $eventname )
+	public static function CreateEvent( $modulename, $eventname )
 	{
 		$db = CmsApp::get_instance()->GetDb();
 		$count = $db->GetOne('SELECT count(*) from '.CMS_DB_PREFIX.'events where originator = ? and event_name = ?', array($modulename, $eventname));
@@ -71,7 +71,7 @@ final class Events
 	 * @param string $modulename The name of the module that is sending the event
 	 * @param string $eventname The name of the event
 	 */
-	static public function RemoveEvent( $modulename, $eventname )
+	public static function RemoveEvent( $modulename, $eventname )
 	{
 		$db = CmsApp::get_instance()->GetDb();
 
@@ -108,7 +108,7 @@ final class Events
 	 * @param string $eventname The name of the event
 	 * @param array $params The parameters associated with this event.
 	 */
-	static public function SendEvent( $modulename, $eventname, $params = array() )
+	public static function SendEvent( $modulename, $eventname, $params = array() )
 	{
 		global $CMS_INSTALL_PAGE;
 		if( isset($CMS_INSTALL_PAGE) ) return;
@@ -145,7 +145,7 @@ final class Events
     /**
      * @ignore
      */
-    static public function setup()
+    public static function setup()
     {
         $obj = new \CMSMS\internal\global_cachable(__CLASS__,function(){
                 $db = \CmsApp::get_instance()->GetDb();
@@ -165,11 +165,11 @@ final class Events
 	 * @param string $eventname The name of the event
 	 * @return mixed If successful, an array of arrays, each element
 	 *               in the array contains two elements 'handler_name', and 'module_handler',
-	 *               any one of these could be null. If it fails, false is returned.
+	 *               any one of these could be null. If it fails, empty array is returned.
 	 */
-	static public function ListEventHandlers( $modulename, $eventname )
+	public static function ListEventHandlers( $modulename, $eventname )
 	{
-        self::$_handlercache = \CMSMS\internal\global_cache::get(__CLASS__);
+		self::$_handlercache = \CMSMS\internal\global_cache::get(__CLASS__);
 		$handlers = array();
 
 		if( is_array(self::$_handlercache) && count(self::$_handlercache) ) {
@@ -178,24 +178,23 @@ final class Events
 			}
 		}
 
-		if (count($handlers) > 0) return $handlers;
-		return false;
+		return $handlers;
 	}
 
 
     /**
      * @ignore
      */
-    static public function GetEventHandler( $handler_id )
+    public static function GetEventHandler( $handler_id )
     {
         self::$_handlercache = \CMSMS\internal\global_cache::get(__CLASS__);
 
-        $out = [];
 		if( is_array(self::$_handlercache) && count(self::$_handlercache) ) {
             foreach( self::$_handlercache as $row ) {
                 if( $row['handler_id'] == $handler_id ) return $row;
             }
         }
+        return [];
     }
 
 	/**
@@ -203,7 +202,7 @@ final class Events
 	 *
 	 * @return mixed If successful, a list of all the known events.  If it fails, false
 	 */
-	static public function ListEvents()
+	public static function ListEvents()
 	{
 		$db = CmsApp::get_instance()->GetDb();
 
@@ -234,7 +233,7 @@ final class Events
 	 * @param bool $removable Can this event be removed from the list? Defaults to true.
 	 * @return bool If successful, true.  If it fails, false.
 	 */
-	static public function AddEventHandler( $modulename, $eventname, $tag_name = false, $module_handler = false, $removable = true)
+	public static function AddEventHandler( $modulename, $eventname, $tag_name = false, $module_handler = false, $removable = true)
 	{
 		if( $tag_name == false && $module_handler == false ) return false;
 		if( $tag_name != false && $module_handler != false ) return false;
@@ -301,7 +300,7 @@ final class Events
     /**
      * @ignore
      */
-    static protected function InternalRemoveHandler( array $handler )
+    protected static function InternalRemoveHandler( array $handler )
     {
 		$db = CmsApp::get_instance()->GetDb();
         $id = $handler['event_id'];
@@ -322,7 +321,7 @@ final class Events
      *
      * @param int $handler_id
      */
-    static public function RemoveEventHandlerById( $handler_id )
+    public static function RemoveEventHandlerById( $handler_id )
     {
         $handler = self::GetEventHandler( $handler_id );
         if( $handler ) self::InternalRemoveHandler( $handler );
@@ -337,7 +336,7 @@ final class Events
 	 * @param string $module_handler The name of the module. If not passed, no module is set.
 	 * @return bool If successful, true.  If it fails, false.
 	 */
-	static public function RemoveEventHandler( $modulename, $eventname, $tag_name = false, $module_handler = false )
+	public static function RemoveEventHandler( $modulename, $eventname, $tag_name = false, $module_handler = false )
 	{
 		if( $tag_name != false && $module_handler != false ) return false;
 		$field = 'handler_name';
@@ -379,7 +378,7 @@ final class Events
 	 * @param string $eventname The name of the event
 	 * @return bool If successful, true.  If it fails, false.
 	 */
-	static public function RemoveAllEventHandlers( $modulename, $eventname )
+	public static function RemoveAllEventHandlers( $modulename, $eventname )
 	{
 		$db = CmsApp::get_instance()->GetDb();
 
@@ -408,7 +407,7 @@ final class Events
      *
      * @param int $handler_id
      */
-    static public function OrderHandlerUp( $handler_id )
+    public static function OrderHandlerUp( $handler_id )
     {
         $handler = self::GetEventHandler( $handler_id );
         if( !$handler ) return;
@@ -428,7 +427,7 @@ final class Events
      *
      * @param int $handler_id
      */
-    static public function OrderHandlerDown( $handler_id )
+    public static function OrderHandlerDown( $handler_id )
     {
         $handler = self::GetEventHandler( $handler_id );
         if( !$handler ) return;
@@ -465,7 +464,7 @@ final class Events
 	 * @return string Returns the description string for the event.  Empty string if nothing
 	 *                is found.
 	 */
-	static public function GetEventDescription($eventname)
+	public static function GetEventDescription($eventname)
 	{
 		return lang('event_desc_'.strtolower($eventname));
 	}

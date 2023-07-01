@@ -272,7 +272,7 @@ class cms_url
     }
 
     /**
-     * Return the fragement portion of the URL
+     * Return the fragment portion of the URL
      *
      * @return string
      */

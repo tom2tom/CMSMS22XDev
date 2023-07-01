@@ -53,7 +53,7 @@ function smarty_function_metadata($params, $smarty)
     \CMSMS\HookManager::do_hook('metadata_postrender', [ 'content_id'=>$content_obj->Id(), 'html'=>&$result ]);
 	if( isset($params['assign']) )	{
 		$smarty->assign(trim($params['assign']),$result);
-		return;
+		return '';
 	}
 	return $result;
 }

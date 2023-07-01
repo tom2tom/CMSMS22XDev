@@ -50,7 +50,7 @@ final class ModuleOperations
     /**
      * @ignore
      */
-    static private $_instance = null;
+    private static $_instance;
 
     /**
      * @ignore
@@ -60,7 +60,7 @@ final class ModuleOperations
     /**
      * @ignore
      */
-    static private $_classmap = null;
+    private static $_classmap = null;
 
     /**
      * @ignore
@@ -115,11 +115,10 @@ final class ModuleOperations
      *
      * @return ModuleOperations
      */
-    public static function &get_instance()
+    public static function get_instance()
     {
-        if( !isset(self::$_instance) ) {
-            $c = __CLASS__;
-            self::$_instance = new $c;
+        if( !self::$_instance ) {
+            self::$_instance = new self();
         }
         return self::$_instance;
     }
@@ -142,8 +141,8 @@ final class ModuleOperations
      */
     protected static function get_module_classname($module)
     {
-        $module = trim($module);
-        if( !$module ) return;
+        $module = trim((string)$module);
+        if( !$module ) return '';
         $map = self::get_module_classmap();
         if( isset($map[$module]) ) return $map[$module];
         return $module;
@@ -154,8 +153,8 @@ final class ModuleOperations
      */
     protected static function get_module_filename($module)
     {
-        $module = trim($module);
-        if( !$module ) return;
+        $module = trim((string)$module);
+        if( !$module ) return '';
         $map = self::get_module_classmap();
         $config = \cms_config::get_instance();
         return cms_join_path($config['root_path'],'modules',$module,"$module.module.php");
@@ -182,17 +181,16 @@ final class ModuleOperations
      * @internal
      * @ignore
      */
-    private function _generate_moduleinfo( CMSModule &$modinstance )
+    private function _generate_moduleinfo( CMSModule $modinstance )
     {
-        $dir = dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$modinstance->GetName();
+        $dir = dirname(__DIR__,2).DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$modinstance->GetName();
         if( !is_writable( $dir ) ) throw new CmsFileSystemException(lang('errordirectorynotwritable'));
 
         $to_string = function( $key, $value ) {
-            $res = null;
             if( is_numeric($value) && strpos($value,' ') === FALSE ) {
-                $res .= "$key = $value".PHP_EOL;
+                $res = "$key = $value".PHP_EOL;
             } else {
-                $res .= "$key = \"{$value}\"".PHP_EOL;
+                $res = "$key = \"{$value}\"".PHP_EOL;
             }
             return $res;
         };
@@ -223,17 +221,17 @@ final class ModuleOperations
      * @param CMSModule $modinstance The instance of the module object
      * @param string $message Reference to a string which will be filled with the message
      *                        created by the run of the method
-     * @param int $filecount Reference to an interger which will be filled with the
+     * @param int $filecount Reference to an integer which will be filled with the
      *                           total # of files in the package
      * @return string an XML string comprising the module and its files
      */
-    function CreateXMLPackage( CMSModule &$modinstance, &$message, &$filecount )
+    function CreateXMLPackage( CMSModule $modinstance, &$message, &$filecount )
     {
         // get a file list
         global $CMSMS_GENERATING_XML;
         $CMSMS_GENERATING_XML = 1;
         $filecount = 0;
-        $dir = dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$modinstance->GetName();
+        $dir = dirname(__DIR__,2).DIRECTORY_SEPARATOR."modules".DIRECTORY_SEPARATOR.$modinstance->GetName();
         if( !is_writable( $dir ) ) throw new CmsFileSystemException(lang('errordirectorynotwritable'));
 
         // generate the moduleinfo.ini file
@@ -300,7 +298,7 @@ final class ModuleOperations
     function ExpandXMLPackage( $xmluri, $overwrite = 0, $brief = 0 )
     {
         // first make sure that we can actually write to the module directory
-        $dir = dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR."modules";
+        $dir = dirname(__DIR__,2).DIRECTORY_SEPARATOR."modules";
 
         if( !is_writable( $dir ) && $brief == 0 ) throw new CmsFileSystemException(lang('errordirectorynotwritable'));
 
@@ -459,7 +457,7 @@ final class ModuleOperations
     /**
      * @ignore
      */
-    private function _install_module(CmsModule& $module_obj)
+    private function _install_module(CmsModule $module_obj)
     {
         debug_buffer('install_module '.$module_obj->GetName());
 
@@ -550,7 +548,7 @@ final class ModuleOperations
         if( !is_array($this->_moduleinfo) || count($this->_moduleinfo) == 0 ) {
             $tmp = \CMSMS\internal\global_cache::get('modules');
             if( is_array($tmp) ) {
-                $dir = dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR."modules";
+                $dir = dirname(__DIR__,2).DIRECTORY_SEPARATOR."modules";
                 $this->_moduleinfo = array();
                 for( $i = 0, $n = count($tmp); $i < $n; $i++ ) {
                     $name = $tmp[$i]['module_name'];
@@ -636,7 +634,7 @@ final class ModuleOperations
 
         global $CMS_FORCELOAD;
         $CMS_FORCELOAD = $force_load;
-        $obj = new $classname;
+        $obj = new $classname();
         unset($CMS_FORCELOAD);
         if( !is_object($obj) || ! $obj instanceof \CMSModule ) {
             // oops, some problem loading.
@@ -732,7 +730,7 @@ final class ModuleOperations
      */
     public function FindAllModules()
     {
-        $dir = dirname(dirname(__DIR__)).DIRECTORY_SEPARATOR."modules";
+        $dir = dirname(__DIR__,2).DIRECTORY_SEPARATOR."modules";
 
         $result = array();
         if( $handle = @opendir($dir) ) {
@@ -808,7 +806,7 @@ final class ModuleOperations
     /**
      * @ignore
      */
-    private function _upgrade_module( &$module_obj, $to_version = '' )
+    private function _upgrade_module( $module_obj, $to_version = '' )
     {
         // we can't upgrade a module if the schema is not up to date.
         $gCms = CmsApp::get_instance();
@@ -1117,17 +1115,17 @@ final class ModuleOperations
      * @param bool $force an optional flag to indicate wether the module should be force loaded if necesary.
      * @return CMSModule
      */
-    public function &get_module_instance($module_name,$version = '',$force = FALSE)
+    public function get_module_instance($module_name,$version = '',$force = FALSE)
     {
         if( empty($module_name) && isset($this->variables['module'])) $module_name = $this->variables['module'];
 
-        $obj = null;
+        $obj = null; // no object
         if( isset($this->_modules[$module_name]) ) {
             if( $force ) {
                 unset($this->_modules[$module_name]);
             }
             else {
-                $obj =& $this->_modules[$module_name];
+                $obj = $this->_modules[$module_name];
             }
         }
         if( !is_object($obj) ) {
@@ -1167,7 +1165,7 @@ final class ModuleOperations
      * @return CMSModule
      * @since 1.10
      */
-    public function &GetSyntaxHighlighter($module_name = '')
+    public function GetSyntaxHighlighter($module_name = '')
     {
         $obj = null;
         if( !$module_name ) {
@@ -1196,7 +1194,7 @@ final class ModuleOperations
      * @since 1.10
      * @deprecated
      */
-    public function &GetWYSIWYGModule($module_name = '')
+    public function GetWYSIWYGModule($module_name = '')
     {
         $obj = null;
         if( !$module_name ) {
@@ -1226,7 +1224,7 @@ final class ModuleOperations
      * @return CMSModule
      * @since 1.10
      */
-    public function &GetSearchModule()
+    public function GetSearchModule()
     {
         $obj = null;
         $module_name = cms_siteprefs::get('searchmodule','Search');
@@ -1243,7 +1241,7 @@ final class ModuleOperations
      * @return \CMSMS\FilePickerInterface
      * @since 2.2
      */
-    public function &GetFilePickerModule()
+    public function GetFilePickerModule()
     {
         $obj = null;
         $module_name = cms_siteprefs::get('filepickermodule','FilePicker');
@@ -1261,7 +1259,7 @@ final class ModuleOperations
      * @param string $module_name
      * @return CMSModule
      */
-    public function &GetSyntaxModule($module_name = '')
+    public function GetSyntaxModule($module_name = '')
     {
         return $this->GetSyntaxHighlighter($module_name);
     }
@@ -1279,7 +1277,7 @@ final class ModuleOperations
     public function IsQueuedForInstall($module_name)
     {
         $module_name = trim((string)$module_name);
-        if( !$module_name ) return;
+        if( !$module_name ) return FALSE;
         if( !isset($_SESSION['moduleoperations']) ) return FALSE;
         if( !isset($_SESSION['moduleoperations'][$module_name]) ) return FALSE;
         return TRUE;
@@ -1325,6 +1323,7 @@ final class ModuleOperations
             unset($_SESSION['moduleoperations_result']);
             return $data;
         }
+        return '';
     }
 
 
@@ -1337,7 +1336,7 @@ final class ModuleOperations
      */
     public function unload_module($module_name)
     {
-        if( !isset($this->_modules[$module_name]) || !is_object($this->_modules[$module_name]) )  return;
+        if( !isset($this->_modules[$module_name]) || !is_object($this->_modules[$module_name]) ) return;
         unset($this->_modules[$module_name]);
     }
 

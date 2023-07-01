@@ -128,11 +128,10 @@ abstract class Resultset
      */
     public function GetAssoc($force_array = false, $first2cols = false)
     {
-        $data = null;
+        $data = [];
         $first_row = $this->Fields();
         if( count($first_row) < 2 ) return $data;
 
-        $data = [];
         $keys = array_keys($first_row);
         $numeric_index = isset($row[0]);
         if( !$first2cols && (count($keys) > 2 || $force_array) ) {
@@ -188,7 +187,7 @@ abstract class Resultset
      * @param string $field An optional field name, if not specified, the entire row will be returned.
      * @return mixed|array Either a single value, or an array
      */
-    abstract public function Fields( $field = null );
+    abstract public function Fields( $field = '' );
 
     /**
      * Fetch the current row, and move to the next row.
@@ -215,6 +214,7 @@ abstract class Resultset
     {
         if( $key == 'EOF' ) return $this->EOF();
         if( $key == 'fields' ) return $this->Fields();
+        return null; // no value for unsupported property
     }
 
 }

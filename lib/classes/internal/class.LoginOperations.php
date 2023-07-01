@@ -17,7 +17,7 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-#$Id: class.user.inc.php 2961 2006-06-25 04:49:31Z wishy $
+#$Id$
 
 namespace CMSMS;
 
@@ -32,7 +32,7 @@ final class LoginOperations
         $this->_loginkey = sha1( CMS_VERSION.$this->_get_salt() );
     }
 
-    public static function &get_instance()
+    public static function get_instance()
     {
         if( !self::$_instance ) self::$_instance = new self();
         return self::$_instance;
@@ -72,7 +72,7 @@ final class LoginOperations
         return TRUE;
     }
 
-    public function save_authentication(\User $user,\User $effective_user = null)
+    public function save_authentication(\User $user,\User $effective_user = null) // no object
     {
         // saves session/cookie data
         if( $user->id < 1 || empty($user->password) ) throw new \LogicException('User information invalid for '.__METHOD__);
@@ -80,8 +80,8 @@ final class LoginOperations
         $private_data = array();
         $private_data['uid'] = $user->id;
         $private_data['username'] = $user->username;
-        $private_data['eff_uid'] = null;
-        $private_data['eff_username'] = null;
+        $private_data['eff_uid'] = 0;
+        $private_data['eff_username'] = '';
         $private_data['hash'] = password_hash( $user->id.$user->password.__FILE__, PASSWORD_BCRYPT );
         if( $effective_user && $effective_user->id > 0 && $effective_user->id != $user->id ) {
             $private_data['eff_uid'] = $effective_user->id;
@@ -105,29 +105,29 @@ final class LoginOperations
         if( !empty($this->_data) ) return $this->_data;
 
         // using session, and-or cookie data see if we are authenticated
-        $private_data = null;
         if( isset($_SESSION[$this->_loginkey]) ) {
             $private_data = $_SESSION[$this->_loginkey];
         }
         else {
+            $private_data = [];
             if( isset($_COOKIE[$this->_loginkey]) ) $private_data = $_SESSION[$this->_loginkey] = $_COOKIE[$this->_loginkey];
         }
 
-        if( !$private_data ) return;
+        if( !$private_data ) return [];
         $parts = explode('::',$private_data,2);
-        if( count($parts) != 2 ) return;
+        if( count($parts) != 2 ) return [];
 
-        if( $parts[0] != sha1( $this->_get_salt() . $parts[1] ) ) return; // payload corrupted.
+        if( $parts[0] != sha1( $this->_get_salt() . $parts[1] ) ) return []; // payload corrupted.
         $private_data = json_decode( base64_decode( $parts[1]), TRUE );
 
-        if( !is_array($private_data) ) return;
-        if( empty($private_data['uid']) ) return;
-        if( empty($private_data['username']) ) return;
-        if( empty($private_data['hash']) ) return;
+        if( !is_array($private_data) ) return [];
+        if( empty($private_data['uid']) ) return [];
+        if( empty($private_data['username']) ) return [];
+        if( empty($private_data['hash']) ) return [];
 
         // now authenticate the passhash
         // requires a database query
-        if( !\CmsApp::get_instance()->is_frontend_request() && !$this->_check_passhash($private_data['uid'],$private_data['hash']) ) return;
+        if( !\CmsApp::get_instance()->is_frontend_request() && !$this->_check_passhash($private_data['uid'],$private_data['hash']) ) return [];
 
         // if we get here, the user is authenticated.
         // set the session key from the cookie if it exists.
@@ -161,21 +161,21 @@ final class LoginOperations
     public function get_loggedin_uid()
     {
         $data = $this->_get_data();
-        if( !$data ) return;
+        if( !$data ) return 0;
         return (int) $data['uid'];
     }
 
     public function get_loggedin_username()
     {
         $data = $this->_get_data();
-        if( !$data ) return;
+        if( !$data ) return '';
         return trim($data['username']);
     }
 
     public function get_loggedin_user()
     {
         $uid = $this->get_loggedin_uid();
-        if( $uid < 1 ) return;
+        if( $uid < 1 ) return null;
         $user = \UserOperations::get_instance()->LoadUserByID($uid);
         return $user;
     }
@@ -183,7 +183,7 @@ final class LoginOperations
     public function get_effective_uid()
     {
         $data = $this->_get_data();
-        if( !$data ) return;
+        if( !$data ) return 0;
         if( isset($data['eff_uid']) && $data['eff_uid'] ) return $data['eff_uid'];
         return $this->get_loggedin_uid();
     }
@@ -191,15 +191,15 @@ final class LoginOperations
     public function get_effective_username()
     {
         $data = $this->_get_data();
-        if( !$data ) return;
+        if( !$data ) return '';
         if( isset($data['eff_username']) && $data['eff_username'] ) return $data['eff_username'];
         return $this->get_loggedin_username();
     }
 
-    public function set_effective_user(\User $e_user = null)
+    public function set_effective_user(\User $e_user = null) // no object
     {
         $li_user = $this->get_loggedin_user();
-        if( $e_user && $e_user->id == $li_user->id ) return;
+        if( $e_user && $e_user->id == $li_user->id ) return '';
 
         $new_key = $this->save_authentication($li_user,$e_user);
         return $new_key;

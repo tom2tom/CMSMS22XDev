@@ -15,7 +15,7 @@ class nlstools
 
   public static function get_instance()
   {
-    if( !is_object(self::$_instance) ) self::$_instance = new self();
+    if( !self::$_instance ) self::$_instance = new self();
     return self::$_instance;
   }
 
@@ -45,7 +45,7 @@ class nlstools
       include($file);
 
       $tmp = __NAMESPACE__.'\\'.$name;
-      $obj = new $tmp;
+      $obj = new $tmp();
       if( !is_a($obj,__NAMESPACE__.'\nls') ) {
           unset($obj);
           continue;

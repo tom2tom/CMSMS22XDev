@@ -21,7 +21,7 @@ function smarty_function_page_image($params, $smarty)
     $get_bool = function(array $params,$key,$dflt) {
         if( !isset($params[$key]) ) return (bool) $dflt;
         if( empty($params[$key]) ) return (bool) $dflt;
-        return (bool) cms_to_bool($params[$key]);
+        return cms_to_bool($params[$key]);
     };
 
     $full = $get_bool($params,'full',false);
@@ -30,18 +30,18 @@ function smarty_function_page_image($params, $smarty)
     $assign = trim(get_parameter_value($params,'assign'));
     unset($params['full'], $params['thumbnail'], $params['tag'], $params['assign']);
 
-	$propname = 'image';
+    $propname = 'image';
     if( $thumbnail ) $propname = 'thumbnail';
     if( $tag ) $full = true;
 
-	$contentobj = cms_utils::get_current_content();
-    $val = null;
-	if( is_object($contentobj) ) {
-		$val = $contentobj->GetPropertyValue($propname);
-		if( $val == -1 ) $val = null;
+    $contentobj = cms_utils::get_current_content();
+    $val = null; //mixed value not yet known
+    if( is_object($contentobj) ) {
+        $val = $contentobj->GetPropertyValue($propname);
+        if( $val == -1 ) $val = null;
     }
 
-    $out = null;
+    $out = '';
     if( $val ) {
         $orig_val = $val;
         $config = \cms_config::get_instance();
@@ -62,22 +62,22 @@ function smarty_function_page_image($params, $smarty)
         }
     }
 
-	if( $assign ) {
-		$smarty->assign($assign,$out);
-		return;
+    if( $assign ) {
+        $smarty->assign($assign,$out);
+        return '';
     }
-	return $out;
+    return $out;
 }
 
 function smarty_cms_about_function_page_image() {
 ?>
-	<p>Author: Ted Kulp&lt;tedkulp@users.sf.net&gt;</p>
+    <p>Author: Ted Kulp&lt;tedkulp@users.sf.net&gt;</p>
 
-	<p>Change History:</p>
-	<ul>
-		<li>Fix for CMSMS 1.9</li>
+    <p>Change History:</p>
+    <ul>
+        <li>Fix for CMSMS 1.9</li>
         <li>Jan 2016 <em>(calguy1000)</em> - Adds the full param for CMSMS 2.2</li>
-	</ul>
+    </ul>
 <?php
 }
 ?>

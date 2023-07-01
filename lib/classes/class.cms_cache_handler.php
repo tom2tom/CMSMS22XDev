@@ -61,7 +61,7 @@ class cms_cache_handler
    */
   final public static function get_instance()
   {
-    if( !is_object(self::$_instance) ) self::$_instance = new cms_cache_handler;
+    if( !self::$_instance ) self::$_instance = new self();
     return self::$_instance;
   }
 
@@ -70,7 +70,7 @@ class cms_cache_handler
    *
    * @param cms_cache_driver $driver
    */
-  final public function set_driver(cms_cache_driver& $driver)
+  final public function set_driver(cms_cache_driver $driver)
   {
     $this->_driver = $driver;
   }
@@ -188,7 +188,7 @@ class cms_cache_handler
     if( !is_object($this->_driver) ) return FALSE;
     if( isset($CMS_INSTALL_PAGE) ) return FALSE;
 
-    return TRuE;
+    return TRUE;
   }
 }
 

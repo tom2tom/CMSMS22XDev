@@ -17,11 +17,11 @@ function disable_button(idlist) {
 
 function enable_action_buttons() {
 
-    var files = $("#filesarea input[type='checkbox'].fileselect").filter(':checked').length,
-        dirs = $("#filesarea input[type='checkbox'].dir").filter(':checked').length,
-        arch = $("#filesarea input[type='checkbox'].archive").filter(':checked').length,
-        text = $("#filesarea input[type='checkbox'].text").filter(':checked').length,
-        imgs = $("#filesarea input[type='checkbox'].image").filter(':checked').length;
+    var files = $('#filesarea input[type="checkbox"].fileselect').filter(':checked').length,
+        dirs = $('#filesarea input[type="checkbox"].dir').filter(':checked').length,
+        arch = $('#filesarea input[type="checkbox"].archive').filter(':checked').length,
+        text = $('#filesarea input[type="checkbox"].text').filter(':checked').length,
+        imgs = $('#filesarea input[type="checkbox"].image').filter(':checked').length;
 
     disable_button('button.filebtn');
     $('button.filebtn').prop('disabled',true);
@@ -50,8 +50,7 @@ function enable_action_buttons() {
 $(function () {
     enable_action_buttons();
 
-    $('#refresh').unbind('click');
-    $('#refresh').bind('click', function () {
+    $('#refresh').off('click').on('click', function() {
         // ajaxy reload for the files area.
         $('#filesarea').load(refresh_url);
         return false;
@@ -88,12 +87,12 @@ $(function () {
 
     $(document).on('click', '#btn_view', function () {
         // find the selected item.
-        var tmp = $("#filesarea input[type='checkbox']").filter(':checked').val();
+        var tmp = $('#filesarea input[type="checkbox"]').filter(':checked').val();
         var url = '{$viewfile_url}&showtemplate=false&{$actionid}viewfile=' + tmp;
         url = url.replace(/amp;/g, '');
         $('#popup_contents').load(url);
         $('#popup').dialog({
-       	  minWidth: 380,
+          minWidth: 380,
           maxHeight: 600
         });
         return false;
@@ -182,7 +181,7 @@ $(function () {
 				<td>
 				{if !isset($file->noCheckbox)}
 					<label for="x_{$file->urlname}" style="display: none;">{$mod->Lang('toggle')}</label>
-					<input type="checkbox" title="{$mod->Lang('toggle')}" id="x_{$file->urlname}" name="{$actionid}selall[]" value="{$file->urlname}" class="fileselect {implode(' ',$file->type)}" {if isset($file->checked)}checked="checked"{/if}/>
+					<input type="checkbox" title="{$mod->Lang('toggle')}" id="x_{$file->urlname}" name="{$actionid}selall[]" value="{$file->urlname}" class="fileselect {' '|adjust:'implode':$file->type}"{if isset($file->checked)} checked="checked"{/if} />
 				{/if}
 				</td>
 			</tr>

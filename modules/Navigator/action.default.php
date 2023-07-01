@@ -36,18 +36,18 @@
 if( !defined('CMS_VERSION') ) exit;
 
 debug_buffer('Start Navigator default action');
-$items = null;
+$items = '';
 $nlevels = -1;
 $show_all = FALSE;
 $show_root_siblings = FALSE;
-$start_element = null;
-$start_page = null;
-$start_level = null;
-$childrenof = null;
+$start_element = '';
+$start_page = '';
+$start_level = 0;
+$childrenof = '';
 $deep = TRUE;
 $collapse = FALSE;
 
-$template = null;
+$template = '';
 if( isset($params['template']) ) {
     $template = trim($params['template']);
 }
@@ -77,10 +77,10 @@ if( !$tpl->isCached() ) {
             Nav_utils::clear_excludes();
             $items = trim($value);
             $nlevels = 1;
-            $start_element = null;
-            $start_page = null;
-            $start_level = null;
-            $childrenof = null;
+            $start_element = '';
+            $start_page = '';
+            $start_level = 0;
+            $childrenof = '';
             break;
 
         case 'includeprefix':
@@ -106,15 +106,15 @@ if( !$tpl->isCached() ) {
                 }
             }
             $nlevels = 1;
-            $start_element = null;
-            $start_page = null;
-            $start_level = null;
-            $childrenof = null;
+            $start_element = '';
+            $start_page = '';
+            $start_level = 0;
+            $childrenof = '';
             break;
 
         case 'excludeprefix':
             Nav_utils::set_excludes($value);
-            $items = null;
+            $items = '';
             break;
 
         case 'nlevels':
@@ -135,36 +135,36 @@ if( !$tpl->isCached() ) {
 
         case 'start_element':
             $start_element = trim($value);
-            $start_page = null;
-            $start_level = null;
-            $childrenof = null;
-            $items = null;
+            $start_page = '';
+            $start_level = 0;
+            $childrenof = '';
+            $items = '';
             break;
 
         case 'start_page':
-            $start_element = null;
+            $start_element = '';
             $start_page = trim($value);
-            $start_level = null;
-            $childrenof = null;
-            $items = null;
+            $start_level = 0;
+            $childrenof = '';
+            $items = '';
             break;
 
         case 'start_level':
             $value = (int)$value;
             if( $value > 1 ) {
-                $start_element = null;
-                $start_page = null;
-                $items = null;
+                $start_element = '';
+                $start_page = '';
+                $items = '';
                 $start_level = $value;
             }
             break;
 
         case 'childrenof':
-            $start_page = null;
-            $start_element = null;
-            $start_level = null;
-            $childrenof = trim($value);
-            $items = null;
+            $start_page = '';
+            $start_element = '';
+            $start_level = 0;
+            $childrenof = trim((string)$value);
+            $items = '';
             break;
 
         case 'collapse':
@@ -235,11 +235,11 @@ if( !$tpl->isCached() ) {
     }
     else if( $items ) {
         if( $nlevels < 1 ) $nlevels = 1;
-        $items = explode(',',$items);
-        $items = array_unique($items);
-        foreach( $items as $item ) {
+        $aliases = explode(',',$items);
+        $aliases = array_unique($aliases);
+        foreach( $aliases as $item ) {
             $item = trim($item);
-            $tmp = $hm->sureGetNodeByAlias(trim($item));
+            $tmp = $hm->sureGetNodeByAlias($item);
             if( $tmp ) $rootnodes[] = $tmp;
         }
     }

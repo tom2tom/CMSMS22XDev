@@ -52,8 +52,7 @@ class UploadHandler extends jquery_upload_handler
         $str = basename($complete_path).' uploaded to '.\filemanager_utils::get_full_cwd();
         if( $thumb ) $str .= ' and a thumbnail was generated';
         audit('',$this->_mod->GetName(),$str);
-
-        /*
+/*
         $info = getimagesize($complete_path);
         if( !$info || !isset($info['mime']) ) return;
 
@@ -72,7 +71,7 @@ class UploadHandler extends jquery_upload_handler
         imagesavealpha($i_dest,TRUE);
         imagecopyresampled($i_dest,$i_src,0,0,0,0,$width,$height,imagesx($i_src),imagesy($i_src));
 
-        $res = null;
+        $res = false;
         switch( $info['mime'] ) {
         case 'image/gif':
             $res = imagegif($i_dest,$complete_thumb);
@@ -84,6 +83,6 @@ class UploadHandler extends jquery_upload_handler
             $res = imagejpeg($i_dest,$complete_thumb,100);
             break;
         }
-        */
+*/
     }
 }

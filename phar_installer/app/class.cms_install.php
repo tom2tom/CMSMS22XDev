@@ -50,7 +50,7 @@ class cms_install extends app
         // if the system temporary directory is not the same as the config temporary directory
         // then we attempt to putenv the TMPDIR environment variable
         // so that tmpfile() will work as it uses the system temporary directory which can read from environment variables
-        $sys_tmpdir = null;
+        $sys_tmpdir = '';
         if( function_exists('sys_get_temp_dir') ) $sys_tmpdir = rtrim(sys_get_temp_dir(),'\\/');
         $config = $this->get_config();
         if( (!$sys_tmpdir || !is_dir($sys_tmpdir) || !is_writable($sys_tmpdir)) && $sys_tmpdir != $config['tmpdir'] ) {
@@ -88,7 +88,7 @@ class cms_install extends app
           ->assign('installer_version',$config['installer_version']);
 
         $fn = $this->get_appdir().'/build.ini';
-        $build = null;
+        $build = [];
         if( file_exists($fn) ) $build = parse_ini_file($fn);
         if( isset($build['build_time']) ) $smarty->assign('build_time',$build['build_time']);
 
@@ -126,7 +126,7 @@ class cms_install extends app
             @unlink($dest_archive);
         }
         if( $i == 2 ) throw new Exception('Checksum of temporary archive does not match... copying/permissions problem');
-        $this->_archive = $dest_archive;;
+        $this->_archive = $dest_archive;
 
         // get version details (version we are installing)
         // if not in the session, save them there.
@@ -148,7 +148,7 @@ class cms_install extends app
         }
     }
 
-    static public function autoload($classname)
+    public static function autoload($classname)
     {
         if( startswith($classname, 'cms_autoinstaller\\') ) $classname = substr($classname,strlen('cms_autoinstaller\\'));
 
@@ -181,7 +181,7 @@ class cms_install extends app
         $config_file = realpath(getcwd()).'/custom_config.ini';
         if( is_file($config_file) && is_readable($config_file) ) {
             $tmp = parse_ini_file($config_file);
-            if( is_array($tmp) && count($tmp) ) {
+            if( $tmp && is_array($tmp) ) {
                 $config = array_merge($config,$tmp);
                 if( isset($tmp['dest']) ) $this->_custom_destdir = $tmp['dest'];
             }

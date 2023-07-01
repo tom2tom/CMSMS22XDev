@@ -1,6 +1,6 @@
 <script type="text/javascript">
 $(function() {
-  $('.helpicon').click(function(){
+  $('.helpicon').on('click', function(){
     var x = $(this).attr('name');
     $('#'+x).dialog();
   });

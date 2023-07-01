@@ -232,9 +232,9 @@ class DataDictionary extends \CMSMS\Database\DataDictionary
      * The name is not checked for a reserved-word.
      * Permitted characters in unquoted identifiers are in accord with MySQL documentation.
      */
-    protected function NameQuote($name = null, $allowBrackets = false)
+    protected function NameQuote($name = '', $allowBrackets = false)
     {
-        if (!is_string($name)) {
+        if (!is_string($name) || !$name) {
             return '';
         }
 

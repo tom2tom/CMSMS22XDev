@@ -10,13 +10,13 @@ class Statement extends \CMSMS\Database\Statement
     private $_bind;
     private $_bound;
     private $_types;
-    private $_stmt; // the statement object.
+    private $_stmt; // the statement object
     private $_meta; // after first execute
     private $_num_rows; // after first execute
     private $_row; // updates after each execute for queries with a resultset
     private $_pos; // updates after each execute for queries with a resultset
 
-    public function __construct(Connection $conn,$sql = null)
+    public function __construct(Connection $conn,$sql = '')
     {
         // this is just for type checking.
         parent::__construct($conn,$sql);
@@ -90,7 +90,7 @@ class Statement extends \CMSMS\Database\Statement
         if( !$conn || !$this->db->IsConnected() ) throw new \LogicException('Attempt to create prepared statement when database is not connected');
         $this->_stmt = $conn->prepare( (string) $sql );
 	if( !$this->_stmt ) throw new \LogicException('Could not prepare a statement: '.$conn->error);
-        $this->_row = null;
+        $this->_row = [];
         $this->_pos = 0;
     }
 
@@ -120,21 +120,20 @@ class Statement extends \CMSMS\Database\Statement
         if( $this->_data ) next($this->_data);
     }
 
-    public function Fields($col = null)
+    public function Fields($col = '')
     {
-        $row = null;
+        $row = [];
         if( $this->_stmt ) {
             $this->_stmt->fetch();
             $row = $this->_row;
         }
         if( !$row && $this->_data ) $row = current($this->_data);
-        if( !$row ) return; // nothing
+        if( !$row ) return []; // nothing
 
         if( $col ) {
             if( isset($row[$col]) ) return $row[$col];
-        } else {
-            return $row;
         }
+        return $row;
     }
 
     public function Execute()
@@ -180,7 +179,7 @@ class Statement extends \CMSMS\Database\Statement
             $this->_meta = $meta;
             $this->_row = array();
             while( $field = $this->_meta->fetch_field() ) {
-                $this->_row[$field->name] = null;
+                $this->_row[$field->name] = '';
                 $params[] =& $this->_row[$field->name];
             }
             call_user_func_array(array($this->_stmt,'bind_result'),$params);

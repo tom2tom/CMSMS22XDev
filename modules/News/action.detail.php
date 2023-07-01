@@ -4,14 +4,12 @@ if (!isset($gCms)) exit;
 //
 // initialization
 //
-$query = null;
-$article = null;
+$article = null; // no object
 $preview = FALSE;
 $articleid = (isset($params['articleid']))?$params['articleid']:-1;
 $cache_id = 'nd'.md5(serialize($params));
 $compile_id = 'nd'.$articleid;
 
-$template = null;
 if (isset($params['detailtemplate'])) {
     $template = trim($params['detailtemplate']);
 }
@@ -32,7 +30,7 @@ if( $id == '_preview_' && isset($_SESSION['news_preview']) && isset($params['pre
             $data = unserialize(file_get_contents($fname));
             if( is_array($data) ) {
                 // get passed data into a standard format.
-                $article = new news_article;
+                $article = new news_article();
                 $article->set_linkdata($id,$params);
                 news_ops::fill_article_from_formparams($article,$data,FALSE,FALSE);
                 $compile_id = 'news_preview_'.time();
@@ -55,7 +53,7 @@ if( $preview || !$tpl_ob->IsCached() ) {
     }
     if( !$article ) {
         throw new CmsError404Exception('Article '.(int)$params['articleid'].' not found, or otherwise unavailable');
-        return;
+//      return; useless here
     }
     $article->set_linkdata($id,$params);
 

@@ -135,13 +135,14 @@ class ModuleManagerModuleInfo extends CmsExtendedModuleInfo implements ArrayAcce
             if(in_array($this['name'], self::$_deprecated)) return TRUE;
             return FALSE;
         }
+        return null; // no value for unsupported property
     }
 
     #[\ReturnTypeWillChange]
     public function offsetSet($key,$value)
     {
         if( !in_array($key,self::$_mmkeys) ) parent::OffsetSet($key,$value);
-        if( $key != 'e_status' && $key != 'deprecated' ) return; // dynamic
+        if( $key != 'e_status' && $key != 'deprecated' ) return; // void
         $this->_mmdata[$key] = $value;
     }
 
@@ -182,13 +183,12 @@ class ModuleManagerModuleInfo extends CmsExtendedModuleInfo implements ArrayAcce
         return self::$_minfo;
     }
 
-    public static function &get_module_info($module)
+    public static function get_module_info($module)
     {
         $tmp = self::get_all_module_info();
         if( isset($tmp[$module]) ) return $tmp[$module];
 
-        $out = null;
-        return $out;
+        return [];
     }
 
 } // end of class

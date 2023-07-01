@@ -25,14 +25,14 @@ function smarty_function_last_modified_by($params, $smarty)
 	if (isset($content_obj) && $content_obj->LastModifiedBy() > -1)	{
 		$id = $content_obj->LastModifiedBy();
 	} else {
-		return;
+		return '';
 	}
 
     $format = "id";
 	if(!empty($params['format'])) $format = $params['format'];
     $userops = UserOperations::get_instance();
     $thisuser = $userops->LoadUserByID($id);
-    if( !$thisuser ) return; // could not find user record.
+    if( !$thisuser ) return ''; // could not find user record.
 
     $output = '';
     if($format==="id") {
@@ -45,7 +45,7 @@ function smarty_function_last_modified_by($params, $smarty)
 
     if( isset($params['assign']) ) {
         $smarty->assign(trim($params['assign']),$output);
-        return;
+        return '';
     }
     return $output;
 }

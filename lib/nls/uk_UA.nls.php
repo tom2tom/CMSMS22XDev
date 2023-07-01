@@ -44,7 +44,7 @@ $nls['locale']['uk_UA'] = 'uk_UA,uk_UA.cp1251,uk_UA.CP1251,uk_UA.CP866,uk_UA.koi
 $nls['encoding']['uk_UA'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['uk_UA'] = array(dirname(__FILE__).'/uk_UA/admin.inc.php');
+$nls['file']['uk_UA'] = array(__DIR__.'/uk_UA/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

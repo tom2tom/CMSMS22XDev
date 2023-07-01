@@ -33,10 +33,10 @@ define ('IMAGE_MIME', 'mime');
  * Returns false if $file is not a file, no arguments are supplied, $file is not an image, or otherwise fails.
  *
  **/
-function image_info($file = null, $out = null) {
+function image_info($file = '', $out = '') {
 
   // If $file is not supplied or is not a file, warn the user and return false.
-  if (is_null($file) || !is_file($file)) {
+  if ( !$file || !is_file($file)) {
    // echo '<p><b>Warning:</b> image_info() => first argument must be a file.</p>';
     return false;
   }
@@ -52,8 +52,8 @@ function image_info($file = null, $out = null) {
        'mime',
        );
 
-       // If $out is supplied, but is not a valid key, nullify it.
-       if (!is_null($out) && !in_array($out, $redefine_keys)) $out = null;
+       // If $out is supplied, but is not a valid key, empty it.
+       if ( $out && !in_array($out, $redefine_keys)) $out = '';
 
        // Assign usefull values for the third index.
        $types = array(
@@ -92,11 +92,11 @@ function image_info($file = null, $out = null) {
          $data[$redefine_keys[$k]] = $v;
        }
 
-       // Make 'type' usefull.
+       // Make 'type' useful.
        $data['type'] = $types[$data['type']];
 
        // Return the desired information.
-       return !is_null($out) ? $data[$out] : $data;
+       return ($out) ? $data[$out] : $data;
 }
 
 

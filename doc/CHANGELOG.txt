@@ -1,3 +1,44 @@
+Version 2.2.18 - Real Soon Now
+-------------------------------
+Various places
+ - Compatibility fixes for PHP 8.2.
+ - Replaced deprecated Smarty syntax in templates.
+ - Replaced some of the deprecated jQuery syntax.
+ - Corrected typos.
+
+Core - General
+ - Corrected filter applied to $_GET, $_SERVER at the start of each request.
+ - Added missing nls files, allowing installation of extra translations.
+ - Smarty upgraded to version 4.3.0.
+ - Enabled use of PHP function rawurlencode in Smarty templates.
+ - Added Smarty modifier plugin 'adjust' to handle deprecated modifier-function-calls in templates.
+ - PHPMailer upgraded to version 6.7.1.
+ - jQuery upgraded to version 1.12.4.
+ - jQuery UI upgraded to version 1.12.1.
+ - jQuery migrate upgraded to version 1.4.1.
+
+ContentManager
+ - BR #12474 - Taking the default page down by accident through the content type.
+
+DesignManager
+ - Fix new template creation
+
+FileManager
+ - BR #12535 - File Manager Unpack archive .tar.gz.
+
+FilePicker
+ - BR #12621 - FilePicker upload bug.
+
+MenuManager 1.50.4
+ - BR #12619 - Wrong assignment of $prevdepth.
+ - BR #12620 - Version 2 breaks MenuManager with childrenof.
+
+News
+ - Sanitise news-item strings (title, content etc) before display
+
+Phar Installer v1.4
+ - Always-optional post-installation email includes more advice, and no password
+
 Version 2.2.17 - Iqaluit
 -------------------------------
 Everywhere Compatibility fixes for PHP 7, 8.0 and 8.1
@@ -5,12 +46,12 @@ Everywhere Compatibility fixes for PHP 7, 8.0 and 8.1
 Core - General
  - BR #12529 - Cacheable Pages have Bad Header Last-Modified
  - BR #12543 - Lib file corrections
- - BR #12618 - HasChildren() is broken
  - BR #12587 - can't uninstall modules
+ - BR #12618 - HasChildren() is broken
  - Smarty upgraded to version 4.2.1
     Note: Smarty 2 syntax is still supported, but deprecated
  - Added function CMSMS\strftime to replace deprecated PHP function. PHP Intl extension recommended to support this.
- - Enabled use of PHP functions trim,ltrim,rtrim in smarty templates.
+ - Enabled use of PHP functions trim,ltrim,rtrim in Smarty templates.
  - PHPMailer upgraded to version 6.6.0.
  - Added module's support for arrays in parameters.
  - Added getter, setter methods and autotls settings to cms_mailer class.
@@ -31,7 +72,7 @@ News 2.51.12
  - BR #12543 - Lib file corrections.
 
 FileManager 1.6.13
-TBA
+ - BR TBA
 
 Version 2.2.16 - Truro
 -------------------------------

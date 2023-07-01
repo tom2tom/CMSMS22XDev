@@ -28,12 +28,12 @@
 # END_LICENSE
 #-------------------------------------------------------------------------
 use FilePicker\TemporaryProfileStorage;
-use CMSMS\FilePickerProfile as Profile;
+//use CMSMS\FilePickerProfile as Profile;
 use CMSMS\FileType;
 
 require_once(__DIR__.'/lib/class.ProfileDAO.php');
 
-final class FilePicker extends \CMSModule implements \CMSMS\FilePickerInterface
+final class FilePicker extends \CMSModule implements CMSMS\FilePickerInterface
 {
     protected $_dao;
     protected $_typehelper;
@@ -109,22 +109,22 @@ final class FilePicker extends \CMSModule implements \CMSMS\FilePickerInterface
         return filemanager_utils::get_file_list($path);
     }
 
-    public function get_profile_or_default( $profile_name, $dir = null, $uid = null )
+    public function get_profile_or_default( $profile_name, $dir = '', $uid = 0 )
     {
         $profile_name = trim($profile_name);
-        $profile = null;
+        $profile = null; // no object
         if( $profile_name ) $profile = $this->_dao->loadByName( $profile_name );
         if( !$profile ) $profile = $this->get_default_profile( $dir, $uid );
         return $profile;
     }
 
-    public function get_default_profile( $dir = null, $uid = null )
+    public function get_default_profile( $dir = '', $uid = 0 )
     {
         /* $dir is absolute */
         $profile = $this->_dao->loadDefault();
         if( $profile ) return $profile;
 
-        $profile = new \CMSMS\FilePickerProfile;
+        $profile = new \CMSMS\FilePickerProfile();
         return $profile;
     }
 
@@ -136,7 +136,7 @@ final class FilePicker extends \CMSModule implements \CMSMS\FilePickerInterface
     public function get_html( $name, $value, \CMSMS\FilePickerProfile $profile, $required = false )
     {
         $_instance = 'i'.uniqid();
-        if( $value === '-1' ) $value = null;
+        if( $value === '-1' ) $value = '';
 
         // store the profile as a 'useonce' and add it's signature to the params on the url
         $sig = TemporaryProfileStorage::set( $profile );
@@ -144,7 +144,7 @@ final class FilePicker extends \CMSModule implements \CMSMS\FilePickerInterface
         $tpl_ob = $smarty->CreateTemplate($this->GetTemplateResource('contentblock.tpl'),null,null,$smarty);
         $tpl_ob->assign('mod',$this);
         $tpl_ob->assign('sig',$sig);
-        $tpl_ob->assign('blockName',$name);;
+        $tpl_ob->assign('blockName',$name);
         $tpl_ob->assign('value',$value);
         $tpl_ob->assign('instance',$_instance);
         $tpl_ob->assign('profile',$profile);

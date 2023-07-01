@@ -109,14 +109,14 @@ final class cms_utils
 	 * @param string $version An optional version string
 	 * @return CmsModule The matching module object or null
 	 */
-	public static function &get_module($name,$version = '')
+	public static function get_module($name,$version = '')
 	{
 		return ModuleOperations::get_instance()->get_module_instance($name,$version);
 	}
 
 
 	/**
-	 * A convenience function to return an indication if a module is availalbe.
+	 * A convenience function to return an indication if a module is available.
 	 *
 	 * @see get_module()
 	 * @final
@@ -132,48 +132,48 @@ final class cms_utils
 
 
 	/**
-	 * A convenience function to return the current database instance.
+	 * A convenience function to return the current database-connection.
 	 *
 	 * @link http://phplens.com/lens/adodb/docs-adodb.htm
 	 * @since 1.9
 	* @return \CMSMS\Database\Connection
 	* @throws \Exception
 	*/
-	final public static function & get_db()
+	final public static function get_db()
 	{
 		return \CmsApp::get_instance()->GetDb();
 	}
 
 
 	/**
-	 * A convenience function to return a handle to the global CMSMS config.
+	 * A convenience function to return the global CMSMS config.
 	 *
 	 * @final
 	 * @since 1.9
 	 * @return cms_config The global configuration object.
 	 */
-	final public static function & get_config()
+	final public static function get_config()
 	{
 		return \cms_config::get_instance();
 	}
 
 
 	/**
-	 * A convenience function to return a handle to the CMSMS Smarty object.
+	 * A convenience function to return the CMSMS Smarty object.
 	 *
 	 * @see CmsApp::GetSmarty()
 	 * @since 1.9
 	 * @final
 	 * @return Smarty_CMS Handle to the Smarty object
 	 */
-	final public static function & get_smarty()
+	final public static function get_smarty()
 	{
 		return \Smarty_CMS::get_instance();
 	}
 
 
 	/**
-	 * A convenience functon to return a reference to the current content object.
+	 * A convenience function to return the current content object.
 	 *
 	 * This function will always return NULL if called from an admin action
 	 *
@@ -200,6 +200,7 @@ final class cms_utils
 	{
 		$obj = CmsApp::get_instance()->get_content_object();
 		if( $obj ) return $obj->Alias();
+		return '';
 	}
 
 
@@ -229,7 +230,7 @@ final class cms_utils
 	 * @param string $module_name The module name.
 	 * @return CMSModule
 	 */
-	public static function &get_wysiwyg_module($module_name = '')
+	public static function get_wysiwyg_module($module_name = '')
 	{
 		return ModuleOperations::get_instance()->GetWYSIWYGModule($module_name);
 	}
@@ -243,7 +244,7 @@ final class cms_utils
 	 * @author calguy1000
 	 * @return CMSModule
 	 */
-	public static function &get_syntax_highlighter_module()
+	public static function get_syntax_highlighter_module()
 	{
 		return ModuleOperations::get_instance()->GetSyntaxHighlighter();
 	}
@@ -256,7 +257,7 @@ final class cms_utils
 	 * @author calguy1000
 	 * @return CMSModule
 	 */
-	public static function &get_search_module()
+	public static function get_search_module()
 	{
 		return ModuleOperations::get_instance()->GetSearchModule();
 	}
@@ -268,13 +269,13 @@ final class cms_utils
 	 * @author calguy1000
 	 * @return CMSModule
 	 */
-	public static function &get_filepicker_module()
+	public static function get_filepicker_module()
 	{
 		return ModuleOperations::get_instance()->GetFilePickerModule();
 	}
 
 	/**
-	 * Attempt to retreive the IP address of the connected user.
+	 * Attempt to retrieve the IP address of the connected user.
 	 * This function attempts to compensate for proxy servers.
 	 *
 	 * @author calguy1000

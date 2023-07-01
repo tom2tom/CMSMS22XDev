@@ -18,9 +18,9 @@
 function smarty_cms_function_share_data($params,$template)
 {
     $dest = trim(strtolower(get_parameter_value($params,'scope','parent')));
-    $vars = (isset($params['data']))?$params['data']:null;
-    $vars = (isset($params['vars']))?$params['vars']:$vars;
-    if( !$vars ) return; // nothing to do.
+    $vars = (isset($params['data']))?$params['data']:
+      ((isset($params['vars']))?$params['vars']:'');
+    if( !$vars ) return ''; // nothing to do.
 
     if( is_string($vars) ) {
         $t_list = explode(',',$vars);
@@ -32,9 +32,9 @@ function smarty_cms_function_share_data($params,$template)
         $vars = $t_list_2;
     }
 
-    if( !count($vars) ) return;
+    if( !count($vars) ) return '';
 
-    $scope = null;
+    $scope = null; // no object
     $fn = 'assign';
     switch( $dest ) {
     case 'global':
@@ -44,7 +44,7 @@ function smarty_cms_function_share_data($params,$template)
 
     default: /* parent scope */
         $scope = $template->parent;
-        if( !is_object($scope) ) return;
+        if( !is_object($scope) ) return '';
         if( $scope == $template->smarty ) {
             // a bit of a trick... if our parent is the global smarty object
             // we assume we want this variable available through the rest of the templates

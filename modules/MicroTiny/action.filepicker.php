@@ -145,9 +145,9 @@ while( false !== ($filename = $dh->read()) ) {
   $info = @stat($fullname);
   $filesizename = array(" Bytes", " KB", " MB");
   if( $info && $info['size'] > 0) {
-  	$file['size'] = round($info['size']/pow(1024, ($i = floor(log($info['size'], 1024)))), 2) . $filesizename[$i];
+    $file['size'] = round($info['size']/pow(1024, ($i = floor(log($info['size'], 1024)))), 2) . $filesizename[$i];
   } else {
-  	$file['size'] = null;
+    $file['size'] = '';
   }
   if( $file['isdir'] ) {
     $url = $this->create_url($id,'filepicker',$returnid)."&showtemplate=false&subdir=$filename&type=$type&field=$field";

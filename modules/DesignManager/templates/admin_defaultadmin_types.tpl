@@ -1,4 +1,4 @@
-{if isset($list_all_types)}
+{if !empty($list_all_types)}
 <table class="pagetable">
   <thead>
     <tr>

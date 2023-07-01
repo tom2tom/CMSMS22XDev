@@ -191,7 +191,7 @@ if (isset($_POST["submit"])) {
 
 include_once ('header.php');
 
-if (false == empty($error)) echo $themeObject->ShowErrors('<ul class="error">' . $error . '</ul>');
+if (!empty($error)) echo $themeObject->ShowErrors('<ul class="error">' . $error . '</ul>');
 
 $out      = array(-1 => lang('none'));
 $userlist = UserOperations::get_instance()->LoadUsers();

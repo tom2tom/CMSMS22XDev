@@ -50,7 +50,7 @@ function send_recovery_email(\User $user)
     $gCms = \CmsApp::get_instance();
     $config = $gCms->GetConfig();
 
-    $obj = new \cms_mailer;
+    $obj = new \cms_mailer();
     $obj->IsHTML(TRUE);
     $obj->AddAddress($user->email, html_entity_decode($user->firstname . ' ' . $user->lastname));
     $obj->SetSubject(lang('lostpwemailsubject',html_entity_decode(get_site_preference('sitename','CMSMS Site'))));
@@ -79,14 +79,14 @@ function send_recovery_email(\User $user)
 function find_recovery_user($hash)
 {
     if( $hash ) {
-    $gCms = \CmsApp::get_instance();
-    $userops = $gCms->GetUserOperations();
-
-    foreach ($userops->LoadUsers() as $user) {
-        $code = \cms_userprefs::get_for_user( $user->id, 'pwreset' );
-            if( $code && $hash === $code ) { //OR hash_equals($hash, $code) PHP 5.6+
+        $gCms = \CmsApp::get_instance();
+        $userops = $gCms->GetUserOperations();
+        // TODO avoid creating all User-objects merely to try to find one of them
+        foreach ($userops->LoadUsers() as $user) {
+            $code = \cms_userprefs::get_for_user( $user->id, 'pwreset' );
+            if( $code && $hash === $code ) { //timing attack, hence hash_equals($hash, $code), not a factor here
                 return $user;
-    }
+            }
         }
     }
     return null;
@@ -137,7 +137,7 @@ else if (isset($_REQUEST['forgotpwchangeform']) && $_REQUEST['forgotpwchangeform
         $error = lang('usernotfound');
     }
     else {
-        if ($_REQUEST['password'] != '') {
+        if ($_REQUEST['password']) {
             if ($_REQUEST['password'] == $_REQUEST['passwordagain']) {
                 $user->SetPassword($_REQUEST['password']);
                 $user->Save();
@@ -181,9 +181,10 @@ if( isset($_POST['logincancel']) ) {
 else if( isset($_POST['loginsubmit']) ) {
     // login form submitted
     $login_ops->deauthenticate();
-    $username = $password = null;
-    if (isset($_POST["username"])) $username = cleanValue($_POST["username"]);
-    if (isset($_POST["password"])) $password = $_POST["password"];
+    $username = '';
+    if( isset($_POST["username"]) ) $username = cleanValue($_POST["username"]);
+    $password = '';
+    if( isset($_POST["password"]) ) $password = $_POST["password"];
     unset($_POST['username'],$_POST['password'],$_REQUEST['username'],$_REQUEST['password']);
 
     $userops = $gCms->GetUserOperations();
@@ -194,11 +195,10 @@ else if( isset($_POST['loginsubmit']) ) {
         if( !$username || !$password ) throw new \LogicException(lang('usernameincorrect'));
 
         // load user by name
-        // do hooks for authentication
         $oneuser = $userops->LoadUserByUsername($username, $password, TRUE, TRUE);
-        // $oneuser = $userops->LoadUserByUsername($username, $password, TRUE, TRUE);
         if( !$oneuser ) throw new CmsLoginError(lang('usernameincorrect'));
 
+        // do hooks for authentication
         \CMSMS\HookManager::do_hook('Core::LoginPre', [ 'user'=>$oneuser  ] );
 
         $login_ops->save_authentication($oneuser);

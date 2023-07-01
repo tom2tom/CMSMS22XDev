@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-function search_StemPhrase(&$module,$phrase)
+function search_StemPhrase($module,$phrase)
 {
     // strip out smarty tags
     $phrase = preg_replace('/{.*?}/', ' ', $phrase);
@@ -56,7 +56,7 @@ function search_StemPhrase(&$module,$phrase)
 
     // stem words
     $stemmed_words = array();
-    $stemmer = null;
+    $stemmer = null; // no object
     if( $module->GetPreference('usestemming', 'false') != 'false' ) $stemmer = new PorterStemmer();
 
     foreach ($words as $word) {
@@ -77,7 +77,7 @@ function search_StemPhrase(&$module,$phrase)
 }
 
 
-function search_AddWords(&$obj, $module = 'Search', $id = -1, $attr = '', $content = '', $expires = NULL)
+function search_AddWords($obj, $module = 'Search', $id = -1, $attr = '', $content = '', $expires = NULL) // mixed timestamp or null
 {
     $db = $obj->GetDb();
     $obj->DeleteWords($module, $id, $attr);
@@ -130,7 +130,7 @@ function search_AddWords(&$obj, $module = 'Search', $id = -1, $attr = '', $conte
     }
 }
 
-function search_DeleteWords(&$obj, $module = 'Search', $id = -1, $attr = '')
+function search_DeleteWords($obj, $module = 'Search', $id = -1, $attr = '')
 {
     $db = $obj->GetDb();
     $db->BeginTrans();
@@ -151,7 +151,7 @@ function search_DeleteWords(&$obj, $module = 'Search', $id = -1, $attr = '')
 }
 
 
-function search_Reindex(&$module)
+function search_Reindex($module)
 {
     @set_time_limit(999);
     $module->DeleteAllWords();
@@ -194,7 +194,7 @@ function search_Reindex(&$module)
 }
 
 
-function search_DoEvent(&$module, $originator, $eventname, &$params )
+function search_DoEvent($module, $originator, $eventname, &$params )
 {
     if ($originator != 'Core') return;
 

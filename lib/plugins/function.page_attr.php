@@ -42,7 +42,7 @@ function smarty_function_page_attr($params, $smarty)
         $contentobj = cms_utils::get_current_content();
     }
 
-    $result = null;
+    $result = '';
     if( $contentobj && $key ) {
         switch( $key ) {
         case '_dflt_':
@@ -69,12 +69,12 @@ function smarty_function_page_attr($params, $smarty)
 
         case 'created_date':
             $result = $contentobj->GetCreationDate();
-            if( $result < 0 ) $result = null;
+            if( $result < 0 ) $result = '';
             break;
 
         case 'modified_date':
             $result = $contentobj->GetModifiedDate();
-            if( $result < 0 ) $result = null;
+            if( $result < 0 ) $result = '';
             break;
 
         case 'last_modified_by':
@@ -92,7 +92,7 @@ function smarty_function_page_attr($params, $smarty)
     }
     if( $assign ) {
         $smarty->assign($assign,$result);
-        return;
+        return '';
     }
 	return $result;
 }

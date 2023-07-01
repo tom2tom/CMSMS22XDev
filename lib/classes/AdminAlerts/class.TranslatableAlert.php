@@ -58,7 +58,7 @@ class TranslatableAlert extends Alert
      *
      * @param mixed $perms A single permission name, or an An array of permission names, or null.
      */
-    public function __construct($perms = null)
+    public function __construct($perms = [])
     {
         if( $perms ) {
             if( is_string($perms) ) $perms = [ $perms ];
@@ -139,7 +139,7 @@ class TranslatableAlert extends Alert
     }
 
     /**
-     * Givent he admin_uid, check if the specified uid has at least one of the permissions specified in the perms array.
+     * Given the admin_uid, check if the specified uid has at least one of the permissions specified in the perms array.
      *
      * @param int $admin_uid
      * @return bool;
@@ -158,7 +158,7 @@ class TranslatableAlert extends Alert
     }
 
     /**
-     * Givent he title key, translate the key into a displayable string.
+     * Given the title key, translate the key into a displayable string.
      *
      * @return string
      */
@@ -166,10 +166,11 @@ class TranslatableAlert extends Alert
     {
         $modname = $this->module;
         if( !$modname || strtolower($modname) == 'core' ) {
-            return call_user_func('lang', $this->_titlekey );;
+            return call_user_func('lang', $this->_titlekey );
         }
         $mod = \cms_utils::get_module($modname);
         if( $mod ) return call_user_func( [ $mod, 'Lang'], $this->_titlekey );
+        return '';
     }
 
     /**
@@ -183,10 +184,11 @@ class TranslatableAlert extends Alert
         $args = [ $this->_msgkey ];
         if( $this->_msgargs ) $args = array_merge( $args, $this->_msgargs );
         if( !$modname || strtolower($modname) == 'core' ) {
-            return call_user_func_array('lang',$args);;
+            return call_user_func_array('lang',$args);
         }
         $mod = \cms_utils::get_module($modname);
         if( $mod ) return call_user_func_array([ $mod, 'Lang'], $args);
+        return '';
     }
 
     /**

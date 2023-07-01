@@ -6,8 +6,8 @@
     <div class="pageoverflow">
       <p class="pagetext"></p>
       <p class="pageinput">
-        <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}"/>
-        <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}"/>
+        <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />
+        <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
       </p>
     </div>
 
@@ -52,7 +52,7 @@
   <div style="clear: both;"></div>
 </fieldset>{* container *}
 
-<input type="hidden" name="{$actionid}type" value="{$type->get_id()}"/>
+<input type="hidden" name="{$actionid}type" value="{$type->get_id()}" />
 
 {if $type->get_content_callback() != ''}
 {tab_header name='content' label=$mod->Lang('prompt_proto_template')}
@@ -71,7 +71,7 @@
   </p>
 
   <div class="pagecontainer">
-    <input type="submit" name="{$actionid}reset" value="{$mod->Lang('reset_factory')}" onclick="return confirm('{$mod->Lang('confirm_reset_type')|escape:'javascript'}')"/>
+    <input type="submit" name="{$actionid}reset" value="{$mod->Lang('reset_factory')}" onclick="return confirm('{$mod->Lang("confirm_reset_type")|escape:"javascript"}');" />
   </div>
 </div>
 {/if}

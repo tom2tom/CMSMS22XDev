@@ -118,9 +118,9 @@ class FilePickerProfile
      *
      * @param array $params An associative array of parameters suitable for the setValue method.
      */
-    public function __construct( array $params = null )
+    public function __construct( array $params = [] )
     {
-        if( !is_array($params) || !count($params) ) return;
+        if( !count($params) ) return;
         foreach( $params as $key => $val ) {
             $this->setValue($key,$val);
         }
@@ -149,12 +149,13 @@ class FilePickerProfile
         case 'sort':
             return (bool) $this->_data[$key];
         }
+        return null; // no value for unrecognised property
     }
 
     /**
-     * Create a new profile object based on the current one, with various aadjusments.
+     * Create a new profile object based on the current one, with various adjustments.
      *
-     * @param array $params Associative array of paramaters for the setValue method.
+     * @param array $params Associative array of parameters for the setValue method.
      * @return FilePickerProfile
      */
     public function overrideWith( array $params )

@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: listtags.php 2772 2006-05-17 02:25:27Z wishy $
+#$Id$
 
 $CMS_ADMIN_PAGE=1;
 $CMS_LOAD_ALL_PLUGINS=1;

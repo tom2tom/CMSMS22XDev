@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: class.admintheme.inc.php 7596 2011-12-24 22:50:52Z calguy1000 $
+#$Id$
 
 /**
  * Classes and utilities for the base CMS Admin theme
@@ -186,6 +186,7 @@ abstract class CmsAdminThemeBase
 		if( $key == 'userid' ) return get_userid();
 		if( $key == 'title' ) return $this->_title;
 		if( $key == 'subtitle' ) return $this->_subtitle;
+		return null; // no value
 	}
 
 	/**
@@ -675,8 +676,8 @@ abstract class CmsAdminThemeBase
 		}
 
 		// find the selected menu item.
-		$selected_key = null;
-		$pending_selected_key = null;
+		$selected_key = '';
+		$pending_selected_key = '';
 		$req_url = new cms_url($_SERVER['REQUEST_URI']);
 		$req_vars = array();
 		if( $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['mact']) && !isset($_GET['mact']) ) {
@@ -798,7 +799,7 @@ abstract class CmsAdminThemeBase
 	 */
 	public function SetTitle($str)
 	{
-		if( $str == '' ) $str = null;
+		if( (string)$str == '' ) $str = '';
 		$this->_title = $str;
 	}
 
@@ -813,7 +814,7 @@ abstract class CmsAdminThemeBase
 	 */
 	public function SetSubTitle($str)
 	{
-		if( $str == '' ) $str = null;
+		if( (string)$str == '' ) $str = '';
 		$this->_subtitle = $str;
 	}
 
@@ -924,13 +925,13 @@ abstract class CmsAdminThemeBase
 	 * @access protected
 	 * @param string $module_name
 	 */
-	protected function get_module_help_url($module_name = null)
+	protected function get_module_help_url($module_name = '')
 	{
 		if( !$module_name ) $module_name = $this->get_action_module();
-		if( !$module_name ) return;
+		if( !$module_name ) return '';
 
 		$modman = cms_utils::get_module('ModuleManager');
-		if( !is_object($modman) ) return;
+		if( !is_object($modman) ) return '';
 		return $modman->create_url('m1_','defaultadmin','',array('modulehelp'=>$module_name));
 	}
 
@@ -940,7 +941,7 @@ abstract class CmsAdminThemeBase
 	 *
 	 * @access protected
 	 * @param string $title The title to search for
-	 * @return string The matching key, or null
+	 * @return string The matching key, or empty
 	 */
 	protected function find_menuitem_by_title($title)
 	{
@@ -948,6 +949,7 @@ abstract class CmsAdminThemeBase
 		foreach( $nav as $key => $rec ) {
 			if( isset($rec['title']) && $rec['title'] == $title ) return $key;
 		}
+		return '';
 	}
 
 
@@ -1108,10 +1110,10 @@ abstract class CmsAdminThemeBase
 	abstract public function ShowErrors($errors,$get_var='');
 
 	/**
-	 * Abstrct function for showing messages in the admin theme.
+	 * Abstract function for showing messages in the admin theme.
 	 *
 	 * @abstract
-	 * @param mixed $message The message, either a string, or an array of stri9ngs
+	 * @param mixed $message The message, either a string, or an array of strings
 	 * @param string $get_var An optional get variable name that can contain an error string key.  If specified, message param is ignored.
 	 */
 	abstract public function ShowMessage($message,$get_var='');
@@ -1135,15 +1137,16 @@ abstract class CmsAdminThemeBase
 	 *
 	 * @returns string
 	 */
-	static public function GetDefaultTheme()
+	public static function GetDefaultTheme()
 	{
 		$tmp = self::GetAvailableThemes();
 		if( is_array($tmp) && count($tmp) ) {
 			$tmp = array_keys($tmp);
 			$logintheme = get_site_preference('logintheme');
-			if( $logintheme && in_array($logintheme,$tmp) )	return $logintheme;
+			if( $logintheme && in_array($logintheme,$tmp) ) return $logintheme;
 			return $tmp[0];
 		}
+		return '';
 	}
 
 
@@ -1152,21 +1155,21 @@ abstract class CmsAdminThemeBase
 	 *
 	 * @return array A hash of strings.
 	 */
-	static public function GetAvailableThemes()
+	public static function GetAvailableThemes()
 	{
 		$config = \cms_config::get_instance();
 
+		$res = array();
 		$files = glob(cms_join_path($config['admin_path'],'themes').'/*');
 		if( is_array($files) && count($files) ) {
-			$res = array();
 			foreach( $files as $file ) {
 				if( !is_dir($file) ) continue;
 				$name = basename($file);
 				if( !is_readable(cms_join_path($file,"{$name}Theme.php")) ) continue;
 				$res[$name] = $name;
 			}
-			return $res;
 		}
+		return $res;
 	}
 
 
@@ -1177,13 +1180,13 @@ abstract class CmsAdminThemeBase
 	 * @param string $name optional theme name.
 	 * @return CmsAdminThemeBase Reference to the initialized admin theme.
 	 */
-	static public function GetThemeObject($name = '')
+	public static function GetThemeObject($name = '')
 	{
 		if( is_object(self::$_instance) ) return self::$_instance;
 
 		if( !$name ) $name = cms_userprefs::get_for_user(get_userid(FALSE),'admintheme',self::GetDefaultTheme());
 		if( class_exists($name) ) {
-			self::$_instance = new $name;
+			self::$_instance = new $name();
 		}
 		else {
 			$gCms = CmsApp::get_instance();
@@ -1205,8 +1208,7 @@ abstract class CmsAdminThemeBase
 				}
 				else {
 					// still not found
-					$res = null;
-					return $res;
+					return null;
 				}
 			}
 		}
@@ -1217,9 +1219,9 @@ abstract class CmsAdminThemeBase
 	/**
 	 * A public function to add a notification for display in the theme.
 	 *
-	 * @param CmsAdminThemeNotification $notification A reference to the new notification
+	 * @param CmsAdminThemeNotification $notification The new notification object
 	 */
-	public function add_notification(CmsAdminThemeNotification &$notification)
+	public function add_notification(CmsAdminThemeNotification $notification)
 	{
 		if( !is_array($this->_notifications) ) $this->_notifications = array();
 		$this->_notifications[] = $notification;
@@ -1236,7 +1238,7 @@ abstract class CmsAdminThemeBase
 	 */
 	public function AddNotification($priority,$module,$html)
 	{
-	  $notification = new CmsAdminThemeNotification;
+	  $notification = new CmsAdminThemeNotification();
 	  $notification->priority = max(1,min(3,$priority));
 	  $notification->module = $module;
 	  $notification->html = $html;
@@ -1538,7 +1540,7 @@ abstract class CmsAdminThemeBase
 	public final function StartTab($tabid, $params = array())
 	{
 		$message = '';
-		if (FALSE == empty($this->_activetab) && $tabid == $this->_activetab && FALSE == empty($params['tab_message'])) {
+		if (!empty($this->_activetab) && $tabid == $this->_activetab && !empty($params['tab_message'])) {
 			$message = $this->ShowMessage($this->Lang($params['tab_message']));
 		}
 

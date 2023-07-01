@@ -45,7 +45,7 @@ $nls['locale']['pl_PL'] = 'pl_PL.utf8,pl_PL.UTF-8,pl_PL.utf.8,pl_PL,polish,Polis
 $nls['encoding']['pl_PL'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['pl_PL'] = array(dirname(__FILE__).'/pl_PL/admin.inc.php');
+$nls['file']['pl_PL'] = array(__DIR__.'/pl_PL/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this whpl translations exist in HTMLarea and plugin dirs

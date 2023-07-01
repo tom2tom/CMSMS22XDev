@@ -47,7 +47,7 @@ $nls['locale']['af_ZA'] = 'af_ZA,af_ZA.utf8,af_ZA.utf-8,af_ZA.UTF-8,afrikaans,Af
 $nls['encoding']['af_ZA'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['af_ZA'] = array(dirname(__FILE__).'/af_ZA/admin.inc.php');
+$nls['file']['af_ZA'] = array(__DIR__.'/af_ZA/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

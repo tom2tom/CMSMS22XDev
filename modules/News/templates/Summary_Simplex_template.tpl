@@ -22,7 +22,7 @@
     <!-- .news-article (wrapping each article) -->
     <section class='news-article'>
         <header>
-            <h2><a href='{$entry->moreurl}' title='{$entry->title|cms_escape:htmlall}'>{$entry->title|cms_escape}</a></h2>
+            <h2><a href="{$entry->moreurl}" title="{$entry->title|cms_escape:'htmlall'}">{$entry->title|cms_escape}</a></h2>
             <div class='meta cf'>
                 <time class='date' datetime="{$entry->postdate|date_format:'Y-m-d'}">
                     <span class='day'> {$entry->postdate|date_format:'d'} </span>
@@ -33,10 +33,10 @@
             </div>
         </header>
         {if $entry->summary}
-            <p>{$entry->summary|strip_tags}</p>
+            <p>{$entry->summary|adjust:'strip_tags'}</p>
             <span class='more'>{$entry->morelink} &#8594;</span>
         {else if $entry->content}
-            <p>{$entry->content|strip_tags}</p>
+            <p>{$entry->content|adjust:'strip_tags'}</p>
         {/if}
     </section>
     <!-- .news-article //-->

@@ -1,10 +1,10 @@
 <script type="text/javascript">
 $(function() {
-  $('.helpicon').click(function() {
+  $('.helpicon').on('click', function() {
     var x = $(this).attr('name');
     $('#'+x).dialog({ width: 'auto' });
   });
-  $('.template_view').click(function() {
+  $('.template_view').on('click', function() {
     var row = $(this).closest('tr');
     $('.template_content',row).dialog( {
       width: 'auto',
@@ -14,7 +14,7 @@ $(function() {
     });
     return false;
   });
-  $('.stylesheet_view').click(function() {
+  $('.stylesheet_view').on('click', function() {
     var row = $(this).closest('tr');
     $('.stylesheet_content',row).dialog( {
       width: 'auto',

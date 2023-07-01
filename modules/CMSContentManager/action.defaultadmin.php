@@ -62,26 +62,26 @@ if( isset($params['setoptions']) ) {
     $pagelimit = max(1,min(500,(int)$params['pagelimit']));
     cms_userprefs::set($this->GetName().'_pagelimit',$pagelimit);
 
-    $filter = null;
-    $filter_type = (isset($params['filter_type'])) ? $params['filter_type'] : null;
+    $filter = null; // no object
+    $filter_type = (isset($params['filter_type'])) ? $params['filter_type'] : '';
     switch( $filter_type ) {
     case ContentListFilter::EXPR_DESIGN:
-        $filter = new ContentListFilter;
+        $filter = new ContentListFilter();
         $filter->type = ContentListFilter::EXPR_DESIGN;
         $filter->expr = $params['filter_design'];
         break;
     case ContentListFilter::EXPR_TEMPLATE:
-        $filter = new ContentListFilter;
+        $filter = new ContentListFilter();
         $filter->type = ContentListFilter::EXPR_TEMPLATE;
         $filter->expr = $params['filter_template'];
         break;
     case ContentListFilter::EXPR_OWNER:
-        $filter = new ContentListFilter;
+        $filter = new ContentListFilter();
         $filter->type = ContentListFilter::EXPR_OWNER;
         $filter->expr = $params['filter_owner'];
         break;
     case ContentListFilter::EXPR_EDITOR:
-        $filter = new ContentListFilter;
+        $filter = new ContentListFilter();
         $filter->type = ContentListFilter::EXPR_EDITOR;
         $filter->expr = $params['filter_editor'];
         break;

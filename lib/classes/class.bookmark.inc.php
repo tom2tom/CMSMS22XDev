@@ -35,22 +35,22 @@ class Bookmark
 	/**
 	 * @var int $bookmark_id The bookmark id
 	 */
-	var $bookmark_id;
+	public $bookmark_id;
 
 	/**
 	 * @var int $user_id Admin user (owner) ID
 	 */
-	var $user_id;
+	public $user_id;
 
 	/**
 	 * @var string $title The bookmark title
 	 */
-	var $title;
+	public $title;
 
 	/**
 	 * @var string $url The bookmark URL
 	 */
-	var $url;
+	public $url;
 
 	/**
 	 * Generic constructor.  Runs the SetInitialValues fuction.

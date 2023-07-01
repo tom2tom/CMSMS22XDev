@@ -35,7 +35,7 @@ function smarty_cms_function_current_date($params, $smarty) {
 	$out = cms_htmlentities($string);
 	if( isset($params['assign']) ) {
 		$smarty->assign(trim($params['assign']),$out);
-		return;
+		return '';
 	}
 	return $out;
 }

@@ -37,8 +37,8 @@ function handle_change() {
 }
 $(function() {
   handle_change();
-  $('#fld_type').change(handle_change);
-  $('#{$actionid}cancel').click(function(){
+  $('#fld_type').on('change', handle_change);
+  $('#{$actionid}cancel').on('click', function() {
     $(this).closest('form').attr('novalidate','novalidate');
   });
 });

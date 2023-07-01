@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: Link.inc.php 4225 2007-10-14 16:31:00Z calguy1000 $
+#$Id$
 
 /**
  * Class definition and methods for Page Link content type

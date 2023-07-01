@@ -57,8 +57,8 @@ if (isset($params['submit']) || isset($params['apply'])) {
             $error = $this->Lang('error_invaliddates');
     }
 
-    $startdatestr = NULL;
-    $enddatestr = NULL;
+    $startdatestr = '';
+    $enddatestr = '';
     if ($useexp) {
         $startdate = trim($db->DbTimeStamp($startdate), "'");
         $enddate = trim($db->DbTimeStamp($enddate), "'");
@@ -181,8 +181,8 @@ if (isset($params['submit']) || isset($params['apply'])) {
                             $fldid
                         ));
                     } else {
-                        $query = "UPDATE " . CMS_DB_PREFIX . "module_news_fieldvals
-SET value = ?, modified_date = $now WHERE news_id = ? AND fielddef_id = ?";
+                        $query = "UPDATE " . CMS_DB_PREFIX .
+"module_news_fieldvals SET value = ?, modified_date = $now WHERE news_id = ? AND fielddef_id = ?";
                         $dbr = $db->Execute($query, array(
                             $value,
                             $articleid,
@@ -332,11 +332,12 @@ SET value = ?, modified_date = $now WHERE news_id = ? AND fielddef_id = ?";
     $row = $db->GetRow($query, array($articleid));
 
     if ($row) {
-        $title        = $row['news_title'];
-        $content      = $row['news_data'];
-        $extra        = $row['news_extra'];
-        $summary      = $row['summary'];
-        $news_url     = $row['news_url'];
+        // sanitize relevant fields, whose content might be from an untrustworthy source
+        $title        = $row['news_title'] ? news_ops::execSpecialize($row['news_title']) : (string)$row['news_title'];
+        $content      = $row['news_data'] ? news_ops::execSpecialize($row['news_data']) : (string)$row['news_data'];
+        $extra        = $row['news_extra'] ? news_ops::execSpecialize($row['news_extra']) : $row['news_extra']; // TODO CHECK FORMAT
+        $summary      = $row['summary'] ? news_ops::execSpecialize($row['summary']) : (string)$row['summary'];
+        $news_url     = $row['news_url']; //TODO handle untrusted e.g. external href
         $status       = $row['status'];
         $usedcategory = $row['news_category_id'];
         $postdate     = $db->UnixTimeStamp($row['news_date']);
@@ -383,7 +384,7 @@ $custom_flds = array();
 while ($dbr && ($row = $dbr->FetchRow())) {
     if (isset($row['extra']) && $row['extra']) $row['extra'] = unserialize($row['extra']);
 
-    $options = null;
+    $options = [];
     if (isset($row['extra']['options'])) $options = $row['extra']['options'];
 
     $value = '';
@@ -396,7 +397,7 @@ while ($dbr && ($row = $dbr->FetchRow())) {
         $name = "customfield[" . $row['id'] . "]";
     }
 
-    $obj = new StdClass();
+    $obj = new stdClass();
 
     $obj->value    = $value;
     $obj->nameattr = $id . $name;

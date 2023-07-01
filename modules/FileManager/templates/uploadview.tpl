@@ -4,12 +4,12 @@ $(function() {
   var _files = [];  // filenames
 
   // prevent browser default drag/drop handling
-  $(document).bind('drop dragover', function(e) {
+  $(document).on('drop dragover', function(e) {
     //prevent default drag/drop stuff.
     e.preventDefault();
   });
 
-  $(document).bind('dragover', function(e) {
+  $(document).on('dragover', function(e) {
     var dropZone = $('#dropzone'),
     timeout = window.dropZoneTimeout;
     if (timeout) {

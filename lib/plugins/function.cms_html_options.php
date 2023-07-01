@@ -18,7 +18,7 @@
 
 function smarty_function_cms_html_options($params, $smarty)
 {
-    $options = null;
+    $options = null; //no relevant value
     if( !isset($params['options']) ) {
         if( isset($params['value']) && isset($params['label']) ) {
             $opt = array();
@@ -29,16 +29,16 @@ function smarty_function_cms_html_options($params, $smarty)
             $options = $opt;
         }
         else {
-            return;
+            return '';
         }
     }
     else {
         $options = $params['options'];
     }
 
-    $out = null;
+    $out = '';
     if( is_array($options) && count($options) ) {
-        $selected = null;
+        $selected = '';
         if( isset($params['selected']) ) {
             $selected = $params['selected'];
             if( !is_array($selected) ) $selected = explode(',',$selected);
@@ -48,7 +48,7 @@ function smarty_function_cms_html_options($params, $smarty)
 
     if( isset($params['assign']) ) {
         $smarty->assign($params['assign'],$out);
-        return;
+        return '';
     }
     return $out;
 }

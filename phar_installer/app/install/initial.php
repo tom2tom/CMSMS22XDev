@@ -73,7 +73,7 @@ $template->save();
 // Default Content Object
 //
 ContentOperations::get_instance()->LoadContentType('content');
-$content = new Content;
+$content = new Content();
 $content->SetName('Home');
 $content->SetAlias();
 $content->SetOwner(1);

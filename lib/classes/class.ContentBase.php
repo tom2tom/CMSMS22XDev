@@ -16,7 +16,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: class.content.inc.php 6905 2011-02-20 22:23:40Z calguy1000 $
+#$Id$
 
 /**
  * This file provides the basic abstract content class
@@ -272,7 +272,7 @@ abstract class ContentBase
 	 *
 	 * @internal
 	 */
-	protected $mAdditionalEditors;
+	protected $mAdditionalEditors; // if set, is array
 
 	/**
 	 * state or meta information
@@ -848,7 +848,7 @@ abstract class ContentBase
 
 	/**
 	 * Set whether this page should be accessed via a secure protocol.
-	 * The secure flag effectsw whether the ssl protocol and appropriate config entries are used when generating urls to this page.
+	 * The secure flag affects whether the ssl protocol and appropriate config entries are used when generating urls to this page.
 	 *
 	 * @param bool $secure
 	 */
@@ -993,15 +993,16 @@ abstract class ContentBase
 	 * @param string $alias The alias
 	 * @param bool $doAutoAliasIfEnabled Whether an alias should be calculated or not.
 	 */
-	public function SetAlias($alias = null, $doAutoAliasIfEnabled = true)
+	public function SetAlias($alias = '', $doAutoAliasIfEnabled = true)
 	{
 		$contentops = ContentOperations::get_instance();
 		$config = \cms_config::get_instance();
 		if ($alias == '' && $doAutoAliasIfEnabled && $config['auto_alias_content'] == true) {
+			// auto generate an alias
 			$alias = trim($this->mMenuText);
 			if ($alias == '') $alias = trim($this->mName);
-
-			// auto generate an alias
+			$alias = strip_tags($alias ); // since 2.2.18 = breaker?
+			$alias = preg_replace('/&#?[a-z0-9]{2,8};/i','',$alias); // ditto
 			$tolower = true;
 			$alias = munge_string_to_url($alias, $tolower);
 			$res = $contentops->CheckAliasValid($alias);
@@ -1268,7 +1269,7 @@ abstract class ContentBase
 	 *
 	 * @param array $data Data as loaded from the database
 	 * @param bool  $loadProperties Optionally load content properties at the same time.
-	 * @returns	bool
+	 * @return bool
 	 */
 	function LoadFromData(&$data, $loadProperties = false)
 	{
@@ -1707,12 +1708,12 @@ abstract class ContentBase
 			// DELETE properties
 			$query = 'DELETE FROM '.CMS_DB_PREFIX.'content_props WHERE content_id = ?';
 			$result = $db->Execute($query,array($this->mId));
-			$this->_props = null;
+			$this->_props = null; // no object
 
 			// Delete additional editors.
 			$query = 'DELETE FROM '.CMS_DB_PREFIX.'additional_users WHERE content_id = ?';
 			$result = $db->Execute($query,array($this->mId));
-			$this->mAdditionalEditors = null;
+			$this->mAdditionalEditors = null; //a.k.a unset, otherwise array
 
 			// Delete route
 			if( $this->mURL != '' ) cms_route_manager::del_static($this->mURL);
@@ -1773,9 +1774,11 @@ abstract class ContentBase
 		// alias field can exist if the user has manage all content... OR alias is a basic property
 		// and this user has other edit rights to the content page.
 		// empty value on the alias field means we need to generate a new alias
-		$new_alias = null;
+		$new_alias = '';
 		$alias_field_exists = isset( $params['alias'] );
-		if( $alias_field_exists ) $new_alias = trim(strip_tags($params['alias']));
+		if( $alias_field_exists ) {
+			$new_alias = trim(strip_tags($params['alias'])); //TODO also scrub entities
+		}
 		// if we are adding or we have a new alias, set alias to the field value, or calculate one, adjust as needed
 		if( !$editing || $new_alias || $alias_field_exists ) {
 			$this->SetAlias($new_alias);
@@ -1971,7 +1974,7 @@ abstract class ContentBase
 				$atab = $a->tab;
 				$btab = $b->tab;
 
-				$res = null;
+				$res = 0;
 				if( ($r = strcmp($atab,$btab)) != 0 ) $res = $r;
 				else if( $a->priority < $b->priority ) $res = -1;
 				else if( $a->priority > $b->priority ) $res = 1;
@@ -2116,7 +2119,7 @@ abstract class ContentBase
 	 * Note: group ids are expressed as negative integers in the keys.
 	 * @return array
 	 */
-	static public function GetAdditionalEditorOptions()
+	public static function GetAdditionalEditorOptions()
 	{
 		$opts = [];
 		$userops = UserOperations::get_instance();
@@ -2144,7 +2147,7 @@ abstract class ContentBase
 	 * @param int  $owner_id  The current owner of the page.
 	 * @return string HTML output
 	 */
-	static public function GetAdditionalEditorInput($addteditors,$owner_id = -1)
+	public static function GetAdditionalEditorInput($addteditors,$owner_id = -1)
 	{
 		$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_addteditor',lang('help_title_content_addteditor'));
 		$ret[] = '<label for="addteditors">'.lang('additionaleditors').':</label>'.$help;
@@ -2171,10 +2174,9 @@ abstract class ContentBase
 	 * @return string The input element.
 	 * @see ContentBase::GetAdditionalEditorInput
 	 */
-	public function ShowAdditionalEditors($addteditors = '')
+	public function ShowAdditionalEditors($addteditors = [])
 	{
-		$ret = [];
-		if( $addteditors == '' ) $addteditors = $this->GetAdditionalEditors();
+		if( !$addteditors ) $addteditors = $this->GetAdditionalEditors();
 		return self::GetAdditionalEditorInput($addteditors,$this->Owner());
 	}
 
@@ -2234,7 +2236,7 @@ abstract class ContentBase
 	 */
 	protected function AddProperty($name,$priority,$tab = self::TAB_MAIN,$required = false,$basic = false)
 	{
-		$ob = new StdClass;
+		$ob = new stdClass();
 		$ob->name = (string) $name;
 		$ob->priority = (int) $priority;
 		$ob->tab = (string) $tab;
@@ -2257,7 +2259,7 @@ abstract class ContentBase
 	}
 
 	/**
-	 * Add a property that is directly associtated with a field in the content table.
+	 * Add a property that is directly associated with a field in the content table.
 	 * @alias for AddProperty
 	 *
 	 * @param string $name The property name

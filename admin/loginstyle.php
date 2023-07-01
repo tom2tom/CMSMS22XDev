@@ -16,13 +16,13 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: login.php 4251 2007-11-15 21:34:40Z calguy1000 $
+#$Id$
 
 $CMS_ADMIN_PAGE=1;
 $CMS_LOGIN_PAGE=1;
 
-require_once("../lib/include.php");
-require_once("../lib/classes/class.user.inc.php");
+require_once "../lib/include.php";
+require_once "../lib/classes/class.user.inc.php";
 
 $themeObject = cms_utils::get_theme_object();
 $theme = $themeObject->themeName;
@@ -40,13 +40,13 @@ $cms_readfile = function($filename) {
 };
 
 header("Content-type: text/css; charset=" . get_encoding());
-if (file_exists(dirname(__FILE__)."/themes/$theme/css/style.css")) {
-    echo file_get_contents(dirname(__FILE__)."/themes/$theme/css/style.css");
+if (file_exists(__DIR__."/themes/$theme/css/style.css")) {
+    echo file_get_contents(__DIR__."/themes/$theme/css/style.css");
 }
 else {
-    echo file_get_contents(dirname(__FILE__)."/themes/OneEleven/css/style.css");
+    echo file_get_contents(__DIR__."/themes/OneEleven/css/style.css");
 }
 
-if (file_exists(dirname(__FILE__)."/themes/".$theme."/extcss/style.css")) {
-    $cms_readfile(dirname(__FILE__)."/themes/".$theme."/extcss/style.css");
+if (file_exists(__DIR__."/themes/".$theme."/extcss/style.css")) {
+    $cms_readfile(__DIR__."/themes/".$theme."/extcss/style.css");
 }

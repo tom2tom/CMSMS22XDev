@@ -47,7 +47,7 @@ try {
         }
     }
 
-    $bulk_op = null;
+    $bulk_op = '';
     $templates = CmsLayoutTemplate::load_bulk($params['tpl_select']);
     switch( $params['bulk_action'] ) {
     case 'delete':

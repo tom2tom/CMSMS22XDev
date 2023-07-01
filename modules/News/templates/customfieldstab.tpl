@@ -20,11 +20,11 @@
 *}
 <script type="text/javascript">
 $(function() {
-  $('a.del_fielddef').click(function(ev){
+  $('a.del_fielddef').on('click', function(ev){
     var self = $(this);
     ev.preventDefault();
     cms_confirm('{$mod->Lang('areyousure')}').done(function(){
-       window.location = self.attr('href');
+       window.location.href = self.attr('href');
     });
   });
 });

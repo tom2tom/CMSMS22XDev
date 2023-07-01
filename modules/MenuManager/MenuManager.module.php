@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id:$
+#$Id$
 
 final class MenuManager extends CMSModule
 {
@@ -82,7 +82,7 @@ final class MenuManager extends CMSModule
   /**
    * Recursive function to go through all nodes and put them into a list
    */
-  protected function GetChildNodes(&$parentnode, &$nodelist, &$gCms, &$prevdepth, &$count, &$params, $origdepth, &$showparents, $deep = false)
+  protected function GetChildNodes($parentnode, &$nodelist, &$gCms, &$prevdepth, &$count, &$params, $origdepth, &$showparents, $deep = false)
   {
     $includeprefix = '';
     $excludeprefix = '';
@@ -101,12 +101,12 @@ final class MenuManager extends CMSModule
     }
 
     $nadded = 0;
-    if( isset($parentnode) ) {
+    if( $parentnode ) {
       $children = $parentnode->getChildren($deep);
       if( $children ) {
         $nchildren = count($children);
         $nc = -1;
-        foreach( $children as &$onechild ) {
+        foreach( $children as $onechild ) {
           $nc++;
           $content = $onechild->GetContent($deep);
           if( !is_object($content) ) {
@@ -145,7 +145,7 @@ final class MenuManager extends CMSModule
 
           if( $content != NULL && $content->Active() &&
               ($includeit && !$excludeit) &&
-              ($content->ShowInMenu() || ($show_all == 1  && !$content->IsSystemPage())) ) {
+              ($content->ShowInMenu() || ($show_all == 1 && !$content->IsSystemPage())) ) {
             $newnode = $this->FillNode($content, $onechild, $nodelist, $count, $prevdepth, $origdepth, $deep, $params);
             if( $nc == 0 ) {
               $newnode->first = 1;
@@ -174,13 +174,12 @@ final class MenuManager extends CMSModule
             }
           }
         }
-        unset($onechild);
       }
     }
     return $nadded;
   }
 
-  protected function &FillNode(&$content, &$node, &$nodelist, &$count, &$prevdepth, $origdepth, $deep = false, $params = array())
+  protected function FillNode($content, $node, &$nodelist, &$count, &$prevdepth, $origdepth, $deep = false, $params = array())
   {
     $onenode = new stdClass();
     $onenode->id = $content->Id();
@@ -288,7 +287,7 @@ final class MenuManager extends CMSModule
     return $reverse ? $size-1-$pos : $pos;
   }
 
-  final static public function smarty_cms_breadcrumbs($params,$smarty)
+  final public static function smarty_cms_breadcrumbs($params,$smarty)
   {
     $params['action'] = 'breadcrumbs';
     $params['module'] = 'MenuManager';

@@ -97,7 +97,7 @@ final class modmgr_utils
 
     public static function build_module_data( &$xmldetails, &$installdetails, $newest = true )
     {
-        if( !is_array($xmldetails) ) return;
+        if( !is_array($xmldetails) ) return [];
 
         // sort
         uasort( $xmldetails, array('modmgr_utils','uasort_cmp_details') );
@@ -173,7 +173,7 @@ final class modmgr_utils
         return $results;
     }
 
-    public static function get_module_xml($filename,$size,$md5sum = null)
+    public static function get_module_xml($filename,$size,$md5sum = '')
     {
         $mod = cms_utils::get_module('ModuleManager');
         $xml_filename = modulerep_client::get_repository_xml($filename,$size);
@@ -234,6 +234,7 @@ final class modmgr_utils
         if( $ts <= $stale_ts ) return 'stale';
         if( $ts <= $warn_ts ) return 'warn';
         if( $ts >= $new_ts ) return 'new';
+        return '';
     }
 
     public static function get_images()

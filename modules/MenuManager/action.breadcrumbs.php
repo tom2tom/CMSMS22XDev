@@ -76,7 +76,7 @@ if( !$tpl->isCached() ) {
     $pagestack = array_reverse($pagestack);
     $newstack = array();
     $prevdepth = 1;
-    $curNode = null;
+    $curNode = null; // no object
     for( $i = 0; $i < count($pagestack) - 1; $i++ ) {
         $newstack[] = $pagestack[$i];
         $newstack[count($newstack)-1]->depth = 1;

@@ -48,8 +48,7 @@ class BookmarkOperations
 		$root_url = preg_replace('#^http(s)?://#','', CMS_ROOT_URL);
 		$urlext = CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 		if( startswith($url,$root_url) ) $url = str_replace($root_url,'[ROOT_URL]',$url);
-		$url = str_replace($urlext,'[SECURITYTAG]',$url);
-		return $url;
+		return str_replace($urlext,'[SECURITYTAG]',$url);
 	}
 
 	/**
@@ -69,8 +68,7 @@ class BookmarkOperations
 			$url = str_replace($from,$to,$url);
 		}
 
-		$url = str_replace($from,$to,$url);
-		return $url;
+		return str_replace($from,$to,$url);
 	}
 
 	/**
@@ -107,9 +105,8 @@ class BookmarkOperations
 	 * @return Bookmark
 	 * @since 0.6.1
 	 */
-	function &LoadBookmarkByID($id)
+	function LoadBookmarkByID($id)
 	{
-		$result = null;
 		$db = \CmsApp::get_instance()->GetDb();
 
 		$query = "SELECT bookmark_id, user_id, title, url FROM ".CMS_DB_PREFIX."admin_bookmarks WHERE bookmark_id = ?";
@@ -121,10 +118,10 @@ class BookmarkOperations
 			$onemark->user_id = $row['user_id'];
 			$onemark->url = $this->_prep_for_display($row['url']);
 			$onemark->title = $row['title'];
-			$result = $onemark;
+			return $onemark;
 		}
 
-		return $result;
+		return null; // no object
 	}
 
 	/**
@@ -135,16 +132,15 @@ class BookmarkOperations
 	 */
 	function InsertBookmark(Bookmark $bookmark)
 	{
-		$result = -1;
 		$db = \CmsApp::get_instance()->GetDb();
 
 		$bookmark->url = $this->_prep_for_saving($bookmark->url);
 		$new_bookmark_id = $db->GenID(CMS_DB_PREFIX."admin_bookmarks_seq");
 		$query = "INSERT INTO ".CMS_DB_PREFIX."admin_bookmarks (bookmark_id, user_id, url, title) VALUES (?,?,?,?)";
 		$dbresult = $db->Execute($query, array($new_bookmark_id, $bookmark->user_id, $bookmark->url, $bookmark->title));
-		if ($dbresult !== false) $result = $new_bookmark_id;
+		if ($dbresult !== false) return $new_bookmark_id;
 
-		return $result;
+		return -1;
 	}
 
 	/**
@@ -155,15 +151,14 @@ class BookmarkOperations
 	 */
 	function UpdateBookmark(Bookmark $bookmark)
 	{
-		$result = false;
 		$db = \CmsApp::get_instance()->GetDb();
 
 		$bookmark->url = $this->_prep_for_saving($bookmark->url);
 		$query = "UPDATE ".CMS_DB_PREFIX."admin_bookmarks SET user_id = ?, title = ?, url = ? WHERE bookmark_id = ?";
 		$dbresult = $db->Execute($query, array($bookmark->user_id, $bookmark->title, $bookmark->url, $bookmark->bookmark_id));
-		if ($dbresult !== false) $result = true;
+		if ($dbresult !== false) return true;
 
-		return $result;
+		return false;
 	}
 
 	/**
@@ -174,13 +169,12 @@ class BookmarkOperations
 	 */
 	function DeleteBookmarkByID($id)
 	{
-		$result = false;
 		$db = \CmsApp::get_instance()->GetDb();
 
 		$query = "DELETE FROM ".CMS_DB_PREFIX."admin_bookmarks where bookmark_id = ?";
 		$dbresult = $db->Execute($query, array($id));
-		if ($dbresult !== false) $result = true;
-		return $result;
+		if ($dbresult !== false) return true;
+		return false;
 	}
 }
 

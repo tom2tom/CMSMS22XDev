@@ -90,7 +90,7 @@ final class DesignManager extends CMSModule
      * @param  mixed $data A string or array of response data
      * @return string Returns a string containing the JSON representation of provided response data
      */
-    public function GetJSONResponse($status, $message, $data = null)
+    public function GetJSONResponse($status, $message, $data = null) // mixed value
     {
 
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {

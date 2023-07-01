@@ -39,8 +39,8 @@ if( !$this->CheckPermission('Modify Modules') ) return;
 $this->SetCurrentTab('modules');
 
 if( isset($params['cancel']) ) {
-  $this->SetMessage($this->Lang('msg_cancelled'));
-  $this->RedirectToAdminTab();
+    $this->SetMessage($this->Lang('msg_cancelled'));
+    $this->RedirectToAdminTab();
 }
 
 try {
@@ -168,7 +168,6 @@ try {
             return $out;
         };
 
-        $deps = null;
         list($res,$deps) = modulerep_client::get_module_dependencies($module_name,$module_version);
         if( is_array($deps) && count($deps) ) {
 
@@ -177,17 +176,16 @@ try {
 
             if( $uselatest ) {
                 // we want the latest of all of the dependencies.
-		$latest = null;
-		try {
+                try {
                     $latest = modulerep_client::get_modulelatest($dep_module_names);
                     if( $latest ) {
                         // throw new CmsInvalidDataException($this->Lang('error_dependencynotfound'));
                         $latest = $array_to_hash($latest,'name');
                         $deps = $update_latest_deps($deps,$latest);
-	            }
-		}
+                    }
+                }
                 catch( ModuleNoDataException $e ) {
-		    // nothing here
+                    // nothing here
                 }
             } else {
                 $info = modulerep_client::get_multiple_moduleinfo($deps);
@@ -228,13 +226,11 @@ try {
     //   get module info for all dependencies
 
     // recursively (depth first) get the dependencies for the module+version we specified.
-    $alldeps = array();
     $uselatest = (int) $this->GetPreference('latestdepends',1);
     $alldeps = $resolve_deps($module_name,$module_version,$uselatest);
 
     // get information for all dependencies, and make sure that they are all there.
     if( is_array($alldeps) && count($alldeps) ) {
-        $res = null;
         try {
             if( $this->GetPreference('latestdepends',1) ) {
                 // get the latest version of dependency (but not necessarily of the module we're installing)
@@ -248,13 +244,13 @@ try {
         }
         catch( \ModuleNoDataException $e ) {
             // at least one of the dependencies could not be found on the server.
+            $res = [];
             // may be a system module... if it is not a system module, throw an exception
             audit('','ModuleManager','At least one requested module was not available on the forge ('.$this->GetName().' '.$this->GetVersion().')');
-        } 
+        }
 
         foreach( $alldeps as $name => $row ) {
             $fnd = FALSE;
-            $tmp = null;
             if( is_array($res) && count($res) ) {
                 foreach( $res as $rec ) {
                     if( $rec['name'] != $name ) continue;

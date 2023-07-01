@@ -86,20 +86,23 @@ class manifest_reader
     protected function handle_line($line)
     {
         if( !$line ) return;
-        if( startswith($line,'MANIFEST') ) return $this->handle_header($line);
+        if( startswith($line,'MANIFEST') ) {
+            $this->handle_header($line);
+            return;
+        }
 
         $fields = explode(' :: ',$line);
         if( count($fields) != 3 ) throw new Exception(lang('error_internal','mr103'));
 
         switch( $fields[0] ) {
         case 'ADDED':
-            return $this->handle_added($fields);
+            $this->handle_added($fields);
             break;
         case 'CHANGED':
-            return $this->handle_changed($fields);
+            $this->handle_changed($fields);
             break;
         case 'DELETED':
-            return $this->handle_deleted($fields);
+            $this->handle_deleted($fields);
             break;
         default:
             throw new Exception(lang('error_internal','mr104'));
@@ -109,7 +112,6 @@ class manifest_reader
     protected function read()
     {
         if( !$this->_has_read ) {
-            $fopen = $fclose = $fgets = $feof = null;
             if( $this->_compressed ) {
                 $fopen = 'gzopen';
                 $fclose = 'gzclose';
@@ -129,7 +131,7 @@ class manifest_reader
             @copy($this->_filename,$tmpname);
             $fh = $fopen($tmpname,'r');
             if( !$fh )  {
-              echo "DEBUG: $fopen on ".$this->_filename."<br/>"; die();
+              echo "DEBUG: $fopen on ".$this->_filename."<br />";
               throw new Exception(lang('error_internal','mr102'));
             }
             while( !$feof($fh) ) {

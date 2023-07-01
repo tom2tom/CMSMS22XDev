@@ -23,7 +23,7 @@ function smarty_function_form_end($params, $smarty)
 	if( isset($params['assign']) )
 	{
 		$smarty->assign($params['assign'],$out);
-		return;
+		return '';
 	}
 	return $out;
 }

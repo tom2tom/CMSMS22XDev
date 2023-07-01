@@ -46,8 +46,8 @@ try {
     $content_obj = null;
     $pagedefaults = CmsContentManagerUtils::get_pagedefaults();
     $content_type = $pagedefaults['contenttype'];
-    $error = null;
-    $active_tab = null;
+    $error = '';
+    $active_tab = '';
 
     if( isset($params['content_id']) ) $content_id = (int)$params['content_id'];
 
@@ -180,7 +180,7 @@ try {
         $content_obj->FillParams($_POST,($content_id > 0));
     }
 
-    $active_tab = isset($params['active_tab']) ? trim($params['active_tab']) : null;
+    $active_tab = isset($params['active_tab']) ? trim($params['active_tab']) : '';
     if( isset($params['submit']) || isset($params['apply']) || isset($params['preview']) ) {
         $error = $content_obj->ValidateData();
         if( $error ) {
@@ -243,7 +243,7 @@ catch( CmsContentException $e ) {
 //
 if( $content_id > 0 && CmsContentManagerUtils::locking_enabled() ) {
     try {
-        $lock_id = null;
+        $lock_id = 0;
         for( $i = 0; $i < 3; $i++ ) {
             // check if this thing is already locked.
             $lock_id = CmsLockOperations::is_locked('content',$content_id);
@@ -264,16 +264,15 @@ if( $content_id > 0 && CmsContentManagerUtils::locking_enabled() ) {
     }
 }
 
-$tab_names = [];
 $tab_contents_array = [];
 $tab_message_array = [];
 try {
     $tab_names = $content_obj->GetTabNames();
 
-    // the content object may not have a main tab, but we require one
-    if( !in_array($content_obj::TAB_MAIN,$tab_names) ) {
-        $tmp = array($content_obj::TAB_MAIN=>lang($content_obj::TAB_MAIN));
-        $tab_names = array_merge($tmp,$tab_names);
+    // the content object might not have a main tab, but we require one
+    if( !isset($tab_names[$content_obj::TAB_MAIN]) ) {
+        $tab_names = array($content_obj::TAB_MAIN=>lang($content_obj::TAB_MAIN))
+         + $tab_names;
     }
 
     foreach( $tab_names as $currenttab => $label ) {
@@ -282,29 +281,41 @@ try {
 
         $contentarray = $content_obj->GetTabElements($currenttab, $content_obj->Id() < 1 );
         if( $currenttab == $content_obj::TAB_MAIN ) {
-            // first tab... add the content type selector.
-            if( $this->CheckPermission('Manage All Content') || $content_obj->Owner() == $user_id )  {
-                // if you're only an additional editor on this page... you don't get to change this.
-                $help = '&nbsp;'.cms_admin_utils::get_help_tag(array('key'=>'help_content_type','title'=>$this->Lang('help_title_content_type')));
-                $tmp = array('<label for="content_type">*'.$this->Lang('prompt_editpage_contenttype').':</label>'.$help);
+            // first tab... prepend a content-type selector.
+            // unless the user is merely an additional-editor.
+            if( ($this->CheckPermission('Manage All Content') || $content_obj->Owner() == $user_id) )  {
+                $dflt = $content_obj->DefaultContent();
+                $dflttypes = array('content','pagelink');
+                $selcount = 0;
                 $tmp2 = "<select id=\"content_type\" name=\"{$id}content_type\">";
                 foreach( $existingtypes as $type => $label ) {
-                    $tmp2 .= CmsFormUtils::create_option(array('value'=>$type,'label'=>$label),$content_type);
+                    if( !$dflt || in_array($type, $dflttypes )) {
+                        $tmp2 .= CmsFormUtils::create_option(array('value'=>$type,'label'=>$label),$content_type);
+                        $selcount++;
+                    }
                 }
-                $tmp2 .= '</select>';
-                $tmp[] = $tmp2;
-                $contentarray = array_merge(array($tmp),$contentarray);
+                if( $selcount > 0) {
+                    $tmp2 .= '</select>';
+                    $help = '&nbsp;'.cms_admin_utils::get_help_tag(array('key'=>'help_content_type','title'=>$this->Lang('help_title_content_type')));
+                    $tmp = array('<label for="content_type">*'.$this->Lang('prompt_editpage_contenttype').':</label>'.$help, $tmp2);
+                    if( $contentarray ) {
+                        array_unshift($contentarray, $tmp);
+                    }
+                    else {
+                        $contentarray = $tmp;
+                    }
+                }
             }
         }
         $tab_contents_array[$currenttab] = $contentarray;
     }
 }
 catch( Exception $e ) {
+    if (!$tab_names) $tab_names = [];
     $error = $e->GetMessage();
 }
 
 if( $error ) echo $this->ShowErrors($error);
-
 
 // give stuff to smarty.
 if( $content_obj->HasPreview() ) {
@@ -313,17 +324,18 @@ if( $content_obj->HasPreview() ) {
     $smarty->assign('preview_url',"{$config['root_url']}/index.php?{$config['query_var']}=".__CMS_PREVIEW_PAGE__);
 }
 
-if( $this->GetPreference('template_list_mode','designpage') != 'all')  {
+if( $this->GetPreference('template_list_mode','designpage') != 'all') {
     $tmp = $this->create_url($id,'admin_ajax_gettemplates',$returnid);
-    $tmp = str_replace('amp;','',$tmp).'&showtemplate=false';
-    $smarty->assign('designchanged_ajax_url',$tmp);
+    $url = str_replace('&amp;','&',$tmp).'&showtemplate=false';
+    $smarty->assign('designchanged_ajax_url',$url);
 }
 
 $parms = array();
 if( $content_id > 0 ) $parms['content_id']=$content_id;
 $url = str_replace('&amp','&',$this->create_url($id,'admin_editcontent',$returnid,$parms)).'&showtemplate=false';
 $smarty->assign('apply_ajax_url',$url);
-$smarty->assign('preview_ajax_url',$this->create_url($id,'admin_editcontent',$returnid,array('preview'=>1)));
+$url = str_replace('&amp','&',$this->create_url($id,'admin_editcontent',$returnid,array('preview'=>1)));
+$smarty->assign('preview_ajax_url',$url);
 $smarty->assign('lock_timeout',$this->GetPreference('locktimeout'));
 $smarty->assign('lock_refresh',$this->GetPreference('lockrefresh'));
 $smarty->assign('options_tab_name',$content_obj::TAB_OPTIONS);
@@ -333,9 +345,10 @@ $smarty->assign('content_obj',$content_obj);
 $smarty->assign('tab_names',$tab_names);
 $smarty->assign('tab_contents_array',$tab_contents_array);
 $smarty->assign('tab_message_array',$tab_message_array);
-$factory = new ContentAssistantFactory($content_obj);
-/* $assistant = $factory->getEditContentAssistant(); */
-/* if( is_object($assistant) ) $smarty->assign('extra_content',$assistant->getExtraCode()); */
+$smarty->assign('userid',get_userid());
+/*$factory = new ContentAssistantFactory($content_obj);
+$assistant = $factory->getEditContentAssistant();
+if( is_object($assistant) ) $smarty->assign('extra_content',$assistant->getExtraCode());*/
 
 echo $this->ProcessTemplate('admin_editcontent.tpl');
 

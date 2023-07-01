@@ -331,7 +331,7 @@ final class modulerep_client
 
     /**
      * Return info about installed modules that have newer versions available.
-     * return mixed (FALSE on error, NULL or associative array on success
+     * return mixed (FALSE on error, associative array maybe empty on success
      */
     public static function get_newmoduleversions()
     {
@@ -347,9 +347,10 @@ final class modulerep_client
                 $out[$row['name']] = $row;
             }
         }
-        if( count($out) ) return $out;
+        return $out;
     }
 
+    //TODO return mixed bool|array
     public static function get_upgrade_module_info($module_name)
     {
         $versions = self::get_allmoduleversions();
@@ -359,6 +360,7 @@ final class modulerep_client
         foreach( $versions as $row ) {
             if( $row['name'] == $module_name ) return $row;
         }
+        return FALSE;
     }
 } // end of class
 

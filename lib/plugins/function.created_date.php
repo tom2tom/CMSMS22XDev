@@ -36,7 +36,7 @@ function smarty_function_created_date($params, $smarty)
 
 		if( isset($params['assign']) ) {
 			$smarty->assign(trim($params['assign']),$str);
-			return;
+			return '';
 		}
 		return $str;
 	}

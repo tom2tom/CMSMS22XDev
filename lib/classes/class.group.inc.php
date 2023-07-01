@@ -113,9 +113,8 @@ class Group
         $this->_data['id'] = $db->GenID(CMS_DB_PREFIX."groups_seq");
         $time = $db->DBTimeStamp(time());
         $query = "INSERT INTO `".CMS_DB_PREFIX."groups` (group_id, group_name, group_desc, active, create_date, modified_date)
-                  VALUES (?,?,?,?,".$time.", ".$time.")";
-        $dbresult = $db->Execute($query, array($this->id, $this->name, $this->description, $this->active));
-        return $dbresult;
+VALUES (?,?,?,?,".$time.", ".$time.")";
+        return $db->Execute($query, array($this->id, $this->name, $this->description, $this->active));
     }
 
     /**
@@ -162,7 +161,7 @@ class Group
      * @return Group
      * @throws CmsInvalidDataException
      */
-    public static function &load($id)
+    public static function load($id)
     {
         $id = (int) $id;
         if( $id < 1 ) throw new \CmsInvalidDataException(lang('missingparams'));
@@ -187,7 +186,6 @@ class Group
     public static function load_all()
     {
         $db = CmsApp::get_instance()->GetDb();
-        $result = array();
         $query = "SELECT group_id, group_name, group_desc, active FROM `".CMS_DB_PREFIX."groups` ORDER BY group_id";
         $list = $db->GetArray($query);
         $out = array();
@@ -200,7 +198,7 @@ class Group
             $obj->active = $row['active'];
             $out[] = $obj;
         }
-        if( count($out) ) return $out;
+        return $out;
     }
 
     /**
@@ -236,7 +234,7 @@ class Group
         if( $this->id < 1 ) return;
         if( $this->HasPermission($perm) ) return;
         $groupops = GroupOperations::get_instance();
-        return $groupops->GrantPermission($this->id,$perm);
+        $groupops->GrantPermission($this->id,$perm);
     }
 
     /**
@@ -254,7 +252,7 @@ class Group
         if( $this->id <= 0 ) return;
         if( !$this->HasPermission($perm) ) return;
         $groupops = GroupOperations::get_instance();
-        return $groupops->RemovPermission($this->id,$perm);
+        $groupops->RemovePermission($this->id,$perm);
     }
 
 }

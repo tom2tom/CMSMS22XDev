@@ -13,7 +13,7 @@ function CMSFileBrowser(_settings) {
   }
 
   function enable_sendValue() {
-    $('a.js-trigger-insert').click(function(e) {
+    $('a.js-trigger-insert').on('click', function(e) {
       var $this = $(this),
         $elm = $this.closest('li'),
         $data = $elm.data(),

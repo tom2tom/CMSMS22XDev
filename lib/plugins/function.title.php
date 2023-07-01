@@ -32,7 +32,7 @@ function smarty_function_title($params, $smarty)
 
 	if( isset($params['assign']) ) {
 	    $smarty->assign(trim($params['assign']),$result);
-	    return;
+	    return '';
     }
     return $result;
 }

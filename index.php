@@ -144,7 +144,9 @@ while( $trycount < 2 ) {
         else {
             debug_buffer('process template top');
             $tpl_id = $contentobj->TemplateId();
-            $top = $body = $head = null;
+            $top = '';
+            $head = '';
+            $body = '';
 
             \CMSMS\HookManager::do_hook('Core::PageTopPreRender', [ 'content'=>&$contentobj, 'html'=>&$top ]);
             $tpl = $smarty->createTemplate('tpl_top:'.$tpl_id,$cache_id);

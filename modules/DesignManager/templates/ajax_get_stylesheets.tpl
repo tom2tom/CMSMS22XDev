@@ -85,7 +85,7 @@ $('#css_selall').cmsms_checkall();
           {$design_names.$dsn_id}<br />
         {/foreach}
         {/strip}{/capture}
-        <a class="tooltip text-red" data-cms-description='{$tooltip_designs|htmlentities}' title="{$mod->Lang('help_stylesheet_multiple_designs')}">{$mod->Lang('prompt_multiple')} ({count($t1)})
+        <a class="tooltip text-red" data-cms-description="{$tooltip_designs|adjust:'htmlentities'}" title="{$mod->Lang('help_stylesheet_multiple_designs')}">{$mod->Lang('prompt_multiple')} ({count($t1)})
       {/if}
     </td>
 

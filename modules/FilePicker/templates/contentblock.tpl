@@ -11,6 +11,6 @@ $(function() {
       remove_title: '{$mod->Lang('clear')}',
       remove_label: '{$mod->Lang('clear')}',
    });
-})
+});
 </script>
 </div>{* .cmsfp *}

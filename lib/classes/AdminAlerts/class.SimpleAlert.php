@@ -67,7 +67,7 @@ class SimpleAlert extends Alert
      *
      * @param string[] $perms An array of permission names.  Or null.
      */
-    public function __construct($perms = null)
+    public function __construct($perms = [])
     {
         if( $perms && (!is_array($perms) || !count($perms)) ) throw new \InvalidArgumentException('perms must be an array of permission name strings');
         $this->_perms = $perms;
@@ -139,7 +139,7 @@ class SimpleAlert extends Alert
     }
 
     /**
-     * Givent he admin_uid, check if the specified uid has at least one of the permissions specified in the perms array.
+     * Given the admin_uid, check if the specified uid has at least one of the permissions specified in the perms array.
      *
      * @param int $admin_uid
      * @return bool;

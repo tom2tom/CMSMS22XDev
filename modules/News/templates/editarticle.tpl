@@ -2,7 +2,7 @@
 //<![CDATA[
 {if isset($start_tab_preview)}
   $(function() {
-    $('[name=m1_apply]').on('click', function(e) {
+    $('[name="m1_apply"]').on('click', function(e) {
 
       e.preventDefault();
 
@@ -27,14 +27,14 @@
         dataType: 'json'
       }).done(function(resultdata) {
         var htmlShow, details, list, tid = 0;
-        var tip = '{$mod->Lang("close")|htmlspecialchars:(ENT_QUOTES+ENT_SUBSTITUTE):"UTF-8":false}';
+        var tip = '{$mod->Lang("close")|adjust:"htmlspecialchars":(ENT_QUOTES+ENT_SUBSTITUTE):"UTF-8":false}';
         if (resultdata) {
           details = resultdata.details;
           if (resultdata.response === 'Success') {
             if (details) {
               details = escapeHtml(details);
             } else {
-              details = '{$mod->Lang("articleupdated")|htmlspecialchars:(ENT_QUOTES+ENT_SUBSTITUTE):"UTF-8":false}';
+              details = '{$mod->Lang("articleupdated")|adjust:"htmlspecialchars":(ENT_QUOTES+ENT_SUBSTITUTE):"UTF-8":false}';
             }
             htmlShow = '<div class="pagemcontainer">' +
             '<span id="resultcloser" class="close-warning" title="' + tip + '"></span>' +
@@ -53,7 +53,7 @@
               }
             } else {
               list = false;
-              details = '{$mod->Lang("error_unknown")|htmlspecialchars:(ENT_QUOTES+ENT_SUBSTITUTE):"UTF-8":false}';
+              details = '{$mod->Lang("error_unknown")|adjust:"htmlspecialchars":(ENT_QUOTES+ENT_SUBSTITUTE):"UTF-8":false}';
             }
             htmlShow = '<div class="pageerrorcontainer">' +
             '<span id="resultcloser" class="close-warning" title="' + tip + '"></span>';
@@ -64,7 +64,7 @@
             }
           }
         } else {
-          details = '{lang("error_internal")|htmlspecialchars:(ENT_QUOTES+ENT_SUBSTITUTE):"UTF-8":false}';
+          details = '{lang("error_internal")|adjust:"htmlspecialchars":(ENT_QUOTES+ENT_SUBSTITUTE):"UTF-8":false}';
           htmlShow = '<div class="pageerrorcontainer">' +
           '<span id="resultcloser" class="close-warning" title="' + tip + '"></span>' +
           '<p class="pageerror">' + details + '</p></div>';
@@ -90,7 +90,7 @@
       });
     });
 
-    $('input[name=preview_returnid],#preview_template').on('change', function(e) {
+    $('input[name="preview_returnid"],#preview_template').on('change', function(e) {
       e.preventDefault();
       news_dopreview();
     });
@@ -155,10 +155,10 @@
           }
         } else {
           list = false;
-          details = '{$mod->Lang("error_unknown")|htmlspecialchars:(ENT_QUOTES+ENT_SUBSTITUTE):"UTF-8":false}';
+          details = '{$mod->Lang("error_unknown")|adjust:"htmlspecialchars":(ENT_QUOTES+ENT_SUBSTITUTE):"UTF-8":false}';
         }
         //TODO do not hardcode OneEleven-theme style notification
-        var tip = '{$mod->Lang("close")|htmlspecialchars:(ENT_QUOTES+ENT_SUBSTITUTE):"UTF-8":false}';
+        var tip = '{$mod->Lang("close")|adjust:"htmlspecialchars":(ENT_QUOTES+ENT_SUBSTITUTE):"UTF-8":false}';
         var htmlShow = '<div class="pageerrorcontainer">' +
          '<span id="resultcloser" class="close-warning" title="' + tip + ' "></span>';
         if (list) {
@@ -189,16 +189,16 @@
   }
 {/if}
   $(function() {
-    $('[name=m1_submit],[name=m1_apply]').hide().on('click', function() {
+    $('[name="m1_submit"],[name="m1_apply"]').hide().on('click', function() {
       $('#edit_news').dirtyForm('option', 'disabled', true);
     });
-    $('[name=m1_cancel]').on('click', function() {
+    $('[name="m1_cancel"]').on('click', function() {
       $('#edit_news').dirtyForm('option', 'disabled', true);
       $(this).closest('form').attr('novalidate', 'novalidate');
     });
     $('#edit_news').dirtyForm({
       onDirty : function() {
-        $('[name=m1_apply],[name=m1_submit]').show('slow');
+        $('[name="m1_apply"],[name="m1_submit"]').show('slow');
       }
     });
     $(document).on('cmsms_textchange', function() {
@@ -221,9 +221,9 @@
   <div class="pageoptions">
     <p class="pageinput">
       <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />
-      <input type="submit" id="{$actionid}cancel" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
+      &nbsp;<input type="submit" id="{$actionid}cancel" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
       {if isset($articleid)}
-        <input type="submit" name="{$actionid}apply" value="{$mod->Lang('apply')}" />
+        &nbsp;<input type="submit" name="{$actionid}apply" value="{$mod->Lang('apply')}" />
       {/if}
     </p>
   </div>
@@ -424,8 +424,8 @@
 
   <div class="pageoverflow">
     <p class="pageinput">
-      <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />&nbsp;
-      <input type="submit" id="{$actionid}cancel" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
+      <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />;
+      &nbsp;<input type="submit" id="{$actionid}cancel" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
       {if isset($articleid)}
         &nbsp;<input type="submit" name="{$actionid}apply" value="{$mod->Lang('apply')}" />
       {/if}

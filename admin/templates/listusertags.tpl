@@ -1,13 +1,13 @@
 <script type="text/javascript">
 $(function() {
-   $('a.delusertag').click(function(ev){
-      ev.preventDefault();
-      var _hr = $(this).attr('href');
-      cms_confirm('{lang('confirm_deleteusertag')|cms_escape:'javascript'}').done(function(){
-         window.location.href = _hr;
-      })
-   })
-})
+  $('a.delusertag').on('click',function(ev) {
+    ev.preventDefault();
+    var _hr = $(this).attr('href');
+    cms_confirm("{lang('confirm_deleteusertag')|cms_escape:'javascript'}").done(function() {
+      window.location.href = _hr;
+    });
+  });
+});
 </script>
 
 <div class="pagecontainer">
@@ -22,8 +22,8 @@ $(function() {
        <tr>
          <th>{lang('name')}</th>
          <th>{lang('description')}</th>
-	 <th class="pageicon"></th>
-	 <th class="pageicon"></th>
+         <th class="pageicon"></th>
+         <th class="pageicon"></th>
        </tr>
      </thead>
      <tbody>
@@ -32,12 +32,12 @@ $(function() {
        <tr class="{cycle values='row1,row2'}">
           <td><a href="{$edit_url}" title="{lang('editusertag')}">{$tag.name}</a></td>
           <td>{$tag.description}</td>
-	  <td>
-	     <a href="{$edit_url}">{admin_icon icon='edit.gif' title=lang('editusertag')}</a>
-	  </td>
-	  <td>
-	     <a class="delusertag" href="deleteuserplugin.php{$urlext}&amp;userplugin_id={$tag_id}">{admin_icon icon='delete.gif' title=lang('delete')}</a>
-	  </td>
+          <td>
+             <a href="{$edit_url}">{admin_icon icon='edit.gif' title=lang('editusertag')}</a>
+          </td>
+          <td>
+             <a class="delusertag" href="deleteuserplugin.php{$urlext}&amp;userplugin_id={$tag_id}">{admin_icon icon='delete.gif' title=lang('delete')}</a>
+          </td>
        </tr>
      {/foreach}
      </tbody>

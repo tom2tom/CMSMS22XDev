@@ -4,7 +4,7 @@
     <div class="pageheader">{$subheader}
     {if isset($wiki_url) && isset($image_help_external)}
        <span class="helptext">
-         <a class='helpicon' href="{$wiki_url}" target="_blank">{$image_help_external}</a><a href="{$wiki_url}" target="_blank">{'help'|lang}</a> ({'new_window'|lang})
+         <a class='helpicon' href="{$wiki_url}" target="_blank">{$image_help_external}</a><a href="{$wiki_url}" target="_blank">{lang('help')}</a> ({lang('new_window')})
        </span>
     {/if}
     </div>
@@ -18,12 +18,12 @@
     <table class="pagetable">
       <thead>
        <tr>
-         <th><span title="{lang_by_realm('tags','tag_name')}">{'name'|lang}</span></th>
-         <th><span title="{lang_by_realm('tags','tag_type')}">{'type'|lang}</span></th>
+         <th><span title="{lang_by_realm('tags','tag_name')}">{lang('name')}</span></th>
+         <th><span title="{lang_by_realm('tags','tag_type')}">{lang('type')}</span></th>
          <th class="pagew10"><span title="{lang_by_realm('tags','tag_adminplugin')}">{lang('adminplugin')}</span></th>
-         <th class="pagew10"><span title="{lang_by_realm('tags','tag_cachable')}">{'cachable'|lang}</span></th>
-         <th class="pagew10"><span title="{lang_by_realm('tags','tag_help')}">{'help'|lang}</span></th>
-         <th class="pagew10"><span title="{lang_by_realm('tags','tag_about')}">{'about'|lang}</span></th>
+         <th class="pagew10"><span title="{lang_by_realm('tags','tag_cachable')}">{lang('cachable')}</span></th>
+         <th class="pagew10"><span title="{lang_by_realm('tags','tag_help')}">{lang('help')}</span></th>
+         <th class="pagew10"><span title="{lang_by_realm('tags','tag_about')}">{lang('about')}</span></th>
        </tr>
       </thead>
       <tbody>
@@ -56,12 +56,12 @@
          </td>
          <td>
            {if isset($one.help_url)}
-             <a href="{$one.help_url}" title="{lang_by_realm('tags','viewhelp')}">{'help'|lang}</a>
+             <a href="{$one.help_url}" title="{lang_by_realm('tags','viewhelp')}">{lang('help')}</a>
            {/if}
          </td>
          <td>
            {if isset($one.about_url)}
-             <a href="{$one.about_url}" title="{lang_by_realm('tags','viewabout')}">{'about'|lang}</a>
+             <a href="{$one.about_url}" title="{lang_by_realm('tags','viewabout')}">{lang('about')}</a>
            {/if}
          </td>
        </tr>

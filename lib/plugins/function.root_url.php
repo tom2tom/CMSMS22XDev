@@ -27,7 +27,7 @@ function smarty_function_root_url($params, $smarty)
 
     if( isset($params['assign']) ) {
 		$smarty->assign(trim($params['assign']),$str);
-		return;
+		return '';
     }
 
 	return $str;

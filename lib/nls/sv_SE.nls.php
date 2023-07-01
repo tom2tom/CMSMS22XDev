@@ -47,7 +47,7 @@ $nls['locale']['sv_SE'] = 'sv_SE,sv_SE.utf8,sv_SE.UTF-8,sv_SE.utf-8,sv_SE.iso885
 $nls['encoding']['sv_SE'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['sv_SE'] = array(dirname(__FILE__).'/sv_SE/admin.inc.php');
+$nls['file']['sv_SE'] = array(__DIR__.'/sv_SE/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

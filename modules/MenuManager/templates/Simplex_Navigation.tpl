@@ -11,20 +11,20 @@
         {elseif $node->index > 0}
             </li>
         {/if}
-        {if $node->current == true}
-            <li{if $node->parent == true || $node->haschildren == true} class='parent current'{/if}>
+        {if $node->current}
+            <li{if $node->parent || $node->haschildren} class='parent current'{/if}>
                 <a href='{$node->url}' class='current'{if $node->target != ''} target='{$node->target}'{/if}>{$node->menutext}</a>
-        {elseif $node->parent == true && ($node->type != 'sectionheader' && $node->type != 'separator')}
+        {elseif $node->parent && ($node->type != 'sectionheader' && $node->type != 'separator')}
             <li class='parent current'>
                 <a href='{$node->url}' class='current'{if $node->target != ''} target='{$node->target}'{/if}>{$node->menutext}</a>
         {elseif $node->type == 'sectionheader'}
             <li class='sectionheader'>
-                <span class='sectionheader {if $node->parent == true} parent{/if}{if $node->current == true} current{/if}'>{$node->menutext}</span>
+                <span class='sectionheader {if $node->parent} parent{/if}{if $node->current} current{/if}'>{$node->menutext}</span>
         {elseif $node->type == 'separator'}
             <li class='separator'>
                 <hr class='separator' />
         {else}
-            <li{if $node->parent == true || $node->haschildren == true} class='parent'{/if}>
+            <li{if $node->parent || $node->haschildren} class='parent'{/if}>
                 <a href='{$node->url}'{if $node->target != ''} target='{$node->target}'{/if}>{$node->menutext}</a>
         {/if}
     {/foreach}

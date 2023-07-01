@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: editprefs.php 7685 2012-01-22 21:52:55Z calguy1000 $
+#$Id$
 
 /**
  * Init variables / objects
@@ -27,14 +27,15 @@ $orig_memory = (function_exists('memory_get_usage')?memory_get_usage():0);
 $CMS_ADMIN_PAGE = 1;
 $CMS_TOP_MENU = 'admin';
 $CMS_ADMIN_TITLE = 'myaccount';
-require_once ("../lib/include.php");
+
+require_once ("../lib/include.php"); // might change the password recorded in $_POST[]
 check_login();
-$urlext = '?' . CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY];
-$thisurl = basename(__FILE__) . $urlext;
-$userid = get_userid(); // Checks also login
+$userid = get_userid(); // Also checks login - again!
 if( !check_permission($userid,'Manage My Settings') && !check_permission($userid,'Manage My Account') ) return;
 
-$userobj = UserOperations::get_instance()->LoadUserByID($userid); // <- Safe to do, cause if $userid fails, it redirects automatically to login.
+$urlext = '?' . CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY];
+$thisurl = basename(__FILE__) . $urlext;
+$userobj = UserOperations::get_instance()->LoadUserByID($userid); // <- Safe to do, cause if $userid failed, it redirected to login.
 $db = cmsms()->GetDb();
 $error = '';
 $message = '';
@@ -71,7 +72,7 @@ if( isset($_POST['active_tab']) ) $tab = trim(cleanValue($_POST['active_tab']));
 /**
  * Submit account
  *
- * NOTE: Assumes that we succesfully acquired user object.
+ * NOTE: assumes that we successfully acquired the user object.
  */
 if (isset($_POST['submit_account']) && check_permission($userid,'Manage My Account')) {
 
@@ -80,10 +81,10 @@ if (isset($_POST['submit_account']) && check_permission($userid,'Manage My Accou
   if (isset($_POST["user"])) $username = cleanValue($_POST["user"]);
 
   $password = '';
-  if (isset($_POST["password"])) $password = $_POST["password"];
+  if (isset($_REQUEST["password"])) $password = $_REQUEST["password"]; // NOT $_POST, that might have been inappropriately 'sanitized'
 
   $passwordagain = '';
-  if (isset($_POST["passwordagain"])) $passwordagain = $_POST["passwordagain"];
+  if (isset($_REQUEST["passwordagain"])) $passwordagain = $_REQUEST["passwordagain"]; // ditto
 
   $firstname = '';
   if (isset($_POST["firstname"])) $firstname = cleanValue($_POST["firstname"]);
@@ -108,7 +109,7 @@ if (isset($_POST['submit_account']) && check_permission($userid,'Manage My Accou
     $validinfo = false;
     $error = lang('nopasswordmatch');
   }
-  else if (!empty($email) && !is_email($email)) {
+  else if ($email && !is_email($email)) {
     $validinfo = false;
     $error = lang('invalidemail').': '.$email;
   }
@@ -121,7 +122,7 @@ if (isset($_POST['submit_account']) && check_permission($userid,'Manage My Accou
     $userobj->email = $email;
     \CMSMS\HookManager::do_hook('Core::EditUserPre', [ 'user'=>&$userobj ] );
 
-    if ($password != '') $userobj->SetPassword($password);
+    if ($password) $userobj->SetPassword($password);
     $result = $userobj->Save();
 
     if($result) {
@@ -183,10 +184,10 @@ if (isset($_POST['submit_prefs']) && check_permission($userid,'Manage My Setting
 
 include_once ("header.php");
 
-if ($error != "") {
+if ($error) {
   $themeObject->ShowErrors($error);
 }
-if ($message != "") {
+if ($message) {
   $themeObject->ShowMessage($message);
 }
 
@@ -195,7 +196,7 @@ $contentops = cmsms()->GetContentOperations();
 $smarty->assign('SECURE_PARAM_NAME', CMS_SECURE_PARAM_NAME); // Assigned at include.php?
 $smarty->assign('CMS_USER_KEY', $_SESSION[CMS_USER_KEY]); // Assigned at include.php?
 
-# WYSIWYG editor
+// Html editor
 $tmp = module_meta::get_instance()->module_list_by_capability(CmsCoreCapabilities::WYSIWYG_MODULE);
 $tmp2 = array(-1 => lang('none'));
 for ($i = 0; $i < count($tmp); $i++) {
@@ -204,7 +205,7 @@ for ($i = 0; $i < count($tmp); $i++) {
 
 $smarty -> assign('wysiwyg_opts', $tmp2);
 
-# Syntaxhighlighter editor
+// Syntaxhighlight editor
 $tmp = module_meta::get_instance()->module_list_by_capability(CmsCoreCapabilities::SYNTAX_MODULE);
 $tmp2 = array(-1 => lang('none'));
 for ($i = 0; $i < count($tmp); $i++) {
@@ -213,17 +214,17 @@ for ($i = 0; $i < count($tmp); $i++) {
 
 $smarty->assign('syntax_opts', $tmp2);
 
-# Admin themes
+// Admin themes
 $smarty->assign('themes_opts',CmsAdminThemeBase::GetAvailableThemes());
 
-# Modules
+// Modules
 $allmodules = ModuleOperations::get_instance()->GetInstalledModules();
 $modules = array();
 foreach ((array)$allmodules as $onemodule) {
   $modules[$onemodule] = $onemodule;
 }
 
-#Tabs
+// Tabs
 $out = $themeObject->StartTabHeaders();
 if( check_permission($userid,'Manage My Account') ) {
   $out .= $themeObject->SetTabHeader('maintab',lang('useraccount'), ('maintab' == $tab)?true:false);
@@ -239,7 +240,7 @@ $smarty->assign('maintab_start',$themeObject->StartTab("maintab"));
 $smarty->assign('advancedtab_start',$themeObject->StartTab("advancedtab"));
 $smarty->assign('tab_end',$themeObject->EndTab());
 
-# Prefs
+// Prefs
 $smarty->assign('module_opts', $modules);
 $smarty->assign('wysiwyg', $wysiwyg);
 $smarty->assign('ce_navdisplay', $ce_navdisplay);
@@ -263,7 +264,7 @@ $smarty->assign('userobj', $userobj);
 $smarty->assign('manageaccount',check_permission($userid,'Manage My Account'));
 $smarty->assign('managesettings',check_permission($userid,'Manage My Settings'));
 
-# Output
+// Output
 $smarty->display('myaccount.tpl');
 include_once ("footer.php");
 

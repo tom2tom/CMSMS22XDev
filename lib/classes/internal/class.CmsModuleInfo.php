@@ -32,6 +32,7 @@ class CmsModuleInfo implements ArrayAccess
             if( isset($this->_data[$key]) ) return $this->_data[$key];
             break;
         }
+        return null; // no value for unrecognised property
     }
 
     #[\ReturnTypeWillChange]
@@ -76,7 +77,8 @@ class CmsModuleInfo implements ArrayAccess
 
     public function __construct($module_name,$can_load = TRUE)
     {
-        $arr = $arr2 = $fn1 = $fn2 = $ft1 = $ft2 = null;
+        $ft1 = 0;
+        $ft2 = 0;
         $fn1 = $this->_get_module_meta_file( $module_name );
         $fn2 = $this->_get_module_file( $module_name );
         if( is_file($fn1) ) $ft1 = filemtime($fn1);
@@ -90,7 +92,7 @@ class CmsModuleInfo implements ArrayAccess
             $arr = $this->_read_from_module_meta($module_name);
         }
         if( !$arr ) {
-            $arr['name'] = $module_name;
+            $arr = ['name'=> $module_name];
             $this->_setData( $arr );
             $this->_data['notavailable'] = true;
         } else {
@@ -129,10 +131,10 @@ class CmsModuleInfo implements ArrayAccess
         $config = \cms_config::get_instance();
         $dir = $config['root_path']."/modules/$module_name";
         $fn = $this->_get_module_meta_file( $module_name );
-        if( !is_file($fn) ) return;
+        if( !is_file($fn) ) return [];
         $inidata = @parse_ini_file($fn,TRUE);
-        if( $inidata === FALSE || count($inidata) == 0 ) return;
-        if( !isset($inidata['module']) ) return;
+        if( $inidata === FALSE || count($inidata) == 0 ) return [];
+        if( !isset($inidata['module']) ) return [];
 
         $data = $inidata['module'];
         $arr = [];
@@ -166,7 +168,7 @@ class CmsModuleInfo implements ArrayAccess
         // load the module... this is more likely to result in fatal errors than exceptions
         // so we don't bother to read
         $mod = ModuleOperations::get_instance()->get_module_instance($module_name,'',TRUE);
-        if( !is_object($mod) ) return;
+        if( !is_object($mod) ) return [];
 
         $arr = [];
         $arr['name'] = $mod->GetName();
@@ -194,7 +196,7 @@ class CmsModuleInfo implements ArrayAccess
         if( !$this['writable'] ) return FALSE;
 
         $_write_ini = function($input,$filename,$depth = 0) use (&$_write_ini) {
-            if( !is_array($input) ) { return; }
+            if( !is_array($input) ) { return ''; } //TODO type
 
             $res = '';
             foreach($input as $key => $val) {

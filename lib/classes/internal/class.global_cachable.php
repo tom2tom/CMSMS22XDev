@@ -7,7 +7,7 @@ class global_cachable
     private $_name;
     private $_fetchcb;
 
-    public function __construct($name,callable $fetch_fn)
+    public function __construct($name, $fetch_fn)
     {
         $this->_name = trim($name);
         $this->_fetchcb = $fetch_fn;

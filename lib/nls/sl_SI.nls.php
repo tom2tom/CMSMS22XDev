@@ -48,7 +48,7 @@ $nls['locale']['sl_SI'] = 'sl_SI,sl_SI.utf8,sl_SI.UTF-8,sl_SI.utf-8,slovenian,Sl
 $nls['encoding']['sl_SI'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['sl_SI'] = array(dirname(__FILE__).'/sl_SI/admin.inc.php');
+$nls['file']['sl_SI'] = array(__DIR__.'/sl_SI/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

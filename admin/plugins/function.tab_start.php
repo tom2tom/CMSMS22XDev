@@ -20,7 +20,7 @@ function smarty_function_tab_start($params,$template)
 {
 	$smarty = $template->smarty;
 
-	if( !isset($params['name']) ) return;
+	if( !isset($params['name']) ) return '';
 
 	$parms = array();
 	foreach( $params as $key => $value )
@@ -41,7 +41,7 @@ function smarty_function_tab_start($params,$template)
 	if( isset($params['assign']) )
 	{
 		$smarty->assign(trim($params['assign']),$out);
-		return;
+		return '';
 	}
 	return $out;
 }

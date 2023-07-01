@@ -27,8 +27,8 @@ if( !file_exists($src) ) {
   $this->Redirect($id,"defaultadmin",$returnid,$params);
 }
 
-include_once(dirname(__FILE__).'/easyarchives/EasyArchive.class.php');
-$archive = new EasyArchive;
+include_once(__DIR__.'/easyarchives/EasyArchive.class.php');
+$archive = new EasyArchive();
 $destdir = filemanager_utils::join_path($config['root_path'],filemanager_utils::get_cwd());
 if( !endswith($destdir,'/') ) $destdir .= '/';
 $res = $archive->extract($src,$destdir);

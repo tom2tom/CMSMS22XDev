@@ -9,7 +9,7 @@ if( $_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['showtemplate']) && $_GET
 
 if( !isset($params["newdir"]) && !isset($params['setdir']) ) $this->RedirectToAdminTab();
 
-$path = null;
+$path = '';
 if( isset($params['newdir']) ) {
     // set a relative directory.
     $newdir = trim($params["newdir"]);

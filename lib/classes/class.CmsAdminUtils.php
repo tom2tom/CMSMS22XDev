@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: class.admintheme.inc.php 7596 2011-12-24 22:50:52Z calguy1000 $
+#$Id$
 
 /**
  * Classes and utilities for working with the CMSMS admin interface.

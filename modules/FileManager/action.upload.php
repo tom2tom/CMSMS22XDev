@@ -5,7 +5,7 @@ require_once( __DIR__.'/lib/class.jquery_upload_handler.php' );
 
 class FileManagerUploadHandler extends jquery_upload_handler
 {
-  function __construct($options=null)
+  function __construct($options=[])
   {
     if( !is_array($options) ) $options = array();
 
@@ -41,7 +41,7 @@ class FileManagerUploadHandler extends jquery_upload_handler
           $parms = \CMSMS\HookManager::do_hook( 'FileManager::OnFileUploaded', $parms );
           if( is_array($parms) && isset($parms['file']) ) $file = $parms['file']; // file name could have changed.
 
-          $thumb = null;
+          $thumb = FALSE;
           if( $mod->GetPreference('create_thumbnails') ) {
               $thumb = filemanager_utils::create_thumbnail($file, NULL, TRUE);
           }

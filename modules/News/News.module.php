@@ -36,7 +36,7 @@ class News extends CMSModule
     function GetHelp() { return $this->Lang('help'); }
     function GetAuthor() { return 'Ted Kulp'; }
     function GetAuthorEmail() { return 'wishy@cmsmadesimple.org'; }
-    function GetChangeLog() { return file_get_contents(dirname(__FILE__).'/changelog.inc'); }
+    function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
     function GetEventDescription( $eventname ) { return $this->lang('eventdesc-' . $eventname); }
     function GetEventHelp( $eventname ) { return $this->lang('eventhelp-' . $eventname); }
 
@@ -201,7 +201,7 @@ class News extends CMSModule
         return $result;
     }
 
-    function SearchReindex(&$module)
+    function SearchReindex($module)
     {
         $db = $this->GetDb();
 
@@ -213,7 +213,7 @@ class News extends CMSModule
                 $module->AddWords($this->GetName(),
                                   $result->fields['news_id'], 'article',
                                   $result->fields['news_data'] . ' ' . $result->fields['summary'] . ' ' . $result->fields['news_title'] . ' ' . $result->fields['news_title'],
-                                  ($result->fields['end_time'] != NULL && $this->GetPreference('expired_searchable',0) == 0) ?  $db->UnixTimeStamp($result->fields['end_time']) : NULL);
+                                  ($result->fields['end_time'] != NULL && $this->GetPreference('expired_searchable',0) == 0) ? $db->UnixTimeStamp($result->fields['end_time']) : NULL); //null for no datetime field value
             }
             $result->MoveNext();
         }
@@ -239,7 +239,7 @@ class News extends CMSModule
 
     public function get_tasks()
     {
-        if( !$this->GetPreference('alert_drafts',0) ) return;
+        if( !$this->GetPreference('alert_drafts',0) ) return [];
         $out = array();
         $out[] = new \News\CreateDraftAlertTask();
         return $out;
@@ -259,7 +259,7 @@ class News extends CMSModule
                   AND (end_time IS NULL OR end_time > NOw())';
                 $count = $db->GetOne($query);
                 if( $count ) {
-                    $obj = new StdClass;
+                    $obj = new stdClass();
                     $obj->priority = 2;
                     $link = $this->CreateLink('m1_','defaultadmin','', $this->Lang('notify_n_draft_items_sub',$count));
                     $obj->html = $this->Lang('notify_n_draft_items',$link);
@@ -308,23 +308,25 @@ class News extends CMSModule
     {
         $mod = cms_utils::get_module('News');
         if( is_object($mod) ) return $mod->Lang('type_'.$str);
+        return '';
     }
 
     public static function template_help_callback($str)
     {
-        $str = trim($str);
         $mod = cms_utils::get_module('News');
         if( is_object($mod) ) {
+            $str = trim((string)$str);
             $file = $mod->GetModulePath().'/doc/tpltype_'.$str.'.inc';
             if( is_file($file) ) return file_get_contents($file);
         }
+        return '';
     }
 
     public static function reset_page_type_defaults(CmsLayoutTemplateType $type)
     {
         if( $type->get_originator() != 'News' ) throw new CmsLogicException('Cannot reset contents for this template type');
 
-        $fn = null;
+        $fn = '';
         switch( $type->get_name() ) {
         case 'summary':
             $fn = 'orig_summary_template.tpl';
@@ -342,8 +344,11 @@ class News extends CMSModule
             $fn = 'browsecat.tpl';
         }
 
-        $fn = cms_join_path(__DIR__,'templates',$fn);
-        if( file_exists($fn) ) return @file_get_contents($fn);
+        if( $fn ) {
+            $fn = cms_join_path(__DIR__,'templates',$fn);
+            if( file_exists($fn) ) return @file_get_contents($fn);
+        }
+        return '';
     }
 
     public function HasCapability($capability, $params = array())

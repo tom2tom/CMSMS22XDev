@@ -16,18 +16,11 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: translation.functions.php 7867 2012-04-13 18:00:14Z calguy1000 $
+#$Id$
 
 /**
- * Translation functions/classes
- *
- * @package CMS
- * @license GPL
- */
-
-/**
- * A singleton class to provide simple, generic mechanism for dealing with languages
- * encodings, and locales.  This class does not handle translation strings.
+ * A class to provide simple, generic mechanism for dealing with language
+ * encodings and locales. This class does not handle translation strings.
  *
  * @author Robert Campbell
  * @since 1.11
@@ -36,11 +29,6 @@
  */
 final class CmsNlsOperations
 {
-    /**
-     * @ignore
-     */
-    private function __construct() {}
-
     /**
      * @ignore
      */
@@ -54,7 +42,7 @@ final class CmsNlsOperations
     /**
      * @ignore
      */
-    private static $_encoding;
+    private static $_encoding; // string, single or comma-separated encoding(s)
 
     /**
      * @ignore
@@ -70,6 +58,11 @@ final class CmsNlsOperations
      * @ignore
      */
     private static $_stored_dflt_language;
+
+    /**
+     * @ignore
+     */
+    private function __construct() {}
 
     /**
      * @ignore
@@ -103,7 +96,7 @@ final class CmsNlsOperations
 
     /**
      * Get an array of all languages that are known
-     * (installed).  Udes the NLS files to handle this
+     * (installed).  Use the NLS files to handle this
      *
      * @return array Array of language names
      */
@@ -111,44 +104,48 @@ final class CmsNlsOperations
     {
         self::_load_nls();
         if( is_array(self::$_nls) ) return array_keys(self::$_nls);
+        return [];
     }
 
     /**
      * Get language info about a particular language.
      *
      * @param string $lang language name.
-     * @return CmsNls object repesenting the named language.  or null.
+     * @return mixed CmsNls object representing the named language or null.
      */
     public static function get_language_info($lang)
     {
         self::_load_nls();
         if( isset(self::$_nls[$lang]) ) return self::$_nls[$lang];
+        return null; // no object
     }
 
-  /**
-   * Set a current language.
-   * The language specified may be an empty string, which will assume that the system
-   * should try to detect an appropriate language.  If no default can be found for
-   * some reason, en_US will be assumed.
-   *
-   * When a language is found, the system will automatically set the locale for the request.
-   *
-   * Note: CMSMS 1.11 and above will not support multiple languages per request.
-   * therefore, it should be assumed that this function can only be called once per request.
-   *
-   * @internal
-   * @see set_locale
-   * @param string The desired language.
-   * @return bool
-   */
-  public static function set_language($lang = null)
-  {
-	  $curlang = '';
-	  if( self::$_cur_lang != '') $curlang = self::$_cur_lang;
-	  if( $lang == '' && \CmsApp::get_instance()->is_frontend_request() && is_object(self::$_fe_language_detector) ) $lang = self::$_fe_language_detector->find_language();
-	  if( $lang != '' ) $lang = self::find_nls_match($lang); // resolve input string
-	  if( $lang == '' ) $lang = self::get_default_language();
-	  if( $curlang == $lang ) return TRUE; // nothing to do.
+   /**
+    * Set a current language.
+    * The language specified may be an empty string, which will assume that the system
+    * should try to detect an appropriate language.  If no default can be found for
+    * some reason, en_US will be assumed.
+    *
+    * When a language is found, the system will automatically set the locale for the request.
+    *
+    * Note: CMSMS 1.11 and above will not support multiple languages per request.
+    * therefore, it should be assumed that this function can only be called once per request.
+    *
+    * @internal
+    * @see set_locale
+    * @param string The desired language.
+    * @return bool
+    */
+    public static function set_language($lang = '')
+    {
+        $curlang = '';
+        if( self::$_cur_lang ) $curlang = self::$_cur_lang;
+        if( !$lang && \CmsApp::get_instance()->is_frontend_request() && is_object(self::$_fe_language_detector) ) {
+            $lang = self::$_fe_language_detector->find_language();
+        }
+        if( $lang ) $lang = self::find_nls_match($lang); // resolve input string
+        if( !$lang ) $lang = self::get_default_language();
+        if( $curlang == $lang ) return TRUE; // nothing to do
 
         self::_load_nls();
         if( isset(self::$_nls[$lang]) ) {
@@ -161,20 +158,27 @@ final class CmsNlsOperations
         return FALSE;
     }
 
-  /**
-   * Get the current language.
-   * If not explicitly set this method will try to detect the current language.
-   * different detection mechanisms are used for admin requests vs. frontend requests.
-   * if no match could be found in any way, en_US is returned.
-   *
-   * @return string Language name.
-   */
-  public static function get_current_language()
-  {
-	  if( isset(self::$_cur_lang) ) return self::$_cur_lang;
-	  if( is_object(self::$_fe_language_detector) && \CmsApp::get_instance()->is_frontend_request() ) return self::$_fe_language_detector->find_language();
-	  return self::get_default_language();
-  }
+   /**
+    * Get the current language.
+    * If not explicitly set this method will try to detect the current language.
+    * Several detection mechanisms are used for admin requests vs. frontend requests.
+    * If no match is found, en_US is returned.
+    *
+    * @return string Language name
+    */
+    public static function get_current_language()
+    {
+        if( isset(self::$_cur_lang) ) {
+            return self::$_cur_lang;
+        }
+        if( isset(self::$_stored_dflt_language) ) {
+            return self::$_stored_dflt_language;
+        }
+        if( is_object(self::$_fe_language_detector) && \CmsApp::get_instance()->is_frontend_request() ) {
+            return self::$_fe_language_detector->find_language();
+        }
+        return self::get_default_language();
+    }
 
     /**
      * Get a default language.
@@ -182,7 +186,7 @@ final class CmsNlsOperations
      *
      * For admin requests first the preference is checked.  Secondly,
      * an attempt is made to find a language understood by the browser that is compatible
-     * with what is avaialable.  If no match can be found, en_US is assumed.
+     * with what is available.  If no match can be found, en_US is assumed.
      *
      * For frontend requests if a language detector has been set into this object it will
      * be called to attempt to find a language.  If that fails, then the frontend language preference
@@ -200,7 +204,6 @@ final class CmsNlsOperations
         if( self::$_stored_dflt_language ) return self::$_stored_dflt_language;
 
         self::_load_nls();
-        $lang = '';
         if (isset($CMS_ADMIN_PAGE) || isset($CMS_STYLESHEET) || isset($CMS_INSTALL_PAGE)) {
             $lang = self::get_admin_language();
         }
@@ -212,19 +215,19 @@ final class CmsNlsOperations
         return $lang;
     }
 
-  /**
-   * Use detection mechanisms to find a suitable frontend language.
-   * the language returned must be available as specified by the
-   * available NLS Files.
-   *
-   * @return string language name.
-   */
-  protected static function get_frontend_language()
-  {
-	  $x = trim(get_site_preference('frontendlang'));
-	  if( !$x ) $x = 'en_US';
-	  return $x;
-  }
+   /**
+    * Use detection mechanisms to find a suitable frontend language.
+    * The language returned must be available as specified by the
+    * available NLS Files.
+    *
+    * @return string language name.
+    */
+    protected static function get_frontend_language()
+    {
+        $x = trim(get_site_preference('frontendlang'));
+        if( !$x ) $x = 'en_US';
+        return $x;
+    }
 
     /**
      * Use detection mechanisms to find a suitable language for an admin request.
@@ -237,14 +240,15 @@ final class CmsNlsOperations
     protected static function get_admin_language()
     {
         global $CMS_LOGIN_PAGE;
-        $uid = $lang = null;
+        $uid = 0;
+        $lang = '';
         if( !isset($CMS_LOGIN_PAGE) ) {
             $uid = get_userid(false);
             if( $uid ) {
                 $lang = cms_userprefs::get_for_user($uid,'default_cms_language');
                 if( $lang ) {
                     self::_load_nls();
-                    if( !isset(self::$_nls[$lang]) ) $lang = null;
+                    if( !isset(self::$_nls[$lang]) ) $lang = '';
                 }
             }
         }
@@ -274,7 +278,7 @@ final class CmsNlsOperations
     public static function detect_browser_language()
     {
         $langs = self::get_browser_languages();
-        if( !is_array($langs) || !count($langs) ) return;
+        if( !is_array($langs) || !count($langs) ) return '';
 
         self::_load_nls();
         foreach( $langs as $onelang => $weight ) {
@@ -284,6 +288,7 @@ final class CmsNlsOperations
                 if( $obj->matches($onelang) ) return $obj->name();
             }
         }
+        return '';
     }
 
     /**
@@ -293,7 +298,7 @@ final class CmsNlsOperations
      */
     public static function get_browser_languages()
     {
-        if( !isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ) return;
+        if( !isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ) return [];
 
         $in = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
         preg_match_all('/([a-z]{1,8}(-[a-z]{1,8})?)\s*(;\s*q\s*=\s*(1|0\.[0-9]+))?/i', $in, $lang_parse);
@@ -346,7 +351,7 @@ final class CmsNlsOperations
     public static function set_encoding($str)
     {
         if( !$str ) {
-            self::$_encoding = null;
+            self::$_encoding = '';
             return;
         }
         self::$_encoding = $str;
@@ -361,10 +366,9 @@ final class CmsNlsOperations
      */
     protected static function set_locale()
     {
-        $config = \cms_config::get_instance();
         static $_locale_set;
 
-        $locale = '';
+        $config = \cms_config::get_instance();
         if( isset($config['locale']) && $config['locale'] != '' ) {
             if( $_locale_set ) return;
 
@@ -394,7 +398,7 @@ final class CmsNlsOperations
      *
      * @param CmsLanguageDetector Object containing methods to detect a compatible, desired language
      */
-    public static function set_language_detector(CmsLanguageDetector& $obj)
+    public static function set_language_detector(CmsLanguageDetector $obj)
     {
         if( is_object(self::$_fe_language_detector) ) die('language detector already set');
         self::$_fe_language_detector = $obj;
@@ -405,7 +409,7 @@ final class CmsNlsOperations
      * Find a match for a specific language
      * This method will try to find the NLS information closest to the language specified.
      *
-     * @param string $str An approximate language specification (an alias matchis done if possible).
+     * @param string $str An approximate language specification (an alias match is done if possible).
      * @return hash containing NLS information.
      */
     protected static function find_nls_match($str)
@@ -414,6 +418,7 @@ final class CmsNlsOperations
         foreach( self::$_nls as $key => $obj ) {
             if( $obj->matches($str) ) return $obj->name();
         }
+        return [];
     }
 } // end of class
 

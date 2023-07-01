@@ -33,7 +33,7 @@
 #
 #-------------------------------------------------------------------------
 #END_LICENSE
-#$Id:$
+#$Id$
 
 class NavigatorNode
 {
@@ -86,7 +86,7 @@ final class Navigator extends CMSModule
     function GetHelp($lang='en_US') { return $this->Lang('help'); }
     function GetAuthor() { return 'Robert Campbell'; }
     function GetAuthorEmail() { return ''; }
-    function GetChangeLog() { return file_get_contents(dirname(__FILE__).'/changelog.inc'); }
+    function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
 
     public function InitializeFrontend()
     {
@@ -130,7 +130,7 @@ final class Navigator extends CMSModule
         $this->CreateParameter('excludeprefix','',$this->Lang('help_excludeprefix'));
     }
 
-    final static public function nav_breadcrumbs($params,$smarty)
+    final public static function nav_breadcrumbs($params,$smarty)
     {
         $params['action'] = 'breadcrumbs';
         $params['module'] = __CLASS__;
@@ -141,13 +141,14 @@ final class Navigator extends CMSModule
     {
         $mod = cms_utils::get_module(__CLASS__);
         if( is_object($mod) ) return $mod->Lang('type_'.$str);
+        return '';
     }
 
     public static function reset_page_type_defaults(CmsLayoutTemplateType $type)
     {
         if( $type->get_originator() != __CLASS__ ) throw new CmsLogicException('Cannot reset contents for this template type');
 
-        $fn = null;
+        $fn = '';
         switch( $type->get_name() ) {
         case 'navigation':
             $fn = 'simple_navigation.tpl';
@@ -157,17 +158,21 @@ final class Navigator extends CMSModule
             break;
         }
 
-        $fn = cms_join_path(dirname(__FILE__),'templates',$fn);
-        if( file_exists($fn) ) return @file_get_contents($fn);
+        if( $fn ) {
+            $fn = cms_join_path(__DIR__,'templates',$fn);
+            if( file_exists($fn) ) return @file_get_contents($fn);
+        }
+        return '';
     }
 
     public static function template_help_callback($str)
     {
-        $str = trim($str);
         $mod = cms_utils::get_module('Navigator');
         if( is_object($mod) ) {
+            $str = trim((string)$str);
             $file = $mod->GetModulePath().'/doc/tpltype_'.$str.'.inc';
             if( is_file($file) ) return file_get_contents($file);
         }
+        return '';
     }
 } // End of class

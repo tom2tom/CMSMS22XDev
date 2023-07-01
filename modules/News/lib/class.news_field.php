@@ -62,6 +62,7 @@ final class news_field
     case 'fielddef_id':
       return $this->_data['id'];
     }
+    return null; // no value for unsupported property
   }
 
   #[\ReturnTypeWillChange]
@@ -161,31 +162,31 @@ final class news_field
     }
   }
 
-  public static function &load_by_id($id)
+  public static function load_by_id($id)
   {
     $id = (int)$id;
-    if( $id < 1 ) return;
+    if( $id < 1 ) return null; // no object
 
     $db = cmsms()->GetDb();
     $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_news_fielddefs WHERE id = ?';
     $row = $db->GetRow($query,array($id));
     if( $row['extra'] ) $row['extra'] = unserialize($row['extra']);
-    $obj = new news_field;
-    $obj->_data = $row;
+    $obj = new news_field();
+    $obj->_data = $row; // TODO any sanitisation hereabouts?
     return $obj;
   }
 
-  public static function &load_by_name($name)
+  public static function load_by_name($name)
   {
     $name = trim($name);
-    if( !$name ) return;
+    if( !$name ) return null; // no object
 
     $db = cmsms()->GetDb();
     $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_news_fielddefs WHERE name = ?';
     $row = $db->GetRow($query,array($name));
     if( $row['extra'] ) $row['extra'] = unserialize($row['extra']);
-    $obj = new news_field;
-    $obj->_data = $row;
+    $obj = new news_field();
+    $obj->_data = $row; // TODO any sanitisation hereabouts?
     return $obj;
   }
 } // end of class

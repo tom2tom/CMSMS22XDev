@@ -64,7 +64,6 @@ if( $USE_THEME && $modinst->SuppressAdminOutput($_REQUEST) != false || isset($_R
 
 // module output
 $params = ModuleOperations::get_instance()->GetModuleParameters($id);
-$content = null;
 if( $USE_THEME ) {
     $themeObject = cms_utils::get_theme_object();
     $themeObject->set_action_module($module);
@@ -95,7 +94,7 @@ if( $USE_THEME ) {
     echo '<div class="pageoverflow">';
     $title = $themeObject->title;
     $module_help_type = 'both';
-    if( $title ) $module_help_type = null;
+    if( $title ) $module_help_type = '';
     if( !$title ) $title = $themeObject->get_active_title();
     if( !$title ) $title = $modinst->GetFriendlyName();
     echo $themeObject->ShowHeader($title,'','',$module_help_type).'</div>';

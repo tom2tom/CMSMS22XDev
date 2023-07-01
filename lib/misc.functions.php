@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id:$
+#$Id$
 
 /**
  * Miscellaneous support functions
@@ -43,7 +43,7 @@ function redirect($to)
         // cannot redirect cli based scripts
         die("ERROR: no redirect on cli based scripts ---\n");
     }
-    $_SERVER['PHP_SELF'] = null;
+    $_SERVER['PHP_SELF'] = null; // aka unset
 
     $schema = 'http';
     if( $app->is_https_request() ) $schema = 'https';
@@ -346,7 +346,7 @@ function debug_display($var, $title="", $echo_to_screen = true, $use_html = true
         }
     }
 
-    if(FALSE == empty($var)) {
+    if(!empty($var)) {
         if ($use_html) echo '<pre>';
         if(is_array($var)) {
             echo "Number of elements: " . count($var) . "\n";
@@ -1140,15 +1140,15 @@ function cms_get_jquery($exclude = '',$ssl = FALSE,$cdn = FALSE,$append = '',$cu
   if( $ssl === true || $ssl === TRUE ) $base_url = $config['ssl_url'];
   $basePath=$custom_root!=''?trim($custom_root,'/'):$base_url;
 
-  // Scripts to include
+  // Scripts to include NOTE keep {cms_jquery} tag help reconciled with the following
   $scripts['jquery'] = array('cdn'=>'https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js',
                              'local'=>$basePath.'/lib/jquery/js/jquery-1.12.4.min.js',
                              'aliases'=>array('jquery.min.js','jquery',));
-  $scripts['jquery-ui'] = array('cdn'=>'https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js',
-                                'local'=>$basePath.'/lib/jquery/js/jquery-ui-1.10.4.custom.min.js',
+  $scripts['jquery-ui'] = array('css_cdn'=>'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js',
+                                'local'=>$basePath.'/lib/jquery/js/jquery-ui-1.12.1.custom.min.js',
                                 'aliases'=>array('jquery-ui.min.js','ui'),
-                                'css'=>$basePath.'/lib/jquery/css/smoothness/jquery-ui-1.10.4.custom.min.css');
-  $scripts['nestedSortable'] = array('local'=>$basePath.'/lib/jquery/js/jquery.mjs.nestedSortable.js');
+                                'css'=>$basePath.'/lib/jquery/css/smoothness/jquery-ui-1.12.1.custom.min.css');
+  $scripts['nestedSortable'] = array('local'=>$basePath.'/lib/jquery/js/jquery.mjs.nestedSortable.min.js');
   $scripts['json'] = array('local'=>$basePath.'/lib/jquery/js/jquery.json-2.4.min.js');
   $scripts['migrate'] = array('local'=>$basePath.'/lib/jquery/js/jquery-migrate-1.4.1.min.js');
 
@@ -1161,20 +1161,20 @@ function cms_get_jquery($exclude = '',$ssl = FALSE,$cdn = FALSE,$append = '',$cu
       $scripts['cms_admin'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cms_admin.js');
       $scripts['cms_dirtyform'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_dirtyform.js');
       $scripts['cms_lock'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_lock.js');
-      $scripts['cms_hiersel'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_hierselector.js');
       $scripts['cms_autorefresh'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_autorefresh.js');
+      $scripts['cms_hiersel'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_hierselector.js');
+      $scripts['cms_filepicker'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_filepicker.js');
       $scripts['ui_touch_punch'] = array('local'=>$basePath.'/lib/jquery/js/jquery.ui.touch-punch.min.js');
-      $scripts['cms_filepicker'] = [ 'local'=>$basePath.'/lib/jquery/js/jquery.cmsms_filepicker.js' ];
   }
 
-  // Check if we need to exclude some script
-  if(!empty($exclude)) {
+  // Check if we need to exclude some script(s)
+  if( !empty($exclude) ) {
       $exclude_list = explode(",", trim(str_replace(' ','',$exclude)));
       foreach($exclude_list as $one) {
           $one = trim(strtolower($one));
 
           // find a match
-          $found = null;
+          $found = '';
           foreach( $scripts as $key => $rec ) {
               if( strtolower($one) == strtolower($key) ) {
                   $found = $key;
@@ -1195,8 +1195,8 @@ function cms_get_jquery($exclude = '',$ssl = FALSE,$cdn = FALSE,$append = '',$cu
       }
   }
 
-  // let them add scripts to the end ie: a jQuery plugin
-  if(!empty($append)) {
+  // optionally add stuff to the end e.g. a jQuery plugin or stylesheet
+  if( !empty($append) ) {
       $append_list = explode(",", trim(str_replace(' ','',$append)));
       foreach($append_list as $key => $item) {
           $scripts['user_'.$key] = array('local'=>$item);
@@ -1206,16 +1206,17 @@ function cms_get_jquery($exclude = '',$ssl = FALSE,$cdn = FALSE,$append = '',$cu
   // Output
   $output = '';
   $fmt_js = '<script type="text/javascript" src="%s"></script>';
-  $fmt_css = '<link rel="stylesheet" type="text/css" href="%s" />';
+  $fmt_css = '<link type="text/css" href="%s" rel="stylesheet" />';
   foreach($scripts as $script) {
+      //TODO check logic here
+      if( !empty($script['css']) && $include_css ) {
+          $url_css = $script['css'];
+          if( $cdn && !empty($script['css_cdn']) ) $url_css = $script['css_cdn'];
+          $output .= sprintf($fmt_css,$url_css)."\n";
+      }
       $url_js = $script['local'];
       if( $cdn && isset($script['cdn']) ) $url_js = $script['cdn'];
       $output .= sprintf($fmt_js,$url_js)."\n";
-      if( isset($script['css']) && $script['css'] != '' ) {
-          $url_css = $script['css'];
-          if( $cdn && isset($script['css_cdn']) ) $url_css = $script['css_cdn'];
-          if( $include_css ) $output .= sprintf($fmt_css,$url_css)."\n";
-      }
   }
   return $output;
 }
@@ -1231,7 +1232,7 @@ function setup_session($cachable = FALSE)
     static $_setup_already = FALSE;
     if( $_setup_already ) return;
 
-    $_f = $_l = null;
+    $_f = $_l = null; // no return values
     if( headers_sent( $_f, $_l) ) throw new \LogicException("Attempt to set headers, but headers were already sent at: $_f::$_l");
 
     if( $cachable ) {

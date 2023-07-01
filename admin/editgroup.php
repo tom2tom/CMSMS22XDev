@@ -57,7 +57,7 @@ $userops = $gCms->GetUserOperations();
 $useringroup = $userops->UserInGroup($userid,$group_id);
 
 if ($access) {
-    $groupobj = new Group;
+    $groupobj = new Group();
     if( $group_id > 0 ) {
         $groupobj = Group::load($group_id);
     }

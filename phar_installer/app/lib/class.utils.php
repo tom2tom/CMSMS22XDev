@@ -21,9 +21,9 @@ final class utils
         $dir = $app->get_appdir().'/upgrade';
         if( !is_dir($dir) ) throw new Exception(lang('error_internal','u100'));
 
-        $dh = opendir($dir);
         $versions = array();
-        if( !$dh ) throw new Exception(lang('error_internal',712));
+        $dh = opendir($dir);
+        if( !$dh ) throw new Exception(lang('error_internal','u101'));
         while( ($file = readdir($dh)) !== false ) {
             if( $file == '.' || $file == '..' ) continue;
             if( is_dir($dir.'/'.$file) &&
@@ -32,7 +32,7 @@ final class utils
             }
         }
         closedir($dh);
-        if( count($versions) ) {
+        if( count($versions) > 1 ) {
             usort($versions,'version_compare');
         }
         return $versions;
@@ -43,7 +43,7 @@ final class utils
         // it is not an error to not have a changelog file
         $app = get_app();
         $dir = $app->get_appdir()."/upgrade/$version";
-        if( !is_dir($dir) ) throw new Exception(lang('error_internal','u100'));
+        if( !is_dir($dir) ) throw new Exception(lang('error_internal','u110'));
         $files = array('CHANGELOG.txt','CHANGELOG.TXT','changelog.txt');
         foreach( $files as $fn ) {
             if( is_file("$dir/$fn") ) {
@@ -61,7 +61,7 @@ final class utils
         // it is not an error to not have a readme file
         $app = get_app();
         $dir = $app->get_appdir()."/upgrade/$version";
-        if( !is_dir($dir) ) throw new Exception(lang('error_internal','u100'));
+        if( !is_dir($dir) ) throw new Exception(lang('error_internal','u210'));
         $files = array('README.HTML.INC','readme.html.inc','README.HTML','readme.html');
         foreach( $files as $fn ) {
             if( is_file("$dir/$fn") ) return @file_get_contents("$dir/$fn");

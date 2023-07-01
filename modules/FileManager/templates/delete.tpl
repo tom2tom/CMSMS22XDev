@@ -8,7 +8,7 @@
 <div class="pageoverflow">
   <p class="pagetext">{$mod->Lang('deleteselected')}:</p>
   <p class="pageinput">
-    {'<br/>'|implode:$selall}
+    {'<br />'|adjust:'implode':$selall}
   </p>
 </div>
 <div class="pageoverflow">

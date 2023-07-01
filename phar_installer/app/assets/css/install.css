@@ -476,7 +476,7 @@ h1, h2, h3, h4, h5, h6 {
 	margin: -.25em .25em 0;
 	background-color: #efefef;
 	padding: .1em .5em;
-	text-transform: uppercase;
+/*	text-transform: uppercase;*/
 	font-weight: 400;
 	font-size: .875em;
 	border-radius: 3px;

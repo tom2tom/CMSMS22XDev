@@ -191,7 +191,7 @@ $sqlarray = $dbdict->CreateIndexSQL(CMS_DB_PREFIX.'index_locks3', CMS_DB_PREFIX.
 $return = $dbdict->ExecuteSQLArray($sqlarray);
 
 // create initial types.
-$page_template_type = $gcb_template_type = null;
+$page_template_type = $gcb_template_type = null; // no object
 for( $tries = 0; $tries < 2; $tries++ ) {
     try {
         $page_template_type = CmsLayoutTemplateType::load(CmsLayoutTemplateType::CORE.'::page');
@@ -291,7 +291,7 @@ $fix_template_name = function($in) use (&$db,&$_fix_name) {
 verbose_msg('convert global content blocks to generic templates');
 $query = 'SELECT * FROM '.CMS_DB_PREFIX.'htmlblobs';
 $sql2 = 'INSERT INTO '.CMS_DB_PREFIX.CmsLayoutTemplate::TABLENAME.' (name,content,description,type_id,type_dflt,owner_id,created,modified) VALUES (?,?,?,?,0,?,UNIX_TIMESTAMP(),UNIX_TIMESTAMP())';
-$gcblist = null;
+$gcblist = [];
 $tmp = $db->GetArray($query);
 if( is_array($tmp) && count($tmp) ) {
     // for each gcb, come up wit a new name and if the new name does not exist in the database, create a new template by that name.

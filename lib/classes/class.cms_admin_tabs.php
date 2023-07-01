@@ -29,22 +29,22 @@ final class cms_admin_tabs
   /**
    * @ignore
    */
-  private static $_start_headers_sent = null;
+  private static $_start_headers_sent = null; // aka unset
 
   /**
    * @ignore
    */
-  private static $_end_headers_sent = null;
+  private static $_end_headers_sent = null; // aka unset
 
   /**
    * @ignore
    */
-  private static $_start_content_sent = null;
+  private static $_start_content_sent = null; // aka unset
 
   /**
    * @ignore
    */
-  private static $_in_tab = null;
+  private static $_in_tab = 0;
 
   /**
    * @ignore
@@ -168,8 +168,8 @@ final class cms_admin_tabs
    */
   public static function end_tab()
   {
-    if( !self::$_in_tab ) return;
-    self::$_in_tab = null;
+    if( !self::$_in_tab ) return '';
+    self::$_in_tab = 0;
     return '</div> <!-- EndTab -->';
   }
 } // end of class

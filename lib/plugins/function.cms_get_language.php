@@ -21,7 +21,7 @@ function smarty_function_cms_get_language($params, $smarty)
 	$lang = CmsNlsOperations::get_current_language();
 	if( isset($params['assign']) ) {
 	  $smarty->assign(trim($params['assign']),$lang);
-	  return;
+	  return '';
 	}
 	return $lang;
 }

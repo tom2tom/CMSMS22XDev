@@ -24,8 +24,8 @@ function smarty_function_recently_updated($params, $smarty)
 	$leadin = "Modified: ";
 	if(!empty($params['leadin'])) $leadin = $params['leadin'];
 
-	$showtitle='true';
-	if(!empty($params['showtitle'])) $showtitle = $params['showtitle'];
+	$showtitle = true;
+	if(isset($params['showtitle'])) $showtitle = cms_to_bool($params['showtitle']); // 2.2.18 bugfix: support falsy setting 
 
 	$dateformat = isset($params['dateformat']) ? $params['dateformat'] : "d.m.y h:m" ;
 	if( strpos($dateformat, '%') !== false ) {
@@ -60,7 +60,7 @@ function smarty_function_recently_updated($params, $smarty)
 		$curcontent = $curnode->GetContent();
 		$output .= '<li>';
 		$output .= '<a href="'.$curcontent->GetURL().'">'.$updated_page['content_name'].'</a>';
-		if ((FALSE == empty($updated_page['titleattribute'])) && ($showtitle=='true')) {
+		if (!empty($updated_page['titleattribute']) && $showtitle) {
 			$output .= '<br />';
 			$output .= $updated_page['titleattribute'];
 		}
@@ -82,7 +82,7 @@ function smarty_function_recently_updated($params, $smarty)
 
 	if( isset($params['assign']) ) {
 		$smarty->assign(trim($params['assign']),$output);
-		return;
+		return '';
 	}
 	return $output;
 }

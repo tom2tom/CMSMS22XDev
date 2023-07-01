@@ -48,7 +48,7 @@ $nls['locale']['hr_HR'] = 'hr_HR,hr_HR.utf8,hr_HR.utf-8,hr_HR.UTF-8,croatian,Cro
 $nls['encoding']['hr_HR'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['hr_HR'] = array(dirname(__FILE__).'/hr_HR/admin.inc.php');
+$nls['file']['hr_HR'] = array(__DIR__.'/hr_HR/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

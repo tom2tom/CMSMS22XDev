@@ -30,7 +30,6 @@ if( isset($params['cancel']) ) {
 }
 
 try {
-    $css_ob = null;
     $message = $this->Lang('msg_stylesheet_saved');
     $response = 'success';
     $apply = isset($params['apply']) ? 1 : 0;
@@ -98,7 +97,7 @@ try {
         $smarty->assign('lock_refresh', $this->GetPreference('lock_refresh'));
         try {
             $lock_id = CmsLockOperations::is_locked('stylesheet', $css_ob->get_id());
-            $lock = null;
+            $lock = null; // no object
             if( $lock_id > 0 ) {
                 // it's locked... by somebody, make sure it's expired before we allow stealing it.
                 $lock = CmsLock::load('stylesheet',$css_ob->get_id());
@@ -142,6 +141,7 @@ try {
     $smarty->assign('extraparms', $extraparms);
     $smarty->assign('css', $css_ob);
     if ($css_ob && $css_ob->get_id()) $smarty->assign('css_id', $css_ob->get_id());
+    $smarty->assign('userid',get_userid());
 
     echo $this->ProcessTemplate('admin_edit_css.tpl');
 } catch( CmsException $e ) {

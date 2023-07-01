@@ -96,11 +96,11 @@
     });
 
     $(document).on('click', '#available-stylesheets li',function(ev) {
-        $(this).focus();
+        $(this).trigger('focus');
     });
 
     $(document).on('click', '#selected-stylesheets li',function(ev) {
-        $('a:first',this).focus();
+        $('a',this).first().trigger('focus');
     });
 
     $(document).on('keyup','#available-stylesheets li',function(ev){
@@ -111,7 +111,7 @@
         }
         else if( ev.keyCode == $.ui.keyCode.SPACE || ev.keyCode == 107 ) {
           // spacebar or plus
-	  ev.preventDefault();
+          ev.preventDefault();
           $(this).toggleClass('selected ui-state-hover');
           find_sortable_focus(this);
         }
@@ -131,7 +131,7 @@
             $('span',_el).remove();
             $(_el).append(_a);
             $(_el).removeClass('selected ui-state-hover')
-	         .attr('tabindex',-1)
+                 .attr('tabindex',-1)
                  .addClass('unsaved no-sort')
                  .append($('<a href="#"/>').addClass('ui-icon ui-icon-trash sortable-remove').text('{$mod->Lang('remove')}').attr('title','{$mod->Lang('remove')}'))
                  .find('input[type="checkbox"]').prop('checked',true);
@@ -156,13 +156,13 @@
     $(document).on('click','a.edit_css',function(ev){
        if( __changed ) {
            ev.preventDefault();
-          var url = $(this).attr('href');
-      	  cms_confirm('{$mod->Lang('confirm_save_design')}').done(function(){
-             // save and redirect
-	     save_design().done(function(){
-	        window.location.href = url;
-	     });
-	  });
+           var url = $(this).attr('href');
+           cms_confirm("{$mod->Lang('confirm_save_design')}").done(function(){
+               // save and redirect
+               save_design().done(function() {
+                   window.location.href = url;
+               });
+           });
        }
     });
 

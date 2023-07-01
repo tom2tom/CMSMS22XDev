@@ -15,7 +15,7 @@ $(function() {
       $('#form_edittemplate').lockManager( {
         type: 'template',
         oid: {$tpl_id|default:0},
-        uid: {get_userid(FALSE)},
+        uid: {$userid},
         lock_timeout: {$lock_timeout|default:0},
         lock_refresh: {$lock_refresh|default:0},
         error_handler: function(err) {
@@ -24,12 +24,12 @@ $(function() {
         lostlock_handler: function(err) {
             // we lost the lock on this content... make sure we can't save anything.
             // and display a nice message.
-            $('[name$=cancel]').fadeOut().val('{$mod->Lang("cancel")}').fadeIn();
+            $('[name$="cancel"]').fadeOut().val('{$mod->Lang("cancel")}').fadeIn();
             $('#form_edittemplate').dirtyForm('option','dirty',false);
             $('#submitbtn, #applybtn').prop('disabled',true);
             $('#submitbtn, #applybtn').button({ 'disabled' : true });
             $('.lock-warning').removeClass('hidden-item');
-            cms_alert('{$mod->Lang('msg_lostlock')|escape:'javascript'}');
+            cms_alert("{$mod->Lang('msg_lostlock')|escape:'javascript'}");
         }
       });
     } // do_locking
@@ -39,7 +39,7 @@ $(function() {
         $('#form_edittemplate').dirtyForm('option','dirty',true);
     });
 
-    $('#form_edittemplate').on('click','[name$=apply],[name$=submit],[name$=cancel]',function(){
+    $('#form_edittemplate').on('click','[name$="apply"],[name$="submit"],[name$="cancel"]',function(){
         // if we manually click on one of these buttons, the form is no longer considered dirty for the purposes of warnings.
         $('#form_edittemplate').dirtyForm('option','dirty',false);
     });
@@ -55,7 +55,7 @@ $(function() {
            console.debug('item unlocked');
            var el = $('<input type="hidden"/>');
            el.attr('name',$(self).attr('name')).val($(self).val()).appendTo(form);
-           form.submit();
+           form.trigger('submit');
        });
     });
     */
@@ -90,7 +90,7 @@ $(function() {
 
             $('#cancelbtn').button('option','label','{$mod->Lang('cancel')}');
             $('#tpl_modified_cont').hide();
-            $('#content').focus();
+            $('#content').trigger('focus');
         });
     });
 
@@ -110,7 +110,7 @@ $(function() {
 {$get_lock = $template->get_lock()}
 
 {capture assign='disable'}
-    {if isset($get_lock) && ({get_userid(false)} != $get_lock.uid)}disabled="disabled"{/if}
+{if (isset($get_lock) && ($userid != $get_lock.uid))} disabled="disabled"{/if}
 {/capture}
 
 {if isset($get_lock)}
@@ -177,7 +177,7 @@ $(function() {
 {if $has_manage_right}
     {tab_header name='advanced' label=$mod->Lang('prompt_advanced')}
 {/if}
-{if $template->get_owner_id() == get_userid() or $has_manage_right}
+{if ($has_manage_right || $template->get_owner_id() == $userid)}
     {tab_header name='permissions' label=$mod->Lang('prompt_permissions')}
 {/if}
 
@@ -272,7 +272,7 @@ $(function() {
     {/if}
 {/if}
 
-{if $template->get_owner_id() == get_userid() or $has_manage_right}
+{if ($has_manage_right || $template->get_owner_id() == $userid)}
     {tab_start name='permissions'}
     {if isset($user_list)}
     <div class="pageoverflow">

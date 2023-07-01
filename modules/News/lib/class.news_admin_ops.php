@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: News.module.php 2114 2005-11-04 21:51:13Z wishy $
+#$Id$
 
 final class news_admin_ops
 {
@@ -53,7 +53,6 @@ final class news_admin_ops
         // put mention into the admin log
         audit($articleid, 'News: '.$articleid, 'Article deleted');
     }
-
 
     public static function handle_upload($itemid,$fieldname,&$error)
     {
@@ -103,8 +102,7 @@ final class news_admin_ops
         return $filename;
     }
 
-
-    static public function UpdateHierarchyPositions()
+    public static function UpdateHierarchyPositions()
     {
         $db = cmsms()->GetDb();
 
@@ -145,13 +143,12 @@ final class news_admin_ops
         }
     }
 
-
-    static public function delete_static_route($news_article_id)
+    public static function delete_static_route($news_article_id)
     {
         return cms_route_manager::del_static('','News',$news_article_id);
     }
 
-    static public function register_static_route($news_url,$news_article_id,$detailpage = '')
+    public static function register_static_route($news_url,$news_article_id,$detailpage = '')
     {
         if( $detailpage <= 0 ) {
             $gCms = cmsms();
@@ -170,7 +167,7 @@ final class news_admin_ops
     public static function optionstext_to_array($txt)
     {
         $txt = trim($txt);
-        if( !$txt ) return;
+        if( !$txt ) return [];
 
         $arr_options = array();
         $tmp1 = explode("\n",$txt);
@@ -184,7 +181,6 @@ final class news_admin_ops
             if( $tmp2_k == '' || $tmp2_v == '' ) continue;
             $arr_options[$tmp2_k] = $tmp2_v;
         }
-        if( count($arr_options) == 0 ) return;
         return $arr_options;
     }
 

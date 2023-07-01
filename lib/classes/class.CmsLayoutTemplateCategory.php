@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: class.global.inc.php 6939 2011-03-06 00:12:54Z calguy1000 $
+#$Id$
 
 /**
  * Classes and utilities for managing template categories.
@@ -162,7 +162,7 @@ class CmsLayoutTemplateCategory
 		}
 
         $db = cmsms()->GetDb();
-        $tmp = null;
+        $tmp = 0;
         if( !$this->get_id() ) {
             $query = 'SELECT id FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE name = ?';
             $tmp = $db->GetOne($query,array($this->get_name()));
@@ -259,7 +259,7 @@ class CmsLayoutTemplateCategory
 	/**
 	 * @ignore
 	 */
-    private static function &_load_from_data($row)
+    private static function _load_from_data($row)
     {
         $ob = new CmsLayoutTemplateCategory();
         $ob->_data = $row;
@@ -273,10 +273,10 @@ class CmsLayoutTemplateCategory
 	 * @param int|string $val Either the integer category id, or the category name
 	 * @return self
 	 */
-    public static function &load($val)
+    public static function load($val)
     {
         $db = cmsms()->GetDb();
-        $row = null;
+        $row = [];
         if( is_numeric($val) && $val > 0 ) {
             $query = 'SELECT * FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE id = ?';
             $row = $db->GetRow($query,array((int)$val));

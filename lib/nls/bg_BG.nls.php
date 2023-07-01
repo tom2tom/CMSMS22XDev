@@ -46,7 +46,7 @@ $nls['locale']['bg_BG'] = 'bg_BG,bg_BG.utf8,bg_BG.utf-8,bg_BG.UTF-8,bulgarian,Bu
 $nls['encoding']['bg_BG'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['bg_BG'] = array(dirname(__FILE__).'/bg_BG/admin.inc.php');
+$nls['file']['bg_BG'] = array(__DIR__.'/bg_BG/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

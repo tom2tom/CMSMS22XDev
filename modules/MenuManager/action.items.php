@@ -71,7 +71,7 @@ if( !$tpl->isCached() ) {
                 // there were children.
                 $bdepth = $nodelist[$ocount]->depth;
                 for( $i = $ocount; $i < count($nodelist); $i++ ) {
-                    $nodelist[$i]->depth = $nodelist[$i]->depth - $bdepth + $mnode->depth + 1;;
+                    $nodelist[$i]->depth = $nodelist[$i]->depth - $bdepth + $mnode->depth + 1;
                     $nodelist[$i]->prevdepth = $nodelist[$i-1]->depth;
                 }
                 $prevdepth = $nodelist[$i-1]->depth;

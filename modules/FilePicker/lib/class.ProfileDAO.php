@@ -45,7 +45,7 @@ class ProfileDAO
     public function loadDefault()
     {
         $dflt_id = $this->getDefaultProfileId();
-        if( $dflt_id < 1 ) return;
+        if( $dflt_id < 1 ) return null; // no object
 
         return $this->loadById( $dflt_id );
     }
@@ -104,8 +104,7 @@ class ProfileDAO
         $dbr = $this->_db->Execute( $sql, [ $profile->name, serialize($profile->getRawData()), $profile->id ] );
         if( !$dbr ) throw new \RuntimeException('Problem updating profile record');
 
-        $obj = $profile->markModified();
-        return $obj;
+        return $profile->markModified();
     }
 
     public function save( Profile $profile )
@@ -122,7 +121,7 @@ class ProfileDAO
     {
         $sql = 'SELECT * FROM '.self::table_name().' ORDER BY name';
         $list = $this->_db->GetArray($sql);
-        if( !count($list) ) return;
+        if( !$list ) return [];
 
         $out = [];
         foreach( $list as $row ) {

@@ -23,7 +23,7 @@ final class dm_reader_factory
 {
   private function __construct() {}
 
-  public static function &get_reader($xmlfile)
+  public static function get_reader($xmlfile)
   {
     $mod = cms_utils::get_module('DesignManager');
     if( !is_readable($xmlfile) ) throw new CmsFileSystemException($mod->Lang('error_filenotfound',$xmlfile));
@@ -42,7 +42,7 @@ final class dm_reader_factory
     if( $p === FALSE ) throw new CmsException($mod->Lang('error_readxml'));  // highly unlikely.
     $word = substr($str,0,$p);
 
-    $ob = null;
+    $ob = null; // default no object
     switch( $word ) {
     case 'theme':
       $ob = new dm_theme_reader($xmlfile);

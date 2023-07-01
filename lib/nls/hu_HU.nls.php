@@ -48,7 +48,7 @@ $nls['locale']['hu_HU'] = 'hu_HU,hu_HU.utf8,hu_HU.utf-8,hu_HU.UTF-8,hungarian,Hu
 $nls['encoding']['hu_HU'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['hu_HU'] = array(dirname(__FILE__).'/hu_HU/admin.inc.php');
+$nls['file']['hu_HU'] = array(__DIR__.'/hu_HU/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

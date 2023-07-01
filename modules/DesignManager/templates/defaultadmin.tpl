@@ -1,16 +1,16 @@
 <script type="text/javascript">
 $(function() {
-  $('img.viewhelp').click(function(){
+  $('img.viewhelp').on('click', function() {
     var n = $(this).attr('name');
     $('#'+n).dialog();
   });
 
-  $(document).on('click','#clearlocks,#cssclearlocks',function(ev){
+  $(document).on('click','#clearlocks,#cssclearlocks',function(ev) {
      var url = $(this).attr('href');
      ev.preventDefault();
-     cms_confirm('{$mod->Lang('confirm_clearlocks')|escape:'javascript'}').done(function(){
-       window.location = url;
-     })
+     cms_confirm("{$mod->Lang('confirm_clearlocks')|escape:'javascript'}").done(function() {
+       window.location.href = url;
+     });
   });
 });
 </script>

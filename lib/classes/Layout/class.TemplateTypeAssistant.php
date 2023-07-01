@@ -57,7 +57,7 @@ abstract class TemplateTypeAssistant
      *
      * @return CmsLayoutTemplateType
      */
-    abstract public function &get_type();
+    abstract public function get_type();
 
     /**
      * Get a usage string for the current assistant.

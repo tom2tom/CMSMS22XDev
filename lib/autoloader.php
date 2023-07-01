@@ -24,7 +24,7 @@
  */
 
 /*
-function __cms_load($filename)
+function _cms_load($filename)
 {
   $gCms = CmsApp::get_instance(); // wierd, but this is required.
   require_once($filename);

@@ -29,7 +29,6 @@ $category_id = $this->GetPreference('default_category', '');
 $do_send_email = false;
 $do_redirect = false;
 
-$template = null;
 if (isset($params['formtemplate'])) {
   $template = trim($params['formtemplate']);
 }
@@ -241,7 +240,7 @@ if( $do_send_email == true ) {
 
     // this needs to be done after the form is generated
     // because we use some of the same smarty variables
-    $cmsmailer = new cms_mailer;
+    $cmsmailer = new cms_mailer();
     if( $cmsmailer ) {
         $addy = trim($this->GetPreference('formsubmit_emailaddress'));
         if( $addy != '' ) {

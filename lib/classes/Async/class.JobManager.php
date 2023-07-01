@@ -32,21 +32,15 @@
 #-------------------------------------------------------------------------
 #END_LICENSE
 
-/**
- * This file defines the job manager for asyncrhonous jobs.
- *
- * @package CMS
- */
 namespace CMSMS\Async;
 
 /**
- * A singleton class defining a manager for asyncrhonous jobs.
+ * A singleton class defining a manager for asynchronous jobs.
  *
- * In reality, this is a simple proxy for methods in the CmsJobManager module.
+ * This is a simple proxy for methods in the CmsJobManager module.
  *
  * @package CMS
  * @author Robert Campbell
- * @copyright Copyright (c) 2017, Robert Campbell <calguy1000@cmsmadesimple.org>
  * @since 2.2
  */
 final class JobManager
@@ -98,11 +92,12 @@ final class JobManager
      * Trigger asynchronous processing.
      *
      * @internal
+     * @return void
      */
     public function trigger_async_processing()
     {
         $mod = $this->get_mod();
-        if( $mod ) return $mod->trigger_async_processing();
+        if( $mod ) $mod->trigger_async_processing();
     }
 
     /**
@@ -115,6 +110,7 @@ final class JobManager
     {
         $mod = $this->get_mod();
         if( $mod ) return $mod->load_job_by_id( $job_id );
+        return null; // no object
     }
 
     /**
@@ -123,10 +119,11 @@ final class JobManager
      * @param Job $job
      * @return int The id of the job.
      */
-    public function save_job( Job &$job )
+    public function save_job( Job $job )
     {
         $mod = $this->get_mod();
         if( $mod ) return $mod->save_job($job);
+        return 0; // no job
     }
 
     /**
@@ -135,21 +132,23 @@ final class JobManager
      * Note: After calling this method, the job object itself is invalid and cannot be saved.
      *
      * @param Job $job
+     * @return void
      */
-    public function delete_job( Job &$job )
+    public function delete_job( Job $job )
     {
         $mod = $this->get_mod();
-        if( $mod ) return $mod->delete_job($job);
+        if( $mod ) $mod->delete_job($job);
     }
 
     /**
-     * Remove all of the jbos originating from a specific module
+     * Remove all of the jobs originating from a specific module
      *
      * @param string $module_name
+     * @return void
      */
     public function delete_jobs_by_module( $module_name )
     {
         $mod = $this->get_mod();
-        if( $mod ) return $mod->delete_job($module_name);
+        if( $mod ) $mod->delete_job($module_name);
     }
 } // end of class

@@ -658,7 +658,7 @@ class http_request
         {
             $this->headerArray = array();
         }
-  
+
         $f = 0;
         if( strpos($str,':') !== FALSE )
         {
@@ -940,7 +940,7 @@ class http_request
             }
 
             // Specify the custom cookies
-            if ($this->useCookie && $cookieString != '')
+            if ($this->useCookie && $cookieString)
             {
                 $this->addRequestHeader("Cookie: " . $cookieString);
             }
@@ -952,8 +952,7 @@ class http_request
             }
 
             // Specify the referrer
-            $this->addRequestHeader("Referer: " . $this->referrer);
-            if ($this->referrer != '')
+            if ($this->referrer)
             {
                 $this->addRequestHeader("Referer: " . $this->referrer);
             }
@@ -1174,15 +1173,15 @@ class http_request
             $path        = "/";
             $expires     = "";
 
-            while(($name = trim(urldecode($this->_tokenize("=")))) != "")
+            while( ($name = trim(urldecode($this->_tokenize("=")))) )
             {
                 $value = urldecode($this->_tokenize(";"));
 
                 switch($name)
                 {
-                    case "path"     : $path     = $value; break;
-                    case "domain"   : $domain   = $value; break;
-                    case "secure"   : $secure   = ($value != '') ? '1' : '0'; break;
+                    case "path"  : $path   = $value; break;
+                    case "domain": $domain = $value; break;
+                    case "secure": $secure = ($value) ? '1' : '0'; break;
                 }
             }
 
@@ -1370,11 +1369,12 @@ class http_request
      */
     function _setError($error)
     {
-        if ($error != '')
+        if ($error)
         {
             $this->error = $error;
             return $error;
         }
+        return '';
     }
 }
 

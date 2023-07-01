@@ -38,7 +38,7 @@ class wizard_step4 extends wizard_step
         foreach ($databases as $db => $lbl) {
             if( extension_loaded($db) ) $this->_dbms_options[$db] = $lbl;
         }
-        if( !count($this->_dbms_options) ) throw new Exception(lang('error_nodatabases'));
+        if( count($this->_dbms_options) == 0 ) throw new Exception(lang('error_nodatabases'));
 
         $action = $wiz->get_data('action');
         if( $action == 'freshen' || $action == 'upgrade' ) {
@@ -62,13 +62,15 @@ class wizard_step4 extends wizard_step
     private function validate($config)
     {
         $action = $this->get_wizard()->get_data('action');
-        if( !isset($config['dbtype']) || !$config['dbtype'] ) throw new Exception(lang('error_nodbtype'));
-        if( !isset($config['dbhost']) || !$config['dbhost'] ) throw new Exception(lang('error_nodbhost'));
-        if( !isset($config['dbname']) || !$config['dbname'] ) throw new Exception(lang('error_nodbname'));
-        if( !isset($config['dbuser']) || !$config['dbuser'] ) throw new Exception(lang('error_nodbuser'));
-        if( !isset($config['dbpass']) || !$config['dbpass'] ) throw new Exception(lang('error_nodbpass'));
-        if( $action == 'install' && ( !isset($config['dbprefix']) || !$config['dbprefix'] ) ) {
-            throw new Exception(lang('error_nodbprefix'));
+        if( $action != 'freshen' ) {
+            if( !isset($config['dbtype']) || !$config['dbtype'] ) throw new Exception(lang('error_nodbtype'));
+            if( !isset($config['dbhost']) || !$config['dbhost'] ) throw new Exception(lang('error_nodbhost'));
+            if( !isset($config['dbname']) || !$config['dbname'] ) throw new Exception(lang('error_nodbname'));
+            if( !isset($config['dbuser']) || !$config['dbuser'] ) throw new Exception(lang('error_nodbuser'));
+            if( !isset($config['dbpass']) || !$config['dbpass'] ) throw new Exception(lang('error_nodbpass'));
+            if( $action == 'install' && ( !isset($config['dbprefix']) || !$config['dbprefix'] ) ) {
+                throw new Exception(lang('error_nodbprefix'));
+            }
         }
         if( !isset($config['timezone']) || !$config['timezone'] ) {
             throw new Exception(lang('error_notimezone'));
@@ -88,31 +90,33 @@ class wizard_step4 extends wizard_step
             }
         }
 
-        // try a test connection
-        $spec = new ConnectionSpec;
-        $spec->type = $config['dbtype'];
-        $spec->host = $config['dbhost'];
-        $spec->username = $config['dbuser'];
-        $spec->password = $config['dbpass'];
-        $spec->dbname = $config['dbname'];
-        $spec->port = isset($config['dbport']) ? $config['dbport'] : null;
-        $spec->prefix = $config['dbprefix'];
-        $db = Connection::initialize($spec);
-        $db->Execute("SET NAMES 'utf8'");
+        if( $action != 'freshen' ) {
+            // try a test connection
+            $spec = new ConnectionSpec();
+            $spec->type = $config['dbtype'];
+            $spec->host = $config['dbhost'];
+            $spec->username = $config['dbuser'];
+            $spec->password = $config['dbpass'];
+            $spec->dbname = $config['dbname'];
+            $spec->port = isset($config['dbport']) ? $config['dbport'] : null;
+            $spec->prefix = $config['dbprefix'];
+            $db = Connection::initialize($spec);
+            $db->Execute("SET NAMES 'utf8'");
 
-        // see if we can create and drop a table.
-        try {
-            $db->Execute('CREATE TABLE '.$config['dbprefix'].'_dummyinstall (i int)');
-        }
-        catch( Exception $e ) {
-            throw new Exception(lang('error_createtable'));
-        }
+            // see if we can create and drop a table.
+            try {
+                $db->Execute('CREATE TABLE '.$config['dbprefix'].'_dummyinstall (i int)');
+            }
+            catch( Exception $e ) {
+                throw new Exception(lang('error_createtable'));
+            }
 
-        try {
-            $db->Execute('DROP TABLE '.$config['dbprefix'].'_dummyinstall');
-        }
-        catch( Exception $e ) {
-            throw new Exception(lang('error_droptable'));
+            try {
+                $db->Execute('DROP TABLE '.$config['dbprefix'].'_dummyinstall');
+            }
+            catch( Exception $e ) {
+                throw new Exception(lang('error_droptable'));
+            }
         }
 
         // see if a smattering of core tables exist

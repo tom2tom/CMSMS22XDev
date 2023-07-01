@@ -5,14 +5,14 @@ $(function() {
       var form = $(this).closest('form');
       cms_confirm('{$ModuleManager->Lang('confirm_reseturl')|escape:'javascript'}').done(function(){
           $('#inp_reset').val(1);
-	  form.submit();
+          form.trigger('submit');
       });
   });
   $(document).on('click','#settings_submit',function(ev){
       ev.preventDefault();
       var form = $(this).closest('form');
       cms_confirm('{$ModuleManager->Lang('confirm_settings')|escape:'javascript'}').done(function(){
-          form.submit();
+          form.trigger('submit');
       });
   });
 });

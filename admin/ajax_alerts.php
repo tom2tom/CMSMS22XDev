@@ -17,7 +17,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: moduleinterface.php 8558 2012-12-10 00:59:49Z calguy1000 $
+#$Id$
 
 $CMS_ADMIN_PAGE=1;
 require_once("../lib/include.php");

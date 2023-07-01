@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: translation.functions.php 7867 2012-04-13 18:00:14Z calguy1000 $
+#$Id$
 
 /**
  * Translation functions/classes
@@ -105,7 +105,7 @@ class CmsNls
   }
 
   /**
-   * Return the name of this Nls object
+   * Return the name of this CmsNls object
    * @return string
    */
   public function name()
@@ -114,7 +114,7 @@ class CmsNls
   }
 
   /**
-   * Return this isocode of this Nls object
+   * Return this isocode of this CmsNls object
    * @return string
    */
   public function isocode()
@@ -124,7 +124,7 @@ class CmsNls
   }
 
   /**
-   * Return the display string for this Nls object
+   * Return the display string for this CmsNls object
    * @return string
    */
   public function display()
@@ -133,7 +133,7 @@ class CmsNls
   }
 
   /**
-   * Return the locale string for this Nls object
+   * Return the locale string for this CmsNls object
    * @return string
    */
   public function locale()
@@ -142,7 +142,7 @@ class CmsNls
   }
 
   /**
-   * Return the encoding for this Nls object (or UTF-8)
+   * Return the encoding for this CmsNls object (or UTF-8)
    * @return string
    */
   public function encoding()
@@ -152,7 +152,7 @@ class CmsNls
   }
 
   /**
-   * Return the full name of this Nls object
+   * Return the full name of this CmsNls object
    * @return string
    */
   public function fullname()
@@ -161,7 +161,7 @@ class CmsNls
   }
 
   /**
-   * Return the aliases associated with this Nls object
+   * Return the aliases associated with this CmsNls object
    * @return mixed array of aliases, or null
    */
   public function aliases()
@@ -173,7 +173,7 @@ class CmsNls
   }
 
   /**
-   * Return the key associated with this Nls object
+   * Return the key associated with this CmsNls object
    * @return string
    */
   public function key()
@@ -182,7 +182,7 @@ class CmsNls
   }
 
   /**
-   * Return the direction of this Nls object (ltr or rtl)
+   * Return the direction of this CmsNls object (ltr or rtl)
    * @return string
    */
   public function direction()
@@ -192,7 +192,7 @@ class CmsNls
   }
 
   /**
-   * Return the first two characters of the isocode for this Nls Object
+   * Return the first two characters of the isocode for this CmsNls Object
    * This is used typically for WYSIWYG text editors.
    *
    * @return string
@@ -210,7 +210,7 @@ class CmsNls
    * @ignore
    * @param array $data
    */
-  public static function &from_array($data)
+  public static function from_array($data)
   {
     $obj = new CmsNls();
 

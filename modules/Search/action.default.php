@@ -1,7 +1,6 @@
 <?php
 if (!isset($gCms)) exit;
 
-$template = null;
 if (isset($params['formtemplate'])) {
     $template = trim($params['formtemplate']);
 }

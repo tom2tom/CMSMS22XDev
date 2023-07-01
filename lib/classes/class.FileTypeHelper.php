@@ -290,7 +290,7 @@ class FileTypeHelper
     }
 
     /**
-     * Atempt to find a file type for the given filename.
+     * Attempt to find a file type for the given filename.
      *
      * @param string $filename
      * @return string A FileType type constant describing the file type, if found.
@@ -303,5 +303,6 @@ class FileTypeHelper
         if( $this->is_xml( $filename ) ) return FileType::TYPE_XML;
         if( $this->is_document( $filename ) ) return FileType::TYPE_DOCUMENT;
         if( $this->is_archive( $filename ) ) return FileType::TYPE_ARCHIVE;
+        return '';
     }
 } // end of class

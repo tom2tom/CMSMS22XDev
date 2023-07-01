@@ -16,7 +16,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: class.content.inc.php 6905 2011-02-20 22:23:40Z calguy1000 $
+#$Id$
 
 /**
  * @package CMS
@@ -69,7 +69,7 @@ final class CMS_Content_Block
     public static function reset()
     {
         self::$_priority = 100;
-        self::$_contentBlocks = null;
+        self::$_contentBlocks = null; // aka unset
     }
 
     public static function smarty_compiler_contentblock($params,$smarty)
@@ -222,7 +222,7 @@ final class CMS_Content_Block
     public static function smarty_internal_fetch_contentblock($params, $smarty)
     {
         $contentobj = CmsApp::get_instance()->get_content_object();
-        $result = null;
+        $result = '';
         if (is_object($contentobj)) {
             if( !$contentobj->IsPermitted() ) throw new CmsError403Exception();
             $id = '';
@@ -356,7 +356,7 @@ final class CMS_Content_Block
         }
         $img = $result;
 
-        $out = null;
+        $out = '';
         if( startswith(realpath($dir),realpath($basename)) ) {
             if( ($img == -1 || empty($img)) && isset($params['default']) && $params['default'] ) $img = $params['default'];
 
@@ -392,7 +392,7 @@ final class CMS_Content_Block
         }
         if( isset($params['assign']) ){
             $smarty->assign(trim($params['assign']),$out);
-            return;
+            return '';
         }
         return $out;
     }
@@ -400,9 +400,8 @@ final class CMS_Content_Block
     public static function smarty_fetch_moduleblock($params,$smarty)
     {
         $result = '';
-        $key = '';
 
-        if( !isset($params['block']) ) return;
+        if( empty($params['block']) ) return '';
         $block = $params['block'];
 
         $gCms = CmsApp::get_instance();
@@ -419,7 +418,7 @@ final class CMS_Content_Block
 
         if( isset($params['assign']) ) {
             $smarty->assign($params['assign'],$result);
-            return;
+            return '';
         }
         return $result;
     }

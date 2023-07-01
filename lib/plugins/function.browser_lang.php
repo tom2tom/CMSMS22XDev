@@ -19,14 +19,14 @@
 function smarty_function_browser_lang($params, $smarty)
 {
   $default = 'en';
-  $res = null;
+  $res = '';
 
   //
   // get the default language
   //
   if( isset($params['default']) ) $default = strtolower(substr($params['default'],0,2));
 
-  // 
+  //
   // get the accepted languages
   //
   $accept_str = get_parameter_value( $params, 'accepted' );
@@ -49,8 +49,8 @@ function smarty_function_browser_lang($params, $smarty)
           //
           $accepted = array_merge(array($default),$accepted);
           $accepted = array_unique($accepted);
-          
-          // 
+
+          //
           // now process browser language
           //
           $res = $default;
@@ -73,9 +73,9 @@ function smarty_function_browser_lang($params, $smarty)
 
   if( isset($params['assign']) ) {
 		$smarty->assign(trim($params['assign']),$res);
-		return;
+		return '';
   }
-  
+
   return $res;
 }
 

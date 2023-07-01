@@ -32,9 +32,9 @@ class Profile extends FilePickerProfile
         }
     }
 
-    public function __construct(array $in = null)
+    public function __construct(array $in = [])
     {
-        if( !is_array( $in ) ) return;
+        if( !$in ) return;
 
         parent::__construct($in);
         foreach( $in as $key => $value ) {
@@ -97,9 +97,9 @@ class Profile extends FilePickerProfile
         if( $this->reltop && !is_dir($this->top) ) throw new ProfileException('err_profile_topdir');
     }
 
-    public function withNewId( $new_id = null )
+    public function withNewId( $new_id = 0 )
     {
-        if( !is_null($new_id) ) {
+        if( $new_id ) {
             $new_id = (int) $new_id;
             if( $new_id < 1 ) throw new LogicException('Invalid id passed to '.__METHOD__);
         }

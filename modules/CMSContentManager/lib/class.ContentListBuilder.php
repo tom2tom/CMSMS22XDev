@@ -151,13 +151,12 @@ final class ContentListQuery extends CmsDbQueryBase
         $this->_totalmatchingrows = $db->GetOne('SELECT FOUND_ROWS()');
     }
 
-    public function &GetObject()
+    public function GetObject()
     {
         $this->execute();
-        if( !$this->_rs ) throw new CmsLogicException('Cannot get stylesheet from invalid stylesheet query object');
+        if( !$this->_rs ) throw new CmsLogicException('Cannot get pages from content query object');
 
-        $out = (int) $this->_rs->fields['content_id'];
-        return $out;
+        return (int)$this->_rs->fields['content_id'];
     }
 }
 
@@ -178,9 +177,9 @@ final class ContentListBuilder
   private $_module;
   private $_userid;
   private $_use_perms = TRUE;
-  private $_filter = null;
+  private $_filter = null; // no object
   private $_pagelimit = 500;
-  private $_offset    = 0;
+  private $_offset = 0;
   private $_pagelist;
   private $_seek_to;
   private $_locks;
@@ -231,9 +230,8 @@ final class ContentListBuilder
 
       // anonymous, recursive function.
       $func = function($node) use(&$func) {
-          $out = null;
+          $out = [];
           if( $node->has_children() ) {
-              $out = array();
               if( $node->get_tag('id') ) $out[] = $node->get_tag('id');
               $children = $node->get_children();
               for($i = 0, $iMax = count($children); $i < $iMax; $i++ ) {
@@ -243,7 +241,7 @@ final class ContentListBuilder
               $out = array_unique($out);
           }
           return $out;
-      }; // function.
+      };
 
       $this->_opened_array = $func($hm);
       cms_userprefs::set('opened_pages',implode(',',$this->_opened_array));
@@ -391,7 +389,7 @@ final class ContentListBuilder
    */
   public function get_numpages()
   {
-    if( !is_array($this->_pagelist) ) return;
+    if( !is_array($this->_pagelist) ) return 0;
     $npages = (int)(count($this->_pagelist) / $this->_pagelimit);
     if( count($this->_pagelist) % $this->_pagelimit  != 0 ) $npages++;
     return $npages;
@@ -405,7 +403,7 @@ final class ContentListBuilder
     $page_id = (int)$page_id;
     if( $page_id < 1 ) return FALSE;
 
-    if( !$this->_module->CheckPermission('Manage All Content') ) return;
+    if( !$this->_module->CheckPermission('Manage All Content') ) return FALSE;
 
     $contentops = ContentOperations::get_instance();
     $content1 = $contentops->LoadContentFromId($page_id);
@@ -428,7 +426,7 @@ final class ContentListBuilder
   }
 
   /**
-   * Move a content page up, or down wrt it's peers.
+   * Move a content page up or down wrt its peers.
    */
   public function move_content($page_id,$direction)
   {
@@ -513,29 +511,29 @@ final class ContentListBuilder
    */
   public function get_display_columns()
   {
-      $config = \cms_config::get_instance();
+//    $config = \cms_config::get_instance();
       $dflt = 'expand,icon1,hier,page,alias,url,template,friendlyname,owner,active,default,move,view,copy,edit,delete,multiselect';
       $mod = $this->_module;
       $cols = explode(',',$mod->GetPreference('list_visiblecolumns',$dflt));
 
       $columnstodisplay = array();
-      $columnstodisplay['expand'] = (!$this->_filter && in_array('expand',$cols)) ? 'icon' : null;
-      $columnstodisplay['icon1'] = in_array('icon1',$cols) ? 'icon' : null;
-      $columnstodisplay['hier'] = in_array('hier',$cols) ? 'normal' : null;
-      $columnstodisplay['page'] = in_array('page',$cols) ? 'normal' : null;
-      $columnstodisplay['alias'] = in_array('alias',$cols) ? 'normal' : null;
-      $columnstodisplay['url'] = in_array('url',$cols) ? 'normal' : null;
-      $columnstodisplay['template'] = in_array('template',$cols) ? 'normal' : null;
-      $columnstodisplay['friendlyname'] = in_array('friendlyname',$cols) ? 'normal' : null;
-      $columnstodisplay['owner'] = in_array('owner',$cols) ? 'normal' : null;
-      $columnstodisplay['active'] = (in_array('active',$cols) && $mod->CheckPermission('Manage All Content')) ? 'icon' : null;
-      $columnstodisplay['default'] = (in_array('default',$cols) && $mod->CheckPermission('Manage All Content')) ? 'icon' : null;
-      $columnstodisplay['move'] = (in_array('move',$cols) && ($mod->CheckPermission('Manage All Content') || $mod->CheckPermission('Reorder Content'))) ? 'icon' : null;
-      $columnstodisplay['view'] = in_array('view',$cols) ? 'icon' : null;
-      $columnstodisplay['copy'] = (in_array('copy',$cols) && ($mod->CheckPermission('Add Pages') || $mod->CheckPermission('Manage All Content'))) ? 'icon' : null;
-      $columnstodisplay['edit'] = in_array('edit',$cols) ? 'icon' : null;
-      $columnstodisplay['delete'] = (in_array('delete',$cols) && ($mod->CheckPermission('Remove Pages') || $mod->CheckPermission('Manage All Content'))) ? 'icon' : null;
-      $columnstodisplay['multiselect'] = (in_array('multiselect',$cols) && ($mod->CheckPermission('Remove Pages') || $mod->CheckPermission('Manage All Content'))) ? 'icon' : null;
+      $columnstodisplay['expand'] = (!$this->_filter && in_array('expand',$cols)) ? 'icon' : '';
+      $columnstodisplay['icon1'] = in_array('icon1',$cols) ? 'icon' : '';
+      $columnstodisplay['hier'] = in_array('hier',$cols) ? 'normal' : '';
+      $columnstodisplay['page'] = in_array('page',$cols) ? 'normal' : '';
+      $columnstodisplay['alias'] = in_array('alias',$cols) ? 'normal' : '';
+      $columnstodisplay['url'] = in_array('url',$cols) ? 'normal' : '';
+      $columnstodisplay['template'] = in_array('template',$cols) ? 'normal' : '';
+      $columnstodisplay['friendlyname'] = in_array('friendlyname',$cols) ? 'normal' : '';
+      $columnstodisplay['owner'] = in_array('owner',$cols) ? 'normal' : '';
+      $columnstodisplay['active'] = (in_array('active',$cols) && $mod->CheckPermission('Manage All Content')) ? 'icon' : '';
+      $columnstodisplay['default'] = (in_array('default',$cols) && $mod->CheckPermission('Manage All Content')) ? 'icon' : '';
+      $columnstodisplay['move'] = (in_array('move',$cols) && ($mod->CheckPermission('Manage All Content') || $mod->CheckPermission('Reorder Content'))) ? 'icon' : '';
+      $columnstodisplay['view'] = in_array('view',$cols) ? 'icon' : '';
+      $columnstodisplay['copy'] = (in_array('copy',$cols) && ($mod->CheckPermission('Add Pages') || $mod->CheckPermission('Manage All Content'))) ? 'icon' : '';
+      $columnstodisplay['edit'] = in_array('edit',$cols) ? 'icon' : '';
+      $columnstodisplay['delete'] = (in_array('delete',$cols) && ($mod->CheckPermission('Remove Pages') || $mod->CheckPermission('Manage All Content'))) ? 'icon' : '';
+      $columnstodisplay['multiselect'] = (in_array('multiselect',$cols) && ($mod->CheckPermission('Remove Pages') || $mod->CheckPermission('Manage All Content'))) ? 'icon' : '';
 
       foreach( $columnstodisplay as $key => $val ) {
           if( isset($this->_display_columns[$key]) ) $columnstodisplay[$key] = $val && $this->_display_columns[$key];
@@ -585,7 +583,7 @@ final class ContentListBuilder
           // we display only the pages matching the filter
           $query = new ContentListQuery($this->_filter);
           while( !$query->EOF() ) {
-              $display[] = $query->GetObject();
+              $display[] = $query->GetObject(); // in this case, just an integer id ?
               $query->MoveNext();
           }
       }
@@ -694,9 +692,9 @@ final class ContentListBuilder
   }
 
   /**
-   * Given a content id, and a userid indicate wether the user has access to all peers of the content page.
+   * Given a content id and a userid indicate whether the user has access to all peers of the content page.
    */
-  private function _check_peer_authorship($content_id,$userid = null)
+  private function _check_peer_authorship($content_id,$userid = 0)
   {
     if( $content_id < 1 ) return FALSE;
     if( $userid <= 0 ) $userid = $this->_userid;
@@ -707,7 +705,7 @@ final class ContentListBuilder
   /**
    * Checks if the specified user is the author of the specified content page
    */
-  private function _check_authorship($content_id,$userid = null)
+  private function _check_authorship($content_id,$userid = 0)
   {
     if( $userid <= 0 ) $userid = $this->_userid;
     return ContentOperations::get_instance()->CheckPageAuthorship($userid,$content_id);
@@ -718,7 +716,7 @@ final class ContentListBuilder
    */
   public function get_locks()
   {
-      //if( $this->_module->GetPreference('locktimeout') < 1 ) return;
+      //if( $this->_module->GetPreference('locktimeout') < 1 ) return [];
       if( is_array($this->_locks) ) return $this->_locks;
       $this->_locks = array();
       $tmp = CmsLockOperations::get_locks('content');
@@ -775,7 +773,7 @@ final class ContentListBuilder
    */
   private function _get_users()
   {
-      static $_users = null;
+      static $_users = null; // aka unset
       if( !$_users ) {
           $tmp = UserOperations::get_instance()->LoadUsers();
           if( is_array($tmp) && count($tmp) ) {
@@ -790,7 +788,7 @@ final class ContentListBuilder
   }
 
   /**
-   * Givena list of displayable pages, builds display info for each page.
+   * Given a list of displayable pages, builds display info for each page.
    */
   private function _get_display_data($page_list)
   {

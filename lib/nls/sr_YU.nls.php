@@ -48,7 +48,7 @@ $nls['locale']['sr_YU'] = 'sr_YU,sr_YU.utf-8,sr_YU.UTF-8,sr_RS.sr_RS.utf-8,serbi
 $nls['encoding']['sr_YU'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['sr_YU'] = array(dirname(__FILE__).'/sr_YU/admin.inc.php');
+$nls['file']['sr_YU'] = array(__DIR__.'/sr_YU/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

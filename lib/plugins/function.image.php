@@ -60,7 +60,7 @@ function smarty_function_image($params, $smarty)
 
   if( isset($params['assign']) )	{
       $smarty->assign(trim($params['assign']),$text);
-      return;
+      return '';
   }
   return $text;
 }

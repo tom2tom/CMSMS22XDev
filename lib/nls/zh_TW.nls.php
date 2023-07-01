@@ -45,7 +45,7 @@ $nls['locale']['zh_TW'] = 'zh_TW,zh_TW.euctw,zh_TW.utf8,zh_TW.big5,zh_TW.Big5,zh
 $nls['encoding']['zh_TW'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['zh_TW'] = array(dirname(__FILE__).'/zh_TW/admin.inc.php');
+$nls['file']['zh_TW'] = array(__DIR__.'/zh_TW/admin.inc.php');
 
 $nls['htmlarea']['zh_TW'] = 'en';
 ?>

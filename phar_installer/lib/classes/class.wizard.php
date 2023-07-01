@@ -8,14 +8,14 @@ use RegexIterator;
 
 class wizard
 {
-  private static $_instance = null;
-  private $_name = null;
-  private $_stepvar = 's';
-  private $_steps;
-  private $_stepobj;
+  private static $_instance;
   private $_classdir;
+  private $_initialized = false;
+  private $_name = '';
   private $_namespace;
-  private $_initialized;
+  private $_stepobj = null;
+  private $_steps = [];
+  private $_stepvar = 's';
 
   const STATUS_OK    = 'OK';
   const STATUS_ERROR = 'ERROR';
@@ -24,17 +24,15 @@ class wizard
 
   private function __construct($classdir,$namespace)
   {
-    $this->_namespace = $namespace;
     if( !is_dir($classdir) ) throw new Exception('Could not find wizard steps in '.$classdir);
-
     $this->_classdir = $classdir;
     $this->_name = basename($classdir);
-
+    $this->_namespace = $namespace;
   }
 
   final public static function get_instance($classdir = '', $namespace = '')
   {
-    if( !is_object(self::$_instance) ) self::$_instance = new self($classdir,$namespace);
+    if( !self::$_instance ) self::$_instance = new self($classdir,$namespace);
     return self::$_instance;
   }
 

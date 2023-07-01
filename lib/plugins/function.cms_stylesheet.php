@@ -22,13 +22,13 @@ function smarty_function_cms_stylesheet($params, $smarty)
 	# Initials
 	#---------------------------------------------
 
-    $gCms = CmsApp::get_instance();
+	$gCms = CmsApp::get_instance();
 	$config = $gCms->GetConfig();
 
 	global $CMS_LOGIN_PAGE;
 	global $CMS_STYLESHEET;
 	$CMS_STYLESHEET = 1;
-	$name = null;
+	$name = '';
 	$design_id = -1;
 	$use_https = 0;
 	$cache_dir = $config['css_path'];
@@ -43,7 +43,7 @@ function smarty_function_cms_stylesheet($params, $smarty)
 	# Trivial Exclusion
 	#---------------------------------------------
 
-	if( isset($CMS_LOGIN_PAGE) ) return;
+	if( isset($CMS_LOGIN_PAGE) ) return '';
 
 	#---------------------------------------------
 	# Read parameters
@@ -57,7 +57,7 @@ function smarty_function_cms_stylesheet($params, $smarty)
             $design_id = (int)$params['designid'];
         } else {
             $content_obj = $gCms->get_content_object();
-            if( !is_object($content_obj) ) return;
+            if( !is_object($content_obj) ) return '';
             $design_id = (int) $content_obj->GetPropertyValue('design_id');
             $use_https = (int) $content_obj->Secure();
         }
@@ -80,7 +80,7 @@ function smarty_function_cms_stylesheet($params, $smarty)
         # Build query
         #---------------------------------------------
 
-        $query = null;
+        $query = null; // no object
         if( $name != '' ) {
             // stylesheet by name
             $query = new CmsLayoutStylesheetQuery( [ 'fullname'=>$name ] );
@@ -215,7 +215,7 @@ function smarty_function_cms_stylesheet($params, $smarty)
 
 	if( isset($params['assign']) ){
 	    $smarty->assign(trim($params['assign']), $stylesheet);
-	    return;
+	    return '';
     }
 
 	return $stylesheet;
@@ -226,7 +226,7 @@ function smarty_function_cms_stylesheet($params, $smarty)
 	Misc functions
 **********************************************************/
 
-function cms_stylesheet_writeCache($filename, $list, $trimbackground, &$smarty)
+function cms_stylesheet_writeCache($filename, $list, $trimbackground, $smarty)
 {
 	$_contents = '';
     if( is_string($list) && !is_array($list) ) $list = array($list);
@@ -249,7 +249,7 @@ function cms_stylesheet_writeCache($filename, $list, $trimbackground, &$smarty)
             debug_to_log('Error Processing Stylesheet');
             debug_to_log($e->GetMessage());
             audit('','Plugin: cms_stylesheet', 'Smarty Compile process failed, an error in the template?');
-            return;
+            return '';
 	}
 
 	$smarty->left_delimiter = '{';
@@ -278,7 +278,7 @@ function cms_stylesheet_writeCache($filename, $list, $trimbackground, &$smarty)
 function cms_stylesheet_toString($filename, $media_query = '', $media_type = '', $root_url = '', &$stylesheet = '', &$params = [])
 {
 	if( !endswith($root_url,'/') ) $root_url .= '/';
-	if( isset($params['nolinks']) )	{
+	if( isset($params['nolinks']) ) {
 		$stylesheet .= $root_url.$filename.',';
 	} else {
 

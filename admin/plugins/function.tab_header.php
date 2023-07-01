@@ -20,7 +20,7 @@ function smarty_function_tab_header($params,$template)
 {
 	$smarty = $template->smarty;
 
-	if( !isset($params['name']) ) return;
+	if( !isset($params['name']) ) return '';
 	$name = trim($params['name']);
 	$label = $name;
 	$active = FALSE;
@@ -38,7 +38,7 @@ function smarty_function_tab_header($params,$template)
 	$out = cms_admin_tabs::set_tab_header($name,$label,$active);
 	if( isset($params['assign']) ) {
 		$smarty->assign(trim($params['assign']),$out);
-		return;
+		return '';
 	}
 	return $out;
 }

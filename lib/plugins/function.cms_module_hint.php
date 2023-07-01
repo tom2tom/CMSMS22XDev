@@ -18,11 +18,11 @@
 
 function smarty_function_cms_module_hint($params, $smarty)
 {
-    if( !isset($params['module']) ) return;
+    if( !isset($params['module']) ) return '';
 
     $module = trim($params['module']);
     $modobj = cms_utils::get_module($module);
-    if( !is_object($modobj) ) return;
+    if( !is_object($modobj) ) return '';
 
     $data = cms_utils::get_app_data('__CMS_MODULE_HINT__'.$module);
     if( !$data ) $data = array();

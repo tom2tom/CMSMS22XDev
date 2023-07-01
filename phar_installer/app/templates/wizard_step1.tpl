@@ -2,8 +2,8 @@
 {extends file='wizard_step.tpl'}
 
 {block name='logic'}
-    {capture assign='browser_title'}CMS Made Simple&trade; {$version|default:''} ({$version_name|default:''}) {'apptitle'|tr}{/capture}
-    {capture assign='title'}{'title_welcome'|tr} {'to'|tr} CMS Made Simple&trade; {$version|default:''} <em>({$version_name|default:''})</em><br />{'apptitle'|tr}{/capture}
+    {capture assign='browser_title'}CMS Made Simple&trade; {$version|default:''} ({$version_name|default:''}) {tr('apptitle')}{/capture}
+    {capture assign='title'}{tr('title_welcome')} {tr('to')} CMS Made Simple&trade; {$version|default:''} <em>({$version_name|default:''})</em><br />{tr('apptitle')}{/capture}
     {$current_step = '1'}
 {/block}
 
@@ -18,47 +18,47 @@ function redirect_langchange() {
 }
 </script>
 
-<p>{'welcome_message'|tr}</p>
+<p>{tr('welcome_message')}</p>
 
 <div class="installer-form">
 {wizard_form_start}
     {if empty($custom_destdir) && !empty($dirlist)}
-      <h3>{'step1_destdir'|tr}</h3>
+      <h3>{tr('step1_destdir')}</h3>
 
-      <p class="message yellow">{'step1_info_destdir'|tr}</p>
+      <p class="message yellow">{tr('step1_info_destdir')}</p>
 
       <div class="row message yellow">
-        <label>{'destination_directory'|tr}:</label>
+        <label>{tr('destination_directory')}:</label>
         <select class="form-field" name="destdir">
           {html_options options=$dirlist selected=$destdir|default:''}
         </select>
       </div>
-      <hr>
+      <hr />
     {/if}
 
-    <h3>{'step1_language'|tr}</h3>
-    <p class="info">{'select_language'|tr}</p>
+    <h3>{tr('step1_language')}</h3>
+    <p class="info">{tr('select_language')}</p>
     <div class="row">
-        <label>{'available_languages'|tr}:</label>
+        <label>{tr('available_languages')}:</label>
         <select id="lang_selector" class="form-field" name="lang" onchange="redirect_langchange();">
             {html_options options=$languages selected=$curlang}
         </select>
     </div>
 
-    <hr>
+    <hr />
 
-    <h3>{'step1_advanced'|tr}</h3>
-    <p class="info">{'info_advanced'|tr}</p>
+    <h3>{tr('step1_advanced')}</h3>
+    <p class="info">{tr('info_advanced')}</p>
 
     <div class="row">
-        <label>{'advanced_mode'|tr}:</label>
+        <label>{tr('advanced_mode')}:</label>
         <select class="form-field" name="verbose">
             {html_options options=$yesno selected=$verbose}
         </select>
     </div>
 
     <div id="bottom_nav">
-      <input type="submit" class="action-button positive" name="next" value="{'next'|tr} &rarr;" />
+      <input type="submit" class="action-button positive" name="next" value="{tr('next')} &rarr;" />
     </div>
 {wizard_form_end}
 </div>

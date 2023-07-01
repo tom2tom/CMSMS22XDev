@@ -46,7 +46,7 @@ $nls['locale']['fr_FR'] = 'fr_FR.UTF-8,fr_FR.utf8,fr_FR.utf-8,fr_FR,fr_FR@euro,f
 $nls['encoding']['fr_FR'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['fr_FR'] = array(dirname(__FILE__).'/fr_FR/admin.inc.php');
+$nls['file']['fr_FR'] = array(__DIR__.'/fr_FR/admin.inc.php');
 
 #Language setting for HTML area
 $nls['htmlarea']['fr_FR'] = 'fr';

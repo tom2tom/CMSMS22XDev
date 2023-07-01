@@ -4,17 +4,17 @@ $(function() {
   $('#selall').cmsms_checkall();
   $('#bulkactions').hide();
   $('#bulk_category').hide();
-  $('#toggle_filter').click(function() {
+  $('#toggle_filter').on('click', function() {
     $('#filter').dialog( {
       width: 'auto',
       modal: true
     });
   });
-    $('a.delete_article').click(function(ev) {
+    $('a.delete_article').on('click', function(ev) {
       var self = $(this);
       ev.preventDefault();
-      cms_confirm('{$mod->Lang('areyousure')|escape:'javascript'}').done(function() {
-        window.location = self.attr('href');
+      cms_confirm("{$mod->Lang('areyousure')|escape:'javascript'}").done(function() {
+        window.location.href = self.attr('href');
         return true;
       });
     });
@@ -41,8 +41,8 @@ $(function() {
   $('#bulkactions').on('click','#submit_bulkaction',function(ev) {
     var form = $(this).closest('form');
     ev.preventDefault();
-    cms_confirm('{$mod->Lang('areyousure_multiple')|escape:'javascript'}').done(function() {
-      form.submit();
+    cms_confirm("{$mod->Lang('areyousure_multiple')|escape:'javascript'}").done(function() {
+      form.trigger('submit');
     });
   });
 });

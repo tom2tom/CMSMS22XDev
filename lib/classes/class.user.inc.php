@@ -39,42 +39,45 @@ class User
 	/**
 	 * @var int $id User id
 	 */
-	var $id;
+	public $id;
 
 	/**
 	 * @var string Username
 	 */
-	var $username;
+	public $username;
 
 	/**
 	 * @var string $password Password (md5 encoded)
 	 */
-	var $password;
+	public $password;
 
 	/**
 	 * @var string $firstname Users First Name
 	 */
-	var $firstname;
+	public $firstname;
 
 	/**
 	 * @var string $lastname Last Name
 	 */
-	var $lastname;
+	public $lastname;
 
 	/**
 	 * @var string $email Users Email Address
 	 */
-	var $email;
+	public $email;
 
 	/**
 	 * @var bool $active Active Flag
 	 */
-	var $active;
+	public $active;
 
 	/**
 	 * @var bool $adminaccess Flag to tell whether user can login to admin panel
 	 */
-	var $adminaccess;
+	public $adminaccess;
+
+	public $access_to_user; // unused here, but used for parking a proxy 'editable' property for template
+	public $pagecount; //ditto
 
 	/**
 	 * Generic constructor.  Runs the SetInitialValues fuction.
@@ -124,7 +127,7 @@ class User
 	{
 		$result = false;
 
-        $userops = UserOperations::get_instance();
+		$userops = UserOperations::get_instance();
 		if ($this->id > -1) {
 			$result = $userops->UpdateUser($this);
 		}

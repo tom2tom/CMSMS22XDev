@@ -29,7 +29,7 @@
 /**
  * @access private
  */
-function cms_module_ListTemplates(&$modinstance, $modulename = '')
+function cms_module_ListTemplates($modinstance, $modulename = '')
 {
 	$db = CmsApp::get_instance()->GetDb();
 	$retresult = array();
@@ -50,7 +50,7 @@ function cms_module_ListTemplates(&$modinstance, $modulename = '')
  * follow any smarty caching rules.
  * @access private
  */
-function cms_module_GetTemplate(&$modinstance, $tpl_name, $modulename = '')
+function cms_module_GetTemplate($modinstance, $tpl_name, $modulename = '')
 {
 	$db = CmsApp::get_instance()->GetDb();
 
@@ -70,27 +70,25 @@ function cms_module_GetTemplate(&$modinstance, $tpl_name, $modulename = '')
  * Code adapted from the Guestbook module
  * @access private
  */
-function cms_module_GetTemplateFromFile(&$modinstance, $template_name)
+function cms_module_GetTemplateFromFile($modinstance, $template_name)
 {
 	$ok = (strpos($template_name, '..') === false);
-	if (!$ok) return;
+	if (!$ok) return '';
 
 	$tpl_base  = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.'modules'.DIRECTORY_SEPARATOR;
 	$tpl_base .= $modinstance->GetName().DIRECTORY_SEPARATOR.'templates';
 	$template = $tpl_base.DIRECTORY_SEPARATOR.$template_name;
 	if( !endswith($template,'.tpl') ) $template .= '.tpl';
 	if (is_file($template)) {
-		return file_get_contents($template);
+		return (string)file_get_contents($template);
 	}
-	else {
-		return null;
-	}
+	return '';
 }
 
 /**
  * @access private
  */
-function cms_module_SetTemplate(&$modinstance, $tpl_name, $content, $modulename = '')
+function cms_module_SetTemplate($modinstance, $tpl_name, $content, $modulename = '')
 {
 	$db = CmsApp::get_instance()->GetDb();
 
@@ -111,7 +109,7 @@ function cms_module_SetTemplate(&$modinstance, $tpl_name, $content, $modulename 
 /**
  * @access private
  */
-function cms_module_DeleteTemplate(&$modinstance, $tpl_name = '', $modulename = '')
+function cms_module_DeleteTemplate($modinstance, $tpl_name = '', $modulename = '')
 {
 	$db = CmsApp::get_instance()->GetDb();
 
@@ -119,7 +117,7 @@ function cms_module_DeleteTemplate(&$modinstance, $tpl_name = '', $modulename = 
 	$query = "DELETE FROM ".CMS_DB_PREFIX."module_templates WHERE module_name = ?";
 	if( $tpl_name != '' ) {
 		$query .= 'AND template_name = ?';
-	    $parms[] = $tpl_name;
+		$parms[] = $tpl_name;
 	}
 	$result = $db->Execute($query, $parms);
 	return ($result == false)?false:true;
@@ -128,13 +126,13 @@ function cms_module_DeleteTemplate(&$modinstance, $tpl_name = '', $modulename = 
 /**
  * @access private
  */
-function cms_module_ProcessTemplate(&$modinstance, $tpl_name, $designation = '', $cache = false, $cacheid = '')
+function cms_module_ProcessTemplate($modinstance, $tpl_name, $designation = '', $cache = false, $cacheid = '')
 {
 	$ok = (strpos($tpl_name, '..') === false);
-	if (!$ok) return;
+	if (!$ok) return '';
 
-    $smarty = $modinstance->GetActionTemplateObject();
-    if( !$smarty ) $smarty = Smarty_CMS::get_instance();
+	$smarty = $modinstance->GetActionTemplateObject();
+	if( !$smarty ) $smarty = Smarty_CMS::get_instance();
 	$oldcache = $smarty->caching;
 	if( $smarty->caching != Smarty::CACHING_OFF ) {
 		$smarty->caching = ($modinstance->can_cache_output())?Smarty::CACHING_LIFETIME_CURRENT:Smarty::CACHING_OFF;
@@ -150,7 +148,7 @@ function cms_module_ProcessTemplate(&$modinstance, $tpl_name, $designation = '',
  * note, there is no caching involved.
  * @access private
  */
-function cms_module_ProcessTemplateFromData(&$modinstance, $data)
+function cms_module_ProcessTemplateFromData($modinstance, $data)
 {
     $smarty = $modinstance->GetActionTemplateObject();
     if( !$smarty ) $smarty = Smarty_CMS::get_instance();
@@ -161,7 +159,7 @@ function cms_module_ProcessTemplateFromData(&$modinstance, $data)
 /**
  * @access private
  */
-function cms_module_ProcessTemplateFromDatabase(&$modinstance, $tpl_name, $designation = '', $cache = false, $modulename = '')
+function cms_module_ProcessTemplateFromDatabase($modinstance, $tpl_name, $designation = '', $cache = false, $modulename = '')
 {
     $smarty = $modinstance->GetActionTemplateObject();
     if( !$smarty ) $smarty = Smarty_CMS::get_instance();

@@ -28,7 +28,7 @@ if( isset($params['cancel']) ) {
 }
 
 try {
-  $category = null;
+  $category = null; // no object
   if( !isset($params['cat']) ) {
     $category = new CmsLayoutTemplateCategory();
     //$category->set_name('New Category');

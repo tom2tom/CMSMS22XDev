@@ -29,7 +29,7 @@ function smarty_cms_function_cms_yesno($params, $smarty)
 
     if( isset($params['assign']) ) {
         $smarty->assign(trim($params['assign']),$out);
-        return;
+        return '';
     }
     return $out;
 }

@@ -24,7 +24,7 @@ function smarty_function_tab_end($params,$template)
 	if( isset($params['assign']) )
 	{
 		$smarty->assign(trim($params['assign']),$out);
-		return;
+		return '';
 	}
 	return $out;
 }

@@ -24,14 +24,14 @@
         * Regex for matching a consonant
         * @var string
         */
-        var $regex_consonant;
+        public $regex_consonant;
 
 
         /**
         * Regex for matching a vowel
         * @var string
         */
-        var $regex_vowel;
+        public $regex_vowel;
 
 	function __construct()
 	{
@@ -333,7 +333,7 @@
         *                       of the $str string. True does not necessarily mean
         *                       that it was replaced.
         */
-        function replace(&$str, $check, $repl, $m = null)
+        function replace(&$str, $check, $repl, $m = null) // mixed value
         {
             $len = 0 - strlen($check);
 

@@ -2,7 +2,7 @@
 
 {$main_id = ' id=\'main-menu\''}
 {function do_class}
-    {if count($classes) > 0} class='{implode(' ',$classes)}'{/if}
+{if count($classes) > 0} class="{' '|adjust:'implode':$classes}"{/if}
 {/function}
 
 {function name='Simplex_menu' depth='1'}
@@ -15,19 +15,19 @@
             {$href_class = ['cf']}
             {$parent_indicator = ''}
             {$aria_support = ''}
-    
+
             {if $node->current || $node->parent}
                 {* this is the current page *}
                 {$list_class[] = 'current'}
                 {$href_class[] = 'current'}
             {/if}
-    
+
             {if $node->children_exist}
                 {$list_class[] = 'parent'}
                 {$aria_support = ' aria-haspopup=\'true\''}
                 {$parent_indicator = ' <i class=\'icon-arrow-left\' aria-hidden=\'true\'></i>'}
             {/if}
-    
+
             {* build the menu item node *}
             {if $node->type == 'sectionheader'}
                 {$list_class[] = 'sectionheader'}

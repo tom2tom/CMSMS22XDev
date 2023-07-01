@@ -533,13 +533,16 @@ if (defined('STDOUT') && $_outfile == STDOUT) {
     if ($_to_ver) {
         $dir = __DIR__;
         $base = basename($dir);
-        //the topmost reachable dirname is not '.' if there is any slash in the path
+        //vanilla CMSMS2.2 uses foldername phar-installer, CMSMS2.99+ uses phar_installer
+        //and topmost reachable dirname is not '.' if there is any slash in the path
         while ($dir != '.' && $dir != '/' && $base != 'phar_installer') {
             $dir = dirname($dir);
             $base = basename($dir);
         }
         if ($dir !== '.' && $dir !== '/') {
-//2.99+     $file = joinpath($dir, 'lib', 'upgrade', $_to_ver);
+//2.99+
+//           $file = joinpath($dir, 'lib', 'upgrade', $_to_ver);
+//2.2
             $file = joinpath($dir, 'app', 'upgrade', $_to_ver);
             if (is_dir($file)) {
                 if (!is_file($file.DIRECTORY_SEPARATOR.'changelog.txt')) {
@@ -756,7 +759,7 @@ function sighandler($signum)
     exit(1);
 }
 
-function cleanup($signum = null)
+function cleanup()
 {
     global $_tmpdir;
     debug('Clean up');
@@ -778,7 +781,7 @@ function ask_string($prompt, $dflt = null, $allow_empty = false)
         }
 
         if ($allow_empty) {
-            return;
+            return '';
         }
         if ($dflt) {
             return $dflt;
@@ -996,7 +999,7 @@ class compare_dirs
     private $_list_a;
     private $_list_b;
     private $_do_md5;
-    private $_has_run = null;
+    private $_has_run = false;
     private $_base_dir;
     private $_ignored = [];
     private $_donotdelete = [];
@@ -1146,7 +1149,7 @@ class compare_dirs
         return false;
     }
 
-    private function _read_dir($dir = null)
+    private function _read_dir($dir = '')
     {
         global $uninstallmodules;
 

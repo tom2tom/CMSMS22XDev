@@ -74,9 +74,9 @@ class ContentOperations
 	 *
 	 * @return ContentOperations
 	 */
-	public static function &get_instance()
+	public static function get_instance()
 	{
-		if( !is_object( self::$_instance ) ) self::$_instance = new ContentOperations();
+		if( !self::$_instance ) self::$_instance = new self();
 		return self::$_instance;
 	}
 
@@ -128,7 +128,7 @@ class ContentOperations
 
 
 	/**
-	 * Given an array of content_type and seralized_content, reconstructs a
+	 * Given an array of content_type and serialized_content, reconstructs a
 	 * content object.  It will handled loading the content type if it hasn't
 	 * already been loaded.
 	 *
@@ -140,7 +140,7 @@ class ContentOperations
 	 * @param  array $data
 	 * @return ContentBase A content object derived from ContentBase
 	 */
-	public function &LoadContentFromSerializedData(&$data)
+	public function LoadContentFromSerializedData(&$data)
 	{
 		if( !isset($data['content_type']) && !isset($data['serialized_content']) ) return FALSE;
 
@@ -187,13 +187,13 @@ class ContentOperations
 	 * @param mixed $type The type.  Either a string, or an instance of CmsContentTypePlaceHolder
 	 * @return ContentBase (A valid object derived from ContentBase)
 	 */
-	public function &CreateNewContent($type)
+	public function CreateNewContent($type)
 	{
 		if( is_object($type) && $type instanceof CmsContentTypePlaceHolder ) $type = $type->type;
-		$result = NULL;
 
+		$result = null; // no object
 		$ctph = $this->LoadContentType($type);
-		if( is_object($ctph) && class_exists($ctph->class) ) $result = new $ctph->class;
+		if( is_object($ctph) && class_exists($ctph->class) ) $result = new $ctph->class();
 		return $result;
 	}
 
@@ -203,11 +203,10 @@ class ContentOperations
 	 *
 	 * @param int $id The id of the content object to load
 	 * @param bool $loadprops Also load the properties of that content object. Defaults to false.
-	 * @return mixed The loaded content object. If nothing is found, returns FALSE.
+	 * @return mixed The loaded content object. If nothing is found, returns NULL.
 	 */
-	function &LoadContentFromId($id,$loadprops=false)
+	function LoadContentFromId($id,$loadprops=false)
 	{
-		$result = FALSE;
 		$id = (int) $id;
 		if( $id < 1 ) $id = $this->GetDefaultContent();
 		if( cms_content_cache::content_exists($id) ) return cms_content_cache::get_content($id);
@@ -224,7 +223,7 @@ class ContentOperations
 				return $contentobj;
 			}
 		}
-		return $result;
+		return null; //no object
 	}
 
 
@@ -235,17 +234,15 @@ class ContentOperations
 	 * @param bool $only_active If true, only return the object if it's active flag is true. Defaults to false.
 	 * @return ContentBase The loaded content object. If nothing is found, returns NULL.
 	 */
-	function &LoadContentFromAlias($alias, $only_active = false)
+	function LoadContentFromAlias($alias, $only_active = false)
 	{
 		if( cms_content_cache::content_exists($alias) ) return cms_content_cache::get_content($alias);
 
 		$hm = Cmsapp::get_instance()->GetHierarchyManager();
 		$node = $hm->sureGetNodeByAlias($alias);
-		$out = null;
-		if( !$node ) return $out;
-		if( $only_active && !$node->get_tag('active') ) return $out;
-		$out = $this->LoadContentFromId($node->get_tag('id'));
-		return $out;
+		if( !$node ) return null;
+		if( $only_active && !$node->get_tag('active') ) return null;
+		return $this->LoadContentFromId($node->get_tag('id'));
 	}
 
 
@@ -342,6 +339,7 @@ class ContentOperations
 				return $this->_content_types[$name];
 			}
 		}
+		return null; // no object
 	}
 
 
@@ -349,9 +347,10 @@ class ContentOperations
 	 * Register a new content type
 	 *
 	 * @since 1.9
-	 * @param CmsContentTypePlaceHolder Reference to placeholder object
+	 * @param CmsContentTypePlaceHolder object
+	 * @return bool
 	 */
-	public function register_content_type(CmsContentTypePlaceHolder& $obj)
+	public function register_content_type(CmsContentTypePlaceHolder $obj)
 	{
 		$this->_get_content_types();
 		if( isset($this->_content_types[$obj->type]) ) return FALSE;
@@ -379,10 +378,10 @@ class ContentOperations
 		$tmp = cms_siteprefs::get('disallowed_contenttypes');
 		if( $tmp ) $disallowed_a = explode(',',$tmp);
 
+		$result = array();
 		$this->_get_content_types();
 		$types = $this->_content_types;
 		if ( isset($types) ) {
-			$result = array();
 			foreach( $types as $obj ) {
 				global $CMS_ADMIN_PAGE;
 				if( !isset($obj->friendlyname) && isset($obj->friendlyname_key) && isset($CMS_ADMIN_PAGE) ) {
@@ -398,8 +397,8 @@ class ContentOperations
 					}
 				}
 			}
-			return $result;
 		}
+		return $result;
 	}
 
 
@@ -422,9 +421,9 @@ class ContentOperations
 	 *
 	 * @internal
 	 * @ignore
-	 * @param integer $contentid The content id to update
+	 * @param integer $content_id The content id to update
 	 * @param array $hash A hash of all content objects (only certain fields)
-	 * @return array|null
+	 * @return array maybe empty
 	 */
 	private function _set_hierarchy_position($content_id,$hash)
 	{
@@ -459,6 +458,7 @@ class ContentOperations
 			$saved_row['hierarchy_path'] = $pathhier;
 			return $saved_row;
 		}
+		return [];
 	}
 
 
@@ -532,7 +532,7 @@ class ContentOperations
 	 * @return cms_content_tree The cached tree of content
 	 * @deprecated
 	 */
-	function &GetAllContentAsHierarchy($loadcontent = false)
+	function GetAllContentAsHierarchy($loadcontent = false)
 	{
 		$tree = \CMSMS\internal\global_cache::get('content_tree');
 		return $tree;
@@ -583,7 +583,7 @@ class ContentOperations
 			}
 			$dbr->MoveFirst();
 
-			$tmp = null;
+			$tmp = [];
 			if( count($child_ids) ) {
 				// get all the properties for the child_ids
 				$query = 'SELECT * FROM '.CMS_DB_PREFIX.'content_props WHERE content_id IN ('.implode(',',$child_ids).') ORDER BY content_id';
@@ -667,7 +667,7 @@ class ContentOperations
 		}
 
 		// get the content ids from the returned data
-		$contentprops = null;
+		$contentprops = [];
 		if( $loadprops ) {
 			$child_ids = array();
 			if(!is_array($contentrows) ) { $contentrows = []; }
@@ -676,7 +676,7 @@ class ContentOperations
 				$child_ids[] = $contentrows[$i]['content_id'];
 			}
 
-			$tmp = null;
+			$tmp = [];
 			if( count($child_ids) ) {
 				// get all the properties for the child_ids
 				$query = 'SELECT * FROM '.CMS_DB_PREFIX.'content_props WHERE content_id IN ('.implode(',',$child_ids).') ORDER BY content_id';
@@ -757,7 +757,7 @@ class ContentOperations
 	 * @param bool $loadprops Not implemented
 	 * @return array The array of content objects
 	 */
-	function &GetAllContent($loadprops=true)
+	function GetAllContent($loadprops=true)
 	{
 		debug_buffer('get all content...');
 		$gCms = CmsApp::get_instance();
@@ -889,7 +889,7 @@ class ContentOperations
 	 * Check if a content alias is used
 	 *
 	 * @param string $alias The alias to check
-	 * @param int $content_id The id of hte current page, if any
+	 * @param int $content_id The id of the current page, if any
 	 * @return bool
 	 * @since 2.2.2
 	 */
@@ -929,13 +929,13 @@ class ContentOperations
 	 *
 	 * @param string $alias The content alias to check
 	 * @param int $content_id The id of the current page, for used alias checks on existing pages
-	 * @return string The error, if any.  If there is no error, returns FALSE.
+	 * @return string The error, if any.  If there is no error, returns empty string.
 	 */
 	function CheckAliasError($alias, $content_id = -1)
 	{
 		if( !$this->CheckAliasValid($alias) ) return lang('invalidalias2');
 		if ($this->CheckAliasUsed($alias,$content_id)) return lang('aliasalreadyused');
-		return FALSE;
+		return '';
 	}
 
 	/**
@@ -947,15 +947,14 @@ class ContentOperations
 	 */
 	function CreateFriendlyHierarchyPosition($position)
 	{
-		#Change padded numbers back into user-friendly values
+		//Change padded numbers back into user-friendly values
 		$tmp = '';
 		$levels = explode('.',$position);
 
 		foreach ($levels as $onelevel) {
 			$tmp .= ltrim($onelevel, '0') . '.';
 		}
-		$tmp = rtrim($tmp, '.');
-		return $tmp;
+		return rtrim($tmp, '.');
 	}
 
 	/**
@@ -967,15 +966,14 @@ class ContentOperations
 	 */
 	function CreateUnfriendlyHierarchyPosition($position)
 	{
-		#Change user-friendly values into padded numbers
+		//Change user-friendly values into padded numbers
 		$tmp = '';
 		$levels = explode('.',$position);
 
 		foreach ($levels as $onelevel) {
 			$tmp .= str_pad($onelevel, 5, '0', STR_PAD_LEFT) . '.';
 		}
-		$tmp = rtrim($tmp, '.');
-		return $tmp;
+		return rtrim($tmp, '.');
 	}
 
 	/**
@@ -987,7 +985,7 @@ class ContentOperations
 	 * @param int $base_id (optional) Page ID to act as the base page.  The current page is used if not specified.
 	 * @return bool
 	 */
-	public function CheckParentage($test_id,$base_id = null)
+	public function CheckParentage($test_id,$base_id = 0)
 	{
 		$gCms = CmsApp::get_instance();
 		if( !$base_id ) $base_id = $gCms->get_content_id();

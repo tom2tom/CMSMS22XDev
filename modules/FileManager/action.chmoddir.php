@@ -14,7 +14,7 @@ $config = $gCms->GetConfig();
 $fullname=$this->Slash($params["path"],$params["dirname"]);
 $fullname=$this->Slash($config["root_path"],$fullname);
 
-function chmodRecursive($path,$newmode,&$module) {
+function chmodRecursive($path,$newmode,$module) {
 	$dir = opendir($path);
 	while ($entry = readdir($dir)) {
 		if ($entry=="." || $entry=="..") continue;

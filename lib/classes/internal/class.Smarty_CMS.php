@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: content.functions.php 6863 2011-01-18 02:34:48Z calguy1000 $
+#$Id$
 
 /**
  * @package CMS
@@ -30,8 +30,9 @@
  */
 class Smarty_CMS extends CMSSmartyBase
 {
-    public $id; // <- triggers error without | do search why this is needed
-    public $params; // <- triggers error without | do search why this is needed
+    public $assign; // used by ancestor class(es)
+    public $id; // <- triggers error without | do search why is this needed
+    public $params; // <- triggers error without | do search why is this needed
     protected $_global_cache_id;
     private static $_instance;
 
@@ -127,8 +128,8 @@ class Smarty_CMS extends CMSSmartyBase
             $this->addPluginsDir($admin_dir.'/plugins');
             $this->setTemplateDir($admin_dir.'/templates');
             $this->setConfigDir($admin_dir.'/configs');
-// TODO next release enable custom security (might be a breaker)
-//            $this->enableSecurity('CMSSmartySecurityPolicy');
+            // TODO custom security for admin might be a breaker
+            $this->enableSecurity('CMSSmartySecurityPolicy');
         }
         else if( $_gCms->test_state(CmsApp::STATE_INSTALL) ) {
             $this->addTemplateDir($config['assets_path'].'/templates');
@@ -139,9 +140,9 @@ class Smarty_CMS extends CMSSmartyBase
     /**
      * get_instance method
      *
-     * @return reference to object $this
+     * @return object $this
      */
-    public static function &get_instance()
+    public static function get_instance()
     {
         if( !self::$_instance ) {
             self::$_instance = new self();
@@ -369,8 +370,8 @@ class Smarty_CMS extends CMSSmartyBase
 
         //put the new template onto the stack, and do our work, to handle recursive calls.
         $this->_tpl_stack[] = $_tpl;
-        $tmp = null;
         if( $display ) {
+            $tmp = '';
             $_tpl->display();
         } else {
             $tmp = $_tpl->fetch();

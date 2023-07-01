@@ -3,18 +3,18 @@ $(function() {
 
     $('#sel_all').cmsms_checkall();
 
-    $('.switchuser').click(function(ev){
+    $('.switchuser').on('click', function(ev){
         ev.preventDefault();
         var _href = $(this).attr('href');
-        cms_confirm('{lang('confirm_switchuser')|escape:'javascript'}').done(function(){
+        cms_confirm("{lang('confirm_switchuser')|escape:'javascript'}").done(function() {
             window.location.href = _href;
         });
     });
 
-    $('.toggleactive').click(function(ev){
+    $('.toggleactive').on('click', function(ev){
         ev.preventDefault();
         var _href = $(this).attr('href');
-        cms_confirm('{lang('confirm_toggleuseractive')|escape:'javascript'}').done(function(){
+        cms_confirm("{lang('confirm_toggleuseractive')|escape:'javascript'}").done(function() {
             window.location.href = _href;
         });
     });
@@ -22,14 +22,14 @@ $(function() {
     $(document).on('click', '.js-delete', function(ev){
         ev.preventDefault();
         var _href = $(this).attr('href');
-        cms_confirm('{lang('confirm_delete_user')|escape:'javascript'}').done(function(){
+        cms_confirm("{lang('confirm_delete_user')|escape:'javascript'}").done(function() {
             window.location.href = _href;
         });
     });
 
     $('#withselected, #bulksubmit').prop('disabled',true);
     $('#bulksubmit').button({ 'disabled' : true });
-    $('#sel_all, .multiselect').on('click',function(){
+    $('#sel_all, .multiselect').on('click',function() {
         if( !$(this).is(':checked') ) {
             $('#withselected').prop('disabled',true);
             $('#bulksubmit').prop('disabled',true);
@@ -41,28 +41,27 @@ $(function() {
         }
     });
 
-    $('#listusers').submit(function(ev){
+    $('#listusers').on('submit',function(ev){
         ev.preventDefault();
         var v = $('#withselected').val();
         if( v === 'delete' ) {
-            cms_confirm('{lang('confirm_delete_user')|escape:'javascript'}').done(function(){
-                $('#listusers').unbind('submit');
-            $('#bulksubmit').click();
+            cms_confirm("{lang('confirm_delete_user')|escape:'javascript'}").done(function() {
+                $('#listusers').off('submit');
+                $('#bulksubmit').trigger('click');
             }).fail(function() {
                 return false;
             });
         } else {
-            cms_confirm('{lang('confirm_bulkuserop')|escape:'javascript'}').done(function(){
-            $('#listusers').unbind('submit');
-            $('#bulksubmit').click();
+            cms_confirm("{lang('confirm_bulkuserop')|escape:'javascript'}").done(function() {
+                $('#listusers').off('submit');
+                $('#bulksubmit').trigger('click');
                 return true;
             });
         }
     });
 
-    $('#withselected').change(function(){
+    $('#withselected').on('change', function() {
         var v = $(this).val();
-
         if (v === 'copyoptions') {
             $('#userlist').show();
         } else {

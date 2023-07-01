@@ -31,7 +31,7 @@ function smarty_function_menu_text($params, $smarty)
 
 	if( isset($params['assign']) ){
 		$smarty->assign(trim($params['assign']),$result);
-		return;
+		return '';
 	}
 
 	return $result;

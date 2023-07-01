@@ -285,7 +285,7 @@ class cms_filecache_driver extends cms_cache_driver
     private function _read_cache_file($fn)
     {
         $this->_cleanup($fn);
-        $data = null;
+        $data = null; // no matched cache item == no value
         if( is_file($fn) ) {
             clearstatcache();
             $fp = @fopen($fn,'rb');

@@ -5,7 +5,7 @@ class dm_design_exporter
     private $_tpl_list;
     private $_css_list;
     private $_files;
-    private $_image = null;
+    private $_image = null; // unused property
     private $_description;
     static  $_mm_types;
     static  $_nav_types;
@@ -38,7 +38,7 @@ class dm_design_exporter
 ]>\n
 EOT;
 
-    public function __construct(CmsLayoutCollection &$design)
+    public function __construct(CmsLayoutCollection $design)
     {
         $this->_design = $design;
         if( !is_array(self::$_mm_types ) ) {
@@ -202,7 +202,6 @@ EOT;
     {
         switch( $type ) {
         case 'TPL':
-            $tpl_ob = null;
             if( is_object($name) ) {
                 $tpl_ob = $name;
                 $name = $tpl_ob->get_name();
@@ -236,7 +235,7 @@ EOT;
             // and add it to the list.
             // notice we don't recurse.
             $tpl = $this->_parse_tpl_urls($tpl);
-            $new_tpl_ob = new CmsLayoutTemplate;
+            $new_tpl_ob = new CmsLayoutTemplate();
             $new_tpl_ob->set_content($tpl);
             $name = substr($name,0,-4);
             $type = 'TPL';
@@ -434,7 +433,7 @@ EOT;
     private function _xml_output_file($key,$value,$lvl = 0)
     {
         $config = \cms_config::get_instance();
-        if( !startswith($key,'__') || !endswith($key,'__') ) return; // invalid
+        if( !startswith($key,'__') || !endswith($key,'__') ) return ''; // invalid
         $p = strpos($key,',,');
         $nkey = substr($key,0,$p);
         $nkey = substr($nkey,2);

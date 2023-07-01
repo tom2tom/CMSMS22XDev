@@ -3,11 +3,10 @@ if (!isset($gCms)) exit;
 
 if( !class_exists('news_admin_ops') ) {
   // this is required if called from the installer
-  $fn = dirname(__FILE__).'/lib/class.news_admin_ops.php';
+  $fn = __DIR__.'/lib/class.news_admin_ops.php';
   require_once($fn);
 }
 
-$uid = null;
 if( cmsms()->test_state(CmsApp::STATE_INSTALL) ) {
   $uid = 1; // hardcode to first user
 } else {
@@ -108,7 +107,7 @@ catch( CmsException $e ) {
 }
 
 try {
-  $fn = dirname(__FILE__).DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'orig_summary_template.tpl';
+  $fn = __DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'orig_summary_template.tpl';
   if( file_exists( $fn ) ) {
 	$template = @file_get_contents($fn);
 	$tpl = new CmsLayoutTemplate();
@@ -128,7 +127,7 @@ catch( CmsException $e ) {
 
 try {
   // Setup Simplex Theme HTML5 sample summary template
-  $fn = dirname(__FILE__).DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'Summary_Simplex_template.tpl';
+  $fn = __DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'Summary_Simplex_template.tpl';
   if( file_exists( $fn ) ) {
 	$template = @file_get_contents($fn);
 	$tpl = new CmsLayoutTemplate();
@@ -165,7 +164,7 @@ catch( CmsException $e ) {
 }
 
 try {
-  $fn = dirname(__FILE__).DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'orig_detail_template.tpl';
+  $fn = __DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'orig_detail_template.tpl';
   if( file_exists( $fn ) ) {
 	$template = @file_get_contents($fn);
 	$tpl = new CmsLayoutTemplate();
@@ -185,7 +184,7 @@ catch( CmsException $e ) {
 
 try {
   // Setup Simplex Theme HTML5 sample detail template
-  $fn = dirname(__FILE__).DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'Simplex_Detail_template.tpl';
+  $fn = __DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'Simplex_Detail_template.tpl';
   if( file_exists( $fn ) ) {
 	$template = @file_get_contents($fn);
 	$tpl = new CmsLayoutTemplate();
@@ -222,7 +221,7 @@ catch( CmsException $e ) {
 }
 
 try {
-  $fn = dirname(__FILE__).DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'orig_form_template.tpl';
+  $fn = __DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'orig_form_template.tpl';
   if( file_exists( $fn ) ) {
 	$template = @file_get_contents($fn);
 	$template = @file_get_contents($fn);
@@ -260,7 +259,7 @@ catch( CmsException $e ) {
 }
 
 try {
-  $fn = dirname(__FILE__).DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'browsecat.tpl';
+  $fn = __DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'browsecat.tpl';
   if( file_exists( $fn ) ) {
 	  $template = @file_get_contents($fn);
 	  $tpl = new CmsLayoutTemplate();

@@ -68,7 +68,7 @@ final class cms_admin_utils
 	public static function get_icon($icon)
 	{
 		$theme = cms_utils::get_theme_object();
-		if( !is_object($theme) ) return;
+		if( !is_object($theme) ) return '';
 
 		$smarty = \Smarty_CMS::get_instance();
 		$module = $smarty->get_template_vars('actionmodule');
@@ -87,7 +87,7 @@ final class cms_admin_utils
 		$dirs[] = array(cms_join_path($config['root_path'],$config['admin_dir'],"themes/{$theme->themeName}/images/{$icon}"),
 						$config['admin_url']."/themes/{$theme->themeName}/images/{$icon}");
 
-		$fnd = null;
+		$fnd = '';
 		foreach( $dirs as $one ) {
 			if( file_exists($one[0]) ) {
 				$fnd = $one[1];
@@ -98,7 +98,7 @@ final class cms_admin_utils
 	}
 
 	/**
-	 * Get a help tag for displaying inlne, popup help.
+	 * Get a help tag for displaying inline, popup help.
 	 *
 	 * This method accepts variable arguments.  If only one argument is passed it is assumed to be
 	 * the second key for the help tag and the first key is assumed to be the current module name.
@@ -109,7 +109,7 @@ final class cms_admin_utils
 	 */
 	public static function get_help_tag()
 	{
-		if( !CmsApp::get_instance()->test_state(CmsApp::STATE_ADMIN_PAGE) ) return;
+		if( !CmsApp::get_instance()->test_state(CmsApp::STATE_ADMIN_PAGE) ) return '';
 
 		$params = array();
 		$args = func_get_args();
@@ -126,7 +126,7 @@ final class cms_admin_utils
 		}
 
 		$theme = cms_utils::get_theme_object();
-		if( !is_object($theme) ) return;
+		if( !is_object($theme) ) return '';
 
 		$key1 = '';
 		$key2 = '';
@@ -162,14 +162,14 @@ final class cms_admin_utils
 			}
 		}
 
-		if( !$key1 ) 	return;
+		if( !$key1 ) 	return '';
 
 		$key = $key1;
 		if( $key2 !== '' ) $key .= '__'.$key2;
 		if( $title === '' ) $title = $key2;
 
 		$icon = self::get_icon('info.gif');
-		if( !$icon ) return;
+		if( !$icon ) return '';
 
 		return '<span class="cms_help" data-cmshelp-key="'.$key.'" data-cmshelp-title="'.$title.'"><img class="cms_helpicon" src="'.$icon.'" alt="'.$title.'" /></span>';
 	}

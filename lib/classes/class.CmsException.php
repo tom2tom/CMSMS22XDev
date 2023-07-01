@@ -65,7 +65,8 @@ abstract class CmsExtraDataException extends Exception
    */
   public function __construct(/* var args */)
   {
-      $args = $msg = $prev = NULL;
+      $msg = '';
+      $prev = null; // no object
       $code = 0;
       $args = func_get_args();
       if( is_array($args) && count($args) == 1 ) $args = $args[0];

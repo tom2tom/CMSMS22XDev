@@ -16,11 +16,14 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: content.functions.php 6863 2011-01-18 02:34:48Z calguy1000 $
+#$Id$
 
 /**
  * This file contains a class that fixes a problem with the Smarty_Resource_Custom class
- *
+ * TODO check whether overriding
+ *  $this->generateSafeName($source->name)
+ *  i.e. substr(preg_replace('/[^A-Za-z0-9._]/', '', (string) $name), 0, 127)
+ * is still relevant
  * @ignore
  */
 
@@ -40,8 +43,8 @@ abstract class CMS_Fixed_Resource_Custom extends Smarty_Resource_Custom
         $source->uid = sha1($source->type . ':' . $source->name);
 
         $mtime = $this->fetchTimestamp($source->name);
-        if ($mtime !== null) {
-            $source->timestamp = $mtime;
+        if ($mtime !== null) { //smarty defaults to null
+            $source->timestamp = $mtime; //might be 0
         } else {
             $this->fetch($source->name, $content, $timestamp);
             $source->timestamp = isset($timestamp) ? $timestamp : false;

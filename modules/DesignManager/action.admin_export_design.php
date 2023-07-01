@@ -46,10 +46,10 @@ function _ref_map_get_sig($fn,$type = 'URL')
 function _get_css_urls($css_content)
 {
   $content = $css_content;
-  $config = cmsms()->GetConfig();
   $regex='/url\s*\(\"*(.*)\"*\)/i';
   $content = preg_replace_callback($regex,
-    function($matches) use($config) {
+    function($matches) {
+      $config = cmsms()->GetConfig();
       $url = $matches[1];
       if( !startswith($url,'http') || startswith($url,$config['root_url']) || startswith($url,'[[root_url]]') ) {
         $sig = _ref_map_get_sig($url);
@@ -121,11 +121,11 @@ function _get_sub_templates( $template )
 function _get_tpl_urls($tpl_content)
 {
   $content = $tpl_content;
-  $config = cmsms()->GetConfig();
-  $innerT = '[a-z0-9:?=&@/._-]+?';
-  foreach( array("href", "src", "url") as $type ) {
+  foreach (array("href", "src", "url") as $type) {
+    $innerT = '[a-z0-9:?=&@/._-]+?';
     $content = preg_replace_callback("|$type\=([\"'`])(".$innerT.")\\1|i",
-      function($matches) use($config) {
+      function($matches) {
+        $config = cmsms()->GetConfig();
         $url = $matches[2];
         if( !startswith($url,'http') || startswith($url,$config['root_url']) || startswith($url,'{root_url}') ) {
           $sig = _ref_map_get_sig($url);

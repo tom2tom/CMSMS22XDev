@@ -48,6 +48,7 @@ class CmsExtendedModuleInfo extends CmsModuleInfo implements ArrayAccess
             }
             return $out;
         }
+        return null; // no value for unrecognised property
     }
 
     #[\ReturnTypeWillChange]

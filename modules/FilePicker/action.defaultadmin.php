@@ -27,7 +27,7 @@
 #-------------------------------------------------------------------------
 # END_LICENSE
 #-------------------------------------------------------------------------
-use FilePicker\ProfileDAO;
+//use FilePicker\ProfileDAO;
 if( !defined('CMS_VERSION') ) exit;
 if( !$this->VisibleToAdminUser() ) return;
 

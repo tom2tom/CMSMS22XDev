@@ -37,7 +37,7 @@ final class AdminSearch_usertag_slave extends AdminSearch_slave
         return $_mod;
     }
 
-    private function get_match_info($udtprops, &$mod)
+    private function get_match_info($udtprops, $mod)
     {
         $title = $udtprops['userplugin_name'];
         $gCms = cmsms();

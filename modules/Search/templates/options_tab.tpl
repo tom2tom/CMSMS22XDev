@@ -1,7 +1,7 @@
 {$formstart}
 <div class="pageoverflow">
   <p class="pagetext">{$prompt_stopwords}:</p>
-  <p class="pageinput">{$input_stopwords|html_entity_decode}</p>
+  <p class="pageinput">{$input_stopwords|adjust:'html_entity_decode'}</p>
   <p class="pagetext">{$prompt_resetstopwords}:</p>
   <p class="pageinput">{$input_resetstopwords}</p>
 </div>
@@ -28,7 +28,7 @@
 <div class="pageoverflow">
   <p class="pagetext"></p>
   <p class="pageinput">{$submit}
-    <input type="submit" name="{$actionid}reindex" value="{$mod->Lang('reindexallcontent')}" onclick="return confirm('{$mod->Lang('confirm_reindex')|escape:'javascript'}')"/>
+    <input type="submit" name="{$actionid}reindex" value="{$mod->Lang('reindexallcontent')}" onclick="return confirm('{$mod->Lang("confirm_reindex")|escape:"javascript"}');" />
   </p>
 </div>
 {$formend}

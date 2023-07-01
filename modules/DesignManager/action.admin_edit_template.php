@@ -38,9 +38,8 @@ if (isset($params['cancel'])) {
     $this->RedirectToAdminTab();
 }
 
+$userid = get_userid();
 try {
-    $tpl_obj = null;
-    $type_obj = null;
     $type_is_readonly = false;
     $message = $this->Lang('msg_template_saved');
     $response = 'success';
@@ -49,7 +48,7 @@ try {
     $extraparms = array();
     if (isset($params['import_type'])) {
         $tpl_obj = CmsLayoutTemplate::create_by_type($params['import_type']);
-        $tpl_obj->set_owner(get_userid());
+        $tpl_obj->set_owner($userid);
         $design = CmsLayoutCollection::load_default();
         if( $design ) {
             $tpl_obj->add_design($design);
@@ -145,7 +144,7 @@ try {
         $smarty->assign('lock_refresh', $this->GetPreference('lock_refresh'));
         try {
             $lock_id = CmsLockOperations::is_locked('template', $tpl_obj->get_id());
-            $lock = null;
+            $lock = null; // no object
             if( $lock_id > 0 ) {
                 // it's locked... by somebody, make sure it's expired before we allow stealing it.
                 $lock = CmsLock::load('template',$tpl_obj->get_id());
@@ -210,7 +209,7 @@ try {
     if ($tpl_obj->get_id()) $smarty->assign('tpl_id', $tpl_obj->get_id());
     $smarty->assign('has_manage_right', $this->CheckPermission('Modify Templates'));
     $smarty->assign('has_themes_right', $this->CheckPermission('Manage Designs'));
-    if ($this->CheckPermission('Modify Templates') || $tpl_obj->get_owner_id() == get_userid()) {
+    if ($this->CheckPermission('Modify Templates') || $tpl_obj->get_owner_id() == $userid) {
 
         $userops = cmsms()->GetUserOperations();
         $allusers = $userops->LoadUsers();
@@ -233,6 +232,7 @@ try {
         }
         if (is_array($tmp) && count($tmp)) $smarty->assign('addt_editor_list', $tmp);
     }
+    $smarty->assign('userid',$userid);
     echo $this->ProcessTemplate('admin_edit_template.tpl');
 } catch( CmsException $e ) {
     $this->SetError($e->GetMessage());

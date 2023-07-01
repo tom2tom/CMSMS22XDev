@@ -3,8 +3,8 @@ if (!isset($gCms)) exit;
 
 class SearchItemCollection
 {
-    var $_ary;
-    var $maxweight;
+    public $_ary;
+    public $maxweight;
 
     function __construct()
     {
@@ -59,7 +59,6 @@ class SearchItemCollection
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-$template = null;
 if( isset($params['resulttemplate']) ) {
     $template = trim($params['resulttemplate']);
 }

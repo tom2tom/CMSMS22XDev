@@ -20,9 +20,9 @@ function smarty_function_admin_icon($params,$template)
 {
     $smarty = $template->smarty;
 
-    if( !cmsms()->test_state(CmsApp::STATE_ADMIN_PAGE) ) return;
+    if( !cmsms()->test_state(CmsApp::STATE_ADMIN_PAGE) ) return '';
 
-    $icon = null;
+    $icon = '';
     $tagparms = array('class'=>'systemicon');
     foreach( $params as $key => $value ) {
         switch( $key ) {
@@ -45,9 +45,9 @@ function smarty_function_admin_icon($params,$template)
         }
     }
 
-    if( !$icon ) return;
+    if( !$icon ) return '';
     $fnd = cms_admin_utils::get_icon($icon);
-    if( !$fnd ) return;
+    if( !$fnd ) return '';
 
     if( !isset($tagparms['alt']) ) $tagparms['alt'] = basename($fnd);
 
@@ -59,7 +59,7 @@ function smarty_function_admin_icon($params,$template)
 
     if( isset($params['assign']) ) {
         $smarty->assign(trim($params['assign']),$out);
-        return;
+        return '';
     }
     return $out;
 }

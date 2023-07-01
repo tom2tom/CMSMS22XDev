@@ -151,7 +151,7 @@
 	    options.lang = {$lang_js};
 	    options.prefix = '{$profile->prefix}';
 	    var filepicker = new CMSFileBrowser(options);
-	  })
+	  });
 	</script>
 
 	<div id="mkdir_dlg" title="{$mod->Lang('title_mkdir')}" style="display: none;" data-oklbl="{$mod->Lang('ok')}">

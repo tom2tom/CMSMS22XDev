@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id:$
+#$Id$
 $CMS_ADMIN_PAGE=1;
 $orig_memory = (function_exists('memory_get_usage')?memory_get_usage():0);
 require_once("../lib/include.php");
@@ -58,7 +58,9 @@ $npages = ceil($totalrows / $limit);
 $page = max(1,min($npages,$page));
 $from = ($page-1) * $limit;
 $orig_filter = new stdClass();
-$orig_filter->user = $orig_filter->action = $orig_filter->item_name = null;
+$orig_filter->user = '';
+$orig_filter->action = '';
+$orig_filter->item_name = '';
 if( !empty($_SESSION['adminlog_filter']) ) { $filter = $_SESSION['adminlog_filter']; }
 else { $filter = clone $orig_filter; }
 

@@ -86,7 +86,7 @@ tinymce.PluginManager.add('cmsms_linker', function(editor, url) {
       function insertLink() {
         if(data.text !== initialText) {
           if(anchorElm) {
-            editor.focus();
+            editor.trigger('focus');
             anchorElm.innerHTML = data.text;
 
             dom.setAttribs(anchorElm, {

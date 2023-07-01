@@ -22,7 +22,7 @@ if( !check_login(FALSE) ) exit; // admin only.... but any admin
 $handlers = ob_list_handlers();
 for ($cnt = 0; $cnt < count($handlers); $cnt++) { ob_end_clean(); }
 
-$out = null;
+$out = null; //empty ajax result
 $term = trim(strip_tags(get_parameter_value($_REQUEST,'term')));
 $alias = trim(strip_tags(get_parameter_value($_REQUEST,'alias')));
 

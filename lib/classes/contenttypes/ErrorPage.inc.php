@@ -33,8 +33,8 @@
  */
 class ErrorPage extends Content
 {
-    var $doAliasCheck;
-    var $error_types;
+    public $doAliasCheck;
+    public $error_types;
 
     public function __construct()
     {

@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: listusertags.php 7396 2011-09-15 12:57:25Z rolf1 $
+#$Id$
 
 $CMS_ADMIN_PAGE=1;
 require_once("../lib/include.php");
@@ -25,8 +25,10 @@ $urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 $userid = get_userid();
 if( !check_permission($userid, 'Modify User-defined Tags') ) return;
 $tagops = cmsms()->GetUserTagOperations();
-$themeObject = null;
+$themeObject = null; // object not yet set
 $userplugin_id = 0;
+
+if( isset($_POST['cancel']) ) redirect('listusertags.php'.$urlext);
 
 if( !isset($_POST['ajax']) ) {
     include_once('header.php');
@@ -43,8 +45,6 @@ $record = array('userplugin_id'=>'',
 if( isset($_REQUEST['userplugin_id']) && $_REQUEST['userplugin_id'] != '' ) {
     $record = $tagops->GetUserTag((int)$_REQUEST['userplugin_id']);
 }
-
-if( isset($_POST['cancel']) ) redirect('listusertags.php'.$urlext);
 
 $error = array();
 if( isset($_POST['submit']) || isset($_POST['apply']) ) {

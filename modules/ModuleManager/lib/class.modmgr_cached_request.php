@@ -64,8 +64,8 @@ final class modmgr_cached_request
 
     // check for the cached file
     $atime = time() - ($age * 60);
-    $status = '';
-    $resutl = '';
+//    $status = '';
+//    $result = '';
     if( (isset($config['developer_mode']) && $mod->GetPreference('disable_caching',0)) ||
         !file_exists($fn) || filemtime($fn) <= $atime ) {
         // execute the request

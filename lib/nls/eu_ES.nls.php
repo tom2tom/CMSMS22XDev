@@ -48,7 +48,7 @@ $nls['locale']['eu_ES'] = 'eu_ES,eu_ES.utf8,eu_ES.utf-8,eu_ES.UTF-8,eu_ES@euro,b
 $nls['encoding']['eu_ES'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['eu_ES'] = array(dirname(__FILE__).'/eu_ES/admin.inc.php');
+$nls['file']['eu_ES'] = array(__DIR__.'/eu_ES/admin.inc.php');
 
 #Language setting for HTML area
 $nls['htmlarea']['eu_ES'] = 'en';

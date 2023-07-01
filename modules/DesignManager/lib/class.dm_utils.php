@@ -33,13 +33,12 @@ final class dm_utils
 
 	public static function get_template_locks()
 	{
-		static $_locks = null;
+		static $_locks = [];
 		static $_locks_loaded = FALSE;
 		if( !$locks_loaded ) {
 			$_locks_loaded = TRUE;
 			$tmp = CmsLockOperations::get_locks('template');
 			if( is_array($tmp) && count($tmp) ) {
-				$_locks = array();
 				foreach( $tmp as $lock_obj ) {
 					$_locks[$lock_obj['oid']] = $lock_obj;
 				}
@@ -50,13 +49,12 @@ final class dm_utils
 
 	public static function get_css_locks()
 	{
-		static $_locks = null;
+		static $_locks = [];
 		static $_locks_loaded = FALSE;
 		if( !$locks_loaded ) {
 			$_locks_loaded = TRUE;
 			$tmp = CmsLockOperations::get_locks('stylesheet');
 			if( is_array($tmp) && count($tmp) ) {
-				$_locks = array();
 				foreach( $tmp as $lock_obj ) {
 					$_locks[$lock_obj['oid']] = $lock_obj;
 				}

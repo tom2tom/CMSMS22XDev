@@ -22,10 +22,9 @@
 #
 #-------------------------------------------------------------------------
 #END_LICENSE
-if( !isset($gCms) ) exit;
 
 use \CMSMS\Async\Job as Job;
-use \CMSMS\Async\CronJobTrait;
+//use \CMSMS\Async\CronJobTrait;
 
 final class CmsJobManager extends \CMSModule
 {
@@ -36,20 +35,21 @@ final class CmsJobManager extends \CMSModule
 
     private $_current_job;
     private $_lock;
+
     public static function table_name() { return CMS_DB_PREFIX.'mod_cmsjobmgr'; }
 
-    function GetFriendlyName() { return $this->Lang('friendlyname'); }
-    function GetVersion() { return '0.1.3'; }
-    function MinimumCMSVersion() { return '2.1.99'; }
-    function GetAuthor() { return 'Calguy1000'; }
-    function GetAuthorEmail() { return 'calguy1000@cmsmadesimple.org'; }
-    function IsPluginModule() { return TRUE; }
-    function HasAdmin() { return TRUE; }
-    function GetAdminDescription() { return $this->Lang('moddescription'); }
-    function GetAdminSection() { return 'siteadmin'; }
-    function LazyLoadFrontend() { return FALSE; }
-    function LazyLoadAdmin() { return FALSE; }
-    function VisibleToAdminUser() { return $this->CheckPermission(\CmsJobManager::MANAGE_JOBS); }
+    public function GetFriendlyName() { return $this->Lang('friendlyname'); }
+    public function GetVersion() { return '0.1.3'; }
+    public function MinimumCMSVersion() { return '2.1.99'; }
+    public function GetAuthor() { return 'Calguy1000'; }
+    public function GetAuthorEmail() { return 'calguy1000@cmsmadesimple.org'; }
+    public function IsPluginModule() { return TRUE; }
+    public function HasAdmin() { return TRUE; }
+    public function GetAdminDescription() { return $this->Lang('moddescription'); }
+    public function GetAdminSection() { return 'siteadmin'; }
+    public function LazyLoadFrontend() { return FALSE; }
+    public function LazyLoadAdmin() { return FALSE; }
+    public function VisibleToAdminUser() { return $this->CheckPermission(\CmsJobManager::MANAGE_JOBS); }
     public function GetHelp() { return $this->Lang('help'); }
     public function HandlesEvents() { return TRUE; }
 
@@ -69,23 +69,22 @@ final class CmsJobManager extends \CMSModule
         return $this->Lang('evtdesc_'.$name);
     }
 
-    protected function &create_new_template($str)
+    protected function create_new_template($str)
     {
         $smarty = $this->GetActionTemplateObject();
-        $tpl = $smarty->CreateTemplate($this->GetTemplateResource($str),null,null,$smarty);
-        return $tpl;
+        return $smarty->CreateTemplate($this->GetTemplateResource($str),null,null,$smarty);
     }
 
     /**
      * @ignore
      * @internal
      */
-    public function &get_current_job()
+    public function get_current_job()
     {
         return $this->_current_job;
     }
 
-    protected function set_current_job($job = null)
+    protected function set_current_job($job = null) // no object
     {
         if( !is_null($job) && !$job instanceof \CMSMS\Async\Job ) throw new \LogicException('Invalid data passed to '.__METHOD__);
         $this->_current_job = $job;
@@ -112,7 +111,7 @@ final class CmsJobManager extends \CMSModule
 
     protected function unlock()
     {
-        $this->_lock = null;
+        $this->_lock = 0;
         $this->RemovePreference(self::LOCKPREF);
     }
 
@@ -150,7 +149,7 @@ final class CmsJobManager extends \CMSModule
             if( is_array($tmp) && count($tmp) == 4 ) {
                 $classname = $tmp[1].'Task';
                 require_once($dir.'/'.$match->current());
-                $obj = new $classname;
+                $obj = new $classname();
                 if( !$obj instanceof CmsRegularTask ) continue;
                 if( !$obj->test($now) ) continue;
                 $job = new \CMSMS\Async\RegularTask($obj);
@@ -162,7 +161,7 @@ final class CmsJobManager extends \CMSModule
         // 2.  Get task objects from modules.
         $opts = ModuleOperations::get_instance();
         $modules = $opts->get_modules_with_capability('tasks');
-        if (!$modules) return;
+        if (!$modules) return false;
         foreach( $modules as $one ) {
             if( !is_object($one) ) $one = \cms_utils::get_module($one);
             if( !is_object($one) ) continue; // for some reason the module exists but cannot be loaded
@@ -199,16 +198,17 @@ final class CmsJobManager extends \CMSModule
         $db = $this->GetDb();
         $sql = 'SELECT * FROM '.self::table_name().' WHERE id = ?';
         $row = $db->GetRow( $sql, [ $job_id] );
-        if( !is_array($row) || !count($row) ) return;
+        if( !is_array($row) || !count($row) ) return null; // no object
 
         $obj = unserialize($row['data']);
         $obj->set_id( $row['id'] );
         return $obj;
     }
 
-    public function save_job(Job &$job)
+    public function save_job(Job $job)
     {
-        $recurs = $until = null;
+        $recurs = null; //default db field-value
+        $until = 0;
         if( \CmsJobManager\utils::job_recurs($job) ) {
             $recurs = $job->frequency;
             $until = $job->until;
@@ -228,7 +228,7 @@ final class CmsJobManager extends \CMSModule
         }
     }
 
-    public function delete_job(Job &$job)
+    public function delete_job(Job $job)
     {
         if( !$job->id ) throw new \LogicException('Cannot delete a job that has no id');
         $db = $this->GetDb();
@@ -273,10 +273,10 @@ final class CmsJobManager extends \CMSModule
             return;
         }
 
-            // gotta determine a scheme
+        // gotta determine a scheme
         $url_ob->set_queryvar('cms_cron',1);
         $url_ob->set_queryvar('showtemplate','false');
-        $prefix_scheme = null;
+        $prefix_scheme = '';
         if( !$url_ob->get_scheme() ) {
             $url_ob->set_scheme('http');
             if( CmsApp::get_instance()->is_https_request() ) $url_ob->set_scheme('https');
@@ -299,9 +299,10 @@ final class CmsJobManager extends \CMSModule
 
         try {
             $fp = @fsockopen($prefix_scheme.$url_ob->get_host(),$url_ob->get_port(),$errno,$errstr,1);
-            if( !$fp ) throw new \RuntimeException('Could not connect to the async processing action');
+            if( !$fp ) {
+                throw new \RuntimeException('Could not connect to the async processing action');
+            }
             fwrite($fp,$out);
-            $code = null;
             $data = fgets($fp);
             $code = (int) substr($data,9,3);
             fclose($fp);
@@ -315,4 +316,4 @@ final class CmsJobManager extends \CMSModule
         }
     }
 
-} // class CGSmartNav
+} // class CmsJobManager

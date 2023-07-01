@@ -18,10 +18,11 @@
 
 function smarty_function_cms_set_language($params, $smarty)
 {
-  $lang = null;
+  $lang = '';
   if( isset($params['lang']) ) {
     $lang = trim($params['lang']);
   }
-  $res = CmsNlsOperations::set_language($lang);
+  CmsNlsOperations::set_language($lang);
+  return '';
 }
 ?>

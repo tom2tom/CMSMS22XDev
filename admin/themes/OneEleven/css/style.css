@@ -2365,7 +2365,7 @@ a.toggle-dropzone:focus {
 		padding: 0;
 		max-width: 30px;
 		word-wrap: break-word;
-		text-overflow: elipsis
+		text-overflow: ellipsis
 	}
 	table.pagetable th {
 		overflow: hidden

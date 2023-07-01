@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: class.global.inc.php 6939 2011-03-06 00:12:54Z calguy1000 $
+#$Id$
 
 /**
  * Classes and utilities for working with user preferences.
@@ -78,7 +78,7 @@ final class cms_userprefs
 	 */
 	private static function _reset()
 	{
-		self::$_prefs = null;
+		self::$_prefs = null; // aka unset
 	}
 
 	/**

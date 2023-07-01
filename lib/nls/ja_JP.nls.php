@@ -46,7 +46,7 @@ $nls['locale']['ja_JP'] = 'ja_JP,ja_JP.utf8,ja_JP.utf-8,ja_JP.UTF-8,ja_JP.SJIS,j
 $nls['encoding']['ja_JP'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['ja_JP'] = array(dirname(__FILE__).'/ja_JP/admin.inc.php');
+$nls['file']['ja_JP'] = array(__DIR__.'/ja_JP/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

@@ -122,15 +122,15 @@ abstract class Alert
     {
         switch( $key ) {
         case 'name':
-            return trim($this->_name);
+            return trim((string)$this->_name);
         case 'module':
             return trim((string)$this->_module);
         case 'priority':
             return trim((string)$this->_priority);
         case 'created':
-            return (int) $this->_created;
+            return (int)$this->_created;
         case 'loaded':
-            return (bool) $this->_loaded;
+            return (bool)$this->_loaded;
         default:
             throw new \InvalidArgumentException("$key is not a gettable member of ".get_class($this));
         }
@@ -139,7 +139,7 @@ abstract class Alert
     /**
      * PHP's magic __set method.
      *
-     * Progrramers can modify the name, module, priority, and title of the alert.
+     * Programmers can modify the name, module, priority, and title of the alert.
      * Alerts can only be modified before the object is stored in the database.  Not afterwards.
      * If an unknown key, or invalid priority is provided then an exception is thrown.
      *
@@ -204,7 +204,7 @@ abstract class Alert
     abstract public function get_message();
 
     /**
-     * Return the URL for an iconf or this alert.
+     * Return the URL for an icon for this alert.
      *
      * @abstract
      * @return string
@@ -214,10 +214,10 @@ abstract class Alert
     /**
      * Get the name of the preference that this alert will be stored as.
      *
-     * @param string $name optionaly provide a name for the alert.  If not specified the current alert name will be used.
+     * @param string $name optionally provide a name for the alert.  If not specified the current alert name will be used.
      * @return string
      */
-    public function get_prefname($name = null)
+    public function get_prefname($name = '')
     {
         if( !$name ) $name = $this->name;
         return self::get_fixed_prefname( $name );
@@ -237,9 +237,9 @@ abstract class Alert
     protected static function decode_object($serialized)
     {
         $tmp = unserialize($serialized);
-        if( !is_array($tmp) || !isset($tmp['data']) ) return;
+        if( !is_array($tmp) || !isset($tmp['data']) ) return null; // no object
 
-        $obj = null;
+        $obj = null; // no alert
         if( !empty($tmp['module']) && strtolower($tmp['module']) != 'core' ) {
             $mod = \cms_utils::get_module($tmp['module']); // hopefully module is valid.
             if( $mod ) $obj = unserialize($tmp['data']);
@@ -276,7 +276,7 @@ abstract class Alert
         if( !startswith( $name, 'adminalert_') ) $name = self::get_fixed_prefname( $name );
         $tmp = \cms_siteprefs::get( $name );
         if( !$tmp && $throw ) throw new \LogicException('Could not find an alert with the name '.$name);
-        if( !$tmp ) return;
+        if( !$tmp ) return null;
 
         $obj = self::decode_object($tmp);
         if( !is_object($obj) ) throw new \LogicException('Problem loading alert named '.$name);
@@ -310,14 +310,14 @@ abstract class Alert
      * @param int|null $uid The admin userid to test for.  If no uid is specified, the currently logged in admin user id is used.
      * @return Alert[]
      */
-    public static function load_my_alerts($uid = null)
+    public static function load_my_alerts($uid = 0)
     {
         $uid = (int) $uid;
         if( $uid < 1 ) $uid = get_userid(FALSE);
         if( !$uid ) return [];
 
         $alerts = self::load_all();
-        if( !$alerts || !count($alerts) ) return;
+        if( !$alerts || !is_array($alerts) ) return [];
 
         $out = [];
         foreach( $alerts as $alert ) {

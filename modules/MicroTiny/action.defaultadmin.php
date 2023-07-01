@@ -27,11 +27,11 @@ echo $this->EndTabHeaders();
 echo $this->StartTabContent();
 
 echo $this->StartTab("example");
-include(dirname(__FILE__).'/function.admin_example.php');
+include(__DIR__.'/function.admin_example.php');
 echo $this->EndTab();
 
 echo $this->StartTab("settings");
-include(dirname(__FILE__).'/function.admin_settings.php');
+include(__DIR__.'/function.admin_settings.php');
 echo $this->EndTab();
 
 echo $this->EndTabContent();

@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: class.global.inc.php 6939 2011-03-06 00:12:54Z calguy1000 $
+#$Id$
 
 /**
  * Contains classes to represent a template query and its results.
@@ -221,7 +221,7 @@ o	 * @throws CmsInvalidDataException
 	 * @throws CmsLogicException
 	 * @return CmsLayoutTemplate
 	 */
-    public function &GetTemplate()
+    public function GetTemplate()
     {
         return $this->GetObject();
     }
@@ -236,7 +236,7 @@ o	 * @throws CmsInvalidDataException
 	 * @throws CmsLogicException
 	 * @return CmsLayoutTemplate
 	 */
-    public function &GetObject()
+    public function GetObject()
     {
         $this->execute();
         if( !$this->_rs ) throw new CmsLogicException('Cannot get template from invalid template query object');

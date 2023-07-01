@@ -16,11 +16,10 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-use FilePicker\TemporaryInstanceStorage;
+
 use FilePicker\TemporaryProfileStorage;
 use FilePicker\PathAssistant;
-use FilePicker\utils;
-use CMSMS\FileType;
+
 if( !isset($gCms) ) exit;
 if( !check_login(FALSE) ) exit; // admin only.... but any admin
 
@@ -38,15 +37,15 @@ $clean_str = function( $in ) {
 //
 $sesskey = md5(__FILE__);
 if( isset($_GET['_enc']) ) {
-   $parms = json_decode(base64_decode($_GET['_enc']),TRUE);
-   if( is_array($parms) && count($parms) ) $_GET = array_merge($_GET,$parms);
-   unset($_GET['_enc']);
+    $parms = json_decode(base64_decode($_GET['_enc']),TRUE);
+    if( is_array($parms) && count($parms) ) $_GET = array_merge($_GET,$parms);
+    unset($_GET['_enc']);
 }
 
 $inst = get_parameter_value($_GET,'inst');
 $sig = $clean_str(get_parameter_value($_GET,'sig'));
 $nosub = (int) get_parameter_value($_GET,'nosub');
-$profile = null;
+$profile = null; // no object
 if( $sig ) $profile = TemporaryProfileStorage::get($sig);
 if( !$profile ) $profile = $this->get_default_profile();
 /*
@@ -122,7 +121,7 @@ $accept_file = function(\CMSMS\FilePickerProfile $profile,$cwd,$path,$filename) 
 };
 
 $get_thumbnail_tag = function($file,$path,$url) {
-    $imagetag = null;
+    $imagetag = '';
     $imagepath = $path.'/thumb_'.$file;
     $imageurl = $url.'/thumb_'.$file;
     if( is_file($imagepath) ) $imagetag="<img src='".$imageurl."' alt='".$file."' title='".$file."' />";
@@ -134,7 +133,7 @@ $get_thumbnail_tag = function($file,$path,$url) {
  * @String $filename
  */
 $get_filetype = function($filename) use (&$is_image,&$is_archive) {
-    $ext = strtolower(substr($filename,strrpos($filename,".")+1));
+	$ext = strtolower(substr($filename,strrpos($filename,".")+1));
 	$filetype = 'file'; // default to all file
 	$imgext = array('jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff', 'svg', 'wbmp', 'webp'); // images
 	$videoext = array('mov', 'mpeg', 'mp4', 'avi', 'mpg','wma', 'flv', 'webm', 'wmv', 'qt', 'ogg'); // videos
@@ -192,13 +191,13 @@ while( false !== ($filename = $dh->read()) ) {
     if( $info && $info['size'] > 0) {
         $file['size'] = round($info['size']/pow(1024, ($i = floor(log($info['size'], 1024)))), 2) . $filesizename[$i];
     } else {
-        $file['size'] = null;
+        $file['size'] = '';
     }
     if( $file['isdir'] ) {
         $parms = [ 'subdir'=>$filename, 'inst'=>$inst, 'sig'=>$sig ];
         //if( $type ) $parms['type'] = $type;
         $url = $this->create_url($id,'filepicker',$returnid)."&showtemplate=false&_enc=".base64_encode(json_encode($parms));
-	$file['chdir_url'] = $url;
+        $file['chdir_url'] = $url;
     }
     $files[$filename] = $file;
 }
@@ -212,12 +211,11 @@ if( $profile->show_thumbs && $thumbs ) {
 // done the loop, now sort
 usort($files,$sortfiles);
 
-$cwd_for_display = null;
 $assistant2 = new PathAssistant($config,$config['root_path']);
 $cwd_for_display = $assistant2->to_relative( $startdir );
 $css_files = [ '/lib/css/filepicker.css', '/lib/css/filepicker.min.css' ];
 $mtime = -1;
-$sel_file = null;
+$sel_file = '';
 foreach( $css_files as $file ) {
     $fp = $this->GetModulePath().'/'.$file;
     if( is_file($fp) ) {

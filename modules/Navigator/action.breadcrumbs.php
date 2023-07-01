@@ -37,7 +37,7 @@ if( !defined('CMS_VERSION') ) exit;
 
 debug_buffer('Start Navigator breadcrumbs action');
 
-$template = null;
+$template = '';
 if( isset($params['template']) ) {
     $template = trim($params['template']);
 }

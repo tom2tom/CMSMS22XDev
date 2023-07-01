@@ -65,11 +65,14 @@ if (!isset($CMS_INSTALL_PAGE) && (!file_exists(CONFIG_FILE_LOCATION) || filesize
 //$_GET = filter_var_array($_GET, FILTER_SANITIZE_STRING);
 
 /**
- * a replacement for filter_var_array FILTER_SANITIZE_STRING
+ * replacement for the formerly-used, deprecated, filter_var_array FILTER_SANITIZE_STRING
  * temporary as we will revisit the security measures used
  * (JoMorg)
+ * input-sanitizing is best when context-specific and tailored accordingly,
+ * and the original $_SERVER, $_GET values still available
  *
  * Note: the closure is recursive to allow for parameters with arrays
+ * removal of unclosed PHP tags ('/<\s*\?\s*php.*$/i','/<\s*\?\s*=.*$/') is a crasher
  *
  * @param $param
  *
@@ -81,12 +84,10 @@ $sanitize_fn = function (&$param) use (&$sanitize_fn)
     array_walk($param, $sanitize_fn);
   }
   else {
-    $param = preg_replace('/\x00|<[^>]*>?/', '', $param);
-    $param = str_replace(["'", '"'], ['&#39;', '&#34;'], $param);
+    $param = preg_replace('/<[^>]*>/', '', $param);
+    return str_replace(["\0", "'", '"'], ['', '&#39;', '&#34;'], $param);
   }
-  return $param;
 };
-//TODO input-sanitizing should be context-specific, and original S_SERVER, $_GET values still available e.g. for passwords
 array_walk($_SERVER, $sanitize_fn);
 array_walk($_GET, $sanitize_fn);
 
@@ -171,7 +172,7 @@ $obj = new \CMSMS\internal\global_cachable('module_deps',
                    $db = \CmsApp::get_instance()->GetDb();
                    $query = 'SELECT parent_module,child_module,minimum_version FROM '.CmsApp::get_instance()->GetDbPrefix().'module_deps ORDER BY parent_module';
                    $tmp = $db->GetArray($query);
-                   if( !is_array($tmp) || !count($tmp) ) return;
+                   if( !is_array($tmp) || !count($tmp) ) return [];
                    $out = array();
                    foreach( $tmp as $row ) {
                        $out[$row['child_module']][$row['parent_module']] = $row['minimum_version'];

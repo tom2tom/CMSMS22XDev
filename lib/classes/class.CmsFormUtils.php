@@ -57,10 +57,10 @@ final class CmsFormUtils
      * @return string The generated <option> element(s).
      * @see self::create_options()
      */
-    public static function create_option($data,$selected = null)
+    public static function create_option($data,$selected = '')
     {
         $out = '';
-        if( !is_array($data) ) return;
+        if( !is_array($data) ) return '';
 
         if( isset($data['label']) && isset($data['value']) ) {
             if( !is_array($data['value']) ) {
@@ -106,7 +106,7 @@ final class CmsFormUtils
      */
     public static function create_options($options,$selected = '')
     {
-        if( !is_array($options) || count($options) == 0 ) return;
+        if( !is_array($options) || count($options) == 0 ) return '';
 
         $out = '';
         foreach( $options as $key => $value ) {
@@ -131,8 +131,8 @@ final class CmsFormUtils
      */
     public static function create_dropdown($name,$list_options,$selected,$params = array())
     {
-        if( $name == '' ) return;
-        if( !is_array($list_options) || count($list_options) == 0 ) return;
+        if( $name == '' ) return '';
+        if( !is_array($list_options) || count($list_options) == 0 ) return '';
 
         $options = self::create_options($list_options,$selected);
         $elem_id = $name;
@@ -249,7 +249,7 @@ final class CmsFormUtils
         $result = '';
         $uid = get_userid(false);
         $attribs = array();
-        $module = null;
+        $module = null; // no object
         $attribs['name'] = get_parameter_value($parms,'name');
         if( !$attribs['name'] ) throw new CmsInvalidDataException('"name" is a required parameter"');
         $attribs['id'] = get_parameter_value($parms,'id',$attribs['name']);
@@ -275,8 +275,8 @@ final class CmsFormUtils
                 $css_name = get_parameter_value($parms,'cssname',self::NONE);
                 self::_add_wysiwyg($module->GetName(),$attribs['id'],$css_name);
             } else {
-                // just incase forced module is not a wysiwyg module.
-                $module = null;
+                // just in case forced module is not a wysiwyg module.
+                $module = null; // no relevant object
             }
             $attribs['class'] .= ' '.$appendclass;
         }
@@ -289,7 +289,7 @@ final class CmsFormUtils
                 self::_add_syntax($module->GetName());
             } else {
                 // wanted a syntax module, but couldn't find one...
-                $module = null;
+                $module = null; // no relevant object
             }
         }
 

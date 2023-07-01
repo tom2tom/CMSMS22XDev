@@ -4,7 +4,6 @@ namespace __appbase\tests;
 
 use __appbase\http_request;
 use __appbase\utils;
-use ArrayAccess;
 use Exception;
 use function __appbase\lang;
 
@@ -41,7 +40,7 @@ function test_is_true($val)
 function test_remote_file($url,$timeout = 3,$searchString = '')
 {
   $timeout = max(1,min(360,$timeout));
-  $req = new http_request;
+  $req = new http_request();
   $req->setTarget($url);
   $req->setTimeout($timeout);
   $req->execute();
@@ -154,7 +153,7 @@ abstract class test_base
 
   protected function returnBytes($val)
   {
-      if(is_string($val) && $val != '') {
+      if( is_string($val) && $val ) {
           $val = trim($val);
           $last = strtolower(substr($val,-1));
           $val = (float) substr($val,0,-1);

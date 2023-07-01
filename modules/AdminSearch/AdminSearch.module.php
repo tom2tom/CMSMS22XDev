@@ -32,7 +32,7 @@ final class AdminSearch extends CMSModule
   function HasAdmin() { return true; }
   function GetAdminSection() { return 'extensions'; }
   function GetHelp() { return $this->Lang('help'); }
-  function GetChangeLog() { return file_get_contents(dirname(__FILE__).'/changelog.inc'); }
+  function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
   function GetAdminDescription() { return $this->Lang('moddescription'); }
 
   function VisibleToAdminUser()
@@ -70,7 +70,7 @@ final class AdminSearch extends CMSModule
 
   public function get_adminsearch_slaves()
   {
-    $dir = dirname(__FILE__).'/lib/';
+    $dir = __DIR__.'/lib/';
     $files = glob($dir.'/class.AdminSearch*slave.php');
     if( count($files) ) {
       $output = array();

@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: content.functions.php 6863 2011-01-18 02:34:48Z calguy1000 $
+#$Id$
 
 /**
  * File contains a custom resource class for smarty

@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: content.functions.php 6863 2011-01-18 02:34:48Z calguy1000 $
+#$Id$
 
 /**
  * @package CMS
@@ -67,7 +67,7 @@ class Smarty_Parser extends Smarty_CMS
 	*
 	* @return object $this
 	*/
-	public static function &get_instance()
+	public static function get_instance()
 	{
 		if( !is_object(self::$_instance) ) {
 			self::$_instance = new self();
@@ -115,14 +115,14 @@ class Smarty_Parser extends Smarty_CMS
 	 *
 	 * @param string $plugin_name    class plugin name to load
 	 * @param bool   $check          check if already loaded
-	 * @return string |boolean filepath of loaded file or false
+	 * @return string filepath of loaded file or empty
 	 */
 /*
 	public function loadPlugin($plugin_name, $check = true)
 	{
 		// if function or class exists, exit silently (already loaded)
 		if ($check && (is_callable($plugin_name) || class_exists($plugin_name, false))) {
-			return true;
+			return 'TODO some string';
 		}
 
 		// Plugin name is expected to be: Smarty_[Type]_[Name]
@@ -132,20 +132,17 @@ class Smarty_Parser extends Smarty_CMS
 		// count($_name_parts) < 3 === !isset($_name_parts[2])
 		if (!isset($_name_parts[2]) || strtolower($_name_parts[0]) !== 'smarty') {
 			throw new SmartyException("plugin {$plugin_name} is not a valid name format");
-			return false;
+			return ''; useless here
 		}
 
 		// if type is "internal", get plugin from sysplugins
 		if (strtolower($_name_parts[1]) == 'internal') {
-
 			$file = SMARTY_SYSPLUGINS_DIR . strtolower($plugin_name) . '.php';
 			if (file_exists($file)) {
-
 				require_once($file);
 				return $file;
 			} else {
-
-				return false;
+				return '';
 			}
 		}
 
@@ -182,7 +179,6 @@ class Smarty_Parser extends Smarty_CMS
 
 						$file = stream_resolve_include_path($file);
 					} else {
-
 						$file = Smarty_Internal_Get_Include_Path::getIncludePath($file);
 					}
 
@@ -195,7 +191,7 @@ class Smarty_Parser extends Smarty_CMS
 			}
 		}
 		// no plugin loaded
-		return false;
+		return '';
 	}
 */
 
@@ -228,11 +224,11 @@ class CMSMS_Dummy_Smarty_Variable
 	 */
 	public $nocache = false;
 	/**
-	 * the scope the variable will have  (local,parent or root)
+	 * the scope the variable will have (see Smarty SCOPE_* consts - local 1,parent 2, root 8, etc )
 	 *
-	 * @var int
+	 * @var int, 0 for unspecified
 	 */
-	public $scope = null;
+	public $scope = 0;
 
 	/**
 	 * create Smarty variable object

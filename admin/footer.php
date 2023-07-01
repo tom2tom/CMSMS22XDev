@@ -64,7 +64,7 @@ if( is_array($list) && count($list) ) {
             $cssnames = $tmpnames;
         }
         else {
-            $cssnames = null;
+            $cssnames = [];
         }
 
         // initialize each 'specialized' textarea.
@@ -73,7 +73,7 @@ if( is_array($list) && count($list) ) {
             $selector = $rec['id'];
             $cssname = $rec['stylesheet'];
 
-            if( $cssname == CmsFormUtils::NONE ) $cssname = null;
+            if( $cssname == CmsFormUtils::NONE ) $cssname = '';
             if( !$cssname || !is_array($cssnames) || !in_array($cssname,$cssnames) || $selector == CmsFormUtils::NONE ) {
                 $need_generic = TRUE;
                 continue;

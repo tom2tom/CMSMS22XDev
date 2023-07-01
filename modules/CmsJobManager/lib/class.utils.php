@@ -25,7 +25,7 @@ final class utils
 
     public static function calculate_next_start_time(\CMSMS\Async\CronJob $job)
     {
-        $out = null;
+        $out = 0;
         $now = time();
         if( !self::job_recurs($job) ) return $out;
         switch( $job->frequency ) {

@@ -29,7 +29,7 @@
 /**
  * @access private
  */
-function cms_module_CreateFormStart(&$modinstance, $id, $action='default', $returnid='', $method='post', $enctype='', $inline=false, $idsuffix='', $params = array(), $extra='')
+function cms_module_CreateFormStart($modinstance, $id, $action='default', $returnid='', $method='post', $enctype='', $inline=false, $idsuffix='', $params = array(), $extra='')
 {
   $gCms = CmsApp::get_instance();
   static $_formcount = 1;
@@ -96,7 +96,7 @@ function cms_module_CreateFormStart(&$modinstance, $id, $action='default', $retu
 /**
  * @access private
  */
-function cms_module_CreateLabelForInput(&$modinstance, $id, $name, $labeltext='', $addttext='')
+function cms_module_CreateLabelForInput($modinstance, $id, $name, $labeltext='', $addttext='')
 {
   $text = '<label class="cms_label" for="'.cms_htmlentities($id.$name).'"';
   if ($addttext != '') $text .= ' ' . $addttext;
@@ -107,7 +107,7 @@ function cms_module_CreateLabelForInput(&$modinstance, $id, $name, $labeltext=''
 /**
  * @access private
  */
-function cms_module_CreateInputText(&$modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addttext='')
+function cms_module_CreateInputText($modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addttext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -126,7 +126,7 @@ function cms_module_CreateInputText(&$modinstance, $id, $name, $value='', $size=
 /**
  * @access private
  */
-function cms_module_CreateInputTextWithLabel(&$modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addttext='', $label='', $labeladdtext='')
+function cms_module_CreateInputTextWithLabel($modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addttext='', $label='', $labeladdtext='')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
@@ -144,7 +144,7 @@ function cms_module_CreateInputTextWithLabel(&$modinstance, $id, $name, $value='
 /**
  * @access private
  */
-function cms_module_CreateInputColor(&$modinstance, $id, $name, $value='', $addttext='')
+function cms_module_CreateInputColor($modinstance, $id, $name, $value='', $addttext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -160,7 +160,7 @@ function cms_module_CreateInputColor(&$modinstance, $id, $name, $value='', $addt
 /**
  * @access private
  */
-function cms_module_CreateInputDate(&$modinstance, $id, $name, $value='', $addttext='')
+function cms_module_CreateInputDate($modinstance, $id, $name, $value='', $addttext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -176,7 +176,7 @@ function cms_module_CreateInputDate(&$modinstance, $id, $name, $value='', $addtt
 /**
  * @access private
  */
-function cms_module_CreateInputDatetime(&$modinstance, $id, $name, $value='', $addttext='')
+function cms_module_CreateInputDatetime($modinstance, $id, $name, $value='', $addttext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -192,7 +192,7 @@ function cms_module_CreateInputDatetime(&$modinstance, $id, $name, $value='', $a
 /**
  * @access private
  */
-function cms_module_CreateInputDatetimeLocal(&$modinstance, $id, $name, $value='', $addttext='')
+function cms_module_CreateInputDatetimeLocal($modinstance, $id, $name, $value='', $addttext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -208,7 +208,7 @@ function cms_module_CreateInputDatetimeLocal(&$modinstance, $id, $name, $value='
 /**
  * @access private
  */
-function cms_module_CreateInputMonth(&$modinstance, $id, $name, $value='', $addttext='')
+function cms_module_CreateInputMonth($modinstance, $id, $name, $value='', $addttext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -224,7 +224,7 @@ function cms_module_CreateInputMonth(&$modinstance, $id, $name, $value='', $addt
 /**
  * @access private
  */
-function cms_module_CreateInputWeek(&$modinstance, $id, $name, $value='', $addttext='')
+function cms_module_CreateInputWeek($modinstance, $id, $name, $value='', $addttext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -240,7 +240,7 @@ function cms_module_CreateInputWeek(&$modinstance, $id, $name, $value='', $addtt
 /**
  * @access private
  */
-function cms_module_CreateInputTime(&$modinstance, $id, $name, $value='', $addttext='')
+function cms_module_CreateInputTime($modinstance, $id, $name, $value='', $addttext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -256,7 +256,7 @@ function cms_module_CreateInputTime(&$modinstance, $id, $name, $value='', $addtt
 /**
  * @access private
  */
-function cms_module_CreateInputNumber(&$modinstance, $id, $name, $value='', $addttext='')
+function cms_module_CreateInputNumber($modinstance, $id, $name, $value='', $addttext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -272,7 +272,7 @@ function cms_module_CreateInputNumber(&$modinstance, $id, $name, $value='', $add
 /**
  * @access private
  */
-function cms_module_CreateInputRange(&$modinstance, $id, $name, $value='', $addttext='')
+function cms_module_CreateInputRange($modinstance, $id, $name, $value='', $addttext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -288,7 +288,7 @@ function cms_module_CreateInputRange(&$modinstance, $id, $name, $value='', $addt
 /**
  * @access private
  */
-function cms_module_CreateInputEmail(&$modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addttext='')
+function cms_module_CreateInputEmail($modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addttext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -306,7 +306,7 @@ function cms_module_CreateInputEmail(&$modinstance, $id, $name, $value='', $size
 /**
  * @access private
  */
-function cms_module_CreateInputTel(&$modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addttext='')
+function cms_module_CreateInputTel($modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addttext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -324,7 +324,7 @@ function cms_module_CreateInputTel(&$modinstance, $id, $name, $value='', $size='
 /**
  * @access private
  */
-function cms_module_CreateInputSearch(&$modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addttext='')
+function cms_module_CreateInputSearch($modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addttext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -342,7 +342,7 @@ function cms_module_CreateInputSearch(&$modinstance, $id, $name, $value='', $siz
 /**
  * @access private
  */
-function cms_module_CreateInputUrl(&$modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addttext='')
+function cms_module_CreateInputUrl($modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addttext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -360,7 +360,7 @@ function cms_module_CreateInputUrl(&$modinstance, $id, $name, $value='', $size='
 /**
  * @access private
  */
-function cms_module_CreateInputFile(&$modinstance, $id, $name, $accept='', $size='10',$addttext='')
+function cms_module_CreateInputFile($modinstance, $id, $name, $accept='', $size='10',$addttext='')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
@@ -377,7 +377,7 @@ function cms_module_CreateInputFile(&$modinstance, $id, $name, $accept='', $size
 /**
  * @access private
  */
-function cms_module_CreateInputPassword(&$modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addttext='')
+function cms_module_CreateInputPassword($modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addttext='')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
@@ -395,7 +395,7 @@ function cms_module_CreateInputPassword(&$modinstance, $id, $name, $value='', $s
 /**
  * @access private
  */
-function cms_module_CreateInputHidden(&$modinstance, $id, $name, $value='', $addttext='')
+function cms_module_CreateInputHidden($modinstance, $id, $name, $value='', $addttext='')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
@@ -411,7 +411,7 @@ function cms_module_CreateInputHidden(&$modinstance, $id, $name, $value='', $add
 /**
  * @access private
  */
-function cms_module_CreateInputCheckbox(&$modinstance, $id, $name, $value='', $selectedvalue='', $addttext='')
+function cms_module_CreateInputCheckbox($modinstance, $id, $name, $value='', $selectedvalue='', $addttext='')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
@@ -428,7 +428,7 @@ function cms_module_CreateInputCheckbox(&$modinstance, $id, $name, $value='', $s
 /**
  * @access private
  */
-function cms_module_CreateInputSubmit(&$modinstance, $id, $name, $value='', $addttext='', $image='', $confirmtext='')
+function cms_module_CreateInputSubmit($modinstance, $id, $name, $value='', $addttext='', $image='', $confirmtext='')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
@@ -454,7 +454,7 @@ function cms_module_CreateInputSubmit(&$modinstance, $id, $name, $value='', $add
 /**
  * @access private
  */
-function cms_module_CreateInputReset(&$modinstance, $id, $name, $value='Reset', $addttext='')
+function cms_module_CreateInputReset($modinstance, $id, $name, $value='Reset', $addttext='')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
@@ -468,7 +468,7 @@ function cms_module_CreateInputReset(&$modinstance, $id, $name, $value='Reset', 
 /**
  * @access private
  */
-function cms_module_CreateFileUploadInput(&$modinstance, $id, $name, $addttext='', $size='10', $maxlength='255')
+function cms_module_CreateFileUploadInput($modinstance, $id, $name, $addttext='', $size='10', $maxlength='255')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
@@ -482,7 +482,7 @@ function cms_module_CreateFileUploadInput(&$modinstance, $id, $name, $addttext='
 /**
  * @access private
  */
-function cms_module_CreateInputDropdown(&$modinstance, $id, $name, $items, $selectedindex, $selectedvalue, $addttext)
+function cms_module_CreateInputDropdown($modinstance, $id, $name, $items, $selectedindex, $selectedvalue, $addttext)
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
@@ -511,7 +511,7 @@ function cms_module_CreateInputDropdown(&$modinstance, $id, $name, $items, $sele
 /**
  * @access private
  */
-function cms_module_CreateInputDataList(&$modinstance, $id, $name, $value='', $items = [], $size='10', $maxlength='255', $addttext='')
+function cms_module_CreateInputDataList($modinstance, $id, $name, $value='', $items = [], $size='10', $maxlength='255', $addttext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -544,7 +544,7 @@ function cms_module_CreateInputDataList(&$modinstance, $id, $name, $value='', $i
 /**
  * @access private
  */
-function cms_module_CreateInputSelectList(&$modinstance, $id, $name, $items, $selecteditems=array(), $size=3, $addttext='', $multiple = true)
+function cms_module_CreateInputSelectList($modinstance, $id, $name, $items, $selecteditems=array(), $size=3, $addttext='', $multiple = true)
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
@@ -575,7 +575,7 @@ function cms_module_CreateInputSelectList(&$modinstance, $id, $name, $items, $se
 /**
  * @access private
  */
-function cms_module_CreateInputRadioGroup(&$modinstance, $id, $name, $items, $selectedvalue='', $addttext='', $delimiter='')
+function cms_module_CreateInputRadioGroup($modinstance, $id, $name, $items, $selectedvalue='', $addttext='', $delimiter='')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
@@ -600,7 +600,7 @@ function cms_module_CreateInputRadioGroup(&$modinstance, $id, $name, $items, $se
 /**
  * @access private
  */
-function cms_module_CreateLink(&$modinstance, $id, $action, $returnid='', $contents='', $params=array(), $warn_message='',
+function cms_module_CreateLink($modinstance, $id, $action, $returnid='', $contents='', $params=array(), $warn_message='',
 							   $onlyhref=false, $inline=false, $addttext='', $targetcontentonly=false, $prettyurl='')
 {
   if( !is_array($params) && $params == '' ) $params = array();
@@ -630,7 +630,7 @@ function cms_module_CreateLink(&$modinstance, $id, $action, $returnid='', $conte
 /**
  * @access private
  */
-function cms_module_create_url(&$modinstance,$id,$action,$returnid='',$params=array(),
+function cms_module_create_url($modinstance,$id,$action,$returnid='',$params=array(),
 							   $inline=false,$targetcontentonly=false,$prettyurl='')
 {
 	$config = \cms_config::get_instance();
@@ -693,7 +693,7 @@ function cms_module_create_url(&$modinstance,$id,$action,$returnid='',$params=ar
 /**
  * @access private
  */
-function cms_module_CreateContentLink(&$modinstance, $pageid, $contents='')
+function cms_module_CreateContentLink($modinstance, $pageid, $contents='')
 {
 	$pageid = cms_htmlentities($pageid);
 	$contents = cms_htmlentities($contents);
@@ -723,7 +723,7 @@ function cms_module_CreateContentLink(&$modinstance, $pageid, $contents='')
 /**
  * @access private
  */
-function cms_module_CreateReturnLink(&$modinstance, $id, $returnid, $contents='', $params=array(), $onlyhref=false)
+function cms_module_CreateReturnLink($modinstance, $id, $returnid, $contents='', $params=array(), $onlyhref=false)
 {
   $id = cms_htmlentities($id);
   $returnid = cms_htmlentities($returnid);
@@ -771,7 +771,7 @@ function cms_module_CreateReturnLink(&$modinstance, $id, $returnid, $contents=''
 /**
  * @access private
  */
-function cms_module_CreateFieldsetStart(&$modinstance, $id, $name, $legend_text='', $addtext='', $addtext_legend='')
+function cms_module_CreateFieldsetStart($modinstance, $id, $name, $legend_text='', $addtext='', $addtext_legend='')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);

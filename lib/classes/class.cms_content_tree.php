@@ -55,7 +55,7 @@
 class cms_content_tree extends cms_tree
 {
 	/**
-	 * Find a tree node given a specfied tag and value.
+	 * Find a tree node given a specified tag and value.
 	 *
 	 * @param string $tag_name The tag name to search for
 	 * @param mixed  $value The tag value to search for
@@ -63,7 +63,7 @@ class cms_content_tree extends cms_tree
 	 * @param bool $usequick Optionally, when searching by id... use the quickfind method if possible.
 	 * @return cms_tree
 	 */
-	public function &find_by_tag($tag_name,$value,$case_insensitive = FALSE,$usequick = TRUE)
+	public function find_by_tag($tag_name,$value,$case_insensitive = FALSE,$usequick = TRUE)
 	{
 		if( $usequick && $tag_name == 'id' && $case_insensitive == FALSE && ($this->get_parent() == null || $this->get_tag('id') == '') ) {
 			$res = ContentOperations::get_instance()->quickfind_node_by_id($value);
@@ -112,7 +112,7 @@ class cms_content_tree extends cms_tree
 	 */
 	public function sureGetNodeByAlias($alias)
 	{
-		if( $alias == '' ) return;
+		if( $alias == '' ) return null; // no alias >> no mathcing object
 		if( (int)$alias > 0 && is_numeric($alias) ) return $this->find_by_tag('id',$alias,true);
 		return $this->find_by_tag('alias',$alias,true);
 	}
@@ -141,7 +141,7 @@ class cms_content_tree extends cms_tree
 	 */
 	function getNodeByHierarchy($position)
 	{
-		$result = null;
+		$result = null; // no object
 		$id = ContentOperations::get_instance()->GetPageIDFromHierarchy($position);
 		if ($id) $result = $this->find_by_tag('id',$id);
 		return $result;
@@ -204,7 +204,7 @@ class cms_content_tree extends cms_tree
 	 * @param  string $key Tag name/key
 	 * @return mixed Node value.
 	 */
-	public function &getTag($key = 'id')
+	public function getTag($key = 'id')
 	{
 		return $this->get_tag($key);
 	}
@@ -220,7 +220,7 @@ class cms_content_tree extends cms_tree
 	 * @see cms_tree::get_parent()
 	 * @return cms_tree or null.
 	 */
-	public function &getParentNode()
+	public function getParentNode()
 	{
 		return $this->get_parent();
 	}
@@ -235,7 +235,7 @@ class cms_content_tree extends cms_tree
 	 * @see cms_tree::add_node()
 	 * @param cms_content_tree The node to add
 	 */
-	public function addNode(cms_content_tree &$node)
+	public function addNode(cms_content_tree $node)
 	{
 		return $this->add_node($node);
 	}
@@ -247,11 +247,11 @@ class cms_content_tree extends cms_tree
 	 * This method will return the content object associated with this node, loading it
 	 * if necessary, and placing it in the cache for subsequent requests.
 	 *
-	 * @param bool $deep load all child proeprties for the content object if loading is required.
+	 * @param bool $deep load all child properties for the content object if loading is required.
 	 * @param bool $loadsiblings load all the siblings for the selected content object at the same time (a preformance optimization)
 	 * @param bool $loadall If loading siblings, include inactive/disabled pages.
 	 */
-	public function &getContent($deep = false,$loadsiblings = true,$loadall = false)
+	public function getContent($deep = false,$loadsiblings = true,$loadall = false)
 	{
 		if( !cms_content_cache::content_exists($this->get_tag('id')) ) {
 			// not in cache
@@ -259,8 +259,7 @@ class cms_content_tree extends cms_tree
 			if( !$loadsiblings || !$parent ) {
 				// only load this content object
 				// todo: LoadContentFromId should use content cache.
-				$content = ContentOperations::get_instance()->LoadContentFromId($this->get_tag('id'), $deep);
-				return $content;
+				return ContentOperations::get_instance()->LoadContentFromId($this->get_tag('id'), $deep);
 			}
 			else {
 				$parent->getChildren($deep,$loadall);
@@ -327,13 +326,15 @@ class cms_content_tree extends cms_tree
 	 * @param bool $deep Optionally load the properties of the children (only used when loadcontent is true)
 	 * @param bool $all Load all children, including inactive/disabled ones (only used when loadcontent is true)
 	 * @param bool $loadcontent Load content objects for children
-	 * @return Array of cms_tree objects.
+	 * @return Array of cms_tree objects or null
+	 * We do not return an empty array where there is no child, as
+	 * some things use isset() to check the result.
 	 */
-	public function &getChildren($deep = false,$all = false,$loadcontent = true)
+	public function getChildren($deep = false,$all = false,$loadcontent = true)
 	{
 		$children = $this->get_children();
 		if( is_array($children) && count($children) && $loadcontent ) {
-			// check to see if we need to load anything.
+			// check whether we need to load anything.
 			$ids = array();
 			for( $i = 0, $n = count($children); $i < $n; $i++ ) {
 				if( !$children[$i]->isContentCached() ) $ids[] = $children[$i]->get_tag('id');
@@ -352,7 +353,7 @@ class cms_content_tree extends cms_tree
 	/**
 	 * @ignore
 	 */
-	private function &_buildFlatList()
+	private function _buildFlatList()
 	{
 		$result = array();
 
@@ -379,9 +380,9 @@ class cms_content_tree extends cms_tree
 	 *
 	 * @return Array of cms_tree nodes.
 	 */
-	public function &getFlatList()
+	public function getFlatList()
 	{
-		static $result = null;
+		static $result = null; // no object
 		if( is_null($result) ) {
 			$result = $this->_buildFlatList();
 		}

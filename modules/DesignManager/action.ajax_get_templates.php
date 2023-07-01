@@ -3,11 +3,12 @@
 $handlers = ob_list_handlers();
 for ($cnt = 0; $cnt < count($handlers); $cnt++) { ob_end_clean(); }
 
+$userid = get_userid();
 try {
     $tmp = get_parameter_value($_REQUEST,'filter');
     $filter = json_decode($tmp,TRUE);
     $smarty->assign('tpl_filter',$filter);
-    if( !$this->CheckPermission('Modify Templates') ) $filter[] = 'e:'.get_userid();
+    if( !$this->CheckPermission('Modify Templates') ) $filter[] = 'e:'.$userid;
 
     $tpl_query = new CmsLayoutTemplateQuery($filter);
     $templates = $tpl_query->GetMatches();
@@ -33,21 +34,21 @@ try {
     }
 
     $types = CmsLayoutTemplateType::get_all();
-    $originators = array();
     if( $types ) {
-        $tmp = array();
         $tmp2 = array();
         $tmp3 = array();
         for( $i = 0; $i < count($types); $i++ ) {
-            $tmp['t:'.$types[$i]->get_id()] = $types[$i]->get_langified_display_value();
-            $tmp2[$types[$i]->get_id()] = $types[$i]->get_langified_display_value();
-            $tmp3[$types[$i]->get_id()] = $types[$i];
-            if( !isset($originators[$types[$i]->get_originator()]) ) {
-                $originators['o:'.$types[$i]->get_originator()] = $types[$i]->get_originator(TRUE);
-            }
+            $n = $types[$i]->get_id();
+            $tmp2[$n] = $types[$i]->get_langified_display_value();
+            $tmp3[$n] = $types[$i];
         }
-        $smarty->assign('list_all_types',$tmp3);
+        asort($tmp2);
         $smarty->assign('list_types',$tmp2);
+        $smarty->assign('list_all_types',$tmp3); // no sorting needed
+    }
+    else {
+        $smarty->assign('list_types',[]);
+        $smarty->assign('list_all_types',[]);
     }
 
     $locks = \CmsLockOperations::get_locks('template');
@@ -59,6 +60,7 @@ try {
     $smarty->assign('has_add_right',
         $this->CheckPermission('Modify Templates') ||
         $this->CheckPermission('Add Templates'));
+    $smarty->assign('userid',$userid);
 
     echo $this->ProcessTemplate('ajax_get_templates.tpl');
 }

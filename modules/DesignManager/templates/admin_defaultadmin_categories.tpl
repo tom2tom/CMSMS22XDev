@@ -25,14 +25,14 @@ $(function () {
                     $response.remove();
                 }, 10000);
             });
-    	}
+        }
     });
-    $('#categorylist a.del_cat').click(function(ev){
-       var self = $(this);
-       ev.preventDefault();
-       cms_confirm('{$mod->Lang('confirm_delete_category')|escape:'javascript'}').done(function(){
-          window.location = self.attr('href');
-       });
+    $('#categorylist a.del_cat').on('click', function(ev) {
+        var self = $(this);
+        ev.preventDefault();
+        cms_confirm("{$mod->Lang('confirm_delete_category')|escape:'javascript'}").done(function() {
+            window.location.href = self.attr('href');
+        });
     });
 });
 </script>

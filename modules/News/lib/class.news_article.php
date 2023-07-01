@@ -12,7 +12,7 @@ class news_article
 
     private function _getdata($key)
     {
-        $res = null;
+        $res = null; // a.k.a. unset
         if( isset($this->_rawdata[$key]) ) $res = $this->_rawdata[$key];
         return $res;
     }
@@ -177,6 +177,7 @@ class news_article
             }
             //throw new Exception('Requesting invalid data from News article object '.$key);
         }
+        return null; // no value for unrecognised property
     }
 
 

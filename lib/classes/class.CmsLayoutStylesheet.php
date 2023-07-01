@@ -17,7 +17,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: class.global.inc.php 6939 2011-03-06 00:12:54Z calguy1000 $
+#$Id$
 
 /**
  * Contains classes and utilities for working with the CmsLayoutStylesheet stuff
@@ -101,6 +101,7 @@ class CmsLayoutStylesheet
 	public function get_id()
 	{
 		if( isset($this->_data['id']) ) return $this->_data['id'];
+		return 0;
 	}
 
 	/**
@@ -111,6 +112,7 @@ class CmsLayoutStylesheet
 	public function get_name()
 	{
 		if( isset($this->_data['name']) ) return $this->_data['name'];
+		return '';
 	}
 
 	/**
@@ -135,6 +137,7 @@ class CmsLayoutStylesheet
 	public function get_content()
 	{
 		if( isset($this->_data['content']) ) return $this->_data['content'];
+		return '';
 	}
 
 	/**
@@ -159,6 +162,7 @@ class CmsLayoutStylesheet
 	public function get_description()
 	{
 		if( isset($this->_data['description']) ) return $this->_data['description'];
+		return '';
 	}
 
 	/**
@@ -183,8 +187,8 @@ class CmsLayoutStylesheet
 	 */
 	public function get_media_types()
 	{
-		// returns an array...
 		if( isset($this->_data['media_type']) ) return $this->_data['media_type'];
+		return [];
 	}
 
 	/**
@@ -252,6 +256,7 @@ class CmsLayoutStylesheet
 	public function get_media_query()
 	{
 		if( isset($this->_data['media_query']) ) return $this->_data['media_query'];
+		return '';
 	}
 
 	/**
@@ -275,6 +280,7 @@ class CmsLayoutStylesheet
 	public function get_created()
 	{
 		if( isset($this->_data['created']) ) return $this->_data['created'];
+		return 0;
 	}
 
 	/**
@@ -285,6 +291,7 @@ class CmsLayoutStylesheet
 	public function get_modified()
 	{
 		if( isset($this->_data['modified']) ) return $this->_data['modified'];
+		return 0;
 	}
 
 
@@ -297,8 +304,8 @@ class CmsLayoutStylesheet
 	public function get_designs()
 	{
 		if( !is_array($this->_design_assoc) ) {
-			if( !$this->get_id() ) return;
-			$this->_design_assoc = null;
+			if( !$this->get_id() ) return [];
+			$this->_design_assoc = null; //non-array triggers scan
 			$db = CmsApp::get_instance()->GetDb();
 			$query = 'SELECT design_id FROM '.CMS_DB_PREFIX.CmsLayoutCollection::CSSTABLE.' WHERE css_id = ?';
 			$tmp = $db->GetCol($query,array($this->get_id()));
@@ -335,7 +342,6 @@ class CmsLayoutStylesheet
 	 */
 	public function add_design($a)
 	{
-		$n = null;
 		if( is_object($a) && is_a($a,'CmsLayoutCollection') ) {
 			$n = $a->get_id();
 		}
@@ -370,7 +376,6 @@ class CmsLayoutStylesheet
 		// note: should load designs here before removing.
 		if( !is_array($this->_design_assoc) || count($this->_design_assoc) == 0 ) return;
 
-		$n = null;
 		if( is_object($a) && is_a($a,'CmsLayoutCollection') ) {
 			$n = $a->get_id();
 		}
@@ -413,7 +418,7 @@ class CmsLayoutStylesheet
 		}
 
 		$db = CmsApp::get_instance()->GetDb();
-		$tmp = null;
+		$tmp = 0;
 		if( $this->get_id() ) {
 			// double check the name.
 			$query = 'SELECT id FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE name = ? AND id != ?';
@@ -638,17 +643,17 @@ class CmsLayoutStylesheet
 	/**
 	 * @ignore
 	 */
-	private static function &_load_from_data($row,$design_list = null)
+	private static function _load_from_data($row,$design_list = [])
 	{
 		$ob = new CmsLayoutStylesheet();
-		$row['media_type'] = explode(',',$row['media_type']);;
+		$row['media_type'] = explode(',',$row['media_type']);
 		$ob->_data = $row;
 		$fn = $ob->get_content_filename();
 		if( is_file($fn) && is_readable($fn) ) {
 			$ob->_data['content'] = file_get_contents($fn);
 			$ob->_data['modified'] = filemtime($fn);
 		}
-		if( is_array($design_list) ) $ob->_design_assoc = $design_list;
+		if( $design_list && is_array($design_list) ) $ob->_design_assoc = $design_list;
 
 		self::$_css_cache[$row['id']] = $ob;
 		self::$_name_cache[$row['name']] = $row['id'];
@@ -662,16 +667,15 @@ class CmsLayoutStylesheet
 	 * @return CmsLayoutStylesheet
 	 * @throws CmsInvalidDataException
 	 */
-	public static function &load($a)
+	public static function load($a)
 	{
 		// check the cache first..
 		$db = CmsApp::get_instance()->GetDb();
-		$row = null;
+		$row = [];
 		if( is_numeric($a) && (int)$a > 0 ) {
 			$a = (int)$a;
 			if( isset(self::$_css_cache[$a]) ) {
-				$ret = self::$_css_cache[$a];
-				return $ret;
+				return self::$_css_cache[$a];
 			}
 			// not in cache
 			$query = 'SELECT id,name,content,description,media_type,media_query,created,modified FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE id = ?';
@@ -691,8 +695,7 @@ class CmsLayoutStylesheet
 		}
 		if( !is_array($row) || count($row) == 0 ) throw new \CmsInvalidDataException('Could not find stylesheet identified by '.$a);
 
-		$ret = self::_load_from_data($row);
-		return $ret;
+		return self::_load_from_data($row);
 	}
 
 	/**
@@ -707,7 +710,7 @@ class CmsLayoutStylesheet
 	 */
 	public static function load_bulk($ids,$deep = true)
 	{
-		if( !is_array($ids) || count($ids) == 0 ) return;
+		if( !is_array($ids) || count($ids) == 0 ) return [];
 
 		// clean up the input data
 		$is_ints = FALSE;
@@ -751,7 +754,7 @@ class CmsLayoutStylesheet
 
 			// this makes sure that the returned array matches the order specified.
 			foreach( $ids as $one ) {
-				$found = null;
+				$found = [];
 				if( $is_ints ) {
 					// find item in $dbr by id
 					foreach( $dbr as $row ) {
@@ -778,7 +781,7 @@ class CmsLayoutStylesheet
 			}
 		}
 
-		if( count($out) ) return $out;
+		return $out;
 	}
 
 	/**
@@ -834,7 +837,7 @@ class CmsLayoutStylesheet
 	 * @param string $prototype A prototype template name
 	 * @param string $prefix An optional name prefix.
 	 */
-	public static function generate_unique_name($prototype,$prefix = null)
+	public static function generate_unique_name($prototype,$prefix = '')
 	{
 		if( !$prototype ) throw new CmsInvalidDataException('Prototype name cannot be empty');
 		$db = CmsApp::get_instance()->GetDb();
@@ -872,6 +875,7 @@ class CmsLayoutStylesheet
 	{
 		$fn = $this->get_content_filename();
 		if( is_file($fn) && is_readable($fn) ) return TRUE;
+		return FALSE;
 	}
 } // end of class
 

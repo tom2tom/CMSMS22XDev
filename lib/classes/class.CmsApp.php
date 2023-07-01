@@ -101,6 +101,11 @@ final class CmsApp {
 	private $hrinstance;
 
 	/**
+	 * @ignore
+	 */
+	private $bookmarkoperations;
+
+	/**
 	 * Internal error array - So functions/modules can store up debug info and spit it all out at once
 	 * @ignore
 	 */
@@ -115,8 +120,8 @@ final class CmsApp {
 		switch($key) {
 		case 'config':
 			return cms_config::get_instance();
-			break;
 		}
+		return null; // no value for unrecognised property
 	}
 
 	/**
@@ -124,7 +129,7 @@ final class CmsApp {
 	 */
 	protected function __construct()
 	{
-		register_shutdown_function(array(&$this, 'dbshutdown'));
+		register_shutdown_function(array($this, 'dbshutdown'));
 	}
 
 	/**
@@ -132,9 +137,9 @@ final class CmsApp {
 	 *
 	 * @since 1.10
 	 */
-	public static function &get_instance()
+	public static function get_instance()
 	{
-		if( !isset(self::$_instance)  ) self::$_instance = new CmsApp();
+		if( !self::$_instance ) self::$_instance = new self();
 		return self::$_instance;
 	}
 
@@ -206,7 +211,7 @@ final class CmsApp {
 	 */
 	public function set_content_type($mime_type = '')
 	{
-		$this->_content_type = null;
+		$this->_content_type = '';
 		if( isset($mime_type) ) $this->_content_type = $mime_type;
 	}
 
@@ -218,7 +223,7 @@ final class CmsApp {
 	 * @access private
 	 * @ignore
 	 */
-	public function set_content_object(ContentBase &$content)
+	public function set_content_object(ContentBase $content)
 	{
 		if( !$this->_current_content_page || $content instanceof ErrorPage ) $this->_current_content_page = $content;
 	}
@@ -274,7 +279,7 @@ final class CmsApp {
 	 * @return CMSModule Reference to the module object, or null.
 	 * @deprecated
 	 */
-	public function &GetModuleInstance($module_name,$version = '')
+	public function GetModuleInstance($module_name,$version = '')
 	{
 		return ModuleOperations::get_instance()->get_module_instance($module_name,$version);
 	}
@@ -334,7 +339,7 @@ final class CmsApp {
 	* @final
 	* @return cms_config The configuration object.
 	*/
-	public function &GetConfig()
+	public function GetConfig()
 	{
 		return cms_config::get_instance();
 	}
@@ -349,7 +354,7 @@ final class CmsApp {
 	* @return ModuleOperations handle to the ModuleOperations object
 	* @deprecated
 	*/
-	public function & GetModuleOperations()
+	public function GetModuleOperations()
 	{
 		return ModuleOperations::get_instance();
 	}
@@ -364,7 +369,7 @@ final class CmsApp {
 	* @return UserOperations handle to the UserOperations object
 	* @deprecated
 	*/
-	public function & GetUserOperations()
+	public function GetUserOperations()
 	{
 		return UserOperations::get_instance();
 	}
@@ -378,7 +383,7 @@ final class CmsApp {
 	* @return ContentOperations handle to the ContentOperations object
 	* @deprecated
 	*/
-	public function & GetContentOperations()
+	public function GetContentOperations()
 	{
 		return ContentOperations::get_instance();
 	}
@@ -392,7 +397,7 @@ final class CmsApp {
 	* @return BookmarkOperations handle to the BookmarkOperations object, useful only in the admin
 	* @deprecated
 	*/
-	public function & GetBookmarkOperations()
+	public function GetBookmarkOperations()
 	{
 		if (!isset($this->bookmarkoperations)) $this->bookmarkoperations = new BookmarkOperations();
 		return $this->bookmarkoperations;
@@ -408,7 +413,7 @@ final class CmsApp {
 	* @return GroupOperations handle to the GroupOperations object
 	* @deprecated
 	*/
-	public function & GetGroupOperations()
+	public function GetGroupOperations()
 	{
 		return GroupOperations::get_instance();
 	}
@@ -422,27 +427,26 @@ final class CmsApp {
 	* @return UserTagOperations handle to the UserTagOperations object
 	* @deprecated
 	*/
-	public function & GetUserTagOperations()
+	public function GetUserTagOperations()
 	{
 		return UserTagOperations::get_instance();
 	}
 
 	/**
-	* Get a handle to the CMS Smarty object.
+	* Get the CMS Smarty singleton.
 	* If it does not yet exist, this method will instantiate it.
 	*
 	* @final
 	* @see Smarty_CMS
-	* @link http://www.smarty.net/manual/en/
-	* @return Smarty_CMS handle to the Smarty object
+	* @link https://smarty-php.github.io/smarty/4.x
+	* @return Smarty_CMS the session Smarty instance, or null
 	*/
-	public function & GetSmarty()
+	public function GetSmarty()
 	{
 		global $CMS_PHAR_INSTALLER;
-		if( isset($CMS_PHAR_INSTALLER) ) {
-			// we can't load the CMSMS version of smarty during the installation.
-			$out = null;
-			return $out;
+		if( isset($CMS_PHAR_INSTALLER) ) { //TODO $CMS_INSTALL_PAGE ?
+			// we can't load the core version of Smarty during the installation.
+			return null; // no object
 		}
 		return Smarty_CMS::get_instance();
 	}
@@ -453,9 +457,9 @@ final class CmsApp {
 	*
 	* @final
 	* @see HierarchyManager
-	* @return HierarchyManager handle to the HierarchyManager object
+	* @return HierarchyManager reference to the HierarchyManager object TODO check ref or object
 	*/
-	public function & GetHierarchyManager()
+	public function GetHierarchyManager()
 	{
 		/* Check to see if a HierarchyManager has been instantiated yet,
 		  and, if not, go ahead an create the instance. */
@@ -520,7 +524,7 @@ final class CmsApp {
 	 * @return Smarty_Parser handle to the Smarty object
 	 * @deprecated
 	 */
-	final public function &get_template_parser()
+	final public function get_template_parser()
 	{
 		return Smarty_Parser::get_instance();
 	}
@@ -703,7 +707,7 @@ class CmsContentTypePlaceholder
  * @return CmsApp
  * @see CmsApp::get_instance()
  */
-function &cmsms()
+function cmsms()
 {
 	return CmsApp::get_instance();
 }

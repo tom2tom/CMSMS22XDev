@@ -565,13 +565,12 @@ $smarty->assign('lang_template',lang('template'));
 $smarty->assign('lang_date_format_string_help',lang('date_format_string_help'));
 $smarty->assign('lang_info_sitedownexcludes',lang('info_sitedownexcludes'));
 
-$all_attributes = null;
+$all_attributes = [];
 {
-  $content_obj = new Content; // should this be the default type?
+  $content_obj = new Content(); // should this be the default type?
   $list = $content_obj->GetProperties();
   if( is_array($list) && count($list) ) {
     // pre-remove some items.
-    $all_attributes = [];
     for($i = 0, $iMax = count($list); $i < $iMax; $i++ ) {
       $obj = $list[$i];
       if( $obj->tab == $content_obj::TAB_PERMS ) continue;

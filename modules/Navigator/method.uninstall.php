@@ -33,7 +33,7 @@
 #
 #-------------------------------------------------------------------------
 #END_LICENSE
-#$Id: News.module.php 2114 2005-11-04 21:51:13Z wishy $
+#$Id$
 
 $this->RemovePreference();
 $this->DeleteTemplate();

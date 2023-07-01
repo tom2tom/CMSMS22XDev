@@ -294,7 +294,7 @@ while ($dbr && ($row = $dbr->FetchRow())) {
     if (isset($row['extra']) && $row['extra'])
         $row['extra'] = unserialize($row['extra']);
 
-    $options = null;
+    $options = [];
     if (isset($row['extra']['options']))
         $options = $row['extra']['options'];
 
@@ -306,7 +306,7 @@ while ($dbr && ($row = $dbr->FetchRow())) {
         $name = "customfield[" . $row['id'] . "]";
     }
 
-    $obj = new StdClass();
+    $obj = new stdClass();
 
     $obj->value    = $value;
     $obj->type     = $row['type'];

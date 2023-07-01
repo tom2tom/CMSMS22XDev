@@ -45,7 +45,7 @@ $nls['locale']['id_ID'] = 'id_ID,id_ID.utf8,id_ID.utf-8,id_ID.UTF-8,indonesian,I
 $nls['encoding']['id_ID'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['id_ID'] = array(dirname(__FILE__).'/id_ID/admin.inc.php');
+$nls['file']['id_ID'] = array(__DIR__.'/id_ID/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

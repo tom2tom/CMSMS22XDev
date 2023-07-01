@@ -6,7 +6,7 @@ $jobs = [];
 $job_objs = \CmsJobManager\JobQueue::get_all_jobs();
 if( $job_objs ) {
     foreach( $job_objs as $job ) {
-        $obj = new StdClass;
+        $obj = new stdClass();
         $obj->name = $job->name;
         $obj->module = $job->module;
         $obj->frequency = (\CmsJobManager\utils::job_recurs($job)) ? $job->frequency : null;

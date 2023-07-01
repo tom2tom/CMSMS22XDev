@@ -98,7 +98,7 @@ $group_perms = function($in_struct) {
             return strcasecmp($a->name,$b->name);
         });
 
-    $out = [];;
+    $out = [];
     foreach( $in_struct as $one ) {
         $source = $one->source;
         if( !isset($out[$source]) ) $out[$source] = [];

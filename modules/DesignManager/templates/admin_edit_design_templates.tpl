@@ -66,7 +66,7 @@ function find_sortable_focus(in_e) {
    var _list = $(':tabbable');
    var _idx = _list.index(in_e);
    var _out_e = _list.eq(_idx+1).length ? _list.eq(_idx+1) : _list.eq(0);
-   _out_e.focus();
+   _out_e.trigger('focus');
 }
 
 $(function() {
@@ -126,11 +126,11 @@ $(function() {
     });
 
     $(document).on('click', '#available-templates li',function(ev) {
-        $(this).focus();
+        $(this).trigger('focus');
     });
 
     $(document).on('click', '#selected-templates li',function(ev) {
-        $('a:first',this).focus();
+        $('a',this).first().trigger('focus');
     });
 
     $(document).on('keyup', '#available-templates li',function(ev) {

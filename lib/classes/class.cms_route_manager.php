@@ -41,12 +41,12 @@
  * @license GPL
  */
 
-if( !function_exists('__internal_cmp_routes') ) {
+if( !function_exists('_internal_cmp_routes') ) {
 	/**
 	 * @internal
 	 * @ignore
 	 */
-	function __internal_cmp_routes($a,$b) {
+	function _internal_cmp_routes($a,$b) {
 		return strcmp($a['term'],$b['term']);
 	}
 }
@@ -84,7 +84,7 @@ final class cms_route_manager
 	/**
 	 * @ignore
 	 */
-	static private function _find_match($needle,$haystack,$exact)
+	private static function _find_match($needle,$haystack,$exact)
 	{
 		// split the haystack into an array of 'absolute' or 'regex' matches
 		$absolute = array();
@@ -99,7 +99,7 @@ final class cms_route_manager
 		}
 
 		// sort the list of absolutes
-		usort($absolute,'__internal_cmp_routes');
+		usort($absolute,'_internal_cmp_routes');
 
 		// do a binary search on the absolute routes
 		if( count($absolute) ) {
@@ -119,7 +119,7 @@ final class cms_route_manager
 	/**
 	 * @ignore
 	 */
-	static private function route_binarySearch($needle,$haystack,$comparator)
+	private static function route_binarySearch($needle,$haystack,$comparator)
 	{
 		if( count($haystack) == 0 ) return FALSE;
 
@@ -154,7 +154,7 @@ final class cms_route_manager
 	 * @param bool     $static_only A flag indicating that only static routes should be checked.
 	 * @return bool
 	 */
-	static public function route_exists(CmsRoute $route,$static_only = FALSE)
+	public static function route_exists(CmsRoute $route,$static_only = FALSE)
 	{
 		self::_load_static_routes();
 		if( is_array(self::$_routes) ) {
@@ -178,7 +178,7 @@ final class cms_route_manager
 	 * @param bool $static_only A flag indicating that only static routes should be checked.
 	 * @return CmsRoute the matching route, or null.
 	 */
-	static public function find_match($str,$exact = false,$static_only = FALSE)
+	public static function find_match($str,$exact = false,$static_only = FALSE)
 	{
 		self::_load_static_routes();
 
@@ -187,12 +187,13 @@ final class cms_route_manager
 			if( is_object($res) ) return $res;
 		}
 
-		if( $static_only ) return;
+		if( $static_only ) return null; // no ojbect
 
 		if( is_array(self::$_dynamic_routes) ) {
 			$res = self::_find_match($str,self::$_dynamic_routes,$exact);
 			if( is_object($res) ) return $res;
 		}
+		return null; // no object
 	}
 
 
@@ -206,7 +207,7 @@ final class cms_route_manager
 	 * @param CmsRoute $route The route to add.
 	 * @return bool
 	 */
-	public static function add_static(CmsRoute& $route)
+	public static function add_static(CmsRoute $route)
 	{
 		self::_load_static_routes();
 		if( self::route_exists($route) ) return TRUE;
@@ -237,7 +238,7 @@ final class cms_route_manager
 	 * @param string $key3
 	 * @return bool
 	 */
-	public static function del_static($term,$key1 = null,$key2 = null,$key3 = null)
+	public static function del_static($term,$key1 = '',$key2 = '',$key3 = '')
 	{
 		$query = 'DELETE FROM '.CMS_DB_PREFIX.'routes WHERE ';
 		$where = array();
@@ -247,15 +248,15 @@ final class cms_route_manager
 			$parms[] = $term;
 		}
 
-		if( !is_null($key1) ) {
+		if( $key1 ) {
 			$where[] = 'key1 = ?';
 			$parms[] = $key1;
 
-			if( !is_null($key2) ) {
+			if( $key2 ) {
 				$where[] = 'key2 = ?';
 				$parms[] = $key2;
 
-				if( !is_null($key3) ) {
+				if( $key3 ) {
 					$where[] = 'key3 = ?';
 					$parms[] = $key3;
 				}
@@ -303,7 +304,7 @@ final class cms_route_manager
 	 * @param CmsRoute $route The route to register
 	 * @return bool
 	 */
-	static public function register(CmsRoute $route)
+	public static function register(CmsRoute $route)
 	{
 		return self::add_dynamic($route);
 	}
@@ -427,7 +428,7 @@ final class cms_route_manager
 	private static function _clear_cache()
 	{
 		@unlink(self::_get_cache_filespec());
-		self::$_routes = null;
+		self::$_routes = null; //not array - empty array has meaning
 		self::$_routes_loaded = FALSE;
 		// note: dynamic routes don't get cleared.
 	}

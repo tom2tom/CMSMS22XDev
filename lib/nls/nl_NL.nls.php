@@ -43,7 +43,7 @@ $nls['locale']['nl_NL'] = 'nl_NL.utf8,nl_NL.UTF-8,nl_NL.utf.8,nl_NL,nl_NL@euro,d
 $nls['encoding']['nl_NL'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['nl_NL'] = array(dirname(__FILE__).'/nl_NL/admin.inc.php');
+$nls['file']['nl_NL'] = array(__DIR__.'/nl_NL/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

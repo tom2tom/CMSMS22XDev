@@ -16,7 +16,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
 #
-#$Id:$
+#$Id$
 
 /**
  * Classes and utilities to provide menu items in the CMSMS admin navigation
@@ -79,6 +79,7 @@ final class CmsAdminMenuItem
         default:
             if( isset($this->_data[$k]) ) return $this->_data[$k];
         }
+        return null; // no value for unrecognised property
     }
 
 
@@ -130,11 +131,11 @@ final class CmsAdminMenuItem
      *
      * @param CMSModule $mod
      */
-    public static function &from_module(\CMSModule $mod)
+    public static function from_module(\CMSModule $mod)
     {
-        $obj = null;
+        $obj = null; //no object
         if( $mod->HasAdmin() ) {
-            $obj = new CmsAdminMenuItem;
+            $obj = new CmsAdminMenuItem();
             $obj->module = $mod->GetName();
             $obj->section = $mod->GetAdminSection();
             $obj->title   = $mod->GetFriendlyName();

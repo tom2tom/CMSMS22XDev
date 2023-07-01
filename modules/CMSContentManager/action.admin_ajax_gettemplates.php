@@ -36,7 +36,7 @@
 if( !isset($gCms) ) exit;
 if( !$this->CanEditContent() ) exit;
 
-$out = null;
+$out = null; //non-result indicator
 try {
     $design_id = (int) get_parameter_value($params,'design_id',-1);
     if( $design_id > 0 ) {
@@ -85,7 +85,7 @@ try {
     }
 }
 catch( Exception $e ) {
-    $out = null;
+    $out = null; //non-result indicator
 }
 
 if( !is_array($out) || count($out) == 0 ) $out = null;

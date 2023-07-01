@@ -95,7 +95,6 @@ class cms_tree_operations
           $node = new cms_content_tree(array('id'=>$row['content_id'],'alias'=>$row['content_alias'],'active'=>$row['active']));
 
           // find where to insert it.
-          $parent_node = null;
           if( $row['parent_id'] < 1 ) {
               $parent_node = $tree;
           }

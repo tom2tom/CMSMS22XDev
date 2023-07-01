@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: class.global.inc.php 6939 2011-03-06 00:12:54Z calguy1000 $
+#$Id$
 
 /**
  * An abstract class for building database queries and managing results.
@@ -51,7 +51,7 @@ abstract class CmsDbQueryBase
 	 *
 	 * @see execute()
 	 */
-    protected $_totalmatchingrows = null;
+    protected $_totalmatchingrows;
 
 	/**
 	 * The current (integer) offset in the list of results
@@ -66,7 +66,7 @@ abstract class CmsDbQueryBase
 	/**
 	 * This member stores the raw database resultset object.
 	 */
-    protected $_rs = null;
+    protected $_rs;
 
 	/**
 	 * This member stores the original arguments passed to the constructor and used when generating
@@ -77,11 +77,11 @@ abstract class CmsDbQueryBase
 	/**
 	 * Constructor
 	 *
-	 * @param mixed $args Accepts an associative array (key=>value) with arguments for the query, or a comma separarated string of arguments.
+	 * @param mixed $args Accepts an associative array (key=>value) with arguments for the query, or a comma separated string of arguments.
 	 */
     public function __construct($args = '')
     {
-        if( empty($args) ) return;
+        if( !$args ) return;
 
         if( is_array($args) ) {
             $this->_args = $args;
@@ -205,7 +205,7 @@ abstract class CmsDbQueryBase
      * @see $this->fields
      * @return mixed
      */
-    abstract public function &GetObject();
+    abstract public function GetObject();
 
 	/**
 	 * Return an array of matched objects.
@@ -216,7 +216,7 @@ abstract class CmsDbQueryBase
 	 * The output of this method depends on the derived class.
 	 *
      * @see GetObject()
-	 * @return array|null
+	 * @return array maybe empty
 	 */
     public function GetMatches()
     {
@@ -226,7 +226,7 @@ abstract class CmsDbQueryBase
             $out[] = $this->GetObject();
             $this->MoveNext();
         }
-        if( count($out) ) return $out;
+        return $out;
     }
 
 	/**
@@ -242,6 +242,7 @@ abstract class CmsDbQueryBase
         if( $key == 'offset' ) return $this->_offset;
         if( $key == 'totalrows' ) return $this->_totalmatchingrows;
         if( $key == 'numpages' ) return ceil($this->_totalmatchingrows / $this->_limit);
+        return null; //no recognised property
     }
 
 } // end of class

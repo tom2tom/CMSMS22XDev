@@ -49,7 +49,7 @@ $nls['locale']['is_IS'] = 'is_IS,is_IS.utf8,is_IS.utf-8,is_IS.UTF-8,icelandic,Ic
 $nls['encoding']['is_IS'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['is_IS'] = array(dirname(__FILE__).'/is_IS/admin.inc.php');
+$nls['file']['is_IS'] = array(__DIR__.'/is_IS/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

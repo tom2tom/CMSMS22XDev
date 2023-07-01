@@ -82,7 +82,7 @@ class CmsRoute implements ArrayAccess
 	 * @param string $key2 The second key.
 	 * @param string $key3 The second key.
 	 */
-	public function __construct($term,$key1 = '',$defaults = null,$is_absolute = FALSE,$key2 = null,$key3 = null)
+	public function __construct($term,$key1 = '',$defaults = [],$is_absolute = FALSE,$key2 = '',$key3 = '')
 	{
 		$this->_data['term'] = $term;
 		$this->_data['absolute'] = $is_absolute;
@@ -95,8 +95,8 @@ class CmsRoute implements ArrayAccess
 			$this->_data['key1'] = $key1;
 			$this->_data['key2'] = $key2;
 		}
-		if( is_array($defaults) ) $this->_data['defaults'] = $defaults;
-		if( !empty($key3) ) $this->_data['key3'] = $key3;
+		if( $defaults && is_array($defaults) ) $this->_data['defaults'] = $defaults;
+		if( $key3 ) $this->_data['key3'] = $key3;
 	}
 
 	/**
@@ -109,10 +109,9 @@ class CmsRoute implements ArrayAccess
 	 * @param bool $is_absolute Flag indicating wether the term is a regular expression or an absolute string
 	 * @param string $key3 The second key
 	 */
-	public static function &new_builder($term,$key1,$key2 = '',$defaults = null,$is_absolute = FALSE,$key3 = '')
+	public static function new_builder($term,$key1,$key2 = '',$defaults = [],$is_absolute = FALSE,$key3 = '')
 	{
-		$obj = new CmsRoute($term,$key1,$defaults,$is_absolute,$key2,$key3);
-		return $obj;
+		return new CmsRoute($term,$key1,$defaults,$is_absolute,$key2,$key3);
 	}
 
 	/**
@@ -132,6 +131,7 @@ class CmsRoute implements ArrayAccess
 	public function offsetGet($key)
 	{
 		if( in_array($key,self::$_keys) && isset($this->_data[$key]) ) return $this->_data[$key];
+		return null; // no value for unrecognised key
 	}
 
 	/**
@@ -240,7 +240,7 @@ class CmsRoute implements ArrayAccess
 	 */
 	public function matches($str,$exact = false)
 	{
-		$this->_results = null;
+		$this->_results = [];
 		if( (isset($this->_data['absolute']) && $this->_data['absolute']) || $exact ) {
 			$a = trim($this->_data['term']);
 			$a = trim($a,'/');

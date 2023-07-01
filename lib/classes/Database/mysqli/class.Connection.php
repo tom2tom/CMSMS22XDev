@@ -117,7 +117,6 @@ class Connection extends \CMSMS\Database\Connection
     public function do_sql($sql)
     {
         // execute all queries, but only need the resultset from the last one.
-        $resultset = null;
         $this->sql = $sql;
         $time_start = microtime(TRUE);
         $resultid = $this->_mysql->query( $sql );
@@ -126,17 +125,15 @@ class Connection extends \CMSMS\Database\Connection
         if( !$resultid ) {
             $this->FailTrans();
             $this->OnError(self::ERROR_EXECUTE,$this->_mysql->errno, $this->_mysql->error);
-            return $resultset;
+            return null; // no object
         }
         $this->add_debug_query($sql);
-        $resultset = new ResultSet( $this->_mysql, $resultid, $sql );
-        return $resultset;
+        return new ResultSet( $this->_mysql, $resultid, $sql );
     }
 
     public function Prepare($sql)
     {
-        $stmt = new Statement($this,$sql);
-        return $stmt;
+        return new Statement($this,$sql);
     }
 
     public function BeginTrans()
@@ -152,16 +149,17 @@ class Connection extends \CMSMS\Database\Connection
     {
         if( $this->_in_smart_transaction ) {
             $this->_in_smart_transaction++;
-            return;
+            return; //TODO return value?
         }
 
         if( $this->_in_transaction ) {
             $this->OnError( self::ERROR_TRANSACTION, -1, 'Bad Transaction: StartTrans called within BeginTrans');
-            return FALSE;
+            return; //TODO return value? FALSE;
         }
         $this->_transaction_status = TRUE;
         $this->_in_smart_transaction++;
         $this->BeginTrans();
+         //TODO return value?
     }
 
     public function RollbackTrans()

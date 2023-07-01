@@ -160,6 +160,7 @@ final class CmsLock implements ArrayAccess
             if( !isset($this->_data[$key]) ) throw new CmsLogicException('CMSEX_L004');
             return $this->_data[$key];
         }
+        return null; // no value for unrecognised property
     }
 
    /**
@@ -241,7 +242,7 @@ final class CmsLock implements ArrayAccess
         if( !$this->_dirty ) return;
 
         $db = CmsApp::get_instance()->GetDb();
-        $dbr = null;
+        $dbr = FALSE;
         $this->_data['expires'] = time()+$this->_data['lifetime']*60;
         if( !isset($this->_data['id']) ) {
             // insert
@@ -271,7 +272,7 @@ final class CmsLock implements ArrayAccess
     * @throws \CmsInvalidDataException
     * @internal
     */
-    public static function &from_row($row)
+    public static function from_row($row)
     {
         $obj = new CmsLock($row['type'],$row['oid'],$row['lifetime']);
         $obj->_dirty = TRUE;
@@ -321,7 +322,7 @@ final class CmsLock implements ArrayAccess
     * @throws \CmsInvalidDataException
     * @throws \CmsNoLockException
     */
-    public static function &load_by_id($lock_id,$type,$oid,$uid = 0)
+    public static function load_by_id($lock_id,$type,$oid,$uid = 0)
     {
         $query = 'SELECT * FROM '.CMS_DB_PREFIX.self::LOCK_TABLE.' WHERE id = ? AND type = ? AND oid = ?';
         $db = CmsApp::get_instance()->GetDb();
@@ -348,7 +349,7 @@ final class CmsLock implements ArrayAccess
     * @throws \CmsNoLockException
     * @throws \Exception
     */
-    public static function &load($type,$oid,$uid = 0)
+    public static function load($type,$oid,$uid = 0)
     {
         $query = 'SELECT * FROM '.CMS_DB_PREFIX.self::LOCK_TABLE.' WHERE type = ? AND oid = ?';
         $db = CmsApp::get_instance()->GetDb();

@@ -21,8 +21,8 @@
 # Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
 #---------------------------------------------------------------------------
 
-$CMS_VERSION = '2.2.17-b.9';
-$CMS_VERSION_NAME = 'Iqaluit';
+$CMS_VERSION = '2.2.18-b.1';
+$CMS_VERSION_NAME = 'real soon now';
 $CMS_SCHEMA_VERSION = '202';
 
 define('CMS_VERSION', $CMS_VERSION);

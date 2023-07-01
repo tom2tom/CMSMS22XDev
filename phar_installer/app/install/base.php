@@ -80,7 +80,7 @@ $designer_group->GrantPermission('Modify User-defined Tags');
 //
 verbose_msg(ilang('install_initsiteusers'));
 $sitemask = cms_siteprefs::get('sitemask');
-$admin_user = new User;
+$admin_user = new User();
 $admin_user->username = $adminaccount['username'];
 if( isset($adminaccount['emailaddr']) && $adminaccount['emailaddr'] ) $admin_user->email = $adminaccount['emailaddr'];
 $admin_user->active = 1;

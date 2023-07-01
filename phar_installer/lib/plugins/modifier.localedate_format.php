@@ -1,4 +1,7 @@
 <?php
+
+use function __appbase\translator;
+
 /**
  * Smarty plugin
  * Type:     modifier
@@ -8,11 +11,12 @@
  * @param mixed $datevar      input date-time string | timestamp | DateTime object
  * @param string $format      optional strftime() and/or date()-compatible format for output. Default '%b %e, %Y'
  * @param mixed $default_date optional date-time to use if $datevar is empty. Default ''
+ * @param mixed $locale       string | null optional locale to use instead of the default since 2.2.18
  *
  * @return string
  */
 
-function smarty_modifier_localedate_format($datevar, $format = '%b %e, %Y', $default_date = '')
+function smarty_modifier_localedate_format($datevar, $format = '%b %e, %Y', $default_date = '', $locale = '')
 {
     if (empty($datevar)) {
         $datevar = $default_date;
@@ -35,8 +39,8 @@ function smarty_modifier_localedate_format($datevar, $format = '%b %e, %Y', $def
     $outfmt = localedate_adjust($format);
     $tmp = date($outfmt, $st);
     $text = preg_replace_callback_array(array(
-        '~[\x01-\x08\x0e\x0f]~' => function($m) use($st) {
-            return localedate_ise ($st, $m[0]);
+        '~[\x01-\x08\x0e\x0f]~' => function($m) use($st, $locale) {
+            return localedate_ise ($st, $m[0], $locale);
         },
         '~\x11~' => function($m) use($st) { // two-digit century
             return floor(date('Y', $st) / 100);
@@ -164,34 +168,37 @@ re other uses of '#' modifier
     return str_replace($from, $to, $fmt);
 }
 
-function localedate_ise ($st, $mode)
+function localedate_ise($st, $mode, $locale)
 {
     if (extension_loaded('Intl')) {
         $dt = new DateTime();
         $dt->setTimestamp($st);
-        $locale = \__appbase\translator()->get_selected_language();
-
+        if (!$locale) {
+            $locale = translator()->get_selected_language();
+        } else {
+            $locale = trim($locale);
+        }
         switch ($mode) {
         case "\1": // short day name
-            return datefmt_format_object($dt, 'EEE', $locale);
+            return IntlDateFormatter::formatObject($dt, 'EEE', $locale);
         case "\2": // normal day name
-            return datefmt_format_object($dt, 'EEEE', $locale);
+            return IntlDateFormatter::formatObject($dt, 'EEEE', $locale);
         case "\3": // short month name
-            return datefmt_format_object($dt, 'MMM', $locale);
+            return IntlDateFormatter::formatObject($dt, 'MMM', $locale);
         case "\4": // normal month name
-            return datefmt_format_object($dt, 'MMMM', $locale);
+            return IntlDateFormatter::formatObject($dt, 'MMMM', $locale);
         case "\6": // date only
-            return datefmt_format_object($dt,
+            return IntlDateFormatter::formatObject($dt,
                 array(IntlDateFormatter::FULL, IntlDateFormatter::NONE), $locale);
         case "\7": // time only
-            return datefmt_format_object($dt,
+            return IntlDateFormatter::formatObject($dt,
                 array(IntlDateFormatter::NONE, IntlDateFormatter::MEDIUM), $locale);
         case "\x8": // date and time
-            return datefmt_format_object($dt,
+            return IntlDateFormatter::formatObject($dt,
                 array(IntlDateFormatter::FULL, IntlDateFormatter::MEDIUM), $locale);
         case "\x0e": // am/pm, upper-case
         case "\x0f": // am/pm, lower-case
-            $s = datefmt_format_object($dt, 'a', $locale);
+            $s = IntlDateFormatter::formatObject($dt, 'a', $locale);
             if ($mode == "\x0e") {
                 // force upper-case, any charset
                 if (!preg_match('/[\x80-\xff]/',$s)) { return strtoupper($s); }

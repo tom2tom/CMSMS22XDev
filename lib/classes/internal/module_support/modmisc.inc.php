@@ -29,7 +29,7 @@
 /**
  * @access private
  */
-function cms_module_GetAbout(&$modinstance)
+function cms_module_GetAbout($modinstance)
 {
 	$str = '';
 	if ($modinstance->GetAuthor() != '') {
@@ -49,7 +49,7 @@ function cms_module_GetAbout(&$modinstance)
 /**
  * @access private
  */
-function cms_module_GetHelpPage(&$modinstance)
+function cms_module_GetHelpPage($modinstance)
 {
 	$str = '';
 	@ob_start();

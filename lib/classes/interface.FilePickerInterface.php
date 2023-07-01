@@ -26,7 +26,7 @@ interface FilePickerInterface
      * @param int $uid An optional admin user id.
      * @return FilePickerProfile
      */
-    public function get_profile_or_default( $profile_name, $dir = null, $uid = null );
+    public function get_profile_or_default( $profile_name, $dir = '', $uid = 0 );
 
     /**
      * Get the default profile for the specified data.
@@ -34,7 +34,7 @@ interface FilePickerInterface
      * @param int $uid An optional admin user id.
      * @return FilePickerProfile
      */
-    public function get_default_profile( $dir = null, $uid = null );
+    public function get_default_profile( $dir = '', $uid = 0 );
 
     /**
      * Get the URL required to render the filepicker

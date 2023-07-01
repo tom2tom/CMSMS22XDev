@@ -46,13 +46,13 @@ class CmsInstallTest
 	public $error_fragment; //string, but isset() test is used
 	public $ini_val = '';
 	public $message = '';
-	public $opt = '';
+	public $opt = [];
 	public $res = '';
 	public $res_text = '';
-	public $secondvalue = [];
+	public $secondvalue = ''; // mixed string | array
 	public $special_failed = false;
 	public $title = '';
-	public $value = null;
+	public $value = null; // mixed, not yet set
 }
 
 /**
@@ -75,8 +75,11 @@ function getSupportedDBDriver()
  */
 function getTestValues( $property )
 {
+	// CMSMS itself doesn't currently need PHP 7+, but Smarty4 needs 7.1 PHP 7.2 EOL late 2020, 7.3 EOL late 2021
+	// TODO set recommended PHP = earliest current-security-supported micro-version
+	// via https://www.php.net/supported-versions.php and https://www.php.net/releases/index.php
 	$range = array(
-		'php_version'			=> array('minimum'=>'7.0.0', 'recommended'=>'7.4.0'),
+		'php_version'			=> array('minimum'=>'7.1.0', 'recommended'=>'8.0.28'),
 		'gd_version'			=> array('minimum'=>2),
 		'memory_limit'			=> array('minimum'=>'16M', 'recommended'=>'24M'),
 		'max_execution_time'	=> array('minimum'=>30, 'recommended'=>60),
@@ -89,7 +92,7 @@ function getTestValues( $property )
 	);
 
 	if(array_key_exists($property, $range)) {
-		if(empty($range[$property]['recommended']))	$range[$property]['recommended'] = $range[$property]['minimum'];
+		if(empty($range[$property]['recommended'])) $range[$property]['recommended'] = $range[$property]['minimum'];
 		return array($range[$property]['minimum'], $range[$property]['recommended']);
 	}
 
@@ -147,7 +150,7 @@ function extension_loaded_or( $test )
  * @param string  $error_fragment
  * @param string  $error
 */
-function getTestReturn( &$test, $required, $message = '', $error_fragment = '', $error = '' )
+function getTestReturn( $test, $required, $message = '', $error_fragment = '', $error = '' )
 {
 	global $lang_fn;
 	switch($test->res) {
@@ -180,7 +183,7 @@ function getTestReturn( &$test, $required, $message = '', $error_fragment = '', 
  * @param object  $db
  * @param string  $message
 */
-function & testSupportedDatabase( $required, $title, $db = false, $message = '' )
+function testSupportedDatabase( $required, $title, $db = false, $message = '' )
 {
 	global $lang_fn;
 
@@ -294,12 +297,12 @@ function getApacheModules( $module = false )
  * @param string $error_fragment
  * @param string $error
 */
-function & testDummy( $title, $value, $return, $message = '', $error_fragment = '', $error = '' )
+function testDummy( $title, $value, $return, $message = '', $error_fragment = '', $error = '' )
 {
 	$test = new CmsInstallTest();
 	$test->title = $title;
 	$test->value = $value;
-	$test->secondvalue = [];
+	$test->secondvalue = '';
 	$test->res = $return;
 
 	getTestReturn($test, '', $message, $error_fragment, $error);
@@ -313,7 +316,7 @@ function & testDummy( $title, $value, $return, $message = '', $error_fragment = 
  * @param string $testfunc
  * @param string $message
 */
-function & testConfig( $title, $varname, $testfunc = '', $message = '' )
+function testConfig( $title, $varname, $testfunc = '', $message = '' )
 {
 	$gCms = cmsms();
 	$config = $gCms->GetConfig();
@@ -331,8 +334,8 @@ function & testConfig( $title, $varname, $testfunc = '', $message = '' )
 		$test = new CmsInstallTest();
 		$test->title = $title;
 		$test->value = $value;
-		$test->secondvalue = null;
-		if(trim($message) != '') $test->message = $message;
+		$test->secondvalue = '';
+		if($message) $test->message = trim($message);
 	}
 
 	return $test;
@@ -344,9 +347,9 @@ function & testConfig( $title, $varname, $testfunc = '', $message = '' )
  * @param string $varname
  * @param string $type
 */
-function testIni( &$test, $varname, $type, $opt = '' )
+function testIni( $test, $varname, $type, $opt = '' )
 {
-	$error = null;
+	$error = ''; // not changed here
 	$str = ini_get($varname);
 
 	switch($type) {
@@ -398,7 +401,7 @@ function testIni( &$test, $varname, $type, $opt = '' )
  * @param boolean $empty_is_ok
  * @param string  $error_fragment
 */
-function & testIntegerMask($required,$title,$var,$mask,$message = '',$ini = true,$negate = false,$display_value = true,$error_fragment = '')
+function testIntegerMask($required,$title,$var,$mask,$message = '',$ini = true,$negate = false,$display_value = true,$error_fragment = '')
 {
 	$test = new CmsInstallTest();
 	$test->title = $title;
@@ -438,7 +441,7 @@ function & testIntegerMask($required,$title,$var,$mask,$message = '',$ini = true
  * @param boolean $empty_is_ok
  * @param string  $error_fragment
 */
-function & testInteger( $required, $title, $var, $message = '', $ini = true, $empty_is_ok = true, $error_fragment = '' )
+function testInteger( $required, $title, $var, $message = '', $ini = true, $empty_is_ok = true, $error_fragment = '' )
 {
 	global $lang_fn;
 	$test = new CmsInstallTest();
@@ -480,10 +483,10 @@ function & testInteger( $required, $title, $var, $message = '', $ini = true, $em
  * @param boolean $code_not_empty
  * @param string  $error_fragment
  */
-function & testString( $required, $title, $var, $message = '', $ini = true, $code_empty = 'green', $code_not_empty = 'yellow',
+function testString( $required, $title, $var, $message = '', $ini = true, $code_empty = 'green', $code_not_empty = 'yellow',
 					   $error_fragment = '' )
 {
-    global $lang_fn;
+	global $lang_fn;
 	$test = new CmsInstallTest();
 	$test->title = $title;
 
@@ -517,7 +520,7 @@ function & testString( $required, $title, $var, $message = '', $ini = true, $cod
  * @param boolean $negative_test
  * @param string  $error_fragment
 */
-function & testBoolean( $required, $title, $var, $message = '', $ini = true, $negative_test = false, $error_fragment = '' )
+function testBoolean( $required, $title, $var, $message = '', $ini = true, $negative_test = false, $error_fragment = '' )
 {
 	global $lang_fn;
 	$test = new CmsInstallTest();
@@ -560,8 +563,7 @@ function & testBoolean( $required, $title, $var, $message = '', $ini = true, $ne
  * @param int     $unlimited
  * @param string  $error_fragment
 */
-function & testVersionRange( $required, $title, $var, $message = '', $minimum = '', $recommended = '', $ini = true, $unlimited = null,
-							 $error_fragment='' )
+function testVersionRange( $required, $title, $var, $message = '', $minimum = '', $recommended = '', $ini = true, $unlimited = 0, $error_fragment='' )
 {
 	$test = new CmsInstallTest();
 	$test->title = $title;
@@ -569,16 +571,16 @@ function & testVersionRange( $required, $title, $var, $message = '', $minimum = 
 
 	if($ini) {
 		testIni($test, $var, 'string');
-		if(isset($test->error))	$required = false;
+		if(isset($test->error)) $required = false;
 	}
 	else {
 		$test->ini_val = $var;
 	}
 
 	$test->value = $test->ini_val;
-	$test->secondvalue = null;
+	$test->secondvalue = '';
 
-	if( (! is_null($unlimited)) && ($test->ini_val == (string) $unlimited) ) {
+	if( $unlimited && ((string) $test->ini_val == (string) $unlimited) ) {
 		$test->value = $lang_fn('unlimited');
 		$test->res = 'green';
 		getTestReturn($test, $required);
@@ -612,8 +614,7 @@ function & testVersionRange( $required, $title, $var, $message = '', $minimum = 
  * @param int     $unlimited
  * @param string  $error_fragment
 */
-function & testRange( $required, $title, $var, $message = '', $minimum = '', $recommended = '', $ini = true, $test_as_bytes = false, $unlimited = null,
-					  $error_fragment = '' )
+function testRange( $required, $title, $var, $message = '', $minimum = '', $recommended = '', $ini = true, $test_as_bytes = false, $unlimited = 0, $error_fragment = '' )
 {
 	$test = new CmsInstallTest();
 	$test->title = $title;
@@ -629,14 +630,14 @@ function & testRange( $required, $title, $var, $message = '', $minimum = '', $re
 	}
 
 	$test->value = $test->ini_val;
-	$test->secondvalue = null;
+	$test->secondvalue = '';
 	if($test_as_bytes) {
 		$test->ini_val = returnBytes($test->ini_val);
 		$minimum = returnBytes($minimum);
 		$recommended = returnBytes($recommended);
 	}
 
-	if( (! is_null($unlimited)) && ((int) $test->ini_val == (int) $unlimited) ) {
+	if( $unlimited && ((int) $test->ini_val == (int) $unlimited) ) {
 		$test->value = $lang_fn('unlimited');
 		$test->res = 'green';
 		getTestReturn($test, $required);
@@ -692,7 +693,7 @@ function returnBytes( $val )
  * @param string  $file
  * @param string  $data
  */
-function & testUmask( $required, $title, $umask, $message = '', $debug = false, $dir = '', $file = '_test_umask_', $data = 'this is a test' )
+function testUmask( $required, $title, $umask, $message = '', $debug = false, $dir = '', $file = '_test_umask_', $data = 'this is a test' )
 {
 	$test = new CmsInstallTest();
 	$test->title = $title;
@@ -865,7 +866,7 @@ function permission_octal2string( $mode )
  * @param string  $dir
  * @param string  $file
 */
-function & testCreateDirAndFile( $required, $title, $message = '', $debug = false, $dir = '_test_dir_file_', $file = '_test_dir_file_' )
+function testCreateDirAndFile( $required, $title, $message = '', $debug = false, $dir = '_test_dir_file_', $file = '_test_dir_file_' )
 {
 	$test = new CmsInstallTest();
 	$test->title = $title;
@@ -876,7 +877,7 @@ function & testCreateDirAndFile( $required, $title, $message = '', $debug = fals
 
 	if($debug) {
 		if(file_exists($file)) unlink($file);
-		if( (is_dir($dir)) && (false !== strpos($dir, dirname(dirname(__FILE__)))) ) rmdir($dir);
+		if( (is_dir($dir)) && (false !== strpos($dir, dirname(__DIR__))) ) rmdir($dir);
 
 		if(! mkdir($dir)) $test->error = $lang_fn('errordirectorynotwritable') .' ('. $dir . ')';
 		if(! touch($file)) $test->error = $lang_fn('errorcantcreatefile') .' ('. $file . ')';
@@ -884,7 +885,7 @@ function & testCreateDirAndFile( $required, $title, $message = '', $debug = fals
 	}
 	else {
 		if(file_exists($file)) @unlink($file);
-		if( (@is_dir($dir)) && (false !== strpos($dir, dirname(dirname(__FILE__)))) ) @rmdir($dir);
+		if( (@is_dir($dir)) && (false !== strpos($dir, dirname(__DIR__))) ) @rmdir($dir);
 
 		@mkdir($dir);
 		@touch($file);
@@ -894,12 +895,12 @@ function & testCreateDirAndFile( $required, $title, $message = '', $debug = fals
 	}
 
 	if(! $_test) {
-        $test->value = 0;
+		$test->value = 0;
 		$test->res = 'red';
 		getTestReturn($test, $required, $message, 'Can.27t_create_file');
 	}
 	else {
-        $test->value = 1;
+		$test->value = 1;
 		$test->res = 'green';
 		getTestReturn($test, $required);
 	}
@@ -918,7 +919,7 @@ function & testCreateDirAndFile( $required, $title, $message = '', $debug = fals
  * @param string  $file
  * @param string  $data
 */
-function & testDirWrite( $required, $title, $dir, $message = '', $quick = 0, $debug = false, $file = '_test_dir_write_', $data = 'this is a test' )
+function testDirWrite( $required, $title, $dir, $message = '', $quick = 0, $debug = false, $file = '_test_dir_write_', $data = 'this is a test' )
 {
 	$test = new CmsInstallTest();
 	$test->title = $title;
@@ -953,14 +954,13 @@ function & testDirWrite( $required, $title, $dir, $message = '', $quick = 0, $de
 		if($debug) $fp = fopen($test_file, "w");
 		else       $fp = @fopen($test_file, "w");
 		if($fp !== false) {
-			$_return = '';
 			if($debug) $_return = fwrite($fp, $data);
 			else       $_return = @fwrite($fp, $data);
 			@fclose($fp);
 
-			if(! $debug) @unlink($test_file);
+			if(! $debug) @unlink($test_file); // TODO check no redundant file left
 
-			if(! empty($_return)) {
+			if($_return) {
 				$test->res = 'green';
 				getTestReturn($test, $required);
 				return $test;
@@ -982,7 +982,7 @@ function & testDirWrite( $required, $title, $dir, $message = '', $quick = 0, $de
  * @param string  $message
  * @param boolean $debug
 */
-function & testFileWritable( $required, $title, $file, $message = '', $debug = false )
+function testFileWritable( $required, $title, $file, $message = '', $debug = false )
 {
 	$test = new CmsInstallTest();
 	$test->title = $title;
@@ -1036,26 +1036,26 @@ function & testFileWritable( $required, $title, $file, $message = '', $debug = f
  * @param int     $timeout
  * @param string  $search
 */
-function & testRemoteFile( $required, $title, $url = '', $message = '', $debug = false, $timeout = 10, $search = 'cmsmadesimple' )
+function testRemoteFile( $required, $title, $url = '', $message = '', $debug = false, $timeout = 10, $search = 'cmsmadesimple' )
 {
 	global $lang_fn;
 	if(empty($url)) $url = CMS_DEFAULT_VERSIONCHECK_URL;
 
 	$test = new CmsInstallTest();
 	$test->title = $title;
-    $test->value = $lang_fn('success');
+	$test->value = $lang_fn('success');
 
 	if(! $url_info = parse_url($url)) {
 		// Relative or invalid URL?
 		$test->res = 'red';
-        $test->value = $lang_fn('failure');
+		$test->value = $lang_fn('failure');
 		getTestReturn($test, $required, '', '', $lang_fn('invalid_test'));
 		return $test;
 	}
 
 	if( !isset($url_info['scheme']) || !isset($url_info['host']) ) {
 		$test->res = 'red';
-        $test->value = $lang_fn('failure');
+		$test->value = $lang_fn('failure');
 		getTestReturn($test, $required, '', '', $lang_fn('invalid_url'));
 		return $test;
 	}
@@ -1113,7 +1113,7 @@ function & testRemoteFile( $required, $title, $url = '', $message = '', $debug =
 		}
 		else {
 			$test->res = 'red';
-            $test->value = $lang_fn('failure');
+			$test->value = $lang_fn('failure');
 			getTestReturn($test, $required, '', '', $lang_fn('connection_error'));
 			$test->continueon = 0;
 			return $test;
@@ -1257,7 +1257,7 @@ function & testRemoteFile( $required, $title, $url = '', $message = '', $debug =
  * @param string  $formattime
  * @param boolean $debug
 */
-function & testFileChecksum( $required, $title, $file, $checksum, $message = '', $formattime = '%c', $debug = false )
+function testFileChecksum( $required, $title, $file, $checksum, $message = '', $formattime = '%c', $debug = false )
 {
 	$test = new CmsInstallTest();
 	$test->title = $title;
@@ -1354,7 +1354,7 @@ function testSessionSavePath( $sess_path )
  * @return object
  * @param string $inputname
 */
-function & testFileUploads( $inputname )
+function testFileUploads( $inputname )
 {
 	global $lang_fn;
 
@@ -1411,7 +1411,7 @@ function & testFileUploads( $inputname )
 			}
 			elseif(! is_readable($_file['tmp_name'])) {
 				$_data['error_string'] = $lang_fn('upload_file_no_readable');
-            }
+			}
 			else {
 				$_data['error_string'] = $lang_fn('upload_err_unknown');
 			}
@@ -1427,7 +1427,7 @@ function & testFileUploads( $inputname )
  * @return object
  *
  */
-function &_testTimeSettings1()
+function _testTimeSettings1()
 {
 	global $lang_fn;
 	$test = new CmsInstallTest();
@@ -1436,17 +1436,17 @@ function &_testTimeSettings1()
 	$fn = tempnam(TMP_CACHE_LOCATION,'tst');
 	@touch($fn);
 	$mtime = filemtime($fn);
-    $test->value = 1;
+	$test->value = 1;
 	$test->res = 'green';
 	if( $mtime === FALSE ) {
-        $test->value = 0;
+		$test->value = 0;
 		$test->res = 'red';
 	}
 	else {
 		$val = time() - $mtime;
 		if( abs($val) > 3 ) {
 			$test->res = 'red';
-            $test->value = 0;
+			$test->value = 0;
 			$test->message = $lang_fn('test_file_timedifference_msg',$val);
 		}
 	}
@@ -1458,7 +1458,7 @@ function &_testTimeSettings1()
  * @return object
  *
  */
-function &_testTimeSettings2()
+function _testTimeSettings2()
 {
 	global $lang_fn;
 	$test = new CmsInstallTest();
@@ -1466,12 +1466,12 @@ function &_testTimeSettings2()
 
 	$query = 'SELECT UNIX_TIMESTAMP()';  // mysql only.
 	$test->res = 'green';
-    $test->value = 1;
+	$test->value = 1;
 	$tmp = cmsms()->GetDb()->GetOne($query);
 	$val = time() - $tmp;
 	if( abs( time() - $tmp ) > 3 ) {
 		$test->res = 'red';
-        $test->value = 0;
+		$test->value = 0;
 		$test->msg = $lang_fn('test_db_timedifference_msg',$val);
 	}
 	return $test;
@@ -1486,14 +1486,14 @@ function &_testTimeSettings2()
  * @param string  $message
  * @param string  $error_fragment
 */
-function & testGDVersion( $required, $title, $minimum, $message = '', $error_fragment = '' )
+function testGDVersion( $required, $title, $minimum, $message = '', $error_fragment = '' )
 {
 	$test = new CmsInstallTest();
 	$test->title = $title;
 
 	$gd_version_number = GDVersion();
 	$test->value = $gd_version_number;
-	$test->secondvalue = null;
+	$test->secondvalue = '';
 
 	$test->res = 'green';
 	if($gd_version_number < $minimum) {
@@ -1510,7 +1510,7 @@ function & testGDVersion( $required, $title, $minimum, $message = '', $error_fra
 */
 function GDVersion()
 {
-	static $gd_version_number = null;
+	static $gd_version_number = null; // aka unset
 
 	if(is_null($gd_version_number)) {
 		if(extension_loaded('gd')) {

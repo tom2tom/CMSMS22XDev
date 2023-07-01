@@ -1,18 +1,19 @@
-(function($) {
-	// shake error
-	$('#error').effect('shake', {
-		times: '6',
-		distance: '3'
-	}, 15);
-	// hide message
-	$('.message').hide().fadeIn(2600);
-	// toggle info window
+$(function() {
 	$('.info-wrapper').removeClass('open');
-	$('.toggle-info').click(function() {
+	// shake it all on error
+	$('#error').effect('shake', {
+		times: 6,
+		distance: 3
+	}, 15);
+	// reveal any message
+	$('.message').hide().fadeIn(2600);
+	// focus input with class focus
+	$('input.focus').first().trigger('focus');
+	// toggle info window
+	$('.toggle-info').on('click', function(ev) {
+		ev.preventDefault();
 		$('.info').toggle();
 		$('.info-wrapper').toggleClass('open');
 		return false;
 	});
-	// focus input with class focus
-	$('input:first.focus').focus();
-})(jQuery);
+});

@@ -42,20 +42,24 @@ else if( isset($params['submit_filter_css']) ) {
         $filter_css_rec['limit'] = max(2,min(100,(int)$params['filter_limit_css']));
     }
     $this->SetCurrentTab('stylesheets');
-	unset($_SESSION[$this->GetName().'tpl_page']);
+    unset($_SESSION[$this->GetName().'tpl_page']);
     cms_userprefs::set($this->GetName().'css_filter',serialize($filter_css_rec));
 }
 else if( isset($params['submit_create']) ) {
-	$this->Redirect($id,'admin_edit_template',$returnid,array('import_type'=>$params['import_type']));
-	return;
+    $tmp = $params['import_type'];
+    if( startswith($tmp, 't:') ) {
+        $tmp = substr($tmp, 2); // only the type-id is useful
+    }
+    $this->Redirect($id,'admin_edit_template',$returnid,array('import_type'=>$tmp));
+//    return; // useless here
 }
 else if( isset($params['submit_bulk']) ) {
-	$tmp = array('allparms'=>base64_encode(json_encode($params)));
-	$this->Redirect($id,'admin_bulk_template',$returnid,$tmp);
+    $tmp = array('allparms'=>base64_encode(json_encode($params)));
+    $this->Redirect($id,'admin_bulk_template',$returnid,$tmp);
 }
 else if( isset($params['submit_bulk_css']) ) {
-	$tmp = array('allparms'=>base64_encode(json_encode($params)));
-	$this->Redirect($id,'admin_bulk_css',$returnid,$tmp);
+    $tmp = array('allparms'=>base64_encode(json_encode($params)));
+    $this->Redirect($id,'admin_bulk_css',$returnid,$tmp);
 }
 else if( isset($params['design_setdflt']) && $this->CheckPermission('Manage Designs') ) {
     $design_id = (int)$params['design_setdflt'];
@@ -81,23 +85,22 @@ else if( isset($params['design_setdflt']) && $this->CheckPermission('Manage Desi
 $tmp = cms_userprefs::get($this->GetName().'template_filter');
 if( $tmp ) $filter_tpl_rec = unserialize($tmp);
 if( isset($params['tpl_page']) ) {
-	$this->SetCurrentTab('templates');
-	$page = max(1,(int)$params['tpl_page']);
-	$_SESSION[$this->GetName().'tpl_page'] = $page;
-	$filter_tpl_rec['offset'] = ($page - 1) * $filter_tpl_rec['limit'];
+    $this->SetCurrentTab('templates');
+    $page = max(1,(int)$params['tpl_page']);
+    $_SESSION[$this->GetName().'tpl_page'] = $page;
+    $filter_tpl_rec['offset'] = ($page - 1) * $filter_tpl_rec['limit'];
 } else if( isset($_SESSION[$this->GetName().'tpl_page']) ) {
-	$page = max(1,(int)$_SESSION[$this->GetName().'tpl_page']);
-	$filter_tpl_rec['offset'] = ($page - 1) * $filter_tpl_rec['limit'];
+    $page = max(1,(int)$_SESSION[$this->GetName().'tpl_page']);
+    $filter_tpl_rec['offset'] = ($page - 1) * $filter_tpl_rec['limit'];
 }
 
 $efilter = $filter_tpl_rec;
 if( isset($efilter['tpl']) && $efilter['tpl'] != '' ) {
-	$efilter[] = $efilter['tpl'];
-	unset($efilter['tpl']);
+    $efilter[] = $efilter['tpl'];
+    unset($efilter['tpl']);
 }
-
 /*
-$templates = null;
+$templates = [];
 try {
     $tpl_query = new CmsLayoutTemplateQuery($efilter);
     $templates = $tpl_query->GetMatches();
@@ -106,49 +109,52 @@ catch( Exception $e ) {
     // nothing here
 }
 if( count($templates) ) {
-	$smarty->assign('templates',$templates);
-	$tpl_nav = array();
-	$tpl_nav['pagelimit'] = $tpl_query->limit;
-	$tpl_nav['numpages'] = $tpl_query->numpages;
-	$tpl_nav['numrows'] = $tpl_query->totalrows;
-	$tpl_nav['curpage'] = (int)($tpl_query->offset / $tpl_query->limit) + 1;
-	$smarty->assign('tpl_nav',$tpl_nav);
+    $smarty->assign('templates',$templates);
+    $tpl_nav = array();
+    $tpl_nav['pagelimit'] = $tpl_query->limit;
+    $tpl_nav['numpages'] = $tpl_query->numpages;
+    $tpl_nav['numrows'] = $tpl_query->totalrows;
+    $tpl_nav['curpage'] = (int)($tpl_query->offset / $tpl_query->limit) + 1;
+    $smarty->assign('tpl_nav',$tpl_nav);
 }
 */
-
-// build a list of the types, and categories, and later (designs).
+// build a list of the types, and categories, and later, designs.
 $opts = array();
 $opts[''] = $this->Lang('prompt_none');
 $types = CmsLayoutTemplateType::get_all();
 $originators = array();
 if( $types && count($types) ) {
-    $tmp = $tmp2 = $tmp3 = [];
+    $tmp = array();
     for( $i = 0; $i < count($types); $i++ ) {
         $tmp['t:'.$types[$i]->get_id()] = $types[$i]->get_langified_display_value();
-        $tmp2[$types[$i]->get_id()] = $types[$i]->get_langified_display_value();
-        $tmp3[$types[$i]->get_id()] = $types[$i];
-		if( !isset($originators[$types[$i]->get_originator()]) ) {
-			$originators['o:'.$types[$i]->get_originator()] = $types[$i]->get_originator(TRUE);
-		}
+        $org = $types[$i]->get_originator();
+        if( !isset($originators[$org]) ) {
+            $originators['o:'.$org] = $types[$i]->get_originator(TRUE);
+        }
     }
-    usort($tmp3,function($a,$b){
-            // core always beets alphabetic type
-            // then sort by originator and then name.
-            $ao = $a->get_originator();
-            $bo = $b->get_originator();
-            if( $ao == $a::CORE && $bo ==  $a::CORE ) return strcasecmp($a->get_name(),$b->get_name());
-            if( $ao == $a::CORE ) return -1;
-            if( $bo == $b::CORE ) return 1;
-            return strcasecmp($a->get_langified_display_value(),$b->get_langified_display_value());
-        });
     asort($tmp);
-    asort($tmp2);
+    $opts[$this->Lang('tpl_types')] = $tmp; // data to populate the new-template type-selector
+    $smarty->assign('list_types',$tmp); // for TBA
     asort($originators);
-    $smarty->assign('list_all_types',$tmp3);
-    $smarty->assign('list_types',$tmp2);
-    $opts[$this->Lang('tpl_types')] = $tmp;
-	$opts[$this->Lang('tpl_originators')] = $originators;
+    $opts[$this->Lang('tpl_originators')] = $originators;
+    // data to populate the template-types tab
+    uasort($types,function($a,$b) {
+        // core always beats alphabetic type
+        // then sort by originator and then name.
+        $ao = $a->get_originator();
+        $bo = $b->get_originator();
+        if( $ao == $a::CORE && $bo ==  $a::CORE ) return strcasecmp($a->get_name(),$b->get_name());
+        if( $ao == $a::CORE ) return -1;
+        if( $bo == $b::CORE ) return 1;
+        return strcasecmp($a->get_langified_display_value(),$b->get_langified_display_value());
+    });
+    $smarty->assign('list_all_types',$types);
 }
+else {
+    $smarty->assign('list_types',[]);
+    $smarty->assign('list_all_types',[]);
+}
+
 $cats = CmsLayoutTemplateCategory::get_all();
 if( $cats && count($cats) ) {
     $smarty->assign('list_categories',$cats);
@@ -158,6 +164,7 @@ if( $cats && count($cats) ) {
     }
     $opts[$this->Lang('prompt_categories')] = $tmp;
 }
+
 $designs = CmsLayoutCollection::get_all();
 if( $designs && count($designs) ) {
     $smarty->assign('list_designs',$designs);
@@ -166,9 +173,9 @@ if( $designs && count($designs) ) {
         $tmp['d:'.$designs[$i]->get_id()] = $designs[$i]->get_name();
         $tmp2[$designs[$i]->get_id()] = $designs[$i]->get_name();
     }
-    asort($tmp);
     asort($tmp2);
     $smarty->assign('design_names',$tmp2);
+    asort($tmp);
     $opts[$this->Lang('prompt_design')] = $tmp;
 }
 if( $this->CheckPermission('Manage Designs') ) {
@@ -180,24 +187,24 @@ if( $this->CheckPermission('Manage Designs') ) {
         $tmp['u:'.$allusers[$i]->id] = $allusers[$i]->username;
         $users[$allusers[$i]->id] = $allusers[$i]->username;
     }
-    asort($tmp);
     asort($users);
     $smarty->assign('list_users',$users);
+    asort($tmp);
     $opts[$this->Lang('prompt_user')] = $tmp;
 }
 
 if( $this->CheckPermission('Manage Stylesheets') ) {
-	$tmp = cms_userprefs::get($this->GetName().'css_filter');
-	if( $tmp ) $filter_css_rec = unserialize($tmp);
-	if( isset($params['css_page']) ) {
-		$this->SetCurrentTab('stylesheets');
-		$page = max(1,(int)$params['css_page']);
-		$_SESSION[$this->GetName().'css_page'] = $page;
-		$filter_css_rec['offset'] = ($page - 1) * $filter_css_rec['limit'];
-	} else if( isset($_SESSION[$this->GetName().'css_page']) ) {
-		$page = max(1,(int)$_SESSION[$this->GetName().'css_page']);
-		$filter_css_rec['offset'] = ($page - 1) * $filter_css_rec['limit'];
-	}
+    $tmp = cms_userprefs::get($this->GetName().'css_filter');
+    if( $tmp ) $filter_css_rec = unserialize($tmp);
+    if( isset($params['css_page']) ) {
+        $this->SetCurrentTab('stylesheets');
+        $page = max(1,(int)$params['css_page']);
+        $_SESSION[$this->GetName().'css_page'] = $page;
+        $filter_css_rec['offset'] = ($page - 1) * $filter_css_rec['limit'];
+    } else if( isset($_SESSION[$this->GetName().'css_page']) ) {
+        $page = max(1,(int)$_SESSION[$this->GetName().'css_page']);
+        $filter_css_rec['offset'] = ($page - 1) * $filter_css_rec['limit'];
+    }
 }
 
 // give everything to smarty that we can.

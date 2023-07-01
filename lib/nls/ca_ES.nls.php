@@ -46,7 +46,7 @@ $nls['locale']['ca_ES'] = 'ca_ES,ca_ES.utf8,ca_ES.utf8@valencia,ca_ES.utf-8,ca_E
 $nls['encoding']['ca_ES'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['ca_ES'] = array(dirname(__FILE__).'/ca_ES/admin.inc.php');
+$nls['file']['ca_ES'] = array(__DIR__.'/ca_ES/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

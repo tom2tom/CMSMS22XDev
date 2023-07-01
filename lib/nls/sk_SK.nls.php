@@ -49,7 +49,7 @@ $nls['locale']['sk_SK'] = 'sk_SK,sk_SK.utf8,sk_SK.UTF-8,sk_SK.utf-8,slovak,Slova
 $nls['encoding']['sk_SK'] = "UTF-8";
 
 #Location of the file(s)
-$nls['file']['sk_SK'] = array(dirname(__FILE__).'/sk_SK/admin.inc.php');
+$nls['file']['sk_SK'] = array(__DIR__.'/sk_SK/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

@@ -171,9 +171,9 @@ while ($dbresult && $row = $dbresult->FetchRow()) {
     $onerow = new stdClass();
 
     $onerow->id = $row['news_id'];
-    $onerow->news_title = $row['news_title'];
+    $onerow->news_title = $row['news_title'] ? news_ops::execSpecialize($row['news_title']) : (string)$row['news_title'];
     $onerow->title = $this->CreateLink($id, 'editarticle', $returnid, $row['news_title'], array('articleid'=>$row['news_id']));
-    $onerow->data = $row['news_data'];
+    $onerow->data = $row['news_data'] ? news_ops::execSpecialize($row['news_data']) : (string)$row['news_data']; 
     $onerow->expired = 0;
     if( ($row['end_time'] != '') && ($db->UnixTimeStamp($row['end_time']) < time()) ) $onerow->expired = 1;
     $onerow->postdate = $row['news_date'];

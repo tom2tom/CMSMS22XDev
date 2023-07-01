@@ -7,16 +7,16 @@
 	<div class="footer-right cf">
 		<ul class="links">
 			<li>
-				<a href="https://docs.cmsmadesimple.org/" rel="external" title="{'documentation'|lang}">{'documentation'|lang}</a>
+				<a href="https://docs.cmsmadesimple.org/" rel="external" title="{lang('documentation')}">{lang('documentation')}</a>
 			</li>			
 			<li>
-				<a href="https://forum.cmsmadesimple.org/" rel="external" title="{'forums'|lang}">{'forums'|lang}</a>
+				<a href="https://forum.cmsmadesimple.org/" rel="external" title="{lang('forums')}">{lang('forums')}</a>
 			</li>
 			<li>
-				<a href="http://www.cmsmadesimple.org/about-link/" rel="external" title="{'about'|lang}">{'about'|lang}</a>
+				<a href="http://www.cmsmadesimple.org/about-link/" rel="external" title="{lang('about')}">{lang('about')}</a>
 			</li>
 			<li>
-				<a href="http://www.cmsmadesimple.org/about-link/about-us/" rel="external" title="{'team'|lang}">{'team'|lang}</a>
+				<a href="http://www.cmsmadesimple.org/about-link/about-us/" rel="external" title="{lang('team')}">{lang('team')}</a>
 			</li>
 		</ul>
 	</div>

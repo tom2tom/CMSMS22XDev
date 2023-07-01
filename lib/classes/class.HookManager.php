@@ -17,7 +17,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: class.global.inc.php 6939 2011-03-06 00:12:54Z calguy1000 $
+#$Id$
 
 /**
  * Contains classes and utilities for working with CMSMS hooks.
@@ -148,6 +148,7 @@ namespace CMSMS {
             } else if( is_callable($in) ) {
                 return spl_object_hash((object)$in);
             }
+            return '';
         }
 
         /**
@@ -171,10 +172,12 @@ namespace CMSMS {
         /**
          * Test if we are currently handling a hook or not.
          *
-         * @param null|string $name The hook name to test for.  If null is provided, the system will return true if any hook is being processed.
+         * @param null|string $name The hook name to test for.
+         *  If a falsy value is provided, the method will return true if
+         *  any hook is being processed.
          * @return bool
          */
-        public static function in_hook($name = null)
+        public static function in_hook($name = '')
         {
             if( !$name ) return (count(self::$_in_process) > 0);
             return in_array($name,self::$_in_process);
@@ -201,11 +204,12 @@ namespace CMSMS {
             $name = trim($name);
 
             $is_event = false;
-            $module = $eventname = null;
+            $module = '';
+            $eventname = '';
             if( strpos($name,':') !== FALSE ) list($module,$eventname) = explode('::',$name);
             if( $module && $eventname ) $is_event = true;
 
-            if( !$is_event && ( !isset(self::$_hooks[$name]) || !count(self::$_hooks[$name]->handlers) )  ) return; // nothing to do.
+            if( !$is_event && ( !isset(self::$_hooks[$name]) || !count(self::$_hooks[$name]->handlers) )  ) return []; // nothing to do.
 
             // note: $args is an array
             $value = $args;
@@ -233,7 +237,6 @@ namespace CMSMS {
                 foreach( self::$_hooks[$name]->handlers as $obj ) {
                     // input is passed to the callback, and can be adjusted.
                     // note it's not certain that the same data will be passed out of the handler
-                    $res = null;
                     if( empty($value) || !is_array($value) || $is_assoc($value) ) {
                         $res = call_user_func($obj->callable,$value);
                     } else {
@@ -266,12 +269,12 @@ namespace CMSMS {
             $args = func_get_args();
             $name = array_shift($args);
             $name = trim($name);
-            if( !isset(self::$_hooks[$name]) || !count(self::$_hooks[$name]->handlers)  ) return; // nothing to do.
+            if( !isset(self::$_hooks[$name]) || !count(self::$_hooks[$name]->handlers)  ) return null; // nothing to do.
 
             // note $args is an array
             $value = $args;
             self::$_in_process[] = $name;
-            $res = null;
+            $res = null; // mixed non-result
 
             if( isset(self::$_hooks[$name]->handlers) && count(self::$_hooks[$name]->handlers) ) {
                 // sort the handlers.
@@ -294,7 +297,7 @@ namespace CMSMS {
                     } else {
                         $res = call_user_func_array($obj->callable,$value);
                     }
-                    if( !empty( $res ) ) break;
+                    if( $res ) break;
                 }
             }
             array_pop(self::$_in_process);
@@ -323,11 +326,12 @@ namespace CMSMS {
             $name = trim($name);
             //if( is_array($args) && count($args) == 1 && is_array($args[0]) && !$is_assoc($args[0]) ) $args = $args[0];
             $is_event = false;
-            $module = $eventname = null;
+            $module = '';
+            $eventname = '';
             if( strpos($name,':') !== FALSE ) list($module,$eventname) = explode('::',$name);
             if( $module && $eventname ) $is_event = true;
 
-            if( !$is_event && ( !isset(self::$_hooks[$name]) || !count(self::$_hooks[$name]->handlers) )  ) return; // nothing to do.
+            if( !$is_event && ( !isset(self::$_hooks[$name]) || !count(self::$_hooks[$name]->handlers) )  ) return []; // nothing to do.
 
             // sort the handlers.
             if( !self::$_hooks[$name]->sorted ) {

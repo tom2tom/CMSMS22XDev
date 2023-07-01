@@ -81,7 +81,7 @@ try {
 			$reader = dm_reader_factory::get_reader($tmpfile);
 
 			if( isset($params['next2']) ) {
-				$error = null;
+				$error = 0;
 				if( !isset($params['check1']) ) {
 					$error = 1;
 					echo $this->ShowErrors($this->Lang('error_notconfirmed'));

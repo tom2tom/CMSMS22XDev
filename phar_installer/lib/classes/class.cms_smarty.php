@@ -26,7 +26,7 @@ class cms_smarty extends Smarty
     $this->setCompileDir($tmpdir.'/templates_c');
     $this->setCacheDir($tmpdir.'/cache');
 
-    $this->registerPlugin('modifier','tr',array($this,'modifier_tr'));
+//    $this->registerPlugin('modifier','tr',array($this,'modifier_tr'));
     $dirs = array($this->compile_dir,$this->cache_dir);
     for( $i = 0; $i < count($dirs); $i++ ) {
       @mkdir($dirs[$i],0777,TRUE);
@@ -36,15 +36,16 @@ class cms_smarty extends Smarty
 
   public static function get_instance()
   {
-    if( !is_object(self::$_instance) ) self::$_instance = new self();
+    if( !self::$_instance ) self::$_instance = new self();
     return self::$_instance;
   }
-
+/*
   public function modifier_tr()
   {
     $args = func_get_args();
     return langtools::get_instance()->translate($args);
   }
+*/
 }
 
 ?>

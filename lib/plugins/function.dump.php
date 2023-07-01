@@ -24,7 +24,7 @@ function smarty_function_dump($params, $smarty)
 		function build_accessor($parent_str,$parent_type,$childname) {
 			$str = $parent_str;
 			if( $parent_type == 'object' ) {
-                $str .= '-&gt;';
+				$str .= '-&gt;';
 			}
 			else if( $parent_type == 'array' ) {
 				$str .= '.';
@@ -33,16 +33,16 @@ function smarty_function_dump($params, $smarty)
 			return $str;
 		}
 
-		function dump_object($params,&$obj,$level=1,$ignore=array(),$accessor = '')
+		function dump_object($params,$obj,$level=1,$ignore=array(),$accessor = '')
 		{
 			$maxlevel = 3;
 			if( isset($params['maxlevel']) ) {
-                $maxlevel = (int)$params['maxlevel'];
-                $maxlevel = max(1,$maxlevel);
-                $maxlevel = min(10,$maxlevel);
-            }
+				$maxlevel = (int)$params['maxlevel'];
+				$maxlevel = max(1,$maxlevel);
+				$maxlevel = min(10,$maxlevel);
+			}
 
-			if( $level > $maxlevel ) return;
+			if( $level > $maxlevel ) return '';
 
 			$objname = get_class($obj);
 			$str = '';
@@ -97,7 +97,7 @@ function smarty_function_dump($params, $smarty)
 				$maxlevel = min(10,$maxlevel);
 			}
 
-			if( $level > $maxlevel ) return;
+			if( $level > $maxlevel ) return '';
 			$str = '';
 
 			foreach( $data as $key => $value ) {
@@ -123,7 +123,7 @@ function smarty_function_dump($params, $smarty)
 	}
 
 	// get the item name (without any $)
-	if( !isset($params['item']) ) return;
+	if( !isset($params['item']) ) return '';
 
 	$item = trim($params['item']);
 	if( startswith($item,'$') ) $item = substr($item,1);
@@ -137,7 +137,7 @@ function smarty_function_dump($params, $smarty)
 	if( $pos2 < $pos1 && $pos2 !== FALSE ) {
 		$pos = $pos2;
 		$len = 1;
-    }
+	}
 
 	$str = substr($item,0,$pos);
 	$work = substr($item,$pos+$len);
@@ -186,7 +186,7 @@ function smarty_function_dump($params, $smarty)
 		else {
 			$done = true;
 		}
-    }
+	}
 
 	$parenttype = gettype($obj);
 	$str = '<pre>';
@@ -195,19 +195,19 @@ function smarty_function_dump($params, $smarty)
 
 	if( is_object($obj) ) {
 		$str .= dump_object($params,$obj,0,$ignore,$item);
-    }
+	}
 	else if( is_array($obj) ) {
 		$str .= dump_array($params,$obj,0,$ignore,$item);
-    }
+	}
 	else {
 		$str .= $obj.'<br/>';
-    }
+	}
 	$str.='</pre>';
 
 	if( isset($params['assign']) ) {
-	    $smarty->assign(trim($params['assign']),$str);
-	    return;
-    }
+		$smarty->assign(trim($params['assign']),$str);
+		return '';
+	}
 	return $str;
 }
 

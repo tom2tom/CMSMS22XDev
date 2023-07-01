@@ -23,7 +23,7 @@ function smarty_function_global_content($params, $smarty)
 	if( isset($params['assign']) )
 	{
 		$smarty->assign(trim($params['assign']),$txt);
-		return;
+		return '';
 	}
 	return $txt;
 }

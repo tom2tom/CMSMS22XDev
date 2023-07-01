@@ -9,7 +9,7 @@ function smarty_function_thumbnail_url($params,$template)
 
     if( !$file ) {
         trigger_error('thumbnail_url plugin: invalid file parameter');
-        return;
+        return; // useless here
     }
 
     if( $add_dir ) {
@@ -17,11 +17,11 @@ function smarty_function_thumbnail_url($params,$template)
         $test = $dir.'/'.$add_dir;
         if( !is_dir($test) || !is_readable($test) ) {
             trigger_error("thumbnail_url plugin: dir=$add_dir invalid directory name specified");
-            return;
+            return; // useless here
         }
     }
 
-    $out = null;
+    $out = '';
     $file = 'thumb_'.$file;
     $fullpath = $dir.'/'.$file;
     if( is_file($fullpath) && is_readable($fullpath) ) {
@@ -33,7 +33,7 @@ function smarty_function_thumbnail_url($params,$template)
 
     if( $assign ) {
         $template->assign($assign,$out);
-        return;
+        return '';
     }
     return $out;
 }

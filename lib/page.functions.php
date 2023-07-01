@@ -196,10 +196,10 @@ function audit($itemid, $itemname, $action)
 
     $userid = get_userid(FALSE);
     $username = get_username(FALSE);
-    $ip_addr = null;
     if( $itemid == '' ) $itemid = -1;
     if( $userid < 1 ) $userid = 0;
 
+    $ip_addr = null; // empty table-value
     if( $userid > 0 && !$app->is_cli() ) $ip_addr = cms_utils::get_real_ip();
 
     $query = "INSERT INTO ".CMS_DB_PREFIX."adminlog (timestamp, user_id, username, item_id, item_name, action, ip_addr) VALUES (?,?,?,?,?,?,?)";
@@ -474,7 +474,7 @@ function get_pageid_or_alias_from_url()
             if (!isset($matches['id'])) $matches['id'] = 'cntnt01';
             if (!isset($matches['action'])) $matches['action'] = 'defaulturl';
             if (!isset($matches['inline'])) $matches['inline'] = 0;
-            if (!isset($matches['returnid']))	$matches['returnid'] = ''; #Look for default page
+            if (!isset($matches['returnid'])) $matches['returnid'] = ''; //Look for default page
             if (!isset($matches['module'])) $matches['module'] = $route->get_dest();
 
             //Get rid of numeric matches
@@ -557,17 +557,21 @@ function preprocess_mact($returnid)
 }
 
 /**
- * Replacement for deprecated strftime function
+ * Alternative to deprecated strftime() which also processes date/date_format()
+ * formats and which may be used as a drop-in replacement for strftime()
+ * or date(). (Not so for date_format(), whose arguments are in a different order.)
  * @since 2.2.16
  *
  * @param string $format strftime()- and/or date()-compatible format specifier
  * @param mixed $datevar timestamp | date-time-string | DateTime object | empty to use time() value
+ * @param mixed $locale  string | null Since 2.2.18 optional locale to use instead of the default
  * @return string
  */
-function locale_ftime($format, $datevar = null)
+function locale_ftime($format, $datevar = null, $locale = '')
 {
-    // hack to access shared code - do this properly in future!
+    // this approach is clunky, but avoids loading up memory for a method
+    // which is probably rarely used
     $fp = cms_join_path(CMS_ROOT_PATH, 'lib', 'plugins', 'modifier.localedate_format.php');
     require_once $fp;
-    return smarty_modifier_localedate_format($datevar, $format);
+    return smarty_modifier_localedate_format($datevar, $format, '', $locale);
 }

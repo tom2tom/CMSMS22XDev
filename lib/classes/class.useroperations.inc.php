@@ -17,7 +17,7 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-#$Id: class.user.inc.php 2961 2006-06-25 04:49:31Z wishy $
+#$Id$
 
 /**
  * User related functions.
@@ -32,7 +32,7 @@
 require_once(__DIR__ . DIRECTORY_SEPARATOR . 'class.user.inc.php');
 
 /**
- * Class for doing user related functions.  Maybe of the User object functions
+ * Class for doing user related functions.  Many of the User class methods
  * are just wrappers around these.
  *
  * @package CMS
@@ -71,9 +71,9 @@ class UserOperations
 	 *
 	 * @return UserOperations
 	 */
-	public static function &get_instance()
+	public static function get_instance()
 	{
-		if( !is_object(self::$_instance) ) self::$_instance = new UserOperations();
+		if( !self::$_instance ) self::$_instance = new self();
 		return self::$_instance;
 	}
 
@@ -155,16 +155,14 @@ FROM ".CMS_DB_PREFIX."users ORDER BY username";
 	 * Does not use a cache, so use sparingly.
 	 *
 	 * @param mixed $username Username to load
-	 * @param mixed $password Password to check against
-	 * @param mixed $activeonly Only load the user if they are active
-	 * @param mixed $adminaccessonly Only load the user if they have admin access
-	 * @return mixed If successful, the filled User object.  If it fails, it returns false.
+	 * @param mixed $password Password to check
+	 * @param mixed $activeonly Only load the user if she/he is active. Default true,
+	 * @param mixed $adminaccessonly Only load the user if she/he has admin access. Default false,
+	 * @return mixed If successful, the filled User object.  Otherwise null.
 	 * @since 0.6.1
 	 */
 	function LoadUserByUsername($username, $password = '', $activeonly = true, $adminaccessonly = false)
 	{
-		// note: does not use cache
-		$result = null;
 		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
 
@@ -176,17 +174,17 @@ FROM ".CMS_DB_PREFIX."users ORDER BY username";
 		$where[] = 'username = ?';
 		$params[] = $username;
 
-		if ($password != '') {
+		if ($password) {
 			$where[] = 'password = ?';
 			$params[] = md5(get_site_preference('sitemask','').$password);
 		}
 
-		if ($activeonly == true) {
+		if ($activeonly) {
 			$joins[] = CMS_DB_PREFIX."user_groups ug ON u.user_id = ug.user_id";
 			$where[] = "u.active = 1";
 		}
 
-		if ($adminaccessonly == true) {
+		if ($adminaccessonly) {
 			$where[] = "admin_access = 1";
 		}
 
@@ -194,25 +192,28 @@ FROM ".CMS_DB_PREFIX."users ORDER BY username";
 		if( !empty($where) ) $query .= ' WHERE '.implode(' AND ',$where);
 
 		$id = $db->GetOne($query,$params);
-		if( $id ) $result = self::LoadUserByID($id);
+		if( $id > 0 ) {
+			$result = self::LoadUserByID($id);
+		}
+		else { $result = null; } // no object
 
 		return $result;
 	}
 
 	/**
-	 * Loads a user by user id.
+	 * Loads a User corresponding to the specified user id.
 	 *
 	 * @param mixed $id User id to load
-	 * @return mixed If successful, the filled User object.  If it fails, it returns false.
+	 * @return mixed If successful, the filled User object.  If it fails, it returns null.
 	 * @since 0.6.1
 	 */
 	function LoadUserByID($id)
 	{
 		$id = (int)$id;
-		if( $id < 1 ) return false;
+		if( $id < 1 ) return null; // no object
 		if( isset($this->_saved_users[$id]) ) return $this->_saved_users[$id];
 
-		$result = false;
+		$result = null; // no object
 		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
 
@@ -245,23 +246,21 @@ FROM ".CMS_DB_PREFIX."users ORDER BY username";
 	 */
 	function InsertUser($user)
 	{
-		$result = -1;
-
 		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
 
 		// check for conflict in username
 		$query = 'SELECT user_id FROM '.CMS_DB_PREFIX.'users WHERE username = ?';
 		$tmp = $db->GetOne($query,array($user->username));
-		if( $tmp ) return $result;
+		if( $tmp ) return -1;
 
 		$time = $db->DBTimeStamp(time());
 		$new_user_id = $db->GenID(CMS_DB_PREFIX."users_seq");
 		$query = "INSERT INTO ".CMS_DB_PREFIX."users (user_id, username, password, active, first_name, last_name, email, admin_access, create_date, modified_date) VALUES (?,?,?,?,?,?,?,?,".$time.",".$time.")";
 		$dbresult = $db->Execute($query, array($new_user_id, $user->username, $user->password, $user->active, $user->firstname, $user->lastname, $user->email, 1)); //Force admin access on
-		if ($dbresult !== false) $result = $new_user_id;
+		if ($dbresult !== false) return $new_user_id;
 
-		return $result;
+		return -1;
 	}
 
 	/**
@@ -273,22 +272,21 @@ FROM ".CMS_DB_PREFIX."users ORDER BY username";
 	 */
 	function UpdateUser($user)
 	{
-		$result = false;
 		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
 
 		// check for username conflict
 		$query = 'SELECT user_id FROM '.CMS_DB_PREFIX.'users WHERE username = ? and user_id != ?';
 		$tmp = $db->GetOne($query,array($user->username,$user->id));
-		if( $tmp ) return $result;
+		if( $tmp ) return false;
 
 		$time = $db->DBTimeStamp(time());
 		$query = "UPDATE ".CMS_DB_PREFIX."users SET username = ?, password = ?, active = ?, modified_date = ".$time.", first_name = ?, last_name = ?, email = ?, admin_access = ? WHERE user_id = ?";
-		#$dbresult = $db->Execute($query, array($user->username, $user->password, $user->active, $user->firstname, $user->lastname, $user->email, $user->adminaccess, $user->id));
+		//$dbresult = $db->Execute($query, array($user->username, $user->password, $user->active, $user->firstname, $user->lastname, $user->email, $user->adminaccess, $user->id));
 		$dbresult = $db->Execute($query, array($user->username, $user->password, $user->active, $user->firstname, $user->lastname, $user->email, 1, $user->id));
-		if ($dbresult !== false) $result = true;
+		if ($dbresult !== false) return true;
 
-		return $result;
+		return false;
 	}
 
 	/**
@@ -356,8 +354,9 @@ FROM ".CMS_DB_PREFIX."users ORDER BY username";
 	public function GetList()
 	{
 		$allusers = $this->LoadUsers();
-		if( !count($allusers) ) return;
+		if( !$allusers ) return [];
 
+		$out = [];
 		foreach( $allusers as $oneuser ) {
 			$out[$oneuser->id] = $oneuser->username;
 		}
@@ -371,7 +370,7 @@ FROM ".CMS_DB_PREFIX."users ORDER BY username";
 	 * @param int $currentuserid
 	 * @param string $name The HTML element name.
 	 */
-	function GenerateDropdown($currentuserid=null, $name='ownerid')
+	function GenerateDropdown($currentuserid=0, $name='ownerid')
 	{
 		$result = '';
 		$list = $this->GetList();

@@ -41,7 +41,7 @@
 
 /**
  *  A simple class to handle remembering and preloading template data for
- *  frotnend requests.
+ *  frontend requests.
  *
  * @package CMS
  * @author Robert Campbell
@@ -52,7 +52,7 @@
  */
 class CmsTemplateCache
 {
-  static private $_instance;
+  private static $_instance;
   private $_cache;
   private $_key;
 

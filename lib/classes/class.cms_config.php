@@ -271,9 +271,9 @@ final class cms_config implements ArrayAccess
    *
    * @return cms_config
    */
-  public static function &get_instance()
+  public static function get_instance()
   {
-    if( !isset(self::$_instance) ) {
+    if( !self::$_instance ) {
       self::$_instance = new self();
 
       // now load the config

@@ -13,5 +13,5 @@
   <strong>{$mod->Lang('prompt_created')}:</strong> {$css->get_created()|cms_date_format}<br/>
   <strong>{$mod->Lang('prompt_modified')}:</strong> {$css->get_modified()|relative_time}
   {$tmp=$css->get_description()}
-  {if $tmp != ''}<br/><strong>{$mod->Lang('prompt_description')}:</strong> {$tmp|strip_tags|cms_escape|summarize}{/if}
+  {if $tmp}<br /><strong>{$mod->Lang('prompt_description')}:</strong> {$tmp|adjust:'strip_tags'|cms_escape|summarize}{/if}
 {/if}{/strip}

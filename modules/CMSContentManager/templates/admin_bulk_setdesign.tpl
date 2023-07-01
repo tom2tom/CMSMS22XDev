@@ -1,7 +1,7 @@
 <script type="text/javascript">
 $(function() {
-   $('#showmore_ctl').click(function(){
-      $(this).closest('form').submit();
+   $('#showmore_ctl').on('click', function(){
+      $(this).closest('form').trigger('submit');
    });
 });
 </script>

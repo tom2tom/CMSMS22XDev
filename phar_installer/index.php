@@ -39,18 +39,18 @@ try {
 
     // some basic system wide pre-requisites
     if(php_sapi_name() == "cli") throw new \Exception("We are sorry but:\n\nCLI based execution of this script is not supported.\nPlease browse to this script with a compatible browser");
-    if( version_compare(phpversion(),'7.0.0') < 0 ) throw new \Exception('We are sorry, but this installer requires at least PHP 7.0.0');
+    if( version_compare(phpversion(),'7.1.0') < 0 ) throw new \Exception('We are sorry, but this installer requires at least PHP 7.1.0'); //Smarty4 at least needs this
     _detect_bad_ioncube();
-    
+
     // clear opcache before disabling it
     if( function_exists( 'opcache_get_status' ) && opcache_get_status() ) opcache_reset();
     // disable some stuff.
     @ini_set('opcache.enable',0); // disable zend opcode caching.
     @ini_set('apc.enabled',0); // disable apc opcode caching (for later versions of APC)
-    @ini_set('xcache.cacher',0); // disable xcache opcode caching 
+    @ini_set('xcache.cacher',0); // disable xcache opcode caching
 
     require_once __DIR__.'/app/class.cms_install.php';
-    $app = new cms_install;
+    $app = new cms_install();
     $app->run();
 }
 catch( \Exception $e ) {

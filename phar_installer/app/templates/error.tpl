@@ -3,7 +3,7 @@
 {extends file='index.tpl'}
 
 {block name='logic'}
-    {$title = 'title_error'|tr}
+    {$title = tr('title_error')}
 {/block}
 
 {block name='contents'}{/block}

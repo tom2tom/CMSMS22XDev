@@ -1,6 +1,21 @@
 <?php
 
-namespace __appbase;
+namespace {
+
+use __appbase\langtools;
+
+function tr(...$args)
+{
+  static $tools = null;
+  if( $tools === null ) {
+    $tools = langtools::get_instance();
+  }
+  return $tools->translate($args);
+}
+
+}
+
+namespace __appbase {
 
 function startswith($haystack,$needle)
 {
@@ -16,4 +31,5 @@ function endswith($haystack,$needle)
   return false;
 }
 
+}
 ?>

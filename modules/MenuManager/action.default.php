@@ -27,11 +27,11 @@ if( !$tpl->isCached() ) {
     $nodelist = array();
     $count = 0;
     $getchildren = true;
-    $rootnode = null;
+    $rootnode = null; //mixed object or objects[]
     $prevdepth = 1;
 
     if( isset($params['childrenof']) ) {
-        $parent = $hm->sureGetNodeByAlias($params['childrenof']);;
+        $parent = $hm->sureGetNodeByAlias($params['childrenof']);
         if( $parent ) {
             // get the children.
             $children = $parent->GetChildren($deep);

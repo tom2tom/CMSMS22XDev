@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: supportinfo.php 4216 2007-10-06 19:28:55Z wishy $
+#$Id$
 
 $CMS_ADMIN_PAGE=1;
 $CMS_ADMIN_TITLE = 'system_verification';
@@ -34,7 +34,7 @@ if (!$access) die('Permission Denied');
 
 include_once("header.php");
 
-define('CMS_BASE', dirname(dirname(__FILE__)));
+define('CMS_BASE', dirname(__DIR__));
 require_once cms_join_path(CMS_BASE, 'lib', 'test.functions.php');
 
 function checksum_lang($params,$smarty)
@@ -136,17 +136,17 @@ function check_checksum_data(&$report)
     if( $filenotfound ) $tmp2[] = sprintf("%d %s",count($filenotfound),lang('files_not_found'));
     if( $notreadable ) $tmp2[] = sprintf("%d %s",$notreadable,lang('files_not_readable'));
     if( $md5failed ) $tmp2[] = sprintf("%d %s",$md5failed,lang('files_checksum_failed'));
-    if( !empty($tmp) ) $tmp .= "<br/>";
 
-    $tmp = implode( "<br/>", $tmp2 );
+    $tmp = implode( "<br />", $tmp2 );
     if( $filenotfound ) {
-      $tmp .= "<br/>".lang('files_not_found').':';
-      $tmp .= "<br/>".implode("<br/>",$filenotfound)."<br/>";
+      $tmp .= "<br />".lang('files_not_found').':';
+      $tmp .= "<br />".implode("<br/>",$filenotfound)."<br />";
     }
     if( $filesfailed ) {
-      $tmp .= "<br/>".count($filesfailed).' '.lang('files_failed').':';
-      $tmp .= "<br/>".implode("<br/>",$filesfailed)."<br/>";
+      $tmp .= "<br />".count($filesfailed).' '.lang('files_failed').':';
+      $tmp .= "<br />".implode("<br/>",$filesfailed)."<br />";
     }
+//    if( $tmp ) $tmp .= "<br />";
 
     $report = $tmp;
     return false;

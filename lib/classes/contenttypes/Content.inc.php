@@ -41,7 +41,7 @@ class Content extends ContentBase
 	/**
 	 * @ignore
 	 */
-	private $_contentBlocks = null;
+	private $_contentBlocks = null; // aka unset empty array has meaning
 
 	/**
 	 * Indicates whether or not this content type may be copied.
@@ -64,13 +64,13 @@ class Content extends ContentBase
 	public function IsSearchable()
 	{
 		if( !parent::IsSearchable() ) return FALSE;
-		return ($this->GetPropertyValue('searchable') == 0)?FALSE:TRUE;
+		return ($this->GetPropertyValue('searchable') != 0);
 	}
 
 	public function HasSearchableContent() { return TRUE; }
 
 	/**
-	 * Indicates wether ths page type uses a template.
+	 * Indicates wether this page type uses a template.
 	 * Content pages do use a template.
 	 *
 	 * @since 2.0
@@ -170,7 +170,7 @@ class Content extends ContentBase
 						if( !is_object($module) ) continue;
 						if( !$module->HasCapability(CmsCoreCapabilities::CONTENT_BLOCKS) ) continue;
 						$tmp = $module->GetContentBlockFieldValue($blockName,$blockInfo['params'],$params,$this);
-						if( $tmp != null ) $params[$name] = $tmp;
+						if( $tmp ) $params[$name] = $tmp;
 					}
 				}
 			}
@@ -260,7 +260,7 @@ class Content extends ContentBase
 	 *
 	 * This method also calls the parent method to validate the standard properties
 	 *
-	 * @return mixed either an array of validation error strings, or false to indicate no errors
+	 * @return array of validation error strings, or empty to indicate no errors
 	 */
 	function ValidateData()
 	{
@@ -269,13 +269,11 @@ class Content extends ContentBase
 
 		if ($this->mTemplateId <= 0 ) {
 			$errors[] = lang('nofieldgiven',array(lang('template')));
-			$result = false;
 		}
 
 		$blocks = $this->get_content_blocks();
 		if( !$blocks ) {
 			$errors[] = lang('error_parsing_content_blocks');
-			$result = false;
 		}
 
 		$have_content_en = FALSE;
@@ -293,7 +291,6 @@ class Content extends ContentBase
 					$tmp = $module->ValidateContentBlockFieldValue($blockName,$value,$blockInfo['params'],$this);
 					if( !empty($tmp) ) {
 						$errors[] = $tmp;
-						$result = false;
 					}
 				}
 			}
@@ -301,10 +298,9 @@ class Content extends ContentBase
 
 		if( !$have_content_en ) {
 			$errors[] = lang('error_no_default_content_block');
-			$result = false;
 		}
 
-		return (count($errors) > 0?$errors:FALSE);
+		return $errors;
 	}
 
 	/**
@@ -350,7 +346,7 @@ class Content extends ContentBase
 		static $_designtree;
 		static $_designlist;
 		static $_templates;
-		if( $_designlist == null ) {
+		if( $_designlist == null ) { // i.e. static var not yet assigned
 			$_tpl = CmsLayoutTemplate::template_query(array('as_list'=>1));
 			if( is_array($_tpl) && count($_tpl) > 0 ) {
 				$_templates = array();
@@ -467,7 +463,7 @@ class Content extends ContentBase
 		}
 	}
 
-	private function _get_param($in,$key,$dflt = null)
+	private function _get_param($in,$key,$dflt = null) //mixed value
 	{
 		if( !is_array($in) ) return $dflt;
 		if( is_array($key) ) return $dflt;
@@ -489,13 +485,13 @@ class Content extends ContentBase
 		if( $adminonly ) {
 			$uid = get_userid(FALSE);
 			$res = \UserOperations::get_instance()->UserInGroup($uid,1);
-			if( !$res ) return;
+			if( !$res ) return '';
 		}
 		$adminonly = cms_to_bool(get_parameter_value($blockInfo,'adminonly',0));
 		if( $adminonly ) {
 			$uid = get_userid(FALSE);
 			$res = \UserOperations::get_instance()->UserInGroup($uid,1);
-			if( !$res ) return;
+			if( !$res ) return '';
 		}
 		if( $this->Id() < 1 && empty($value) ) {
 			$value = trim($this->_get_param($blockInfo,'default'));
@@ -546,7 +542,7 @@ class Content extends ContentBase
 		if( $adminonly ) {
 			$uid = get_userid(FALSE);
 			$res = \UserOperations::get_instance()->UserInGroup($uid,1);
-			if( !$res ) return;
+			if( !$res ) return '';
 		}
 		$config = \cms_config::get_instance();
 		$adddir = get_site_preference('contentimage_path');

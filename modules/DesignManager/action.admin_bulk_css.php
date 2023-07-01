@@ -38,7 +38,7 @@ if( isset($params['cancel']) ) {
 }
 
 try {
-    $bulk_op = null;
+    $bulk_op = '';
     $stylesheets = CmsLayoutStylesheet::load_bulk($params['css_select']);
     switch( $params['css_bulk_action'] ) {
     case 'delete':

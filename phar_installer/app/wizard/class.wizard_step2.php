@@ -74,7 +74,7 @@ class wizard_step2 extends wizard_step
         $app = get_app();
         $config = $app->get_config();
 
-        $rpwd = get_app()->get_destdir();
+        $rpwd = $app->get_destdir();
         $info = $this->get_cmsms_info($rpwd);
         $wizard = $this->get_wizard();
         $smarty = smarty();
@@ -82,7 +82,7 @@ class wizard_step2 extends wizard_step
         $smarty->assign('nofiles',$config['nofiles']);
 
         if( $info ) {
-            // it's an upgrade
+            // it's a refresh or upgrade
             $wizard->set_data('version_info',$info);
             $smarty->assign('cmsms_info',$info);
             if( !isset($info['error_status']) || $info['error_status'] != 'same_ver' ) {
@@ -127,8 +127,8 @@ class wizard_step2 extends wizard_step
             };
             $list_files = function($dir,$n = 5) {
                 $n = max(1,min(100,$n));
-                if( !$dir ) return;
-                if( !is_dir($dir) ) return;
+                if( !$dir ) return [];
+                if( !is_dir($dir) ) return [];
                 $files = glob($dir.'/*');
                 $files = array_slice($files,0,$n);
                 foreach( $files as &$file ) {

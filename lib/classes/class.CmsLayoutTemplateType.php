@@ -95,6 +95,7 @@ class CmsLayoutTemplateType
     public function get_id()
     {
         if( isset($this->_data['id']) ) return $this->_data['id'];
+        return 0;
     }
 
     /**
@@ -133,6 +134,7 @@ class CmsLayoutTemplateType
     public function get_name()
     {
         if( isset($this->_data['name']) ) return $this->_data['name'];
+        return '';
     }
 
     /**
@@ -157,6 +159,7 @@ class CmsLayoutTemplateType
     public function get_dflt_flag()
     {
         if( isset($this->_data['has_dflt']) ) return $this->_data['has_dflt'];
+        return FALSE;
     }
 
     /**
@@ -180,10 +183,11 @@ class CmsLayoutTemplateType
     public function get_dflt_contents()
     {
         if( isset($this->_data['dflt_contents']) ) return $this->_data['dflt_contents'];
+        return '';
     }
 
     /**
-     * Set the default content used when creating a new templateof this  type.
+     * Set the default content used when creating a new template of this  type.
      *
      * @param string $str The default template contents.
      */
@@ -201,6 +205,7 @@ class CmsLayoutTemplateType
     public function get_description()
     {
         if( isset($this->_data['description']) ) return $this->_data['description'];
+        return '';
     }
 
 
@@ -223,6 +228,7 @@ class CmsLayoutTemplateType
     public function get_owner()
     {
         if( isset($this->_data['owner']) ) return $this->_data['owner'];
+        return 0;
     }
 
     /**
@@ -246,6 +252,7 @@ class CmsLayoutTemplateType
     public function get_create_date()
     {
         if( isset($this->_data['created']) ) return $this->_data['created'];
+        return 0;
     }
 
     /**
@@ -256,6 +263,7 @@ class CmsLayoutTemplateType
     public function get_modified_date()
     {
         if( isset($this->_data['modified']) ) return $this->_data['modified'];
+        return 0;
     }
 
     /**
@@ -281,6 +289,7 @@ class CmsLayoutTemplateType
     public function get_lang_callback()
     {
         if( isset($this->_data['lang_callback']) ) return $this->_data['lang_callback'];
+        return null;
     }
 
     /**
@@ -302,6 +311,7 @@ class CmsLayoutTemplateType
     public function get_help_callback()
     {
         if( isset($this->_data['help_callback']) ) return $this->_data['help_callback'];
+        return null;
     }
 
     /**
@@ -325,12 +335,13 @@ class CmsLayoutTemplateType
     public function get_oneonly_flag()
     {
         if( isset($this->_data['one_only']) ) return $this->_data['one_only'];
+        return FALSE;
     }
 
     /**
      * Set a callback to be used when restoring the 'default content' to system default values.
      *
-     * Modules typically distribut sample templates.  This callback function is used when the
+     * Modules typically distribute sample templates.  This callback function is used when the
      * user clicks on a button to reset the selected template type to it's factory default values.
      *
      * @param callable $data A static function name string, or an array of class name and member name.
@@ -349,6 +360,7 @@ class CmsLayoutTemplateType
     public function get_content_callback()
     {
         if( isset($this->_data['content_callback']) ) return $this->_data['content_callback'];
+        return null;
     }
 
 	/**
@@ -360,6 +372,7 @@ class CmsLayoutTemplateType
 	public function get_content_block_flag()
 	{
         if( isset($this->_data['requires_contentblocks']) ) return $this->_data['requires_contentblocks'];
+        return FALSE;
 	}
 
 	/**
@@ -440,12 +453,12 @@ class CmsLayoutTemplateType
         $this->_data['id'] = $db->Insert_ID();
 		CmsTemplateCache::clear_cache();
 		audit($this->get_id(),'CMSMS','Template Type '.$this->get_name().' Created');
-        $this->_dirty = null;
+        $this->_dirty = FALSE;
     }
 
 
     /**
-     * A function to update the contents of the database to match th current record.
+     * A function to update the contents of the database to match the current record.
      *
      * This method will ensure that the current object is valid, generate an id, and
      * update the record in the database.  An exception will be thrown if errors occur.
@@ -471,7 +484,7 @@ class CmsLayoutTemplateType
         if( !$dbr ) throw new CmsSQLErrorException($db->ErrorMsg());
 
 		CmsTemplateCache::clear_cache();
-        $this->_dirty = null;
+        $this->_dirty = FALSE;
 		audit($this->get_id(),'CMSMS','Template Type '.$this->get_name().' Updated');
     }
 
@@ -528,14 +541,14 @@ class CmsLayoutTemplateType
     }
 
     /**
-     * Create a new template of ths type
+     * Create a new template of this type
      *
      * This method will throw an exception if the template cannot be created.
      *
      * @param string $name The template name
      * @return CmsLayoutTemplate object, or null.
      */
-    public function &create_new_template($name = '')
+    public function create_new_template($name = '')
     {
         $ob = new CmsLayoutTemplate();
         $ob->set_type( $this );
@@ -545,7 +558,7 @@ class CmsLayoutTemplateType
     }
 
     /**
-     * Get the default template of ths type
+     * Get the default template of this type
      *
      * This method will throw an exception if the template cannot be created.
      *
@@ -562,7 +575,7 @@ class CmsLayoutTemplateType
      */
     public function get_template_helptext()
     {
-        $text = null;
+        $text = '';
         $cb = $this->get_help_callback();
         $originator = $this->get_originator();
         $name = $this->get_name();
@@ -593,7 +606,8 @@ class CmsLayoutTemplateType
     public function get_langified_display_value()
     {
         $t = $this->get_lang_callback();
-        $to = $tn = null;
+        $to = '';
+        $tn = '';
         if( is_callable($t) ) {
             $to = call_user_func($t,$this->get_originator());
             $tn = call_user_func($t,$this->get_name());
@@ -605,7 +619,7 @@ class CmsLayoutTemplateType
     }
 
 	/**
-	 * Reset the default contens of this template type back to factory defaults
+	 * Reset the default content of this template type back to factory default
      *
      * @throws CmsException
      * @throws CmsDataNotFoundException
@@ -627,7 +641,7 @@ class CmsLayoutTemplateType
 	 * @internal
 	 * @return CmsLayoutTemplateType
 	 */
-    private static function &_load_from_data($row)
+    private static function _load_from_data($row)
     {
         if( isset($row['lang_cb']) && $row['lang_cb'] ) $row['lang_callback'] = unserialize($row['lang_cb']);
         if( isset($row['help_content_cb']) && $row['help_content_cb'] ) $row['help_callback'] = unserialize($row['help_content_cb']);
@@ -652,10 +666,10 @@ class CmsLayoutTemplateType
      * @param mixed $val An integer template type id, or a string in the form of Originator::Name
      * @return CmsLayoutTemplateType
      */
-    public static function &load($val)
+    public static function load($val)
     {
         $db = CmsApp::get_instance()->GetDb();
-        $row = null;
+        $row = [];
         if( is_numeric($val) && (int)$val > 0 ) {
             $val = (int) $val;
 			if( isset(self::$_cache[$val]) ) return self::$_cache[$val];
@@ -676,18 +690,19 @@ class CmsLayoutTemplateType
                 $row = $db->GetRow($query,array(trim($tmp[0]),trim($tmp[1])));
             }
         }
-        if( !is_array($row) || count($row) == 0 ) throw new CmsDataNotFoundException('Could not find template type identified by '.$val);
-
+        if( !is_array($row) || count($row) == 0 ) {
+            throw new CmsDataNotFoundException('Could not find template type identified by '.$val);
+        }
         return self::_load_from_data($row);
     }
 
     /**
      * Load all of the template types for a certain originator.
      *
-     * This method will throw exceptions if an error is encounted.
+     * This method will throw exceptions if an error is encountered.
      *
      * @throws CmsInvalidDataException
-     * @param string $originator The origiator name
+     * @param string $originator The originator name
      * @return array An array of CmsLayoutTemplateType objects, or null if no matches are found.
      */
     public static function load_all_by_originator($originator)
@@ -699,7 +714,7 @@ class CmsLayoutTemplateType
         if( isset(self::$_cache) && count(self::$_cache) ) $query .= ' AND id NOT IN ('.implode(',',array_keys(self::$_cache)).')';
         $query .= ' ORDER BY modified DESC';
         $list = $db->GetArray($query,array($originator));
-        if( !is_array($list) || count($list) == 0 ) return;
+        if( !is_array($list) || count($list) == 0 ) return [];
 
         foreach( $list as $row ) {
             self::_load_from_data($row);
@@ -724,7 +739,7 @@ class CmsLayoutTemplateType
 		if( self::$_cache && count(self::$_cache) ) $query .= ' WHERE id NOT IN ('.implode(',',array_keys(self::$_cache)).')';
 		$query .= '	ORDER BY modified ASC';
         $list = $db->GetArray($query);
-        if( !is_array($list) || count($list) == 0 ) return;
+        if( !is_array($list) || count($list) == 0 ) return [];
 
         foreach( $list as $row ) {
             self::_load_from_data($row);
@@ -740,7 +755,7 @@ class CmsLayoutTemplateType
 	 */
 	public static function load_bulk($list)
 	{
-		if( !is_array($list) || count($list) == 0 ) return;
+		if( !is_array($list) || count($list) == 0 ) return [];
 
 		$list2 = array();
 		foreach( $list as $one ) {
@@ -753,7 +768,7 @@ class CmsLayoutTemplateType
         $db = CmsApp::get_instance()->GetDb();
         $query = 'SELECT * FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE id IN ('.implode(',',$list).')';
         $list = $db->GetArray($query);
-        if( !is_array($list) || count($list2) == 0 ) return;
+        if( !is_array($list) || count($list2) == 0 ) return [];
 
         $out = array();
         foreach( $list as $row ) {
@@ -778,7 +793,7 @@ class CmsLayoutTemplateType
      * @return \CMSMS\Layout\TemplateTypeAssistant
      * @since 2.2
      */
-    public function &get_assistant()
+    public function get_assistant()
     {
         if( !$this->_assistant ) {
             $classnames = [];
@@ -787,7 +802,7 @@ class CmsLayoutTemplateType
             $classnames[] = $this->get_originator().'_'.$this->get_name().'_Type_Assistant';
             foreach( $classnames as $cn ) {
                 if( class_exists($cn) ) {
-                    $tmp = new $cn;
+                    $tmp = new $cn();
                     if( is_a($tmp,'\CMSMS\Layout\TemplateTypeAssistant') ) {
                         $this->_assistant = $tmp;
                         break;
@@ -809,10 +824,10 @@ class CmsLayoutTemplateType
     public function get_usage_string($name)
     {
         $name = trim($name);
-        if( !$name ) return;
+        if( !$name ) return '';
 
         $assistant = $this->get_assistant();
-        if( !$assistant ) return;
+        if( !$assistant ) return '';
 
         return $assistant->get_usage_string($name);
     }

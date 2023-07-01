@@ -1,4 +1,4 @@
-<?php 
+<?php
 // 28/11/2005 (2.4)
 // - dUnzip2 is now compliant with wrong placed "Data Description", made by some compressors,
 //   like the classes ZipLib and ZipLib2 by 'Hasin Hayder'. Thanks to Ricardo Parreno for pointing it.
@@ -56,18 +56,18 @@ class dUnzip2{
 		return "2.4";
 	}
 	// Public
-	var $fileName;
-	var $compressedList; // You will problably use only this one!
-	var $centralDirList; // Central dir list... It's a kind of 'extra attributes' for a set of files
-	var $endOfCentral;   // End of central dir, contains ZIP Comments
-	var $debug;
-	var $debugstrings;
+	public $fileName;
+	public $compressedList; // You will problably use only this one!
+	public $centralDirList; // Central dir list... It's a kind of 'extra attributes' for a set of files
+	public $endOfCentral;   // End of central dir, contains ZIP Comments
+	public $debug;
+	public $debugstrings;
 
 	// Private
-	var $fh;
-	var $zipSignature = "\x50\x4b\x03\x04"; // local file header signature
-	var $dirSignature = "\x50\x4b\x01\x02"; // central dir header signature
-	var $dirSignatureE= "\x50\x4b\x05\x06"; // end of central dir signature
+	private $fh;
+	private $zipSignature = "\x50\x4b\x03\x04"; // local file header signature
+	private $dirSignature = "\x50\x4b\x01\x02"; // central dir header signature
+	private $dirSignatureE= "\x50\x4b\x05\x06"; // end of central dir signature
 
 	// Public
 	Function dUnzip2($fileName){
@@ -361,7 +361,7 @@ class dUnzip2{
 	}
 	Function unzipAll($targetDir=false, $baseDir="", $maintainStructure=true, $chmod=false){
 		if($targetDir === false)
-			$targetDir = dirname(__FILE__)."/";
+			$targetDir = __DIR__."/";
 
 		$lista = $this->getList();
 		if(count($lista)) foreach($lista as $fileName=>$trash){

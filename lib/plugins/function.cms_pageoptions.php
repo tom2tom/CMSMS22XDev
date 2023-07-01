@@ -18,9 +18,9 @@
 
 function smarty_function_cms_pageoptions($params, $smarty)
 {
-  if( !isset($params['numpages']) ) return;
+  if( !isset($params['numpages']) ) return '';
   $numpages = (int)$params['numpages'];
-  if( $numpages < 1 ) return;
+  if( $numpages < 1 ) return '';
   $curpage = get_parameter_value($params,'curpage',1);
   $curpage = (int)$curpage;
   $curpage = max(1,min($numpages,$curpage));
@@ -74,7 +74,7 @@ function smarty_function_cms_pageoptions($params, $smarty)
 
   if( isset($params['assign']) ) {
     $smarty->assign($params['assign'],$out);
-    return;
+    return '';
   }
   return $out;
 }

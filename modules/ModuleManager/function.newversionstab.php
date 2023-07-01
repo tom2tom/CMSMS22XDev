@@ -50,9 +50,16 @@ $results = array();
 
 if( !empty($newversions) ) {
 	foreach( $newversions as $row ) {
-		$txt = '';
 		$onerow = new stdClass();
-		$onerow->txt = $onerow->error = $onerow->age = $onerow->depends_url = $onerow->about_url = $onerow->help_url = $onerow->helplink = $onerow->aboutlink = $onerow->dependslink = null;
+		$onerow->txt = '';
+		$onerow->error = '';
+		$onerow->age = '';
+		$onerow->depends_url = '';
+		$onerow->about_url = '';
+		$onerow->help_url = '';
+		$onerow->helplink = '';
+		$onerow->aboutlink = '';
+		$onerow->dependslink = '';
 		foreach( $row as $key => $val ) {
 			$onerow->$key = $val;
 		}

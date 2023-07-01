@@ -48,7 +48,7 @@
 		{cycle values="row1,row2" assign='rowclass'}
 			<tr class="{$rowclass}" {if $entry->age=='new'}style="font-weight: bold;"{/if}>
 			<td>{get_module_status_icon status=$entry->age}</td>
-			<td><span title="{$entry->description|strip_tags|cms_escape}">{$entry->name}</span></td>
+			<td><span title="{$entry->description|adjust:'strip_tags'|cms_escape}">{$entry->name}</span></td>
 			<td>{$entry->version}</td>
 			<td>{$entry->date|localedate_format:'%x'}</td>
 			{*<td>{$entry->downloads}</td>*}

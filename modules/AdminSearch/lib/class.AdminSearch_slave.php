@@ -102,9 +102,9 @@ abstract class AdminSearch_slave
     }
 
     protected function process_query_string(&$qry) {
-        #check if we need a case sensitive query string
+        //check if we need a case sensitive query string
         if (!$this->search_casesensitive()) return;
-        #make it happen
+        //make it happen
         $qry = str_replace('LIKE','COLLATE utf8_bin LIKE', $qry);
     }
 

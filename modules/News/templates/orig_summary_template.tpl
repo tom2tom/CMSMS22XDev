@@ -44,7 +44,7 @@
 {/if}
 
 <div class="NewsSummaryLink">
-<a href="{$entry->moreurl}" title="{$entry->title|cms_escape:htmlall}">{$entry->title|cms_escape}</a>
+<a href="{$entry->moreurl}" title="{$entry->title|cms_escape:'htmlall'}">{$entry->title|cms_escape}</a>
 </div>
 
 <div class="NewsSummaryCategory">

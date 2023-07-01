@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: class.global.inc.php 6939 2011-03-06 00:12:54Z calguy1000 $
+#$Id$
 
 /**
  * This class defines classes and utility functions for a Theme or Collection.
@@ -230,7 +230,7 @@ class CmsLayoutCollection
 	 */
     public function add_stylesheet($css)
     {
-        $css_t = null;
+        $css_t = 0;
         if( is_object($css) && is_a($css,'CmsLayoutStylesheet') ) {
             $css_t = $css->get_id();
         }
@@ -253,7 +253,7 @@ class CmsLayoutCollection
 	 */
     public function delete_stylesheet($css)
     {
-        $css_t = null;
+        $css_t = 0;
         if( is_object($css) && is_a($css,'CmsLayoutStylesheet') ) {
             $css_t = $css->id;
         }
@@ -294,9 +294,8 @@ class CmsLayoutCollection
 	 */
     public function get_templates()
     {
-        $out = null;
-        if( !$this->get_id() ) return $out;
-        if( !$this->has_templates() ) return $out;
+        if( !$this->get_id() ) return [];
+        if( !$this->has_templates() ) return [];
 
         return $this->_tpl_assoc;
     }
@@ -327,7 +326,7 @@ class CmsLayoutCollection
 	 */
 	public function add_template($tpl)
 	{
-        $tpl_id = null;
+        $tpl_id = 0;
         if( is_object($tpl) && is_a($tpl,'CmsLayoutTemplate') ) {
             $tpl_id = $tpl->get_id();
         }
@@ -349,7 +348,7 @@ class CmsLayoutCollection
 	 */
     public function delete_template($tpl)
     {
-        $tpl_id = null;
+        $tpl_id = 0;
         if( is_object($tpl) && is_a($tpl,'CmsLayoutTemplate') ) {
             $tpl_id = $tpl->get_id();
         }
@@ -390,7 +389,7 @@ class CmsLayoutCollection
         }
 
         $db = CmsApp::get_instance()->GetDb();
-        $tmp = null;
+        $tmp = 0;
         if( $this->get_id() ) {
             $query = 'SELECT id FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE name = ? AND id != ?';
             $tmp = $db->GetOne($query,array($this->get_name(),$this->get_id()));
@@ -546,11 +545,11 @@ class CmsLayoutCollection
 	/**
 	 * @ignore
 	 */
-    protected static function &_load_from_data($row)
+    protected static function _load_from_data($row)
     {
-        $ob = new CmsLayoutCollection;
-        $css = null;
-        $tpls = null;
+        $ob = new CmsLayoutCollection();
+        $css = [];
+        $tpls = [];
         if( isset($row['css']) ) {
             $css = $row['css'];
             unset($row['css']);
@@ -573,10 +572,10 @@ class CmsLayoutCollection
 	 * @param mixed $x - Accepts either an integer theme id, or a theme name,
 	 * @return CmsLayoutCollection
 	 */
-    public static function &load($x)
+    public static function load($x)
     {
         $db = CmsApp::get_instance()->GetDb();
-        $row = null;
+        $row = [];
         if( is_numeric($x) && $x > 0 ) {
             if( is_array(self::$_raw_cache) && count(self::$_raw_cache) ) {
 				if( isset(self::$_raw_cache[$x]) ) return self::_load_from_data(self::$_raw_cache[$x]);
@@ -619,7 +618,6 @@ class CmsLayoutCollection
 	 */
     public static function get_all($quick = FALSE)
     {
-        $out = null;
         $query = 'SELECT * FROM '.CMS_DB_PREFIX.self::TABLENAME.' ORDER BY name ASC';
         $db = CmsApp::get_instance()->GetDb();
         $dbr = $db->GetArray($query);
@@ -663,6 +661,7 @@ class CmsLayoutCollection
             }
 			return $out;
         }
+        return [];
     }
 
 	/**
@@ -688,9 +687,8 @@ class CmsLayoutCollection
 	 * @throws CmsInvalidDataException
 	 * @return CmsLayoutCollection
 	 */
-	public static function &load_default()
+	public static function load_default()
 	{
-		$tmp = null;
 		if( self::$_dflt_id == '' ) {
 			$query = 'SELECT id FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE dflt = 1';
 			$db = CmsApp::get_instance()->GetDb();
@@ -722,7 +720,7 @@ class CmsLayoutCollection
 			$newname = $origname.' '.$n;
 		}
 
-		if( $n == 100 ) return;
+		if( $n == 100 ) return '';
 		return $newname;
 	}
 } // end of class

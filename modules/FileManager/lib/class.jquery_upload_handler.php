@@ -14,19 +14,19 @@ abstract class jquery_upload_handler
 {
     private $options;
 
-    function __construct($options=null) {
+    function __construct($options = []) {
         $this->options = array(
             'script_url' => $this->getFullUrl().'/'.basename(__FILE__),
-            'upload_dir' => dirname(__FILE__).'/files/',
+            'upload_dir' => __DIR__.'/files/',
             'upload_url' => $this->getFullUrl().'/files/',
             'param_name' => 'files',
             // The php.ini settings upload_max_filesize and post_max_size
-            // take precedence over the following max_file_size setting:
-            'max_file_size' => null,
+            // take precedence over the following max_file_size setting
+            'max_file_size' => null, // effectively unset
             'min_file_size' => 1,
             'accept_file_types' => '/.+$/i',
-            'max_number_of_files' => null,
-            // Set the following option to false to enable non-multipart uploads:
+            'max_number_of_files' => null, // unset
+            // Set the following option to false to enable non-multipart uploads
             'discard_aborted_uploads' => false
         );
         if (is_array($options) && count($options)) {
@@ -110,7 +110,8 @@ abstract class jquery_upload_handler
                 $write_image = 'imagepng';
                 break;
             default:
-                $src_img = $image_method = null;
+                $src_img = false;
+                 $write_image = '';
         }
         $success = $src_img && @imagecopyresampled(
             $new_img,
