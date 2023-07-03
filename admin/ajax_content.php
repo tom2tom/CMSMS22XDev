@@ -27,10 +27,10 @@ $gCms = CmsApp::get_instance();
 $hm = $gCms->GetHierarchyManager();
 $contentops = $gCms->GetContentOperations();
 $allow_all = 1; // back compatibility
-if (isset($_REQUEST['allow_all']) && !cms_to_bool($_REQUEST['allow_all'])) $allow_all = 0;
+if( isset($_REQUEST['allow_all']) && !cms_to_bool($_REQUEST['allow_all']) ) $allow_all = 0;
 $for_child = (isset($_REQUEST['for_child']) && cms_to_bool($_REQUEST['for_child'])) ? 1 : 0;
 $allowcurrent = (isset($_REQUEST['allowcurrent']) && cms_to_bool($_REQUEST['allowcurrent'])) ? 1 : 0;
-$current = (isset($_REQUEST['current']) ) ? (int) $_REQUEST['current'] : 0;
+$current = (isset($_REQUEST['current']) ) ? (int)$_REQUEST['current'] : 0;
 
 $display = 'title';
 $mod = cms_utils::get_module('CMSContentManager');
@@ -84,8 +84,8 @@ try {
         break;
 
     case 'here_up':
-        // given a page id, get all of the info for all of the parents, and their peers.
-        // as well as the info of my current children.
+        // given a page id, get all info for all ancestors, and their peers.
+        // as well as the info for the page's current children.
         if( !isset($_REQUEST['page']) ) throw new Exception('missingparams');
 
         $children_to_data = function($node) use ($display,$allow_all,$for_child,$ruid,$contentops,$can_edit_any,$allowcurrent,$current) {
@@ -162,21 +162,16 @@ try {
             $error = 'missingparams';
         }
         else {
-            $page = (int)$_REQUEST['page'];
-            if( $page < 1 ) { // TODO if $page == 0 ? default page ?
-                $error = 'missingparams';
+            $page = (int)$_REQUEST['page']; // value < 1 treated as default page
+            // get the page info
+            $contentobj = $contentops->LoadContentFromId($page);
+            if( !is_object($contentobj) ) {
+                $error = 'errorgettingcontent';
             }
             else {
-                // get the page info.
-                $contentobj = $contentops->LoadContentFromId($page);
-                if( !is_object($contentobj) ) {
-                    $error = 'errorgettingcontent';
-                }
-                else {
-                    $out = $contentobj->ToData();
-                    if( $display == 'title' ) { $out['display'] = $out['content_name']; }
-                    else { $out['display'] = $out['menu_text']; }
-                }
+                $out = $contentobj->ToData();
+                if( $display == 'title' ) { $out['display'] = $out['content_name']; }
+                else { $out['display'] = $out['menu_text']; }
             }
         }
         break;
