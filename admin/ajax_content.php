@@ -23,22 +23,22 @@ require_once("../lib/include.php");
 
 $op = 'pageinfo';
 if( isset($_REQUEST['op']) ) $op = trim($_REQUEST['op']);
-$gCms = \CmsApp::get_instance();
+$gCms = CmsApp::get_instance();
 $hm = $gCms->GetHierarchyManager();
 $contentops = $gCms->GetContentOperations();
 $allow_all = (isset($_REQUEST['allow_all']) && cms_to_bool($_REQUEST['allow_all'])) ? 1 : 0;
-$allow_all = 1;
+//$allow_all = 1;
 $for_child = (isset($_REQUEST['for_child']) && cms_to_bool($_REQUEST['for_child'])) ? 1 : 0;
 $allowcurrent = (isset($_REQUEST['allowcurrent']) && cms_to_bool($_REQUEST['allowcurrent'])) ? 1 : 0;
-$current = (isset($_REQUEST['current']) ) ? (int) $_REQUEST['current'] : null;
+$current = (isset($_REQUEST['current']) ) ? (int) $_REQUEST['current'] : 0;
 
 $display = 'title';
 $mod = cms_utils::get_module('CMSContentManager');
 if( $mod ) $display = CmsContentManagerUtils::get_pagenav_display();
 
+$ruid = get_userid(FALSE);
 try {
-    $ruid = get_userid(FALSE);
-    if( $ruid < 1 ) throw new \Exception('permissiondenied'); // should throw a 403
+    if( $ruid < 1 ) throw new Exception('permissiondenied'); // should throw a 403
     $can_edit_any = check_permission($ruid,'Manage All Content') || check_permission($ruid,'Modify Any Page');
 
     $out = [];
@@ -86,7 +86,7 @@ try {
     case 'here_up':
         // given a page id, get all of the info for all of the parents, and their peers.
         // as well as the info of my current children.
-        if( !isset($_REQUEST['page']) ) throw new \Exception('missingparams');
+        if( !isset($_REQUEST['page']) ) throw new Exception('missingparams');
 
         $children_to_data = function($node) use ($display,$allow_all,$for_child,$ruid,$contentops,$can_edit_any,$allowcurrent,$current) {
             $children = $node->getChildren(false,$allow_all);
@@ -222,10 +222,10 @@ try {
         break;
 
     default:
-        throw new \Exception('missingparam');
+        throw new Exception('missingparam');
     }
 }
-catch( \Exception $e ) {
+catch( Exception $e ) {
     $error = $e->GetMessage();
 }
 
