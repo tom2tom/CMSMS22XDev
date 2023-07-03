@@ -18,13 +18,13 @@
 
 function smarty_function_page_selector($params,$template)
 {
-    $value = (isset($params['value']) ) ? (int) $params['value'] : 0;
-    $name = (isset($params['name']) ) ? trim($params['name']) : 'parent_id';
-    $allowcurrent = (isset($params['allowcurrent']) ) ? cms_to_bool($params['allowcurrent']) : 0;
-    $allow_all = (isset($params['allowall']) ) ? cms_to_bool($params['allowall']) : 0;
-    $for_child = (isset($params['for_child']) ) ? cms_to_bool($params['for_child']) : 0;
-
-    $out = \ContentOperations::get_instance()->CreateHierarchyDropdown('',$value,$name,$allowcurrent,0,0,$allow_all,$for_child);
+    $value = (isset($params['value']) ) ? (int)$params['value'] : 0; // selected-page id
+    $name = (isset($params['name']) ) ? trim($params['name']) : 'parent_id'; //input-element name
+    $allowcurrent = (isset($params['allowcurrent']) ) ? cms_to_bool($params['allowcurrent']) : false;
+    $allow_all = (isset($params['allowall']) ) ? cms_to_bool($params['allowall']) : false;
+    $for_child = (isset($params['for_child']) ) ? cms_to_bool($params['for_child']) : false;
+    // no current-page
+    $out = ContentOperations::get_instance()->CreateHierarchyDropdown(0,$value,$name,$allowcurrent,false,false,$allow_all,$for_child);
     if( isset($params['assign']) )  {
         $smarty->assign(trim($params['assign']),$out);
         return '';

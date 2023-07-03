@@ -784,47 +784,66 @@ class ContentOperations
 	 *
 	 * This method was rewritten for 2.0 to use the jquery hierselector plugin to better accommodate larger websites.
 	 *
-	 * Since many parameters are now ignored, A new method needs to be writtent o replace this archaic method...
-	 * so consider this method to be deprecateed.
+	 * Since many parameters are now ignored, A new method needs to be written to replace this archaic method...
+	 * so consider this method to be deprecated.
 	 *
 	 * @deprecated
-	 * @param int $current The id of the content object we are working with.  Used with allowcurrent to not show children of the current conrent object, or itself.
-	 * @param int $value The id of the currently selected content object.
+	 * @param int $current Numeric id of the content object we are working with.
+	 *  Used with allowcurrent to not show children of the current current object
+	 *  or itself. Default 0
+	 * @param int $value Numeric id of the currently selected content object. Default 0
 	 * @param string $name The html name of the dropdown.
-	 * @param bool $allowcurrent Ensures that the current value cannot be selected, or $current and it's childrern.  Used to prevent circular deadlocks.
-	 * @param bool $use_perms If true, checks authorship permissions on pages and only shows those the current user has authorship of (can edit)
-	 * @param bool $ignore_current (ignored as of 2.0)
-		 (Before 2.2 this parameter was called ignore_current and
-	 * @param bool $allow_all If true, show all items, even if the content object doesn't have a valid link. Defaults to false.
-	 * @param bool $for_child If true, assume that we want to add a new child and obey the WantsChildren flag of each content page. (new in 2.2).
-	 * @return string The html dropdown of the hierarchy.
+	 * @param bool $allowcurrent Ensures that the current value cannot be selected,
+	 *  or $current and its children. Used to prevent circular deadlocks. Default false
+	 * @param bool $use_perms If true, checks authorship permissions on pages
+	 *  and only shows those which the current user has authorship of (can edit)
+	 * Default false
+	 * @param bool $ignore_current (ignored as of 2.0) Default false
+		 (Before 2.2 this parameter was called ignore_current
+	 * @param bool $allow_all If true, show all items, even if the content object
+	 *  doesn't have a valid link. Default false.
+	 * @param bool $for_child If true, assume that we want to add a new child
+	 *  and obey the WantsChildren flag of each content page. (new in 2.2). Default false
+	 * @return string Html for an input to be hidden plus js to populate
+	 * a dropdown of the hierarchy via ajax.
 	 */
-	function CreateHierarchyDropdown($current = '', $value = '', $name = 'parent_id', $allowcurrent = 0,
-									 $use_perms = 0, $ignore_current = 0, $allow_all = false, $for_child = false )
+	function CreateHierarchyDropdown($current = 0, $value = 0, $name = 'parent_id', $allowcurrent = false,
+									 $use_perms = false, $ignore_current = false, $allow_all = false, $for_child = false)
 	{
 		static $count = 0;
 		$count++;
 		$id = 'cms_hierdropdown'.$count;
-		$value = (int) $value;
+		$value = (int)$value;
 		$uid = get_userid(FALSE);
+		$ttl = lang('title_hierselect');
 
-		$out = "<input type=\"text\" title=\"".lang('title_hierselect')."\" name=\"{$name}\" id=\"{$id}\" class=\"cms_hierdropdown\" value=\"{$value}\" size=\"50\" maxlength=\"50\"/>";
-		$opts = array();
-		$opts['current'] = $current;
-		$opts['value'] = $value;
+		$opts = [
+		 'current' => $current,
+		 'value' => $value
+		];
 		$opts['allowcurrent'] = ($allowcurrent)?'true':'false';
 		$opts['allow_all'] = ($allow_all)?'true':'false';
 		$opts['use_perms'] = ($use_perms)?'true':'false';
 		$opts['for_child'] = ($for_child)?'true':'false';
 		$opts['use_simple'] = !(check_permission($uid,'Manage All Content') || check_permission($uid,'Modify Any Page'));
 		$opts['is_manager'] = !$opts['use_simple'];
-		$str = '{';
+		$str = '';
 		foreach($opts as $key => $val) {
 			if( $val == '' ) continue;
 			$str .= $key.': '.$val.',';
 		}
-		$str = substr($str,0,-1).'}';
-		$out .= "<script type=\"text/javascript\">$(function() { $('#$id').hierselector($str); });</script>";
+		$str = substr($str,0,-1); // trim redundant comma
+
+		$out = <<<EOS
+<input type="text" id="$id" name="$name" class="cms_hierdropdown" title="$ttl" value="$value" size="50" maxlength="50" />
+<script type="text/javascript">
+$(function() {
+ $('#$id').hierselector({
+  $str
+ });
+});
+</script>
+EOS;
 		return $out;
 	}
 
