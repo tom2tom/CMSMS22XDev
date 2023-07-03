@@ -7,10 +7,10 @@ $lang['help_function_page_selector'] = <<<'EOT'
 <h3>What Parameters Does it Take?</h3>
 <ul>
  <li>name - <em>(string)</em> - The name of the input field.</p>
- <li>value - <em>(int)</em> - The id of the currently selected page.</p>
- <li>allowcurrent - <em>(bool)</em> - Whether or not to allow the currently selected item to be re-selected.  The default value is false.</li>
- <li>allow_all - <em>(bool)</em> - Whether or not to allow inactive content items, or content items that do not have usable links to be selected. The default value is false</li>
- <li>for_child - <em>(bool)</em> - Indicates that we are selecting a parent page for a new content item.  The default value is false.</p>
+ <li>value - <em>(int)</em> - The numeric id of the currently selected page.</p>
+ <li>allowcurrent - <em>(bool)</em> - Whether to allow the currently selected page to be re-selected. The default value is false.</li>
+ <li>allow_all - <em>(bool)</em> - Whether to allow inactive content items, or content items that do not have usable links, to be selected. The default value is false</li>
+ <li>for_child - <em>(bool)</em> - Indicates that we are selecting a parent page for a new content item. The default value is false.</p>
   </li>
 </ul>
 EOT;
@@ -334,7 +334,7 @@ $lang['help_function_cms_stylesheet'] = <<<'EOT'
 <p>Just insert the tag into your template/page's head section like: <code>{cms_stylesheet}</code></p>
 <h3>What parameters does it take?</h3>
 <ul>
- <li><em>(optional)</em> name - Instead of getting all stylesheets for the given page, it will only get one specifically named one, whether it's attached to the current template or not.</li>
+ <li><em>(optional)</em> name - Instead of getting all stylesheets for the given page, it will only get one specifically named one, whether or not it's attached to the current template.</li>
  <li><em>(optional)</em> nocombine - (boolean, default false) If enabled, and there are multiple stylesheets associated with the template, the stylesheets will be output as separate tags rather than combined into a single tag.</li>
  <li><em>(optional)</em> nolinks - (boolean, default false) If enabled, the stylesheets will be output as a URL without &lt;link&gt; tag.</li>
  <li><em>(optional)</em> https - (boolean, default false) indicates wether the ssl_url config entry should be used to prefix stylesheet urls.  If not specified, the system will attempt to determine the proper root url based on the secure flag of the page being displayed.</li>
@@ -524,7 +524,7 @@ $lang['help_function_tab_header'] = <<<'EOT'
 <ul>
  <li><strong>name - required string</strong> - The name of the tab.  Must match the name of a tab passed to {tab_header}</li>
  <li>label - <em>optional string</em> - The human readable label for the tab.  If not specified, the tab name will be used.</li>
- <li>active - <em>optional mixed./em> - Indicates whether this is the active tab or not.  You may pass in the name (string) of the active tab in a sequence of tab headers, or a boolean value.</li>
+ <li>active - <em>optional mixed./em> - Indicates whether this is the active tab. You may pass in the name (string) of the active tab in a sequence of tab headers, or a boolean value.</li>
  <li>assign - <em>(optional)</em> - Assign the output to the named smarty variable.</li>
 </ul>
 <h3>See Also:</h3>
@@ -576,7 +576,7 @@ $lang['help_function_stylesheet'] = <<<'EOT'
 <p>Just insert the tag into your template/page's head section like: <code>{stylesheet}</code></p>
 <h3>What parameters does it take?</h3>
 <ul>
- <li><em>(optional)</em>name - Instead of getting all stylesheets for the given page, it will only get one specifically named one, whether it's attached to the current template or not.</li>
+ <li><em>(optional)</em>name - Instead of getting all stylesheets for the given page, it will only get one specifically named one, whether or not it's attached to the current template.</li>
  <li><em>(optional)</em>media - If name is defined, this allows you set a different media type for that stylesheet.</li>
  <li><em>(optional)</em>templateid - If templateid is defined, this will return stylesheets associated with that template instead of the current one.</li>
  <li><em>(optional)</em> <tt>assign</tt> - Assign the results to the named smarty variable.</li>
@@ -915,7 +915,7 @@ $lang['help_function_content'] = <<<'EOT'
    <p>i.e.: <code>{content data-foo="bar"}</code></p>
  </li>
  <li><em>(optional)</em> adminonly (true/false) - If set to true, only members of the special &quot;Admin&quot; group (gid==1) will be able to edit this content block.</li>
- <li><em>(optional)</em> assign - Assigns the content to a smarty parameter, which you can then use in other areas of the page, or use to test whether content exists in it or not.
+ <li><em>(optional)</em> assign - Assigns the content to a smarty parameter, which you can then use in other areas of the page, or use to test whether content exists in it.
   <p>Example of passing page content to a User Defined Tag as a parameter:</p></li>
   <pre>
    {content assign=pagecontent}
@@ -1117,7 +1117,7 @@ $lang['help_function_cms_filepicker'] = <<<'EOT'
  <li>type - <em>(optional)</em> string - An indication of the file type that can be selected.
   <p>Possible values are: image,audio,video,media,xml,document,archive,any</p>
  </li>
- <li>required - <em>(optional)</em> boolean - Indicates whether or not the input field is required.</li>
+ <li>required - <em>(optional)</em> boolean - Indicates whether the input field is required.</li>
 </ul>
 <h3>Example:</h3>
 <p>Create a filepicker field to allow selecting images in the images/apples directory.</p>
