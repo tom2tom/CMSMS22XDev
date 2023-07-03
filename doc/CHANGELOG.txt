@@ -8,21 +8,22 @@ Various places
 
 Core - General
  - Corrected filter applied to $_GET, $_SERVER at the start of each request.
- - Corrected page-selector operation.
+ - Corrected page-selector widget operation.
+ - Reverted strftime()-replacement to work without Intl extension if necessary.
  - Added missing nls files, allowing installation of extra translations.
  - Smarty upgraded to version 4.3.0.
  - Enabled use of PHP function rawurlencode in Smarty templates.
  - Added Smarty modifier plugin 'adjust' to handle deprecated modifier-function-calls in templates.
  - PHPMailer upgraded to version 6.7.1.
  - jQuery upgraded to version 1.12.4.
- - jQuery UI upgraded to version 1.12.1.
+ - jQuery UI upgraded to version 1.12.1 (with previous styling).
  - jQuery migrate upgraded to version 1.4.1.
 
 ContentManager
  - BR #12474 - Taking the default page down by accident through the content type.
 
 DesignManager
- - Fix new template creation
+ - Correct new template creation
 
 FileManager
  - BR #12535 - File Manager Unpack archive .tar.gz.
@@ -35,9 +36,9 @@ MenuManager 1.50.4
  - BR #12620 - Version 2 breaks MenuManager with childrenof.
 
 News
- - Sanitise news-item strings (title, content etc) before display
+ - Sanitise news-item strings (title, summary, content) before display
 
-Phar Installer v1.4
+Phar Installer 1.4
  - Always-optional post-installation email includes more advice, and no password
 
 Version 2.2.17 - Iqaluit
