@@ -26,8 +26,8 @@ if( isset($_REQUEST['op']) ) $op = trim($_REQUEST['op']);
 $gCms = CmsApp::get_instance();
 $hm = $gCms->GetHierarchyManager();
 $contentops = $gCms->GetContentOperations();
-$allow_all = (isset($_REQUEST['allow_all']) && cms_to_bool($_REQUEST['allow_all'])) ? 1 : 0;
-//$allow_all = 1;
+$allow_all = 1; // back compatibility
+if (isset($_REQUEST['allow_all']) && !cms_to_bool($_REQUEST['allow_all'])) $allow_all = 0;
 $for_child = (isset($_REQUEST['for_child']) && cms_to_bool($_REQUEST['for_child'])) ? 1 : 0;
 $allowcurrent = (isset($_REQUEST['allowcurrent']) && cms_to_bool($_REQUEST['allowcurrent'])) ? 1 : 0;
 $current = (isset($_REQUEST['current']) ) ? (int) $_REQUEST['current'] : 0;
@@ -163,7 +163,7 @@ try {
         }
         else {
             $page = (int)$_REQUEST['page'];
-            if( $page < 1 ) {
+            if( $page < 1 ) { // TODO if $page == 0 ? default page ?
                 $error = 'missingparams';
             }
             else {
