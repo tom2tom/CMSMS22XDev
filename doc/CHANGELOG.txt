@@ -1,4 +1,4 @@
-Version 2.2.18 - Real Soon Now
+Version 2.2.19 - Inuvik
 -------------------------------
 Various places
  - Compatibility fixes for PHP 8.2.
@@ -9,7 +9,6 @@ Various places
 Core - General
  - Corrected filter applied to $_GET, $_SERVER at the start of each request.
  - Corrected page-selector widget operation.
- - Reverted strftime()-replacement to work without Intl extension if necessary.
  - Added missing nls files, allowing installation of extra translations.
  - Smarty upgraded to version 4.3.0.
  - Enabled use of PHP function rawurlencode in Smarty templates.
@@ -18,6 +17,9 @@ Core - General
  - jQuery upgraded to version 1.12.4.
  - jQuery UI upgraded to version 1.12.1 (with previous styling).
  - jQuery migrate upgraded to version 1.4.1.
+
+CMSMailer
+ - removed deprecated status
 
 ContentManager
  - BR #12474 - Taking the default page down by accident through the content type.
@@ -32,6 +34,7 @@ FilePicker
  - BR #12621 - FilePicker upload bug.
 
 MenuManager 1.50.4
+ - migrated from core to a normal CMSMS module in Forge 
  - BR #12619 - Wrong assignment of $prevdepth.
  - BR #12620 - Version 2 breaks MenuManager with childrenof.
 
@@ -40,6 +43,11 @@ News
 
 Phar Installer 1.4
  - Always-optional post-installation email includes more advice, and no password
+
+Version 2.2.18 - Apex
+-------------------------------
+Core - General
+ - Reverted strftime()-replacement to work without Intl extension if necessary.
 
 Version 2.2.17 - Iqaluit
 -------------------------------
