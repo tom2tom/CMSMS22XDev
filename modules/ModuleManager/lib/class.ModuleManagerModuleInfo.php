@@ -3,7 +3,7 @@
 class ModuleManagerModuleInfo extends CmsExtendedModuleInfo implements ArrayAccess
 {
     private static $_minfo;
-    private static $_deprecated = array('CMSMailer','MenuManager');
+    private static $_deprecated = array();
     private static $_mmkeys = array('e_status','can_install','can_upgrade','can_uninstall','missing_deps','deprecated','needs_upgrade');
     private $_mmdata = array();
 
