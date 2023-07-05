@@ -47,7 +47,7 @@ Phar Installer 1.4
 Version 2.2.18 - Apex
 -------------------------------
 Core - General
- - Reverted strftime()-replacement to work without Intl extension if necessary.
+ - strftime()-replacement works without Intl extension if necessary.
 
 Version 2.2.17 - Iqaluit
 -------------------------------

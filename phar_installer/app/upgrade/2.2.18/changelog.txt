@@ -1,0 +1,1 @@
+Don't require Intl extension for strftime()-replacement.
