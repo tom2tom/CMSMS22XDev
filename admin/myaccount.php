@@ -81,10 +81,10 @@ if (isset($_POST['submit_account']) && check_permission($userid,'Manage My Accou
   if (isset($_POST["user"])) $username = cleanValue($_POST["user"]);
 
   $password = '';
-  if (isset($_REQUEST["password"])) $password = $_REQUEST["password"]; // NOT $_POST, that might have been inappropriately 'sanitized'
+  if (isset($_POST["password"])) $password = $_POST["password"];
 
   $passwordagain = '';
-  if (isset($_REQUEST["passwordagain"])) $passwordagain = $_REQUEST["passwordagain"]; // ditto
+  if (isset($_POST["passwordagain"])) $passwordagain = $_POST["passwordagain"];
 
   $firstname = '';
   if (isset($_POST["firstname"])) $firstname = cleanValue($_POST["firstname"]);
