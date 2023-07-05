@@ -74,7 +74,7 @@ class ExternalHandlerJob extends Job
     {
         switch( $key ) {
         case 'function':
-            return trim($this->_data[$key]);
+            return trim((string)$this->_data[$key]);
 
         case 'is_udt':
             return (bool) $this->_data[$key];
@@ -92,7 +92,7 @@ class ExternalHandlerJob extends Job
     {
         switch( $key ) {
         case 'function':
-            $this->_data[$key] = trim($val);
+            $this->_data[$key] = trim((string)$val);
             break;
 
         case 'is_udt':

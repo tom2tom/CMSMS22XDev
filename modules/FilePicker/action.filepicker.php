@@ -27,9 +27,12 @@ if( !check_login(FALSE) ) exit; // admin only.... but any admin
 //for ($cnt = 0; $cnt < count($handlers); $cnt++) { ob_end_clean(); }
 
 $clean_str = function( $in ) {
-    $in = cleanValue($in);
-    $in = strip_tags($in);
-    return trim($in);
+    if( $in ) {
+        $in = cleanValue($in);
+        $in = strip_tags($in);
+        return trim($in);
+    }
+    return (string)$in;
 };
 
 //

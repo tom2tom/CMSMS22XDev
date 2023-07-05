@@ -28,20 +28,21 @@ class microtiny_profile implements ArrayAccess
     case 'allowcssoverride':
     case 'system':
       if( isset($this->_data[$key]) ) return (bool)$this->_data[$key];
-      break;
+      return false;
 
     case 'formats':
       if( isset($this->_data[$key]) ) return $this->_data[$key];
-      break;
+      return [];
 
     case 'name':
     case 'dfltstylesheet':
       if( isset($this->_data[$key]) ) return trim($this->_data[$key]);
-      break;
+      return '';
 
     case 'label':
-      if( isset($this->_data[$key]) ) return $this->_data[$key];
-      return $this['name'];
+      if( isset($this->_data[$key]) ) return trim($this->_data[$key]);
+      if( isset($this->_data['name']) ) return trim($this->_data['name']);
+      return '';
 
     default:
       throw new CmsInvalidDataException('invalid key '.$key.' for '.__CLASS__.' object');
