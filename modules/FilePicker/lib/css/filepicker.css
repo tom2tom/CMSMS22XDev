@@ -1,10 +1,10 @@
 @font-face {
 	font-family: 'cmsms-filepicker';
-	src:  url('../fonts/cmsms-filepicker.eot');
-	src:  url('../fonts/cmsms-filepicker.eot?#iefix') format('embedded-opentype'),
-		   url('../fonts/cmsms-filepicker.ttf') format('truetype'),
-		   url('../fonts/cmsms-filepicker.woff') format('woff'),
-		   url('../fonts/cmsms-filepicker.svg') format('svg');
+	src: url('../fonts/cmsms-filepicker.svg') format('svg'),
+		url('../fonts/cmsms-filepicker.woff2') format('woff2'),
+		url('../fonts/cmsms-filepicker.woff') format('woff'),
+		url('../fonts/cmsms-filepicker.ttf') format('truetype'),
+		url('../fonts/cmsms-filepicker.eot') format('embedded-opentype');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -168,7 +168,7 @@ img {
 
 .cmsms-fp-upload {
 	margin-right:4px;
-   font-size:18px;
+	font-size:18px;
 }
 
 
@@ -351,7 +351,7 @@ img {
 }
 
 .filepicker-list .filepicker-thumb {
-        position: relative;
+	position: relative;
 	width: 139px;
 	overflow: hidden;
 	height: 90px;
@@ -475,14 +475,14 @@ img {
 }
 
 .filepicker-thumb .filepicker-cmd {
-    cursor: pointer;
-    position: absolute;
-    top: 0;
-    right: 0px;
-    width: 20px;
-    height: 20px;
-    line-height: 14px;
-    opacity: 0.6;
+	cursor: pointer;
+	position: absolute;
+	top: 0;
+	right: 0px;
+	width: 20px;
+	height: 20px;
+	line-height: 14px;
+	opacity: 0.6;
 }
 
 .list-view  .filepicker-file-information {
@@ -577,8 +577,8 @@ img {
 }
 
 .dlg-options {
-    text-align: right;
-    padding-top: 0.5em;
+	text-align: right;
+	padding-top: 0.5em;
 }
 
 
