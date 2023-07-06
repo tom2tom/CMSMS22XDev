@@ -1,17 +1,17 @@
 /*
  * Theme: OneEleven 2012 (c)
  * Author: Goran Ilic (ja@ich-mach-das.at) - http://dev.cmsmadesimple.org/users/uniqu3
- * Version: 1.1
+ * Version: 1.2
  */
-
 /* NORMALIZE BROWSER
 /* normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
-
 /* Général
    ========================================================================== */
+/* disabled - breaks back-compatibility
 *, *:before, *:after {
   box-sizing: border-box;
 }
+*/
 /* Document
    ========================================================================== */
 /**
@@ -294,12 +294,10 @@ template {
  * from writing a bunch of Styles)
  * For Demo see /admin/themes/OneEleven/doc/grid.html
  */
-
 /* Container - Wrapping all grids inside,
  * use .cf class to clear floated elements
  */
 .c_full { width: 100% }
-
 /* Global Grid style, the actual grid */
 .grid_1,
 .grid_2,
@@ -319,7 +317,6 @@ template {
 	margin-left: 1%;
 	margin-right: 1%
 }
-
 /* Alpha = no margin left, Omega = no margin right */
 .alpha { margin-left: 0 }
 .omega { margin-right: 0 }
@@ -337,7 +334,6 @@ template {
 .c_full .grid_10 { width: 81.333% }
 .c_full .grid_11 { width: 89.667% }
 .c_full .grid_12 { width: 98.0% }
-
 /* Prefix to add extra space left
  * Example (same for other like suffix, push or pull): <div class='grid_1 prefix_1'>
  */
@@ -403,7 +399,6 @@ template {
 .m_top_60 { margin-top: 60px !important }
 .m_top_90 { margin-top: 90px !important }
 .m_top_120 { margin-top: 120px !important }
-
 /* Margin bottom */
 .m_bottom_5 { margin-bottom: 5px !important }
 .m_bottom_10 { margin-bottom: 10px !important }
@@ -415,7 +410,6 @@ template {
 .m_bottom_60 { margin-bottom: 60px !important }
 .m_bottom_90 { margin-bottom: 90px !important }
 .m_bottom_120 { margin-bottom: 120px !important }
-
 /* Padding top */
 .p_top_5 { padding-top: 5px !important }
 .p_top_10 { padding-top: 10px !important }
@@ -426,7 +420,6 @@ template {
 .p_top_90 { padding-top: 90px !important }
 .p_top_120 { padding-top: 120px !important }
 .p_top_130 { padding-top: 130px !important }
-
 /* Padding bottom */
 .p_bottom_5 { padding-bottom: 5px !important }
 .p_bottom_10 { padding-bottom: 10px !important }
@@ -460,7 +453,6 @@ template {
 	clear: both
 }
 /* COMMON STUFF */
-
 /*
  * Colors:
  * #f6f6f6 Body/Content Background
@@ -471,7 +463,6 @@ template {
  * #fa8004 Orange (links, title)
  * #147fdb Blue (links, titles)
  */
-
 html, body {
 	width: 100%;
 	margin: 0;
@@ -485,6 +476,9 @@ body {
 	line-height: 1.4;
 	font-size: 14px;
 	background: #f6f6f6
+}
+body * {
+	box-sizing: content-box /* back-compatible reversion of normaliser setting */
 }
 ins {
 	background-color: #ff9;

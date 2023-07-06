@@ -1,15 +1,17 @@
 /*
  * Theme: OneEleven 2012 (c)
  * Author: Goran Ilic (ja@ich-mach-das.at) - http://dev.cmsmadesimple.org/users/uniqu3
- * Version: 1.1
+ * Version: 1.2
  */
 /* NORMALIZE BROWSER
 /* normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
 /* Général
    ========================================================================== */
+/* disabled - breaks back-compatibility
 *, *:before, *:after {
   box-sizing: border-box;
 }
+*/
 /* Document
    ========================================================================== */
 /**
@@ -469,6 +471,9 @@ body {
 	line-height: 1.4;
 	font-size: 14px;
 	background: #f6f6f6
+}
+body * {
+	box-sizing: content-box /* back-compatible reversion of normaliser setting */
 }
 ins {
 	background-color: #ff9;
