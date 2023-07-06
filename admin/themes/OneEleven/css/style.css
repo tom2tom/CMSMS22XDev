@@ -7,7 +7,7 @@
 /* normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
 /* Général
    ========================================================================== */
-/* disabled - breaks back-compatibility
+/* disabled - breaks 111 back-compatibility
 *, *:before, *:after {
   box-sizing: border-box;
 }
@@ -478,10 +478,11 @@ body {
 	background: #f6f6f6
 }
 body * {
-	box-sizing: content-box /* back-compatible reversion of normaliser setting */
+	box-sizing: content-box; /* back-compatible reversion of normaliser setting */
+/*	overflow: hidden 111 breaker */
 }
 ins {
-	background-color: #ff9;
+	background-color: #ddd;
 	color: #232323;
 	text-decoration: none;
 }
