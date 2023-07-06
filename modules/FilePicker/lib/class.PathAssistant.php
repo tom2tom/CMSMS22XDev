@@ -55,8 +55,8 @@ class PathAssistant
 
     public function is_relative_to( $path_a, $path_b )
     {
-        $path_a = realpath( $path_a );
-        $path_b = realpath( $path_b );
+        if( $path_a ) { $path_a = realpath( $path_a ); } else { return FALSE; }
+        if( $path_b ) { $path_b = realpath( $path_b ); } else { return FALSE; }
         if( !$path_a || ! $path_b ) return FALSE;
 
         return startswith( $path_a, $path_b);
@@ -88,7 +88,7 @@ class PathAssistant
 
     public function is_valid_relative_path( $str )
     {
-        $str = trim($str);
+        $str = trim((string)$str);
         $absolute = $this->to_absolute($str);
         return $this->is_relative( $absolute );
     }
