@@ -37,7 +37,7 @@ class wizard_step3 extends wizard_step
         // set this to the current minimum security-supported micro-version
         // via www.php.net/supported-versions.php and www.php.net/releases/index.php
         $app_config = $app->get_config();
-        $prefphp = (!empty($app_config['livephpmin'])) ? $app_config['livephpmin'] : '8.0.0';
+        $prefphp = (!empty($app_config['livephpmin'])) ? $app_config['livephpmin'] : '8.0';
         $obj->recommended = $prefphp;
         $obj->fail_msg = lang('fail_php_version',$obj->minimum,$prefphp,$v);
         $obj->warn_msg = lang('msg_yourvalue',$v);
