@@ -56,8 +56,8 @@ class PathAssistant
     public function is_relative_to( $path_a, $path_b )
     {
         if( $path_a ) { $path_a = realpath( $path_a ); } else { return FALSE; }
-        if( $path_b ) { $path_b = realpath( $path_b ); } else { return FALSE; }
-        if( !$path_a || ! $path_b ) return FALSE;
+        if( $path_b ) { $path_b = realpath( $path_b ); }
+        if( !$path_a || !$path_b ) return FALSE;
 
         return startswith( $path_a, $path_b);
     }
@@ -79,7 +79,7 @@ class PathAssistant
 
     public function relative_path_to_url( $relative )
     {
-        $relative = trim($relative);
+        $relative = trim((string)$relative);
         if( startswith($relative,'/') ) $relative = substr($relative,1);
         $prefix = $this->get_top_url();
         if( endswith( $prefix, '/') ) $prefix = substr($prefix,0,-1);
