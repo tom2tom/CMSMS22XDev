@@ -533,8 +533,8 @@ class Smarty_CMS extends CMSSmartyBase
                         $file = Smarty_Internal_Get_Include_Path::getIncludePath($file);
                     }
 
-                    if ($file !== false) {
-                        require_once($file);
+                    if ($file) {
+                        require_once $file;
                         if( is_callable($plugin_name) || class_exists($plugin_name, false) ) return $file;
                     }
                 }

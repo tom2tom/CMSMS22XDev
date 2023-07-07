@@ -225,7 +225,7 @@ final class CmsApp {
 	 */
 	public function set_content_object(ContentBase $content)
 	{
-		if( !$this->_current_content_page || $content instanceof ErrorPage ) $this->_current_content_page = $content;
+		if( empty($this->_current_content_page) || $content instanceof ErrorPage ) $this->_current_content_page = $content;
 	}
 
 	/**
@@ -235,7 +235,7 @@ final class CmsApp {
 	 */
 	public function get_content_object()
 	{
-		return $this->_current_content_page;
+		return (isset($this->_current_content_page)) ? $this->_current_content_page : null;
 	}
 
 	/**

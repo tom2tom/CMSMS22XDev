@@ -474,7 +474,7 @@ class ContentOperations
 		$db = CmsApp::get_instance()->GetDb();
 		$sql = 'SELECT content_id, parent_id, item_order, content_alias AS alias, hierarchy, id_hierarchy, hierarchy_path FROM '.CMS_DB_PREFIX.'content ORDER BY hierarchy';
 		$list = $db->GetArray($sql);
-		if( !count($list) ) {
+		if( !$list ) {
 			// nothing to do, get outa here.
 			return;
 		}
@@ -489,7 +489,7 @@ class ContentOperations
 		$usql = "UPDATE ".CMS_DB_PREFIX."content SET hierarchy = ?, id_hierarchy = ?, hierarchy_path = ? WHERE content_id = ?";
 		foreach( $hash as $content_id => $row ) {
 			$changed = $this->_set_hierarchy_position($content_id,$hash);
-			if( is_array($changed) ) {
+			if( $changed ) {
 				$db->Execute($usql, array($changed['hierarchy'], $changed['id_hierarchy'], $changed['hierarchy_path'], $changed['content_id']));
 			}
 		}

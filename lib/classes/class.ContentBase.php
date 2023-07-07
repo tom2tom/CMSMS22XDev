@@ -1623,7 +1623,7 @@ abstract class ContentBase
 			if ($this->mAlias != $this->mOldAlias || ($this->mAlias == '' && $this->RequiresAlias()) ) {
 				$contentops = ContentOperations::get_instance();
 				$error = $contentops->CheckAliasError($this->mAlias, $this->mId);
-				if ($error !== false) {
+				if ($error) {
 					$errors[]= $error;
 				}
 			}
@@ -1661,7 +1661,7 @@ abstract class ContentBase
 					}
 
 					$this->mURL = implode('/',$stack);
-					if( $parent_url != '' ) {
+					if( $parent_url ) {
 						// woot, we got a prent url.
 						$this->mURL = $parent_url.'/'.$this->mAlias;
 					}

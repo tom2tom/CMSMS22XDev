@@ -200,7 +200,7 @@ if (isset($_POST["addaliases"])) {
         $alias_num_add = 2;
         // If a '-2' version of the alias already exists
         // Check the '-3' version etc.
-        while ($contentops->CheckAliasError($alias . '-' . $alias_num_add) !== FALSE) {
+        while ($contentops->CheckAliasError($alias . '-' . $alias_num_add)) {
           $alias_num_add++;
         }
         $alias .= '-' . $alias_num_add;

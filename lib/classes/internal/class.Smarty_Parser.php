@@ -176,14 +176,13 @@ class Smarty_Parser extends Smarty_CMS
 
 					// try PHP include_path
 					if ($_stream_resolve_include_path) {
-
 						$file = stream_resolve_include_path($file);
 					} else {
 						$file = Smarty_Internal_Get_Include_Path::getIncludePath($file);
 					}
 
-					if ($file !== false) {
-						require_once($file);
+					if ($file) {
+						require_once $file;
 						if( is_callable($plugin_name) || class_exists($plugin_name, false) )
 							return $file;
 					}

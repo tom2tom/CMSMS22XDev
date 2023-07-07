@@ -65,7 +65,7 @@ class CMSContentTemplateResource extends CMS_Fixed_Resource_Custom
             $mtime = time();
             return;
         }
-        else if (isset($contentobj) && $contentobj !== FALSE) {
+        else if( !empty($contentobj) ) {
             $source = $contentobj->Show($name);
             $source = preg_replace('/\{\/?php\}/', '', $source);
             $source = trim($source);
