@@ -19,7 +19,7 @@
 #
 #$Id$
 
-use \CMSMS\HookManager as HookMgr;
+use CMSMS\HookManager as HookMgr;
 
 #
 # EOF

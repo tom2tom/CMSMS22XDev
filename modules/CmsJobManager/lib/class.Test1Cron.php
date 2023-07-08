@@ -1,6 +1,6 @@
 <?php
 
-use \CMSMS\Async\CronJob;
+use CMSMS\Async\CronJob;
 
 class Test1Cron extends CronJob
 {

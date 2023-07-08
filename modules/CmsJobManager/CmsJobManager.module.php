@@ -23,8 +23,8 @@
 #-------------------------------------------------------------------------
 #END_LICENSE
 
-use \CMSMS\Async\Job as Job;
-//use \CMSMS\Async\CronJobTrait;
+use CMSMS\Async\Job as Job;
+//use CMSMS\Async\CronJobTrait;
 
 final class CmsJobManager extends \CMSModule
 {

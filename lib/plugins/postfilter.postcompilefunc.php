@@ -16,25 +16,25 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-use \CMSMS\HookManager;
+use CMSMS\HookManager;
 
 function smarty_postfilter_postcompilefunc($tpl_output, $smarty)
 {
-	$result = explode(':', $smarty->_current_file);
+    $result = explode(':', $smarty->_current_file);
 
-	if (count($result) > 1)	{
-		switch ($result[0])	{
+    if (count($result) > 1) {
+        switch ($result[0]) {
         case 'cms_stylesheet':
         case 'stylesheet':
             HookManager::do_hook('Core::StylesheetPostCompile',array('stylesheet'=>&$tpl_output));
             break;
 
-        case "content":
+        case 'content':
             HookManager::do_hook('Core::ContentPostCompile', array('content' => &$tpl_output));
             break;
 
         case 'cms_template':
-        case "template":
+        case 'template':
         case 'tpl_top':
         case 'tpl_body':
         case 'tpl_head':
@@ -43,11 +43,11 @@ function smarty_postfilter_postcompilefunc($tpl_output, $smarty)
 
         default:
             break;
-		}
-	}
+        }
+    }
 
-	HookManager::do_hook('Core::SmartyPostCompile', array('content' => &$tpl_output));
+    HookManager::do_hook('Core::SmartyPostCompile', array('content' => &$tpl_output));
 
-	return $tpl_output;
+    return $tpl_output;
 }
 ?>

@@ -18,7 +18,7 @@
 #
 #$Id: listusers.php 11099 2017-03-01 18:21:57Z calguy1000 $
 
-use \CMSMS\HookManager;
+use CMSMS\HookManager;
 
 $CMS_ADMIN_PAGE = 1;
 require_once ('../lib/include.php');

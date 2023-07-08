@@ -1,7 +1,7 @@
 <?php
-use \FilePicker\TemporaryProfileStorage;
-use \FilePicker\PathAssistant;
-use \FilePicker\UploadHandler;
+use FilePicker\TemporaryProfileStorage;
+use FilePicker\PathAssistant;
+use FilePicker\UploadHandler;
 
 if( !isset($gCms) ) exit;
 try {

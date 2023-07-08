@@ -7,7 +7,7 @@
  * @license GPL
  */
 
-use \CMSMS\HookManager;
+use CMSMS\HookManager;
 
 /**
  * A class to represent a smarty template.

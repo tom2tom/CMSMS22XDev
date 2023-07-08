@@ -24,7 +24,7 @@
  * @license GPL
  */
 
-use \CMSMS\internal\global_cache;
+use CMSMS\internal\global_cache;
 
 /**
  * A class for working with site preferences

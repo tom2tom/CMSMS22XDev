@@ -1,6 +1,6 @@
 <?php
 
-use \CMSMS\Async\Job;
+use CMSMS\Async\Job;
 
 class Test1Job extends Job
 {

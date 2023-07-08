@@ -27,7 +27,7 @@
 #-------------------------------------------------------------------------
 # END_LICENSE
 #-------------------------------------------------------------------------
-use \FilePicker\ProfileDAO;
+use FilePicker\ProfileDAO;
 
 $dict = NewDataDictionary( $db );
 $sqlarray = $dict->DropTableSQL(ProfileDAO::table_name());

@@ -31,7 +31,7 @@
  */
 namespace CMSMS\Hooks {
 
-    use \CMSMS\HookManager;
+    use CMSMS\HookManager;
 
     /**
      * An internal class to represent a hook handler.

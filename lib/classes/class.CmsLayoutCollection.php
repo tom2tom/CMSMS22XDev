@@ -24,7 +24,7 @@
  * @license GPL
  */
 
-use \CMSMS\HookManager;
+use CMSMS\HookManager;
 
 /**
  * A class to manage a collection (or theme) of Templates and Stylesheets

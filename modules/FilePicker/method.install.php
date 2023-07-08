@@ -27,7 +27,7 @@
 #-------------------------------------------------------------------------
 # END_LICENSE
 #-------------------------------------------------------------------------
-use \FilePicker\ProfileDAO;
+use FilePicker\ProfileDAO;
 
 $db = $this->GetDb();
 $taboptarray = array('mysql' => 'TYPE=MyISAM');
