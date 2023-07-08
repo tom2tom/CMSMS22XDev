@@ -30,6 +30,8 @@
 
 function smarty_modifier_summarize($string,$numwords='5',$etc='...')
 {
+	if( !$string ) return (string)$string;
+
 	$tmp = explode(" ",strip_tags($string));
 	$stringarray = array();
 
