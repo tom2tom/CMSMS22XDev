@@ -35,7 +35,7 @@ $color_6: #000;
 #ffe6e6e6
 */
 $font-family_1: 'cmsms-filepicker';
-/*$font-family_2: sans-serif; inherit */
+$font-family_2: sans-serif; // TODO inherit from outside iframe
 
 @font-face {
 	font-family: 'cmsms-filepicker';
@@ -158,8 +158,9 @@ body.cmsms-filepicker {
 	padding: 0;
 	background-color: #f0f0f0;
 	color: $color_1;
-/*	font-family: $font-family_2; INHERIT*/
+	font-family: $font-family_2; /*TODO js etc to make this inherit from outside iframe */
 	font-size: 14px;
+	overflow: auto;
 }
 body.dragging {
 	background-color: lightcyan;

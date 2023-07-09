@@ -10,15 +10,15 @@
 }
 
 [class^="cmsms-fp-"], [class*=" cmsms-fp-"] {
-  font-family: 'cmsms-filepicker' !important;
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	font-family: 'cmsms-filepicker' !important;
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 .cmsms-fp-music:before {
@@ -58,30 +58,36 @@
 	content: "\e60b";
 }
 .cmsms-fp-plus:before {
-   content: "\e60c";
+	content: "\e60c";
 }
 .cmsms-fp-close:before {
-   content: "\e60d";
+	content: "\e60d";
 }
 .cmsms-fp-upload:before {
-  content: "\e60e";
+	content: "\e60e";
 }
 
 html,
-body { height: 100% }
-.filepicker-container { height: 100% }
+body {
+	height: 100%
+}
+
+.filepicker-container {
+	height: 100%
+}
 
 body.cmsms-filepicker {
 	margin: 0;
 	padding: 0;
 	background-color: #f0f0f0;
 	color: #444;
-	font-family: sans-serif;
+	font-family: sans-serif; /*TODO js etc to make this inherit from outside frame */
 	font-size: 14px;
+	overflow: auto
 }
 
 body.dragging {
-    background-color: lightcyan;
+	background-color: lightcyan;
 }
 
 a img,
@@ -131,18 +137,18 @@ img {
 	line-height:18px;
 }
 .filepicker-button.make-dir .filepicker-icon-stack-1x {
-   left:-1px;
-   top:-1px;
-   width:100%;
-   font-size:18px;
+	left:-1px;
+	top:-1px;
+	width:100%;
+	font-size:18px;
 }
 .filepicker-button.make-dir .cmsms-fp-folder-plus {
 	left:1px;
-   top:-1px;
+	top:-1px;
 	color:#FFF;
 	text-shadow:none;
 	font-size:14px;
-   font-weight:bold;
+	font-weight:bold;
 }
 
 .cmsms-filepicker .btn-file {
@@ -342,7 +348,7 @@ img {
 	border: none;
 }
 
-#filepicker-items > li:nth-child(odd)  {
+#filepicker-items > li:nth-child(odd) {
 	background-color: #fcfcfc;
 }
 
@@ -485,7 +491,7 @@ img {
 	opacity: 0.6;
 }
 
-.list-view  .filepicker-file-information {
+.list-view .filepicker-file-information {
 	padding: 0 0 0 15px;
 	font-size: 12px;
 	background-color: transparent;
@@ -563,9 +569,9 @@ img {
 
 .list-view .filepicker-file-details span.filepicker-delete {
 	width:30px;
-   text-align: right;
-   font-size: 16px;
-   background-color:transparent;
+	text-align: right;
+	font-size: 16px;
+	background-color:transparent;
 }
 
 .list-view .filepicker-delete:hover {
@@ -583,7 +589,7 @@ img {
 
 
 @media screen and (max-width: 430px) {
-	.list-view .filepicker-file-details span.filepicker-file-ext  {
+	.list-view .filepicker-file-details span.filepicker-file-ext {
 		display: none;
 	}
 
@@ -591,7 +597,7 @@ img {
 		width: 170px;
 	}
 
-	.list-view  .filepicker-file-information {
+	.list-view .filepicker-file-information {
 		padding-right: 185px;
 	}
 
