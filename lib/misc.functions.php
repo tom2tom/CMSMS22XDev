@@ -1117,12 +1117,20 @@ function cms_to_bool($str)
  * See the {cms_jquery} smarty plugin for a convenient way of including the CMSMS provided jquery
  * libraries from within a smarty template.
  *
- * Known libraries:
- *   jquery
- *   jquery-ui
- *   nestedSortable
- *   json
- *   migrate
+ * Known and excludable libraries:
+ *  jquery
+ *  jquery-ui
+ *  json
+ *  migrate
+ *  nestedSortable
+ *  ui_touch_punch
+ *  cms_admin
+ *  cms_autorefresh
+ *  cms_dirtyform
+ *  cms_filepicker
+ *  cms_hiersel
+ *  cms_js_setup
+ *  cms_lock
  *
  * @since 1.10
  * @param string $exclude A comma separated list of script names or aliases to exclude.
