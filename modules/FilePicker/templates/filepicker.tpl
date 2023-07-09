@@ -4,11 +4,11 @@
 		<meta charset="utf-8" />
 		<meta http-equiv="Content-type" content="text/html;charset=utf-8" />
 		<title>{$mod->Lang('filepickertitle')}</title>
+		{cms_jquery exclude='json,migrate,nestedSortable,cms_admin,cms_autorefresh,cms_dirtyform,cms_filepicker,cms_hiersel,cms_js_setup,cms_lock'}
 		<link rel="stylesheet" type="text/css" href="{$cssurl}" />
 	</head>
-	{strip}
 	<body class="cmsms-filepicker">
-		<div id="full-fp">
+		{strip}<div id="full-fp">
 			<div class="filepicker-navbar">
 				<div class="filepicker-navbar-inner">
 					<div class="filepicker-view-option">
@@ -103,7 +103,6 @@
 								</a>
 							{/if}
 
-
 							</div>
 							<div class="filepicker-file-information">
 								<h4 class="filepicker-file-title">
@@ -136,27 +135,25 @@
 				</div>
 			</div>
 		</div>
-	</body>
-	{/strip}
-	{cms_jquery exclude='ui_touch_punch,nestedSortable,json,migrate,cms_autorefresh,cms_dirtyform,cms_hiersel,cms_lock,cms_filepicker'}
-	<script type="text/javascript" src="{$mod->GetModuleURLPath()}/js/ext/jquery.fileupload.js"></script>
-	<script type="text/javascript" src="{$mod->GetModuleURLPath()}/lib/js/cmsms_filebrowser/filebrowser.js"></script>
-	<script type="text/javascript">
-	  $(function() {
-	    var options = {};
-	    options.cmd_url = '{cms_action_url action=ajax_cmd forjs=1}&showtemplate=false';
-	    options.cwd = '{$cwd}';
-	    options.sig = '{$sig}';
-	    options.inst = '{$inst}';
-	    options.lang = {$lang_js};
-	    options.prefix = '{$profile->prefix}';
-	    var filepicker = new CMSFileBrowser(options);
-	  });
-	</script>
-
-	<div id="mkdir_dlg" title="{$mod->Lang('title_mkdir')}" style="display: none;" data-oklbl="{$mod->Lang('ok')}">
-		<div class="dlg-options">
-			<label>{$mod->Lang('name')}:</label> <input type="text" id="fld_mkdir" size="40"/>
+{/strip}
+		<div id="mkdir_dlg" title="{$mod->Lang('title_mkdir')}" style="display: none;" data-oklbl="{$mod->Lang('ok')}">
+			<div class="dlg-options">
+				<label>{$mod->Lang('name')}:</label> <input type="text" id="fld_mkdir" size="40" />
+			</div>
 		</div>
-	</div>
+		<script type="text/javascript" src="{$mod->GetModuleURLPath()}/js/ext/jquery.fileupload.js"></script>
+		<script type="text/javascript" src="{$mod->GetModuleURLPath()}/lib/js/cmsms_filebrowser/filebrowser.js"></script>
+		<script type="text/javascript">
+		$(function() {
+			var filepicker = new CMSFileBrowser({
+			cmd_url: '{cms_action_url action=ajax_cmd forjs=1}&showtemplate=false',
+			cwd: '{$cwd}',
+			sig: '{$sig}',
+			inst: '{$inst}',
+			lang: {$lang_js},
+			prefix: '{$profile->prefix}'
+			});
+		});
+		</script>
+	</body>
 </html>
