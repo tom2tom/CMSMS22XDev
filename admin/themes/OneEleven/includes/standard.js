@@ -6,7 +6,7 @@
  * ========================================================== */
 /*!
 CMSMS OneEleven theme functions v.1.2
-(C) 2014-2022 CMS Made Simple Foundation <foundation@cmsmadesimple.org>
+(C) 2014-2023 CMS Made Simple Foundation <foundation@cmsmadesimple.org>
 License GPL2+
 */
 (function(global, $) {
@@ -261,9 +261,23 @@ License GPL2+
             _this.updateDisplay();
             // handles the initial state of the sidebar (collapsed or expanded)
             _this.handleSidebar($container);
+            var throttleTimer = 0;
             $(window).on('resize', function() {
-                _this.handleSidebar($container);
-                _this.updateDisplay();
+              if (throttleTimer === 0) {
+                var win = this;
+                throttleTimer = setTimeout(function() {
+                  // workaround for old browsers lacking viewport-dimensions support
+                  // get values for vh, vw units
+                  var vh = win.innerHeight * 0.01,
+                   vw = win.innerWidth * 0.01;
+                  // set custom property values to the root of the document
+                  document.documentElement.style.setProperty('--vh', vh + 'px', 'important');
+                  document.documentElement.style.setProperty('--vw', vw + 'px', 'important');
+                  _this.handleSidebar($container);
+                  _this.updateDisplay();
+                  throttleTimer = 0;
+                }, 100);
+              }
             });
         },
 

@@ -475,7 +475,8 @@ body {
 	color: #232323;
 	line-height: 1.4;
 	font-size: 14px;
-	background: #f6f6f6
+	background: #f6f6f6;
+	overflow: hidden;
 }
 body * {
 	box-sizing: content-box; /* back-compatible reversion of normaliser setting */
@@ -962,7 +963,7 @@ aside .no-slide,
 }
 /*** header ***/
 header.header {
-	height: 100px;
+	height: 100px; /* used in .content-inner calc */
 	background: #cecece
 }
 header .header-top {
@@ -1423,7 +1424,14 @@ nav ul#oe_pagemenu li.current li a:active {
 	margin: 0 0 0 40px
 }
 #oe_mainarea .content-inner {
-	padding: 0 20px 0 25px
+	max-height: -webkit-calc(var(--vh, 1vh) * 100 - 130px);
+	max-height: -webkit-calc(100vh - 130px);
+	max-height: -moz-calc(var(--vh, 1vh) * 100 - 130px);
+	max-height: -moz-calc(100vh - 130px);
+	max-height: calc(var(--vh, 1vh) * 100 - 130px); /* fallback for older browsers without viewport support */
+	max-height: calc(100vh - 130px); /* head + foot fixed sizes total 130px */
+	padding: 0 20px 0 25px;
+	overflow: auto;
 }
 #oe_mainarea header.pageheader {
 	max-height: 63px;
@@ -1438,7 +1446,7 @@ nav ul#oe_pagemenu li.current li a:active {
 footer#oe_footer {
 	width: 100%;
 	z-index: 50;
-	height: 30px;
+	height: 30px; /* used in .content-inner calc */
 	background: transparent url(themes/OneEleven/images/layout/sprite_repeatx.png) 829px -259px repeat-x;
 	padding-top: 5px;
 	clear: both;
@@ -2762,10 +2770,11 @@ a.toggle-dropzone:focus {
 
 .cmsfp_dlg {
 	padding: 0 !important;
+	overflow: hidden !important;
 }
 .cmsfp_dlg iframe {
-	width: 100% !important;
 	height: 100% !important;
+	width: 100% !important;
 	max-width: none !important;
 	border: none;
 }
