@@ -18,14 +18,17 @@ Core - General
  - jQuery UI upgraded to version 1.12.1 (with previous styling).
  - jQuery migrate upgraded to version 1.4.1.
 
+Admin theme
+ - Corrected content scrolling
+
 CMSMailer
- - removed deprecated status
+ - Removed deprecated status
 
 ContentManager
  - BR #12474 - Taking the default page down by accident through the content type.
 
 DesignManager
- - Correct new template creation
+ - Corrected new template creation
 
 FileManager
  - BR #12535 - File Manager Unpack archive .tar.gz.
