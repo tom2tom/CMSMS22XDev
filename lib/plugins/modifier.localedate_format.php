@@ -15,10 +15,10 @@
 
 function smarty_modifier_localedate_format($datevar, $format = '%b %e, %Y', $default_date = '', $locale = '')
 {
-    if (empty($datevar)) {
+    if (!$datevar) {
         $datevar = $default_date;
     }
-    if (empty($datevar)) {
+    if (!$datevar) {
         $st = time();
     } elseif (is_numeric($datevar)) {
         $st = (int)$datevar;

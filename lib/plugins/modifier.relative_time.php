@@ -25,7 +25,7 @@
  */
 function smarty_modifier_relative_time($timestamp)
 {
-    if(!$timestamp) return '';
+    if( !$timestamp ) return '';
 
     if( !preg_match('/^[0-9]+$/',$timestamp) ) {
         $timestamp = (int) strtotime($timestamp);
