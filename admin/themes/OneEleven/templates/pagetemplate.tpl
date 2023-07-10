@@ -19,15 +19,15 @@
 		<link rel='apple-touch-icon' sizes='72x72' href='{$config.admin_url}/themes/OneEleven/images/favicon/apple-touch-icon-ipad.png' />
 		<link rel='apple-touch-icon' sizes='114x114' href='{$config.admin_url}/themes/OneEleven/images/favicon/apple-touch-icon-iphone4.png' />
 		<link rel='apple-touch-icon' sizes='144x144' href='{$config.admin_url}/themes/OneEleven/images/favicon/apple-touch-icon-ipad3.png' />
-		<!-- custom jQueryUI 1.12.1 styling See link in JQUI stylesheet for color reference //-->
+		<!-- custom jQueryUI 1.12.1 styling See link in stylesheet for customisation reference //-->
 		<link href="themes/OneEleven/css/default-cmsms/jquery-ui-1.12.1.custom.min.css" rel="stylesheet" />
 		<link href="style.php" rel="stylesheet" />
-		<!-- learn IE html5 -->
+		<!-- teach IE html5 -->
 		<!--[if lt IE 9]>
 		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
 		{cms_jquery include_css=0}
-		<script type="text/javascript" src="themes/OneEleven/includes/standard.js"></script>
+		<script type="text/javascript" src="themes/OneEleven/includes/standard.js"></script>{*OR .min for production*}
 		<!-- THIS IS WHERE EXTRA HEADER STUFF GOES -->
 		{$headertext|default:''}
 	</head>

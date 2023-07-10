@@ -290,11 +290,11 @@ template {
 /* GRID SYSTEM
  * Fluid Grid based on Based on 960 Grid System - http://www.960.gs
  * Helper Styles for Module Developer, make aligning modules easier.
- * (To bad Robert didn't request this earlier i could of saved myself
- * from writing a bunch of Styles)
+ * (Too bad Robert didn't request this earlier I could have saved myself
+ * from writing a bunch of styles)
  * For Demo see /admin/themes/OneEleven/doc/grid.html
  */
-/* Container - Wrapping all grids inside,
+/* Container - wrapping all grids inside,
  * use .cf class to clear floated elements
  */
 .c_full { width: 100% }

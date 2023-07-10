@@ -11,7 +11,7 @@
 		<meta name="viewport" content="initial-scale=1.0 maximum-scale=1.0 user-scalable=no" />
 		<meta name="HandheldFriendly" content="True" />
 		<link href="themes/OneEleven/images/favicon/cmsms-favicon.ico" rel="shortcut icon" />
-		<!-- custom jQueryUI 1.12.1 styling See link in JQUI stylesheet for color reference //-->
+		<!-- custom jQueryUI 1.12.1 styling See link in stylesheet for customisation reference //-->
 		<link href="themes/OneEleven/css/default-cmsms/jquery-ui-1.12.1.custom.min.css" rel="stylesheet" />
 		<link href="loginstyle.php" rel="stylesheet" />
 		<!-- teach IE html5 -->
