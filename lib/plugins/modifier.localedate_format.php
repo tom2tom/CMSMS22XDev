@@ -49,13 +49,13 @@ function smarty_modifier_localedate_format($datevar, $format = '%b %e, %Y', $def
              $n1 = date('Y', $st);
              $n2 = date('z', strtotime('first monday of january '.$n1));
              $n1 = date('z', $st);
-             return floor(($n2-$n1) / 7) + 1;
+             return floor(($n1-$n2) / 7) + 1;
          },
         '~\x13~' => function($m) use($st) { // week of year, assuming the first Sunday is day 0
             $n1 = date('Y', $st);
             $n2 = date('z', strtotime('first sunday of january '.$n1));
             $n1 = date('z', $st);
-            return floor(($n2-$n1) / 7) + 1;
+            return floor(($n1-$n2) / 7) + 1;
         }
     ), $tmp);
 
