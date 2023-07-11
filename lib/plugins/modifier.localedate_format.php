@@ -40,7 +40,7 @@ function smarty_modifier_localedate_format($datevar, $format = '%b %e, %Y', $def
             return localedate_ise ($st, $m[0], $locale);
         },
         '~\x11~' => function($m) use($st) { // two-digit century
-            return floor(date('Y', $st) / 100);
+            return floor(date('Y', $st) / 100 + 0.001); // OR just (int)
         },
         '~\x12~' => function($m) use($st) { // week of year, per ISO8601
             return substr(date('o', $st), -2);
@@ -49,13 +49,13 @@ function smarty_modifier_localedate_format($datevar, $format = '%b %e, %Y', $def
              $n1 = date('Y', $st);
              $n2 = date('z', strtotime('first monday of january '.$n1));
              $n1 = date('z', $st);
-             return floor(($n1-$n2) / 7) + 1;
+             return floor(($n2-$n1) / 7 + 0.001) + 1; // OR just (int)
          },
         '~\x13~' => function($m) use($st) { // week of year, assuming the first Sunday is day 0
             $n1 = date('Y', $st);
             $n2 = date('z', strtotime('first sunday of january '.$n1));
             $n1 = date('z', $st);
-            return floor(($n1-$n2) / 7) + 1;
+            return floor(($n2-$n1) / 7 + 0.001) + 1; // OR just (int)
         }
     ), $tmp);
 
