@@ -349,7 +349,12 @@ if (isset($_POST['editsiteprefs'])) {
       foreach( $_POST as $key => $val ) {
         if( !startswith($key,$prefix) ) continue;
         $key = substr($key,strlen($prefix));
-        $mailprefs[$key] = trim(htmlspecialchars($val, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8', false)); //OR custom fitterer c.f. include.php
+        if( $val ) {
+          $mailprefs[$key] = trim(htmlspecialchars($val, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8', false)); //OR custom fitterer c.f. include.php
+        }
+        else {
+          $mailprefs[$key] = (string)$val;
+        }
       }
 
       // validate
