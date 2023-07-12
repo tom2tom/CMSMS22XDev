@@ -20,8 +20,8 @@
 $CMS_ADMIN_PAGE=1;
 require_once("../lib/include.php");
 
-$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 check_login();
+$urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 $config = \cms_config::get_instance();
 
 // get some urls and preset language strings.
@@ -51,7 +51,7 @@ $data['uploads_url'] = $config['uploads_url'];
 $data['secure_param_name'] = CMS_SECURE_PARAM_NAME;
 $data['user_key'] = $_SESSION[CMS_USER_KEY];
 
-// todo: use  apreference
+// todo: use a preference
 $fp = ModuleOperations::get_instance()->GetFilePickerModule();
 if( $fp ) {
     $data['filepicker_url'] = $fp->get_browser_url();
