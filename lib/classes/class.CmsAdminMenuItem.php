@@ -1,7 +1,6 @@
 <?php
-# CMS - CMS Made Simple
-# (c)2004-6 by Ted Kulp (ted@cmsmadesimple.org)
-# Visit our homepage at: http://cmsmadesimple.org
+# CMS Made Simple class CmsAdminMenuItem
+# (c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,19 +19,10 @@
 
 /**
  * Classes and utilities to provide menu items in the CMSMS admin navigation
- * @package CMS
- * @license     GPL
- */
-
-/**
- * Base module class.
- *
- * All modules should inherit and extend this class with their functionality.
- *
  * @package		CMS
  * @since		2.0
  * @license     GPL
- * @author      Robert Campbell <calguy1000@cmsmadesimple.org>
+ * @author      Robert Campbell
  * @see         CMSModule::GetAdminSection() FOO
  * @property string $module The module that hosts the destination action
  * @property string $section The admin section (from CMSModule::GetAdminSection)

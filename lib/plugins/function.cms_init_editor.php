@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: cms_init_editor
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -51,7 +50,7 @@ function smarty_function_cms_init_editor($params, $smarty)
 function smarty_cms_about_function_cms_init_editor()
 {
 ?>
-  <p>Author: Robert Campbell&lt;calguy1000@cmsmadesimple.org&gt;</p>
+  <p>Author: Robert Campbell</p>
   <p>Change History:</p>
   <ul>
     <li>None</li>

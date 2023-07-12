@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2012 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple class CmsLayoutStylesheetQuery
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -19,21 +18,13 @@
 #$Id$
 
 /**
- * A class to perform advanced queries on the layout stylesheets.
- *
- * @since   2.0
- * @package CMS
- * @license GPL
- */
-
-/**
  * A class to represent a template query, and its results.
  * This class accepts in it's constructor an array of filter arguments.
  *
  * @package CMS
  * @license GPL
  * @since 2.0
- * @author Robert Campbell <calguy1000@gmail.com>
+ * @author Robert Campbell
  * @see CmsDbQueryBase
  * @property int $id The stylesheet id.  This will result in at most 1 result being returned.
  * @property string $name A stylesheet name to filter upon.  If a partial name is provided, it is assumed to be a prefix.

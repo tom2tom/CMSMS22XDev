@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: CMSContentManager (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A module for managing content in CMSMS.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Interface: ContentAssistant
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #

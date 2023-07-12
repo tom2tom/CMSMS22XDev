@@ -1,6 +1,4 @@
 <?php
-//Visit our homepage at: https://www.cmsmadesimple.org
-
 /**
  * This file contains the class and methods to define the CmsLayoutTemplate functionality
  * @package CMS
@@ -15,7 +13,7 @@ use CMSMS\HookManager;
  * @package CMS
  * @license GPL
  * @since 2.0
- * @author Robert Campbell <calguy1000@gmail.com>
+ * @author Robert Campbell
  */
 class CmsLayoutTemplate
 {

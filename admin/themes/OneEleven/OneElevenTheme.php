@@ -1,12 +1,8 @@
 <?php
 #-------------------------------------------------------------------------
-# OneEleven- An admin theme for CMS Made Simple
-# (c) 2012 by Author: Goran Ilic (ja@ich-mach-das.at) http://dev.cmsmadesimple.org/users/uniqu3
-# (c) 2012 by Robert Campbell (calguy1000@cmsmadesimple.org)
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# OneEleven- an admin theme for CMS Made Simple
+# (c) 2012 Goran Ilic (ja@ich-mach-das.at) http://dev.cmsmadesimple.org/users/uniqu3
+# (c) 2012 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #

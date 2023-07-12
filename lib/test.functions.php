@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2008 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple test functions
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by

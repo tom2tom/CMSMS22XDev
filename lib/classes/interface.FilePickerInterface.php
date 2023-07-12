@@ -13,7 +13,7 @@ namespace CMSMS;
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell <calguy1000@cmsmadesimple.org>
+ * @author Robert Campbell
  * @since  2.2
  */
 interface FilePickerInterface

@@ -1,13 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Class: cms_objlock (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A class for managing locks on various objects.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: CmsLock and related exceptions
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A class for managing locks on various objects.
 #
 #-------------------------------------------------------------------------
 #
@@ -43,7 +39,7 @@
  * An exception indicating an error creating a lock
  *
  * @package CMS
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 2.0
  */
 class CmsLockException extends CmsException {}
@@ -52,7 +48,7 @@ class CmsLockException extends CmsException {}
  * An exception indicating a uid mismatch wrt a lock (person operating on the lock is not the owner)
  *
  * @package CMS
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 2.0
  */
 class CmsLockOwnerException extends CmsLockException {}
@@ -61,7 +57,7 @@ class CmsLockOwnerException extends CmsLockException {}
  * An exception indicating an error removing a lock
  *
  * @package CMS
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 2.0
  */
 class CmsUnLockException extends CmsLockException {}
@@ -70,7 +66,7 @@ class CmsUnLockException extends CmsLockException {}
  * An exception indicating an error loading or finding a lock
  *
  * @package CMS
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 2.0
  */
 class CmsNoLockException extends CmsLockException {}
@@ -79,7 +75,7 @@ class CmsNoLockException extends CmsLockException {}
  * A simple class representing a lock on a logical object in CMSMS.
  *
  * @package CMS
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 2.0
  * @param-read int $id
  * @param string $type

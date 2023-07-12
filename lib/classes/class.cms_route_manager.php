@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: cms_content_tree (c) 2010 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A caching tree for CMSMS content objects.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: cms_route_manager
+# (c) 2010 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -56,7 +51,7 @@ if( !function_exists('_internal_cmp_routes') ) {
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell <calguy1000@cmsmadesimple.org>
+ * @author Robert Campbell
  * @since  1.9
  */
 final class cms_route_manager
@@ -202,7 +197,7 @@ final class cms_route_manager
 	 * This method will return TRUE, and do nothing if the route already exists.
 	 * The route cache will be removed if the route is successfully added to the database.
 	 *
-	 * @author Robert Campbell <calguy1000@cmsmadesimple.org>
+	 * @author Robert Campbell
 	 * @since 1.11
 	 * @param CmsRoute $route The route to add.
 	 * @return bool
@@ -230,7 +225,7 @@ final class cms_route_manager
 	 * Delete a static route.
 	 * The route cache will be removed if the route is successfully removed from the database.
 	 *
-	 * @author Robert Campbell <calguy1000@cmsmadesimple.org>
+	 * @author Robert Campbell
 	 * @since 1.11
 	 * @param string $term The term to search for
 	 * @param string $key1
@@ -282,7 +277,7 @@ final class cms_route_manager
 	 * Dynamic routes are not stored to the database, and are checked after static routes when searching for a match.
 	 * This method will return TRUE if the route already exists (static, or dynamic)
 	 *
-	 * @author Robert Campbell <calguy1000@cmsmadesimple.org>
+	 * @author Robert Campbell
 	 * @since 1.11
 	 * @param CmsRoute $route The dynamic route object to add
 	 * @return bool.

@@ -13,7 +13,7 @@
  * harvest resources from web. This can be used with scripts that need
  * a way to communicate with various APIs who support REST.
  *
- * Modified by Robert Campbell (calguy1000@cmsmadesimple.org)
+ * Modified by Robert Campbell
  * Renamed the class to cms_http_request
  * Fixed some bugs.
  *
@@ -350,7 +350,7 @@ class cms_http_request
     /**
      * Clear all cookies
      *
-     * @author Robert Campbell (calguy1000@gmail.com)
+     * @author Robert Campbell
      */
     function resetCookies()
     {

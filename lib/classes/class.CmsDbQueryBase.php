@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2012 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple class CmsDbQueryBase
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -19,14 +18,6 @@
 #$Id$
 
 /**
- * An abstract class for building database queries and managing results.
- *
- * @since 2.0
- * @package CMS
- * @license GPL
- */
-
-/**
  * An abstract class for building queries and managing results.
  *
  * This class is capable of managing a resultset, and encapsulates conversionof database rows into
@@ -35,7 +26,7 @@
  * @since 2.0
  * @package CMS
  * @license GPL
- * @author Robert Campbell <calguy1000@gmail.com>
+ * @author Robert Campbell
  * @property-read array $fields Associative array of the current row of the resultset (read only)
  * @property-read boolean $EOF  Indicates wether the resultset is past the last element (read only)
  * @property-read int $limit The maximum number of rows to return in one resultset (read only)

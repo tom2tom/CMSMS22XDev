@@ -1,11 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# (c) 2016 by Robert Campbell (calguy1000@cmsmadesimple.org)
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005-2010 by Ted Kulp (wishy@cmsmadesimple.org)
-# This projects homepage is: http://www.cmsmadesimple.org
+# Module News class: News\CreateDraftAlertTask
+# (c) 2016 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #

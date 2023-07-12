@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2010 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple class cms_module_plugin
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -20,12 +19,6 @@
 
 /**
  * Extend smarty for moduleinterface.php
- *
- * @package CMS
- */
-
-
-/**
  * A function to call a module as a smarty plugin
  * This method is used by the {cms_module} plugin, and internally when {ModuleName} is called
  *

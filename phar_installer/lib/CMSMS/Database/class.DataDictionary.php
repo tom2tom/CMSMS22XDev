@@ -1,13 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: \CMSMS\Database\DataDictionary (c) 2015 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A class to define methods of interacting with database tables.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: CMSMS\Database\DataDictionary
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A class to define methods of interacting with database tables.
 #
 #-------------------------------------------------------------------------
 #
@@ -185,7 +181,6 @@ function Lens_ParseArgs($args,$endstmtchar=',',$tokenchars='_.-')
  *
  * @package CMS
  * @author Robert Campbell
- * @copyright Copyright (c) 2015, Robert Campbell <calguy1000@cmsmadesimple.org>
  * @since 2.2
  */
 abstract class DataDictionary

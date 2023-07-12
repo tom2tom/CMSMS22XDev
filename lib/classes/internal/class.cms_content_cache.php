@@ -1,13 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: cms_content_tree (c) 2010 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A caching tree for CMSMS content objects.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: cms_content_cache
+# (c) 2010 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A cache for CMSMS content objects.
 #
 #-------------------------------------------------------------------------
 #

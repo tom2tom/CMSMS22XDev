@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2010 by Ted Kulp (ted@cmsmadesimple.org)
-#This projects homepage is: http://cmsmadesimple.org
+#CMS Made Simple class ErrorPage
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -17,12 +16,6 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #$Id$
-
-/**
- * Define the error page content type
- * @package CMS
- * @license GPL
- */
 
 /**
  * Main class for CMS Made Simple ErrorPage content type

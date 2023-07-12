@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2013 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple class cms_config
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -17,14 +16,6 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 /**
- * This file contains the class that manages the CMSMS config.php file
- *
- * @package CMS
- * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
- */
-
-/**
  * A singleton class for interacting with the CMSMS config.php file.
  *
  * This class uses the ArrayAccess interface to behave like a PHP array.
@@ -32,7 +23,7 @@
  * @since 1.9
  * @package CMS
  * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  */
 final class cms_config implements ArrayAccess
 {

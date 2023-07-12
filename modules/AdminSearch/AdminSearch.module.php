@@ -27,7 +27,7 @@ final class AdminSearch extends CMSModule
   function LazyLoadAdmin() { return TRUE; }
   function LazyLoadFrontend() { return TRUE; }
   function IsPluginModule() { return FALSE; }
-  function GetAuthor() { return 'CMS Made Simple Foundation'; }
+  function GetAuthor() { return 'calguy1000'; }
   function GetAuthorEmail() { return ''; }
   function HasAdmin() { return true; }
   function GetAdminSection() { return 'extensions'; }

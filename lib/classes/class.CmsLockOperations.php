@@ -1,13 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Class: CmsLockOperations (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A class for managing locks on various objects.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: CmsLockOperations
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A class for managing locks on various objects.
 #
 #-------------------------------------------------------------------------
 #

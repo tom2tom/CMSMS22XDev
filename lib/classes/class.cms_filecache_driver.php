@@ -1,13 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Class: cms_filecache_driver (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A class for caching data in files for CMSMS.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: cms_filecache_driver
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A class for caching data in files for CMSMS.
 #
 #-------------------------------------------------------------------------
 #

@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # Module: DesignManager - A CMSMS addon module to provide template management.
-# (c) 2012 by Robert Campbell <calguy1000@cmsmadesimple.org>
+# (c) 2012 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@ final class DesignManager extends CMSModule
     function LazyLoadAdmin() { return TRUE; }
     function LazyLoadFrontend() { return TRUE; }
     function IsPluginModule() { return FALSE; }
-    function GetAuthor() { return 'Calguy1000'; }
-    function GetAuthorEmail() { return 'calguy1000@cmsmadesimple.org'; }
+    function GetAuthor() { return 'calguy1000'; }
+    function GetAuthorEmail() { return ''; }
     function HasAdmin() { return true; }
     function GetAdminSection() { return 'layout'; }
     function AllowAutoInstall() { return TRUE; }

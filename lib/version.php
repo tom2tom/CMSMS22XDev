@@ -1,10 +1,8 @@
 <?php
 #---------------------------------------------------------------------------
 # CMS Made Simple - Power for the professional, Simplicity for the end user.
-# (c) 2004 - 2011 by Ted Kulp
-# (c) 2011 - 2018 by the CMS Made Simple Development Team
-# (c) 2018 and beyond by the CMS Made Simple Foundation
-# This project's homepage is: https://www.cmsmadesimple.org
+# (c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+
 #---------------------------------------------------------------------------
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

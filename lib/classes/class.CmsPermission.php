@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2010 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple class CmsPermission
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -20,18 +19,12 @@
 #$Id$
 
 /**
- * Class and utilities for working with permissions.
- * @package CMS
- * @license GPL
- */
-
-/**
  * Simple class for dealing with a permission.
  *
  * @since 2.0
  * @package CMS
  * @license GPL
- * @author Robert Campbell <calguy1000@gmail.com>
+ * @author Robert Campbell
  */
 final class CmsPermission
 {

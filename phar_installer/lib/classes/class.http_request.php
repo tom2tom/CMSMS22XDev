@@ -19,7 +19,7 @@ namespace __appbase;
  * @link        http://www.phpfour.com/lib/http
  * @since       Version 0.1
  *
- * Modified by Robert Campbell (calguy1000@cmsmadesimple.org)
+ * Modified by Robert Campbell
  * Renamed the class to cms_http_request
  * Fixed some bugs.
  */
@@ -316,38 +316,38 @@ class http_request
     function clear()
     {
         // Set the request defaults
-        $this->host         = '';
-        $this->port         = 0;
-        $this->path         = '';
-        $this->target       = '';
-        $this->method       = 'GET';
-        $this->schema       = 'http';
-        $this->params       = array();
-        $this->headers      = array();
-        $this->cookies      = array();
-        $this->_cookies     = array();
-        $this->headerArray  = array();
-        $this->proxy        = null;
+        $this->host        = '';
+        $this->port        = 0;
+        $this->path        = '';
+        $this->target      = '';
+        $this->method      = 'GET';
+        $this->schema      = 'http';
+        $this->params      = array();
+        $this->headers     = array();
+        $this->cookies     = array();
+        $this->_cookies    = array();
+        $this->headerArray = array();
+        $this->proxy       = null;
 
         // Set the config details
-        $this->debug        = FALSE;
-        $this->error        = '';
-        $this->status       = 0;
-        $this->timeout      = '25';
-        $this->useCurl      = TRUE;
-        $this->referrer     = '';
-        $this->username     = '';
-        $this->password     = '';
-        $this->redirect     = FALSE;
-        $this->result       = null;
+        $this->debug       = FALSE;
+        $this->error       = '';
+        $this->status      = 0;
+        $this->timeout     = '25';
+        $this->useCurl     = TRUE;
+        $this->referrer    = '';
+        $this->username    = '';
+        $this->password    = '';
+        $this->redirect    = FALSE;
+        $this->result      = null;
 
         // Set the cookie and agent defaults
         $app = get_app();
-        $this->nextToken    = '';
-        $this->useCookie    = TRUE;
-        $this->saveCookie   = TRUE;
-        $this->maxRedirect  = 3;
-        $this->cookiePath   = $app->get_tmpdir().'/c'.md5(get_class().session_id()).'.dat'; // by default, use a cookie file that is unique only to this session.
+        $this->nextToken   = '';
+        $this->useCookie   = TRUE;
+        $this->saveCookie  = TRUE;
+        $this->maxRedirect = 3;
+        $this->cookiePath  = $app->get_tmpdir().'/c'.md5(get_class().session_id()).'.dat'; // by default, use a cookie file that is unique only to this session.
         $this->userAgent    = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.9';
     }
 
@@ -355,7 +355,7 @@ class http_request
      * Clear all cookies
      *
      * @return void
-     * @author Robert Campbell (calguy1000@gmail.com)
+     * @author Robert Campbell
      */
     function resetCookies()
     {

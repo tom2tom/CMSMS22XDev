@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: cms_tree (c) 2010 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A simple php tree class.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: cms_utils
+# (c) 2010 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -48,8 +43,7 @@
  *
  * @package CMS
  * @license GPL
- * @author  Robert Campbell
- * @copyright Copyright (c) 2010, Robert Campbell <calguy1000@cmsmadesimple.org>
+ * @author Robert Campbell
  * @since 1.9
  */
 final class cms_utils
@@ -120,7 +114,7 @@ final class cms_utils
 	 *
 	 * @see get_module()
 	 * @final
-	 * @author calguy1000
+	 * @author Robert Campbell
 	 * @since 1.11
 	 * @param string $name The module name
 	 * @return bool
@@ -241,7 +235,7 @@ final class cms_utils
 	 * This is a wrapper around a similar function in the ModuleOperations class.
 	 *
 	 * @since 1.10
-	 * @author calguy1000
+	 * @author Robert Campbell
 	 * @return CMSModule
 	 */
 	public static function get_syntax_highlighter_module()
@@ -254,7 +248,7 @@ final class cms_utils
 	 * A convenience method to get the currently selected search module.
 	 *
 	 * @since 1.10
-	 * @author calguy1000
+	 * @author Robert Campbell
 	 * @return CMSModule
 	 */
 	public static function get_search_module()
@@ -266,7 +260,7 @@ final class cms_utils
 	 * A convenience method to get the currently selected filepicker module.
 	 *
 	 * @since 2.2
-	 * @author calguy1000
+	 * @author Robert Campbell
 	 * @return CMSModule
 	 */
 	public static function get_filepicker_module()
@@ -278,7 +272,7 @@ final class cms_utils
 	 * Attempt to retrieve the IP address of the connected user.
 	 * This function attempts to compensate for proxy servers.
 	 *
-	 * @author calguy1000
+	 * @author Robert Campbell
 	 * @since 1.10
 	 * @returns string IP address in dotted notation, or empty
 	 */
@@ -297,7 +291,7 @@ final class cms_utils
 	 * Get a reference to the current theme object
 	 * only returns a valid value when in an admin request.
 	 *
-	 * @author calguy1000
+	 * @author Robert Campbell
 	 * @since 1.11
 	 * @returns CmsAdminThemeBase derived object, or null
 	 */

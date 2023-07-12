@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2010 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple class Group
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -17,12 +16,6 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #$Id: class.group.inc.php 12663 2021-12-13 02:30:03Z tomphantoo $
-
-/**
- * Classes and functions related to CMSMS admin groups.
- * @package CMS
- * @license GPL
- */
 
 /**
  * Generic group class. This can be used for any logged in group or group related function.

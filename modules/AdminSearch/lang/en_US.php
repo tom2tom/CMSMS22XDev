@@ -38,7 +38,7 @@ $lang['help'] = <<<EOT
 <p>As per the GPL, this software is provided as-is. Please read the text of the license for the full disclaimer.</p>
 
 <h3>License</h3>
-<p>This module has been released under the <a href="http://www.gnu.org/licenses/licenses.html#GPL">GNU Public License</a>. This module may not be used otherwise than in accordance with that license, or a later version of it if such is granted by the module's distributor.</p>
+<p>This module has been released under the <a href="http://www.gnu.org/licenses/licenses.html#GPL">GNU General Public License</a>. This module may not be used otherwise than in accordance with that license, or a later version of it if such is granted by the module's distributor.</p>
 EOT;
 
 // I 

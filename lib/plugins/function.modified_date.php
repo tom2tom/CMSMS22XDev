@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: modified_date
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -44,7 +43,7 @@ function smarty_function_modified_date($params, $smarty)
 
 function smarty_cms_about_function_modified_date() {
 ?>
-	<p>Author: Ted Kulp&lt;tedkulp@users.sf.net&gt;</p>
+	<p>Author: Ted Kulp&lt;ted@cmsmadesimple.org&gt;</p>
 
 	<p>Change History:</p>
 		<ul>

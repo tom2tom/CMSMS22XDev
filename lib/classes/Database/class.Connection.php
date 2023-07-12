@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: \CMSMS\Database\Connection (c) 2015 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A class to define interaction with a database.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: CMSMS\Database\Connection
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -57,7 +52,6 @@ namespace CMSMS\Database {
      *
      * @package CMS
      * @author Robert Campbell
-     * @copyright Copyright (c) 2015, Robert Campbell <calguy1000@cmsmadesimple.org>
      * @since 2.2
      * @property-read float $query_time_total The total query time so far in this request (in seconds)
      * @property-read int $query_count The total number of queries executed so far.

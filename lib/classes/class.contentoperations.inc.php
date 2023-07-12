@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2010 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple class ContentOperations
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -17,17 +16,6 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #$Id$
-
-/**
- * Content related functions.
- *
- * @package CMS
- * @license GPL
- */
-
-/**
- * Include the content class definition
- */
 
 /**
  * Class for static methods related to content
@@ -999,7 +987,7 @@ EOS;
 	 * Check if the supplied page id is a parent of the specified base page (or the current page)
 	 *
 	 * @since 2.0
-	 * @author Robert Campbell <calguy1000@hotmail.com>
+	 * @author Robert Campbell
 	 * @param int $test_id Page ID to test
 	 * @param int $base_id (optional) Page ID to act as the base page.  The current page is used if not specified.
 	 * @return bool
@@ -1023,7 +1011,7 @@ EOS;
 	 * Grab URLs from the content table and register them with the route manager.
 	 *
 	 * @since 1.9
-	 * @author Robert Campbell <calguy1000@hotmail.com>
+	 * @author Robert Campbell
 	 * @internal
 	 * @access private
 	 */
@@ -1047,7 +1035,7 @@ WHERE active = 1 AND default_content = 0 AND page_url != \'\'';
 	 * Return a list of pages that the user is owner of.
 	 *
 	 * @since 2.0
-	 * @author Robert Campbell <calguy1000@hotmail.com>
+	 * @author Robert Campbell
 	 * @param int $userid The userid
 	 * @return array Array of integer page id's
 	 */
@@ -1086,7 +1074,7 @@ WHERE active = 1 AND default_content = 0 AND page_url != \'\'';
 	 * Return a list of pages that the user has edit access to.
 	 *
 	 * @since 2.0
-	 * @author Robert Campbell <calguy1000@hotmail.com>
+	 * @author Robert Campbell
 	 * @param int $userid The userid
 	 * @return int[] Array of page id's
 	 */

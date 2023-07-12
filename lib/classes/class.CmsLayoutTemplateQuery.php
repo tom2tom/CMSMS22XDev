@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2012 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple class CmsLayoutTemplateQuery
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -17,12 +16,6 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #$Id$
-
-/**
- * Contains classes to represent a template query and its results.
- * @package CMS
- * @license GPL
- */
 
 /**
  * A class to represent a template query, and its results.
@@ -47,7 +40,7 @@
  * @package CMS
  * @license GPL
  * @since 2.0
- * @author Robert Campbell <calguy1000@gmail.com>
+ * @author Robert Campbell
  * @see CmsDbQueryBase
  * @property string $sortby The sorting field for the returned results.  Possible values are: id,name,created,modified,type.  The default is to sort by template name.';
  * @property string $sortorder The sorting order for the returned results.  Possible values are: ASC,DESC.  The default is ASC.

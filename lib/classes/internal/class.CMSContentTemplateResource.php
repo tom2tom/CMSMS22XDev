@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2012 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple class CMSContentTemplateResource
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -19,23 +18,12 @@
 #$Id$
 
 /**
- * This file contains a smarty resource handler for content pages.
- *
- * @internal
- * @ignore
- * @package CMS
- * @copyright Copyright (c) 2012, Robert Campbell <calguy1000@cmsmadesimple.org>
- * @since 1.11
- */
-
-/**
  * A simple class for handling the content smarty resource.
  *
  * @package CMS
- * @author Robert Campbell
  * @internal
  * @ignore
- * @copyright Copyright (c) 2012, Robert Campbell <calguy1000@cmsmadesimple.org>
+ * @author Robert Campbell
  * @since 1.11
  */
 class CMSContentTemplateResource extends CMS_Fixed_Resource_Custom

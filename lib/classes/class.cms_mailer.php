@@ -1,11 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: CMSMailer - a simple wrapper around phpmailer
-# copyright (c) Robert Campbell <rob@techcom.dyndns.org>
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: cms_mailer - a simple wrapper around phpmailer
+# (c) 2011 Made Simple Foundation <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -33,7 +29,7 @@ use PHPMailer\PHPMailer\PHPMailer;
  * @package CMS
  * @license GPL
  * @since 2.0
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  */
 class cms_mailer
 {

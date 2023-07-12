@@ -1,9 +1,9 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: CMSMailer - a simple wrapper around cms_mailer class and PHPMailer
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module: CMSMailer
+# (c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# a simple wrapper around cms_mailer class and PHPMailer
+#
 #-------------------------------------------------------------------------
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ class CMSMailer extends CMSModule
   function GetVersion() { return '6.2.15'; }
   function MinimumCMSVersion() { return '1.99-alpha0'; }
   function GetHelp() { return $this->Lang('help'); }
-  function GetAuthor() { return 'Calguy1000'; }
+  function GetAuthor() { return 'calguy1000'; }
   function GetAuthorEmail() { return ''; }
   function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
   function IsPluginModule() { return FALSE; }

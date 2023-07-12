@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2012 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple class CMS_Fixed_Resource_Custom
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -19,17 +18,13 @@
 #$Id$
 
 /**
- * This file contains a class that fixes a problem with the Smarty_Resource_Custom class
+ * A class that fixes a problem with the Smarty_Resource_Custom class
  * TODO check whether overriding
  *  $this->generateSafeName($source->name)
  *  i.e. substr(preg_replace('/[^A-Za-z0-9._]/', '', (string) $name), 0, 127)
  * is still relevant
- * @ignore
- */
-
-/**
- * A simple class to resolve an issue with smarty
  *
+ * @ignore
  * @since 1.11
  * @internal
  * @ignore

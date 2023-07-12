@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2010 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple class User
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -18,13 +17,6 @@
 #
 #
 #$Id: class.user.inc.php 10384 2016-01-11 19:22:23Z calguy1000 $
-
-/**
- * User class definition
- *
- * @package CMS
- * @license GPL
- */
 
 /**
  * Generic admin user class.  This can be used for any logged in user or user related function.

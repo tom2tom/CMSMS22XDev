@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: module_available
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -19,11 +18,11 @@
 function smarty_function_module_available($params, $smarty)
 {
 	$name = '';
-	if( isset($params['name']) ) 
+	if( isset($params['name']) )
 	{
 		$name = trim($params['name']);
 	}
-	if( isset($params['m']) ) 
+	if( isset($params['m']) )
 	{
 		$name = trim($params['m']);
 	}
@@ -45,7 +44,7 @@ function smarty_function_module_available($params, $smarty)
 
 function smarty_cms_about_function_module_available() {
 ?>
-	<p>Author: Robert Campbell&lt;calguy1000@cmsmadesimple.org&gt;</p>
+	<p>Author: Robert Campbell</p>
 
 	<p>Change History:</p>
         <ul>

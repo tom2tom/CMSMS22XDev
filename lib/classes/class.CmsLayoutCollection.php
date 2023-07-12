@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2012 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple class CmsLayoutCollection
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -18,12 +17,6 @@
 #
 #$Id$
 
-/**
- * This class defines classes and utility functions for a Theme or Collection.
- * @package CMS
- * @license GPL
- */
-
 use CMSMS\HookManager;
 
 /**
@@ -32,7 +25,7 @@ use CMSMS\HookManager;
  * @package CMS
  * @license GPL
  * @since 2.0
- * @author Robert Campbell <calguy1000@gmail.com>
+ * @author Robert Campbell
  */
 class CmsLayoutCollection
 {

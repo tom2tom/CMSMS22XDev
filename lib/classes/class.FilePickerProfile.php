@@ -24,7 +24,7 @@ namespace CMSMS;
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell <calguy1000@cmsmadesimple.org>
+ * @author Robert Campbell
  * @since  2.2
  * @property-read string $top The top directory for the filepicker (relative to the CMSMS uploads directory)
  * @property-read FileType $type The CMSMS FileType representing what files can be selected.

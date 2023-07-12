@@ -1,8 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2013 by Ted Kulp (wishy@users.sf.net)
-#(c)2011-2016 by The CMSMS Dev Team
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple hook functions
+#(c) 2011 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by

@@ -1,13 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: ContentManager (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A module for managing content in CMSMS.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module: ContentManager
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A module for managing content in CMSMS.
 #
 #-------------------------------------------------------------------------
 #
@@ -40,7 +36,7 @@ final class CMSContentManager extends CMSModule
     function GetVersion() { return '1.1.9'; }
     function GetHelp() { return CmsLangOperations::lang_from_realm('help','help_cmscontentmanager_help'); }
     function GetAuthor() { return 'calguy1000'; }
-    function GetAuthorEmail() { return 'calguy1000@cmsmadesimple.org'; }
+    function GetAuthorEmail() { return ''; }
     function GetChangeLog() { return @file_get_contents(__DIR__.'/changelog.inc'); }
     function IsPluginModule() { return FALSE; }
     function HasAdmin() { return TRUE; }

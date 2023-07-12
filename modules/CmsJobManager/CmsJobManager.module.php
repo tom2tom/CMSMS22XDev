@@ -1,10 +1,10 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: CmsJobManager (c) 2016 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A core module for CMS Made Simple to allow management of asynchronous jobs
-#  and cron jobs.
+# Module: CmsJobManager
+# (c) 2016 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A core module for CMS Made Simple to allow management of asynchronous
+# jobs and cron jobs.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,8 +41,8 @@ final class CmsJobManager extends \CMSModule
     public function GetFriendlyName() { return $this->Lang('friendlyname'); }
     public function GetVersion() { return '0.1.3'; }
     public function MinimumCMSVersion() { return '2.1.99'; }
-    public function GetAuthor() { return 'Calguy1000'; }
-    public function GetAuthorEmail() { return 'calguy1000@cmsmadesimple.org'; }
+    public function GetAuthor() { return 'calguy1000'; }
+    public function GetAuthorEmail() { return ''; }
     public function IsPluginModule() { return TRUE; }
     public function HasAdmin() { return TRUE; }
     public function GetAdminDescription() { return $this->Lang('moddescription'); }

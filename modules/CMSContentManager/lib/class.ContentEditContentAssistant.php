@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: CMSContentManager (c) 2013 by Robert Campbell 
-#         (calguy1000@cmsmadesimple.org)
-#  A module for managing content in CMSMS.
-# 
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module CMSContentManager class ContentEditContentAssistant
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -19,7 +14,7 @@
 # However, as a special exception to the GPL, this software is distributed
 # as an addon module to CMS Made Simple.  You may not use this software
 # in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin 
+# Made simple that does not indicate clearly and obviously in its admin
 # section that the site was built with CMS Made simple.
 #
 # This program is distributed in the hope that it will be useful,
@@ -34,8 +29,8 @@
 #-------------------------------------------------------------------------
 #END_LICENSE
 
-class ContentEditContentAssistant extends EditContentAssistant 
-{  
+class ContentEditContentAssistant extends EditContentAssistant
+{
   public function getExtraCode()
   {
     // get javascript for editcontent for the Content object, and it's derived objects.

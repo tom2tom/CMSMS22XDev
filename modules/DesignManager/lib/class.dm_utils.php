@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: DesignManager - A CMSMS addon module to provide template management.
-# (c) 2012 by Robert Campbell <calguy1000@cmsmadesimple.org>
+# Module DesignManager class dm_utils
+# (c) 2012 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,15 +21,15 @@
 
 final class dm_utils
 {
-    public function __construct() {}
+	public function __construct() {}
 
-    public static function locking_enabled()
-    {
+	public static function locking_enabled()
+	{
 		$mod = cms_utils::get_module('DesignManager');
-        $timeout = $mod->GetPreference('lock_timeout');
-        if( $timeout > 0 ) return TRUE;
-        return FALSE;
-    }
+		$timeout = $mod->GetPreference('lock_timeout');
+		if( $timeout > 0 ) return TRUE;
+		return FALSE;
+	}
 
 	public static function get_template_locks()
 	{

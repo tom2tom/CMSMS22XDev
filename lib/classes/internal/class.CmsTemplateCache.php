@@ -1,14 +1,10 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: CmsTemplateCache (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A simple class to handle remembering and preloading template data for
-#  frotnend requests.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: CmsTemplateCache
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A simple class to handle remembering and preloading template data for
+# frontend requests.
 #
 #-------------------------------------------------------------------------
 #
@@ -44,10 +40,9 @@
  *  frontend requests.
  *
  * @package CMS
- * @author Robert Campbell
  * @internal
  * @ignore
- * @copyright Copyright (c) 2013, Robert Campbell <calguy1000@cmsmadesimple.org>
+ * @author Robert Campbell
  * @since 2.0
  */
 class CmsTemplateCache

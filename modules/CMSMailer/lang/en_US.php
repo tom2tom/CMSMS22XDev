@@ -256,7 +256,7 @@ $lang['help'] = '<h3>What Does This Do?</h3>
 of the license for the full disclaimer.</p>
 
 <h3>Copyright and License</h3>
-<p>Copyright &copy; 2005-2023 CMS Made Simple Foundation <a href=\'mailto:foundation@smamadesimple.org\'>&lt;CMSMS Foundation&gt;</a>. All rights reserved.</p>
+<p>Copyright &copy; 2005-2023 CMS Made Simple Foundation Inc <a href=\'mailto:foundation@smamadesimple.org\'>&lt;CMSMS Foundation&gt;</a>. All rights reserved.</p>
 <p>This module has been released under the <a href=\'http://www.gnu.org/licenses/licenses.html#GPL\'>GNU General Public License</a>. This module may not be distributed or used otherwise than in accordance with that license.</p>
 ';
 

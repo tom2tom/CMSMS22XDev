@@ -1,7 +1,6 @@
 <?php
-# CMS - CMS Made Simple
-# (c)2004-6 by Ted Kulp (ted@cmsmadesimple.org)
-# Visit our homepage at: http://cmsmadesimple.org
+# CMS Made Simple class CMSModule
+# (c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,13 +16,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
 #
 #$Id$
-
-/**
- * This file contains the base module class for all CMSMS modules.
- *
- * @package CMS
- * @license GPL
- */
 
 /**
  * Base module class.
@@ -262,7 +254,7 @@ abstract class CMSModule
      * is installed or upgraded.
      *
      * @see smarty documentation.
-     * @author calguy1000
+     * @author Robert Campbell
      * @since 1.11
      * @param string  $name The plugin name
      * @param string  $type The plugin type (function,compiler,block, etc)
@@ -283,7 +275,7 @@ abstract class CMSModule
      * Unregister a smarty plugin from the system.
      * This method removes any matching rows from the database, and should only be used in a modules uninstall or upgrade routine.
      *
-     * @author calguy1000
+     * @author Robert Campbell
      * @since 1.11
      * @param string $name The smarty plugin name.  If no name is specified all smarty plugins registered to this module will be removed.
      */
@@ -2463,7 +2455,7 @@ abstract class CMSModule
      *
      * @final
      * @since 2.0.1
-     * @author calguy1000
+     * @author Robert Campbell
      * @return Smarty_Internal_Template
      */
     final public function GetActionTemplateObject()
@@ -2477,7 +2469,7 @@ abstract class CMSModule
      *
      * @final
      * @since 1.11
-     * @author calguy1000
+     * @author Robert Campbell
      * @param string $template The template name.
      * @return string
      */
@@ -2494,7 +2486,7 @@ abstract class CMSModule
      * Note: Since 2.2.1 This function will throw a logic exception if a string or eval resource is supplied.
      *
      * @since 2.0
-     * @author calguy1000
+     * @author Robert Campbell
      * @param string $template The template name.
      * @return string
      */
@@ -2515,7 +2507,7 @@ abstract class CMSModule
      * A function to return a resource identifier to a module specific file template
      *
      * @since 1.11
-     * @author calguy1000
+     * @author Robert Campbell
      * @param string $template The template name.
      * @return string
      */
@@ -2703,7 +2695,7 @@ abstract class CMSModule
      *
      * @final
      * @since 1.11
-     * @author calguy1000
+     * @author Robert Campbell
      * @param string $tab The tab name
      * @see CMSModule::RedirectToAdminTab();)
      */

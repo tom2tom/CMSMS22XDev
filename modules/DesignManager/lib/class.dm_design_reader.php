@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: DesignManager - A CMSMS addon module to provide template management.
-# (c) 2012 by Robert Campbell <calguy1000@cmsmadesimple.org>
+# Module DesignManager class dm_design_reader
+# (c) 2012 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

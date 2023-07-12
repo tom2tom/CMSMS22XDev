@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#This projects homepage is: http://www.cmsmadesimple.org
+#Plugin handler: get_template_vars
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -97,7 +96,7 @@ function smarty_function_get_template_vars($params, $smarty)
 
 function smarty_cms_about_function_get_template_vars() {
 	?>
-	<p>Author: Robert Campbell&lt;calguy1000@hotmail.com&gt;</p>
+	<p>Author: Robert Campbell</p>
 	<p>Version: 1.0</p>
 	<p>
 	Change History:<br/>

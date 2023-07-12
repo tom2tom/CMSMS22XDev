@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: cms_tree (c) 2010 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A simple php tree class.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: cms_admin_utils
+# (c) 2010 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -48,8 +43,7 @@ if( !CmsApp::get_instance()->test_state(CmsApp::STATE_ADMIN_PAGE) )
  *
  * @package CMS
  * @license GPL
- * @author  Robert Campbell
- * @copyright Copyright (c) 2012, Robert Campbell <calguy1000@cmsmadesimple.org>
+ * @author Robert Campbell
  * @since 2.0
  */
 final class cms_admin_utils

@@ -1,8 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2012 by Ted Kulp (ted@cmsmadesimple.org)
-#(c)2013-2016 by The CMSMS Dev Team
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple class CmsLayoutStylesheet
+#(c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -20,12 +18,6 @@
 #$Id$
 
 /**
- * Contains classes and utilities for working with the CmsLayoutStylesheet stuff
- * @package CMS
- * @license GPL
- */
-
-/**
  * A class to represent a stylesheet.
  *
  * This class is capable of managing a single stylesheet, and has static methods for loading stylesheets from the database.
@@ -37,7 +29,7 @@
  * @package CMS
  * @license GPL
  * @since 2.0
- * @author Robert Campbell <calguy1000@gmail.com>
+ * @author Robert Campbell
  * @see CmsLayoutCollection
  */
 class CmsLayoutStylesheet

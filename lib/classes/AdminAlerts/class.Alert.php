@@ -1,8 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2013 by Ted Kulp (ted@cmsmadesimple.org)
-#(c)2016 by the CMSMS Dev Team
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple class CMSMS\AdminAlerts\Alert
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -19,13 +17,6 @@
 #
 #$Id$
 
-/**
- * This file contains the base definition for an admin alert.
- *
- * @package CMS
- * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
- */
 namespace CMSMS\AdminAlerts;
 
 /**
@@ -41,7 +32,7 @@ namespace CMSMS\AdminAlerts;
  * @since 2.2
  * @package CMS
  * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @prop string $name The alert name.  This is set by default on construction, but can be overridden.  It is used to control how the alert is saved.
  * @prop string $module An optional module name.  If specified, the module will be loaded when the alert is read from the database.
  * @prop string $priority The alert priority

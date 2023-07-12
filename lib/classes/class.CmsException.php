@@ -1,13 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# CmsException (c) 2012 by Robert Campbell
-# (calguy1000@cmsmadesimple.org)
-# A collection of CMSMS Exception classes
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Classes: CmsException and derivatives
+# (c) 2012 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A collection of custom Exception classes
 #
 #-------------------------------------------------------------------------
 #
@@ -115,7 +111,7 @@ abstract class CmsExtraDataException extends Exception
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 1.10
  */
 class CmsException extends CmsExtraDataException
@@ -147,7 +143,7 @@ class CmsException extends CmsExtraDataException
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 1.10
  */
 class CmsLogicException extends CmsException {}
@@ -157,7 +153,7 @@ class CmsLogicException extends CmsException {}
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 1.10
  */
 class CmsCommunicationException extends CmsException {}
@@ -167,7 +163,7 @@ class CmsCommunicationException extends CmsException {}
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 1.10
  */
 class CmsPrivacyException extends CmsException {}
@@ -177,7 +173,7 @@ class CmsPrivacyException extends CmsException {}
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 1.10
  */
 class CmsSingletonException extends CmsException {}
@@ -187,7 +183,7 @@ class CmsSingletonException extends CmsException {}
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 1.10
  */
 class CmsInvalidDataException extends CmsLogicException {}
@@ -197,7 +193,7 @@ class CmsInvalidDataException extends CmsLogicException {}
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 1.10
  */
 class CmsDataNotFoundException extends CmsException {}
@@ -207,7 +203,7 @@ class CmsDataNotFoundException extends CmsException {}
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 1.11
  */
 class CmsError404Exception extends CmsException {}
@@ -216,7 +212,7 @@ class CmsError404Exception extends CmsException {}
  * A special exception indicating that a 403 error should be supplied.
  *
  * @package CMS
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 1.12
  */
 class CmsError403Exception extends CmsException {}
@@ -226,7 +222,7 @@ class CmsError403Exception extends CmsException {}
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 2.0
  */
 class CmsContentException extends CmsException {}
@@ -236,7 +232,7 @@ class CmsContentException extends CmsException {}
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 1.11
  */
 class CmsEditContentException extends CmsContentException {}
@@ -246,7 +242,7 @@ class CmsEditContentException extends CmsContentException {}
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 2.0
  */
 class CmsSQLErrorException extends CmsException {}
@@ -257,7 +253,7 @@ class CmsSQLErrorException extends CmsException {}
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 2.0
  */
 class CmsXMLErrorException extends CmsException {}
@@ -267,7 +263,7 @@ class CmsXMLErrorException extends CmsException {}
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 2.0
  */
 class CmsFileSystemException extends CmsException {}

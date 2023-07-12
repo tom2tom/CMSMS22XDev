@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2010 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple class cms_siteprefs
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -18,21 +17,15 @@
 #
 #$Id$
 
-/**
- * A class and utilities for working with site preferences.
- * @package CMS
- * @license GPL
- */
-
 use CMSMS\internal\global_cache;
 
 /**
- * A class for working with site preferences
+ * A class and utilities for working with site preferences.
  *
  * @package CMS
  * @license GPL
  * @since 1.10
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  */
 final class cms_siteprefs
 {

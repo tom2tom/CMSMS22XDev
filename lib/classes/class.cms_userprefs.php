@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2010 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple class cms_userprefs
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -19,19 +18,12 @@
 #$Id$
 
 /**
- * Classes and utilities for working with user preferences.
- * @package CMS
- * @license GPL
- */
-
-
-/**
- * A static class for preferences stored with admin user accounts
+ * Class and utilities for working with admin user preferences.
  *
  * @package CMS
  * @license GPL
  * @since 1.10
- * @author Robert Campbell (calguy1000@gmail.com)
+ * @author Robert Campbell
  */
 final class cms_userprefs
 {

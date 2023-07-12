@@ -1,14 +1,10 @@
 <?php
-#-------------------------------------------------------------------------
-# Module: FilePicker - A CMSMS addon module to provide file picking capabilities.
-# (c) 2016 by Fernando Morgado <jomorg@cmsmadesimple.org>
-# (c) 2016 by Robert Campbell <calguy1000@cmsmadesimple.org>
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2006 by Ted Kulp (wishy@cmsmadesimple.org)
-# This project's homepage is: http://www.cmsmadesimple.org
-#-------------------------------------------------------------------------
-#-------------------------------------------------------------------------
 # BEGIN_LICENSE
+# #-------------------------------------------------------------------------
+# Module FilePicker action
+# (c) 2016 Fernando Morgado <jomorg@cmsmadesimple.org>
+# (c) 2016 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#
 #-------------------------------------------------------------------------
 # This file is part of FilePicker
 # FilePicker is free software; you can redistribute it and/or modify
@@ -26,12 +22,11 @@
 # Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
 #-------------------------------------------------------------------------
 # END_LICENSE
-#-------------------------------------------------------------------------
 
 if( !defined('CMS_VERSION') ) exit;
 
 # just for tests purposes
-#this will be handled differently 
+#this will be handled differently
 $fn = cms_join_path($this->GetModulePath(), 'lib',  'ext', 'UploadHandler.php');
 require_once($fn);
 
@@ -45,7 +40,7 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: OPTIONS, HEAD, GET, POST, PUT, DELETE');
 header('Access-Control-Allow-Headers: X-File-Name, X-File-Type, X-File-Size');
 
-switch ($_SERVER['REQUEST_METHOD']) 
+switch ($_SERVER['REQUEST_METHOD'])
 {
 	case 'OPTIONS':
         break;

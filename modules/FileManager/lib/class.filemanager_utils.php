@@ -1,10 +1,7 @@
 <?php
-# FileManager. A plugin for CMS - CMS Made Simple
-# Copyright (c) 2006-08 by Morten Poulsen <morten@poulsen.org>
-#
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+# FileManager module class
+# (c) 2006-08 Morten Poulsen <morten@poulsen.org>
+# (c) 2008 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by

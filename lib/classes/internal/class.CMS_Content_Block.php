@@ -1,7 +1,6 @@
 <?php
-# CMS - CMS Made Simple
-# (c)2004 by Ted Kulp (tedkulp@users.sf.net)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# CMS Made Simple class CMS_Content_Block
+# (c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,13 +18,9 @@
 #$Id$
 
 /**
- * @package CMS
- */
-
-/**
  * Helper class to deal with parsing or fetching content blocks.
  *
- * @author      Robert Campbell <calguy1000@cmsmadesimple.org>
+ * @author      Robert Campbell
  * @since		1.11
  * @ignore
  * @internal

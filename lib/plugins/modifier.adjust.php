@@ -1,8 +1,7 @@
 <?php
 /*
-CMS - CMS Made Simple
-(C) 2004-2023 CMS Made Simple Foundation Inc
-Visit our homepage at: https://www.cmsmadesimple.org
+Plugin handler: adjust
+(c) 2023 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

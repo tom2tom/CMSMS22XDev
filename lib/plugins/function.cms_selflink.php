@@ -1,14 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# cms_selflink (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A function for retrieving A url or link to an internal CMSMS Page.
-#  This is a rewrite of the original cms_selflink plugin by Ted Kulk and various authors.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004-2013 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# cms_selflink plugin
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A function for retrieving an url or link to an internal CMSMS Page.
 #
 #-------------------------------------------------------------------------
 #
@@ -34,6 +29,7 @@
 #
 #-------------------------------------------------------------------------
 #END_LICENSE
+# This is a rewrite of the original cms_selflink plugin by Ted Kulp and various authors.
 
 function smarty_function_cms_selflink($params, $smarty)
 {

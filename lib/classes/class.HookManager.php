@@ -1,8 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2012 by Ted Kulp (ted@cmsmadesimple.org)
-#(c)2013-2016 by The CMSMS Dev Team
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple classes CMSMS\HookManager and related
+#(c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -104,7 +102,7 @@ namespace CMSMS {
      * @package CMS
      * @license GPL
      * @since 2.2
-     * @author Robert Campbell <calguy1000@gmail.com>
+     * @author Robert Campbell
      */
     class HookManager
     {

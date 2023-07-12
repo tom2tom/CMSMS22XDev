@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: Content (c) 2013 by Robert Campbell 
-#         (calguy1000@cmsmadesimple.org)
-#  A module for managing content in CMSMS.
-# 
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module CMSContentManager action
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -19,7 +14,7 @@
 # However, as a special exception to the GPL, this software is distributed
 # as an addon module to CMS Made Simple.  You may not use this software
 # in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin 
+# Made simple that does not indicate clearly and obviously in its admin
 # section that the site was built with CMS Made simple.
 #
 # This program is distributed in the hope that it will be useful,
@@ -51,7 +46,7 @@ if( !function_exists('cm_prettyurls_ok') ) {
   }
 }
 
-if( isset($params['multisubmit']) && isset($params['multiaction']) && 
+if( isset($params['multisubmit']) && isset($params['multiaction']) &&
     isset($params['multicontent']) && is_array($params['multicontent']) && count($params['multicontent']) > 0 ) {
   list($module,$bulkaction) = explode('::',$params['multiaction'],2);
   if( $module == '' || $module == '-1' || $bulkaction == '' || $bulkaction == '-1' ) {
@@ -68,7 +63,7 @@ $smarty->assign('prettyurls_ok',cm_prettyurls_ok());
 $smarty->assign('can_add_content',$this->CheckPermission('Add Pages') || $this->CheckPermission('Manage All Content'));
 $smarty->assign('can_reorder_content',$this->CheckPermission('Manage All Content'));
 
-// load all the content that this user can display... 
+// load all the content that this user can display...
 // organize it into a tree
 $builder = new ContentListBuilder($this);
 $curpage = 1;
@@ -157,7 +152,7 @@ $smarty->assign('ajax',$ajax);
 if( $error ) $smarty->assign('error',$error);
 
 $opts = array();
-if( $this->CheckPermission('Remove Pages') || 
+if( $this->CheckPermission('Remove Pages') ||
     $this->CheckPermission('Manage All Content') ) {
   bulkcontentoperations::register_function($this->Lang('bulk_delete'),'delete');
 }

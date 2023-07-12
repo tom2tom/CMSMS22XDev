@@ -1,13 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: cms_tree (c) 2010 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A simple php tree class.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: content_assistant
+# (c) 2010 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A content managment assister class.
 #
 #-------------------------------------------------------------------------
 #
@@ -43,8 +39,7 @@
  *
  * @package CMS
  * @internal
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
- * @copyright Copyright (c) 2010, Robert Campbell <calguy1000@cmsmadesimple.org>
+ * @author Robert Campbell
  * @since 1.9
  */
 class content_assistant

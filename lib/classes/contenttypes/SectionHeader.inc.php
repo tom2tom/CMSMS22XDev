@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2010 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple class SectionHeader
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -17,14 +16,6 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #$Id: SectionHeader.inc.php 9406 2014-03-28 23:06:42Z calguy1000 $
-
-/**
- * Class definition and methods for Section Header content type
- *
- * @package CMS
- * @subpackage content_types
- * @license GPL
- */
 
 /**
  * Implements the CMS Made Simple Section Header content type

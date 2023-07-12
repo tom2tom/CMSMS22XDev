@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2010 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple class Content
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -18,14 +17,6 @@
 #
 #
 #$Id: Content.inc.php 11378 2017-07-10 21:30:18Z calguy1000 $
-
-/**
- * Class definition and methods for the main Content class.
- *
- * @package CMS
- * @subpackage content_types
- * @license GPL
- */
 
 /**
  * Implements the Content (page) content type.

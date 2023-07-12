@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2010 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple class Bookmark
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -17,12 +16,6 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #$Id: class.bookmark.inc.php 10553 2016-04-17 17:24:24Z calguy1000 $
-
-/**
- * This file contains a class that defines a bookmark in the CMSMS admin console.
- * @package CMS
- * @license GPL
- */
 
 /**
  * Bookmark class for the CMSMS admin console.

@@ -4,7 +4,7 @@
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  */
 
 namespace CMSMS\AdminAlerts;
@@ -18,7 +18,7 @@ namespace CMSMS\AdminAlerts;
  * @since 2.2
  * @package CMS
  * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @prop string[] $perms An array of permission names.  The logged in user must have at least one of these permissions to see the alert.
  * @prop string $icon The complete URL to an icon to associate with this alert
  * @prop string $titlekey The language key (relative to the module) for the alert title.

@@ -1,13 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: CMSMS\Database\compatibility (c) 2015 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
+# Class: CMSMS\Database\compatibility
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 # A collection of compatibility tools for the database connectivity layer.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
 #
 #-------------------------------------------------------------------------
 #

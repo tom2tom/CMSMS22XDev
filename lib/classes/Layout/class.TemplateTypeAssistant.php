@@ -1,13 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: CmsLayoutTemplateType (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A class to manage template types.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: CMSMS\Layout\TemplateTypeAssistant
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A class to manage template types.
 #
 #-------------------------------------------------------------------------
 #
@@ -48,7 +44,7 @@ namespace CMSMS\Layout;
  * @package CMS
  * @license GPL
  * @since 2.2
- * @author Robert Campbell <calguy1000@gmail.com>
+ * @author Robert Campbell
  */
 abstract class TemplateTypeAssistant
 {

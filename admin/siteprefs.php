@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple admin console script
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -349,12 +348,7 @@ if (isset($_POST['editsiteprefs'])) {
       foreach( $_POST as $key => $val ) {
         if( !startswith($key,$prefix) ) continue;
         $key = substr($key,strlen($prefix));
-        if( $val ) {
-          $mailprefs[$key] = trim(htmlspecialchars($val, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8', false)); //OR custom fitterer c.f. include.php
-        }
-        else {
-          $mailprefs[$key] = (string)$val;
-        }
+        $mailprefs[$key] = trim(htmlspecialchars($val, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8', false)); //OR custom filterer c.f. include.php
       }
 
       // validate

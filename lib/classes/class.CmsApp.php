@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2010 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple classes CmsApp, CmsContentTypePlaceholder
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -19,13 +18,6 @@
 #$Id$
 
 /**
- * Global class for easy access to all important variables.
- *
- * @package CMS
- * @license GPL
- */
-
-/**
  * Simple singleton class that contains various functions and states
  * representing the application.
  *
@@ -35,8 +27,8 @@
  * @license GPL
  * @since 0.5
  */
-final class CmsApp {
-
+final class CmsApp
+{
 	/**
 	 * A constant indicating that the request is for a page in the CMSMS admin console
 	 */

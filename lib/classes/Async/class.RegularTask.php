@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: \CMSMS\Database\Connection (c) 2016 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A class to define interaction with a database.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: CMSMS\Async\RegularTask
+# (c) 2016 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -47,7 +42,6 @@ namespace CMSMS\Async;
  *
  * @package CMS
  * @author Robert Campbell
- * @copyright Copyright (c) 2015, Robert Campbell <calguy1000@cmsmadesimple.org>
  * @since 2.2
  * @property CmsRegularTask $task The task to convert.
  */

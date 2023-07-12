@@ -1,13 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: \CMSMS\Database\Statement (c) 2015 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A class to represent a prepared SQL statement
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: CMSMS\Database\Statement
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A class to represent a prepared SQL statement
 #
 #-------------------------------------------------------------------------
 #
@@ -47,7 +43,6 @@ namespace CMSMS\Database;
  *
  * @package CMS
  * @author Robert Campbell
- * @copyright Copyright (c) 2017, Robert Campbell <calguy1000@cmsmadesimple.org>
  * @since 2.2
  * @property-read Connection $db The database connection
  * @property-read string $sql The SQL query.

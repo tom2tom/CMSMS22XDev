@@ -1,8 +1,6 @@
 <?php
-#This file is Copyright (c) 2016 by Robert Campbell <calguy1000@cmsmadesimple.org>
-#CMS - CMS Made Simple (CMSMS)
-#CMSMS is copyright (c) 2004 by Ted Kulp.
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple admin console script
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by

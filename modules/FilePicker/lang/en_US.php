@@ -120,6 +120,6 @@ $lang['help'] = <<<EOT
 <p>As per the GPL, this software is provided as-is. Please read the text of the license for the full disclaimer.</p>
 
 <h3>Copyright and License</h3>
-<p>Copyright &copy; 2017, JoMorg and calguy1000. All Rights Are Reserved.</p>
-<p>This module has been released under the <a href="http://www.gnu.org/licenses/licenses.html#GPL">GNU Public License</a>. You must agree to this license before using the module.</p>
+<p>Copyright &copy; 2017 CMS Made Simple Foundation Inc &lt;foundation@cmsmadesimple.org&gt;. All rights reserved.</p>
+<p>This module has been released under the <a href="http://www.gnu.org/licenses/licenses.html#GPL">GNU General Public License</a>. You must agree to this license before using the module.</p>
 EOT;

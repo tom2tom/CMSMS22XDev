@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: image
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -69,7 +68,7 @@ function smarty_function_image($params, $smarty)
 function smarty_cms_about_function_image()
 {
 ?>
-	<p>Author: Robert Campbell &lt;calguy1000@hotmail.com&gt;,</p>
+	<p>Author: Robert Campbell</p>
 
 	<p>Change History</p>
 	<ul>
