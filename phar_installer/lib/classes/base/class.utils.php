@@ -83,15 +83,15 @@ class utils
 
   /**
    * cleans passwords for config.php mainly db pass.
-   * we don't want quotes on the string
+   * we don't want quotes in the string
    * @since 1.3.13
    * @param $val
    *
-   * @return string|string[]
+   * @return string
    */
     public static function clean_password($val)
     {
-      if( !$val ) return $val;
+      if( !$val ) return (string)$val;
       $val = trim( (string) $val );
       $val = str_replace(["'", '"'], "", $val);
 
@@ -117,9 +117,10 @@ class utils
         }
 
         if( ini_get('safe_mode') != '1' ) {
-            // last ditch effort to find a place to write to.
-            $tmp = @tempnam('','xxx');
-            if( $tmp && file_exists($tmp) ) {
+            // last ditch effort to find a place to write to
+            $n = mt_rand(1000,9999);
+            $tmp = @tempnam('',"x{$n}x"); // no warning, thanks
+            if( $tmp && file_exists($tmp) ) { //new dummy file in system-default place
                 @unlink($tmp);
                 return realpath(dirname($tmp));
             }
