@@ -41,7 +41,7 @@ final class CmsJobManager extends \CMSModule
     public function GetFriendlyName() { return $this->Lang('friendlyname'); }
     public function GetVersion() { return '0.1.3'; }
     public function MinimumCMSVersion() { return '2.1.99'; }
-    public function GetAuthor() { return 'calguy1000'; }
+    public function GetAuthor() { return 'Robert Campbell'; }
     public function GetAuthorEmail() { return ''; }
     public function IsPluginModule() { return TRUE; }
     public function HasAdmin() { return TRUE; }

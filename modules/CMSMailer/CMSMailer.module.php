@@ -66,7 +66,7 @@ class CMSMailer extends CMSModule
   function GetVersion() { return '6.2.15'; }
   function MinimumCMSVersion() { return '1.99-alpha0'; }
   function GetHelp() { return $this->Lang('help'); }
-  function GetAuthor() { return 'calguy1000'; }
+  function GetAuthor() { return 'Robert Campbell'; }
   function GetAuthorEmail() { return ''; }
   function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
   function IsPluginModule() { return FALSE; }

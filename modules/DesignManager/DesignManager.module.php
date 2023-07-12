@@ -28,7 +28,7 @@ final class DesignManager extends CMSModule
     function LazyLoadAdmin() { return TRUE; }
     function LazyLoadFrontend() { return TRUE; }
     function IsPluginModule() { return FALSE; }
-    function GetAuthor() { return 'calguy1000'; }
+    function GetAuthor() { return 'Robert Campbell'; }
     function GetAuthorEmail() { return ''; }
     function HasAdmin() { return true; }
     function GetAdminSection() { return 'layout'; }

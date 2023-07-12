@@ -35,7 +35,7 @@ final class CMSContentManager extends CMSModule
     function GetFriendlyName() { return $this->Lang('friendlyname'); }
     function GetVersion() { return '1.1.9'; }
     function GetHelp() { return CmsLangOperations::lang_from_realm('help','help_cmscontentmanager_help'); }
-    function GetAuthor() { return 'calguy1000'; }
+    function GetAuthor() { return 'Robert Campbell'; }
     function GetAuthorEmail() { return ''; }
     function GetChangeLog() { return @file_get_contents(__DIR__.'/changelog.inc'); }
     function IsPluginModule() { return FALSE; }

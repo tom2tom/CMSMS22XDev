@@ -42,7 +42,7 @@ class ModuleManager extends CMSModule
   function GetFriendlyName() { return $this->Lang('friendlyname'); }
   function GetVersion() { return '2.1.9'; }
   function GetHelp() { return $this->Lang('help'); }
-  function GetAuthor() { return 'calguy1000'; }
+  function GetAuthor() { return 'Robert Campbell'; }
   function GetAuthorEmail() { return ''; }
   function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
   function IsPluginModule() { return FALSE; }
