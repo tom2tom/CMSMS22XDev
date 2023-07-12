@@ -14,9 +14,11 @@
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
 
-function smarty_function_cms_action_url($params, $smarty)
+// historically, this plugin has been specially handled
+// (triggered by its name smarty_cms_function...)
+// to ensure that it's never cached
+function smarty_cms_function_cms_action_url($params, $smarty)
 {
     $module = $smarty->getTemplateVars('actionmodule');
     $returnid = $smarty->getTemplateVars('returnid');

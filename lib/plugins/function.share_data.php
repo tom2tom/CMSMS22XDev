@@ -15,7 +15,10 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-function smarty_function_share_data($params,$template)
+// historically, this plugin has been specially handled
+// (triggered by its name smarty_cms_function...)
+// to ensure that it's never cached
+function smarty_cms_function_share_data($params,$template)
 {
     $dest = trim(strtolower(get_parameter_value($params,'scope','parent')));
     $vars = (isset($params['data']))?$params['data']:
@@ -42,7 +45,7 @@ function smarty_function_share_data($params,$template)
         $fn = 'assignGlobal';
         break;
 
-    default: /* parent scope */
+    default: // parent scope
         $scope = $template->parent;
         if( !is_object($scope) ) return '';
         if( $scope == $template->smarty ) {

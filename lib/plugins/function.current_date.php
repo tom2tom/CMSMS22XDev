@@ -15,9 +15,12 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-// this method is deprecated and should be removed.
-// it is redundant.
-function smarty_function_current_date($params, $smarty) {
+// this plugin is redundant, deprecated and should be removed.
+// historically, this plugin has been specially handled
+// (triggered by its name smarty_cms_function...)
+// to ensure that it's never cached
+function smarty_cms_function_current_date($params, $smarty)
+{
 	$format = '%b j, Y';
 	if( isset($params['format']) && !empty($params['format']) ) $format = trim($params['format']);
 

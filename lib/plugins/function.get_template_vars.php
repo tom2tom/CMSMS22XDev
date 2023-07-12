@@ -79,7 +79,10 @@ if( !function_exists('__cms_function_output_var') ) {
     }
 }
 
-function smarty_function_get_template_vars($params, $smarty)
+// historically, this plugin has been specially handled
+// (triggered by its name smarty_cms_function...)
+// to ensure that it's never cached
+function smarty_cms_function_get_template_vars($params, $smarty)
 {
 	$tpl_vars = $smarty->getTemplateVars();
 	$str = '<pre>';
