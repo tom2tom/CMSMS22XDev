@@ -317,7 +317,7 @@ $lang['help_function_content_module'] = <<<'EOT'
  <li><strong>(required)</strong>block  - The name of the content block.</li>
  <li><em>(optional)</em>label - A label for the content block for use when editing the page.</li>
  <li><em>(optional)</em> required - Allows specifying that the content block must contain some text.</em></li>
- <li><em>(optional)</em> tab - The desired tab to display this field on in the edit form..</li>
+ <li><em>(optional)</em> tab - The desired tab to display this field on in the edit form.</li>
  <li><em>(optional)</em> priority (integer) - Allows specifying an integer priority for the block within the tab.</li>
  <li><em>(optional)</em> assign (string) - Assign the results to a smarty variable with that name.</li>
  </ul>
@@ -445,7 +445,7 @@ $lang['help_function_content_image'] = <<<'EOT'
  </li>
  <li><em>(optional)</em> default (string) - Use to set a default image used when no image is selected.</li>
  <li><em>(optional)</em> urlonly (bool) - output only the url to the image, ignoring all parameters like id, name, width, height, etc.</li>
- <li><em>(optional)</em> tab (string) The desired tab to display this field on in the edit form..</li>
+ <li><em>(optional)</em> tab (string) The desired tab to display this field on in the edit form.</li>
  <li><em>(optional)</em> exclude (string) - Specify a prefix of files to exclude.  i.e: thumb_ </li>
  <li><em>(optional)</em> sort (bool) - optionally sort the options. Default is to not sort.</li>
  <li><em>(optional)</em> priority (integer) - Allows specifying an integer priority for the block within the tab.</li>
@@ -908,7 +908,7 @@ $lang['help_function_content'] = <<<'EOT'
  <li><em>(optional)</em> required (true/false) - Allows specifying that the content block must contain some text.</li>
  <li><em>(optional)</em> placeholder (string) - Allows specifying placeholder text.</li>
  <li><em>(optional)</em> priority (integer) - Allows specifying an integer priority for the block within the tab.</li>
- <li><em>(optional)</em> tab (string) - The desired tab to display this field on in the edit form..</li>
+ <li><em>(optional)</em> tab (string) - The desired tab to display this field on in the edit form.</li>
  <li><em>(optional)</em> cssname (string) - A hint to the WYSIWYG editor module to use the specified stylesheet name for extended styles.</li>
  <li><em>(optional)</em> noedit (true/false) - If set to true, then the content block will not be available for editing in the content editing form.  This is useful for outputting a content block to page content that was created via a third party module.</li>
  <li><em>(optional)</em> data-xxxx (string) - Allows passing data attributes to the generated textarea for use by syntax hilighter and WYSIWYG modules.
@@ -1111,7 +1111,7 @@ $lang['help_function_cms_filepicker'] = <<<'EOT'
 <ul>
  <li>name - <strong>required</strong> string - The name for the input field.</li>
  <li>prefix - <em>(optional)</em> string - A prefix for the name of the input field.</li>
- <li>value - <em>(optional)</em> string - The current value for the input field..</li>
+ <li>value - <em>(optional)</em> string - The current value for the input field.</li>
  <li>profile - <em>(optional)</em> string - The name of the profile to use.  The profile must exist within the selected file picker module, or a default profile may be used.</li>
  <li>top - <em>(optional)</em> string - A top directory, relative to the uploads directory.  This should override any top value already specified in the profile.</li>
  <li>type - <em>(optional)</em> string - An indication of the file type that can be selected.

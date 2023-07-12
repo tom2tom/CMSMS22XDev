@@ -610,7 +610,7 @@ $lang['event_help_contentprecompile'] = "<h4>Parameters</h4>
 ";
 $lang['event_help_contentprerender'] = "<h4>Parameters</h4>
 <ul>
-<li>'content' - Reference to the affected content object..</li>
+<li>'content' - Reference to the affected content object.</li>
 </ul>
 ";
 $lang['event_help_contentstylesheet'] = "<h4>Parameters</h4>
