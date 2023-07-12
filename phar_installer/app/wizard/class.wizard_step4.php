@@ -141,29 +141,34 @@ class wizard_step4 extends wizard_step
 
     protected function process()
     {
-        $tmp = array_keys($this->_dbms_options);
-        $this->_config['dbtype'] = $tmp[0];
-        $this->_config['dbhost'] = trim(utils::clean_string($_POST['dbhost']));
-        $this->_config['dbname'] = trim(utils::clean_string($_POST['dbname']));
-        $this->_config['dbuser'] = trim(utils::clean_string($_POST['dbuser']));
-        $this->_config['dbpass'] = $_POST['dbpass'];
-        $this->_config['timezone'] = trim(utils::clean_string($_POST['timezone']));
-        if( isset($_POST['dbtype']) ) $this->_config['dbtype'] = trim(utils::clean_string($_POST['dbtype']));
-        if( isset($_POST['dbport']) ) $this->_config['dbport'] = trim(utils::clean_string($_POST['dbport']));
-        if( isset($_POST['dbprefix']) ) $this->_config['dbprefix'] = trim(utils::clean_string($_POST['dbprefix']));
+        $wiz = $this->get_wizard();
+        $action = $wiz->get_data('action');
+        if( $action !== 'freshen') {
+            $tmp = array_keys($this->_dbms_options);
+            $this->_config['dbtype'] = $tmp[0];
+            if( isset($_POST['dbtype']) ) $this->_config['dbtype'] = trim(utils::clean_string($_POST['dbtype']));
+            $this->_config['dbhost'] = trim(utils::clean_string($_POST['dbhost']));
+            $this->_config['dbname'] = trim(utils::clean_string($_POST['dbname']));
+            $this->_config['dbuser'] = trim(utils::clean_string($_POST['dbuser']));
+            $this->_config['dbpass'] = $_POST['dbpass'];
+            if( isset($_POST['dbport']) ) $this->_config['dbport'] = trim(utils::clean_string($_POST['dbport']));
+            if( isset($_POST['dbprefix']) ) $this->_config['dbprefix'] = trim(utils::clean_string($_POST['dbprefix']));
+            if( isset($_POST['samplecontent']) ) $this->_config['samplecontent'] = (int)$_POST['samplecontent'];
+        }
         if( isset($_POST['query_var']) ) $this->_config['query_var'] = trim(utils::clean_string($_POST['query_var']));
-        if( isset($_POST['samplecontent']) ) $this->_config['samplecontent'] = (int)$_POST['samplecontent'];
-        $this->get_wizard()->set_data('config',$this->_config);
+        $this->_config['timezone'] = trim(utils::clean_string($_POST['timezone']));
+
+        $wiz->set_data('config',$this->_config);
 
         try {
-            $app = get_app();
-            $config = $app->get_config();
             $this->validate($this->_config);
-            $wiz = $this->get_wizard();
             $url = $wiz->next_url();
-            $action = $wiz->get_data('action');
-            if( $action == 'freshen' ) $url = $wiz->step_url(6);
+            if( $action == 'freshen' ) {
+                $url = $wiz->step_url(6);
+            }
             if( $action == 'upgrade' ) {
+                $app = get_app();
+                $config = $app->get_config();
                 if( $config['nofiles'] ) {
                     $url = $wiz->step_url(8);
                 } else {
@@ -181,10 +186,10 @@ class wizard_step4 extends wizard_step
     protected function display()
     {
         parent::display();
-        $wiz = $this->get_wizard();
         $tmp = timezone_identifiers_list();
         if( !is_array($tmp) ) throw new Exception(lang('error_tzlist'));
         $tmp2 = array_combine(array_values($tmp),array_values($tmp));
+        $wiz = $this->get_wizard();
         $smarty = smarty();
         $smarty->assign('timezones',array_merge(array(''=>lang('none')),$tmp2))
           ->assign('dbtypes',$this->_dbms_options)
