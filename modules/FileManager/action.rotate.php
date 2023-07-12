@@ -1,7 +1,7 @@
 <?php
 # FileManager module action
-# (c) 2006-13 Morten Poulsen <morten@poulsen.org>
-# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# (c) 2006-8 Morten Poulsen <morten@poulsen.org>
+# (c) 2008 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
