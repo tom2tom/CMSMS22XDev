@@ -7,7 +7,6 @@
 {/block}
 
 {block name='contents'}
-
 <div class="installer-form">
 {wizard_form_start}
 {if $action != 'freshen'}
