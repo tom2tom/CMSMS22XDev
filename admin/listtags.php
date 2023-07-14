@@ -55,6 +55,7 @@ $find_file = function($filename) use ($dirs) {
         $fn = "$dir/$filename";
         if( is_file($fn) ) return $fn;
     }
+    return '';
 };
 
 include_once("header.php");

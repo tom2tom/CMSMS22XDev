@@ -1,5 +1,5 @@
 <?php
-#CMS Made Simple support functions 
+#CMS Made Simple support functions
 #(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
@@ -993,7 +993,7 @@ function cms_move_uploaded_file( $tmpfile, $destination )
 function cms_ipmatches($ip,$checklist)
 {
   $_testip = function($range,$ip) {
-    $result = 1;
+    $result = true;
 
     // IP Pattern Matcher
     // J.Adams <jna@retina.net>
@@ -1020,24 +1020,24 @@ function cms_ipmatches($ip,$checklist)
       }
 
       if (($maskl & $rangel) == ($maskl & $ipl)) {
-        return 1;
+        return true;
       } else {
-        return 0;
+        return false;
       }
     } else {
       // range based
       $maskocts = explode('.',$range);
       $ipocts = explode('.',$ip);
 
-      if( count($maskocts) != count($ipocts) && count($maskocts) != 4 ) return 0;
+      if( count($maskocts) != count($ipocts) && count($maskocts) != 4 ) return false;
 
       // perform a range match
       for ($i=0; $i<4; $i++) {
         if (preg_match("/\[([0-9]+)\-([0-9]+)\]/",$maskocts[$i],$regs)) {
-          if ( ($ipocts[$i] > $regs[2]) || ($ipocts[$i] < $regs[1])) $result = 0;
+          if ( ($ipocts[$i] > $regs[2]) || ($ipocts[$i] < $regs[1])) $result = false;
         }
         else {
-          if ( isset($maskocts[$i]) && isset($ipocts[$i]) && ($maskocts[$i] <> $ipocts[$i]) ) $result = 0;
+          if ( isset($maskocts[$i]) && isset($ipocts[$i]) && ($maskocts[$i] <> $ipocts[$i]) ) $result = false;
         }
       }
     }

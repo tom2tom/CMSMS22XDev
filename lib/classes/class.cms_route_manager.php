@@ -402,6 +402,7 @@ final class cms_route_manager
 				file_put_contents($fn,serialize($tmp));
 				return $tmp;
 			}
+			return [];
 		}
 		else {
 			self::$_routes_loaded = TRUE;

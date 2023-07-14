@@ -195,8 +195,8 @@ class CmsModuleInfo implements ArrayAccess
     {
         if( !$this['writable'] ) return FALSE;
 
-        $_write_ini = function($input,$filename,$depth = 0) use (&$_write_ini) {
-            if( !is_array($input) ) { return ''; } //TODO type
+        $_write_ini = function($input,$filename,$depth = 0) use (&$_write_ini) { // : void
+            if( !is_array($input) || !$filename ) { return; }
 
             $res = '';
             foreach($input as $key => $val) {
@@ -213,12 +213,7 @@ class CmsModuleInfo implements ArrayAccess
                     }
                 }
             }
-            if( $filename ) {
-                file_put_contents($filename, $res);
-            }
-            else {
-                return $res;
-            }
+            file_put_contents($filename, $res);
         }; // _write_ini
 
         $dir = dirname(__DIR__,2)."/modules/$module_name";

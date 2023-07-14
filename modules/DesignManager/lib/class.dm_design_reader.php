@@ -56,6 +56,7 @@ class dm_design_reader extends dm_reader_base
             if( ($n = count($in)) ) {
                 return $in[$n-1];
             }
+            return '';
         };
 
         if( !$this->_scanned ) {

@@ -296,9 +296,9 @@ class cms_filecache_driver extends cms_cache_driver
                 if( $data && startswith($data,self::KEY_SERIALIZED) ) {
                     $data = unserialize(substr($data,strlen(self::KEY_SERIALIZED)));
                 }
-                return $data;
             }
         }
+        return $data;
     }
 
 

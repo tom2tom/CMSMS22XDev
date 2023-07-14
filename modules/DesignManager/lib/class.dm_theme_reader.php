@@ -41,6 +41,7 @@ class dm_theme_reader extends dm_reader_base
 
     $__get_in = function() use ($in) {
       if( ($n = count($in)) ) return $in[$n-1];
+      return '';
     };
 
     if( $this->_scanned ) return;
@@ -98,7 +99,7 @@ class dm_theme_reader extends dm_reader_base
             else {
               throw new Exception('Invalid theme data structure');
             }
-            //no break here  
+            //no break here
           case 'mmtemplate_name':
             if( $__get_in() != 'template' ) {
               // validity error.
@@ -131,7 +132,7 @@ class dm_theme_reader extends dm_reader_base
             else {
               throw new Exception('Invalid theme data structure');
             }
-            //no break here  
+            //no break here
           case 'cssname':
             if( $__get_in() != 'stylesheet' ) {
               // validity error.
@@ -158,7 +159,7 @@ class dm_theme_reader extends dm_reader_base
             else {
               throw new Exception('Invalid theme data structure');
             }
-            //no break here  
+            //no break here
           case 'cssmediatype':
             if( $__get_in() != 'stylesheet' ) {
               // validity error.
@@ -172,7 +173,7 @@ class dm_theme_reader extends dm_reader_base
             else {
               throw new Exception('Invalid theme data structure');
             }
-            //no break here  
+            //no break here
           case 'refname':
             if( $__get_in() != 'reference' ) {
               // validity error.
@@ -199,7 +200,7 @@ class dm_theme_reader extends dm_reader_base
             else {
               throw new Exception('Invalid theme data structure');
             }
-            //no break here  
+            //no break here
           case 'reflocation':
             if( $__get_in() != 'reference' ) {
               // validity error.
