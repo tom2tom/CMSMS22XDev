@@ -45,7 +45,7 @@ class wizard_step8 extends wizard_step
             $spec->port = isset($destconfig['dbport']) ? $destconfig['dbport'] : null;
             $spec->prefix = $destconfig['dbprefix'];
         }
-        if( !defined('CMS_DB_PREFIX')) {
+        if( !defined('CMS_DB_PREFIX')) { //sometimes undefined when installer is running
             define('CMS_DB_PREFIX',$spec->prefix);
         }
         $db = Connection::initialize($spec);

@@ -42,7 +42,7 @@ class wizard_step4 extends wizard_step
 
         $action = $wiz->get_data('action');
         if( $action == 'freshen' || $action == 'upgrade' ) {
-            // read config data from config.php for freshen action.
+            // read config data from config.php for freshen,upgrade session.
             $app = get_app();
             $destdir = $app->get_destdir();
             $config_file = $destdir.'/config.php';
