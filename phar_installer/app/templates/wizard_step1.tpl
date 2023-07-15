@@ -3,7 +3,7 @@
 
 {block name='logic'}
     {capture assign='browser_title'}CMS Made Simple&trade; {$version|default:''} ({$version_name|default:''}) {tr('apptitle')}{/capture}
-    {capture assign='title'}{tr('title_welcome')} {tr('to')} CMS Made Simple&trade; {$version|default:''} <em>({$version_name|default:''})</em><br />{tr('apptitle')}{/capture}
+    {capture assign='title'}{tr('title_welcome_full',{$version|default:''})} <em>({$version_name|default:''})</em><br />{tr('apptitle')}{/capture}
     {$current_step = '1'}
 {/block}
 
