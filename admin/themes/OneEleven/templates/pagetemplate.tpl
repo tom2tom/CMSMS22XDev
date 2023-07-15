@@ -72,8 +72,8 @@
 				<div id="oe_sidebar">
 					<aside>
 						<span title="{lang('open')}/{lang('close')}" class="toggle-button close">{lang('open')}/{lang('close')}</span>
-						{include file='navigation.tpl' nav=$theme->get_navigation_tree() depth=0 nocache}
 					</aside>
+					{include file='navigation.tpl' nav=$theme->get_navigation_tree() depth=0 nocache}
 				</div>
 				<!-- end sidebar //-->
 				<!-- start main -->
