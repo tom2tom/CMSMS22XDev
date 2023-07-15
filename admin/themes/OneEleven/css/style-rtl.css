@@ -1139,12 +1139,12 @@ header .shortcuts li.favorites a {
 }
 #oe_sidebar aside {
 	position: relative;
-	overflow: hidden;
-	min-height: 45px;
+/*	overflow: hidden;*/
+/*	min-height: 40px;*/
 }
 #oe_sidebar nav.navigation {
 	height: auto;
-	margin-top: 45px;
+	margin-top: 40px;
 	position: relative
 }
 /* toggle sidebar */
@@ -1154,10 +1154,11 @@ header .shortcuts li.favorites a {
 	display: block;
 	cursor: pointer;
 	width: 24px;
-	height: 25px;
+	height: 24px;
 	position: absolute;
-	left: -1px;
-	top: 12px
+	right: 7px; /* for right-aligned */
+/*	left: 9px; for left-aligned */
+	top: 9px
 }
 #oe_sidebar .toggle-button.top {
 	top: -33px
@@ -1167,10 +1168,10 @@ header .shortcuts li.favorites a {
 	background-repeat: no-repeat
 }
 .sidebar-on #oe_sidebar .toggle-button {
-	background-position: right -9px top -254px
+	background-position: right -7px top -253px
 }
 .sidebar-off #oe_sidebar .toggle-button {
-	background-position: right -9px top -216px
+	background-position: right -7px top -215px
 }
 /* sidebar notifications */
 #oe_sidebar .notification a {
@@ -1217,8 +1218,11 @@ header .shortcuts li.favorites a {
 /* main navigation */
 /* TODO effective vertical auto-scrolling of this ul-li tree */
 nav ul#oe_pagemenu {
+	height: auto;
+	max-height: calc(100vh - 171px);
 	border-bottom: 1px solid #adadad;
 	/*margin-top: 45px*/
+	overflow-y: auto
 }
 nav ul#oe_pagemenu li {
 	position: relative;
@@ -1229,7 +1233,8 @@ nav ul#oe_pagemenu li {
 }
 /* position sticky menu */
 .sidebar-on #oe_sidebar nav.navigation {
-	width: 249px
+	width: 249px;
+	overflow: hidden
 }
 .sidebar-off #oe_sidebar nav.navigation {
 	width: 40px;
@@ -1260,12 +1265,12 @@ nav ul#oe_pagemenu li a {
 	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) no-repeat;
 	color: #232323;
 	outline: 0;
-	margin-right: 9px;
+	margin-right: 1px;
 	height: 33px;
 	font-weight: bold;
 	display: block;
 	text-shadow: -1px 1px 0 #fff;
-	padding-right: 30px;
+	padding-right: 38px;
 	text-decoration: none;
 	border: 1px solid transparent;
 }
@@ -1298,77 +1303,77 @@ nav ul#oe_pagemenu li a:focus {
 	margin-left: 10px;
 }
 nav ul#oe_pagemenu li a.main {
-	background-position: right -10px top -484px
+	background-position: right -2px top -484px
 }
 nav ul#oe_pagemenu li a.content {
-	background-position: right -10px top -520px
+	background-position: right -2px top -520px
 }
 nav ul#oe_pagemenu li a.layout {
-	background-position: right -10px top -556px
+	background-position: right -2px top -556px
 }
 nav ul#oe_pagemenu li a.files {
-	background-position: right -10px top -520px
+	background-position: right -2px top -520px
 }
 nav ul#oe_pagemenu li a.usersgroups {
-	background-position: right -10px top -592px
+	background-position: right -2px top -592px
 }
 nav ul#oe_pagemenu li a.extensions {
-	background-position: right -10px top -628px
+	background-position: right -2px top -628px
 }
 nav ul#oe_pagemenu li a.siteadmin {
-	background-position: right -10px top -664px
+	background-position: right -2px top -664px
 }
 nav ul#oe_pagemenu li a.myprefs {
-	background-position: right -10px top -700px
+	background-position: right -2px top -700px
 }
 nav ul#oe_pagemenu li a.ecommerce {
-	background-position: right -10px top -990px
+	background-position: right -2px top -990px
 }
 /* hover, active */
 nav ul#oe_pagemenu li a.main:hover,
 nav ul#oe_pagemenu li.current a.main,
 nav ul#oe_pagemenu li:hover a.main {
-	background-position: right -10px top -278px
+	background-position: right -2px top -278px
 }
 nav ul#oe_pagemenu li a.content:hover,
 nav ul#oe_pagemenu li.current a.content,
 nav ul#oe_pagemenu li:hover a.content {
-	background-position: right -10px top -758px
+	background-position: right -2px top -758px
 }
 nav ul#oe_pagemenu li a.layout:hover,
 nav ul#oe_pagemenu li.current a.layout,
 nav ul#oe_pagemenu li:hover a.layout {
-	background-position: right -10px top -790px
+	background-position: right -2px top -790px
 }
 nav ul#oe_pagemenu li a.files:hover,
 nav ul#oe_pagemenu li.current a.files,
 nav ul#oe_pagemenu li:hover a.files {
-	background-position: right -10px top -758px
+	background-position: right -2px top -758px
 }
 nav ul#oe_pagemenu li a.usersgroups:hover,
 nav ul#oe_pagemenu li.current a.usersgroups,
 nav ul#oe_pagemenu li:hover a.usersgroups {
-	background-position: right -10px top -823px
+	background-position: right -2px top -823px
 }
 nav ul#oe_pagemenu li a.extensions:hover,
 nav ul#oe_pagemenu li.current a.extensions,
 nav ul#oe_pagemenu li:hover a.extensions {
-	background-position: right -10px top -854px
+	background-position: right -2px top -854px
 }
 nav ul#oe_pagemenu li a.siteadmin:hover,
 nav ul#oe_pagemenu li.current a.siteadmin,
 nav ul#oe_pagemenu li:hover a.siteadmin {
-	background-position: right -10px top -921px
+	background-position: right -2px top -921px
 }
 nav ul#oe_pagemenu li a.myprefs:hover,
 nav ul#oe_pagemenu li.current a.myprefs,
 nav ul#oe_pagemenu li:hover a.myprefs {
-	background-position: right -10px top -885px
+	background-position: right -2px top -885px
 }
 nav ul#oe_pagemenu li a.ecommerce:hover,
 nav ul#oe_pagemenu li.current a.ecommerce,
 nav ul#oe_pagemenu li:hover a.ecommerce {
-	background-position: right -10px top -953px
+	background-position: right -2px top -953px
 }
 /* second level & collapsed sidebar */
 nav ul#oe_pagemenu ul {
@@ -2591,7 +2596,7 @@ a.toggle-dropzone:focus {
 		display: block
 	}
 	#oe_mainarea .content-inner {
-		padding: 0 5px
+		padding: 0 16px
 	}
 	header .cms-logo {
 		background: none;
