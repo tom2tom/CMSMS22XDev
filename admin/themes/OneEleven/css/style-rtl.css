@@ -1,5 +1,5 @@
 /*
- * Theme: OneEleven rtl 2012 (c)
+ * Theme: OneEleven rtl 2012
  * Author: Goran Ilic (ja@ich-mach-das.at) - http://dev.cmsmadesimple.org/users/uniqu3
  * Version: 1.2
  */
@@ -290,11 +290,11 @@ template {
 /* GRID SYSTEM
  * Fluid Grid based on Based on 960 Grid System - http://www.960.gs
  * Helper Styles for Module Developer, make aligning modules easier.
- * (To bad Robert didn't request this earlier i could of saved myself
- * from writing a bunch of Styles)
+ * (Too bad Robert didn't request this earlier I could have saved myself
+ * from writing a bunch of styles)
  * For Demo see /admin/themes/OneEleven/doc/grid.html
  */
-/* Container - Wrapping all grids inside,
+/* Container - wrapping all grids inside,
  * use .cf class to clear floated elements
  */
 .c_full { width: 100% }
@@ -1138,10 +1138,9 @@ header .shortcuts li.favorites a {
 	width: 40px
 }
 #oe_sidebar aside {
-	padding-bottom: 30px;
 	position: relative;
 	overflow: hidden;
-	min-height: 40px;
+	min-height: 45px;
 }
 #oe_sidebar nav.navigation {
 	height: auto;
@@ -1216,6 +1215,7 @@ header .shortcuts li.favorites a {
 	padding: 4px 0
 }
 /* main navigation */
+/* TODO effective vertical auto-scrolling of this ul-li tree */
 nav ul#oe_pagemenu {
 	border-bottom: 1px solid #adadad;
 	/*margin-top: 45px*/
@@ -1408,10 +1408,10 @@ nav ul#oe_pagemenu li.current li a:active {
 }
 /*** page content ***/
 #oe_mainarea {
-	margin: 0 249px 0 0
+	margin: 0 234px 0 0
 }
 #oe_container.sidebar-off #oe_mainarea {
-	margin: 0 40px 0 0
+	margin: 0 26px 0 0
 }
 #oe_mainarea .content-inner {
 	max-height: -webkit-calc(var(--vh, 1vh) * 100 - 130px);
@@ -1420,7 +1420,7 @@ nav ul#oe_pagemenu li.current li a:active {
 	max-height: -moz-calc(100vh - 130px);
 	max-height: calc(var(--vh, 1vh) * 100 - 130px); /* fallback for older browsers without viewport support */
 	max-height: calc(100vh - 130px); /* head + foot fixed sizes total 130px */
-	padding: 0 25px 0 20px;
+	padding: 0 25px 0 12px;
 	overflow: auto;
 }
 #oe_mainarea header.pageheader {
@@ -2729,10 +2729,11 @@ a.toggle-dropzone:focus {
 }
 .cmsfp_dlg {
 	padding: 0 !important;
+	overflow: hidden !important;
 }
 .cmsfp_dlg iframe {
-	width: 100% !important;
 	height: 100% !important;
+	width: 100% !important;
 	max-width: none !important;
 	border: none;
 }
