@@ -297,7 +297,7 @@ class dm_theme_reader extends dm_reader_base
       $rec['desc'] = '';
       $rec['data'] = base64_decode($one['data']);
       $rec['mediatype'] = base64_decode($one['mediatype']);
-      $rec['medisaquery'] = '';
+      $rec['mediaquery'] = '';
       $out[] = $rec;
     }
     return $out;

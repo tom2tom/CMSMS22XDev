@@ -229,7 +229,7 @@ EOT;
             if( !$mod ) throw new \CmsException('MenuManager file template specified, but MenuManager could not be loaded.');
 
             $tpl = $mod->GetTemplateFromFile($name);
-            if( !$tpl ) throw new \CmsException('Could not find MenuMaager template '.$name);
+            if( !$tpl ) throw new \CmsException('Could not find MenuManager template '.$name);
 
             // create a new CmsLayoutTemplate object for this template
             // and add it to the list.
