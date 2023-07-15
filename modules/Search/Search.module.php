@@ -40,8 +40,8 @@ class Search extends CMSModule
         }
     }
 
-    public function LazyLoadFrontend() { return TRUE; }
-    public function LazyLoadAdmin() { return TRUE; }
+    public function LazyLoadFrontend() { return true; }
+    public function LazyLoadAdmin() { return true; }
     public function GetName() { return 'Search'; }
     public function GetFriendlyName() { return $this->Lang('search'); }
     public function IsPluginModule() { return true; }
@@ -194,7 +194,7 @@ EOT;
         return search_Reindex($this);
     }
 
-    function DoEvent($originator,$eventname,&$params)
+    public function DoEvent($originator,$eventname,&$params)
     {
         $this->load_tools();
         return search_DoEvent($this, $originator, $eventname, $params);
@@ -207,7 +207,7 @@ EOT;
         case CmsCoreCapabilities::PLUGIN_MODULE:
             return true;
         }
-        return FALSE;
+        return false;
     }
 
     public static function page_type_lang_callback($str)

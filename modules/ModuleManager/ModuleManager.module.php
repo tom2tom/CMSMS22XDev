@@ -38,24 +38,24 @@ class ModuleManager extends CMSModule
 {
   const _dflt_request_url = 'https://www.cmsmadesimple.org/ModuleRepository/request/v2/';
 
-  function GetName() { return get_class($this); }
-  function GetFriendlyName() { return $this->Lang('friendlyname'); }
-  function GetVersion() { return '2.1.9'; }
-  function GetHelp() { return $this->Lang('help'); }
-  function GetAuthor() { return 'Robert Campbell'; }
-  function GetAuthorEmail() { return ''; }
-  function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
-  function IsPluginModule() { return FALSE; }
-  function HasAdmin() { return TRUE; }
-  function IsAdminOnly() { return TRUE; }
-  function GetAdminSection() { return 'extensions'; }
-  function GetAdminDescription() { return $this->Lang('admindescription'); }
-  function LazyLoadAdmin() { return TRUE; }
-  function MinimumCMSVersion() { return '2.2.3'; }
-  function InstallPostMessage() { return $this->Lang('postinstall'); }
-  function UninstallPostMessage() { return $this->Lang('postuninstall'); }
-  function UninstallPreMessage() { return $this->Lang('really_uninstall'); }
-  function VisibleToAdminUser() { return ($this->CheckPermission('Modify Site Preferences') || $this->CheckPermission('Modify Modules')); }
+  public function GetName() { return get_class($this); }
+  public function GetFriendlyName() { return $this->Lang('friendlyname'); }
+  public function GetVersion() { return '2.1.9'; }
+  public function GetHelp() { return $this->Lang('help'); }
+  public function GetAuthor() { return 'Robert Campbell'; }
+  public function GetAuthorEmail() { return ''; }
+  public function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
+  public function IsPluginModule() { return FALSE; }
+  public function HasAdmin() { return TRUE; }
+  public function IsAdminOnly() { return TRUE; }
+  public function GetAdminSection() { return 'extensions'; }
+  public function GetAdminDescription() { return $this->Lang('admindescription'); }
+  public function LazyLoadAdmin() { return TRUE; }
+  public function MinimumCMSVersion() { return '2.2.3'; }
+  public function InstallPostMessage() { return $this->Lang('postinstall'); }
+  public function UninstallPostMessage() { return $this->Lang('postuninstall'); }
+  public function UninstallPreMessage() { return $this->Lang('really_uninstall'); }
+  public function VisibleToAdminUser() { return ($this->CheckPermission('Modify Site Preferences') || $this->CheckPermission('Modify Modules')); }
 
   protected function _DisplayErrorPage($id, &$params, $returnid, $message='')
   {
@@ -67,17 +67,17 @@ class ModuleManager extends CMSModule
     echo $this->ProcessTemplate('error.tpl');
   }
 
-  function Install()
+  public function Install()
   {
     $this->SetPreference('module_repository',ModuleManager::_dflt_request_url);
   }
 
-  function Upgrade($oldversion, $newversion)
+  public function Upgrade($oldversion, $newversion)
   {
     $this->SetPreference('module_repository',ModuleManager::_dflt_request_url);
   }
 
-  function DoAction($action, $id, $params, $returnid=-1)
+  public function DoAction($action, $id, $params, $returnid=-1)
   {
     $smarty = cmsms()->GetSmarty();
     $smarty->assign($this->GetName(), $this);

@@ -21,21 +21,21 @@ if( !isset($gCms) ) exit;
 
 final class AdminSearch extends CMSModule
 {
-  function GetFriendlyName()  { return $this->Lang('friendlyname');  }
-  function GetVersion()  { return '1.0.6'; }
-  function MinimumCMSVersion()  { return '2.2.15';  }
-  function LazyLoadAdmin() { return TRUE; }
-  function LazyLoadFrontend() { return TRUE; }
-  function IsPluginModule() { return FALSE; }
-  function GetAuthor() { return 'Robert Campbell'; }
-  function GetAuthorEmail() { return ''; }
-  function HasAdmin() { return true; }
-  function GetAdminSection() { return 'extensions'; }
-  function GetHelp() { return $this->Lang('help'); }
-  function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
-  function GetAdminDescription() { return $this->Lang('moddescription'); }
+  public function GetFriendlyName() { return $this->Lang('friendlyname'); }
+  public function GetVersion() { return '1.0.6'; }
+  public function MinimumCMSVersion() { return '2.2.15'; }
+  public function LazyLoadAdmin() { return TRUE; }
+  public function LazyLoadFrontend() { return TRUE; }
+  public function IsPluginModule() { return FALSE; }
+  public function GetAuthor() { return 'Robert Campbell'; }
+  public function GetAuthorEmail() { return ''; }
+  public function HasAdmin() { return true; }
+  public function GetAdminSection() { return 'extensions'; }
+  public function GetHelp() { return $this->Lang('help'); }
+  public function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
+  public function GetAdminDescription() { return $this->Lang('moddescription'); }
 
-  function VisibleToAdminUser()
+  public function VisibleToAdminUser()
   {
     return $this->can_search();
   }
@@ -45,12 +45,12 @@ final class AdminSearch extends CMSModule
       return $this->CheckPermission('Use Admin Search');
   }
 
-  function InstallPostMessage()
+  public function InstallPostMessage()
   {
     return $this->Lang('postinstall');
   }
 
-  function UninstallPostMessage()
+  public function UninstallPostMessage()
   {
     return $this->Lang('postuninstall');
   }
@@ -75,10 +75,10 @@ final class AdminSearch extends CMSModule
     if( count($files) ) {
       $output = array();
       foreach( $files as $onefile ) {
-	$parts = explode('.',basename($onefile));
-	$classname = implode('.',array_slice($parts,1,count($parts)-2));
-	if( $classname == 'AdminSearch_slave' ) continue;
-	$output[] = $classname;
+        $parts = explode('.',basename($onefile));
+        $classname = implode('.',array_slice($parts,1,count($parts)-2));
+        if( $classname == 'AdminSearch_slave' ) continue;
+        $output[] = $classname;
       }
       return $output;
     }

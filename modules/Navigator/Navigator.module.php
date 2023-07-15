@@ -69,20 +69,20 @@ final class Navigator extends CMSModule
 {
     const __DFLT_PAGE = '**DFLT_PAGE**';
 
-    function GetName() { return get_class($this); }
-    function GetFriendlyName() { return $this->Lang('friendlyname'); }
-    function IsPluginModule() { return true; }
-    function HasAdmin() { return false; }
-    function GetVersion() { return '1.0.9'; }
-    function MinimumCMSVersion() { return '2.1.99'; }
-    function GetAdminDescription() { return $this->Lang('description'); }
-    function GetAdminSection() { return 'layout'; }
-    function LazyLoadFrontend() { return TRUE; }
-    function LazyLoadAdmin() { return TRUE; }
-    function GetHelp($lang='en_US') { return $this->Lang('help'); }
-    function GetAuthor() { return 'Robert Campbell'; }
-    function GetAuthorEmail() { return ''; }
-    function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
+    public function GetName() { return get_class($this); }
+    public function GetFriendlyName() { return $this->Lang('friendlyname'); }
+    public function IsPluginModule() { return true; }
+    public function HasAdmin() { return false; }
+    public function GetVersion() { return '1.0.9'; }
+    public function MinimumCMSVersion() { return '2.1.99'; }
+    public function GetAdminDescription() { return $this->Lang('description'); }
+    public function GetAdminSection() { return 'layout'; }
+    public function LazyLoadFrontend() { return TRUE; }
+    public function LazyLoadAdmin() { return TRUE; }
+    public function GetHelp($lang='en_US') { return $this->Lang('help'); }
+    public function GetAuthor() { return 'Robert Campbell'; }
+    public function GetAuthorEmail() { return ''; }
+    public function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
 
     public function InitializeFrontend()
     {

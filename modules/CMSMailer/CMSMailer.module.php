@@ -61,23 +61,23 @@ class CMSMailer extends CMSModule
     throw new CmsException('Call to invalid method '.$method.' on '.get_class($this->the_mailer).' object');
   }
 
-  function GetName() { return 'CMSMailer'; }
-  function GetFriendlyName() { return $this->Lang('friendlyname'); }
-  function GetVersion() { return '6.2.15'; }
-  function MinimumCMSVersion() { return '1.99-alpha0'; }
-  function GetHelp() { return $this->Lang('help'); }
-  function GetAuthor() { return 'Robert Campbell'; }
-  function GetAuthorEmail() { return ''; }
-  function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
-  function IsPluginModule() { return FALSE; }
-  function HasAdmin() { return FALSE; }
-  function GetAdminSection() { return 'extensions'; }
-  function GetAdminDescription() { return $this->Lang('moddescription'); }
-  function VisibleToAdminUser() { return FALSE; }
-  function InstallPostMessage() { return $this->Lang('postinstall'); }
-  function LazyLoadFrontend() { return TRUE; }
-  function LazyLoadAdmin() { return TRUE; }
-  function UninstallPostMessage() { return $this->Lang('postuninstall'); }
+  public function GetName() { return 'CMSMailer'; }
+  public function GetFriendlyName() { return $this->Lang('friendlyname'); }
+  public function GetVersion() { return '6.2.15'; }
+  public function MinimumCMSVersion() { return '1.99-alpha0'; }
+  public function GetHelp() { return $this->Lang('help'); }
+  public function GetAuthor() { return 'Robert Campbell'; }
+  public function GetAuthorEmail() { return ''; }
+  public function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
+  public function IsPluginModule() { return FALSE; }
+  public function HasAdmin() { return FALSE; }
+  public function GetAdminSection() { return 'extensions'; }
+  public function GetAdminDescription() { return $this->Lang('moddescription'); }
+  public function VisibleToAdminUser() { return FALSE; }
+  public function InstallPostMessage() { return $this->Lang('postinstall'); }
+  public function LazyLoadFrontend() { return TRUE; }
+  public function LazyLoadAdmin() { return TRUE; }
+  public function UninstallPostMessage() { return $this->Lang('postuninstall'); }
 } // end of class
 
 ?>
