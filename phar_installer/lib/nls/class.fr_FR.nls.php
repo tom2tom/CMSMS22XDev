@@ -2,7 +2,7 @@
 
 namespace __appbase;
 
-final class fr_FR_nls extends nls
+class fr_FR_nls extends nls
 {
   public function __construct()
   {
@@ -12,9 +12,9 @@ final class fr_FR_nls extends nls
     $this->_locale = 'fr_FR';
     $this->_encoding = 'UTF-8';
     $this->_aliases = 'french,fre,fr_BE,fr_CA,fr_LU,fr_CH,fr_FR.ISO8859-1';
-  }  
-  
-  
+  }
+
+  public function foo() { return 1; }
 } // end of class
 
 ?>
