@@ -22,24 +22,24 @@ if( !isset($gCms) ) exit;
 
 final class DesignManager extends CMSModule
 {
-    function GetFriendlyName()  { return $this->Lang('friendlyname');  }
-    function GetVersion()  { return '1.1.9'; }
-    function MinimumCMSVersion()  { return '2.1'; }
-    function LazyLoadAdmin() { return TRUE; }
-    function LazyLoadFrontend() { return TRUE; }
-    function IsPluginModule() { return FALSE; }
-    function GetAuthor() { return 'Robert Campbell'; }
-    function GetAuthorEmail() { return ''; }
-    function HasAdmin() { return true; }
-    function GetAdminSection() { return 'layout'; }
-    function AllowAutoInstall() { return TRUE; }
-    function GetHelp() { return CmsLangOperations::lang_from_realm('help','help_designmanager_help'); }
-    function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
-    function GetAdminDescription() { return $this->Lang('moddescription'); }
-    function InstallPostMessage() { return $this->Lang('postinstall'); }
-    function UninstallPostMessage() { return $this->Lang('postuninstall'); }
+    public function GetFriendlyName() { return $this->Lang('friendlyname'); }
+    public function GetVersion() { return '1.1.10'; }
+    public function MinimumCMSVersion()  { return '2.1'; }
+    public function LazyLoadAdmin() { return TRUE; }
+    public function LazyLoadFrontend() { return TRUE; }
+    public function IsPluginModule() { return FALSE; }
+    public function GetAuthor() { return 'Robert Campbell'; }
+    public function GetAuthorEmail() { return ''; }
+    public function HasAdmin() { return true; }
+    public function GetAdminSection() { return 'layout'; }
+    public function AllowAutoInstall() { return TRUE; }
+    public function GetHelp() { return CmsLangOperations::lang_from_realm('help','help_designmanager_help'); }
+    public function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
+    public function GetAdminDescription() { return $this->Lang('moddescription'); }
+    public function InstallPostMessage() { return $this->Lang('postinstall'); }
+    public function UninstallPostMessage() { return $this->Lang('postuninstall'); }
 
-    function VisibleToAdminUser()
+    public function VisibleToAdminUser()
     {
         if( $this->CheckPermission('Add Templates') ||
             $this->CheckPermission('Modify Templates') ||

@@ -32,22 +32,22 @@
 
 final class CMSContentManager extends CMSModule
 {
-    function GetFriendlyName() { return $this->Lang('friendlyname'); }
-    function GetVersion() { return '1.1.9'; }
-    function GetHelp() { return CmsLangOperations::lang_from_realm('help','help_cmscontentmanager_help'); }
-    function GetAuthor() { return 'Robert Campbell'; }
-    function GetAuthorEmail() { return ''; }
-    function GetChangeLog() { return @file_get_contents(__DIR__.'/changelog.inc'); }
-    function IsPluginModule() { return FALSE; }
-    function HasAdmin() { return TRUE; }
-    function LazyLoadAdmin() { return TRUE; }
-    function LazyLoadFrontend() { return TRUE; }
-    function GetAdminSection() { return 'content'; }
-    function GetAdminDescription() { return $this->Lang('moddescription'); }
-    function MinimumCMSVersion() { return "1.99-alpha0"; }
-    function InstallPostMessage() { return $this->Lang('postinstall'); }
-    function UninstallPostMessage() { return $this->Lang('postuninstall'); }
-    function UninstallPreMessage() { return $this->Lang('preuninstall'); }
+    public function GetFriendlyName() { return $this->Lang('friendlyname'); }
+    public function GetVersion() { return '1.1.10'; }
+    public function GetHelp() { return CmsLangOperations::lang_from_realm('help','help_cmscontentmanager_help'); }
+    public function GetAuthor() { return 'Robert Campbell'; }
+    public function GetAuthorEmail() { return ''; }
+    public function GetChangeLog() { return @file_get_contents(__DIR__.'/changelog.inc'); }
+    public function IsPluginModule() { return FALSE; }
+    public function HasAdmin() { return TRUE; }
+    public function LazyLoadAdmin() { return TRUE; }
+    public function LazyLoadFrontend() { return TRUE; }
+    public function GetAdminSection() { return 'content'; }
+    public function GetAdminDescription() { return $this->Lang('moddescription'); }
+    public function MinimumCMSVersion() { return "1.99-alpha0"; }
+    public function InstallPostMessage() { return $this->Lang('postinstall'); }
+    public function UninstallPostMessage() { return $this->Lang('postuninstall'); }
+    public function UninstallPreMessage() { return $this->Lang('preuninstall'); }
 
     /**
      * Tests whether the current user is authorized to edit the content page whose id is specified

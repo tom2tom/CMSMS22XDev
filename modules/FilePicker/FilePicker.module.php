@@ -67,14 +67,14 @@ final class FilePicker extends \CMSModule implements CMSMS\FilePickerInterface
      * end of private methods
      */
 
-    function GetFriendlyName() { return $this->Lang('friendlyname');  }
-    function GetVersion() { return '1.0.5'; }
-    function GetHelp() { return $this->Lang('help'); }
-    function IsPluginModule() { return FALSE; }
-    function HasAdmin() { return TRUE; }
-    function GetAdminSection() { return 'extensions'; }
+    public function GetFriendlyName() { return $this->Lang('friendlyname'); }
+    public function GetVersion() { return '1.0.6'; }
+    public function GetHelp() { return $this->Lang('help'); }
+    public function IsPluginModule() { return FALSE; }
+    public function HasAdmin() { return TRUE; }
+    public function GetAdminSection() { return 'extensions'; }
 
-    function HasCapability( $capability, $params = array() )
+    public function HasCapability( $capability, $params = array() )
     {
         switch( $capability ) {
         case 'contentblocks':
@@ -86,7 +86,7 @@ final class FilePicker extends \CMSModule implements CMSMS\FilePickerInterface
         }
     }
 
-    function GetContentBlockFieldInput($blockName, $value, $params, $adding, ContentBase $content_obj)
+    public function GetContentBlockFieldInput($blockName, $value, $params, $adding, ContentBase $content_obj)
     {
         if( empty($blockName) ) return FALSE;
         $uid = get_userid(FALSE);

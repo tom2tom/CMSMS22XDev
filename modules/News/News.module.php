@@ -16,30 +16,30 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #$Id: News.module.php 2114 2005-11-04 21:51:13Z wishy $
-if( !isset($gCms) ) exit;
+//if( !isset($gCms) ) exit;
 
 class News extends CMSModule
 {
-    function GetName() { return 'News'; }
-    function GetFriendlyName() { return $this->Lang('news'); }
-    function IsPluginModule() { return true; }
-    function HasAdmin() { return true; }
-    function GetVersion() { return '2.51.11'; }
-    function MinimumCMSVersion() { return '2.1.6'; }
-    function GetAdminDescription() { return $this->Lang('description'); }
-    function GetAdminSection() { return 'content'; }
-    function AllowSmartyCaching() { return TRUE; }
-    function LazyLoadFrontend() { return TRUE; }
-    function LazyLoadAdmin() { return TRUE; }
-    function InstallPostMessage() { return $this->Lang('postinstall');  }
-    function GetHelp() { return $this->Lang('help'); }
-    function GetAuthor() { return 'Ted Kulp'; }
-    function GetAuthorEmail() { return 'wishy@cmsmadesimple.org'; }
-    function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
-    function GetEventDescription( $eventname ) { return $this->lang('eventdesc-' . $eventname); }
-    function GetEventHelp( $eventname ) { return $this->lang('eventhelp-' . $eventname); }
+    public function GetName() { return 'News'; }
+    public function GetFriendlyName() { return $this->Lang('news'); }
+    public function IsPluginModule() { return true; }
+    public function HasAdmin() { return true; }
+    public function GetVersion() { return '2.51.12'; }
+    public function MinimumCMSVersion() { return '2.1.6'; }
+    public function GetAdminDescription() { return $this->Lang('description'); }
+    public function GetAdminSection() { return 'content'; }
+    public function AllowSmartyCaching() { return TRUE; }
+    public function LazyLoadFrontend() { return TRUE; }
+    public function LazyLoadAdmin() { return TRUE; }
+    public function InstallPostMessage() { return $this->Lang('postinstall');  }
+    public function GetHelp() { return $this->Lang('help'); }
+    public function GetAuthor() { return 'Ted Kulp'; }
+    public function GetAuthorEmail() { return 'wishy@cmsmadesimple.org'; }
+    public function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
+    public function GetEventDescription( $eventname ) { return $this->lang('eventdesc-' . $eventname); }
+    public function GetEventHelp( $eventname ) { return $this->lang('eventhelp-' . $eventname); }
 
-    function InitializeFrontend()
+    public function InitializeFrontend()
     {
         $this->RestrictUnknownParams();
 
@@ -105,8 +105,7 @@ class News extends CMSModule
         $this->SetParameterType('junk',CLEAN_STRING);
     }
 
-
-    function InitializeAdmin()
+    public function InitializeAdmin()
     {
         $this->CreateParameter('pagelimit', 1000, $this->Lang('help_pagelimit'));
         $this->CreateParameter('browsecat', 0, $this->lang('helpbrowsecat'));
@@ -128,13 +127,13 @@ class News extends CMSModule
         $this->CreateParameter('idlist','',$this->Lang('help_idlist'));
     }
 
-    function VisibleToAdminUser()
+    public function VisibleToAdminUser()
     {
         return $this->CheckPermission('Modify News') || $this->CheckPermission('Modify Site Preferences') ||
             $this->CheckPermission('Approve News');
     }
 
-    function GetDfltEmailTemplate()
+    public function GetDfltEmailTemplate()
     {
         $text = "A new news article has been posted to your website.  The details are as follows:\n";
         $text .= "Title:      {\$title}\n";
@@ -145,7 +144,7 @@ class News extends CMSModule
         return $text;
     }
 
-    function SearchResultWithParams($returnid, $articleid, $attr = '', $params = '')
+    public function SearchResultWithParams($returnid, $articleid, $attr = '', $params = '')
     {
         $gCms = CmsApp::get_instance();
         $result = array();
@@ -200,7 +199,7 @@ class News extends CMSModule
         return $result;
     }
 
-    function SearchReindex($module)
+    public function SearchReindex($module)
     {
         $db = $this->GetDb();
 
@@ -218,7 +217,6 @@ class News extends CMSModule
         }
     }
 
-
     public function GetFieldTypes()
     {
         $items = [ 'textbox'=>$this->Lang('textbox'),
@@ -230,7 +228,7 @@ class News extends CMSModule
         return $items;
     }
 
-    function GetTypesDropdown( $id, $name, $selected = '' )
+    public function GetTypesDropdown( $id, $name, $selected = '' )
     {
         $items = $this->GetFieldTypes();
         return $this->CreateInputDropdown($id, $name, array_flip($items), -1, $selected);
@@ -244,7 +242,7 @@ class News extends CMSModule
         return $out;
     }
 
-    function GetNotificationOutput($priority = 2)
+    public function GetNotificationOutput($priority = 2)
     {
         // if this user has permission to change News articles from
         // Draft to published, and there are draft news articles
