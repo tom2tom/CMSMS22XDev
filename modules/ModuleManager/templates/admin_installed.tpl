@@ -181,6 +181,10 @@ $(function() {
           {else}
             <a class="modop mod_active" href="{cms_action_url action='local_active' mod=$item.name state=1}" title="{$mod->Lang('toggle_active')}">{admin_icon icon='false.gif'}</a>
           {/if}
+        {elseif $item.active}
+          {admin_icon icon='true.gif' title=lang('yes')}
+        {else}
+          {admin_icon icon='false.gif' title=lang('no')}
         {/if}
       </td>
       <td>
