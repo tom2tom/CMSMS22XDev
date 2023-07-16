@@ -97,9 +97,7 @@
 					{/strip}
 				</div>
 				<!-- end main //-->
-				<div class="spacer">
-					&nbsp;
-				</div>
+{*				<div class="spacer">&nbsp;</div>*}
 			</div>
 			<!-- end content //-->
 			<!-- start footer -->
