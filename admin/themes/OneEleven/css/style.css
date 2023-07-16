@@ -953,13 +953,13 @@ aside .no-slide,
 	height: 100%
 }
 #oe_admin-content .shadow {
-	background: transparent url(themes/OneEleven/images/layout/sprite_repeatx.png) 831px -148px repeat-x;
+	background: transparent url(themes/OneEleven/images/layout/sprite_repeatx.png) 0 -148px repeat-x;
 	z-index: 50;
 	position: absolute;
 	top: 100px;
 	left: 0;
 	width: 100%;
-	height: 7px
+	height: 5px
 }
 /*** header ***/
 header.header {
@@ -969,7 +969,7 @@ header.header {
 header .header-top {
 	height: 69px;
 	border-bottom: 1px solid #cecece;
-	background: #eee url(themes/OneEleven/images/layout/sprite_repeatx.png) 831px -10px repeat-x
+	background: #eee url(themes/OneEleven/images/layout/sprite_repeatx.png) 0 -10px repeat-x
 }
 header .cms-logo {
 	width: 240px;
@@ -996,7 +996,7 @@ header .header-bottom {
 	border-bottom: 1px solid #0f0f0f;
 	position: relative;
 	width: 100%;
-	background: #232323 url(themes/OneEleven/images/layout/sprite_repeatx.png) 831px -99px repeat-x
+	background: #232323 url(themes/OneEleven/images/layout/sprite_repeatx.png) 0 -99px repeat-x
 }
 header .welcome {
 	width: 250px;
@@ -1200,7 +1200,7 @@ header .shortcuts li.favorites a {
 	line-height: 35px;
 	position: relative;
 	padding: 14px 10px;
-	background: #232323 url(themes/OneEleven/images/layout/sprite_repeatx.png) 122px -175px repeat-x;
+	background: #232323 url(themes/OneEleven/images/layout/sprite_repeatx.png) 0 -175px repeat-x;
 	color: #fff
 }
 #oe_sidebar div.notification .box-shadow,
@@ -1229,12 +1229,12 @@ header .shortcuts li.favorites a {
 /* TODO effective vertical auto-scrolling of this ul-li tree */
 nav ul#oe_pagemenu {
 	height: auto;
-	max-height: -webkit-calc(var(--vh, 1vh) * 100 - 175px);
-	max-height: -webkit-calc(100vh - 175px);
-	max-height: -moz-calc(var(--vh, 1vh) * 100 - 175px);
-	max-height: -moz-calc(100vh - 175px);
-	max-height: calc(var(--vh, 1vh) * 100 - 175px); /* fallback for older browsers without viewport support */
-	max-height: calc(100vh - 175px); /* head + toggler + foot fixed sizes total 175px */
+	max-height: -webkit-calc(var(--vh, 1vh) * 100 - 176px);
+	max-height: -webkit-calc(100vh - 176px);
+	max-height: -moz-calc(var(--vh, 1vh) * 100 - 176px);
+	max-height: -moz-calc(100vh - 176px);
+	max-height: calc(var(--vh, 1vh) * 100 - 176px); /* fallback for older browsers without viewport support */
+	max-height: calc(100vh - 176px); /* head + toggler + foot fixed sizes total 176px */
 	border-bottom: 1px solid #adadad;
 	/*margin-top: 45px*/
 	overflow-y: auto
@@ -1435,12 +1435,12 @@ nav ul#oe_pagemenu li.current li a:active {
 	margin: 0 0 0 26px
 }
 #oe_mainarea .content-inner {
-	max-height: -webkit-calc(var(--vh, 1vh) * 100 - 130px);
-	max-height: -webkit-calc(100vh - 130px);
-	max-height: -moz-calc(var(--vh, 1vh) * 100 - 130px);
-	max-height: -moz-calc(100vh - 130px);
-	max-height: calc(var(--vh, 1vh) * 100 - 130px); /* fallback for older browsers without viewport support */
-	max-height: calc(100vh - 130px); /* head + foot fixed sizes total 130px */
+	max-height: -webkit-calc(var(--vh, 1vh) * 100 - 134px);
+	max-height: -webkit-calc(100vh - 134px);
+	max-height: -moz-calc(var(--vh, 1vh) * 100 - 134px);
+	max-height: -moz-calc(100vh - 134px);
+	max-height: calc(var(--vh, 1vh) * 100 - 134px); /* fallback for older browsers without viewport support */
+	max-height: calc(100vh - 134px); /* head + foot fixed sizes total 134px */
 	padding: 0 12px 0 25px;
 	overflow: auto;
 }
@@ -1457,10 +1457,10 @@ nav ul#oe_pagemenu li.current li a:active {
 footer#oe_footer {
 	width: 100%;
 	z-index: 50;
-/*	height: 30px; 22? used in .content-inner calc */
-	background: transparent url(themes/OneEleven/images/layout/sprite_repeatx.png) 829px -266px repeat-x;
+/*	height: 30px; 34.1? used in .content-inner calc */
+	background: transparent url(themes/OneEleven/images/layout/sprite_repeatx.png) 0 -263px repeat-x;
 /*	padding-top: 5px;*/
-	padding: 6px 12px;
+	padding: 8px 12px 4px;
 	clear: both;
 	position: fixed;
 	bottom: 0
@@ -1682,7 +1682,7 @@ table.pagetable th,
 table.pagetable thead tr {
 	color: #fa8004;
 	text-shadow: -1px -1px 0 #000;
-	background: #232323 url(themes/OneEleven/images/layout/sprite_repeatx.png) 831px -99px repeat-x;
+	background: #232323 url(themes/OneEleven/images/layout/sprite_repeatx.png) 0 -99px repeat-x;
 	height: 45px;
 	text-align: left;
 	white-space: nowrap;
@@ -2021,7 +2021,7 @@ textarea.pageextrasmalltextarea {
 	border-radius: 4px;
 	margin-right: 2.29%;
 	margin-bottom: 10px;
-	background: #d5d5d5 url(themes/OneEleven/images/layout/sprite_repeatx.png) 214px -339px repeat-x;
+	background: #d5d5d5 url(themes/OneEleven/images/layout/sprite_repeatx.png) 0 -339px repeat-x;
 	border: 1px solid #ddd
 }
 .dashboard-box.last {
@@ -2235,7 +2235,7 @@ a.toggle-dropzone:focus {
 	top: -29px
 }
 #login div.login-box {
-	background: #d5d5d5 url(themes/OneEleven/images/layout/sprite_repeatx.png) 214px -339px repeat-x;
+	background: #d5d5d5 url(themes/OneEleven/images/layout/sprite_repeatx.png) 0 -339px repeat-x;
 	position: relative;
 	border-radius: 4px 4px 0 4px;
 	border: 1px solid #aaa;
