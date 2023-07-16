@@ -235,17 +235,20 @@ License GPL2+
 
         init: function() {
             var _this = this,
-                $sidebar_toggle = $('.toggle-button'), // object for sidebar toggle
+                $sidebar_toggle = $('#oe_sidebar > aside'), // object for sidebar toggle
+                $toggle_btn = $sidebar_toggle.find('.toggle-button'), // icon for sidebar toggle
                 $container = $('#oe_container'), // page container
                 $menu = $('#oe_pagemenu'); // page menu
 
             // handle navigation sidebar toggling
             $sidebar_toggle.on('click', function(e) {
                 e.preventDefault();
-                if ($container.hasClass('sidebar-on')) {
-                    _this._closeSidebar($container, $menu);
-                } else {
-                    _this._showSidebar($container, $menu);
+                if ($toggle_btn.is(':visible')) {
+                    if ($container.hasClass('sidebar-on')) {
+                        _this._closeSidebar($container, $menu);
+                    } else {
+                        _this._showSidebar($container, $menu);
+                    }
                 }
             });
 

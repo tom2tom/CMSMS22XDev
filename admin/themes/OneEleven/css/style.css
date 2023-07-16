@@ -933,7 +933,7 @@ aside .no-slide,
 	text-indent: -9999em;
 	background: transparent url(themes/OneEleven/images/icons/extra/close.png) no-repeat;
 	cursor: pointer;
-	margin:5px
+	margin: 5px
 }
 /* --- LAYOUT --- */
 /* full height */
@@ -1146,10 +1146,11 @@ header .shortcuts li.favorites a {
 	overflow: hidden;
 	width: 40px
 }
-#oe_sidebar aside {
+#oe_sidebar > aside {
 	position: relative;
 /*	overflow: hidden;*/
-/*	min-height: 40px;*/
+	height: 40px;
+	cursor: pointer
 }
 #oe_sidebar nav.navigation {
 	height: auto;
@@ -1172,7 +1173,7 @@ header .shortcuts li.favorites a {
 #oe_sidebar .toggle-button.top {
 	top: -33px
 }
-#oe_sidebar .toggle-button{
+#oe_sidebar .toggle-button {
 	background-image: url(themes/OneEleven/images/layout/sprite_norepeat.png);
 	background-repeat: no-repeat
 }
@@ -2500,8 +2501,9 @@ a.toggle-dropzone:focus {
 	#oe_sidebar {
 		bottom: 30px
 	}
-	#oe_sidebar aside {
-		padding: 0
+	#oe_sidebar > aside {
+		padding: 0;
+		cursor: default
 	}
 	#oe_mainarea header.pageheader span.helptext em{
 		display: none
@@ -2614,8 +2616,9 @@ a.toggle-dropzone:focus {
 		width: 100%;
 		background: #ddd;
 	}
-	#oe_sidebar aside {
-		padding: 0
+	#oe_sidebar > aside {
+		padding: 0;
+		cursor: default
 	}
 	.sidebar-on #oe_sidebar nav.navigation {
 		width: auto
