@@ -1,7 +1,7 @@
 <div class="pagecontainer">
 {if empty($smarty.get.cleanreport)}
 	<p class="pageshowrows">
-		<span class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary">
+		<span class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" style="height:16px;">
 			<a href="{$systeminfo_cleanreport}">
 				<span class="ui-button-icon-primary ui-icon ui-icon-circle-zoomin"></span>
 				<span class="ui-button-text">{si_lang a=copy_paste_forum}</span>
