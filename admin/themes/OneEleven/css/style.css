@@ -440,7 +440,7 @@ template {
 }
 .cf:after {
 	clear: both;
-	content: ".";
+	content: "";
 	display: block;
 	height: 0;
 	visibility: hidden
@@ -522,7 +522,7 @@ ul, ol {
 #oe_mainarea li {
 	line-height: 1.5
 }
-#oe_mainarea ol li{
+#oe_mainarea ol li {
 	list-style:decimal
 }
 h1,
@@ -941,7 +941,7 @@ aside .no-slide,
 	position: relative;
 	height: auto !important;
 	height: 100%;
-	margin: 0 0 -30px 0;
+/*	margin: 0 0 -30px 0;*/
 	min-height: 100%
 }
 /* realign content */
@@ -1166,7 +1166,7 @@ header .shortcuts li.favorites a {
 	width: 24px;
 	height: 24px;
 	position: absolute;
-	right: 9px; /* for right-aligned */
+	right: 7px; /* for right-aligned */
 /*	left: 7px; for left-aligned */
 	top: 9px
 }
@@ -1181,7 +1181,7 @@ header .shortcuts li.favorites a {
 	background-position: -7px -253px
 }
 .sidebar-off #oe_sidebar .toggle-button {
-	background-position: -7px -215px
+	background-position: -8px -215px
 }
 /* sidebar notifications */
 #oe_sidebar .notification a {
@@ -1229,7 +1229,12 @@ header .shortcuts li.favorites a {
 /* TODO effective vertical auto-scrolling of this ul-li tree */
 nav ul#oe_pagemenu {
 	height: auto;
-	max-height: calc(100vh - 171px);
+	max-height: -webkit-calc(var(--vh, 1vh) * 100 - 175px);
+	max-height: -webkit-calc(100vh - 175px);
+	max-height: -moz-calc(var(--vh, 1vh) * 100 - 175px);
+	max-height: -moz-calc(100vh - 175px);
+	max-height: calc(var(--vh, 1vh) * 100 - 175px); /* fallback for older browsers without viewport support */
+	max-height: calc(100vh - 175px); /* head + toggler + foot fixed sizes total 175px */
 	border-bottom: 1px solid #adadad;
 	/*margin-top: 45px*/
 	overflow-y: auto
@@ -1277,7 +1282,7 @@ nav ul#oe_pagemenu li a {
 	color: #232323;
 	outline: 0;
 	margin-left: 1px;
-	height: 33px;
+	height: 34px;
 	font-weight: bold;
 	display: block;
 	text-shadow: 1px 1px 0 #fff;
@@ -1452,9 +1457,10 @@ nav ul#oe_pagemenu li.current li a:active {
 footer#oe_footer {
 	width: 100%;
 	z-index: 50;
-	height: 30px; /* used in .content-inner calc */
-	background: transparent url(themes/OneEleven/images/layout/sprite_repeatx.png) 829px -259px repeat-x;
-	padding-top: 5px;
+/*	height: 30px; 22? used in .content-inner calc */
+	background: transparent url(themes/OneEleven/images/layout/sprite_repeatx.png) 829px -266px repeat-x;
+/*	padding-top: 5px;*/
+	padding: 6px 12px;
 	clear: both;
 	position: fixed;
 	bottom: 0
@@ -1471,23 +1477,26 @@ footer#oe_footer a:hover, footer#oe_footer a:active {
 	color: #fff
 }
 #oe_footer .footer-left {
-	width: 450px;
+/*	width: 450px;
 	padding: 10px;
 	line-height: 15px;
+*/
 	float: left
 }
 .footer-left {
-	margin: 0 0 0 260px
+/*	margin: 0 0 0 260px*/
 }
 #oe_container.sidebar-off .footer-left {
-	margin: 0 0 0 60px
+/*	margin: 0 0 0 60px*/
 }
 #oe_footer .footer-right {
 	float: right;
-	padding: 10px;
+	margin-right: 6px;
+/*	padding: 10px;
 	line-height: 15px;
 	display: inline;
 	width: auto
+*/
 }
 #oe_footer ul.links {
 	display: inline-block;
@@ -1553,7 +1562,7 @@ span.helptext a {
 	margin-left: 8px;
 	background: none
 }
-.pageheader span.helptext a img{
+.pageheader span.helptext a img {
 	margin-right: 10px
 }
 #oe_mainarea a.helpicon {
@@ -2448,13 +2457,13 @@ a.toggle-dropzone:focus {
 
 /* --- CMS_HELP --- */
 
-.cms_helptext ul{
+.cms_helptext ul {
 
 	padding: 0 10px;
 	list-style: disc;
 }
 
-.cms_helptext ul li{
+.cms_helptext ul li {
 
 	margin-bottom: 8px;
 }
@@ -2487,8 +2496,7 @@ a.toggle-dropzone:focus {
 		color: #fff;
 		background: #147fdb
 	}
-/*
-	textarea {
+/*	textarea {
 		width: 43em;
 	}
 */
@@ -2498,14 +2506,15 @@ a.toggle-dropzone:focus {
 	header .admin-title {
 		font-size: 12px
 	}
-	#oe_sidebar {
+/*	#oe_sidebar {
 		bottom: 30px
 	}
+*/
 	#oe_sidebar > aside {
 		padding: 0;
 		cursor: default
 	}
-	#oe_mainarea header.pageheader span.helptext em{
+	#oe_mainarea header.pageheader span.helptext em {
 		display: none
 	}
 	.dashboard-box {
@@ -2516,8 +2525,8 @@ a.toggle-dropzone:focus {
 	footer#oe_footer {
 		clear: both;
 		overflow: hidden;
-		line-height: 20px;
-		position: static
+/*		line-height: 20px;
+		position: static*/
 	}
 	#oe_footer .footer-left {
 		margin-left: 0
@@ -2677,8 +2686,8 @@ a.toggle-dropzone:focus {
 	footer#oe_footer {
 		clear: both;
 		overflow: hidden;
-		line-height: 20px;
-		position: static
+/*		line-height: 20px;*/
+/*		position: static*/
 	}
 	#oe_footer .footer-left {
 		float: none;
@@ -2689,10 +2698,11 @@ a.toggle-dropzone:focus {
 		display: block
 	}
 	#oe_footer small {
-		padding: 10px 0 0 0;
+/*		padding: 10px 0 0 0;*/
+		padding: 3px;
 		margin: 0;
 		display: block;
-		font-size: .7em
+/*		font-size: 0.7em*/
 	}
 	fieldset,
 	form,

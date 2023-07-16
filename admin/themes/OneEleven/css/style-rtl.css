@@ -435,7 +435,7 @@ template {
 }
 .cf:after {
 	clear: both;
-	content: ".";
+	content: "";
 	display: block;
 	height: 0;
 	visibility: hidden
@@ -517,7 +517,7 @@ ul, ol {
 #oe_mainarea li {
 	line-height: 1.5
 }
-#oe_mainarea ol li{
+#oe_mainarea ol li {
 	list-style:decimal
 }
 h1,
@@ -807,7 +807,7 @@ table.pagetable a.text-red {
 }
 .warning,
 .pagewarning {
-	background: #faf6d4 url(themes/OneEleven/images/icons/extra/warning.png) right 10px top 50% no-repeat;
+	background: #faf6d4 url(themes/OneEleven/images/icons/extra/warning.png) 10px 50% no-repeat;
 	border: 1px solid #e6c26e
 }
 .yellow {
@@ -818,7 +818,7 @@ table.pagetable a.text-red {
 .error,
 .pageerrorcontainer,
 .pageerrorinstalldir {
-	background: #f2d4ce url(themes/OneEleven/images/icons/extra/block.png) right 10px top 50% no-repeat;
+	background: #f2d4ce url(themes/OneEleven/images/icons/extra/block.png) 10px 50% no-repeat;
 	border: 1px solid #ae432e
 }
 .red {
@@ -828,7 +828,7 @@ table.pagetable a.text-red {
 }
 .success,
 .pagemcontainer {
-	background: #d9e6c3 url(themes/OneEleven/images/icons/extra/accept.png) right 10px top 50% no-repeat;
+	background: #d9e6c3 url(themes/OneEleven/images/icons/extra/accept.png) 10px 50% no-repeat;
 	border: 1px solid #77ab13
 }
 .green {
@@ -837,7 +837,7 @@ table.pagetable a.text-red {
 	border: 1px solid #77ab13
 }
 .information {
-	background: #cee6f2 url(themes/OneEleven/images/icons/extra/info.png) right 10px top 50% no-repeat;
+	background: #cee6f2 url(themes/OneEleven/images/icons/extra/info.png) 10px 50% no-repeat;
 	border: 1px solid #058dc7
 }
 .message:hover {
@@ -924,7 +924,7 @@ aside .no-slide,
 	text-indent: -9999em;
 	background: transparent url(themes/OneEleven/images/icons/extra/close.png) no-repeat;
 	cursor: pointer;
-	margin:5px
+	margin: 5px
 }
 /* --- LAYOUT --- */
 /* full height */
@@ -932,7 +932,7 @@ aside .no-slide,
 	position: relative;
 	height: auto !important;
 	height: 100%;
-	margin: 0 0 -30px 0;
+/*	margin: 0 0 -30px 0;*/
 	min-height: 100%
 }
 /* realign content */
@@ -944,7 +944,7 @@ aside .no-slide,
 	height: 100%
 }
 #oe_admin-content .shadow {
-	background: transparent url(themes/OneEleven/images/layout/sprite_repeatx.png) right 831px top -148px repeat-x;
+	background: transparent url(themes/OneEleven/images/layout/sprite_repeatx.png) 831px -148px repeat-x;
 	z-index: 50;
 	position: absolute;
 	top: 100px;
@@ -960,7 +960,7 @@ header.header {
 header .header-top {
 	height: 69px;
 	border-bottom: 1px solid #cecece;
-	background: #eee url(themes/OneEleven/images/layout/sprite_repeatx.png) right 831px top -10px repeat-x
+	background: #eee url(themes/OneEleven/images/layout/sprite_repeatx.png) 831px -10px repeat-x
 }
 header .cms-logo {
 	width: 240px;
@@ -987,7 +987,7 @@ header .header-bottom {
 	border-bottom: 1px solid #0f0f0f;
 	position: relative;
 	width: 100%;
-	background: #232323 url(themes/OneEleven/images/layout/sprite_repeatx.png) right 831px top -99px repeat-x
+	background: #232323 url(themes/OneEleven/images/layout/sprite_repeatx.png) 831px -99px repeat-x
 }
 header .welcome {
 	width: 250px;
@@ -1012,7 +1012,7 @@ header a.welcome-user {
 	display: inline-block;
 	text-indent: -999em;
 	margin-left: 10px;
-	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) right -10px top -336px no-repeat
+	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) -10px -336px no-repeat
 }
 /* breadcrumbs nav */
 header .breadcrumbs {
@@ -1036,7 +1036,7 @@ header .breadcrumbs ul li.home {
 	background: url(themes/OneEleven/images/layout/breadcrubms-divider.png) no-repeat left;
 }
 header .breadcrumbs ul li.home a {
-	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) right -10px top -367px no-repeat;
+	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) -10px -367px no-repeat;
 	width: 18px;
 	text-indent: -999em
 }
@@ -1085,22 +1085,22 @@ header .shortcuts li a {
 	cursor: pointer;
 }
 header .shortcuts li.help a {
-	background-position: right -10px top -737px
+	background-position: -10px -737px
 }
 header .shortcuts li.settings a {
-	background-position: right -10px top -10px
+	background-position: -10px -10px
 }
 header .shortcuts li.logout a {
-	background-position: right -10px top -86px
+	background-position: -10px -86px
 }
 header .shortcuts li.view-site a {
-	background-position: right -10px top -124px
+	background-position: -10px -124px
 }
 header .shortcuts li.notifications {
 	position: relative;
 }
 header .shortcuts li.notifications a {
-	background-position: right -10px top -1058px;
+	background-position: -10px -1058px;
 	color: #fff !important;
 }
 header .shortcuts li.notifications span.bubble {
@@ -1121,7 +1121,7 @@ header .shortcuts li.notifications span.bubble {
 	text-indent: initial;
 }
 header .shortcuts li.favorites a {
-	background-position: right -10px top -48px
+	background-position: -10px -48px
 }
 /*** sidebar ***/
 #oe_sidebar {
@@ -1157,8 +1157,8 @@ header .shortcuts li.favorites a {
 	width: 24px;
 	height: 24px;
 	position: absolute;
-	right: 7px; /* for right-aligned */
-/*	left: 9px; for left-aligned */
+	left: 7px; /* for left-aligned */
+/*	right: 9px; for right-aligned */
 	top: 9px
 }
 #oe_sidebar .toggle-button.top {
@@ -1169,17 +1169,17 @@ header .shortcuts li.favorites a {
 	background-repeat: no-repeat
 }
 .sidebar-on #oe_sidebar .toggle-button {
-	background-position: right -7px top -253px
+	background-position: -7px -253px
 }
 .sidebar-off #oe_sidebar .toggle-button {
-	background-position: right -7px top -215px
+	background-position: -8px -215px
 }
 /* sidebar notifications */
 #oe_sidebar .notification a {
 	text-decoration: none;
 	display: block;
 	height: 35px;
-	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) right -10px top -446px no-repeat;
+	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) -10px -446px no-repeat;
 	color: #fff
 }
 #oe_sidebar .notification a span {
@@ -1191,7 +1191,7 @@ header .shortcuts li.favorites a {
 	line-height: 35px;
 	position: relative;
 	padding: 14px 10px;
-	background: #232323 url(themes/OneEleven/images/layout/sprite_repeatx.png) right 122px top -175px repeat-x;
+	background: #232323 url(themes/OneEleven/images/layout/sprite_repeatx.png) 122px -175px repeat-x;
 	color: #fff
 }
 #oe_sidebar div.notification .box-shadow,
@@ -1220,7 +1220,12 @@ header .shortcuts li.favorites a {
 /* TODO effective vertical auto-scrolling of this ul-li tree */
 nav ul#oe_pagemenu {
 	height: auto;
-	max-height: calc(100vh - 171px);
+	max-height: -webkit-calc(var(--vh, 1vh) * 100 - 175px);
+	max-height: -webkit-calc(100vh - 175px);
+	max-height: -moz-calc(var(--vh, 1vh) * 100 - 175px);
+	max-height: -moz-calc(100vh - 175px);
+	max-height: calc(var(--vh, 1vh) * 100 - 175px); /* fallback for older browsers without viewport support */
+	max-height: calc(100vh - 175px); /* head + toggler + foot fixed sizes total 175px */
 	border-bottom: 1px solid #adadad;
 	/*margin-top: 45px*/
 	overflow-y: auto
@@ -1252,6 +1257,7 @@ nav ul#oe_pagemenu li span.open-nav {
 	top: 0;
 	text-indent: -9999em
 }
+
 nav ul#oe_pagemenu li span.open-nav.open-sub,
 nav ul#oe_pagemenu li.current span.open-nav,
 nav ul#oe_pagemenu li:hover span.open-nav,
@@ -1259,7 +1265,7 @@ nav ul#oe_pagemenu li.current span.open-nav,
 nav ul#oe_pagemenu li.current:hover span.open-nav,
 nav ul#oe_pagemenu li a span:hover {
 	cursor: pointer;
-	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) right 180px top -176px no-repeat
+	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) 180px -176px no-repeat
 }
 /*** menu style ***/
 nav ul#oe_pagemenu li a {
@@ -1267,7 +1273,7 @@ nav ul#oe_pagemenu li a {
 	color: #232323;
 	outline: 0;
 	margin-right: 1px;
-	height: 33px;
+	height: 34px;
 	font-weight: bold;
 	display: block;
 	text-shadow: -1px 1px 0 #fff;
@@ -1304,77 +1310,77 @@ nav ul#oe_pagemenu li a:focus {
 	margin-left: 10px;
 }
 nav ul#oe_pagemenu li a.main {
-	background-position: right -2px top -484px
+	background-position: -2px -484px
 }
 nav ul#oe_pagemenu li a.content {
-	background-position: right -2px top -520px
+	background-position: -2px -520px
 }
 nav ul#oe_pagemenu li a.layout {
-	background-position: right -2px top -556px
+	background-position: -2px -556px
 }
 nav ul#oe_pagemenu li a.files {
-	background-position: right -2px top -520px
+	background-position: -2px -520px
 }
 nav ul#oe_pagemenu li a.usersgroups {
-	background-position: right -2px top -592px
+	background-position: -2px -592px
 }
 nav ul#oe_pagemenu li a.extensions {
-	background-position: right -2px top -628px
+	background-position: -2px -628px
 }
 nav ul#oe_pagemenu li a.siteadmin {
-	background-position: right -2px top -664px
+	background-position: -2px -664px
 }
 nav ul#oe_pagemenu li a.myprefs {
-	background-position: right -2px top -700px
+	background-position: -2px -700px
 }
 nav ul#oe_pagemenu li a.ecommerce {
-	background-position: right -2px top -990px
+	background-position: -2px -990px
 }
 /* hover, active */
 nav ul#oe_pagemenu li a.main:hover,
 nav ul#oe_pagemenu li.current a.main,
 nav ul#oe_pagemenu li:hover a.main {
-	background-position: right -2px top -278px
+	background-position: -2px -278px
 }
 nav ul#oe_pagemenu li a.content:hover,
 nav ul#oe_pagemenu li.current a.content,
 nav ul#oe_pagemenu li:hover a.content {
-	background-position: right -2px top -758px
+	background-position: -2px -758px
 }
 nav ul#oe_pagemenu li a.layout:hover,
 nav ul#oe_pagemenu li.current a.layout,
 nav ul#oe_pagemenu li:hover a.layout {
-	background-position: right -2px top -790px
+	background-position: -2px -790px
 }
 nav ul#oe_pagemenu li a.files:hover,
 nav ul#oe_pagemenu li.current a.files,
 nav ul#oe_pagemenu li:hover a.files {
-	background-position: right -2px top -758px
+	background-position: -2px -758px
 }
 nav ul#oe_pagemenu li a.usersgroups:hover,
 nav ul#oe_pagemenu li.current a.usersgroups,
 nav ul#oe_pagemenu li:hover a.usersgroups {
-	background-position: right -2px top -823px
+	background-position: -2px -823px
 }
 nav ul#oe_pagemenu li a.extensions:hover,
 nav ul#oe_pagemenu li.current a.extensions,
 nav ul#oe_pagemenu li:hover a.extensions {
-	background-position: right -2px top -854px
+	background-position: -2px -854px
 }
 nav ul#oe_pagemenu li a.siteadmin:hover,
 nav ul#oe_pagemenu li.current a.siteadmin,
 nav ul#oe_pagemenu li:hover a.siteadmin {
-	background-position: right -2px top -921px
+	background-position: -2px -921px
 }
 nav ul#oe_pagemenu li a.myprefs:hover,
 nav ul#oe_pagemenu li.current a.myprefs,
 nav ul#oe_pagemenu li:hover a.myprefs {
-	background-position: right -2px top -885px
+	background-position: -2px -885px
 }
 nav ul#oe_pagemenu li a.ecommerce:hover,
 nav ul#oe_pagemenu li.current a.ecommerce,
 nav ul#oe_pagemenu li:hover a.ecommerce {
-	background-position: right -2px top -953px
+	background-position: -2px -953px
 }
 /* second level & collapsed sidebar */
 nav ul#oe_pagemenu ul {
@@ -1442,9 +1448,10 @@ nav ul#oe_pagemenu li.current li a:active {
 footer#oe_footer {
 	width: 100%;
 	z-index: 50;
-	height: 30px; /* used in .content-inner calc */
-	background: transparent url(themes/OneEleven/images/layout/sprite_repeatx.png) right 829px top -259px repeat-x;
-	padding-top: 5px;
+/*	height: 30px; 22? used in .content-inner calc */
+	background: transparent url(themes/OneEleven/images/layout/sprite_repeatx.png) 829px -266px repeat-x;
+/*	padding-top: 5px;*/
+	padding: 6px 12px;
 	clear: both;
 	position: fixed;
 	bottom: 0
@@ -1461,23 +1468,26 @@ footer#oe_footer a:hover, footer#oe_footer a:active {
 	color: #fff
 }
 #oe_footer .footer-left {
-	width: 450px;
+/*	width: 450px;
 	padding: 10px;
 	line-height: 15px;
+*/
 	float: right
 }
 .footer-left {
-	margin: 0 260px 0 0
+/*	margin: 0 0 0 260px*/
 }
 #oe_container.sidebar-off .footer-left {
-	margin: 0 60px 0 0
+/*	margin: 0 0 0 60px*/
 }
 #oe_footer .footer-right {
 	float: left;
-	padding: 10px;
+	margin-left: 6px;
+/*	padding: 10px;
 	line-height: 15px;
 	display: inline;
 	width: auto
+*/
 }
 #oe_footer ul.links {
 	display: inline-block;
@@ -1543,7 +1553,7 @@ span.helptext a {
 	margin-right: 8px;
 	background: none
 }
-.pageheader span.helptext a img{
+.pageheader span.helptext a img {
 	margin-left: 10px
 }
 #oe_mainarea a.helpicon {
@@ -1663,7 +1673,7 @@ table.pagetable th,
 table.pagetable thead tr {
 	color: #fa8004;
 	text-shadow: 1px -1px 0 #000;
-	background: #232323 url(themes/OneEleven/images/layout/sprite_repeatx.png) right 831px top -99px repeat-x;
+	background: #232323 url(themes/OneEleven/images/layout/sprite_repeatx.png) 831px -99px repeat-x;
 	height: 45px;
 	text-align: right;
 	white-space: nowrap;
@@ -1993,7 +2003,7 @@ textarea.pageextrasmalltextarea {
 	border-radius: 4px;
 	margin-left: 2.29%;
 	margin-bottom: 10px;
-	background: #d5d5d5 url(themes/OneEleven/images/layout/sprite_repeatx.png) right 214px top -339px repeat-x;
+	background: #d5d5d5 url(themes/OneEleven/images/layout/sprite_repeatx.png) 214px -339px repeat-x;
 	border: 1px solid #ddd
 }
 .dashboard-box.last {
@@ -2205,7 +2215,7 @@ a.toggle-dropzone:focus {
 	top: -29px
 }
 #login div.login-box {
-	background: #d5d5d5 url(themes/OneEleven/images/layout/sprite_repeatx.png) right 214px top -339px repeat-x;
+	background: #d5d5d5 url(themes/OneEleven/images/layout/sprite_repeatx.png) 214px -339px repeat-x;
 	position: relative;
 	border-radius: 4px 4px 4px 0;
 	border: 1px solid #aaa;
@@ -2330,7 +2340,7 @@ a.toggle-dropzone:focus {
 }
 #login p.forgotpw a {
 	padding-right: 20px;
-	background: url(themes/OneEleven/images/layout/help.png) right 50% no-repeat;
+	background: url(themes/OneEleven/images/layout/help.png) 50% no-repeat;
 	color: #585858;
 	text-shadow: 0 1px 0 #fff;
 	font-size: 12px;
@@ -2413,11 +2423,11 @@ a.toggle-dropzone:focus {
 	cursor: pointer;
 }
 /* --- CMS_HELP --- */
-.cms_helptext ul{
+.cms_helptext ul {
 	padding: 0 10px;
 	list-style: disc;
 }
-.cms_helptext ul li{
+.cms_helptext ul li {
 	margin-bottom: 8px;
 }
 /* --- SCREEN UP TO 1024px --- */
@@ -2448,8 +2458,7 @@ a.toggle-dropzone:focus {
 		color: #fff;
 		background: #147fdb
 	}
-/*
-	textarea {
+/*	textarea {
 		width: 43em;
 	}
 */
@@ -2459,14 +2468,15 @@ a.toggle-dropzone:focus {
 	header .admin-title {
 		font-size: 12px
 	}
-	#oe_sidebar {
+/*	#oe_sidebar {
 		bottom: 30px
 	}
+*/
 	#oe_sidebar > aside {
 		padding: 0;
 		cursor: default
 	}
-	#oe_mainarea header.pageheader span.helptext em{
+	#oe_mainarea header.pageheader span.helptext em {
 		display: none
 	}
 	.dashboard-box {
@@ -2477,8 +2487,8 @@ a.toggle-dropzone:focus {
 	footer#oe_footer {
 		clear: both;
 		overflow: hidden;
-		line-height: 20px;
-		position: static
+/*		line-height: 20px;
+		position: static*/
 	}
 	#oe_footer .footer-left {
 		margin-right: 0
@@ -2638,8 +2648,8 @@ a.toggle-dropzone:focus {
 	footer#oe_footer {
 		clear: both;
 		overflow: hidden;
-		line-height: 20px;
-		position: static
+/*		line-height: 20px;*/
+/*		position: static*/
 	}
 	#oe_footer .footer-left {
 		float: none;
@@ -2650,10 +2660,11 @@ a.toggle-dropzone:focus {
 		display: block
 	}
 	#oe_footer small {
-		padding: 10px 0 0 0;
+/*		padding: 10px 0 0 0;*/
+		padding: 3px;
 		margin: 0;
 		display: block;
-		font-size: .7em
+/*		font-size: 0.7em*/
 	}
 	fieldset,
 	form,
