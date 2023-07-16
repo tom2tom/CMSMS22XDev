@@ -146,8 +146,8 @@ $(function () {
 {$hiddenpath}
 {/if}
 
-<div id="filesarea">
 {if (!empty($files)}
+<div id="filesarea">
 	<table width="100%" class="pagetable scrollable">
 		<thead>
 			<tr>
@@ -195,8 +195,8 @@ $(function () {
 			</tr>
 		</tfoot>
 	</table>
-{/if}
 </div>
+{/if}
 
 {if !isset($noform)}
 	{*{$actiondropdown}{$targetdir}{$okinput}*}
