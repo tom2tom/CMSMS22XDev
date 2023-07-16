@@ -30,7 +30,7 @@ $(function() {
 });
 </script>
 
-{if $itemcount > 0}
+{if !empty($items)}
 <table class="pagetable">
 	<thead>
 		<tr>

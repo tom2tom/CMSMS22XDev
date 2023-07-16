@@ -80,11 +80,11 @@
 {*      {cms_module module='Uploads' mode='simpleurl' upload_id=$entry->extravalue} *}
     </div>
 {/if}
-{if isset($entry->fields)}
+{if !empty($entry->fields)}
   {foreach $entry->fields as $field}
      <div class="NewsSummaryField">
         {if $field->type == 'file'}
-          {if isset($field->value) && $field->value}
+          {if !empty($field->value)}
             <img src="{$entry->file_location}/{$field->value}" />
           {/if}
         {elseif $field->type == 'linkedfile'}

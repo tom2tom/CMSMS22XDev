@@ -14,7 +14,7 @@
     </p>
   </div>
 
-  {if isset($type_list)}
+  {if !empty($type_list)}
   <div class="pageoverflow">
     <p class="pagetext">{$mod->Lang('prompt_type')}:</p>
     <p class="pageinput">
@@ -23,7 +23,7 @@
   </div>
   {/if}
 
-  {if isset($category_list)}
+  {if !empty($category_list)}
   <div class="pageoverflow">
     <p class="pagetext">{$mod->Lang('prompt_category')}:</p>
     <p class="pageinput">
@@ -32,7 +32,7 @@
   </div>
   {/if}
 
-  {if isset($design_list)}
+  {if !empty($design_list)}
   <div class="pageoverflow">
     <p class="pagetext">{$mod->Lang('prompt_designs')}:</p>
     <p class="pageinput">
@@ -62,7 +62,7 @@
     </div>
   {/if}
 
-  {if isset($user_list)}
+  {if !empty($user_list)}
   <div class="pageoverflow">
     <p class="pagetext">{$mod->Lang('prompt_owner')}:</p>
     <p class="pageinput">

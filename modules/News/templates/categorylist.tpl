@@ -16,7 +16,7 @@ $(function() {
   {if $itemcount > 1}<a href="{cms_action_url action='admin_reorder_cats'}" title="{$mod->Lang('reorder')}">{admin_icon icon='reorder.gif'} {$mod->Lang('reorder')}</a>{/if}
 </p></div>
 
-{if $itemcount > 0}
+{if !empty($items)}
 <table class="pagetable">
 	<thead>
 		<tr>

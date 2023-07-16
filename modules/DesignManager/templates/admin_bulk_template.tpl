@@ -1,6 +1,6 @@
 <h3>{$mod->Lang($bulk_op)}</h3>
 
-{if isset($templates)}
+{if !empty($templates)}
 <table class="pagetable">
   <thead>
    <tr>

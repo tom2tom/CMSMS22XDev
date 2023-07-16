@@ -7,12 +7,12 @@
   {if $key == $curletter}
 	<strong>{$key}</strong>&nbsp;
   {else}
-	<a href="{$url}" title="{$ModuleManager->Lang('title_letter',$key)}">{$key}</a>&nbsp;
+	<a href="{$url}" title="{$mod->Lang('title_letter',$key)}">{$key}</a>&nbsp;
   {/if}
 {/foreach}
 </p>
 
-{if isset($message) && $message != ''}
+{if !empty($message)}
 <div class="warning"><p>{$message}</p></div>
 {/if}
 
@@ -28,16 +28,16 @@
 {/strip}
 {/function}
 
-{if isset($itemcount) && $itemcount > 0}
+{if !empty($items)}
 <table class="pagetable scrollable">
 	<thead>
 		<tr>
 			<th></th>
 			<th>{$nametext}</th>
-			<th><span title="{$ModuleManager->Lang('title_modulelastversion')}">{$vertext}</span></th>
-			<th><span title="{$ModuleManager->Lang('title_modulelastreleasedate')}">{$ModuleManager->Lang('releasedate')}</span></th>
-{*			<th><span title="{$ModuleManager->Lang('title_moduletotaldownloads')}">{$ModuleManager->Lang('downloads')}</span></th>*}
-			<th><span title="{$ModuleManager->Lang('title_modulestatus')}">{$ModuleManager->Lang('statustext')}</span></th>
+			<th><span title="{$mod->Lang('title_modulelastversion')}">{$vertext}</span></th>
+			<th><span title="{$mod->Lang('title_modulelastreleasedate')}">{$mod->Lang('releasedate')}</span></th>
+			{*<th><span title="{$mod->Lang('title_moduletotaldownloads')}">{$mod->Lang('downloads')}</span></th>*}
+			<th><span title="{$mod->Lang('title_modulestatus')}">{$mod->Lang('statustext')}</span></th>
 			<th>&nbsp;</th>
 			<th>&nbsp;</th>
 			<th>&nbsp;</th>
@@ -51,18 +51,20 @@
 			<td><span title="{$entry->description|adjust:'strip_tags'|cms_escape}">{$entry->name}</span></td>
 			<td>{$entry->version}</td>
 			<td>{$entry->date|localedate_format:'%x'}</td>
-{*			<td>{$entry->downloads}</td>*}
+			{*<td>{$entry->downloads}</td>*}
 			<td>{if $entry->candownload}
-				<span title="{$ModuleManager->Lang('title_moduleinstallupgrade')}">{$entry->status}</span>
+				<span title="{$mod->Lang('title_moduleinstallupgrade')}">{$entry->status}</span>
 			{else}
 				{$entry->status}
 			{/if}
 			</td>
-			<td><a href="{$entry->depends_url}" title="{$ModuleManager->Lang('title_moduledepends')}">{$ModuleManager->Lang('dependstxt')}</a></td>
-			<td><a href="{$entry->help_url}" title="{$ModuleManager->Lang('title_modulehelp')}">{$ModuleManager->Lang('helptxt')}</a></td>
-			<td><a href="{$entry->about_url}" title="{$ModuleManager->Lang('title_moduleabout')}">{$ModuleManager->Lang('abouttxt')}</a></td>
+			<td><a href="{$entry->depends_url}" title="{$mod->Lang('title_moduledepends')}">{$mod->Lang('dependstxt')}</a></td>
+			<td><a href="{$entry->help_url}" title="{$mod->Lang('title_modulehelp')}">{$mod->Lang('helptxt')}</a></td>
+			<td><a href="{$entry->about_url}" title="{$mod->Lang('title_moduleabout')}">{$mod->Lang('abouttxt')}</a></td>
 		</tr>
 	{/foreach}
 	</tbody>
 </table>
+{else}
+<div class="warning">{$mod->Lang('error_nomodules')}</div>
 {/if}

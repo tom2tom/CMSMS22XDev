@@ -6,7 +6,7 @@
 {/function}
 
 {function name='Simplex_menu' depth='1'}
-    <ul{$main_id}{if isset($ul_class) && $ul_class != ''} class="{$ul_class}"{/if}>
+    <ul{$main_id}{if !empty($ul_class)} class="{$ul_class}"{/if}>
         {$main_id = ''}
         {$ul_class = ''}
         {foreach $data as $node}
@@ -32,7 +32,7 @@
             {if $node->type == 'sectionheader'}
                 {$list_class[] = 'sectionheader'}
                 <li{do_class classes=$list_class}{$aria_support}><span>{$node->menutext}{$parent_indicator}</span>
-                {if isset($node->children)}
+                {if !empty($node->children)}
                     {Simplex_menu data=$node->children depth=$depth+1}
                 {/if}
                 </li>
@@ -43,7 +43,7 @@
                 {* regular item *}
                 <li{do_class classes=$list_class}{$aria_support}>
                     <a{do_class classes=$href_class} href='{$node->url}'{if $node->target != ''} target='{$node->target}'{/if}>{$node->menutext}{$parent_indicator}</a>
-                    {if isset($node->children)}
+                    {if !empty($node->children)}
                         {Simplex_menu data=$node->children depth=$depth+1}
                     {/if}
                 </li>
@@ -52,7 +52,7 @@
     </ul>
 {/function}
 
-{if isset($nodes)}
+{if !empty($nodes)}
     {Simplex_menu data=$nodes depth='0' ul_class='cf'}
 {/if}
 

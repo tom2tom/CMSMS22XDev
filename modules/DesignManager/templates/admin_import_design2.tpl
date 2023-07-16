@@ -79,6 +79,7 @@ $(function() {
 {* tab_start name='copyright' *}
 
 {tab_start name='templates'}
+{if !empty($templates) }
 <table class="pagetable">
   <thead>
     <tr>
@@ -109,9 +110,10 @@ $(function() {
   {/foreach}
   </tbody>
 </table>
-
+{/if}
 
 {tab_start name='stylesheets'}
+{if !empty($stylesheets) }
 <div id="stylesheet_list">
   <table class="pagetable">
     <thead>
@@ -144,6 +146,7 @@ $(function() {
     </tbody>
   </table>
 </div>
+{/if}
 {tab_end}
 
 <div class="pageoverflow">

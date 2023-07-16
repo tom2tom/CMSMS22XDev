@@ -228,7 +228,7 @@ $(function() {
                 </select>
             </p>
         </div>
-        {if isset($type_list)}
+        {if !empty($type_list)}
             <div class="pageoverflow">
                 <p class="pagetext"><label for="tpl_type">{$mod->Lang('prompt_type')}:</label>&nbsp;{cms_help key2=help_template_type title=$mod->Lang('prompt_type')}</p>
                 <p class="pageinput">
@@ -248,7 +248,7 @@ $(function() {
             </div>
             {/if}
         {/if}
-        {if isset($category_list)}
+        {if !empty($category_list)}
         <div class="pageoverflow">
             <p class="pagetext"><label for="tpl_category">{$mod->Lang('prompt_category')}:</label>&nbsp;{cms_help key2=help_template_category title=$mod->Lang('prompt_category')}</p>
             <p class="pageinput">
@@ -274,7 +274,7 @@ $(function() {
 
 {if ($has_manage_right || $template->get_owner_id() == $userid)}
     {tab_start name='permissions'}
-    {if isset($user_list)}
+    {if !empty($user_list)}
     <div class="pageoverflow">
         <p class="pagetext"><label for="tpl_owner">{$mod->Lang('prompt_owner')}:</label>&nbsp;{cms_help key2=help_template_owner title=$mod->Lang('prompt_owner')}</p>
         <p class="pageinput">
@@ -284,7 +284,7 @@ $(function() {
         </p>
     </div>
     {/if}
-    {if isset($addt_editor_list)}
+    {if !empty($addt_editor_list)}
     <div class="pageoverflow">
         <p class="pagetext"><label for="tpl_addeditor">{$mod->Lang('additional_editors')}:</label>&nbsp;{cms_help key2=help_template_addteditors title=$mod->Lang('additional_editors')}</p>
         <p class="pageinput">

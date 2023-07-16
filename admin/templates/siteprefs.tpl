@@ -46,7 +46,7 @@
 			<p class="pagetext"><label for="globalmetadata">{lang('globalmetadata')}:</label>&nbsp;{cms_help key2='siteprefs_globalmetadata' title=lang('globalmetadata')}</p>
 			<p class="pageinput"><textarea id="globalmetadata" class="pagesmalltextarea" name="metadata" cols="80" rows="20">{$metadata}</textarea></p>
 		</div>
-		{if isset($themes)}
+		{if !empty($themes)}
 			<div class="pageoverflow">
 				<p class="pagetext"><label for="logintheme">{lang('master_admintheme')}:</label></p>
 				<p class="pageinput">
@@ -76,7 +76,7 @@
 				&nbsp;{cms_help key2='siteprefs_thumbheight' title=lang('thumbnail_height')}
 			</p>
 		</div>
-		{if isset($search_modules)}
+		{if !empty($search_modules)}
 			<p class="pagetext"><label for="search_module">{lang('search_module')}:</label></p>
 			<p class="pageinput">
 				<select id="search_module" name="search_module">

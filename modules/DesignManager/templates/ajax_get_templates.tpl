@@ -18,7 +18,7 @@ $('#tpl_selall').cmsms_checkall();
     {/if}
   </div>
 
-  {if isset($tpl_nav) && $tpl_nav.numpages > 1}
+  {if !empty($tpl_nav) && $tpl_nav.numpages > 1}
     <div class="pageoptions" style="text-align: right;">
         <label for="tpl_page">{$mod->Lang('prompt_page')}:</label>&nbsp;
         <select id="tpl_page" name="{$actionid}tpl_page">
@@ -29,7 +29,7 @@ $('#tpl_selall').cmsms_checkall();
   {/if}
 </div>
 
-{if isset($templates)}
+{if !empty($templates)}
   <table class="pagetable">
     <thead>
       <tr>

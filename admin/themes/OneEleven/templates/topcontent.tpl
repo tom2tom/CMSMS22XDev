@@ -24,7 +24,7 @@
 			{if $node.description}
 			<span class="description">{$node.description}</span>
 			{/if}
-			{if isset($node.children)}
+			{if !empty($node.children)}
 			<h4>{lang('subitems')}</h4>
 			<ul class="subitems cf">
 			{foreach $node.children as $one}

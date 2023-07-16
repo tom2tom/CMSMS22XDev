@@ -4,7 +4,7 @@
 <div class="information"><p>{$ModuleManager->Lang('info_searchtab')}</p></div>
 {/if}
 <div style="clear:both;">&nbsp;</div>
-{if isset($message)}
+{if !empty($message)}
 <p class="pageerror">{$message}</p>
 {/if}
 
@@ -20,7 +20,7 @@
 {/strip}
 {/function}
 
-{if isset($itemcount) && $itemcount > 0}
+{if !empty($items)}
 <table class="pagetable scrollable">
 	<thead>
 		<tr>

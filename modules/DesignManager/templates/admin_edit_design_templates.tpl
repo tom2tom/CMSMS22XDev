@@ -14,7 +14,7 @@
 </style>
 
 <div class="information">{$mod->Lang('info_edittemplate_templates_tab')}</div>
-{if !isset($all_templates)}
+{if empty($all_templates)}
 <div class="pagewarning">{$mod->Lang('warning_edittemplate_notemplates')}</div>
 {else}
 

@@ -110,7 +110,7 @@ $(function() {
 	{/if}
 </div>{* .row *}
 
-{if $itemcount > 0}
+{if !empty($items)}
 {$form2start}
 <table class="pagetable" id="articlelist">
 	<thead>

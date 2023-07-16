@@ -27,7 +27,7 @@ $(function() {
     <div class="message blue">{tr('step2_nofiles')}</div>
   {/if}
 
-  {if !isset($cmsms_info)}
+  {if empty($cmsms_info)}
     <div class="message blue">{tr('step2_nocmsms')}</div>
     {if !$install_empty_dir}
     <div class="message yellow">{tr('step2_install_dirnotempty2')}
@@ -97,7 +97,7 @@ $(function() {
   {/if}
 
   <div id="bottom_nav">
-    {if !isset($cmsms_info)}
+    {if empty($cmsms_info)}
       {if isset($retry_url)}
       {* <a class="action-button orange" href="{$retry_url}" title="{tr('retry')}">{tr('retry')} <i class="icon-loop"></i></a> *}
       <a onClick="window.location.reload();" class="action-button orange" title="{tr('retry')}">{tr('retry')} <i class="icon-loop"></i></a>
@@ -114,7 +114,7 @@ $(function() {
 </div>
 
 <div class="hidden">
-  {if isset($upgrade_info)}
+  {if !empty($upgrade_info)}
     {foreach $upgrade_info as $ver => $data}
       {if $data.readme}
       <div id="r{$data@iteration}" title="{tr('readme_uc')}: {$ver}">

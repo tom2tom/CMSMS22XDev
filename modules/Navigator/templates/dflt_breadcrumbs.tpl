@@ -1,7 +1,7 @@
 {* default breadcrumbs template *}
 {strip}
 <div class="breadcrumb">
-  {if isset($starttext)}{$starttext}:&nbsp;{/if}
+  {if !empty($starttext)}{$starttext}:&nbsp;{/if}
   {foreach $nodelist as $node}
     {$spanclass='breadcrumb'}
     {if $node->current}

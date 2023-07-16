@@ -18,7 +18,7 @@
       </p>
     </div>
 
-    {if isset($user_list)}
+    {if !empty($user_list)}
     <div class="pageoverflow">
       <p class="pagetext"><label for="tpl_name">{$mod->Lang('prompt_owner')}:</label></p>
       <p class="pageinput">
@@ -27,7 +27,7 @@
     </div>
     {/if}
 
-    {if isset($category_list)}
+    {if !empty($category_list)}
     <div class="pageoverflow">
       <p class="pagetext">{$mod->Lang('prompt_category')}:</p>
       <p class="pageinput">

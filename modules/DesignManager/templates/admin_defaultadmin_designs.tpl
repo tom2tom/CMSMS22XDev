@@ -5,7 +5,7 @@
   </div>
 </div>
 
-{if isset($list_designs)}
+{if !empty($list_designs)}
 <table class="pagetable">
   <thead>
     <tr>

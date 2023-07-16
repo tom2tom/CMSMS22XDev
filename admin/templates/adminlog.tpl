@@ -72,7 +72,7 @@ $(function() {
       <div class="clear"></div>
   </div>
 
-  {if $logempty==false}
+  {if !empty($loglines)}
     <table class="pagetable">
       <thead>
       <tr>

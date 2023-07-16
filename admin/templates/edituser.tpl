@@ -33,7 +33,7 @@ $(function() {
         <input type="hidden" value="{$user_id}" name="user_id" />
 
         {tab_header name='user' label=lang('profile')}
-        {if isset($groups)}
+        {if !empty($groups)}
             {tab_header name='groups' label=lang('groups')}
         {/if}
         {if $manage_users == true}
@@ -109,7 +109,7 @@ $(function() {
         </div>
         {/if}
 
-        {if isset($groups)}
+        {if !empty($groups)}
         <!-- group options -->
         {tab_start name='groups'}
         <div class="pageverflow">

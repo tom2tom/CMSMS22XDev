@@ -1,6 +1,6 @@
 {* admin statistics tab *}
 
-{if isset($topwords)}
+{if !empty($topwords)}
 {$formstart}
 <div class="pageoverflow">
   <table class="pagetable">

@@ -19,11 +19,11 @@
   </div>
 
   <div class="pageoptions options-form grid_4" style="float: right;">
-    {if isset($content_list)}
+    {if !empty($content_list)}
     <span><label for="ajax_find">{$mod->Lang('find')}:</label>&nbsp;<input type="text" id="ajax_find" name="ajax_find" title="{$mod->Lang('title_listcontent_find')}" value="" size="25" /></span>
     {/if}
 
-    {if isset($content_list) && $npages > 1}
+    {if !empty($content_list) && $npages > 1}
       {form_start action='defaultadmin'}
         <span>{$mod->Lang('page')}:&nbsp;
         <select name="{$actionid}curpage" id="{$actionid}curpage">
@@ -246,7 +246,7 @@
   {/if}
   </div>{* #contentlist *}
 
-{if isset($content_list)}
+{if !empty($content_list)}
   <div class="row c_full cf">
     {if $can_add_content}
       <div class="pageoptions grid_6" style="margin-top: 8px;">

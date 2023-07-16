@@ -16,7 +16,7 @@ $(function() {
     </div>
 </div>
 
-{if $tags}
+{if !empty($tags)}
   <table class="pagetable">
      <thead>
        <tr>

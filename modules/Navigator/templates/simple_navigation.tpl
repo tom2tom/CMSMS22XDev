@@ -1,6 +1,6 @@
 {* simple navigation *}
 {* note, function can only be defined once *}
-{* 
+{*
   variables:
   node: contains the current node.
   aclass: is used to build a string containing class names given to the a tag if one is used
@@ -40,7 +40,7 @@
     {* build the menu item node *}
     {if $node->type == 'sectionheader'}
       <li class='sectionheader {$liclass}'><span>{$node->menutext}</span>
-        {if isset($node->children)}
+        {if !empty($node->children)}
           {Nav_menu data=$node->children depth=$depth+1}
         {/if}
       </li>
@@ -50,7 +50,7 @@
       {* regular item *}
       <li class="{$liclass}">
         <a class="{$aclass}" href="{$node->url}"{if $node->target ne ""} target="{$node->target}"{/if}><span>{$node->menutext}</span></a>
-        {if isset($node->children)}
+        {if !empty($node->children)}
           {Nav_menu data=$node->children depth=$depth+1}
         {/if}
       </li>
@@ -59,6 +59,6 @@
 </ul>
 {/strip}{/function}
 
-{if isset($nodes)}
+{if !empty($nodes)}
 {Nav_menu data=$nodes depth=0}
 {/if}

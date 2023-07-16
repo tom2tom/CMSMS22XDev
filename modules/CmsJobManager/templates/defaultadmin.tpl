@@ -9,7 +9,7 @@ $(function() {
 
 <div class="information">{$mod->Lang('info_background_jobs')}</div>
 
-{if !count($jobs)}
+{if empty($jobs)}
   <div style="text-align: center;">
     <div class="information">{$mod->Lang('info_no_jobs')}</div>
   </div>
@@ -51,7 +51,7 @@ $(function() {
   </table>
 {/if}
 
-{* delete me before distributing - TODO ?? 
+{* delete me before distributing - TODO ??
 
 <a id="simple1" href="{cms_action_url action=test1}" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary">
 <span class="ui-button-icon-primary ui-icon ui-icon-circle-check"></span>

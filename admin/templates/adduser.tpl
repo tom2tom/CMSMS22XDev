@@ -3,7 +3,7 @@
 
     {form_start url='adduser.php'}
     {tab_header name='user' label=lang('profile')}
-    {if isset($groups)}
+    {if !empty($groups)}
         {tab_header name='groups' label=lang('groups')}
     {/if}
     {tab_header name='settings' label=lang('settings')}
@@ -67,7 +67,7 @@
         </p>
     </div>
 
-    {if isset($groups)}
+    {if !empty($groups)}
     <!-- groups -->
     {tab_start name='groups'}
     <div class="pageverflow">

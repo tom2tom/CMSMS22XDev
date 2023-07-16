@@ -1,3 +1,4 @@
+{if !empty($items)}
 <div class="pageoverflow">
 <table class="pagetable">
   <thead>
@@ -18,6 +19,7 @@
 {/foreach}
 </table>
 </div>
+{/if}
 <div class="pageoverflow">
   <p class="pageoptions">{$newtemplatelink}</p>
 </div>

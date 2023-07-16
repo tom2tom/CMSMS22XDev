@@ -1,4 +1,4 @@
-{if $slaves|@count > 0}
+{if !empty($slaves)}
 <style type="text/css" scoped>
 #status_area,#searchresults_cont,#workarea {
   display: none;

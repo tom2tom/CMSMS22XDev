@@ -15,7 +15,7 @@ $('#css_selall').cmsms_checkall();
     </ul>
   </div>
 
-  {if isset($css_nav) && $css_nav.numpages > 1}
+  {if !empty($css_nav) && $css_nav.numpages > 1}
     <div class="pageoptions" style="text-align: right;">
       {form_start action=defaultadmin}
         <label for="css_page">{$mod->Lang('prompt_page')}:</label>&nbsp;
@@ -28,7 +28,7 @@ $('#css_selall').cmsms_checkall();
   {/if}
 </div>
 
-{if isset($stylesheets)}
+{if !empty($stylesheets)}
   {strip}
   {form_start action=admin_bulk_css}
   <table class="pagetable">

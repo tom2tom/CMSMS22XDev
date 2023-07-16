@@ -284,7 +284,7 @@
         {$inputcontent}
       </p>
     </div>
-    {if isset($statustext)}
+    {if !empty($statustext)}
     <div class="pageoverflow">
       <p class="pagetext">
         <label for="fld9">*{$statustext}:</label> {cms_help key='help_article_status' title=$statustext}
@@ -363,7 +363,7 @@
         </p>
       </div>
     </div>
-    {if isset($custom_fields)}
+    {if !empty($custom_fields)}
     {foreach $custom_fields as $field}
     <div class="pageoverflow">
       <p class="pagetext">

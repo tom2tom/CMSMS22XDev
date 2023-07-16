@@ -1,6 +1,6 @@
 {* cssmenu_ulshadow navigation *}
 {* note, function can only be defined once *}
-{* 
+{*
   variables:
   node: contains the current node.
   aclass: is used to build a string containing class names given to the a tag if one is used
@@ -15,11 +15,11 @@
     {*{$liclass=' depth'|cat:$depth}*}
     {$aclass=''}
 
-    {* the first child gets a special class 
+    {* the first child gets a special class
     {if $node@first && $node@total > 1}{$liclass=$liclass|cat:' first_child'}{/if}
     *}
 
-    {* the last child gets a special class 
+    {* the last child gets a special class
     {if $node@last && $node@total > 1}{$liclass=$liclass|cat:' last_child'}{/if}
     *}
 
@@ -32,7 +32,7 @@
       {$liclass=$liclass|cat:' parent'}
       {$aclass=$aclass|cat:' parent'}
     {/if}
-    {if isset($node->children)}
+    {if !empty($node->children)}
       {$liclass=$liclass|cat:' menuparent'}
       {$aclass=$aclass|cat:' menuparent'}
     {/if}
@@ -40,7 +40,7 @@
     {* build the menu item node *}
     {if $node->type == 'sectionheader'}
       <li class='sectionheader {$liclass}'><span>{$node->menutext}</span>
-        {if isset($node->children)}
+        {if !empty($node->children)}
           {cssmenu_ulshadow data=$node->children depth=$depth+1}
         {/if}
       </li>
@@ -50,7 +50,7 @@
       {* regular item *}
       <li class="{$liclass}">
         <a class="{$aclass}" href="{$node->url}"{if $node->target ne ""} target="{$node->target}"{/if}><span>{$node->menutext}</span></a>
-        {if isset($node->children)}
+        {if !empty($node->children)}
           {cssmenu_ulshadow data=$node->children depth=$depth+1}
         {/if}
       </li>
@@ -62,7 +62,7 @@
 </ul>
 {/function}
 
-{if isset($nodes)}
+{if !empty($nodes)}
 <div id="menuwrapper">
   {cssmenu_ulshadow data=$nodes depth=0}
   <div class="clearb"></div>

@@ -1,9 +1,9 @@
 {* original form template *}
 <h3>{$mod->Lang('title_fesubmit_form')}</h3>
 
-{if isset($error)}
+{if !empty($error)}
 <div class="error">{$error}</div>
-{elseif isset($message)}
+{elseif !empty($message)}
 <div class="message">{$message}</div>
 {/if}
 
@@ -23,7 +23,7 @@
 		</p>
 	</div>
 
-{if !isset($hide_summary_field) or $hide_summary_field == 0}
+{if empty($hide_summary_field)}
 	<div class="row">
 		<p class="col4"><label for="news_summary">{$mod->Lang('summary')}:</label></p>
 		<p class="col8">
@@ -61,7 +61,7 @@
 			{html_select_time prefix=$tmp time=$enddate}
 		</p>
 	</div>
-	{if isset($customfields)}
+	{if !empty($customfields)}
 		{foreach $customfields as $field}
 		<div class="row">
 		<p class="col4"><label for="news_fld_{$field->id}">{$field->name}:</label></p>

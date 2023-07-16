@@ -6,7 +6,7 @@
 {/function}
 
 {function name='Simplex_footer_menu' depth='1'}
-    <ul{$main_id}{if isset($ul_class) && $ul_class != ''} class="{$ul_class}"{/if}>
+    <ul{$main_id}{if !empty($ul_class)} class="{$ul_class}"{/if}>
         {$main_id = ''}
         {$ul_class = ''}
         {foreach $data as $node}
@@ -28,7 +28,7 @@
             {if $node->type == 'sectionheader'}
                 {$list_class[] = 'sectionheader'}
                 <li{do_footer_class classes=$list_class}><span>{$node->menutext}</span>
-                {if isset($node->children)}
+                {if !empty($node->children)}
                     {Simplex_footer_menu data=$node->children depth=$depth+1}
                 {/if}
                 </li>
@@ -39,7 +39,7 @@
                 {* regular item *}
                 <li{do_footer_class classes=$list_class}>
                     <a{do_footer_class classes=$href_class} href='{$node->url}'{if $node->target != ''} target='{$node->target}'{/if}>{$node->menutext}</a>
-                    {if isset($node->children)}
+                    {if !empty($node->children)}
                         {Simplex_footer_menu data=$node->children depth=$depth+1}
                     {/if}
                 </li>
@@ -48,7 +48,7 @@
     </ul>
 {/function}
 
-{if isset($nodes)}
+{if !empty($nodes)}
     {Simplex_footer_menu data=$nodes depth='0' ul_class='cf'}
 {/if}
 

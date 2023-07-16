@@ -10,7 +10,7 @@
 </div>
 <div class="clearb"></div>
 
-{if isset($dependencies)}
+{if !empty($dependencies)}
   {$has_custom=0}
   {foreach $dependencies as $name => $rec}
      {if $rec.has_custom}{$has_custom=1}{/if}

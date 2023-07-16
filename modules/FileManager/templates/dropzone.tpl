@@ -55,7 +55,7 @@ $(function() {
 {/literal}</script>
 <div class="drop">
 	<div class="drop-inner cf">
-	{if isset($dirlist)}
+	{if !empty($dirlist)}
 		<span class="folder-selection open" title="{lang('open')}"></span>
 		<div class="dialog invisible" role="dialog" title="{$FileManager->Lang('change_working_folder')}">
 			<form id="chdir_form" class="cms_form" action="{$chdir_url}" method="post">

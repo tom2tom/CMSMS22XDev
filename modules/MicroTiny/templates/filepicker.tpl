@@ -55,8 +55,8 @@
 						</li>
 						{foreach $files as $file}
 						<li class="filepicker-item{if $file.isdir} dir{else} {$file.filetype}{/if}" title="{if $file.isdir}{$mod->Lang('dirinfo')}: {/if}{$file.name}" data-fb-ext='{$file.ext}'>
-							<div class="filepicker-thumb{if (isset($file.thumbnail) && $file.thumbnail != '') || $file.isdir} no-background{/if}">
-							{if $showthumbnails && isset($file.thumbnail) && $file.thumbnail != ''}
+							<div class="filepicker-thumb{if !empty($file.thumbnail) || $file.isdir} no-background{/if}">
+							{if $showthumbnails && !empty($file.thumbnail)}
 								<a class="filepicker-file-action js-trigger-insert" href="{$file.fullurl}" title="{if $file.isdir}{$mod->Lang('dirinfo')}: {/if}{$file.name}">{$file.thumbnail}</a>
 							{elseif $file.isdir}
 								<a class="icon-no-thumb" href="{$file.chdir_url}" title="{if $file.isdir}{$mod->Lang('dirinfo')}: {/if}{$file.name}"><i class="cmsms-fp-folder-close"></i></a>

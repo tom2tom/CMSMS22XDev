@@ -1,4 +1,4 @@
-{if isset($list_categories)}
+{if !empty($list_categories)}
 <script type="text/javascript">
 $(function () {
     $('#categorylist tbody').cmsms_sortable_table({
@@ -49,7 +49,7 @@ $(function () {
 	<a id="addcategory" href="{$url}" title="{$mod->Lang('create_category')}">{admin_icon icon='newobject.gif'} {$mod->Lang('create_category')}</a>
 </div>
 
-{if isset($list_categories)}
+{if !empty($list_categories)}
 <table id="categorylist" class="pagetable">
 	<thead>
 		<tr>

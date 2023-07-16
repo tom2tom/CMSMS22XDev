@@ -24,14 +24,14 @@ function ChooseFile(filename) {
 
 <div class="header">
 
-{if isset($messagefail) && $messagefail!=""}
+{if !empty($messagefail)}
 <fieldset class="fp-error">
 <legend>{$errortext}</legend>
 {$messagefail}
 </fieldset>
 {/if}
 
-{if isset($messagesuccess) && $messagesuccess!=""}
+{if !empty($messagesuccess)}
 <fieldset class="fp-sucess">
 <legend>{$successtext}</legend>
 {$messagesuccess}
@@ -43,7 +43,7 @@ function ChooseFile(filename) {
 <h2><img src="{$rooturl}/modules/FileManager/icons/themes/{$admintheme}/extensions/dir.png" title="{$subdir}" alt="{$subdir}" />/{$subdir}</h2>
 </fieldset>
 
-{if isset($formstart) && $formstart!=''}
+{if !empty($formstart)}
 <fieldset>
 <legend>{$fileoperations}</legend>
 {$formstart}
@@ -65,6 +65,7 @@ function ChooseFile(filename) {
 
 </div>
 <div class="filelist">
+{if !empty($files)}
 <table width="100%">
 <thead>
 <tr>
@@ -92,12 +93,10 @@ function ChooseFile(filename) {
     {else}
       <div class="thumbnail">
       <a title="{$file->name}" href='#' onclick='ChooseFile("{$file->fullurl}")'>
-      {if isset($file->thumbnail) && $file->thumbnail!=''}
-
+      {if !empty($file->thumbnail)}
         {$file->thumbnail}
       {else}
-
-        {if $file->isimage=="1"}
+        {if $file->isimage}
         <img src="{$rooturl}/modules/FileManager/icons/themes/{$admintheme}/extensions/png.png" title="{$file->name}" alt="{$file->name}" />
         {else}
         <img src="{$rooturl}/modules/FileManager/icons/themes/{$admintheme}/extensions/{$file->fileicon}" title="{$file->name}" alt="{$file->name}" />
@@ -119,6 +118,7 @@ function ChooseFile(filename) {
   {/foreach}
 <tr><td colspan="4">&nbsp;</td></tr>
 </table>
+{/if}
 </div>
 {*
 <div class="rightbox">

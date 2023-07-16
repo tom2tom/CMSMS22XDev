@@ -64,7 +64,7 @@ $(function() {
   {form_end}
 </div>
 
-{if isset($module_info)}
+{if !empty($module_info)}
 <div class="pageoptions">
   <a id="importbtn">{admin_icon icon='import.gif'} {$mod->Lang('importxml')}</a>
 </div>

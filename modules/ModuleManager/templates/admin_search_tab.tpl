@@ -41,7 +41,7 @@ $(function() {
 </fieldset>
 {$formend}
 
-{if isset($search_data)}
+{if !empty($search_data)}
 <fieldset>
 <legend>{$ModuleManager->Lang('search_results')}:</legend>
 <table class="pagetable scrollable">

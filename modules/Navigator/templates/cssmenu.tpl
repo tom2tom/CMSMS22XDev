@@ -47,7 +47,7 @@
   {* build the menu item from the node *}
   {if $node->type == 'sectionheader'}
     <li class="{' '|adjust:'implode':$liclass}"><a{if count($aclass) > 0} class="{' '|adjust:'implode':$aclass}"{/if}><span class="sectionheader">{$node->menutext}</span></a>
-      {if isset($node->children)}
+      {if !empty($node->children)}
         {include file=$smarty.template nodes=$node->children}
       {/if}
     </li>
@@ -57,7 +57,7 @@
     {* regular item *}
     <li class="{' '|adjust:'implode':$liclass}">
       <a{if count($aclass) > 0} class="{' '|adjust:'implode':$aclass}"{/if} href="{$node->url}"{if $node->target} target="{$node->target}"{/if}><span>{$node->menutext}</span></a>
-      {if isset($node->children)}
+      {if !empty($node->children)}
         {include file=$smarty.template nodes=$node->children}
       {/if}
     </li>
