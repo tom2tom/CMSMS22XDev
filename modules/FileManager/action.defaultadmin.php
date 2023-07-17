@@ -1,18 +1,35 @@
 <?php
+#FileManager module action
+#(c) 2006-8 Morten Poulsen <morten@poulsen.org>
+#(c) 2008 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#
+#This program is free software; you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation; either version 2 of the License, or
+#(at your option) any later version.
+#
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#You should have received a copy of the GNU General Public License
+#along with this program; if not, write to the Free Software
+#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 if (!function_exists("cmsms")) exit;
 if (!$this->CheckPermission('Modify Files')) exit;
 
-if (isset($params["fmmessage"]) && $params["fmmessage"]!="") {
+if (!empty($params["fmmessage"])) {
     // gotta get rid of this stuff.
     $count="";
-    if (isset($params["fmmessagecount"]) && $params["fmmessagecount"]!="") $count=$params["fmmessagecount"];
+    if (!empty($params["fmmessagecount"])) $count = $params["fmmessagecount"];
     echo $this->ShowMessage($this->Lang($params["fmmessage"],$count));
 }
 
-if (isset($params["fmerror"]) && $params["fmerror"]!="") {
+if (!empty($params["fmerror"])) {
     // gotta get rid of this stuff
     $count="";
-    if (isset($params["fmerrorcount"]) && $params["fmerrorcount"]!="") $count=$params["fmerrorcount"];
+    if (!empty($params["fmerrorcount"])) $count = $params["fmerrorcount"];
     echo $this->ShowErrors($this->Lang($params["fmerror"],$count));
 }
 
@@ -46,4 +63,4 @@ $smarty->assign('path_parts',$path_parts);
 echo $this->ProcessTemplate('fmpath.tpl');
 
 include(__DIR__."/uploadview.php");
-include(__DIR__."/action.admin_fileview.php"); // this is also an action.
+include(__DIR__."/action.admin_fileview.php"); // this is also a standalone action
