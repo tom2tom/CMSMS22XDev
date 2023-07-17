@@ -9,7 +9,7 @@
     {else}
       {* error *}
       <p class="pagetext" style="color: red;">{$module_name}</p>
-      <br/>
+      <br />
       <p class="pageinput" style="color: red;">{$item[1]}</p>
     {/if}
   </div>

@@ -135,7 +135,7 @@ $(function() {
         <div class="pageoverflow">
             <p class="pagetext"><label for="tpl_name">*{$mod->Lang('prompt_name')}:</label>&nbsp;{cms_help key2=help_template_name title=$mod->Lang('prompt_name')}</p>
             <p class="pageinput">
-                <input id="tpl_name" type="text" name="{$actionid}name" size="50" maxlength="90" value="{$template->get_name()}" {if !$has_manage_right}readonly="readonly"{/if} placeholder="{$mod->Lang('new_template')}"/>
+                <input id="tpl_name" type="text" name="{$actionid}name" size="50" maxlength="90" value="{$template->get_name()}" {if !$has_manage_right}readonly="readonly"{/if} placeholder="{$mod->Lang('new_template')}" />
             </p>
         </div>
 
@@ -263,9 +263,9 @@ $(function() {
             <p class="pagetext">{$mod->Lang('prompt_filetemplate')}:</p>
             <p class="pageinput">
             {if $template->has_content_file()}
-            <input type="submit" id="importbtn" name="{$actionid}import" value="{$mod->Lang('import')}"/>
+            <input type="submit" id="importbtn" name="{$actionid}import" value="{$mod->Lang('import')}" />
             {elseif $template->get_id() > 0}
-            <input type="submit" id="exportbtn" name="{$actionid}export" value="{$mod->Lang('export')}"/>
+            <input type="submit" id="exportbtn" name="{$actionid}export" value="{$mod->Lang('export')}" />
             {/if}
         </p>
         </div>

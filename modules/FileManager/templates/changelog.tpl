@@ -3,28 +3,28 @@
 
     <li>
       <b>Version 1.4.0</b> <em>(silmarillion)</em>
-      <br/>
+      <br />
 
     </li>
 
     <li>
     <b>Version 1.2.0</b> <em>(silmarillion)</em>
-    <br/>
+    <br />
     New dirname starting with a . is now avoided
-    <br/>
+    <br />
     Work towars 1.10 methods
 
   </li>
 
   <li>
     <b>Version 1.1.0</b> <em>(silmarillion)</em>
-    <br/>
+    <br />
     Hid error on empty image files bug #4635
-    <br/>
+    <br />
     Removed html from urls (bad bad, sil...)
-    <br/>
+    <br />
     Now shows image info for files with uppercase extensions
-    <br/>
+    <br />
     Now shows a proper error message if an uploaded file was too big, fixing bug #4046
 
 
@@ -33,21 +33,21 @@
 
   <li>
   <b>Version 1.0.2</b> <em>(silmarillion)</em>
-  <br/>
+  <br />
   Now check for illegal chars in filename when uploading files.
   </li>
   <li>
   <b>Version 1.0.1</b> <em>(silmarillion)</em>
-  <br/>
+  <br />
   Released with CMSms 1.6.4
-  <br/>
+  <br />
   Fixed file dates
   </li>
   <li>
   <b>Version 1.0</b> <em>(silmarillion)</em>
-  <br/>
+  <br />
   Released with CMSms 1.6
-  <br/>
+  <br />
   Closed a small security hole
   </li>
   <li><b>Version 0.4.5</b> <em>(silmarillion)</em></li>

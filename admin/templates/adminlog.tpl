@@ -25,17 +25,17 @@ $(function() {
         <form id="adminlog_filter" method="post" action="adminlog.php?{$SECURE_PARAM_NAME}={$CMS_USER_KEY}">
           <div class="c_full">
             <label>{$langfilteraction}</label>
-            <input type="text" name="filteraction" value="{$filter->action}" class="grid_10"/>
+            <input type="text" name="filteraction" value="{$filter->action}" class="grid_10" />
             <div class="clearb"></div>
           </div>
           <div class="c_full">
             <label>{lang('item_name_contains')}</label>
-            <input type="text" name="filteritem" value="{$filter->item_name}" class="grid_10"/>
+            <input type="text" name="filteritem" value="{$filter->item_name}" class="grid_10" />
             <div class="clearb"></div>
           </div>
           <div class="c_full">
             <label>{$langfilteruser}:</label>
-            <input type="text" name="filteruser" value="{$filter->user}" class="grid_10"/>
+            <input type="text" name="filteruser" value="{$filter->user}" class="grid_10" />
             <div class="clearb"></div>
           </div>
           <div class="pageoverflow">

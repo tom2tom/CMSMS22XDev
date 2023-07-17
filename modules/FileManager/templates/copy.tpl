@@ -30,8 +30,8 @@
 <div class="pageoverflow">
   <p class="pagetext"></p>
   <p class="pageinput">
-    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('copy')}"/>
-    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}"/>
+    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('copy')}" />
+    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
   </p>
 </div>
 {$endform}

@@ -2,7 +2,7 @@
 <div class="pageoverflow">
   <p class="pagetext"></p>
   <p class="pageinput">
-    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}"/>
+    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />
   </p>
 </div>
 <fieldset>

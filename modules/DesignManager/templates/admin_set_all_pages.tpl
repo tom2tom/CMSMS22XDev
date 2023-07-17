@@ -7,7 +7,7 @@
     <div class="pageoverflow">
       <p class="pagetext"><label for="tpl_name">{$mod->Lang('prompt_name')}:</label></p>
       <p class="pageinput">
-        <input id="tpl_name" type="text" size="50" maxlength="50" value="{$template->get_name()}" value="{$template->get_name()}" readonly="readonly"/>
+        <input id="tpl_name" type="text" size="50" maxlength="50" value="{$template->get_name()}" value="{$template->get_name()}" readonly="readonly" />
       </p>
     </div>
 
@@ -67,7 +67,7 @@
 <div class="pageoverflow">
   <p class="pagetext">{$mod->Lang('confirm_setall_1')}:</p>
   <p class="pageinput">
-    <input type="checkbox" name="{$actionid}check1" value="1" id="check1" />&nbsp;<label for="check1">{$mod->Lang('confirm_setall_2')}</label><br/>
+    <input type="checkbox" name="{$actionid}check1" value="1" id="check1" />&nbsp;<label for="check1">{$mod->Lang('confirm_setall_2')}</label><br />
     <input type="checkbox" name="{$actionid}check2" value="1" id="check2" />&nbsp;<label for="check2">{$mod->Lang('confirm_setall_3')}</label>
   </p>
 </div>

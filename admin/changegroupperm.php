@@ -179,7 +179,7 @@ if ($submitted == 1) {
                 $new_id = $db->GenID(CMS_DB_PREFIX."group_perms_seq");
                 $result = $db->Execute($iquery, array($new_id,$keyparts[2],$keyparts[1]));
                 if( !$result ) {
-                    echo "FATAL: ".$db->ErrorMsg().'<br/>'.$db->sql; exit();
+                    echo "FATAL: ".$db->ErrorMsg().'<br />'.$db->sql; exit();
                 }
             }
         }

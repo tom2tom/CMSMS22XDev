@@ -88,8 +88,7 @@
                         {foreach $groups as $onegroup}
                         <tr>
                             <td>
-                            <input type="checkbox" name="sel_groups[]" id="g{$onegroup->id}" value="{$onegroup->id}" {if in_array($onegroup->
-                            id,$sel_groups)}checked="checked"{/if}/> </td>
+                            <input type="checkbox" name="sel_groups[]" id="g{$onegroup->id}" value="{$onegroup->id}"{if in_array($onegroup->id,$sel_groups)} checked="checked"{/if} /></td>
                             <td><label for="g{$onegroup->id}">{$onegroup->name}</label></td>
                             <td>{$onegroup->description}</td>
                         </tr>

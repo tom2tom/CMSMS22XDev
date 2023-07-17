@@ -127,7 +127,7 @@ else {
 	    <p class="pageinput"><input type="checkbox" id="active" name="active" <?php echo ($active == 1?"checked=\"checked\"":"")?> /></p>
 	  </div>
  	   <?php } else { ?>
-                <div><input type="hidden" name="active" value="<?php echo $active ?>"/></div>
+                <div><input type="hidden" name="active" value="<?php echo $active ?>" /></div>
            <?php } ?>
 		<div class="pageoverflow">
 			<p class="pagetext">&nbsp;</p>

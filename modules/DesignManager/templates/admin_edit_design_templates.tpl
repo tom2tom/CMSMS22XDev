@@ -29,7 +29,7 @@
                     {if !$tmpl || !in_array($tpl->get_id(),$tmpl)}
                         <li class="ui-state-default" data-cmsms-item-id="{$tpl->get_id()}" tabindex="0">
                             <span>{$tpl->get_name()}</span>
-                            <input class="hidden" type="checkbox" name="{$actionid}assoc_tpl[]" value="{$tpl->get_id()}"/>
+                            <input class="hidden" type="checkbox" name="{$actionid}assoc_tpl[]" value="{$tpl->get_id()}" />
                         </li>
                     {/if}
                 {/foreach}
@@ -52,7 +52,7 @@
                                 <span>{$tpl->get_name()}</span>
                                 {/if}
                                 <a href="#" title="{$mod->Lang('remove')}" class="ui-icon ui-icon-trash sortable-remove">{$mod->Lang('remove')}</a>
-                                <input class="hidden" type="checkbox" name="{$actionid}assoc_tpl[]" value="{$tpl->get_id()}" checked="checked"/>
+                                <input class="hidden" type="checkbox" name="{$actionid}assoc_tpl[]" value="{$tpl->get_id()}" checked="checked" />
                             </li>
                         {/if}
                     {/foreach}

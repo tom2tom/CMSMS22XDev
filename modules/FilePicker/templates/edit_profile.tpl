@@ -20,7 +20,7 @@
 </div>
 <div class="c_full cf">
   <label for="profile_top" class="grid_2">{$mod->Lang('topdir')}:</label>
-  <p class="grid_9"><input type="text" id="profile_top" name="{$actionid}top" value="{$profile->reltop}" size="80"/>
+  <p class="grid_9"><input type="text" id="profile_top" name="{$actionid}top" value="{$profile->reltop}" size="80" />
   &nbsp;{cms_help key2='HelpPopup_ProfileDir' title=$mod->Lang('HelpPopupTitle_ProfileDir')}
   </p>
 </div>

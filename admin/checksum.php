@@ -139,11 +139,11 @@ function check_checksum_data(&$report)
     $tmp = implode( "<br />", $tmp2 );
     if( $filenotfound ) {
       $tmp .= "<br />".lang('files_not_found').':';
-      $tmp .= "<br />".implode("<br/>",$filenotfound)."<br />";
+      $tmp .= "<br />".implode("<br />",$filenotfound)."<br />";
     }
     if( $filesfailed ) {
       $tmp .= "<br />".count($filesfailed).' '.lang('files_failed').':';
-      $tmp .= "<br />".implode("<br/>",$filesfailed)."<br />";
+      $tmp .= "<br />".implode("<br />",$filesfailed)."<br />";
     }
 //    if( $tmp ) $tmp .= "<br />";
 

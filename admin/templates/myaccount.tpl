@@ -132,7 +132,7 @@ $(function() {
       <div class="pageoverflow">
         <p class="pagetext"><label for="indent">{lang('adminindent')}:</label>&nbsp;{cms_help key2='help_myaccount_indent' title=lang('adminindent')}</p>
         <p class="pageinput">
-          <input class="pagenb" type="checkbox" id="indent" name="indent" {if $indent == true}checked="checked"{/if} />
+          <input class="pagenb" type="checkbox" id="indent" name="indent"{if $indent} checked="checked"{/if} />
           {lang('indent')}
         </p>
       </div>
@@ -160,7 +160,7 @@ $(function() {
       <div class="pageoverflow">
         <p class="pagetext"><label for="admincallout">{lang('admincallout')}:</label>&nbsp;{cms_help key2='help_myaccount_admincallout' title=lang('admincallout')}</p>
         <p class="pageinput">
-          <input class="pagenb" id="admincallout" type="checkbox" name="bookmarks" {if $bookmarks == true}checked="checked"{/if} />
+          <input class="pagenb" id="admincallout" type="checkbox" name="bookmarks"{if $bookmarks} checked="checked"{/if} />
           {lang('showbookmarks')}
         </p>
       </div>
@@ -168,7 +168,7 @@ $(function() {
       <div class="pageoverflow">
         <p class="pagetext"><label for="hidehelp">{lang('hide_help_links')}:</label>&nbsp;{cms_help key2='help_myaccount_hidehelp' title=lang('hide_help_links')}</p>
         <p class="pageinput">
-          <input class="pagenb" id="hidehelp" type="checkbox" name="hide_help_links" {if $hide_help_links == true}checked="checked"{/if} />
+          <input class="pagenb" id="hidehelp" type="checkbox" name="hide_help_links"{if $hide_help_links} checked="checked"{/if} />
           {lang('hide_help_links_help')}
         </p>
       </div>

@@ -39,7 +39,7 @@ $(function() {
       <p class="pageinput">
         <input id="import_newname" type="text" name="{$actionid}newname" value="{$new_name}" size="50" maxlength="50"/>
         &nbsp;{admin_icon name='help_import_newname' icon='info.gif' class='helpicon'}
-        <br/>
+        <br />
         {$mod->Lang('prompt_orig_name')}: {$design_info.name}
       </p>
     </div>

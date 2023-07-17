@@ -64,9 +64,9 @@
 <div class="pageoverflow">
 	<p class="pagetext"></p>
 	<p class="pageinput">
-		<input id="btn_submit" type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}"/>
-		<input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}"/>
-		<input id="btn_revert" type="submit" name="revert" value="{$mod->Lang('revert')}"/>
+		<input id="btn_submit" type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />
+		<input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
+		<input id="btn_revert" type="submit" name="revert" value="{$mod->Lang('revert')}" />
 	</p>
 </div>
 <div class="pageoverflow">

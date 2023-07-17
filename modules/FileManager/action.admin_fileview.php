@@ -125,7 +125,7 @@ for ($i = 0; $i < count($filelist); $i++) {
       // for the parent directory
       $onerow->noCheckbox = 1;
       $icon = $this->GetModuleURLPath().'/icons/themes/default/actions/dir_up.gif';
-      $img_tag = '<img src="'.$icon.'" width="32" title="'.$this->Lang('title_changeupdir').'"/>';
+      $img_tag = '<img src="'.$icon.'" width="32" title="'.$this->Lang('title_changeupdir').'" />';
       $onerow->iconlink = $this->CreateLink($id,'changedir', '', $img_tag, $parms );
       $onerow->txtlink = "<a class=\"dirlink\" href=\"{$url}\" title=\"{$this->Lang('title_changeupdir')}\">{$link}</a>";
     }
@@ -178,7 +178,7 @@ if( isset($params['viewfile']) && $params['viewfile'] ) {
         }
       }
       else if( in_array('image',$file->type) ) {
-        $data = '<img src="'.$file->url.'" alt="'.$file->name.'"/>';
+        $data = '<img src="'.$file->url.'" alt="'.$file->name.'" />';
         echo $data;
         exit;
       }

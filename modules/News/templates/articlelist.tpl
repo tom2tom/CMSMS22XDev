@@ -59,7 +59,7 @@ $(function() {
 		{html_options options=$categorylist selected=$curcategory}
 		</select>
 		<label for="filter_allcategories">{$prompt_showchildcategories}:</label>
-		<input id="filter_allcategories" type="checkbox" name="{$actionid}allcategories" value="yes" {if $allcategories=="yes"}checked="checked"{/if} />
+		<input id="filter_allcategories" type="checkbox" name="{$actionid}allcategories" value="yes"{if $allcategories=="yes"} checked="checked"{/if} />
 		{cms_help key='help_articles_filterchildcats' title=$prompt_showchildcategories}
 	</p>
 	</div>
@@ -104,7 +104,7 @@ $(function() {
 		<select name="{$actionid}pagenumber">
 		{cms_pageoptions numpages=$pagecount curpage=$pagenumber}
 		</select>&nbsp;
-		<input type="submit" name="{$actionid}paginate" value="{$mod->Lang('prompt_go')}"/>
+		<input type="submit" name="{$actionid}paginate" value="{$mod->Lang('prompt_go')}" />
 		{form_end}
 	</div>
 	{/if}

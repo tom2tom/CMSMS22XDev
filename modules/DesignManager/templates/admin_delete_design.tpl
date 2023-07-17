@@ -29,7 +29,7 @@
   <p class="pagetext">{$mod->Lang('confirm_delete_1')}:</p>
   <p class="pageinput">
     <input type="checkbox" id="opt_delete1" value="yes" name="{$actionid}confirm_delete1"/>&nbsp;
-<label for="opt_delete1">{$mod->Lang('confirm_delete_2a')}:</label><br/>
+<label for="opt_delete1">{$mod->Lang('confirm_delete_2a')}:</label><br />
     <input type="checkbox" id="opt_delete2" value="yes" name="{$actionid}confirm_delete2"/>&nbsp;
 <label for="opt_delete2">{$mod->Lang('confirm_delete_2b')}:</label>
   </p>
@@ -38,8 +38,8 @@
 <div class="pageoverflow">
   <p class="pagetext"></p>
   <p class="pageinput">
-    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}"/>
-    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}"/>
+    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />
+    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
   </p>
 </div>
 {form_end}

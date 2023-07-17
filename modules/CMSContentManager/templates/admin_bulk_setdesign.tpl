@@ -38,8 +38,8 @@ $(function() {
 <div class="pageoverflow">
 	<p class="pageinput">
 		<label>
-			<input type="hidden" name="{$actionid}showmore" value="0"/>
-			<input type="checkbox" id="showmore_ctl" name="{$actionid}showmore" value="1" {if $showmore}checked{/if}/>
+			<input type="hidden" name="{$actionid}showmore" value="0" />
+			<input type="checkbox" id="showmore_ctl" name="{$actionid}showmore" value="1"{if $showmore} checked="checked"{/if} />
 			{$mod->Lang('prompt_showmore')}</label>
 	</p>
 </div>

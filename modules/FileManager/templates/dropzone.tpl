@@ -76,7 +76,7 @@ $(function() {
 			<div id="theme_dropzone">
 				{$formstart}
 				<input type="hidden" name="disable_buffer" value="1" />
-				<input type="file" id="theme_dropzone_i" name="{$actionid}files[]" multiple style="display: none;" />
+				<input type="file" id="theme_dropzone_i" name="{$actionid}files[]" multiple="multiple" style="display: none;" />
 				{$prompt_dropfiles}
 				{$formend}
 			</div>

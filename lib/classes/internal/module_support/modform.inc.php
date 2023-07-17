@@ -418,7 +418,7 @@ function cms_module_CreateInputCheckbox($modinstance, $id, $name, $value='', $se
   $selectedvalue = cms_htmlentities($selectedvalue);
 
   $text = '<input type="checkbox" class="cms_checkbox" name="'.$id.$name.'" value="'.$value.'"';
-  if ($selectedvalue == $value) $text .= ' ' . 'checked="checked"';
+  if ($selectedvalue == $value) $text .= ' checked="checked"';
   if ($addttext != '') $text .= ' '.$addttext;
   $text .= " />\n";
   return $text;
@@ -588,7 +588,7 @@ function cms_module_CreateInputRadioGroup($modinstance, $id, $name, $items, $sel
 	  $counter = $counter + 1;
 	  $text .= '<input class="cms_radio" type="radio" name="'.$id.$name.'" id="'.$id.$name.$counter.'" value="'.$value.'"';
 	  if ($addttext != '') $text .= ' ' . $addttext;
-	  if ($selectedvalue == $value) $text .= ' ' . 'checked="checked"';
+	  if ($selectedvalue == $value) $text .= ' checked="checked"';
 	  $text .= ' />';
 	  $text .= '<label class="cms_label" for="'.$id.$name.$counter.'">'.$key .'</label>' . $delimiter;
   }

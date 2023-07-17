@@ -73,20 +73,20 @@ $(function() {
 	<div class="pageoverflow" id="area_maxlen">
 		<p class="pagetext"><label for="fld_maxlen">{$maxlengthtext}:</label> {cms_help key='help_fielddef_maxlen' title=$maxlengthtext}</p>
 		<p class="pageinput">
-			<input type="text" id="fld_maxlen" name="{$actionid}max_length" value="{$max_length}" size="5" maxlength="5"/><br/>{$info_maxlength}
+			<input type="text" id="fld_maxlen" name="{$actionid}max_length" value="{$max_length}" size="5" maxlength="5"/><br />{$info_maxlength}
 		</p>
 	</div>
 	<div class="pageoverflow">
 		<p class="pagetext"><label for="fld_public">{$userviewtext}:</label> {cms_help key='help_fielddef_public' title=$userviewtext}</p>
 		<p class="pageinput">
 			<input type="hidden" name="{$actionid}public" value="0" />
-			<input type="checkbox" id="fld_public" name="{$actionid}public" value="1" {if $public == 1}checked="checked"{/if} />
+			<input type="checkbox" id="fld_public" name="{$actionid}public" value="1"{if $public == 1} checked="checked"{/if} />
 		</p>
 	</div>
 	<div class="pageoverflow">
 		<p class="pagetext">&nbsp;</p>
 		<p class="pageinput">
-			<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}"/>
+			<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />
 			<input type="submit" id="{$actionid}cancel" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
 		</p>
 	</div>

@@ -201,7 +201,7 @@ $(function() {
 
     <p class="pageinput media-type">
     {foreach $all_types as $type}{strip}
-        <input id="media_type_{$type}" type="checkbox" name="{$actionid}media_type[]" value="{$type}" {if $css->has_media_type($type)}checked="checked"{/if} />
+        <input id="media_type_{$type}" type="checkbox" name="{$actionid}media_type[]" value="{$type}"{if $css->has_media_type($type)} checked="checked"{/if} />
         &nbsp;
         {$tmp='media_type_'|cat:$type}
         <label for="media_type_{$type}">{$mod->Lang($tmp)}</label>

@@ -91,7 +91,7 @@
             <span style="color: red;"><strong>{$mod->Lang('lock_expired')}:</strong> {$row.lock.expires|relative_time}</span>
           {else}
             <strong>{$mod->Lang('lock_expires')}:</strong> {$row.lock.expires|relative_time}
-                  {/if}<br/>
+                  {/if}<br />
             {/strip}{/capture}
             {if !$row.can_steal}
               <span class="tooltip" data-cms-description="{$tooltip_lockinfo|adjust:'htmlentities'}">{$row.page}</span>

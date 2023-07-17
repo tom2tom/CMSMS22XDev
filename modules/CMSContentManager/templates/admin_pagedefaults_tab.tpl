@@ -5,7 +5,7 @@
 <div class="pageoverflow">
 	<p class="pagetext"></p>
 	<p class="pageinput">
-		<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}"/>
+		<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />
 	</p>
 </div>
 <div class="pageoverflow">
@@ -82,7 +82,7 @@
 <div class="pageoverflow">
 	<p class="pagetext"><label for="extra1">{$mod->Lang('prompt_pagedflt_extra1')}:</label>&nbsp;{cms_help key2='help_pagedflt_extra1' title=$mod->Lang('prompt_pagedflt_extra1')}</p>
 	<p class="pageinput">
-		<input id="extra1" type="text" name="{$actionid}extra1" value="{$page_prefs.extra1|cms_escape}" size="80" maxlength="255"/>
+		<input id="extra1" type="text" name="{$actionid}extra1" value="{$page_prefs.extra1|cms_escape}" size="80" maxlength="255" />
 	</p>
 </div>
 <div class="pageoverflow">

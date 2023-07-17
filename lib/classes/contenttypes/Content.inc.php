@@ -417,7 +417,7 @@ class Content extends ContentBase
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_page_searchable',lang('help_title_page_searchable'));
 			return array('<label for="id_searchable">'.lang('searchable').':</label>'.$help,
 						 '<input type="hidden" name="searchable" value="0"/>
-						  <input id="id_searchable" type="checkbox" name="searchable" value="1" '.($searchable==1?'checked="checked"':'').'/>');
+						  <input id="id_searchable" type="checkbox" name="searchable" value="1"'.($searchable==1?' checked="checked"':'').' />');
 
 		case 'disable_wysiwyg':
 			$disable_wysiwyg = $this->GetPropertyValue('disable_wysiwyg');
@@ -425,7 +425,7 @@ class Content extends ContentBase
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_page_disablewysiwyg',lang('help_title_page_disablewysiwyg'));
 			return array('<label for="id_disablewysiwyg">'.lang('disable_wysiwyg').':</label>'.$help,
 						 '<input type="hidden" name="disable_wysiwyg" value="0" />
-						  <input id="id_disablewysiwyg" type="checkbox" name="disable_wysiwyg" value="1"  '.($disable_wysiwyg==1?'checked="checked"':'').'/>');
+						  <input id="id_disablewysiwyg" type="checkbox" name="disable_wysiwyg" value="1" '.($disable_wysiwyg==1?' checked="checked"':'').' />');
 
 		case 'wantschildren':
 			$showadmin = ContentOperations::get_instance()->CheckPageOwnership(get_userid(), $this->Id());
@@ -434,7 +434,7 @@ class Content extends ContentBase
 				$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_page_wantschildren',lang('help_title_page_wantschildren'));
 				return array('<label for="id_wantschildren">'.lang('wantschildren').':</label>'.$help,
 							 '<input type="hidden" name="wantschildren" value="0"/>
-							  <input id="id_wantschildren" type="checkbox" name="wantschildren" value="1" '.($wantschildren?'checked="checked"':'').'/>');
+							  <input id="id_wantschildren" type="checkbox" name="wantschildren" value="1"'.($wantschildren?' checked="checked"':'').' />');
 			}
 			break;
 

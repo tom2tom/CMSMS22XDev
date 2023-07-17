@@ -161,7 +161,7 @@ $(function () {
 				<th class="pageicon"></th>
 				<th class="pageicon" title="{$mod->Lang('title_col_filedate')}">{$filedatetext}</th>
 				<th class="pageicon">
-					<input type="checkbox" name="tagall" value="tagall" id="tagall" title="{$mod->Lang('title_tagall')}"/>
+					<input type="checkbox" name="tagall" value="tagall" id="tagall" title="{$mod->Lang('title_tagall')}" />
 				</th>
 			</tr>
 		</thead>

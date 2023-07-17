@@ -165,7 +165,7 @@ if ($access) {
     echo "<p class=\"pageinput\">".$description."</p>\n";
     echo "</div>\n";
 
-    echo "<br/><table class=\"pagetable\">\n";
+    echo "<br /><table class=\"pagetable\">\n";
     echo "<thead>\n";
     echo "  <tr>\n";
     echo "    <th>".lang('order')."</th>\n";
@@ -219,7 +219,7 @@ if ($access) {
     }
     echo "</tbody>\n";
     echo "</table>\n";
-    echo "<br/><form action=\"editevent.php\" method=\"post\">\n";
+    echo "<br /><form action=\"editevent.php\" method=\"post\">\n";
     echo "<div>\n";
     echo '<input type="hidden" name="'.CMS_SECURE_PARAM_NAME.'" value="'.$_SESSION[CMS_USER_KEY].'" />'."\n";
     echo '<input type="hidden" name="action" value="create" />'."\n";

@@ -2150,7 +2150,7 @@ abstract class ContentBase
 	{
 		$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_addteditor',lang('help_title_content_addteditor'));
 		$ret[] = '<label for="addteditors">'.lang('additionaleditors').':</label>'.$help;
-		$text = '<input name="additional_editors" type="hidden" value=""/>';
+		$text = '<input name="additional_editors" type="hidden" value="" />';
 		$text .= '<select id="addteditors" name="additional_editors[]" multiple="multiple" size="5">';
 
 		$topts = self::GetAdditionalEditorOptions();
@@ -2301,7 +2301,7 @@ abstract class ContentBase
 		case 'cachable':
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_cachable',lang('help_title_content_cachable'));
 			return array('<label for="in_cachable">'.lang('cachable').':</label>'.$help,
-						 '<input type="hidden" name="cachable" value="0"/><input id="in_cachable" class="pagecheckbox" type="checkbox" value="1" name="cachable"'.($this->mCachable?' checked="checked"':'').' />');
+						 '<input type="hidden" name="cachable" value="0" /><input id="in_cachable" class="pagecheckbox" type="checkbox" value="1" name="cachable"'.($this->mCachable?' checked="checked"':'').' />');
 
 		case 'title':
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_title',lang('help_title_content_title'));
@@ -2326,14 +2326,14 @@ abstract class ContentBase
 		case 'active':
 			if( !$this->DefaultContent() ) {
 				$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_active',lang('help_title_content_active'));
-				return array('<label for="id_active">'.lang('active').':</label>'.$help,'<input type="hidden" name="active" value="0"/><input class="pagecheckbox" type="checkbox" name="active" id="id_active" value="1"'.($this->mActive?' checked="checked"':'').' />');
+				return array('<label for="id_active">'.lang('active').':</label>'.$help,'<input type="hidden" name="active" value="0" /><input class="pagecheckbox" type="checkbox" name="active" id="id_active" value="1"'.($this->mActive?' checked="checked"':'').' />');
 			}
 			break;
 
 		case 'showinmenu':
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_showinmenu',lang('help_title_content_showinmenu'));
 			return array('<label for="showinmenu">'.lang('showinmenu').':</label>'.$help,
-						 '<input type="hidden" name="showinmenu" value="0"/><input class="pagecheckbox" type="checkbox" value="1" name="showinmenu" id="showinmenu"'.($this->mShowInMenu?' checked="checked"':'').' />');
+						 '<input type="hidden" name="showinmenu" value="0" /><input class="pagecheckbox" type="checkbox" value="1" name="showinmenu" id="showinmenu"'.($this->mShowInMenu?' checked="checked"':'').' />');
 
 		case 'target':
 			$text = '<option value="---">'.lang('none').'</option>';
@@ -2353,7 +2353,7 @@ abstract class ContentBase
 		case 'secure':
 			$opt = '';
 			if( $this->mSecure ) $opt = ' checked="checked"';
-			$str  = '<input type="hidden" name="secure" value="0"/>';
+			$str  = '<input type="hidden" name="secure" value="0" />';
 			$str .= '<input type="checkbox" name="secure" id="secure" value="1"'.$opt.'/>';
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_secure',lang('help_title_content_secure'));
 			return array('<label for="secure">'.lang('secure_page').':</label>'.$help,$str);
@@ -2362,7 +2362,7 @@ abstract class ContentBase
 			if( !$this->DefaultContent() ) {
 				$pretty_urls = $config['url_rewriting'] == 'none' ? 0 : 1;
 				if ($pretty_urls != 0) {
-					$str = '<input type="text" name="page_url" id="page_url" value="'.$this->mURL.'" size="50" maxlength="255"/>';
+					$str = '<input type="text" name="page_url" id="page_url" value="'.$this->mURL.'" size="50" maxlength="255" />';
 					$prompt = '<label for="page_url">'.lang('page_url').':</label>';
 					if( cms_siteprefs::get('content_mandatory_urls',0) ) $prompt = '*'.$prompt;
 					$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_page_url',lang('help_title_page_url'));

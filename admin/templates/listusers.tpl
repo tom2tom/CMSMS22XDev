@@ -136,7 +136,7 @@ $(function() {
                 </td>
                 <td>
                     {if $can_edit && $user->id != $my_userid}
-                        <input class="multiselect" type="checkbox" name="multiselect[]" value="{$user->id}" title="{lang('info_selectuser')}"/>
+                        <input class="multiselect" type="checkbox" name="multiselect[]" value="{$user->id}" title="{lang('info_selectuser')}" />
                     {/if}
                 </td>
             </tr>

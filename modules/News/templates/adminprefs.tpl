@@ -1,7 +1,7 @@
 {$startform}
 <div class="pageoverflow">
   <p class="pageinput">
-    <input type="submit" name="{$actionid}optionssubmitbutton" value="{$mod->Lang('submit')}"/>
+    <input type="submit" name="{$actionid}optionssubmitbutton" value="{$mod->Lang('submit')}" />
   </p>
 </div>
 
@@ -32,13 +32,13 @@
 	<div class="pageoverflow">
 		<p class="pagetext"><label for="fld3">{$title_hide_summary_field}:</label> {cms_help key='help_opt_hide_summary' title=$title_hide_summary_field}</p>
 		<p class="pageinput">
-                  <input type="checkbox" id="fld3" name="{$actionid}hide_summary_field" value="1" {if $hide_summary_field == 1}checked="checked"{/if}/>
+                  <input type="checkbox" id="fld3" name="{$actionid}hide_summary_field" value="1"{if $hide_summary_field == 1} checked="checked"{/if} />
                 </p>
 	</div>
 	<div class="pageoverflow">
 		<p class="pagetext"><label for="fld4">{$title_allow_summary_wysiwyg}: {cms_help key='help_opt_allow_summary_wysiwyg' title=$title_allow_summary_wysiwyg}</label></p>
 		<p class="pageinput">
-                  <input type="checkbox" id="fld4" name="{$actionid}allow_summary_wysiwyg" value="1" {if $allow_summary_wysiwyg}checked="checked"{/if}/>
+                  <input type="checkbox" id="fld4" name="{$actionid}allow_summary_wysiwyg" value="1"{if $allow_summary_wysiwyg} checked="checked"{/if} />
                 </p>
 	</div>
 	<div class="pageoverflow">
@@ -48,7 +48,7 @@
                 </p>
 	</div>
 </fieldset>
-<br/>
+<br />
 
 <fieldset>
 <legend>{$title_fesubmit_settings}:</legend>
@@ -58,7 +58,7 @@
                   <select id="fld9_a" name="{$actionid}allow_fesubmit">
                   {cms_yesno selected=$allow_fesubmit}
                   </select>
-		  <br/>{$mod->Lang('info_allow_fesubmit')}
+		  <br />{$mod->Lang('info_allow_fesubmit')}
                 </p>
 	</div>
 
@@ -101,7 +101,7 @@
   </fieldset>
 
 </fieldset>
-<br/>
+<br />
 
 <fieldset>
 <legend>{$title_detail_settings}:</legend>
@@ -112,13 +112,13 @@
 	<div class="pageoverflow">
 		<p class="pagetext"><label for="fld12">{$title_expired_searchable}:</label> {cms_help key='info_expired_searchable' title=$title_expired_searchable}</p>
 		<p class="pageinput">
-                  <input type="checkbox" id="fld12" name="{$actionid}expired_searchable" value="1" {if $expired_searchable}checked="checked"{/if}/>
+                  <input type="checkbox" id="fld12" name="{$actionid}expired_searchable" value="1"{if $expired_searchable} checked="checked"{/if} />
                 </p>
 	</div>
         <div class="pageoverflow">
 	  <p class="pagetext"><label for="fld13">{$title_expired_viewable}</label> {cms_help key='info_expired_viewable' title=$title_expired_viewable}</p>
 	  <p class="pagetext">
-            <input type="checkbox" id="fld13" name="{$actionid}expired_viewable" value="1" {if $expired_viewable}checked="checked"{/if}/>
+            <input type="checkbox" id="fld13" name="{$actionid}expired_viewable" value="1"{if $expired_viewable} checked="checked"{/if} />
           </p>
         </div>
 </fieldset>
