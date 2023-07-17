@@ -29,14 +29,14 @@
 	<div class="hidden">
 		<input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}" />
 	</div>
-	
+
 	<div class="pageoverflow">
 		<p class="pageoptions">
 			{$hidden}{$hidden2}
 			{$submit} {$cancel}
 		</p>
 	</div>
-	
+
 	<table class="pagetable scrollable" id="permtable">
 		<thead>
 			<tr>
@@ -61,7 +61,7 @@
 						{foreach $group_list as $thisgroup}
 							{if $thisgroup->id != -1}
 								{$gid=$thisgroup->id}
-								<td class="g{$thisgroup->id}"><input type="checkbox" name="pg_{$perm->id}_{$gid}" value="1"{if isset($perm->group[$gid]) || $gid == 1} checked="checked"{/if} {if $gid == 1} disabled="disabled"{/if} /></td>
+								<td class="g{$thisgroup->id}"><input type="checkbox" name="pg_{$perm->id}_{$gid}" value="1"{if isset($perm->group[$gid]) || $gid == 1} checked="checked"{/if}{if $gid == 1} disabled="disabled"{/if} /></td>
 							{/if}
 						{/foreach}
 					</tr>

@@ -80,7 +80,7 @@
               {else}
                 {$gid=$thisgroup->id}
                 <td class="g{$thisgroup->id}">
-                  <input type="checkbox" name="ug_{$user->id}_{$gid}" value="1"{if isset($user->group[$gid])} checked="checked"{/if}  />
+                  <input type="checkbox" name="ug_{$user->id}_{$gid}" value="1"{if isset($user->group[$gid])} checked="checked"{/if} />
                 </td>
               {/if}
             {/if}
