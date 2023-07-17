@@ -102,7 +102,7 @@ $(function() {
     }
   });
 });
-{/literal}</script>
+</script>
 
 <style type="text/css">
   .upload-wrapper { margin: 10px 0 }
@@ -143,7 +143,7 @@ $(function() {
     border-radius: 4px;
     display: none;
   }
-</style>
+{/literal}</style>
 
 {$formstart}
   <input type="hidden" name="disable_buffer" value="1" />
