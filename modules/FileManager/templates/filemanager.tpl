@@ -1,11 +1,11 @@
 {if !isset($noform)}
-<style type="text/css">
+<style type="text/css">{literal}
 a.filelink:visited {
    color: #000;
 }
 </style>
 <script type="text/javascript">
-var refresh_url = '{$refresh_url}'+'&showtemplate=false';
+{/literal}var refresh_url = '{$refresh_url}'+'&showtemplate=false';{literal}
 refresh_url = refresh_url.replace(/amp;/g,'');
 // <![CDATA[
 function enable_button(idlist) {
@@ -88,7 +88,7 @@ $(function () {
     $(document).on('click', '#btn_view', function () {
         // find the selected item.
         var tmp = $('#filesarea input[type="checkbox"]').filter(':checked').val();
-        var url = '{$viewfile_url}&showtemplate=false&{$actionid}viewfile=' + tmp;
+        {/literal}var url = '{$viewfile_url}&showtemplate=false&{$actionid}viewfile=' + tmp;{literal}
         url = url.replace(/amp;/g, '');
         $('#popup_contents').load(url);
         $('#popup').dialog({
@@ -108,7 +108,7 @@ $(function () {
     });
 });
 // ]]>
-</script>
+{/literal}</script>
 
 {function filebtn icon='ui-icon-circle-check'}
 {$addclass='ui-button-icon-primary'}
@@ -146,7 +146,7 @@ $(function () {
 {$hiddenpath}
 {/if}
 
-{if (!empty($files)}
+{if !empty($files)}
 <div id="filesarea">
 	<table width="100%" class="pagetable scrollable">
 		<thead>
