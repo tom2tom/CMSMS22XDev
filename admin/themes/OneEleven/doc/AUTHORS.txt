@@ -2,14 +2,14 @@ AUTHORS
 --------------------------------------
 
 - Goran ilic <uniqu3e [AT] cmsmadesimple [DOT] org>
-- Robert Campbell <calguy1000 [AT] cmsmadesimple [DOT] org>
+- Robert Campbell
 
 THANKS
 --------------------------------------
 
 - My family
 
-First i want to give a big "THANK YOU" to my Wife and my little Boy for 
+First i want to give a big "THANK YOU" to my Wife and my little Boy for
 having so much patience with me! I love you!
 
 **************************************
@@ -34,7 +34,7 @@ Thanks to community for supporting this software!
 *************************************
 
 - Yusuke Kamiyamane http://p.yusukekamiyamane.com/
- 
+
 for creating great Fugue Iconset used as system icons
 
 Fugue Icons
@@ -66,7 +66,7 @@ http://creativecommons.org/licenses/by/2.5/
 
 ************************************
 
-- jQuery Team 
+- jQuery Team
 for Providing amazing Framework
 
 ************************************
