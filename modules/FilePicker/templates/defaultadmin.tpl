@@ -17,7 +17,6 @@
 		</tr>
 	</thead>
 	<tbody>
-	{if !empty($profiles)}
 	{foreach $profiles as $profile}
 		<tr class="{cycle values='row1,row2'}">
 			{cms_action_url action=edit_profile pid=$profile->id assign='edit_url'}
