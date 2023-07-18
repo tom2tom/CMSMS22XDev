@@ -2682,7 +2682,7 @@ a.toggle-dropzone:focus {
 	body.currentpages table.pagetable th:nth-child(8) {
 		display: none
 	}
-	/* position:fixed doesn't work well with mobile devices */
+	/* position:fixed doesn't work well with mobile devices ? */
 	footer#oe_footer {
 		clear: both;
 		overflow: hidden;
