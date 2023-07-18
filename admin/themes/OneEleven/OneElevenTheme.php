@@ -78,21 +78,21 @@ class OneElevenTheme extends CmsAdminThemeBase {
 
 		$config = cms_config::get_instance();
 
-        $module = '';
-        if (isset($_REQUEST['module'])) {
-            $module = $_REQUEST['module'];
-        } else if (isset($_REQUEST['mact'])) {
-            $tmp = explode(',', $_REQUEST['mact']);
-            $module = $tmp[0];
-        }
+		$module = '';
+		if (isset($_REQUEST['module'])) {
+			$module = $_REQUEST['module'];
+		} else if (isset($_REQUEST['mact'])) {
+			$tmp = explode(',', $_REQUEST['mact']);
+			$module = $tmp[0];
+		}
 
 		// get the image url.
-        $icon = "modules/{$module}/images/icon.gif";
-        $path = cms_join_path($config['root_path'], $icon);
-        if (file_exists($path)) {
-            $url = $config->smart_root_url() . '/' . $icon;
-            $this->set_value('module_icon_url', $url);
-        }
+		$icon = "modules/{$module}/images/icon.gif";
+		$path = cms_join_path($config['root_path'], $icon);
+		if (file_exists($path)) {
+			$url = $config->smart_root_url() . '/' . $icon;
+			$this->set_value('module_icon_url', $url);
+		}
 
 		if ($module_help_type) {
 			// set the module help url (this should be supplied TO the theme)
@@ -136,23 +136,83 @@ class OneElevenTheme extends CmsAdminThemeBase {
 	}
 
 	public function do_toppage($section_name) {
+		$config = cms_config::get_instance();
 		$smarty = Smarty_CMS::get_instance();
+/*
+no icon for:
+'addbookmark'
+'addgroup'
+'adduser'
+'editbookmark'
+'editeventhandler'
+'editgroup'
+'edituser'
+'editusertag'
+'home'
+'logout'
+no usage of icons:
+'' => 'blobs.png',
+'' => 'cmsprinting.png',
+'' => 'images.png',
+'' => 'modules.png',
+'' => 'pagedefaults.png',
+'' => 'preferences.png',
+'' => 'stylesheets.png',
+'' => 'template.png',
+'' => 'viewsite.png',
+*/
+		// admin menu item names with corresponding topfiles icons
+		$aliases = array (
+		'adminlog' => 'adminlog.png',
+		'checksum' => 'checksum.png',
+		'content' => 'content.png',
+		'ecommerce' => 'ecommerce.png',
+		'eventhandlers' => 'eventhandlers.png',
+		'extensions' => 'extensions.png',
+		'files' => 'files.png',
+		'groupmembers' => 'groupmembers.png',
+		'groupperms' => 'groupperms.png',
+		'groups' => 'groups.png',
+		'layout' => 'layout.png',
+		'main' => 'main.png',
+		'managebookmarks' => 'managebookmarks.png',
+		'myaccount' => 'myaccount.png',
+		'myprefs' => 'myprefs.png',
+		'siteadmin' => 'siteadmin.png',
+		'siteprefs' => 'siteprefs.png',
+		'systeminfo' => 'systeminfo.png',
+		'systemmaintenance' => 'systemmaintenance.png',
+		'tags' => 'tags.png',
+		'users' => 'users.png',
+		'usersgroups' => 'usersgroups.png',
+		'usertags' => 'usertags.png',
+		'viewsite' => 'pages.png'
+		);
 		$otd = $smarty->template_dir;
 		$smarty->template_dir = __DIR__ . '/templates';
 		if ($section_name) {
 			$smarty->assign('section_name', $section_name);
 			$smarty->assign('pagetitle', lang($section_name));
-			$smarty->assign('nodes', $this->get_navigation_tree($section_name, -1, FALSE));
+			$nodes = $this->get_navigation_tree($section_name, -1, FALSE);
 		} else {
 			$nodes = $this->get_navigation_tree(-1, 2, FALSE);
-			$smarty->assign('nodes', $nodes);
 		}
-
+		foreach ($nodes as &$one) {
+			$nm = $one['name'];
+			$fp = cms_join_path(CMS_ROOT_PATH, 'modules', $nm, 'images', 'icon.png');
+			if (file_exists($fp)) {
+				$one['img'] = $config->smart_root_url() . "/modules/{$nm}/images/icon.png";
+			} else if (isset($aliases[$nm])) {
+				$one['img'] = "themes/OneEleven/images/icons/topfiles/{$aliases[$nm]}";
+			}
+		}
+		unset($one);
+		$smarty->assign('nodes', $nodes);
 		$smarty->assign('config', cms_config::get_instance());
 		$smarty->assign('theme', $this);
 
 		// is the website set down for maintenance?
-		if( get_site_preference('enablesitedownmessage') == '1' )  { $smarty->assign('is_sitedown', 'true'); }
+		if (get_site_preference('enablesitedownmessage') == '1') { $smarty->assign('is_sitedown', 'true'); }
 
 		$_contents = $smarty->display('topcontent.tpl');
 		$smarty->template_dir = $otd;
@@ -162,18 +222,18 @@ class OneElevenTheme extends CmsAdminThemeBase {
 
 	public function do_login($params)
 	{
-	  // by default we're gonna grab the theme name
-        $config = cms_config::get_instance();
-        $smarty = Smarty_CMS::get_instance();
+		// by default we're gonna grab the theme name
+		$config = cms_config::get_instance();
+		$smarty = Smarty_CMS::get_instance();
 
-	  $smarty->template_dir = __DIR__ . '/templates';
-	  global $error,$warningLogin,$acceptLogin,$changepwhash;
-	  $fn = $config['admin_path']."/themes/".$this->themeName."/login.php";
-	  include($fn);
+		$smarty->template_dir = __DIR__ . '/templates';
+		global $error,$warningLogin,$acceptLogin,$changepwhash;
+		$fn = $config['admin_path']."/themes/".$this->themeName."/login.php";
+		include($fn);
 
-	  $smarty->assign('lang', get_site_preference('frontendlang'));
-	  $_contents = $smarty->display('login.tpl');
-	  return $_contents;
+		$smarty->assign('lang', get_site_preference('frontendlang'));
+		$_contents = $smarty->display('login.tpl');
+		return $_contents;
 	}
 
 	public function postprocess($html) {
@@ -194,21 +254,21 @@ class OneElevenTheme extends CmsAdminThemeBase {
 				$title = lang($title, $extra);
 			}
 		} else {
-		  if( $this->title ) {
-		    $title = $this->title;
-		  }
-		  else {
-		    // no title, get one from the breadcrumbs.
-		    $bc = $this->get_breadcrumbs();
-		    if (is_array($bc) && count($bc)) {
-		      $title = $bc[count($bc) - 1]['title'];
-		    }
-		  }
+			if ($this->title) {
+				$title = $this->title;
+			}
+			else {
+				// no title, get one from the breadcrumbs.
+				$bc = $this->get_breadcrumbs();
+				if (is_array($bc) && count($bc)) {
+					$title = $bc[count($bc) - 1]['title'];
+				}
+			}
 		}
-        // page title and alias
+		// page title and alias
 		$smarty->assign('pagetitle', $title);
-        $smarty->assign('subtitle',$this->subtitle);
-        $smarty->assign('pagealias', munge_string_to_url($alias));
+		$smarty->assign('subtitle',$this->subtitle);
+		$smarty->assign('pagealias', munge_string_to_url($alias));
 
 		// module name?
 		if (($module_name = $this->get_value('module_name'))) {
@@ -221,10 +281,10 @@ class OneElevenTheme extends CmsAdminThemeBase {
 		}
 
 		// module_help_url
-		if( !cms_userprefs::get_for_user(get_userid(),'hide_help_links',0) ) {
-            if (($module_help_url = $this->get_value('module_help_url'))) {
-                $smarty->assign('module_help_url', $module_help_url);
-            }
+		if (!cms_userprefs::get_for_user(get_userid(),'hide_help_links',0)) {
+			if (($module_help_url = $this->get_value('module_help_url'))) {
+				$smarty->assign('module_help_url', $module_help_url);
+			}
 		}
 
 		// my preferences
@@ -238,7 +298,7 @@ class OneElevenTheme extends CmsAdminThemeBase {
 			$smarty->assign('marks', $marks);
 		}
 		$smarty->assign('headertext',$this->get_headtext());
-        $smarty->assign('footertext',$this->get_footertext());
+		$smarty->assign('footertext',$this->get_footertext());
 
 		// and some other common variables
 		$smarty->assign('content', str_replace('</body></html>', '', $html));
@@ -261,16 +321,16 @@ class OneElevenTheme extends CmsAdminThemeBase {
 			$smarty->assign('messages', $this->_messages);
 
 		// is the website set down for maintenance?
-		if( get_site_preference('enablesitedownmessage') == '1' )  { $smarty->assign('is_sitedown', 'true'); }
+		if (get_site_preference('enablesitedownmessage') == '1') { $smarty->assign('is_sitedown', 'true'); }
 
 		$_contents = $smarty->fetch('pagetemplate.tpl');
 		$smarty->template_dir = $otd;
 		return $_contents;
 	}
 
-    public function get_my_alerts()
-    {
-        return \CMSMS\AdminAlerts\Alert::load_my_alerts();
-    }
+	public function get_my_alerts()
+	{
+		return \CMSMS\AdminAlerts\Alert::load_my_alerts();
+	}
 }
 ?>
