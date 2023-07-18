@@ -31,6 +31,54 @@
 class OneElevenTheme extends CmsAdminThemeBase {
 	private $_errors = array();
 	private $_messages = array();
+	// admin menu item names with corresponding topfiles icons
+	private $_topaliases = array (
+/* no top icon for:
+		'addbookmark' => '',
+		'addgroup' => '',
+		'adduser' => '',
+		'editbookmark' => '',
+		'editeventhandler' => '',
+		'editgroup' => '',
+		'edituser' => '',
+		'editusertag' => '',
+		'home' => '',
+		'logout' => '',
+		'A' => 'blobs.png',
+		'B' => 'cmsprinting.png',
+		'C' => 'images.png',
+		'D' => 'modules.png',
+		'E' => 'pagedefaults.png',
+		'F' => 'preferences.png',
+		'G' => 'stylesheets.png',
+		'H' => 'template.png',
+		'I' => 'viewsite.png', //see pages.png
+*/
+		'adminlog' => 'adminlog.png',
+		'checksum' => 'checksum.png',
+		'content' => 'content.png',
+		'ecommerce' => 'ecommerce.png',
+		'eventhandlers' => 'eventhandlers.png',
+		'extensions' => 'extensions.png',
+		'files' => 'files.png',
+		'groupmembers' => 'groupmembers.png',
+		'groupperms' => 'groupperms.png',
+		'groups' => 'groups.png',
+		'layout' => 'layout.png',
+		'main' => 'main.png',
+		'managebookmarks' => 'managebookmarks.png',
+		'myaccount' => 'myaccount.png',
+		'myprefs' => 'myprefs.png',
+		'siteadmin' => 'siteadmin.png',
+		'siteprefs' => 'siteprefs.png',
+		'systeminfo' => 'systeminfo.png',
+		'systemmaintenance' => 'systemmaintenance.png',
+		'tags' => 'tags.png',
+		'users' => 'users.png',
+		'usersgroups' => 'usersgroups.png',
+		'usertags' => 'usertags.png',
+		'viewsite' => 'pages.png'
+	);
 
 	public function ShowErrors($errors, $get_var = '') {
 		// cache errors for use in the template.
@@ -73,10 +121,7 @@ class OneElevenTheme extends CmsAdminThemeBase {
 
 	public function ShowHeader($title_name, $extra_lang_params = array(), $link_text = '', $module_help_type = FALSE) {
 		if ($title_name) $this->set_value('pagetitle', $title_name);
-		if (is_array($extra_lang_params) && count($extra_lang_params)) $this->set_value('extra_lang_params', $extra_lang_params);
-		$this->set_value('module_help_type', $module_help_type);
-
-		$config = cms_config::get_instance();
+		if ($extra_lang_params && is_array($extra_lang_params)) $this->set_value('extra_lang_params', $extra_lang_params);
 
 		$module = '';
 		if (isset($_REQUEST['module'])) {
@@ -87,17 +132,25 @@ class OneElevenTheme extends CmsAdminThemeBase {
 		}
 
 		// get the image url.
-		$icon = "modules/{$module}/images/icon.gif";
-		$path = cms_join_path($config['root_path'], $icon);
-		if (file_exists($path)) {
-			$url = $config->smart_root_url() . '/' . $icon;
-			$this->set_value('module_icon_url', $url);
-		}
+		if ($module) {
+			$ext = 'png';
+			$path = cms_join_path(CMS_ROOT_PATH, 'modules', $module, 'images', 'icon.png');
+			if (!file_exists($path)) {
+				$ext = 'gif';
+				$path = substr($path, 0, -3) . 'gif';
+			}
+			if (file_exists($path)) {
+				$config = cms_config::get_instance();
+				$url = $config->smart_root_url() . "/modules/{$module}/images/icon.{$ext}"; 
+				$this->set_value('module_icon_url', $url);
+			}
 
-		if ($module_help_type) {
-			// set the module help url (this should be supplied TO the theme)
-			$module_help_url = $this->get_module_help_url();
-			$this->set_value('module_help_url', $module_help_url);
+			$this->set_value('module_help_type', $module_help_type);
+			if ($module_help_type) {
+				// set the module help url (this should be supplied TO the theme)
+				$module_help_url = $this->get_module_help_url();
+				$this->set_value('module_help_url', $module_help_url);
+			}
 		}
 
 		$bc = $this->get_breadcrumbs();
@@ -138,58 +191,8 @@ class OneElevenTheme extends CmsAdminThemeBase {
 	public function do_toppage($section_name) {
 		$config = cms_config::get_instance();
 		$smarty = Smarty_CMS::get_instance();
-/*
-no icon for:
-'addbookmark'
-'addgroup'
-'adduser'
-'editbookmark'
-'editeventhandler'
-'editgroup'
-'edituser'
-'editusertag'
-'home'
-'logout'
-no usage of icons:
-'' => 'blobs.png',
-'' => 'cmsprinting.png',
-'' => 'images.png',
-'' => 'modules.png',
-'' => 'pagedefaults.png',
-'' => 'preferences.png',
-'' => 'stylesheets.png',
-'' => 'template.png',
-'' => 'viewsite.png',
-*/
-		// admin menu item names with corresponding topfiles icons
-		$aliases = array (
-		'adminlog' => 'adminlog.png',
-		'checksum' => 'checksum.png',
-		'content' => 'content.png',
-		'ecommerce' => 'ecommerce.png',
-		'eventhandlers' => 'eventhandlers.png',
-		'extensions' => 'extensions.png',
-		'files' => 'files.png',
-		'groupmembers' => 'groupmembers.png',
-		'groupperms' => 'groupperms.png',
-		'groups' => 'groups.png',
-		'layout' => 'layout.png',
-		'main' => 'main.png',
-		'managebookmarks' => 'managebookmarks.png',
-		'myaccount' => 'myaccount.png',
-		'myprefs' => 'myprefs.png',
-		'siteadmin' => 'siteadmin.png',
-		'siteprefs' => 'siteprefs.png',
-		'systeminfo' => 'systeminfo.png',
-		'systemmaintenance' => 'systemmaintenance.png',
-		'tags' => 'tags.png',
-		'users' => 'users.png',
-		'usersgroups' => 'usersgroups.png',
-		'usertags' => 'usertags.png',
-		'viewsite' => 'pages.png'
-		);
 		$otd = $smarty->template_dir;
-		$smarty->template_dir = __DIR__ . '/templates';
+		$smarty->template_dir = __DIR__ . DIRECTORY_SEPARATOR . 'templates';
 		if ($section_name) {
 			$smarty->assign('section_name', $section_name);
 			$smarty->assign('pagetitle', lang($section_name));
@@ -199,52 +202,54 @@ no usage of icons:
 		}
 		foreach ($nodes as &$one) {
 			$nm = $one['name'];
-			$fp = cms_join_path(CMS_ROOT_PATH, 'modules', $nm, 'images', 'icon.png');
-			if (file_exists($fp)) {
-				$one['img'] = $config->smart_root_url() . "/modules/{$nm}/images/icon.png";
-			} else if (isset($aliases[$nm])) {
-				$one['img'] = "themes/OneEleven/images/icons/topfiles/{$aliases[$nm]}";
+			$ext = 'png';
+			$path = cms_join_path(CMS_ROOT_PATH, 'modules', $nm, 'images', 'icon.png');
+			if (!file_exists($path)) {
+				$ext = 'gif';
+				$path = substr($path, 0, -3) . 'gif';
+			}
+			if (file_exists($path)) {
+				$one['img'] = $config->smart_root_url() . "/modules/{$nm}/images/icon.{$ext}";
+			} else if (isset($this->_topaliases[$nm])) {
+				$one['img'] = "themes/{$this->themeName}/images/icons/topfiles/{$this->_topaliases[$nm]}";
 			}
 		}
 		unset($one);
 		$smarty->assign('nodes', $nodes);
-		$smarty->assign('config', cms_config::get_instance());
+		$smarty->assign('config', $config);
 		$smarty->assign('theme', $this);
 
 		// is the website set down for maintenance?
 		if (get_site_preference('enablesitedownmessage') == '1') { $smarty->assign('is_sitedown', 'true'); }
 
-		$_contents = $smarty->display('topcontent.tpl');
+		$_contents = $smarty->fetch('topcontent.tpl');
 		$smarty->template_dir = $otd;
 		echo $_contents;
 	}
 
 
-	public function do_login($params)
-	{
-		// by default we're gonna grab the theme name
+	public function do_login($params) {
 		$config = cms_config::get_instance();
 		$smarty = Smarty_CMS::get_instance();
-
-		$smarty->template_dir = __DIR__ . '/templates';
+		$otd = $smarty->template_dir;
+		$smarty->template_dir = __DIR__ . DIRECTORY_SEPARATOR . 'templates';
 		global $error,$warningLogin,$acceptLogin,$changepwhash;
-		$fn = $config['admin_path']."/themes/".$this->themeName."/login.php";
-		include($fn);
+		$path = __DIR__ . DIRECTORY_SEPARATOR . 'login.php';
+		include_once $path;
 
 		$smarty->assign('lang', get_site_preference('frontendlang'));
-		$_contents = $smarty->display('login.tpl');
-		return $_contents;
+		$smarty->display('login.tpl');
+		$smarty->template_dir = $otd;
 	}
 
 	public function postprocess($html) {
 		$smarty = Smarty_CMS::get_instance();
 		$otd = $smarty->template_dir;
-		$smarty->template_dir = __DIR__ . '/templates';
+		$smarty->template_dir = __DIR__ . DIRECTORY_SEPARATOR . 'templates';
 		$module_help_type = $this->get_value('module_help_type');
 
 		// get a page title
 		$title = $this->get_value('pagetitle');
-		$alias = $this->get_value('pagetitle');
 		if ($title) {
 			if (!$module_help_type) {
 				// if not doing module help, translate the string.
@@ -267,8 +272,9 @@ no usage of icons:
 		}
 		// page title and alias
 		$smarty->assign('pagetitle', $title);
-		$smarty->assign('subtitle',$this->subtitle);
-		$smarty->assign('pagealias', munge_string_to_url($alias));
+		$smarty->assign('subtitle', $this->subtitle);
+		$alias = $this->get_value('pagetitle');
+		$smarty->assign('pagealias', ($alias ? munge_string_to_url($alias) : ''));
 
 		// module name?
 		if (($module_name = $this->get_value('module_name'))) {
@@ -280,20 +286,21 @@ no usage of icons:
 			$smarty->assign('module_icon_url', $module_icon_url);
 		}
 
+		$userid = get_userid();
 		// module_help_url
-		if (!cms_userprefs::get_for_user(get_userid(),'hide_help_links',0)) {
+		if (!cms_userprefs::get_for_user($userid,'hide_help_links',0)) {
 			if (($module_help_url = $this->get_value('module_help_url'))) {
 				$smarty->assign('module_help_url', $module_help_url);
 			}
 		}
 
-		// my preferences
-		if (check_permission(get_userid(),'Manage My Settings')) {
-		  $smarty->assign('myaccount',1);
+		// user preferences
+		if (check_permission($userid,'Manage My Settings')) {
+			$smarty->assign('myaccount',1);
 		}
 
 		// if bookmarks
-		if (cms_userprefs::get_for_user(get_userid(), 'bookmarks') && check_permission(get_userid(),'Manage My Bookmarks')) {
+		if (cms_userprefs::get_for_user($userid, 'bookmarks') && check_permission($userid,'Manage My Bookmarks')) {
 			$marks = $this->get_bookmarks();
 			$smarty->assign('marks', $marks);
 		}
@@ -306,14 +313,13 @@ no usage of icons:
 		$smarty->assign('theme', $this);
 		$smarty->assign('secureparam', CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY]);
 		$userops = UserOperations::get_instance();
-		$smarty->assign('user', $userops->LoadUserByID(get_userid()));
+		$smarty->assign('user', $userops->LoadUserByID($userid));
 		// get user selected language
-		$smarty->assign('lang',cms_userprefs::get_for_user(get_userid(), 'default_cms_language'));
+		$smarty->assign('lang',cms_userprefs::get_for_user($userid, 'default_cms_language'));
 		// get language direction
 		$lang = CmsNlsOperations::get_current_language();
 		$info = CmsNlsOperations::get_language_info($lang);
 		$smarty->assign('lang_dir',$info->direction());
-
 
 		if (is_array($this->_errors) && count($this->_errors))
 			$smarty->assign('errors', $this->_errors);
@@ -328,8 +334,7 @@ no usage of icons:
 		return $_contents;
 	}
 
-	public function get_my_alerts()
-	{
+	public function get_my_alerts() {
 		return \CMSMS\AdminAlerts\Alert::load_my_alerts();
 	}
 }
