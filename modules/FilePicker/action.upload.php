@@ -27,10 +27,10 @@ if( !defined('CMS_VERSION') ) exit;
 
 # just for tests purposes
 #this will be handled differently
-$fn = cms_join_path($this->GetModulePath(), 'lib',  'ext', 'UploadHandler.php');
+$fn = cms_join_path($this->GetModulePath(), 'lib', 'class.UploadHandler.php');
 require_once($fn);
 
-$UploadHandler = new UploadHandler();
+$UploadHandler = new \FilePicker\UploadHandler();
 
 header('Pragma: no-cache');
 header('Cache-Control: private, no-cache');
