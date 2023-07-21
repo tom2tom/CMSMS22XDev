@@ -48,7 +48,7 @@ function chmodRecursive($path,$newmode,$module) {
 }
 
 function isEmpty($path) {
-	$empty=true;
+//	$empty=true;
 	$dir = opendir($path) ;
 	while ($entry = readdir($dir)) {
 		if ($entry!="." && $entry!=".." && $entry!="\\" && $entry!="/") {
