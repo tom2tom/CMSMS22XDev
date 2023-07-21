@@ -1007,12 +1007,12 @@ header .welcome a {
 	color: #fff
 }
 header a.welcome-user {
-	height: 18px;
-	width: 18px;
+	height: 25px;
+	width: 20px;
 	display: inline-block;
 	text-indent: -999em;
 	margin-left: 10px;
-	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) -10px -336px no-repeat
+	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) -10px -140px no-repeat
 }
 /* breadcrumbs nav */
 header .breadcrumbs {
@@ -1036,7 +1036,7 @@ header .breadcrumbs ul li.home {
 	background: url(themes/OneEleven/images/layout/breadcrubms-divider.png) no-repeat left;
 }
 header .breadcrumbs ul li.home a {
-	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) -10px -367px no-repeat;
+	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) -10px -164px no-repeat;
 	width: 18px;
 	text-indent: -999em
 }
@@ -1077,7 +1077,7 @@ header .shortcuts li:last-child, header .shortcuts li.last {
 header .shortcuts li a {
 	display: block;
 	margin-top: 5px;
-	width: 18px;
+	width: 20px;
 	height: 25px;
 	text-indent: -9999em;
 	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) no-repeat;
@@ -1085,29 +1085,29 @@ header .shortcuts li a {
 	cursor: pointer;
 }
 header .shortcuts li.help a {
-	background-position: -10px -737px
+	background-position: -8px -230px
 }
 header .shortcuts li.settings a {
-	background-position: -10px -10px
+	background-position: -8px -20px
 }
 header .shortcuts li.logout a {
-	background-position: -10px -86px
+	background-position: -8px -80px
 }
 header .shortcuts li.view-site a {
-	background-position: -10px -124px
+	background-position: -8px -110px
 }
 header .shortcuts li.notifications {
 	position: relative;
 }
 header .shortcuts li.notifications a {
-	background-position: -10px -1058px;
+	background-position: -8px -290px;
 	color: #fff !important;
 }
 header .shortcuts li.notifications span.bubble {
 	position: absolute;
 	top: 0;
 	left: 0;
-	margin-left: 0;
+	margin-left: 6px;
 	text-align: center;
 	width: 1.2em;
 	height: 1.2em;
@@ -1121,7 +1121,7 @@ header .shortcuts li.notifications span.bubble {
 	text-indent: initial;
 }
 header .shortcuts li.favorites a {
-	background-position: -10px -48px
+	background-position: -8px -50px
 }
 /*** sidebar ***/
 #oe_sidebar {
@@ -1169,17 +1169,17 @@ header .shortcuts li.favorites a {
 	background-repeat: no-repeat
 }
 .sidebar-on #oe_sidebar .toggle-button {
-	background-position: -7px -253px
+	background-position: -8px -436px
 }
 .sidebar-off #oe_sidebar .toggle-button {
-	background-position: -8px -215px
+	background-position: -9px -466px
 }
 /* sidebar notifications */
 #oe_sidebar .notification a {
 	text-decoration: none;
 	display: block;
 	height: 35px;
-	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) -10px -446px no-repeat;
+	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) -10px -187px no-repeat;
 	color: #fff
 }
 #oe_sidebar .notification a span {
@@ -1257,7 +1257,6 @@ nav ul#oe_pagemenu li span.open-nav {
 	top: 0;
 	text-indent: -9999em
 }
-
 nav ul#oe_pagemenu li span.open-nav.open-sub,
 nav ul#oe_pagemenu li.current span.open-nav,
 nav ul#oe_pagemenu li:hover span.open-nav,
@@ -1265,7 +1264,7 @@ nav ul#oe_pagemenu li.current span.open-nav,
 nav ul#oe_pagemenu li.current:hover span.open-nav,
 nav ul#oe_pagemenu li a span:hover {
 	cursor: pointer;
-	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) 180px -176px no-repeat
+	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) 185px -364px no-repeat
 }
 /*** menu style ***/
 nav ul#oe_pagemenu li a {
@@ -1310,77 +1309,77 @@ nav ul#oe_pagemenu li a:focus {
 	margin-left: 10px;
 }
 nav ul#oe_pagemenu li a.main {
-	background-position: -2px -484px
+	background-position: 0 -520px
 }
 nav ul#oe_pagemenu li a.content {
-	background-position: -2px -520px
+	background-position: 0 -580px
 }
 nav ul#oe_pagemenu li a.layout {
-	background-position: -2px -556px
+	background-position: 0 -700px
 }
 nav ul#oe_pagemenu li a.files {
-	background-position: -2px -520px
+	background-position: 0 -1000px
 }
 nav ul#oe_pagemenu li a.usersgroups {
-	background-position: -2px -592px
+	background-position: 0 -640px
 }
 nav ul#oe_pagemenu li a.extensions {
-	background-position: -2px -628px
+	background-position: 0 -760px
 }
 nav ul#oe_pagemenu li a.siteadmin {
-	background-position: -2px -664px
+	background-position: 0 -882px
 }
 nav ul#oe_pagemenu li a.myprefs {
-	background-position: -2px -700px
+	background-position: 0 -820px
 }
 nav ul#oe_pagemenu li a.ecommerce {
-	background-position: -2px -990px
+	background-position: 0 -940px
 }
 /* hover, active */
 nav ul#oe_pagemenu li a.main:hover,
 nav ul#oe_pagemenu li.current a.main,
 nav ul#oe_pagemenu li:hover a.main {
-	background-position: -2px -284px
+	background-position: 0 -490px
 }
 nav ul#oe_pagemenu li a.content:hover,
 nav ul#oe_pagemenu li.current a.content,
 nav ul#oe_pagemenu li:hover a.content {
-	background-position: -2px -758px
+	background-position: 0 -550px
 }
 nav ul#oe_pagemenu li a.layout:hover,
 nav ul#oe_pagemenu li.current a.layout,
 nav ul#oe_pagemenu li:hover a.layout {
-	background-position: -2px -790px
+	background-position: 0 -670px
 }
 nav ul#oe_pagemenu li a.files:hover,
 nav ul#oe_pagemenu li.current a.files,
 nav ul#oe_pagemenu li:hover a.files {
-	background-position: -2px -758px
+	background-position: 0 -970px
 }
 nav ul#oe_pagemenu li a.usersgroups:hover,
 nav ul#oe_pagemenu li.current a.usersgroups,
 nav ul#oe_pagemenu li:hover a.usersgroups {
-	background-position: -2px -823px
+	background-position: 0 -610px
 }
 nav ul#oe_pagemenu li a.extensions:hover,
 nav ul#oe_pagemenu li.current a.extensions,
 nav ul#oe_pagemenu li:hover a.extensions {
-	background-position: -2px -854px
+	background-position: 0 -730px
 }
 nav ul#oe_pagemenu li a.siteadmin:hover,
 nav ul#oe_pagemenu li.current a.siteadmin,
 nav ul#oe_pagemenu li:hover a.siteadmin {
-	background-position: -2px -921px
+	background-position: 0 -852px
 }
 nav ul#oe_pagemenu li a.myprefs:hover,
 nav ul#oe_pagemenu li.current a.myprefs,
 nav ul#oe_pagemenu li:hover a.myprefs {
-	background-position: -2px -885px
+	background-position: 0 -790px
 }
 nav ul#oe_pagemenu li a.ecommerce:hover,
 nav ul#oe_pagemenu li.current a.ecommerce,
 nav ul#oe_pagemenu li:hover a.ecommerce {
-	background-position: -2px -953px
+	background-position: 0 -910px
 }
 /* second level & collapsed sidebar */
 nav ul#oe_pagemenu ul {
@@ -2124,7 +2123,7 @@ ul.sortable .placeholder {
 	top:0
 }
 .drop-inner + a.toggle-dropzone {
-	background: transparent url(themes/OneEleven/images/layout/toggle-dropzone.png) no-repeat right -15px top 0;
+	background: transparent url(themes/OneEleven/images/layout/toggle-dropzone.png) no-repeat -15px 0;
 	border: 1px solid #ccc;
 	border-top: none;
 	text-indent: -9999em;
@@ -2139,7 +2138,7 @@ a.toggle-dropzone:focus {
 	outline: none
 }
 .drop-inner.hidden + a.toggle-dropzone {
-	background: transparent url(themes/OneEleven/images/layout/toggle-dropzone.png) no-repeat 100% 0;
+	background: transparent url(themes/OneEleven/images/layout/toggle-dropzone.png) no-repeat 0 0;
 }
 .drop .drop-inner {
 	float:none;
@@ -2372,8 +2371,8 @@ a.toggle-dropzone:focus {
 	margin: 0 auto;
 	position: relative;
 }
-.row:before, .row:after {
-	content: " ";
+.row::before, .row::after {
+	content: "";
 	display: table;
 }
 .row:after {
@@ -2644,7 +2643,7 @@ a.toggle-dropzone:focus {
 	body.currentpages table.pagetable th:nth-child(8) {
 		display: none
 	}
-	/* position:fixed doesn't work well with mobile devices */
+	/* position:fixed doesn't work well with mobile devices ? */
 	footer#oe_footer {
 		clear: both;
 		overflow: hidden;
