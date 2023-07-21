@@ -220,7 +220,7 @@ $css_files = [ '/lib/css/filepicker.css', '/lib/css/filepicker.min.css' ];
 $mtime = -1;
 $sel_file = '';
 foreach( $css_files as $file ) {
-    $fp = $this->GetModulePath().'/'.$file;
+    $fp = $this->GetModulePath().$file;
     if( is_file($fp) ) {
         $fmt = filemtime($fp);
         if( $fmt > $mtime ) {
