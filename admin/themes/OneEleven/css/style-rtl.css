@@ -1012,7 +1012,7 @@ header a.welcome-user {
 	display: inline-block;
 	text-indent: -999em;
 	margin-left: 10px;
-	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) -10px -140px no-repeat
+	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) -8px -140px no-repeat
 }
 /* breadcrumbs nav */
 header .breadcrumbs {
