@@ -66,7 +66,7 @@ function cmscm_get_deletable_pages($node)
             }
         }
     }
-  return $out;
+    return $out;
 }
 
 if( isset($params['cancel']) ) {
