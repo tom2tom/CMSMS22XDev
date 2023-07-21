@@ -11,8 +11,8 @@
 
 <p>----------------------------------------------</p>
 
-<p><strong>{'cms_version'|replace:'_':' '|ucwords}</strong>: {$cms_version}</p>
-<p><strong>{'installed_modules'|replace:'_':' '|ucwords}</strong>:</p>
+<p><strong>{'cms_version'|replace:'_':' '|adjust:'ucwords'}</strong>: {$cms_version}</p>
+<p><strong>{'installed_modules'|replace:'_':' '|adjust:'ucwords'}</strong>:</p>
 <ul>
 {foreach $installed_modules as $module}
 	<li>{$module.module_name}: {$module.version}</li>
@@ -20,14 +20,14 @@
 </ul>
 <br />
 {if $count_config_info > 1}
-<p><strong>{'config_information'|replace:'_':' '|ucwords}</strong>:</p>
+<p><strong>{'config_information'|replace:'_':' '|adjust:'ucwords'}</strong>:</p>
 <ul>
 	{foreach $config_info as $view => $tmp}
 		{if $view < 1}
 			{foreach $tmp as $key => $test}
 	<li>{$key}:
-				{if isset($test->value)}{$test->value}
-				{/if}
+		{if isset($test->value)}{$test->value}
+		{/if}
 	</li>
 			{/foreach}
 		{/if}
@@ -38,15 +38,15 @@
 
 
 {if $count_php_information > 1}
-<p><strong>{'php_information'|replace:'_':' '|ucwords}</strong>:</p>
+<p><strong>{'php_information'|replace:'_':' '|adjust:'ucwords'}</strong>:</p>
 <ul>
 	{foreach $php_information as $view => $tmp}
 		{if $view < 1}
 			{foreach $tmp as $key => $test}
 	<li>{$key}:
-				{if isset($test->secondvalue)}{$test->value} ({$test->secondvalue})
-				{elseif isset($test->value)}{$test->value}
-				{/if}
+		{if isset($test->secondvalue) && $test->secondvalue !== ''}{$test->value} ({$test->secondvalue})
+		{elseif isset($test->value)}{$test->value}
+		{/if}
 	</li>
 			{/foreach}
 		{/if}
@@ -61,7 +61,7 @@
   {$list=$performance_info[0]}
   {foreach $list as $key => $test}
     <li>{$key}:
-	{if isset($test->secondvalue)}{$test->value} ({$test->secondvalue})
+	{if isset($test->secondvalue) && $test->secondvalue !== ''}{$test->value} ({$test->secondvalue})
 	{elseif isset($test->value)}{$test->value}
 	{/if}
     </li>
@@ -70,12 +70,12 @@
 {/if}
 
 {if $count_server_info > 1}
-<p><strong>{'server_information'|replace:'_':' '|ucwords}</strong>:</p>
+<p><strong>{'server_information'|replace:'_':' '|adjust:'ucwords'}</strong>:</p>
 <ul>
 	{foreach $server_info as $view => $tmp}
 		{if $view < 1}
 			{foreach $tmp as $key => $test}
-	<li>{$key|replace:'_':' '|ucwords}:
+	<li>{$key|replace:'_':' '|adjust:'ucwords'}:
 		{if isset($test->value)}{$test->value}
 		{/if}
 	</li>
@@ -86,13 +86,13 @@
 <br />
 {/if}
 {if $count_permission_info > 1}
-<p><strong>{'permission_information'|replace:'_':' '|ucwords}</strong>:</p>
+<p><strong>{'permission_information'|replace:'_':' '|adjust:'ucwords'}</strong>:</p>
 <ul>
 	{foreach $permission_info as $view => $tmp}
 		{if $view < 1}
 			{foreach $tmp as $key => $test}
 	<li>{$key}:
-		{if isset($test->secondvalue)}{$test->value} ({$test->secondvalue})
+		{if isset($test->secondvalue) && $test->secondvalue !== ''}{$test->value} ({$test->secondvalue})
 		{elseif isset($test->value)}{$test->value}
 		{/if}
 	</li>
