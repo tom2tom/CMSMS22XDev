@@ -50,6 +50,7 @@ final class CmsJobManager extends \CMSModule
     public function LazyLoadFrontend() { return FALSE; }
     public function LazyLoadAdmin() { return FALSE; }
     public function VisibleToAdminUser() { return $this->CheckPermission(\CmsJobManager::MANAGE_JOBS); }
+    public function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.htm'); }
     public function GetHelp() { return $this->Lang('help'); }
     public function HandlesEvents() { return TRUE; }
 
