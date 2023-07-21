@@ -125,7 +125,7 @@ $result = $db->Execute($query);
 $user_struct = array();
 while($result && $row = $result->FetchRow()) {
     if (isset($user_struct[$row['user_id']])) {
-        $str = &$user_struct[$row['user_id']];
+        $str = &$user_struct[$row['user_id']]; // TODO reference relevance
         $str->group[$row['group_id']]=1;
     }
     else {
