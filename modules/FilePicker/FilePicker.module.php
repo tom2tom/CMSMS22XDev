@@ -67,12 +67,14 @@ final class FilePicker extends \CMSModule implements CMSMS\FilePickerInterface
      * end of private methods
      */
 
-    public function GetFriendlyName() { return $this->Lang('friendlyname'); }
-    public function GetVersion() { return '1.0.6'; }
-    public function GetHelp() { return $this->Lang('help'); }
-    public function IsPluginModule() { return FALSE; }
-    public function HasAdmin() { return TRUE; }
+    public function GetAdminDescription() { return $this->Lang('moddescription'); }
     public function GetAdminSection() { return 'extensions'; }
+    public function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.htm'); }
+    public function GetFriendlyName() { return $this->Lang('friendlyname'); }
+    public function GetHelp() { return $this->Lang('help'); }
+    public function GetVersion() { return '1.0.7'; }
+    public function HasAdmin() { return TRUE; }
+    public function IsPluginModule() { return FALSE; }
 
     public function HasCapability( $capability, $params = array() )
     {
@@ -183,7 +185,6 @@ final class FilePicker extends \CMSModule implements CMSMS\FilePickerInterface
 
         return $this->_typehelper->is_image( $filespec );
     }
-
 
     // INTERNAL UTILITY FUNCTION
     public function is_acceptable_filename( \CMSMS\FilePickerProfile $profile, $filename )

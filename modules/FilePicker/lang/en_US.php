@@ -56,6 +56,9 @@ $lang['HelpPopup_ProfileDir'] = 'Optionally enter the relative path of a directo
 $lang['HelpPopupTitle_ProfileShowthumbs'] = 'Show Thumbnails';
 $lang['HelpPopup_ProfileShowthumbs'] = 'If enabled, thumbnails will be visible for image files for which thumbnails are generated.';
 
+// M
+$lang['moddescription'] = 'File management capabilities setup';
+
 // N
 $lang['name'] = 'Name';
 $lang['no_profiles'] = 'No profiles defined yet. You can add them by clicking the button above.';
@@ -103,8 +106,8 @@ $lang['youareintext'] = 'The current working directory (relative to the top of t
 // HELP TEXT
 $lang['help'] = <<<EOT
 <h3>What does this do?</h3>
-<p>This module provides the generic ability to allow an authorized admin editor to select a file.  I.e:  to select an image for use in a WYSIWYG field, or to associate an image or thumbnail with a page, or attach a PDF file to a news article.  The module also has a small amount of ancillary functionality to allow authorized users to upload and delete files, or to create and remove subdirectories.</p>
-<p>This module also allows for the creation of multiple profiles with different capabilities.  Profiles can be used by the <code>{cms_filepicker}</code> plugin or by the module's &quot;select&quot; action when definining how the picker should behave.   Other module parameters, or user permissions can override the settings defined in the profile.</p>
+<p>This module allows authorized admin editors to select a file e.g. to select an image for use in a WYSIWYG field, or to associate an image or thumbnail with a page, or attach a PDF file to a news article.  The module also has a small amount of ancillary functionality to allow authorized users to upload and delete files, or to create and remove subdirectories.</p>
+<p>This module also allows for the creation of multiple profiles with different capabilities. Profiles can be used by the <code>{cms_filepicker}</code> plugin or by the module's &quot;select&quot; action when definining how the picker should behave. Other module parameters, or user permissions can override the settings defined in the profile.</p>
 
 <h3>How Do I Use It</h3>
 <p>This module is intended to be used in the core or third party modules via various core API's.  And via the {cms_filepicker} plugin.</p>
