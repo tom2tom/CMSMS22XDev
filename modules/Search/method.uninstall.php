@@ -1,7 +1,7 @@
 <?php
 if (!isset($gCms)) exit;
 
-$db =& $this->GetDb();
+$db = $this->GetDb();
 $dict = NewDataDictionary($db);
 
 $sqlarray = $dict->DropTableSQL(CMS_DB_PREFIX.'module_search_index');
@@ -23,7 +23,7 @@ $this->RemovePreference();
 #---------------------
 
 $this->RemovePermission('Manage Search');
-	
+
 $this->RemoveEvent('SearchInitiated');
 $this->RemoveEvent('SearchCompleted');
 $this->RemoveEvent('SearchItemAdded');

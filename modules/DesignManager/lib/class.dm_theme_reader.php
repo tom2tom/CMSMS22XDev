@@ -411,7 +411,7 @@ class dm_theme_reader extends dm_reader_base
       $stylesheet = new CmsLayoutStylesheet();
       $stylesheet->set_name($css_rec['name']);
 
-      $ob = &$this;
+      $ob = $this;
       $regex='/url\s*\(\"*(.*)\"*\)/i';
       $css_rec['data'] = preg_replace_callback($regex,
                            function($matches) use ($ob,$ref_map,$destdir) {

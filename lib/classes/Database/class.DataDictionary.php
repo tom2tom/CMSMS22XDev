@@ -365,10 +365,9 @@ abstract class DataDictionary
 	public function ExecuteSQLArray($sql, $continueOnError = true)
 	{
 		$rez = 2;
-		$conn = &$this->connection;
 		foreach($sql as $line) {
 			try {
-				$ok = $conn->Execute($line);
+				$ok = $this->connection->Execute($line);
 				if (!$ok) {
 					if (!$continueOnError) return 0;
 					$rez = 1;
@@ -982,10 +981,10 @@ abstract class DataDictionary
 				if ( isset($cols[$k]) && is_object($cols[$k]) ) {
 					$c = $cols[$k];
 					$ml = $c->max_length;
-					$mt = &$this->MetaType($c->type,$ml);
+					$mt = $this->MetaType($c->type,$ml); // TODO reference relevance
 					if ($ml == -1) $ml = '';
 					if ($mt == 'X') $ml = $v['SIZE'];
-					if (($mt != $v['TYPE']) ||  $ml != $v['SIZE']) $holdflds[$k] = $v;
+					if (($mt != $v['TYPE']) || $ml != $v['SIZE']) $holdflds[$k] = $v;
 				} else {
 					$holdflds[$k] = $v;
 				}

@@ -198,7 +198,7 @@ $smarty = $gCms->GetSmarty();
 $smarty->register_function('lang','checksum_lang');
 $smarty->caching = false;
 $smarty->force_compile = true;
-$db = &$gCms->GetDb();
+$db = $gCms->GetDb();
 
 // Handle output
 $res = true;

@@ -232,7 +232,7 @@ final class UserTagOperations
 		$db = $gCms->GetDb();
 
 		$query = 'DELETE FROM '.CMS_DB_PREFIX.'userplugins WHERE userplugin_name = ?';
-		$result = &$db->Execute($query, array($name));
+		$result = $db->Execute($query, array($name));
 
 		$this->_cache = array();
 		if ($result) {

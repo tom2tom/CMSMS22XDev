@@ -46,7 +46,7 @@ class CMSContentTemplateResource extends CMS_Fixed_Resource_Custom
             return;
         }
         else if( isset($_SESSION['__cms_preview_']) && $contentobj->Id() == __CMS_PREVIEW_PAGE__ ) {
-            $contentobj =& $_SESSION['__cms_preview__'];
+            $contentobj = $_SESSION['__cms_preview__'];
             $source = $contentobj->Show($name);
             $source = preg_replace("/\{\/?php\}/", "", $source); //smarty blocks these tags anyway
             $source = trim($source);

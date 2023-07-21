@@ -27,7 +27,7 @@ if( !filemanager_utils::test_valid_path($params['path']) ) {
   $this->Redirect($id, 'defaultadmin', $returnid, array("fmerror" => "fileoutsideuploads"));
 }
 
-$config = & $gCms->GetConfig();
+$config = $gCms->GetConfig();
 $fullname = $this->Slash($params["path"], $params["filename"]);
 $fullname = $this->Slash($config["root_path"], $fullname);
 

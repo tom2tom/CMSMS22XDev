@@ -78,7 +78,7 @@ EOT;
 
     private function _parse_css_for_urls($content)
     {
-        $ob = &$this;
+        $ob = $this;
         $regex='/url\s*\(\"*(.*)\"*\)/i';
         $content = preg_replace_callback($regex,
                                          function($matches) use ($ob) {
@@ -98,7 +98,7 @@ EOT;
 
     private function _parse_tpl_urls($content)
     {
-        $ob = &$this;
+        $ob = $this;
 
         $temp_fix_cmsselflink = function($matches) use ($ob) {
             // GCB (required name param)
@@ -136,7 +136,7 @@ EOT;
             return TRUE;
         };
 
-        $ob = &$this;
+        $ob = $this;
         $types = array("href", "src", "url");
         foreach( $types as $type ) {
             $innerT = '[a-z0-9:?=&@/._-]+?';
@@ -251,7 +251,7 @@ EOT;
 
     private function _get_sub_templates($template)
     {
-        $ob = &$this;
+        $ob = $this;
 
         $replace_mm = function($matches) use ($ob) {
             // Menu Manager (optional template param)

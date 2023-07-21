@@ -1123,7 +1123,7 @@ final class ModuleOperations
         if( !is_object($obj) ) {
             // gotta load it.
             $res = $this->_load_module($module_name,$force);
-            if( $res ) $obj =& $this->_modules[$module_name];
+            if( $res ) $obj = $this->_modules[$module_name];
         }
 
         if( is_object($obj) && !empty($version) ) {

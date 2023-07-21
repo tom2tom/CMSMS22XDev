@@ -147,7 +147,7 @@ function smarty_function_dump($params, $smarty)
 
 	$str = '$baseobj';
 	$done = false;
-	$tmpobj =& $baseobj->modules['Album'];
+//	$tmpobj = $baseobj->modules['Album'];
 	$count = 0;
 	while( $done == false ) {
 		$count++;
