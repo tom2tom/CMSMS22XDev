@@ -52,9 +52,9 @@
 					<!-- welcome -->
 					<div class="welcome">
 					{if isset($myaccount)}
-						<span><a class="welcome-user" href="myaccount.php?{$secureparam}" title="{lang('myaccount')}">{lang('myaccount')}</a> {lang('welcome_user')}: <a href="myaccount.php?{$secureparam}">{$user->username}</a></span>
+						<span><a class="welcome-user" href="myaccount.php?{$secureparam}" title="{lang('myaccount')}">{lang('myaccount')}</a>{lang('welcome_user')}: <a href="myaccount.php?{$secureparam}">{$user->username}</a></span>
 					{else}
-						<span><a class="welcome-user">{lang('myaccount')}</a> {lang('welcome_user')}: {$user->username}</span>
+						<span><a class="welcome-user">{lang('myaccount')}</a>{lang('welcome_user')}: {$user->username}</span>
 					{/if}
 					</div>
 					<!-- bookmarks -->
