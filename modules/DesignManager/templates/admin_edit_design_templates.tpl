@@ -1,4 +1,4 @@
-<style type="text/css">
+<style type="text/css">{literal}
 #available-templates li.selected {
    background-color: #147fdb;
 }
@@ -11,7 +11,7 @@
 #template_sel a.ui-icon+a:focus {
    border: 2px solid #147fdb;
 }
-</style>
+{/literal}</style>
 
 <div class="information">{$mod->Lang('info_edittemplate_templates_tab')}</div>
 {if empty($all_templates)}
@@ -42,7 +42,7 @@
             <legend>{$mod->Lang('attached_templates')}</legend>
             <div id="selected-templates">
                 <ul class="sortable-templates sortable-list selected-templates">
-                    {if $design->get_templates()|default:[]|count == 0}<li class="placeholder no-sort">{$mod->Lang('drop_items')}</li>{/if}
+                    {if count($tmpl) == 0}<li class="placeholder no-sort">{$mod->Lang('drop_items')}</li>{/if}
                     {foreach $all_templates as $tpl}
                         {if $tmpl && in_array($tpl->get_id(),$tmpl)}
                             <li class="ui-state-default cf sortable-item no-sort" data-cmsms-item-id="{$tpl->get_id()}" tabindex="-1">
@@ -61,7 +61,7 @@
         </fieldset>
     </div>
 </div>
-<script>
+<script>{literal}
 function find_sortable_focus(in_e) {
    var _list = $(':tabbable');
    var _idx = _list.index(in_e);
@@ -70,7 +70,7 @@ function find_sortable_focus(in_e) {
 }
 
 $(function() {
-    var _manage_templates = '{$manage_templates}';
+    {/literal}var _manage_templates = '{$manage_templates}';{literal}
     var _edit_url = '{cms_action_url action=admin_edit_template tpl=xxxx forjs=1}';
     $('ul.sortable-templates').sortable({
         connectWith: '#selected-templates ul',
@@ -109,7 +109,7 @@ $(function() {
                 var _text = $(this).text().trim();
                 var _e;
                 if( _manage_templates ) {
-                    _e = $('<a/>').attr('href',_url).text(_text).addClass('edit_tpl unsaved').attr('title','{$mod->Lang('edit_template')}');
+                    {/literal}_e = $('<a/>').attr('href',_url).text(_text).addClass('edit_tpl unsaved').attr('title',"{$mod->Lang('edit_template')}");{literal}
                 } else {
                     _e = $('<span/>').text(_text);
                 }
@@ -157,17 +157,17 @@ $(function() {
               var _el = $(this).clone();
               var _a;
               if( _manage_templates ) {
-                        _a = $('<a/>').attr('href',_url).text(_text).addClass('edit_tpl unsaved').attr('title','{$mod->Lang('edit_template')}');
+                        {/literal}_a = $('<a/>').attr('href',_url).text(_text).addClass('edit_tpl unsaved').attr('title',"{$mod->Lang('edit_template')}");{literal}
                  } else {
                   _a = $('<span/>').text(_text);
               }
               $('span',_el).remove();
               $(_el).append(_a);
-              $(_el).removeClass('selected ui-state-hover')
+              {/literal}$(_el).removeClass('selected ui-state-hover')
                        .attr('tabindex',-1)
                        .addClass('unsaved no-sort')
-                       .append($('<a href="#"/>').addClass('ui-icon ui-icon-trash sortable-remove').text('{$mod->Lang('remove')}').attr('title','{$mod->Lang('remove')}'))
-                       .find('input[type="checkbox"]').prop('checked', true);
+                       .append($('<a href="#"/>').addClass('ui-icon ui-icon-trash sortable-remove').text('{$mod->Lang('remove')}').attr('title',"{$mod->Lang('remove')}"))
+                       .find('input[type="checkbox"]').prop('checked', true);{literal}
               $('#selected-templates > ul').append(_el);
               $(this).remove();
               set_changed();
@@ -189,18 +189,18 @@ $(function() {
     });
 
     $(document).on('click','a.edit_tpl',function(ev){
-       if( __changed ) {
-           ev.preventDefault();
-          var url = $(this).attr('href');
-                cms_confirm('{$mod->Lang('confirm_save_design')}').done(function(){
-             // save and redirect
-             save_design().done(function(){
-                window.location.href = url;
-             });
-          });
-       }
-       // normal default link behavior.
+        if( __changed ) {
+            ev.preventDefault();
+            var url = $(this).attr('href');
+            cms_confirm({/literal}"{$mod->Lang('confirm_save_design')}"{literal}).done(function() {
+                // save and redirect
+                save_design().done(function() {
+                    window.location.href = url;
+                });
+            });
+        }
+        // normal default link behavior.
     });
 });
-</script>
+{/literal}</script>
 {/if}

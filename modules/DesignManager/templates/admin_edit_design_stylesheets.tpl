@@ -1,5 +1,5 @@
 {* stylesheets tab for edit template *}
-<style type="text/css">
+<style type="text/css">{literal}
 #available-stylesheets li.selected {
    background-color: #147fdb;
 }
@@ -12,7 +12,7 @@
 #selected-stylesheets a.ui-icon+a:focus {
    border: 2px solid #147fdb;
 }
-</style>
+{/literal}</style>
 
 <div class="information">{$mod->Lang('info_edittemplate_stylesheets_tab')}</div>
 {if empty($all_stylesheets)}
@@ -26,7 +26,7 @@
             <div id="available-stylesheets">
                 <ul class="sortable-stylesheets sortable-list available-items available-stylesheets">
                 {foreach $all_stylesheets as $css}
-                    {if !$cssl or !in_array($css->get_id(),$cssl)}
+                    {if !$cssl || !in_array($css->get_id(),$cssl)}
                         <li class="ui-state-default" data-cmsms-item-id="{$css->get_id()}" tabindex="0">
                             <span>{$css->get_name()}</span>
                             <input class="hidden" type="checkbox" name="{$actionid}assoc_css[]" value="{$css->get_id()}" tabindex="-1" />
@@ -42,8 +42,8 @@
             <legend>{$mod->Lang('attached_stylesheets')}</legend>
             <div id="selected-stylesheets">
                 <ul class="sortable-stylesheets sortable-list selected-stylesheets">
-                    {if $design->get_stylesheets()|count == 0}<li class="placeholder">{$mod->Lang('drop_items')}</li>{/if}
-                    {foreach $design->get_stylesheets() as $one}
+                    {if count($cssl) == 0}<li class="placeholder">{$mod->Lang('drop_items')}</li>{/if}
+                    {foreach $cssl as $one}
                         <li class="ui-state-default cf sortable-item" data-cmsms-item-id="{$one}">
                             <a href="{cms_action_url action=admin_edit_css css=$one}" class="edit_css" title="{$mod->Lang('edit_stylesheet')}">{$list_stylesheets.$one}</a>
                             <a href="#" "title="{$mod->Lang('remove')}" class="ui-icon ui-icon-trash sortable-remove" title="{$mod->Lang('remove')}">{$mod->Lang('remove')}</a>
@@ -55,7 +55,7 @@
         </fieldset>
     </div>
   </div>
-  <script>
+  <script>{literal}
   $(function() {
     var _edit_url = '{cms_action_url action=admin_edit_css css=xxxx forjs=1}';
     $('ul.sortable-stylesheets').sortable({
@@ -118,7 +118,7 @@
         else if( ev.keyCode == 39 ) {
           // right arrow
           ev.preventDefault();
-          $('#available-stylesheets li.selected').each(function(){
+          $('#available-stylesheets li.selected').each(function() {
             $(this).removeClass('selected ui-state-hover');
             var _css_id = $(this).data('cmsms-item-id');
             var _url = _edit_url.replace('xxx',_css_id);
@@ -126,15 +126,15 @@
 
             var _el = $(this).clone();
             var _a;
-            _a = $('<a/>').attr('href',_url).text(_text).addClass('edit_css unsaved').
-                      attr('title','{$mod->Lang('edit_stylesheet')}');
+            {/literal}_a = $('<a/>').attr('href',_url).text(_text).addClass('edit_css unsaved').
+                      attr('title',"{$mod->Lang('edit_stylesheet')}");
             $('span',_el).remove();
             $(_el).append(_a);
             $(_el).removeClass('selected ui-state-hover')
                  .attr('tabindex',-1)
                  .addClass('unsaved no-sort')
-                 .append($('<a href="#"/>').addClass('ui-icon ui-icon-trash sortable-remove').text('{$mod->Lang('remove')}').attr('title','{$mod->Lang('remove')}'))
-                 .find('input[type="checkbox"]').prop('checked',true);
+                 .append($('<a href="#"/>').addClass('ui-icon ui-icon-trash sortable-remove').text("{$mod->Lang('remove')}").attr('title',"{$mod->Lang('remove')}"))
+                 .find('input[type="checkbox"]').prop('checked',true);{literal}
             $('#selected-stylesheets > ul').append(_el);
             $(this).remove();
             set_changed();
@@ -153,11 +153,11 @@
         $(this).remove();
     });
 
-    $(document).on('click','a.edit_css',function(ev){
+    $(document).on('click','a.edit_css',function(ev) {
        if( __changed ) {
            ev.preventDefault();
            var url = $(this).attr('href');
-           cms_confirm("{$mod->Lang('confirm_save_design')}").done(function(){
+           cms_confirm({/literal}"{$mod->Lang('confirm_save_design')}"{literal}).done(function() {
                // save and redirect
                save_design().done(function() {
                    window.location.href = url;
@@ -167,5 +167,5 @@
     });
 
   });
-  </script>
+  {/literal}</script>
 {/if}
