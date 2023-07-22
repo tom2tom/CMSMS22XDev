@@ -170,14 +170,19 @@ abstract class CmsAdminThemeBase
 	#[\ReturnTypeWillChange]
 	public function __get($key)
 	{
-		if( $key == 'themeName' ) {
+		switch ($key) {
+		case 'themeName':
 			$class = get_class($this);
-			if( endswith($class,'Theme') ) $class = substr($class,0,strlen($class)-5);
+			if( endswith($class,'Theme') ) $class = substr($class,0,-5);
 			return $class;
+		case 'userid':
+			return get_userid();
+		case 'title':
+			if( isset($this->_title) ) return $this->_title;
+			break;
+		case 'subtitle':
+			if( isset($this->_subtitle) ) return $this->_subtitle;
 		}
-		if( $key == 'userid' ) return get_userid();
-		if( $key == 'title' ) return $this->_title;
-		if( $key == 'subtitle' ) return $this->_subtitle;
 		return null; // no value
 	}
 
@@ -730,7 +735,7 @@ abstract class CmsAdminThemeBase
 			// and build breadcrumbs
 			$item =& $this->_menuItems[$selected_key];
 			$item['selected'] = TRUE;
-			$this->_title .= $item['title'];
+			$this->_title .= $item['title']; //TODO ensure $this->_title exists
 			$this->_active_item = $selected_key;
 			$this->_breadcrumbs[] = array('title'=>$item['title'],'url'=>$item['url']);
 			if( $item['parent'] != -1 ) {
@@ -776,7 +781,7 @@ abstract class CmsAdminThemeBase
 		}
 
 		// fix subtitle, if any
-		if ($subtitle != '') $this->_title .= ': '.$subtitle;
+		if ($subtitle) $this->_title .= ': '.(string)$subtitle; //TODO ensure $this->_title exists
 		debug_buffer('after populate admin navigation');
 	}
 
@@ -948,8 +953,8 @@ abstract class CmsAdminThemeBase
 	/**
 	 * Return the list of bookmarks
 	 *
-	 * @param bool $pure if False the shortcuts for adding and managing bookmarks are added to the list.
-	 * @return array Array of Bookmark objects
+	 * @param bool $pure if false the shortcuts for adding and managing bookmarks are added to the list. Default false
+	 * @return array Bookmark objects
 	 */
 	public function get_bookmarks($pure = FALSE)
 	{
@@ -962,7 +967,9 @@ abstract class CmsAdminThemeBase
 			$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 			$mark= new Bookmark();
 			$mark->title = lang('addbookmark');
-			$mark->url = 'makebookmark.php'.$urlext.'&amp;title='.urlencode($this->_title).'&amp;ref='.base64_encode($source);
+			$mark->url = 'makebookmark.php'.$urlext;
+			if (!empty($this->_title)) { $mark->url .= '&amp;title='.rawurlencode($this->_title); }
+			$mark->url .= '&amp;ref='.base64_encode($source);
 			$marks[] = $mark;
 
 			$mark = new Bookmark();
