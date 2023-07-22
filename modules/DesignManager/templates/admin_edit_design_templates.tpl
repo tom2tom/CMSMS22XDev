@@ -148,7 +148,7 @@ $(function() {
         }
         else if( ev.keyCode == 39 ) {
            // right arrow.
-           $('#available-templates li.selected').each(function(){
+           $('#available-templates li.selected').each(function() {
               $(this).removeClass('selected');
               var _tpl_id = $(this).data('cmsms-item-id');
               var _url = _edit_url.replace('xxxx',_tpl_id);
@@ -179,7 +179,7 @@ $(function() {
         }
     });
 
-    $(document).on('click', '#selected-templates .sortable-remove', function(e) {
+    $(document).on('click', '#selected-templates .sortable-remove',function(e) {
         // click on remove icon
         e.preventDefault();
         set_changed();
@@ -188,7 +188,7 @@ $(function() {
         $(this).remove();
     });
 
-    $(document).on('click','a.edit_tpl',function(ev){
+    $(document).on('click','a.edit_tpl',function(ev) {
         if( __changed ) {
             ev.preventDefault();
             var url = $(this).attr('href');
