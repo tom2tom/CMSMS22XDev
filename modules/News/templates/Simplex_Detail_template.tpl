@@ -5,7 +5,7 @@
   {$main_title=$entry->title scope=global}
 {/if}
 
-{* <h2>{$entry->title|cms_escape:htmlall}</h2> *}
+{* <h2>{$entry->title|cms_escape:'htmlall'}</h2> *}
 {if $entry->summary}
     {$entry->summary}
 {/if}
