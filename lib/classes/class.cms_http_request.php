@@ -735,12 +735,12 @@ class cms_http_request
             // Get a blank slate
             $tempString   = array();
 
-            // Convert cookiesa array into a query string (ie animal=dog&sport=baseball)
+            // Convert cookies array into a query string (ie animal=dog&sport=baseball)
             foreach ($this->cookies as $key => $value)
             {
                 if(strlen(trim($value)) > 0)
                 {
-                    $tempString[] = $key . "=" . urlencode($value);
+                    $tempString[] = $key . "=" . rawurlencode($value);
                 }
             }
 

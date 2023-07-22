@@ -807,7 +807,7 @@ class http_request
             {
                 if(strlen(trim($value)) > 0)
                 {
-                    $tempString[] = $key . "=" . urlencode($value);
+                    $tempString[] = $key . "=" . rawurlencode($value);
                 }
             }
 

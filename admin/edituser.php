@@ -166,7 +166,7 @@ if (isset($_POST["submit"])) {
             $gCms->clear_cached_files();
             $url = 'listusers.php?' . $urlext;
             if ($message) {
-                $message = urlencode($message);
+                $message = rawurlencode($message);
                 $url .= '&message=' . $message;
             }
             redirect($url);
