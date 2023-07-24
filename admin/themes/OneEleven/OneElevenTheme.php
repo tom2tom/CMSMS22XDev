@@ -141,7 +141,7 @@ class OneElevenTheme extends CmsAdminThemeBase {
 			}
 			if (file_exists($path)) {
 				$config = cms_config::get_instance();
-				$url = $config->smart_root_url() . "/modules/{$module}/images/icon.{$ext}"; 
+				$url = $config->smart_root_url() . "/modules/{$module}/images/icon.{$ext}";
 				$this->set_value('module_icon_url', $url);
 			}
 
