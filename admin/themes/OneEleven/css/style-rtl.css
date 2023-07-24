@@ -1007,12 +1007,13 @@ header .welcome a {
 	color: #fff
 }
 header a.welcome-user {
-	height: 25px;
-	width: 20px;
+	height: 24px;
+	width: 28px;
 	display: inline-block;
 	text-indent: -999em;
-	margin-left: 10px;
-	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) -8px -140px no-repeat
+	margin-left: 4px;
+	padding-top: 4px;
+	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) -8px -136px no-repeat
 }
 /* breadcrumbs nav */
 header .breadcrumbs {
@@ -1067,40 +1068,39 @@ header .shortcuts ul {
 	margin-left: 20px
 }
 header .shortcuts li {
-	padding: 0 12px;
-	display: inline-block;
+	padding: 0 8px;
 	float: right
 }
 header .shortcuts li:last-child, header .shortcuts li.last {
-	padding: 0 12px 0 0
+	padding-left: 4px
 }
 header .shortcuts li a {
 	display: block;
-	margin-top: 5px;
-	width: 20px;
-	height: 25px;
+	margin-top: 4px;
+	width: 28px;
+	height: 24px;
 	text-indent: -9999em;
 	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) no-repeat;
 	overflow: hidden;
 	cursor: pointer;
 }
 header .shortcuts li.help a {
-	background-position: -8px -230px
+	background-position: -5px -229px
 }
 header .shortcuts li.settings a {
-	background-position: -8px -20px
+	background-position: -5px -19px
 }
 header .shortcuts li.logout a {
-	background-position: -8px -81px
+	background-position: -5px -80px
 }
 header .shortcuts li.view-site a {
-	background-position: -8px -111px
+	background-position: -5px -110px
 }
 header .shortcuts li.notifications {
 	position: relative;
 }
 header .shortcuts li.notifications a {
-	background-position: -8px -290px;
+	background-position: -5px -290px;
 	color: #fff !important;
 }
 header .shortcuts li.notifications span.bubble {
@@ -1121,7 +1121,7 @@ header .shortcuts li.notifications span.bubble {
 	text-indent: initial;
 }
 header .shortcuts li.favorites a {
-	background-position: -8px -50px
+	background-position: -5px -50px
 }
 /*** sidebar ***/
 #oe_sidebar {
@@ -1172,7 +1172,7 @@ header .shortcuts li.favorites a {
 	background-position: -8px -436px
 }
 .sidebar-off #oe_sidebar .toggle-button {
-	background-position: -9px -466px
+	background-position: -8px -466px
 }
 /* sidebar notifications */
 #oe_sidebar .notification a {
@@ -1271,7 +1271,7 @@ nav ul#oe_pagemenu li a {
 	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) no-repeat;
 	color: #232323;
 	outline: 0;
-	margin-right: 1px;
+	margin-right: 0;
 	height: 34px;
 	font-weight: bold;
 	display: block;
@@ -1309,77 +1309,77 @@ nav ul#oe_pagemenu li a:focus {
 	margin-left: 10px;
 }
 nav ul#oe_pagemenu li a.main {
-	background-position: 0 -520px
+	background-position: -2px -520px
 }
 nav ul#oe_pagemenu li a.content {
-	background-position: 0 -580px
+	background-position: -2px -580px
 }
 nav ul#oe_pagemenu li a.layout {
-	background-position: 0 -700px
+	background-position: -2px -700px
 }
 nav ul#oe_pagemenu li a.files {
-	background-position: 0 -1000px
+	background-position: -2px -1000px
 }
 nav ul#oe_pagemenu li a.usersgroups {
-	background-position: 0 -640px
+	background-position: -2px -640px
 }
 nav ul#oe_pagemenu li a.extensions {
-	background-position: 0 -760px
+	background-position: -2px -760px
 }
 nav ul#oe_pagemenu li a.siteadmin {
-	background-position: 0 -882px
+	background-position: -2px -882px
 }
 nav ul#oe_pagemenu li a.myprefs {
-	background-position: 0 -820px
+	background-position: -2px -820px
 }
 nav ul#oe_pagemenu li a.ecommerce {
-	background-position: 0 -940px
+	background-position: -2px -940px
 }
 /* hover, active */
 nav ul#oe_pagemenu li a.main:hover,
 nav ul#oe_pagemenu li.current a.main,
 nav ul#oe_pagemenu li:hover a.main {
-	background-position: 0 -490px
+	background-position: -2px -490px
 }
 nav ul#oe_pagemenu li a.content:hover,
 nav ul#oe_pagemenu li.current a.content,
 nav ul#oe_pagemenu li:hover a.content {
-	background-position: 0 -550px
+	background-position: -2px -550px
 }
 nav ul#oe_pagemenu li a.layout:hover,
 nav ul#oe_pagemenu li.current a.layout,
 nav ul#oe_pagemenu li:hover a.layout {
-	background-position: 0 -670px
+	background-position: -2px -670px
 }
 nav ul#oe_pagemenu li a.files:hover,
 nav ul#oe_pagemenu li.current a.files,
 nav ul#oe_pagemenu li:hover a.files {
-	background-position: 0 -970px
+	background-position: -2px -970px
 }
 nav ul#oe_pagemenu li a.usersgroups:hover,
 nav ul#oe_pagemenu li.current a.usersgroups,
 nav ul#oe_pagemenu li:hover a.usersgroups {
-	background-position: 0 -610px
+	background-position: -2px -610px
 }
 nav ul#oe_pagemenu li a.extensions:hover,
 nav ul#oe_pagemenu li.current a.extensions,
 nav ul#oe_pagemenu li:hover a.extensions {
-	background-position: 0 -730px
+	background-position: -2px -730px
 }
 nav ul#oe_pagemenu li a.siteadmin:hover,
 nav ul#oe_pagemenu li.current a.siteadmin,
 nav ul#oe_pagemenu li:hover a.siteadmin {
-	background-position: 0 -852px
+	background-position: -2px -852px
 }
 nav ul#oe_pagemenu li a.myprefs:hover,
 nav ul#oe_pagemenu li.current a.myprefs,
 nav ul#oe_pagemenu li:hover a.myprefs {
-	background-position: 0 -790px
+	background-position: -2px -790px
 }
 nav ul#oe_pagemenu li a.ecommerce:hover,
 nav ul#oe_pagemenu li.current a.ecommerce,
 nav ul#oe_pagemenu li:hover a.ecommerce {
-	background-position: 0 -910px
+	background-position: -2px -910px
 }
 /* second level & collapsed sidebar */
 nav ul#oe_pagemenu ul {
