@@ -471,7 +471,7 @@ body {
 	line-height: 1.4;
 	font-size: 14px;
 	background: #f6f6f6;
-	overflow: hidden;
+	overflow: hidden
 }
 body * {
 	box-sizing: content-box; /* back-compatible reversion of normaliser setting */
@@ -1082,7 +1082,7 @@ header .shortcuts li a {
 	text-indent: -9999em;
 	background: url(themes/OneEleven/images/layout/sprite_norepeat.png) no-repeat;
 	overflow: hidden;
-	cursor: pointer;
+	cursor: pointer
 }
 header .shortcuts li.help a {
 	background-position: -5px -229px
@@ -1125,16 +1125,16 @@ header .shortcuts li.favorites a {
 }
 /*** sidebar ***/
 #oe_sidebar {
+	position: absolute;
+	top: 100px;
+	bottom: 0;
+	right: 0;
 	width: 249px;
 	border-left: 1px solid #fff;
 	background: #ddd url(themes/OneEleven/images/layout/sidebar-shadow.png) repeat-y left;
-	position: absolute;
-	right: 0;
-	top: 100px;
-	bottom: 0
+	overflow: hidden
 }
 #oe_container.sidebar-off #oe_sidebar {
-	overflow: hidden;
 	width: 40px
 }
 #oe_sidebar > aside {
@@ -1146,7 +1146,8 @@ header .shortcuts li.favorites a {
 #oe_sidebar nav.navigation {
 	height: auto;
 	margin-top: 40px;
-	position: relative
+	position: relative;
+	overflow: hidden
 }
 /* toggle sidebar */
 #oe_sidebar .toggle-button {
@@ -1235,16 +1236,15 @@ nav ul#oe_pagemenu li {
 	zoom: 1;
 	background: url(themes/OneEleven/images/layout/navigation-bg.gif) repeat-x top;
 	line-height: 35px;
-	padding: 0
+	padding: 0;
+	overflow: hidden
 }
 /* position sticky menu */
 .sidebar-on #oe_sidebar nav.navigation {
-	width: 249px;
-	overflow: hidden
+	width: 249px
 }
 .sidebar-off #oe_sidebar nav.navigation {
-	width: 40px;
-	overflow: hidden
+	width: 40px
 }
 /* toggle submenu */
 nav ul#oe_pagemenu li span.open-nav {
@@ -2594,8 +2594,7 @@ a.toggle-dropzone:focus {
 		width: auto
 	}
 	.sidebar-off #oe_sidebar nav.navigation {
-		width: 40px;
-		overflow: hidden
+		width: 40px
 	}
 	header.header {
 		overflow: hidden
