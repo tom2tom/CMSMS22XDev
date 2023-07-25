@@ -54,10 +54,12 @@ News
 Phar Installer 1.4
  - Always-optional post-installation email includes more advice, and no password
 
+
 Version 2.2.18 - Apex
 -------------------------------
 Core - General
  - strftime()-replacement works without Intl extension if necessary.
+
 
 Version 2.2.17 - Iqaluit
 -------------------------------
@@ -93,6 +95,7 @@ News 2.51.12
 
 FileManager 1.6.13
  - BR TBA
+
 
 Version 2.2.16 - Truro
 -------------------------------
@@ -319,7 +322,7 @@ FilePicker v1.0.4
   - Fix authenticated object insertion vulnerability.
 
 
-Version 2.2.9.1
+Version 2.2.9.1 - Blow Me Down
 -------------------------------
 Core - General
   - fix to the CmsLayoutStylesheetQuery class.
@@ -669,7 +672,7 @@ Core - General
   - Adds the ability to reduce redundant mentions in the Admin log (runs asynchronously).
   - Refactor the Admin log page to allow for better filtering and pagination.
   - Admin log now uses cms_date_format and cleans output.
-  - Notification functions in the CmsAdminThemeBase function are now just stubs and do nothing. Will be removed at a later date.
+  - Notification functions in the CmsAdminThemeBase class are now just stubs and do nothing. Will be removed at a later date.
   - Removed the GetNotificationOutput() method from the module API.
   - Adds classes for creating Alerts. This is much more advanced than the old Notifications system.
   - Minor accessibility tweaks to the OneEleven theme.
@@ -701,14 +704,14 @@ Core - General
   - Pass an explicit cacheid in to createtemplate in index.php.
   - Fix an error message in the autorefresh JavaScript class.
   - Fix problems that could result in uid=1 becoming inactive, and not a member of other groups when edited by another user.
-  - Fix query problem in CmsLayoutStylesheetQuery with Mysql 5.7.
+  - Fix query problem in CmsLayoutStylesheetQuery with Mysql 5.6+.
   - The {content} tag now supports passing data attributes to the generated textarea, for use by syntax highlighter and WYSIWYG modules. i.e: {content data-foo="bar"}.
   - Refactoring of the Admin login code to be cleaner, more efficient, more secure.
   - No longer allow any modules to auto-upgrade on frontend requests.
   - Fix problem with cms_filecache_driver::clear().
-  - Introduces the new Hook mechanism to allow optimizing cms_stylesheet a bit further. All core SendEvent calls are now implemented as hooks.
+  - Introduces the new Hook mechanism.
   - changegroupperms can now localize permission names,  and add an info string for each permission. (the listpermissions hook).
-  - Adds add_headtext(), get_headtext(),  add_footertext(), get_footertext() methods to the Admin theme class.
+  - Adds add_headtext(), get_headtext(), add_footertext(), get_footertext() methods to the Admin theme class.
   - minor refactoring of admin/index.php, admin/header.php, admin/footer.php and admin/moduleinterface.php.
   - now use hooks so that loaded modules can now add text to the head area of any Admin page output.
   - Change the help for the basic attributes.
@@ -824,7 +827,7 @@ Search
 AdminSearch v1.0.3
   - Fixes problem with use of 'Use Admin Search' permission.
   - Now searches for matching strings within templates and stylesheets that are stored as files.
-  - Now listens to the HasSearchableContent metod when searching content pages.
+  - Now listens to the HasSearchableContent method when searching content pages.
 
 ModuleManager
   - Now detect if module_custom directories exist and are populated and warn about this before upgrading a module.
@@ -895,7 +898,7 @@ Core - General
   - Minor fixes to generation of moduleinfo.ini.
   - Fix an error message in the autorefresh JavaScript class.
   - Fix problems that could result in uid=1 becoming inactive, and not a member of other groups when edited by another user.
-  - Fix query problem in CmsLayoutStylesheetQuery with Mysql 5.7.
+  - Fix query problem in CmsLayoutStylesheetQuery with Mysql 5.6+.
 
   - #11080 - Parameter $adding in GetContentBlockFieldInput always FALSE.
   - #11093 - Bad error message in jquery.cmsms_autorefresh.js.
@@ -915,7 +918,6 @@ AdminSearch
 
 Phar Installer
   - Adds missing 'Manage Stylesheets' permission that would not be created on upgrade from 1.12.
-
 
 
 Version 2.1.4 - Freetown
@@ -1110,6 +1112,7 @@ Core - General
 - Changed cmsms plugins to use $smarty->getTemplateVars() instead of $smarty->get_template_vars() because of scope issues.
 - Minor fix to {form_start} when not used in a module.
 - Improved error handling for cms_stylesheet.  Now will generate a message in the Admin log, and an html comment on error.
+- Module actions can now 'return' their results
 
 CMSContentManager v1.0.1
 - Fixes for changing content types.
