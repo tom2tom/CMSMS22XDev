@@ -1,7 +1,7 @@
 Version 2.2.19 - Inuvik
 -------------------------------
 Various places
- - Compatibility fixes for PHP 8.2.
+ - Compatibility fixes for PHP 8.2 (and 8.3).
  - Replaced deprecated Smarty syntax in templates.
  - Replaced some of the deprecated jQuery syntax.
  - Corrected typos.
@@ -21,20 +21,24 @@ Core - General
 Admin theme
  - Corrected content scrolling
 
+CmsJobManager
+ - BR #12629 - Add missing changelog and retriever
+
 CMSMailer
  - Removed deprecated status
 
 ContentManager
- - BR #12474 - Taking the default page down by accident through the content type.
+ - BR #12474 - Taking the default page down by accident through the content type
 
 DesignManager
  - Corrected new template creation
 
 FileManager
- - BR #12535 - File Manager Unpack archive .tar.gz.
+ - BR #12535 - File Manager Unpack archive .tar.gz
 
 FilePicker
- - BR #12621 - FilePicker upload bug.
+ - BR #12621 - FilePicker upload bug
+ - BR #12628 - Add missing changelog and retriever
 
 MenuManager 1.50.4
  - migrated from core to a normal CMSMS module in Forge 
