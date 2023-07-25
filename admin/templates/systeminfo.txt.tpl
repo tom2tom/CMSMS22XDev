@@ -44,7 +44,7 @@
 		{if $view < 1}
 			{foreach $tmp as $key => $test}
 	<li>{$key}:
-		{if isset($test->secondvalue) && $test->secondvalue !== ''}{$test->value} ({$test->secondvalue})
+		{if isset($test->secondvalue)}{$test->value} ({$test->secondvalue})
 		{elseif isset($test->value)}{$test->value}
 		{/if}
 	</li>
@@ -61,7 +61,7 @@
   {$list=$performance_info[0]}
   {foreach $list as $key => $test}
     <li>{$key}:
-	{if isset($test->secondvalue) && $test->secondvalue !== ''}{$test->value} ({$test->secondvalue})
+	{if isset($test->secondvalue)}{$test->value} ({$test->secondvalue})
 	{elseif isset($test->value)}{$test->value}
 	{/if}
     </li>
@@ -92,7 +92,7 @@
 		{if $view < 1}
 			{foreach $tmp as $key => $test}
 	<li>{$key}:
-		{if isset($test->secondvalue) && $test->secondvalue !== ''}{$test->value} ({$test->secondvalue})
+		{if isset($test->secondvalue)}{$test->value} ({$test->secondvalue})
 		{elseif isset($test->value)}{$test->value}
 		{/if}
 	</li>

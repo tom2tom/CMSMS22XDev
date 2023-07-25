@@ -48,7 +48,7 @@ class CmsInstallTest
 	public $opt = [];
 	public $res = '';
 	public $res_text = '';
-	public $secondvalue = ''; // mixed string | array
+	public $secondvalue = null; // mixed string | array | null(not set)
 	public $special_failed = false;
 	public $title = '';
 	public $value = null; // mixed, not yet set
@@ -301,7 +301,7 @@ function testDummy( $title, $value, $return, $message = '', $error_fragment = ''
 	$test = new CmsInstallTest();
 	$test->title = $title;
 	$test->value = $value;
-	$test->secondvalue = '';
+	$test->secondvalue = null; // not set
 	$test->res = $return;
 
 	getTestReturn($test, '', $message, $error_fragment, $error);
@@ -333,7 +333,7 @@ function testConfig( $title, $varname, $testfunc = '', $message = '' )
 		$test = new CmsInstallTest();
 		$test->title = $title;
 		$test->value = $value;
-		$test->secondvalue = '';
+		$test->secondvalue = null; // not set
 		if($message) $test->message = trim($message);
 	}
 
@@ -577,7 +577,7 @@ function testVersionRange( $required, $title, $var, $message = '', $minimum = ''
 	}
 
 	$test->value = $test->ini_val;
-	$test->secondvalue = '';
+	$test->secondvalue = null; // not set
 
 	if( $unlimited && ((string) $test->ini_val == (string) $unlimited) ) {
 		$test->value = $lang_fn('unlimited');
@@ -629,7 +629,7 @@ function testRange( $required, $title, $var, $message = '', $minimum = '', $reco
 	}
 
 	$test->value = $test->ini_val;
-	$test->secondvalue = '';
+	$test->secondvalue = null; // not set
 	if($test_as_bytes) {
 		$test->ini_val = returnBytes($test->ini_val);
 		$minimum = returnBytes($minimum);
@@ -1492,7 +1492,7 @@ function testGDVersion( $required, $title, $minimum, $message = '', $error_fragm
 
 	$gd_version_number = GDVersion();
 	$test->value = $gd_version_number;
-	$test->secondvalue = '';
+	$test->secondvalue = null; // not set
 
 	$test->res = 'green';
 	if($gd_version_number < $minimum) {
