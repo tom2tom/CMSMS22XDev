@@ -15,16 +15,20 @@ class install_filehandler extends filehandler
       if( !$this->is_accepted_lang($filespec) ) return;
     }
 
-    if( !$this->dir_exists($filespec) ) $this->create_directory($filespec);
-
+    if( !$this->dir_exists($filespec) ) {
+      $this->create_directory($filespec);
+    }
     $destname = $this->get_destdir().$filespec;
-    if( file_exists($destname) && !is_writable($destname) ) throw new Exception(lang('error_overwrite',$filespec));
+    if( file_exists($destname) && !is_writable($destname) ) {
+      throw new Exception(lang('error_overwrite',$filespec));
+    }
 
     $cksum = md5_file($srcspec);
     @copy($srcspec,$destname);
     $cksum2 = md5_file($destname);
-    if( $cksum != $cksum2 ) throw new Exception(lang('error_checksum',$filespec));
-
+    if( $cksum != $cksum2 ) {
+      throw new Exception(lang('error_checksum',$filespec));
+    }
     $this->output_string(lang('file_installed',$filespec));
   }
 }

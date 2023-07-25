@@ -16,8 +16,6 @@ class wizard_step6 extends wizard_step
 
     public function run()
     {
-        $app = get_app();
-
         $tz = date_default_timezone_get();
         if( !$tz ) @date_default_timezone_set('UTC');
 

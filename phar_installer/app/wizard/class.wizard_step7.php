@@ -77,14 +77,15 @@ class wizard_step7 extends wizard_step
         $this->message(lang('install_extractfiles'));
         $phardata = new PharData($archive);
         $archive = basename($archive);
+        $l = strlen($archive);
         $filehandler = new install_filehandler();
         $filehandler->set_languages($languages);
         $filehandler->set_destdir($destdir);
-        $filehandler->set_output_fn('\cms_autoinstaller\wizard_step6::verbose');
-        foreach( new RecursiveIteratorIterator($phardata) as $file => $it ) {
+        $filehandler->set_output_fn('\cms_autoinstaller\wizard_step7::verbose');
+        foreach( new RecursiveIteratorIterator($phardata) as $file => $fi ) {
             if( ($p = strpos($file,$archive)) === FALSE ) continue;
-            $fn = substr($file,$p+strlen($archive));
-            $filehandler->handle_file($fn,$file,$it);
+            $fn = substr($file,$p+$l);
+            $filehandler->handle_file($fn,$file,$fi);
         }
     }
 
@@ -92,7 +93,6 @@ class wizard_step7 extends wizard_step
     {
         // get the list of all available versions that this upgrader knows about
         $app = get_app();
-        $app_config = $app->get_config();
         $upgrade_dir =  $app->get_appdir().'/upgrade';
         if( !is_dir($upgrade_dir) ) throw new Exception(lang('error_internal',730));
         $destdir = $app->get_destdir();
@@ -203,7 +203,7 @@ class wizard_step7 extends wizard_step
                 throw new Exception(lang('error_internal',755));
             }
 
-            // create index.html files in directories.
+            // [re-]create index.html files in directories.
             $this->do_index_html();
         }
         catch( Exception $e ) {
