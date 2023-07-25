@@ -135,6 +135,7 @@ tinymce.addI18n('fr_FR',{
 "Insert\/edit link": "Ins\u00e9rer\/modifier un lien",
 "Insert\/edit video": "Ins\u00e9rer\/modifier une vid\u00e9o",
 "Media": "M\u00e9dia",
+"Poster": "Publier",
 "Alternative source": "Source alternative",
 "Paste your embed code below:": "Collez votre code d'int\u00e9gration ci-dessous :",
 "Insert video": "Ins\u00e9rer une vid\u00e9o",
@@ -226,5 +227,6 @@ tinymce.addI18n('fr_FR',{
 "Tools": "Outils",
 "View": "Voir",
 "Table": "Tableau",
+"Image Title":"Titre de l'image",
 "Format": "Format"
 });
