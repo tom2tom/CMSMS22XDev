@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html lang="{$lang|truncate:'2':''}" dir="{$lang_dir}">
+<html lang="{$lang|truncate:2:''}" dir="{$lang_dir}">
 	<head>
 	{$thetitle=$pagetitle}
 	{if $thetitle && $subtitle}{$thetitle="{$thetitle} - {$subtitle}"}{/if}
@@ -31,7 +31,7 @@
 		<!-- THIS IS WHERE EXTRA HEADER STUFF GOES -->
 		{$headertext|default:''}
 	</head>
-	<body lang="{$lang|truncate:'2':''}" id="{$pagetitle|adjust:'md5'}" class="oe_{$pagealias}">
+	<body lang="{$lang|truncate:2:''}" id="{$pagetitle|adjust:'md5'}" class="oe_{$pagealias}">
 		<!-- start container -->
 		<div id="oe_container" class="sidebar-on">
 			<!-- start header -->
