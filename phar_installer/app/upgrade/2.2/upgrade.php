@@ -32,7 +32,7 @@ $move_directory_files = function($srcdir,$destdir) {
 
 //$gCms = cmsms();
 $dbdict = NewDataDictionary($db);
-$taboptarray = array('mysql' => 'TYPE=MyISAM');
+//$taboptarray = array('mysqli' => 'ENGINE=MyISAM','mysql' => 'ENGINE=MyISAM');
 
 $sqlarray = $dbdict->AddColumnSQL(CMS_DB_PREFIX.CmsLayoutTemplateType::TABLENAME,'help_content_cb C(255), one_only I1');
 $dbdict->ExecuteSQLArray($sqlarray);
