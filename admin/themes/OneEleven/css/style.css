@@ -469,6 +469,7 @@ body {
 	min-width: 900px;
 	color: #232323;
 	line-height: 1.4;
+	font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	font-size: 14px;
 	background: #f6f6f6;
 	overflow: hidden
@@ -670,7 +671,6 @@ input,
 textarea,
 select,
 menu {
-	font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	font-size: 14px;
 	margin: 2px 5px 2px 0;
 	padding: 4px 5px;
@@ -2111,7 +2111,7 @@ ul.sortable .placeholder {
 	color: #147fdb;
 	margin: 0;
 	padding: 0;
-	font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+/*	font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
 }
 /*** theme dropzone ***/
 .drop {
