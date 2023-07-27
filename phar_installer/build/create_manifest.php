@@ -397,8 +397,14 @@ try {
 if (!$res) {
     fatal('Retrieving files from ' .$uri_from. ' failed');
 }
-if (!is_file(joinpath($_fromdir, 'lib', 'version.php')) || !is_dir(joinpath($_fromdir, 'lib', 'classes', 'Database'))) {
-    fatal('The files retrieved from ' .$uri_from. 'do not appear to be for a CMSMS installation');
+if (0) { //TODO from-version < 2.1 ?
+    if (!is_file(joinpath($_fromdir, 'version.php')) || !is_dir(joinpath($_fromdir, 'lib', 'adodb_lite'))) {
+        fatal('The files retrieved from ' .$uri_from. ' do not appear to be for a CMSMS installation');
+    }
+} else {
+    if (!is_file(joinpath($_fromdir, 'lib', 'version.php')) || !is_dir(joinpath($_fromdir, 'lib', 'classes', 'Database'))) {
+        fatal('The files retrieved from ' .$uri_from. ' do not appear to be for a CMSMS installation');
+    }
 }
 
 try {
@@ -410,8 +416,14 @@ try {
 if (!$res) {
     fatal('Retrieving files from ' .$uri_to. ' failed');
 }
-if (!is_file(joinpath($_todir, 'lib', 'version.php')) || !is_dir(joinpath($_todir, 'lib', 'classes', 'Database'))) {
-    fatal('The files retrieved from ' .$uri_to. 'do not appear to be for a CMSMS installation');
+if (0) { //TODO to-version < 2.1 ?
+    if (!is_file(joinpath($_todir, 'version.php')) || !is_dir(joinpath($_todir, 'lib', 'adodb_lite'))) {
+        fatal('The files retrieved from ' .$uri_to. ' do not appear to be for a CMSMS installation');
+    }
+} else {
+    if (!is_file(joinpath($_todir, 'lib', 'version.php')) || !is_dir(joinpath($_todir, 'lib', 'classes', 'Database'))) {
+        fatal('The files retrieved from ' .$uri_to. ' do not appear to be for a CMSMS installation');
+    }
 }
 
 try {
@@ -445,7 +457,12 @@ if ($mode == 'd' || $mode == 'f') {
             continue;
         }
         if ($mode == 'd') {
-            $str = "DELETED :: $fn";
+            if ($do_md5) {
+                $md5 = md5_file($file);
+                $str = "DELETED :: $md5 :: $fn";
+            } else {
+                $str = "DELETED :: $fn";
+            }
         } else {
             $md5 = md5_file($file);
             $str = "DELETED :: $md5 :: $fn";
@@ -1190,7 +1207,7 @@ class compare_dirs
                 $rec = [];
                 $rec['size'] = @filesize($fn);
                 $rec['mtime'] = @filemtime($fn);
-                if ($this->_do_md5) {
+                if ($this->_do_md5 && !is_dir($fn)) {
                     $rec['md5'] = md5_file($fn);
                 }
                 $out[$base] = $rec;
@@ -1205,7 +1222,7 @@ class compare_dirs
             $rec = [];
             $rec['size'] = @filesize($fn);
             $rec['mtime'] = @filemtime($fn);
-            if ($this->_do_md5) {
+            if ($this->_do_md5 && !is_dir($fn)) {
                 $rec['md5'] = md5_file($fn);
             }
             $out[$base] = $rec;
