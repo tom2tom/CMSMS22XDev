@@ -26,7 +26,7 @@
 use FilePicker\ProfileDAO;
 
 $db = $this->GetDb();
-$taboptarray = array('mysql' => 'TYPE=MyISAM');
+$taboptarray = array('mysqli' => 'ENGINE=MyISAM','mysql' => 'ENGINE=MyISAM');
 $dict = NewDataDictionary($db);
 
 try {

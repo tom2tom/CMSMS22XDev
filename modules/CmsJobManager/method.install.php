@@ -5,7 +5,7 @@ $this->CreatePermission(\CmsJobManager::MANAGE_JOBS,\CmsJobManager::MANAGE_JOBS)
 $this->CreateEvent(\CmsJobManager::EVT_ONFAILEDJOB);
 $this->AddEventHandler('Core','ModuleUninstalled',FALSE);
 
-$taboptarray = array('mysql' => 'TYPE=MyISAM');
+$taboptarray = array('mysqli' => 'ENGINE=MyISAM','mysql' => 'ENGINE=MyISAM');
 $dict = NewDataDictionary($db);
 
 $flds = "id I KEY AUTO NOTNULL,

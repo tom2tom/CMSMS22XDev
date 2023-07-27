@@ -34,7 +34,7 @@ $flds = "
 	searchable I1
 "; // icon is no longer used.
 
-$taboptarray = array('mysql' => 'TYPE=MyISAM');
+$taboptarray = array('mysqli' => 'ENGINE=MyISAM', 'mysql' => 'ENGINE=MyISAM');
 $sqlarray = $dict->CreateTableSQL(CMS_DB_PREFIX."module_news", $flds, $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 $db->CreateSequence(CMS_DB_PREFIX."module_news_seq");
@@ -50,7 +50,7 @@ $flds = "
 	modified_date T
 ";
 
-$taboptarray = array('mysql' => 'TYPE=MyISAM');
+//$taboptarray = array('mysql' => 'ENGINE=MyISAM', 'mysqli' => 'ENGINE=MyISAM');
 $sqlarray = $dict->CreateTableSQL(CMS_DB_PREFIX."module_news_categories",$flds, $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 $db->CreateSequence(CMS_DB_PREFIX."module_news_categories_seq");
@@ -67,7 +67,7 @@ $flds = "
 	extra  X
 ";
 
-$taboptarray = array('mysql' => 'TYPE=MyISAM');
+//$taboptarray = array('mysql' => 'ENGINE=MyISAM', 'mysqli' => 'ENGINE=MyISAM');
 $sqlarray = $dict->CreateTableSQL(CMS_DB_PREFIX."module_news_fielddefs", $flds, $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 
@@ -79,7 +79,7 @@ $flds = "
 	modified_date " . CMS_ADODB_DT . "
 ";
 
-$taboptarray = array('mysql' => 'TYPE=MyISAM');
+//$taboptarray = array('mysql' => 'ENGINE=MyISAM', 'mysqli' => 'ENGINE=MyISAM');
 $sqlarray = $dict->CreateTableSQL(CMS_DB_PREFIX."module_news_fieldvals", $flds, $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 

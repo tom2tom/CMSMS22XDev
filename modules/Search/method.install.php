@@ -19,7 +19,7 @@ $flds= "
 		extra_attr C(100),
 		expires " . CMS_ADODB_DT;
 
-$taboptarray = array('mysql' => 'ENGINE=MyISAM');
+$taboptarray = array('mysqli' => 'ENGINE=MyISAM', 'mysql' => 'ENGINE=MyISAM');
 $sqlarray = $dict->CreateTableSQL(CMS_DB_PREFIX.'module_search_items', $flds, $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 
@@ -39,7 +39,7 @@ $flds= "
 		word C(255),
 		count I
 	";
-$taboptarray = array('mysql' => 'TYPE=MyISAM');
+//$taboptarray = array('mysql' => 'ENGINE=MyISAM', 'mysqli' => 'ENGINE=MyISAM');
 $sqlarray = $dict->CreateTableSQL(CMS_DB_PREFIX.'module_search_index', $flds, $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 
@@ -49,7 +49,7 @@ $dict->ExecuteSQLArray($sqlarray);
 $flds = "word C(255) KEY,
          count       I
         ";
-$taboptarray = array('mysql' => 'TYPE=MyISAM');
+//$taboptarray = array('mysql' => 'ENGINE=MyISAM', 'mysqli' => 'ENGINE=MyISAM');
 $sqlarray = $dict->CreateTableSQL(CMS_DB_PREFIX.'module_search_words', $flds, $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 

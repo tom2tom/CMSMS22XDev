@@ -11,14 +11,17 @@ status_msg('Upgrading database for CMSMS 2.0');
 
 $gCms = cmsms();
 $dbdict = NewDataDictionary($db);
-$taboptarray = array('mysql' => 'TYPE=MyISAM');
+$taboptarray = array('mysqli' => 'ENGINE=MyISAM','mysql' => 'ENGINE=MyISAM');
 
-verbose_msg('updating structure of content tabless');
-$sqlarray = $dbdict->DropColumnSQL(CMS_DB_PREFIX.'content',array('collaapsed','markup'));
+verbose_msg('updating structure of content tables');
+$sqlarray = $dbdict->DropColumnSQL(CMS_DB_PREFIX.'content',array('collapsed','markup'));
 $return = $dbdict->ExecuteSQLArray($sqlarray);
 $sqlarray = $dbdict->AlterColumnSQL(CMS_DB_PREFIX.'content_props', 'content X2');
 $return = $dbdict->ExecuteSQLArray($sqlarray);
 $sqlarray = $dbdict->CreateIndexSQL(CMS_DB_PREFIX.'idx_content_by_modified', CMS_DB_PREFIX."content", 'modified_date');
+$return = $dbdict->ExecuteSQLArray($sqlarray);
+//possible prior bad upgrade
+$sqlarray = $dbdict->RenameTableSQL(CMS_DB_PREFIX.'event_handler_seq', CMS_DB_PREFIX.'event_handlers_seq');
 $return = $dbdict->ExecuteSQLArray($sqlarray);
 
 verbose_msg('add index to the module plugins table');
