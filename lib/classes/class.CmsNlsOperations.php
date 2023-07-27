@@ -94,10 +94,10 @@ final class CmsNlsOperations
     }
 
     /**
-     * Get an array of all languages that are known
-     * (installed).  Use the NLS files to handle this
+     * Get an array of all languages that are known (installed).
+     * Use the NLS files to handle this
      *
-     * @return array Array of language names
+     * @return array of language names, or maybe empty
      */
     public static function get_installed_languages()
     {
