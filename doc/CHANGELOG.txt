@@ -53,7 +53,7 @@ News
 
 Phar Installer 1.4
  - Always-optional post-installation email includes more advice, and no password
-
+ - 2.0 upgrade relative to 1.12.2
 
 Version 2.2.18 - Apex
 -------------------------------
