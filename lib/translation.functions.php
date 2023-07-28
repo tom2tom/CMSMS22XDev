@@ -133,10 +133,12 @@ function get_language_list($allow_none = true)
 
   $langs = CmsNlsOperations::get_installed_languages();
   asort($langs);
-  foreach( $langs as $key  ) {
+  foreach( $langs as $key ) {
     $obj = CmsNlsOperations::get_language_info($key);
     $value = $obj->display();
-    if( $obj->fullname() ) $value .= ' ('.$obj->fullname().')';
+    if( $obj->fullname() ) {
+      $value .= ' ('.$obj->fullname().')';
+    }
     $tmp[$key] = $value;
   }
 
