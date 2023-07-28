@@ -288,11 +288,11 @@ template {
 }
 
 /* GRID SYSTEM
- * Fluid Grid based on Based on 960 Grid System - http://www.960.gs
- * Helper Styles for Module Developer, make aligning modules easier.
+ * Fluid grid based on 960 Grid System - http://www.960.gs
+ * Helper styles for module developer, make aligning modules easier.
  * (Too bad Robert didn't request this earlier I could have saved myself
  * from writing a bunch of styles)
- * For Demo see /admin/themes/OneEleven/doc/grid.html
+ * For demo see /admin/themes/OneEleven/doc/grid.html
  */
 /* Container - wrapping all grids inside,
  * use .cf class to clear floated elements
@@ -519,7 +519,7 @@ ul, ol {
 	line-height: 1.5
 }
 #oe_mainarea ol li {
-	list-style:decimal
+	list-style: decimal
 }
 h1,
 h2,
@@ -871,8 +871,8 @@ aside.message,
 	border-radius: 0 0 4px 4px;
 	box-shadow: 1px 1px 3px 1px #444;
 	-webkit-box-shadow: 1px 1px 3px 1px #444;
-	top:0;
-	margin:0;
+	top: 0;
+	margin: 0;
 	left: 35%
 }
 aside .no-slide,
@@ -1251,7 +1251,7 @@ nav ul#oe_pagemenu li span.open-nav {
 	display: block;
 	width: 210px;
 	height: 35px;
-	z-index:50;
+	z-index: 50;
 	position: absolute;
 	right: 5px;
 	top: 0;
@@ -1291,7 +1291,7 @@ nav ul#oe_pagemenu li ul,
 	display: block
 }
 #oe_container.sidebar-on nav ul#oe_pagemenu li {
-	zoom:1
+	zoom: 1
 }
 nav ul#oe_pagemenu li.current a,
 nav ul#oe_pagemenu li a:hover,
@@ -1419,10 +1419,10 @@ nav ul#oe_pagemenu li.current li a:active {
 }
 /*** page content ***/
 #oe_mainarea {
-	margin: 0 0 0 234px
+	margin: 0 0 0 249px
 }
 #oe_container.sidebar-off #oe_mainarea {
-	margin: 0 0 0 26px
+	margin: 0 0 0 40px
 }
 #oe_mainarea .content-inner {
 	max-height: -webkit-calc(var(--vh, 1vh) * 100 - 134px);
@@ -1431,7 +1431,8 @@ nav ul#oe_pagemenu li.current li a:active {
 	max-height: -moz-calc(100vh - 134px);
 	max-height: calc(var(--vh, 1vh) * 100 - 134px); /* fallback for older browsers without viewport support */
 	max-height: calc(100vh - 134px); /* head + foot fixed sizes total 134px */
-	padding: 0 12px 0 25px;
+	padding: 0 12px;
+	float: left;
 	overflow: auto;
 }
 #oe_mainarea header.pageheader {
@@ -1508,8 +1509,8 @@ footer#oe_footer a:hover, footer#oe_footer a:active {
 	line-height: 63px;
 	font-weight: normal;
 	width: auto;
-	margin:0;
-	padding:0;
+	margin: 0;
+	padding: 0;
 	float: left;
 	display: inline;
 	color: #147fdb
@@ -1523,7 +1524,7 @@ footer#oe_footer a:hover, footer#oe_footer a:active {
 .pageheader span.helptext {
 	display: inline;
 	line-height: 63px;
-	float:right;
+	float: right;
 	width: auto;
 	color: #232323;
 	font-size: 12px
@@ -1561,8 +1562,8 @@ span.helptext a {
 .pageheader {
 	font-size: 18px;
 	font-weight: normal;
-	margin:0;
-	padding:0;
+	margin: 0;
+	padding: 0;
 	color: #147fdb
 }
 div.pageoverflow {
@@ -1626,7 +1627,7 @@ div.alert-dialog .alert-remove {
 div.alert-dialog span.ui-icon {
 }
 div.dialog h3 {
-	margin:5px 0;
+	margin: 5px 0;
 	color: #147fdb;
 	font-size: 14px
 }
@@ -1649,10 +1650,10 @@ table th:last-child {
 	border-top-right-radius: 4px
 }
 table tr:last-child td:first-child {
-	border-bottom-left-radius:4px
+	border-bottom-left-radius: 4px
 }
 table tr:last-child td:last-child {
-	border-bottom-right-radius:4px
+	border-bottom-right-radius: 4px
 }
 table.pagetable {
 	border-collapse: inherit;
@@ -2053,7 +2054,7 @@ textarea.pageextrasmalltextarea {
 	list-style: none;
 	margin: 0 4px;
 	line-height: 1.4;
-	float:left
+	float: left
 }
 .dashboard-box ul.subitems li a {
 	font-size: 13px;
@@ -2111,16 +2112,16 @@ ul.sortable .placeholder {
 	color: #147fdb;
 	margin: 0;
 	padding: 0;
-/*	font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
+	font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 /*** theme dropzone ***/
 .drop {
 	position: absolute;
 	width: 262px;
-	padding-top:1px;
+	padding-top: 1px;
 	padding-bottom: 14px;
 	right: 0;
-	top:0
+	top: 0
 }
 .drop-inner + a.toggle-dropzone {
 	background: transparent url(themes/OneEleven/images/layout/toggle-dropzone.png) no-repeat -15px 0;
@@ -2131,7 +2132,7 @@ ul.sortable .placeholder {
 	height: 14px;
 	position: absolute;
 	bottom: 0;
-	right:0
+	right: 0
 }
 a.toggle-dropzone:active,
 a.toggle-dropzone:focus {
@@ -2153,7 +2154,7 @@ a.toggle-dropzone:focus {
 }
 .drop div.zone {
 	display: block;
-	float:left;
+	float: left;
 	width: 210px;
 	border: 1px dashed #ccc;
 	text-align: center
@@ -2172,7 +2173,7 @@ a.toggle-dropzone:focus {
 }
 .drop span.folder-selection {
 	display: inline-block;
-	float:left;
+	float: left;
 	margin-right: 10px;
 	width: 16px;
 	cursor: pointer;
@@ -2234,8 +2235,8 @@ a.toggle-dropzone:focus {
 	display: none
 }
 #login fieldset {
-	margin:0 0 10px 0;
-	padding:0;
+	margin: 0 0 10px 0;
+	padding: 0;
 	border: none
 }
 #login label {
@@ -2253,8 +2254,8 @@ a.toggle-dropzone:focus {
 #login input[type="password"]:focus {
 	margin: 5px 0;
 	border: 1px solid #147fdb;
-	box-shadow:0 0 5px #147fdb;
-	-webkit-box-shadow:0 0 5px #147fdb;
+	box-shadow: 0 0 5px #147fdb;
+	-webkit-box-shadow: 0 0 5px #147fdb;
 	transition: all 0.2s ease-in-out;
 	-webkit-transition: all 200ms ease-in-out;
 	-moz-transition: all 200ms ease-in-out;
@@ -2329,7 +2330,7 @@ a.toggle-dropzone:focus {
 }
 #login img.goback {
 	padding-top: 2px;
-	float:left
+	float: left
 }
 #login p.forgotpw {
 	display: inline-block;
