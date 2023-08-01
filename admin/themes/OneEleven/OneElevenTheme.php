@@ -28,6 +28,8 @@
 #
 #-------------------------------------------------------------------------
 
+use CMSMS\AdminAlerts\Alert;
+
 class OneElevenTheme extends CmsAdminThemeBase {
 	private $_errors = array();
 	private $_messages = array();
@@ -229,15 +231,18 @@ class OneElevenTheme extends CmsAdminThemeBase {
 
 
 	public function do_login($params) {
-		$config = cms_config::get_instance();
+//		$config = cms_config::get_instance();
 		$smarty = Smarty_CMS::get_instance();
 		$otd = $smarty->template_dir;
 		$smarty->template_dir = __DIR__ . DIRECTORY_SEPARATOR . 'templates';
 		global $error,$warningLogin,$acceptLogin,$changepwhash;
 		$path = __DIR__ . DIRECTORY_SEPARATOR . 'login.php';
 		include_once $path;
-
-		$smarty->assign('lang', get_site_preference('frontendlang'));
+//		$tmp = get_site_preference('frontendlang');
+		$tmp = CmsNlsOperations::get_frontend_language();
+		if (!$tmp) { $tmp = 'en'; } // default global english
+		$lang = CmsNlsOperations::get_lang_attribute($tmp);
+		$smarty->assign('lang', $lang);
 		$smarty->display('login.tpl');
 		$smarty->template_dir = $otd;
 	}
@@ -314,8 +319,18 @@ class OneElevenTheme extends CmsAdminThemeBase {
 		$smarty->assign('secureparam', CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY]);
 		$userops = UserOperations::get_instance();
 		$smarty->assign('user', $userops->LoadUserByID($userid));
-		// get user selected language
-		$smarty->assign('lang',cms_userprefs::get_for_user($userid, 'default_cms_language'));
+		// prefer user selected language
+		$tmp = cms_userprefs::get_for_user($userid, 'default_cms_language');
+		if (!$tmp) {
+			$tmp = CmsNlsOperations::get_current_language();
+		}
+		if ($tmp) {
+			$lang = CmsNlsOperations::get_lang_attribute($tmp);
+		}
+		else {
+			$lang = '';
+		}
+		$smarty->assign('lang', $lang);
 		// get language direction
 		$lang = CmsNlsOperations::get_current_language();
 		$info = CmsNlsOperations::get_language_info($lang);
@@ -335,7 +350,7 @@ class OneElevenTheme extends CmsAdminThemeBase {
 	}
 
 	public function get_my_alerts() {
-		return \CMSMS\AdminAlerts\Alert::load_my_alerts();
+		return Alert::load_my_alerts();
 	}
 }
 ?>

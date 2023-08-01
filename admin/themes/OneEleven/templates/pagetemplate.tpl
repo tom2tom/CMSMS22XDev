@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html{if $lang} lang="{$lang|truncate:2:''}"{/if} dir="{$lang_dir}">
+<html{if $lang} lang="{$lang|truncate:5:''}"{/if} dir="{$lang_dir|default:'ltr'}">
 	<head>
 	{$thetitle=$pagetitle}
 	{if $thetitle && $subtitle}{$thetitle="{$thetitle} - {$subtitle}"}{/if}
@@ -31,7 +31,7 @@
 		<!-- THIS IS WHERE EXTRA HEADER STUFF GOES -->
 		{$headertext|default:''}
 	</head>
-	<body{if $lang} lang="{$lang|truncate:2:''}"{/if} id="{$pagetitle|adjust:'md5'}"{if $pagealias} class="oe_{$pagealias}"{/if}>
+	<body{if $lang} lang="{$lang|truncate:5:''}"{/if} id="{$pagetitle|adjust:'md5'}"{if $pagealias} class="oe_{$pagealias}"{/if}>
 		<!-- start container -->
 		<div id="oe_container" class="sidebar-on">
 			<!-- start header -->
@@ -45,7 +45,7 @@
 					<!-- title -->
 					<span class="admin-title"> {lang('adminpaneltitle')} - {sitename}</span>
 				</div>
-				<div class='clear'></div>
+				<div class="clear"></div>
 				<!-- end header-top //-->
 				<!-- start header-bottom -->
 				<div class="header-bottom cf">
@@ -76,6 +76,7 @@
 					{include file='navigation.tpl' nav=$theme->get_navigation_tree() depth=0 nocache}
 				</div>
 				<!-- end sidebar //-->
+				<div class="clear"></div>
 				<!-- start main -->
 				<div id="oe_mainarea" class="cf">
 					{strip}

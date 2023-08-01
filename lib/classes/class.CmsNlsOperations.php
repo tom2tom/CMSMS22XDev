@@ -221,7 +221,7 @@ final class CmsNlsOperations
     *
     * @return string language name.
     */
-    protected static function get_frontend_language()
+    public static function get_frontend_language()
     {
         $x = trim(get_site_preference('frontendlang'));
         if( !$x ) $x = 'en_US';
@@ -319,6 +319,30 @@ final class CmsNlsOperations
     }
 
     /**
+     * Return a string derived from locale identifier $lang and suitable
+     * for use as a html-element lang attribute.
+     * This is not NLS-specific ATM, but might be amended to interrogate
+     * identifier aliases
+     * @since 2.2.19
+     *
+     * @param string $lang any length, but normally like 'de[_DE]'
+     * @return string 2 bytes (like 'en') or 5 bytes (like 'en-GB')
+     */
+    public static function get_lang_attribute($lang)
+    {
+        $a = substr($lang, 0, 2);
+        if (strlen($lang) < 5) {
+            return $a;
+        }
+        else {
+            if (!($lang[2] == '_' || $lang[2] == '-')) { return $a; }
+            $b = substr($lang, 3, 2);
+            if (strcasecmp($a, $b) == 0) { return $a; }
+            return "$a-$b";
+        }
+    }
+
+    /**
      * Return the currently active encoding.
      * If an encoding has not been explicitly set, the default_encoding value from the config file will be used
      * If that value is empty, the encoding associated with the current language will be used.
@@ -402,7 +426,6 @@ final class CmsNlsOperations
         if( is_object(self::$_fe_language_detector) ) die('language detector already set');
         self::$_fe_language_detector = $obj;
     }
-
 
     /**
      * Find a match for a specific language

@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 {capture assign='sitename'}{sitename}{/capture}
-<html>
+<html{if $lang} lang="{$lang|truncate:5:''}"{/if} dir="{$lang_dir|default:'ltr'}">
 	<head>
 		<meta charset="{$encoding}" />
 		<title>{lang('logintitle',$sitename)}</title>
