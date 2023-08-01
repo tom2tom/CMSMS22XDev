@@ -18,11 +18,11 @@
   {if $has_custom}
     <div class="warning">
       <h3>{$ModuleManager->Lang('warning')}</h3>
-      <p>{$mod->Lang('warn_modulecustom')}</p>
+      <p>{$ModuleManager->Lang('warn_modulecustom')}</p>
       <ul>
         {foreach $dependencies as $name => $rec}
           {if $rec.has_custom}<li>{$name}</li>{/if}
-	{/foreach}
+        {/foreach}
       </ul>
     </div>
     <div class="clearb"></div>
