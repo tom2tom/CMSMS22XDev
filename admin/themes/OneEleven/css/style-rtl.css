@@ -433,7 +433,7 @@ template {
 *+ html .cf {
 	min-height: 1%
 }
-.cf:after {
+.cf::after {
 	clear: both;
 	content: "";
 	display: block;
@@ -442,7 +442,8 @@ template {
 }
 .clear {
 	clear: both;
-	height: 0
+	height: 0;
+	visibility: hidden
 }
 .clearb {
 	clear: both
@@ -473,10 +474,6 @@ body {
 	font-size: 14px;
 	background: #f6f6f6;
 	overflow: hidden
-}
-body * {
-	box-sizing: content-box; /* back-compatible reversion of normaliser setting */
-/*	overflow: hidden 111 breaker */
 }
 ins {
 	background-color: #ddd;
@@ -964,7 +961,7 @@ header .header-top {
 	background: #eee url(themes/OneEleven/images/layout/sprite_repeatx.png) 0 -10px repeat-x
 }
 header .cms-logo {
-	width: 240px;
+	width: 239px;
 	height: 70px;
 	padding-right: 10px;
 	background: transparent url(themes/OneEleven/images/layout/cms-logo-bg.gif) no-repeat top left;
@@ -1433,8 +1430,7 @@ nav ul#oe_pagemenu li.current li a:active {
 	max-height: calc(var(--vh, 1vh) * 100 - 134px); /* fallback for older browsers without viewport support */
 	max-height: calc(100vh - 134px); /* head + foot fixed sizes total 134px */
 	padding: 0 12px;
-	float: right;
-	overflow: auto;
+	overflow: auto
 }
 #oe_mainarea header.pageheader {
 	max-height: 63px;
