@@ -1105,7 +1105,7 @@ final class ModuleOperations
      * @param string $module_name The module name
      * @param string $version an optional version string.
      * @param bool $force an optional flag to indicate wether the module should be force loaded if necesary.
-     * @return CMSModule
+     * @return mixed CMSModule | null
      */
     public function get_module_instance($module_name,$version = '',$force = FALSE)
     {
@@ -1128,7 +1128,7 @@ final class ModuleOperations
 
         if( is_object($obj) && !empty($version) ) {
             $res = version_compare($obj->GetVersion(),$version);
-            if( $res < 0 OR $res === FALSE ) $obj = null;
+            if( $res < 0 || $res === FALSE ) $obj = null;
         }
 
         return $obj;
