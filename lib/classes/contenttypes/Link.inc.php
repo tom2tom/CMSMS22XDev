@@ -59,17 +59,15 @@ class Link extends ContentBase
     public function ValidateData()
     {
 		$errors = parent::ValidateData();
-		if( $errors === FALSE )	$errors = array();
 
 		if ($this->GetPropertyValue('url') == '') {
 			$errors[]= lang('nofieldgiven',array(lang('url')));
-			$result = false;
 		}
 
 		return $errors;
     }
 
-    function TabNames()
+    public function TabNames()
     {
 		$res = array(lang('main'));
 		if( check_permission(get_userid(),'Manage All Content') ) {

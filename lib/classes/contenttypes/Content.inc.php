@@ -564,7 +564,7 @@ class Content extends ContentBase
 			return $input;
 		} else {
 			$dropdown = create_file_dropdown($inputname,$dir,$value,'jpg,jpeg,png,gif','',true,'',$prefix,1,$sort);
-			if( $dropdown === false ) $dropdown = lang('error_retrieving_file_list');
+			if( !$dropdown ) $dropdown = lang('error_retrieving_file_list');
 		}
 		return $dropdown;
 	}

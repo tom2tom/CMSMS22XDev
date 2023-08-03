@@ -360,14 +360,13 @@ function pagination($page, $totalrows, $limit)
  * @param string A prefix to use when filtering files
  * @param boolean A flag indicating wether the files matching the extension and the prefix should be included or excluded from the result set
  * @param boolean A flag indicating wether the output should be sorted.
- * @return string
+ * @return string maybe empty
  */
 function create_file_dropdown($name,$dir,$value,$allowed_extensions,$optprefix='',$allownone=false,$extratext='',
 			      $fileprefix='',$excludefiles=1,$sortresults = 0)
 {
-  $files = array();
   $files = get_matching_files($dir,$allowed_extensions,true,true,$fileprefix,$excludefiles);
-  if( $files === false ) return false;
+  if( !$files ) return '';
   $out = "<select name=\"{$name}\" id=\"{$name}\" {$extratext}>\n";
   if( $allownone ) {
     $txt = '';

@@ -208,7 +208,7 @@ final class cms_content_cache
 	  else if( is_string($identifier) ) {
 		  if( !self::$_alias_map ) return FALSE;
 		  if( !isset(self::$_alias_map[$identifier]) ) return FALSE;
-		  return self::$_alias_map[$identifier];
+		  return (bool)self::$_alias_map[$identifier];
 	  }
 	  return FALSE;
   }

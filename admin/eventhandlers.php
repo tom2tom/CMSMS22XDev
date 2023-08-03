@@ -63,11 +63,11 @@ switch( $action ) {
 			$text = Events::GetEventHelp($event);
 		}
 		else {
-		    $moduleobj = cms_utils::get_module($module);
-		    if( is_object($moduleobj) ) {
+			$moduleobj = cms_utils::get_module($module);
+			if( is_object($moduleobj) ) {
 				$desctext = $moduleobj->GetEventDescription($event);
 				$text = $moduleobj->GetEventHelp($event);
-		    }
+			}
 		}
 
 		echo "<h3>$event</h3>";
@@ -81,9 +81,9 @@ switch( $action ) {
 
 		echo "<h4>".lang('eventhandler')."</h4>";
 		$hlist = Events::ListEventHandlers( $module, $event );
-		if ($hlist === false) {
+		if (!$hlist) {
 			echo '<p>'.lang('none').'</p>';
-        }
+		}
 		else {
 			echo '<ul>';
 			foreach ($hlist as $te) {
@@ -97,7 +97,7 @@ switch( $action ) {
 					echo '</li>';
 				}
 			echo '</ul>';
-        }
+		}
 		break;
 	}
 
