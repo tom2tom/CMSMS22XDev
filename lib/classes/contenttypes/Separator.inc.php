@@ -30,7 +30,7 @@
 class Separator extends ContentBase
 {
 
-	function SetProperties()
+	public function SetProperties()
 	{
 		parent::SetProperties();
 		$this->RemoveProperty('secure',0);
@@ -46,22 +46,22 @@ class Separator extends ContentBase
 		$this->RemoveProperty('tabindex','');
 	}
 
-	function GetURL($rewrite = true) { return '#';  }
-	function IsViewable() { return FALSE; }
-	function FriendlyName() { return lang('contenttype_separator'); }
-	function HasUsableLink() { return false; }
-	function WantsChildren() { return false; }
-	function RequiresAlias() { return FALSE; }
-	public function HasSearchableContent() { return FALSE; }
+	public function GetURL($rewrite = true) { return '#';  }
+	public function IsViewable() { return false; }
+	public function FriendlyName() { return lang('contenttype_separator'); }
+	public function HasUsableLink() { return false; }
+	public function WantsChildren() { return false; }
+	public function RequiresAlias() { return false; }
+	public function HasSearchableContent() { return false; }
 
-	function TabNames()
+	public function TabNames()
 	{
 		$res = array(lang('main'));
 		if( check_permission(get_userid(),'Manage All Content') ) $res[] = lang('options');
 		return $res;
 	}
 
-	function EditAsArray($adding = false, $tab = 0, $showadmin = false)
+	public function EditAsArray($adding = false, $tab = 0, $showadmin = false)
 	{
 		switch($tab) {
 		case '0':
@@ -73,13 +73,12 @@ class Separator extends ContentBase
 		}
 	}
 
-	function ValidateData()
+	public function ValidateData()
 	{
 		$this->mName = CMS_CONTENT_HIDDEN_NAME;
 		return parent::ValidateData();
 	}
 
 }
-
 
 ?>

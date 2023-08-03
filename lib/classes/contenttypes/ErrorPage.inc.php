@@ -26,8 +26,11 @@
  */
 class ErrorPage extends Content
 {
-    public $doAliasCheck;
     public $error_types;
+    public $doAliasCheck; // TODO relevance ? custom property?
+    public $doAutoAliasIfEnabled; //ditto
+    public $mType; //ditto
+    public $mPreview; //ditto
 
     public function __construct()
     {
@@ -43,17 +46,17 @@ class ErrorPage extends Content
         $this->mType = strtolower(get_class($this)) ;
     }
 
-    function HandlesAlias()
+    public function HandlesAlias()
     {
         return true;
     }
 
-    function FriendlyName()
+    public function FriendlyName()
     {
         return lang('contenttype_errorpage');
     }
 
-    function SetProperties()
+    public function SetProperties()
     {
         parent::SetProperties();
         $this->RemoveProperty('secure',0);
@@ -76,36 +79,36 @@ class ErrorPage extends Content
         $this->RemoveProperty('alias','');
         $this->AddBaseProperty('alias',10,1);
 
-        #Turn on preview
+        //Turn on preview TODO relevance? property ?
         $this->mPreview = true;
     }
 
-    function IsCopyable()
-    {
-        return FALSE;
-    }
-
-    function IsDefaultPossible()
-    {
-        return FALSE;
-    }
-
-    function HasUsableLink()
+    public function IsCopyable()
     {
         return false;
     }
 
-    function WantsChildren()
+    public function IsDefaultPossible()
     {
         return false;
     }
 
-    function IsSystemPage()
+    public function HasUsableLink()
+    {
+        return false;
+    }
+
+    public function WantsChildren()
+    {
+        return false;
+    }
+
+    public function IsSystemPage()
     {
         return true;
     }
 
-    function FillParams($params,$editing = false)
+    public function FillParams($params,$editing = false)
     {
         parent::FillParams($params,$editing);
         $this->mParentId = -1;
@@ -114,7 +117,7 @@ class ErrorPage extends Content
         $this->mActive = true;
     }
 
-    function display_single_element($one,$adding)
+    public function display_single_element($one,$adding)
     {
         switch($one) {
         case 'alias':
@@ -137,16 +140,12 @@ class ErrorPage extends Content
         }
     }
 
-    function ValidateData()
+    public function ValidateData()
     {
         // $this->SetPropertyValue('searchable',0);
         // force not searchable.
 
         $errors = parent::ValidateData();
-        if ($errors == FALSE)
-        {
-            $errors = array();
-        }
 
         //Do our own alias check
         if ($this->mAlias == '')
@@ -162,7 +161,7 @@ class ErrorPage extends Content
             $gCms = cmsms();
             $contentops = $gCms->GetContentOperations();
             $error = $contentops->CheckAliasError($this->mAlias, $this->mId);
-            if ($error !== FALSE)
+            if ($error)
             {
                 if ($error == lang('aliasalreadyused'))
                 {
@@ -175,7 +174,7 @@ class ErrorPage extends Content
             }
         }
 
-        return (count($errors) > 0 ? $errors : FALSE);
+        return $errors;
     }
 }
 

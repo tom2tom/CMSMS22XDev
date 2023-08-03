@@ -42,7 +42,7 @@ class PageLink extends ContentBase
 //		return false;
 //	}
 
-	function SetProperties()
+	public function SetProperties()
 	{
 		parent::SetProperties();
 		$this->RemoveProperty('cachable',1);
@@ -55,7 +55,7 @@ class PageLink extends ContentBase
 		$this->mCachable = false;
 	}
 
-	function FillParams($params,$editing = false)
+	public function FillParams($params,$editing = false)
 	{
 		parent::FillParams($params,$editing);
 
@@ -67,15 +67,13 @@ class PageLink extends ContentBase
 		}
 	}
 
-	function ValidateData()
+	public function ValidateData()
 	{
 		$errors = parent::ValidateData();
-		if( $errors === FALSE ) $errors = array();
 
 		$page = $this->GetPropertyValue('page');
 		if ($page == '-1') {
 			$errors[]= lang('nofieldgiven',array(lang('page')));
-			$result = false;
 		}
 
 		// get the content type of page.
@@ -84,28 +82,25 @@ class PageLink extends ContentBase
 			$destobj = $contentops->LoadContentFromID($page);
 			if( !is_object($destobj) ) {
 				$errors[] = lang('destinationnotfound');
-				$result = false;
 			}
 			else if( $destobj->Type() == 'pagelink' ) {
 				$errors[] = lang('pagelink_circular');
-				$result = false;
 			}
 			else if( $destobj->Alias() == $this->mAlias ) {
 				$errors[] = lang('pagelink_circular');
-				$result = false;
 			}
 		}
-		return (count($errors) > 0?$errors:FALSE);
+		return $errors;
 	}
 
-	function TabNames()
+	public function TabNames()
 	{
 		$res = array(lang('main'));
 		if( check_permission(get_userid(),'Manage All Content') ) $res[] = lang('options');
 		return $res;
 	}
 
-	function display_single_element($one,$adding)
+	public function display_single_element($one,$adding)
 	{
 		switch($one) {
 		case 'page':
@@ -124,7 +119,7 @@ class PageLink extends ContentBase
 		}
 	}
 
-	function EditAsArray($adding = false, $tab = 0, $showadmin = false)
+	public function EditAsArray($adding = false, $tab = 0, $showadmin = false)
 	{
 		switch($tab) {
 		case '0':
@@ -136,7 +131,7 @@ class PageLink extends ContentBase
 		}
 	}
 
-	function GetURL($rewrite = true)
+	public function GetURL($rewrite = true)
 	{
 		$page = $this->GetPropertyValue('page');
 		$params = $this->GetPropertyValue('params');

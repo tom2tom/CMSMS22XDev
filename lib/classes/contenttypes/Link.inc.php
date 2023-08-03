@@ -34,7 +34,7 @@ class Link extends ContentBase
 	public function HasSearchableContent() { return FALSE; }
     public function FriendlyName() { return lang('contenttype_redirlink'); }
 
-    function SetProperties()
+    public function SetProperties()
     {
 		parent::SetProperties();
 		$this->RemoveProperty('secure',0);
@@ -42,7 +42,7 @@ class Link extends ContentBase
 		$this->AddProperty('url',3,self::TAB_MAIN,TRUE,TRUE);
     }
 
-    function FillParams($params,$editing = false)
+    public function FillParams($params,$editing = false)
     {
 		parent::FillParams($params,$editing);
 
@@ -56,7 +56,7 @@ class Link extends ContentBase
 		}
     }
 
-    function ValidateData()
+    public function ValidateData()
     {
 		$errors = parent::ValidateData();
 		if( $errors === FALSE )	$errors = array();
@@ -66,7 +66,7 @@ class Link extends ContentBase
 			$result = false;
 		}
 
-		return (count($errors) > 0?$errors:FALSE);
+		return $errors;
     }
 
     function TabNames()
@@ -78,7 +78,7 @@ class Link extends ContentBase
 		return $res;
     }
 
-    function display_single_element($one,$adding)
+    public function display_single_element($one,$adding)
     {
 		switch($one) {
 		case 'url':
@@ -90,7 +90,7 @@ class Link extends ContentBase
 		}
     }
 
-    function EditAsArray($adding = false, $tab = 0, $showadmin = false)
+    public function EditAsArray($adding = false, $tab = 0, $showadmin = false)
     {
 		switch($tab) {
 		case '0':
@@ -102,7 +102,7 @@ class Link extends ContentBase
 		}
     }
 
-    function GetURL($rewrite = true)
+    public function GetURL($rewrite = true)
     {
 		return $this->GetPropertyValue('url');
 		//return cms_htmlentities($this->GetPropertyValue('url'));

@@ -40,7 +40,7 @@ class Content extends ContentBase
 	 *
 	 * @return bool TRUE
 	 */
-	function IsCopyable()
+	public function IsCopyable()
 	{
 		return TRUE;
 	}
@@ -80,7 +80,7 @@ class Content extends ContentBase
 	 *
 	 * @return string
 	 */
-	function FriendlyName()
+	public function FriendlyName()
 	{
 	  return lang('contenttype_content');
 	}
@@ -91,7 +91,7 @@ class Content extends ContentBase
 	 *
 	 * @return bool
 	 */
-	function IsDefaultPossible()
+	public function IsDefaultPossible()
 	{
 		return TRUE;
 	}
@@ -101,7 +101,7 @@ class Content extends ContentBase
 	 *
 	 * This property type adds these properties: design_id, template, searchable, disable_wysiwyg, pagemetadata, pagedata
 	 */
-	function SetProperties()
+	public function SetProperties()
 	{
 	  parent::SetProperties();
 	  $this->AddProperty('design_id',0,self::TAB_OPTIONS);
@@ -139,7 +139,7 @@ class Content extends ContentBase
 	 * @param array $params Hash of parameters to load into content attributes
 	 * @param bool  $editing Whether we in an add or edit operation.
 	 */
-	function FillParams($params,$editing = false)
+	public function FillParams($params,$editing = false)
 	{
 		if (isset($params)) {
 			$parameters = array('pagedata','searchable','disable_wysiwyg','design_id','wantschildren');
@@ -198,7 +198,7 @@ class Content extends ContentBase
 	 * @param string $param which attribute to return (content_en is assumed)
 	 * @return string the specified content, possibly empty
 	 */
-	function Show($param = 'content_en')
+	public function Show($param = 'content_en')
 	{
 		$param = trim((string)$param);
 		if( !$param ) { $param = 'content_en'; }
@@ -253,10 +253,9 @@ class Content extends ContentBase
 	 *
 	 * @return array of validation error strings, or empty to indicate no errors
 	 */
-	function ValidateData()
+	public function ValidateData()
 	{
 		$errors = parent::ValidateData();
-		if( $errors === FALSE ) $errors = array();
 
 		if ($this->mTemplateId <= 0 ) {
 			$errors[] = lang('nofieldgiven',array(lang('template')));
