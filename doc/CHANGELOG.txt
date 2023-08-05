@@ -55,16 +55,14 @@ Phar Installer 1.4
  - Always-optional post-installation email includes more advice, and no password
  - 2.0 upgrade relative to 1.12.2
 
+
 Version 2.2.18 - Apex
 -------------------------------
 Core - General
- - strftime()-replacement works without Intl extension if necessary.
-
+ - Fallback function CMSMS\strftime. PHP Intl extension still recommended. The fallback solves issues on hosts that don't install it by default and don't allow users to install it.
 
 Version 2.2.17 - Iqaluit
 -------------------------------
-Everywhere Compatibility fixes for PHP 7, 8.0 and 8.1
-
 Core - General
  - BR #12529 - Cacheable Pages have Bad Header Last-Modified
  - BR #12543 - Lib file corrections
@@ -80,21 +78,26 @@ Core - General
 
 Content Manager 1.1.10
  - Differentiate new page from cloned page.
+ - Compatibility fixes for PHP 7, 8.0 and 8.1.
 
 Design Manager 1.1.10
  - BR #12545 - Module: DesignManager typo info on top file.
+ - fixes typo BR #12545
+ - Compatibility fixes for PHP 7, 8.0 and 8.1.
 
 FilePicker 1.0.6
  - BR #12539 - Module FilePicker 1.0.5 files corrections.
+ - Compatibility fixes for PHP 7, 8.0 and 8.1.
 
 Module Manager 2.1.9
- - BR #12541 - Module ModuleManager 2.1.8 : corrections 
+ - BR #12541 - Module ModuleManager 2.1.8 : corrections + compatible php 7.1.0 to 8.1.4.
 
 News 2.51.12
  - BR #12543 - Lib file corrections.
+ - Compatibility fixes for PHP 7, 8.0 and 8.1.
 
 FileManager 1.6.13
- - BR TBA
+- Compatibility fixes for PHP 7, 8.0 and 8.1.
 
 
 Version 2.2.16 - Truro
@@ -709,7 +712,7 @@ Core - General
   - Refactoring of the Admin login code to be cleaner, more efficient, more secure.
   - No longer allow any modules to auto-upgrade on frontend requests.
   - Fix problem with cms_filecache_driver::clear().
-  - Introduces the new Hook mechanism.
+  - Introduces the new Hook mechanism. All core SendEvent calls are now implemented as hooks.
   - changegroupperms can now localize permission names,  and add an info string for each permission. (the listpermissions hook).
   - Adds add_headtext(), get_headtext(), add_footertext(), get_footertext() methods to the Admin theme class.
   - minor refactoring of admin/index.php, admin/header.php, admin/footer.php and admin/moduleinterface.php.
