@@ -15,6 +15,7 @@ const SVNROOT = 'http://svn.cmsmadesimple.org/svn/cmsmadesimple';
 
 $_cli = php_sapi_name() == 'cli';
 $_scriptname = basename(__FILE__);
+$resep = strpos(__FILE__, '\\') !== false;
 // default config params
 $do_md5 = false;
 $mode = 'f';
@@ -456,6 +457,7 @@ if ($mode == 'd' || $mode == 'f') {
         if (is_dir($file)) {
             continue;
         }
+        if ($resep) { $fn = strtr($fn, '\\', '/'); }
         if ($mode == 'd') {
             if ($do_md5) {
                 $md5 = md5_file($file);
@@ -478,6 +480,7 @@ if ($mode == 'c' || $mode == 'f') {
         if (is_dir($file)) {
             continue;
         }
+        if ($resep) { $fn = strtr($fn, '\\', '/'); }
         if ($mode == 'c') {
             $str = "CHANGED :: $fn";
         } else {
@@ -495,6 +498,7 @@ if ($mode == 'n' || $mode == 'f') {
         if (is_dir($file)) {
             continue;
         }
+        if ($resep) { $fn = strtr($fn, '\\', '/'); }
         if ($mode == 'n') {
             $str = "ADDED :: $fn";
         } else {
