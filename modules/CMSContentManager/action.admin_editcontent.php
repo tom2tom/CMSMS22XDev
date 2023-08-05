@@ -187,7 +187,7 @@ try {
             // error, but no ajax... fall through
         }
         else if( isset($params['submit']) || isset($params['apply']) ) {
-            $content_obj->SetLastModifiedBy(get_userid());
+            $content_obj->SetLastModifiedBy($user_id);
             $content_obj->Save();
             unset($_SESSION['__cms_copy_obj__']);
             audit($content_obj->Id(),'Content Item: '.$content_obj->Name(),' Edited');
@@ -297,7 +297,7 @@ try {
                         array_unshift($contentarray, $tmp);
                     }
                     else {
-                        $contentarray = $tmp;
+                        $contentarray = [$tmp];
                     }
                 }
             }
@@ -314,7 +314,7 @@ if( $error ) echo $this->ShowErrors($error);
 
 // give stuff to smarty.
 if( $content_obj->HasPreview() ) {
-    $config = cmsms()->GetConfig();
+//  $config = cmsms()->GetConfig(); already set
     $smarty->assign('has_preview',1);
     $smarty->assign('preview_url',"{$config['root_url']}/index.php?{$config['query_var']}=".__CMS_PREVIEW_PAGE__);
 }
@@ -340,7 +340,7 @@ $smarty->assign('content_obj',$content_obj);
 $smarty->assign('tab_names',$tab_names);
 $smarty->assign('tab_contents_array',$tab_contents_array);
 $smarty->assign('tab_message_array',$tab_message_array);
-$smarty->assign('userid',get_userid());
+$smarty->assign('userid',$user_id);
 /*$factory = new ContentAssistantFactory($content_obj);
 $assistant = $factory->getEditContentAssistant();
 if( is_object($assistant) ) $smarty->assign('extra_content',$assistant->getExtraCode());*/
