@@ -327,11 +327,14 @@ class DataDictionary extends \CMSMS\Database\DataDictionary
         else if( is_string($tableoptions) ) {
             $tableoptions = [ $dbtype => $tableoptions ];
         }
+        else if( is_array($tableoptions) && !isset($tableoptions[$dbtype]) && isset($tableoptions['mysqli']) ) {
+            $tableoptions[$dbtype] = $tableoptions['mysql'];
+        }
         else if( is_array($tableoptions) && !isset($tableoptions[$dbtype]) && isset($tableoptions['mysql']) ) {
             $tableoptions[$dbtype] = $tableoptions['mysql'];
         }
         else if( is_array($tableoptions) && !isset($tableoptions[$dbtype]) && isset($tableoptions['MYSQL']) ) {
-            $tableoptions[$dbtype] = $tableoptions['MYSQL'];
+            $tableoptions[$dbtype] = $tableoptions['mysql'];
         }
 
         foreach( $tableoptions as $key => &$val ) {
