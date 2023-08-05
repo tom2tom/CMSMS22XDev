@@ -2023,14 +2023,15 @@ abstract class ContentBase
 	 * @abstract
 	 * @since 2.0
 	 * @param string $key the tab key (as returned with GetTabNames)
-	 * @return string html text to display at the top of the tab.
+	 * @return string html text to display at the top of the tab, or empty.
 	 */
 	public function GetTabMessage($key)
 	{
 		switch( $key ) {
 		case self::TAB_PERMS:
 			return '<div class="information">'.lang('msg_permstab').'</div>';
-			break;
+		default:
+			return '';
 		}
 	}
 
