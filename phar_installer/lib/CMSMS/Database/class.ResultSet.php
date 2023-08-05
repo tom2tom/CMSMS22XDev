@@ -1,7 +1,7 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Class CMSMS\Database\ConnectionSpec
+# Class: CMSMS\Database\ConnectionSpec
 # (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 # A class to define how to connect to a database.
 #

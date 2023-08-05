@@ -737,7 +737,7 @@ abstract class DataDictionary
 			// VALIDATE FIELD INFO
 			if (!strlen($fname)) {
 				die('failed');
-				return false;
+				return false; // useless here
 			}
 
 			$fid = strtoupper(preg_replace('/^`(.+)`$/', '$1', $fname));
@@ -981,7 +981,7 @@ abstract class DataDictionary
 				if ( isset($cols[$k]) && is_object($cols[$k]) ) {
 					$c = $cols[$k];
 					$ml = $c->max_length;
-					$mt = $this->MetaType($c->type,$ml); // TODO reference relevance
+					$mt = $this->MetaType($c->type,$ml);
 					if ($ml == -1) $ml = '';
 					if ($mt == 'X') $ml = $v['SIZE'];
 					if (($mt != $v['TYPE']) || $ml != $v['SIZE']) $holdflds[$k] = $v;

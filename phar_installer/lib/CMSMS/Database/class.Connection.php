@@ -278,7 +278,7 @@ namespace CMSMS\Database {
          * @param int $nrows  The number of rows to return
          * @param int $offset The starting offset of rows to return
          * @param array Any additional parameters required by placeholders in the $sql statement.
-         * @return \CMSMS\Database\ResultSet
+         * @return mixed \CMSMS\Database\ResultSet | null
          */
         public function SelectLimit( $sql, $nrows = -1, $offset = -1, $inputarr = [] )
         {
@@ -331,7 +331,7 @@ namespace CMSMS\Database {
          *
          * @param string $sql The SQL statement to execute.
          * @param array $inputarr Any parameters marked as placeholders in the SQL statement.
-         * @return \CMSMS\Database\ResultSet
+         * @return mixed \CMSMS\Database\ResultSet | null
          */
         public function Execute($sql, $inputarr = [])
         {

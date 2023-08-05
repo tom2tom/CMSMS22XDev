@@ -1,7 +1,7 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Class CMSMS\Database\Statement
+# Class: CMSMS\Database\Statement
 # (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 # A class to represent a prepared SQL statement
 #

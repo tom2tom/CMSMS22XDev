@@ -1,7 +1,7 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Class CMSMS\Database\compatibility
+# Class: CMSMS\Database\compatibility
 # (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 # A collection of compatibility tools for the database connectivity layer.
 #
