@@ -1138,8 +1138,18 @@ class compare_dirs
                 continue; // deleted/moved in b.
             }
             $rec_b = $this->_list_b[$path];
-            if ($rec_a['size'] != $rec_b['size'] || $rec_a['mtime'] != $rec_b['mtime'] ||
-            (isset($rec_a['md5']) && isset($rec_b['md5']) && $rec_a['md5'] != $rec_b['md5'])) {
+            $changed = $rec_a['size'] != $rec_b['size'];
+            if (!$changed) {
+                if (isset($rec_a['md5']) && isset($rec_b['md5'])) {
+                    if ($rec_a['md5'] != $rec_b['md5']) {
+                        $changed = true;
+                    }
+                } elseif (isset($rec_a['md5']) || isset($rec_b['md5'])) {
+                    $changed = true;
+                }
+                //else TODO some other default comparison
+            }
+            if ($changed) {
                 $out[] = $path;
             }
         }
