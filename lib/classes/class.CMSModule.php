@@ -971,8 +971,8 @@ abstract class CMSModule
      * in the module directory, if one can be found.  This provides a way of splitting
      * secondary functions into other files.
      *
-     * @abstract
-     * @return string|false A value of FALSE indicates no error.  Any other value will be used as an error message.
+     * @return mixed string|int|bool A result of FALSE indicates that the module
+     *  installed correctly. Any other value indicates an error (>1) or error message.
      */
     public function Install()
     {
@@ -1010,11 +1010,10 @@ abstract class CMSModule
      * (FALSE) will allow the uninstall procedure to proceed.
      *
      * The default behaviour of this function is to include a file called method.uninstall.php
-     * in your module directory to do uninstall operations.
+     * in the module directory to do uninstall operations.
      *
-     * @abstract
-     * @return string|false A result of FALSE indicates that the module uninstalled correctly, any other value indicates
-     *                      an error message.
+     * @return mixed string|int|bool A result of FALSE indicates that the module
+     *  uninstalled correctly. Any other value indicates an error (>1) or error message.
      * @throws \Exception
      */
     public function Uninstall()
@@ -1083,11 +1082,11 @@ abstract class CMSModule
      * a requirement, it makes life easy for your users.
      *
      * The default behavior of this method is to call a function called method.upgrade.php
-     * in your module directory, if it exists.
+     * in the module directory, if it exists.
      *
      * @param string $oldversion The version we are upgrading from
      * @param string $newversion The version we are upgrading to
-     * @return bool
+     * @return mixed string FAIL | int(>1) FAIL | bool(false) SUCCESS
      */
     public function Upgrade($oldversion, $newversion)
     {
