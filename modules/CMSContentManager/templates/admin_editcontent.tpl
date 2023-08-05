@@ -261,7 +261,7 @@ $(function() {
       <iframe name="_previewframe_" class="preview" id="previewframe"></iframe>
       <div id="previewerror" class="red" style="display:none;color:#000;">
         <fieldset>
-          <legend>LEGEND</legend>
+          <legend>TODO</legend>
           <ul id="preview_errors"></ul>
         </fieldset>
       </div>
