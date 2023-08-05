@@ -457,8 +457,8 @@ final class ModuleOperations
         $db = $gCms->GetDb();
 
         $result = $module_obj->Install();
-        if( !isset($result) || $result === FALSE) {
-            // install returned nothing, or FALSE, a successful installation
+        if( !$result ) {
+            // install returned false, success
             $query = 'DELETE FROM '.CMS_DB_PREFIX.'modules WHERE module_name = ?';
             $dbr = $db->Execute($query,array($module_obj->GetName()));
             $query = 'DELETE FROM '.CMS_DB_PREFIX.'module_deps WHERE child_module = ?';
@@ -816,7 +816,8 @@ final class ModuleOperations
 
         $db = $gCms->GetDb();
         $result = $module_obj->Upgrade($dbversion,$to_version);
-        if( !isset($result) || $result === FALSE ) {
+        if( !$result ) {
+            // upgrade returned false, success
             $lazyload_fe    = (method_exists($module_obj,'LazyLoadFrontend') && $module_obj->LazyLoadFrontend())?1:0;
             $lazyload_admin = (method_exists($module_obj,'LazyLoadAdmin') && $module_obj->LazyLoadAdmin())?1:0;
             $admin_only = ($module_obj->IsAdminOnly())?1:0;
@@ -889,7 +890,8 @@ final class ModuleOperations
         $cleanup = $modinstance->AllowUninstallCleanup();
         $result = $modinstance->Uninstall();
 
-        if (!isset($result) || $result === FALSE) {
+        if( !$result ) {
+            // uninstall returned false, success
             // now delete the record
             $query = "DELETE FROM ".CMS_DB_PREFIX."modules WHERE module_name = ?";
             $db->Execute($query, array($module));
