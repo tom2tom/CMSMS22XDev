@@ -20,8 +20,8 @@
 /**
  * Implements the CMS Made Simple Separator content type
  *
- * A separator is used simply for navigations to provide a visual separation between menu items.  Typically
- * as a horizontal or vertical bar.
+ * A separator is used simply for navigations to provide a visual separation
+ * between menu items.  Typically as a horizontal or vertical bar.
  *
  * @package CMS
  * @subpackage content_types
@@ -61,15 +61,16 @@ class Separator extends ContentBase
 		return $res;
 	}
 
+	//this is a redundant CMSMS1 method TODO remove
 	public function EditAsArray($adding = false, $tab = 0, $showadmin = false)
 	{
 		switch($tab) {
 		case '0':
 			return $this->display_attributes($adding);
-			break;
 		case '1':
 			return $this->display_attributes($adding,1);
-			break;
+		default:
+			return [];
 		}
 	}
 

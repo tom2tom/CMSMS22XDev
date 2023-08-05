@@ -119,15 +119,16 @@ class PageLink extends ContentBase
 		}
 	}
 
+	//this is a redundant CMSMS1 method TODO remove
 	public function EditAsArray($adding = false, $tab = 0, $showadmin = false)
 	{
 		switch($tab) {
 		case '0':
 			return $this->display_attributes($adding);
-			break;
 		case '1':
 			return $this->display_attributes($adding,1);
-			break;
+		default:
+			return [];
 		}
 	}
 
