@@ -129,7 +129,7 @@ class BookmarkOperations
 		$new_bookmark_id = $db->GenID(CMS_DB_PREFIX."admin_bookmarks_seq");
 		$query = "INSERT INTO ".CMS_DB_PREFIX."admin_bookmarks (bookmark_id, user_id, url, title) VALUES (?,?,?,?)";
 		$dbresult = $db->Execute($query, array($new_bookmark_id, $bookmark->user_id, $bookmark->url, $bookmark->title));
-		if ($dbresult !== false) return $new_bookmark_id;
+		if ($dbresult) return $new_bookmark_id;
 
 		return -1;
 	}
@@ -147,7 +147,7 @@ class BookmarkOperations
 		$bookmark->url = $this->_prep_for_saving($bookmark->url);
 		$query = "UPDATE ".CMS_DB_PREFIX."admin_bookmarks SET user_id = ?, title = ?, url = ? WHERE bookmark_id = ?";
 		$dbresult = $db->Execute($query, array($bookmark->user_id, $bookmark->title, $bookmark->url, $bookmark->bookmark_id));
-		if ($dbresult !== false) return true;
+		if ($dbresult) return true;
 
 		return false;
 	}
@@ -164,7 +164,7 @@ class BookmarkOperations
 
 		$query = "DELETE FROM ".CMS_DB_PREFIX."admin_bookmarks where bookmark_id = ?";
 		$dbresult = $db->Execute($query, array($id));
-		if ($dbresult !== false) return true;
+		if ($dbresult) return true;
 		return false;
 	}
 }

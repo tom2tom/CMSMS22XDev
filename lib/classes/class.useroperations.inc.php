@@ -250,7 +250,7 @@ FROM ".CMS_DB_PREFIX."users ORDER BY username";
 		$new_user_id = $db->GenID(CMS_DB_PREFIX."users_seq");
 		$query = "INSERT INTO ".CMS_DB_PREFIX."users (user_id, username, password, active, first_name, last_name, email, admin_access, create_date, modified_date) VALUES (?,?,?,?,?,?,?,?,".$time.",".$time.")";
 		$dbresult = $db->Execute($query, array($new_user_id, $user->username, $user->password, $user->active, $user->firstname, $user->lastname, $user->email, 1)); //Force admin access on
-		if ($dbresult !== false) return $new_user_id;
+		if ($dbresult) return $new_user_id;
 
 		return -1;
 	}
@@ -276,7 +276,7 @@ FROM ".CMS_DB_PREFIX."users ORDER BY username";
 		$query = "UPDATE ".CMS_DB_PREFIX."users SET username = ?, password = ?, active = ?, modified_date = ".$time.", first_name = ?, last_name = ?, email = ?, admin_access = ? WHERE user_id = ?";
 		//$dbresult = $db->Execute($query, array($user->username, $user->password, $user->active, $user->firstname, $user->lastname, $user->email, $user->adminaccess, $user->id));
 		$dbresult = $db->Execute($query, array($user->username, $user->password, $user->active, $user->firstname, $user->lastname, $user->email, 1, $user->id));
-		if ($dbresult !== false) return true;
+		if ($dbresult) return true;
 
 		return false;
 	}
@@ -290,10 +290,9 @@ FROM ".CMS_DB_PREFIX."users ORDER BY username";
 	 */
 	function DeleteUserByID($id)
 	{
- 		if( $id <= 1 ) return false;
- 		if( !check_permission(get_userid(),'Manage Users') ) return false;
+		if( $id <= 1 ) return false;
+		if( !check_permission(get_userid(),'Manage Users') ) return false;
 
-		$result = false;
 		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
 
@@ -309,8 +308,8 @@ FROM ".CMS_DB_PREFIX."users ORDER BY username";
 		$query = "DELETE FROM ".CMS_DB_PREFIX."userprefs where user_id = ?";
 		$dbresult = $db->Execute($query, array($id));
 
-		if ($dbresult !== false) $result = true;
-		return $result;
+		if ($dbresult) return true;
+		return false;
 	}
 
 	/**

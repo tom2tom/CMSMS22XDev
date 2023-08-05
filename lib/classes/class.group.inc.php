@@ -93,7 +93,7 @@ class Group
         $db = CmsApp::get_instance()->GetDb();
         $sql = 'UPDATE `'.CMS_DB_PREFIX.'groups` SET group_name = ?, group_desc = ?, active = ?, modified_date = NOW() WHERE group_id = ?';
         $dbresult = $db->Execute($sql,array($this->name,$this->description,$this->active,$this->id));
-        if( $dbresult !== false ) return TRUE;
+        if( $dbresult ) return TRUE;
         return FALSE;
     }
 
