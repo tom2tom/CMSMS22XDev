@@ -32,9 +32,12 @@ function cms_module_ListTemplates($modinstance, $modulename = '')
 	$query = 'SELECT * from '.CMS_DB_PREFIX.'module_templates WHERE module_name = ? ORDER BY template_name ASC';
 	$result = $db->Execute($query, array($modulename != ''?$modulename:$modinstance->GetName()));
 
-	while (isset($result) && !$result->EOF) {
-		$retresult[] = $result->fields['template_name'];
-		$result->MoveNext();
+	if ($result) {
+		while(!$result->EOF) {
+			$retresult[] = $result->fields['template_name'];
+			$result->MoveNext();
+		}
+		$result->Close();
 	}
 
 	return $retresult;
@@ -52,9 +55,13 @@ function cms_module_GetTemplate($modinstance, $tpl_name, $modulename = '')
 	$query = 'SELECT * from '.CMS_DB_PREFIX.'module_templates WHERE module_name = ? and template_name = ?';
 	$result = $db->Execute($query, array($modulename != ''?$modulename:$modinstance->GetName(), $tpl_name));
 
-	if ($result && $result->RecordCount() > 0) {
-		$row = $result->FetchRow();
-		return $row['content'];
+	if ($result) {
+		if ($result->RecordCount() > 0) {
+			$row = $result->FetchRow();
+			$result->Close();
+			return $row['content'];
+		}
+		$result->Close();
 	}
 
 	return '';
