@@ -27,8 +27,9 @@ CmsJobManager
 CMSMailer
  - Removed deprecated status
 
-ContentManager
+ContentManager 1.1.11
  - BR #12474 - Taking the default page down by accident through the content type
+ - BR #12635 - Apply button is shown for non-existing page and creates new pages 
 
 DesignManager
  - Corrected new template creation

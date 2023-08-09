@@ -33,7 +33,7 @@
 final class CMSContentManager extends CMSModule
 {
     public function GetFriendlyName() { return $this->Lang('friendlyname'); }
-    public function GetVersion() { return '1.1.10'; }
+    public function GetVersion() { return '1.1.11'; }
     public function GetHelp() { return CmsLangOperations::lang_from_realm('help','help_cmscontentmanager_help'); }
     public function GetAuthor() { return 'Robert Campbell'; }
     public function GetAuthorEmail() { return ''; }

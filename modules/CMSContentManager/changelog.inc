@@ -1,6 +1,7 @@
 <ul>
-<li>2023-MM-DD v1.1.10</li>
+<li>2023-MM-DD v1.1.11</li>
  <li>BR #12474 - Taking the default page down by accident through the content type</li>
+ <li>BR #12635 - Apply button is shown for non-existing page and creates new pages</li>
 <li>2023-06-13 v1.1.10</li>
  <li>Differentiate new page from cloned page</li>
 <li>2022-01-21 v1.1.9</li>
