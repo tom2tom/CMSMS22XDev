@@ -459,11 +459,11 @@ try {
     @mkdir($datadir);
     if( !is_dir($datadir) || !is_dir($outdir) ) throw new Exception('Problem creating working directories: '.$datadir.' and '.$outdir);
 
-    $tmp = 'cmsms-'.create_source_archive().'-install';
     if( !$archive_only ) {
-        $basename = $tmp;
-        $destname = $tmp.'.phar';
-        $destname2 = $tmp.'.php';
+        $basename = 'cmsms-'.create_source_archive().'-install';
+        $destname = $basename.'.phar';
+        $destname2 = $basename.'.php';
+        $when = date('Y-m-d H:i:s');
 
         $fn = "$srcdir/app/build.ini";
         $fh = fopen($fn,'w');
@@ -589,6 +589,10 @@ try {
             $arch->setExternalAttributesName('README-PHARDEBUG.TXT', ZipArchive::OPSYS_UNIX, 0644 << 16);
             $arch->close();
             @unlink($infile);
+            echo "INFO: generating standard installer SHA1 signature\n";
+            $sig = sha1_file($outfile);
+            $outfile = str_replace('.zip', '.sig', $outfile);
+            file_put_contents($outfile, $sig . "\r\n" . $when);
 
             // zip up the install dir itself (uses shell zip command)
             @mkdir($systmpdir,0777,TRUE);
@@ -630,7 +634,23 @@ try {
             $cmd = escapeshellcmd($cmd);
             system($cmd);
             rrmdir($systmpdir);
+            echo "INFO: generating expanded installer SHA1 signature\n";
+            $sig = sha1_file($outfile);
+            $outfile = str_replace('.zip', '.sig', $outfile);
+            file_put_contents($outfile, $sig . "\r\n" . $when);
         } // zip
+        else {
+            //TODO test these
+            if( $rename ) {
+                $outfile = "$outdir/$destname2";
+            }
+            else {
+                $outfile = "$outdir/$destname";
+            }
+            $sig = sha1_file($outfile);
+            $outfile .= '.sig';
+            file_put_contents($outfile, $sig . "\r\n" . $when);
+        }
         rrmdir($datadir);
     } // !archive only
     echo "INFO: Done, see files in $outdir\n";
