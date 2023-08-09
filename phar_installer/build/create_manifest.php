@@ -515,7 +515,7 @@ if ($_compress) {
         case 'zip':
           $_cfile = $_tmpfile.'.zip';
           $zip = new ZipArchive();
-          if ($zip->open($$_cfile, ZipArchive::CREATE) !== true) {
+          if ($zip->open($_cfile, ZipArchive::CREATE) !== true) {
               fatal("Cannot open <$_cfile> for zip compression");
           }
           $zip->addFromString($_tmpfile, file_get_contents($_tmpfile));
