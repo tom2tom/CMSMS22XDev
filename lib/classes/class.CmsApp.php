@@ -239,6 +239,7 @@ final class CmsApp
 	{
 		$obj = $this->get_content_object();
 		if( is_object($obj) ) return $obj->Id();
+		return 0;
 	}
 
 
