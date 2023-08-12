@@ -4,6 +4,7 @@ Various places
  - Compatibility fixes for PHP 8.2 (and 8.3).
  - Replaced deprecated Smarty syntax in templates.
  - Replaced some of the deprecated jQuery syntax.
+ - Corrected html errors and inconsistencies.
  - Corrected typos.
 
 Core - General
@@ -21,7 +22,7 @@ Core - General
 Admin theme
  - Corrected content scrolling
 
-CmsJobManager
+CmsJobManager 0.1.4
  - BR #12629 - Add missing changelog and retriever
 
 CMSMailer

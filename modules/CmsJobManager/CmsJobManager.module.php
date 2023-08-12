@@ -39,7 +39,7 @@ final class CmsJobManager extends \CMSModule
     public static function table_name() { return CMS_DB_PREFIX.'mod_cmsjobmgr'; }
 
     public function GetFriendlyName() { return $this->Lang('friendlyname'); }
-    public function GetVersion() { return '0.1.3'; }
+    public function GetVersion() { return '0.1.4'; }
     public function MinimumCMSVersion() { return '2.1.99'; }
     public function GetAuthor() { return 'Robert Campbell'; }
     public function GetAuthorEmail() { return ''; }
