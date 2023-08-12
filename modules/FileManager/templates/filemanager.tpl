@@ -1,13 +1,12 @@
-{if !isset($noform)}
-<style type="text/css">{literal}
+{if !isset($noform)}{*TODO <style/> invalid here - migrate to <head/>*}
+<style>{literal}
 a.filelink:visited {
    color: #000;
 }
 </style>
-<script type="text/javascript">
+<script>
 {/literal}var refresh_url = '{$refresh_url}'+'&showtemplate=false';{literal}
 refresh_url = refresh_url.replace(/amp;/g,'');
-// <![CDATA[
 function enable_button(idlist) {
   $(idlist).prop('disabled',false).removeClass('ui-state-disabled ui-button-disabled');
 }
@@ -107,7 +106,6 @@ $(function () {
         }
     });
 });
-// ]]>
 {/literal}</script>
 
 {function filebtn icon='ui-icon-circle-check'}
@@ -148,7 +146,7 @@ $(function () {
 
 {if !empty($files)}
 <div id="filesarea">
-	<table width="100%" class="pagetable scrollable">
+	<table style="width:100%" class="pagetable scrollable">
 		<thead>
 			<tr>
 				<th class="pageicon">&nbsp;</th>
@@ -161,7 +159,7 @@ $(function () {
 				<th class="pageicon"></th>
 				<th class="pageicon" title="{$mod->Lang('title_col_filedate')}">{$filedatetext}</th>
 				<th class="pageicon">
-					<input type="checkbox" name="tagall" value="tagall" id="tagall" title="{$mod->Lang('title_tagall')}" />
+					<input type="checkbox" name="tagall" value="tagall" id="tagall" title="{$mod->Lang('title_tagall')}">
 				</th>
 			</tr>
 		</thead>
@@ -170,19 +168,19 @@ $(function () {
 			{cycle values="row1,row2" assign=rowclass}
 			{$thedate=str_replace(' ','&nbsp;',(string)$file->filedate|cms_date_format)}{$thedate=str_replace('-','&minus;',(string)$thedate)}
 			<tr class="{$rowclass}">
-				<td valign="middle">{if isset($file->thumbnail) && $file->thumbnail!=''}{$file->thumbnail}{else}{$file->iconlink}{/if}</td>
-				<td class="clickable" valign="middle">{$file->txtlink}</td>
-				<td class="clickable" valign="middle">{$file->mime}</td>
-				<td class="clickable" style="padding-right:8px;white-space:pre;" valign="middle">{$file->fileinfo}</td>
-				<td class="clickable" style="padding-right:8px;white-space:pre;" valign="middle">{if isset($file->fileowner)}{$file->fileowner}{else}&nbsp;{/if}</td>
-				<td class="clickable" style="padding-right:8px;" valign="middle">{$file->filepermissions}</td>
-				<td class="clickable" style="padding-right:8px;white-space:pre;text-align:right;" valign="middle">{$file->filesize}</td>
-				<td class="clickable" style="padding-right:8px;" valign="middle">{if isset($file->filesizeunit)}{$file->filesizeunit}{else}&nbsp;{/if}</td>
-				<td class="clickable" style="padding-right:8px;white-space:pre;" valign="middle">{$thedate}</td>
+				<td style="vertical-align:middle">{if isset($file->thumbnail) && $file->thumbnail!=''}{$file->thumbnail}{else}{$file->iconlink}{/if}</td>
+				<td class="clickable" style="vertical-align:middle">{$file->txtlink}</td>
+				<td class="clickable" style="vertical-align:middle">{$file->mime}</td>
+				<td class="clickable" style="padding-right:8px;white-space:pre;vertical-align:middle">{$file->fileinfo}</td>
+				<td class="clickable" style="padding-right:8px;white-space:pre;vertical-align:middle">{if isset($file->fileowner)}{$file->fileowner}{else}&nbsp;{/if}</td>
+				<td class="clickable" style="padding-right:8px;vertical-align:middle">{$file->filepermissions}</td>
+				<td class="clickable" style="padding-right:8px;white-space:pre;text-align:right;vertical-align:middle">{$file->filesize}</td>
+				<td class="clickable" style="padding-right:8px;vertical-align:middle">{if isset($file->filesizeunit)}{$file->filesizeunit}{else}&nbsp;{/if}</td>
+				<td class="clickable" style="padding-right:8px;white-space:pre;vertical-align:middle">{$thedate}</td>
 				<td>
 				{if !isset($file->noCheckbox)}
 					<label for="x_{$file->urlname}" style="display: none;">{$mod->Lang('toggle')}</label>
-					<input type="checkbox" title="{$mod->Lang('toggle')}" id="x_{$file->urlname}" name="{$actionid}selall[]" value="{$file->urlname}" class="fileselect {' '|adjust:'implode':$file->type}"{if isset($file->checked)} checked="checked"{/if} />
+					<input type="checkbox" title="{$mod->Lang('toggle')}" id="x_{$file->urlname}" name="{$actionid}selall[]" value="{$file->urlname}" class="fileselect {' '|adjust:'implode':$file->type}"{if isset($file->checked)} checked{/if}>
 				{/if}
 				</td>
 			</tr>

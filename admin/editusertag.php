@@ -94,7 +94,7 @@ if( isset($_POST['submit']) || isset($_POST['apply']) ) {
             $error[] = lang('invalidcode');
             $buffer = ob_get_clean();
             //add error
-            $error[] = preg_replace('/<br \/>/', '', $buffer );
+            $error[] = preg_replace('/<br ?\/?>/', '', $buffer);
             $validinfo = false;
         }
         else {

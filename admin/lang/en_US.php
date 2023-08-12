@@ -58,7 +58,7 @@ $lang['adminprefsdescription'] = "Here you set your specific preferences for sit
 $lang['adminspecialgroup'] = "Warning: Members of this group automatically have all permissions";
 $lang['adminsystemtitle'] = "CMSMS Admin System";
 $lang['admintheme'] = "Administration Theme";
-$lang['admin_enablenotifications'] = "Allow users to view notifications<br /><em>(notifications will be displayed on all Admin pages)</em>";
+$lang['admin_enablenotifications'] = "Allow users to view notifications<br><em>(notifications will be displayed on all Admin pages)</em>";
 $lang['admin_layout_legend'] = "Admin layout settings";
 $lang['admin_lock_timeout'] = 'Lock timeout';
 $lang['advanced'] = "Advanced";
@@ -1031,8 +1031,8 @@ $lang['informationmissing'] = "Information missing";
 $lang['info_adduser'] = "Add a administrative new user account";
 $lang['info_adduser_username'] = "The username field must consist of alphanumeric characters,, the dot (.), underscore, or space";
 $lang['info_autoalias'] = "If this field is empty, an alias will be created automatically.";
-$lang['info_changegroupperms'] = "This page allows specifying which Admin user groups have which permission.  Keep in mind that an individual Admin user can belong to multiple Admin groups.<br /><strong>Note:</strong> the &quot;Admin&quot; group is a special group and is automatically granted all permissions.";
-$lang['info_changeusergroup'] = "This page allows specifying the member groups for each Admin user.  Group membership determines the permissions the user has, and therefore his capabilities in the Admin console.<br /><strong>Note:</strong> the &quot;Admin&quot; group is a special group and is automatically granted all permissions.";
+$lang['info_changegroupperms'] = "This page allows specifying which Admin user groups have which permission.  Keep in mind that an individual Admin user can belong to multiple Admin groups.<br><strong>Note:</strong> the &quot;Admin&quot; group is a special group and is automatically granted all permissions.";
+$lang['info_changeusergroup'] = "This page allows specifying the member groups for each Admin user.  Group membership determines the permissions the user has, and therefore his capabilities in the Admin console.<br><strong>Note:</strong> the &quot;Admin&quot; group is a special group and is automatically granted all permissions.";
 $lang['info_clearusersettings'] = "This will remove all user settings from the database, setting every preference back to defaults";
 $lang['info_copyusersettings'] = "Ensure that this users settings and preferences are identical to that of another existing user";
 $lang['info_default_contenttype'] = "Applicable when adding new content objects, this control specifies the type that is selected by default.  Please ensure that the selected item is not one of the &quot;disallowed types&quot;.";
@@ -1056,9 +1056,9 @@ $lang['info_preview_notice'] = "Warning: This preview panel behaves much like a 
 $lang['info_selectuser'] = "Toggle selection to perform actions on multiple users at once";
 $lang['info_settings_sitedown'] = "These options allow you to toggle the website as &quot;down for maintenance&quot; for website visitor.";
 //$lang['info_setusersettings'] = "Set this users settings to be a template for newly created users and to effect other users";
-$lang['info_sitedownexcludes'] = "This parameter allows listing a comma separated list of IP addresses or networks that should not be subject to the Site Down mechanism.  This allows administrators to work on a site whilst anonymous visitors receive a Site Down message.<br/><br/>Addresses can be specified in the following formats:<br />
-1. xxx.xxx.xxx.xxx -- (exact IP address)<br />
-2. xxx.xxx.xxx.[yyy-zzz] -- (IP address range)<br />
+$lang['info_sitedownexcludes'] = "This parameter allows listing a comma separated list of IP addresses or networks that should not be subject to the Site Down mechanism.  This allows administrators to work on a site whilst anonymous visitors receive a Site Down message.<br/><br/>Addresses can be specified in the following formats:<br>
+1. xxx.xxx.xxx.xxx -- (exact IP address)<br>
+2. xxx.xxx.xxx.[yyy-zzz] -- (IP address range)<br>
 3. xxx.xxx.xxx.xxx/nn -- (nnn = number of bits, cisco style.  i.e:  192.168.0.100/24 = entire 192.168.0 class C subnet)";
 $lang['info_smarty_cachemodules'] = "Select how to cache tags in various templates that call module actions.  If enabled, all module calls will be cached.  This may have negative effects on some modules, or modules with forms.  <em>(note: you can override this using the nocache option as described in the Smarty manual)</em>.  If disabled no module calls will be cached which may have an effect on performance.   If you select to allow the module to decide, the default is that caching is not performed.  The module can override this, and you can disable caching using the nocache parameter when calling the module.";
 $lang['info_smarty_cacheudt'] = "If enabled, all calls to user defined tags will be cached.  This will be useful for tags that display the output of database queries.  You can disable caching using the nocache parameter in the UDT call.  i.e: <code>{myusertag nocache}</code>";
@@ -1178,7 +1178,7 @@ $lang['mediatype_speech'] = "speech : Intended for speech synthesizers.";
 $lang['mediatype_tty'] = "tty : Intended for media using a fixed-pitch character grid, such as Teletypes and terminals.";
 $lang['mediatype_tv'] = "tv : Intended for television-type devices.";
 $lang['media_query'] = "Media Query";
-$lang['media_query_description'] = "<strong>Notice:</strong> When Media Query is used, Media Type selection will be ignored.<br /> Use any valid expression as recommended by <a href=&quot;http://www.w3.org/TR/css3-mediaqueries/&quot; rel=&quot;external&quot title=&quot;W3C&quot;>W3C</a>.";
+$lang['media_query_description'] = "<strong>Notice:</strong> When Media Query is used, Media Type selection will be ignored.<br> Use any valid expression as recommended by <a href=&quot;http://www.w3.org/TR/css3-mediaqueries/&quot; rel=&quot;external&quot title=&quot;W3C&quot;>W3C</a>.";
 */
 $lang['memory_limit'] = "PHP Effective Memory Limit";
 $lang['menutext'] = "Menu Text";

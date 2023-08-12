@@ -45,15 +45,15 @@ function smarty_function_dump($params, $smarty)
 
 			$objname = get_class($obj);
 			$str = '';
-			$str .= str_repeat('  ',$level).'Object Name: '.$objname.'<br />';
-			$str .= str_repeat('  ',$level).'Parent: '.get_parent_class($obj)."<br />";
+			$str .= str_repeat('  ',$level).'Object Name: '.$objname.'<br>';
+			$str .= str_repeat('  ',$level).'Parent: '.get_parent_class($obj)."<br>";
 
 			if( !isset($params['nomethods']) ) {
 				$methods = get_class_methods($objname);
 				if( count($methods) ) {
-					$str .= str_repeat('  ',$level).'Methods: <br />';
+					$str .= str_repeat('  ',$level).'Methods: <br>';
 					foreach( $methods as $one )	{
-						$str .= str_repeat('  ',$level).'- '.$one.'<br />';
+						$str .= str_repeat('  ',$level).'- '.$one.'<br>';
 					}
 				}
 			}
@@ -61,25 +61,25 @@ function smarty_function_dump($params, $smarty)
 			if( !isset($params['novars']) )	{
 				$vars = get_object_vars($obj);
 				if( is_array($vars) && count($vars) ) {
-					$str .= str_repeat('  ',$level).'Properties: <br />';
+					$str .= str_repeat('  ',$level).'Properties: <br>';
 					foreach( $vars as $name => $value )	{
 						if( in_array($name,$ignore) ) continue;
 						$acc = build_accessor($accessor,'object',$name);
 
 						$type = gettype($value);
 						if( $type == 'object' )	{
-							$str .= str_repeat('  ',$level).'- '.'<u>'.$name.': Object</u> <em>{$'.$acc.'}</em><br />';
+							$str .= str_repeat('  ',$level).'- '.'<u>'.$name.': Object</u> <em>{$'.$acc.'}</em><br>';
 							if( isset($params['recurse']) )	$str .= dump_object($params,$value,$level+1,$ignore,$acc);
 						}
 						else if( $type == 'array' ) {
-							$str .= str_repeat('  ',$level).'- '.'<u>'.$name.': Array ('.count($value).')</u> <em>{$'.$acc.'}</em><br />';
+							$str .= str_repeat('  ',$level).'- '.'<u>'.$name.': Array ('.count($value).')</u> <em>{$'.$acc.'}</em><br>';
 							if( isset($params['recurse']) )	$str .= dump_array($params,$value,$level+1,$ignore,$acc);
 						}
 						else if( $type == 'NULL' ) {
-							$str .= str_repeat('  ',$level).'- '.$name.': NULL <em>{$'.$acc.'}</em><br />';
+							$str .= str_repeat('  ',$level).'- '.$name.': NULL <em>{$'.$acc.'}</em><br>';
 						}
 						else {
-							$str .= str_repeat('  ',$level).'- '.$name.' = '.cms_htmlentities($value).' <em>{$'.$acc.'}</em><br />';
+							$str .= str_repeat('  ',$level).'- '.$name.' = '.cms_htmlentities($value).' <em>{$'.$acc.'}</em><br>';
 						}
 					}
 				}
@@ -103,18 +103,18 @@ function smarty_function_dump($params, $smarty)
 				$acc = build_accessor($accessor,'array',$key);
 				$type = gettype($value);
 				if( is_object($value) )	{
-					$str .= str_repeat('  ',$level).'- <u>'.$key.' = Object</u> <em>{$'.$acc.'}</em><br />';
+					$str .= str_repeat('  ',$level).'- <u>'.$key.' = Object</u> <em>{$'.$acc.'}</em><br>';
 					if( isset($params['recurse']) )	$str .= dump_object($params,$value,$level+1,$ignore,$acc);
 				}
 				else if( is_array($value) )	{
-					$str .= str_repeat('  ',$level)."- <u>$key = Array (".count($value).')</u> <em>{$'.$acc.'}</em><br />';
+					$str .= str_repeat('  ',$level)."- <u>$key = Array (".count($value).')</u> <em>{$'.$acc.'}</em><br>';
 					if( isset($params['recurse']) )	$str .= dump_array($params,$value,$level+1,$ignore,$acc);
 				}
 				else if( $type == 'NULL' ) {
-					$str .= str_repeat('  ',$level).'- '.$name.': NULL <em>{$'.$acc.'\}</em><br />';
+					$str .= str_repeat('  ',$level).'- '.$name.': NULL <em>{$'.$acc.'\}</em><br>';
 				}
 				else {
-					$str .= str_repeat('  ',$level)."- $key = ".cms_htmlentities($value).' {$'.$acc.'}<br />';
+					$str .= str_repeat('  ',$level)."- $key = ".cms_htmlentities($value).' {$'.$acc.'}<br>';
 				}
 			}
 			return $str;
@@ -180,7 +180,7 @@ function smarty_function_dump($params, $smarty)
 			$tmp2 = '$obj =& '.$str.';';
 			eval($tmp2);
 			$type = gettype($obj);
-			if( $count > 4 ) { print_r( $obj ); echo '<hr/>'; }
+			if( $count > 4 ) { print_r( $obj ); echo '<hr>'; }
 		}
 		else {
 			$done = true;
@@ -190,7 +190,7 @@ function smarty_function_dump($params, $smarty)
 	$parenttype = gettype($obj);
 	$str = '<pre>';
 	$str .= '<strong>Dump of: $'.$item;
-	$str .= '</strong> ('.ucwords($parenttype).')<br />';
+	$str .= '</strong> ('.ucwords($parenttype).')<br>';
 
 	if( is_object($obj) ) {
 		$str .= dump_object($params,$obj,0,$ignore,$item);
@@ -199,7 +199,7 @@ function smarty_function_dump($params, $smarty)
 		$str .= dump_array($params,$obj,0,$ignore,$item);
 	}
 	else {
-		$str .= $obj.'<br />';
+		$str .= $obj.'<br>';
 	}
 	$str.='</pre>';
 

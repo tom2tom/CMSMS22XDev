@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 $(function() {
   $('.helpicon').on('click', function(){
     var x = $(this).attr('name');
@@ -15,16 +15,16 @@ $(function() {
 <div class="pageoverflow">
   <p class="pagetext"><label for="import_xml_file">{$mod->Lang('prompt_import_xml_file')}:</label></p>
   <p class="pageinput">
-    <input type="file" id="import_xml_file" name="{$actionid}import_xml_file" size="50"/>
-    {admin_icon name='help_import_xml_file' icon='info.gif' class='helpicon'}
+    <input type="file" id="import_xml_file" name="{$actionid}import_xml_file" size="50">
+    {cms_help key2='help_import_xml_file' title=$mod->Lang('prompt_import_xml_file')}
   </p>
 </div>
 
 <div class="pageoverflow">
   <p class="pagetext"></p>
   <p class="pageinput">
-    <input type="submit" name="{$actionid}next1" value="{$mod->Lang('next')}" />
-    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
+    <input type="submit" name="{$actionid}next1" value="{$mod->Lang('next')}">
+    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
   </p>
 </div>
 {form_end}

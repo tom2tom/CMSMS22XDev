@@ -53,20 +53,17 @@ final class FileManager extends CMSModule {
 
         $result="";
         if ($isdir) {
-            $result="<img height=\"".$iconsizeHeight."\" style=\"border:0;\" src=\"".$config["root_url"]."/modules/FileManager/icons/themes/default/extensions/".$iconsize."/dir.png\" ".
-                "alt=\"directory\" ".
-                "align=\"middle\" />";
+            $result="<img height=\"".$iconsizeHeight."\" style=\"vertical-align:middle;border:0;\" src=\"".$config["root_url"]."/modules/FileManager/icons/themes/default/extensions/".$iconsize."/dir.png\" ".
+                "alt=\"directory\">";
             return $result;
         }
 
         if (file_exists($config["root_path"]."/modules/FileManager/icons/themes/default/extensions/".$iconsize."/".strtolower($extension).".png")) {
-            $result="<img height='".$iconsizeHeight."' style='border:0;' src='".$config["root_url"]."/modules/FileManager/icons/themes/default/extensions/".$iconsize."/".strtolower($extension).".png' ".
-                "alt='".$extension."-file' ".
-                "align='middle' />";
+            $result="<img height='".$iconsizeHeight."' style='vertical-align:middle;border:0;' src='".$config["root_url"]."/modules/FileManager/icons/themes/default/extensions/".$iconsize."/".strtolower($extension).".png' ".
+                "alt='".$extension."-file'>";
         } else {
-            $result="<img height='".$iconsizeHeight."' style='border:0;' src='".$config["root_url"]."/modules/FileManager/icons/themes/default/extensions/".$iconsize."/0.png' ".
-                "alt=".$extension."-file' ".
-                "align='middle' />";
+            $result="<img height='".$iconsizeHeight."' style='vertical-align:middle;border:0;' src='".$config["root_url"]."/modules/FileManager/icons/themes/default/extensions/".$iconsize."/0.png' ".
+                "alt='".$extension."-file'>";
         }
         return $result;
     }
@@ -182,7 +179,7 @@ final class FileManager extends CMSModule {
 
         if (file_exists($imagepath)) {
             $imageurl=$url.'/thumb_'.$file["name"];
-            $image="<img src=\"".$imageurl."\" alt=\"".$file["name"]."\" title=\"".$file["name"]."\" />";
+            $image="<img src=\"".$imageurl."\" alt=\"".$file["name"]."\" title=\"".$file["name"]."\">";
             $url = $this->create_url('m1_','view','',array('file'=>$this->encodefilename($file['name'])));
             //$result="<a href=\"".$file['url']."\" target=\"_blank\">";
             $result="<a href=\"".$url."\" target=\"_blank\">";
@@ -211,12 +208,12 @@ final class FileManager extends CMSModule {
         $jsfiles[] = 'jqueryrotate/jQueryRotate-2.2.min.js';
         $jsfiles[] = 'jrac/jquery.jrac.js';
 
-        $fmt = '<script type="text/javascript" src="%s/%s"></script>';
+        $fmt = '<script src="%s/%s"></script>';
         foreach( $jsfiles as $one ) {
             $out .= sprintf($fmt,$urlpath,$one)."\n";
         }
 
-        $fmt = '<link rel="stylesheet" type="text/css" href="%s/%s"/>';
+        $fmt = '<link rel="stylesheet" href="%s/%s">';
         $cssfiles = array('jrac/style.jrac.css');
         foreach( $cssfiles as $one ) {
             $out .= sprintf($fmt,$urlpath,$one);

@@ -23,15 +23,15 @@
 <div class="pageoverflow">
   <p class="pagetext"><label for="destname">{$mod->Lang('copy_destname')}:</label></p>
   <p class="pageinput">
-    <input type="text" id="destname" name="{$actionid}destname" size="50" maxlength="255"/>
+    <input type="text" id="destname" name="{$actionid}destname" size="50" maxlength="255">
   </p>
 </div>
 {/if}
 <div class="pageoverflow">
   <p class="pagetext"></p>
   <p class="pageinput">
-    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('copy')}" />
-    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
+    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('copy')}">
+    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
   </p>
 </div>
 {$endform}

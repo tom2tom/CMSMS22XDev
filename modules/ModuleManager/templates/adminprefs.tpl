@@ -1,17 +1,17 @@
-<script type="text/javascript">
+<script>
 $(function() {
-  $(document).on('click','#reseturl',function(ev){
+  $(document).on('click','#reseturl',function(ev) {
       ev.preventDefault();
       var form = $(this).closest('form');
-      cms_confirm('{$ModuleManager->Lang('confirm_reseturl')|escape:'javascript'}').done(function(){
+      cms_confirm('{$ModuleManager->Lang('confirm_reseturl')|escape:'javascript'}').done(function() {
           $('#inp_reset').val(1);
           form.trigger('submit');
       });
   });
-  $(document).on('click','#settings_submit',function(ev){
+  $(document).on('click','#settings_submit',function(ev) {
       ev.preventDefault();
       var form = $(this).closest('form');
-      cms_confirm('{$ModuleManager->Lang('confirm_settings')|escape:'javascript'}').done(function(){
+      cms_confirm('{$ModuleManager->Lang('confirm_settings')|escape:'javascript'}').done(function() {
           form.trigger('submit');
       });
   });
@@ -19,22 +19,22 @@ $(function() {
 </script>
 {if isset($message)}<p>{$message}</p>{/if}
 
-{form_start action='setprefs'}<input type="hidden" id="inp_reset" name="{$actionid}reseturl" value=""/>
+{form_start action='setprefs'}<input type="hidden" id="inp_reset" name="{$actionid}reseturl" value="">
 {if isset($module_repository)}
   <div class="pageoverflow">
     <p class="pagetext"><label for="mr_url">{$ModuleManager->Lang('prompt_repository_url')}:</label></p>
     <p class="pageinput">
-      <input type="text" name="{$actionid}url" id="mr_url" maxlength="255" value="{$module_repository}" />
-      <input type="submit" id="reseturl" value="{$ModuleManager->Lang('reset')}" />
+      <input type="text" name="{$actionid}url" id="mr_url" maxlength="255" value="{$module_repository}">
+      <input type="submit" id="reseturl" value="{$ModuleManager->Lang('reset')}">
     </p>
   </div>
 
 {/if}
 
   <div class="pageoverflow">
-    <p class="pagetext"><label>{$ModuleManager->Lang('prompt_dl_chunksize')}:</label>&nbsp;{cms_help key2='help_dl_chunksize' title=$ModuleManager->Lang('prompt_dl_chunksize')}</p>
+    <p class="pagetext"><label for="chunksize">{$ModuleManager->Lang('prompt_dl_chunksize')}:</label>&nbsp;{cms_help key2='help_dl_chunksize' title=$ModuleManager->Lang('prompt_dl_chunksize')}</p>
     <p class="pageinput">
-      <input type="text" name="{$actionid}dl_chunksize" value="{$dl_chunksize}" size="4" maxlength="4"/>
+      <input type="text" id="chunksize" name="{$actionid}dl_chunksize" value="{$dl_chunksize}" size="4" maxlength="4">
     </p>
   </div>
 
@@ -66,7 +66,7 @@ $(function() {
   <div class="pageoverflow">
     <p class="pagetext"></p>
     <p class="pageinput">
-      <input type="submit" id="settings_submit" name="{$actionid}submit" value="{$ModuleManager->Lang('submit')}"/>
+      <input type="submit" id="settings_submit" name="{$actionid}submit" value="{$ModuleManager->Lang('submit')}">
     </p>
   </div>
 {form_end}

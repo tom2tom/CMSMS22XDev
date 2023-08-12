@@ -330,7 +330,7 @@ $lang['retry'] = 'Retry';
 $lang['safe_mode'] = 'Testing to ensure &quot;safe mode&quot; is disabled';
 $lang['saltpasswords'] = 'Salt Passwords';
 $lang['select_language'] = 'The first thing for you to do is select your preferred language from the list below. This will be used to enhance your experience during this installer session, but will not affect your CMSMS installation.';
-$lang['send_admin_email'] = 'Send installation-complete email to administrator.<br />No password was provided. <strong>Remember</strong> to securely communicate the password as soon as possible.';
+$lang['send_admin_email'] = 'Send installation-complete email to administrator.<br>No password was provided. <strong>Remember</strong> to securely communicate the password as soon as possible.';
 $lang['session_capabilities'] = 'Testing for proper session capabilities (sessions are using cookies and session save path is writeable, etc)';
 $lang['session_save_path_exists'] = 'Session_save_path exists';
 $lang['session_save_path_writable'] = 'Session_save_path is writeable';
@@ -373,7 +373,7 @@ $lang['social_message'] = 'I have successfully installed CMS Made Simple!';
 # T
 $lang['test_failed'] = 'A required test failed';
 $lang['test_passed'] = 'A test passed <em>(passed tests are only displayed in advanced mode)</em>';
-$lang['test_warning'] = 'A setting is above the required value, but below the recommended value, or...<br />A capability that may be required for some optional functionality is unavailable';
+$lang['test_warning'] = 'A setting is above the required value, but below the recommended value, or...<br>A capability that may be required for some optional functionality is unavailable';
 $lang['th_status'] = 'Status';
 $lang['th_testname'] = 'Test';
 $lang['th_value'] = 'Value';
@@ -406,8 +406,8 @@ $lang['username'] = 'User name';
 # V
 
 # W
-$lang['warn_disable_functions'] = 'Note: one or more PHP core functions are disabled. This can have negative impact on your CMSMS installation, particularly with third party extensions. Please keep an eye on your error log. Your disabled functions are: <br /><br />%s';
-$lang['warn_email'] = 'Note: for security reasons, the sent email will not include the recorded password.<br />You\'ll need to communicate that to the user separately.<br />Or an experienced user might initiate a lost-password process.';
+$lang['warn_disable_functions'] = 'Note: one or more PHP core functions are disabled. This can have negative impact on your CMSMS installation, particularly with third party extensions. Please keep an eye on your error log. Your disabled functions are: <br><br>%s';
+$lang['warn_email'] = 'Note: for security reasons, the sent email will not include the recorded password.<br>You\'ll need to communicate that to the user separately.<br>Or an experienced user might initiate a lost-password process.';
 $lang['warn_max_execution_time'] = 'Although the host\'s max execution time of %s meets or exceeds the minimum value of %s, we recommend you increase it to %s or greater';
 $lang['warn_memory_limit'] = 'The host\'s memory limit value is %s, which is above the minimum of %s. However, %s is recommended';
 $lang['warn_open_basedir'] = 'open_basedir is enabled in the host\'s PHP configuration. Although you may continue, CMSMS will not support installs with open_basedir restrictions.';

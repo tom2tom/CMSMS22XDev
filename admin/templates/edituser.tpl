@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 $(function() {
     $(document).on('click', '#submit', function() {
         return confirm("{lang('confirm_edituser')|escape:'javascript'}");{*TODO cms_confirm().done(returnttrue).fail(returnfalse)*}
@@ -30,7 +30,7 @@ $(function() {
     <h3>{lang('edituser')}{if $user != ''}&nbsp;{$user}{/if}</h3>
 
     {form_start url='edituser.php'}
-        <input type="hidden" value="{$user_id}" name="user_id" />
+        <input type="hidden" value="{$user_id}" name="user_id">
 
         {tab_header name='user' label=lang('profile')}
         {if !empty($groups)}
@@ -47,7 +47,7 @@ $(function() {
                 <label for="username">{lang('name')}:</label>&nbsp;{cms_help realm='admin' key='info_adduser_username' title=lang('name')}
             </p>
             <p class="pageinput">
-                <input type="text" id="username" name="user" maxlength="25" value="{$user}" class="standard" />
+                <input type="text" id="username" name="user" maxlength="25" value="{$user}" class="standard">
             </p>
         </div>
         <div class="pageoverflow">
@@ -55,8 +55,8 @@ $(function() {
                 <label for="password">{lang('password')}:</label>&nbsp;{cms_help realm='admin' key='info_edituser_password' title=lang('password')}
             </p>
             <p class="pageinput">
-                <input type="password" id="password" name="password" maxlength="100" value="" class="standard" />
-                <br />
+                <input type="password" id="password" name="password" maxlength="100" value="" class="standard">
+                <br>
                 {lang('info_edituser_password')}
             </p>
         </div>
@@ -65,8 +65,8 @@ $(function() {
                 <label for="passwordagain">{lang('passwordagain')}:</label>&nbsp;{cms_help realm='admin' key='info_edituser_passwordagain' title=lang('passwordagain')}
             </p>
             <p class="pageinput">
-                <input id="passwordagain" type="password" name="passwordagain" maxlength="100" value="" class="standard" />
-                <br />
+                <input id="passwordagain" type="password" name="passwordagain" maxlength="100" value="" class="standard">
+                <br>
                 {lang('info_edituser_passwordagain')}
             </p>
         </div>
@@ -75,7 +75,7 @@ $(function() {
                 <label for="firstname">{lang('firstname')}:</label>&nbsp;{cms_help key2='help_myaccount_firstname' title=lang('firstname')}
             </p>
             <p class="pageinput">
-                <input id="firstname" type="text" name="firstname" maxlength="50" value="{$firstname}" class="standard"/>
+                <input id="firstname" type="text" name="firstname" maxlength="50" value="{$firstname}" class="standard">
             </p>
         </div>
         <div class="pageoverflow">
@@ -83,7 +83,7 @@ $(function() {
                 <label for="lastname">{lang('lastname')}:</label>&nbsp;{cms_help key2='help_myaccount_lastname' title=lang('lastname')}
             </p>
             <p class="pageinput">
-                <input id="lastname" type="text" name="lastname" maxlength="50" value="{$lastname}" class="standard" />
+                <input id="lastname" type="text" name="lastname" maxlength="50" value="{$lastname}" class="standard">
             </p>
         </div>
         <div class="pageoverflow">
@@ -91,7 +91,7 @@ $(function() {
                 <label for="email">{lang('email')}:</label>&nbsp;{cms_help key2='help_myaccount_email' title=lang('email')}
             </p>
             <p class="pageinput">
-                <input id="email" type="text" name="email" maxlength="255" value="{$email}" class="standard" />
+                <input id="email" type="text" name="email" maxlength="255" value="{$email}" class="standard">
             </p>
         </div>
 
@@ -101,9 +101,9 @@ $(function() {
                 <label for="active">{lang('active')}:</label>&nbsp;{cms_help realm='admin' key='info_user_active' title=lang('active')}
             </p>
             <p class="pageinput">
-	        <input type="hidden" name="active" value="0" />
-                <input id="active" type="checkbox" class="pagecheckbox" name="active" value="1"{if $active == 1} checked="checked"{/if} />
-                <br />
+	        <input type="hidden" name="active" value="0">
+                <input id="active" type="checkbox" class="pagecheckbox" name="active" value="1"{if $active == 1} checked{/if}>
+                <br>
                 {lang('info_user_active')}
             </p>
         </div>
@@ -113,7 +113,7 @@ $(function() {
         <!-- group options -->
         {tab_start name='groups'}
         <div class="pageverflow">
-            <input type="hidden" name="groups" value="1"/>
+            <input type="hidden" name="groups" value="1">
             <p class="pagetext">
                 {lang('groups')}:
             </p>
@@ -131,7 +131,7 @@ $(function() {
                             {foreach $groups as $onegroup}
                             <tr>
                                 <td>
-                                <input type="checkbox" name="g{$onegroup->id}" id="g{$onegroup->id}" value="1"{if in_array($onegroup->id,$membergroups)} checked="checked"{/if} /> </td>
+                                <input type="checkbox" name="g{$onegroup->id}" id="g{$onegroup->id}" value="1"{if in_array($onegroup->id,$membergroups)} checked{/if}> </td>
                                 <td><label for="g{$onegroup->id}">{$onegroup->name}</label></td>
                                 <td>{$onegroup->description}</td>
                             </tr>
@@ -139,7 +139,7 @@ $(function() {
                         </tbody>
                     </table>
                 </div>
-                <br />
+                <br>
                 <div class="information">{lang('info_membergroups')}</div>
             </div>
         </div>
@@ -163,7 +163,7 @@ $(function() {
                 <label for="clearusersettings" title="{lang('info_clearusersettings')}">{lang('clearusersettings')}</label>
             </p>
             <p class="pageinput">
-                <input type="checkbox" name="clearusersettings" value="1" id="clearusersettings" title="{lang('info_clearusersettings')}:" />
+                <input type="checkbox" name="clearusersettings" value="1" id="clearusersettings" title="{lang('info_clearusersettings')}:">
             </p>
         </div>
         {/if}
@@ -171,8 +171,8 @@ $(function() {
         {tab_end}
 
         <div class="pageoverflow">
-            <input type="submit" id="submit" name="submit" value="{lang('submit')}" />
-            <input type="submit" name="cancel" value="{lang('cancel')}" />
+            <input type="submit" id="submit" name="submit" value="{lang('submit')}">
+            <input type="submit" name="cancel" value="{lang('cancel')}">
         </div>
     {form_end}
 </div>

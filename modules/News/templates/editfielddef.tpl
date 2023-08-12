@@ -19,7 +19,7 @@
 #$Id$
 *}
 
-<script type="text/javascript">
+<script>
 function handle_change() {
   var val = $('#fld_type').val();
   if( val == 'dropdown' ) {
@@ -49,7 +49,7 @@ $(function() {
 	<div class="pageoverflow">
 		<p class="pagetext"><label for="fld_name">*{$nametext}:</label> {cms_help key='help_fielddef_name' title=$nametext}</p>
 		<p class="pageinput">
-			<input type="text" id="fld_name" name="{$actionid}name" value="{$name|cms_escape}" size="30" maxlength="255" required="required" />
+			<input type="text" id="fld_name" name="{$actionid}name" value="{$name|cms_escape}" size="30" maxlength="255" required>
 		</p>
 	</div>
 	{if $showinputtype eq true}
@@ -62,7 +62,7 @@ $(function() {
 			</p>
 		</div>
 	{else}
-		<input type="hidden" id="fld_type" name="{$actionid}type" value="{$type}"/>
+		<input type="hidden" id="fld_type" name="{$actionid}type" value="{$type}">
 	{/if}
 	<div class="pageoverflow" id="area_options">
 		<p class="pagetext"><label for="fld_options">{$mod->Lang('options')}:</label> {cms_help key='help_fielddef_options' title=$mod->Lang('options')}</p>
@@ -73,21 +73,21 @@ $(function() {
 	<div class="pageoverflow" id="area_maxlen">
 		<p class="pagetext"><label for="fld_maxlen">{$maxlengthtext}:</label> {cms_help key='help_fielddef_maxlen' title=$maxlengthtext}</p>
 		<p class="pageinput">
-			<input type="text" id="fld_maxlen" name="{$actionid}max_length" value="{$max_length}" size="5" maxlength="5"/><br />{$info_maxlength}
+			<input type="text" id="fld_maxlen" name="{$actionid}max_length" value="{$max_length}" size="5" maxlength="5"><br>{$info_maxlength}
 		</p>
 	</div>
 	<div class="pageoverflow">
 		<p class="pagetext"><label for="fld_public">{$userviewtext}:</label> {cms_help key='help_fielddef_public' title=$userviewtext}</p>
 		<p class="pageinput">
-			<input type="hidden" name="{$actionid}public" value="0" />
-			<input type="checkbox" id="fld_public" name="{$actionid}public" value="1"{if $public == 1} checked="checked"{/if} />
+			<input type="hidden" name="{$actionid}public" value="0">
+			<input type="checkbox" id="fld_public" name="{$actionid}public" value="1"{if $public == 1} checked{/if}>
 		</p>
 	</div>
 	<div class="pageoverflow">
 		<p class="pagetext">&nbsp;</p>
 		<p class="pageinput">
-			<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />
-			<input type="submit" id="{$actionid}cancel" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
+			<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
+			<input type="submit" id="{$actionid}cancel" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
 		</p>
 	</div>
 {$endform}

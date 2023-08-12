@@ -6,7 +6,7 @@
 		<nav class="dashboard-inner cf">
 		{if !empty($node.img)}
 			<a href="{$node.url}"{if isset($node.target)} target="{$node.target}"{/if}{if $node.selected} class="selected"{/if} tabindex="-1">
-				<img src="{$node.img}" alt="{$node.title}"{if $node.description} title="{$node.description|adjust:'strip_tags'}"{/if} />
+				<img src="{$node.img}" alt="{$node.title}"{if $node.description} title="{$node.description|adjust:'strip_tags'}"{/if}>
 			</a>
 		{/if}
 			<h3>

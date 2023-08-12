@@ -1,21 +1,21 @@
-{form_start id="admin_edit_design"}<input type="hidden" name="{$actionid}design" value="{$design->get_id()}" />
-<input type="hidden" name="{$actionid}ajax" id="ajax" />
+{form_start id="admin_edit_design"}<input type="hidden" name="{$actionid}design" value="{$design->get_id()}">
+<input type="hidden" name="{$actionid}ajax" id="ajax">
 
 <fieldset>
   <div style="width: 49%; float: left;">
     <div class="pageoverflow">
       <p class="pagetext"></p>
       <p class="pageinput">
-        <input id="submitme" type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />
-        <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
-        <input id="applyme" type="submit" name="{$actionid}apply" value="{$mod->Lang('apply')}" />
+        <input id="submitme" type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
+        <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
+        <input id="applyme" type="submit" name="{$actionid}apply" value="{$mod->Lang('apply')}">
       </p>
     </div>
 
     <div class="pageoverflow">
       <p class="pagetext"><label for="design_name">{$mod->Lang('prompt_name')}</label>:&nbsp;{cms_help key2='help_design_name' title=$mod->Lang('prompt_name')}</p>
       <p class="pageinput">
-        <input type="text" id="design_name" name="{$actionid}name" value="{$design->get_name()}" size="50" maxlength="90" />
+        <input type="text" id="design_name" name="{$actionid}name" value="{$design->get_name()}" size="50" maxlength="90">
       </p>
     </div>
   </div>
@@ -56,7 +56,7 @@
   <div id="help_design_name" title="{$mod->Lang('help_design_name')}">{$mod->Lang('help_design_name')}</div>
 {/strip}</div>
 
-<script type="text/javascript">
+<script>
 var __changed=0;
 function set_changed() {
    __changed=1;
@@ -85,5 +85,4 @@ $(function() {
         $('select.selall option').prop('selected',true);
     });
 });
-
 </script>

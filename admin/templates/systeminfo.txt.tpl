@@ -1,9 +1,9 @@
 <div class="pagecontainer">
 <div class="pageoverflow">
 <h2>{si_lang a=systeminfo_copy_paste}</h2>
-<br />
+<br>
 </div>
-<hr />
+<hr>
 
 <div class="pageoverflow">
 
@@ -18,7 +18,7 @@
 	<li>{$module.module_name}: {$module.version}</li>
 {/foreach}
 </ul>
-<br />
+<br>
 {if $count_config_info > 1}
 <p><strong>{'config_information'|replace:'_':' '|adjust:'ucwords'}</strong>:</p>
 <ul>
@@ -33,7 +33,7 @@
 		{/if}
 	{/foreach}
 </ul>
-<br />
+<br>
 {/if}
 
 
@@ -52,7 +52,7 @@
 		{/if}
 	{/foreach}
 </ul>
-<br />
+<br>
 {/if}
 
 {if count($performance_info)}
@@ -83,7 +83,7 @@
 		{/if}
 	{/foreach}
 </ul>
-<br />
+<br>
 {/if}
 {if $count_permission_info > 1}
 <p><strong>{'permission_information'|replace:'_':' '|adjust:'ucwords'}</strong>:</p>
@@ -107,7 +107,7 @@
 </div>
 
 {literal}
-<script type="text/javascript">
+<script>
 	function fnSelect(objId) {
 		fnDeSelect();
 		if (document.selection) {

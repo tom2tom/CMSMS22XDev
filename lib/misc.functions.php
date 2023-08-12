@@ -92,7 +92,7 @@ function redirect($to)
 
     if (headers_sent() && !$debug) {
         // use javascript instead
-        echo '<script type="text/javascript">
+        echo '<script>
           <!--location.replace("'.$to.'"); // -->
           </script>
           <noscript>
@@ -102,8 +102,8 @@ function redirect($to)
     }
     else {
         if ( $debug ) {
-            echo "Debug is on.  Redirecting disabled...  Please click this link to continue.<br />";
-            echo "<a accesskey=\"r\" href=\"".$to."\">".$to."</a><br />";
+            echo "Debug is on.  Redirecting disabled...  Please click this link to continue.<br>";
+            echo "<a accesskey=\"r\" href=\"".$to."\">".$to."</a><br>";
             echo '<div id="DebugFooter">';
             foreach (CmsApp::get_instance()->get_errors() as $error) {
                 echo $error;
@@ -830,7 +830,7 @@ function cleanValue($val) {
   //Replace odd spaces with safe ones
   $val = str_replace(" ", " ", $val);
   $val = str_replace(chr(0xCA), "", $val);
-  //Encode any HTML to entities (including \n --> <br />)
+  //Encode any HTML to entities (including \n --> <br>)
   $_cleanHtml = function($string,$remove = false) {
     if ($remove) {
       $string = strip_tags($string);
@@ -943,10 +943,10 @@ function stack_trace()
   foreach( $stack as $elem ) {
     if( $elem['function'] == 'stack_trace' ) continue;
     if( isset($elem['file'])  ) {
-      echo $elem['file'].':'.$elem['line'].' - '.$elem['function'].'<br />';
+      echo $elem['file'].':'.$elem['line'].' - '.$elem['function'].'<br>';
     }
     else {
-      echo ' - '.$elem['function'].'<br />';
+      echo ' - '.$elem['function'].'<br>';
     }
   }
 }
@@ -1212,8 +1212,8 @@ function cms_get_jquery($exclude = '',$ssl = FALSE,$cdn = FALSE,$append = '',$cu
 
   // Output
   $output = '';
-  $fmt_js = '<script type="text/javascript" src="%s"></script>';
-  $fmt_css = '<link type="text/css" href="%s" rel="stylesheet" />';
+  $fmt_js = '<script src="%s"></script>';
+  $fmt_css = '<link href="%s" rel="stylesheet">';
   foreach($scripts as $script) {
       //TODO check logic here
       if( !empty($script['css']) && $include_css ) {

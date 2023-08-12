@@ -1,12 +1,11 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>{$filepickertitle}</title>
-<link rel="stylesheet" type="text/css" href="{$rooturl}/FileManager/filepicker.css" />
+<link rel="stylesheet" href="{$rooturl}/FileManager/filepicker.css">
 {literal}
-<script language="javascript" type="text/javascript">
-
+<script>
 function ChooseFile(filename) {
 {/literal}
   var URL = filename;
@@ -40,7 +39,7 @@ function ChooseFile(filename) {
 
 <fieldset>
 <legend>{$youareintext}</legend>
-<h2><img src="{$rooturl}/modules/FileManager/icons/themes/{$admintheme}/extensions/dir.png" title="{$subdir}" alt="{$subdir}" />/{$subdir}</h2>
+<h2><img src="{$rooturl}/modules/FileManager/icons/themes/{$admintheme}/extensions/dir.png" title="{$subdir}" alt="{$subdir}">/{$subdir}</h2>
 </fieldset>
 
 {if !empty($formstart)}
@@ -48,7 +47,7 @@ function ChooseFile(filename) {
 <legend>{$fileoperations}</legend>
 {$formstart}
 
-<table width="100%">
+<table style="width:100%">
 <tr>
 <td align="left">
 {$fileuploadtext}: {$fileuploadinput}{$fileuploadsubmit}
@@ -66,29 +65,29 @@ function ChooseFile(filename) {
 </div>
 <div class="filelist">
 {if !empty($files)}
-<table width="100%">
+<table style="width:100%">
 <thead>
 <tr>
 <td>&nbsp;</td>
 <td>&nbsp;</td>
-<td width="1%" align="right" style="white-space:nowrap;"><b>{$dimensionstext}</b></td>
-<td width="1%" align="right" style="white-space:nowrap;"><b>{$sizetext}</b></td>
+<td style="width:1%;white-space:nowrap;" align="right"><b>{$dimensionstext}</b></td>
+<td style="width:1%;white-space:nowrap;" align="right"><b>{$sizetext}</b></td>
 </tr>
 </thead>
   {foreach $files as $file}
   <tr>
   {if $file->isdir=="1"}
-    <td width="1%" align="center"><img src="{$rooturl}/modules/FileManager/icons/themes/{$admintheme}/extensions/dir.png" title="Dir" alt="Dir" /></td> <!-- diricon?? -->
+    <td style="width:1%" align="center"><img src="{$rooturl}/modules/FileManager/icons/themes/{$admintheme}/extensions/dir.png" title="Dir" alt="Dir"></td> <!-- diricon?? -->
     <td>{$file->namelink} </td>
-    <td width="1%">&nbsp;</td>
-    <td width="1%">&nbsp;</td>
+    <td style="width:1%">&nbsp;</td>
+    <td style="width:1%">&nbsp;</td>
   {else}
     <td align="right">
     {if $filepickerstyle=="filename"}
       {if $file->isimage=="1"}
-      <img src="{$rooturl}/modules/FileManager/icons/themes/{$admintheme}/extensions/png.png" title="{$file->name}" alt="{$file->name}" />
+      <img src="{$rooturl}/modules/FileManager/icons/themes/{$admintheme}/extensions/png.png" title="{$file->name}" alt="{$file->name}">
       {else}
-      <img src="{$rooturl}/modules/FileManager/icons/themes/{$admintheme}/extensions/{$file->fileicon}" title="{$file->name}" alt="{$file->name}" />
+      <img src="{$rooturl}/modules/FileManager/icons/themes/{$admintheme}/extensions/{$file->fileicon}" title="{$file->name}" alt="{$file->name}">
       {/if}
     {else}
       <div class="thumbnail">
@@ -97,9 +96,9 @@ function ChooseFile(filename) {
         {$file->thumbnail}
       {else}
         {if $file->isimage}
-        <img src="{$rooturl}/modules/FileManager/icons/themes/{$admintheme}/extensions/png.png" title="{$file->name}" alt="{$file->name}" />
+        <img src="{$rooturl}/modules/FileManager/icons/themes/{$admintheme}/extensions/png.png" title="{$file->name}" alt="{$file->name}">
         {else}
-        <img src="{$rooturl}/modules/FileManager/icons/themes/{$admintheme}/extensions/{$file->fileicon}" title="{$file->name}" alt="{$file->name}" />
+        <img src="{$rooturl}/modules/FileManager/icons/themes/{$admintheme}/extensions/{$file->fileicon}" title="{$file->name}" alt="{$file->name}">
         {/if}
       {/if}
       </a>
@@ -111,8 +110,8 @@ function ChooseFile(filename) {
      {$file->name}
        </a>
     </td>
-    <td width="1%" align="right">{$file->dimensions}</td>
-    <td width="1%" align="right">{$file->size}</td>
+    <td style="width:1%" align="right">{$file->dimensions}</td>
+    <td style="width:1%" align="right">{$file->size}</td>
   {/if}
   </tr>
   {/foreach}

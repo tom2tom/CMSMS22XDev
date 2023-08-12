@@ -13,7 +13,7 @@
 <div class="pageoverflow">
 <form method="post" action="{$filter_action}">
   <div class="hidden">
-    <input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}" />
+    <input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}">
   </div>
   <b>{$selectgroup}:</b>&nbsp;
   <select name="groupsel" id="groupsel">
@@ -25,13 +25,13 @@
     {/if}
   {/foreach}
   </select>&nbsp;
-  <input type="submit" name="filter" value="{$apply}" />
+  <input type="submit" name="filter" value="{$apply}">
 </form>
-</div><br />
+</div><br>
 
 {$form_start}{$hidden|default:''}
 <div class="hidden">
-  <input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}" />
+  <input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}">
 </div>
 <div class="pageoptions">
   {$submit} {$cancel}
@@ -80,7 +80,7 @@
               {else}
                 {$gid=$thisgroup->id}
                 <td class="g{$thisgroup->id}">
-                  <input type="checkbox" name="ug_{$user->id}_{$gid}" value="1"{if isset($user->group[$gid])} checked="checked"{/if} />
+                  <input type="checkbox" name="ug_{$user->id}_{$gid}" value="1"{if isset($user->group[$gid])} checked{/if}>
                 </td>
               {/if}
             {/if}

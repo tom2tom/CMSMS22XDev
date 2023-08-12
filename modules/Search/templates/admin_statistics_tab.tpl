@@ -6,8 +6,8 @@
   <table class="pagetable">
     <thead>
       <tr>
-        <th width="75%">{$wordtext}</th>
-        <th width="25%">{$counttext}</th>
+        <th style="width:75%">{$wordtext}</th>
+        <th style="width:25%">{$counttext}</th>
       </tr>
     </thead>
     <tbody>

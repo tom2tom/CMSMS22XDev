@@ -7,7 +7,7 @@ abstract class wizard_step
   public function __construct()
   {
     //TODO only if debugging
-    echo "DEBUG: create wizard step<br />";
+    echo "DEBUG: create wizard step<br>";
   }
 
   /**

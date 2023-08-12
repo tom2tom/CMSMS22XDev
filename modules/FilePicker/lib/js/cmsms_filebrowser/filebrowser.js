@@ -139,7 +139,7 @@ function CMSFileBrowser(_settings) {
           if(res.error != undefined) {
             n_errors++;
             var msg = settings.lang.error_problem_upload + ' ' + res.name;
-            if(res.errormsg != undefined) msg += '.<br/>' + res.errormsg;
+            if(res.errormsg != undefined) msg += '.<br>' + res.errormsg;
             cms_alert(msg);
           }
         }

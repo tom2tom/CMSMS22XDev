@@ -8,16 +8,16 @@
 <div class="pageoverflow">
   <p class="pagetext">{$mod->Lang('deleteselected')}:</p>
   <p class="pageinput">
-    {'<br />'|adjust:'implode':$selall}
+    {'<br>'|adjust:'implode':$selall}
   </p>
 </div>
 <div class="pageoverflow">
   <p class="pagetext"></p>
   <p class="pageinput">
     {if empty($errors)}
-    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('delete')}" />
+    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('delete')}">
     {/if}
-    <input type="submit" name="{$actionid}cancel" value="{$cancellabel}" />
+    <input type="submit" name="{$actionid}cancel" value="{$cancellabel}">
   </p>
 </div>
 {$endform}

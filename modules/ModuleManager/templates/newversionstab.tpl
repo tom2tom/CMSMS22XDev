@@ -44,7 +44,7 @@
 		<td>{get_module_status_icon status=$entry->age}</td>
 		<td>
 			<span title="{$entry->description|adjust:'strip_tags'|cms_escape}">{$entry->name|default:''}</span>
-{if $entry->error}			<br /><span style="color: red;">{$entry->error}</span>{/if}
+{if $entry->error}			<br><span style="color: red;">{$entry->error}</span>{/if}
 		</td>
 		<td>{$entry->version|default:''}</td>
 		<td>{$entry->date|localedate_format:'%x'}</td>

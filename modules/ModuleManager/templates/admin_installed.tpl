@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 $(function() {
   $('a.mod_upgrade').on('click', function(ev) {
       ev.preventDefault();
@@ -58,7 +58,7 @@ $(function() {
        {cms_help title=$ModuleManager->Lang('title_mm_importxml') key='help_mm_importxml'}
     </p>
     <p class="pageinput">
-      <input id="xml_upload" type="file" name="{$actionid}upload" accept="text/xml"/>
+      <input id="xml_upload" type="file" name="{$actionid}upload" accept="text/xml">
     </p>
   </div>
   {form_end}
@@ -146,7 +146,7 @@ $(function() {
             {capture assign='op'}<span title="{$ModuleManager->Lang('title_depends_upon')}">{$ModuleManager->Lang('depends_upon')}</span>: {', '|adjust:'implode':$tmp}{/capture}{$ops[]=$op}
           {/if}
 
-          {'<br />'|adjust:'implode':$ops}
+          {'<br>'|adjust:'implode':$ops}
       </td>
       <td>
         {* action column *}
@@ -171,7 +171,7 @@ $(function() {
             {/if}
           {/if}
         {/if}
-        {'<br />'|adjust:'implode':$ops}
+        {'<br>'|adjust:'implode':$ops}
       </td>
       <td>
         {* active column *}

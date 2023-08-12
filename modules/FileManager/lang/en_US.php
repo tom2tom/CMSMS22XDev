@@ -116,7 +116,7 @@ $lang['friendlyname'] = 'File Manager';
 $lang['group'] = 'Group';
 
 // H
-$lang['help_advancedmode'] ='<p>Advanced mode allows users to browse and manage all of the files in the CMSMS installation (including system files).</p><br /><p><strong>Use Caution</strong> as it is possible to corrupt a working installation when using advanced mode.</p>';
+$lang['help_advancedmode'] ='<p>Advanced mode allows users to browse and manage all of the files in the CMSMS installation (including system files).</p><br><p><strong>Use Caution</strong> as it is possible to corrupt a working installation when using advanced mode.</p>';
 $lang['help_create_thumbnails'] = 'If enabled, FileManager will automatically create a new thumbnail for each newly uploaded image';
 $lang['help_iconsize'] = 'This option allows specifying the size of the icons displayed in the file list.';
 $lang['help_permissionstyle'] = '<p>This option allows changing the way that permissions are displayed in the file list.  Options include somewhat human readable <em>(rwx)</em> style, or octal <em>(755)</em> format.</p>';
@@ -128,7 +128,7 @@ $lang['help']=<<<EOF
 EOF;
 $lang['help_postrotate'] = <<<EOT
 <p>Options:</p>
-<br />
+<br>
 <ul>
   <li><strong>None</strong> - No postrotate action will be taken.  The rotated image could be larger than the original image.</li>
   <li><strong>Crop</strong> - The rotated image will be cropped to the size of the original source image.  This may result in some of the image being clipped.</li>

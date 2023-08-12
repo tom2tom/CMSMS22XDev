@@ -773,8 +773,8 @@ $lang['help_function_google_search'] = <<<'EOT'
 <h3>What does this do?</h3>
 <p>Search's your website using Google's search engine.</p>
 <h3>How do I use it?</h3>
-<p>Just insert the tag into your template/page like: <code>{google_search}</code><br />
-<br />
+<p>Just insert the tag into your template/page like: <code>{google_search}</code><br>
+<br>
 Note: Google needs to have your website indexed for this to work. You can submit your website to Google <a href="http://www.google.com/addurl.html">here</a>.</p>
 <h3>What if I want to change the look of the textbox or button?</h3>
 <p>The look of the textbox and button can be changed via css. The textbox is given an id of textSearch and the button is given an id of buttonSearch.</p>
@@ -1070,10 +1070,10 @@ $lang['help_function_cms_jquery'] = <<<'EOT'
 <h3>Sample</h3>
 <pre><code>{cms_jquery cdn='true' exclude='jquery-ui' append='uploads/NCleanBlue/js/ie6fix.js' include_css=0}</code></pre>
 <h4><em>Outputs</em></h4>
-<pre><code>&lt;script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"&gt;&lt;/script&gt;
-&lt;script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"&gt;&lt;/script&gt;
-&lt;script type="text/javascript" src="http://localhost/1.10.x/lib/jquery/js/jquery.json-2.4.js"&gt;&lt;/script&gt;
-&lt;script type="text/javascript" src="uploads/NCleanBlue/js/ie6fix.js"&gt;&lt;/script&gt;
+<pre><code>&lt;script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"&gt;&lt;/script&gt;
+&lt;script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"&gt;&lt;/script&gt;
+&lt;script src="http://localhost/1.10.x/lib/jquery/js/jquery.json-2.4.js"&gt;&lt;/script&gt;
+&lt;script src="uploads/NCleanBlue/js/ie6fix.js"&gt;&lt;/script&gt;
 </code></pre>
 <h3>Known Scripts</h3>
 <ul>

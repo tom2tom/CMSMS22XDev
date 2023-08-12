@@ -48,22 +48,22 @@ if( !function_exists('__cms_function_output_var') ) {
 
             $out .= str_repeat($depth_str,$depth);
             $out .= "{$acc} <em>(object of type: ".get_class($val).")</em> = {";
-            if( count($o_items) ) $out .= '<br />';
+            if( count($o_items) ) $out .= '<br>';
             foreach( $o_items as $o_key => $o_val ) {
                 $out .= __cms_function_output_var($o_key,$o_val,$type,$depth+1);
             }
-            $out .= str_repeat($depth_str,$depth)."}<br />";
+            $out .= str_repeat($depth_str,$depth)."}<br>";
         }
         else if( is_array($val) ) {
             $out .= str_repeat($depth_str,$depth);
-            $out .= "{$acc} <em>($type)</em> = [<br />";
+            $out .= "{$acc} <em>($type)</em> = [<br>";
             foreach( $val as $a_key => $a_val ) {
                 $out .= __cms_function_output_var($a_key,$a_val,$type,$depth+1);
             }
-            $out .= str_repeat($depth_str,$depth)."]<br />";
+            $out .= str_repeat($depth_str,$depth)."]<br>";
         }
         else if( is_callable($val) ) {
-            $out .= str_repeat($depth_str,$depth)."{$acc} <em>($type)</em> = callable<br />";
+            $out .= str_repeat($depth_str,$depth)."{$acc} <em>($type)</em> = callable<br>";
         }
         else {
             $out .= str_repeat($depth_str,$depth);
@@ -73,7 +73,7 @@ if( !function_exists('__cms_function_output_var') ) {
             else {
                 $out .= '.'.$key;
             }
-            $out .= " <em>($type)</em> = $val<br />";
+            $out .= " <em>($type)</em> = $val<br>";
         }
         return $out;
     }
@@ -102,7 +102,7 @@ function smarty_cms_about_function_get_template_vars() {
 	<p>Author: Robert Campbell</p>
 	<p>Version: 1.0</p>
 	<p>
-	Change History:<br />
+	Change History:<br>
 	None
 	</p>
 	<?php

@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 $(function() {
     var do_locking = {if !empty($tpl_id) && $tpl_id > 0 && isset($lock_timeout) && $lock_timeout > 0}1{else}0{/if};
     $('#form_edittemplate').dirtyForm({
@@ -39,22 +39,26 @@ $(function() {
         $('#form_edittemplate').dirtyForm('option','dirty',true);
     });
 
-    $('#form_edittemplate').on('click','[name$="apply"],[name$="submit"],[name$="cancel"]',function(){
+    $('#form_edittemplate').on('click','[name$="apply"],[name$="submit"],[name$="cancel"]',function() {
         // if we manually click on one of these buttons, the form is no longer considered dirty for the purposes of warnings.
         $('#form_edittemplate').dirtyForm('option','dirty',false);
     });
 
 /*
-    $(document).on('click', '#submitbtn, #cancelbtn, #importbtn, #exportbtn', function(ev){
+    $(document).on('click', '#submitbtn, #cancelbtn, #importbtn, #exportbtn', function(ev) {
        if( ! do_locking ) return;
        // unlock the item, and submit the form
        var self = this;
        ev.preventDefault();
        var form = $(this).closest('form');
-       $('#form_edittemplate').lockManager('unlock').done(function(){
+       $('#form_edittemplate').lockManager('unlock').done(function() {
            console.debug('item unlocked');
-           var el = $('<input type="hidden"/>');
-           el.attr('name',$(self).attr('name')).val($(self).val()).appendTo(form);
+           $('<input/>', {
+            type:'hidden',
+            name:$(self).attr('name'),
+            val:$(self).val()
+           })
+           .appendTo(form);
            form.trigger('submit');
        });
     });
@@ -67,24 +71,22 @@ $(function() {
 
         $.post(url, data, function(data,textStatus,jqXHR) {
 
-            var $response = $('<aside/>').addClass('message');
+            var response = $('<aside></aside>', { 'class':'message' });
             if (data.status === 'success') {
-
-                $response.addClass('pagemcontainer')
-                    .append($('<span>').text('Close').addClass('close-warning'))
-                    .append($('<p/>').text(data.message));
+                response.addClass('pagemcontainer')
+                    .append($('<span></span>', { 'class':'close-warning',text:'Close' })
+                    .append($('<p></p>', { text:data.message });
             } else if (data.status === 'error') {
-
-                $response.addClass('pageerrorcontainer')
-                    .append($('<span>').text('Close').addClass('close-warning'))
-                    .append($('<p/>').text(data.message));
+                response.addClass('pageerrorcontainer')
+                    .append($('<span></span>', { 'class':'close-warning',text:'Close' })
+                    .append($('<p></p>', { text:data.message });
             }
 
-            $('body').append($response.hide());
-            $response.slideDown(1000, function() {
+            $('body').append(response.hide());
+            response.slideDown(1000, function() {
                 window.setTimeout(function() {
-                    $response.slideUp();
-                    $response.remove();
+                    response.slideUp();
+                    response.remove();
                 }, 10000);
             });
 
@@ -124,10 +126,10 @@ $(function() {
     <div class="grid_6">
         <div class="pageoverflow">
             <p class="pageinput">
-                <input type="submit" id="submitbtn" name="{$actionid}submit" value="{$mod->Lang('submit')}"{$disable|strip} />
-                <input type="submit" id="cancelbtn" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
+                <input type="submit" id="submitbtn" name="{$actionid}submit" value="{$mod->Lang('submit')}"{$disable|strip}>
+                <input type="submit" id="cancelbtn" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
                 {if $template->get_id()}
-                <input type="submit" id="applybtn" name="{$actionid}apply" value="{$mod->Lang('apply')}"{$disable|strip} />
+                <input type="submit" id="applybtn" name="{$actionid}apply" value="{$mod->Lang('apply')}"{$disable|strip}>
                 {/if}
             </p>
         </div>
@@ -135,7 +137,7 @@ $(function() {
         <div class="pageoverflow">
             <p class="pagetext"><label for="tpl_name">*{$mod->Lang('prompt_name')}:</label>&nbsp;{cms_help key2=help_template_name title=$mod->Lang('prompt_name')}</p>
             <p class="pageinput">
-                <input id="tpl_name" type="text" name="{$actionid}name" size="50" maxlength="90" value="{$template->get_name()}" {if !$has_manage_right}readonly="readonly"{/if} placeholder="{$mod->Lang('new_template')}" />
+                <input id="tpl_name" type="text" name="{$actionid}name" size="50" maxlength="90" value="{$template->get_name()}"{if !$has_manage_right} readonly{/if} placeholder="{$mod->Lang('new_template')}">
             </p>
         </div>
 
@@ -202,7 +204,7 @@ $(function() {
 <div class="pageoverflow">
     <p class="pagetext"><label for="description">{$mod->Lang('prompt_description')}:</label>&nbsp;{cms_help key2=help_template_description title=$mod->Lang('prompt_description')}</p>
     <p class="pageinput">
-        <textarea id="description" name="{$actionid}description" {if !$has_manage_right}readonly="readonly"{/if}>{$template->get_description()}</textarea>
+        <textarea id="description" name="{$actionid}description"{if !$has_manage_right} readonly{/if}>{$template->get_description()}</textarea>
     </p>
 </div>
 
@@ -211,7 +213,7 @@ $(function() {
     <div class="pageoverflow">
         <p class="pagetext"><label for="designlist">{$mod->Lang('prompt_designs')}:</label>&nbsp;{cms_help key2=help_template_designlist title=$mod->Lang('prompt_designs')}</p>
         <p class="pageinput">
-            <select id="designlist" name="{$actionid}design_list[]" multiple="multiple" size="5">
+            <select id="designlist" name="{$actionid}design_list[]" multiple size="5">
                 {html_options options=$design_list selected=$template->get_designs()}
             </select>
         </p>
@@ -223,7 +225,7 @@ $(function() {
         <div class="pageoverflow">
             <p class="pagetext"><label for="tpl_listable">{$mod->Lang('prompt_listable')}:</label>&nbsp;{cms_help key2=help_template_listable title=$mod->Lang('prompt_listable')}</p>
             <p class="pageinput">
-                <select id="tpl_listable" name="{$actionid}listable"{if $type_is_readonly} readonly="readonly"{/if}>
+                <select id="tpl_listable" name="{$actionid}listable"{if $type_is_readonly} readonly{/if}>
                 {cms_yesno selected=$template->get_listable()}
                 </select>
             </p>
@@ -232,7 +234,7 @@ $(function() {
             <div class="pageoverflow">
                 <p class="pagetext"><label for="tpl_type">{$mod->Lang('prompt_type')}:</label>&nbsp;{cms_help key2=help_template_type title=$mod->Lang('prompt_type')}</p>
                 <p class="pageinput">
-                    <select id="tpl_type" name="{$actionid}type"{if $type_is_readonly} readonly="readonly"{/if}>
+                    <select id="tpl_type" name="{$actionid}type"{if $type_is_readonly} readonly{/if}>
                         {html_options options=$type_list selected=$template->get_type_id()}
                     </select>
                 </p>
@@ -263,9 +265,9 @@ $(function() {
             <p class="pagetext">{$mod->Lang('prompt_filetemplate')}:</p>
             <p class="pageinput">
             {if $template->has_content_file()}
-            <input type="submit" id="importbtn" name="{$actionid}import" value="{$mod->Lang('import')}" />
+            <input type="submit" id="importbtn" name="{$actionid}import" value="{$mod->Lang('import')}">
             {elseif $template->get_id() > 0}
-            <input type="submit" id="exportbtn" name="{$actionid}export" value="{$mod->Lang('export')}" />
+            <input type="submit" id="exportbtn" name="{$actionid}export" value="{$mod->Lang('export')}">
             {/if}
         </p>
         </div>
@@ -288,7 +290,7 @@ $(function() {
     <div class="pageoverflow">
         <p class="pagetext"><label for="tpl_addeditor">{$mod->Lang('additional_editors')}:</label>&nbsp;{cms_help key2=help_template_addteditors title=$mod->Lang('additional_editors')}</p>
         <p class="pageinput">
-            <select id="tpl_addeditor" name="{$actionid}addt_editors[]" multiple="multiple" size="5">
+            <select id="tpl_addeditor" name="{$actionid}addt_editors[]" multiple size="5">
                 {html_options options=$addt_editor_list selected=$template->get_additional_editors()}
             </select>
         </p>

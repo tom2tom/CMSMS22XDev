@@ -127,7 +127,7 @@ $get_thumbnail_tag = function($file,$path,$url) {
     $imagetag = '';
     $imagepath = $path.'/thumb_'.$file;
     $imageurl = $url.'/thumb_'.$file;
-    if( is_file($imagepath) ) $imagetag="<img src='".$imageurl."' alt='".$file."' title='".$file."' />";
+    if( is_file($imagepath) ) $imagetag="<img src='".$imageurl."' alt='".$file."' title='".$file."'>";
     return $imagetag;
 };
 

@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 $(function() {
   $('#clearlog').on('click', function(ev) {
     ev.preventDefault();
@@ -24,24 +24,24 @@ $(function() {
     <div id="adminlog_filters" style="display: none;" title="{lang('filter')}">
         <form id="adminlog_filter" method="post" action="adminlog.php?{$SECURE_PARAM_NAME}={$CMS_USER_KEY}">
           <div class="c_full">
-            <label>{$langfilteraction}</label>
-            <input type="text" name="filteraction" value="{$filter->action}" class="grid_10" />
+            <label for="actionin">{$langfilteraction}</label>
+            <input type="text" id="actionin" name="filteraction" value="{$filter->action}" class="grid_10">
             <div class="clearb"></div>
           </div>
           <div class="c_full">
-            <label>{lang('item_name_contains')}</label>
-            <input type="text" name="filteritem" value="{$filter->item_name}" class="grid_10" />
+            <label for="filterin">{lang('item_name_contains')}</label>
+            <input type="text" id="filterin" name="filteritem" value="{$filter->item_name}" class="grid_10">
             <div class="clearb"></div>
           </div>
           <div class="c_full">
-            <label>{$langfilteruser}:</label>
-            <input type="text" name="filteruser" value="{$filter->user}" class="grid_10" />
+            <label for="userin">{$langfilteruser}:</label>
+            <input type="text" id="userin" name="filteruser" value="{$filter->user}" class="grid_10">
             <div class="clearb"></div>
           </div>
           <div class="pageoverflow">
             <p class="pageinput">
-             <input type="submit" name="filterapply" value="{lang('apply')}"/>
-             <input type="submit" name="filterreset" value="{lang('reset')}"/>
+             <input type="submit" name="filterapply" value="{lang('apply')}">
+             <input type="submit" name="filterreset" value="{lang('reset')}">
             </p>
           </div>
         </form>

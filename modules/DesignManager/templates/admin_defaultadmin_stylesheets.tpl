@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 $(function() {
   // dynamically populate the stylesheets area
   cms_busy();
@@ -56,7 +56,7 @@ $(function() {
 
 <div id="filtercssdlg" style="display: none;" title="{$mod->Lang('css_filter')}">
   {form_start id='filtercssdlg_form'}{*strip*}
-    <input type="hidden" id="submit_filter_css" name="{$actionid}submit_filter_css" value="1"/>
+    <input type="hidden" id="submit_filter_css" name="{$actionid}submit_filter_css" value="1">
     <div class="c_full">
       <label for="filter_css_design" class="grid_3 text-right">{$mod->Lang('prompt_design')}:</label>
       <select id="filter_css_design" name="{$actionid}filter_css_design" title="{$mod->Lang('title_filter_design')}" class="grid_9">

@@ -3,7 +3,7 @@
 <table class="pagetable">
   <thead>
     <tr>
-      <th width="75%">{$nameprompt}</th>
+      <th style="width:75%">{$nameprompt}</th>
       <th>{$defaultprompt}</th>
       <th class="pageicon">&nbsp;</th>
       <th class="pageicon">&nbsp;</th>

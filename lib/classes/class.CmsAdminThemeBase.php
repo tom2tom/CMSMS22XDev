@@ -1094,7 +1094,7 @@ abstract class CmsAdminThemeBase
 		if ($width != '') $retStr .= ' width="'.$width.'"';
 		if ($height != '') $retStr .= ' height="'.$height.'"';
 		if ($alt != '') $retStr .= ' alt="'.$alt.'" title="'.$alt.'"';
-		$retStr .= ' />';
+		$retStr .= '>';
 		return $retStr;
 	}
 

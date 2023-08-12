@@ -17,7 +17,7 @@
 </li>
 <li>Version 1.1.6 May, 2008. Now show if available modules are incompatible with the current CMS_VERSION.</li>
 </li>
-<li>Version 1.2 June, 2008.<br />
+<li>Version 1.2 June, 2008.<br>
 This version should reduce the memory requirements of this module, and trade it off for performance on the server, and more requests to the server.
    <ul>
     <li>Bumped Minimum CMS Version to 1.3</li>
@@ -27,19 +27,19 @@ This version should reduce the memory requirements of this module, and trade it 
     <li>Add support for requesting only the newest versions of the modules</li>
    </ul>
 </li>
-<li>Version 1.2.1 August, 2008.<br />
+<li>Version 1.2.1 August, 2008.<br>
 Added a warning message to the top of the admin display.
 </li>
-<li>Version 1.3 May, 2009.<br />
+<li>Version 1.3 May, 2009.<br>
 Added dependency checking.
 </li>
-<li>Version 1.3.3 March, 2010.<br />
+<li>Version 1.3.3 March, 2010.<br>
 <ul>
   <li>PHP 5.x improvements (specifically remove warnings for PHP 5.3)</li>
   <li>Minor bug fixes.</li>
 </ul>
 </li>
-<li>Version 1.4 June, 2010.<br />
+<li>Version 1.4 June, 2010.<br>
 <ul>
   <li>Implemented automatic dependency calculation, and one-click installation.</li>
   <li>Assorted usability improvements.</li>

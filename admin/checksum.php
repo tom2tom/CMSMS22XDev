@@ -136,16 +136,16 @@ function check_checksum_data(&$report)
     if( $notreadable ) $tmp2[] = sprintf("%d %s",$notreadable,lang('files_not_readable'));
     if( $md5failed ) $tmp2[] = sprintf("%d %s",$md5failed,lang('files_checksum_failed'));
 
-    $tmp = implode( "<br />", $tmp2 );
+    $tmp = implode( "<br>", $tmp2 );
     if( $filenotfound ) {
-      $tmp .= "<br />".lang('files_not_found').':';
-      $tmp .= "<br />".implode("<br />",$filenotfound)."<br />";
+      $tmp .= "<br>".lang('files_not_found').':';
+      $tmp .= "<br>".implode("<br>",$filenotfound)."<br>";
     }
     if( $filesfailed ) {
-      $tmp .= "<br />".count($filesfailed).' '.lang('files_failed').':';
-      $tmp .= "<br />".implode("<br />",$filesfailed)."<br />";
+      $tmp .= "<br>".count($filesfailed).' '.lang('files_failed').':';
+      $tmp .= "<br>".implode("<br>",$filesfailed)."<br>";
     }
-//    if( $tmp ) $tmp .= "<br />";
+//    if( $tmp ) $tmp .= "<br>";
 
     $report = $tmp;
     return false;

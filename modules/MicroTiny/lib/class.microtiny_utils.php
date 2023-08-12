@@ -90,7 +90,7 @@ class microtiny_utils
       if( $first_time ) {
           // only once per request.
           $first_time = FALSE;
-          $output .= '<script type="text/javascript" src="'.$config->smart_root_url().'/modules/MicroTiny/lib/js/tinymce/tinymce.min.js"></script>';
+          $output .= '<script src="'.$config->smart_root_url().'/modules/MicroTiny/lib/js/tinymce/tinymce.min.js"></script>';
       }
 
       $hash_salt = __DIR__.session_id().$frontend.$selector.$css_name.get_userid(FALSE).$languageid;
@@ -102,7 +102,7 @@ class microtiny_utils
       }
 
       $configurl = $config['public_cache_url'].'/'.basename($fn);
-      $output.='<script type="text/javascript" src="'.$configurl.'" defer="defer"></script>';
+      $output.='<script src="'.$configurl.'" defer="defer"></script>';
 
       return $output;
   }
@@ -221,7 +221,7 @@ class microtiny_utils
     if (!file_exists($imagepath)) {
       $image='';
     } else {
-      $image="<img src='".$imageurl."' alt='".$file."' title='".$file."' />";
+      $image="<img src='".$imageurl."' alt='".$file."' title='".$file."'>";
     }
     return $image;
   }

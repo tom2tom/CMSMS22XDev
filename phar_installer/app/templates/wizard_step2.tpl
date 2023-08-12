@@ -7,7 +7,7 @@
 {/block}
 {block name='contents'}
 
-<script type="text/javascript">
+<script>
 $(function() {
   $('#upgrade_info .link').css('cursor','pointer').on('click',function() {
     var e = '#'+$(this).data('content');
@@ -70,7 +70,7 @@ $(function() {
       {if !empty($upgrade_info)}
         <div class="message blue icon">
           <i class="icon-info message-icon"></i>
-          <div class="content"><strong>{tr('step2_hdr_upgradeinfo')}</strong><br />{tr('step2_info_upgradeinfo')}</div>
+          <div class="content"><strong>{tr('step2_hdr_upgradeinfo')}</strong><br>{tr('step2_info_upgradeinfo')}</div>
         </div>
         <ul id="upgrade_info" class="no-list">
           {foreach $upgrade_info as $ver => $data}
@@ -102,11 +102,11 @@ $(function() {
       {* <a class="action-button orange" href="{$retry_url}" title="{tr('retry')}">{tr('retry')} <i class="icon-loop"></i></a> *}
       <a onClick="window.location.reload();" class="action-button orange" title="{tr('retry')}">{tr('retry')} <i class="icon-loop"></i></a>
       {/if}
-      <input class="action-button positive" id="install" type="submit" name="install" value="{tr('install')}" />
+      <input class="action-button positive" id="install" type="submit" name="install" value="{tr('install')}">
     {elseif !isset($cmsms_info.error_status)}
-      <input class="action-button positive" id="upgrade" type="submit" name="upgrade" value="{tr('upgrade')} &rarr;" />
+      <input class="action-button positive" id="upgrade" type="submit" name="upgrade" value="{tr('upgrade')} &rarr;">
     {elseif $cmsms_info.error_status == 'same_ver'}
-      <input class="action-button positive" id="freshen" type="submit" name="freshen" value="{tr('freshen')} &rarr;" />
+      <input class="action-button positive" id="freshen" type="submit" name="freshen" value="{tr('freshen')} &rarr;">
     {/if}
   </div>
 

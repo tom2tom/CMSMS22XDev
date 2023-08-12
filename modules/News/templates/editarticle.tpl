@@ -1,5 +1,4 @@
-<script type="text/javascript">
-//<![CDATA[
+<script>
 {if isset($start_tab_preview)}
   $(function() {
     $('[name="m1_apply"]').on('click', function(e) {
@@ -209,7 +208,6 @@
       $('#expiryinfo').toggle('slow');
     });
   });
-//]]>
 </script>
 <h3>{if isset($articleid)}{$mod->Lang('editarticle')}{else}{$mod->Lang('addarticle')}{/if}</h3>
 
@@ -220,10 +218,10 @@
   {strip}{$hidden|default:''}
   <div class="pageoptions">
     <p class="pageinput">
-      <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />
-      &nbsp;<input type="submit" id="{$actionid}cancel" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
+      <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
+      &nbsp;<input type="submit" id="{$actionid}cancel" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
       {if isset($articleid)}
-        &nbsp;<input type="submit" name="{$actionid}apply" value="{$mod->Lang('apply')}" />
+        &nbsp;<input type="submit" name="{$actionid}apply" value="{$mod->Lang('apply')}">
       {/if}
     </p>
   </div>
@@ -253,7 +251,7 @@
         <label for="fld1">*{$titletext}:</label> {cms_help key='help_article_title' title=$titletext}
       </p>
       <p class="pageinput">
-        <input type="text" id="fld1" name="{$actionid}title" value="{$title|escape:htmlall}" size="80" maxlength="255" required />
+        <input type="text" id="fld1" name="{$actionid}title" value="{$title|escape:htmlall}" size="80" maxlength="255" required>
       </p>
     </div>
     <div class="pageoverflow">
@@ -296,7 +294,7 @@
       </p>
     </div>
     {else}
-    <input type="hidden" name="{$actionid}status" value="{$status}" />
+    <input type="hidden" name="{$actionid}status" value="{$status}">
     {/if}
 
     <div class="pageoverflow">
@@ -304,7 +302,7 @@
         <label for="fld7">{$urltext}:</label> {cms_help key='help_article_url' title=$urltext}
       </p>
       <p class="pageinput">
-        <input type="text" id="fld7" name="{$actionid}news_url" value="{$news_url}" size="50" maxlength="255" />
+        <input type="text" id="fld7" name="{$actionid}news_url" value="{$news_url}" size="50" maxlength="255">
       </p>
     </div>
     <div class="pageoverflow">
@@ -312,7 +310,7 @@
         <label for="fld5">{$extratext}:</label> {cms_help key='help_article_extra' title=$extratext}
       </p>
       <p class="pageinput">
-        <input type="text" id="fld5" name="{$actionid}extra" value="{$extra|cms_escape}" size="50" maxlength="255" />
+        <input type="text" id="fld5" name="{$actionid}extra" value="{$extra|cms_escape}" size="50" maxlength="255">
       </p>
     </div>
 
@@ -332,7 +330,7 @@
         <select name="{$actionid}searchable" id="searchable">
           {cms_yesno selected=$searchable}
         </select>
-        <br />
+        <br>
         {$mod->Lang('info_searchable')}
       </p>
     </div>
@@ -342,7 +340,7 @@
         <label for="fld11">{$useexpirationtext}:</label> {cms_help key='help_article_useexpiry' title=$useexpirationtext}
       </p>
       <p class="pageinput">
-        <input id="fld11" type="checkbox" name="{$actionid}useexp"{if $useexp} checked="checked"{/if} class="pagecheckbox" />
+        <input id="fld11" type="checkbox" name="{$actionid}useexp"{if $useexp} checked{/if} class="pagecheckbox">
       </p>
     </div>
     <div id="expiryinfo" {if $useexp != 1}style="display: none;"{/if}>
@@ -371,14 +369,14 @@
       </p>
       <p class="pageinput">
         {if $field->type == 'textbox'}
-          <input type="text" id="{$field->idattr}" name="{$field->nameattr}" value="{$field->value}" size="{$field->size}" maxlength="{$field->max_len}" />
+          <input type="text" id="{$field->idattr}" name="{$field->nameattr}" value="{$field->value}" size="{$field->size}" maxlength="{$field->max_len}">
         {elseif $field->type == 'checkbox'}
-          <input type="hidden" name="{$field->nameattr}" value="0" />
-          <input type="checkbox" id="{$field->idattr}" name="{$field->nameattr}" value="1"{if $field->value} checked="checked"{/if} />
+          <input type="hidden" name="{$field->nameattr}" value="0">
+          <input type="checkbox" id="{$field->idattr}" name="{$field->nameattr}" value="1"{if $field->value} checked{/if}>
         {elseif $field->type == 'textarea'}
           {cms_textarea id=$field->idattr name=$field->nameattr enablewysiwyg=1 value=$field->value maxlength=$field->max_len}
         {elseif $field->type == 'file'}
-          {if !empty($field->value)}{$field->value}<br />{/if} <input type="file" id="{$field->idattr}" name="{$field->nameattr}" />{if !empty($field->value)} {$delete_field_val} <input type="checkbox" name="{$field->delete}" value="delete" />{/if}
+          {if !empty($field->value)}{$field->value}<br>{/if} <input type="file" id="{$field->idattr}" name="{$field->nameattr}">{if !empty($field->value)} {$delete_field_val} <input type="checkbox" name="{$field->delete}" value="delete">{/if}
         {elseif $field->type == 'dropdown'}
           <select id="{$field->idattr}" name="{$field->nameattr}">
             <option value="-1">{$select_option}</option>
@@ -387,7 +385,7 @@
         {elseif $field->type == 'linkedfile'}
           {if $field->value}
              {thumbnail_url file=$field->value assign=tmp}
-             {if $tmp}<img src="{$tmp}" alt="{$field->value}" />{/if}
+             {if $tmp}<img src="{$tmp}" alt="{$field->value}">{/if}
           {/if}
           {cms_filepicker name="{$field->nameattr}" value=$field->value}
         {/if}
@@ -415,7 +413,7 @@
     </select>
     <label for="cms_hierdropdown1_0">{$prompt_detail_page}:</label>&nbsp;{$preview_page_selector}
   </fieldset>
-  <br />
+  <br>
   <iframe id="previewframe" style="height: 800px; width: 100%; border: 1px solid black; overflow: auto;"></iframe>
   {$end_tab_preview}
   {$end_tab_content}
@@ -424,10 +422,10 @@
 
   <div class="pageoverflow">
     <p class="pageinput">
-      <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />;
-      &nbsp;<input type="submit" id="{$actionid}cancel" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
+      <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">;
+      &nbsp;<input type="submit" id="{$actionid}cancel" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
       {if isset($articleid)}
-        &nbsp;<input type="submit" name="{$actionid}apply" value="{$mod->Lang('apply')}" />
+        &nbsp;<input type="submit" name="{$actionid}apply" value="{$mod->Lang('apply')}">
       {/if}
     </p>
   </div>

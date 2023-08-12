@@ -79,7 +79,7 @@ abstract class wizard_step extends parent_step
   public function error($msg)
   {
       $msg = addslashes($msg);
-      echo '<script type="text/javascript">add_error(\''.$msg.'\');</script>'."\n";
+      echo '<script>add_error(\''.$msg.'\');</script>'."\n";
       flush();
   }
 
@@ -88,7 +88,7 @@ abstract class wizard_step extends parent_step
       $verbose = wizard::get_instance()->get_data('verbose');
       if( $verbose ) {
           $msg = addslashes($msg);
-          echo '<script type="text/javascript">add_verbose(\''.$msg.'\');</script>'."\n";
+          echo '<script>add_verbose(\''.$msg.'\');</script>'."\n";
           flush();
       }
   }
@@ -96,20 +96,20 @@ abstract class wizard_step extends parent_step
   public function message($msg)
   {
       $msg = addslashes($msg);
-      echo '<script type="text/javascript">add_message(\''.$msg.'\');</script>'."\n";
+      echo '<script>add_message(\''.$msg.'\');</script>'."\n";
       flush();
   }
 
   public function set_block_html($id,$html)
   {
       $html = addslashes($html);
-      echo '<script type="text/javascript">set_block_html(\''.$id.'\',\''.$html.'\');</script>'."\n";
+      echo '<script>set_block_html(\''.$id.'\',\''.$html.'\');</script>'."\n";
       flush();
   }
 
   protected function finish()
   {
-      echo '<script type="text/javascript">finish();</script>'."\n";
+      echo '<script>finish();</script>'."\n";
       flush();
   }
 

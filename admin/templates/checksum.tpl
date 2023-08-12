@@ -19,8 +19,8 @@
 
 <form action="{$smarty.server.PHP_SELF}" method="post" enctype="multipart/form-data">
 <div>
-  <input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}" />
-  <input type="hidden" name="action" value="upload" />
+  <input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}">
+  <input type="hidden" name="action" value="upload">
 </div>
 <fieldset>
   <legend>{lang key='perform_validation'}</legend>
@@ -29,20 +29,20 @@
   </div>
   <div class="pageoverflow">
     <p class="pagetext">{lang key='upload_cksum_file'}</p>
-    <p class="pageinput"><input type="file" name="cksumdat" size="30" maxlength="255" /></p>
+    <p class="pageinput"><input type="file" name="cksumdat" size="30" maxlength="255"></p>
   </div>
   <div class="pageoverflow">
     <p class="pagetext">&nbsp;</p>
-    <p class="pageinput"><input type="submit" name="submit" value="{lang key='submit'}" /></p>
+    <p class="pageinput"><input type="submit" name="submit" value="{lang key='submit'}"></p>
   </div>
 </fieldset>
 </form>
 
-<br />
+<br>
 <form action="{$smarty.server.PHP_SELF}" method="post" enctype="multipart/form-data">
 <div>
-  <input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}" />
-  <input type="hidden" name="action" value="download" />
+  <input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}">
+  <input type="hidden" name="action" value="download">
 </div>
 <fieldset>
   <legend>{lang key='download_cksum_file'}</legend>
@@ -51,7 +51,7 @@
   </div>
   <div class="pageoverflow">
     <p class="pagetext">&nbsp;</p>
-    <p class="pageinput"><input type="submit" name="submit" value="{lang key='submit'}" /></p>
+    <p class="pageinput"><input type="submit" name="submit" value="{lang key='submit'}"></p>
   </div>
 </fieldset>
 </form>

@@ -80,7 +80,7 @@ class Link extends ContentBase
     {
 		switch($one) {
 		case 'url':
-			return array(lang('url').':','<input type="text" name="url" size="80" value="'.cms_htmlentities($this->GetPropertyValue('url')).'" />');
+			return array(lang('url').':','<input type="text" name="url" size="80" value="'.cms_htmlentities($this->GetPropertyValue('url')).'">');
 			break;
 
 		default:

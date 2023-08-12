@@ -1,6 +1,6 @@
 {strip}
 	{process_pagedata}
-{/strip}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+{/strip}<!DOCTYPE html>
 <html lang="{cms_get_language}">
 
 <head>

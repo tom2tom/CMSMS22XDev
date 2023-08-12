@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
     function parseTree(ul) {
         var tags = [];
         ul.children('li').each(function() {
@@ -57,16 +57,16 @@
 
 <h3>{$mod->Lang('prompt_ordercontent')}</h3>
 {form_start action='admin_ordercontent' id="theform"}
-<input type="hidden" id="orderlist" name="{$actionid}orderlist" value=""/>
+<input type="hidden" id="orderlist" name="{$actionid}orderlist" value="">
 <div class="information">
 	{$mod->Lang('info_ordercontent')}
 </div>
 <div class="pageoverflow">
 	<p class="pagetext"></p>
 	<p class="pageinput">
-		<input id="btn_submit" type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />
-		<input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
-		<input id="btn_revert" type="submit" name="revert" value="{$mod->Lang('revert')}" />
+		<input id="btn_submit" type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
+		<input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
+		<input id="btn_revert" type="submit" name="revert" value="{$mod->Lang('revert')}">
 	</p>
 </div>
 <div class="pageoverflow">

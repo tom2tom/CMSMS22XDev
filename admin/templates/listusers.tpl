@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 $(function() {
 
     $('#sel_all').cmsms_checkall();
@@ -88,7 +88,7 @@ $(function() {
                 {if $is_admin}<th class="pageicon"></th>{/if}
                 <th class="pageicon"></th>
                 <th class="pageicon"></th>
-                <th class="pageicon"><input type="checkbox" id="sel_all" value="1" title="{lang('selectall')}" /></th>
+                <th class="pageicon"><input type="checkbox" id="sel_all" value="1" title="{lang('selectall')}"></th>
             </tr>
         </thead>
         <tbody>
@@ -136,7 +136,7 @@ $(function() {
                 </td>
                 <td>
                     {if $can_edit && $user->id != $my_userid}
-                        <input class="multiselect" type="checkbox" name="multiselect[]" value="{$user->id}" title="{lang('info_selectuser')}" />
+                        <input class="multiselect" type="checkbox" name="multiselect[]" value="{$user->id}" title="{lang('info_selectuser')}">
                     {/if}
                 </td>
             </tr>
@@ -164,7 +164,7 @@ $(function() {
                 </select>&nbsp;
             </div>
 
-            <input type="submit" id="bulksubmit" name="bulk" value="{lang('submit')}"/>
+            <input type="submit" id="bulksubmit" name="bulk" value="{lang('submit')}">
         </div>
     </div>
 {form_end}

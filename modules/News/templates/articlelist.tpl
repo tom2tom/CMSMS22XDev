@@ -1,5 +1,4 @@
-<script type="text/javascript">
-//<![CDATA[
+<script>
 $(function() {
   $('#selall').cmsms_checkall();
   $('#bulkactions').hide();
@@ -46,7 +45,6 @@ $(function() {
     });
   });
 });
-//]]>
 </script>
 
 {if isset($formstart)}
@@ -59,7 +57,7 @@ $(function() {
 		{html_options options=$categorylist selected=$curcategory}
 		</select>
 		<label for="filter_allcategories">{$prompt_showchildcategories}:</label>
-		<input id="filter_allcategories" type="checkbox" name="{$actionid}allcategories" value="yes"{if $allcategories=="yes"} checked="checked"{/if} />
+		<input id="filter_allcategories" type="checkbox" name="{$actionid}allcategories" value="yes"{if $allcategories=="yes"} checked{/if}>
 		{cms_help key='help_articles_filterchildcats' title=$prompt_showchildcategories}
 	</p>
 	</div>
@@ -81,8 +79,8 @@ $(function() {
 	</div>
 	<div class="pageoverflow">
 	<p class="pageinput">
-		<input type="submit" name="{$actionid}submitfilter" value="{$mod->Lang('submit')}" />
-		<input type="submit" name="{$actionid}resetfilter" value="{$mod->Lang('reset')}" />
+		<input type="submit" name="{$actionid}submitfilter" value="{$mod->Lang('submit')}">
+		<input type="submit" name="{$actionid}resetfilter" value="{$mod->Lang('reset')}">
 	</p>
 	</div>
 	{$formend}
@@ -104,7 +102,7 @@ $(function() {
 		<select name="{$actionid}pagenumber">
 		{cms_pageoptions numpages=$pagecount curpage=$pagenumber}
 		</select>&nbsp;
-		<input type="submit" name="{$actionid}paginate" value="{$mod->Lang('prompt_go')}" />
+		<input type="submit" name="{$actionid}paginate" value="{$mod->Lang('prompt_go')}">
 		{form_end}
 	</div>
 	{/if}
@@ -124,7 +122,7 @@ $(function() {
 			<th class="pageicon">{$statustext}</th>
 			<th class="pageicon">&nbsp;</th>
 			<th class="pageicon">&nbsp;</th>
-			<th class="pageicon"><input type="checkbox" id="selall" value="1" title="{$mod->Lang('selectall')}" /></th>
+			<th class="pageicon"><input type="checkbox" id="selall" value="1" title="{$mod->Lang('selectall')}"></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -160,7 +158,7 @@ $(function() {
 			<a class="delete_article" href="{$entry->delete_url}" title="{$mod->Lang('delete_article')}">{admin_icon icon='delete.gif'}</a>
 			{/if}
 			</td>
-			<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->id}" title="{$mod->Lang('toggle_bulk')}" /></td>
+			<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->id}" title="{$mod->Lang('toggle_bulk')}"></td>
 		</tr>
 	{/foreach}
 	</tbody>
@@ -189,7 +187,7 @@ $(function() {
 		<div id="bulk_category" style="display: inline-block;">
 			{$mod->Lang('category')}: {$categoryinput}
 		</div>
-		<input type="submit" id="submit_bulkaction" name="{$actionid}submit_bulkaction" value="{$mod->Lang('submit')}" />
+		<input type="submit" id="submit_bulkaction" name="{$actionid}submit_bulkaction" value="{$mod->Lang('submit')}">
 	</div>
 {/if}
 	<div class="clearb"></div>

@@ -92,7 +92,7 @@ if (isset($_POST["optimizeall"])) {
   foreach ($optimizearray as $check) {
     if (isset($check["Msg_text"]) && $check["Msg_text"] != "OK") {
       $errorsfound++;
-      $errordetails .= "MySQL reports that table " . $check["Table"] . " does not checkout OK.<br />";
+      $errordetails .= "MySQL reports that table " . $check["Table"] . " does not checkout OK.<br>";
     }
   }
 
@@ -110,7 +110,7 @@ if (isset($_POST["repairall"])) {
   foreach ($repairarray as $check) {
     if (isset($check["Msg_text"]) && $check["Msg_text"] != "OK") {
       $errorsfound++;
-      $errordetails .= "MySQL reports that table " . $check["Table"] . " does not checkout OK.<br />";
+      $errordetails .= "MySQL reports that table " . $check["Table"] . " does not checkout OK.<br>";
     }
   }
 
@@ -283,7 +283,7 @@ if (is_readable($ch_filename)) {
 	  }
 	}
 
-	$changelog = implode("<br />", $changelog);
+	$changelog = implode("<br>", $changelog);
 
 	$smarty->assign("changelog", $changelog);
 	$smarty->assign("changelogfilename", $ch_filename);

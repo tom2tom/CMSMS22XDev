@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 $(function() {
   {if !$advanced}$('#advhelp').hide();{/if}
   $('#advanced').on('click', function() {
@@ -25,17 +25,17 @@ $(function() {
 <div class="pageoverflow">
 	<p class="pagetext"><label for="searchterm">{$ModuleManager->Lang('searchterm')}:</label></p>
 	<p class="pageinput">
-		<input id="searchterm" type="text" name="{$actionid}term" size="50" value="{$term}" title="{$ModuleManager->Lang('title_searchterm')}" placeholder="{$ModuleManager->Lang('entersearchterm')}" />&nbsp;
-		<input type="hidden" name="{$actionid}advanced" value="0"/>
-		<input type="checkbox" id="advanced" name="{$actionid}advanced" value="1"{if $advanced} checked="checked"{/if} title="{$ModuleManager->Lang('title_advancedsearch')}" />&nbsp;<label for="advanced">{$ModuleManager->Lang('prompt_advancedsearch')}</label>
-		<span id="advhelp" style="display: none;"><br />{$ModuleManager->Lang('advancedsearch_help')}</span>
+		<input id="searchterm" type="text" name="{$actionid}term" size="50" value="{$term}" title="{$ModuleManager->Lang('title_searchterm')}" placeholder="{$ModuleManager->Lang('entersearchterm')}">&nbsp;
+		<input type="hidden" name="{$actionid}advanced" value="0">
+		<input type="checkbox" id="advanced" name="{$actionid}advanced" value="1"{if $advanced} checked{/if} title="{$ModuleManager->Lang('title_advancedsearch')}">&nbsp;<label for="advanced">{$ModuleManager->Lang('prompt_advancedsearch')}</label>
+		<span id="advhelp" style="display: none;"><br>{$ModuleManager->Lang('advancedsearch_help')}</span>
 	</p>
 </div>
 
 <div class="pageoverflow">
 	<p class="pagetext"></p>
 	<p class="pageinput">
-		<input type="submit" name="{$actionid}submit" value="{$ModuleManager->Lang('submit')}" />
+		<input type="submit" name="{$actionid}submit" value="{$ModuleManager->Lang('submit')}">
 	</p>
 </div>
 </fieldset>

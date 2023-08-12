@@ -5,7 +5,7 @@
 {/if}
 <div class="information">{$mod->Lang('info_categories')}</div>
 
-<script type="text/javascript">
+<script>
 $(function() {
   $('#{$actionid}cancel').on('click', function() {
     $(this).closest('form').attr('novalidate','novalidate');
@@ -17,7 +17,7 @@ $(function() {
 	<div class="pageoverflow">
 		<p class="pagetext"><label for="{$actionid}name">*{$mod->Lang('name')}:</label> {cms_help key='help_category_name' title=$mod->Lang('name')}</p>
 		<p class="pageinput">
-			<input type="text" id="{$actionid}name" name="{$actionid}name" value="{$name|cms_escape|default:''}" required="required" />
+			<input type="text" id="{$actionid}name" name="{$actionid}name" value="{$name|cms_escape|default:''}" required>
 		</p>
 	</div>
 	<div class="pageoverflow">
@@ -31,8 +31,8 @@ $(function() {
 	<div class="pageoverflow">
 		<p class="pagetext">&nbsp;</p>
 		<p class="pageinput">
-			<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />
-			<input type="submit" id="{$actionid}cancel" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
+			<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
+			<input type="submit" id="{$actionid}cancel" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
 		</p>
 	</div>
 {$endform}

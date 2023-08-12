@@ -15,7 +15,7 @@
             <label for="username">*{lang('name')}:</label>&nbsp;{cms_help realm='admin' key='info_adduser_username' title=lang('name')}
         </p>
         <p class="pageinput">
-            <input id="username" type="text" name="user" maxlength="255" value="{$user}" class="standard"/>
+            <input id="username" type="text" name="user" maxlength="255" value="{$user}" class="standard">
         </p>
     </div>
     <div class="pageoverflow">
@@ -23,7 +23,7 @@
             <label for="password">*{lang('password')}:</label>&nbsp;{cms_help realm='admin' key='info_edituser_password' title=lang('password')}
         </p>
         <p class="pageinput">
-            <input type="password" id="password" name="password" maxlength="100" value="{$password}" class="standard"/>
+            <input type="password" id="password" name="password" maxlength="100" value="{$password}" class="standard">
         </p>
     </div>
     <div class="pageoverflow">
@@ -31,7 +31,7 @@
             <label for="passwordagain">*{lang('passwordagain')}:</label>&nbsp;{cms_help realm='admin' key='info_edituser_passwordagain' title=lang('passwordagain')}
         </p>
         <p class="pageinput">
-            <input type="password" id="passwordagain" name="passwordagain" maxlength="100" value="{$passwordagain}" class="standard"/>
+            <input type="password" id="passwordagain" name="passwordagain" maxlength="100" value="{$passwordagain}" class="standard">
         </p>
     </div>
     <div class="pageoverflow">
@@ -39,7 +39,7 @@
             <label for="firstname">{lang('firstname')}:</label>&nbsp;{cms_help key2='help_myaccount_firstname' title=lang('firstname')}
         </p>
         <p class="pageinput">
-            <input type="text" id="firstname" name="firstname" maxlength="50" value="{$firstname}" class="standard"/>
+            <input type="text" id="firstname" name="firstname" maxlength="50" value="{$firstname}" class="standard">
         </p>
     </div>
     <div class="pageoverflow">
@@ -47,7 +47,7 @@
             <label for="lastname">{lang('lastname')}:</label>&nbsp;{cms_help key2='help_myaccount_lastname' title=lang('lastname')}
         </p>
         <p class="pageinput">
-            <input type="text" id="lastname" name="lastname" maxlength="50" value="{$lastname}" class="standard"/>
+            <input type="text" id="lastname" name="lastname" maxlength="50" value="{$lastname}" class="standard">
         </p>
     </div>
     <div class="pageoverflow">
@@ -55,7 +55,7 @@
             <label for="email">{lang('email')}:</label>&nbsp;{cms_help key2='help_myaccount_email' title=lang('email')}
         </p>
         <p class="pageinput">
-            <input type="text" id="email" name="email" maxlength="255" value="{$email}" class="standard"/>
+            <input type="text" id="email" name="email" maxlength="255" value="{$email}" class="standard">
         </p>
     </div>
     <div class="pageoverflow">
@@ -63,7 +63,7 @@
             {lang('active')}:&nbsp;{cms_help realm='admin' key='info_user_active' title=lang('active')}
         </p>
         <p class="pageinput">
-            <input type="checkbox" class="pagecheckbox" name="active" value="1"{if $active == 1} checked="checked"{/if}/>
+            <input type="checkbox" class="pagecheckbox" name="active" value="1"{if $active == 1} checked{/if}>
         </p>
     </div>
 
@@ -88,7 +88,7 @@
                         {foreach $groups as $onegroup}
                         <tr>
                             <td>
-                            <input type="checkbox" name="sel_groups[]" id="g{$onegroup->id}" value="{$onegroup->id}"{if in_array($onegroup->id,$sel_groups)} checked="checked"{/if} /></td>
+                            <input type="checkbox" name="sel_groups[]" id="g{$onegroup->id}" value="{$onegroup->id}"{if in_array($onegroup->id,$sel_groups)} checked{/if}></td>
                             <td><label for="g{$onegroup->id}">{$onegroup->name}</label></td>
                             <td>{$onegroup->description}</td>
                         </tr>
@@ -115,8 +115,8 @@
     {tab_end}
 
     <div class="pageoverflow">
-        <input type="submit" id="submit" name="submit" value="{lang('submit')}"/>
-        <input type="submit" name="cancel" value="{lang('cancel')}"/>
+        <input type="submit" id="submit" name="submit" value="{lang('submit')}">
+        <input type="submit" name="cancel" value="{lang('cancel')}">
     </div>
     {form_end}
 </div>

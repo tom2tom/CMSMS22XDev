@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 function parseTree(ul)
 {
   var tags = [];
@@ -52,13 +52,13 @@ $(function() {
 {category_tree}
 
 {form_start id="reorder_form"}
-<input type="hidden" name="{$actionid}submit_type" id="submit_type" value=""/>
-<input type="hidden" name="{$actionid}data" id="submit_data" value=""/>
+<input type="hidden" name="{$actionid}submit_type" id="submit_type" value="">
+<input type="hidden" name="{$actionid}data" id="submit_data" value="">
 <div class="pageoverflow">
   <p class="pagetext"></p>
   <p class="pageinput">
-    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />
-    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
+    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
+    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
   </p>
 </div>
 {form_end}

@@ -70,7 +70,7 @@ function siteprefs_display_permissions($permsarr)
     $str .= implode(',',$permsarr[$i]);
     $result[] = $str;
   }
-  $str = implode('<br />&nbsp;&nbsp;',$result);
+  $str = implode('<br>&nbsp;&nbsp;',$result);
   return $str;
 }
 
@@ -252,9 +252,9 @@ if (isset($_POST['testumask'])) {
         $userinfo = @posix_getpwuid($filestat[4]);
         $username = isset($userinfo['name']) ? $userinfo['name'] : lang('unknown');
         $permsstr = siteprefs_display_permissions(siteprefs_interpret_permissions($filestat[2]));
-        $testresults = sprintf("%s: %s<br />%s:<br />&nbsp;&nbsp;%s",lang('owner'),$username,lang('permissions'),$permsstr);
+        $testresults = sprintf("%s: %s<br>%s:<br>&nbsp;&nbsp;%s",lang('owner'),$username,lang('permissions'),$permsstr);
       } else {
-        $testresults = sprintf("%s: %s<br />%s:<br />&nbsp;&nbsp;%s",lang('owner'),"N/A",lang('permissions'),"N/A");
+        $testresults = sprintf("%s: %s<br>%s:<br>&nbsp;&nbsp;%s",lang('owner'),"N/A",lang('permissions'),"N/A");
       }
       @unlink($testfile);
     }

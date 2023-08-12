@@ -205,7 +205,7 @@ body {
 
 <h3>Compatibility:</h3>
 <p>For compatibility purposes, the old method of managing module templates has been kept. <em>(This functionality is <strong>deprecated</strong> and may be removed at a future date.)</em>  Therefore until modules migrate their functionality to use the new APIs for managing template types, templates and stylesheets you may still have to visit numerous different admin pages and experience different interfaces to manage the templates of those modules.</p>
-<br />
+<br>
 EOT;
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
@@ -276,21 +276,21 @@ $lang['import_design'] = 'Import Design';
 $lang['import_design_step1'] = 'Import Design Step 1';
 $lang['import_design_step2'] = 'Import Design Step 2';
 $lang['info_about_categories'] = 'Categories provide an additional, useful method of sorting and organizing templates.  A template can belong to multiple categories and filtering on categories is permitted in the template list.  Examples of categories may include &quot;landing page templates&quot; or &quot;base templates&quot; when utilizing template inheritance.';
-$lang['info_copy_css'] = '<strong>Note:</strong><br />Copying a stylesheet will copy the stylesheet contents, as well as the description, media query, and media types.  However, the new stylesheet will not be associated with any designs';
+$lang['info_copy_css'] = '<strong>Note:</strong><br>Copying a stylesheet will copy the stylesheet contents, as well as the description, media query, and media types.  However, the new stylesheet will not be associated with any designs';
 $lang['info_css_content_file'] = 'The contents of this stylesheet are stored in a file.  You can edit this item by editing <strong>%s</strong> with your favorite editor.';
 $lang['info_editcss_mediatype_tab'] = '<strong>Warning:</strong> This functionality is deprecated and will be removed at a later date.  If both the media type and media query are specified, then the media query will take preference when rendering stylesheets';
 $lang['info_editcss_mediaquery_tab'] = '<strong>Warning:</strong> If both the media type and media query are specified, then the media query will take preference when rendering stylesheets';
-$lang['info_edittemplate_templates_tab'] = 'Here you can select the templates that should be attached to the design.<br />
-Attaching a template to a design is only used for organizational and export purposes. Order is not important.<br />
-<br />
-<b>How to use:</b><br />
-Select one or more templates, drag them from Available Templates and drop them in the Attached Templates box, then hit Apply or Submit.<br />
+$lang['info_edittemplate_templates_tab'] = 'Here you can select the templates that should be attached to the design.<br>
+Attaching a template to a design is only used for organizational and export purposes. Order is not important.<br>
+<br>
+<b>How to use:</b><br>
+Select one or more templates, drag them from Available Templates and drop them in the Attached Templates box, then hit Apply or Submit.<br>
 Delete an attached template by clicking the trash icon.';
-$lang['info_edittemplate_stylesheets_tab'] = 'Here you can select the stylesheets that should be attached to the design.<br />
-Stylesheets are used to control the appearance of the web pages, and for organizational and export purposes. The order is used for determining the order in which stylesheets are output for a page using this design.<br />
-<br />
-<b>How to use:</b><br />
-Select one or more stylesheets, drag them from Available Stylesheets and drop them in the Attached Stylesheets box, then hit Apply or Submit.<br />
+$lang['info_edittemplate_stylesheets_tab'] = 'Here you can select the stylesheets that should be attached to the design.<br>
+Stylesheets are used to control the appearance of the web pages, and for organizational and export purposes. The order is used for determining the order in which stylesheets are output for a page using this design.<br>
+<br>
+<b>How to use:</b><br>
+Select one or more stylesheets, drag them from Available Stylesheets and drop them in the Attached Stylesheets box, then hit Apply or Submit.<br>
 Delete an attached stylesheet by clicking the trash icon.';
 $lang['info_import_xml_step1'] = 'Step 1: Choose a Design XML File to import';
 $lang['info_import_xml_step2'] = 'Step 2: Read information about this design before importing it to your CMSMS installation.';

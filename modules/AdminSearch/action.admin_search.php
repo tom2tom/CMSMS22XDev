@@ -22,29 +22,29 @@ if( !$this->VisibleToAdminUser() ) exit;
 
 function status_error($msg)
 {
-  echo '<script type="text/javascript">parent.status_error(\''.$msg.'\')</script>';
+  echo '<script>parent.status_error(\''.$msg.'\')</script>';
 }
 
 function status_msg($msg)
 {
-  echo '<script type="text/javascript">parent.status_msg(\''.$msg.'\')</script>';
+  echo '<script>parent.status_msg(\''.$msg.'\')</script>';
 }
 
 function begin_section($id,$txt,$desc = '')
 {
   $desc = addslashes((string)$desc);
-  echo "<script type=\"text/javascript\">parent.begin_section('{$id}','{$txt}','{$desc}')</script>";
+  echo "<script>parent.begin_section('{$id}','{$txt}','{$desc}')</script>";
 }
 
 function add_result($listid,$content)
 {
   $tmp = "parent.add_result('{$listid}',{$content});";
-  echo '<script type="text/javascript">'.$tmp.'</script>';
+  echo '<script>'.$tmp.'</script>';
 }
 
 function end_section()
 {
-  echo '<script type="text/javascript">parent.end_section()</script>';
+  echo '<script>parent.end_section()</script>';
 }
 
 if( !isset($params['search_text']) || $params['search_text'] == '' ) {
@@ -94,7 +94,7 @@ if( is_array($slaves) && count($slaves) ) {
                   );
 
                   $one = json_encode($tmp);
-                  
+
                 }
                 add_result($one_slave['class'],$one);
             }

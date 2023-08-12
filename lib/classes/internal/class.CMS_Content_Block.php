@@ -381,7 +381,7 @@ final class CMS_Content_Block
                     foreach( $tagparms as $key => $val ) {
                         $out .= " $key=\"$val\"";
                     }
-                    $out .= '/>';
+                    $out .= '>';
                 }
             }
         }

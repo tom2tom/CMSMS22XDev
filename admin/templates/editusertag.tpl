@@ -1,5 +1,4 @@
-<script type="text/javascript">
-// <![CDATA[
+<script>
 $(function() {
   $('#runbtn').button({
     icons: { primary: 'ui-icon-gear' }
@@ -35,7 +34,7 @@ $(function() {
           d = resultdata;
         }
 
-        e = $('<div />').text(d).html(); // quick tip for entity encoding.
+        e = $('<div></div>').text(d).html(); // quick tip for entity encoding.
         if( r === '_error' ) e = d;
         $('#edit_userplugin_runout').html(e);
         $('#edit_userplugin_runout').dialog({ modal: true, width: 'auto' });
@@ -71,7 +70,6 @@ $(function() {
     return false;
   });
 });
-//]]>
 </script>
 
 <div class="pagecontainer">
@@ -90,11 +88,11 @@ $(function() {
 			<div class="pageoverflow">
 				<p class="pagetext"></p>
 				<p class="pageinput">
-					<input id="submitme" type="submit" name="submit" value="{lang('submit')}" />
-					<input type="submit" name="cancel" value="{lang('cancel')}" />
+					<input id="submitme" type="submit" name="submit" value="{lang('submit')}">
+					<input type="submit" name="cancel" value="{lang('cancel')}">
 					{if $record.userplugin_id != ''}
-						<input id="applybtn" type="submit" name="apply" value="{lang('apply')}" title="{lang('title_applyusertag')}" />
-						<button id="runbtn" type="submit" name="run" title="{lang('runuserplugin')}"/>{lang('run')}</button>
+						<input id="applybtn" type="submit" name="apply" value="{lang('apply')}" title="{lang('title_applyusertag')}">
+						<button id="runbtn" type="submit" name="run" title="{lang('runuserplugin')}">{lang('run')}</button>
 					{/if}
 				</p>
 			</div>
@@ -103,7 +101,7 @@ $(function() {
 					<label for="name">{lang('name')}:&nbsp;{cms_help key1=h_udtname title=lang('name')}</label>
 				</p>
 				<p class="pageinput">
-					<input type="text" id="name" name="userplugin_name" value="{$record.userplugin_name}" size="50" maxlength="50" />
+					<input type="text" id="name" name="userplugin_name" value="{$record.userplugin_name}" size="50" maxlength="50">
 				</p>
 			</div>
 		</div>
@@ -131,7 +129,7 @@ $(function() {
 	{tab_start name='code'}
 		<div class="pageoverflow">
 			<p class="pagetext">
-				<label for="code"><b>{lang('code')}:</b></label>&nbsp;{cms_help key1=h_udtcode title=lang('code')}
+				<label for="udtcode"><b>{lang('code')}:</b></label>&nbsp;{cms_help key1=h_udtcode title=lang('code')}
 			</p>
 			<p class="pageinput">
 				{cms_textarea id='udtcode' name='code' value=$record.code wantedsyntax=php rows=10 cols=80}

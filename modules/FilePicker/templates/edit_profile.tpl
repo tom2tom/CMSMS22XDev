@@ -7,20 +7,20 @@
 {form_start pid=$profile->id}
 <div class="pageoverflow">
   <p class="pageinput">
-    <input type="submit" id="submit" name="{$actionid}submit" value="{lang('submit')}" />
-    <input type="submit" id="cancel" name="{$actionid}cancel" value="{lang('cancel')}" formnovalidate />
+    <input type="submit" id="submit" name="{$actionid}submit" value="{lang('submit')}">
+    <input type="submit" id="cancel" name="{$actionid}cancel" value="{lang('cancel')}" formnovalidate>
   </p>
 </div>
-<hr/>
+<hr>
 <div class="c_full cf">
   <label for="profile_name" class="grid_2 required">* {$mod->Lang('name')}:</label>
-  <p class="grid_9"><input type="text" size="40" id="profile_name" name="{$actionid}name" value="{$profile->name|cms_escape}" required="required" />
+  <p class="grid_9"><input type="text" size="40" id="profile_name" name="{$actionid}name" value="{$profile->name|cms_escape}" required>
     &nbsp;{cms_help key2='HelpPopup_ProfileName' title=$mod->Lang('HelpPopupTitle_ProfileName')}
   </p>
 </div>
 <div class="c_full cf">
   <label for="profile_top" class="grid_2">{$mod->Lang('topdir')}:</label>
-  <p class="grid_9"><input type="text" id="profile_top" name="{$actionid}top" value="{$profile->reltop}" size="80" />
+  <p class="grid_9"><input type="text" id="profile_top" name="{$actionid}top" value="{$profile->reltop}" size="80">
   &nbsp;{cms_help key2='HelpPopup_ProfileDir' title=$mod->Lang('HelpPopupTitle_ProfileDir')}
   </p>
 </div>

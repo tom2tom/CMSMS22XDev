@@ -179,7 +179,7 @@ if ($submitted == 1) {
                 $new_id = $db->GenID(CMS_DB_PREFIX."group_perms_seq");
                 $result = $db->Execute($iquery, array($new_id,$keyparts[2],$keyparts[1]));
                 if( !$result ) {
-                    echo "FATAL: ".$db->ErrorMsg().'<br />'.$db->sql; exit();
+                    echo "FATAL: ".$db->ErrorMsg().'<br>'.$db->sql; exit();
                 }
             }
         }
@@ -206,10 +206,10 @@ $smarty->assign('title_permission',lang('permission'));
 $smarty->assign('selectgroup',lang('selectgroup'));
 $tmp = base64_encode(json_encode($sel_group_ids));
 $sig = md5(__FILE__.$tmp);
-$smarty->assign('hidden2','<input type="hidden" name="sel_groups" value="'.$sig.'::'.$tmp.'"/>');
-$smarty->assign('hidden','<input type="hidden" name="submitted" value="1" />');
-$smarty->assign('submit','<input type="submit" name="changeperm" value="'.lang('submit').'" class="pagebutton" />');
-$smarty->assign('cancel','<input type="submit" name="cancel" value="'.lang('cancel').'" class="pagebutton" />');
+$smarty->assign('hidden2','<input type="hidden" name="sel_groups" value="'.$sig.'::'.$tmp.'">');
+$smarty->assign('hidden','<input type="hidden" name="submitted" value="1">');
+$smarty->assign('submit','<input type="submit" name="changeperm" value="'.lang('submit').'" class="pagebutton">');
+$smarty->assign('cancel','<input type="submit" name="cancel" value="'.lang('cancel').'" class="pagebutton">');
 
 
 # begin output

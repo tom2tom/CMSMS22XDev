@@ -105,8 +105,8 @@ switch( $action ) {
 	{
 		$events = Events::ListEvents();
 
-		echo '<br /><form action="eventhandlers.php" method="get">';
-		echo '<div><input type="hidden" name="'.CMS_SECURE_PARAM_NAME.'" value="'.$_SESSION[CMS_USER_KEY].'" /></div>';
+		echo '<br><form action="eventhandlers.php" method="get">';
+		echo '<div><input type="hidden" name="'.CMS_SECURE_PARAM_NAME.'" value="'.$_SESSION[CMS_USER_KEY].'"></div>';
 
 		echo lang('filterbymodule').': <select name="modulefilter">' . "\n";
 		echo '<option value="">'.lang('showall').'</option>';
@@ -123,7 +123,7 @@ switch( $action ) {
 				echo '>'.$onemod.'</option>';
 			}
 		}
-		echo "</select> <input type=\"submit\" value=\"".lang('submit')."\" /></form>\n\n";
+		echo "</select> <input type=\"submit\" value=\"".lang('submit')."\"></form>\n\n";
 
 		echo "<table class=\"pagetable\">\n";
 		echo "<thead>\n";

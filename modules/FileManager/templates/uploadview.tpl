@@ -103,8 +103,8 @@ $(function() {
   });
 });
 </script>
-
-<style type="text/css">
+{/literal}{*TODO <style/> invalid here - migrate to <head/>*}{literal}
+<style>
   .upload-wrapper { margin: 10px 0 }
   .hcentered { text-align: center }
   .vcentered {
@@ -146,7 +146,7 @@ $(function() {
 {/literal}</style>
 
 {$formstart}
-  <input type="hidden" name="disable_buffer" value="1" />
+  <input type="hidden" name="disable_buffer" value="1">
   <fieldset>
     {if isset($is_ie)}
       <div class="pageerrorcontainer message">
@@ -155,12 +155,12 @@ $(function() {
     {/if}
     <div class="upload-wrapper">
       <div style="width: 60%; float: left;">
-        {*<input type="hidden" name="MAX_FILE_SIZE" value="{$maxfilesize}" />*}{* recommendation for browser *}
-        <input id="fileupload" type="file" name="{$actionid}files[]" size="50" title="{$mod->Lang('title_filefield')}" multiple="multiple" />
+        {*<input type="hidden" name="MAX_FILE_SIZE" value="{$maxfilesize}">*}{* recommendation for browser *}
+        <input id="fileupload" type="file" name="{$actionid}files[]" size="50" title="{$mod->Lang('title_filefield')}" multiple>
         <div id="pageoverflow">
           <p class="pagetext"></p>
           <p class="pageinput">
-            <input id="cancel" type="submit" value="{$mod->Lang('cancel')}" style="display: none;" />
+            <input id="cancel" type="submit" value="{$mod->Lang('cancel')}" style="display: none;">
           </p>
         </div>
       </div>

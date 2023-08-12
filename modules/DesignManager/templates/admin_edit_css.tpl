@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 $(function() {
     var do_locking = {if $css_id|default:0 > 0 && isset($lock_timeout) && $lock_timeout > 0}1{else}0{/if};
     $('#form_editcss').dirtyForm({
@@ -52,37 +52,38 @@ $(function() {
        ev.preventDefault();
        var form = $(this).closest('form');
        $('#form_editcss').lockManager('unlock').done(function() {
-           var el = $('<input type="hidden"/>');
-           el.attr('name',$(self).attr('name')).val($(self).val()).appendTo(form);
+           $('<input/>',{
+            type: 'hidden',
+            name: $(self).attr('name'),
+            val: $(self).val()
+           }).appendTo(form);
            form.trigger('submit');
        });
     });
 
-    $(document).on('click', '#applybtn', function(e){
+    $(document).on('click', '#applybtn', function(e) {
         e.preventDefault();
 
         var url = $('#form_editcss').attr('action')+'?showtemplate=false&m1_apply=1',
             data = $('#form_editcss').serializeArray();
 
         $.post(url, data, function(data,textStatus,jqXHR) {
-            var $response = $('<aside/>').addClass('message');
+            var response = $('<aside></aside>',{ 'class':'message' });
             if (data.status === 'success') {
-
-                $response.addClass('pagemcontainer')
-                    .append($('<span>').text('Close').addClass('close-warning'))
-                    .append($('<p/>').text(data.message));
+                response.addClass('pagemcontainer')
+                    .append($('<span></span>',{ 'class':'close-warning',text:'Close' })
+                    .append($('<p></p>',{ text:data.message });
             } else if (data.status === 'error') {
-
-                $response.addClass('pageerrorcontainer')
-                    .append($('<span>').text('Close').addClass('close-warning'))
-                    .append($('<p/>').text(data.message));
+                response.addClass('pageerrorcontainer')
+                    .append($('<span></span>',{ 'class':'close-warning',text:'Close' })
+                    .append($('<p></p>',{ text:data.message });
             }
 
-            $('body').append($response.hide());
-            $response.slideDown(1000, function() {
+            $('body').append(response.hide());
+            response.slideDown(1000, function() {
                 window.setTimeout(function() {
-                    $response.slideUp();
-                    $response.remove();
+                    response.slideUp();
+                    response.remove();
                 }, 10000);
             });
 
@@ -138,17 +139,17 @@ $(function() {
     <div class="grid_6">
         <div class="pageoverflow">
             <p class="pageinput">
-                <input type="submit" id="submitbtn" name="{$actionid}submit" value="{$mod->Lang('submit')}" {$disable|strip} />
-                <input type="submit" id="cancelbtn" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
+                <input type="submit" id="submitbtn" name="{$actionid}submit" value="{$mod->Lang('submit')}" {$disable|strip}>
+                <input type="submit" id="cancelbtn" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
                 {if $css->get_id()}
-                <input type="submit" id="applybtn" name="{$actionid}apply" value="{$mod->Lang('apply')}" {$disable|strip} />
+                <input type="submit" id="applybtn" name="{$actionid}apply" value="{$mod->Lang('apply')}" {$disable|strip}>
                 {/if}
             </p>
         </div>
         <div class="pageoverflow">
             <p class="pagetext"><label for="css_name">*{$mod->Lang('prompt_name')}:</label>&nbsp;{cms_help key2=help_stylesheet_name title=$mod->Lang('prompt_name')}</p>
             <p class="pageinput">
-                <input id="css_name" type="text" name="{$actionid}name" size="50" maxlength="90" value="{$css->get_name()}" placeholder="{$mod->Lang('new_stylesheet')}" />
+                <input id="css_name" type="text" name="{$actionid}name" size="50" maxlength="90" value="{$css->get_name()}" placeholder="{$mod->Lang('new_stylesheet')}">
             </p>
         </div>
     </div>{* column *}
@@ -201,11 +202,11 @@ $(function() {
 
     <p class="pageinput media-type">
     {foreach $all_types as $type}{strip}
-        <input id="media_type_{$type}" type="checkbox" name="{$actionid}media_type[]" value="{$type}"{if $css->has_media_type($type)} checked="checked"{/if} />
+        <input id="media_type_{$type}" type="checkbox" name="{$actionid}media_type[]" value="{$type}"{if $css->has_media_type($type)} checked{/if}>
         &nbsp;
         {$tmp='media_type_'|cat:$type}
         <label for="media_type_{$type}">{$mod->Lang($tmp)}</label>
-        {if !$type@last}<br />{/if}
+        {if !$type@last}<br>{/if}
     {/strip}{/foreach}
     </p>
 </div>
@@ -233,7 +234,7 @@ $(function() {
     <div class="pageoverflow">
         <p class="pagetext"><label for="designlist">{$mod->Lang('prompt_designs')}:</label>&nbsp;{cms_help key2=help_css_designs title=$mod->Lang('prompt_designs')}</p>
         <p class="pageinput">
-            <select id="designlist" name="{$actionid}design_list[]" multiple="multiple" size="5">
+            <select id="designlist" name="{$actionid}design_list[]" multiple size="5">
                 {html_options options=$design_list selected=$css->get_designs()}
             </select>
         </p>
@@ -246,9 +247,9 @@ $(function() {
     <p class="pagetext">{$mod->Lang('prompt_cssfile')}:</p>
     <p class="pageinput">
         {if $css->has_content_file()}
-            <input type="submit" id="importbtn" name="{$actionid}import" value="{$mod->Lang('import')}" />
+            <input type="submit" id="importbtn" name="{$actionid}import" value="{$mod->Lang('import')}">
         {else}
-            <input type="submit" id="exportbtn" name="{$actionid}export" value="{$mod->Lang('export')}" />
+            <input type="submit" id="exportbtn" name="{$actionid}export" value="{$mod->Lang('export')}">
         {/if}
     </p>
   </div>

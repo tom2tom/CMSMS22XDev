@@ -150,9 +150,9 @@ $smarty->assign('form_end','</form>');
 $smarty->assign('apply',lang('apply'));
 $smarty->assign('selectgroup',lang('selectgroup'));
 $smarty->assign('title_user',lang('user'));
-$smarty->assign('hidden','<input type="hidden" name="submitted" value="1" />');
-$smarty->assign('submit','<input type="submit" name="changegrp" value="'.lang('submit').'" class="pagebutton" />');
-$smarty->assign('cancel','<input type="submit" name="cancel" value="'.lang('cancel').'" class="pagebutton" />');
+$smarty->assign('hidden','<input type="hidden" name="submitted" value="1">');
+$smarty->assign('submit','<input type="submit" name="changegrp" value="'.lang('submit').'" class="pagebutton">');
+$smarty->assign('cancel','<input type="submit" name="cancel" value="'.lang('cancel').'" class="pagebutton">');
 
 
 # begin output

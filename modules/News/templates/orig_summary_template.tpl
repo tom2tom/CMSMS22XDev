@@ -85,12 +85,12 @@
      <div class="NewsSummaryField">
         {if $field->type == 'file'}
           {if !empty($field->value)}
-            <img src="{$entry->file_location}/{$field->value}" />
+            <img src="{$entry->file_location}/{$field->value}">
           {/if}
         {elseif $field->type == 'linkedfile'}
           {* also assume it's an image... *}
           {if !empty($field->value)}
-            <img src="{file_url file=$field->value}" alt="{$field->value}" />
+            <img src="{file_url file=$field->value}" alt="{$field->value}">
           {/if}
         {else}
           {$field->name}:&nbsp;{$field->value}

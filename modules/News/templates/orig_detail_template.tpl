@@ -11,7 +11,7 @@
 {/if}
 <h3 id="NewsPostDetailTitle">{$entry->title|cms_escape:'htmlall'}</h3>
 
-<hr id="NewsPostDetailHorizRule" />
+<hr id="NewsPostDetailHorizRule">
 
 {if $entry->summary}
 	<div id="NewsPostDetailSummary">
@@ -53,12 +53,12 @@
         {if $field->type == 'file'}
 {* this template assumes that every file uploaded is an image of some sort, because News doesn't distinguish *}
           {if isset($field->value) && $field->value}
-            <img src="{$entry->file_location}/{$field->value}" alt="{$field->value}" />
+            <img src="{$entry->file_location}/{$field->value}" alt="{$field->value}">
           {/if}
         {elseif $field->type == 'linkedfile'}
           {* also assume it's an image... *}
           {if !empty($field->value)}
-            <img src="{file_url file=$field->value}" alt="{$field->value}" />
+            <img src="{file_url file=$field->value}" alt="{$field->value}">
           {/if}
         {else}
           {$field->name}:&nbsp;{$field->value}

@@ -1,5 +1,4 @@
 <script>
-// <![CDATA[
 $(function() {
   var do_locking = {if isset($content_id) && $content_id > 0 && isset($lock_timeout) && $lock_timeout > 0}1{else}0{/if};
 
@@ -51,7 +50,7 @@ $(function() {
     });
     $.post('{$preview_ajax_url}&showtemplate=false', data, function(resultdata, text) {
       if( typeof resultdata !== 'undefined' && resultdata && resultdata.response == 'Error' ) {
-        $('#previewframe').attr('src','').hide();
+        $('#previewframe').attr('src','about:blank').hide();
         //$('#preview_errors').html('<ul></ul>');
         for( var i = 0; i < resultdata.details.length; i++ ) {
           $('#preview_errors').append('<li>'+resultdata.details[i]+'</li>');
@@ -62,8 +61,8 @@ $(function() {
         var x = new Date().getTime();
         var url = '{$preview_url}&junk='+x;
         $('#previewerror').hide();
-        $('#previewframe').attr('src', url).show();
-      }
+          $('#previewframe').attr('src', url).show();
+        }
     },'json');
   });
 {/if}
@@ -95,8 +94,11 @@ $(function() {
       var form = $(this).closest('form');
       ev.preventDefault();
       $('#Edit_Content').lockManager('unlock',1).done(function() {
-        var el = $('<input type="hidden" />');
-        el.attr('name',$(self).attr('name')).val($(self).val()).appendTo(form);
+        $('<input/>',{
+         type: 'hidden',
+         name: $(self).attr('name'),
+         val: $(self).val()
+        }).appendTo(form);
         form.trigger('submit');
       });
     }
@@ -111,8 +113,11 @@ $(function() {
       ev.preventDefault();
       var form = $(this).closest('form');
       $('#Edit_Content').lockManager('unlock',1).done(function() {
-        var el = $('<input type="hidden"/>');
-        el.attr('name',$(self).attr('name')).val($(self).val()).appendTo(form);
+        $('<input/>',{
+         type: 'hidden',
+         name: $(self).attr('name'),
+         val: $(self).val()
+        }).appendTo(form);
         form.trigger('submit');
       });
     }
@@ -154,7 +159,7 @@ $(function() {
     }
   });
 
-  {if isset($designchanged_ajax_url)}
+{if isset($designchanged_ajax_url)}
   $('#design_id').on('change', function(e,edata) {
     var v = $(this).val();
     var lastValue = $(this).data('lastValue');
@@ -201,9 +206,8 @@ $(function() {
   $('#design_id').data('lastValue',$('#design_id').val());
   $('#template_id').data('lastValue',$('#template_id').val());
   $('#Edit_Content').dirtyForm('option','dirty',false);
-  {/if}
+{/if}
 });
-// ]]>
 </script>
 
 {$extra_content|default:''}
@@ -217,10 +221,10 @@ $(function() {
 {function submit_buttons}
   <p class="pagetext"></p>
   <p class="pageinput">
-  <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" class="pagebutton" title="{$mod->Lang('title_editpage_submit')}" />
-  <input type="submit" name="{$actionid}cancel" formnovalidate value="{$mod->Lang('cancel')}" class="pagebutton" title="{$mod->Lang('title_editpage_cancel')}" />
+  <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" class="pagebutton" title="{$mod->Lang('title_editpage_submit')}">
+  <input type="submit" name="{$actionid}cancel" formnovalidate value="{$mod->Lang('cancel')}" class="pagebutton" title="{$mod->Lang('title_editpage_cancel')}">
   {if $content_id > 0}
-  <input type="submit" name="{$actionid}apply" value="{$mod->Lang('apply')}" class="pagebutton" title="{$mod->Lang('title_editpage_apply')}" />
+  <input type="submit" name="{$actionid}apply" value="{$mod->Lang('apply')}" class="pagebutton" title="{$mod->Lang('title_editpage_apply')}">
   {/if}
   {if ($content_id > 0) && $content_obj->IsViewable() && $content_obj->Active()}
   <a id="viewpage" rel="external" href="{$content_obj->GetURL()}" title="{$mod->Lang('title_editpage_view')}">{admin_icon icon='view.gif' alt=lang('view_page')}</a>
@@ -231,7 +235,7 @@ $(function() {
 <div id="Edit_Content_Result"></div>
 <div id="Edit_Content">
 {form_start content_id=$content_id}
-  <input type="hidden" id="active_tab" name="{$actionid}active_tab"/>
+  <input type="hidden" id="active_tab" name="{$actionid}active_tab">
   {submit_buttons}
 
   {* tab headers *}
@@ -250,7 +254,7 @@ $(function() {
         {foreach $tab_contents_array.$key as $fld}
         <div class="pageoverflow">
           <p class="pagetext">{$fld.0|default:''}</p>
-          <p class="pageinput">{$fld.1|default:''}{if $fld && is_array($fld) && count($fld) == 3}<br />{$fld.2}{/if}</p>
+          <p class="pageinput">{$fld.1|default:''}{if $fld && is_array($fld) && count($fld) == 3}<br>{$fld.2}{/if}</p>
         </div>
         {/foreach}
       {/if}

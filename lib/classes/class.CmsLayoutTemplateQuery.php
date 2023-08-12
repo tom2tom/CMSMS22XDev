@@ -19,22 +19,22 @@
 
 /**
  * A class to represent a template query, and its results.
- * This class accepts in it's constructor an array (or a comma separated string, of filter arguments).
- * Accepted filter arguments are:<br />
- *  o:string - The originator name<br />
- *  i:##,##,## - A list of template id's<br />
- *  t:## - A template type id<br />
- *  c:## - A template category id.<br />
- *  d:## - A design id<br />
- *  u:## - A template owner id<br />
- *  e:## - An additional editor id.<br />
+ * This class accepts in its constructor an array or a comma separated string of filter arguments.
+ * Accepted filter arguments are:<br>
+ *  o:string - The originator name<br>
+ *  i:##,##,## - A list of template id's<br>
+ *  t:## - A template type id<br>
+ *  c:## - A template category id.<br>
+ *  d:## - A design id<br>
+ *  u:## - A template owner id<br>
+ *  e:## - An additional editor id.<br>
  *  l:#  - A boolean (0 or 1) indicating listable, or not listable.
  *
- * Example:<br />
+ * Example:<br>
  * <code>
- * $qry = new CmsTemplateQuery(array('o:'.get_userid(false)));<br />
- * $qry->limit = 50;<br />
- * $list = $qry->GetMatches();<br />
+ * $qry = new CmsTemplateQuery(array('o:'.get_userid(false)));<br>
+ * $qry->limit = 50;<br>
+ * $list = $qry->GetMatches();<br>
  * </code>
  *
  * @package CMS

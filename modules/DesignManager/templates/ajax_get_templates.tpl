@@ -24,7 +24,7 @@ $('#tpl_selall').cmsms_checkall();
         <select id="tpl_page" name="{$actionid}tpl_page">
           {cms_pageoptions numpages=$tpl_nav.numpages curpage=$tpl_nav.curpage}
         </select>
-        &nbsp;<input type="submit" value="{$mod->Lang('go')}" />
+        &nbsp;<input type="submit" value="{$mod->Lang('go')}">
     </div>
   {/if}
 </div>
@@ -45,7 +45,7 @@ $('#tpl_selall').cmsms_checkall();
             <th class="pageicon"></th>{* copy *}
         {/if}
         <th class="pageicon"></th>{* delete *}
-        <th class="pageicon"><input type="checkbox" value="1" id="tpl_selall" title="{$mod->Lang('prompt_select_all')}" /></th>{* checkbox *}
+        <th class="pageicon"><input type="checkbox" value="1" id="tpl_selall" title="{$mod->Lang('prompt_select_all')}"></th>{* checkbox *}
       </tr>
     </thead>
     <tbody>
@@ -145,7 +145,7 @@ $('#tpl_selall').cmsms_checkall();
       {* checkbox column *}
       <td>
         {if (!$template->locked() && ($manage_templates || $template->get_owner_id() == $userid))}
-          <input type="checkbox" class="tpl_select" name="{$actionid}tpl_select[]" value="{$template->get_id()}" title="{$mod->Lang('title_tpl_bulk')}" />
+          <input type="checkbox" class="tpl_select" name="{$actionid}tpl_select[]" value="{$template->get_id()}" title="{$mod->Lang('title_tpl_bulk')}">
         {/if}
       </td>
 
@@ -164,7 +164,7 @@ $('#tpl_selall').cmsms_checkall();
           <option value="export">{$mod->lang('export')}</option>
           <option value="import">{$mod->lang('import')}</option>
         </select>
-        <input id="tpl_bulk_submit" class="tpl_bulk_action" type="submit" name="{$actionid}submit_bulk" value="{$mod->Lang('submit')}" />&nbsp;{cms_help key2='help_bulk_templates' title=$mod->lang('prompt_delete')}
+        <input id="tpl_bulk_submit" class="tpl_bulk_action" type="submit" name="{$actionid}submit_bulk" value="{$mod->Lang('submit')}">&nbsp;{cms_help key2='help_bulk_templates' title=$mod->lang('prompt_delete')}
       </p>
     </div>
     <div class="clearb"></div>

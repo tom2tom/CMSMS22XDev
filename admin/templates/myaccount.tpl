@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 $(function() {
   $('.helpicon').on('click',function() {
     var x = $(this).attr('name');
@@ -13,11 +13,11 @@ $(function() {
 {if $manageaccount}
   {$maintab_start}
   <form method="post" action="{$formurl}">
-    <input type="hidden" name="active_tab" value="maintab" />
+    <input type="hidden" name="active_tab" value="maintab">
     <div class="pageoverflow">
       <div class="pageinput">
-        <input class="pagebutton" type="submit" name="submit_account" value="{lang('submit')}" />
-        <input class="pagebutton" type="submit" name="cancel" value="{lang('cancel')}" />
+        <input class="pagebutton" type="submit" name="submit_account" value="{lang('submit')}">
+        <input class="pagebutton" type="submit" name="cancel" value="{lang('cancel')}">
       </div>
     </div>
 
@@ -25,34 +25,34 @@ $(function() {
       <p class="pagetext">
         <label for="username">*{lang('name')}:</label>&nbsp;{cms_help key2='help_myaccount_username' title=lang('name')}
       </p>
-      <p class="pageinput"><input type="text" id="username" name="user" maxlength="25" value="{$userobj->username}" class="standard" /></p>
+      <p class="pageinput"><input type="text" id="username" name="user" maxlength="25" value="{$userobj->username}" class="standard"></p>
     </div>
 
     <div class="pageoverflow">
       <p class="pagetext"><label for="password">{lang('password')}:</label>&nbsp;{cms_help key2='help_myaccount_password' title=lang('password')}</p>
       <p class="pageinput">
-        <input type="password" id="password" name="password" maxlength="100" value="" />&nbsp;{lang('info_edituser_password')}
+        <input type="password" id="password" name="password" maxlength="100" value="">&nbsp;{lang('info_edituser_password')}
       </p>
     </div>
 
     <div class="pageoverflow">
       <p class="pagetext"><label for="passwordagain">{lang('passwordagain')}:</label>&nbsp;{cms_help key2='help_myaccount_passwordagain' title=lang('passwordagain')}</p>
-      <p class="pageinput"><input type="password" id="passwordagain" name="passwordagain" maxlength="100" value="" class="standard" />&nbsp;{lang('info_edituser_passwordagain')}</p>
+      <p class="pageinput"><input type="password" id="passwordagain" name="passwordagain" maxlength="100" value="" class="standard">&nbsp;{lang('info_edituser_passwordagain')}</p>
     </div>
 
     <div class="pageoverflow">
       <p class="pagetext"><label for="firstname">{lang('firstname')}:</label>&nbsp;{cms_help key2='help_myaccount_firstname' title=lang('firstname')}</p>
-      <p class="pageinput"><input type="text" id="firstname" name="firstname" maxlength="50" value="{$userobj->firstname}" class="standard" /></p>
+      <p class="pageinput"><input type="text" id="firstname" name="firstname" maxlength="50" value="{$userobj->firstname}" class="standard"></p>
     </div>
 
     <div class="pageoverflow">
       <p class="pagetext"><label for="lastname">{lang('lastname')}:</label>&nbsp;{cms_help key2='help_myaccount_lastname' title=lang('lastname')}</p>
-      <p class="pageinput"><input type="text" id="lastname" name="lastname" maxlength="50" value="{$userobj->lastname}" class="standard" /></p>
+      <p class="pageinput"><input type="text" id="lastname" name="lastname" maxlength="50" value="{$userobj->lastname}" class="standard"></p>
     </div>
 
     <div class="pageoverflow">
       <p class="pagetext"><label for="email">{lang('email')}:</label>&nbsp;{cms_help key2='help_myaccount_email' title=lang('email')}</p>
-      <p class="pageinput"><input type="text" id="email" name="email" maxlength="255" value="{$userobj->email}" class="standard" /></p>
+      <p class="pageinput"><input type="text" id="email" name="email" maxlength="255" value="{$userobj->email}" class="standard"></p>
     </div>
   </form>
   {$tab_end}
@@ -61,15 +61,15 @@ $(function() {
 {if $managesettings}
 {$advancedtab_start}
 <form method="post" action="{$formurl}">
-  <input type="hidden" name="active_tab" value="advtab" />
+  <input type="hidden" name="active_tab" value="advtab">
     <div class="pageoverflow">
       <div class="invisible">
-      <input type="hidden" name="edituserprefs" value="true" />
-      <input type="hidden" name="old_default_cms_lang" value="{$old_default_cms_lang}" />
+      <input type="hidden" name="edituserprefs" value="true">
+      <input type="hidden" name="old_default_cms_lang" value="{$old_default_cms_lang}">
       </div>
       <p class="pageinput">
-        <input type="submit" name="submit_prefs" value="{lang('submit')}" class="pagebutton" />
-        <input type="submit" name="cancel" value="{lang('cancel')}" class="pagebutton" />
+        <input type="submit" name="submit_prefs" value="{lang('submit')}" class="pagebutton">
+        <input type="submit" name="cancel" value="{lang('cancel')}" class="pagebutton">
       </p>
     </div>
     <fieldset>
@@ -86,7 +86,7 @@ $(function() {
       <div class="pageoverflow">
         <p class="pagetext"><label for="dateformat">{lang('date_format_string')}:</label>&nbsp;{cms_help key2='help_myaccount_dateformat' title=lang('date_format_string')}</p>
         <p class="pageinput">
-           <input class="pagenb" size="20" maxlength="255" type="text" name="date_format_string" value="{$date_format_string}" />
+           <input id="dateformat" class="pagenb" size="20" maxlength="255" type="text" name="date_format_string" value="{$date_format_string}">
            {lang('date_format_string_help')}
         </p>
       </div>
@@ -126,13 +126,13 @@ $(function() {
 
       <div class="pageoverflow">
         <p class="pagetext"><label for="parent_id">{lang('defaultparentpage')}:</label>&nbsp;{cms_help key2='help_myaccount_dfltparent' title=lang('defaultparentpage')}</p>
-        <p class="pageinput">{$default_parent}</p>
+        <p class="pageinput" id="parent_id">{$default_parent}</p>
       </div>
 
       <div class="pageoverflow">
         <p class="pagetext"><label for="indent">{lang('adminindent')}:</label>&nbsp;{cms_help key2='help_myaccount_indent' title=lang('adminindent')}</p>
         <p class="pageinput">
-          <input class="pagenb" type="checkbox" id="indent" name="indent"{if $indent} checked="checked"{/if} />
+          <input class="pagenb" type="checkbox" id="indent" name="indent"{if $indent} checked{/if}>
           {lang('indent')}
         </p>
       </div>
@@ -160,7 +160,7 @@ $(function() {
       <div class="pageoverflow">
         <p class="pagetext"><label for="admincallout">{lang('admincallout')}:</label>&nbsp;{cms_help key2='help_myaccount_admincallout' title=lang('admincallout')}</p>
         <p class="pageinput">
-          <input class="pagenb" id="admincallout" type="checkbox" name="bookmarks"{if $bookmarks} checked="checked"{/if} />
+          <input class="pagenb" id="admincallout" type="checkbox" name="bookmarks"{if $bookmarks} checked{/if}>
           {lang('showbookmarks')}
         </p>
       </div>
@@ -168,19 +168,20 @@ $(function() {
       <div class="pageoverflow">
         <p class="pagetext"><label for="hidehelp">{lang('hide_help_links')}:</label>&nbsp;{cms_help key2='help_myaccount_hidehelp' title=lang('hide_help_links')}</p>
         <p class="pageinput">
-          <input class="pagenb" id="hidehelp" type="checkbox" name="hide_help_links"{if $hide_help_links} checked="checked"{/if} />
+          <input class="pagenb" id="hidehelp" type="checkbox" name="hide_help_links"{if $hide_help_links} checked{/if}>
           {lang('hide_help_links_help')}
         </p>
       </div>
+    </fieldset>
 
    <div class="pageoverflow">
      <div class="invisible">
-        <input type="hidden" name="edituserprefs" value="true" />
-        <input type="hidden" name="old_default_cms_lang" value="{$old_default_cms_lang}" />
+        <input type="hidden" name="edituserprefs" value="true">
+        <input type="hidden" name="old_default_cms_lang" value="{$old_default_cms_lang}">
      </div>
      <p class="pageinput">
-        <input type="submit" name="submit_prefs" value="{lang('submit')}" class="pagebutton" />
-        <input type="submit" name="cancel" value="{lang('cancel')}" class="pagebutton" />
+        <input type="submit" name="submit_prefs" value="{lang('submit')}" class="pagebutton">
+        <input type="submit" name="cancel" value="{lang('cancel')}" class="pagebutton">
      </p>
    </div>
  </form>

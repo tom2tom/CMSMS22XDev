@@ -415,16 +415,16 @@ class Content extends ContentBase
 			if( $searchable == '' ) $searchable = 1;
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_page_searchable',lang('help_title_page_searchable'));
 			return array('<label for="id_searchable">'.lang('searchable').':</label>'.$help,
-						 '<input type="hidden" name="searchable" value="0"/>
-						  <input id="id_searchable" type="checkbox" name="searchable" value="1"'.($searchable==1?' checked="checked"':'').' />');
+						 '<input type="hidden" name="searchable" value="0">
+						  <input id="id_searchable" type="checkbox" name="searchable" value="1"'.($searchable==1?' checked':'').'>');
 
 		case 'disable_wysiwyg':
 			$disable_wysiwyg = $this->GetPropertyValue('disable_wysiwyg');
 			if( $disable_wysiwyg == '' ) $disable_wysiwyg = 0;
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_page_disablewysiwyg',lang('help_title_page_disablewysiwyg'));
 			return array('<label for="id_disablewysiwyg">'.lang('disable_wysiwyg').':</label>'.$help,
-						 '<input type="hidden" name="disable_wysiwyg" value="0" />
-						  <input id="id_disablewysiwyg" type="checkbox" name="disable_wysiwyg" value="1" '.($disable_wysiwyg==1?' checked="checked"':'').' />');
+						 '<input type="hidden" name="disable_wysiwyg" value="0">
+						  <input id="id_disablewysiwyg" type="checkbox" name="disable_wysiwyg" value="1" '.($disable_wysiwyg==1?' checked':'').'>');
 
 		case 'wantschildren':
 			$showadmin = ContentOperations::get_instance()->CheckPageOwnership(get_userid(), $this->Id());
@@ -432,8 +432,8 @@ class Content extends ContentBase
 				$wantschildren = $this->WantsChildren();
 				$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_page_wantschildren',lang('help_title_page_wantschildren'));
 				return array('<label for="id_wantschildren">'.lang('wantschildren').':</label>'.$help,
-							 '<input type="hidden" name="wantschildren" value="0"/>
-							  <input id="id_wantschildren" type="checkbox" name="wantschildren" value="1"'.($wantschildren?' checked="checked"':'').' />');
+							 '<input type="hidden" name="wantschildren" value="0">
+							  <input id="id_wantschildren" type="checkbox" name="wantschildren" value="1"'.($wantschildren?' checked':'').'>');
 			}
 			break;
 
@@ -489,9 +489,9 @@ class Content extends ContentBase
 		if ($oneline) {
 			$size = (int) $this->_get_param($blockInfo,'size',50);
 			$ret = '<input type="text" size="'.$size.'" maxlength="'.$maxlength.'" name="'.$blockInfo['id'].'" value="'.cms_htmlentities($value, ENT_NOQUOTES, CmsNlsOperations::get_encoding('')).'"';
-			if( $required ) $ret .= " required=\"required\"";
+			if( $required ) $ret .= ' required';
 			if( $placeholder ) $ret .= " placeholder=\"{$placeholder}\"";
-			$ret .= '/>';
+			$ret .= '>';
 		}
 		else {
 			$block_wysiwyg = true;

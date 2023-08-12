@@ -11,7 +11,7 @@
 <div id="bottom_nav">{* bottom nav is needed here *}</div>
 {/block}
 {block name='content-footer'}
-<hr />
+<hr>
 <div class="row message yellow">{tr('step9_removethis')}</div>
 <h3 class="orange text-centered">{tr('step9_join_community')}</h3>
 <p class="text-centered">{tr('step9_get_help')}:</p>

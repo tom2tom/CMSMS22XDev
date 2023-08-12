@@ -823,8 +823,8 @@ class ContentOperations
 		$str = substr($str,0,-1); // trim redundant comma
 
 		$out = <<<EOS
-<input type="text" id="$id" name="$name" class="cms_hierdropdown" title="$ttl" value="$value" size="50" maxlength="50" />
-<script type="text/javascript">
+<input type="text" id="$id" name="$name" class="cms_hierdropdown" title="$ttl" value="$value" size="50" maxlength="50">
+<script>
 $(function() {
  $('#$id').hierselector({
   $str

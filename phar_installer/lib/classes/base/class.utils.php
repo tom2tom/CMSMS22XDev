@@ -52,7 +52,7 @@ class utils
 
         if(headers_sent() ) {
             // use javascript instead
-            echo '<script type="text/javascript"><!-- location.replace("'.$to.'"); // --></script><noscript><meta http-equiv="Refresh" content="0;URL='.$to.'"></noscript>';
+            echo '<script><!-- location.replace("'.$to.'"); // --></script><noscript><meta http-equiv="Refresh" content="0;URL='.$to.'"></noscript>';
             exit;
         }
         else {

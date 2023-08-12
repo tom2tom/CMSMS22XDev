@@ -1,10 +1,11 @@
-<style type="text/css">
+{*TODO <style/> invalid here - migrate to <head/>*}
+<style>{literal}
 img#rotimg {
   z-index: 0;
 }
-</style>
+{/literal}</style>
 
-<script type="text/javascript">
+<script>
 $(function() {
   $('#rotangle').slider({
      min: -180,
@@ -37,11 +38,11 @@ $(function() {
 <div class="pageoverflow">
   <p class="pagetext">{$mod->Lang('image')}: {$filename}</p>
   <p class="pageinput">
-    <img id="rotimg" src="{$image}" width="{$width}" height="{$height}" />
+    <img id="rotimg" src="{$image}" width="{$width}" height="{$height}">
   </p>
 </div>
 <div class="pageoverflow">
-  <p class="pagetext"><label>{$mod->Lang('angle')}: <input type="text" readonly="readonly" id="angletxt" name="{$actionid}angle" value="0" /></label></p>
+  <p class="pagetext"><label for="angletxt">{$mod->Lang('angle')}: <input type="text" readonly id="angletxt" name="{$actionid}angle" value="0"></label></p>
   <p class="pageinput">{$mod->Lang('predefined')}:
     <button class="autorotate" id="neg180" title="{$mod->Lang('rotate_neg180')}">-180</button>
     <button class="autorotate" id="neg135" title="{$mod->Lang('rotate_neg135')}">-135</button>
@@ -74,8 +75,8 @@ $(function() {
 <div class="pageoverflow">
   <p class="pagetext"></p>
   <p class="pageinput">
-    <input type="submit" name="{$actionid}save" value="{$mod->Lang('save')}" />
-    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
+    <input type="submit" name="{$actionid}save" value="{$mod->Lang('save')}">
+    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
   </p>
 </div>
 {$endform}

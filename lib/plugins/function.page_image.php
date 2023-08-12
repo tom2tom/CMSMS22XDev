@@ -57,7 +57,7 @@ function smarty_function_page_image($params, $smarty)
                 if( !$key ) continue;
                 $out .= " $key=\"$val\"";
             }
-            $out .= "/>";
+            $out .= ">";
         }
     }
 

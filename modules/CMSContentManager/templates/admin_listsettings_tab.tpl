@@ -2,7 +2,7 @@
 <div class="pageoverflow">
 	<p class="pagetext"></p>
 	<p class="pageinput">
-		<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" accesskey="s" />
+		<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" accesskey="s">
 	</p>
 </div>
 <div class="pageoverflow">
@@ -15,7 +15,7 @@
 <div class="pageoverflow">
 	<p class="pagetext"><label for="visiblecolumns">{$mod->Lang('prompt_list_visiblecolumns')}:</label>&nbsp;{cms_help key2='help_listsettings_visiblecolumns' title=$mod->Lang('prompt_list_visiblecolumns')}</p>
 	<p class="pageinput">
-		<select id="visiblecolumns" name="{$actionid}list_visiblecolumns[]" multiple="multiple" size="5">
+		<select id="visiblecolumns" name="{$actionid}list_visiblecolumns[]" multiple size="5">
 			{html_options options=$visible_column_opts selected=$list_visiblecolumns}
 		</select></p>
 </div>

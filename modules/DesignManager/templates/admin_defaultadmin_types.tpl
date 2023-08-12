@@ -2,7 +2,7 @@
 <table class="pagetable">
   <thead>
     <tr>
-      <th width="5%">{$mod->Lang('prompt_id')}</th>
+      <th style="width:5%">{$mod->Lang('prompt_id')}</th>
       <th>{$mod->Lang('prompt_name')}</th>
       {if $has_add_right}
       <th class="pageicon"></th>

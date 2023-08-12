@@ -22,7 +22,7 @@ $('#css_selall').cmsms_checkall();
         <select id="css_page" name="{$actionid}css_page">
         {cms_pageoptions numpages=$css_nav.numpages curpage=$css_nav.curpage}
         </select>
-        &nbsp;<input type="submit" value="{$mod->Lang('go')}" />
+        &nbsp;<input type="submit" value="{$mod->Lang('go')}">
       {form_end}
     </div>
   {/if}
@@ -43,7 +43,7 @@ $('#css_selall').cmsms_checkall();
     <th class="pageicon"></th>{* edit *}
     <th class="pageicon"></th>{* copy *}
     <th class="pageicon"></th>{* delete *}
-    <th class="pageicon"><label for="css_selall" style="display: none;">{$mod->Lang('title_css_selectall')}</label><input type="checkbox" value="1" id="css_selall" title="{$mod->Lang('title_css_selectall')}" /></th>{* multiple *}
+    <th class="pageicon"><label for="css_selall" style="display: none;">{$mod->Lang('title_css_selectall')}</label><input type="checkbox" value="1" id="css_selall" title="{$mod->Lang('title_css_selectall')}"></th>{* multiple *}
       </tr>
     </thead>
     <tbody>
@@ -80,9 +80,9 @@ $('#css_selall').cmsms_checkall();
         <span title="{$mod->Lang('help_stylesheet_no_designs')}">{$mod->Lang('prompt_none')}</span>
       {else}
         {capture assign='tooltip_designs'}{strip}
-            <u>{$mod->Lang('prompt_attached_designs')}</u>:<br />
+            <u>{$mod->Lang('prompt_attached_designs')}</u>:<br>
         {foreach $t1 as $dsn_id}
-          {$design_names.$dsn_id}<br />
+          {$design_names.$dsn_id}<br>
         {/foreach}
         {/strip}{/capture}
         <a class="tooltip text-red" data-cms-description="{$tooltip_designs|adjust:'htmlentities'}" title="{$mod->Lang('help_stylesheet_multiple_designs')}">{$mod->Lang('prompt_multiple')} ({count($t1)})
@@ -103,7 +103,7 @@ $('#css_selall').cmsms_checkall();
       <td><a href="{$delete_css}" title="{$mod->Lang('delete_stylesheet')}">{admin_icon icon='delete.gif' title=$mod->Lang('delete_stylesheet')}</a></td>
       <td>
         <label for="css_select{$css@index}" style="display: none;">{$mod->Lang('prompt_select')}:</label>
-        <input id="{$css@index}" type="checkbox" class="css_select" name="{$actionid}css_select[]" value="{$css->get_id()}" />
+        <input id="{$css@index}" type="checkbox" class="css_select" name="{$actionid}css_select[]" value="{$css->get_id()}">
       </td>
         {else}
           <td>
@@ -130,7 +130,7 @@ $('#css_selall').cmsms_checkall();
         <option value="export">{$mod->lang('export')}</option>
         <option value="import">{$mod->lang('import')}</option>
       </select>
-      <input id="css_bulk_submit" class="css_bulk_action" type="submit" name="{$actionid}submit_bulk_css" value="{$mod->Lang('submit')}" />&nbsp;{cms_help key2='help_css_bulk' title=$mod->lang('prompt_delete')}
+      <input id="css_bulk_submit" class="css_bulk_action" type="submit" name="{$actionid}submit_bulk_css" value="{$mod->Lang('submit')}">&nbsp;{cms_help key2='help_css_bulk' title=$mod->lang('prompt_delete')}
     </div>
   {/capture}
 

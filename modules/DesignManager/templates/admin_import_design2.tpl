@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 $(function() {
   $('.helpicon').on('click', function() {
     var x = $(this).attr('name');
@@ -37,9 +37,9 @@ $(function() {
     <div class="pageoverflow">
       <p class="pagetext"><label for="import_newname">{$mod->Lang('prompt_name')}:</label></p>
       <p class="pageinput">
-        <input id="import_newname" type="text" name="{$actionid}newname" value="{$new_name}" size="50" maxlength="50"/>
-        &nbsp;{admin_icon name='help_import_newname' icon='info.gif' class='helpicon'}
-        <br />
+        <input id="import_newname" type="text" name="{$actionid}newname" value="{$new_name}" size="50" maxlength="50">
+        &nbsp;{cms_help key2='help_import_newname' title=$mod->Lang('prompt_name')}
+        <br>
         {$mod->Lang('prompt_orig_name')}: {$design_info.name}
       </p>
     </div>
@@ -58,7 +58,7 @@ $(function() {
       <p class="pagetext">{$mod->Lang('prompt_cmsversion')}:</p>
       <p class="pageinput">
         {if version_compare($design_info.cmsversion,$cms_version) < 0}
-          <span style="color: red;">{$design_info.cmsversion}</span>&nbsp;{admin_icon name='help_import_cmsversion' icon='info.gif' class='helpicon'}
+          <span style="color: red;">{$design_info.cmsversion}</span>&nbsp;{cms_help key2='help_import_cmsversion' title=$mod->Lang('prompt_cmsversion')}
         {else}
           {$design_info.cmsversion}
         {/if}
@@ -152,14 +152,14 @@ $(function() {
 <div class="pageoverflow">
   <p class="pagetext">*{$mod->Lang('confirm_import')}:</p>
   <p class="pageinput">
-    <input type="checkbox" name="{$actionid}check1" value="1" id="check1" />&nbsp;<label for="check1" />{$mod->Lang('confirm_import_1')}</label>
+    <input type="checkbox" name="{$actionid}check1" value="1" id="check1">&nbsp;<label for="check1">{$mod->Lang('confirm_import_1')}</label>
   </p>
 </div>
 <div class="pageoverflow">
   <p class="pagetext"></p>
   <p class="pageinput">
-    <input type="submit" name="{$actionid}next2" value="{$mod->Lang('next')}" />
-    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
+    <input type="submit" name="{$actionid}next2" value="{$mod->Lang('next')}">
+    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
   </p>
 </div>
 {form_end}

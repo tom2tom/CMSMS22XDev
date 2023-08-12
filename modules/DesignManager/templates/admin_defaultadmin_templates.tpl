@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 $(function() {
   // dynamically populate the templates area
   cms_busy();
@@ -109,7 +109,7 @@ $(function() {
 
 <div id="filterdialog" style="display: none;" title="{$mod->Lang('tpl_filter')|escape:'javascript'}">
   {form_start action='defaultadmin' id='filterdialog_form' __activetab='templates'}
-    <input type="hidden" id="submit_filter_tpl" name="{$actionid}submit_filter_tpl" value="1"/>
+    <input type="hidden" id="submit_filter_tpl" name="{$actionid}submit_filter_tpl" value="1">
     <div class="c_full">
       <label for="filter_tpl" class="grid_3 text-right">{$mod->Lang('prompt_options')}:</label>
       <select id="filter_tpl" name="{$actionid}filter_tpl" title="{$mod->Lang('title_filter')}" class="grid_9">
@@ -147,7 +147,7 @@ $(function() {
   <div id="addtemplatedialog" style="display: none;" title="{$mod->Lang('create_template')}">
     {form_start id="addtemplate_form"}
       <div class="pageoverflow">
-        <input type="hidden" name="{$actionid}submit_create" value="1"/>
+        <input type="hidden" name="{$actionid}submit_create" value="1">
         <p class="pagetext"><label for="tpl_import_type">{$mod->Lang('tpl_type')}:</label></p>
           <select name="{$actionid}import_type" id="tpl_import_type" title="{$mod->Lang('title_tpl_import_type')}">
             {html_options options=$list_types}

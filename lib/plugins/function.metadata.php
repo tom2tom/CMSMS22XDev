@@ -38,7 +38,7 @@ function smarty_function_metadata($params, $smarty)
 	if ($showbase)	{
         $base = CMS_ROOT_URL;
         if( $gCms->is_https_request() ) $base = $config['ssl_url'];
-		$result .= "\n<base href=\"".$base."/\" />\n";
+		$result .= "\n<base href=\"".$base."/\">\n";
 	}
 
 	$result .= get_site_preference('metadata', '');

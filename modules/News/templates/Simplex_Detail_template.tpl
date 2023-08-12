@@ -14,7 +14,7 @@
         {$extra_label} {$entry->extra}
 {/if}
 {if $return_url != ""}
-    <br />
+    <br>
         <span class='back'>&#8592; {$return_url}{if $category_name != ''} - {$category_link}{/if}</span>
 {/if}
 
@@ -23,7 +23,7 @@
      <div>
         {if $field->type == 'file'}
       {* this template assumes that every file uploaded is an image of some sort, because News doesn't distinguish *}
-          <img src='{$entry->file_location}/{$field->value}' alt='' />
+          <img src='{$entry->file_location}/{$field->value}' alt=''>
         {else}
           {$field->name}: {$field->value}
         {/if}

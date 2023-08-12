@@ -5,7 +5,7 @@ $lang['admin_title'] = 'Module Manager Admin Panel';
 $lang['abouttxt'] = 'About';
 $lang['accessdenied'] = 'Access Denied. Please check your permissions';
 $lang['action_activated'] = 'Module %s has been activated';
-$lang['action_installed'] = 'Module %s has been installed with the following message(s):<br /><br />%s';
+$lang['action_installed'] = 'Module %s has been installed with the following message(s):<br><br>%s';
 $lang['action_upgraded'] = 'Module %s has been upgraded';
 $lang['action'] = 'Action';
 $lang['active'] = 'Active';
@@ -59,7 +59,7 @@ $lang['error_chmodfailed'] = 'One or more problems encountered when changing per
 $lang['error_connectnomodules'] = 'It appears that no modules match your search criteria.';
 $lang['error_downloadxml'] = 'A problem occurred downloading the XML file: %s';
 $lang['error_dependencynotfound'] = 'One or more dependencies could not be found in the repository';
-$lang['error_dependencynotfound2'] = 'The module %s (%s) could not be found in the repository, but it is a dependency.<br/>This module may no longer be available in the module repository, or may require manual installation.<br />Please ensure that it is installed correctly, then retry this operation.';
+$lang['error_dependencynotfound2'] = 'The module %s (%s) could not be found in the repository, but it is a dependency.<br/>This module may no longer be available in the module repository, or may require manual installation.<br>Please ensure that it is installed correctly, then retry this operation.';
 $lang['error_fileupload'] = 'A problem occurred uploading the file';
 $lang['error_getmodule'] = 'A problem occurred instantiating %s';
 $lang['error_internal'] = 'Internal Error... Please report this to your system administrator';
@@ -104,7 +104,7 @@ $lang['help'] = '<h3>What Does This Do?</h3>
 <p>A client for the CMS Made Simple Module Repository. This module allows previewing and installing modules from the CMSMS Forge without the need for ftp-ing, or unzipping archives.  Module XML files are downloaded using REST, integrity verified, and then expanded automatically.</p>
 <h3>How Do I Use It</h3>
 <p>In order to use this module you will need the \'Modify Modules\' permission.</p>
-<br />
+<br>
 <p>You can find the interface for this module under the \'Site Admin\' menu.  When you select this module, the \'Module Repository\' installation will automatically be queried for a list of it\'s available XML modules.  This list will be cross referenced with the list of currently installed modules, and a summary page displayed.  From here, you can view the descriptive information, the Help, and the About information for a module without physically installing it.  You can also choose to upgrade or install modules.</p>
 <h3>Support</h3>
 <p>As per the GPL, this software is provided as-is. Please read the text of the license for the full disclaimer.</p>

@@ -1,6 +1,6 @@
 {if !isset($is_ie)}
 {* IE sucks... we only get here for REAL browsers. *}
-<script type="text/javascript">{literal}
+<script>{literal}
 $(function() {
 
     var thediv = '#theme_dropzone';
@@ -61,13 +61,13 @@ $(function() {
 			<form id="chdir_form" class="cms_form" action="{$chdir_url}" method="post">
 				<fieldset>
 					<legend>{$FileManager->Lang('change_working_folder')}</legend>
-					<label>{$FileManager->Lang('folder')}: </label>
-					<input type="hidden" name="m1_path" value="{$cwd}" />
-					<input type="hidden" name="m1_ajax" value="1" />
+					<label for="fm_newdir">{$FileManager->Lang('folder')}: </label>
+					<input type="hidden" name="m1_path" value="{$cwd}">
+					<input type="hidden" name="m1_ajax" value="1">
 					<select class="cms_dropdown" id="fm_newdir" name="m1_newdir">
 						{html_options options=$dirlist selected="/`$cwd`"}
 					</select>
-					<input type="submit" name="m1_submit" value="{$FileManager->lang('submit')}" />
+					<input type="submit" name="m1_submit" value="{$FileManager->lang('submit')}">
 				</fieldset>
 				</form>
 		</div>
@@ -75,8 +75,8 @@ $(function() {
 		<div class="zone">
 			<div id="theme_dropzone">
 				{$formstart}
-				<input type="hidden" name="disable_buffer" value="1" />
-				<input type="file" id="theme_dropzone_i" name="{$actionid}files[]" multiple="multiple" style="display: none;" />
+				<input type="hidden" name="disable_buffer" value="1">
+				<input type="file" id="theme_dropzone_i" name="{$actionid}files[]" multiple style="display: none;">
 				{$prompt_dropfiles}
 				{$formend}
 			</div>

@@ -51,7 +51,7 @@ function smarty_function_recently_updated($params, $smarty)
 	$dbresult = $db->Execute( $q );
 	if( !$dbresult ) {
 		// @todo: throw an exception here
-		echo 'DB error: '. $db->ErrorMsg()."<br />";
+		echo 'DB error: '. $db->ErrorMsg()."<br>";
 	}
 	while ($dbresult && $updated_page = $dbresult->FetchRow())
 	{
@@ -60,10 +60,10 @@ function smarty_function_recently_updated($params, $smarty)
 		$output .= '<li>';
 		$output .= '<a href="'.$curcontent->GetURL().'">'.$updated_page['content_name'].'</a>';
 		if (!empty($updated_page['titleattribute']) && $showtitle) {
-			$output .= '<br />';
+			$output .= '<br>';
 			$output .= $updated_page['titleattribute'];
 		}
-		$output .= '<br />';
+		$output .= '<br>';
 		$output .= $leadin;
 		$datevar = strtotime($updated_page['modified_date']);
 		if( strpos($dateformat, '%') !== false ) {
@@ -99,9 +99,9 @@ function smarty_cms_about_function_recently_updated()
 
 	<p>Change History:</p>
 	<ul>
-		<li>added new parameters:<br />
-		&lt;leadin&gt;. The contents of leadin will be shown left of the modified date. Default is &lt;Modified:&gt;<br />
-		$showtitle='true' - if true, the titleattribute of the page will be shown if it exists (true|false)<br />
+		<li>added new parameters:<br>
+		&lt;leadin&gt;. The contents of leadin will be shown left of the modified date. Default is &lt;Modified:&gt;<br>
+		$showtitle='true' - if true, the titleattribute of the page will be shown if it exists (true|false)<br>
 		css_class</li>
 		<li>dateformat may be any PHP date()- and/or strftime()-compatible format, default is d.m.y h:m</li>
 	</ul>

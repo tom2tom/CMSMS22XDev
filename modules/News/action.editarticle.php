@@ -191,7 +191,7 @@ if (isset($params['submit']) || isset($params['apply'])) {
                     }
                 }
                 if (!$dbr)
-                    die('FATAL SQL ERROR: ' . $db->ErrorMsg() . '<br />QUERY: ' . $db->sql);
+                    die('FATAL SQL ERROR: ' . $db->ErrorMsg() . '<br>QUERY: ' . $db->sql);
             }
         }
     }

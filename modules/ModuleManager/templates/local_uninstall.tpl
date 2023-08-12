@@ -6,14 +6,14 @@
 <div class="pageoverflow">
   <p class="pageinput">
     <label>
-      <input type="checkbox" name="{$actionid}confirm" value="1" /> {$ModuleManager->Lang('confirm_action')}
+      <input type="checkbox" name="{$actionid}confirm" value="1"> {$ModuleManager->Lang('confirm_action')}
     </label>
   </p>
 </div>
 <div class="pageoverflow">
   <p class="pageinput">
-    <input type="submit" name="{$actionid}submit" value="{$ModuleManager->Lang('uninstall')}" />
-    <input type="submit" name="{$actionid}cancel" value="{$ModuleManager->Lang('cancel')}" />
+    <input type="submit" name="{$actionid}submit" value="{$ModuleManager->Lang('uninstall')}">
+    <input type="submit" name="{$actionid}cancel" value="{$ModuleManager->Lang('cancel')}">
   </p>
 </div>
 {form_end}

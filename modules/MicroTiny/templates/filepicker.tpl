@@ -1,10 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		<meta http-equiv="Content-type" content="text/html;charset=utf-8"/>
+		<meta http-equiv="Content-type" content="text/html;charset=utf-8">
 		<title>{$mod->Lang('filepickertitle')}</title>
-		<link rel="stylesheet" type="text/css" href="{$mod->GetModuleURLPath()}/lib/css/filepicker.min.css" />
+		<link rel="stylesheet" href="{$mod->GetModuleURLPath()}/lib/css/filepicker.min.css">
 	</head>
 	<body class="cmsms-filepicker">
 		{strip}<div id="full-fp">
@@ -104,8 +104,8 @@
 		</div>
 {/strip}
 		{cms_jquery exclude='json,migrate,nestedSortable,cms_admin,cms_autorefresh,cms_dirtyform,cms_filepicker,cms_hiersel,cms_js_setup,cms_lock'}
-		<script type="text/javascript" src="{$mod->GetModuleURLPath()}/lib/js/tinymce/plugins/cmsms_filebrowser/filebrowser.js"></script>
-		<script type="text/javascript">
+		<script src="{$mod->GetModuleURLPath()}/lib/js/tinymce/plugins/cmsms_filebrowser/filebrowser.js"></script>
+		<script>
 			var filebrowser_global = {
 				field_id : '{$field}'
 			};

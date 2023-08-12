@@ -17,10 +17,10 @@
         {if $verbose}
         <div class="row form-row">
             <div class="four-col">
-                <label>{tr('prompt_dbtype')}</label>
+                <label for="dbtypesel">{tr('prompt_dbtype')}</label>
             </div>
             <div class="eight-col">
-                <select class="form-field" name="dbtype">
+                <select id="dbtypesel" class="form-field" name="dbtype">
                     {html_options options=$dbtypes selected=$config.dbtype}
                 </select>
             </div>
@@ -28,10 +28,10 @@
         {/if}
         <div class="row form-row">
             <div class="four-col">
-                <label>{tr('prompt_dbhost')}</label>
+                <label for="hostin">{tr('prompt_dbhost')}</label>
             </div>
             <div class="eight-col">
-                <input class="form-field required full-width" type="text" name="dbhost" value="{$config.dbhost}" required="required" />
+                <input id="hostin" class="form-field required full-width" type="text" name="dbhost" value="{$config.dbhost}" required>
                 <div class="corner red">
                     <i class="icon-asterisk"></i>
                 </div>
@@ -39,10 +39,10 @@
         </div>
         <div class="row form-row">
             <div class="four-col">
-                <label>{tr('prompt_dbname')}</label>
+                <label for="dbnamein">{tr('prompt_dbname')}</label>
             </div>
             <div class="eight-col">
-                <input class="form-field required full-width" type="text" name="dbname" value="{$config.dbname}" required="required" />
+                <input id="dbnamein" class="form-field required full-width" type="text" name="dbname" value="{$config.dbname}" required>
                 <div class="corner red">
                     <i class="icon-asterisk"></i>
                 </div>
@@ -50,10 +50,10 @@
         </div>
         <div class="row form-row">
             <div class="four-col">
-                <label>{tr('prompt_dbuser')}</label>
+                <label for="dbuserin">{tr('prompt_dbuser')}</label>
             </div>
             <div class="eight-col">
-                <input class="form-field required full-width" type="text" name="dbuser" value="{$config.dbuser}" autocomplete="off" required="required" />
+                <input id="dbuserin" class="form-field required full-width" type="text" name="dbuser" value="{$config.dbuser}" autocomplete="off" required>
                 <div class="corner red">
                     <i class="icon-asterisk"></i>
                 </div>
@@ -61,10 +61,10 @@
         </div>
         <div class="row form-row">
             <div class="four-col">
-                <label>{tr('prompt_dbpass')}</label>
+                <label for="dbpassin">{tr('prompt_dbpass')}</label>
             </div>
             <div class="eight-col">
-                <input class="form-field required full-width" type="password" name="dbpass" value="" autocomplete="off" required="required" />
+                <input id="dbpassin" class="form-field required full-width" type="password" name="dbpass" value="" autocomplete="off" required>
                 <div class="corner red">
                     <i class="icon-asterisk"></i>
                 </div>
@@ -73,18 +73,18 @@
         {if $verbose}
         <div class="row form-row">
             <div class="four-col">
-                <label>{tr('prompt_dbport')}</label>
+                <label for="dbportin">{tr('prompt_dbport')}</label>
             </div>
             <div class="eight-col">
-                <input class="form-field full-width" type="text" name="dbport" value="{$config.dbport}" />
+                <input id="dbportin" class="form-field full-width" type="text" name="dbport" value="{$config.dbport}">
             </div>
         </div>
         <div class="row form-row">
             <div class="four-col">
-                <label>{tr('prompt_dbprefix')}</label>
+                <label for="tblprefin">{tr('prompt_dbprefix')}</label>
             </div>
             <div class="eight-col">
-                <input class="form-field full-width" type="text" name="dbprefix" value="{$config.dbprefix}" />
+                <input id="tblprefin" class="form-field full-width" type="text" name="dbprefix" value="{$config.dbprefix}">
             </div>
         </div>
         {/if}
@@ -94,8 +94,8 @@
     <p>{tr('info_timezone')}</p>
 
     <div class="row form-row">
-        <label class="visuallyhidden">{tr('prompt_timezone')}</label>
-        <select class="form-field" name="timezone">
+        <label for="tzonesel" class="visuallyhidden">{tr('prompt_timezone')}</label>
+        <select id="tzonesel" class="form-field" name="timezone">
             {html_options options=$timezones selected=$config.timezone}
         </select>
     </div>
@@ -106,10 +106,10 @@
 
     <div class="row form-row">
         <div class="four-col">
-            <label>{tr('prompt_queryvar')}</label>
+            <label for="queryin">{tr('prompt_queryvar')}</label>
         </div>
         <div class="eight-col">
-            <input class="form-field" type="text" name="query_var" value="{$config.query_var}" />
+            <input id="queryin" class="form-field" type="text" name="query_var" value="{$config.query_var}">
         </div>
     </div>
     {/if}
@@ -119,15 +119,15 @@
     <p>{tr('info_installcontent')}</p>
 
     <div class="row form-row">
-        <label>{tr('prompt_installcontent')}</label>
-        <select class="form-field" name="samplecontent">
+        <label for="contentsel">{tr('prompt_installcontent')}</label>
+        <select id="contentsel" class="form-field" name="samplecontent">
             {html_options options=$yesno selected=$config.samplecontent}
         </select>
     </div>
     {/if}
 
     <div id="bottom_nav">
-    <input class="action-button positive" type="submit" name="next" value="{tr('next')} &rarr;" />
+    <input class="action-button positive" type="submit" name="next" value="{tr('next')} &rarr;">
     </div>
 
 {wizard_form_end}

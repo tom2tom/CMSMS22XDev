@@ -10,10 +10,10 @@ $lang['cancel'] = 'Cancel';
 $lang['class'] = 'Class';
 $lang['cmsms_linker'] = 'Link to CMSMS Page';
 $lang['css_styles_help'] = 'CSS-stylenames specified here are added to a dropdown box in the editor. Leaving the input field empty will keep the dropdown box hidden (default behavior).';
-$lang['css_styles_help2'] = 'The styles can either be just the class name, or a classname with a new name to show.<br />
-Must be separated by either commas or newlines.<br />
-Example: mystyle1, My style name=mystyle2<br />
-Result: a dropdown containing 2 entries, \'mystyle1\' and \'My style name\' resulting in the insertion of mystyle1, and mystyle2 respectively.<br />
+$lang['css_styles_help2'] = 'The styles can either be just the class name, or a classname with a new name to show.<br>
+Must be separated by either commas or newlines.<br>
+Example: mystyle1, My style name=mystyle2<br>
+Result: a dropdown containing 2 entries, \'mystyle1\' and \'My style name\' resulting in the insertion of mystyle1, and mystyle2 respectively.<br>
 Note: No checking for the actual existence of the stylenames is done. They are used blindly.';
 $lang['css_styles_text'] = 'CSS Styles';
 

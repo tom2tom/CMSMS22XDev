@@ -1,5 +1,5 @@
-{* stylesheets tab for edit template *}
-<style type="text/css">{literal}
+{* stylesheets tab for edit template *}{*TODO <style/> invalid here - migrate to <head/>*}
+<style>{literal}
 #available-stylesheets li.selected {
    background-color: #147fdb;
 }
@@ -29,7 +29,7 @@
                     {if !$cssl || !in_array($css->get_id(),$cssl)}
                         <li class="ui-state-default" data-cmsms-item-id="{$css->get_id()}" tabindex="0">
                             <span>{$css->get_name()}</span>
-                            <input class="hidden" type="checkbox" name="{$actionid}assoc_css[]" value="{$css->get_id()}" tabindex="-1" />
+                            <input class="hidden" type="checkbox" name="{$actionid}assoc_css[]" value="{$css->get_id()}" tabindex="-1">
                         </li>
                     {/if}
                 {/foreach}
@@ -47,7 +47,7 @@
                         <li class="ui-state-default cf sortable-item" data-cmsms-item-id="{$one}">
                             <a href="{cms_action_url action=admin_edit_css css=$one}" class="edit_css" title="{$mod->Lang('edit_stylesheet')}">{$list_stylesheets.$one}</a>
                             <a href="#" "title="{$mod->Lang('remove')}" class="ui-icon ui-icon-trash sortable-remove" title="{$mod->Lang('remove')}">{$mod->Lang('remove')}</a>
-                            <input class="hidden" type="checkbox" name="{$actionid}assoc_css[]" value="{$one}" checked="checked" tabindex="-1"/>
+                            <input class="hidden" type="checkbox" name="{$actionid}assoc_css[]" value="{$one}" checked tabindex="-1">
                         </li>
                     {/foreach}
                 </ul>
@@ -56,7 +56,7 @@
     </div>
   </div>
   <script>{literal}
-  $(function() {
+    $(function() {
     var _edit_url = '{cms_action_url action=admin_edit_css css=xxxx forjs=1}';
     $('ul.sortable-stylesheets').sortable({
         connectWith: '#selected-stylesheets ul',
@@ -74,7 +74,7 @@
             var elements = ui.parent()
                              .children('.selected')
                              .clone(),
-                helper = $('<li/>');
+                helper = $('<li></li>');
 
             ui.data('multidrag', elements).siblings('.selected').remove();
             return helper.append(elements);
@@ -89,7 +89,11 @@
 
             $('.sortable-stylesheets .placeholder').hide();
             $(elements).removeClass('selected ui-state-hover')
-                       .append($('<a href="#"/>').addClass('ui-icon ui-icon-trash sortable-remove').text('Remove'))
+                       .append($('<a></a>', {
+                          href: '#', // link to page-top?
+                          'class': 'ui-icon ui-icon-trash sortable-remove',
+                          text: 'Remove'
+                       })
                        .find('input[type="checkbox"]').prop('checked', true);
         }
 
@@ -125,16 +129,24 @@
             var _text = $(this).text().trim();
 
             var _el = $(this).clone();
-            var _a;
-            {/literal}_a = $('<a/>').attr('href',_url).text(_text).addClass('edit_css unsaved').
-                      attr('title',"{$mod->Lang('edit_stylesheet')}");
+            var _a = $('<a></a>', {
+              href:_url,
+              'class':'edit_css unsaved',{/literal}
+              title:"{$mod->Lang('edit_stylesheet')}",
+              text:_text
+            });
             $('span',_el).remove();
             $(_el).append(_a);
             $(_el).removeClass('selected ui-state-hover')
                  .attr('tabindex',-1)
                  .addClass('unsaved no-sort')
-                 .append($('<a href="#"/>').addClass('ui-icon ui-icon-trash sortable-remove').text("{$mod->Lang('remove')}").attr('title',"{$mod->Lang('remove')}"))
-                 .find('input[type="checkbox"]').prop('checked',true);{literal}
+                 .append($('<a></a>', {
+                   href:'#', // link to page-top?
+                   'class':'ui-icon ui-icon-trash sortable-remove',
+                   title:"{$mod->Lang('remove')}",
+                   text:"{$mod->Lang('remove')}"
+                 }){literal}
+                 .find('input[type="checkbox"]').prop('checked',true);
             $('#selected-stylesheets > ul').append(_el);
             $(this).remove();
             set_changed();
@@ -167,5 +179,5 @@
     });
 
   });
-  {/literal}</script>
+    {/literal}</script>
 {/if}

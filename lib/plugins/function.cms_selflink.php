@@ -247,7 +247,7 @@ function smarty_function_cms_selflink($params, $smarty)
 		}
 
 		$result .= '" title="'.$title.'" ';
-		$result .= 'href="'.$url.'" />';
+		$result .= 'href="'.$url.'">';
 	}
 	else {
 		if( isset($params['label_side']) ) $label_side = strtolower(trim($params['label_side']));
@@ -277,7 +277,7 @@ function smarty_function_cms_selflink($params, $smarty)
 			if( $width ) $result .= " width=\"$width\"";
 			if( $height ) $height = max(1,$height);
 			if( $height ) $result .= " height=\"$height\"";
-			$result .= "/>";
+			$result .= ">";
 			if (! (isset($params['imageonly']) && $params['imageonly'])) $result .= " $linktext";
 		} else {
 			$result .= $linktext;

@@ -111,7 +111,7 @@ class PageLink extends ContentBase
 
 		case 'params':
 			$val = cms_htmlentities($this->GetPropertyValue('params'));
-			return array(lang('additional_params').':','<input type="text" name="params" value="'.$val.'" />');
+			return array(lang('additional_params').':','<input type="text" name="params" value="'.$val.'">');
 			break;
 
 		default:

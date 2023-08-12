@@ -1,4 +1,5 @@
-<style type="text/css">{literal}
+{*TODO <style/> invalid here - migrate to <head/>*}
+<style>{literal}
 #available-templates li.selected {
    background-color: #147fdb;
 }
@@ -29,7 +30,7 @@
                     {if !$tmpl || !in_array($tpl->get_id(),$tmpl)}
                         <li class="ui-state-default" data-cmsms-item-id="{$tpl->get_id()}" tabindex="0">
                             <span>{$tpl->get_name()}</span>
-                            <input class="hidden" type="checkbox" name="{$actionid}assoc_tpl[]" value="{$tpl->get_id()}" />
+                            <input class="hidden" type="checkbox" name="{$actionid}assoc_tpl[]" value="{$tpl->get_id()}">
                         </li>
                     {/if}
                 {/foreach}
@@ -52,7 +53,7 @@
                                 <span>{$tpl->get_name()}</span>
                                 {/if}
                                 <a href="#" title="{$mod->Lang('remove')}" class="ui-icon ui-icon-trash sortable-remove">{$mod->Lang('remove')}</a>
-                                <input class="hidden" type="checkbox" name="{$actionid}assoc_tpl[]" value="{$tpl->get_id()}" checked="checked" />
+                                <input class="hidden" type="checkbox" name="{$actionid}assoc_tpl[]" value="{$tpl->get_id()}" checked>
                             </li>
                         {/if}
                     {/foreach}
@@ -88,7 +89,7 @@ $(function() {
             var elements = ui.parent()
                              .children('.selected')
                              .clone(),
-                helper = $('<li/>');
+                helper = $('<li></li>');
 
             ui.data('multidrag', elements).siblings('.selected').remove();
             return helper.append(elements);
@@ -109,16 +110,25 @@ $(function() {
                 var _text = $(this).text().trim();
                 var _e;
                 if( _manage_templates ) {
-                    {/literal}_e = $('<a/>').attr('href',_url).text(_text).addClass('edit_tpl unsaved').attr('title',"{$mod->Lang('edit_template')}");{literal}
+                    {/literal}_e = $('<a></a>', {
+                      href:_url,
+                      'class':'edit_tpl unsaved',
+                      title:"{$mod->Lang('edit_template')}",
+                      text:_text
+                    });{literal}
                 } else {
-                    _e = $('<span/>').text(_text);
+                    _e = $('<span></span>', { text:_text });
                 }
                 $('span',this).remove();
                 $(this).append(_e);
                 $(this).removeClass('selected ui-state-hover')
                        .attr('tabindex',-1)
                        .addClass('unsaved no-sort')
-                       .append($('<a href="#"/>').addClass('ui-icon ui-icon-trash sortable-remove').text('Remove'))
+                       .append($('<a></a>', {
+                          href,'#',
+                          'class':'ui-icon ui-icon-trash sortable-remove',
+                          text:'Remove'
+                       })
                        .find('input[type="checkbox"]').prop('checked', true);
             });
             set_changed();
@@ -157,16 +167,26 @@ $(function() {
               var _el = $(this).clone();
               var _a;
               if( _manage_templates ) {
-                        {/literal}_a = $('<a/>').attr('href',_url).text(_text).addClass('edit_tpl unsaved').attr('title',"{$mod->Lang('edit_template')}");{literal}
-                 } else {
-                  _a = $('<span/>').text(_text);
+                 {/literal}_a = $('<a></a>', {
+                   href:_url,
+                   'class':'edit_tpl unsaved',
+                   title:"{$mod->Lang('edit_template')}",
+                   text:_text
+                 });{literal}
+              } else {
+                 _a = $('<span></span>', { text:_text });
               }
               $('span',_el).remove();
               $(_el).append(_a);
               {/literal}$(_el).removeClass('selected ui-state-hover')
                        .attr('tabindex',-1)
                        .addClass('unsaved no-sort')
-                       .append($('<a href="#"/>').addClass('ui-icon ui-icon-trash sortable-remove').text('{$mod->Lang('remove')}').attr('title',"{$mod->Lang('remove')}"))
+                       .append($('<a></a>', {
+                         href:'#',
+                        'class':'ui-icon ui-icon-trash sortable-remove',
+                        text:"{$mod->Lang('remove')}",
+                        title:"{$mod->Lang('remove')}"
+                       })
                        .find('input[type="checkbox"]').prop('checked', true);{literal}
               $('#selected-templates > ul').append(_el);
               $(this).remove();

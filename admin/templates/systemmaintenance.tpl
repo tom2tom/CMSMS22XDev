@@ -17,7 +17,7 @@
 				<div class="pageoverflow">
 					<p class="pagetext">{lang('clearcache')}:</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" name="clearcache" value="{lang('clear')}" />
+						<input class="pagebutton" type="submit" name="clearcache" value="{lang('clear')}">
 					</p>
 				</div>
 			</fieldset>
@@ -31,7 +31,7 @@
 				<div class="pageoverflow">
 					<p class="pagetext">{lang('sysmain_updatehierarchy')}:</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" name="updatehierarchy" value="{lang('sysmain_update')}" />
+						<input class="pagebutton" type="submit" name="updatehierarchy" value="{lang('sysmain_update')}">
 					</p>
 				</div>
 			</form>
@@ -40,7 +40,7 @@
 				<div class="pageoverflow">
 					<p class="pagetext">{lang('sysmain_updateurls')}:</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" name="updateurls" value="{lang('sysmain_update')}" />
+						<input class="pagebutton" type="submit" name="updateurls" value="{lang('sysmain_update')}">
 					</p>
 				</div>
 			</form>
@@ -51,10 +51,10 @@
 						<p class="pagetext">{$withoutaliascount} {lang('sysmain_pagesmissinalias')}:</p>
 						<p class="pageinput">
 							{foreach $pagesmissingalias as $page}
-								{*{$page.count}.*} {$page.content_name}<br />
+								{*{$page.count}.*} {$page.content_name}<br>
 							{/foreach}
-							<br />
-							<input class="pagebutton" type="submit" name="addaliases" value="{lang('sysmain_fixaliases')}" />
+							<br>
+							<input class="pagebutton" type="submit" name="addaliases" value="{lang('sysmain_fixaliases')}">
 						</p>
 					</div>
 				</form>
@@ -66,10 +66,10 @@
 						<p class="pagetext">{$invalidtypescount} {lang('sysmain_pagesinvalidtypes')}:</p>
 						<p class="pageinput">
 							{foreach $pageswithinvalidtype as $page}
-								{$page.content_name} <em>({$page.content_alias}) - {$page.type}</em><br />
+								{$page.content_name} <em>({$page.content_alias}) - {$page.type}</em><br>
 							{/foreach}
-							<br />
-							<input class="pagebutton" type="submit" name="fixtypes" value="{lang('sysmain_fixtypes')|escape:'javascript'}" />
+							<br>
+							<input class="pagebutton" type="submit" name="fixtypes" value="{lang('sysmain_fixtypes')|escape:'javascript'}">
 						</p>
 					</div>
 				</form>
@@ -97,13 +97,13 @@
 				<div class="pageoverflow">
 					<p class="pagetext">{lang('sysmain_optimizetables')}:</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" name="optimizeall" value="{lang('sysmain_optimize')}" />
+						<input class="pagebutton" type="submit" name="optimizeall" value="{lang('sysmain_optimize')}">
 					</p>
 				</div>
 				<div class="pageoverflow">
 					<p class="pagetext">{lang('sysmain_repairtables')}:</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" name="repairall" value="{lang('sysmain_repair')}" />
+						<input class="pagebutton" type="submit" name="repairall" value="{lang('sysmain_repair')}">
 					</p>
 				</div>
 			</fieldset>

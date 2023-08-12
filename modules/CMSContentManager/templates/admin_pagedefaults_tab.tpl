@@ -5,7 +5,7 @@
 <div class="pageoverflow">
 	<p class="pagetext"></p>
 	<p class="pageinput">
-		<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />
+		<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
 	</p>
 </div>
 <div class="pageoverflow">
@@ -75,32 +75,32 @@
 <div class="pageoverflow">
 	<p class="pagetext"><label for="addteditors">{$mod->Lang('prompt_pagedflt_addteditors')}:</label>&nbsp;{cms_help key2='help_pagedflt_addteditors' title=$mod->Lang('prompt_pagedflt_addteditors')}</p>
 	<p class="pageinput">
-		<select id="addteditors" name="{$actionid}addteditors[]" multiple="multiple" size="6">
+		<select id="addteditors" name="{$actionid}addteditors[]" multiple size="6">
 			{html_options options=$addteditor_list selected=$page_prefs.addteditors}
 		</select></p>
 </div>
 <div class="pageoverflow">
 	<p class="pagetext"><label for="extra1">{$mod->Lang('prompt_pagedflt_extra1')}:</label>&nbsp;{cms_help key2='help_pagedflt_extra1' title=$mod->Lang('prompt_pagedflt_extra1')}</p>
 	<p class="pageinput">
-		<input id="extra1" type="text" name="{$actionid}extra1" value="{$page_prefs.extra1|cms_escape}" size="80" maxlength="255" />
+		<input id="extra1" type="text" name="{$actionid}extra1" value="{$page_prefs.extra1|cms_escape}" size="80" maxlength="255">
 	</p>
 </div>
 <div class="pageoverflow">
 	<p class="pagetext"><label for="extra2">{$mod->Lang('prompt_pagedflt_extra2')}:</label>&nbsp;{cms_help key2='help_pagedflt_extra2' title=$mod->Lang('prompt_pagedflt_extra2')}</p>
 	<p class="pageinput">
-		<input id="extra2" type="text" name="{$actionid}extra2" value="{$page_prefs.extra2|cms_escape}" size="80" maxlength="255"/>
+		<input id="extra2" type="text" name="{$actionid}extra2" value="{$page_prefs.extra2|cms_escape}" size="80" maxlength="255">
 	</p>
 </div>
 <div class="pageoverflow">
 	<p class="pagetext"><label for="extra3">{$mod->Lang('prompt_pagedflt_extra3')}:</label>&nbsp;{cms_help key2='help_pagedflt_extra3' title=$mod->Lang('prompt_pagedflt_extra3')}</p>
 	<p class="pageinput">
-		<input id="extra3" type="text" name="{$actionid}extra3" value="{$page_prefs.extra3|cms_escape}" size="80" maxlength="255"/>
+		<input id="extra3" type="text" name="{$actionid}extra3" value="{$page_prefs.extra3|cms_escape}" size="80" maxlength="255">
 	</p>
 </div>
 <div class="pageoverflow">
 	<p class="pagetext"></p>
 	<p class="pageinput">
-		<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}"/>
+		<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
 	</p>
 </div>
 {form_end}

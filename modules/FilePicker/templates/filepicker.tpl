@@ -1,11 +1,11 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html>
 <html lang="en" data-cmsfp-inst="{$inst}">
 	<head>
-		<meta charset="utf-8" />
-		<meta http-equiv="Content-type" content="text/html;charset=utf-8" />
+		<meta charset="utf-8">
+		<meta http-equiv="Content-type" content="text/html;charset=utf-8">
 		<title>{$mod->Lang('filepickertitle')}</title>
 		{cms_jquery exclude='json,migrate,nestedSortable,cms_admin,cms_autorefresh,cms_dirtyform,cms_filepicker,cms_hiersel,cms_js_setup,cms_lock'}
-		<link rel="stylesheet" type="text/css" href="{$cssurl}" />
+		<link rel="stylesheet" href="{$cssurl}">
 	</head>
 	<body class="cmsms-filepicker">
 		{strip}<div id="full-fp">
@@ -30,7 +30,7 @@
 							{if $profile->can_upload}
 							<span class="filepicker-button upload-file btn-file">
 								<i class="cmsms-fp-upload"></i> {$mod->Lang('upload')}
-								<input id="filepicker-file-upload" type="file" multiple="" title="{$mod->Lang('select_upload_files')}" />
+								<input id="filepicker-file-upload" type="file" multiple title="{$mod->Lang('select_upload_files')}">
 							</span>
 							{/if}
 						</p>
@@ -86,7 +86,7 @@
 							{elseif $profile->show_thumbs && !empty($file.thumbnail)}
 								<a class="filepicker-file-action js-trigger-insert" href="{$file.relurl}" title="{$file.name}">{$file.thumbnail}</a>
 							{elseif $profile->show_thumbs && $file.is_thumb}
-								<a class="filepicker-file-action js-trigger-insert" href="{$file.relurl}" title="{$file.name}"><img src="{$file.fullurl}" alt="{$file.name}" /></a>
+								<a class="filepicker-file-action js-trigger-insert" href="{$file.relurl}" title="{$file.name}"><img src="{$file.fullurl}" alt="{$file.name}"></a>
 							{else}
 								<a class="filepicker-file-action js-trigger-insert icon-no-thumb" title="{$file.name}" href="{$file.relurl}">
 									{if $file.filetype == 'image'}
@@ -138,12 +138,12 @@
 {/strip}
 		<div id="mkdir_dlg" title="{$mod->Lang('title_mkdir')}" style="display: none;" data-oklbl="{$mod->Lang('ok')}">
 			<div class="dlg-options">
-				<label>{$mod->Lang('name')}:</label> <input type="text" id="fld_mkdir" size="40" />
+				<label for="fld_mkdir">{$mod->Lang('name')}:</label> <input type="text" id="fld_mkdir" size="40">
 			</div>
 		</div>
-		<script type="text/javascript" src="{$mod->GetModuleURLPath()}/js/ext/jquery.fileupload.js"></script>
-		<script type="text/javascript" src="{$mod->GetModuleURLPath()}/lib/js/cmsms_filebrowser/filebrowser.js"></script>
-		<script type="text/javascript">
+		<script src="{$mod->GetModuleURLPath()}/js/ext/jquery.fileupload.js"></script>
+		<script src="{$mod->GetModuleURLPath()}/lib/js/cmsms_filebrowser/filebrowser.js"></script>
+		<script>
 		$(function() {
 			var filepicker = new CMSFileBrowser({
 			cmd_url: '{cms_action_url action=ajax_cmd forjs=1}&showtemplate=false',

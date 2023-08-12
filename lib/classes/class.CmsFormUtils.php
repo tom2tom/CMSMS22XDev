@@ -151,7 +151,7 @@ final class CmsFormUtils
                 break;
 
             case 'multiple':
-                $out .= " multiple=\"multiple\"";
+                $out .= " multiple";
                 break;
 
             case 'class':

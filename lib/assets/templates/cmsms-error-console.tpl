@@ -1,9 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="utf-8" />
+		<meta charset="utf-8">
 		<title>CMS Made Simple - Error Console</title>
-		<meta name="robots" content="noindex, nofollow" />
+		<meta name="robots" content="noindex, nofollow">
 		<style>
 			body {
 				min-width: 900px;
@@ -69,12 +69,12 @@
 	</head>
 	<body>
 		<div class="logo">
-			<img src="{root_url}/lib/assets/images/cmsms-logo.png" alt="CMS Made Simple" />
+			<img src="{root_url}/lib/assets/images/cmsms-logo.png" alt="CMS Made Simple">
 		</div>
 		<div id="wrapper">
 			<h1>Oops!</h1>
 			<p class="info">
-				It looks like something went wrong and an error has occurred.<br />
+				It looks like something went wrong and an error has occurred.<br>
 				A notification has been added to the admin log.
 			</p>
 			<div class="clear"></div>

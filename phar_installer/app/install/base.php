@@ -12,7 +12,7 @@ verbose_msg(ilang('install_setschemaver'));
 //
 verbose_msg(ilang('install_initsiteprefs'));
 cms_siteprefs::set('sitedownmessage','<p>Site is currently down for maintenance</p>');
-cms_siteprefs::set('metadata',"<meta name=\"Generator\" content=\"CMS Made Simple - Copyright (C) 2004-" . date('Y') . ". All rights reserved.\" />\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\r\n");
+cms_siteprefs::set('metadata',"<meta name=\"Generator\" content=\"CMS Made Simple - Copyright (C) 2004-" . date('Y') . ". All rights reserved.\">\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\r\n");
 cms_siteprefs::set('global_umask','022');
 cms_siteprefs::set('auto_clear_cache_age',60); // cache files for only 60 days by default
 cms_siteprefs::set('adminlog_lifetime',3600*24*31); // admin log entries only live for 60 days.

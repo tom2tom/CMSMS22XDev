@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 $(function() {
    $('#showmore_ctl').on('click', function(){
       $(this).closest('form').trigger('submit');
@@ -38,8 +38,8 @@ $(function() {
 <div class="pageoverflow">
 	<p class="pageinput">
 		<label>
-			<input type="hidden" name="{$actionid}showmore" value="0" />
-			<input type="checkbox" id="showmore_ctl" name="{$actionid}showmore" value="1"{if $showmore} checked="checked"{/if} />
+			<input type="hidden" name="{$actionid}showmore" value="0">
+			<input type="checkbox" id="showmore_ctl" name="{$actionid}showmore" value="1"{if $showmore} checked{/if}>
 			{$mod->Lang('prompt_showmore')}</label>
 	</p>
 </div>
@@ -47,17 +47,17 @@ $(function() {
 <div class="pageoverflow">
 	<p class="pagetext">{$mod->Lang('prompt_confirm_operation')}:</p>
 	<p class="pageinput">
-		<input type="checkbox" id="confirm1" value="1" name="{$actionid}confirm1" />
+		<input type="checkbox" id="confirm1" value="1" name="{$actionid}confirm1">
 		&nbsp; <label for="confirm1">{$mod->Lang('prompt_confirm1')}</label>
-		<br />
-		<input type="checkbox" id="confirm2" value="1" name="{$actionid}confirm2" />
+		<br>
+		<input type="checkbox" id="confirm2" value="1" name="{$actionid}confirm2">
 		&nbsp; <label for="confirm2">{$mod->Lang('prompt_confirm2')}</label></p>
 </div>
 
 <div class="pageoverflow">
 	<p class="pageinput">
-		<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />
-		<input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
+		<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
+		<input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
 	</p>
 </div>
 {form_end}

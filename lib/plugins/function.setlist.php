@@ -47,7 +47,7 @@ function smarty_cms_help_function_setlist() {
 	<pre>
 		{setlist var='varname' value='"red":"#f00","green":"#0f0","blue":"#00f","violet":"#f0f","yellow":"#ff0"'}
 		{foreach from=$varname key=color item=colorcode}
-		    {$color} is {$colorcode}<br />
+		    {$color} is {$colorcode}<br>
 		{/foreach}
 	</pre>
 	<p>It uses JSON syntax (with implicit curly-brace wrappers), so you can do crazy stuff if you choose to:</p>

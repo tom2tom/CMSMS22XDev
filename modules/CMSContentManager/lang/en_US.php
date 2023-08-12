@@ -109,7 +109,7 @@ $lang['go'] = 'Go';
 
 #H
 $lang['help_content_type'] = 'The content type controls the overall function of an item.  Some content types are used for building HTML pages, while others are for building links or other navigation functions.';
-$lang['help_general_lockrefresh'] = 'Specify the number of seconds (at most) at which a lock should be refreshed.  Setting a value of 0 will disable refreshing of locks.<br/><strong>Note:</strong> Locks are not refreshed unless there are some changes in the form.<br />The minimum value for this field (other than 0) is 30.';
+$lang['help_general_lockrefresh'] = 'Specify the number of seconds (at most) at which a lock should be refreshed.  Setting a value of 0 will disable refreshing of locks.<br><strong>Note:</strong> Locks are not refreshed unless there are some changes in the form.<br>The minimum value for this field (other than 0) is 30.';
 $lang['help_general_locktimeout'] = 'Specify the number of minutes after which a non-refreshed lock will expire.  Specifying a value of 0 will disable locking all together.  The minimum value for this field is 5 and the maximum value is 480.';
 $lang['help_general_templatelistmode'] = 'This option controls how templates will be listed in the add/edit content form.';
 $lang['help_listsettings_namecolumn'] = 'Specify what text should be displayed in the &quot;Name&quot; column of the content list view.  Choose either the page title, or menu text';

@@ -7,7 +7,7 @@
 <div class="pageoverflow">
 	<form method="post" action="{$filter_action}">
 		<div class="hidden">
-			<input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}" />
+			<input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}">
 		</div>
 		<b>{$selectgroup}:</b>&nbsp;
 		<select name="groupsel" id="groupsel">
@@ -19,15 +19,15 @@
 				{/if}
 			{/foreach}
 		</select>
-		&nbsp;<input type="submit" name="filter" value="{$apply}" />
+		&nbsp;<input type="submit" name="filter" value="{$apply}">
 	</form>
 </div>
 
-<br />
+<br>
 
 {$form_start}
 	<div class="hidden">
-		<input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}" />
+		<input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}">
 	</div>
 
 	<div class="pageoverflow">
@@ -61,7 +61,7 @@
 						{foreach $group_list as $thisgroup}
 							{if $thisgroup->id != -1}
 								{$gid=$thisgroup->id}
-								<td class="g{$thisgroup->id}"><input type="checkbox" name="pg_{$perm->id}_{$gid}" value="1"{if isset($perm->group[$gid]) || $gid == 1} checked="checked"{/if}{if $gid == 1} disabled="disabled"{/if} /></td>
+								<td class="g{$thisgroup->id}"><input type="checkbox" name="pg_{$perm->id}_{$gid}" value="1"{if isset($perm->group[$gid]) || $gid == 1} checked{/if}{if $gid == 1} disabled="disabled"{/if}></td>
 							{/if}
 						{/foreach}
 					</tr>

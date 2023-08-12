@@ -5,5 +5,5 @@
 <p><b>{$moduletext}</b>:&nbsp;{$modulename}</p>
 <p><b>{$vertext}</b>:&nbsp;{$moduleversion}</p>
 <p><b>{$xmltext}</b>:&nbsp;{$xmlfile}</p>
-<hr/>
+<hr>
 {$content}
