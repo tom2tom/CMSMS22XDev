@@ -30,48 +30,57 @@ function escapeRegExp(string) {
 
 function add_result(listid,content) {
   $('#searchresults_cont').show();
-  search_text = $('#searchtext').val();
-  casesensitive = $('#search_case').is(':checked');
-  search_text_regex = RegExp(escapeRegExp(search_text),'g'+(casesensitive ? '' : 'i'));
+  var search_text = $('#searchtext').val();
+  var casesensitive = $('#search_case').is(':checked');
+  var search_text_regex = RegExp(escapeRegExp(search_text),'g'+(casesensitive ? '' : 'i'));
 
-  var html = $('<li/>');
-    if (content.edit_url.length == 0) {
-      var _a = $('<span/>',{class: "search_resulttitle"}).text(content.title);
-    } else {
-      var _a = $('<a/>').attr('href',content.edit_url.replace(/&amp;/g,'&')).attr('target','_blank').attr('title',content.title).text(content.title);
-    }
-    html.append(_a);
+  var html = $('<li></li>'),
+    _a, _p, _s;
+  if (content.edit_url.length == 0) {
+    _a = $('<span></span>',{
+      'class': 'search_resulttitle',
+      text: content.title
+    });
+  } else {
+    _a = $('<a></a>',{
+     href: content.edit_url.replace(/&amp;/g,'&'),
+     target:'_blank',
+     title: content.title,
+     text: content.title
+    });
+  }
+  html.append(_a);
 
-    if ('text' in content) {
-      if (content.text !== '') { //should we show snippets?
-        _p = $('<p/>').html(content.text);
-        html.append(_p);
-      }
-    } else if (  Object.keys(content.locations).length > 0 ) {
-      html.append(' (' + content.count + 'x)');
-      _p = $('<p/>');
-      Object.keys(content.locations).forEach(function(element) {
-        _p.append('<i>' + element + ':</i><br/>');
-        content.locations[element].forEach(function (snippet) {
-         _s = '&nbsp;&nbsp;' + snippet.replace(search_text_regex,'<span class="search_oneresult">$&</span>') + '<br/>';
-         _p.append(_s);
-       });
-      });
+  if ('text' in content) {
+    if (content.text !== '') { //should we show snippets?
+      _p = $('<p></p>').html(content.text);
       html.append(_p);
     }
-    else if( content.snippets.length > 0 ) {
-      html.append(' (' + content.count + 'x)');
-       _p = $('<p/>');
-       content.snippets.forEach(function (snippet) {
-         _s = snippet.replace(search_text_regex,'<span class="search_oneresult">$&</span>') + '<br/>';
-         _p.append(_s);
-       });
-       html.append(_p);
-    }
+  } else if ( Object.keys(content.locations).length > 0 ) {
+    html.append(' (' + content.count + 'x)');
+    _p = $('<p></p>');
+    Object.keys(content.locations).forEach(function(element) {
+      _p.append('<i>' + element + ':</i><br>');
+      content.locations[element].forEach(function (snippet) {
+       _s = '&nbsp;&nbsp;' + snippet.replace(search_text_regex,'<span class="search_oneresult">$&</span>') + '<br>';
+       _p.append(_s);
+     });
+    });
+    html.append(_p);
+  }
+  else if( content.snippets.length > 0 ) {
+    html.append(' (' + content.count + 'x)');
+     _p = $('<p></p>');
+     content.snippets.forEach(function (snippet) {
+       _s = snippet.replace(search_text_regex,'<span class="search_oneresult">$&</span>') + '<br>';
+       _p.append(_s);
+     });
+     html.append(_p);
+  }
 
-    $('ul#'+listid).append(html);
-    var c = $('ul#'+listid).children().length;
-    $('ul#'+listid).closest('li.section').find('span.section_count').html(c);
+  $('ul#'+listid).append(html);
+  var c = $('ul#'+listid).children().length;
+  $('ul#'+listid).closest('li.section').find('span.section_count').html(c);
 
 }
 function end_section() {
@@ -79,7 +88,7 @@ function end_section() {
 }
 $(function() {
   $('#adminsearchform > form').attr('target','workarea');
-  $('#workarea').attr('src',ajax_url);
+  $('#workarea').attr('src',ajax_url); //TODO where is,ajax_url ?
   if( typeof sel_all !== 'undefined' ) {
     $('#filter_box input.filter_toggle:checkbox').prop('checked',true);
   }

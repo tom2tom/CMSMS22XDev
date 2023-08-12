@@ -452,7 +452,7 @@
         },
 
         _initIframeSettings: function (options) {
-            var targetHost = $('<a></a>').prop('href', options.url).prop('host');
+            var targetHost = $('<a></a>').attr('href', options.url).prop('host'); //TODO 'hostname'? what value?
             // Setting the dataType to iframe enables the iframe transport:
             options.dataType = 'iframe ' + (options.dataType || '');
             // The iframe transport accepts a serialized array as form data:
@@ -491,7 +491,7 @@
                 paramName = [];
                 fileInput.each(function () {
                     var input = $(this),
-                        name = input.prop('name') || 'files[]',
+                        name = input.attr('name') || 'files[]',
                         i = (input.prop('files') || [1]).length;
                     while (i) {
                         paramName.push(name);
@@ -499,7 +499,7 @@
                     }
                 });
                 if (!paramName.length) {
-                    paramName = [fileInput.prop('name') || 'files[]'];
+                    paramName = [fileInput.attr('name') || 'files[]'];
                 }
             } else if (!Array.isArray(paramName)) {
                 paramName = [paramName];
@@ -520,10 +520,10 @@
             }
             options.paramName = this._getParamName(options);
             if (!options.url) {
-                options.url = options.form.prop('action') || location.href;
+                options.url = options.form.attr('action') || location.href;
             }
             // The HTTP request method must be "POST" or "PUT":
-            options.type = (options.type || options.form.prop('method') || '')
+            options.type = (options.type || options.form.attr('method') || '')
                 .toUpperCase();
             if (options.type !== 'POST' && options.type !== 'PUT' &&
                     options.type !== 'PATCH') {
@@ -1046,7 +1046,7 @@
             }
             files = $.makeArray(fileInput.prop('files'));
             if (!files.length) {
-                value = fileInput.prop('value');
+                value = fileInput.val();
                 if (!value) {
                     return $.Deferred().resolve([]).promise();
                 }

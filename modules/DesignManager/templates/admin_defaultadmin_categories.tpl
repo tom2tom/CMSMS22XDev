@@ -1,28 +1,26 @@
 {if !empty($list_categories)}
-<script type="text/javascript">
+<script>
 $(function () {
     $('#categorylist tbody').cmsms_sortable_table({
         actionurl: '{cms_action_url action='ajax_order_cats' forjs=1}&showtemplate=false',
         callback: function(data) {
 
-            var $response = $('<aside/>').addClass('message');
+            var response = $('<aside></aside>',{ 'class':'message' });
 
             if (data.status === 'success') {
-
-                $response.addClass('pagemcontainer')
-                    .append($('<span>').text('Close').addClass('close-warning'))
-                    .append($('<p/>').text(data.message));
+                response.addClass('pagemcontainer')
+                    .append($('<span></span>',{ 'class':'close-warning',text:'Close' })
+                    .append($('<p></p>',{ text:data.message });
             } else if (data.status === 'error') {
-
-                $response.addClass('pageerrorcontainer')
-                    .append($('<span>').text('Close').addClass('close-warning'))
-                    .append($('<p/>').text(data.message));
+                response.addClass('pageerrorcontainer')
+                    .append($('<span></span>',{ 'class':'close-warning',text:'Close' })
+                    .append($('<p></p>'.{ text:data.message });
             }
 
-            $('body').append($response).slideDown(1000, function() {
+            $('body').append(response).slideDown(1000, function() {
                 window.setTimeout(function() {
-                    $response.slideUp();
-                    $response.remove();
+                    response.slideUp();
+                    response.remove();
                 }, 10000);
             });
         }
@@ -53,7 +51,7 @@ $(function () {
 <table id="categorylist" class="pagetable">
 	<thead>
 		<tr>
-			<th width="5%" title="{$mod->Lang('title_cat_id')}">{$mod->Lang('prompt_id')}</th>
+			<th style="width:5%" title="{$mod->Lang('title_cat_id')}">{$mod->Lang('prompt_id')}</th>
 			<th title="{$mod->Lang('title_cat_name')}">{$mod->Lang('prompt_name')}</th>
 			<th class="pageicon"></th>
 			<th class="pageicon"></th>

@@ -95,7 +95,7 @@
                                 );
                                 // Fix for IE endless progress bar activity bug
                                 // (happens on form submits to iframe targets):
-                                $('<iframe src="javascript:false;"></iframe>')
+                                $('<iframe></iframe>').attr('src','javascript:false;')
                                     .appendTo(form);
                                 window.setTimeout(function () {
                                     // Removing the form in a setTimeout call
@@ -105,13 +105,13 @@
                                 }, 0);
                             });
                         form
-                            .prop('target', iframe.prop('name'))
-                            .prop('action', options.url)
-                            .prop('method', options.type);
+                            .attr('target', iframe.attr('name'))
+                            .attr('action', options.url)
+                            .attr('method', options.type);
                         if (options.formData) {
                             $.each(options.formData, function (index, field) {
-                                $('<input type="hidden"/>')
-                                    .prop('name', field.name)
+                                $('<input />').attr('type','hidden')
+                                    .attr('name', field.name)
                                     .val(field.value)
                                     .appendTo(form);
                             });
@@ -125,7 +125,7 @@
                             });
                             if (options.paramName) {
                                 options.fileInput.each(function (index) {
-                                    $(this).prop(
+                                    $(this).attr(
                                         'name',
                                         paramNames[index] || options.paramName
                                     );
@@ -145,7 +145,7 @@
                         if (fileInputClones && fileInputClones.length) {
                             options.fileInput.each(function (index, input) {
                                 var clone = $(fileInputClones[index]);
-                                $(input).prop('name', clone.prop('name'));
+                                $(input).attr('name', clone.attr('name'));
                                 clone.replaceWith(input);
                             });
                         }

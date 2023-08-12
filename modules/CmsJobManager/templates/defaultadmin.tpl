@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 $(function() {
   $('#simple1').on('click', function(ev){
      ev.preventDefault();

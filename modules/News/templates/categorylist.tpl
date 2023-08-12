@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 $(function() {
   $('a.del_cat').on('click', function(ev) {
     var self = $(this);

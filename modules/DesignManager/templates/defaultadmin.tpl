@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 $(function() {
   $('img.viewhelp').on('click', function() {
     var n = $(this).attr('name');

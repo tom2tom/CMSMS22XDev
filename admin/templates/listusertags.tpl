@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
 $(function() {
   $('a.delusertag').on('click',function(ev) {
     ev.preventDefault();

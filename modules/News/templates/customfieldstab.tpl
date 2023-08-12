@@ -18,7 +18,7 @@
 #
 #$Id$
 *}
-<script type="text/javascript">
+<script>
 $(function() {
   $('a.del_fielddef').on('click', function(ev){
     var self = $(this);
