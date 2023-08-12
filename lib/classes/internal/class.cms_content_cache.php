@@ -56,23 +56,23 @@ final class cms_content_cache
 	/**
 	 * @ignore
 	 */
-	private static $_alias_map; //array or unset/null
+	private static $_alias_map = null; //array or unset/null
 
 	/**
 	 * @ignore
 	 */
-	private static $_id_map; //array or unset/null
+	private static $_id_map = null; //array or unset/null
 
 	/**
 	 * @ignore
 	 */
-	private static $_content_cache; //array or unset/null
+	private static $_content_cache = null; //array or unset/null
 
 
 	/**
 	 * @ignore
 	 */
-	private $_preload_cache;
+	private $_preload_cache = null; //array or null
 
 	/**
 	 * @ignore
@@ -178,7 +178,7 @@ final class cms_content_cache
   public static function get_content($identifier)
   {
 	  $hash = self::content_exists($identifier);
-	  if( $hash === FALSE ) {
+	  if( !$hash ) {
 		  // content doesn't exist...
 		  return null; // no object
 	  }
@@ -194,23 +194,23 @@ final class cms_content_cache
    * If the identifier is a string, an alias search is performed.
    *
    * @param mixed Unique identifier
-   * @return bool
+   * @return string maybe empty
    */
   public static function content_exists($identifier)
   {
-	  if( !self::$_content_cache ) return FALSE;
+	  if( !self::$_content_cache ) return '';
 
 	  if( is_numeric($identifier) ) {
-		  if( !self::$_id_map ) return FALSE;
-		  if( !isset(self::$_id_map[$identifier]) ) return FALSE;
-		  return self::$_id_map[$identifier];
+		  if( self::$_id_map && isset(self::$_id_map[$identifier]) ) {
+			return self::$_id_map[$identifier]; //hash value
+		  }
 	  }
 	  else if( is_string($identifier) ) {
-		  if( !self::$_alias_map ) return FALSE;
-		  if( !isset(self::$_alias_map[$identifier]) ) return FALSE;
-		  return (bool)self::$_alias_map[$identifier];
+		  if( self::$_alias_map && isset(self::$_alias_map[$identifier]) ) {
+			return self::$_alias_map[$identifier]; //hash value
+		  }
 	  }
-	  return FALSE;
+	  return '';
   }
 
 
@@ -311,8 +311,7 @@ final class cms_content_cache
    */
   public static function have_preloaded()
   {
-	  if( is_array(self::get_instance()->_preload_cache) ) return TRUE;
-	  return FALSE;
+	  return !empty(self::get_instance()->_preload_cache);
   }
 
   /**
