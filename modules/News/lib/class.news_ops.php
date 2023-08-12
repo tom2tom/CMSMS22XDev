@@ -29,7 +29,7 @@ private static $_cached_fieldvals;
 public static function get_categories($id,$params,$returnid=-1)
 {
     $tmp = self::get_all_categories();
-    if( isset($tmp) && !count($tmp) ) return [];
+    if( !$tmp ) return [];
 
     $catinfo = array();
     if( !isset($params['category']) || $params['category'] == '' ) {
@@ -124,7 +124,8 @@ public static function get_all_categories()
         $db = CmsApp::get_instance()->GetDb();
         $query = "SELECT * FROM ".CMS_DB_PREFIX."module_news_categories ORDER BY hierarchy";
         $dbresult = $db->GetArray($query);
-        if( $dbresult ) self::$_cached_categories = $dbresult;
+        if( $dbresult ) { self::$_cached_categories = $dbresult; }
+        else { self::$_cached_categories = []; }
         self::$_categories_loaded = TRUE;
     }
     return self::$_cached_categories;
@@ -134,7 +135,7 @@ public static function get_category_list()
 {
     self::get_all_categories();
     $categorylist = array();
-    if (!empty(self::$_cached_categories))
+    if (self::$_cached_categories)
     {
         for( $i = 0, $n = count(self::$_cached_categories); $i < $n; $i++ ) {
             $row = self::$_cached_categories[$i];
@@ -333,7 +334,7 @@ private static function get_article_from_row($row,$get_fields = 'PUBLIC')
     if( $get_fields && $get_fields != 'NONE' && $article->id ) {
         self::preloadFieldData($article->id);
         $fields = self::get_fields($article->id);
-        if( isset($fields) && count($fields) ) {
+        if( $fields ) {
             foreach( $fields as $field ) {
                 $article->set_field($field);
             }

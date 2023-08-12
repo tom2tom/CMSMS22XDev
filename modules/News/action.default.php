@@ -320,7 +320,7 @@ if( !$tpl_ob->IsCached() ) {
         $catName = $params['category'];
     }
     else if (isset($params['category_id'])) {
-        if( isset($items) && count($items) ) {
+        if( $items ) {
             foreach( $items as $item ) {
                 if( $item['news_category_id'] == $params['category_id'] ) {
                     $catName = $item['news_category_name'];
@@ -331,10 +331,7 @@ if( !$tpl_ob->IsCached() ) {
         //$catName = $db->GetOne('SELECT news_category_name FROM '.CMS_DB_PREFIX . 'module_news_categories where news_category_id=?',array($params['category_id']));
     }
     $tpl_ob->assign('category_name',$catName);
-
-    $count = isset($items) ? count($items) : '0';
-    $tpl_ob->assign('count', $count);
-
+    $tpl_ob->assign('count', count($items));
     $tpl_ob->assign('cats', $items);
 }
 

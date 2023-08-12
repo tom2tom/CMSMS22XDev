@@ -301,7 +301,7 @@ $perm_id = $db->GetOne("SELECT permission_id FROM ".CMS_DB_PREFIX."permissions W
 $group_id = $db->GetOne("SELECT group_id FROM `".CMS_DB_PREFIX."groups` WHERE group_name = 'Admin'");
 
 $count = $db->GetOne("SELECT count(*) FROM " . CMS_DB_PREFIX . "group_perms WHERE group_id = ? AND permission_id = ?", array($group_id, $perm_id));
-if (isset($count) && intval($count) == 0) {
+if ((int)$count == 0) {
   $new_id = $db->GenID(CMS_DB_PREFIX."group_perms_seq");
   $query = "INSERT INTO " . CMS_DB_PREFIX . "group_perms (group_perm_id, group_id, permission_id, create_date, modified_date) VALUES (".$new_id.", ".$group_id.", ".$perm_id.", ". $db->DBTimeStamp(time()) . ", " . $db->DBTimeStamp(time()) . ")";
   $db->Execute($query);
@@ -310,7 +310,7 @@ if (isset($count) && intval($count) == 0) {
 $group_id = $db->GetOne("SELECT group_id FROM `".CMS_DB_PREFIX."groups` WHERE group_name = 'Editor'");
 
 $count = $db->GetOne("SELECT count(*) FROM " . CMS_DB_PREFIX . "group_perms WHERE group_id = ? AND permission_id = ?", array($group_id, $perm_id));
-if (isset($count) && intval($count) == 0) {
+if ((int)$count == 0) {
   $new_id = $db->GenID(CMS_DB_PREFIX."group_perms_seq");
   $query = "INSERT INTO " . CMS_DB_PREFIX . "group_perms (group_perm_id, group_id, permission_id, create_date, modified_date) VALUES (".$new_id.", ".$group_id.", ".$perm_id.", ". $db->DBTimeStamp(time()) . ", " . $db->DBTimeStamp(time()) . ")";
   $db->Execute($query);

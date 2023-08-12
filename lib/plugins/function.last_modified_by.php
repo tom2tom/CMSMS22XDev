@@ -21,7 +21,7 @@ function smarty_function_last_modified_by($params, $smarty)
     $content_obj = $gCms->get_content_object();
 	$id = "";
 
-	if (isset($content_obj) && $content_obj->LastModifiedBy() > -1)	{
+	if ($content_obj && $content_obj->LastModifiedBy() > -1) {
 		$id = $content_obj->LastModifiedBy();
 	} else {
 		return '';
