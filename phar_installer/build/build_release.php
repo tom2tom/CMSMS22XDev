@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 $cli = (php_sapi_name() == 'cli');
 //if( !$cli ) throw new Exception('This script must be executed via the CLI');
@@ -19,6 +19,9 @@ $outdir = $rootdir.'/out';
 $systmpdir = sys_get_temp_dir().'/'.basename(__FILE__,'php').getmypid();
 //TODO update these lists, per the following variables
 //do not skip class.cms_config.php or Smarty files like smarty_internal_method*config.php
+//TODO some of '~\.md$~i', might be redundant
+//'~\.htaccess$~', skip if re-created by installer
+//'~web\.config$~', ditto
 $exclude_patterns = array('/\.svn\//','/^ext\//','/^build\/.*/','/.*~$/','/tmp\/.*/','/\.\#.*/','/\#.*/','/^out\//','/^README*TXT/i');
 $exclude_from_zip = array('*~','tmp/','.#*','#*'.'*.bak');
 $src_excludes = array('/\/phar_installer\//','/\/config\.php$/', '/\/find-mime$/', '/\/installer\//', '/^\/tmp\/.*/', '/^#.*/', '/^\/scripts\/.*/', '/\.git/', '/\.svn/', '/svn-.*/',
@@ -36,8 +39,6 @@ $all_excludes = [
 '~index\.html?$~',
 '~[\\/]config\.php$~',
 '~siteuuid\.dat$~',
-'~\.htaccess$~',
-'~web\.config$~',
 '~\.bak$~',
 '/~$/',
 '~\.#~',
@@ -45,7 +46,6 @@ $all_excludes = [
 '~DEVELOP~',
 '~HIDE~',
 ];
-//TODO some of this type might be redundant '~\.md$~i',
 
 // members of $src_excludes which need double-check before exclusion to confirm they're 'ours'
 $src_checks = ['scripts', 'tmp', 'tests'];
@@ -53,9 +53,9 @@ $src_checks = ['scripts', 'tmp', 'tests'];
 $s = basename($rootdir);
 $src_excludes = [
 -4 => "~$s~",
--3 => '~scripts~',
--2 => '~tmp~',
--1 => '~tests~',
+-3 => '~[\\/]scripts[\\/]~',
+-2 => '~[\\/]tmp[\\/]~',
+-1 => '~[\\/]tests[\\/]~',
 ] + $all_excludes;
 
 // root-relative sub-paths of source dirs whose actual contents are NOT for installation with sources in general.
@@ -82,8 +82,8 @@ $archive_only = 0;
 $checksums = 1;
 $clean = 0;
 $indir = ''; // hence default to latest release in svn
-$priv_file = __DIR__.'/priv.pem'; //seems unused
-$pub_file = __DIR__.'/pub.pem'; //seems unused
+//$priv_file = __DIR__.'/priv.pem'; //unused
+//$pub_file = __DIR__.'/pub.pem'; //unused
 $rename = 1;
 $sourceuri = 'file://'; // sources file-set locator
 $verbose = 0;
@@ -249,6 +249,7 @@ function export_source_files()
 {
     global $svn_url,$tmpdir;
     echo "INFO: exporting data from SVN ($svn_url)\n";
+    //TODO $cmd if running on windows
     $cmd = "svn export -q $svn_url $tmpdir";
     $cmd = escapeshellcmd($cmd);
     system($cmd);
@@ -259,6 +260,7 @@ function get_svn_branch()
 {
     global $svn_url;
     echo "INFO: identifying SVN branch\n";
+    //TODO $cmd if running on windows
 //BAD TODO $cmd = "svn info $svn_url | grep '^URL:' | egrep -o '(tags|branches)/[^/]+|trunk'";
     $cmd = "svn info $svn_url | grep '^URL:'";
 //BAD $cmd = escapeshellcmd($cmd);
@@ -426,6 +428,7 @@ function create_source_archive()
 
     echo "INFO: Creating tar.gz archive of core files\n";
     chdir($tmpdir);
+    //TODO $cmd if running on windows
     $cmd = escapeshellcmd("tar -zcf $datadir/data.tar.gz") . ' *';
     system($cmd);
 
@@ -481,6 +484,7 @@ try {
 
         // change permissions
         echo "INFO: Recursively applying more-restrictive permissions\n";
+        //TODO $cmd if running on windows
         $cmd = "chmod -R g-w,o-w {$srcdir}";
         echo "DEBUG: $cmd\n";
         $junk = null;

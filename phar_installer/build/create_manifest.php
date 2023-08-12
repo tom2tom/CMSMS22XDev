@@ -51,8 +51,6 @@ $src_excludes = [
 '~siteuuid\.dat$~',
 '~master\.dat$~',
 '~master\.ini$~',
-'~\.htccess$~',
-'~web\.config$~i',
 '~phar_installer~',
 '~installer~',
 '~scripts~',
@@ -66,7 +64,9 @@ $src_excludes = [
 '~#.*~',
 '~\.#.*~',
 ];
-//TODO root-dir etc '~\.htaccess$~',
+//TODO keep files like .htaccess unless installer recreates them
+//'~\.htccess$~',
+//'~web\.config$~i',
 
 // TODO completely ignore some places c.f. build_release script:
 $folder_excludes = [
