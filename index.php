@@ -40,10 +40,10 @@ if (file_exists(TMP_CACHE_LOCATION.'/SITEDOWN')) {
 
 if (!is_writable(TMP_TEMPLATES_C_LOCATION) || !is_writable(TMP_CACHE_LOCATION)) {
     echo '<html><title>Error</title></head><body>';
-    echo '<p>The following directories must be writable by the web server:<br />';
-    echo 'tmp/cache<br />';
-    echo 'tmp/templates_c<br /></p>';
-    echo '<p>Please correct by executing:<br /><em>chmod 777 tmp/cache<br />chmod 777 tmp/templates_c</em><br />or the equivalent for your platform before continuing.</p>';
+    echo '<p>The following directories must be writable by the web server:<br>';
+    echo 'tmp/cache<br>';
+    echo 'tmp/templates_c<br></p>';
+    echo '<p>Please correct by executing:<br><em>chmod 777 tmp/cache<br>chmod 777 tmp/templates_c</em><br>or the equivalent for your platform before continuing.</p>';
     echo '</body></html>';
     exit;
 }
@@ -180,10 +180,10 @@ while( $trycount < 2 ) {
     }
 
     catch (CmsError404Exception $e) {
-        // Catch CMSMS 404 error
-        // 404 error thrown... gotta do this process all over again
+        // 404 error thrown
         $page = 'error404';
         $showtemplate = true;
+        $proto = (!empty($_SERVER['SERVER_PROTOCOL'])) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0';
         unset($_REQUEST['mact']);
         unset($_REQUEST['module']);
         unset($_REQUEST['action']);
@@ -194,15 +194,16 @@ while( $trycount < 2 ) {
         $contentobj = $contentops->LoadContentFromAlias('error404',true);
         if( is_object($contentobj) ) {
             // we have a 404 error page
-            header("HTTP/1.0 404 Not Found");
+            header("$proto 404 Not Found");
             header("Status: 404 Not Found");
+            // loop thru this process again
         }
         else {
             // no 404 error page
-            @ob_end_clean();
-            header("HTTP/1.0 404 Not Found");
+            @ob_end_clean(); //redundant
+            header("$proto 404 Not Found");
             header("Status: 404 Not Found");
-            echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+            echo '<!DOCTYPE html>
 <html><head>
 <title>404 Not Found</title>
 </head><body>
@@ -213,12 +214,12 @@ while( $trycount < 2 ) {
         }
     }
 
-    catch (CmsError403Exception $e) // <- Catch CMSMS 403 error
-    {
+    catch (CmsError403Exception $e) {
+        // 403 error thrown
         //debug_display('handle 403 exception '.$e->getFile().' at '.$e->getLine().' -- '.$e->getMessage());
-        // 404 error thrown... gotta do this process all over again.
         $page = 'error403';
         $showtemplate = true;
+        $proto = (!empty($_SERVER['SERVER_PROTOCOL'])) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0';
         unset($_REQUEST['mact']);
         unset($_REQUEST['module']);
         unset($_REQUEST['action']);
@@ -234,17 +235,19 @@ while( $trycount < 2 ) {
             header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
             header("Cache-Control: no-store, no-cache, must-revalidate");
             header("Cache-Control: post-check=0, pre-check=0", false);
-            header("HTTP/1.0 403 Forbidden");
+            header("$proto 403 Forbidden");
             header("Status: 403 Forbidden");
+            // loop thru this process again
         }
         else {
-            @ob_end_clean();
+            // no 403 error page
+            @ob_end_clean(); //redundant
             header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
             header("Cache-Control: no-store, no-cache, must-revalidate");
             header("Cache-Control: post-check=0, pre-check=0", false);
-            header("HTTP/1.0 403 Forbidden");
+            header("$proto 403 Forbidden");
             header("Status: 403 Forbidden");
-            echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+            echo '<!DOCTYPE html>
 <html><head>
 <title>403 Forbidden</title>
 </head><body>
@@ -255,7 +258,7 @@ while( $trycount < 2 ) {
     }
 
     catch (Exception $e) {
-        // Catch rest of exceptions
+        // any other exception
         $handlers = ob_list_handlers();
         for ($cnt = 0; $cnt < count($handlers); $cnt++) { ob_end_clean(); }
         echo $smarty->errorConsole($e);
