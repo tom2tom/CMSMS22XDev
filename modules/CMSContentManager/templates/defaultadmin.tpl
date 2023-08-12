@@ -1,6 +1,5 @@
 {if empty($ajax)}
-<script type="text/javascript">
-//<![CDATA[
+<script>
 function cms_CMloadUrl(link, lang) {
   $(document).on('click', link, function(e) {
     var url = $(this).attr('href') + '&showtemplate=false&{$actionid}ajax=1';
@@ -224,15 +223,14 @@ $(function() {
     }
   });
 });
-//]]>
 </script>
 
 	<div id="useroptions" style="display: none;" title="{$mod->Lang('title_userpageoptions')}">
 	{form_start action='defaultadmin' id='myoptions_form'}
 		<div class="c_full cf">
-			<input type="hidden" name="{$actionid}setoptions" value="1"/>
-			<label class="grid_4">{$mod->Lang('prompt_pagelimit')}:</label>
-			<select name="{$actionid}pagelimit" class="grid_7">
+			<input type="hidden" name="{$actionid}setoptions" value="1">
+			<label class="grid_4" for="page_limits">{$mod->Lang('prompt_pagelimit')}:</label>
+			<select name="{$actionid}pagelimit" class="grid_7" id="page_limits">
 				{html_options options=$pagelimits selected=$pagelimit}
 			</select>
 		</div>
@@ -246,32 +244,32 @@ $(function() {
 			{$opts['EDITOR_UID']=$mod->Lang('prompt_editor')}
 			{if $filter}{$type=$filter->type}{$expr=$filter->expr}{/if}
 			<div class="c_full cf">
-				<label class="grid_4">{$mod->Lang('prompt_filter_type')}:</label>
+				<label class="grid_4" for="filter_type">{$mod->Lang('prompt_filter_type')}:</label>
 				<select name="{$actionid}filter_type" class="grid_7" id="filter_type">
 					{html_options options=$opts selected=$type}
 				</select>
 			</div>
 			<div class="c_full cf filter_fld" id="filter_design">
-				<label class="grid_4">{$mod->Lang('prompt_design')}:</label>
-				<select name="{$actionid}filter_design" class="grid_7">
+				<label class="grid_4" for="designsel">{$mod->Lang('prompt_design')}:</label>
+				<select name="{$actionid}filter_design" class="grid_7" id="designsel">
 					{html_options options=$design_list selected=$expr}
 				</select>
 			</div>
 			<div class="c_full cf filter_fld" id="filter_template">
-				<label class="grid_4">{$mod->Lang('prompt_template')}:</label>
-				<select name="{$actionid}filter_template" class="grid_7">
+				<label class="grid_4" for="tplsel">{$mod->Lang('prompt_template')}:</label>
+				<select name="{$actionid}filter_template" class="grid_7" id="tplsel">
 					{html_options options=$template_list selected=$expr}
 				</select>
 			</div>
 			<div class="c_full cf filter_fld" id="filter_owner">
-				<label class="grid_4">{$mod->Lang('prompt_owner')}:</label>
-				<select name="{$actionid}filter_owner" class="grid_7">
+				<label class="grid_4" for="ownersel">{$mod->Lang('prompt_owner')}:</label>
+				<select name="{$actionid}filter_owner" class="grid_7" id="ownersel">
 					{html_options options=$user_list selected=$expr}
 				</select>
 			</div>
 			<div class="c_full cf filter_fld" id="filter_editor">
-				<label class="grid_4">{$mod->Lang('prompt_editor')}:</label>
-				<select name="{$actionid}filter_editor" class="grid_7">
+				<label class="grid_4" for="editorssel">{$mod->Lang('prompt_editor')}:</label>
+				<select name="{$actionid}filter_editor" class="grid_7" id="editorssel">
 					{html_options options=$user_list selected=$expr}
 				</select>
 			</div>
