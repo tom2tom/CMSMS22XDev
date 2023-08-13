@@ -9,7 +9,7 @@ $(function() {
     },
     done_handler: function() {
       $('#css_bulk_action,#css_bulk_submit').prop('disabled',true);
-      $('#css_bulk_submit').button({ 'disabled' : true });
+{*    $('#css_bulk_submit').button({ 'disabled' : true });TODO extra .button needed?*}
     }
   });
 
@@ -19,11 +19,11 @@ $(function() {
     if( l == 0 ) {
       $('#css_bulk_action').prop('disabled',true);
       $('#css_bulk_submit').prop('disabled',true);
-      $('#css_bulk_submit').button({ 'disabled' : true });
+{*    $('#css_bulk_submit').button({ 'disabled' : true });TODO extra .button needed?*}
     } else {
       $('#css_bulk_action').prop('disabled',false);
       $('#css_bulk_submit').prop('disabled',false);
-      $('#css_bulk_submit').button({ 'disabled' : false });
+{*    $('#css_bulk_submit').button({ 'disabled' : false });TODO extra .button needed?*}
     }
   });
 

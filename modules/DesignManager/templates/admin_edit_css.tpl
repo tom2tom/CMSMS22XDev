@@ -28,7 +28,7 @@ $(function() {
             $('[name$="cancel"]').fadeOut().val('{$mod->Lang("cancel")}').fadeIn();
             $('#form_editcss').dirtyForm('option','dirty',false);
             $('#submitbtn, #applybtn').prop('disabled',true);
-            $('#submitbtn, #applybtn').button({ 'disabled' : true });
+{*          $('#submitbtn, #applybtn').button({ 'disabled' : true });TODO extra .button needed?*}
             $('.lock-warning').removeClass('hidden-item');
             cms_alert("{$mod->Lang('msg_lostlock')|escape:'javascript'}");
         }
@@ -117,7 +117,7 @@ $(function() {
 
 {$get_lock = $css->get_lock()}
 {capture assign='disable'}
-{if (isset($get_lock) && ($userid != $get_lock.uid))} disabled="disabled"{/if}
+{if (isset($get_lock) && ($userid != $get_lock.uid))} disabled{/if}
 {/capture}
 
 {*

@@ -27,7 +27,7 @@ $(function() {
             $('[name$="cancel"]').fadeOut().val('{$mod->Lang("cancel")}').fadeIn();
             $('#form_edittemplate').dirtyForm('option','dirty',false);
             $('#submitbtn, #applybtn').prop('disabled',true);
-            $('#submitbtn, #applybtn').button({ 'disabled' : true });
+{*          $('#submitbtn, #applybtn').button({ 'disabled' : true });TODO extra .button needed?*}
             $('.lock-warning').removeClass('hidden-item');
             cms_alert("{$mod->Lang('msg_lostlock')|escape:'javascript'}");
         }
@@ -112,7 +112,7 @@ $(function() {
 {$get_lock = $template->get_lock()}
 
 {capture assign='disable'}
-{if (isset($get_lock) && ($userid != $get_lock.uid))} disabled="disabled"{/if}
+{if (isset($get_lock) && ($userid != $get_lock.uid))} disabled{/if}
 {/capture}
 
 {if isset($get_lock)}
@@ -243,7 +243,7 @@ $(function() {
             <div class="pageoverflow">
                 <p class="pagetext"><label for="tpl_dflt">{$mod->Lang('prompt_default')}:</label>&nbsp;{cms_help key2=help_template_dflt title=$mod->Lang('prompt_default')}</p>
                 <p class="pageinput">
-                    <select id="tpl_dflt" name="{$actionid}default" {if $template->get_type_dflt()}disabled{/if}>
+                    <select id="tpl_dflt" name="{$actionid}default"{if $template->get_type_dflt()} disabled{/if}>
                         {cms_yesno selected=$template->get_type_dflt()}
                     </select>
                 </p>

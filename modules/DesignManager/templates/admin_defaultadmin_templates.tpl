@@ -9,7 +9,7 @@ $(function() {
     },
     done_handler: function() {
       $('#tpl_bulk_action,#tpl_bulk_submit').prop('disabled', true);
-      $('#tpl_bulk_submit').button({ 'disabled': true });
+{*    $('#tpl_bulk_submit').button({ 'disabled': true });TODO extra .button needed?*}
     }
   });
 
@@ -18,15 +18,11 @@ $(function() {
     if (l == 0) {
       $('#tpl_bulk_action').prop('disabled', true);
       $('#tpl_bulk_submit').prop('disabled', true);
-      $('#tpl_bulk_submit').button({
-        'disabled': true
-      });
+{*    $('#tpl_bulk_submit').button({ 'disabled': true });TODO extra .button needed?*}
     } else {
       $('#tpl_bulk_action').prop('disabled', false);
       $('#tpl_bulk_submit').prop('disabled', false);
-      $('#tpl_bulk_submit').button({
-        'disabled': false
-      });
+{*    $('#tpl_bulk_submit').button({ 'disabled': false });TODO extra .button needed?*}
     }
   });
 

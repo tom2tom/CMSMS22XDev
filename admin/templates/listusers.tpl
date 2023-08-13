@@ -28,16 +28,16 @@ $(function() {
     });
 
     $('#withselected, #bulksubmit').prop('disabled',true);
-    $('#bulksubmit').button({ 'disabled' : true });
+{*  $('#bulksubmit').button({ 'disabled' : true });TODO extra .button needed?*}
     $('#sel_all, .multiselect').on('click',function() {
         if( !$(this).is(':checked') ) {
             $('#withselected').prop('disabled',true);
             $('#bulksubmit').prop('disabled',true);
-            $('#bulksubmit').button({ 'disabled' : true });
+{*          $('#bulksubmit').button({ 'disabled' : true });TODO extra .button needed?*}
         } else {
             $('#withselected').prop('disabled',false);
             $('#bulksubmit').prop('disabled',false);
-            $('#bulksubmit').button({ 'disabled' : false });
+{*          $('#bulksubmit').button({ 'disabled' : false });ibid*}
         }
     });
 
@@ -95,7 +95,7 @@ $(function() {
         {foreach $users as $user}
             <tr class="{cycle values='row1,row2'}">
                 {$can_edit=1}
-                {if !$user->access_to_user }
+                {if !$user->access_to_user}
                     {$can_edit=0}
                 {/if}
                 <td>
