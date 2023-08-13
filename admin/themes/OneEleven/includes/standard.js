@@ -65,7 +65,7 @@ License GPL2+
             }
 
             //check all existing script tags in the page for the url
-            $('script[type="text/javascript"]').each(function() {
+            $('script').each(function() {
                 var load = (url !== $(this).attr('src'));
                 return load;
             });
