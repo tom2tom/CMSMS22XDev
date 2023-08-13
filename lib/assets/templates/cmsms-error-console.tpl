@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html{if $lang} lang="{$lang|truncate:5:''}"{/if} dir="{$lang_dir|default:'ltr'}">
 	<head>
 		<meta charset="utf-8">
 		<title>CMS Made Simple - Error Console</title>
