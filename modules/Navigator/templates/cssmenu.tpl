@@ -52,7 +52,7 @@
       {/if}
     </li>
   {else if $node->type == 'separator'}
-    <li style="list-style-type: none;"><hr class="menu_separator"/></li>
+    <li style="list-style-type: none;"><hr class="menu_separator"></li>
   {else}
     {* regular item *}
     <li class="{' '|adjust:'implode':$liclass}">

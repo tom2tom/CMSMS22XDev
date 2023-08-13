@@ -128,10 +128,10 @@ h2 {
   <dl>
    <dt>Q: Where is the support for <em style="color: red;">&quot;some functionality&quot;</em> in the editor, and how do I activate it?</dt>
       <dd>A: You don't.  The version of TinyMCE distributed with MicroTiny is a trimmed down, custom package.  We have added our own custom plugins, but don't support the addition of custom plugins or the ability to customize the configuration in any way other than the edit profile form.  If you require additional functionality in a WYSIWYG editor you may have some success in a third party module.</dd>
-    <br/>
+    <br>
     <dt>Q: Which HTML/HTML5 tags are supported by this module, and how do I change that?</dt>
       <dd>A: The list of supported elements in the default TinyMCE editor can be found on the TinyMCE website <em>(though we don't have a correct link at the moment)</em>.  There is no mechanism in the MicroTiny module to extend that.</dd>
-    <br/>
+    <br>
     <dt>Q: I cannot get the MicroTiny editor to work in the Admin interface, what can I do</dt>
       <dd>A: There are a few steps you can follow to diagnose this issue:
         <ol>
@@ -144,7 +144,7 @@ h2 {
       </dd>
     <dt>Q: How do I insert a &lt;br/&gt; instead of create new paragraphs?</dt>
       <dd>A: Press [shift]+Enter instead of just the Enter key.</dd>
-    <br/>
+    <br>
     <dt>Q: Why is <em style="color: red;">&quot;some functionality&quot;</em> available in the menubar, and not the toolbar?</dt>
       <dd>A: For this most part this is done intentionally to allow web developers the ability to further restrict the functionality of certain editor profiles.  The menubar can be toggled off in different profiles thus denying the user the functionality only available in the menubar.</dd>
   </dl>

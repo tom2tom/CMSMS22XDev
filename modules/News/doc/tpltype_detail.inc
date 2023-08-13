@@ -40,7 +40,7 @@
 </ul>
 
 <p>Members can be displayed by the following syntax: {$entry->membername} or assigned to another smarty variable using {assign var='foo' value=$entry->membername}.</p>
-<p>The following members are available in the entry array:<br/></p>
+<p>The following members are available in the entry array:<br></p>
 
 
 <h3>field Object Reference</h3>

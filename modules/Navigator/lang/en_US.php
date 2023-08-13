@@ -53,7 +53,7 @@ $lang['help'] = <<<EOT
 </ul>
 <h3>Examples:</h3>
 <ul>
-   <li>A simple navigation that is only 2 levels deep, using the default template:<br/>
+   <li>A simple navigation that is only 2 levels deep, using the default template:<br>
      <pre><code>{Navigator number_of_levels=2}</code></pre>
    </li>
      <li>Display a simple navigation two levels deep starting with the children of the current page.  Use the default template:</li>

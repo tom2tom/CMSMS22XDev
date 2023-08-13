@@ -1007,7 +1007,7 @@ $lang['hour'] = "hour";
 $lang['hours'] = "hours";
 //$lang['htmlblobdescription'] = "Global Content Blocks are chunks of content you can place in your pages or templates.";
 //$lang['htmlblobs'] = "Global Content Blocks";
-$lang['h_udtcode'] = 'Enter your PHP code here.  Keep in mind that a UDT <em>(User Defined Tag)</em> is in fact a Smarty function plugin.  It has limited scope.<br/>
+$lang['h_udtcode'] = 'Enter your PHP code here.  Keep in mind that a UDT <em>(User Defined Tag)</em> is in fact a Smarty function plugin.  It has limited scope.<br>
 <ul>
   <li><strong>Note:</strong> You have access to the full <a href=\"https://www.cmsmadesimple.org/APIDOC2_0\">CMSMS API</a> to interact with the system and with modules.</li>
   <li>Tip: Parameters passed to the UDT i.e: <code>{myudt param1=value1 param2=value2}</code> are available via the $params associative array, which is in scope.</li>
@@ -1045,7 +1045,7 @@ $lang['info_edituser_passwordagain'] = "Change this field to change the user's p
 $lang['info_estrict_failed'] = "Some libraries that CMSMS uses do not work well with E_STRICT.  Please disable this before continuing";
 $lang['info_generate_cksum_file'] = "This function will allow you to generate a checksum file and save it on your local computer for later validation.  This should be done just prior to rolling out the website, and/or after any upgrades, or major modifications.";
 $lang['info_group_inactive'] = "This group is inactive.  Members of this group will not realize the permissions associated with the group";
-$lang['info_mailtest'] = "This form will send a pre formatted email to the address you specify.<br/>If you do not receive the mail you may need to re-check your settings.<br/><strong>Note:</strong> you may also want to check your spam folder.";
+$lang['info_mailtest'] = "This form will send a pre formatted email to the address you specify.<br>If you do not receive the mail you may need to re-check your settings.<br><strong>Note:</strong> you may also want to check your spam folder.";
 $lang['info_mail_notset'] = "Mail settings have not yet been saved. Please ensure the information in Site Admin >> Settings - Global Settings >> Mail Settings tab is correct for your server.";
 $lang['info_membergroups'] = "A user may be a member of zero or more groups.  A user who is not a member of any groups will still be able to login to the Admin console";
 $lang['info_noalerts'] = 'There are no alerts at this time';
@@ -1056,7 +1056,7 @@ $lang['info_preview_notice'] = "Warning: This preview panel behaves much like a 
 $lang['info_selectuser'] = "Toggle selection to perform actions on multiple users at once";
 $lang['info_settings_sitedown'] = "These options allow you to toggle the website as &quot;down for maintenance&quot; for website visitor.";
 //$lang['info_setusersettings'] = "Set this users settings to be a template for newly created users and to effect other users";
-$lang['info_sitedownexcludes'] = "This parameter allows listing a comma separated list of IP addresses or networks that should not be subject to the Site Down mechanism.  This allows administrators to work on a site whilst anonymous visitors receive a Site Down message.<br/><br/>Addresses can be specified in the following formats:<br>
+$lang['info_sitedownexcludes'] = "This parameter allows listing a comma separated list of IP addresses or networks that should not be subject to the Site Down mechanism.  This allows administrators to work on a site whilst anonymous visitors receive a Site Down message.<br><br>Addresses can be specified in the following formats:<br>
 1. xxx.xxx.xxx.xxx -- (exact IP address)<br>
 2. xxx.xxx.xxx.[yyy-zzz] -- (IP address range)<br>
 3. xxx.xxx.xxx.xxx/nn -- (nnn = number of bits, cisco style.  i.e:  192.168.0.100/24 = entire 192.168.0 class C subnet)";

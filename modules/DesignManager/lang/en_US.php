@@ -149,7 +149,7 @@ div.error {
 <p><strong>Note:</strong> You can include other templates inside of stylesheets using the <code>[[include file='cms_template::&lt;template_name&gt;']]</code> syntax as mentioned above however you must be aware of the change in smarty delimiters when processing stylesheets.  For example:</p>
 
   <ul>
-    <li>Stylesheet &quot;page&quot;<br/>
+    <li>Stylesheet &quot;page&quot;<br>
 <pre><code><span style="color: blue;">[[include file='cms_template::my_colors']]</span>
 body {
   background-color: <span style="color: blue;">[[&#36;my_background]]</span>;
@@ -157,7 +157,7 @@ body {
 }
 </code></pre>
     </li>
-    <li>Template: &quot;my_colors&quot;<br/>
+    <li>Template: &quot;my_colors&quot;<br>
 <pre><code style="color: blue;">[[&#36;my_background='#fff']]
 [[&#36;dflt_foreground='#000']]
 </code></pre>
@@ -218,7 +218,7 @@ $lang['help_css_bulk'] = 'This option allows performing actions on multiple styl
 $lang['help_css_description'] = 'You may (optionally) include a description for this stylesheet.  This may be useful to describe the items that are in the stylesheet and aide in organization';
 $lang['help_css_designs'] = 'You may associate one or more designs with a stylesheet.  Stylesheets associated with a design are automatically output by the {cms_stylesheet} tag, and when exporting a design for sharing';
 $lang['help_css_mediaquery'] = <<<EOT
-<p>A media query consists of a media type and at least one expression that limits the style sheets' scope by using media features, such as width, height, and color. Added in CSS3, media queries let the presentation of content be tailored to a specific range of output devices without having to change the content itself. For a simple reference see this page on the <a href="https://developer.mozilla.org/en/docs/CSS/Media_queries">Mozilla developer network</a></p><br/>
+<p>A media query consists of a media type and at least one expression that limits the style sheets' scope by using media features, such as width, height, and color. Added in CSS3, media queries let the presentation of content be tailored to a specific range of output devices without having to change the content itself. For a simple reference see this page on the <a href="https://developer.mozilla.org/en/docs/CSS/Media_queries">Mozilla developer network</a></p><br>
 <p>CMSMS Allows associating a media query with a stylesheet.  When <code>{cms_stylesheet}</code> renders its output the media query will be automatically placed in the stylesheet tag.</p>
 EOT;
 $lang['help_design_name'] = 'This field contains the unique, logician name for the collection of templates and stylesheets';

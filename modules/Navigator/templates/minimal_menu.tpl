@@ -24,7 +24,7 @@ hr.separator - To style the ruler for the separator *}
         {/if}
       </li>
     {else if $node->type == 'separator'}
-      <li style="list-style-type: none;"><hr class="separator"/></li>
+      <li style="list-style-type: none;"><hr class="separator"></li>
     {else}
       {* regular item *}
       {$liclass=''}

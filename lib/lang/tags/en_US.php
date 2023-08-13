@@ -299,9 +299,9 @@ $lang['help_function_browser_lang'] = <<<'EOT'
 <p><em>({session_put} is a plugin provided by the CGSimpleSmarty module)</em></p>
 <h3>What Parameters does it Take?</h3>
 <ul>
- <li><strong>accepted <em>(required)</em></strong><br/> - A comma separated list of two character language names that are accepted.</li>
- <li>default<br/>- <em>(optional)</em> A default language to output if no accepted language was supported by the browser.  en is used if no other value is specified.</li>
- <li>assign<br/>- <em>(optional)</em> The name of the smarty variable to assign the results to.  If not specified the results of this function are returned.</li>
+ <li><strong>accepted <em>(required)</em></strong><br> - A comma separated list of two character language names that are accepted.</li>
+ <li>default<br>- <em>(optional)</em> A default language to output if no accepted language was supported by the browser.  en is used if no other value is specified.</li>
+ <li>assign<br>- <em>(optional)</em> The name of the smarty variable to assign the results to.  If not specified the results of this function are returned.</li>
 </ul>
 EOT;
 
@@ -345,13 +345,13 @@ $lang['help_function_cms_stylesheet'] = <<<'EOT'
 <p>When generating css files this system passes the stylesheets retrieved from the database through smarty.  The smarty delimiters have been changed from the CMSMS standard { and } to [[ and ]] respectively to ease transition in stylesheets.  This allows creating smarty variables i.e.: [[assign var='red' value='#900']] at the top of the stylesheet, and then using these variables later in the stylesheet, i.e:</p>
 <pre>
 <code>
-h3 .error { color: [[$red]]; }<br/>
+h3 .error { color: [[$red]]; }<br>
 </code>
 </pre>
 <p>Because the cached files are generated in the tmp/cache directory of the CMSMS installation, the CSS relative working directory is not the root of the website.  Therefore any images, or other tags that require a url should use the [[root_url]] tag to force it to be an absolute url. i.e:</p>
 <pre>
 <code>
-h3 .error { background: url([[root_url]]/uploads/images/error_background.gif); }<br/>
+h3 .error { background: url([[root_url]]/uploads/images/error_background.gif); }<br>
 </code>
 </pre>
 <p><strong>Note:</strong> Due to the caching nature of the plugin, smarty variables should be placed at the top of EACH stylesheet that is attached to a template.</p>
@@ -436,12 +436,12 @@ $lang['help_function_content_image'] = <<<'EOT'
 <ul>
  <li><strong>(required)</strong> block (string) - The name for this additional content block.
   <p>Example:</p>
-  <pre>{content_image block='image1'}</pre><br/>
+  <pre>{content_image block='image1'}</pre><br>
  </li>
  <li><em>(optional)</em> label (sring) - A label or prompt for this content block in the edit content page.  If not specified, the block name will be used.</li>
  <li><em>(optional)</em> dir (string) - The name of a directory (relative to the uploads directory, from which to select image files. If not specified, the preference from the global settings page will be used.  If that preference is empty, the uploads directory will be used.
   <p>Example: use images from the uploads/images directory.</p>
-  <pre><code>{content_image block='image1' dir='images'}</code></pre><br/>
+  <pre><code>{content_image block='image1' dir='images'}</code></pre><br>
  </li>
  <li><em>(optional)</em> default (string) - Use to set a default image used when no image is selected.</li>
  <li><em>(optional)</em> urlonly (bool) - output only the url to the image, ignoring all parameters like id, name, width, height, etc.</li>
@@ -464,7 +464,7 @@ $lang['help_function_process_pagedata'] = <<<'EOT'
  <li>Insert smarty assign variables and other smarty logic into the pagedata field of some of your content pages.</li>
  <li>Insert the <code>{process_pagedata}</code> tag into the very top of your page template.</li>
 </ol>
-<br/>
+<br>
 <h3>What parameters does it take?</h3>
 <p><em>(optional)</em> assign (string) - Assign the results to a smarty variable with that name.</p>
 EOT;
@@ -851,11 +851,11 @@ that works without modifying the embedded application.</p>
  <li>a) Add <code>{embed header=true}</code> into the head section of your page template, or into the metadata section in the options tab of a content page.  This will ensure that the required JavaScript gets included.  If you insert this tag into the metadata section in the options tab of a content page you must ensure that <code>{metadata}</code> is in your page template.</li>
  <li>b) Add <code>{embed url="http://www.google.com"}</code> into your page content or in the body of your page template.</li>
 </ul>
-<br/>
+<br>
 <h4>Example to make the iframe larger</h4>
 <p>Add the following to your style sheet:</p>
 <pre>#myframe { height: 600px; }</pre>
-<br/>
+<br>
 <h3>What parameters does it take?</h3>
 <ul>
  <li><em>(required)</em>url - the url to be included</li>
@@ -1095,7 +1095,7 @@ $lang['help_function_cms_jquery'] = <<<'EOT'
  <li><em>(optional)</em> <tt>exclude</tt> - use comma seperated value(CSV) list of scripts (as listed above) taht you would like to <strong>ex</strong>clude. <code>'jquery-ui,migrate'</code></li>
  <li><em>(optional)</em> <tt>cdn</tt> - cdn='true' will insert jQuery and jQueryUI Frameworks using Google's Content Delivery Netwok. Default is false.</li>
  <li><em>(optional)</em> <tt>ssl</tt> - use to use the ssl_url as the base path.</li>
- <li><em>(optional)</em> <tt>custom_root</tt> - use to set any base path wished.<code>custom_root='http://test.domain.com/'</code> <br/>NOTE: overwrites ssl option and works with the cdn option</li>
+ <li><em>(optional)</em> <tt>custom_root</tt> - use to set any base path wished.<code>custom_root='http://test.domain.com/'</code> <br>NOTE: overwrites ssl option and works with the cdn option</li>
  <li><em>(optional)</em> <tt>include_css <em>(boolean)</em></tt> - use to prevent css from being included with the output.  Default value is true.</li>
  <li><em>(optional)</em> <tt>append</tt> - use comma seperated value(CSV) list of script paths you would like to append. <code>'/uploads/jquery.ui.nestedSortable.js,http://code.jquery.com/jquery-1.7.1.min.js'</code></li>
  <li><em>(optional)</em> <tt>assign</tt> - Assign the results to the named smarty variable.</li>
