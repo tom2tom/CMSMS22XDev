@@ -47,9 +47,6 @@ MenuManager 1.50.4
  - BR #12619 - Wrong assignment of $prevdepth.
  - BR #12620 - Version 2 breaks MenuManager with childrenof.
 
-ModuleManager
- - Conform admin-menu section to top-content page description
-
 News
  - Sanitise news-item strings (title, summary, content) before display
 
