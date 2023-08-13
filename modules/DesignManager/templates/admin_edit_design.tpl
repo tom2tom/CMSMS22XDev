@@ -22,14 +22,14 @@
   <div style="width: 49%; float: right;">
     <div class="pageoverflow">
       <p class="pagetext"><label for="created">{$mod->Lang('prompt_created')}:</label>&nbsp;{cms_help key2='help_design_created' title=$mod->Lang('prompt_created')}</p>
-      <p class="pageinput">
+      <p class="pageinput" id="created">
       {$design->get_created()|localedate_format:'%x %X'}
       </p>
     </div>
 
     <div class="pageoverflow">
       <p class="pagetext"><label for="modified">{$mod->Lang('prompt_modified')}:</label>&nbsp;{cms_help key2='help_design_modified' title=$mod->Lang('prompt_modified')}</p>
-      <p class="pageinput">
+      <p class="pageinput" id="modified">
       {$design->get_modified()|localedate_format:'%x %X'}
       </p>
     </div>

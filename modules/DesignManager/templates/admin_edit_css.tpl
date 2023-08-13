@@ -157,13 +157,13 @@ $(function() {
     {if $css->get_id()}
         <div class="pageoverflow">
             <p class="pagetext"><label for="css_created">{$mod->Lang('prompt_created')}:</label>&nbsp;{cms_help key2=help_stylesheet_created title=$mod->Lang('prompt_created')}</p>
-            <p class="pageinput">
+            <p class="pageinput" id="css_created">
                 {$css->get_created()|localedate_format:'%x %X'}
             </p>
         </div>
         <div class="pageoverflow">
             <p class="pagetext"><label for="css_modified">{$mod->Lang('prompt_modified')}:</label>&nbsp;{cms_help key2=help_stylesheet_modified title=$mod->Lang('prompt_modified')}</p>
-            <p class="pageinput">
+            <p class="pageinput" id="css_modified">
                 {$css->get_modified()|localedate_format:'%x %X'}
             </p>
         </div>
