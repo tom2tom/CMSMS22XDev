@@ -444,7 +444,7 @@ class Smarty_CMS extends CMSSmartyBase
     {
         $this->force_compile = true;
 
-        # do not show smarty debug console popup to users not logged in
+        // do not show smarty debug console popup to users not logged in
         //$this->debugging = get_userid(FALSE);
 
         $this->assign('e_line', $e->getLine());
@@ -459,7 +459,7 @@ class Smarty_CMS extends CMSSmartyBase
         $output = $this->fetch('cmsms-error-console.tpl');
 
         $this->force_compile = false;
-        $this->debugging = false;
+//      $this->debugging = false;
 
         return $output;
     }
