@@ -63,7 +63,7 @@
             {lang('active')}:&nbsp;{cms_help realm='admin' key='info_user_active' title=lang('active')}
         </p>
         <p class="pageinput">
-            <input type="checkbox" class="pagecheckbox" name="active" value="1"{if $active == 1} checked{/if}>
+            <input type="checkbox" class="pagecheckbox" name="active" value="1"{if $active} checked{/if}>
         </p>
     </div>
 

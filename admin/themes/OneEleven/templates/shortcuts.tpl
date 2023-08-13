@@ -32,7 +32,7 @@
 			<a href="{root_url}/index.php" rel="external" target="_blank" title="{lang('viewsite')}">{lang('viewsite')}</a>
 		</li>
 		<li class="logout">
-			<a href="logout.php?{$secureparam}" title="{lang('logout')}" {if isset($is_sitedown)}onclick="return confirm('{lang("maintenance_warning")|escape:"javascript"}');"{/if}>{lang('logout')}</a>
+			<a href="logout.php?{$secureparam}" title="{lang('logout')}"{if isset($is_sitedown)} onclick="return confirm('{lang("maintenance_warning")|escape:"javascript"}');"{/if}>{lang('logout')}</a>
 		</li>
 	</ul>
 </div>

@@ -50,12 +50,12 @@ $(function() {
     <div class="c_full">
       <div class="grid_8" style="padding-top: 8px;">
         <a id="toggle_filters">{admin_icon icon='view.gif' alt=""} {lang('filter')}</a>
-        {if $filter_applied}<span style="color: green;"><em>({lang('applied')})</em></span>{/if}
+        {if $filter_applied} <span style="color: green;"><em>({lang('applied')})</em></span>{/if}
         {if isset($downloadlink)}
           <a href="adminlog.php{$urlext}&amp;download=1">{$downloadlink}</a>&nbsp;
           <a href="adminlog.php{$urlext}&amp;download=1">{$langdownload}</a>
         {/if}
-        {if $clearicon != ''}
+        {if $clearicon}
           &nbsp;
           <a href="adminlog.php{$urlext}&amp;clear=true">{$clearicon}</a>
           <a id="clearlog" href="adminlog.php{$urlext}&amp;clear=true">{$langclear}</a>

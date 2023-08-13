@@ -46,7 +46,7 @@
 	<tbody>
 	{foreach $items as $entry}
 		{cycle values="row1,row2" assign='rowclass'}
-			<tr class="{$rowclass}" {if $entry->age=='new'}style="font-weight: bold;"{/if}>
+			<tr class="{$rowclass}"{if $entry->age=='new'} style="font-weight: bold;"{/if}>
 			<td>{get_module_status_icon status=$entry->age}</td>
 			<td><span title="{$entry->description|adjust:'strip_tags'|cms_escape}">{$entry->name}</span></td>
 			<td>{$entry->version}</td>

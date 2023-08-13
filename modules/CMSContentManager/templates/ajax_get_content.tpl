@@ -213,7 +213,7 @@
       <tr>
         {foreach $columns as $column => $flag}
     {if $flag}
-      <th class="{*$column TODO Rolf *} {if $flag=='icon'}pageicon{/if}"><!-- {$column} -->
+      <th{*$column TODO Rolf*}{if $flag=='icon'} class="pageicon"{/if}><!-- {$column} -->
       {if $column == 'expand' or $column == 'hier' or $column == 'icon1' or $column == 'view' or $column == 'copy' or $column == 'edit' or $column == 'delete'}
             <span title="{$mod->Lang("coltitle_{$column}")}">&nbsp;</span>{* no column header *}
       {elseif $column == 'multiselect'}
@@ -221,7 +221,7 @@
       {elseif $column == 'page'}
         <span title="{$coltitle_page}">{$colhdr_page}</span>
       {else}
-        {if ($have_locks == '1') && ($column == 'default' || $column == 'move')}
+        {if $have_locks && ($column == 'default' || $column == 'move')}
           <span title="{$mod->Lang('error_action_contentlocked')}">({$mod->Lang("colhdr_{$column}")})</span>
         {else}
           <span title="{$mod->Lang("coltitle_{$column}")}">{$mod->Lang("colhdr_{$column}")}</span>

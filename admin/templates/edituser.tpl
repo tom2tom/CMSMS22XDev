@@ -36,7 +36,7 @@ $(function() {
         {if !empty($groups)}
             {tab_header name='groups' label=lang('groups')}
         {/if}
-        {if $manage_users == true}
+        {if $manage_users}
             {tab_header name='settings' label=lang('settings')}
         {/if}
 
@@ -145,7 +145,7 @@ $(function() {
         </div>
         {/if}
 
-        {if $manage_users == true}
+        {if $manage_users}
         <!-- user settings -->
         {tab_start name='settings'}
         <div class="pageoverflow">

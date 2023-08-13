@@ -19,7 +19,7 @@
 			<h4>{lang('subitems')}</h4>
 			<ul class="subitems cf">
 			{foreach $node.children as $one}
-				<li><a href="{$one.url}"{if isset($one.target)} target="{$one.target}"{/if} {if substr($one.url,0,6) == 'logout' and isset($is_sitedown)}onclick="return confirm('{lang("maintenance_warning")|escape:"javascript"}');"{/if}>{$one.title}</a></li>
+				<li><a href="{$one.url}"{if isset($one.target)} target="{$one.target}"{/if}{if substr($one.url,0,6) == 'logout' and isset($is_sitedown)} onclick="return confirm('{lang("maintenance_warning")|escape:"javascript"}');"{/if}>{$one.title}</a></li>
 			{/foreach}
 			</ul>
 			{/if}

@@ -6,7 +6,7 @@
      {else}
        {$part->name}
      {/if}
-     {if !$part@last}<span class="ds">/</span>{/if}
+     {if !$part@last} <span class="ds">/</span>{/if}
    {/foreach}
    </span>
 </h3>

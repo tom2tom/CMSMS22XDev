@@ -39,17 +39,17 @@
 
 	<table class="pagetable scrollable" id="permtable">
 		<thead>
-			<tr>
+			<tr>{$ncols=1}
 				<th>{$title_permission}</th>
-				{foreach $group_list as $thisgroup}
-					{if $thisgroup->id != -1}<th class="g{$thisgroup->id}">{$thisgroup->name}</th>{/if}
+				{foreach $group_list as $thisgroup}{$gid=$thisgroup->id}
+					{if $gid != -1}{$ncols=$ncols+1}<th class="g{$gid}">{$thisgroup->name}</th>{/if}
 				{/foreach}
 			</tr>
 		</thead>
 		<tbody>
 			{foreach $perms as $section => $list}
 				<tr>
-					<td colspan="{count($group_list)+1}"><h3>{$section|upper}</h3></td>
+					<td colspan="{$ncols}"><h3>{$section|upper}</h3></td>
 				</tr>
 				{foreach $list as $perm}
 					{cycle values='row1,row2' assign='currow'}
@@ -58,11 +58,10 @@
 							&nbsp;&nbsp;&nbsp;<strong>{$perm->label}</strong>
 							{if !empty($perm->description)}<div class="description">&nbsp;&nbsp;&nbsp;{$perm->description}</div>{/if}
 						</td>
-						{foreach $group_list as $thisgroup}
-							{if $thisgroup->id != -1}
-								{$gid=$thisgroup->id}
-								<td class="g{$thisgroup->id}"><input type="checkbox" name="pg_{$perm->id}_{$gid}" value="1"{if isset($perm->group[$gid]) || $gid == 1} checked{/if}{if $gid == 1} disabled="disabled"{/if}></td>
-							{/if}
+						{foreach $group_list as $thisgroup}{$gid=$thisgroup->id}
+						{if $gid != -1}
+							<td class="g{$gid}"><input type="checkbox" name="pg_{$perm->id}_{$gid}" value="1"{if isset($perm->group[$gid]) || $gid == 1} checked{/if}{if $gid == 1} disabled{/if}></td>
+						{/if}
 						{/foreach}
 					</tr>
 				{/foreach}
