@@ -27,22 +27,10 @@ function cms_CMloadUrl(link, lang) {
 
 function cms_CMtoggleState(el) {
   $(el).prop('disabled', true);
-  $('button' + el).button({
-    'disabled': true
-  });
 
   $(document).on('click', 'input:checkbox', function() {
-    if ($('input:checkbox').is(':checked')) {
-      $(el).prop('disabled', false);
-      $('button' + el).button({
-        'disabled': false
-      });
-    } else {
-      $(el).prop('disabled', true);
-      $('button' + el).button({
-        'disabled': true
-      });
-    }
+    var state = $('input:checkbox').is(':checked');
+    $(el).prop('disabled', !state);
   });
 }
 
@@ -51,6 +39,8 @@ $(function() {
   $('#content_area').autoRefresh({
     url: '{$ajax_get_content}',
     done_handler: function() {
+      cms_CMtoggleState('#multiaction');
+      cms_CMtoggleState('#multisubmit');
       $('#ajax_find').autocomplete({
         source: '{cms_action_url action=admin_ajax_pagelookup forjs=1}&showtemplate=false',
         minLength: 2,
@@ -80,9 +70,6 @@ $(function() {
   $('#selectall').cmsms_checkall({
     target: '#contenttable'
   });
-
-  cms_CMtoggleState('#multiaction');
-  cms_CMtoggleState('#multisubmit');
 
   // these links can't use ajax as they effect pagination.
 //cms_CMloadUrl('a.expandall');
