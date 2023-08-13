@@ -110,10 +110,11 @@
                             .attr('method', options.type);
                         if (options.formData) {
                             $.each(options.formData, function (index, field) {
-                                $('<input />').attr('type','hidden')
-                                    .attr('name', field.name)
-                                    .val(field.value)
-                                    .appendTo(form);
+                                $('<input/>', {
+                                  type: 'hidden',
+                                  name: field.name,
+                                  val: field.value
+                                }).appendTo(form);
                             });
                         }
                         if (options.fileInput && options.fileInput.length &&
