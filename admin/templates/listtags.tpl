@@ -4,7 +4,7 @@
     <div class="pageheader">{$subheader}
     {if isset($wiki_url) && isset($image_help_external)}
        <span class="helptext">
-         <a class='helpicon' href="{$wiki_url}" target="_blank">{$image_help_external}</a><a href="{$wiki_url}" target="_blank">{lang('help')}</a> ({lang('new_window')})
+         <a class="helpicon" href="{$wiki_url}" target="_blank">{$image_help_external}</a><a href="{$wiki_url}" target="_blank">{lang('help')}</a> ({lang('new_window')})
        </span>
     {/if}
     </div>

@@ -15,7 +15,7 @@
 {/if}
 {if $return_url != ""}
     <br>
-        <span class='back'>&#8592; {$return_url}{if $category_name != ''} - {$category_link}{/if}</span>
+        <span class="back">&#8592; {$return_url}{if $category_name != ''} - {$category_link}{/if}</span>
 {/if}
 
 {if isset($entry->fields)}
@@ -23,14 +23,14 @@
      <div>
         {if $field->type == 'file'}
       {* this template assumes that every file uploaded is an image of some sort, because News doesn't distinguish *}
-          <img src='{$entry->file_location}/{$field->value}' alt=''>
+          <img src="{$entry->file_location}/{$field->value}" alt="">
         {else}
           {$field->name}: {$field->value}
         {/if}
      </div>
   {/foreach}
 {/if}
-    <footer class='news-meta'>
+    <footer class="news-meta">
     {if $entry->postdate}
         {$entry->postdate|cms_date_format}
     {/if}

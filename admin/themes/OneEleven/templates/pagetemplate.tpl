@@ -12,13 +12,13 @@
 		<meta name="referrer" content="origin">
 		<meta name="viewport" content="initial-scale=1.0 maximum-scale=1.0 user-scalable=no">
 		<meta name="HandheldFriendly" content="True">
-		<meta name='msapplication-TileImage' content='{$config.admin_url}/themes/OneEleven/images/favicon/ms-application-icon.png'>
-		<meta name='msapplication-TileColor' content='#f89938'>
+		<meta name="msapplication-TileImage" content="{$config.admin_url}/themes/OneEleven/images/favicon/ms-application-icon.png">
+		<meta name="msapplication-TileColor" content="#f89938">
 		<link rel="shortcut icon" href="{$config.admin_url}/themes/OneEleven/images/favicon/cmsms-favicon.ico">
-		<link rel='apple-touch-icon' href='{$config.admin_url}/themes/OneEleven/images/favicon/apple-touch-icon-iphone.png'>
-		<link rel='apple-touch-icon' sizes='72x72' href='{$config.admin_url}/themes/OneEleven/images/favicon/apple-touch-icon-ipad.png'>
-		<link rel='apple-touch-icon' sizes='114x114' href='{$config.admin_url}/themes/OneEleven/images/favicon/apple-touch-icon-iphone4.png'>
-		<link rel='apple-touch-icon' sizes='144x144' href='{$config.admin_url}/themes/OneEleven/images/favicon/apple-touch-icon-ipad3.png'>
+		<link rel="apple-touch-icon" href="{$config.admin_url}/themes/OneEleven/images/favicon/apple-touch-icon-iphone.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="{$config.admin_url}/themes/OneEleven/images/favicon/apple-touch-icon-ipad.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="{$config.admin_url}/themes/OneEleven/images/favicon/apple-touch-icon-iphone4.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="{$config.admin_url}/themes/OneEleven/images/favicon/apple-touch-icon-ipad3.png">
 		<!-- custom jQueryUI 1.12.1 styling See link in stylesheet for customisation reference //-->
 		<link href="themes/OneEleven/css/default-cmsms/jquery-ui-1.12.1.custom.min.css" rel="stylesheet">
 		<link href="style.php" rel="stylesheet">

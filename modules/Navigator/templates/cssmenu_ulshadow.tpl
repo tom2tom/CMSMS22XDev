@@ -39,13 +39,13 @@
 
     {* build the menu item node *}
     {if $node->type == 'sectionheader'}
-      <li class='sectionheader {$liclass}'><span>{$node->menutext}</span>
+      <li class="sectionheader {$liclass}"><span>{$node->menutext}</span>
         {if !empty($node->children)}
           {cssmenu_ulshadow data=$node->children depth=$depth+1}
         {/if}
       </li>
     {else if $node->type == 'separator'}
-      <li class='separator {$liclass}'><hr class='separator'/></li>
+      <li class="separator {$liclass}"><hr class="separator"></li>
     {else}
       {* regular item *}
       <li class="{$liclass}">

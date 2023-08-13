@@ -76,7 +76,7 @@
 			{/if}
 
 			{if $invalidtypescount=="0" && $withoutaliascount==""}
-				<p class='green'><strong>{lang('sysmain_nocontenterrors')}</strong></p>
+				<p class="green"><strong>{lang('sysmain_nocontenterrors')}</strong></p>
 			{/if}
 
 		</fieldset>
@@ -89,9 +89,9 @@
 				<p>{$tablecount} {lang('sysmain_tablesfound',$nonseqcount)}</p>
 
 				{if $errorcount==0}
-					<p class='green'><strong>{lang('sysmain_nostr_errors')}</strong></p>
+					<p class="green"><strong>{lang('sysmain_nostr_errors')}</strong></p>
 				{else}
-					<p class='red'><strong>{$errorcount} {if $errorcount>1}{lang('sysmain_str_errors')}{else}{lang('sysmain_str_error')}{/if}:  {$errortables}</strong></p>
+					<p class="red"><strong>{$errorcount} {if $errorcount>1}{lang('sysmain_str_errors')}{else}{lang('sysmain_str_error')}{/if}: {$errortables}</strong></p>
 				{/if}
 
 				<div class="pageoverflow">
@@ -112,7 +112,7 @@
 
 	{if isset($changelog)}
 		{$theme->StartTab('changelog')}
-			<p class='file'>{$changelogfilename}</p>
+			<p class="file">{$changelogfilename}</p>
 			<div class="changelog">{$changelog}</div>
 		{$theme->EndTab()}
 	{/if}

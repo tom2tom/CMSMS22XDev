@@ -38,11 +38,11 @@
                 </li>
             {else if $node->type == 'separator'}
                 {$list_class[] = 'separator'}
-                <li{do_class classes=$list_class}'><hr class='separator'/></li>
+                <li{do_class classes=$list_class}><hr class="separator"></li>
             {else}
                 {* regular item *}
                 <li{do_class classes=$list_class}{$aria_support}>
-                    <a{do_class classes=$href_class} href='{$node->url}'{if $node->target != ''} target='{$node->target}'{/if}>{$node->menutext}{$parent_indicator}</a>
+                    <a{do_class classes=$href_class} href="{$node->url}"{if $node->target} target="{$node->target}"{/if}>{$node->menutext}{$parent_indicator}</a>
                     {if !empty($node->children)}
                         {Simplex_menu data=$node->children depth=$depth+1}
                     {/if}
