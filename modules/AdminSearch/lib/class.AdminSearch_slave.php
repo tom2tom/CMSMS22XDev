@@ -59,7 +59,7 @@ abstract class AdminSearch_slave
     protected function include_inactive_items()
     {
         if( isset($this->_params['include_inactive_items']) ) return cms_to_bool($this->_params['include_inactive_items']);
-        return FALSE;
+        return TRUE;
     }
 
     protected function generate_snippets($content)
