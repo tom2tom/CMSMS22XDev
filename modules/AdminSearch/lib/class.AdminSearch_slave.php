@@ -4,12 +4,18 @@ abstract class AdminSearch_slave
 {
     private $_params = array();
 
-    public function set_text($text) {
-        $this->set_params(array('search_text'=>$text));
+    public function set_text($text)
+    {
+        if( $text || is_numeric($text) ) {
+            $this->set_params(array('search_text'=>$text));
+        }
+        throw new Exception('Invalid parameter search_text');
     }
 
-    protected function get_text() {
+    protected function get_text()
+    {
         if( isset($this->_params['search_text']) ) return $this->_params['search_text'];
+        return '';
     }
 
     public function set_params($params)
@@ -56,12 +62,13 @@ abstract class AdminSearch_slave
         return FALSE;
     }
 
-    protected function generate_snippets($content) {
+    protected function generate_snippets($content)
+    {
         $search_term = $this->get_text();
         $positions = array();
         $lastPos = 0;
 
-        $strposFunctionName = $this->search_casesensitive() ? 'strpos' : 'stripos';
+        $strposFunctionName = $this->search_casesensitive() ? 'strpos' : 'stripos'; // too bad if caseless non-ASCII!
 
         while (($lastPos = $strposFunctionName($content, $search_term, $lastPos))!== false) {
                 $positions[] = $lastPos;
@@ -79,8 +86,9 @@ abstract class AdminSearch_slave
         return $tmp;
     }
 
-    protected function get_resultset($title, $description = '', $edit_url = ''){
-        $obj = New StdClass;
+    protected function get_resultset($title, $description = '', $edit_url = '')
+    {
+        $obj = new stdClass();
         $obj->title = $title;
         $obj->description = $description;
         $obj->edit_url = $edit_url;
@@ -93,7 +101,8 @@ abstract class AdminSearch_slave
         return $obj;
     }
 
-    protected function get_number_of_occurrences($content) {
+    protected function get_number_of_occurrences($content)
+    {
         if ($this->search_casesensitive()) {
             return substr_count($content,$this->get_text());
         } else {
@@ -101,7 +110,8 @@ abstract class AdminSearch_slave
         }
     }
 
-    protected function process_query_string(&$qry) {
+    protected function process_query_string(&$qry)
+    {
         //check if we need a case sensitive query string
         if (!$this->search_casesensitive()) return;
         //make it happen
