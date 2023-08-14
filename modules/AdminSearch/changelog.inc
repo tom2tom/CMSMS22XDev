@@ -1,16 +1,23 @@
 1.0 - September 2015<br>
 Initial release<br>
 <br>
-1.0.2 - December 2015<br>
+1.0.1 - April 2016<br>
+Minor fix to permissions checks<br>
 <br>
-1.0.3 - July 2017<br>
-Search the metadata field of content pages<br>
+1.0.2 - August 2016<br>
+Use &apos;Manage Stylesheets&apos; permission when searching stylesheets<br>
+<br>
+1.0.3 - June 2017<br>
+Fix problem with use of &apos;Use Admin Search&apos; permission<br>
+Search in templates and stylesheets stored as files<br>
+Use HasSearchableContent method when searching content pages<br>
+<br>
+1.0.4 - July 2017<br>
+Search in the metadata field of content pages<br>
 Fixes for single quotes in search results<br>
 <br>
-1.0.4 - November 2017<br>
-<br>
 1.0.5 - March 2020<br>
-Remove click thru warning<br>
+Remove click-thru warning<br>
 <br>
 1.0.6 - January 2022<br>
 Fixed BR #12443 Admin Search fails on some searches with default mysql mode only_full_group_by (mysql 5.7.5+)<br>
