@@ -20,7 +20,7 @@
  var sel_all = 1;
  {/if}
 
- $(document).on('click','#searchbtn',function(){
+ $(document).on('click','#searchbtn',function() {
    var l = $('#filter_box :checkbox.filter_toggle:checked').length;
    if( l == 0 ) {
      cms_alert("$mod->Lang('error_select_slave')|escape:'javascript'}");
@@ -59,10 +59,10 @@
       <input class="filter_toggle" id="{$slave.class}" type="checkbox" name="{$actionid}slaves[]" value="{$slave.class}"{if isset($saved_search.slaves) && in_array($slave.class,$saved_search.slaves)} checked{/if}>&nbsp;<label for="{$slave.class}" title="{$slave.description}">{$slave.name}</label>{if !$slave@last}<br>{/if}
     {/foreach}
     <br><br>
+    <input type="checkbox" id="include_inactive_items" name="{$actionid}include_inactive_items" value="1" checked>&nbsp;<label for="include_inactive_items">{$mod->lang('lbl_include_inactive_items')}</label><br>
     <input type="checkbox" id="search_desc" name="{$actionid}search_descriptions" value="1" checked>&nbsp;<label for="search_desc">{$mod->lang('lbl_search_desc')}</label><br>
     <input type="checkbox" id="search_case" name="{$actionid}search_casesensitive" value="1">&nbsp;<label for="search_case">{$mod->lang('lbl_search_casesensitive')}</label><br>
-    <input type="checkbox" id="search_snippets" name="{$actionid}show_snippets" value="1">&nbsp;<label for="search_snippets">{$mod->lang('lbl_show_snippets')}</label><br>
-    <input type="checkbox" id="include_inactive_items" name="{$actionid}include_inactive_items" value="1" checked>&nbsp;<label for="include_inactive_items">{$mod->lang('lbl_include_inactive_items')}</label>
+    <input type="checkbox" id="search_snippets" name="{$actionid}show_snippets" value="1">&nbsp;<label for="search_snippets">{$mod->lang('lbl_show_snippets')}</label>
   </p>
   <br>
 </div>

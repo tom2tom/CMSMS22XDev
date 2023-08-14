@@ -41,15 +41,15 @@ $lang['help'] = <<<EOT
 <p>This module has been released under the <a href="http://www.gnu.org/licenses/licenses.html#GPL">GNU General Public License</a>. This module may not be used otherwise than in accordance with that license, or a later version of it if such is granted by the module's distributor.</p>
 EOT;
 
-// I 
+// I
 
 // L
 $lang['lbl_content_search'] = 'Search Content Pages';
 $lang['lbl_css_search'] = 'Search Stylesheets';
-$lang['lbl_gcb_search'] = 'Search Global Content Blocks';
-$lang['lbl_oldmodtemplate_search'] = 'Search module templates';
-$lang['lbl_include_inactive_items'] = 'Include inactive items';
-$lang['lbl_search_casesensitive'] = 'Search is case-sensitive';
+//$lang['lbl_gcb_search'] = 'Search Global Content Blocks'; no such thing now
+$lang['lbl_oldmodtemplate_search'] = 'Search Module Templates';
+$lang['lbl_include_inactive_items'] = 'Include Inactive Pages';
+$lang['lbl_search_casesensitive'] = 'Search is Case-Sensitive';
 $lang['lbl_search_desc'] = 'Search Descriptions <em>(where applicable)</em>';
 $lang['lbl_show_snippets'] = 'Show snippets with the results';
 $lang['lbl_template_search'] = 'Search Templates';
