@@ -33,22 +33,34 @@ final class AdminSearch_content_slave extends AdminSearch_slave
         );
 
         $userid = get_userid();
+        $all = $this->include_inactive_items();
 
         $content_manager = cms_utils::get_module('CMSContentManager');
         $db = cmsms()->GetDb();
-        $where_clause = implode(' LIKE ? OR ', array_keys($content_db_fields));
 
         //content table
-        $query = 'SELECT DISTINCT content_id FROM '.CMS_DB_PREFIX.'content WHERE ' . $where_clause . ' LIKE ?';
+        $query = 'SELECT DISTINCT content_id FROM '.CMS_DB_PREFIX.'content WHERE ';
+        $where_clause = implode(' LIKE ? OR ', array_keys($content_db_fields));
+        if( $all ) {
+            $query .= $where_clause . ' LIKE ?';
+        } else {
+            $query .= ' active=1 AND (' . $where_clause . ' LIKE ?)';
+        }
+
         //content_props table
-        $query2 = 'SELECT DISTINCT content_id,prop_name,content FROM '.CMS_DB_PREFIX.'content_props WHERE content LIKE ?';
+        if( $all ) { 
+            $query2 = 'SELECT DISTINCT content_id,prop_name,content FROM '.CMS_DB_PREFIX.'content_props WHERE content LIKE ?';
+        } else {
+            //TODO ignore inactive pages' content - JOIN content table
+            $query2 = 'SELECT DISTINCT content_id,prop_name,content FROM '.CMS_DB_PREFIX.'content_props WHERE content LIKE ?';
+        }
         $txt = '%'.$this->get_text().'%';
 
         $output = array();
 
         $resultSets = array();
 
-//        $urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+//      $urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
         //checking the content table
         $this->process_query_string($query);
