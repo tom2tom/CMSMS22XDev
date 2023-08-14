@@ -16,21 +16,20 @@ final class AdminSearch_content_slave extends AdminSearch_slave
 
     public function check_permission()
     {
-        $userid = get_userid();
         $mod = cms_utils::get_module('CMSContentManager');
         return $mod->CanEditContent();
     }
 
     public function get_matches()
     {
-        #key: db colums name, value: corresponding function name to get the value from the Content Object
+        //key: db colums name, value: corresponding function name to get the value from the Content object
         $content_db_fields = array(
-            'content_name' => [ 'function_name' => 'Name', 'translation' => \CmsLangOperations::lang_from_realm('admin','name') ],
-            'menu_text' => [ 'function_name' => 'MenuText', 'translation' => \CmsLangOperations::lang_from_realm('admin','menutext') ],
-            'content_alias' => [ 'function_name' => 'Alias', 'translation' => \CmsLangOperations::lang_from_realm('admin','alias') ],
-            'metadata' => [ 'function_name' => 'Metadata', 'translation' => \CmsLangOperations::lang_from_realm('admin','metadata') ],
-            'titleattribute' => [ 'function_name' => 'TitleAttribute', 'translation' => \CmsLangOperations::lang_from_realm('admin','titleattribute') ],
-            'page_url'  => [ 'function_name' => 'URL', 'translation' => \CmsLangOperations::lang_from_realm('admin','page_url') ]
+            'content_name' => [ 'function_name' => 'Name', 'translation' => CmsLangOperations::lang_from_realm('admin','name') ],
+            'menu_text' => [ 'function_name' => 'MenuText', 'translation' => CmsLangOperations::lang_from_realm('admin','menutext') ],
+            'content_alias' => [ 'function_name' => 'Alias', 'translation' => CmsLangOperations::lang_from_realm('admin','alias') ],
+            'metadata' => [ 'function_name' => 'Metadata', 'translation' => CmsLangOperations::lang_from_realm('admin','metadata') ],
+            'titleattribute' => [ 'function_name' => 'TitleAttribute', 'translation' => CmsLangOperations::lang_from_realm('admin','titleattribute') ],
+            'page_url'  => [ 'function_name' => 'URL', 'translation' => CmsLangOperations::lang_from_realm('admin','page_url') ]
         );
 
         $userid = get_userid();
@@ -39,9 +38,9 @@ final class AdminSearch_content_slave extends AdminSearch_slave
         $db = cmsms()->GetDb();
         $where_clause = implode(' LIKE ? OR ', array_keys($content_db_fields));
 
-        #content table
+        //content table
         $query = 'SELECT DISTINCT content_id FROM '.CMS_DB_PREFIX.'content WHERE ' . $where_clause . ' LIKE ?';
-        #content_props table
+        //content_props table
         $query2 = 'SELECT DISTINCT content_id,prop_name,content FROM '.CMS_DB_PREFIX.'content_props WHERE content LIKE ?';
         $txt = '%'.$this->get_text().'%';
 
@@ -49,9 +48,9 @@ final class AdminSearch_content_slave extends AdminSearch_slave
 
         $resultSets = array();
 
-        $urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+//        $urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
-        #checking the content table
+        //checking the content table
         $this->process_query_string($query);
 
         $dbr = $db->GetArray($query, array_fill(0,count($content_db_fields),$txt));
@@ -92,7 +91,7 @@ final class AdminSearch_content_slave extends AdminSearch_slave
             }
         }
 
-        #checking the content_props table
+        //checking the content_props table
         $this->process_query_string($query2);
         $dbr = $db->GetArray($query2, [$txt]);
         if( is_array($dbr) && count($dbr) ) {
@@ -126,9 +125,9 @@ final class AdminSearch_content_slave extends AdminSearch_slave
                 if( $count > 0 ) {
                     $snippets = $this->generate_snippets($content);
                     if ($row['prop_name'] == 'content_en') {
-                        $prop_name = \CmsLangOperations::lang_from_realm('admin','content');
-                    } elseif (\CmsLangOperations::key_exists($row['prop_name'],'admin')) {
-                      $prop_name = \CmsLangOperations::lang_from_realm('admin',$row['prop_name']);
+                        $prop_name = CmsLangOperations::lang_from_realm('admin','content');
+                    } elseif (CmsLangOperations::key_exists($row['prop_name'],'admin')) {
+                      $prop_name = CmsLangOperations::lang_from_realm('admin',$row['prop_name']);
                     } else {
                       $prop_name = $row['prop_name'];
                     }
@@ -138,7 +137,7 @@ final class AdminSearch_content_slave extends AdminSearch_slave
             }
         }
 
-        #processing the results
+        //processing the results
         foreach ($resultSets as $cId => $result_object) {
             $output[] = json_encode($result_object);
         }
