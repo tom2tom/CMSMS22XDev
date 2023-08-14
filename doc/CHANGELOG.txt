@@ -22,6 +22,9 @@ Core - General
 Admin theme
  - Corrected content scrolling
 
+AdminSearch 1.0.7
+ - Support exclusion of inactive pages from searches
+
 CmsJobManager 0.1.4
  - BR #12629 - Add missing changelog and retriever
 
