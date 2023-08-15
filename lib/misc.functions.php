@@ -1091,19 +1091,19 @@ function get_secure_param()
 
 
 /**
- * A simple function to convert a string to a bool.
- * accepts, 'y','yes','true',1 as TRUE (case insensitive) all other values represent FALSE.
+ * A simple function to convert a value to a corresponding bool.
+ * Regards 'y', 'yes', 'true', 'on' (all case insensitive), and
+ * numerics > -1 and < 1 as TRUE, all other values as FALSE.
  *
- * @param string $str Input string to test.
- * Rolf: only used in lib/classes/contenttypes/Content.inc.php
+ * @param mixed $str Value to test. Normally a scalar.
  */
 function cms_to_bool($str)
 {
-  if( is_numeric($str) ) return ((int)$str != 0)?TRUE:FALSE;
+  if( is_numeric($str) ) return ((int)$str != 0);
+  if( !$str ) return FALSE;
 
-  $str = strtolower($str);
-  if( $str == '1' || $str == 'y' || $str == 'yes' || $str == 'true' || $str === 'on' ) return TRUE;
-  return FALSE;
+  $str = strtolower((string)$str);
+  return ($str == 'y' || $str == 'yes' || $str == 'true' || $str === 'on');
 }
 
 
