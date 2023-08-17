@@ -42,18 +42,11 @@ final class AdminSearch_content_slave extends AdminSearch_slave
         $query = 'SELECT DISTINCT content_id FROM '.CMS_DB_PREFIX.'content WHERE ';
         $where_clause = implode(' LIKE ? OR ', array_keys($content_db_fields));
         if( $all ) {
-            $query .= $where_clause . ' LIKE ?';
+            $query .= $where_clause . ' LIKE ?'; //assumes content-field value can be matched regardless of case
         } else {
             $query .= ' active=1 AND (' . $where_clause . ' LIKE ?)';
         }
 
-        //content_props table
-        if( $all ) { 
-            $query2 = 'SELECT DISTINCT content_id,prop_name,content FROM '.CMS_DB_PREFIX.'content_props WHERE content LIKE ?';
-        } else {
-            //TODO ignore inactive pages' content - JOIN content table
-            $query2 = 'SELECT DISTINCT content_id,prop_name,content FROM '.CMS_DB_PREFIX.'content_props WHERE content LIKE ?';
-        }
         $txt = '%'.$this->get_text().'%';
 
         $output = array();
@@ -62,25 +55,23 @@ final class AdminSearch_content_slave extends AdminSearch_slave
 
 //      $urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
-        //checking the content table
+        //check the table
         $this->process_query_string($query);
 
-        $dbr = $db->GetArray($query, array_fill(0,count($content_db_fields),$txt));
+        $dbr = $db->GetCol($query, array_fill(0,count($content_db_fields),$txt));
         if( is_array($dbr) && count($dbr) ) {
-
-
-            foreach( $dbr as $row ) {
-                $content_id = $row['content_id'];
-                if( !check_permission($userid,'Manage All Content') && !check_permission($userid,'Modify Any Page') &&
-                    !cmsms()->GetContentOperations()->CheckPageAuthorship($userid,$content_id) ) {
-                    // no access to this content page.
+            $pmod = check_permission($userid,'Manage All Content') || check_permission($userid,'Modify Any Page');
+            $ops = cmsms()->GetContentOperations();
+            foreach( $dbr as $content_id ) {
+                if( !($pmod || $ops->CheckPageAuthorship($userid,$content_id)) ) {
+                    // no access to this content page TODO why so? we're viewing, not editing
                     continue;
                 }
 
-                $content_obj = cmsms()->GetContentOperations()->LoadContentFromId($content_id);
+                $content_obj = $ops->LoadContentFromId($content_id);
                 if( !is_object($content_obj) ) continue;
 
-                if (!$this->include_inactive_items() && !$content_obj->Active()) continue;
+                if (!$all && !$content_obj->Active()) continue; //TODO already filtered in query
 
                 if (!isset($resultSets[$content_id])) {
                     $resultSets[$content_id] = $this->get_resultset($content_obj->Name(),$content_obj->Name(),$content_manager->create_url('m1_','admin_editcontent','',array('content_id'=>$content_id)));
@@ -103,25 +94,32 @@ final class AdminSearch_content_slave extends AdminSearch_slave
             }
         }
 
-        //checking the content_props table
+        //content_props table
+        if( $all ) {
+            $query2 = 'SELECT DISTINCT content_id,prop_name,content FROM '.CMS_DB_PREFIX.'content_props WHERE content LIKE ?';
+        } else {
+            $query2 = 'SELECT DISTINCT P.content_id,P.prop_name,P.content FROM '.CMS_DB_PREFIX.'content_props P JOIN '.CMS_DB_PREFIX.'content C ON P.content_id=C.content_id WHERE C.active=1 AND P.content LIKE ?';
+        }
+
+        //check the table
         $this->process_query_string($query2);
         $dbr = $db->GetArray($query2, [$txt]);
         if( is_array($dbr) && count($dbr) ) {
 
-
+            if( !isset($pmod) ) { $pmod = check_permission($userid,'Manage All Content') || check_permission($userid,'Modify Any Page'); }
+            if( !isset($ops) ) { $ops = cmsms()->GetContentOperations(); }
             foreach( $dbr as $row ) {
                 $content_id = $row['content_id'];
-                if( !check_permission($userid,'Manage All Content') && !check_permission($userid,'Modify Any Page') &&
-                    !cmsms()->GetContentOperations()->CheckPageAuthorship($userid,$content_id) ) {
-                    // no access to this content page.
+                if( !($pmod || !$ops->CheckPageAuthorship($userid,$content_id)) ) {
+                    // no access to this content page TODO why so? we're viewing, not editing
                     continue;
                 }
 
-                $content_obj = cmsms()->GetContentOperations()->LoadContentFromId($content_id);
+                $content_obj = $ops->LoadContentFromId($content_id);
                 if( !is_object($content_obj) ) continue;
                 //if( !$content_obj->HasSearchableContent() ) continue;
 
-                if (!$this->include_inactive_items() && !$content_obj->Active()) continue;
+                if (!$all && !$content_obj->Active()) continue; //TODO already filtered in query
 
                 if (!isset($resultSets[$content_id])) {
                     $resultSets[$content_id] = $this->get_resultset($content_obj->Name(),$content_obj->Name(),$content_manager->create_url('m1_','admin_editcontent','',array('content_id'=>$content_id)));
@@ -149,7 +147,7 @@ final class AdminSearch_content_slave extends AdminSearch_slave
             }
         }
 
-        //processing the results
+        //process the results
         foreach ($resultSets as $cId => $result_object) {
             $output[] = json_encode($result_object);
         }
