@@ -16,10 +16,11 @@ $lang['help_function_page_selector'] = <<<'EOT'
 EOT;
 $lang['help_function_cms_html_options'] = <<<'EOT'
 <h3>What does this do?</h3>
-<p>This is a powerful plugin to render options for select elements into html &lt;option&gt; and &lt;optgroup&gt; tags.  Each option can have child elements, it's own title tag, and it's own class attribute.</p>
+<p>This is a powerful plugin to render options for select elements into html &lt;option&gt; and &lt;optgroup&gt; tags.  Each option can have child elements, its own title tag, and its own class attribute.</p>
 <h3>Usage:</h3>
 <pre><code>{cms_html_options options=$options [selected=value]}</code></pre>
 <h3>What Parameters Does it Take?</h3>
+<p>Unlike the comparable Smarty <code>{html_options}</code> plugin, this supports parameters &apos;label&apos;, &apos;title&apos; and &apos;value&apos;</p>
 <ul>
  <li>options - <em>(array)</em> - An array of option definitions.</li>
  <li>selected - <em>(string)</em> - The value to automatically select in the dropdown.  must correspond to the value of one of the options.</li>
