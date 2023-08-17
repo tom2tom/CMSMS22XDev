@@ -10,42 +10,35 @@ $(function() {
     done_handler: function() {
       $('#css_bulk_action,#css_bulk_submit').prop('disabled',true);
 {*    $('#css_bulk_submit').button({ 'disabled' : true });TODO extra .button needed?*}
+      $('#css_selall,.css_select').on('click',function() {
+        // if one or more .css_select is checked, enable the bulk actions
+        var l = $('.css_select:checked').length,
+          st = l === 0;
+        $('#css_bulk_action').prop('disabled',st);
+        $('#css_bulk_submit').prop('disabled',st);
+{*      $('#css_bulk_submit').button({ 'disabled' : st});TODO extra .button needed?*}
+      });
+      $('a.steal_css_lock').on('click',function() {
+        // we're gonna confirm stealing this lock.
+        return confirm("{$mod->Lang('confirm_steal_lock')|escape:'javascript'}");
+      });
     }
-  });
-
-  $('#css_selall,.css_select').on('click',function() {
-    // if there is one or more .css_select checked, we enabled the bulk actions
-    var l = $('.css_select:checked').length;
-    if( l == 0 ) {
-      $('#css_bulk_action').prop('disabled',true);
-      $('#css_bulk_submit').prop('disabled',true);
-{*    $('#css_bulk_submit').button({ 'disabled' : true });TODO extra .button needed?*}
-    } else {
-      $('#css_bulk_action').prop('disabled',false);
-      $('#css_bulk_submit').prop('disabled',false);
-{*    $('#css_bulk_submit').button({ 'disabled' : false });TODO extra .button needed?*}
-    }
-  });
-
-  $('a.steal_css_lock').on('click',function() {
-    // we're gonna confirm stealing this lock.
-    return confirm("{$mod->Lang('confirm_steal_lock')|escape:'javascript'}");
   });
 
   $('#stylesheet_area').on('click','#editcssfilter',function() {
     $('#filtercssdlg').dialog({
       width: 'auto',
       buttons: {
-        '{$mod->Lang('submit')}': function() {
+        "{$mod->Lang('submit')}": function() {
           $(this).dialog('close');
           $('#filtercssdlg_form').trigger('submit');
         },
-        '{$mod->Lang('reset')}': function() {
+        "{$mod->Lang('reset')}": function() {
           $(this).dialog('close');
             $('#submit_filter_css').val('-1');
           $('#filtercssdlg_form').trigger('submit');
         },
-        '{$mod->Lang('cancel')}': function() {
+        "{$mod->Lang('cancel')}": function() {
           $(this).dialog('close');
         }
       }

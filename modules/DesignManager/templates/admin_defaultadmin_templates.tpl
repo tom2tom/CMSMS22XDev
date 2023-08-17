@@ -10,51 +10,46 @@ $(function() {
     done_handler: function() {
       $('#tpl_bulk_action,#tpl_bulk_submit').prop('disabled', true);
 {*    $('#tpl_bulk_submit').button({ 'disabled': true });TODO extra .button needed?*}
+
+      $('#tpl_selall,.tpl_select').on('click', function() {
+        var l = $('.tpl_select:checked').length,
+          st = l === 0;
+        $('#tpl_bulk_action').prop('disabled', st);
+        $('#tpl_bulk_submit').prop('disabled', st);
+{*      $('#tpl_bulk_submit').button({ 'disabled': st });TODO extra .button needed?*}
+      });
+
+      $(document).on('click', 'a.steal_tpl_lock', function() {
+        // we're gonna confirm stealing this lock.
+        return confirm("{$mod->Lang('confirm_steal_lock')|escape:'javascript'}");
+      });
+
+      $(document).on('click', 'a.sedit_tpl', function(ev) {
+        if ($(this).hasClass('steal_tpl_lock')) return true;
+
+        // double check whether this page is locked.
+        var tpl_id = $(this).attr('data-tpl-id');
+        var url = '{$admin_url}/ajax_lock.php?showtemplate=false';
+        var opts = {
+          opt: 'check',
+          type: 'template',
+          oid: tpl_id
+        };
+        opts[cms_data.secure_param_name] = cms_data.user_key;
+        $.ajax({
+          url: url,
+          data: opts,
+        }).done(function(data) {
+          if (data.status == 'success') {
+            if (data.locked) {
+              // gotta display a message.
+              ev.preventDefault();
+              cms_alert("{$mod->Lang('error_contentlocked')|escape:'javascript'}");
+            }
+          }
+        });
+      });
     }
-  });
-
-  $('#tpl_selall,.tpl_select').on('click', function() {
-    var l = $('.tpl_select:checked').length;
-    if (l == 0) {
-      $('#tpl_bulk_action').prop('disabled', true);
-      $('#tpl_bulk_submit').prop('disabled', true);
-{*    $('#tpl_bulk_submit').button({ 'disabled': true });TODO extra .button needed?*}
-    } else {
-      $('#tpl_bulk_action').prop('disabled', false);
-      $('#tpl_bulk_submit').prop('disabled', false);
-{*    $('#tpl_bulk_submit').button({ 'disabled': false });TODO extra .button needed?*}
-    }
-  });
-
-  $(document).on('click', 'a.steal_tpl_lock', function() {
-    // we're gonna confirm stealing this lock.
-    return confirm("{$mod->Lang('confirm_steal_lock')|escape:'javascript'}");
-  });
-
-  $(document).on('click', 'a.sedit_tpl', function(ev) {
-    if ($(this).hasClass('steal_tpl_lock')) return true;
-
-    // double check whether this page is locked.
-    var tpl_id = $(this).attr('data-tpl-id');
-    var url = '{$admin_url}/ajax_lock.php?showtemplate=false';
-    var opts = {
-      opt: 'check',
-      type: 'template',
-      oid: tpl_id
-    };
-    opts[cms_data.secure_param_name] = cms_data.user_key;
-    $.ajax({
-      url: url,
-      data: opts,
-    }).done(function(data) {
-      if (data.status == 'success') {
-        if (data.locked) {
-          // gotta display a message.
-          ev.preventDefault();
-          cms_alert("{$mod->Lang('error_contentlocked')|escape:'javascript'}");
-        }
-      }
-    });
   });
 
   $(document).on('click', '#tpl_bulk_submit', function() {
