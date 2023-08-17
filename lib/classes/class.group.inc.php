@@ -58,7 +58,7 @@ class Group
 
         case 'name':
         case 'description':
-            $this->_data[$key] = trim($val);
+            $this->_data[$key] = trim((string)$val);
             break;
 
         case 'active':

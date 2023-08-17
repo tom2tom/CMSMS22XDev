@@ -33,10 +33,11 @@ include_once("header.php");
 
 function listudt_summarize($str,$numwords,$ets='...')
 {
+    if( !$str ) { return (string)$str; }
     $str = strip_tags($str);
     $stringarray = explode(" ",$str);
     $numwords = min(max($numwords,1),100);
-    if( $numwords >= count($stringarray) ) return $str;
+    if( $numwords >= count($stringarray) ) { return $str; }
     $tmp = array_slice($stringarray,0,$numwords);
     $tmp = implode(' ',$tmp).$ets;
     return $tmp;
