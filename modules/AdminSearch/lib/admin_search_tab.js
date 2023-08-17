@@ -88,13 +88,13 @@ function end_section() {
 }
 $(function() {
   $('#adminsearchform > form').attr('target','workarea');
-  $('#workarea').attr('src',ajax_url); //TODO where is,ajax_url ?
+  $('#workarea').attr('src',ajax_url); //ajax_url set externally, refers to admin_search action
   if( typeof sel_all !== 'undefined' ) {
     $('#filter_box input.filter_toggle:checkbox').prop('checked',true);
   }
   $('#filter_box input:checkbox').on('click',function(e){
     var v = $(this).val();
-    if( v == -1 ) {
+    if( v === -1 ) {
       var t = $(this).prop('checked');
       if( t ) {
         $('.filter_toggle').prop('checked',true);
