@@ -48,6 +48,7 @@ class NavigatorNode
     public $has_children;
     public $hierarchy;
     public $id;
+    public $image;
     public $menutext;
     public $modified;
     public $parent;

@@ -222,7 +222,7 @@ if( isset($_POST['testmail']) ) {
         }
         $message .= lang('testmsg_success');
       }
-      catch( \Exception $e ) {
+      catch( Exception $e ) {
         $error .= '<li>'.$e->GetMessage().'</li>';
       }
     }
@@ -509,6 +509,7 @@ $smarty->assign('tab_end',$themeObject->EndTab());
 $smarty->assign('SECURE_PARAM_NAME',CMS_SECURE_PARAM_NAME);
 $smarty->assign('CMS_USER_KEY',$_SESSION[CMS_USER_KEY]);
 $smarty->assign('sitename',$sitename);
+$smarty->assign('site_ipaddr',cms_utils::get_real_ip());
 $smarty->assign('global_umask',$global_umask);
 $smarty->assign('testresults',$testresults);
 $smarty->assign('frontendlang',$frontendlang);
