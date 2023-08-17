@@ -22,8 +22,8 @@
 
  $(document).on('click','#searchbtn',function() {
    var l = $('#filter_box :checkbox.filter_toggle:checked').length;
-   if( l == 0 ) {
-     cms_alert("$mod->Lang('error_select_slave')|escape:'javascript'}");
+   if( l === 0 ) {
+     cms_alert("{$mod->Lang('error_select_slave')|escape:'javascript'}");
    } else {
      $('#searchresults').html('');
    }
