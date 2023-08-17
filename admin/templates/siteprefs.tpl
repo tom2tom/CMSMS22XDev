@@ -153,7 +153,7 @@
 			<p class="pagetext"><label for="basic_attributes">{lang('basic_attributes')}:</label>&nbsp;{cms_help key2='settings_basicattribs2' title=lang('basic_attributes')}</p>
 			<p class="pageinput">
 				<select id="basic_attributes" class="multicolumn" name="basic_attributes[]" multiple size="5">
-					{cms_html_options options=$all_attributes selected=$basic_attributes}
+					{html_options options=$all_attributes selected=$basic_attributes}
 				</select>
 			</p>
 		</div>
@@ -242,7 +242,7 @@
 			<p class="pagetext"><label for="sitedownexcludes">{lang('sitedownexcludes')}:</label> {cms_help key2='settings_sitedownexcludes' title=lang('sitedownexcludes')}</p>
 			<p class="pageinput">
 				<input id="sitedownexcludes" type="text" name="sitedownexcludes" size="50" maxlength="255" value="{$sitedownexcludes|cms_escape}">
-				<br><strong>{lang('your_ipaddress')}:</strong>&nbsp;<span style="color: red;">{cms_utils::get_real_ip()}</span><br>{$lang_info_sitedownexcludes}
+				<br><strong>{lang('your_ipaddress')}:</strong>&nbsp;<span style="color:red">{$site_ipaddr}</span><br>{$lang_info_sitedownexcludes}
 			</p>
 		</div>
 		<div class="pageoverflow">
