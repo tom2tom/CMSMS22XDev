@@ -75,7 +75,7 @@ final class UserTagOperations
 			$db = CmsApp::get_instance()->GetDb();
 
 			$out = array();
-			$query = 'SELECT * FROM '.CMS_DB_PREFIX.'userplugins'.' ORDER BY userplugin_name';
+			$query = 'SELECT * FROM '.CMS_DB_PREFIX.'userplugins ORDER BY userplugin_name';
 			$data = $db->GetArray($query);
 			if( is_array($data) ) {
 				foreach( $data as $row ) {
