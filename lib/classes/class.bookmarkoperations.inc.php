@@ -74,16 +74,18 @@ class BookmarkOperations
 		$db = $gCms->GetDb();
 
 		$result = array();
-		$query = "SELECT bookmark_id, user_id, title, url FROM ".CMS_DB_PREFIX."admin_bookmarks WHERE user_id = ? ORDER BY title";
+		$query = "SELECT bookmark_id, title, url FROM ".CMS_DB_PREFIX."admin_bookmarks WHERE user_id = ? ORDER BY title";
 		$dbresult = $db->Execute($query, array($user_id));
-
-		while ($dbresult && $row = $dbresult->FetchRow()) {
-			$onemark = new Bookmark();
-			$onemark->bookmark_id = $row['bookmark_id'];
-			$onemark->user_id = $row['user_id'];
-			$onemark->url = $this->_prep_for_display($row['url']);
-			$onemark->title = $row['title'];
-			$result[] = $onemark;
+		if ($dbresult) {
+			while ($row = $dbresult->FetchRow()) {
+				$onemark = new Bookmark();
+				$onemark->bookmark_id = $row['bookmark_id'];
+				$onemark->user_id = $user_id;
+				$onemark->url = ($row['url']) ? $this->_prep_for_display($row['url']) : '<Missing URL>';
+				$onemark->title = $row['title'] ?: '<Missing Title>';
+				$result[] = $onemark;
+			}
+			$dbresult->Close();
 		}
 
 		return $result;
@@ -100,16 +102,20 @@ class BookmarkOperations
 	{
 		$db = \CmsApp::get_instance()->GetDb();
 
-		$query = "SELECT bookmark_id, user_id, title, url FROM ".CMS_DB_PREFIX."admin_bookmarks WHERE bookmark_id = ?";
+		$query = "SELECT user_id, title, url FROM ".CMS_DB_PREFIX."admin_bookmarks WHERE bookmark_id = ?";
 		$dbresult = $db->Execute($query, array($id));
 
-		while ($dbresult && $row = $dbresult->FetchRow()) {
-			$onemark = new Bookmark();
-			$onemark->bookmark_id = $row['bookmark_id'];
-			$onemark->user_id = $row['user_id'];
-			$onemark->url = $this->_prep_for_display($row['url']);
-			$onemark->title = $row['title'];
-			return $onemark;
+		if ($dbresult) {
+			while ($row = $dbresult->FetchRow()) {
+				$onemark = new Bookmark();
+				$onemark->bookmark_id = (int)$id;
+				$onemark->user_id = (int)$row['user_id'];
+				$onemark->url = isset($row['url']) ? $this->_prep_for_display($row['url']) : '<Missing URL>';
+				$onemark->title = isset($row['title']) ? $row['title'] : '<Missing Title>';
+				$dbresult->Close();
+				return $onemark;
+			}
+			$dbresult->Close();
 		}
 
 		return null; // no object
@@ -125,7 +131,8 @@ class BookmarkOperations
 	{
 		$db = \CmsApp::get_instance()->GetDb();
 
-		$bookmark->url = $this->_prep_for_saving($bookmark->url);
+		$bookmark->url = isset($bookmark->url) ? $this->_prep_for_saving($bookmark->url) : '<Missing URL>';
+		if (!isset($bookmark->title)) $bookmark->title = '<Missing Title>';
 		$new_bookmark_id = $db->GenID(CMS_DB_PREFIX."admin_bookmarks_seq");
 		$query = "INSERT INTO ".CMS_DB_PREFIX."admin_bookmarks (bookmark_id, user_id, url, title) VALUES (?,?,?,?)";
 		$dbresult = $db->Execute($query, array($new_bookmark_id, $bookmark->user_id, $bookmark->url, $bookmark->title));
@@ -144,7 +151,8 @@ class BookmarkOperations
 	{
 		$db = \CmsApp::get_instance()->GetDb();
 
-		$bookmark->url = $this->_prep_for_saving($bookmark->url);
+		$bookmark->url = isset($bookmark->url) ? $this->_prep_for_saving($bookmark->url) : '<Missing URL>';
+		if (!isset($bookmark->title)) $bookmark->title = '<Missing Title>';
 		$query = "UPDATE ".CMS_DB_PREFIX."admin_bookmarks SET user_id = ?, title = ?, url = ? WHERE bookmark_id = ?";
 		$dbresult = $db->Execute($query, array($bookmark->user_id, $bookmark->title, $bookmark->url, $bookmark->bookmark_id));
 		if ($dbresult) return true;

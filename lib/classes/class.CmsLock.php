@@ -270,6 +270,7 @@ final class CmsLock implements ArrayAccess
     */
     public static function from_row($row)
     {
+        if( !isset($row['type']) ) $row['type'] = '';
         $obj = new CmsLock($row['type'],$row['oid'],$row['lifetime']);
         $obj->_dirty = TRUE;
         foreach( $row as $key => $val ) {

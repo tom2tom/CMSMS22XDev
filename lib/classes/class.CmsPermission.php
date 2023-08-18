@@ -119,7 +119,7 @@ VALUES (?,?,?,?,$now,$now)";
 		if( !isset($this->_data['id']) || $this->_data['id'] < 1 ) {
 			// Name must be unique
 			$db = CmsApp::get_instance()->GetDb();
-			$query = 'SElECT permission_id FROM '.CMS_DB_PREFIX.'permissions
+			$query = 'SELECT permission_id FROM '.CMS_DB_PREFIX.'permissions
 WHERE permission_name = ?';
 			$dbr = $db->GetOne($query,array($this->_data['name']));
 			if( $dbr > 0 ) throw new CmsInvalidDataException('Permission with name '.$this->_data['name'].' already exists');
@@ -189,10 +189,14 @@ WHERE permission_name = ?';
 			throw new CmsInvalidDataException('Could not find permission named '.$name);
 		}
 
+		foreach( ['permission_name','permission_text','permission_source','create_date','modified_date'] as $fld ) {
+			if( $row[$fld] === null ) $row[$fld] = '';
+		}
 		$obj = new CmsPermission();
 		$obj->_data['id'] = $row['permission_id'];
 		$obj->_data['name'] = $row['permission_name'];
 		$obj->_data['text'] = $row['permission_text'];
+		$obj->_data['source'] = $row['permission_source'];
 		$obj->_data['create_date'] = $row['create_date'];
 		$obj->_data['modified_date'] = $row['modified_date'];
 

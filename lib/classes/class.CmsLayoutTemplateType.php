@@ -639,17 +639,20 @@ class CmsLayoutTemplateType
 	 */
     private static function _load_from_data($row)
     {
-        if( isset($row['lang_cb']) && $row['lang_cb'] ) $row['lang_callback'] = unserialize($row['lang_cb']);
-        if( isset($row['help_content_cb']) && $row['help_content_cb'] ) $row['help_callback'] = unserialize($row['help_content_cb']);
-        if( isset($row['dflt_content_cb']) && $row['dflt_content_cb'] ) $row['content_callback'] = unserialize($row['dflt_content_cb']);
+        foreach( ['originator','name','dflt_contents','description'] as $fld ) {
+            if( !isset($row[$fld]) ) $row[$fld] = '';
+        }
+        if( !empty($row['lang_cb']) ) $row['lang_callback'] = unserialize($row['lang_cb']);
+        if( !empty($row['help_content_cb']) ) $row['help_callback'] = unserialize($row['help_content_cb']);
+        if( !empty($row['dflt_content_cb']) ) $row['content_callback'] = unserialize($row['dflt_content_cb']);
         unset($row['lang_cb'],$row['help_content_cb'],$row['dflt_content_cb']);
 
         $ob = new self();
         $ob->_data = $row;
         $ob->_dirty = FALSE;
 
-		self::$_cache[$ob->get_id()] = $ob;
-		self::$_name_cache[$ob->get_originator().'::'.$ob->get_name()] = $ob->get_id();
+        self::$_cache[$ob->get_id()] = $ob;
+        self::$_name_cache[$ob->get_originator().'::'.$ob->get_name()] = $ob->get_id();
         return $ob;
     }
 

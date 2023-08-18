@@ -77,10 +77,15 @@ if (isset($_POST["editbookmark"])) {
 else if ($bookmark_id != -1) {
   $query = "SELECT * from ".CMS_DB_PREFIX."admin_bookmarks WHERE bookmark_id = ?";
   $result = $db->Execute($query, array($bookmark_id));
-  $row = $result->FetchRow();
-
-  $myurl = $row["url"];
-  $title = $row["title"];
+  if ($result) {
+    $row = $result->FetchRow();
+    foreach (['title','url'] as $fld) {
+      if ($row[$fld] === null) $row[$fld] = '';
+    }
+    $myurl = $row['url'];
+    $title = $row['title'];
+    $result->Close();
+  }
 }
 
 if (strlen($title) > 0) $CMS_ADMIN_SUBTITLE = $title;

@@ -197,6 +197,9 @@ public static function get_field_from_row($row)
     if( !isset($row['id']) ) return null; // no object
 
     $res = new news_field();
+    foreach( ['name','type','extra'] as $fld ) {
+        if( !isset($row[$fld]) ) $row[$fld] = '';
+    }
     foreach( $row as $key => $value ) {
         switch( $key ) {
         case 'id':
@@ -205,6 +208,7 @@ public static function get_field_from_row($row)
         case 'max_length':
         case 'item_order':
         case 'public':
+        case 'extra':
         case 'value':
             $res->$key = $value;
             break;

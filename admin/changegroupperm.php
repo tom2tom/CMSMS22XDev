@@ -71,22 +71,28 @@ $load_perms = function() use ($db) {
         },\CMSMS\HookManager::PRIORITY_HIGH);
 
     $perm_struct = array();
-    while($result && $row = $result->FetchRow()) {
-        if (isset($perm_struct[$row['permission_id']])) {
-            $str = &$perm_struct[$row['permission_id']];
-            $str->group[$row['group_id']]=1;
+    if ($result) {
+        while ($row = $result->FetchRow()) {
+            foreach (['permission_source','permission_text'] as $fld) {
+                if ($row[$fld] === null) $row[$fld] = '';
+            }
+            if (isset($perm_struct[$row['permission_id']])) {
+                $str = &$perm_struct[$row['permission_id']];
+                $str->group[$row['group_id']]=1;
+            }
+            else {
+                $thisPerm = new \stdClass();
+                $thisPerm->group = array();
+                if (!empty($row['group_id'])) $thisPerm->group[$row['group_id']] = 1;
+                $thisPerm->id = $row['permission_id'];
+                $thisPerm->name = $thisPerm->label = $row['permission_text'];
+                $thisPerm->source = $row['permission_source'];
+                $thisPerm->label = \CMSMS\HookManager::do_hook_first_result('localizeperm',$thisPerm->name);
+                $thisPerm->description = \CMSMS\HookManager::do_hook_first_result('getperminfo',$thisPerm->name);
+                $perm_struct[$row['permission_id']] = $thisPerm;
+            }
         }
-        else {
-            $thisPerm = new \stdClass();
-            $thisPerm->group = array();
-            if (!empty($row['group_id'])) $thisPerm->group[$row['group_id']] = 1;
-            $thisPerm->id = $row['permission_id'];
-            $thisPerm->name = $thisPerm->label = $row['permission_text'];
-            $thisPerm->source = $row['permission_source'];
-            $thisPerm->label = \CMSMS\HookManager::do_hook_first_result('localizeperm',$thisPerm->name);
-            $thisPerm->description = \CMSMS\HookManager::do_hook_first_result('getperminfo',$thisPerm->name);
-            $perm_struct[$row['permission_id']] = $thisPerm;
-        }
+        $result->Close();
     }
     return $perm_struct;
 };

@@ -1,13 +1,15 @@
 <?php
 namespace FilePicker;
 
+use FilePicker\Profile;
+
 class ProfileDAO
 {
     private $_mod;
     private $_db;
     const DFLT_PREF = 'ProfileDAO_defaultProfileId';
 
-    public static function table_name() { return CMS_DB_PREFIX.'mod_filepicker_profiles'; }
+    public static function table_name() { return \CMS_DB_PREFIX.'mod_filepicker_profiles'; }
 
     public function __construct( \FilePicker $mod )
     {
@@ -20,6 +22,7 @@ class ProfileDAO
         $data = unserialize($row['data']);
         $data['name'] = $row['name'];
         $data['id'] = $row['id'];
+        if( !isset($data['data']) ) $data['data'] = '';
         $data['create_date'] = $row['create_date'];
         $data['modified_date'] = $row['modified_date'];
         $obj = new Profile($data);
@@ -57,15 +60,17 @@ class ProfileDAO
         $sql = 'SELECT * FROM '.self::table_name().' WHERE id = ?';
         $row = $this->_db->GetRow($sql,[ $id ]);
         if( is_array($row) && count($row) ) return $this->profile_from_row($row);
+        return null; // no object
     }
 
     public function loadByName( $name )
     {
-        $name = trim($name);
+        $name = trim((string)$name);
         if( !$name ) throw new \LogicException('Invalid name passed to '.__METHOD__);
         $sql = 'SELECT * FROM '.self::table_name().' WHERE name = ?';
         $row = $this->_db->GetRow($sql,[ $name ]);
         if( is_array($row) && count($row) ) return $this->profile_from_row($row);
+        return null; // no object
     }
 
     public function delete( Profile $profile )
@@ -75,8 +80,8 @@ class ProfileDAO
         $sql = 'DELETE FROM '.self::table_name().' WHERE id = ?';
         $this->_db->Execute( $sql, [ $profile->id ] );
 
-        $profile = $profile->withNewId();
-        return $profile;
+        $obj = $profile->withNewId();
+        return $obj;
     }
 
     protected function _insert( Profile $profile )

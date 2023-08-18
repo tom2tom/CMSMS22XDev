@@ -255,6 +255,9 @@ class CmsLayoutTemplateCategory
     private static function _load_from_data($row)
     {
         $ob = new CmsLayoutTemplateCategory();
+		foreach( ['name','description','item_order'] as $fld ) {
+			if( !isset($row[$fld]) ) $row[$fld] = '';
+		}
         $ob->_data = $row;
         return $ob;
     }

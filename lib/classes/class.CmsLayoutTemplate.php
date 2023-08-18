@@ -805,6 +805,9 @@ listable,created,modified) VALUES (?,?,?,?,?,?,?,?,?,?)';
 	private static function _load_from_data($row,$design_list = [])
 	{
 		$ob = new CmsLayoutTemplate();
+		foreach( ['name','content','description'] as $fld ) {
+			if( !isset($row[$fld]) ) $row[$fld] = '';
+		}
 		$ob->_data = $row;
 		$fn = $ob->get_content_filename();
 		if( is_file($fn) && is_readable($fn) ) {

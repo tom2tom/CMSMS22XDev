@@ -88,22 +88,26 @@ class UserOperations
 			$query = "SELECT user_id, username, password, first_name, last_name, email, active, admin_access
 FROM ".CMS_DB_PREFIX."users ORDER BY username";
 			$dbresult = $db->SelectLimit($query,$limit,$offset);
-
-			while( $dbresult && !$dbresult->EOF ) {
-				$row = $dbresult->fields;
-				$oneuser = new User();
-				$oneuser->id = $row['user_id'];
-				$oneuser->username = $row['username'];
-				$oneuser->firstname = $row['first_name'];
-				$oneuser->lastname = $row['last_name'];
-				$oneuser->email = $row['email'];
-				$oneuser->password = $row['password'];
-				$oneuser->active = $row['active'];
-				$oneuser->adminaccess = $row['admin_access'];
-				$result[] = $oneuser;
-				$dbresult->MoveNext();
+			if( $dbresult ) {
+				while( !$dbresult->EOF ) {
+					$row = $dbresult->fields;
+					foreach( ['username','first_name','last_name','email','password'] as $fld ) {
+						if( $row[$fld] === null ) $row[$fld] = '';
+					}
+					$oneuser = new User();
+					$oneuser->id = $row['user_id'];
+					$oneuser->username = $row['username'];
+					$oneuser->firstname = $row['first_name'];
+					$oneuser->lastname = $row['last_name'];
+					$oneuser->email = $row['email'];
+					$oneuser->password = $row['password'];
+					$oneuser->active = (int)$row['active'];
+					$oneuser->adminaccess = (int)$row['admin_access'];
+					$result[] = $oneuser;
+					$dbresult->MoveNext();
+				}
+				$dbresult->Close();
 			}
-
 			$this->_users = $result;
 		}
 
@@ -125,18 +129,23 @@ FROM ".CMS_DB_PREFIX."users ORDER BY username";
 
 		$query = "SELECT u.user_id, u.username, u.password, u.first_name, u.last_name, u.email, u.active, u.admin_access FROM ".CMS_DB_PREFIX."users u, `".CMS_DB_PREFIX."groups` g, ".CMS_DB_PREFIX."user_groups cg where cg.user_id = u.user_id and cg.group_id = g.group_id and g.group_id =? ORDER BY username";
 		$dbresult = $db->Execute($query, array($groupid));
-
-		while ($dbresult && $row = $dbresult->FetchRow()) {
-			$oneuser = new User();
-			$oneuser->id = $row['user_id'];
-			$oneuser->username = $row['username'];
-			$oneuser->firstname = $row['first_name'];
-			$oneuser->lastname = $row['last_name'];
-			$oneuser->email = $row['email'];
-			$oneuser->password = $row['password'];
-			$oneuser->active = $row['active'];
-			$oneuser->adminaccess = $row['admin_access'];
-			$result[] = $oneuser;
+		if ($dbresult) {
+			while ($row = $dbresult->FetchRow()) {
+				foreach( ['username','first_name','last_name','email','password'] as $fld ) {
+					if( $row[$fld] === null ) $row[$fld] = '';
+				}
+				$oneuser = new User();
+				$oneuser->id = $row['user_id'];
+				$oneuser->username = $row['username'];
+				$oneuser->firstname = $row['first_name'];
+				$oneuser->lastname = $row['last_name'];
+				$oneuser->email = $row['email'];
+				$oneuser->password = $row['password'];
+				$oneuser->active = (int)$row['active'];
+				$oneuser->adminaccess = (int)$row['admin_access'];
+				$result[] = $oneuser;
+			}
+			$dbresult->Close();
 		}
 
 		return $result;
@@ -211,19 +220,24 @@ FROM ".CMS_DB_PREFIX."users ORDER BY username";
 
 		$query = "SELECT username, password, active, first_name, last_name, admin_access, email FROM ".CMS_DB_PREFIX."users WHERE user_id = ?";
 		$dbresult = $db->Execute($query, array($id));
-
-		while ($dbresult && $row = $dbresult->FetchRow()) {
-			$oneuser = new User();
-			$oneuser->id = $id;
-			$oneuser->username = $row['username'];
-			$oneuser->password = $row['password'];
-			$oneuser->firstname = $row['first_name'];
-			$oneuser->lastname = $row['last_name'];
-			$oneuser->email = $row['email'];
-			$oneuser->adminaccess = $row['admin_access'];
-			$oneuser->active = $row['active'];
-			$result = $oneuser;
-		}
+        if( $dbresult ) {
+            while( $row = $dbresult->FetchRow() ) {
+                foreach( ['username','first_name','last_name','email','password'] as $fld ) {
+                    if( $row[$fld] === null ) $row[$fld] = '';
+                }
+                $oneuser = new User();
+                $oneuser->id = $id;
+                $oneuser->username = $row['username'];
+                $oneuser->password = $row['password'];
+                $oneuser->firstname = $row['first_name'];
+                $oneuser->lastname = $row['last_name'];
+                $oneuser->email = $row['email'];
+                $oneuser->adminaccess = (int)$row['admin_access'];
+                $oneuser->active = (int)$row['active'];
+                $result = $oneuser;
+            }
+            $dbresult->Close();
+        }
 
 		$this->_saved_users[$id] = $result;
 		return $result;
@@ -276,8 +290,7 @@ FROM ".CMS_DB_PREFIX."users ORDER BY username";
 		$query = "UPDATE ".CMS_DB_PREFIX."users SET username = ?, password = ?, active = ?, modified_date = ".$time.", first_name = ?, last_name = ?, email = ?, admin_access = ? WHERE user_id = ?";
 		//$dbresult = $db->Execute($query, array($user->username, $user->password, $user->active, $user->firstname, $user->lastname, $user->email, $user->adminaccess, $user->id));
 		$dbresult = $db->Execute($query, array($user->username, $user->password, $user->active, $user->firstname, $user->lastname, $user->email, 1, $user->id));
-		if ($dbresult) return true;
-
+		if( $dbresult ) return true;
 		return false;
 	}
 
@@ -308,7 +321,7 @@ FROM ".CMS_DB_PREFIX."users ORDER BY username";
 		$query = "DELETE FROM ".CMS_DB_PREFIX."userprefs where user_id = ?";
 		$dbresult = $db->Execute($query, array($id));
 
-		if ($dbresult) return true;
+		if( $dbresult ) return true;
 		return false;
 	}
 
@@ -317,7 +330,7 @@ FROM ".CMS_DB_PREFIX."users ORDER BY username";
 	 *
 	 * @since 0.6.1
 	 * @param mixed $id Id of the user to count
-	 * @return mixed Number of pages they own.  0 if any problems.
+	 * @return int Number of pages they own.  0 if any problems.
 	 */
 	function CountPageOwnershipByID($id)
 	{
@@ -325,13 +338,14 @@ FROM ".CMS_DB_PREFIX."users ORDER BY username";
 		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
 
-		$query = "SELECT count(*) AS count FROM ".CMS_DB_PREFIX."content WHERE owner_id = ?";
+		$query = "SELECT count(*) AS num FROM ".CMS_DB_PREFIX."content WHERE owner_id = ?";
 		$dbresult = $db->Execute($query, array($id));
 
-		if ($dbresult && $dbresult->RecordCount() > 0) {
+		if( $dbresult && $dbresult->RecordCount() > 0 ) {
 			$row = $dbresult->FetchRow();
-			if (isset($row["count"])) $result = $row["count"];
+			if( isset($row["num"]) ) $result = $row["num"];
 		}
+		if( $dbresult ) $dbresult->Close();
 
 		return $result;
 	}

@@ -170,7 +170,11 @@ final class news_field
     $db = cmsms()->GetDb();
     $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_news_fielddefs WHERE id = ?';
     $row = $db->GetRow($query,array($id));
-    if( $row['extra'] ) $row['extra'] = unserialize($row['extra']);
+    foreach( ['name','type'] as $fld ) {
+        if( $row[$fld] === null ) $row[$fld] = '';
+    }
+    if( $row['extra'] ) { $row['extra'] = unserialize($row['extra']); }
+    if( !$row['extra'] ) { $row['extra'] = ''; }
     $obj = new news_field();
     $obj->_data = $row; // TODO any sanitisation hereabouts?
     return $obj;

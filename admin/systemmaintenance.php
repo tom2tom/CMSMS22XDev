@@ -184,32 +184,52 @@ if (isset($_POST["addaliases"])) {
   $count = 0;
   $query = "SELECT * FROM " . CMS_DB_PREFIX . "content";
   $allcontent = $db->Execute($query);
-  while ($contentpiece = $allcontent->FetchRow()) {
-    $content_id = $contentpiece["content_id"];
-    if (trim($contentpiece["content_alias"]) == '' && $contentpiece['type'] != 'separator' ) {
-
-      $alias = trim($contentpiece["menu_text"]);
-      if ($alias == '') {
-        $alias = trim($contentpiece["content_name"]);
+  if ($allcontent) {
+    while ($contentpiece = $allcontent->FetchRow()) {
+      foreach( [
+        'content_name',
+        'type',
+        'hierarchy',
+        'menu_text',
+        'content_alias',
+        'id_hierarchy',
+        'hierarchy_path',
+        'prop_names',
+        'metadata',
+        'titleattribute',
+        'tabindex',
+        'accesskey',
+        'page_url'
+      ] as $fld ) {
+        if ($contentpiece[$fld] === null) $contentpiece[$fld] = '';
       }
+      $content_id = (int)$contentpiece['content_id'];
+      if (trim($contentpiece['content_alias']) == '' && $contentpiece['type'] != 'separator' ) {
 
-      $tolower = true;
-      $alias = munge_string_to_url($alias, $tolower);
-      if ($contentops->CheckAliasError($alias, $content_id)) {
-        $alias_num_add = 2;
-        // If a '-2' version of the alias already exists
-        // Check the '-3' version etc.
-        while ($contentops->CheckAliasError($alias . '-' . $alias_num_add)) {
-          $alias_num_add++;
+        $alias = trim($contentpiece['menu_text']);
+        if ($alias == '') {
+          $alias = trim($contentpiece['content_name']);
         }
-        $alias .= '-' . $alias_num_add;
-      }
-      $query2 = "UPDATE " . CMS_DB_PREFIX . "content SET content_alias=? WHERE content_id=?";
-      $params2 = array($alias, $content_id);
-      $dbresult = $db->Execute($query2, $params2);
-      $count++;
 
+        $tolower = true;
+        $alias = munge_string_to_url($alias, $tolower);
+        if ($contentops->CheckAliasError($alias, $content_id)) {
+          $alias_num_add = 2;
+          // If a '-2' version of the alias already exists
+          // Check the '-3' version etc.
+          while ($contentops->CheckAliasError($alias . '-' . $alias_num_add)) {
+            $alias_num_add++;
+          }
+          $alias .= '-' . $alias_num_add;
+        }
+        $query2 = "UPDATE " . CMS_DB_PREFIX . "content SET content_alias=? WHERE content_id=?";
+        $params2 = array($alias, $content_id);
+        $dbresult = $db->Execute($query2, $params2);
+        $count++;
+
+      }
     }
+    $allcontent->Close();
   }
   audit('', 'System maintenance', 'Fixed pages missing aliases, count:' . $count);
   $themeObject->ShowMessage($count . " " . lang("sysmain_aliasesfixed"));
@@ -221,15 +241,19 @@ if (isset($_POST["fixtypes"])) {
   //$contentops->SetAllHierarchyPositions();
 
   $count = 0;
-  $query = "SELECT * FROM " . CMS_DB_PREFIX . "content";
+  $query = "SELECT content_id,type FROM " . CMS_DB_PREFIX . "content";
   $allcontent = $db->Execute($query);
-  while ($contentpiece = $allcontent->FetchRow()) {
-    if (!in_array($contentpiece["type"], $simpletypes)) {
-      $query2 = "UPDATE " . CMS_DB_PREFIX . "content SET type='content' WHERE content_id=?";
-      $params2 = array($contentpiece["content_id"]);
-      $dbresult = $db->Execute($query2, $params2);
-      $count++;
+  if ($allcontent) {
+    while ($contentpiece = $allcontent->FetchRow()) {
+      if (!isset($contentpiece['type']) ||
+          !in_array($contentpiece['type'], $simpletypes)) {
+        $query2 = "UPDATE " . CMS_DB_PREFIX . "content SET type='content' WHERE content_id=?";
+        $params2 = array($contentpiece['content_id']);
+        $dbresult = $db->Execute($query2, $params2);
+        $count++;
+      }
     }
+    $allcontent->Close();
   }
 
   audit('', 'System maintenance', 'Converted pages with invalid content types, count:' . $count);
@@ -243,17 +267,35 @@ $allcontent = $db->Execute($query);
 $pages = array();
 $withoutalias = array();
 $invalidtypes = array();
-if( is_object($allcontent) ) {
+if ($allcontent) {
   while ($contentpiece = $allcontent->FetchRow()) {
-    $pages[] = $contentpiece["content_name"];
-    if (trim($contentpiece["content_alias"]) == "" && $contentpiece['type'] != 'separator') {
+    foreach( [
+      'content_name',
+      'type',
+      'hierarchy',
+      'menu_text',
+      'content_alias',
+      'id_hierarchy',
+      'hierarchy_path',
+      'prop_names',
+      'metadata',
+      'titleattribute',
+      'tabindex',
+      'accesskey',
+      'page_url'
+    ] as $fld ) {
+      if ($contentpiece[$fld] === null) $contentpiece[$fld] = '';
+    }
+    $pages[] = $contentpiece['content_name'];
+    if (trim($contentpiece['content_alias']) == '' && $contentpiece['type'] != 'separator') {
       $withoutalias[] = $contentpiece;
     }
-    if (!in_array($contentpiece["type"], $simpletypes)) {
+    if (!in_array($contentpiece['type'], $simpletypes)) {
       $invalidtypes[] = $contentpiece;
     }
     //print_r($contentpiece);
   }
+  $allcontent->Close();
 }
 $smarty->assign_by_ref("pagesmissingalias", $withoutalias);
 $smarty->assign_by_ref("pageswithinvalidtype", $invalidtypes);
@@ -263,30 +305,30 @@ $smarty->assign("invalidtypescount", count($invalidtypes));
 $smarty->assign("withoutaliascount", count($withoutalias));
 
 /*
-*
-* Changelog
-*
-*/
+ *
+ * Changelog
+ *
+ */
 $ch_filename = cms_join_path(CMS_BASE, 'doc', 'CHANGELOG.txt');
 $changelog = @file($ch_filename);
 
 if (is_readable($ch_filename)) {
 
-	for ($i = 0; $i < count($changelog); $i++) {
-	  if (substr($changelog[$i], 0, 7) == "Version") {
-		  if ($i == 0) {
-			  $changelog[$i] = "<div class=\"version\"><h3>" . $changelog[$i] . "</h3>";
-		  } else {
-			  $changelog[$i] = "</div><div class=\"version\"><h3>" . $changelog[$i] . "</h3>";
-		  }
+    for ($i = 0; $i < count($changelog); $i++) {
+      if (substr($changelog[$i], 0, 7) == "Version") {
+        if ($i == 0) {
+          $changelog[$i] = "<div class=\"version\"><h3>" . $changelog[$i] . "</h3>";
+        } else {
+          $changelog[$i] = "</div><div class=\"version\"><h3>" . $changelog[$i] . "</h3>";
+        }
 
-	  }
-	}
+      }
+    }
 
-	$changelog = implode("<br>", $changelog);
+    $changelog = implode("<br>", $changelog);
 
-	$smarty->assign("changelog", $changelog);
-	$smarty->assign("changelogfilename", $ch_filename);
+    $smarty->assign("changelog", $changelog);
+    $smarty->assign("changelogfilename", $ch_filename);
 
 }
 

@@ -1131,6 +1131,16 @@ abstract class ContentBase
 		$dbr = $db->GetArray($query,array((int)$this->mId));
 
 		foreach( $dbr as $row ) {
+			foreach( [
+			'type',
+			'prop_name',
+			'param1',
+			'param2',
+			'param3',
+			'content'
+			] as $fld ) {
+				if( $row[$fld] === null ) $row[$fld] = '';
+			}
 			$this->_props[$row['prop_name']] = $row['content'];
 		}
 		return true;
@@ -1272,17 +1282,34 @@ abstract class ContentBase
 	 */
 	function LoadFromData(&$data, $loadProperties = false)
 	{
+		foreach( [
+			'content_name',
+			'type',
+			'hierarchy',
+			'menu_text',
+			'content_alias',
+			'id_hierarchy',
+			'hierarchy_path',
+			'prop_names',
+			'metadata',
+			'titleattribute',
+			'tabindex',
+			'accesskey',
+			'page_url'
+		] as $fld ) {
+			if( !isset($data[$fld]) ) $data[$fld] = '';
+		}
 		$result = true;
-		$this->mId						= $data["content_id"];
+		$this->mId						= (int)$data["content_id"];
 		$this->mName					= $data["content_name"];
 		$this->mAlias					= $data["content_alias"];
 		$this->mOldAlias				= $data["content_alias"];
-		$this->mOwner					= $data["owner_id"];
-		$this->mParentId				= $data["parent_id"];
-		$this->mOldParentId				= $data["parent_id"];
-		$this->mTemplateId				= $data["template_id"];
-		$this->mItemOrder				= $data["item_order"];
-		$this->mOldItemOrder			= $data["item_order"];
+		$this->mOwner					= (int)$data["owner_id"];
+		$this->mParentId				= (int)$data["parent_id"];
+		$this->mOldParentId				= (int)$data["parent_id"];
+		$this->mTemplateId				= (int)$data["template_id"];
+		$this->mItemOrder				= (int)$data["item_order"];
+		$this->mOldItemOrder			= (int)$data["item_order"];
 		$this->mMetadata				= $data['metadata'];
 		$this->mHierarchy				= $data["hierarchy"];
 		$this->mIdHierarchy				= $data["id_hierarchy"];
@@ -1297,7 +1324,7 @@ abstract class ContentBase
 		$this->mCachable				= ($data["cachable"] == 1);
 		if( isset($data['secure']) ) $this->mSecure = $data["secure"];
 		if( isset($data['page_url']) ) $this->mURL  = $data["page_url"];
-		$this->mLastModifiedBy			= $data["last_modified_by"];
+		$this->mLastModifiedBy			= (int)$data["last_modified_by"];
 		$this->mCreationDate			= $data["create_date"];
 		$this->mModifiedDate			= $data["modified_date"];
 
@@ -2265,7 +2292,6 @@ abstract class ContentBase
 	 * @param string $name The property name
 	 * @param int    $priority The priority
 	 * @param bool   $is_required Whether this field is required for this content type
-	 * @param string  (optional) unused.
 	 * @deprecated
 	 */
 	protected function AddBaseProperty($name,$priority,$is_required = 0)
