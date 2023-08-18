@@ -1,5 +1,5 @@
 <?php
-#CMS Made Simple initialization script 
+#CMS Made Simple initialization script
 #(c) 2011 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
@@ -137,14 +137,14 @@ require_once($dirname.DIRECTORY_SEPARATOR.'std_hooks.php');
 $obj = new \CMSMS\internal\global_cachable('schema_version',
                function() {
                    $db = \CmsApp::get_instance()->GetDb();
-                   $query = 'SELECT version FROM '.CmsApp::get_instance()->GetDbPrefix().'version';
+                   $query = 'SELECT version FROM '.CMS_DB_PREFIX.'version';
                    return $db->GetOne($query);
                });
 \CMSMS\internal\global_cache::add_cachable($obj);
 $obj = new \CMSMS\internal\global_cachable('latest_content_modification',
                function() {
                    $db = \CmsApp::get_instance()->GetDb();
-                   $query = 'SELECT modified_date FROM '.CmsApp::get_instance()->GetDbPrefix().'content ORDER BY modified_date DESC';
+                   $query = 'SELECT modified_date FROM '.CMS_DB_PREFIX.'content ORDER BY modified_date DESC';
                    $tmp = $db->GetOne($query);
                    return $db->UnixTimeStamp($tmp);
                });
@@ -152,23 +152,21 @@ $obj = new \CMSMS\internal\global_cachable('latest_content_modification',
 $obj = new \CMSMS\internal\global_cachable('default_content',
                function() {
                    $db = \CmsApp::get_instance()->GetDb();
-                   $query = 'SELECT content_id FROM '.CmsApp::get_instance()->GetDbPrefix().'content WHERE default_content = 1';
-                   $tmp = $db->GetOne($query);
-                   return $tmp;
+                   $query = 'SELECT content_id FROM '.CMS_DB_PREFIX.'content WHERE default_content = 1';
+                   return $db->GetOne($query);
                });
 \CMSMS\internal\global_cache::add_cachable($obj);
 $obj = new \CMSMS\internal\global_cachable('modules',
                function() {
                    $db = \CmsApp::get_instance()->GetDb();
-                   $query = 'SELECT * FROM '.CmsApp::get_instance()->GetDbPrefix().'modules ORDER BY module_name';
-                   $tmp = $db->GetArray($query);
-                   return $tmp;
+                   $query = 'SELECT * FROM '.CMS_DB_PREFIX.'modules ORDER BY module_name';
+                   return $db->GetArray($query);
                });
 \CMSMS\internal\global_cache::add_cachable($obj);
 $obj = new \CMSMS\internal\global_cachable('module_deps',
                function() {
                    $db = \CmsApp::get_instance()->GetDb();
-                   $query = 'SELECT parent_module,child_module,minimum_version FROM '.CmsApp::get_instance()->GetDbPrefix().'module_deps ORDER BY parent_module';
+                   $query = 'SELECT parent_module,child_module,minimum_version FROM '.CMS_DB_PREFIX.'module_deps ORDER BY parent_module';
                    $tmp = $db->GetArray($query);
                    if( !is_array($tmp) || !count($tmp) ) return [];
                    $out = array();
