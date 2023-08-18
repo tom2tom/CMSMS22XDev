@@ -480,7 +480,7 @@ $modops = ModuleOperations::get_instance();
 $modops->UninstallModule('ThemeManager');
 
 verbose_msg('upgrading cms_groups table');
-$sqlarray = $dbdict->AddColumnSQL(CMS_DB_PREFIX.'groups','group_desc C(255)');
+$sqlarray = $dbdict->AddColumnSQL('`'.CMS_DB_PREFIX.'groups`','group_desc C(255)');
 $dbdict->ExecuteSQLArray($sqlarray);
 
 verbose_msg('Remove the CMSPrinting module from the database');

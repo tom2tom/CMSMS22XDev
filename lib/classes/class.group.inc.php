@@ -160,7 +160,7 @@ VALUES (?,?,?,?,".$time.", ".$time.")";
         if( $id < 1 ) throw new \CmsInvalidDataException(lang('missingparams'));
 
         $db = CmsApp::get_instance()->GetDb();
-        $query = "SELECT group_id, group_name, group_desc, active FROM ".CMS_DB_PREFIX."groups WHERE group_id = ? ORDER BY group_id";
+        $query = "SELECT group_id, group_name, group_desc, active FROM `".CMS_DB_PREFIX."groups` WHERE group_id = ? ORDER BY group_id";
         $row = $db->GetRow($query, array($id));
         foreach( ['group_name', 'group_desc'] as $fld ) {
             if( $row[$fld] === null ) $row[$fld] = '';
