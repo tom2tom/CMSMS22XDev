@@ -141,7 +141,7 @@ final class cms_module_smarty_plugin_manager
 
 	/**
 	 * Attempt to load a specific plugin
-	 * This is called by the smarty class when looking for an unknwon plugin.
+	 * This is called by the smarty class when looking for an unknown plugin.
 	 *
 	 * @internal
 	 */
