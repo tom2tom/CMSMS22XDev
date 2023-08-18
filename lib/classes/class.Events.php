@@ -447,7 +447,7 @@ final class Events
 	 */
 	static function GetEventHelp($eventname)
 	{
-		return lang('event_help_'.strtolower($eventname));
+		return lang('event_help_'.strtolower((string)$eventname));
 	}
 
 
@@ -461,7 +461,7 @@ final class Events
 	 */
 	public static function GetEventDescription($eventname)
 	{
-		return lang('event_desc_'.strtolower($eventname));
+		return lang('event_desc_'.strtolower((string)$eventname));
 	}
 } // class
 

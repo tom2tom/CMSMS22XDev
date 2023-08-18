@@ -189,16 +189,17 @@ function author_pages($userid)
  */
 function audit($itemid, $itemname, $action)
 {
+    if( !isset($itemname) ) $itemname = '';
     if( !isset($action) ) $action = '-- unset --';
     $app = cmsms();
     $db = $app->GetDb();
 
     $userid = get_userid(FALSE);
+    if( $userid < 1 ) $userid = 0;
     $username = get_username(FALSE);
     if( $itemid == '' ) $itemid = -1;
-    if( $userid < 1 ) $userid = 0;
 
-    $ip_addr = null; // empty table-value
+    $ip_addr = '';
     if( $userid > 0 && !$app->is_cli() ) $ip_addr = cms_utils::get_real_ip();
 
     $query = "INSERT INTO ".CMS_DB_PREFIX."adminlog (timestamp, user_id, username, item_id, item_name, action, ip_addr) VALUES (?,?,?,?,?,?,?)";
