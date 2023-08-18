@@ -82,6 +82,7 @@ class CmsLayoutCollection
     public function get_id()
     {
         if( isset($this->_data['id']) ) return $this->_data['id'];
+        return 0;
     }
 
 	/**
@@ -91,6 +92,7 @@ class CmsLayoutCollection
     public function get_name()
     {
         if( isset($this->_data['name']) ) return $this->_data['name'];
+        return '';
     }
 
 	/**
@@ -116,6 +118,7 @@ class CmsLayoutCollection
     public function get_default()
     {
         if( isset($this->_data['dflt']) ) return $this->_data['dflt'];
+        return FALSE;
     }
 
 
@@ -141,6 +144,7 @@ class CmsLayoutCollection
     public function get_description()
     {
         if( isset($this->_data['description']) ) return $this->_data['description'];
+        return '';
     }
 
 	/**
@@ -164,6 +168,7 @@ class CmsLayoutCollection
     public function get_created()
     {
         if( isset($this->_data['created']) ) return $this->_data['created'];
+        return 0;
     }
 
 	/**
@@ -174,6 +179,7 @@ class CmsLayoutCollection
     public function get_modified()
     {
         if( isset($this->_data['modified']) ) return $this->_data['modified'];
+        return 0;
     }
 
 	/**
@@ -541,16 +547,18 @@ class CmsLayoutCollection
     protected static function _load_from_data($row)
     {
         $ob = new CmsLayoutCollection();
+        foreach( ['name','description'] as $fld ) {
+            if( !isset($row[$fld]) ) $row[$fld] = '';
+        }
         $css = [];
         $tpls = [];
-        if( isset($row['css']) ) {
+        if( !empty($row['css']) ) {
             $css = $row['css'];
-            unset($row['css']);
         }
-        if( isset($row['templates']) ) {
+        if( !empty($row['templates']) ) {
             $tpls = $row['templates'];
-            unset($row['templates']);
         }
+        unset($row['css'],$row['templates']);
         $ob->_data = $row;
         if( is_array($css) && count($css) ) $ob->_css_assoc = $css;
         if( is_array($tpls) && count($tpls) ) $ob->_tpl_assoc = $tpls;
@@ -649,7 +657,7 @@ class CmsLayoutCollection
             self::$_raw_cache = $cache;
 
             $out = array();
-            foreach( $cache as $key => $row ) {
+            foreach( $cache as $row ) {
 				$out[] = self::_load_from_data($row);
             }
 			return $out;
