@@ -146,7 +146,7 @@ final class Events
                       FROM ".CMS_DB_PREFIX."event_handlers eh
 				      INNER JOIN ".CMS_DB_PREFIX."events e ON e.event_id = eh.event_id
 				      ORDER BY eh.handler_order ASC";
-                return $db->GetArray($q);
+                return $db->GetArray($q);//TODO replace null string-values with ''
             });
         \CMSMS\internal\global_cache::add_cachable($obj);
     }
@@ -193,18 +193,19 @@ final class Events
 	/**
 	 * Get a list of all of the known events.
 	 *
-	 * @return mixed If successful, a list of all the known events.  If it fails, false
+	 * @return array of all the known events, or empty
 	 */
 	public static function ListEvents()
 	{
 		$db = CmsApp::get_instance()->GetDb();
 
+		//Non eof these string-fields may be null-valued
 		$q = 'SELECT e.originator, e.event_name, e.event_id, count(eh.event_id) as usage_count FROM '.CMS_DB_PREFIX.
 			'events e left outer join '.CMS_DB_PREFIX.
 			'event_handlers eh on e.event_id=eh.event_id GROUP BY e.originator, e.event_name, e.event_id ORDER BY originator,event_name';
 
 		$dbresult = $db->Execute( $q );
-		if( $dbresult == false ) return false;
+		if( $dbresult == false ) return [];
 
 		$result = array();
 		while( $row = $dbresult->FetchRow() ) {
@@ -212,6 +213,7 @@ final class Events
 			if(!cms_utils::module_available($row['originator']) && $row['originator'] !== 'Core') continue;
 			$result[] = $row;
 		}
+		$dbresult->Close();
 		return $result;
 	}
 

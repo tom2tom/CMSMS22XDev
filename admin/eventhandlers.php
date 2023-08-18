@@ -111,7 +111,7 @@ switch( $action ) {
 		echo lang('filterbymodule').': <select name="modulefilter">' . "\n";
 		echo '<option value="">'.lang('showall').'</option>';
 		$modlist = array();
-		if( is_array($events) )	{
+		if( $events ) {
 			foreach( $events as $oneevent )	{
 				if (!in_array($oneevent['originator'], $modlist)) $modlist[] = $oneevent['originator'];
 			}
