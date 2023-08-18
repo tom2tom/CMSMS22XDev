@@ -142,73 +142,75 @@ if (isset($params['searchinput']) && $params['searchinput'] != '') {
     }
     $query .= " ORDER BY nb DESC, total_weight DESC";
 
-    $result = $db->Execute($query);
-    $hm = $gCms->GetHierarchyManager();
     $col = new SearchItemCollection();
-
-    while ($result && !$result->EOF) {
-        //Handle internal (templates, content, etc) first...
-        if ($result->fields['module_name'] == $this->GetName()) {
-            if ($result->fields['extra_attr'] == 'content') {
-                //Content is easy... just grab it out of hierarchy manager and toss the url in
-                $node = $hm->sureGetNodeById($result->fields['content_id']);
-                if (isset($node)) {
-                    $content = $node->GetContent();
-                    if ($content && $content->Active()) $col->AddItem($content->Name(), $content->GetURL(), $content->Name(), $result->fields['total_weight'], $result->fields['extra_attr'], $result->fields['content_id']);
+    $result = $db->Execute($query);
+    if ($result) {
+        $hm = $gCms->GetHierarchyManager();
+        while (!$result->EOF) {
+            //Handle internal (templates, content, etc) first...
+            if ($result->fields['module_name'] == $this->GetName()) {
+                if ($result->fields['extra_attr'] == 'content') {
+                    //Content is easy... just grab it out of hierarchy manager and toss the url in
+                    $node = $hm->sureGetNodeById($result->fields['content_id']);
+                    if (isset($node)) {
+                        $content = $node->GetContent();
+                        if ($content && $content->Active()) $col->AddItem($content->Name(), $content->GetURL(), $content->Name(), $result->fields['total_weight'], $result->fields['extra_attr'], $result->fields['content_id']);
+                    }
                 }
             }
-        }
-        else {
-            $thepageid = $this->GetPreference('resultpage',-1);
-            if( $thepageid == -1 ) $thepageid = $returnid;
-            if( isset($params['detailpage']) ) {
-                $tmppageid = '';
-                $manager = $gCms->GetHierarchyManager();
-                $node = $manager->sureGetNodeByAlias($params['detailpage']);
-                if (isset($node)) {
-                    $tmppageid = $node->getID();
+            else {
+                $thepageid = $this->GetPreference('resultpage',-1);
+                if( $thepageid == -1 ) $thepageid = $returnid;
+                if( isset($params['detailpage']) ) {
+                    $tmppageid = '';
+                    $manager = $gCms->GetHierarchyManager();
+                    $node = $manager->sureGetNodeByAlias($params['detailpage']);
+                    if (isset($node)) {
+                        $tmppageid = $node->getID();
+                    }
+                    else {
+                        $node = $manager->sureGetNodeById($params['detailpage']);
+                        if (isset($node)) $tmppageid= $params['detailpage'];
+                    }
+                    if( $tmppageid ) $thepageid = $tmppageid;
                 }
-                else {
-                    $node = $manager->sureGetNodeById($params['detailpage']);
-                    if (isset($node)) $tmppageid= $params['detailpage'];
-                }
-                if( $tmppageid ) $thepageid = $tmppageid;
-            }
-            if( $thepageid == -1 ) $thepageid = $returnid;
+                if( $thepageid == -1 ) $thepageid = $returnid;
 
-            //Start looking at modules...
-            $modulename = $result->fields['module_name'];
-            $moduleobj = $this->GetModuleInstance($modulename);
-            if ($moduleobj != FALSE) {
-                if (method_exists($moduleobj, 'SearchResultWithParams' )) {
-                    // search through the params, for all the passthru ones
-                    // and get only the ones matching this module name
-                    $parms = array();
-                    foreach( $params as $key => $value ) {
-                        $str = 'passthru_'.$modulename.'_';
-                        if( preg_match( "/$str/", $key ) > 0 ) {
-                            $name = substr($key,strlen($str));
-                            if( $name != '' ) $parms[$name] = $value;
+                //Start looking at modules...
+                $modulename = $result->fields['module_name'];
+                $moduleobj = $this->GetModuleInstance($modulename);
+                if ($moduleobj != FALSE) {
+                    if (method_exists($moduleobj, 'SearchResultWithParams' )) {
+                        // search through the params, for all the passthru ones
+                        // and get only the ones matching this module name
+                        $parms = array();
+                        foreach( $params as $key => $value ) {
+                            $str = 'passthru_'.$modulename.'_';
+                            if( preg_match( "/$str/", $key ) > 0 ) {
+                                $name = substr($key,strlen($str));
+                                if( $name != '' ) $parms[$name] = $value;
+                            }
+                        }
+                        $searchresult = $moduleobj->SearchResultWithParams( $thepageid, $result->fields['content_id'],
+                                                                            $result->fields['extra_attr'], $parms);
+                        if (count($searchresult) == 3) {
+                            $col->AddItem($searchresult[0], $searchresult[2], $searchresult[1],
+                                          $result->fields['total_weight'], $modulename, $result->fields['content_id']);
                         }
                     }
-                    $searchresult = $moduleobj->SearchResultWithParams( $thepageid, $result->fields['content_id'],
-                                                                        $result->fields['extra_attr'], $parms);
-                    if (count($searchresult) == 3) {
-                        $col->AddItem($searchresult[0], $searchresult[2], $searchresult[1],
-                                      $result->fields['total_weight'], $modulename, $result->fields['content_id']);
-                    }
-                }
-                else if (method_exists($moduleobj, 'SearchResult')) {
-                    $searchresult = $moduleobj->SearchResult( $thepageid, $result->fields['content_id'], $result->fields['extra_attr']);
-                    if (count($searchresult) == 3) {
-                        $col->AddItem($searchresult[0], $searchresult[2], $searchresult[1],
-                                      $result->fields['total_weight'], $modulename, $result->fields['content_id']);
+                    else if (method_exists($moduleobj, 'SearchResult')) {
+                        $searchresult = $moduleobj->SearchResult( $thepageid, $result->fields['content_id'], $result->fields['extra_attr']);
+                        if (count($searchresult) == 3) {
+                            $col->AddItem($searchresult[0], $searchresult[2], $searchresult[1],
+                                          $result->fields['total_weight'], $modulename, $result->fields['content_id']);
+                        }
                     }
                 }
             }
-        }
 
-        $result->MoveNext();
+            $result->MoveNext();
+        }
+        $result->Close();
     }
 
     $col->CalculateWeights();

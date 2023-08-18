@@ -19,7 +19,10 @@ $query = 'SELECT b.word
 $dbr = $db->SelectLimit( $query, $wordcount, 0 );
 
 $wordlist = array();
-while( $dbr && ($row = $dbr->FetchRow() ) ) {
-    $wordlist[] = $row['word'];
+if( $dbr ) {
+    while( ($row = $dbr->FetchRow() ) ) {
+        $wordlist[] = $row['word'];
+    }
+    $dbr ->Close();
 }
 echo implode(',',$wordlist);

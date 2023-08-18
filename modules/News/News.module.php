@@ -205,15 +205,17 @@ class News extends CMSModule
 
         $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_news WHERE searchable = 1 AND status = ? ORDER BY news_date';
         $result = $db->Execute($query,array('published'));
-
-        while ($result && !$result->EOF) {
-            if ($result->fields['status'] == 'published') {
-                $module->AddWords($this->GetName(),
-                                  $result->fields['news_id'], 'article',
-                                  $result->fields['news_data'] . ' ' . $result->fields['summary'] . ' ' . $result->fields['news_title'] . ' ' . $result->fields['news_title'],
-                                  ($result->fields['end_time'] != NULL && $this->GetPreference('expired_searchable',0) == 0) ? $db->UnixTimeStamp($result->fields['end_time']) : NULL); //null for no datetime field value
+        if ($result) {
+            while (!$result->EOF) {
+                if ($result->fields['status'] == 'published') {
+                    $module->AddWords($this->GetName(),
+                                      $result->fields['news_id'], 'article',
+                                      $result->fields['news_data'] . ' ' . $result->fields['summary'] . ' ' . $result->fields['news_title'] . ' ' . $result->fields['news_title'],
+                                      ($result->fields['end_time'] != NULL && $this->GetPreference('expired_searchable',0) == 0) ? $db->UnixTimeStamp($result->fields['end_time']) : NULL); //null for no datetime field value
+                }
+                $result->MoveNext();
             }
-            $result->MoveNext();
+            $result->Close();
         }
     }
 

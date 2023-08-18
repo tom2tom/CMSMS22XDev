@@ -277,11 +277,14 @@ $statusdropdown[$this->Lang('draft')] = 'draft';
 $statusdropdown[$this->Lang('published')] = 'published';
 
 $categorylist = array();
-$query = "SELECT * FROM " . CMS_DB_PREFIX . "module_news_categories ORDER BY hierarchy";
+$query = "SELECT news_category_id,long_name FROM " . CMS_DB_PREFIX . "module_news_categories ORDER BY hierarchy";
 $dbresult = $db->Execute($query);
-
-while ($dbresult && $row = $dbresult->FetchRow()) {
-    $categorylist[$row['long_name']] = $row['news_category_id'];
+if ($dbresult) {
+    while ($row = $dbresult->FetchRow()) {
+        if ($row['long_name'] === null) $row['long_name'] = '';
+        $categorylist[$row['long_name']] = $row['news_category_id'];
+    }
+    $dbresult->Close();
 }
 
 
@@ -289,57 +292,64 @@ while ($dbresult && $row = $dbresult->FetchRow()) {
 $query = 'SELECT * FROM ' . CMS_DB_PREFIX . 'module_news_fielddefs ORDER BY item_order';
 $dbr = $db->Execute($query);
 $custom_flds = array();
+if ($dbr) {
+    while (($row = $dbr->FetchRow())) {
+        foreach (['name','type','extra'] as $fld) {
+            if ($row[$fld] === null) $row[$fld] = '';
+        }
+        if (isset($row['extra']) && $row['extra']) {
+            $row['extra'] = unserialize($row['extra']);
+            if (!$row['extra']) $row['extra'] = '';
+        }
 
-while ($dbr && ($row = $dbr->FetchRow())) {
-    if (isset($row['extra']) && $row['extra'])
-        $row['extra'] = unserialize($row['extra']);
+        $options = [];
+        if (isset($row['extra']['options'])) {
+            $options = $row['extra']['options'];
+        }
+        $value = isset($params['customfield'][$row['id']]) && in_array($params['customfield'][$row['id']], $params['customfield']) ? $params['customfield'][$row['id']] : '';
 
-    $options = [];
-    if (isset($row['extra']['options']))
-        $options = $row['extra']['options'];
-
-    $value = isset($params['customfield'][$row['id']]) && in_array($params['customfield'][$row['id']], $params['customfield']) ? $params['customfield'][$row['id']] : '';
-
-    if ($row['type'] == 'file') {
-        $name = "customfield_" . $row['id'];
-    } else {
-        $name = "customfield[" . $row['id'] . "]";
-    }
-
-    $obj = new stdClass();
-
-    $obj->value    = $value;
-    $obj->type     = $row['type'];
-    $obj->nameattr = $id . $name;
-    $obj->idattr   = 'customfield_' . $row['id'];
-    $obj->prompt   = $row['name'];
-    $obj->size     = min(80, (int)$row['max_length']);
-    $obj->max_len  = max(1, (int)$row['max_length']);
-    $obj->options  = $options;
-    // FIXME - If we create inputs with hmtl markup in smarty template, whats the use of switch and form API here?
-    /*
-    switch( $row['type'] ) {
-        case 'textbox' :
-            $size = min(50, $row['max_length']);
-            $obj->field = $this->CreateInputText($id, $name, $value, $size, $row['max_length']);
-            break;
-        case 'checkbox' :
-            $obj->field = $this->CreateInputHidden($id, $name, $value != '' ? $value : '0') . $this->CreateInputCheckbox($id, $name, '1', $value != '' ? $value : '0');
-            break;
-        case 'textarea' :
-            $obj->field = $this->CreateTextArea(true, $id, $value, $name);
-            break;
-        case 'file' :
+        if ($row['type'] == 'file') {
             $name = "customfield_" . $row['id'];
-            $obj->field = $this->CreateFileUploadInput($id, $name);
-            break;
-        case 'dropdown' :
-            $obj->field = $this->CreateInputDropdown($id, $name, array_flip($options));
-            break;
-    }
-    */
+        } else {
+            $name = "customfield[" . $row['id'] . "]";
+        }
 
-    $custom_flds[$row['name']] = $obj;
+        $obj = new stdClass();
+
+        $obj->value    = $value;
+        $obj->type     = $row['type'];
+        $obj->nameattr = $id . $name;
+        $obj->idattr   = 'customfield_' . $row['id'];
+        $obj->prompt   = $row['name'];
+        $obj->size     = min(80, (int)$row['max_length']);
+        $obj->max_len  = max(1, (int)$row['max_length']);
+        $obj->options  = $options;
+        // FIXME - If we create inputs with hmtl markup in smarty template, whats the use of switch and form API here?
+        /*
+        switch( $row['type'] ) {
+            case 'textbox' :
+                $size = min(50, $row['max_length']);
+                $obj->field = $this->CreateInputText($id, $name, $value, $size, $row['max_length']);
+                break;
+            case 'checkbox' :
+                $obj->field = $this->CreateInputHidden($id, $name, $value != '' ? $value : '0') . $this->CreateInputCheckbox($id, $name, '1', $value != '' ? $value : '0');
+                break;
+            case 'textarea' :
+                $obj->field = $this->CreateTextArea(true, $id, $value, $name);
+                break;
+            case 'file' :
+                $name = "customfield_" . $row['id'];
+                $obj->field = $this->CreateFileUploadInput($id, $name);
+                break;
+            case 'dropdown' :
+                $obj->field = $this->CreateInputDropdown($id, $name, array_flip($options));
+                break;
+        }
+        */
+
+        $custom_flds[$row['name']] = $obj;
+    }
+    $dbr->Close();
 }
 
 /*--------------------
