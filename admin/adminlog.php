@@ -94,7 +94,7 @@ if( $filter->item_name ) {
     $where[] = 'item_name LIKE ?';
     $parms[] = '%'.$filter->item_name.'%';
 }
-if( count($where) ) {
+if( $where ) {
     $sql .= ' WHERE '.implode(' AND ',$where);
 }
 $sql .= ' ORDER BY timestamp DESC';
