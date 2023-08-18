@@ -86,7 +86,7 @@ $smarty->assign('cms_version', $GLOBALS['CMS_VERSION']);
 
 
 $query = "SELECT * FROM ".CMS_DB_PREFIX."modules WHERE active=1";
-$modules = $db->GetArray($query);
+$modules = $db->GetArray($query); //TODO any null-valued strings to process?
 asort($modules);
 $smarty->assign('installed_modules', $modules);
 
