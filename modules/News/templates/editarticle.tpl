@@ -422,7 +422,7 @@
 
   <div class="pageoverflow">
     <p class="pageinput">
-      <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">;
+      <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
       &nbsp;<input type="submit" id="{$actionid}cancel" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
       {if isset($articleid)}
         &nbsp;<input type="submit" name="{$actionid}apply" value="{$mod->Lang('apply')}">

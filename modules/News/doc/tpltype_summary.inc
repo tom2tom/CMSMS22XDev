@@ -30,7 +30,7 @@
 
 <h3>News article objects</h3>
 <p>The $items array contains an array of news article objects.  Below are the members.</p>
-<p>Because the news article objects, are objects, you address them like: {$entry->id} etc.</li>
+<p>You can access the objects' members in the usual manner, like: {$entry->id} etc.</p>
 <ul class="helptext">
   <li>author_id (int) - The uid of the author.  If greater than 0 an admin user account is assumed.  If less than zero an FEU user account is assumed.  A value of 0 indicates an anonymous user.</li>
   <li>author (string) The username of the author... or unknown</li>
@@ -45,7 +45,7 @@
   <li>enddate (string) - Optional, the end date of the article.</li>
   <li>create_date (string) - The date the article was first created.</li>
   <li>modified_date (string) - The date the article was last modified.</li>
-  <li>category (string) - The article's category name.<li>
+  <li>category (string) - The article's category name.</li>
   <li>fields (associative) - An associative array of field objects, representing the fields, and their values for this article.  See the information below on the field object definition.   In past versions of News this was a simple array, now it is an associative one.</li>
   <li>fieldsbyname (associative) (deprecated) - A synonym for the 'fields' member</li>
   <li>file_location (string) - The URL prefix to where files for this article are stored.</li>
@@ -58,7 +58,7 @@
 
 <h3>Category Information</h3>
 <p>The following section illustrates the important elements of the category array.  Other items exist but are used for internal organizational purposes.</p>
-<p>This information is deprecated, as it could be retrieved by calling the browsecat action.</li>
+<p>This information is deprecated, as it could be retrieved by calling the browsecat action.</p>
 <p>Note, each of the members of the $cats array is an associiative array of it's own.  You address it like {$cats[0]['news_category_name']} etc.</p>
 <ul class="helptext">
    <li>news_category_id (int) - The id of this category entry.</li>

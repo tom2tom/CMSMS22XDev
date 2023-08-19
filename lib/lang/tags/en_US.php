@@ -6,12 +6,11 @@ $lang['help_function_page_selector'] = <<<'EOT'
 <pre><code>{page_selector name=dfltpage value=$currentpage}</code></pre>
 <h3>What Parameters Does it Take?</h3>
 <ul>
- <li>name - <em>(string)</em> - The name of the input field.</p>
- <li>value - <em>(int)</em> - The numeric id of the currently selected page.</p>
+ <li>name - <em>(string)</em> - The name of the input field.</li>
+ <li>value - <em>(int)</em> - The numeric id of the currently selected page.</li>
  <li>allowcurrent - <em>(bool)</em> - Whether to allow the currently selected page to be re-selected. The default value is false.</li>
  <li>allow_all - <em>(bool)</em> - Whether to allow inactive content items, or content items that do not have usable links, to be selected. The default value is false</li>
- <li>for_child - <em>(bool)</em> - Indicates that we are selecting a parent page for a new content item. The default value is false.</p>
-  </li>
+ <li>for_child - <em>(bool)</em> - Indicates that we are selecting a parent page for a new content item. The default value is false.</li>
 </ul>
 EOT;
 $lang['help_function_cms_html_options'] = <<<'EOT'
@@ -153,7 +152,7 @@ $lang['help_function_cms_action_url'] = <<<'EOT'
 </ul>
 <p><strong>Note:</strong> Any other parameters not accepted by this plugin are automatically passed to the called module action on the generated URL.</p>
 <h3>Example:</h3>
-<pre><code>{cms_action_url module=News action=defaultadmin}</code><pre>
+<pre><code>{cms_action_url module=News action=defaultadmin}</code></pre>
 EOT;
 
 $lang['help_function_cms_admin_user'] = <<<'EOT'
@@ -203,7 +202,7 @@ EOT;
 
 $lang['help_function_cms_init_editor'] = <<<'EOT'
 <h3>What does this do?</h3>
-  <p>This plugin is used to initialize the selected WYSIWYG editor for display when WYSIWYG functionalities are required for frontend data submission.  This module will find the selected frontend WYSIWYG <em>(see global settings).</em>, determine if it has been requested, and if so generate the appropriate html code <em>(usually JavaScript links)</em> so that the WYSIWYG will initialize properly when the page is loaded.  If no WYSIWYG editors have been requested for the frontend request this plugin will produce no output.</p>
+<p>This plugin is used to initialize the selected WYSIWYG editor for display when WYSIWYG functionalities are required for frontend data submission.  This module will find the selected frontend WYSIWYG <em>(see global settings).</em>, determine if it has been requested, and if so generate the appropriate html code <em>(usually JavaScript links)</em> so that the WYSIWYG will initialize properly when the page is loaded.  If no WYSIWYG editors have been requested for the frontend request this plugin will produce no output.</p>
 <h3>How do I use it?</h3>
 <p>The first thing you must do is select the frontend WYSIWYG editor to use in the global settings page of the admin console.  Next If you use frontend WYSIWYG editors on numerous pages, it may be best to place the {cms_init_editor} plugin directly into your page template.  If you only require the WYSIWYG editor to be enabled on a limited amount of pages you may just place it into the &quot;Page Specific Metadata&quot; field in each page.</p>
 <h3>What parameters does it take?</h3>
@@ -228,8 +227,8 @@ EOT;
 
 $lang['help_function_cms_pageoptions'] = <<<'EOT'
 <h3>What does this do?</h3>
- <p>This is a simple plugin to generate a sequence of &lt;option&gt; tags for a dropdown list that represent page numbers in a pagination.</p>
- <p>Given the number of pages, and the current page this plugin will generate a list of page numbers that allow quick navigation to a subset of the pages.</p>
+<p>This is a simple plugin to generate a sequence of &lt;option&gt; tags for a dropdown list that represent page numbers in a pagination.</p>
+<p>Given the number of pages, and the current page this plugin will generate a list of page numbers that allow quick navigation to a subset of the pages.</p>
 <h3>What parameters does it take?</h3>
 <ul>
  <li>numpages - <strong>required integer</strong> - The total number of available pages to display.</li>
@@ -309,20 +308,19 @@ EOT;
 $lang['help_function_content_module'] = <<<'EOT'
 <h3>What does this do?</h3>
 <p>This content block type allows interfacing with different modules to create different content block types.</p>
-<p>Some modules can define content block types for use in module templates.  i.e: The FrontEndUsers module may define a group list content block type.  It will then indicate how you can use the content_module tag to utilize that block type within your templates.</p>
+<p>Some modules can define content block types for use in module templates e.g. The FrontEndUsers module may define a group list content block type.  It will then indicate how you can use the content_module tag to utilize that block type within your templates.</p>
 <p><strong>Note:</strong> This block type must be used only with compatible modules.  You should not use this in any way except for as guided by add-on modules.</p>
+<h3>What parameters does it take?</h3>
 <p>This tag accepts a few parameters, and passes all other parameters to the module for processing.</p>
-<p>Parameters:
- <ul>
- <li><strong>(required)</strong>module - The name of the module that will provide this content block. This module must be installed and available</li>
- <li><strong>(required)</strong>block  - The name of the content block.</li>
- <li><em>(optional)</em>label - A label for the content block for use when editing the page.</li>
+<ul>
+ <li><strong>(required)</strong> module - The name of the module that will provide this content block. That module must be installed and available.</li>
+ <li><strong>(required)</strong> block  - The name of the content block.</li>
+ <li><em>(optional)</em> label - A label for the content block for use when editing the page.</li>
  <li><em>(optional)</em> required - Allows specifying that the content block must contain some text.</em></li>
  <li><em>(optional)</em> tab - The desired tab to display this field on in the edit form.</li>
  <li><em>(optional)</em> priority (integer) - Allows specifying an integer priority for the block within the tab.</li>
  <li><em>(optional)</em> assign (string) - Assign the results to a smarty variable with that name.</li>
- </ul>
-</p>
+</ul>
 EOT;
 
 $lang['help_function_cms_stylesheet'] = <<<'EOT'
@@ -525,7 +523,7 @@ $lang['help_function_tab_header'] = <<<'EOT'
 <ul>
  <li><strong>name - required string</strong> - The name of the tab.  Must match the name of a tab passed to {tab_header}</li>
  <li>label - <em>optional string</em> - The human readable label for the tab.  If not specified, the tab name will be used.</li>
- <li>active - <em>optional mixed./em> - Indicates whether this is the active tab. You may pass in the name (string) of the active tab in a sequence of tab headers, or a boolean value.</li>
+ <li>active - <em>optional mixed</em> - Indicates whether this is the active tab. You may pass in the name (string) of the active tab in a sequence of tab headers, or a boolean value.</li>
  <li>assign - <em>(optional)</em> - Assign the output to the named smarty variable.</li>
 </ul>
 <h3>See Also:</h3>
