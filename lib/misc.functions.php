@@ -1092,8 +1092,8 @@ function get_secure_param()
 
 /**
  * A simple function to convert a value to a corresponding bool.
- * Regards 'y', 'yes', 'true', 'on' (all case insensitive), and
- * numerics > -1 and < 1 as TRUE, all other values as FALSE.
+ * Reports TRUE booleans, 'y', 'yes', 'true', 'on' (all case insensitive),
+ * and numerics > -1 and < 1 as TRUE, all other values as FALSE.
  *
  * @param mixed $str Value to test. Normally a scalar.
  */
@@ -1102,8 +1102,8 @@ function cms_to_bool($str)
   if( is_numeric($str) ) return ((int)$str != 0);
   if( !$str ) return FALSE;
 
-  $str = strtolower((string)$str);
-  return ($str == 'y' || $str == 'yes' || $str == 'true' || $str === 'on');
+  $str = strtolower((string)$str); // (string)true == '1'
+  return ($str == '1' || $str == 'y' || $str == 'yes' || $str == 'true' || $str === 'on');
 }
 
 
