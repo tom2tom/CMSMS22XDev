@@ -58,7 +58,7 @@
 
   <script>
     $(function() {
-    var _edit_url = '{cms_action_url action=admin_edit_css css=xxxx forjs=1}';
+    //TODO conventional use of .draggable and .droppable would assist maintainability
     $('ul.sortable-stylesheets').sortable({
         connectWith: '#selected-stylesheets ul',
         delay: 150,
@@ -93,7 +93,7 @@
                        .append($('<a></a>', {
                           href: '#', // link to page-top?
                           'class': 'ui-icon ui-icon-trash sortable-remove',
-                          text: 'Remove'
+                          text: "{$mod->Lang('remove')}"
                        }))
                        .find('input[type="checkbox"]').prop('checked', true);
         }
@@ -124,12 +124,12 @@
           // right arrow
           ev.preventDefault();
           $('#available-stylesheets li.selected').each(function() {
-            $(this).removeClass('selected ui-state-hover');
-            var _css_id = $(this).data('cmsms-item-id');
-            var _url = _edit_url.replace('xxx',_css_id);
-            var _text = $(this).text().trim();
-
-            var _el = $(this).clone();
+            var _t = $(this);
+            _t.removeClass('selected ui-state-hover');
+            var _css_id = _t.data('cmsms-item-id');
+            var _url = '{cms_action_url action=admin_edit_css css=xxxx forjs=1}'.replace('xxxx',_css_id);
+            var _text = _t.text().trim();
+            var _el = _t.clone();
             var _a = $('<a></a>', {
               href:_url,
               'class':'edit_css unsaved',
@@ -149,7 +149,7 @@
                  }))
                  .find('input[type="checkbox"]').prop('checked',true);
             $('#selected-stylesheets > ul').append(_el);
-            $(this).remove();
+            _t.remove();
             set_changed();
 
             // set focus somewhere
@@ -157,13 +157,14 @@
           });
         }
     });
-
+    //TODO support DnD back to #available-stylesheets
     $(document).on('click', '#selected-stylesheets .sortable-remove', function(e) {
         e.preventDefault();
         set_changed();
-        $(this).next('input[type="checkbox"]').prop('checked', false);
-        $(this).parent('li').appendTo('#available-stylesheets ul');
-        $(this).remove();
+        var _t = $(this);
+        _t.next('input[type="checkbox"]').prop('checked', false);
+        _t.parent('li').appendTo('#available-stylesheets ul');
+        _t.remove();
     });
 
     $(document).on('click','a.edit_css',function(ev) {
