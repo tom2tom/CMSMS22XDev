@@ -82,6 +82,6 @@ $(function() {
 			</div>
 		</div>
 	</div>
-	<a href="#" title="{lang('open')}/{lang('close')}" class="toggle-dropzone">{lang('open')}/{lang('close')}</a>
+	<a href="javascript:void(0)" title="{lang('open')}/{lang('close')}" class="toggle-dropzone">{lang('open')}/{lang('close')}</a>
 </div>
 {/if}

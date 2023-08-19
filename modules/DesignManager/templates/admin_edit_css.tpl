@@ -71,12 +71,12 @@ $(function() {
             var response = $('<aside></aside>',{ 'class':'message' });
             if (data.status === 'success') {
                 response.addClass('pagemcontainer')
-                    .append($('<span></span>',{ 'class':'close-warning',text:'Close' })
-                    .append($('<p></p>',{ text:data.message });
+                    .append($('<span></span>',{ 'class':'close-warning',text:'Close' }))
+                    .append($('<p></p>',{ text:data.message }));
             } else if (data.status === 'error') {
                 response.addClass('pageerrorcontainer')
-                    .append($('<span></span>',{ 'class':'close-warning',text:'Close' })
-                    .append($('<p></p>',{ text:data.message });
+                    .append($('<span></span>',{ 'class':'close-warning',text:'Close' }))
+                    .append($('<p></p>',{ text:data.message }));
             }
 
             $('body').append(response.hide());

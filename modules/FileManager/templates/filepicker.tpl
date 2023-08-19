@@ -91,7 +91,7 @@ function ChooseFile(filename) {
       {/if}
     {else}
       <div class="thumbnail">
-      <a title="{$file->name}" href="#" onclick='ChooseFile("{$file->fullurl}");'>
+      <a title="{$file->name}" href="#" onclick="ChooseFile('{$file->fullurl}');return false;">
       {if !empty($file->thumbnail)}
         {$file->thumbnail}
       {else}
@@ -106,7 +106,7 @@ function ChooseFile(filename) {
     {/if}
     </td>
     <td align="left">
-       <a title="{$file->name}" href="#" onclick='ChooseFile("{$file->fullurl}");'>
+       <a title="{$file->name}" href="#" onclick="ChooseFile('{$file->fullurl}');return false;">
      {$file->name}
        </a>
     </td>

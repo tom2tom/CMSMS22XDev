@@ -1,5 +1,5 @@
 {*TODO <style/> invalid here - migrate to <head/>*}
-<style>{literal}
+<style>
 #available-templates li.selected {
    background-color: #147fdb;
 }
@@ -12,13 +12,12 @@
 #template_sel a.ui-icon+a:focus {
    border: 2px solid #147fdb;
 }
-{/literal}</style>
+</style>
 
 <div class="information">{$mod->Lang('info_edittemplate_templates_tab')}</div>
 {if empty($all_templates)}
 <div class="pagewarning">{$mod->Lang('warning_edittemplate_notemplates')}</div>
 {else}
-
 {$tmpl=$design->get_templates()}
 <div class="c_full cf" id="template_sel">
     <div class="grid_6 draggable-area">
@@ -52,7 +51,7 @@
                                 {else}
                                 <span>{$tpl->get_name()}</span>
                                 {/if}
-                                <a href="#" title="{$mod->Lang('remove')}" class="ui-icon ui-icon-trash sortable-remove">{$mod->Lang('remove')}</a>
+                                <a href="javascript:void(0)" title="{$mod->Lang('remove')}" class="ui-icon ui-icon-trash sortable-remove">{$mod->Lang('remove')}</a>
                                 <input class="hidden" type="checkbox" name="{$actionid}assoc_tpl[]" value="{$tpl->get_id()}" checked>
                             </li>
                         {/if}
@@ -62,7 +61,8 @@
         </fieldset>
     </div>
 </div>
-<script>{literal}
+
+<script>
 function find_sortable_focus(in_e) {
    var _list = $(':tabbable');
    var _idx = _list.index(in_e);
@@ -71,7 +71,7 @@ function find_sortable_focus(in_e) {
 }
 
 $(function() {
-    {/literal}var _manage_templates = '{$manage_templates}';{literal}
+    var _manage_templates = '{$manage_templates}';
     var _edit_url = '{cms_action_url action=admin_edit_template tpl=xxxx forjs=1}';
     $('ul.sortable-templates').sortable({
         connectWith: '#selected-templates ul',
@@ -110,12 +110,12 @@ $(function() {
                 var _text = $(this).text().trim();
                 var _e;
                 if( _manage_templates ) {
-                    {/literal}_e = $('<a></a>', {
+                    _e = $('<a></a>', {
                       href:_url,
                       'class':'edit_tpl unsaved',
                       title:"{$mod->Lang('edit_template')}",
                       text:_text
-                    });{literal}
+                    });
                 } else {
                     _e = $('<span></span>', { text:_text });
                 }
@@ -125,10 +125,10 @@ $(function() {
                        .attr('tabindex',-1)
                        .addClass('unsaved no-sort')
                        .append($('<a></a>', {
-                          href,'#',
+                          href:'#',
                           'class':'ui-icon ui-icon-trash sortable-remove',
                           text:'Remove'
-                       })
+                       }))
                        .find('input[type="checkbox"]').prop('checked', true);
             });
             set_changed();
@@ -167,18 +167,18 @@ $(function() {
               var _el = $(this).clone();
               var _a;
               if( _manage_templates ) {
-                 {/literal}_a = $('<a></a>', {
+                 _a = $('<a></a>', {
                    href:_url,
                    'class':'edit_tpl unsaved',
                    title:"{$mod->Lang('edit_template')}",
                    text:_text
-                 });{literal}
+                 });
               } else {
                  _a = $('<span></span>', { text:_text });
               }
               $('span',_el).remove();
               $(_el).append(_a);
-              {/literal}$(_el).removeClass('selected ui-state-hover')
+              $(_el).removeClass('selected ui-state-hover')
                        .attr('tabindex',-1)
                        .addClass('unsaved no-sort')
                        .append($('<a></a>', {
@@ -186,8 +186,8 @@ $(function() {
                         'class':'ui-icon ui-icon-trash sortable-remove',
                         text:"{$mod->Lang('remove')}",
                         title:"{$mod->Lang('remove')}"
-                       })
-                       .find('input[type="checkbox"]').prop('checked', true);{literal}
+                       }))
+                       .find('input[type="checkbox"]').prop('checked', true);
               $('#selected-templates > ul').append(_el);
               $(this).remove();
               set_changed();
@@ -212,7 +212,7 @@ $(function() {
         if( __changed ) {
             ev.preventDefault();
             var url = $(this).attr('href');
-            cms_confirm({/literal}"{$mod->Lang('confirm_save_design')}"{literal}).done(function() {
+            cms_confirm("{$mod->Lang('confirm_save_design')}").done(function() {
                 // save and redirect
                 save_design().done(function() {
                     window.location.href = url;
@@ -222,5 +222,5 @@ $(function() {
         // normal default link behavior.
     });
 });
-{/literal}</script>
+</script>
 {/if}

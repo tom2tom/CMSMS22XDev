@@ -1,5 +1,5 @@
 {* stylesheets tab for edit template *}{*TODO <style/> invalid here - migrate to <head/>*}
-<style>{literal}
+<style>
 #available-stylesheets li.selected {
    background-color: #147fdb;
 }
@@ -12,7 +12,7 @@
 #selected-stylesheets a.ui-icon+a:focus {
    border: 2px solid #147fdb;
 }
-{/literal}</style>
+</style>
 
 <div class="information">{$mod->Lang('info_edittemplate_stylesheets_tab')}</div>
 {if empty($all_stylesheets)}
@@ -46,7 +46,7 @@
                     {foreach $cssl as $one}
                         <li class="ui-state-default cf sortable-item" data-cmsms-item-id="{$one}">
                             <a href="{cms_action_url action=admin_edit_css css=$one}" class="edit_css" title="{$mod->Lang('edit_stylesheet')}">{$list_stylesheets.$one}</a>
-                            <a href="#" "title="{$mod->Lang('remove')}" class="ui-icon ui-icon-trash sortable-remove" title="{$mod->Lang('remove')}">{$mod->Lang('remove')}</a>
+                            <a href="javascript:void(0)" "title="{$mod->Lang('remove')}" class="ui-icon ui-icon-trash sortable-remove" title="{$mod->Lang('remove')}">{$mod->Lang('remove')}</a>
                             <input class="hidden" type="checkbox" name="{$actionid}assoc_css[]" value="{$one}" checked tabindex="-1">
                         </li>
                     {/foreach}
@@ -55,7 +55,8 @@
         </fieldset>
     </div>
   </div>
-  <script>{literal}
+
+  <script>
     $(function() {
     var _edit_url = '{cms_action_url action=admin_edit_css css=xxxx forjs=1}';
     $('ul.sortable-stylesheets').sortable({
@@ -93,7 +94,7 @@
                           href: '#', // link to page-top?
                           'class': 'ui-icon ui-icon-trash sortable-remove',
                           text: 'Remove'
-                       })
+                       }))
                        .find('input[type="checkbox"]').prop('checked', true);
         }
 
@@ -131,7 +132,7 @@
             var _el = $(this).clone();
             var _a = $('<a></a>', {
               href:_url,
-              'class':'edit_css unsaved',{/literal}
+              'class':'edit_css unsaved',
               title:"{$mod->Lang('edit_stylesheet')}",
               text:_text
             });
@@ -141,11 +142,11 @@
                  .attr('tabindex',-1)
                  .addClass('unsaved no-sort')
                  .append($('<a></a>', {
-                   href:'#', // link to page-top?
+                   href:'#', // link to page-top, unless js prevails
                    'class':'ui-icon ui-icon-trash sortable-remove',
                    title:"{$mod->Lang('remove')}",
                    text:"{$mod->Lang('remove')}"
-                 }){literal}
+                 }))
                  .find('input[type="checkbox"]').prop('checked',true);
             $('#selected-stylesheets > ul').append(_el);
             $(this).remove();
@@ -169,7 +170,7 @@
        if( __changed ) {
            ev.preventDefault();
            var url = $(this).attr('href');
-           cms_confirm({/literal}"{$mod->Lang('confirm_save_design')}"{literal}).done(function() {
+           cms_confirm("{$mod->Lang('confirm_save_design')}").done(function() {
                // save and redirect
                save_design().done(function() {
                    window.location.href = url;
@@ -178,6 +179,6 @@
        }
     });
 
-  });
-    {/literal}</script>
+    });
+  </script>
 {/if}

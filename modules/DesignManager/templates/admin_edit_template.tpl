@@ -74,12 +74,12 @@ $(function() {
             var response = $('<aside></aside>', { 'class':'message' });
             if (data.status === 'success') {
                 response.addClass('pagemcontainer')
-                    .append($('<span></span>', { 'class':'close-warning',text:'Close' })
-                    .append($('<p></p>', { text:data.message });
+                    .append($('<span></span>',{ 'class':'close-warning',text:'Close' }))
+                    .append($('<p></p>',{ text:data.message }));
             } else if (data.status === 'error') {
                 response.addClass('pageerrorcontainer')
-                    .append($('<span></span>', { 'class':'close-warning',text:'Close' })
-                    .append($('<p></p>', { text:data.message });
+                    .append($('<span></span>',{ 'class':'close-warning',text:'Close' }))
+                    .append($('<p></p>',{ text:data.message }));
             }
 
             $('body').append(response.hide());
@@ -186,9 +186,9 @@ $(function() {
 {tab_start name='template'}
 <div class="pageoverflow">
     <p class="pagetext">
-      <label for="contents">{$mod->Lang('prompt_template_content')}:</label>&nbsp;{cms_help key2=help_template_contents title=$mod->Lang('prompt_template_content')}
+      <label for="content">{$mod->Lang('prompt_template_content')}:</label>&nbsp;{cms_help key2=help_template_contents title=$mod->Lang('prompt_template_content')}
       {if !empty($helptext)}
-        <a id="a_helptext" href="#" style="float: right;">{$mod->Lang('prompt_template_help')}</a>
+        <a id="a_helptext" href="javascript:void(0)" style="float: right;">{$mod->Lang('prompt_template_help')}</a>
       {/if}
     </p>
     {if $template->has_content_file()}
