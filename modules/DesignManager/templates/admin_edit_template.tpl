@@ -62,8 +62,7 @@ $(function() {
            form.trigger('submit');
        });
     });
-    */
-
+*/
     $(document).on('click', '#applybtn', function(e) {
         e.preventDefault();
         var url = $('#form_edittemplate').attr('action')+'?showtemplate=false&m1_apply=1',
