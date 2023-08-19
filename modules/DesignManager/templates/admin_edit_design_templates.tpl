@@ -73,6 +73,7 @@ function find_sortable_focus(in_e) {
 $(function() {
     var _manage_templates = '{$manage_templates}';
     var _edit_url = '{cms_action_url action=admin_edit_template tpl=xxxx forjs=1}';
+    //TODO conventional use of .draggable and .droppable would assist maintainability
     $('ul.sortable-templates').sortable({
         connectWith: '#selected-templates ul',
         delay: 150,
@@ -104,10 +105,11 @@ $(function() {
 
             $('.sortable-templates .placeholder').hide();
 
-            $(elements).each(function(){
-                var _tpl_id = $(this).data('cmsms-item-id');
+            $(elements).each(function() {
+                var _t = $(this);
+                var _tpl_id = _t.data('cmsms-item-id');
                 var _url = _edit_url.replace('xxxx',_tpl_id);
-                var _text = $(this).text().trim();
+                var _text = _t.text().trim();
                 var _e;
                 if( _manage_templates ) {
                     _e = $('<a></a>', {
@@ -120,14 +122,14 @@ $(function() {
                     _e = $('<span></span>', { text:_text });
                 }
                 $('span',this).remove();
-                $(this).append(_e);
-                $(this).removeClass('selected ui-state-hover')
+                _t.append(_e);
+                _t.removeClass('selected ui-state-hover')
                        .attr('tabindex',-1)
                        .addClass('unsaved no-sort')
                        .append($('<a></a>', {
                           href:'#',
                           'class':'ui-icon ui-icon-trash sortable-remove',
-                          text:'Remove'
+                          text:"{$mod->Lang('remove')}"
                        }))
                        .find('input[type="checkbox"]').prop('checked', true);
             });
@@ -159,12 +161,12 @@ $(function() {
         else if( ev.keyCode == 39 ) {
            // right arrow.
            $('#available-templates li.selected').each(function() {
-              $(this).removeClass('selected');
-              var _tpl_id = $(this).data('cmsms-item-id');
+              var _t = $(this);
+              _t.removeClass('selected');
+              var _tpl_id = _t.data('cmsms-item-id');
               var _url = _edit_url.replace('xxxx',_tpl_id);
-              var _text = $(this).text().trim();
-
-              var _el = $(this).clone();
+              var _text = _t.text().trim();
+              var _el = _t.clone();
               var _a;
               if( _manage_templates ) {
                  _a = $('<a></a>', {
@@ -189,7 +191,7 @@ $(function() {
                        }))
                        .find('input[type="checkbox"]').prop('checked', true);
               $('#selected-templates > ul').append(_el);
-              $(this).remove();
+              _t.remove();
               set_changed();
 
               // set focus somewhere
@@ -198,14 +200,15 @@ $(function() {
            console.debug('got arrow');
         }
     });
-
+    //TODO support DnD back to #available-templates
     $(document).on('click', '#selected-templates .sortable-remove',function(e) {
         // click on remove icon
         e.preventDefault();
         set_changed();
-        $(this).next('input[type="checkbox"]').prop('checked', false);
-        $(this).parent('li').removeClass('no-sort').appendTo('#available-templates ul');
-        $(this).remove();
+        var _t = $(this);
+        _t.next('input[type="checkbox"]').prop('checked', false);
+        _t.parent('li').removeClass('no-sort').appendTo('#available-templates ul');
+        _t.remove();
     });
 
     $(document).on('click','a.edit_tpl',function(ev) {
