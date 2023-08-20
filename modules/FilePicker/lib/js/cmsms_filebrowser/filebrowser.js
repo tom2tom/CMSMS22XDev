@@ -133,7 +133,7 @@ function CMSFileBrowser(_settings) {
         progress_text.text(percent + '%');
       },
       done: function(ev, data) {
-        if(data.result.length == 0) return;
+        if(data.result.length === 0) return;
         for(var i = 0; i < data.result.length; i++) {
           res = data.result[i];
           if(res.error != undefined) {
@@ -149,7 +149,7 @@ function CMSFileBrowser(_settings) {
         progress_text.hide();
         progress_bar.progressbar('destroy');
         cms_busy(false);
-        if(n_errors == 0) {
+        if(n_errors === 0) {
           var url = window.location.href + '&nosub=1';
           window.location.href = url;
         }
@@ -171,7 +171,7 @@ function CMSFileBrowser(_settings) {
   function setup_view() {
     var view_type = localStorage.getItem('view-type');
     if(!view_type) view_type = 'grid';
-    if(view_type == 'list') {
+    if(view_type === 'list') {
       listview_btn.trigger('click');
     } else {
       gridview_btn.trigger('click');
