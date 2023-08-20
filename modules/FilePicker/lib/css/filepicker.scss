@@ -39,7 +39,7 @@ $font-family_2: sans-serif; // TODO inherit from outside iframe
 
 @font-face {
 	font-family: 'cmsms-filepicker';
-	src: url('../fonts/cmsms-filepicker.svg') format('svg'), url('../fonts/cmsms-filepicker.woff2') format('woff2'), url('../fonts/cmsms-filepicker.woff') format('woff'), url('../fonts/cmsms-filepicker.ttf') format('truetype'), url('../fonts/cmsms-filepicker.eot') format('embedded-opentype');
+	src: url('../fonts/cmsms-filepicker.woff2') format('woff2'), url('../fonts/cmsms-filepicker.woff') format('woff'), url('../fonts/cmsms-filepicker.ttf') format('truetype'), url('../fonts/cmsms-filepicker.svg') format('svg'), url('../fonts/cmsms-filepicker.eot') format('embedded-opentype');
 	font-weight: normal;
 	font-style: normal;
 }

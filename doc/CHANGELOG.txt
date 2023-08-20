@@ -15,6 +15,7 @@ Core - General
  - Enabled use of PHP function rawurlencode in Smarty templates.
  - Added Smarty modifier plugin 'adjust' to handle deprecated modifier-function-calls in templates.
  - PHPMailer upgraded to version 6.7.1.
+ - TinyMCE upgraded to version 4.9.11.
  - jQuery upgraded to version 1.12.4.
  - jQuery UI upgraded to version 1.12.1 (with previous styling).
  - jQuery migrate upgraded to version 1.4.1.

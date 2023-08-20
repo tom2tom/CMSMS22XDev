@@ -1,0 +1,24 @@
+TinyMCE 4.9.11 plugins omited from Microtiny:
+advlist
+autosave
+bbcode
+codesample
+colorpicker
+contextmenu
+emoticons
+fullpage
+imagetools
+importcss
+legacyoutput
+noneditable
+pagebreak
+preview
+print
+save
+spellchecker
+template
+textcolor
+textpattern
+toc
+visualblocks
+visualchars
