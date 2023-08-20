@@ -187,51 +187,51 @@ $lang['help_cmscontentmanager_help'] = <<<EOT
        <ul>
          <li>Delete
            <p>This option allows deleting multiple content items (and their children) in few steps.  All of the selected content items and their descendants will be analysed for the their eligibility to be deleted.  Users will then be prompted with a list of the content items that passed the analysis <em>(if any)</em> and to confirm the action.</p>
-	   <p>Only users with the permission to remove pages and modify any page, or Manage All Content can use this option.</p>
+           <p>Only users with the permission to remove pages and modify any page, or Manage All Content can use this option.</p>
            <p><strong>Note:</strong> When selecting many content items, or content items with many descendants, this can be a very memory, database and time intensive operation.</p>
          </li>
          <li>Set Active
            <p>This option will ensure that the content items selected are marked as &quot;Active&quot;.  Users will be asked to confirm the operation. This operation does not work on descendent of the selected pages.</p>
-	   <p>Only users with the &quot;Manage All Content&quot; permission can use this option.</p>
+           <p>Only users with the &quot;Manage All Content&quot; permission can use this option.</p>
          </li>
          <li>Set Inactive
            <p>this option analyses the selected items for eligibility, and will set all of the eligible content items to inactive.  Inactive pages cannot be navigated to, and may break a working website.  The default page cannot be set to inactive.</p>
-	   <p>Only users with the &quot;Manage All Content&quot; permission can use this option.</p>
+           <p>Only users with the &quot;Manage All Content&quot; permission can use this option.</p>
          </li>
          <li>Set Cachable
            <p>This option sets the selected content items to &quoc;cachable&quot;.  This may have different effects based on the site configuration:<p>
            <p>If enabled in &quot;Site Admin >> Global Settings&quot; then content items marked as &quot;cachable&quot; can be cached by the browser <em>(this reduces load on your webserver for users visiting the same page frequently).</em>
            <p>Also in &quot;Site Admin >> Global Settings&quot; Smarty caching effects cachable pages.  This is an advanced tool that will cache the generated html code of a for repeated use, and can dramatically reduce server load and improve performance.  However, it is an advanced topic and may negatively the dynamic nature of some content items.</p>
-	   <p>Only users with the &quot;Manage All Content&quot; permission can use this option.</p>
+           <p>Only users with the &quot;Manage All Content&quot; permission can use this option.</p>
          </li>
          <li>Set Not Cachable
            <p>This option ensures that the selected content items are not cachable.<p>
          </li>
          <li>Show In Menu
            <p>This option ensures that the selected content items are visible in frontend navigation menus.</p>
-	   <p>Only users with the &quot;Manage All Content&quot; permission can use this option.</p>
+           <p>Only users with the &quot;Manage All Content&quot; permission can use this option.</p>
          </li>
          <li>Hide From Menu
            <p>This option ensures that the selected content items will not be visible (by default) in frontend navigation menus.  Various options of navigation generation modules may override the &quot;Show In Menu&quot; setting.</p>
-	   <p>Only users with the &quot;Manage All Content&quot; permission can use this option.</p>
+           <p>Only users with the &quot;Manage All Content&quot; permission can use this option.</p>
          </li>
          <li>Set Secure (HTTPS)
            <p>This option will ensure that HTTPS will be used when the selected content items are displayed.</p>
            <p><strong>Note:</strong> You may need to adjust the secure URL settings in the CMSMS config.php file, and to contact your host about proper SSL configuration.</p>
-	   <p>Only users with the &quot;Manage All Content&quot; permission can use this option.</p>
+           <p>Only users with the &quot;Manage All Content&quot; permission can use this option.</p>
          </li>
          <li>Set Insecure (HTTP)
            <p>This option removes the HTTPS flag from the selected content items.</p>
            <p><strong>Note:</strong> Content items without the secure <em>(HTTPS)</em> may still be accessed via the HTTPS protocol.</p>
-	   <p>Only users with the &quot;Manage All Content&quot; permission can use this option.</p>
+           <p>Only users with the &quot;Manage All Content&quot; permission can use this option.</p>
          </li>
          <li>Set Design & Template
            <p>This option will display a form to set the design and template that are associated with the selected content items.  Only some content item types have a design and template association. i.e: the &quot;content&quot; item type, and those provided by other modules that provide similar functionality.</p>
-	   <p>Only users with the &quot;Manage All Content&quot; permission can use this option.</p>
+           <p>Only users with the &quot;Manage All Content&quot; permission can use this option.</p>
          </li>
          <li>Set Owner
            <p>This option displays a form that allows changing the ownership of the selected content items.</p>
-	   <p>Only users with the &quot;Manage All Content&quot; permission can use this option.</p>
+           <p>Only users with the &quot;Manage All Content&quot; permission can use this option.</p>
          </li>
        </ul>
      </li>
@@ -326,64 +326,64 @@ $lang['help_cmscontentmanager_help'] = <<<EOT
     </li>
 
     <li>Secure (HTTPS)
-	<p>This property is used to indicate whether this content item should be accessed using the HTTPS protocol.  In a site configured properly for HTTPS, if this attribute is set for a content item, and an attempt is made to access this page via the insecure HTTP protocol, the user will be redirected to the same page using the more secure HTTPS protocol.  Additionally, if this flag is set then any links to this content item will specify the HTTPS protocol.</p>
-        <p>It is important to know that content items without the secure flag set can still be navigated to using the HTTPS protocol, and no redirection will take place.  Therefore, for search engine ranking purposes the canonical link should be configured properly in each page template.</p>
+      <p>This property is used to indicate whether this content item should be accessed using the HTTPS protocol.  In a site configured properly for HTTPS, if this attribute is set for a content item, and an attempt is made to access this page via the insecure HTTP protocol, the user will be redirected to the same page using the more secure HTTPS protocol.  Additionally, if this flag is set then any links to this content item will specify the HTTPS protocol.</p>
+      <p>It is important to know that content items without the secure flag set can still be navigated to using the HTTPS protocol, and no redirection will take place.  Therefore, for search engine ranking purposes the canonical link should be configured properly in each page template.</p>
     </li>
 
     <li>Cachable
-	<p>This property specifies whether the compiled form of this content item can be cached on the server to reduce server load <em>(if smarty caching is enabled in global settings)</em> AND whether the browser can cache this page <em>(if browser caching is enabled in global settings)</em>.  For largely static websites enabling smarty caching and browser caching can significantly reduce server load and improve overall website performance.</p>
-        <p>Users with restricted permissions may not have the ability to adjust or specify this property.</p>
+      <p>This property specifies whether the compiled form of this content item can be cached on the server to reduce server load <em>(if smarty caching is enabled in global settings)</em> AND whether the browser can cache this page <em>(if browser caching is enabled in global settings)</em>.  For largely static websites enabling smarty caching and browser caching can significantly reduce server load and improve overall website performance.</p>
+      <p>Users with restricted permissions may not have the ability to adjust or specify this property.</p>
     </li>
 
     <li>Image
-	<p>This property allows associating a previously uploaded image with your this content item.  Editors can select an image file from the uploads/images directory.  This image may be displayed on the generated HTML page (if applicable), or used when building the navigation.</p>
-        <p>Users with restricted permissions may not have the ability to adjust or specify this property.</p>
+      <p>This property allows associating a previously uploaded image with your this content item.  Editors can select an image file from the uploads/images directory.  This image may be displayed on the generated HTML page (if applicable), or used when building the navigation.</p>
+      <p>Users with restricted permissions may not have the ability to adjust or specify this property.</p>
     </li>
 
     <li>Thumbnail
-        <p>This property allows associating a previously created thumbnail image with this content item.  Editors can select a thumbnail file from the uploads/images directory.  This thumbnail may be displayed on the generated HTMLO page, or used when building the navigation.</p>
-        <p>Users with restricted permissions may not have the ability to adjust or specify this property.</p>
+      <p>This property allows associating a previously created thumbnail image with this content item.  Editors can select a thumbnail file from the uploads/images directory.  This thumbnail may be displayed on the generated HTMLO page, or used when building the navigation.</p>
+      <p>Users with restricted permissions may not have the ability to adjust or specify this property.</p>
     </li>
 
     <li>Owner
-        <p>The owner property is a dropdown field that indicates which admin user account has primary responsibility for the content item.  By default the owner of the content item is the user who first created it.  Users with significant permission can assign the ownership of an item to another user.</p>
+      <p>The owner property is a dropdown field that indicates which admin user account has primary responsibility for the content item.  By default the owner of the content item is the user who first created it.  Users with significant permission can assign the ownership of an item to another user.</p>
     </li>
 
     <li>Additional Editors
-        <p>This property specifies a list of other admin users or admin groups that are allowed to edit this content item.  It is implemented as a multi-select field.  Again, users with restricted permissions may not have the ability to adjust this property.</p>
+      <p>This property specifies a list of other admin users or admin groups that are allowed to edit this content item.  It is implemented as a multi-select field.  Again, users with restricted permissions may not have the ability to adjust this property.</p>
     </li>
 
     <li>Design
-        <p>The property allows associating a design with the content item.  A design is used to determine the stylesheets and other items that contribute to the appearance of content items.  The design is associated with different templates.  Changing the design property may result in the template property automatically changing.  By default the &quot;default design&quot; selected in the Design Manager is selected here.  Some restricted editors may not have the ability to adjust this property.</p>
+      <p>The property allows associating a design with the content item.  A design is used to determine the stylesheets and other items that contribute to the appearance of content items.  The design is associated with different templates.  Changing the design property may result in the template property automatically changing.  By default the &quot;default design&quot; selected in the Design Manager is selected here.  Some restricted editors may not have the ability to adjust this property.</p>
     </li>
 
     <li>Template
-        <p>The page template property is used to determine the overall layout of the content item (for those content items that generate HTML).  It also determines the use of meta tags and content blocks.  Changing this template will refresh the page and display the appropriate content properties (blocks) that are specified  in the newly selected template.</p>
-        <p>Users with restricted permissions may not have the ability to adjust or specify this property.</p>
+      <p>The page template property is used to determine the overall layout of the content item (for those content items that generate HTML).  It also determines the use of meta tags and content blocks.  Changing this template will refresh the page and display the appropriate content properties (blocks) that are specified  in the newly selected template.</p>
+      <p>Users with restricted permissions may not have the ability to adjust or specify this property.</p>
     </li>
 
     <li>Searchable
-        <p>This property controls whether the content properties on this content item can be indexed by the search module.</p>
-        <p>Users with restricted permissions may not have the ability to adjust or specify this property.</p>
+      <p>This property controls whether the content properties on this content item can be indexed by the search module.</p>
+      <p>Users with restricted permissions may not have the ability to adjust or specify this property.</p>
     </li>
 
     <li>Disable WYSIWYG
-        <p>This property will disable the WYSIWYG editor for all content blocks on this content item.  This overrides all settings on the content blocks, and any user setting.  This is useful for content items that contain pure logic in the content blocks, or strictly call other modules.  This prevents the logic or output from the modules from being effected by the styling injected by the WYSIWYG.</p>
-        <p>Users with restricted permissions may not have the ability to adjust or specify this property.</p>
+      <p>This property will disable the WYSIWYG editor for all content blocks on this content item.  This overrides all settings on the content blocks, and any user setting.  This is useful for content items that contain pure logic in the content blocks, or strictly call other modules.  This prevents the logic or output from the modules from being effected by the styling injected by the WYSIWYG.</p>
+      <p>Users with restricted permissions may not have the ability to adjust or specify this property.</p>
     </li>
 
     <li>Page Metadata
-        <p>The primary purpose of this property is for injecting meta properties into the &lt;head&gt; section of the rendered HTML page.  Typically it is useful for injecting a meta description tag.</p>
-        <p>Users with restricted permissions may not have the ability to adjust or specify this property.</p>
+      <p>The primary purpose of this property is for injecting meta properties into the &lt;head&gt; section of the rendered HTML page.  Typically it is useful for injecting a meta description tag.</p>
+      <p>Users with restricted permissions may not have the ability to adjust or specify this property.</p>
     </li>
 
     <li>Page Data
-        <p>This property is primarily used for inserting data, or logic into the smarty process for use by the page template.  It is an advanced field for usage in flexible layouts that change their behaviour dynamically.</p>
-        <p>Users with restricted permissions may not have the ability to adjust or specify this property.</p>
+      <p>This property is primarily used for inserting data, or logic into the smarty process for use by the page template.  It is an advanced field for usage in flexible layouts that change their behaviour dynamically.</p>
+      <p>Users with restricted permissions may not have the ability to adjust or specify this property.</p>
     </li>
 
     <li>extra1, extra2, and extra3</li>
-        <p>Additional properties for use in either displaying data, or influencing the behaviour of the page template.</p>
+      <p>Additional properties for use in either displaying data, or influencing the behaviour of the page template.</p>
     </li>
   </ul>
 EOT;
@@ -474,7 +474,7 @@ $lang['help_designmanager_help'] = <<<EOT
 
      </li>
      <li>Multiselect:
-	  <p>This column (depending upon permissions) will display a checkbox allowing the selection of multiple templates to perform actions on all of them simultaneously.</p>
+       <p>This column (depending upon permissions) will display a checkbox allowing the selection of multiple templates to perform actions on all of them simultaneously.</p>
      </li>
    </ul>
    <h4>Bulk Actions:</h4>
@@ -600,7 +600,7 @@ $lang['help_designmanager_help'] = <<<EOT
         <p>This tab allows selecting different templates to associate with the design. You can drag and drop templates between the &quot;Available Templates&quot; list and the &quot;Attached Templates&quot; list and to order templates within the attached list. At this time, ordering of templates within the attached template list is not significant.</p>
       </li>
       <li>Stylesheets:
-	  <p>This tab allows selecting different stylesheets to associate with the design. You can drag and drop stylesheets between the &quot;Available Stylesheets&quot; list and the &quot;Attached Stylesheets&quot; list and to order stylesheets within the attached list.  The order of stylesheets within the attached list determines the order that they will be included in the rendered page content for content items of type &quot;Content Page&quot;.</p>
+       <p>This tab allows selecting different stylesheets to associate with the design. You can drag and drop stylesheets between the &quot;Available Stylesheets&quot; list and the &quot;Attached Stylesheets&quot; list and to order stylesheets within the attached list.  The order of stylesheets within the attached list determines the order that they will be included in the rendered page content for content items of type &quot;Content Page&quot;.</p>
       </li>
       <li>Description:
         <p>This tab provides a free form text area where a description of the design, and additional notes can be entered.  the description is also useful to other users when deciding to share a design.</p>
