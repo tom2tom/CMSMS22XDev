@@ -41,7 +41,7 @@ class microtiny_utils
       if(!is_object($mod)) throw new CmsLogicException('Could not find the microtiny module...');
 
       $frontend = CmsApp::get_instance()->is_frontend_request();
-      $languageid = self::GetLanguageId($frontend);
+      list($languageid,$ltr) = self::GetLanguageId($mod);
       $mtime = time() - 300; // by defaul cache for 5 minutes ??
 
       // get the cssname that we're going to use (either passed in, or from profile)
@@ -78,12 +78,12 @@ class microtiny_utils
           }
       }
 
-      // if this is an action for MicroTiny disable caching.
+      // if this is an action for MicroTiny disable caching
       $smarty = CmsApp::get_instance()->GetSmarty();
       $module = $smarty->get_template_vars('actionmodule');
-      if( $module == $mod->GetName() ) $mtime = time() + 60; // do not cache when we're using this from within the MT modul.
+      if( $module == $mod->GetName() ) $mtime = time() + 60; // do not cache when we're using this from within the MT module.
 
-      // also disable caching if told to by the config.php
+      // also disable caching if told to by config.php
       if( isset($config['mt_disable_cache']) && cms_to_bool($config['mt_disable_cache']) ) $mtime = time() + 60;
 
       $output = '';
@@ -97,22 +97,23 @@ class microtiny_utils
       if( get_userid(false) && !$frontend ) $hash_salt .= $_SESSION[CMS_USER_KEY];
       $fn = cms_join_path(PUBLIC_CACHE_LOCATION,'mt_'.md5($hash_salt).'.js');
       if( !file_exists($fn) || filemtime($fn) < $mtime ) {
-          // we have to generate an mt config js file.
-          self::_save_static_config($fn,$frontend,$selector,$css_name,$languageid);
+          // we have to generate a config file.
+          $langdir = ($ltr) ? 'ltr':'rtl';
+          self::_save_static_config($fn,$frontend,$selector,$css_name,$languageid,$langdir);
       }
 
       $configurl = $config['public_cache_url'].'/'.basename($fn);
-      $output.='<script src="'.$configurl.'" defer="defer"></script>';
+      $output .= '<script src="'.$configurl.'" defer="defer"></script>';
 
       return $output;
   }
 
-  private static function _save_static_config($fn, $frontend=false, $selector='', $css_name='', $languageid='')
+  private static function _save_static_config($fn, $frontend=false, $selector='', $css_name='', $languageid='', $langdir='')
   {
-    if( !$fn ) return;
-    $configcontent = self::_generate_config($frontend, $selector, $css_name, $languageid);
-    $res = file_put_contents($fn,$configcontent);
-    if( !$res ) throw new CmsFileSystemException('Problem writing data to '.$fn);
+      if( !$fn ) return;
+      $configcontent = self::_generate_config($frontend, $selector, $css_name, $languageid, $langdir);
+      $res = file_put_contents($fn,$configcontent);
+      if( !$res ) throw new CmsFileSystemException('Problem writing data to '.$fn);
   }
 
   /**
@@ -123,9 +124,10 @@ class microtiny_utils
    * @param string $selector Default ''
    * @param string $css_name Default ''
    * @param string $languageid Default 'en'
+   * @param string $langdir Default 'ltr' Since 2.2.6
    * @return string
    */
-  private static function _generate_config($frontend=false, $selector='', $css_name='', $languageid="en")
+  private static function _generate_config($frontend=false, $selector='', $css_name='', $languageid='en', $langdir='ltr')
   {
       $ajax_url = function($url) {
           return str_replace('&amp;','&',$url).'&showtemplate=false';
@@ -144,13 +146,17 @@ class microtiny_utils
       $tpl_ob->assign('mt_actionid','m1_');
       $tpl_ob->assign('isfrontend',$frontend);
       $tpl_ob->assign('languageid',$languageid);
-      $tpl_ob->assign('langdir','ltr'); //TODO per $languageid 'ltr' or 'rtl'
+      $tpl_ob->assign('langdir',$langdir);
       $tpl_ob->assign('root_url',$config->smart_root_url());
       $fp = \cms_utils::get_filepicker_module();
       if( $fp ) {
           $url = $fp->get_browser_url();
-          $tpl_ob->assign('filepicker_url',$ajax_url($url));
+          $url = $ajax_url($url);
       }
+      else {
+          $url = '';
+      }
+      $tpl_ob->assign('filepicker_url',$url);
       $url = $mod->create_url('m1_','linker',$page_id);
       $tpl_ob->assign('linker_url',$ajax_url($url));
       $url = $mod->create_url('m1_','ajax_getpages',$page_id);
@@ -177,34 +183,41 @@ class microtiny_utils
   }
 
   /**
-   * Convert user's current language to something tinymce can prolly understand (hopefully).
+   * Convert user's current language to something tinymce can prolly understand
    *
    * @since 1.0
-   * @return string
+   * @param MicroTiny $mod
+   *
+   * @return array 2 members: 0:locale identifier(string) 1:ltr direction(bool)
    */
-  private static function GetLanguageId() {
+  private static function GetLanguageId($mod)
+  {
     $mylang = CmsNlsOperations::get_current_language();
-    if ($mylang=="") return "en"; //Lang setting "No default selected"
-    $shortlang = substr($mylang,0,2);
+    if( $mylang == '' ) return ['en',true]; //Lang setting "No default selected"
 
-    $mod = cms_utils::get_module('MicroTiny');
-    $dir = $mod->GetModulePath().'/lib/js/tinymce/langs';
-    $langs = array();
-    {
-        $files = glob($dir.'/*.js');
-        if( is_array($files) && count($files) ) {
-            foreach( $files as $one ) {
-                $one = basename($one);
-                $one = substr($one,0,-3);
-                $langs[] = $one;
-            }
+    $patn = cms_join_path($mod->GetModulePath(),'lib','js','tinymce','langs','*.js');
+    $files = glob($patn);
+    if( $files ) {
+        $langs = [];
+        foreach( $files as $one ) {
+            $langs[] = basename($one,'.js');
         }
     }
+    else {
+        return ['en',true]; // default
+    }
 
-    if( in_array($mylang,$langs) ) return $mylang;
-    if( in_array($shortlang,$langs) ) return $shortlang;
-    return 'en';
-    //TODO also report direction ltr or rtl
+    $info = CmsNlsOperations::get_language_info($mylang);
+    $langltr = $info->direction() !== 'rtl';
+
+    if( in_array($mylang,$langs) ) {
+        return [$mylang,$langltr];
+    }
+    $shortlang = substr($mylang,0,2);
+    if( in_array($shortlang,$langs) ) {
+        return [$shortlang,$langltr];
+    }
+    return ['en',true];
   }
 
   /**
@@ -218,15 +231,15 @@ class microtiny_utils
    */
   public static function GetThumbnailFile($file,$path,$url)
   {
-    $image='';
-    $imagepath = self::Slashes($path."/thumb_".$file);
-    $imageurl = self::Slashes($url."/thumb_".$file);
-    if (!file_exists($imagepath)) {
-      $image='';
-    } else {
-      $image="<img src='".$imageurl."' alt='".$file."' title='".$file."'>";
-    }
-    return $image;
+      $imagepath = $path.DIRECTORY_SEPARATOR.'thumb_'.$file;
+      if( !file_exists($imagepath) ) {
+          $image = '';
+      }
+      else {
+          $imageurl = self::Slashes($url.'/thumb_'.$file);
+          $image = "<img src='".$imageurl."' alt='".$file."' title='".$file."'>";
+      }
+      return $image;
   }
 
   /**
@@ -237,8 +250,7 @@ class microtiny_utils
    */
   private static function Slashes($url)
   {
-    $result=str_replace("\\","/",$url);
-    return $result;
+      return str_replace("\\","/",$url);
   }
 
 } // end of class
