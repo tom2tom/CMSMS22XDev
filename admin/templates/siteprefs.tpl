@@ -153,7 +153,7 @@
 			<p class="pagetext"><label for="basic_attributes">{lang('basic_attributes')}:</label>&nbsp;{cms_help key2='settings_basicattribs2' title=lang('basic_attributes')}</p>
 			<p class="pageinput">
 				<select id="basic_attributes" class="multicolumn" name="basic_attributes[]" multiple size="5">
-					{cms_html_options options=$all_attributes selected=$basic_attributes}{*OR populated $basic_options*}
+					{CmsFormUtils::create_option($all_attributes,$basic_attributes)}{*cms_html_options options=$all_attributes selected=$basic_attributes*}
 				</select>
 			</p>
 		</div>
