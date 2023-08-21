@@ -17,9 +17,11 @@
  var ajax_url = '{$ajax_url}';
  //var clickthru_msg = '{$mod->Lang("warn_clickthru")|escape:"javascript"}';
  {if isset($saved_search.slaves) && in_array(-1,$saved_search.slaves)}
- var sel_all = 1;
+ var sel_all = 1; //TODO unused
  {/if}
-
+ $(document).on('click','#filter_all',function() {
+   $('#filter_box :checkbox.filter_toggle').prop('checked',this.checked);
+ });
  $(document).on('click','#searchbtn',function() {
    var l = $('#filter_box :checkbox.filter_toggle:checked').length;
    if( l === 0 ) {
