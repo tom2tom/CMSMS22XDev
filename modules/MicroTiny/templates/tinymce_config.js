@@ -3,63 +3,63 @@ var cmsms_tiny = {};
 
 // this is the actual tinymce initialization
 tinymce.init({
-    selector: '{if isset($mt_selector) && $mt_selector != ''}{$mt_selector}{else}textarea.MicroTiny{/if}',
-    language: '{$languageid}',
+    selector: "{if !empty($mt_selector)}{$mt_selector}{else}textarea.MicroTiny{/if}",
+    language: "{$languageid}",
     cmsms_tiny: cmsms_tiny = {
-        schema: 'html5',
-        base_url: '{root_url}/',
+        schema: "html5",
+        base_url: "{root_url}/",
         resize: {mt_jsbool($mt_profile.allowresize)},
         statusbar: {mt_jsbool($mt_profile.showstatusbar)},
         menubar: {mt_jsbool($mt_profile.menubar)},
-        filepicker_title: '{$MT->Lang('filepickertitle')|escape:javascript}',
-        filepicker_url: '{$filepicker_url}&field=',
-        filebrowser_title: '{$MT->Lang('title_cmsms_filebrowser')|escape:javascript}',
-        linker_text: '{$MT->Lang('cmsms_linker')|escape:javascript}',
-        linker_title: '{$MT->Lang('title_cmsms_linker')|escape:javascript}',
-        linker_image: '{$MT->GetModuleURLPath()}/lib/images/cmsmslink.gif',
-        linker_url: '{$linker_url}',
-        linker_autocomplete_url: '{$getpages_url}',
-        mailto_text: '{$MT->Lang('mailto_text')|escape:javascript}',
-        mailto_title: '{$MT->Lang('mailto_image')|escape:javascript}',
-        mailto_image: '{$MT->GetModuleURLPath()}/lib/images/mailto.gif',
-        prompt_page: '{$MT->Lang('prompt_linker')|escape:javascript}',
-        prompt_page_info: '{$MT->Lang('info_linker_autocomplete')|escape:javascript}',
-        prompt_alias: '{$MT->Lang('prompt_selectedalias')|escape:javascript}',
-        prompt_alias_info: '{$MT->Lang('tooltip_selectedalias')|escape:javascript}',
-        prompt_text: '{$MT->Lang('prompt_texttodisplay')|escape:javascript}',
-        prompt_class: '{$MT->Lang('prompt_class')|escape:javascript}',
-        prompt_rel: '{$MT->Lang('prompt_rel')|escape:javascript}',
-        prompt_target: '{$MT->Lang('prompt_target')|escape:javascript}',
-        prompt_insertmailto: '{$MT->Lang('prompt_insertmailto')|escape:javascript}',
-        prompt_email: '{$MT->Lang('prompt_email')|escape:javascript}',
-        prompt_anchortext: '{$MT->Lang('prompt_anchortext')|escape:javascript}',
-        prompt_linktext: '{$MT->Lang('prompt_linktext')|escape:javascript}',
-        tab_general: '{$MT->Lang('tab_general_title')|escape:javascript}',
-        tab_advanced: '{$MT->Lang('tab_advanced_title')|escape:javascript}',
-        target_none: '{$MT->Lang('none')|escape:javascript}',
-        target_new_window: '{$MT->Lang('newwindow')|escape:javascript}',
-        loading_info: '{$MT->Lang('loading_info')|escape:javascript}'
+        filepicker_title: "{$MT->Lang('filepickertitle')|escape:'javascript'}",
+        filepicker_url: "{$filepicker_url}&field=",
+        filebrowser_title: "{$MT->Lang('title_cmsms_filebrowser')|escape:'javascript'}",
+        linker_text: "{$MT->Lang('cmsms_linker')|escape:'javascript'}",
+        linker_title: "{$MT->Lang('title_cmsms_linker')|escape:'javascript'}",
+        linker_image: "{$MT->GetModuleURLPath()}/lib/images/cmsmslink.gif",
+        linker_url: "{$linker_url}",
+        linker_autocomplete_url: "{$getpages_url}",
+        mailto_text: "{$MT->Lang('mailto_text')|escape:'javascript'}",
+        mailto_title: "{$MT->Lang('mailto_image')|escape:'javascript'}",
+        mailto_image: "{$MT->GetModuleURLPath()}/lib/images/mailto.gif",
+        prompt_page: "{$MT->Lang('prompt_linker')|escape:'javascript'}",
+        prompt_page_info: "{$MT->Lang('info_linker_autocomplete')|escape:'javascript'}",
+        prompt_alias: "{$MT->Lang('prompt_selectedalias')|escape:'javascript'}",
+        prompt_alias_info: "{$MT->Lang('tooltip_selectedalias')|escape:'javascript'}",
+        prompt_text: "{$MT->Lang('prompt_texttodisplay')|escape:'javascript'}",
+        prompt_class: "{$MT->Lang('prompt_class')|escape:'javascript'}",
+        prompt_rel: "{$MT->Lang('prompt_rel')|escape:'javascript'}",
+        prompt_target: "{$MT->Lang('prompt_target')|escape:'javascript'}",
+        prompt_insertmailto: "{$MT->Lang('prompt_insertmailto')|escape:'javascript'}",
+        prompt_email: "{$MT->Lang('prompt_email')|escape:'javascript'}",
+        prompt_anchortext: "{$MT->Lang('prompt_anchortext')|escape:'javascript'}",
+        prompt_linktext: "{$MT->Lang('prompt_linktext')|escape:'javascript'}",
+        tab_general: "{$MT->Lang('tab_general_title')|escape:'javascript'}",
+        tab_advanced: "{$MT->Lang('tab_advanced_title')|escape:'javascript'}",
+        target_none: "{$MT->Lang('none')|escape:'javascript'}",
+        target_new_window: "{$MT->Lang('newwindow')|escape:'javascript'}",
+        loading_info: "{$MT->Lang('loading_info')|escape:'javascript'}"
     },
     document_base_url: cmsms_tiny.base_url,
     relative_urls: true,
     image_title: true,
-    mysamplesetting: 'foobar',
+    mysamplesetting: "foobar",
     menubar: cmsms_tiny.menubar,
     statusbar: cmsms_tiny.statusbar,
     resize: cmsms_tiny.resize,
-    removed_menuitems: 'newdocument',
+    removed_menuitems: "newdocument",
     browser_spellcheck: true,
-    // smarty logic stuff
-{if isset($mt_cssname) && $mt_cssname != ''}
-    content_css: '{cms_stylesheet name=$mt_cssname nolinks=1}',
+    {*smarty logic stuff*}
+{if !empty($mt_cssname)}
+    content_css: "{cms_stylesheet name=$mt_cssname nolinks=1}",
 {/if}
 {if $isfrontend}
     toolbar: 'undo redo | bold italic underline | alignleft aligncenter alignright alignjustify indent outdent | bullist numlist | link mailto{if $mt_profile.allowimages} | image{/if}',
-    plugins: ['anchor autolink autoresize directionality help hr{if $mt_profile.allowimages} image media{/if} link lists mailto nonbreaking paste tabfocus{if $mt_profile.allowtables} table{/if} wordcount'],
+    plugins: ['anchor autolink autoresize{if $langdir=='rtl'} directionality{/if} help hr{if $mt_profile.allowimages} image media{/if} link lists mailto nonbreaking paste tabfocus{if $mt_profile.allowtables} table{/if} wordcount'],
 {else}
     image_advtab: true,
     toolbar: 'undo redo | cut copy paste | styleselect | bold italic underline | alignleft aligncenter alignright alignjustify indent outdent | bullist numlist | anchor link mailto unlink cmsms_linker{if $mt_profile.allowimages} | image{/if}',
-    plugins: ['anchor autolink autoresize charmap{if $mt_profile.allowimages} cmsms_filepicker image media{/if} cmsms_linker code directionality fullscreen help hr insertdatetime link lists mailto nonbreaking paste searchreplace tabfocus{if $mt_profile.allowtables} table{/if} wordcount'],
+    plugins: ['anchor autolink autoresize charmap{if $mt_profile.allowimages} cmsms_filepicker image media{/if} cmsms_linker code{if $langdir=='rtl'} directionality{/if} fullscreen help hr insertdatetime link lists mailto nonbreaking paste searchreplace tabfocus{if $mt_profile.allowtables} table{/if} wordcount'],
 {/if}
     // callback functions
     urlconverter_callback: function(url, elm, onsave, name) {
@@ -70,7 +70,7 @@ tinymce.init({
             return url;
         }
 
-        // fix entities in cms_selflink urls.
+        // fix entities in cms_selflink urls
         if (url.indexOf('cms_selflink') != -1) {
             decodeURI(url);
             url = url.replace('%20', ' ');
@@ -87,13 +87,13 @@ tinymce.init({
     },
     setup: function(editor) {
         editor.addMenuItem('mailto',{
-           text: cmsms_tiny.prompt_insertmailto,
-           cmd:  'mailto',
-           context: 'insert',
-        })
+            text: cmsms_tiny.prompt_insertmailto,
+            cmd:  'mailto',
+            context: 'insert',
+        });
         editor.on('change', function(e) {
             $(document).trigger('cmsms_formchange');
         });
     },
-    paste_as_text: true,
+    paste_as_text: true
 });

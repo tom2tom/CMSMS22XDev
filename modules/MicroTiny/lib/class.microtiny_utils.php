@@ -24,7 +24,7 @@ class microtiny_utils
    *
    * @since 1.0
    */
-  private function __construct() { }
+  private function __construct() {}
 
   /**
    * Module API wrapper function
@@ -119,9 +119,10 @@ class microtiny_utils
    * Generate a tinymce initialization file.
    *
    * @since 1.0
-   * @param boolean Frontend true/false
-   * @param string Templateid
-   * @param string A2 Languageid
+   * @param bool $frontend Default false
+   * @param string $selector Default ''
+   * @param string $css_name Default ''
+   * @param string $languageid Default 'en'
    * @return string
    */
   private static function _generate_config($frontend=false, $selector='', $css_name='', $languageid="en")
@@ -143,6 +144,7 @@ class microtiny_utils
       $tpl_ob->assign('mt_actionid','m1_');
       $tpl_ob->assign('isfrontend',$frontend);
       $tpl_ob->assign('languageid',$languageid);
+      $tpl_ob->assign('langdir','ltr'); //TODO per $languageid 'ltr' or 'rtl'
       $tpl_ob->assign('root_url',$config->smart_root_url());
       $fp = \cms_utils::get_filepicker_module();
       if( $fp ) {
@@ -175,7 +177,7 @@ class microtiny_utils
   }
 
   /**
-   * Convert users current language to something tinymce can prolly understand (hopefully).
+   * Convert user's current language to something tinymce can prolly understand (hopefully).
    *
    * @since 1.0
    * @return string
@@ -202,6 +204,7 @@ class microtiny_utils
     if( in_array($mylang,$langs) ) return $mylang;
     if( in_array($shortlang,$langs) ) return $shortlang;
     return 'en';
+    //TODO also report direction ltr or rtl
   }
 
   /**
