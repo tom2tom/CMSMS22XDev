@@ -453,7 +453,7 @@ $modules = ModuleOperations::get_instance()->get_modules_with_capability('search
 if( is_array($modules) && count($modules) ) {
   $tmp = [];
   $tmp['-1'] = lang('none');
-  for($i = 0, $iMax = count($modules); $i < $iMax; $i++ ) {
+  for( $i = 0, $iMax = count($modules); $i < $iMax; $i++ ) {
     $tmp[$modules[$i]] = $modules[$i];
   }
   $smarty->assign('search_modules',$tmp);
@@ -480,7 +480,7 @@ $smarty->assign('pretty_urls',$pretty_urls);
 {
   $tmp = module_meta::get_instance()->module_list_by_capability('wysiwyg');
   $tmp2 = array(-1=>lang('none'));
-  for($i = 0, $iMax = count($tmp); $i < $iMax; $i++ ) {
+  for( $i = 0, $iMax = count($tmp); $i < $iMax; $i++ ) {
     $tmp2[$tmp[$i]] = $tmp[$i];
   }
   $smarty->assign('wysiwyg',$tmp2);
@@ -566,20 +566,20 @@ $smarty->assign('lang_date_format_string_help',lang('date_format_string_help'));
 $smarty->assign('lang_info_sitedownexcludes',lang('info_sitedownexcludes'));
 
 $all_attributes = [];
-{
-  $content_obj = new Content(); // should this be the default type?
-  $list = $content_obj->GetProperties();
-  if( is_array($list) && count($list) ) {
-    // pre-remove some items.
-    for($i = 0, $iMax = count($list); $i < $iMax; $i++ ) {
-      $obj = $list[$i];
-      if( $obj->tab == $content_obj::TAB_PERMS ) continue;
-      if( !isset($all_attributes[$obj->tab]) ) $all_attributes[$obj->tab] = array('label'=>lang($obj->tab),'value'=>[]);
-      $all_attributes[$obj->tab]['value'][] = array('value'=>$obj->name,'label'=>lang($obj->name));
-    }
+$content_obj = new Content(); // TODO should this be the default type?
+$list = $content_obj->GetProperties();
+if( is_array($list) && count($list) ) {
+  // pre-remove some items.
+  for( $i = 0, $iMax = count($list); $i < $iMax; $i++ ) {
+    $obj = $list[$i];
+    if( $obj->tab == $content_obj::TAB_PERMS ) continue;
+    if( !isset($all_attributes[$obj->tab]) ) $all_attributes[$obj->tab] = array('label'=>lang($obj->tab),'value'=>[]);
+    $all_attributes[$obj->tab]['value'][] = array('value'=>$obj->name,'label'=>lang($obj->name));
   }
-  $txt = CmsFormUtils::create_option($all_attributes);
 }
+//$txt = CmsFormUtils::create_option($all_attributes,$basic_attributes);
+//$smarty->assign('basic_options',$txt);
+
 $smarty->assign('all_attributes',$all_attributes);
 $smarty->assign('smarty_cacheoptions',array('always'=>lang('always'),'never'=>lang('never'),'moduledecides'=>lang('moduledecides')));
 $smarty->assign('smarty_cacheoptions2',array('always'=>lang('always'),'never'=>lang('never')));
