@@ -83,17 +83,17 @@ class CmsNls
    */
   public function matches($str)
   {
-      if( $str == $this->name() ) return TRUE;
-      if( $str == $this->isocode() ) return TRUE;
-      if( $str == $this->fullname() ) return TRUE;
-      $aliases = $this->aliases();
-      if( !is_array($aliases) ) $aliases = explode(',',$aliases);
-      if( is_array($aliases) && count($aliases) ) {
-          foreach( $aliases as $alias ) {
-              if( !strcasecmp($alias,$str) ) return TRUE;
-          }
+    if( $str == $this->name() ) return TRUE;
+    if( $str == $this->isocode() ) return TRUE;
+    if( $str == $this->fullname() ) return TRUE;
+    $aliases = $this->aliases();
+    if( !is_array($aliases) ) $aliases = explode(',',$aliases);
+    if( is_array($aliases) && count($aliases) ) {
+      foreach( $aliases as $alias ) {
+        if( !strcasecmp($alias,$str) ) return TRUE;
       }
-      return FALSE;
+    }
+    return FALSE;
   }
 
   /**
@@ -102,7 +102,8 @@ class CmsNls
    */
   public function name()
   {
-    return $this->_key;
+    if( !empty($this->_key) ) return $this->_key;
+    return '';
   }
 
   /**
@@ -111,8 +112,9 @@ class CmsNls
    */
   public function isocode()
   {
-    if( !$this->_isocode ) return substr($this->_fullname,0,2);
-    return $this->_isocode;
+    if( !empty($this->_isocode) ) return $this->_isocode;
+    if( !empty($this->_fullname) ) return substr($this->_fullname,0,2);
+    return '';
   }
 
   /**
@@ -121,7 +123,8 @@ class CmsNls
    */
   public function display()
   {
-    if( $this->_display ) return $this->_display;
+    if( !empty($this->_display) ) return $this->_display;
+    return '';
   }
 
   /**
@@ -130,7 +133,8 @@ class CmsNls
    */
   public function locale()
   {
-    return $this->_locale;
+    if( !empty($this->_locale) ) return $this->_locale;
+    return '';
   }
 
   /**
@@ -139,8 +143,8 @@ class CmsNls
    */
   public function encoding()
   {
-    if( !$this->_encoding ) return 'UTF-8';
-    return $this->_encoding;
+    if( !empty($this->_encoding) ) return $this->_encoding;
+    return 'UTF-8';
   }
 
   /**
@@ -149,19 +153,21 @@ class CmsNls
    */
   public function fullname()
   {
-    if( $this->_fullname ) return $this->_fullname;
+    if( !empty($this->_fullname) ) return $this->_fullname;
+    return '';
   }
 
   /**
    * Return the aliases associated with this CmsNls object
-   * @return mixed array of aliases, or null
+   * @return mixed array of aliases, or empty
    */
   public function aliases()
   {
-    if( $this->_aliases ) {
+    if( !empty($this->_aliases) ) {
       if( is_array($this->_aliases) ) return $this->_aliases;
       return explode(',',$this->_aliases);
     }
+    return [];
   }
 
   /**
@@ -170,7 +176,8 @@ class CmsNls
    */
   public function key()
   {
-    return $this->_key;
+    if( !empty($this->_key) )return $this->_key;
+    return '';
   }
 
   /**
@@ -179,7 +186,7 @@ class CmsNls
    */
   public function direction()
   {
-    if( $this->_direction ) return $this->_direction;
+    if( !empty($this->_direction) ) return $this->_direction;
     return 'ltr';
   }
 
@@ -191,12 +198,12 @@ class CmsNls
    */
   public function htmlarea()
   {
-    if( $this->_htmlarea ) return $this->_htmlarea;
+    if( !empty($this->_htmlarea) ) return $this->_htmlarea;
     return substr($this->_fullname,0,2);
   }
 
   /**
-   * Create an Nls object from a compatible array.
+   * Create a CmsNls object from a compatible array.
    *
    * @internal
    * @ignore
@@ -209,9 +216,9 @@ class CmsNls
     // name and key
     if( isset($data['englishlang']) ) {
       foreach( $data['englishlang'] as $k => $v ) {
-	$obj->_fullname = $v;
-	$obj->_key = $k;
-	break;
+        $obj->_fullname = $v;
+        $obj->_key = $k;
+        break;
       }
     }
 
