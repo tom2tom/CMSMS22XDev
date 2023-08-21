@@ -2278,7 +2278,7 @@ abstract class ContentBase
 	 * Get all of the properties for this content object.  independent of whether the user is entitled to view them, or not.
 	 *
 	 * @since 2.0
-	 * @return array of stdclass objects
+	 * @return array of stdClass objects
 	 */
 	public function GetProperties()
 	{

@@ -46,7 +46,7 @@
                     {foreach $cssl as $one}
                         <li class="ui-state-default cf sortable-item" data-cmsms-item-id="{$one}">
                             <a href="{cms_action_url action=admin_edit_css css=$one}" class="edit_css" title="{$mod->Lang('edit_stylesheet')}">{$list_stylesheets.$one}</a>
-                            <a href="javascript:void(0)" "title="{$mod->Lang('remove')}" class="ui-icon ui-icon-trash sortable-remove" title="{$mod->Lang('remove')}">{$mod->Lang('remove')}</a>
+                            <a href="javascript:void(0)" title="{$mod->Lang('remove')}" class="ui-icon ui-icon-trash sortable-remove" title="{$mod->Lang('remove')}">{$mod->Lang('remove')}</a>
                             <input class="hidden" type="checkbox" name="{$actionid}assoc_css[]" value="{$one}" checked tabindex="-1">
                         </li>
                     {/foreach}
