@@ -35,7 +35,7 @@ $lang['help_cmscontentmanager_help'] = <<<EOT
   <p>This content item type is also used in navigations.  It is usually used to generate a horizontal (or vertical) divider between navigation items.  Some types of navigations <em>(determined by the navigation template)</em> may not display separators at all.</p>
   </li>
   <li>Section Header
-    <p>The section header is also only displayed in navigations.  It is used to organize content items.  It provides a textual header above, or between other content items.  Section headers do not have URLS and cannot usually be clicked on.  Some navigation templates may style section headers differently than other content items.</p>
+    <p>The section header is also only displayed in navigations.  It is used to organize content items.  It provides a textual header above, or between other content items.  Section headers do not have an URL and cannot usually be clicked on.  Some navigation templates may style section headers differently than other content items.</p>
   </li>
   <li>Error Page
     <p>The Error Page is a special type of content item type.  It is used when a user attempts to navigate to a content item that is either not navigable or does not exist.</p>
@@ -61,7 +61,7 @@ $lang['help_cmscontentmanager_help'] = <<<EOT
     </li>
   </ul>
   <h5>Column List</h5>
-      <p>The Content Manager module provides a flexible mechanism for hiding and showing different columns in the content list.  Additionally, some columns may be hidden based on the site configuration.  For example, the URL column is hidden if pretty <em>(Search Engine Friendly)</em> URLS are not configured.</p>
+      <p>The Content Manager module provides a flexible mechanism for hiding and showing different columns in the content list.  Additionally, some columns may be hidden based on the site configuration.  For example, the URL column is hidden if pretty <em>(Search Engine Friendly)</em> URLs are not configured.</p>
       <p>Each column in the content list display has a special purpose:</p>
    <ul>
      <li>Expand/Collapse Column
@@ -646,8 +646,8 @@ $lang['help_myaccount_wysiwyg'] = 'Select which WYSIWYG <em>(What You See Is Wha
 /* S */
 $lang['settings_adminlog_lifetime'] = 'This setting indicates the maximum amount of time that entries in the Admin log should be retained.';
 $lang['settings_autoclearcache'] = 'This option allows you to specify the maximum age <em>(in days)</em> before files in the cache directory will be deleted.<br><br>This option is useful to ensure that cached files are regenerated periodically, and that the file system does not become polluted with old and unnecessary files.  An ideal value for this field is 14 or 30 days.<br><br><strong>Note:</strong> Cached files are cleared at most once per day.';
-$lang['settings_autocreate_flaturls'] = 'If SEF/pretty URLs are enabled, and the option to auto-create URLs is enabled, this option indicates hat those auto-created URLS should be flat <em>(i.e: identical to the page alias)</em>.  <strong>Note:</strong> The two values do not need to remain identical, the URL value can be changed to be different than the page alias in subsequent page edits';
-$lang['settings_autocreate_url'] = 'When editing content pages, should SEF/pretty URLS be auto-created?  Auto creating URLS will have no effect if pretty urls are not enabled in the CMSMS config.php file.';
+$lang['settings_autocreate_flaturls'] = 'If SEF/pretty URLs are enabled, and the option to auto-create URLs is enabled, this option indicates that those auto-created URLs should be flat <em>(i.e: identical to the page alias)</em>.  <strong>Note:</strong> The two values do not need to remain identical, the URL value can be changed to be different than the page alias in subsequent page edits';
+$lang['settings_autocreate_url'] = 'When editing content pages, should SEF/pretty URLs be auto-created?  Auto creating URLs will have no effect if pretty urls are not enabled in the CMSMS config.php file.';
 $lang['settings_badtypes'] = 'Select which content types to remove from the content type dropdown when editing or adding content.  This feature is useful if you do not want editors to be able to create certain types of content.  Use CTRL+Click to select, unselect items.  Having no selected items will indicate that all content types are allowed. <em>(applies to all users)</em>';
 $lang['settings_basicattribs2'] = 'This field allows you to specify which content properties that users without the &quot;Manage All Content&quot; permission are allowed to edit.<br>This feature is useful when you have content editors with restricted permission and want to permit editing of additional content properties.';
 $lang['settings_browsercache'] = 'Applicable only to cachable pages, this setting indicates that browsers should be allowed to cache the pages for an amount of time.  If enabled repeat visitors to your site may not immediately see changes to the content of the pages, however enabling this option can seriously improve the performance of your website.';
@@ -674,8 +674,8 @@ $lang['settings_mailprefs_smtpsecure'] = 'This option, when using SMTP authentic
 $lang['settings_mailprefs_smtptimeout'] = 'When using the SMTP mailer, this option specifies the number of seconds before an attempted connection to the SMTP server will fail.  A typical value for this setting is 60.<br><br><strong>Note:</strong> If you need a longer value here it probably indicates an underlying DNS, routing or firewall problem, and you may need to contact your host.';
 $lang['settings_mailprefs_smtpusername'] = 'This is the username for connecting to the SMTP server if SMTP authentication is enabled.';
 $lang['settings_mailtest_testaddress'] = 'Specify a valid email address that will receive the test email';
-$lang['settings_mandatory_urls'] = 'If SEF/pretty URLs are enabled, this option indicates whether page URLS are a required field in the content editor.';
-$lang['settings_nosefurl'] = 'To configure <strong>S</strong>each <strong>E</strong>ngine <strong>F</strong>riendly <em>(pretty)</em> URLs you need to edit a few lines in your config.php file and possibly to edit a .htaccess file or your web servers configuration.   You can read more about configuring pretty URLS <a href="https://docs.cmsmadesimple.org/configuration/pretty-url" class="external" target="blank"><u>here</u></a> &raquo;';
+$lang['settings_mandatory_urls'] = 'If SEF/pretty URLs are enabled, this option indicates whether page URLs are a required field in the content editor.';
+$lang['settings_nosefurl'] = 'To configure <strong>S</strong>each <strong>E</strong>ngine <strong>F</strong>riendly <em>(pretty)</em> URLs you need to edit a few lines in the site\'s config.php file and possibly to edit a .htaccess file or the web server\'s configuration.  You can read more about configuring pretty URLs <a href="https://docs.cmsmadesimple.org/configuration/pretty-url" class="external" target="blank"><u>here</u></a> &raquo;';
 $lang['settings_pseudocron_granularity'] = 'This setting indicates how often the system will attempt to handle regularly scheduled tasks.';
 $lang['settings_searchmodule'] = 'Select the module that should be used to index words for searching, and will provide the site search capabilities';
 $lang['settings_sitedownexcludeadmins'] = 'Do show the website to Admin users logged in to the CMSMS Admin console';

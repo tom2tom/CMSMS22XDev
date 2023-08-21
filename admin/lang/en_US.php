@@ -1668,7 +1668,7 @@ $lang['warning_upgrade_info2'] = "Please click the following link: %s.";
 $lang['warn_addgroup'] = "Creating a new group does not assign any permissions. You will need to assign permissions to the new group in a separate step.";
 $lang['warn_admin_ipandcookies'] = "Warning: Admin activities use cookies and tracks your IP address";
 //$lang['warn_bulk_settemplate'] = '<strong>Warning:</strong> This is potentially a destructive operation, and may break an existing website.  <span style="color: red;">Use caution!</span>';
-$lang['warn_nosefurl'] = "SEO Friendly or Pretty URLs have not been configured. Its settings are not visible here";
+$lang['warn_nosefurl'] = "SEO-friendly ('pretty') URLs have not been configured. Settings related to those are not displayed here.";
 $lang['welcomemsg'] = "Welcome %s";
 $lang['welcome_user'] = "Welcome";
 $lang['wiki'] = "Wiki";  // backwards compatibility
