@@ -6,9 +6,10 @@ tinymce.init({
     selector: "{if !empty($mt_selector)}{$mt_selector}{else}textarea.MicroTiny{/if}",
     language: "{$languageid}",
     cmsms_tiny: cmsms_tiny = {
-        schema: "html5",
         base_url: "{root_url}/",
-        resize: {mt_jsbool($mt_profile.allowresize)},
+        element_format: "html",
+        schema: "html5",
+        resize: {if ($mt_profile.showstatusbar && $mt_profile.allowresize)}"both"{else}false{/if},
         statusbar: {mt_jsbool($mt_profile.showstatusbar)},
         menubar: {mt_jsbool($mt_profile.menubar)},
         filepicker_title: "{$MT->Lang('filepickertitle')|escape:'javascript'}",
@@ -55,11 +56,11 @@ tinymce.init({
 {/if}
 {if $isfrontend}
     toolbar: 'undo redo | bold italic underline | alignleft aligncenter alignright alignjustify indent outdent | bullist numlist | link mailto{if $mt_profile.allowimages} | image{/if}',
-    plugins: ['anchor autolink autoresize{if $langdir=='rtl'} directionality{/if} help hr{if $mt_profile.allowimages} image media{/if} link lists mailto nonbreaking paste tabfocus{if $mt_profile.allowtables} table{/if} wordcount'],
+    plugins: ['anchor','autolink','autoresize'{if $langdir=='rtl'},'directionality'{/if},'help','hr'{if $mt_profile.allowimages},'image','media'{/if},'link','lists','mailto','nonbreaking','paste','tabfocus'{if $mt_profile.allowtables},'table{/if},'wordcount'],
 {else}
     image_advtab: true,
     toolbar: 'undo redo | cut copy paste | styleselect | bold italic underline | alignleft aligncenter alignright alignjustify indent outdent | bullist numlist | anchor link mailto unlink cmsms_linker{if $mt_profile.allowimages} | image{/if}',
-    plugins: ['anchor autolink autoresize charmap{if $mt_profile.allowimages} cmsms_filepicker image media{/if} cmsms_linker code{if $langdir=='rtl'} directionality{/if} fullscreen help hr insertdatetime link lists mailto nonbreaking paste searchreplace tabfocus{if $mt_profile.allowtables} table{/if} wordcount'],
+    plugins: ['anchor','autolink','autoresize','charmap'{if $mt_profile.allowimages},'cmsms_filepicker','image','media'{/if},'cmsms_linker','code'{if $langdir=='rtl'},'directionality'{/if},'fullscreen','help','hr','insertdatetime','link','lists','mailto','nonbreaking','paste','searchreplace','tabfocus'{if $mt_profile.allowtables},'table'{/if},'wordcount'],
 {/if}
     // callback functions
     urlconverter_callback: function(url, elm, onsave, name) {
