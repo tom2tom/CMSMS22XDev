@@ -41,8 +41,8 @@ class microtiny_utils
       if(!is_object($mod)) throw new CmsLogicException('Could not find the microtiny module...');
 
       $frontend = CmsApp::get_instance()->is_frontend_request();
-      list($languageid,$ltr) = self::GetLanguageId($mod);
-      $mtime = time() - 300; // by defaul cache for 5 minutes ??
+      list($languageid,$ltr) = self::GetLanguageId();
+      $mtime = time() - 300; // default cache for 5 minutes ?
 
       // get the cssname that we're going to use (either passed in, or from profile)
       try {
@@ -89,12 +89,18 @@ class microtiny_utils
       $output = '';
       if( $first_time ) {
           // only once per request.
-          $first_time = FALSE;
+          $first_time = false;
           $output .= '<script src="'.$config->smart_root_url().'/modules/MicroTiny/lib/js/tinymce/tinymce.min.js"></script>';
       }
 
-      $hash_salt = __DIR__.session_id().$frontend.$selector.$css_name.get_userid(FALSE).$languageid;
-      if( get_userid(false) && !$frontend ) $hash_salt .= $_SESSION[CMS_USER_KEY];
+      if( $frontend ) {
+          $ip = cms_utils::get_real_ip();
+          $hash_salt = $ip.$selector.$css_name.$languageid.session_id().__DIR__;
+      }
+      else {
+          $userid = get_userid(false);
+          $hash_salt = __DIR__.session_id().$selector.$css_name.$userid.$languageid.$_SESSION[CMS_USER_KEY];
+      }
       $fn = cms_join_path(PUBLIC_CACHE_LOCATION,'mt_'.md5($hash_salt).'.js');
       if( !file_exists($fn) || filemtime($fn) < $mtime ) {
           // we have to generate a config file.
@@ -186,36 +192,42 @@ class microtiny_utils
    * Convert user's current language to something tinymce can prolly understand
    *
    * @since 1.0
-   * @param MicroTiny $mod
    *
-   * @return array 2 members: 0:locale identifier(string) 1:ltr direction(bool)
+   * @return array 2 members: [0]language identifier(string) [1]ltr direction(bool)
    */
-  private static function GetLanguageId($mod)
+  private static function GetLanguageId()
   {
     $mylang = CmsNlsOperations::get_current_language();
     if( $mylang == '' ) return ['en',true]; //Lang setting "No default selected"
 
-    $patn = cms_join_path($mod->GetModulePath(),'lib','js','tinymce','langs','*.js');
+    $isocode = substr($mylang,0,2);
+    $info = CmsNlsOperations::get_language_info($mylang);
+    $langltr = $info->direction() != 'rtl';
+
+    $langs = file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'langs.manifest');
+    if( $langs ) {
+        if( strpos($langs, $mylang) !== false ) {
+            return [$mylang,$langltr];
+        }
+        if( strpos($langs, $isocode) !== false ) {
+            return [$isocode,$langltr];
+        }
+        return ['en',true]; // default
+    }
+    // we have to poll the files
+    $patn = cms_join_path(__DIR__,'js','tinymce','langs',$isocode.'*.js');
     $files = glob($patn);
     if( $files ) {
         $langs = [];
         foreach( $files as $one ) {
             $langs[] = basename($one,'.js');
         }
-    }
-    else {
-        return ['en',true]; // default
-    }
-
-    $info = CmsNlsOperations::get_language_info($mylang);
-    $langltr = $info->direction() !== 'rtl';
-
-    if( in_array($mylang,$langs) ) {
-        return [$mylang,$langltr];
-    }
-    $shortlang = substr($mylang,0,2);
-    if( in_array($shortlang,$langs) ) {
-        return [$shortlang,$langltr];
+        if( in_array($mylang,$langs) ) {
+            return [$mylang,$langltr];
+        }
+        if( in_array($isocode,$langs) ) {
+            return [$isocode,$langltr];
+        }
     }
     return ['en',true];
   }
