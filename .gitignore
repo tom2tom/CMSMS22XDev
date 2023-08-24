@@ -10,7 +10,7 @@ moduleinfo.ini
 *OLD
 UNUSED*
 HIDE*
-MANIFEST*
+#MANIFEST*
 uploads/
 #work in progress
 build.ini
@@ -21,4 +21,6 @@ assets/resources/
 phar_installer/out/
 phar_installer/assets/install/uploadfiles/
 #non-en translations
-ext/
+**/lang/ext
+**/lang/**/ext
+.svn
