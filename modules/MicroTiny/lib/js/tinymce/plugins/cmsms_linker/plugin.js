@@ -253,7 +253,7 @@ tinymce.PluginManager.add('cmsms_linker', function(editor, url) {
 
     // run tinymce window and build form
     win = editor.windowManager.open({
-      title: cmsms_tiny.linker_text,
+      title: cmsms_tiny.linker_heading,
       data: data,
       bodyType: 'tabpanel',
       body: [{
