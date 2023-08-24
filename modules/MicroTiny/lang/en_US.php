@@ -168,10 +168,8 @@ $lang['info_linker_autocomplete'] = 'This is an auto complete field. Begin by ty
 $lang['loading_info'] = 'Loading...';
 
 // M
-//$lang['mailto_image'] = 'Create an email image';
 $lang['mailto_text'] = 'Email link'; // menu label
 $lang['mailto_text2'] = 'Email Link'; //dialog heading, upper-cased version of 'mailto_text'
-//$lang['mailto_title'] = 'Insert/edit email link'; see 'title_mailto'
 $lang['msg_cancelled'] = 'Operation canceled';
 $lang['mthelp_allowcssoverride'] = 'If enabled, then any code that initializes a MicroTiny WYSIWYG area will be able to specify the name of a stylesheet to use instead of the default stylesheet specified above.';
 $lang['mthelp_dfltstylesheet'] = 'Associate a stylesheet with editors using this profile.  This allows the WYSIWYG editor to appear similar to the website appearance.';
@@ -207,7 +205,6 @@ $lang['profile_showstatusbar'] = 'Show statusbar';
 $lang['prompt_anchortext'] = 'Anchor text';
 $lang['prompt_class'] = 'Class attribute';
 $lang['prompt_email'] = 'Email address';
-//$lang['prompt_insertmailto'] = 'Insert/edit email link';
 $lang['prompt_linker'] = 'Page title';
 $lang['prompt_linktext'] = 'Link text';
 $lang['prompt_name'] = 'Name';
