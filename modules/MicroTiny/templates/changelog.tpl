@@ -3,6 +3,7 @@
   <ul>
   <li>Update TinyMCE to version 4.9.11</li>
   <li>Add plugins: help, directionality, nonbreaking</li>
+  <li>Fix configuration: element_format, schema</li>
   </ul>
   </li>
   <li>v2.2.5 (CMSMS 2.2.15)<br>
@@ -14,7 +15,7 @@ Minor fix in error displays.
   <li>v2.2.3 (CMSMS 2.2.9)
   <ul>
   <li>Add entropy to mt_config.js filename to fix issues with js caching when switching users</li>
-  <li>Fixes in the cms_linker plugin for when trying to change a link to a (CMSMS page where the alias has changed</li>
+  <li>Fixes in the cms_linker plugin for when trying to change a link to a CMSMS page where the alias has changed</li>
   </ul>
   </li>
   <li>v2.2.2 (CMSMS 2.2.4)
