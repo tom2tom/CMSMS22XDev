@@ -25,7 +25,14 @@ if( version_compare($oldversion,'2.0') < 0 ) {
   $this->DeleteTemplate();
   include_once(__DIR__.'/method.install.php');
 }
-
+/*
+NOTE: when upgrading TinyMCE, ensure that all its related translation
+files (*.js) that also correspond to supported CMSMS translations (nls
+files exist, even if not currently installed) are isted in the translations
+lookup file,
+ __DIR__/lib/langs.manifest
+in each case, without a trailing '.js'
+*/
 #
 # EOF
 #
