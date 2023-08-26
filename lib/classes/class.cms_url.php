@@ -361,7 +361,7 @@ class cms_url
             $url .= '@';
         }
         if( !empty($parts['host']) ) $url .= $parts['host'];
-        if( !empty($params['port']) && $parts['port'] > 0 ) $url .= ':'.$parts['post'];
+        if( !empty($parts['port']) && $parts['port'] > 0 ) $url .= ':'.$parts['post'];
         if( !empty($parts['path']) ) {
             if( !startswith($parts['path'],'/') ) $url .= '/';
             $url .= $parts['path'];
