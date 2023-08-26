@@ -110,7 +110,6 @@ function check_login($no_redirect = false)
 }
 
 
-
 /**
  * Checks to see that the given userid has access to the given permission.
  * Members of the admin group have all permissions.
@@ -208,7 +207,7 @@ function audit($itemid, $itemname, $action)
 
 
 /**
- * Gets the given site prefernce
+ * Gets the given site preference
  *
  * @deprecated
  * @since 0.6
@@ -239,7 +238,7 @@ function remove_site_preference($prefname,$uselike=false)
 
 
 /**
- * Sets the given site perference with the given value.
+ * Sets the given site preference with the given value.
  *
  * @deprecated
  * @see cms_siteprefs::set
@@ -252,8 +251,6 @@ function set_site_preference($prefname, $value)
 {
   return cms_siteprefs::set($prefname,$value);
 }
-
-
 
 
 /**
@@ -514,6 +511,7 @@ function get_pageid_or_alias_from_url()
     return $page;
 }
 
+
 /**
  * @ignore
  */
@@ -554,6 +552,7 @@ function preprocess_mact($returnid)
     @ob_end_clean();
     \CMS_Content_Block::set_primary_content($result);
 }
+
 
 /**
  * Alternative to deprecated strftime() which also processes date/date_format()
