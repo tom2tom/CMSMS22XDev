@@ -15,47 +15,101 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: addbookmark.php 12671 2021-12-13 03:05:01Z tomphantoo $
+#$Id:$
 
 $CMS_ADMIN_PAGE=1;
 
 require_once("../lib/include.php");
-$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+$urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
 check_login();
 
-$error = "";
+if (isset($_POST["cancel"])) {
+	redirect("listbookmarks.php".$urlext);
+}
 
+$error = "";
 $title= "";
 if (isset($_POST["title"])) $title = trim(cleanValue($_POST["title"]));
 $url = "";
 if (isset($_POST["url"])) $url = trim(cleanValue($_POST["url"]));
 
-if (isset($_POST["cancel"])) {
-	redirect("listbookmarks.php".$urlext);
-	return;
+if ($url) {
+	// mimic FILTER_SANITIZE_URL, allowing valid UTF8 and extended-ASCII chars
+	if (preg_match('/[^\w\-+.,\/\\?&=!*"\'(){}|^~[\]`<>#%$;:@\p{L}\p{N}\p{Po}\x82-\x84\x88\x8a\x8c\x8e\x91-\x94\x96-\x98\x9a\x9c\x9e\x9f\xa8\xad\xb4\xb7\xb8\xc0-\xf6\xf8-\xff]/u', $url)) {
+		unset($_POST['addbookmark']);
+		$error = lang('illegalcharacters', lang('url'));
+	}
+	else {
+		$sitehost = parse_url(CMS_ROOT_URL, PHP_URL_HOST);
+		$validurl = function($url) use($sitehost) {
+			$parts = parse_url($url);
+			if ($parts) {
+				if (empty($parts['scheme'])) return false;
+				$val = strtolower($parts['scheme']);
+				// lots of valid schemes https://en.wikipedia.org/wiki/List_of_URI_schemes
+				if (in_array($val, [
+				'attachment',
+				'blob',
+				'chrome',
+				'cid',
+				'data',
+				'dns',
+				'example',
+				'file',
+				'filesystem',
+				'ftp',
+				'query',
+				'sftp',
+				'tel',
+				'tftp',
+				'view-source',
+				])) return false;
+				// some typo checks
+				similar_text($val, 'https', $p1);
+				$near = ($p1 > 60 && $p1 < 100);
+				if ($near) {
+					similar_text($val, 'http', $p2);
+					$near = ($p2 > 60 && $p2 < 100);
+				}
+				if ($near) return false;
+
+				if (empty($parts['host']) || in_array($parts['host'], [
+				'localhost', //TODO caseless check
+				$sitehost,
+				])) return false;
+//TODO other sanity checks, malevolence checks
+//e.g. refer to https://owasp.org/www-community/attacks/Forced_browsing
+//www.example.com/function.jsp?fwd=admin.jsp
+//www.example.com/example.php?url=http://malicious.example.com
+				return true;
+			}
+			return false;
+		};
+
+		if (!$validurl($url)) {
+			unset($_POST['addbookmark']);
+			$error = lang('error_badfield', lang('url'));
+		}
+	}
 }
 
 $userid = get_userid();
 
-if (isset($_POST["addbookmark"]))
-	{
+if (isset($_POST["addbookmark"])) {
 	$validinfo = true;
 
-	if ( $title == "" )
-		{
+	if ( $title == "" ) {
 		$error .= lang('nofieldgiven', array(lang('title')));
 		$validinfo = false;
-		}
-		else if ( $url == "" )
-		{
+	}
+	else if ( $url == "" ) {
 		$error .= lang('nofieldgiven', array(lang('url')));
 		$validinfo = false;
-		}
+	}
 
-	if ($validinfo)
-		{
-		  $gCms = cmsms();
+	if ($validinfo) {
+		$gCms = cmsms();
 		$gCms->GetBookmarkOperations();
 		$markobj = new Bookmark();
 		$markobj->title = $title;
@@ -64,24 +118,21 @@ if (isset($_POST["addbookmark"]))
 
 		$result = $markobj->save();
 
-		if ($result)
-			{
+		if ($result) {
 			redirect("listbookmarks.php".$urlext);
-			return;
-			}
-		else
-			{
+			return; // useless here
+		}
+		else {
 			$error .= lang('errorinsertingbookmark');
-			}
 		}
 	}
+}
 
 include_once("header.php");
 
-if ($error != "")
-	{
-		echo '<div class="pageerrorcontainer"><p class="pageerror">'.$error.'</p></div>';
-	}
+if ($error) {
+	echo '<div class="pageerrorcontainer"><p class="pageerror">'.$error.'</p></div>';
+}
 ?>
 
 <div class="pagecontainer">
