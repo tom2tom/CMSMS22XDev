@@ -1,3 +1,4 @@
+// data
 var cmsms_tiny = {
     filebrowser_title: "{$MT->Lang('title_cmsms_filebrowser')|escape:'javascript'}",
     filepicker_title: "{$MT->Lang('filepickertitle')|escape:'javascript'}",
@@ -30,7 +31,7 @@ var cmsms_tiny = {
     target_none: "{$MT->Lang('none')|escape:'javascript'}",
 };
 
-// this is the actual tinymce initialization
+// tinymce initialization
 tinymce.init({
     browser_spellcheck: true,
     document_base_url: "{root_url}/",
@@ -82,7 +83,7 @@ tinymce.init({
     },
     setup: function(editor) {
         editor.addMenuItem('mailto', {
-            text: cmsms_tiny.prompt_insertmailto,
+            text: cmsms_tiny.mailto_text,
             cmd: 'mailto',
             context: 'insert',
         });
