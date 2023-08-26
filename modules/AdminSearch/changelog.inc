@@ -30,4 +30,4 @@ More attributes of content objects are searched<br>
 More types of content object are searched<br>
 <br>
 1.0.7 - August 2023<br>
-Added option to exclude inactive-pages from searches<br>
+FR 12555 Added option to exclude inactive-pages from searches<br>
