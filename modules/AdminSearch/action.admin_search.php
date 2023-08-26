@@ -77,10 +77,11 @@ if( is_array($slaves) && count($slaves) ) {
         $obj->set_params($searchparams);
         $results = $obj->get_matches();
         if( is_array($results) && count($results) ) {
+            $log = CMS_DEBUG != false;
             begin_section($one_slave['class'],$obj->get_name(),$obj->get_section_description());
             foreach( $results as $one ) {
-                debug_to_log($one);
-                if (is_array($one)) {
+                if( $log ) debug_to_log($one);
+                if( is_array($one) ) {
                   //oldskool
                   $text = isset($params['show_snippets']) && isset($one['text'])?$one['text']:'';
                   //if( $text ) $text = addslashes($text);
