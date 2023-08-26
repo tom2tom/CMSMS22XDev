@@ -186,21 +186,13 @@ class Smarty_CMS extends CMSSmartyBase
         $this->autoload_filters = array('pre'=>$pre,'post'=>$post,'output'=>$output);
     }
 
-    public function registerClass($a,$b)
-    {
-        if( $this->security_policy ) {
-            $this->security_policy->static_classes[] = $a;
-        }
-        parent::registerClass($a,$b);
-    }
-
     /**
      * Registers plugin to be used in templates
      *
      * @param string   $type       plugin type
      * @param string   $tag        name of template tag
      * @param callback $callback   PHP callback to register
-     * @param bool  $cacheable  if true (default) this fuction is cachable
+     * @param bool  $cacheable  if true (default) this function is cachable
      * @param array    $cache_attr caching attributes if any
      * @return Smarty_Internal_Templatebase current Smarty_Internal_Templatebase (or Smarty or Smarty_Internal_Template) instance for chaining
      * @throws SmartyException when the plugin tag is invalid
