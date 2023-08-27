@@ -186,6 +186,20 @@ class Smarty_CMS extends CMSSmartyBase
         $this->autoload_filters = array('pre'=>$pre,'post'=>$post,'output'=>$output);
     }
 
+    public function registerClass($a,$b)
+    {
+        if( $this->security_policy ) {
+            if( $this->security_policy->static_classes === null ) {
+                //return; //TODO non-compat but consistent with permissive smarty etc
+                $this->security_policy->static_classes = [$a]; //deprecated since 2.2.19 ? or ok ?
+            }
+            elseif( $this->security_policy->static_classes !== [] ) {
+                $this->security_policy->static_classes[] = $a; //top-up the whitelist
+            }
+        }
+        parent::registerClass($a,$b);
+    }
+
     /**
      * Registers plugin to be used in templates
      *
