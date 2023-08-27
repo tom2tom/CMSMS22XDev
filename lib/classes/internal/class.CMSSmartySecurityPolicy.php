@@ -28,17 +28,18 @@
 final class CMSSmartySecurityPolicy extends Smarty_Security
 {
     public $smarty; // used by ancestor, prevent undeclared property
-/* overrides useful?
-    public $allow_constants;
-    public $php_functions;
-    public $php_modifiers;
-    public $streams;
-    public $secure_dir;
-    public $static_classes;
-*/
+
     public function __construct($smarty)
     {
         parent::__construct($smarty);
+        /*
+        CMSMS 2.0 to 2.2.18 did not apply policy to admin requests,
+        although such a policy is defined here
+        CMSMS 2.0 to 2.2.18 enabled overriding some of these policy
+        settings by modules, possibly narrowing or expanding the scope
+        of what Smarty allowed for frontend requests. For now at least,
+        that capability remains. As of 2.2.19, also for admin requests.
+        */
 //Smarty 2,3 only $this->php_handling = Smarty::PHP_REMOVE;
         $this->secure_dir = null; // don't trust anywhere not explicitly whitelisted
         $this->php_modifiers = [];  // allow any php function BUT any such modifier deprecated since 4.3.0 TODO consider same as php_functions (breaker)
