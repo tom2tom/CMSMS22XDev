@@ -13,8 +13,6 @@ final class ru_RU_nls extends nls
     $this->_encoding = 'UTF-8';
     $this->_aliases = 'ru_RU.cp1251,ru_RU.CP1251,ru_RU.CP866,ru_RU.koi8r,ru_RU.utf8,ru_RU.iso88595,russian,Russian_Russia.1251';
   }
-
-  public function foo() { return 1; }
 } // end of class
 
 ?>

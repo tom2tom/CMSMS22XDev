@@ -12,9 +12,7 @@ final class pt_PT_nls extends nls
     $this->_locale = 'pt_PT';
     $this->_encoding = 'UTF-8';
     $this->_aliases = 'portugguese,pt_PT.ISO8859-1';
-  }  
-  
-  
+  }
 } // end of class
 
 ?>

@@ -13,8 +13,6 @@ class it_IT_nls extends nls
     $this->_encoding = 'UTF-8';
     $this->_aliases = 'it_IT.utf8,it_IT.utf-8,it_IT.UTF-8,it_IT@euro,italian,Italian_Italy.1252';
   }
-
-  public function foo() { return 1; }
 } // end of class
 
 ?>
