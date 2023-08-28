@@ -36,13 +36,12 @@ if (isset($_POST["url"])) $url = trim(cleanValue($_POST["url"]));
 
 if ($url) {
 	// mimic FILTER_SANITIZE_URL, allowing valid UTF8 and extended-ASCII chars
-	if (preg_match('/[^\w\-+.,\/\\?&=!*"\'(){}|^~[\]`<>#%$;:@\p{L}\p{N}\p{Po}\x82-\x84\x88\x8a\x8c\x8e\x91-\x94\x96-\x98\x9a\x9c\x9e\x9f\xa8\xad\xb4\xb7\xb8\xc0-\xf6\xf8-\xff]/u', $url)) {
+	if (preg_match('/[^\x21-\x7e\p{L}\p{N}\p{Po}\x82-\x84\x88\x8a\x8c\x8e\x91-\x94\x96-\x98\x9a\x9c\x9e\x9f\xa8\xad\xb4\xb7\xb8\xc0-\xf6\xf8-\xff]/u', $url)) {
 		unset($_POST['addbookmark']);
 		$error = lang('illegalcharacters', lang('url'));
 	}
 	else {
-		$sitehost = parse_url(CMS_ROOT_URL, PHP_URL_HOST);
-		$validurl = function($url) use($sitehost) {
+		$validurl = function($url, $blockhosts) {
 			$parts = parse_url($url);
 			if ($parts) {
 				if (empty($parts['scheme'])) return false;
@@ -74,10 +73,9 @@ if ($url) {
 				}
 				if ($near) return false;
 
-				if (empty($parts['host']) || in_array($parts['host'], [
-				'localhost', //TODO caseless check
-				$sitehost,
-				])) return false;
+				if (empty($parts['host'])
+				 || strcasecmp($parts['host'],'localhost') == 0
+				 || in_array($parts['host'], $blockhosts)) return false;
 //TODO other sanity checks, malevolence checks
 //e.g. refer to https://owasp.org/www-community/attacks/Forced_browsing
 //www.example.com/function.jsp?fwd=admin.jsp
@@ -87,7 +85,9 @@ if ($url) {
 			return false;
 		};
 
-		if (!$validurl($url)) {
+		$sitehost = parse_url(CMS_ROOT_URL, PHP_URL_HOST);
+		//TODO other blocked hosts? 
+		if (!$validurl($url, [$sitehost])) {
 			unset($_POST['addbookmark']);
 			$error = lang('error_badfield', lang('url'));
 		}
