@@ -10,6 +10,7 @@ Various places
 Core - General
  - Corrected filter applied to $_GET, $_SERVER at the start of each request.
  - Corrected page-selector widget operation.
+ - Validate entered bookmark-URLs.
  - Added missing nls files, allowing installation of extra translations.
  - Smarty upgraded to version 4.3.0.
  - Enabled use of PHP function rawurlencode in Smarty templates.
@@ -47,7 +48,7 @@ FilePicker
  - BR #12628 - Add missing changelog and retriever
 
 MenuManager 1.50.4
- - migrated from core to a normal CMSMS module in Forge 
+ - Exported from core to a normal CMSMS module in Forge 
  - BR #12619 - Wrong assignment of $prevdepth.
  - BR #12620 - Version 2 breaks MenuManager with childrenof.
 
@@ -55,6 +56,7 @@ News
  - Sanitise news-item strings (title, summary, content) before display
 
 Phar Installer 1.4
+ - Added missing nls files, enabling installer sessions using extra translations
  - Always-optional post-installation email includes more advice, and no password
  - 2.0 upgrade relative to 1.12.2
 
