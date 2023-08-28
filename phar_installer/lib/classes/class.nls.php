@@ -47,7 +47,7 @@ abstract class nls
   {
     if( empty($this->_isocode) )
     {
-      return substr($this->name,0,2);
+      return substr($this->name(),0,2);
     }
     return $this->_isocode;
   }
