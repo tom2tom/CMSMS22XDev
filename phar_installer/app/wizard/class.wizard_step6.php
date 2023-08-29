@@ -45,6 +45,7 @@ class wizard_step6 extends wizard_step
         $config = $app->get_config();
 
         if( isset($_POST['sitename']) ) $this->_siteinfo['sitename'] = trim(utils::clean_string($_POST['sitename']));
+        //TODO support unselection/uninstallation
         if( isset($_POST['languages']) && is_array($_POST['languages']) ) {
             $tmp = array();
             foreach ( $_POST['languages'] as $lang ) {
@@ -52,6 +53,9 @@ class wizard_step6 extends wizard_step
             }
             $this->_siteinfo['languages'] = $tmp;
         }
+//        else {
+//            $this->_siteinfo['languages'] = [];
+//        }
 
         $wiz = $this->get_wizard();
         $wiz->set_data('siteinfo',$this->_siteinfo);

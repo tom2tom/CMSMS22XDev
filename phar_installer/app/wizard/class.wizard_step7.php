@@ -30,15 +30,14 @@ class wizard_step7 extends wizard_step
         $this->message(lang('install_detectlanguages'));
         $destdir = get_app()->get_destdir();
 
-        $nlsdir = "$destdir/lib/nls";
-        $pattern = "$nlsdir/*nls.php";
+        $pattern = "$destdir/lib/nls/*.nls.php";
         $files = glob($pattern);
         if( !is_array($files) || count($files) == 0 ) throw new Exception(lang('error_internal',710));
 
         foreach( $files as &$one ) {
-            $fn = basename($one);
-            $one = substr($fn,0,strlen($fn)-strlen('.nls.php'));
+            $one = basename($one,'.nls.php');
         }
+        unset($one);
         return $files;
     }
 
@@ -183,9 +182,9 @@ class wizard_step7 extends wizard_step
             case 'upgrade':
                 $tmp = $wiz->get_data('version_info'); // populated only for refreshes & upgrades
                 if( is_array($tmp) && count($tmp) ) {
-                    $languages = $this->detect_languages();
+                    $languages = $this->detect_languages(); // from installed nls files
                     $this->do_manifests();
-                    $this->do_files($languages);
+                    $this->do_files($languages); // TODO incremental changes including removal
                     break;
                 }
                 else {
@@ -194,7 +193,7 @@ class wizard_step7 extends wizard_step
                 // no break here
             case 'freshen':
                 $inst_languages = $this->detect_languages();
-                $this->do_files($inst_languages);
+                $this->do_files($inst_languages); //TODO incremental changes including removal
                 break;
             case 'install':
                 $this->do_files();

@@ -69,6 +69,7 @@ $src_excludes = [
 //'~web\.config$~i',
 
 // TODO completely ignore some places c.f. build_release script:
+// TODO 'lib/nls', *.nls.php files are excluded here, but separately processed
 $folder_excludes = [
 'assets/templates',
 'assets/styles',
@@ -546,6 +547,7 @@ if ($_compress) {
     chmod($_tmpfile, 0666); // generic perms here
     @unlink($_cfile);
 }
+//TODO generate separate nls manifest from files in .../app/assets/nls >> .../app/assets/nls/MANIFEST.NLS
 
 if (defined('STDOUT') && $_outfile == STDOUT) {
     readfile($_tmpfile);
@@ -1176,6 +1178,11 @@ class compare_dirs
             if ($pattern == $filename || fnmatch($pattern, $filename, FNM_CASEFOLD)) {
                 return true;
             }
+//TODO separate manifest for installer-cached .nls.php files other than en_US.nls.php
+//            //special-case the default nls file
+//            if (strpos($filename, '.nls.php') !== false) {
+//                if ($filename != 'en_US.nls.php') { return true; }
+//            }
         }
         return false;
     }

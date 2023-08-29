@@ -324,7 +324,13 @@ class cms_install extends app
     public function get_nls()
     {
         if( is_array($this->_nls) ) return $this->_nls;
-
+/* TODO process installer-cached nls files instead of from archive
+        $patn = $this->get_appdir().'/assets/nls/*.nls.php';
+        $files = glob($patn);
+        foreach( $files as $fp) {
+            include_once $fp; //en_US too?
+        }
+*/
         $archive = $this->get_archive();
         $archive = str_replace('\\','/',$archive); // stupid windoze
         if( !file_exists($archive) ) throw new Exception(lang('error_noarchive'));
