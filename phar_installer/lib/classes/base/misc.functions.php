@@ -31,5 +31,15 @@ function endswith($haystack,$needle)
   return false;
 }
 
+function joinpath()
+{
+  $segs = func_get_args();
+  if( is_array($segs[0]) ) {
+    $segs = $segs[0];
+ }
+ $path = implode(DIRECTORY_SEPARATOR, $segs);
+ return str_replace(DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $path);
+}
+
 }
 ?>
