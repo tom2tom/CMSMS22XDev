@@ -35,7 +35,7 @@ CMSMailer
 
 ContentManager 1.1.11
  - BR #12474 - Taking the default page down by accident through the content type
- - BR #12635 - Apply button is shown for non-existing page and creates new pages 
+ - BR #12635 - Apply button is shown for non-existing page and creates new pages
 
 DesignManager
  - Corrected new template creation
@@ -48,7 +48,7 @@ FilePicker
  - BR #12628 - Add missing changelog and retriever
 
 MenuManager 1.50.4
- - Exported from core to a normal CMSMS module in Forge 
+ - Exported from core to a normal CMSMS module in Forge
  - BR #12619 - Wrong assignment of $prevdepth.
  - BR #12620 - Version 2 breaks MenuManager with childrenof.
 
@@ -57,6 +57,8 @@ News
 
 Phar Installer 1.4
  - Added missing nls files, enabling installer sessions using extra translations
+ - Enabled installed-translation changes during upgrades
+-  Enabled un-installation of translations
  - Always-optional post-installation email includes more advice, and no password
  - 2.0 upgrade relative to 1.12.2
 
