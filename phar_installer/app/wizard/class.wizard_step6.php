@@ -6,6 +6,7 @@ use __appbase\utils;
 use cms_autoinstaller\wizard_step;
 use Exception;
 use function __appbase\get_app;
+use function __appbase\joinpath;
 use function __appbase\lang;
 use function __appbase\smarty;
 use function __appbase\translator;
@@ -34,7 +35,7 @@ class wizard_step6 extends wizard_step
     private function validate($siteinfo)
     {
         $action = $this->get_wizard()->get_data('action');
-        if( $action !== 'freshen' ) {
+        if( $action == 'install' ) {
             if( !isset($siteinfo['sitename']) || !$siteinfo['sitename'] ) throw new Exception(lang('error_nositename'));
         }
     }
@@ -45,17 +46,20 @@ class wizard_step6 extends wizard_step
         $config = $app->get_config();
 
         if( isset($_POST['sitename']) ) $this->_siteinfo['sitename'] = trim(utils::clean_string($_POST['sitename']));
-        //TODO support unselection/uninstallation
-        if( isset($_POST['languages']) && is_array($_POST['languages']) ) {
-            $tmp = array();
-            foreach ( $_POST['languages'] as $lang ) {
-                $tmp[] = utils::clean_string($lang);
+        if( !$config['nofiles'] ) {
+            if( isset($_POST['languages']) && is_array($_POST['languages']) ) {
+                $tmp = array();
+                foreach( $_POST['languages'] as $lang ) {
+                    $tmp[] = utils::clean_string($lang);
+                }
+                $this->_siteinfo['extlanguages'] = $tmp;
+                $this->_siteinfo['removelanguages'] = array_diff($this->_siteinfo['languages'], $tmp);
             }
-            $this->_siteinfo['languages'] = $tmp;
+            else {
+                $this->_siteinfo['extlanguages'] = [];
+                $this->_siteinfo['removelanguages'] = $this->_siteinfo['languages'];
+            }
         }
-//        else {
-//            $this->_siteinfo['languages'] = [];
-//        }
 
         $wiz = $this->get_wizard();
         $wiz->set_data('siteinfo',$this->_siteinfo);
@@ -76,8 +80,25 @@ class wizard_step6 extends wizard_step
         parent::display();
         $wiz = $this->get_wizard();
         $action = $wiz->get_data('action');
-        $languages = get_app()->get_language_list();
-        unset($languages['en_US']);
+        $app = get_app();
+        $config = $app->get_config();
+        if( !$config['nofiles'] ) {
+            $languages = $app->get_language_list(); // from all cached nls files
+            unset($languages['en_US']);
+            if( $action != 'install') {
+                $langsused = [];
+                $patn = joinpath($app->get_destdir(),'admin','lang','ext','*.php');
+                $files = glob($patn, GLOB_NOSORT|GLOB_NOESCAPE);
+                foreach( $files as $fp ) {
+                    $langsused[] = basename($fp,'.php');
+                }
+            }
+            else {
+                $langsused = [];
+            }
+            $this->_siteinfo['languages'] = $langsused;
+            $wiz->set_data('siteinfo',$this->_siteinfo);
+        }
 
         $smarty = smarty();
         $smarty->assign('action',$action)

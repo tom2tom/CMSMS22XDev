@@ -122,7 +122,7 @@ $lang['error_invalidtimezone'] = 'The timezone specified is invalid';
 $lang['error_invalidqueryvar'] = 'The query variable entered contains invalid characters. Please use only alphanumerics and underscore.';
 $lang['error_missingconfigvar'] = 'The key &quot;%s&quot; is either missing or invalid in the config.ini file';
 $lang['error_noarchive'] = 'Problem finding archive file. Please restart';
-$lang['error_nlsnotfound'] = 'Problem finding NLS files in archive';
+//$lang['error_nlsnotfound'] = 'Problem finding NLS files in archive';
 $lang['error_nodatabases'] = 'No compatible database extensions could be found';
 $lang['error_nodbhost'] = 'Please enter a valid hostname (or IP address) for the database connection';
 $lang['error_nodbname'] = 'Please enter the name of a valid database on the host specified above';
@@ -198,7 +198,7 @@ $lang['goback'] = 'Back';
 # H
 
 # I
-$lang['info_addlanguages'] = 'Select languages (in addition to English) to install. <strong>Note:</strong> not all translations are complete.';
+$lang['info_addlanguages'] = '[De]select language(s) (in addition to English) to install. <strong>Note:</strong> not all translations are complete.';
 $lang['info_adminaccount'] = 'Please provide credentials for the initial administrator account. This account will have access to all of the functionality of the CMSMS Admin console.';
 $lang['info_advanced'] = 'Advanced mode enables more options in the installation procedure.';
 $lang['info_dbinfo'] = 'CMS Made Simple stores a great deal of data in the database. A database connection is mandatory. Additionally, the user credentials you supply should have ALL PRIVILEGES on the specified database to allow creating, dropping and modifying tables, indexes and views.';
@@ -321,6 +321,7 @@ $lang['queue_for_upgrade'] = 'Queued non core module %s for upgrade at the next 
 $lang['readme_uc'] = 'README';
 $lang['register_globals'] = 'Ensuring &quot;register globals&quot; is disabled';
 $lang['remote_url'] = 'Test whether the webserver can make outgoing HTTP connections';
+$lang['remove_langs'] = 'Remove translation(s) %s';
 $lang['repeatpw'] = 'Repeat password';
 $lang['reset_site_preferences'] = 'Reset some site preferences';
 $lang['reset_user_settings'] = 'Reset user preferences';

@@ -162,18 +162,14 @@ class wizard_step4 extends wizard_step
 
         try {
             $this->validate($this->_config);
-            $url = $wiz->next_url();
-            if( $action == 'freshen' ) {
-                $url = $wiz->step_url(6);
+            if( $action == 'install' ) {
+                $url = $wiz->next_url();
             }
-            if( $action == 'upgrade' ) {
-                $app = get_app();
-                $config = $app->get_config();
-                if( $config['nofiles'] ) {
-                    $url = $wiz->step_url(8);
-                } else {
-                    $url = $wiz->step_url(7);
-                }
+            elseif( !$this->_config['nofiles'] ) {
+                $url = $wiz->step_url(6); //check for language changes
+            }
+            else {
+                $url = $wiz->step_url(7); //no files processing, lang data irrelevant
             }
             utils::redirect($url);
         }

@@ -9,11 +9,11 @@ use __appbase\utils;
 use __appbase\wizard;
 use Exception;
 use Phar;
-use PharData;
-use RecursiveIteratorIterator;
+//use PharData;
+//use RecursiveIteratorIterator;
 use RuntimeException;
 use function __appbase\endswith;
-use function __appbase\lang;
+//use function __appbase\lang;
 use function __appbase\nls;
 use function __appbase\smarty;
 use function __appbase\startswith;
@@ -324,13 +324,13 @@ class cms_install extends app
     public function get_nls()
     {
         if( is_array($this->_nls) ) return $this->_nls;
-/* TODO process installer-cached nls files instead of from archive
-        $patn = $this->get_appdir().'/assets/nls/*.nls.php';
+        //TODO process MANIFEST file if any before polling
+        $patn = $this->get_appdir().'/assets/nls/*.nls.php'; //TODO check ok in phar
         $files = glob($patn);
         foreach( $files as $fp) {
-            include_once $fp; //en_US too?
+            include_once $fp; //en_US in there too?
         }
-*/
+/*
         $archive = $this->get_archive();
         $archive = str_replace('\\','/',$archive); // stupid windoze
         if( !file_exists($archive) ) throw new Exception(lang('error_noarchive'));
@@ -353,6 +353,7 @@ class cms_install extends app
             }
         }
         if( !$found ) throw new Exception(lang('error_nlsnotfound'));
+*/
         $this->_nls = $nls;
         return $nls;
     }

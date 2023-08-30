@@ -8,6 +8,7 @@ use Exception;
 use PharData;
 use RecursiveIteratorIterator;
 use function __appbase\get_app;
+use function __appbase\joinpath;
 use function __appbase\lang;
 use function __appbase\smarty;
 use function file_put_contents;
@@ -25,20 +26,30 @@ class wizard_step7 extends wizard_step
         file_put_contents($filename,$str);
     }
 
-    private function detect_languages()
+    private function clear_langs($langs)
     {
-        $this->message(lang('install_detectlanguages'));
-        $destdir = get_app()->get_destdir();
-
-        $pattern = "$destdir/lib/nls/*.nls.php";
-        $files = glob($pattern);
-        if( !is_array($files) || count($files) == 0 ) throw new Exception(lang('error_internal',710));
-
-        foreach( $files as &$one ) {
-            $one = basename($one,'.nls.php');
+        if( $langs ) {
+            $val = implode(', ',$langs);
+            $this->message(lang('remove_langs',$val));
+            $app = get_app();
+            $top_dir =  $app->get_destdir();
+            $bases = ( count($langs) == 1 ) ? reset($langs) : '{'.implode(',',$langs).'}';
+            $flags = ( count($langs) == 1 ) ? GLOB_NOSORT|GLOB_NOESCAPE : GLOB_NOSORT|GLOB_NOESCAPE|GLOB_BRACE;
+            $frompaths = array(
+                joinpath($top_dir,'admin','lang','ext',$bases.'.php'), // i.e. admin dir may not be renamed
+                joinpath($top_dir,'lib','lang','*','ext',$bases.'.php'),
+                joinpath($top_dir,'lib','nls',$bases.'.nls.php'),
+                joinpath($top_dir,'modules','*','lang','ext',$bases.'.php'),
+            );
+            foreach( $frompaths as $patn ) {
+                $files = glob($patn,$flags);
+                if( $files ) {
+                    foreach( $files as $fp ) {
+                        unlink($fp);
+                    }
+                }
+            }
         }
-        unset($one);
-        return $files;
     }
 
     private function do_index_html()
@@ -65,8 +76,12 @@ class wizard_step7 extends wizard_step
     {
         $languages = array('en_US');
         $siteinfo = $this->get_wizard()->get_data('siteinfo');
-        if( is_array($siteinfo) && is_array($siteinfo['languages']) && count($siteinfo['languages']) ) $languages = array_merge($languages,$siteinfo['languages']);
-        if( is_array($langlist) && count($langlist) ) $languages = array_merge($languages,$langlist);
+        if( is_array($siteinfo) && is_array($siteinfo['extlanguages']) && count($siteinfo['extlanguages']) ) {
+            $languages = array_merge($languages,$siteinfo['extlanguages']);
+        }
+        if( is_array($langlist) && count($langlist) ) {
+            $languages = array_merge($languages,$langlist);
+        }
         $languages = array_unique($languages);
 
         $destdir = get_app()->get_destdir();
@@ -85,6 +100,27 @@ class wizard_step7 extends wizard_step
             if( ($p = strpos($file,$archive)) === FALSE ) continue;
             $fn = substr($file,$p+$l);
             $filehandler->handle_file($fn,$file,$fi);
+        }
+
+        $srcdir = joinpath(get_app()->get_appdir(),'assets','nls','');
+        $destdir = joinpath($destdir,'lib','nls','');
+        foreach( $languages as $one ) {
+            $fp = $srcdir.$one.'.nls.php';
+            $tp = $destdir.$one.'.nls.php';
+            if( is_file($tp) ) {
+                $s1 = md5_file($fp);
+                if( $s1 !== false ) { // should fail only for en_US
+                    $s2 = md5_file($tp);
+                    if( $s2 != $s1 ) {
+                        copy($fp, $tp);
+                        chmod($tp, 0664);
+                    }
+                }
+            }
+            else {
+                copy($fp, $tp);
+                chmod($tp, 0664);
+            }
         }
     }
 
@@ -182,9 +218,10 @@ class wizard_step7 extends wizard_step
             case 'upgrade':
                 $tmp = $wiz->get_data('version_info'); // populated only for refreshes & upgrades
                 if( is_array($tmp) && count($tmp) ) {
-                    $languages = $this->detect_languages(); // from installed nls files
+                    $siteinfo = $wiz->get_data('siteinfo');
+                    $this->clear_langs($siteinfo['removelanguages']);
                     $this->do_manifests();
-                    $this->do_files($languages); // TODO incremental changes including removal
+                    $this->do_files($siteinfo['extlanguages']);
                     break;
                 }
                 else {
@@ -192,8 +229,9 @@ class wizard_step7 extends wizard_step
                 }
                 // no break here
             case 'freshen':
-                $inst_languages = $this->detect_languages();
-                $this->do_files($inst_languages); //TODO incremental changes including removal
+                $siteinfo = $wiz->get_data('siteinfo');
+                $this->clear_langs($siteinfo['removelanguages']);
+                $this->do_files($siteinfo['extlanguages']);
                 break;
             case 'install':
                 $this->do_files();

@@ -10,7 +10,7 @@
 
 <div class="installer-form">
 {wizard_form_start}
-    {if $action != 'freshen'}
+    {if $action == 'install'}
         <h3>{tr('prompt_sitename')}</h3>
         <p>{tr('info_sitename')}</p>
 
