@@ -355,22 +355,20 @@ class langtools
    * Translate a string
    * uses the current realm, and the currently selected language.
    *
-   * @param mixed - uses sprintf formatting,
+   * @param varargs - uses sprintf formatting,
    * @return string
    */
-  public function translate()
+  public function translate(...$args)
   {
-    $args = func_get_args();
     if( count($args) == 0 ) return '';
     if( count($args) == 1 && is_array($args[0]) ) $args = $args[0];
-
-    if( !$this->_langdata ) $this->_langdata = array();
-    if( !isset($this->_langdata[$this->_realm]) ) $this->_langdata[$this->_realm] = $this->load_realm($this->_realm);
 
     // check to see if the key is available.
     $key = array_shift($args);
     if( !$key ) return '';
 
+    if( !$this->_langdata ) $this->_langdata = array();
+    if( !isset($this->_langdata[$this->_realm]) ) $this->_langdata[$this->_realm] = $this->load_realm($this->_realm);
     if( !isset($this->_langdata[$this->_realm][$key]) ) {
       return '-- Missing Languagestring - '.$key.' --';
     }
@@ -384,11 +382,10 @@ class langtools
 } // end of class
 
 
-function lang()
+function lang(...$args)
 {
   try {
-    $args = func_get_args();
-    return langtools::get_instance()->translate($args);
+    return langtools::get_instance()->translate(...$args);
   }
   catch( Exception $e ) {
     // nothing here.

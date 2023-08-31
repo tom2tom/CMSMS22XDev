@@ -40,10 +40,9 @@ class cms_smarty extends Smarty
     return self::$_instance;
   }
 /*
-  public function modifier_tr()
+  public function modifier_tr(...$args)
   {
-    $args = func_get_args();
-    return langtools::get_instance()->translate($args);
+    return langtools::get_instance()->translate(...$args);
   }
 */
 }

@@ -31,9 +31,8 @@ function endswith($haystack,$needle)
   return false;
 }
 
-function joinpath()
+function joinpath(...$segs)
 {
-  $segs = func_get_args();
   if( is_array($segs[0]) ) {
     $segs = $segs[0];
  }
