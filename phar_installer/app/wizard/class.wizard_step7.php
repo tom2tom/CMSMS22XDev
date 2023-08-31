@@ -205,11 +205,7 @@ class wizard_step7 extends wizard_step
         $action = $wiz->get_data('action');
 
         $smarty = smarty();
-        if( $action == 'freshen' ) {
-            $smarty->assign('next_url',$wiz->step_url(9));
-        } else {
-            $smarty->assign('next_url',$wiz->next_url());
-        }
+        $smarty->assign('next_url',$wiz->next_url());
         $smarty->display('wizard_step7.tpl');
         flush();
 
