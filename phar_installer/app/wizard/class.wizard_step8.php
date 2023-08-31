@@ -2,6 +2,7 @@
 
 namespace cms_autoinstaller;
 
+use __appbase\utils;
 use cms_autoinstaller\wizard_step;
 use cms_config;
 use cms_siteprefs;
@@ -11,7 +12,7 @@ use CMSMS\Database\Connection;
 use CMSMS\Database\ConnectionSpec;
 use Exception;
 use RuntimeException;
-//use const CMS_DB_PREFIX;
+use const CMS_DB_PREFIX;
 use function __appbase\get_app;
 use function __appbase\lang;
 use function __appbase\smarty;
@@ -177,7 +178,8 @@ class wizard_step8 extends wizard_step
         $destdir = $app->get_destdir();
         if( !$destdir ) throw new Exception(lang('error_internal',811));
 
-        $destconfig = $this->get_wizard()->get_data('config');
+        $wiz = $this->get_wizard();
+        $destconfig = $wiz->get_data('config');
         if( !$destconfig ) throw new Exception(lang('error_internal',812));
 
         // get the list of all available versions that this upgrader knows about
@@ -221,6 +223,8 @@ class wizard_step8 extends wizard_step
             // setup database connection
             $db = $this->db_connect($destconfig);
 
+            $this->conform_langs($wiz,$db);
+
             require_once __DIR__.'/msg_functions.php';
 
            // ready to do the upgrading now (in a loop)
@@ -245,14 +249,27 @@ class wizard_step8 extends wizard_step
 
     private function do_freshen()
     {
-/* nothing here
-        try {
-            $this->write_config();
-        }
-        catch( Exception $e ) {
-            $this->error($e->GetMessage());
-        }
-*/
+        $app = get_app();
+        $destdir = $app->get_destdir();
+        if( !$destdir ) throw new Exception(lang('error_internal',828));
+        $wiz = $this->get_wizard();
+        $destconfig = $wiz->get_data('config');
+        if( !$destconfig ) throw new Exception(lang('error_internal',829));
+        $this->connect_to_cmsms($destdir);
+        $db = $this->db_connect($destconfig);
+        $this->conform_langs($wiz,$db);
+    }
+
+    private function conform_langs($wiz,$db)
+    {
+        $siteinfo = $wiz->get_data('siteinfo');
+        if( !$siteinfo ) throw new Exception(lang('error_internal',831));
+        $havelangs = [-9 => '',-8 => 'en_US'] + $siteinfo['extlanguages'];
+        $filler = str_repeat('?,',count($havelangs) - 1);
+        $sql = 'UPDATE '.CMS_DB_PREFIX."siteprefs SET sitepref_value='' WHERE sitepref_name='frontendlang' AND sitepref_value NOT IN({$filler}?)";
+        $db->execute($sql,$havelangs);
+        $sql = 'UPDATE '.CMS_DB_PREFIX."userprefs SET value='' WHERE preference='default_cms_language' AND value NOT IN({$filler}?)";
+        $db->execute($sql,$havelangs);
     }
 
     private function write_config()
@@ -311,15 +328,17 @@ class wizard_step8 extends wizard_step
 
     protected function display()
     {
-        parent::display();
         $wiz = $this->get_wizard();
-        $smarty = smarty();
-        $smarty->assign('next_url',$wiz->next_url())
-         ->display('wizard_step8.tpl');
+        $action = $wiz->get_data('action');
+        if( $action != 'freshen' ) { // for freshens, we only cleanup nls files here
+            parent::display();
+            $smarty = smarty();
+            $smarty->assign('next_url',$wiz->next_url())
+             ->display('wizard_step8.tpl');
+        }
 
         // here, we do the action-specific stuff.
         try {
-            $action = $wiz->get_data('action');
             switch( $action ) {
                 case 'upgrade':
                     $tmp = $wiz->get_data('version_info'); // populated only for refreshes & upgrades
@@ -333,6 +352,8 @@ class wizard_step8 extends wizard_step
                     //no break here
                 case 'freshen':
                     $this->do_freshen();
+                    $url = $wiz->next_url();
+                    utils::redirect($url);
                     break;
                 case 'install':
                     $this->do_install();
