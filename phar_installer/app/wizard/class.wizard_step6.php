@@ -83,7 +83,7 @@ class wizard_step6 extends wizard_step
         $app = get_app();
         $config = $app->get_config();
         if( !$config['nofiles'] ) {
-            $languages = $app->get_language_list(); // from all cached nls files
+            $languages = $app->get_language_list();
             unset($languages['en_US']);
             if( $action != 'install') {
                 $langsused = [];
@@ -98,6 +98,9 @@ class wizard_step6 extends wizard_step
             }
             $this->_siteinfo['languages'] = $langsused;
             $wiz->set_data('siteinfo',$this->_siteinfo);
+        }
+        else {
+            $languages = [];
         }
 
         $smarty = smarty();
