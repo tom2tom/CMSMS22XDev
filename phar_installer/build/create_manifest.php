@@ -547,7 +547,7 @@ if ($_compress) {
     @unlink($_cfile);
 }
 
-//TODO generate separate nls manifest from files in .../app/assets/nls >> .../app/assets/nls/MANIFEST.NLS
+//TODO generate separate nls-files manifest from files in .../lib/nsl >> ...phar_installer/app/assets/MANIFEST.NLS
 
 if (defined('STDOUT') && $_outfile == STDOUT) {
     readfile($_tmpfile);
