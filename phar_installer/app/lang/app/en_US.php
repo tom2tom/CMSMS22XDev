@@ -179,7 +179,7 @@ $lang['file_get_contents'] = 'Testing for the file_get_contents function';
 $lang['file_installed'] = 'Installed %s';
 $lang['file_uploads'] = 'Checking for file upload support';
 $lang['finished_custom_freshen_msg'] = 'The site\'s installation has been freshened! The core files have been updated, and a new config file created. Please visit the website to ensure that everything is functioning correctly.';
-$lang['finished_custom_install_msg'] = 'Done! Please visit the website and log in to its Admin Console.';
+$lang['finished_custom_install_msg'] = 'Done! Please visit the website and log in to its CMSMS Admin Console.';
 $lang['finished_custom_upgrade_msg'] = 'Done! Please visit the site\'s CMSMS Admin Console, and frontend, to ensure that everything is working properly.<br><strong>Hint:</strong> Now is a good time to create another backup.';
 $lang['finished_freshen_msg'] = 'The site\'s installation has been freshened! The core files have been updated, and a new config file created. You can now <a href="%s">visit the website</a> or log in to its <a href="%s">CMSMS Admin Console</a>.';
 $lang['finished_install_msg'] = 'All done! You can now <a href="%s">visit your website</a> or log in to its <a href="%s">CMSMS Admin Console</a>.';
