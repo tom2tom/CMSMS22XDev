@@ -132,20 +132,22 @@ class langtools
   /**
    * Find the first allowed language that the browser supports
    *
-   * @return mixed lang string, or null
+   * @return lang string, or empty
    */
   final public function match_browser_lang()
   {
     $langs = $this->get_browser_langs();
     if( is_array($langs) && count($langs) ) {
+      $tools = nlstools::get_instance();
       for( $i = 0; $i < count($langs); $i++ ) {
-	$obj = nlstools::get_instance()->find($langs[$i]['lang']); // does alias lookup.
-	if( $obj ) {
-	  // it's available... now check if it's allowed.
-	  if( $this->language_allowed($obj->name()) ) return $obj->name();
-	}
+        $obj = $tools->find($langs[$i]['lang']); // does alias lookup.
+        if( $obj ) {
+          // it's available... now check if it's allowed.
+          if( $this->language_allowed($obj->name()) ) return $obj->name();
+        }
       }
     }
+    return '';
   }
 
 
