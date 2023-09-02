@@ -57,7 +57,8 @@ class wizard_step9 extends wizard_step
         audit('','CMSMS version '.CMS_VERSION,'Upgraded');
 
         // set the finished message.
-        if( $app->has_custom_destdir() || !$app->in_phar() ) {
+        if( $app->has_custom_destdir() ) { // || !$app->in_phar()
+            //TODO determine actual link URLs and use normal message
             $this->set_block_html('bottom_nav',lang('finished_custom_upgrade_msg'));
         }
         else {
@@ -146,7 +147,8 @@ class wizard_step9 extends wizard_step
         $this->message(lang('msg_clearedcache'));
 
         // set the finished message.
-        if( !$root_url || !$app->in_phar() ) {
+        if( $app->has_custom_destdir() ) { // || !$app->in_phar()
+            //TODO determine actual link URLs and use normal message
             // find the common part of the SCRIPT_FILENAME and the destdir
             // /var/www/phar_installer/index.php
             if( $root_url ) {
@@ -158,7 +160,6 @@ class wizard_step9 extends wizard_step
             $this->set_block_html('bottom_nav',$msg);
         }
         else {
-            if( endswith($root_url,'/') ) $admin_url = $root_url.'admin';
             $this->set_block_html('bottom_nav',lang('finished_install_msg',$root_url,$admin_url));
         }
     }
