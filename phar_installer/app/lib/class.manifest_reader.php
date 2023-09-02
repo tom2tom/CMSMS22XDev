@@ -47,7 +47,7 @@ class manifest_reader
         foreach( $cols as &$col ) {
             $col = trim($col);
         }
-        if( count($cols) != 2 ) throw new Exception(lang('error_internal','mr105'));
+        if( count($cols) != 2 ) throw new Exception(lang('error_internal','mr102'));
 
         switch( $cols[0] ) {
         case 'MANIFEST_GENERATED':
@@ -132,7 +132,7 @@ class manifest_reader
             $fh = $fopen($tmpname,'r');
             if( !$fh )  {
               echo "DEBUG: $fopen on ".$this->_filename."<br>";
-              throw new Exception(lang('error_internal','mr102'));
+              throw new Exception(lang('error_internal','mr105'));
             }
             while( !$feof($fh) ) {
                 $line = $fgets($fh);
