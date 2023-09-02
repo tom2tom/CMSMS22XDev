@@ -100,27 +100,39 @@ abstract class filehandler
     $filespec = trim($filespec);
     if( !$filespec ) throw new Exception(lang('error_invalidparam','filespec'));
 
-    if( $this->is_imagefile($filespec) ) return FALSE;
+    if( substr_compare($filespec, '.php', -4, 4) !== 0 ) return '';
     $bn = basename($filespec);
-    $dn = dirname($filespec);
-    $fnmatch = 0;
-    $fnmatch = $fnmatch || preg_match('/^[a-zA-Z]{2}_[a-zA-Z]{2}\.php$/',$bn);
-    $fnmatch = $fnmatch || preg_match('/^[a-zA-Z]{2}_[a-zA-Z]{2}\.nls\.php$/',$bn);
-    if( $fnmatch ) return substr($bn,0,strpos($bn,'.'));
+    if( preg_match('/^[a-zA-Z]{2}_[a-zA-Z]{2}\.nls\.php$/',$bn) ) {
+      return substr($bn,0,-8);
+    }
+    if( preg_match('/^[a-zA-Z]{2}_[a-zA-Z]{2}\.php$/',$bn) ) {
+      //(lazily) confirm it's a CMSMS translation
+      if( preg_match('~[\\/]lang[\\/]en_US.php$~',$filespec) ) {
+        return 'en_US';
+      }
+      if( preg_match('~[\\/]lib[\\/]lang[\\/]\w+[\\/]en_US.php$~',$filespec) ) {
+        return 'en_US';
+      }
+      if( preg_match('~[\\/]lang[\\/]ext[\\/]'.$bn.'$~',$filespec) ) {
+        return substr($bn,0,-4);
+      }
+      if( preg_match('~[\\/]lib[\\/]lang[\\/]\w+[\\/]ext[\\/]'.$bn.'$~',$filespec) ) {
+        return substr($bn,0,-4);
+      }
+      return '';
+    }
 
     $nls = get_app()->get_nls();
-    if( !is_array($nls) ) return FALSE; // problem
+    if( !is_array($nls) ) return ''; // problem
 
     $bn = substr($bn,0,strpos($bn,'.'));
-    $last_dn = basename($dn);
     foreach( $nls['alias'] as $alias => $code ) {
-      if( $bn == $alias ) return $code;
+      if( $bn == $alias ) return $code; // TODO caseless?
     }
     foreach( $nls['htmlarea'] as $code => $short ) {
-      if( $bn == $short ) return $code;
+      if( $bn == $short ) return $code; // TODO caseless?
     }
-
-    return FALSE;
+    return '';
   }
 
   protected function is_accepted_lang($filespec)
