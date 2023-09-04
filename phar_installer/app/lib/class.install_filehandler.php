@@ -11,8 +11,22 @@ class install_filehandler extends filehandler
   public function handle_file($filespec,$srcspec,PharFileInfo $fi)
   {
     if( $this->is_excluded($filespec) ) return;
-    if( $this->is_langfile($filespec) ) {
-      if( !$this->is_accepted_lang($filespec) ) return;
+    $res = $this->is_langfile($filespec);
+    if( $res ) {
+      if( !$this->is_accepted_lang($filespec,$res) ) {
+        //cleanup (non-CMSMS at least) dest file corresponding to $srcspec
+        //!$res[0] && $res[1] if a non-CMSMS alias etc was matched e.g. js for tinymce
+        $destname = $this->get_destdir().$filespec;
+        if( file_exists($destname) ) {
+          if( is_writable($destname) ) {
+            unlink($destname);
+          }
+          else {
+            throw new Exception(lang('error_delete',$filespec));
+          }
+        }
+        return;
+      }
     }
 
     if( !$this->dir_exists($filespec) ) {
