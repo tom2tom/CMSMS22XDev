@@ -94,76 +94,71 @@ abstract class filehandler
       return in_array($ext,$image_exts);
   }
 
-  //returns array 0, 1 or 2 members
-  //[1] if present && non-falsy is locale identifier
-  //[2] if present is 'related' (non-CMSMS e.g. TinyMCE) locale identifier
   protected function is_langfile($filespec)
   {
     $filespec = trim($filespec);
     if( !$filespec ) throw new Exception(lang('error_invalidparam','filespec'));
     $pchk = substr_compare($filespec,'.php',-4,4) === 0;
     if( !($pchk || substr_compare($filespec,'.js',-3,3) === 0) ) {
-      return [];
+      return '';
     }
     $bn = basename($filespec);
     if( $pchk ) {
       //CMSMS-used locale identifiers have all been like ab_CD
       //valid identifiers are not confined to that pattern
-      if( preg_match('/^[a-zA-Z]{2}_[a-zA-Z]{2}\.nls\.php$/',$bn) ) {
-        return [substr($bn,0,-8)];
+      if( preg_match('/^[a-zA-Z]{2}_[a-zA-Z]{2}\.nls\.php$/',$bn) ) { // {2,} is valid, but currently unused and catches too many files
+        return substr($bn,0,-8);
       }
-      if( preg_match('/^[a-zA-Z]{2}_[a-zA-Z]{2}\.php$/',$bn) ) {
+      if( preg_match('/^[a-zA-Z]{2}_[a-zA-Z]{2}\.php$/',$bn) ) { // ditto
         //(lazily) confirm it's a CMSMS translation
         if( preg_match('~[\\/]lang[\\/]en_US.php$~',$filespec) ) {
-          return ['en_US'];
+          return 'en_US';
         }
         if( preg_match('~[\\/]lib[\\/]lang[\\/]\w+[\\/]en_US.php$~',$filespec) ) {
-          return ['en_US'];
+          return 'en_US';
         }
         if( preg_match('~[\\/]lang[\\/]ext[\\/]'.$bn.'$~',$filespec) ) {
-          return [substr($bn,0,-4)];
+          return substr($bn,0,-4);
         }
         if( preg_match('~[\\/]lib[\\/]lang[\\/]\w+[\\/]ext[\\/]'.$bn.'$~',$filespec) ) {
-          return [substr($bn,0,-4)];
+          return substr($bn,0,-4);
         }
       }
     }
-//TODO process PHPMailer translations named like .../phpmailer.lang-pt.php
-    $nls = get_app()->get_nls(); // all possbible locales
-    if( !is_array($nls) ) return []; // problem
 
+    $nls = get_app()->get_nls(); // all possible translations
+    if( !is_array($nls) ) return ''; // problem, treat file as non-lang
+
+//TODO also process PHPMailer translations named like .../phpmailer.lang-pt.php
     $bn = substr($bn,0,strpos($bn,'.'));
-    if( !preg_match('/^[a-zA-Z]{2}(_[a-zA-Z]{2})?$/',$bn)) {
-      return [];
+    if( !preg_match('/^[a-zA-Z]{2}(_[a-zA-Z]{2})?$/',$bn)) { // TODO [a-zA-Z]{2,} is valid, but catches most files
+      return '';
     }
     foreach( $nls['alias'] as $alias => $code ) {
       if( strcasecmp($bn,$alias) == 0 ) { //caseless since 2.2.19
-        return [FALSE,$bn];
+        return $code;
       }
     }
     foreach( $nls['htmlarea'] as $code => $short ) {
       if( strcasecmp($bn,$short) == 0 ) { //caseless since 2.2.19
-        return [FALSE,$bn];
+        return $code;
       }
     }
-    return [$bn];
+    return '_NOMATCH_'; //trigger unwanted-file processing
   }
 
-  //$res optional, if non-null is the array value returned by is_langfile()
+  //$res optional, if non-null is the string value returned by is_langfile()
   protected function is_accepted_lang($filespec,$res=null)
   {
     if( $res === null) { $res = $this->is_langfile($filespec); }
     if( !$res ) {
       return FALSE;
     }
-    $langs = $this->get_languages(); // wanted locales
+    $langs = $this->get_languages(); // wanted translations
     if( !$langs || !is_array($langs) ) {
-      return TRUE;
+      return TRUE; //treat as want everything
     }
-    if( $res[0] ) {
-      return in_array($res[0],$langs);
-    }
-    return in_array($res[1],$langs);
+    return in_array($res,$langs);
   }
 
   abstract public function handle_file($filespec,$srcspec,PharFileInfo $fi);
