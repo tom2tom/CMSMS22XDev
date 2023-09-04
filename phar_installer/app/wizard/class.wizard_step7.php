@@ -31,6 +31,7 @@ class wizard_step7 extends wizard_step
         if( $langs ) {
             $val = implode(', ',$langs);
             $this->message(lang('remove_langs',$val));
+            //these cleanups might have been done during files processing
             $app = get_app();
             $top_dir =  $app->get_destdir();
             $bases = ( count($langs) == 1 ) ? reset($langs) : '{'.implode(',',$langs).'}';

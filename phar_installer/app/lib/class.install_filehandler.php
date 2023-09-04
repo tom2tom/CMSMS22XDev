@@ -14,8 +14,7 @@ class install_filehandler extends filehandler
     $res = $this->is_langfile($filespec);
     if( $res ) {
       if( !$this->is_accepted_lang($filespec,$res) ) {
-        //cleanup (non-CMSMS at least) dest file corresponding to $srcspec
-        //!$res[0] && $res[1] if a non-CMSMS alias etc was matched e.g. js for tinymce
+        //cleanup dest file corresponding to $srcspec
         $destname = $this->get_destdir().$filespec;
         if( file_exists($destname) ) {
           if( is_writable($destname) ) {
