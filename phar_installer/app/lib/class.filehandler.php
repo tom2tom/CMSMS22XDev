@@ -72,9 +72,8 @@ abstract class filehandler
     $filespec = trim($filespec);
     if( !$filespec ) throw new Exception(lang('error_invalidparam','filespec'));
 
-    $dn = dirname($filespec);
-    $tmp = $this->get_destdir()."/$dn";
-    return (is_dir($tmp))?TRUE:FALSE;
+    $tmp = $this->get_destdir().'/'.dirname($filespec);
+    return is_dir($tmp);
   }
 
   protected function create_directory($filespec)
@@ -95,55 +94,76 @@ abstract class filehandler
       return in_array($ext,$image_exts);
   }
 
+  //returns array 0, 1 or 2 members
+  //[1] if present && non-falsy is locale identifier
+  //[2] if present is 'related' (non-CMSMS e.g. TinyMCE) locale identifier
   protected function is_langfile($filespec)
   {
     $filespec = trim($filespec);
     if( !$filespec ) throw new Exception(lang('error_invalidparam','filespec'));
-
-    if( substr_compare($filespec, '.php', -4, 4) !== 0 ) return '';
+    $pchk = substr_compare($filespec,'.php',-4,4) === 0;
+    if( !($pchk || substr_compare($filespec,'.js',-3,3) === 0) ) {
+      return [];
+    }
     $bn = basename($filespec);
-    if( preg_match('/^[a-zA-Z]{2}_[a-zA-Z]{2}\.nls\.php$/',$bn) ) {
-      return substr($bn,0,-8);
+    if( $pchk ) {
+      //CMSMS-used locale identifiers have all been like ab_CD
+      //valid identifiers are not confined to that pattern
+      if( preg_match('/^[a-zA-Z]{2}_[a-zA-Z]{2}\.nls\.php$/',$bn) ) {
+        return [substr($bn,0,-8)];
+      }
+      if( preg_match('/^[a-zA-Z]{2}_[a-zA-Z]{2}\.php$/',$bn) ) {
+        //(lazily) confirm it's a CMSMS translation
+        if( preg_match('~[\\/]lang[\\/]en_US.php$~',$filespec) ) {
+          return ['en_US'];
+        }
+        if( preg_match('~[\\/]lib[\\/]lang[\\/]\w+[\\/]en_US.php$~',$filespec) ) {
+          return ['en_US'];
+        }
+        if( preg_match('~[\\/]lang[\\/]ext[\\/]'.$bn.'$~',$filespec) ) {
+          return [substr($bn,0,-4)];
+        }
+        if( preg_match('~[\\/]lib[\\/]lang[\\/]\w+[\\/]ext[\\/]'.$bn.'$~',$filespec) ) {
+          return [substr($bn,0,-4)];
+        }
+      }
     }
-    if( preg_match('/^[a-zA-Z]{2}_[a-zA-Z]{2}\.php$/',$bn) ) {
-      //(lazily) confirm it's a CMSMS translation
-      if( preg_match('~[\\/]lang[\\/]en_US.php$~',$filespec) ) {
-        return 'en_US';
-      }
-      if( preg_match('~[\\/]lib[\\/]lang[\\/]\w+[\\/]en_US.php$~',$filespec) ) {
-        return 'en_US';
-      }
-      if( preg_match('~[\\/]lang[\\/]ext[\\/]'.$bn.'$~',$filespec) ) {
-        return substr($bn,0,-4);
-      }
-      if( preg_match('~[\\/]lib[\\/]lang[\\/]\w+[\\/]ext[\\/]'.$bn.'$~',$filespec) ) {
-        return substr($bn,0,-4);
-      }
-      return '';
-    }
-
-    $nls = get_app()->get_nls();
-    if( !is_array($nls) ) return ''; // problem
+//TODO process PHPMailer translations named like .../phpmailer.lang-pt.php
+    $nls = get_app()->get_nls(); // all possbible locales
+    if( !is_array($nls) ) return []; // problem
 
     $bn = substr($bn,0,strpos($bn,'.'));
+    if( !preg_match('/^[a-zA-Z]{2}(_[a-zA-Z]{2})?$/',$bn)) {
+      return [];
+    }
     foreach( $nls['alias'] as $alias => $code ) {
-      if( $bn == $alias ) return $code; // TODO caseless?
+      if( strcasecmp($bn,$alias) == 0 ) { //caseless since 2.2.19
+        return [FALSE,$bn];
+      }
     }
     foreach( $nls['htmlarea'] as $code => $short ) {
-      if( $bn == $short ) return $code; // TODO caseless?
+      if( strcasecmp($bn,$short) == 0 ) { //caseless since 2.2.19
+        return [FALSE,$bn];
+      }
     }
-    return '';
+    return [$bn];
   }
 
-  protected function is_accepted_lang($filespec)
+  //$res optional, if non-null is the array value returned by is_langfile()
+  protected function is_accepted_lang($filespec,$res=null)
   {
-    $res = $this->is_langfile($filespec);
-    if( !$res ) return FALSE;
-
-    $langs = $this->get_languages();
-    if( !is_array($langs) || count($langs) == 0 ) return TRUE;
-
-    return in_array($res,$langs);
+    if( $res === null) { $res = $this->is_langfile($filespec); }
+    if( !$res ) {
+      return FALSE;
+    }
+    $langs = $this->get_languages(); // wanted locales
+    if( !$langs || !is_array($langs) ) {
+      return TRUE;
+    }
+    if( $res[0] ) {
+      return in_array($res[0],$langs);
+    }
+    return in_array($res[1],$langs);
   }
 
   abstract public function handle_file($filespec,$srcspec,PharFileInfo $fi);
