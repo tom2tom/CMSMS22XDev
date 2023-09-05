@@ -102,27 +102,6 @@ class wizard_step7 extends wizard_step
             $fn = substr($file,$p+$l);
             $filehandler->handle_file($fn,$file,$fi);
         }
-
-        $srcdir = joinpath(get_app()->get_appdir(),'assets','nls','');
-        $destdir = joinpath($destdir,'lib','nls','');
-        foreach( $languages as $one ) {
-            $fp = $srcdir.$one.'.nls.php';
-            $tp = $destdir.$one.'.nls.php';
-            if( is_file($tp) ) {
-                $s1 = md5_file($fp);
-                if( $s1 !== false ) { // should fail only for en_US
-                    $s2 = md5_file($tp);
-                    if( $s2 != $s1 ) {
-                        copy($fp, $tp);
-                        chmod($tp, 0664);
-                    }
-                }
-            }
-            else {
-                copy($fp, $tp);
-                chmod($tp, 0664);
-            }
-        }
     }
 
     private function do_manifests()
