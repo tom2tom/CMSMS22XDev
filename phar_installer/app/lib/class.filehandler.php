@@ -134,6 +134,7 @@ abstract class filehandler
     if( !preg_match('/^[a-zA-Z]{2}(_[a-zA-Z]{2})?$/',$bn)) { // TODO [a-zA-Z]{2,} is valid, but catches most files
       return '';
     }
+//TODO return '' for non-lang files like my.php and my.min.js
     foreach( $nls['alias'] as $alias => $code ) {
       if( strcasecmp($bn,$alias) == 0 ) { //caseless since 2.2.19
         return $code;
@@ -144,7 +145,8 @@ abstract class filehandler
         return $code;
       }
     }
-    return '_NOMATCH_'; //trigger unwanted-file processing
+    return $bn; //further check & maybe exclude this one
+//  return '_NOMATCH_'; //trigger unwanted-file processing
   }
 
   //$res optional, if non-null is the string value returned by is_langfile()
