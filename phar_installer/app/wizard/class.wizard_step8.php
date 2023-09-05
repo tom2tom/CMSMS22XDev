@@ -35,6 +35,7 @@ class wizard_step8 extends wizard_step
             $spec->username = $destconfig['db_username'];
             $spec->password = $destconfig['db_password'];
             $spec->dbname = $destconfig['db_name'];
+            $spec->port = isset($destconfig['db_port']) ? $destconfig['db_port'] : 0; //TODO mysqli default null not 0
             $spec->prefix = $destconfig['db_prefix'];
         }
         else {
@@ -43,16 +44,17 @@ class wizard_step8 extends wizard_step
             $spec->username = $destconfig['dbuser'];
             $spec->password = $destconfig['dbpass'];
             $spec->dbname = $destconfig['dbname'];
-            $spec->port = isset($destconfig['dbport']) ? $destconfig['dbport'] : null;
+            $spec->port = isset($destconfig['dbport']) ? $destconfig['dbport'] : 0; // TODO default null ?
             $spec->prefix = $destconfig['dbprefix'];
         }
-        if( !defined('CMS_DB_PREFIX')) { //sometimes undefined when installer is running
+        if( !defined('CMS_DB_PREFIX') ) { //sometimes undefined when installer is running
             define('CMS_DB_PREFIX',$spec->prefix);
         }
         $db = Connection::initialize($spec);
-        $db->SetErrorHandler(function() { //for debugging use ($db, $logfile)
-            /* normally do nothing */
-// when debugging error_log('step 8 db error "'.$db->ErrorMsg()."\"\n", 3, $logfile);
+        //when debugging $app=get_app();$destdir=$app->get_destdir();$logfile=$destdir.'/installer.log';
+        $db->SetErrorHandler(function() { //when debugging use ($db, $logfile)
+            // normally do nothing
+            // when debugging error_log('step 8 db error "'.$db->ErrorMsg()."\"\n",3,$logfile);
         });
         $db->Execute("SET NAMES 'utf8'");
         compatibility::noop(); // autoload the db class
@@ -63,11 +65,11 @@ class wizard_step8 extends wizard_step
     private function connect_to_cmsms($destdir)
     {
         if( is_file("$destdir/lib/include.php") ) {
-            $app = get_app();
             global $CMS_INSTALL_PAGE, $DONT_LOAD_DB, $DONT_LOAD_SMARTY, $CMS_VERSION;
             $CMS_INSTALL_PAGE = 1;
             $DONT_LOAD_DB = 1;
             $DONT_LOAD_SMARTY = 1;
+            $app = get_app();
             if( $app->in_phar() ) {
                 global $CMS_PHAR_INSTALLER;
                 $CMS_PHAR_INSTALLER = 1; //TODO used only to block core Smarty use c.f. $DONT_LOAD_SMARTY
@@ -107,7 +109,7 @@ class wizard_step8 extends wizard_step
             $siteinfo = $wiz->get_data('siteinfo');
             if( !$siteinfo ) throw new Exception(lang('error_internal',804));
 
-            $this->write_config();
+            $this->write_config($destconfig,$destdir);
             $this->connect_to_cmsms($destdir);
 
             // connect to the database, ready for downstream use
@@ -130,8 +132,8 @@ class wizard_step8 extends wizard_step
             if( !file_exists($fn) ) throw new Exception(lang('error_internal',806));
 
             global $CMS_INSTALL_DROP_TABLES, $CMS_INSTALL_CREATE_TABLES;
-            $CMS_INSTALL_DROP_TABLES=1; // TODO only for upgrades
-            $CMS_INSTALL_CREATE_TABLES=1;
+            $CMS_INSTALL_DROP_TABLES = 1; // TODO only for upgrades
+            $CMS_INSTALL_CREATE_TABLES = 1;
             include_once $fn;
 
             // install sequence tables
@@ -218,7 +220,7 @@ class wizard_step8 extends wizard_step
         }
 
         try {
-            $this->write_config();
+            $this->write_config($destconfig,$destdir);
             $this->connect_to_cmsms($destdir);
             // setup database connection
             $db = $this->db_connect($destconfig);
@@ -237,7 +239,7 @@ class wizard_step8 extends wizard_step
                 }
             }
 
-// former order $this->write_config();
+// former order $this->write_config($destconfig,$destdir);
 //needed?   $this->connect_to_cmsms($destdir);
 
             $this->message(lang('done'));
@@ -272,16 +274,9 @@ class wizard_step8 extends wizard_step
         $db->execute($sql,$havelangs);
     }
 
-    private function write_config()
+    private function write_config($destconfig,$destdir)
     {
-        $destconfig = $this->get_wizard()->get_data('config');
-        if( !$destconfig ) throw new Exception(lang('error_internal',820));
-
-        $destdir = get_app()->get_destdir();
-        if( !$destdir ) throw new Exception(lang('error_internal',823));
-
-        // create new config file.
-        // this step has to go here.... as config file has to exist in step9
+        // [re]create config file
         // so that CMSMS can connect to the database.
         $fn = $destdir.'/config.php';
         if( is_file($fn) ) {
