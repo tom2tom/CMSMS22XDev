@@ -18,7 +18,7 @@
 <div class="row text-centered">
   <a class="action-button social facebook" href="https://www.facebook.com/cmsmadesimple" target="_blank">Facebook</a>
   <a class="action-button social linkedin" href="https://www.linkedin.com/groups/1139537" target="_blank">LinkedIn</a>
-  <a class="action-button social twitter" href="https://twitter.com/cmsms" target="_blank">Twitter</a>
+  <a class="action-button social twitter" href="https://twitter.com/cmsms" target="_blank">X</a>
   <a class="action-button social orange" href="http://www.cmsmadesimple.org/support/options" target="_blank">{tr('step9_get_support')}</a>
 </div>
 <h3 class="orange text-centered">{tr('step9_love_cmsms')}?</h3>

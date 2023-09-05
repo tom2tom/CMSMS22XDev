@@ -371,7 +371,7 @@ h1, h2, h3, h4, h5, h6 {
 	content: "\e60a";
 }
 .icon-twitter:before {
-	content: "\e60b";
+	content: "\e60b"; /*TODO X replacement <img src="app/assets/images/Xlogo.png">*/
 }
 .icon-linkedin:before {
 	content: "\e60c";
@@ -688,7 +688,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .cmsms-ui .action-button.twitter {
-	background-color: #4092CC;
+	color: #000;
+	background-color: #fff; /*#4092CC;*/
 }
 
 .cmsms-ui .action-button.linkedin {
