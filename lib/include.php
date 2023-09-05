@@ -29,12 +29,12 @@
  */
 
 /**
- * Special variables that may be set before this file is included which will influence its behavior.
+ * Global variables that might be set before this file is included and which will influence its behavior.
  *
  * DONT_LOAD_DB       - Indicates that the database should not be initialized and any database related functions should not be called
  * DONT_LOAD_SMARTY   - Indicates that smarty should not be initialized, and no smarty related variables assigned.
  * CMS_INSTALL_PAGE   - Indicates that the file was included from the CMSMS Installation/Upgrade process
- * CMS_PHAR_INSTALLER - Indicates that the file was included from the CMSMS PHAR based installer (note: CMS_INSTALL_PAGE will also be set).
+ * CMS_PHAR_INSTALLER - UNUSED HERE Indicates that the file was included from the CMSMS PHAR based installer (note: CMS_INSTALL_PAGE will also be set).
  * CMS_ADMIN_PAGE     - Indicates that the file was included from an admin side request.
  * CMS_LOGIN_PAGE     - Indicates that the file was included from the admin login form.
  */
