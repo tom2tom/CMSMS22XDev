@@ -1,5 +1,5 @@
 <?php
-#CMS Made Simple classes CmsApp, CmsContentTypePlaceholder
+#CMS Made Simple classes CmsApp, CmsContentTypePlaceHolder
 #(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
@@ -296,22 +296,22 @@ final class CmsApp
 	 * to perform all kinds of database operations.
 	 *
 	 * @final
-	 * @return \CMSMS\Database\Connection a handle to the database Connection object
+	 * @return mixed \CMSMS\Database\Connection the global database Connection object, or null
 	 */
 	final public function GetDb()
 	{
 		/* Check to see if we have a valid instance.
 		 * If not, build the connection
 		 */
-		if (isset($this->db)) return $this->db;
+		if( isset($this->db) ) return $this->db;
 		global $DONT_LOAD_DB;
 
 		if( !isset($DONT_LOAD_DB) ) {
 			$config = \cms_config::get_instance();
 			$this->db = \CMSMS\Database\compatibility::init($config);
+			return $this->db;
 		}
-
-		return $this->db;
+		return null;
 	}
 
 	/**
@@ -661,7 +661,7 @@ final class CmsApp
  *
  * @package CMS
  */
-class CmsContentTypePlaceholder
+class CmsContentTypePlaceHolder
 {
 	/**
 	 * @var string The type name
@@ -669,6 +669,7 @@ class CmsContentTypePlaceholder
 	public $type;
 
 	/**
+	 * @var string The name of the type's class
 	 */
 	public $class;
 
@@ -678,23 +679,24 @@ class CmsContentTypePlaceholder
 	public $filename;
 
 	/**
-	 * @var string A friendly name for the type
+	 * @var string A friendly (UI displayed) name for the type
 	 */
 	public $friendlyname;
 
 	/**
+	 * @var string Admin lang key for the type's UI-displayed name
 	 */
 	public $friendlyname_key;
 
 	/**
-	 * @var Wether the type has been loaded
+	 * @var Whether the type has been loaded
 	 */
 	public $loaded;
 }
 
 
 /**
- * Return the global cmsms() object.
+ * Return the global CmsApp object.
  *
  * @since 1.7
  * @return CmsApp
@@ -713,7 +715,8 @@ function cmsms()
  * @return string
  * @see CmsApp::GetDbPrefix();
  */
-function cms_db_prefix() {
+function cms_db_prefix()
+{
 	return CMS_DB_PREFIX;
 }
 
