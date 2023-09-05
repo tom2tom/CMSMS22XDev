@@ -21,7 +21,7 @@ class Connection extends \CMSMS\Database\Connection
             $this->_mysql = new \mysqli( $this->_connectionSpec->host, $this->_connectionSpec->username,
                                          $this->_connectionSpec->password,
                                          $this->_connectionSpec->dbname,
-                                         (int) $this->_connectionSpec->port );
+                                         (int) $this->_connectionSpec->port ); //TODO mysqli uses default null, not 0
             if( $this->_mysql->connect_error ) {
                 $this->_mysql = null;
                 $this->OnError(self::ERROR_CONNECT,mysqli_connect_errno(),mysqli_connect_error());

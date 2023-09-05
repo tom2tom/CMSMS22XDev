@@ -65,7 +65,7 @@ namespace CMSMS\Database {
             $spec->username = $config['db_username'];
             $spec->password = $config['db_password'];
             $spec->dbname = $config['db_name'];
-            $spec->port = $config['db_port'];
+            $spec->port = $config['db_port']; //TODO default 0 > null ?
             $spec->debug = CMS_DEBUG;
 
             $tmp = [];

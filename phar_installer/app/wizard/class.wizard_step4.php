@@ -53,7 +53,7 @@ class wizard_step4 extends wizard_step
             $this->_config['dbpass'] = $config['db_password'];
             $this->_config['dbname'] = $config['db_name'];
             $this->_config['dbprefix'] = $config['db_prefix'];
-            if( isset($config['db_port']) ) $this->_config['dbport'] = $config['db_port'];
+            if( isset($config['db_port']) ) $this->_config['dbport'] = $config['db_port']; // TODO default null or 0
             if( isset($config['query_var']) ) $this->_config['query_var'] = $config['query_var'];
             if( isset($config['timezone']) ) $this->_config['timezone'] = $config['timezone'];
         }
