@@ -402,13 +402,16 @@ final class cms_config implements ArrayAccess
       case 'db_username':
       case 'db_password':
       case 'db_name':
-        // these guys have to be set
+        // these guys have to be set TODO sometimes during installer before/when creating config
         stack_trace();
         die('FATAL ERROR: Could not find database connection key "'.$key.'" in the config file');
       break;
 
       case 'db_prefix':
         return 'cms_';
+
+      case 'db_port':
+        return 0; //NOTE mysqli default is null, not 0
 
       case 'query_var':
         return 'page';
@@ -502,7 +505,6 @@ final class cms_config implements ArrayAccess
 
       case 'locale':
       case 'page_extension':
-      case 'db_port':
       case 'timezone':
         return '';
 
