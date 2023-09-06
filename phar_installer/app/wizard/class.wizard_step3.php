@@ -76,22 +76,20 @@ class wizard_step3 extends wizard_step
         unset($fh);
 
         if( $version_info ) {
-            if( $action == 'upgrade' ) {
-                // config file must be writable
-                $obj = new _tests_\boolean_test('config_writable',is_writable($version_info['config_file']));
-                $obj->required = true;
-                $obj->fail_key = 'fail_config_writable';
-                $tests[] = $obj;
+            // config file must be writable (even for freshens, which can include timezone change)
+            $obj = new _tests_\boolean_test('config_writable',is_writable($version_info['config_file']));
+            $obj->required = true;
+            $obj->fail_key = 'fail_config_writable';
+            $tests[] = $obj;
 
-                if( version_compare($version_info['version'],'2.2') < 0 ) {
-                    $dir = $app->get_destdir().'/assets';
-                    if( is_dir($dir) ) {
-                        $obj = new _tests_\boolean_test('assets_dir_exists',FALSE);
-                        $obj->fail_key = 'fail_assets_dir';
-                        $obj->warn_key = 'fail_assets_dir';
-                        $obj->required = 0;
-                        $tests[] = $obj;
-                    }
+            if( version_compare($version_info['version'],'2.2') < 0 ) {
+                $dir = $app->get_destdir().'/assets';
+                if( is_dir($dir) ) {
+                    $obj = new _tests_\boolean_test('assets_dir_exists',FALSE);
+                    $obj->fail_key = 'fail_assets_dir';
+                    $obj->warn_key = 'fail_assets_dir';
+                    $obj->required = 0;
+                    $tests[] = $obj;
                 }
             }
         } else {
