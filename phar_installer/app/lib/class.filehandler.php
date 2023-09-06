@@ -129,12 +129,30 @@ abstract class filehandler
     $nls = get_app()->get_nls(); // all possible translations
     if( !is_array($nls) ) return ''; // problem, treat file as non-lang
 
-//TODO also process PHPMailer translations named like .../phpmailer.lang-pt.php
-    $bn = substr($bn,0,strpos($bn,'.'));
+    //PHPMailer translations are named like .../phpmailer.lang-pt.php
+    if( strncmp($bn,'phpmailer.lang-',15) != 0 ) {
+      $p = strpos($bn,'.');
+      if( $p > 0 ) {
+        $bn = substr($bn,0,$p);
+        $xchk = TRUE;
+      }
+      else {
+        return '';
+      }
+    }
+    else {
+      $p = strpos($bn,'.',15);
+      if( $p > 0 ) {
+        $bn = substr($bn,15,$p-15);
+        $xchk = FALSE;
+      }
+      else {
+        return '';
+      }
+    }
     if( !preg_match('/^[a-zA-Z]{2}(_[a-zA-Z]{2})?$/',$bn)) { // TODO [a-zA-Z]{2,} is valid, but catches most files
       return '';
     }
-//TODO return '' for non-lang files like my.php and my.min.js
     foreach( $nls['alias'] as $alias => $code ) {
       if( strcasecmp($bn,$alias) == 0 ) { //caseless since 2.2.19
         return $code;
@@ -145,8 +163,10 @@ abstract class filehandler
         return $code;
       }
     }
-    return $bn; //further check & maybe exclude this one
-//  return '_NOMATCH_'; //trigger unwanted-file processing
+    if( $xchk && stripos($filespec,'lang') === FALSE ) {
+      return '';
+    }
+    return $bn; //maybe keep this one
   }
 
   //$res optional, if non-null is the string value returned by is_langfile()
