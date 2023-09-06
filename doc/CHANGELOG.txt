@@ -57,8 +57,9 @@ News
 
 Phar Installer 1.4
  - Added missing nls files, enabling installer sessions using extra translations
+ - Install translation files (core, TinyMCE, PHPMailer) only for wanted translations
  - Enabled installed-translation changes during upgrades
--  Enabled un-installation of translations
+ - Enabled un-installation of translations
  - Always-optional post-installation email includes more advice, and no password
  - 2.0 upgrade relative to 1.12.2
 
