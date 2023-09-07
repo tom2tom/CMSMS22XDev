@@ -207,8 +207,10 @@ if( !isset($_SERVER['REQUEST_URI']) ) {
 
 if( !isset($CMS_INSTALL_PAGE) ) {
     // Set a umask
-    $global_umask = cms_siteprefs::get('global_umask','');
-    if( $global_umask != '' ) umask( octdec($global_umask) );
+    // BUT avoid using umask() in multithreaded webservers. All running scripts use the same umask
+    // Deprecated since 2.2.19
+    $global_umask = cms_siteprefs::get('global_umask');
+    if( $global_umask !== '' ) umask(octdec($global_umask));
 
     // Load all eligible modules
     debug_buffer('Loading Modules');

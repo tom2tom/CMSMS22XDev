@@ -11,6 +11,7 @@ Core - General
  - Corrected filter applied to $_GET, $_SERVER at the start of each request.
  - Corrected page-selector widget operation.
  - Validate entered bookmark-URLs.
+ - Deprecated use of PHP function umask();
  - Added missing nls files, allowing installation of extra translations.
  - Smarty upgraded to version 4.3.0.
  - Enabled use of PHP function rawurlencode in Smarty templates.

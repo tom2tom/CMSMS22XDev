@@ -691,6 +691,7 @@ function returnBytes( $val )
  * @param string  $dir
  * @param string  $file
  * @param string  $data
+ * @deprecated since 2.2.19 Avoid using umask() in multithreaded webservers, all running scripts use the same umask
  */
 function testUmask( $required, $title, $umask, $message = '', $debug = false, $dir = '', $file = '_test_umask_', $data = 'this is a test' )
 {

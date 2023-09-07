@@ -333,6 +333,7 @@ $tmp[0]['modules'] = testDirWrite(0, $dir, $dir);
 $dir = $config['uploads_path'];
 $tmp[0]['uploads'] = testDirWrite(0, $dir, $dir);
 
+// deprecated since 2.2.19 Avoid using umask() in multithreaded webservers, all running scripts use the same umask
 $global_umask = get_site_preference('global_umask', '022');
 $tmp[0][lang('global_umask')] = testUmask(0, lang('global_umask'), $global_umask);
 
