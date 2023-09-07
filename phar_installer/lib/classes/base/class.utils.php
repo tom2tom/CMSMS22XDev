@@ -50,14 +50,14 @@ class utils
 
         session_write_close();
 
-        if(headers_sent() ) {
+        if( headers_sent() ) {
             // use javascript instead
-            echo '<script><!-- location.replace("'.$to.'"); // --></script><noscript><meta http-equiv="Refresh" content="0;URL='.$to.'"></noscript>';
+            echo '<script>location.replace("'.$to.'");</script><noscript><meta http-equiv="Refresh" content="0;URL='.$to.'"></noscript>';
             exit;
         }
         else {
             header("Location: $to");
-            exit();
+            exit;
         }
     }
 
