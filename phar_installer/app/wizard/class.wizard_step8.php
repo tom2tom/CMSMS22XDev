@@ -13,6 +13,7 @@ use CMSMS\Database\ConnectionSpec;
 use Exception;
 use RuntimeException;
 use const CMS_DB_PREFIX;
+use const CONFIG_FILE_LOCATION;
 use function __appbase\get_app;
 use function __appbase\lang;
 use function __appbase\smarty;
@@ -205,7 +206,7 @@ class wizard_step8 extends wizard_step
         $CMS_VERSION = $app->get_dest_version();
         if( $app->in_phar() ) {
             global $CMS_PHAR_INSTALLER;
-            $CMS_PHAR_INSTALLER = 1; //TODO used only to block core Smarty use c.f.$DONT_LOAD_SMARTY
+            $CMS_PHAR_INSTALLER = 1; //TODO used only to block core Smarty use c.f. $DONT_LOAD_SMARTY
         }
 
         // setup and initialize the CMSMS API's
@@ -258,6 +259,15 @@ class wizard_step8 extends wizard_step
         $destconfig = $wiz->get_data('config');
         if( !$destconfig ) throw new Exception(lang('error_internal',829));
         $this->connect_to_cmsms($destdir);
+        // global flags $CMS_INSTALL_PAGE etc are still set, from prior method-call
+        $config = cms_config::get_instance();
+        if( $config['timezone'] != $destconfig['timezone'] ) {
+            $this->write_config($destconfig,$destdir);
+            // cleanup any message-creation scripts
+            for( $i = 0,$n = count(ob_list_handlers()); $i < $n; $i++ ) {
+                ob_end_clean();
+            }
+        }
         $db = $this->db_connect($destconfig);
         $this->conform_langs($wiz,$db);
     }
@@ -266,7 +276,7 @@ class wizard_step8 extends wizard_step
     {
         $siteinfo = $wiz->get_data('siteinfo');
         if( !$siteinfo ) throw new Exception(lang('error_internal',831));
-        $havelangs = [-9 => '',-8 => 'en_US'] + $siteinfo['extlanguages'];
+        $havelangs = [-3 => '',-2 => 'en_US'] + $siteinfo['extlanguages'];
         $filler = str_repeat('?,',count($havelangs) - 1);
         $sql = 'UPDATE '.CMS_DB_PREFIX."siteprefs SET sitepref_value='' WHERE sitepref_name='frontendlang' AND sitepref_value NOT IN({$filler}?)";
         $db->execute($sql,$havelangs);
@@ -278,7 +288,7 @@ class wizard_step8 extends wizard_step
     {
         // [re]create config file
         // so that CMSMS can connect to the database.
-        $fn = $destdir.'/config.php';
+        $fn = "$destdir/config.php";
         if( is_file($fn) ) {
             $this->verbose(lang('install_backupconfig'));
             $destfn = $destdir.'/bak.config.php';
@@ -304,7 +314,7 @@ class wizard_step8 extends wizard_step
         $CMS_INSTALL_PAGE = 1;
         // get the system config instance, without fully connecting to cmsms
         $fp = $destdir.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR;
-        // during an upgrade, these inclusions might already have been loaded, then cached by PHP
+        // during an upgrade or freshen, these inclusions might already have been loaded, then cached by PHP
         require_once $fp.'misc.functions.php';
         require_once $fp.'classes'.DIRECTORY_SEPARATOR.'class.CmsApp.php';
         require_once $fp.'classes'.DIRECTORY_SEPARATOR.'class.cms_config.php';
@@ -312,7 +322,7 @@ class wizard_step8 extends wizard_step
         $config = cms_config::get_instance();
         $config->merge($newconfig);
         if( !defined('CONFIG_FILE_LOCATION') ) {
-            define('CONFIG_FILE_LOCATION', $destdir.'/config.php');
+            define('CONFIG_FILE_LOCATION', "$destdir/config.php");
         }
         $config->save();
         // double-check, in case there's PHP silliness
@@ -325,7 +335,7 @@ class wizard_step8 extends wizard_step
     {
         $wiz = $this->get_wizard();
         $action = $wiz->get_data('action');
-        if( $action != 'freshen' ) { // for freshens, we only cleanup nls files here
+        if( $action != 'freshen' ) { // for freshens, we only cleanup config file and nls files here
             parent::display();
             $smarty = smarty();
             $smarty->assign('next_url',$wiz->next_url())
