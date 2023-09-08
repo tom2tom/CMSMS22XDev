@@ -98,7 +98,7 @@ final class DesignManager extends CMSModule
             $handlers = ob_list_handlers();
             for ($cnt = 0; $cnt < count($handlers); $cnt++) { ob_end_clean(); }
 
-            header('Content-type:application/json; charset=utf-8');
+            header('Content-Type:application/json; charset=utf-8');
 
             if ($data) {
                 $json = json_encode(array('status' => $status, 'message' => $message, 'data' => $data));
