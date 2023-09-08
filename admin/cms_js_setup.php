@@ -59,7 +59,7 @@ if( $fp ) {
 }
 
 // output some javascript
-$out = 'cms_data = {};'."\n";
+$out = 'var cms_data = {};'."\n";
 
 foreach( $data as $key => $value ) {
     $value = json_encode($value);
@@ -86,7 +86,8 @@ header('Pragma: public');
 header('Expires: 0');
 header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 header('Cache-Control: private',false);
-header('Content-type: text/javascript');
+//Cannot modify this header information - headers already sent
+//header('Content-Type: text/javascript');
 echo $out;
 exit;
 ?>
