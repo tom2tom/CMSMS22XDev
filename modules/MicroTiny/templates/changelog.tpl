@@ -29,7 +29,7 @@ Minor fix for filepicker plugin.
   </li>
   <li>v2.2 (CMSMS 2.2.2)
   <ul>
-  <li>Update TinyMCE to version v4.6.4</li>
+  <li>Update TinyMCE to version 4.6.4 (abandons IE 8-10 support)</li>
   <li>Add tabfocus and hr plugins</li>
   </ul>
   </li>

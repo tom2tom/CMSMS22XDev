@@ -620,7 +620,7 @@ DesignManager v1.1.3
  - Remove debug statements.
 
 MicroTiny v2.2
- - Upgrade tinymce to v4.6.x.
+ - Upgrade tinymce to version 4.6.4 (abandons IE 8-10 support).
  - Adds new tabfocus and hr plugins.
 
 News v2.51.2
@@ -852,7 +852,7 @@ ModuleManager
   - Trigger a hook before exporting a module to XML.
 
 MicroTiny v2.1
-  - New version of the tinymce wysiwyg editor.
+  - Upgrade tinymce to version 4.4.0.
   - Adds a mailto plugin.
   - Now use the FilePicker module for a filepicker, required rewriting the cmsms_filepicker tinymce plugin.
   - Enable the title attribute on the image plugin.
@@ -1068,7 +1068,7 @@ MicroTiny v2.0.2
 - Now use $smarty->CreateTemplate for clarity when compling the config template
 - Now explicitly assign urls so that they do not get caced by smarty.
 - Slightly tweak the default HTML content in the example tab.
-- Updated tinymce to the latest 4.2.7 version, included the 'paste' plugin, and turned on 'paste_as_text'.
+- Updated tinymce to version 4.2.7, included the 'paste' plugin, and turned on 'paste_as_text'.
 - Added the ability to enable the table plugin, now distribute the table plugin
 
 CMSContentManager v1.0.2
