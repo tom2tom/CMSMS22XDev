@@ -1,4 +1,4 @@
-{* wizard step 9 -- files *}
+{* wizard step 9 *}
 
 {extends file='wizard_step.tpl'}
 {block name='logic'}
