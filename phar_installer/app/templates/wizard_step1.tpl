@@ -40,7 +40,7 @@ function redirect_langchange() {
     <p class="info">{tr('select_language')}</p>
     <div class="row">
         <label for="lang_selector">{tr('available_languages')}:</label>
-        <select id="lang_selector" class="form-field" name="lang" onchange="redirect_langchange();">
+        <select id="lang_selector" class="form-field" name="lang">
             {html_options options=$languages selected=$curlang}
         </select>
     </div>
@@ -62,4 +62,10 @@ function redirect_langchange() {
     </div>
 {wizard_form_end}
 </div>
+{/block}
+
+{block name='javascript' append}
+<script>
+ document.getElementById('lang_selector').addEventListener('change',redirect_langchange,true);
+</script>
 {/block}

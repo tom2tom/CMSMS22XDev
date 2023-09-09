@@ -76,9 +76,17 @@
 
 <div id="bottom_nav">
 {if $tests_failed}
-  <a onclick="window.location.reload();" class="action-button orange" title="{tr('retry')}">{tr('retry')} <i class="icon-loop"></i></a>
+ <a id="btn_retry" class="action-button orange" title="{tr('retry')}">{tr('retry')} <i class="icon-loop"></i></a>
 {/if}
 {if $can_continue} <a href="{$next_url}" class="action-button positive" title="{tr('next')}">{tr('next')} &rarr;</a>{/if}
 </div>
 
 {/block}
+
+{if $tests_failed}
+{block name='javascript' append}
+<script>
+ document.getElementById('btn_retry').addEventListener('click',function(){ window.location.reload(); },false);
+</script>
+{/block}
+{/if}
