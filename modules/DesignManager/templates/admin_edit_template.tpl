@@ -12,7 +12,7 @@ $(function() {
 
     // initialize lock manager
     if( do_locking ) {
-      $('#form_edittemplate').lockManager( {
+      $('#form_edittemplate').lockManager({
         type: 'template',
         oid: {$tpl_id|default:0},
         uid: {$userid},

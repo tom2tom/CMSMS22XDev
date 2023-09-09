@@ -4,19 +4,19 @@ $(function() {
   $('#bulkactions').hide();
   $('#bulk_category').hide();
   $('#toggle_filter').on('click', function() {
-    $('#filter').dialog( {
+    $('#filter').dialog({
       width: 'auto',
       modal: true
     });
   });
-    $('a.delete_article').on('click', function(ev) {
-      var self = $(this);
-      ev.preventDefault();
-      cms_confirm("{$mod->Lang('areyousure')|escape:'javascript'}").done(function() {
-        window.location.href = self.attr('href');
-        return true;
-      });
+  $('a.delete_article').on('click', function(ev) {
+    var self = $(this);
+    ev.preventDefault();
+    cms_confirm("{$mod->Lang('areyousure')|escape:'javascript'}").done(function() {
+      window.location.href = self.attr('href');
+      return true;
     });
+  });
   $('#articlelist').on('cms_checkall_toggle','[type="checkbox"]',function() {
     var l = $('#articlelist :checked').length;
 

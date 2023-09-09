@@ -67,7 +67,7 @@ $(function() {
             // now delete the file.
             var turl = '{/literal}{$action_url}{literal}';
             turl = turl.replace(/amp;/g,'') + '&' + $.param({ file: _files[index] });
-            $.ajax( {
+            $.ajax({
               url: turl,
               type: 'DELETE'
             });
@@ -88,7 +88,7 @@ $(function() {
       barValue(total);
 
       function barValue(total) {
-        $("#progressarea").progressbar( {
+        $("#progressarea").progressbar({
           value: parseInt(total)
         });
         $(".ui-progressbar-value").html(str);

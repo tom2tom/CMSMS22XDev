@@ -6,7 +6,7 @@ $(function() {
   });
   $('.template_view').on('click', function() {
     var row = $(this).closest('tr');
-    $('.template_content',row).dialog( {
+    $('.template_content',row).dialog({
       width: 'auto',
       close: function(ev, ui) {
          $(this).dialog('destroy');
@@ -16,7 +16,7 @@ $(function() {
   });
   $('.stylesheet_view').on('click', function() {
     var row = $(this).closest('tr');
-    $('.stylesheet_content',row).dialog( {
+    $('.stylesheet_content',row).dialog({
       width: 'auto',
       close: function(ev, ui) {
          $(this).dialog('destroy');

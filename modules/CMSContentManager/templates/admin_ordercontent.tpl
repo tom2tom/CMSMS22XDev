@@ -16,14 +16,14 @@
             ev.preventDefault();
             var form = $(this).closest('form');
             cms_confirm('{$mod->Lang("confirm_reorder")|escape:"javascript"}').done(function(){
-                var tree = $.toJSON(parseTree($('#masterlist')));
+                var tree = $.toJSON(parseTree($('#masterlist')));//TODO JSON.stringify() since 2009
                 var ajax_res = false;
                 $('#orderlist').val(tree);
                 form.trigger('submit');
             });
         });
 
-        $('ul.sortable').nestedSortable( {
+        $('ul.sortable').nestedSortable({
             disableNesting : 'no-nest',
             forcePlaceholderSize : true,
             handle : 'div',

@@ -16,7 +16,7 @@ $(function() {
 
   // initialize lock manager
   if( do_locking ) {
-    $('#Edit_Content').lockManager( {
+    $('#Edit_Content').lockManager({
       type: 'content',
       oid: {$content_id|default:-1},
       uid: {$userid},
