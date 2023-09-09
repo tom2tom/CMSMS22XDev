@@ -1,11 +1,11 @@
 {if !isset($noform)}{*TODO <style/> invalid here - migrate to <head/>*}
-<style>{literal}
+<style>
 a.filelink:visited {
    color: #000;
 }
 </style>
 <script>
-{/literal}var refresh_url = '{$refresh_url}'+'&showtemplate=false';{literal}
+var refresh_url = '{$refresh_url}'+'&showtemplate=false';
 refresh_url = refresh_url.replace(/amp;/g,'');
 function enable_button(idlist) {
   $(idlist).prop('disabled',false).removeClass('ui-state-disabled ui-button-disabled');
@@ -87,7 +87,7 @@ $(function () {
     $(document).on('click', '#btn_view', function () {
         // find the selected item.
         var tmp = $('#filesarea input[type="checkbox"]').filter(':checked').val();
-        {/literal}var url = '{$viewfile_url}&showtemplate=false&{$actionid}viewfile=' + tmp;{literal}
+        var url = '{$viewfile_url}&showtemplate=false&{$actionid}viewfile=' + tmp;
         url = url.replace(/amp;/g, '');
         $('#popup_contents').load(url);
         $('#popup').dialog({
@@ -106,7 +106,7 @@ $(function () {
         }
     });
 });
-{/literal}</script>
+</script>
 
 {function filebtn icon='ui-icon-circle-check'}
 {$addclass='ui-button-icon-primary'}

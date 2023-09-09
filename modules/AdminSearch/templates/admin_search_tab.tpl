@@ -1,17 +1,17 @@
 {if !empty($slaves)}{*TODO <style/> invalid here - migrate to <head/> deprecated scoped attribute is for some FF versions only*}
-<style scoped>{literal}
+<style scoped>
 #status_area,#searchresults_cont,#workarea {
   display: none;
 }
 #searchresults {
   max-height: 25em;
-  overflow:   auto;
+  overflow: auto;
   cursor: pointer;
 }
 .search_oneresult {
   color: red;
 }
-{/literal}</style>
+</style>
 
 <script>
  var ajax_url = '{$ajax_url}';

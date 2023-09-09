@@ -1,9 +1,9 @@
 {*TODO <style/> invalid here - migrate to <head/>*}
-<style>{literal}
+<style>
 img#rotimg {
   z-index: 0;
 }
-{/literal}</style>
+</style>
 
 <script>
 $(function() {

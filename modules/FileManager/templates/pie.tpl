@@ -47,9 +47,9 @@ $(function() {
 });
 </script>
 {*TODO <style/> invalid here - migrate to <head/>*}
-<style>{literal}
+<style>
 input.invalid { background-color: salmon; }
-{/literal}</style>
+</style>
 
 <h3>{$mod->Lang('resizecrop')}</h3>
 
