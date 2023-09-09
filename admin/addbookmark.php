@@ -15,7 +15,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id:$
+#$Id$
 
 $CMS_ADMIN_PAGE=1;
 
@@ -86,7 +86,7 @@ if ($url) {
 		};
 
 		$sitehost = parse_url(CMS_ROOT_URL, PHP_URL_HOST);
-		//TODO other blocked hosts? 
+		//TODO other blocked hosts?
 		if (!$validurl($url, [$sitehost])) {
 			unset($_POST['addbookmark']);
 			$error = lang('error_badfield', lang('url'));
