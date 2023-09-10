@@ -52,6 +52,7 @@ class wizard
       sort($files);
 
       $_data = array();
+      $stepnow = $this->cur_step();
       for( $i = 0; $i < count($files); $i++ ) {
           $idx = $i+1;
           $filename = $files[$i];
@@ -62,7 +63,7 @@ class wizard
           if( $this->_namespace ) $fullclass = $this->_namespace.'\\'.$classname;
           $rec['classname'] = $classname;
           $rec['class'] = $fullclass;
-          $rec['active'] = ($idx == $this->cur_step())?1:0;
+          $rec['active'] = ($idx == $stepnow)?1:0;
           $_data[$idx] = $rec;
       }
       $this->_steps = $_data;
@@ -158,7 +159,7 @@ class wizard
       $url = $request->raw_server('REQUEST_URI');
       $urlmain = explode('?',$url);
 
-      parse_str($url,$parts);
+      parse_str($urlmain[1],$parts);
       $parts[$this->_stepvar] = $idx;
 
       $tmp = array();
@@ -176,7 +177,7 @@ class wizard
       $url = $request->raw_server('REQUEST_URI');
       $urlmain = explode('?',$url);
 
-      $parts = parse_str($url,$parts);
+      parse_str($urlmain[1],$parts);
       $parts[$this->_stepvar] = $this->cur_step() + 1;
       if( $parts[$this->_stepvar] > $this->num_steps() ) return '';
 
@@ -195,7 +196,7 @@ class wizard
       $url = $request->raw_server('REQUEST_URI');
       $urlmain = explode('?',$url);
 
-      parse_str($url,$parts);
+      parse_str($urlmain[1],$parts);
       $parts[$this->_stepvar] = $this->cur_step() - 1;
       if( $parts[$this->_stepvar] <= 0 ) return '';
 
