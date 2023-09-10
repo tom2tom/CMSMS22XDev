@@ -15,25 +15,27 @@ class wizard
   private $_namespace;
   private $_stepobj = null;
   private $_steps = [];
-  private $_stepvar = 's';
+  private $_stepkey;
 
   const STATUS_OK    = 'OK';
   const STATUS_ERROR = 'ERROR';
   const STATUS_BACK  = 'BACK';
   const STATUS_NEXT  = 'NEXT';
+  const INSTALL_SECURE_PARAM = 'i__ks';
 
   private function __construct($classdir,$namespace)
   {
-    if( !is_dir($classdir) ) throw new Exception('Could not find wizard steps in '.$classdir);
-    $this->_classdir = $classdir;
-    $this->_name = basename($classdir);
-    $this->_namespace = $namespace;
+      if( !is_dir($classdir) ) throw new Exception('Could not find wizard steps in '.$classdir);
+      $this->_classdir = $classdir;
+      $this->_name = basename($classdir);
+      $this->_namespace = $namespace;
+      $this->_stepkey = 'e'.substr(md5(realpath(getcwd()).session_id()),0,11);
   }
 
   final public static function get_instance($classdir = '', $namespace = '')
   {
-    if( !self::$_instance ) self::$_instance = new self($classdir,$namespace);
-    return self::$_instance;
+      if( !self::$_instance ) self::$_instance = new self($classdir,$namespace);
+      return self::$_instance;
   }
 
   private function _init()
@@ -41,7 +43,7 @@ class wizard
       if( $this->_initialized ) return;
       $this->_initialized = true;
 
-      // find all of the classes in the wizard directory.
+      // find all classes in the wizard directory.
       $di = new DirectoryIterator($this->_classdir);
       $ri = new RegexIterator($di,'/^class\.wizard.*\.php$/');
       $files = array();
@@ -71,54 +73,64 @@ class wizard
 
   final public function get_nav()
   {
-    $this->_init();
-    return $this->_steps;
+      $this->_init();
+      return $this->_steps;
   }
 
   final public function get_step_var()
   {
-    return $this->_stepvar;
+      $sess = session::get();
+      if( isset($sess[$this->_stepkey]) ) {
+          return $sess[$this->_stepkey];
+      }
+      return array('',-1);
   }
 
-  final public function set_step_var($str)
+  final public function set_step_var($str,$stepnum)
   {
-    if( $str ) $this->_stepvar = $str;
+      $sess = session::get();
+      $sess[$this->_stepkey] = array($str,(int)$stepnum);
   }
 
   final public function cur_step()
   {
-    $val = 1;
-    if( $this->_stepvar && isset($_GET[$this->_stepvar]) ) $val = (int)$_GET[$this->_stepvar];
-    return $val;
+      $sess = session::get();
+      if( isset($sess[$this->_stepkey]) ) {
+          $val = $sess[$this->_stepkey][0];
+          if( isset($_GET[self::INSTALL_SECURE_PARAM]) && $_GET[self::INSTALL_SECURE_PARAM] == $val ) {
+              return (int)$sess[$this->_stepkey][1];
+          }
+      }
+      return 1;
   }
 
   final public function finished()
   {
-    $this->_init();
-    return $this->cur_step() > $this->num_steps();
+      $this->_init();
+      return $this->cur_step() > $this->num_steps();
   }
 
   final public function num_steps()
   {
-    $this->_init();
-    return count($this->_steps);
+      $this->_init();
+      return count($this->_steps);
   }
 
   final public function get_step()
   {
-    $this->_init();
-    if( is_object($this->_stepobj) ) return $this->_stepobj;
+      $this->_init();
+      if( is_object($this->_stepobj) ) return $this->_stepobj;
 
-    $rec = $this->_steps[$this->cur_step()];
-    if( isset($rec['class']) && class_exists($rec['class']) ) {
-      $obj = new $rec['class']();
-      if( is_object($obj) ) {
-        $this->_stepobj = $obj;
-        return $obj;
+      $rec = $this->_steps[$this->cur_step()];
+      if( isset($rec['class']) && class_exists($rec['class']) ) {
+          $obj = new $rec['class']();
+          if( is_object($obj) ) {
+              $this->_stepobj = $obj;
+              return $obj;
+          }
       }
-    }
-    $this->_stepobj = null;
-    return null;
+      $this->_stepobj = null;
+      return null;
   }
 
   public function get_data($key,$dflt = null)
@@ -159,54 +171,61 @@ class wizard
       $url = $request->raw_server('REQUEST_URI');
       $urlmain = explode('?',$url);
 
-      parse_str($urlmain[1],$parts);
-      $parts[$this->_stepvar] = $idx;
+      $parts = array();
+      $parts[self::INSTALL_SECURE_PARAM] = base_convert(bin2hex(random_bytes(7)),16,36);
+      $this->set_step_var($parts[self::INSTALL_SECURE_PARAM],$idx);
 
       $tmp = array();
       foreach( $parts as $k => $v ) {
           $tmp[] = $k.'='.$v;
       }
-      $url = $urlmain[0].'?'.implode('&',$tmp);
+      $url = rtrim($urlmain[0],' /').'?'.implode('&',$tmp);
       return $url;
   }
 
   final public function next_url()
   {
       $this->_init();
+
+      $idx = $this->cur_step() + 1;
+      if( $idx > $this->num_steps() ) return '';
+
       $request = request::get();
       $url = $request->raw_server('REQUEST_URI');
       $urlmain = explode('?',$url);
 
-      parse_str($urlmain[1],$parts);
-      $parts[$this->_stepvar] = $this->cur_step() + 1;
-      if( $parts[$this->_stepvar] > $this->num_steps() ) return '';
+      $parts = array();
+      $parts[self::INSTALL_SECURE_PARAM] = base_convert(bin2hex(random_bytes(7)),16,36);
+      $this->set_step_var($parts[self::INSTALL_SECURE_PARAM],$idx);
 
       $tmp = array();
       foreach( $parts as $k => $v ) {
           $tmp[] = $k.'='.$v;
       }
-      $url = $urlmain[0].'?'.implode('&',$tmp);
+      $url = rtrim($urlmain[0],' /').'?'.implode('&',$tmp);
       return $url;
   }
 
   final public function prev_url()
   {
       $this->_init();
+
+      $idx = $this->cur_step() - 1;
+      if( $idx < 1 ) return '';
+
       $request = request::get();
       $url = $request->raw_server('REQUEST_URI');
       $urlmain = explode('?',$url);
 
-      parse_str($urlmain[1],$parts);
-      $parts[$this->_stepvar] = $this->cur_step() - 1;
-      if( $parts[$this->_stepvar] <= 0 ) return '';
+      $parts = array();
+      $parts[self::INSTALL_SECURE_PARAM] = base_convert(bin2hex(random_bytes(7)),16,36);
+      $this->set_step_var($parts[self::INSTALL_SECURE_PARAM],$idx);
 
       $tmp = array();
-      if( count($parts) ) {
-          foreach( $parts as $k => $v ) {
-              $tmp[] = $k.'='.$v;
-          }
+      foreach( $parts as $k => $v ) {
+          $tmp[] = $k.'='.$v;
       }
-      $url = $urlmain[0].'?'.implode('&',$tmp);
+      $url = rtrim($urlmain[0],' /').'?'.implode('&',$tmp);
       return $url;
   }
 
