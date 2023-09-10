@@ -74,9 +74,9 @@ function cms_lang(key) {
     alert('lang key '+key+' notset');
 }
 
-// a silly shiv for IE11. ... remove me ASAP.
+// a shiv for browsers before 2015 or so... remove me ASAP.
 if (!String.prototype.startsWith) {
-    String.prototype.startsWith = function(searchString, position){
+    String.prototype.startsWith = function(searchString, position) {
       position = position || 0;
       return this.substr(position, searchString.length) === searchString;
   };
@@ -86,8 +86,7 @@ header('Pragma: public');
 header('Expires: 0');
 header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 header('Cache-Control: private',false);
-//Cannot modify this header information - headers already sent
-//header('Content-Type: text/javascript');
+header('Content-Type: text/javascript',false);
 echo $out;
 exit;
 ?>

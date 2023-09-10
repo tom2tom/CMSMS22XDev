@@ -403,11 +403,11 @@ class cms_install extends app
         // set our selected language...
         translator()->set_selected_language($lang);
 
-        // for every request we're gonna make sure it's not cached.
-        //session_cache_limiter('private');
+        // ensure no request is cached.
+        //session_cache_limiter('nocache'); //WAS 'private'
 
         // and make sure we are in UTF-8
-        //TODO headers already sent header('Content-Type:text/html; charset=UTF-8');
+        header('Content-Type:text/html; charset=UTF-8',false);
 
         // and do our stuff.
         try {
@@ -415,7 +415,7 @@ class cms_install extends app
             $wizard = wizard::get_instance(__DIR__.'/wizard','\cms_autoinstaller');
             // this sets a custom step variable for each instance
             // which is just one more security measure.
-            // nobody can guess an installer URL and jump to a specific step to
+            // RUBBISH! nobody can guess an installer URL and jump to a specific step to
             // nuke anything (even though database creds are stored in the session
             // so are all the other parameters.
             $wizard->set_step_var($tmp);
