@@ -1156,6 +1156,8 @@ function cms_get_jquery($exclude = '',$ssl = FALSE,$cdn = FALSE,$append = '',$cu
                                 'aliases'=>array('jquery-ui.min.js','ui'),
                                 'css'=>$basePath.'/lib/jquery/css/smoothness/jquery-ui-1.12.1.custom.min.css');
   $scripts['nestedSortable'] = array('local'=>$basePath.'/lib/jquery/js/jquery.mjs.nestedSortable.min.js');
+  //TODO discontinued. site says: Use native JSON.stringify (browsers since 2009), or json2.js from https://github.com/douglascrockford/JSON-js
+  //CMSMS since 2.0 (OneEleven theme) has used JSON.stringify() directly
   $scripts['json'] = array('local'=>$basePath.'/lib/jquery/js/jquery.json-2.4.min.js');
   $scripts['migrate'] = array('local'=>$basePath.'/lib/jquery/js/jquery-migrate-1.4.1.min.js');
 

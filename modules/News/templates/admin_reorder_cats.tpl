@@ -15,7 +15,7 @@ function parseTree(ul)
 
 $(function() {
   $(document).on('click','[name="{$actionid}submit"]',function() {
-    var tree = $.toJSON(parseTree($('ul.sortable')));
+    var tree = $.toJSON(parseTree($('ul.sortable')));//TODO JSON.stringify() since 2009
     $('#submit_data').val(tree);
   });
 
