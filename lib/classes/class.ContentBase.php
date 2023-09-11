@@ -2025,7 +2025,7 @@ abstract class ContentBase
 
 	/**
 	 * Used from a page that allows content editing.
-	 * This method provides a list of distinct sections that devides up the various logical sections
+	 * This method provides a list of distinct sections that divides up the various logical sections
 	 * that this content type supports for editing.
 	 *
 	 * @abstract
@@ -2318,7 +2318,7 @@ abstract class ContentBase
 	 * @abstract
 	 * @param string $one The property name
 	 * @param bool $adding Whether or not we are in add or edit mode.
-	 * @return array consisting of two elements.  A label, and the input element.
+	 * @return array consisting of two elements (a label and input element) or empty.
 	 */
 	protected function display_single_element($one,$adding)
 	{
@@ -2488,6 +2488,7 @@ abstract class ContentBase
 		default:
 			throw new CmsInvalidDataException('Attempt to display invalid property '.$one);
 		}
+		return [];
 	}
 } // end of class
 
