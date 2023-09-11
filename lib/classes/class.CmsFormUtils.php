@@ -247,9 +247,9 @@ final class CmsFormUtils
         // todo: rewrite me with var args... to accept a numeric array of arguments, or a hash.
         $haveit = FALSE;
         $result = '';
-        $uid = get_userid(false);
-        $attribs = array();
+        $uid = get_userid(false); // irrelevant for frontend
         $module = null; // no object
+        $attribs = array();
         $attribs['name'] = get_parameter_value($parms,'name');
         if( !$attribs['name'] ) throw new CmsInvalidDataException('"name" is a required parameter"');
         $attribs['id'] = get_parameter_value($parms,'id',$attribs['name']);
