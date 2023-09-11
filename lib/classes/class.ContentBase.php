@@ -2172,7 +2172,7 @@ abstract class ContentBase
 	 * @see ContentBase::GetAdditionalEditorOptions
 	 * @param array $addteditors Array of additional editors
 	 * @param int  $owner_id  The current owner of the page.
-	 * @return string HTML output
+	 * @return array 2 members, a HTML label+help popup and a select element
 	 */
 	public static function GetAdditionalEditorInput($addteditors,$owner_id = -1)
 	{
@@ -2187,18 +2187,18 @@ abstract class ContentBase
 			$text .= CmsFormUtils::create_option(array('label'=>$v,'value'=>$k),$addteditors);
 		}
 
-
 		$text .= '</select>';
 		$ret[] = $text;
 		return $ret;
 	}
 
 	/**
-	 * Provides an input element to display the list of additional editors.
+	 * Provides an input element to display the list of additional editors,
+	 * plus a corresponding label.
 	 * This method is usually called from within this object.
 	 *
 	 * @param array $addteditors An optional array of additional editor id's (group ids specified with negative values)
-	 * @return string The input element.
+	 * @return array 2 members, a HTML label and select element
 	 * @see ContentBase::GetAdditionalEditorInput
 	 */
 	public function ShowAdditionalEditors($addteditors = [])
@@ -2318,7 +2318,7 @@ abstract class ContentBase
 	 * @abstract
 	 * @param string $one The property name
 	 * @param bool $adding Whether or not we are in add or edit mode.
-	 * @return array consisting of two elements (a label and input element) or empty.
+	 * @return array consisting of two elements (normally a label and input element(s)) or empty.
 	 */
 	protected function display_single_element($one,$adding)
 	{
