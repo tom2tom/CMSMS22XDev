@@ -251,12 +251,12 @@ $(function() {
     {tab_start name=$key}
       {if isset($tab_message_array[$key])}{$tab_message_array[$key]}{/if}
       {if isset($tab_contents_array[$key])}
-        {foreach $tab_contents_array.$key as $fld}
+        {foreach $tab_contents_array.$key as $fld}{if $fld}
         <div class="pageoverflow">
           <p class="pagetext">{$fld.0|default:''}</p>
           <p class="pageinput">{$fld.1|default:''}{if $fld && is_array($fld) && count($fld) == 3}<br>{$fld.2}{/if}</p>
         </div>
-        {/foreach}
+        {/if}{/foreach}
       {/if}
   {/foreach}
   {if $content_obj->HasPreview()}
