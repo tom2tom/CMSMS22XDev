@@ -285,9 +285,9 @@ class langtools
    *
    * @param string the realm name, if empty the default realm will be used.
    */
-  final public function set_realm($str = '')
+  final public function set_realm($realm = '')
   {
-    if( !$str ) $str = self::DFLT_REALM;
+    if( !$realm ) $realm = self::DFLT_REALM;
     $this->_realm = $realm;
   }
 
