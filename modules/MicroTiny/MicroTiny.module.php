@@ -48,7 +48,7 @@ class MicroTiny extends CMSModule
 
 } // end of module class
 
-// deprecated since 2.2.6
+// function unused across the core, deprecated since 2.2.6
 function mt_jsbool($val)
 {
   $val = cms_to_bool($val);
