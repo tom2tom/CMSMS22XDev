@@ -36,7 +36,7 @@ $myurl = "";
 if (isset($_POST["url"])) $myurl = trim(cleanValue($_POST["url"]));
 if ($myurl) {
   // mimic FILTER_SANITIZE_URL, allowing valid UTF8 and extended-ASCII chars
-  if (preg_match('/[^\x21-\x7e\p{L}\p{N}\p{Po}\x82-\x84\x88\x8a\x8c\x8e\x91-\x94\x96-\x98\x9a\x9c\x9e\x9f\xa8\xad\xb4\xb7\xb8\xc0-\xf6\xf8-\xff]/u', $url)) {
+  if (preg_match('/[^\x21-\x7e\p{L}\p{N}\p{Po}\x82-\x84\x88\x8a\x8c\x8e\x91-\x94\x96-\x98\x9a\x9c\x9e\x9f\xa8\xad\xb4\xb7\xb8\xc0-\xf6\xf8-\xff]/u', $myurl)) {
     unset($_POST['editbookmark']);
     $error .= "<li>".lang('illegalcharacters', lang('url'))."</li>";
   }
@@ -87,7 +87,7 @@ if ($myurl) {
 
     $sitehost = parse_url(CMS_ROOT_URL, PHP_URL_HOST);
     //TODO other blocked hosts?
-    if (!$validurl($url, [$sitehost])) {
+    if (!$validurl($myurl, [$sitehost])) {
       unset($_POST['editbookmark']);
       $error .= "<li>".lang('error_badfield', lang('url'))."</li>";
     }
@@ -112,7 +112,6 @@ if (isset($_POST["editbookmark"])) {
   }
 
   if ($validinfo) {
-    cmsms()->GetBookmarkOperations();
     $markobj = new Bookmark();
     $markobj->bookmark_id = $bookmark_id;
     $markobj->title = $title;
@@ -123,7 +122,6 @@ if (isset($_POST["editbookmark"])) {
 
     if ($result) {
       redirect("listbookmarks.php".$urlext);
-      return;
     }
     else {
       $error .= "<li>".lang('errorupdatingbookmark')."</li>";
