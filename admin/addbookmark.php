@@ -109,8 +109,6 @@ if (isset($_POST["addbookmark"])) {
 	}
 
 	if ($validinfo) {
-		$gCms = cmsms();
-		$gCms->GetBookmarkOperations();
 		$markobj = new Bookmark();
 		$markobj->title = $title;
 		$markobj->url = $url;
@@ -120,7 +118,6 @@ if (isset($_POST["addbookmark"])) {
 
 		if ($result) {
 			redirect("listbookmarks.php".$urlext);
-			return; // useless here
 		}
 		else {
 			$error .= lang('errorinsertingbookmark');
