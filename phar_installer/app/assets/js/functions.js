@@ -37,18 +37,20 @@ function finish() {
 
 function socialShare() {
 
-    // Twitter
+    // Twitter / X
     if (document.getElementById('twitter')) {
         document.getElementById('twitter').onclick = function() {
-            window.open('https://twitter.com/intent/tweet?button_hashtag=cmsms&text=' + cmsms_lang.message, 'sharertwt', 'toolbar=0,status=0,width=540,height=345');
+            window.open('https://x.com/intent/tweet?button_hashtag=cmsms&text=' + cmsms_lang.message, 'sharertwt', 'toolbar=0,status=0,width=540,height=345');
         };
     }
+/*
     // Google+
     if (document.getElementById('google')) {
         document.getElementById('google').onclick = function() {
             window.open('https://plus.google.com/share?url=http://www.cmsmadesimple.org', 'sharergplus', 'toolbar=0,status=0,width=524,height=505');
         };
     }
+*/
     // Facebook
     if (document.getElementById('facebook')) {
         document.getElementById('facebook').onclick = function() {
