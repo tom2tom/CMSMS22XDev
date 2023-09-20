@@ -15,7 +15,7 @@ class wizard
     private $_namespace;
     private $_stepobj = null;
     private $_steps = [];
-    private $_stepkey;
+    private $_stepkeys;
 
     const STATUS_OK    = 'OK';
     const STATUS_ERROR = 'ERROR';
@@ -29,7 +29,13 @@ class wizard
         $this->_classdir = $classdir;
         $this->_name = basename($classdir);
         $this->_namespace = $namespace;
-        $this->_stepkey = 'e'.substr(md5(realpath(getcwd()).session_id()),0,11);
+        $tmp = md5(realpath(getcwd()).session_id());
+        $n = ord($tmp[0]);
+        while( $n < 97 ) { //'a'
+           $n += 6;
+        }
+        $tmp[0] = chr(min($n,102)); //'f'
+        $this->_stepkeys = substr($tmp,0,12);
     }
 
     final public static function get_instance($classdir = '', $namespace = '')
@@ -50,7 +56,8 @@ class wizard
         foreach( $ri as $one ) {
             $files[] = $one->getFilename();
         }
-        if( !count($files) ) throw new Exception('Could not find wizard steps in '.$classdir);
+        $nsteps = count($files);
+        if( !$nsteps ) throw new Exception('Could not find wizard steps in '.$classdir);
         sort($files);
 
         $_data = array();
@@ -69,6 +76,11 @@ class wizard
             $_data[$idx] = $rec;
         }
         $this->_steps = $_data;
+
+        $sess = session::get();
+        if( empty($sess[$this->_stepkeys]) ) {
+            $sess[$this->_stepkeys] = array_fill(1, $nsteps, '');
+        }
     }
 
     final public function get_nav()
@@ -77,28 +89,36 @@ class wizard
         return $this->_steps;
     }
 
-    final public function get_step_var()
+    final public function get_step_var($stepnum)
     {
+        $stepnum = (int)$stepnum;
         $sess = session::get();
-        if( isset($sess[$this->_stepkey]) ) {
-            return $sess[$this->_stepkey];
+        if( !empty($sess[$this->_stepkeys][$stepnum]) ) {
+            return $sess[$this->_stepkeys][$stepnum];
         }
-        return array('',-1);
+        return '';
     }
 
-    final public function set_step_var($str,$stepnum)
+    final public function set_step_var($stepnum,$str)
     {
         $sess = session::get();
-        $sess[$this->_stepkey] = array($str,(int)$stepnum);
+        $all = $sess[$this->_stepkeys]; // work around lack of 2-D storage
+        $all[(int)$stepnum] = $str;
+        $sess[$this->_stepkeys] = $all;
     }
 
     final public function cur_step()
     {
-        $sess = session::get();
-        if( isset($sess[$this->_stepkey]) ) {
-            $val = $sess[$this->_stepkey][0];
-            if( isset($_GET[self::SECURE_PARAM_NAME]) && $_GET[self::SECURE_PARAM_NAME] == $val ) {
-                return (int)$sess[$this->_stepkey][1];
+        if( isset($_GET[self::SECURE_PARAM_NAME]) ) {
+            $str = $_GET[self::SECURE_PARAM_NAME];
+            $sess = session::get();
+            $all = $sess[$this->_stepkeys];
+            if( ($stepnum = array_search($str,$all,true)) !== false ) {
+                for( $i = $stepnum+1, $n = count($all); $i < $n; $i++ ) {
+                    $all[$i] = '';
+                }
+                $sess[$this->_stepkeys] = $all;
+                return $stepnum;
             }
         }
         return 1;
@@ -171,10 +191,14 @@ class wizard
         $url = $request->raw_server('REQUEST_URI');
         $urlmain = explode('?',$url);
 
+        $str = $this->get_step_var($idx);
+        if( !$str ) {
+            $str = base_convert(bin2hex(random_bytes(7)),16,36);
+            $this->set_step_var($idx,$str);
+        }
         $parts = array();
-        $parts[self::SECURE_PARAM_NAME] = base_convert(bin2hex(random_bytes(7)),16,36);
+        $parts[self::SECURE_PARAM_NAME] = $str;
         //TODO any relevant $parts from $urlmain[1]
-        $this->set_step_var($parts[self::SECURE_PARAM_NAME],$idx);
 
         $tmp = array();
         foreach( $parts as $k => $v ) {
@@ -195,10 +219,14 @@ class wizard
         $url = $request->raw_server('REQUEST_URI');
         $urlmain = explode('?',$url);
 
+        $str = $this->get_step_var($idx);
+        if( !$str ) {
+            $str = base_convert(bin2hex(random_bytes(7)),16,36);
+            $this->set_step_var($idx,$str);
+        }
         $parts = array();
-        $parts[self::SECURE_PARAM_NAME] = base_convert(bin2hex(random_bytes(7)),16,36);
+        $parts[self::SECURE_PARAM_NAME] = $str;
         //TODO any relevant $parts from $urlmain[1]
-        $this->set_step_var($parts[self::SECURE_PARAM_NAME],$idx);
 
         $tmp = array();
         foreach( $parts as $k => $v ) {
@@ -219,10 +247,15 @@ class wizard
         $url = $request->raw_server('REQUEST_URI');
         $urlmain = explode('?',$url);
 
+        $str = $this->get_step_var($idx);
+        if( !$str ) {
+            $str = base_convert(bin2hex(random_bytes(7)),16,36);
+            $this->set_step_var($idx,$str);
+        }
+
         $parts = array();
-        $parts[self::SECURE_PARAM_NAME] = base_convert(bin2hex(random_bytes(7)),16,36);
+        $parts[self::SECURE_PARAM_NAME] = $str;
         //TODO any relevant $parts from $urlmain[1]
-        $this->set_step_var($parts[self::SECURE_PARAM_NAME],$idx);
 
         $tmp = array();
         foreach( $parts as $k => $v ) {
