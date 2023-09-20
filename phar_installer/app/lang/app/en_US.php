@@ -4,7 +4,7 @@ $lang['action_freshen'] = 'Freshening / repairing the current CMSMS %s installat
 $lang['action_install'] = 'Creating a new CMSMS %s website';
 $lang['action_upgrade'] = 'Upgrading the website to CMSMS version %s';
 $lang['advanced_mode'] = 'Enable advanced mode';
-$lang['apptitle'] = 'installation and upgrade assistant'; // effectively a subtitle
+$lang['apptitle'] = 'installation and upgrade assistant'; // several uses, including subtitle
 $lang['assets_dir_exists'] = 'Assets directory exists';
 $lang['available_languages'] = 'Available languages';
 
