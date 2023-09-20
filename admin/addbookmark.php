@@ -35,14 +35,16 @@ $url = "";
 if (isset($_POST["url"])) $url = trim(cleanValue($_POST["url"]));
 
 if ($url) {
+	// get rid of any deprecated rubbish
+	$url = str_replace(['[ROOT_URL]', '[SECURITYTAG]'], [CMS_ROOT_URL, ''], $url);
 	// mimic FILTER_SANITIZE_URL, allowing valid UTF8 and extended-ASCII chars
 	if (preg_match('/[^\x21-\x7e\p{L}\p{N}\p{Po}\x82-\x84\x88\x8a\x8c\x8e\x91-\x94\x96-\x98\x9a\x9c\x9e\x9f\xa8\xad\xb4\xb7\xb8\xc0-\xf6\xf8-\xff]/u', $url)) {
 		unset($_POST['addbookmark']);
 		$error = lang('illegalcharacters', lang('url'));
 	}
 	else {
-		$validurl = function($url, $blockhosts) {
-			$parts = parse_url($url);
+		$validurl = function($checkurl, $blockhosts) {
+			$parts = parse_url($checkurl);
 			if ($parts) {
 				if (empty($parts['scheme'])) return false;
 				$val = strtolower($parts['scheme']);
@@ -74,7 +76,6 @@ if ($url) {
 				if ($near) return false;
 
 				if (empty($parts['host'])
-				 || strcasecmp($parts['host'],'localhost') == 0
 				 || in_array($parts['host'], $blockhosts)) return false;
 //TODO other sanity checks, malevolence checks
 //e.g. refer to https://owasp.org/www-community/attacks/Forced_browsing
@@ -84,10 +85,15 @@ if ($url) {
 			}
 			return false;
 		};
-
-		$sitehost = parse_url(CMS_ROOT_URL, PHP_URL_HOST);
+		//$sitehost = parse_url(CMS_ROOT_URL, PHP_URL_HOST);
+		//$sitehost ok for frontend (MAMS aside?)
 		//TODO other blocked hosts?
-		if (!$validurl($url, [$sitehost])) {
+		if (!$validurl($url, [])) {
+			unset($_POST['addbookmark']);
+			$error = lang('error_badfield', lang('url'));
+		}
+		$config = cms_config::get_instance();
+		if (startswith($url, $config['admin_url'])) {
 			unset($_POST['addbookmark']);
 			$error = lang('error_badfield', lang('url'));
 		}
@@ -112,7 +118,7 @@ if (isset($_POST["addbookmark"])) {
 		$markobj = new Bookmark();
 		$markobj->title = $title;
 		$markobj->url = $url;
-		$markobj->user_id=$userid;
+		$markobj->user_id = $userid;
 
 		$result = $markobj->save();
 
@@ -125,6 +131,8 @@ if (isset($_POST["addbookmark"])) {
 	}
 }
 
+$urlhelp = cms_admin_utils::get_help_tag(['key2'=>'help_bookmark_url', 'title'=>lang('url')]);
+
 include_once("header.php");
 
 if ($error) {
@@ -134,25 +142,25 @@ if ($error) {
 
 <div class="pagecontainer">
 	<div class="pageoverflow">
-		<?php echo $themeObject->ShowHeader('addbookmark'); ?>
-		<form method="post" action="addbookmark.php<?php echo $urlext?>">
+		<?php echo $themeObject->ShowHeader('addbookmark') ?>
+		<form method="post" action="addbookmark.php">
 			<div>
 				<input type="hidden" name="<?php echo CMS_SECURE_PARAM_NAME ?>" value="<?php echo $_SESSION[CMS_USER_KEY] ?>">
+				<input type="hidden" name="addbookmark" value="true">
 			</div>
 			<div class="pageoverflow">
-				<p class="pagetext"><?php echo lang('title')?>:</p>
-				<p class="pageinput"><input type="text" name="title" maxlength="255" value="<?php echo $title?>"></p>
+				<p class="pagetext"><?php echo lang('title') ?>:</p>
+				<p class="pageinput"><input type="text" name="title" maxlength="255" value="<?php echo $title ?>"></p>
 			</div>
 			<div class="pageoverflow">
-				<p class="pagetext"><?php echo lang('url')?>:</p>
+				<p class="pagetext"><?php echo lang('url').':&nbsp;'.$urlhelp ?></p>
 				<p class="pageinput"><input type="text" name="url" size="50" maxlength="255" value="<?php echo $url ?>" class="standard"></p>
 			</div>
+			<br>
 			<div class="pageoverflow">
-				<p class="pagetext">&nbsp;</p>
 				<p class="pageinput">
-					<input type="hidden" name="addbookmark" value="true">
-					<input type="submit" value="<?php echo lang('submit')?>" class="pagebutton">
-					<input type="submit" name="cancel" value="<?php echo lang('cancel')?>" class="pagebutton">
+					<input type="submit" value="<?php echo lang('submit') ?>" class="pagebutton">
+					<input type="submit" name="cancel" value="<?php echo lang('cancel') ?>" class="pagebutton">
 				</p>
 			</div>
 		</form>
