@@ -87,16 +87,21 @@ if ($url) {
     };
 
     //$sitehost = parse_url(CMS_ROOT_URL, PHP_URL_HOST);
-    //$sitehost ok for frontend (MAMS aside?)
-    //TODO other blocked hosts?
+    //treated as ok for frontend urls (MAMS aside?)
+    //TODO blacklisted hosts?
+    $reported = false;
     if (!$validurl($url, [])) {
       unset($_POST['editbookmark']);
       $error .= "<li>".lang('error_badfield', lang('url'))."</li>";
+      $reported = true;
     }
     $config = cms_config::get_instance();
     if (startswith($url, $config['admin_url'])) {
+      //maybe support some check akin to admin menu generation instead of always reject?
       unset($_POST['editbookmark']);
-      $error .= "<li>".lang('error_badfield', lang('url'))."</li>";
+      if (!$reported) { // don't repeat same error
+        $error .= "<li>".lang('error_badfield', lang('url'))."</li>";
+      }
     }
   }
 }
