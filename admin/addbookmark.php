@@ -35,6 +35,8 @@ $url = "";
 if (isset($_POST["url"])) $url = trim(cleanValue($_POST["url"]));
 
 if ($url) {
+	//this validation should be in a standalone function, for use by both
+	//add- and edit-bookmark scripts
 	// get rid of any deprecated rubbish
 	$url = str_replace(['[ROOT_URL]', '[SECURITYTAG]'], [CMS_ROOT_URL, ''], $url);
 	// mimic FILTER_SANITIZE_URL, allowing valid UTF8 and extended-ASCII chars
@@ -86,16 +88,17 @@ if ($url) {
 			return false;
 		};
 		//$sitehost = parse_url(CMS_ROOT_URL, PHP_URL_HOST);
-		//$sitehost ok for frontend (MAMS aside?)
-		//TODO other blocked hosts?
+		//treated as ok for frontend urls (MAMS aside?)
+		//TODO blacklisted hosts?
 		if (!$validurl($url, [])) {
 			unset($_POST['addbookmark']);
 			$error = lang('error_badfield', lang('url'));
 		}
 		$config = cms_config::get_instance();
 		if (startswith($url, $config['admin_url'])) {
+			//maybe support some check akin to admin menu generation instead of always reject?
 			unset($_POST['addbookmark']);
-			$error = lang('error_badfield', lang('url'));
+			$error = lang('error_badfield', lang('url')); //repetition ok
 		}
 	}
 }
