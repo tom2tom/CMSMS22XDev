@@ -223,7 +223,7 @@ else if( isset($_POST['loginsubmit']) ) {
             $homepage = \cms_userprefs::get_for_user($oneuser->id,'homepage');
             if( !$homepage ) $homepage = $config['admin_url'];
 
-            $homepage = \CmsAdminUtils::get_session_url($homepage);
+            $homepage = \CmsAdminUtils::get_session_url($homepage); // involves deprecated conversion of 'placeholders'. instead use verbatim
 
             // and redirect.
             $homepage = html_entity_decode($homepage);

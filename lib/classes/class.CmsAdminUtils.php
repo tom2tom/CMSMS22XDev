@@ -60,6 +60,9 @@ final class CmsAdminUtils
      * Convert an admin request URL to a generic form that is suitable for saving to a database.
      * This is useful for things like bookmarks and homepages.
      * Note it only works for admin urls with user key of the current admin user
+     * @depecated since 2.2.19 admin urls can bypass the permissions mechanism,
+     * and should be supported only with permission checking akin that used
+     * for admin-menu generation
      *
      * @param string $in_url The input URL that has the session key in it.
      * @return string A URL that is converted to a generic form.
@@ -80,7 +83,10 @@ final class CmsAdminUtils
     }
 
     /**
-     * Convert a generic URL into something that is suitable for this users session.
+     * Convert a generic URL into something that is suitable for this user's session.
+     * @depecated since 2.2.19 admin urls can bypass the permissions mechanism,
+     * and should be supported only with permission checking akin that used
+     * for admin-menu generation
      *
      * @param string $in_url The generic url.  usually retrieved from a preference or from the database
      * @return string A URL that has a session key in it.
@@ -88,7 +94,7 @@ final class CmsAdminUtils
     public static function get_session_url($in_url)
     {
         if( !defined('CMS_USER_KEY') ) throw new \LogicException('This method can only be called for admin requests');
-        IF( !isset($_SESSION[CMS_USER_KEY]) || !$_SESSION[CMS_USER_KEY] ) throw new \LogicException('This method can only be called for admin requests');
+        if( !isset($_SESSION[CMS_USER_KEY]) || !$_SESSION[CMS_USER_KEY] ) throw new \LogicException('This method can only be called for admin requests');
 
         $in_p = '[SECURITYTAG]';
         $out_p = CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];

@@ -1275,7 +1275,7 @@ abstract class CmsAdminThemeBase
 			if( $menuItem['parent'] != -1 ) continue; // only parent pages
 			if( !$menuItem['show_in_menu'] || strlen($menuItem['url']) < 1 ) continue; // only visible stuff
 
-			$opts[$menuItem['title']] = CmsAdminUtils::get_generic_url($menuItem['url']);
+			$opts[$menuItem['title']] = CmsAdminUtils::get_generic_url($menuItem['url']); // deprecated, do not use without suitable permission-checks are done
 
 			if( is_array($menuItem['children']) && count($menuItem['children']) ) {
 				foreach( $menuItem['children'] as $thisChild ) {
@@ -1290,7 +1290,7 @@ abstract class CmsAdminThemeBase
 
 					//$opts['&nbsp;&nbsp;'.$menuChild['title']] = cms_htmlentities($menuChild['url']);
 					$url = $menuChild['url'];
-					$url = CmsAdminUtils::get_generic_url($url);
+					$url = CmsAdminUtils::get_generic_url($url); // deprecated ibid
 					$opts['&nbsp;&nbsp;'.$menuChild['title']] = $url;
 				}
 			}

@@ -18,7 +18,7 @@
 #$Id$
 
 /**
- * Class for doing bookmark related functions. Maybe of the Bookmark object functions
+ * Class for doing bookmark related functions. Many of the Bookmark object functions
  * are just wrappers around these.
  *
  * @package CMS
@@ -29,6 +29,8 @@ class BookmarkOperations
 	/**
 	 * Prepares a url for saving by replacing security tags with a holder
 	 * string so it can be replaced when retrieved and not break security.
+	 * @deprecated since 2.2.19 admin-url placeholders contribute to
+	 *  bypassing permissions, should not be allowed or used
 	 *
 	 * @param string $url The url to save
 	 * @return string The fixed url
@@ -36,7 +38,7 @@ class BookmarkOperations
 	 */
 	private function _prep_for_saving($url)
 	{
-		$root_url = preg_replace('#^http(s)?://#','', CMS_ROOT_URL);
+		$root_url = preg_replace('#^http(s)?://#','', CMS_ROOT_URL);// TODO check this!
 		$urlext = CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 		if( startswith($url,$root_url) ) $url = str_replace($root_url,'[ROOT_URL]',$url);
 		return str_replace($urlext,'[SECURITYTAG]',$url);
@@ -45,6 +47,8 @@ class BookmarkOperations
 	/**
 	 * Prepares a url for displaying by replacing the holder for the security
 	 * tag with the actual value.
+	 * @deprecated since 2.2.19 admin-url placeholders contribute to
+	 *  bypassing permissions, should not be allowed or used
 	 *
 	 * @param string $url The url to display
 	 * @return string The fixed url
@@ -81,8 +85,8 @@ class BookmarkOperations
 				$onemark = new Bookmark();
 				$onemark->bookmark_id = $row['bookmark_id'];
 				$onemark->user_id = $user_id;
-				$onemark->url = ($row['url']) ? $this->_prep_for_display($row['url']) : '<Missing URL>';
-				$onemark->title = $row['title'] ?: '<Missing Title>';
+				$onemark->url = ($row['url']) ? $this->_prep_for_display($row['url']) : 'missing.url';
+				$onemark->title = ($row['title']) ?: '&lt;Missing Title&gt;';
 				$result[] = $onemark;
 			}
 			$dbresult->Close();
@@ -110,8 +114,8 @@ class BookmarkOperations
 				$onemark = new Bookmark();
 				$onemark->bookmark_id = (int)$id;
 				$onemark->user_id = (int)$row['user_id'];
-				$onemark->url = isset($row['url']) ? $this->_prep_for_display($row['url']) : '<Missing URL>';
-				$onemark->title = isset($row['title']) ? $row['title'] : '<Missing Title>';
+				$onemark->url = ($row['url']) ? $this->_prep_for_display($row['url']) : 'missing.url';
+				$onemark->title = ($row['title']) ?: '&lt;Missing Title&gt;';
 				$dbresult->Close();
 				return $onemark;
 			}
@@ -131,8 +135,8 @@ class BookmarkOperations
 	{
 		$db = \CmsApp::get_instance()->GetDb();
 
-		$bookmark->url = isset($bookmark->url) ? $this->_prep_for_saving($bookmark->url) : '<Missing URL>';
-		if (!isset($bookmark->title)) $bookmark->title = '<Missing Title>';
+		$bookmark->url = isset($bookmark->url) ? $this->_prep_for_saving($bookmark->url) : 'missing.url';
+		if (!isset($bookmark->title)) $bookmark->title = '&lt;Missing Title&gt;';
 		$new_bookmark_id = $db->GenID(CMS_DB_PREFIX."admin_bookmarks_seq");
 		$query = "INSERT INTO ".CMS_DB_PREFIX."admin_bookmarks (bookmark_id, user_id, url, title) VALUES (?,?,?,?)";
 		$dbresult = $db->Execute($query, array($new_bookmark_id, $bookmark->user_id, $bookmark->url, $bookmark->title));
@@ -151,8 +155,8 @@ class BookmarkOperations
 	{
 		$db = \CmsApp::get_instance()->GetDb();
 
-		$bookmark->url = isset($bookmark->url) ? $this->_prep_for_saving($bookmark->url) : '<Missing URL>';
-		if (!isset($bookmark->title)) $bookmark->title = '<Missing Title>';
+		$bookmark->url = isset($bookmark->url) ? $this->_prep_for_saving($bookmark->url) : 'missing.url';
+		if (!isset($bookmark->title)) $bookmark->title = '&lt;Missing Title&gt;';
 		$query = "UPDATE ".CMS_DB_PREFIX."admin_bookmarks SET user_id = ?, title = ?, url = ? WHERE bookmark_id = ?";
 		$dbresult = $db->Execute($query, array($bookmark->user_id, $bookmark->title, $bookmark->url, $bookmark->bookmark_id));
 		if ($dbresult) return true;
