@@ -36,7 +36,7 @@
 							<p><strong>({$smarty.server.HTTP_HOST})</strong></p>
 							<p class="warning">{lang('warn_admin_ipandcookies')}</p>
 						</aside>
-						<a href="javascript:void(0)" title="{lang('open')}/{lang('close')}" class="toggle-info">{lang('open')}/{lang('close')}</a>
+						<a href="javascript:void(0);" title="{lang('open')}/{lang('close')}" class="toggle-info">{lang('open')}/{lang('close')}</a>
 					</div>
 					<header>
 						<h1>{lang('logintitle',$sitename)}</h1>

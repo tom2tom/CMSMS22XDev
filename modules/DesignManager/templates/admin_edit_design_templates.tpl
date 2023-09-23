@@ -51,7 +51,7 @@
                                 {else}
                                 <span>{$tpl->get_name()}</span>
                                 {/if}
-                                <a href="javascript:void(0)" title="{$mod->Lang('remove')}" class="ui-icon ui-icon-trash sortable-remove">{$mod->Lang('remove')}</a>
+                                <a href="javascript:void(0);" title="{$mod->Lang('remove')}" class="ui-icon ui-icon-trash sortable-remove">{$mod->Lang('remove')}</a>
                                 <input class="hidden" type="checkbox" name="{$actionid}assoc_tpl[]" value="{$tpl->get_id()}" checked>
                             </li>
                         {/if}
