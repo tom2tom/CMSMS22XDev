@@ -13,7 +13,7 @@
 			<a href="myaccount.php?{$secureparam}" title="{lang('myaccount')}">{lang('myaccount')}</a>
 		</li>
 		{/if}
-		{if isset($marks)}
+		{if !empty($marks)}
 		<li class="favorites open">
 			<a href="listbookmarks.php?{$secureparam}" title="{lang('bookmarks')}">{lang('bookmarks')}</a>
 		</li>
@@ -36,24 +36,23 @@
 		</li>
 	</ul>
 </div>
-{if isset($marks)}
+
 <div class="dialog invisible" role="dialog" title="{lang('bookmarks')}">
-	{if is_array($marks) && count($marks) > 0}
+{if !empty($marks)}
 	<h3>{lang('user_created')}</h3>
 	<ul>
 	{foreach $marks as $mark}
-		<li><a{if $mark->bookmark_id > 0} class="bookmark"{/if} href="{$mark->url}" title="{$mark->title}">{$mark->title}</a></li>
+		<li><a{if $mark->bookmark_id > 0} class="bookmark"{/if} href="{$mark->url}" target="_blank" title="{$mark->title}">{$mark->title}</a></li>
 	{/foreach}
 	</ul>
-	{/if}
+{/if}
 	<h3>{lang('help')}</h3>
 	<ul>
-		<li><a rel="external" class="external" href="https://docs.cmsmadesimple.org" title="{lang('documentation')}">{lang('documentation')}</a></li>
-		<li><a rel="external" class="external" href="https://forum.cmsmadesimple.org" title="{lang('forums')}">{lang('forums')}</a></li>
-		<li><a rel="external" class="external" href="https://www.cmsmadesimple.org/support/documentation/chat/">{lang('chat')}</a></li>
+		<li><a rel="external" class="external" href="https://docs.cmsmadesimple.org" target="_blank" title="{lang('documentation')}">{lang('documentation')}</a></li>
+		<li><a rel="external" class="external" href="https://forum.cmsmadesimple.org" target="_blank" title="{lang('forums')}">{lang('forums')}</a></li>
+		<li><a rel="external" class="external" href="https://www.cmsmadesimple.org/support/documentation/chat/" target="_blank">{lang('chat')}</a></li>
 	</ul>
 </div>
-{/if}
 
 {if !empty($my_alerts)}
 <!-- alerts go here -->
