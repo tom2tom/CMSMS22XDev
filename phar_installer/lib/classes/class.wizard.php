@@ -29,7 +29,7 @@ class wizard
         $this->_classdir = $classdir;
         $this->_name = basename($classdir);
         $this->_namespace = $namespace;
-        $tmp = md5(realpath(getcwd()).session_id());
+        $tmp = md5(session_id().realpath(getcwd()));
         $n = ord($tmp[0]);
         while( $n < 97 ) { //'a'
            $n += 6;
