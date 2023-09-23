@@ -4,7 +4,8 @@ $lang['help_bookmark_url'] = <<<'EOT'
 The entered URL will be validated, and may be rejected.<br>
 Reasons for rejection might be: unsuitable scheme, inappropriate address, invalid character(s).<br>
 The URL may include [ROOT_URL] if that's easier than pasting the website root URL.<br>
-Formerly, [SECURITYTAG] was recognised, but is no longer of any use. URL's which access the site's admin pages are not supported.
+The URL may include [SECURITYTAG] as part of an admin-console URL for this site.<br>
+<strong>Note:</strong> support for admin-console bookmarks will be removed in future. Do not use them.
 EOT;
 
 $lang['help_group_permissions'] = <<<EOT

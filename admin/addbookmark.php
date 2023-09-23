@@ -31,15 +31,21 @@ if (isset($_POST["cancel"])) {
 $error = "";
 $title= "";
 if (isset($_POST["title"])) $title = trim(cleanValue($_POST["title"]));
+
 $url = "";
 if (isset($_POST["url"])) $url = trim(cleanValue($_POST["url"]));
-
 if ($url) {
+	$url = html_entity_decode($url);
+	$url = urldecode($url);
 	//this validation should be in a standalone function, for use by both
 	//add- and edit-bookmark scripts
-	// get rid of any deprecated rubbish
-	$url = str_replace(['[ROOT_URL]', '[SECURITYTAG]'], [CMS_ROOT_URL, ''], $url);
-	// mimic FILTER_SANITIZE_URL, allowing valid UTF8 and extended-ASCII chars
+	$url = str_replace('[ROOT_URL]', CMS_ROOT_URL, $url);
+	$extsub = substr($urlext, 1);
+	if (strpos($url, '[SECURITYTAG]') !== false) { // deprecated
+		$url = str_replace('[SECURITYTAG]', $extsub, $url); // allow parsing
+	}
+
+	// mimic FILTER_SANITIZE_URL, allowing valid UTF-8 and extended-ASCII chars
 	if (preg_match('/[^\x21-\x7e\p{L}\p{N}\p{Po}\x82-\x84\x88\x8a\x8c\x8e\x91-\x94\x96-\x98\x9a\x9c\x9e\x9f\xa8\xad\xb4\xb7\xb8\xc0-\xf6\xf8-\xff]/u', $url)) {
 		unset($_POST['addbookmark']);
 		$error = lang('illegalcharacters', lang('url'));
@@ -87,6 +93,7 @@ if ($url) {
 			}
 			return false;
 		};
+
 		//$sitehost = parse_url(CMS_ROOT_URL, PHP_URL_HOST);
 		//treated as ok for frontend urls (MAMS aside?)
 		//TODO blacklisted hosts?
@@ -94,9 +101,17 @@ if ($url) {
 			unset($_POST['addbookmark']);
 			$error = lang('error_badfield', lang('url'));
 		}
+
+		$url = str_replace($extsub, '[SECURITYTAG]', $url); // if any
 		$config = cms_config::get_instance();
 		if (startswith($url, $config['admin_url'])) {
-			//maybe support some check akin to admin menu generation instead of always reject?
+			//TODO somewhere apply a permission-check akin to admin menu generation
+			if (strpos($url, '[SECURITYTAG]') === false) {
+				unset($_POST['addbookmark']);
+				$error = lang('error_badfield', lang('url')); //repetition ok
+			}
+		}
+		elseif (strpos($url, '[SECURITYTAG]') !== false) {
 			unset($_POST['addbookmark']);
 			$error = lang('error_badfield', lang('url')); //repetition ok
 		}
@@ -108,11 +123,11 @@ $userid = get_userid();
 if (isset($_POST["addbookmark"])) {
 	$validinfo = true;
 
-	if ( $title == "" ) {
+	if ($title == "") {
 		$error .= lang('nofieldgiven', array(lang('title')));
 		$validinfo = false;
 	}
-	else if ( $url == "" ) {
+	elseif ($url == "") {
 		$error .= lang('nofieldgiven', array(lang('url')));
 		$validinfo = false;
 	}

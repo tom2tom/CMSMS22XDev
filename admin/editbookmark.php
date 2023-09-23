@@ -35,9 +35,17 @@ if (isset($_POST["title"])) $title = trim(cleanValue($_POST["title"]));
 $url = "";
 if (isset($_POST["url"])) $url = trim(cleanValue($_POST["url"]));
 if ($url) {
-  // get rid of any deprecated rubbish
-  $url = str_replace(['[ROOT_URL]', '[SECURITYTAG]'], [CMS_ROOT_URL, ''], $url);
-  // mimic FILTER_SANITIZE_URL, allowing valid UTF8 and extended-ASCII chars
+  $url = html_entity_decode($url);
+  $url = urldecode($url);
+  //this validation should be in a standalone function, for use by both
+  //add- and edit-bookmark scripts
+  $url = str_replace('[ROOT_URL]', CMS_ROOT_URL, $url);
+  $extsub = substr($urlext, 1);
+  if (strpos($url, '[SECURITYTAG]') !== false) { // deprecated
+    $url = str_replace('[SECURITYTAG]', $extsub, $url);
+  }
+
+  // mimic FILTER_SANITIZE_URL, allowing valid UTF-8 and extended-ASCII chars
   if (preg_match('/[^\x21-\x7e\p{L}\p{N}\p{Po}\x82-\x84\x88\x8a\x8c\x8e\x91-\x94\x96-\x98\x9a\x9c\x9e\x9f\xa8\xad\xb4\xb7\xb8\xc0-\xf6\xf8-\xff]/u', $url)) {
     unset($_POST['editbookmark']);
     $error .= "<li>".lang('illegalcharacters', lang('url'))."</li>";
@@ -95,11 +103,21 @@ if ($url) {
       $error .= "<li>".lang('error_badfield', lang('url'))."</li>";
       $reported = true;
     }
+
+    $url = str_replace($extsub, '[SECURITYTAG]', $url); // if any
     $config = cms_config::get_instance();
     if (startswith($url, $config['admin_url'])) {
-      //maybe support some check akin to admin menu generation instead of always reject?
+      //TODO somewhere apply a permission-check akin to admin menu generation
+      if (strpos($url, '[SECURITYTAG]') === false) {
+        unset($_POST['editbookmark']);
+        if (!$reported) { // don't repeat same error
+          $error .= "<li>".lang('error_badfield', lang('url'))."</li>";
+        }
+      }
+    }
+    elseif (strpos($url, '[SECURITYTAG]') !== false) {
       unset($_POST['editbookmark']);
-      if (!$reported) { // don't repeat same error
+      if (!$reported) {
         $error .= "<li>".lang('error_badfield', lang('url'))."</li>";
       }
     }
