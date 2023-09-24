@@ -306,7 +306,7 @@ class OneElevenTheme extends CmsAdminThemeBase {
 
 		// if bookmarks
 		if (cms_userprefs::get_for_user($userid, 'bookmarks') && check_permission($userid,'Manage My Bookmarks')) {
-			$marks = $this->get_bookmarks();
+			$marks = $this->get_bookmarks(TRUE);
 			$smarty->assign('marks', $marks);
 		}
 		$smarty->assign('headertext',$this->get_headtext());

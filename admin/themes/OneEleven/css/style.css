@@ -1628,9 +1628,9 @@ div.dialog h3 {
 	font-size: 14px
 }
 div.dialog a.bookmark {
-	padding-left: 20px;
+/*	padding-left: 20px;*/
 	line-height: 20px;
-	background: url(themes/OneEleven/images/icons/system/bookmark.png) no-repeat left
+/*	background: url(themes/OneEleven/images/icons/system/bookmark.png) no-repeat left*/
 }
 div.dialog form#chdir_form {
 	display: block
