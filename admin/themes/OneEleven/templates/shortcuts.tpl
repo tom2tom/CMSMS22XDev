@@ -36,13 +36,12 @@
 		</li>
 	</ul>
 </div>
-
 {if !empty($marks)}
 <div class="dialog invisible" role="dialog" title="{lang('bookmarks')}">
 {*	<h3>{lang('user_created')}</h3>*}
 	<ul>
 	{foreach $marks as $mark}
-		<li><a{if $mark->bookmark_id > 0} class="bookmark"{/if} href="{$mark->url}" target="_blank" title="{$mark->title}">{$mark->title}</a></li>
+		{if $mark->url}<li><a{if $mark->bookmark_id > 0} class="bookmark"{/if} href="{$mark->url}" target="_blank" title="{$mark->title}">{$mark->title}</a></li>{else}<br>{/if}
 	{/foreach}
 	</ul>
 {*redundant	<h3>{lang('help')}</h3>
