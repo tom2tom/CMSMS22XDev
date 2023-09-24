@@ -17,7 +17,7 @@
 #
 #$Id$
 
-$CMS_ADMIN_PAGE=1;
+$CMS_ADMIN_PAGE = 1;
 
 require_once("../lib/include.php");
 $urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
@@ -147,6 +147,17 @@ if (isset($_POST["addbookmark"])) {
 			$error .= lang('errorinsertingbookmark');
 		}
 	}
+}
+
+if (!$title && isset($_GET["title"])) {
+	// adding an admin url from the popup
+	$tmp = trim($_GET["title"]); //TODO support cleanValue()
+	$title = urldecode($tmp);
+}
+if (!$url && isset($_GET["ref"])) {
+	$tmp = trim(cleanValue($_GET["ref"]));
+	$tmp = base64_decode($tmp, true);
+	$url = urldecode($tmp);
 }
 
 $urlhelp = cms_admin_utils::get_help_tag(['key2'=>'help_bookmark_url', 'title'=>lang('url')]);

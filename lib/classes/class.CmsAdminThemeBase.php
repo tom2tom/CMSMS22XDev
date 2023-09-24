@@ -962,19 +962,22 @@ abstract class CmsAdminThemeBase
 		$marks = array_reverse($bookops->LoadBookmarks($this->userid));
 
 		if( !$pure ) {
-			$source = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-			//$url = str_replace(CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY], '', $source);
-			$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+			if( $marks ) {
+				$marks[] = new Bookmark(); //spacer
+			}
+			$source = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+			$urlext = CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+			$source = str_replace($urlext, '[SECURITYTAG]', $source);
 			$mark= new Bookmark();
-			$mark->title = lang('addbookmark');
-			$mark->url = 'makebookmark.php'.$urlext;
-			if (!empty($this->_title)) { $mark->url .= '&amp;title='.rawurlencode($this->_title); }
-			$mark->url .= '&amp;ref='.base64_encode($source);
+			$mark->title = lang('addthismark');
+			$mark->url = 'addbookmark.php?'.$urlext;
+			if( !empty($this->_title) ) { $mark->url .= '&title='.rawurlencode($this->_title); }
+			$mark->url .= '&ref='.base64_encode($source);
 			$marks[] = $mark;
 
 			$mark = new Bookmark();
 			$mark->title = lang('managebookmarks');
-			$mark->url = 'listbookmarks.php'.$urlext;
+			$mark->url = 'listbookmarks.php?'.$urlext;
 			$marks[] = $mark;
 		}
 		return $marks;
