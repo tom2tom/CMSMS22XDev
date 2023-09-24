@@ -304,11 +304,14 @@ class OneElevenTheme extends CmsAdminThemeBase {
 			$smarty->assign('myaccount',1);
 		}
 
-		// if bookmarks
-		if (cms_userprefs::get_for_user($userid, 'bookmarks') && check_permission($userid,'Manage My Bookmarks')) {
-			$marks = $this->get_bookmarks(TRUE);
-			$smarty->assign('marks', $marks);
+		// bookmarks
+		if (check_permission($userid,'Manage My Bookmarks')) {
+			$marks = $this->get_bookmarks();
 		}
+		else {
+			$marks = [];
+		}
+		$smarty->assign('marks',$marks);
 		$smarty->assign('headertext',$this->get_headtext());
 		$smarty->assign('footertext',$this->get_footertext());
 
