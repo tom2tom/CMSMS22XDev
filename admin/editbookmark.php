@@ -196,7 +196,7 @@ if ($error != "") echo '<div class="pageerrorcontainer"><p class="pageerror">'.$
         </div>
         <div class="pageoverflow">
             <p class="pagetext"><?php echo lang('url').':&nbsp;'.$urlhelp ?></p>
-            <p class="pageinput"><input type="text" name="url" size="80" maxlength="255" value="<?php echo $url ?>"></p>
+            <p class="pageinput"><input type="text" name="url" size="70" maxlength="255" value="<?php echo $url ?>"></p>
         </div>
         <br>
         <div class="pageoverflow">

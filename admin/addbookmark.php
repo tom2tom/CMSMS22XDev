@@ -30,10 +30,24 @@ if (isset($_POST["cancel"])) {
 
 $error = "";
 $title= "";
-if (isset($_POST["title"])) $title = trim(cleanValue($_POST["title"]));
+if (isset($_POST["title"])) {
+	$title = trim(cleanValue($_POST["title"]));
+}
+elseif (isset($_GET["title"])) {
+	// adding an admin url from the bookmarks popup
+	$tmp = trim($_GET["title"]); //TODO support cleanValue()
+	$title = urldecode($tmp);
+}
 
 $url = "";
-if (isset($_POST["url"])) $url = trim(cleanValue($_POST["url"]));
+if (isset($_POST["url"])) {
+	$url = trim(cleanValue($_POST["url"]));
+}
+elseif (isset($_GET["ref"])) {
+	// adding an admin url
+	$tmp = trim(cleanValue($_GET["ref"]));
+	$url = base64_decode($tmp, true);
+}
 if ($url) {
 	$url = html_entity_decode($url);
 	$url = urldecode($url);
@@ -96,7 +110,7 @@ if ($url) {
 
 		//$sitehost = parse_url(CMS_ROOT_URL, PHP_URL_HOST);
 		//treated as ok for frontend urls (MAMS aside?)
-		//TODO blacklisted hosts?
+		//TODO blacklisted hosts? e.g. a site-preference
 		if (!$validurl($url, [])) {
 			unset($_POST['addbookmark']);
 			$error = lang('error_badfield', lang('url'));
@@ -149,17 +163,6 @@ if (isset($_POST["addbookmark"])) {
 	}
 }
 
-if (!$title && isset($_GET["title"])) {
-	// adding an admin url from the popup
-	$tmp = trim($_GET["title"]); //TODO support cleanValue()
-	$title = urldecode($tmp);
-}
-if (!$url && isset($_GET["ref"])) {
-	$tmp = trim(cleanValue($_GET["ref"]));
-	$tmp = base64_decode($tmp, true);
-	$url = urldecode($tmp);
-}
-
 $urlhelp = cms_admin_utils::get_help_tag(['key2'=>'help_bookmark_url', 'title'=>lang('url')]);
 
 include_once("header.php");
@@ -183,7 +186,7 @@ if ($error) {
 			</div>
 			<div class="pageoverflow">
 				<p class="pagetext"><?php echo lang('url').':&nbsp;'.$urlhelp ?></p>
-				<p class="pageinput"><input type="text" name="url" size="50" maxlength="255" value="<?php echo $url ?>" class="standard"></p>
+				<p class="pageinput"><input type="text" name="url" size="70" maxlength="255" value="<?php echo $url ?>" class="standard"></p>
 			</div>
 			<br>
 			<div class="pageoverflow">
