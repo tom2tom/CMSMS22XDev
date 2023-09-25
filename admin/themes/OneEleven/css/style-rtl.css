@@ -442,8 +442,7 @@ template {
 }
 .clear {
 	clear: both;
-	height: 0;
-	visibility: hidden
+	height: 0
 }
 .clearb {
 	clear: both
