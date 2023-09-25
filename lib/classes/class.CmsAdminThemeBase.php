@@ -963,12 +963,15 @@ abstract class CmsAdminThemeBase
 
 		if( !$pure ) {
 			if( $marks ) {
-				$marks[] = new Bookmark(); //spacer
+				$marks[] = new Bookmark(); //unpopulated == spacer
 			}
-			$source = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+			$path = substr($_SERVER['SCRIPT_FILENAME'],strlen(CMS_ROOT_PATH));
+			$config = cms_config::get_instance();
+			$source = $config['root_url'] . strtr($path,'\\','/');
+			if( !empty($_SERVER['QUERY_STRING']) ) { $source .= '?'.$_SERVER['QUERY_STRING']; }
 			$urlext = CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
-			$source = str_replace($urlext, '[SECURITYTAG]', $source);
-			$mark= new Bookmark();
+			$source = str_replace($urlext,'[SECURITYTAG]',$source);
+			$mark = new Bookmark();
 			$mark->title = lang('addthismark');
 			$mark->url = 'addbookmark.php?'.$urlext;
 			if( !empty($this->_title) ) { $mark->url .= '&title='.rawurlencode($this->_title); }
