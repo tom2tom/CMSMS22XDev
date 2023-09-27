@@ -41,7 +41,7 @@
 {*	<h3>{lang('user_created')}</h3>*}
 	<ul>
 	{foreach $marks as $mark}
-		{if $mark->url}<li><a{if $mark->bookmark_id > 0} class="bookmark"{/if} href="{$mark->url}" target="_blank" title="{$mark->title}">{$mark->title}</a></li>{else}<br>{/if}
+		<li>{if $mark->url}<a{if $mark->bookmark_id > 0} class="bookmark"{/if} href="{$mark->url}" target="_blank" title="{$mark->title}">{$mark->title}</a>{else}&nbsp;{/if}</li>
 	{/foreach}
 	</ul>
 {*redundant	<h3>{lang('help')}</h3>
