@@ -153,8 +153,8 @@ abstract class CmsAdminThemeBase
 			$tmp = explode(',',$_POST['mact']);
 			$this->_query = 'module='.$tmp[0];
 		}
-		if ($this->_query == '' && isset($_POST['module']) && $_POST['module'] != '') $this->_query = 'module='.$_POST['module'];
-		if (strpos( $this->_url, '/' ) === false) {
+		if( $this->_query == '' && isset($_POST['module']) && $_POST['module'] != '' ) $this->_query = 'module='.$_POST['module'];
+		if( strpos( $this->_url, '/' ) === false ) {
 			$this->_script = $this->_url;
 		}
 		else {
@@ -959,7 +959,7 @@ abstract class CmsAdminThemeBase
 	public function get_bookmarks($pure = FALSE)
 	{
 		$bookops = CmsApp::get_instance()->GetBookmarkOperations();
-		$marks = array_reverse($bookops->LoadBookmarks($this->userid));
+		$marks = $bookops->LoadBookmarks($this->userid);
 
 		if( !$pure ) {
 			if( $marks ) {
@@ -967,7 +967,7 @@ abstract class CmsAdminThemeBase
 			}
 			$path = substr($_SERVER['SCRIPT_FILENAME'],strlen(CMS_ROOT_PATH));
 			$config = cms_config::get_instance();
-			$source = $config['root_url'] . strtr($path,'\\','/');
+			$source = $config['root_url'] . strtr($path,'\\','/'); // TODO c.f. $this->_url.$this->_query which has no scheme or host
 			if( !empty($_SERVER['QUERY_STRING']) ) { $source .= '?'.$_SERVER['QUERY_STRING']; }
 			$urlext = CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 			$source = str_replace($urlext,'[SECURITYTAG]',$source);
