@@ -191,7 +191,8 @@ final class UserTagOperations
 		if (!$existing) {
 			$this->_cache = array(); // reset the cache.
 			$new_usertag_id = $db->GenID(CMS_DB_PREFIX."userplugins_seq");
-			$query = "INSERT INTO ".CMS_DB_PREFIX."userplugins (userplugin_id, userplugin_name, code, description, create_date, modified_date) VALUES (?,?,?,?,".$db->DBTimeStamp(time()).",".$db->DBTimeStamp(time()).")";
+			$st = $db->DBTimeStamp(time());
+			$query = "INSERT INTO ".CMS_DB_PREFIX."userplugins (userplugin_id, userplugin_name, code, description, create_date, modified_date) VALUES (?,?,?,?,$st,$st)";
 			$result = $db->Execute($query, array($new_usertag_id, $name, $text, $description));
 			if ($result) {
 				\CMSMS\internal\global_cache::clear(__CLASS__);
@@ -207,7 +208,8 @@ final class UserTagOperations
 				$query .= ', description = ?';
 				$parms[] = $description;
 			}
-			$query .= ', modified_date = NOW() WHERE userplugin_id = ?';
+			$st = $db->DBTimeStamp(time());
+			$query .= ", modified_date = $st WHERE userplugin_id = ?";
 			$parms[] = $id;
 			$result = $db->Execute($query, $parms);
 			if ($result) {
