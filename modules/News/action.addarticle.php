@@ -30,7 +30,7 @@ $status       = isset($params['status']) ? $params['status'] : $status;
 $summary      = isset($params['summary']) ? $params['summary'] : '';
 $title        = isset($params['title']) ? trim(strip_tags($params['title'])) : '';
 $usedcategory = isset($params['category']) ? $params['category'] : $this->GetPreference('default_category', '');
-$useexp       = isset($params['useexp']) ? (int)$params['useexp'] : 0;
+$useexp       = !empty($params['useexp']);
 
 if (isset($params['postdate_Month'])) {
     $postdate = mktime($params['postdate_Hour'], $params['postdate_Minute'], $params['postdate_Second'], $params['postdate_Month'], $params['postdate_Day'], $params['postdate_Year']);
@@ -55,8 +55,9 @@ if (isset($params['submit'])) {
     } else if (!$content) {
         $error = $this->ShowErrors($this->Lang('nocontentgiven'));
     } else if ($useexp) {
-        if ($startdate >= $enddate)
+        if ($startdate >= $enddate) {
             $error = $this->ShowErrors($this->Lang('error_invaliddates'));
+        }
     }
 
     if ($error === FALSE && $news_url) {
@@ -90,44 +91,29 @@ if (isset($params['submit'])) {
     } else {
         $articleid = $db->GenID(CMS_DB_PREFIX . "module_news_seq");
         $query = 'INSERT INTO ' . CMS_DB_PREFIX . 'module_news (news_id, news_category_id, news_title, news_data, summary, status, news_date, start_time, end_time, create_date, modified_date,author_id,news_extra,news_url,searchable) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+        $args = array(
+            $articleid,
+            $usedcategory,
+            $title,
+            $content,
+            $summary,
+            $status,
+            trim($db->DBTimeStamp($postdate), "'"),
+            NULL, // undefined DT value in db
+            NULL, // ditto
+            trim($db->DBTimeStamp(time()), "'"),
+            trim($db->DBTimeStamp(time()), "'"),
+            $userid,
+            $extra,
+            $news_url,
+            $searchable
+        );
         if ($useexp) {
-            $dbr = $db->Execute($query, array(
-                $articleid,
-                $usedcategory,
-                $title,
-                $content,
-                $summary,
-                $status,
-                trim($db->DBTimeStamp($postdate), "'"),
-                trim($db->DBTimeStamp($startdate), "'"),
-                trim($db->DBTimeStamp($enddate), "'"),
-                trim($db->DBTimeStamp(time()), "'"),
-                trim($db->DBTimeStamp(time()), "'"),
-                $userid,
-                $extra,
-                $news_url,
-                $searchable
-            ));
-        } else {
-            $dbr = $db->Execute($query, array(
-                $articleid,
-                $usedcategory,
-                $title,
-                $content,
-                $summary,
-                $status,
-                trim($db->DBTimeStamp($postdate), "'"),
-                NULL,
-                NULL,
-                trim($db->DBTimeStamp(time()), "'"),
-                trim($db->DBTimeStamp(time()), "'"),
-                $userid,
-                $extra,
-                $news_url,
-                $searchable
-            ));
+            $args[7] = trim($db->DBTimeStamp($startdate), "'");
+            $aegs[8] = trim($db->DBTimeStamp($enddate), "'");
         }
 
+        $dbr = $db->Execute($query, $args);
         if (!$dbr) {
             echo "DEBUG: SQL = " . $db->sql . "<br>";
             die($db->ErrorMsg());
@@ -278,13 +264,13 @@ $statusdropdown[$this->Lang('published')] = 'published';
 
 $categorylist = array();
 $query = "SELECT news_category_id,long_name FROM " . CMS_DB_PREFIX . "module_news_categories ORDER BY hierarchy";
-$dbresult = $db->Execute($query);
-if ($dbresult) {
-    while ($row = $dbresult->FetchRow()) {
+$rst = $db->Execute($query);
+if ($rst) {
+    while ($row = $rst->FetchRow()) {
         if ($row['long_name'] === null) $row['long_name'] = '';
         $categorylist[$row['long_name']] = $row['news_category_id'];
     }
-    $dbresult->Close();
+    $rst->Close();
 }
 
 
