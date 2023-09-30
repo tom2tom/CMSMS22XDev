@@ -86,7 +86,7 @@ class BookmarkOperations
 				$onemark->bookmark_id = $row['bookmark_id'];
 				$onemark->user_id = $user_id;
 				$onemark->url = ($row['url']) ? $this->_prep_for_display($row['url']) : 'missing.url';
-				$onemark->title = ($row['title']) ?: '&lt;Missing Title&gt;';
+				$onemark->title = ($row['title']) ?: '&lt;Missing Title&gt;'; //langify?
 				$result[] = $onemark;
 			}
 			$dbresult->Close();
