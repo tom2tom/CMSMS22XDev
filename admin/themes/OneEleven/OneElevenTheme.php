@@ -305,11 +305,53 @@ class OneElevenTheme extends CmsAdminThemeBase {
 		}
 
 		// bookmarks
-		if (check_permission($userid,'Manage My Bookmarks')) {
-			$marks = $this->get_bookmarks();
+		$marks = [];
+		$config = cms_config::get_instance();
+		$urlext = CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+		$ops = CmsApp::get_instance()->GetBookmarkOperations();
+		$list = $ops->LoadBookmarks($userid);
+		if ($list) {
+			$icon = $this->DisplayImage('icons/system/bookmark.png','' ,'' ,'' ,'systemicon');
+			foreach ($list as $obj) {
+				$one = (array)$obj;
+				unset($one['user_id']);
+				$one['icon'] = $icon;
+//				if (sometest) { $one['spacer'] = 1; }
+//TODO smart root url relevance ?
+				if (startswith($one['url'], $config['admin_url'])) {
+					$one['admin'] = 1;
+					$one['verifyurl'] = 'TODOscript.php?'.$urlext;
+				}
+				$marks[] = $one;
+			}
 		}
-		else {
-			$marks = [];
+		if (check_permission($userid,'Manage My Bookmarks')) {
+			if ($list) {
+				$one = array_pop($marks);
+				$one['spacer'] = 1;
+				$marks[] = $one;
+			}
+			$path = substr($_SERVER['SCRIPT_FILENAME'],strlen(CMS_ROOT_PATH));
+			$source = $config['root_url'] . strtr($path,'\\','/'); // TODO c.f. $this->_url.$this->_query which has no scheme or host
+			if( !empty($_SERVER['QUERY_STRING']) ) { $source .= '?'.$_SERVER['QUERY_STRING']; }
+			$source = str_replace($urlext,'[SECURITYTAG]',$source);
+			$url = 'addbookmark.php?'.$urlext;
+			if (!empty($title)) {
+				$url .= '&title='.rawurlencode($title);
+			}
+			$url .= '&ref='.base64_encode($source);
+			$marks[] = [
+				'bookmark_id' => 0,
+				'title' => lang('addthismark'),
+				'url' => $url,
+				'icon' => $this->DisplayImage('icons/system/newobject.gif','' ,'' ,'' ,'systemicon'),
+			];
+			$marks[] = [
+				'bookmark_id' => 0,
+				'title' => lang('managebookmarks'),
+				'url' => 'listbookmarks.php?'.$urlext,
+				'icon' => $this->DisplayImage('icons/system/document-list.png','' ,'' ,'' ,'systemicon')
+			];
 		}
 		$smarty->assign('marks',$marks);
 		$smarty->assign('headertext',$this->get_headtext());
