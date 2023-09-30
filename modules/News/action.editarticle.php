@@ -17,7 +17,7 @@ $author_id    = isset($params['author_id']) ? $params['author_id'] : '-1';
 $content      = isset($params['content']) ? $params['content'] : '';
 $ndays        = (int)$this->GetPreference('expiry_interval', 180);
 if ($ndays == 0) $ndays = 180;
-//TODO preserve existing $endate value if > $now
+//TODO default to recorded $enddate value if any & > $now
 $enddate      = strtotime(sprintf("+%d days", $ndays), $now);
 $extra        = isset($params['extra']) ? trim(strip_tags($params['extra'])) : '';
 $news_url     = isset($params['news_url']) ? $params['news_url'] : '';
@@ -28,7 +28,7 @@ $status       = isset($params['status']) ? $params['status'] : $status;
 $summary      = isset($params['summary']) ? $params['summary'] : '';
 $title        = isset($params['title']) ? trim(strip_tags($params['title'])) : '';
 $usedcategory = isset($params['category']) ? $params['category'] : '';
-$useexp       = isset($params['useexp']) ? 1: 0;
+$useexp       = !empty($params['useexp']);
 
 if (isset($params['postdate_Month'])) {
     $postdate = mktime($params['postdate_Hour'], $params['postdate_Minute'], $params['postdate_Second'], $params['postdate_Month'], $params['postdate_Day'], $params['postdate_Year']);
@@ -52,13 +52,12 @@ if (isset($params['submit']) || isset($params['apply'])) {
         $error = $this->Lang('notitlegiven');
     } else if (empty($content)) {
         $error = $this->Lang('nocontentgiven');
-    } else if ($useexp == 1) {
-        if ($startdate >= $enddate)
+    } else if ($useexp) {
+        if ($startdate >= $enddate) {
             $error = $this->Lang('error_invaliddates');
+        }
     }
 
-    $startdatestr = '';
-    $enddatestr = '';
     if ($useexp) {
         $startdate = trim($db->DbTimeStamp($startdate), "'");
         $enddate = trim($db->DbTimeStamp($enddate), "'");
@@ -71,9 +70,10 @@ if (isset($params['submit']) || isset($params['apply'])) {
         }
         if ($error === FALSE) {
             // check for invalid chars.
-            $translated = munge_string_to_url($news_url, false, true);
-            if (strtolower($translated) != strtolower($news_url))
+            $translated = munge_string_to_url($news_url, FALSE, TRUE);
+            if (strtolower($translated) != strtolower($news_url)) {
                 $error = $this->Lang('error_invalidurl');
+            }
         }
         if ($error === FALSE) {
             // make sure this url isn't taken.
@@ -94,40 +94,30 @@ if (isset($params['submit']) || isset($params['apply'])) {
         // database work
         //
         $query = 'UPDATE ' . CMS_DB_PREFIX . 'module_news SET news_title=?, news_data=?, summary=?, status=?, news_date=?, news_category_id=?, start_time=?, end_time=?, modified_date=?, news_extra=?, news_url = ?, searchable = ? WHERE news_id = ?';
+        $args = array(
+            $title,
+            $content,
+            $summary,
+            $status,
+            trim($db->DBTimeStamp($postdate), "'"),
+            $usedcategory,
+            NULL, // undefined DT value in db
+            NULL, // ditto
+            trim($db->DBTimeStamp(time()), "'"),
+            $extra,
+            $news_url,
+            $searchable,
+            $articleid
+        );
         if ($useexp) {
-            $db->Execute($query, array(
-                $title,
-                $content,
-                $summary,
-                $status,
-                trim($db->DBTimeStamp($postdate), "'"),
-                $usedcategory,
-                trim($db->DBTimeStamp($startdate), "'"),
-                trim($db->DBTimeStamp($enddate), "'"),
-                trim($db->DBTimeStamp(time()), "'"),
-                $extra,
-                $news_url,
-                $searchable,
-                $articleid
-            ));
-        } else {
-            $db->Execute($query, array(
-                $title,
-                $content,
-                $summary,
-                $status,
-                trim($db->DBTimeStamp($postdate), "'"),
-                $usedcategory,
-                $startdatestr,
-                $enddatestr,
-                trim($db->DBTimeStamp(time()), "'"),
-                $extra,
-                $news_url,
-                $searchable,
-                $articleid
-            ));
+            $args[6] = $startdate;
+            $args[7] = $enddate;
         }
-
+        $db->Execute($query, $args);
+        // reliable update-query check
+        if (!($db->Affected_Rows() == 1 || $db->ErrorNo() == 0)) {
+            die('FATAL SQL ERROR: ' . $db->ErrorMsg() . '<br>QUERY: ' . $db->sql);
+        }
         //
         //Update custom fields
         //
@@ -137,7 +127,7 @@ if (isset($params['submit']) || isset($params['apply'])) {
         $types = $db->GetArray($query);
 
         $error = FALSE;
-        if (is_array($types)) {
+        if ($types) {
             foreach ($types as $onetype) {
                 $elem = $id . 'customfield_' . $onetype['id'];
                 if (isset($_FILES[$elem]) && $_FILES[$elem]['name'] != '') {
@@ -147,12 +137,13 @@ if (isset($params['submit']) || isset($params['apply'])) {
                         $error = '';
                         $value = news_admin_ops::handle_upload($articleid, $elem, $error);
                         $smarty->assign('checking', 'blah');
-                        if ($value !== FALSE)
+                        if ($value !== FALSE) {
                             $params['customfield'][$onetype['id']] = $value;
+                        }
                     }
                 }
-            } // foreach
-        }// if
+            }
+        }
 
         if (isset($params['customfield']) && !$error) {
             $now = $db->DbTimeStamp(time());
@@ -166,7 +157,7 @@ if (isset($params['submit']) || isset($params['apply'])) {
                 $dbr = TRUE;
                 if ($tmp === FALSE) {
                     if (!empty($value)) {
-                        $query = "INSERT INTO " . CMS_DB_PREFIX . "module_news_fieldvals (news_id,fielddef_id,value,create_date,modified_date) VALUES (?,?,?,$now,$now)";
+                        $query = 'INSERT INTO ' . CMS_DB_PREFIX . "module_news_fieldvals (news_id,fielddef_id,value,create_date,modified_date) VALUES (?,?,?,$now,$now)";
                         $dbr = $db->Execute($query, array(
                             $articleid,
                             $fldid,
@@ -181,17 +172,19 @@ if (isset($params['submit']) || isset($params['apply'])) {
                             $fldid
                         ));
                     } else {
-                        $query = "UPDATE " . CMS_DB_PREFIX .
+                        $query = 'UPDATE ' . CMS_DB_PREFIX .
 "module_news_fieldvals SET value = ?, modified_date = $now WHERE news_id = ? AND fielddef_id = ?";
-                        $dbr = $db->Execute($query, array(
+                        $db->Execute($query, array(
                             $value,
                             $articleid,
                             $fldid
                         ));
+                        $dbr = ($db->Affected_Rows() > 0 || $db->ErrorNo() == 0);
                     }
                 }
-                if (!$dbr)
+                if (!$dbr) {
                     die('FATAL SQL ERROR: ' . $db->ErrorMsg() . '<br>QUERY: ' . $db->sql);
+                }
             }
         }
     }
@@ -357,11 +350,14 @@ $statusdropdown[$this->Lang('draft')] = 'draft';
 $statusdropdown[$this->Lang('published')] = 'published';
 
 $categorylist = array();
-$query = "SELECT * FROM " . CMS_DB_PREFIX . "module_news_categories ORDER BY hierarchy";
-$dbresult = $db->Execute($query);
-
-while ($dbresult && $row = $dbresult->FetchRow()) {
-    $categorylist[$row['long_name']] = $row['news_category_id'];
+$query = 'SELECT news_category_id,long_name FROM ' . CMS_DB_PREFIX . 'module_news_categories ORDER BY hierarchy';
+$rst = $db->Execute($query);
+if ($rst) {
+    while ($row = $rst->FetchRow()) {
+        if ($row['long_name'] === NULL) $row['long_name'] = '';
+        $categorylist[$row['long_name']] = $row['news_category_id'];
+    }
+    $rst->Close();
 }
 
 /*--------------------
@@ -379,63 +375,64 @@ if (is_array($tmp)) {
 }
 
 $query = 'SELECT * FROM ' . CMS_DB_PREFIX . 'module_news_fielddefs ORDER BY item_order';
-$dbr = $db->Execute($query);
+$rst = $db->Execute($query);
 $custom_flds = array();
-while ($dbr && ($row = $dbr->FetchRow())) {
-    if (isset($row['extra']) && $row['extra']) $row['extra'] = unserialize($row['extra']);
+if ($rst) {
+    while ($row = $rst->FetchRow()) {
+        if (isset($row['extra']) && $row['extra']) $row['extra'] = unserialize($row['extra']);
 
-    $options = [];
-    if (isset($row['extra']['options'])) $options = $row['extra']['options'];
+        $options = [];
+        if (isset($row['extra']['options'])) $options = $row['extra']['options'];
 
-    $value = '';
-    if (isset($fieldvals[$row['id']])) $value = $fieldvals[$row['id']]['value'];
-    $value = isset($params['customfield'][$row['id']]) && in_array($params['customfield'][$row['id']], $params['customfield']) ? $params['customfield'][$row['id']] : $value;
+        $value = '';
+        if (isset($fieldvals[$row['id']])) $value = $fieldvals[$row['id']]['value'];
+        $value = isset($params['customfield'][$row['id']]) && in_array($params['customfield'][$row['id']], $params['customfield']) ? $params['customfield'][$row['id']] : $value;
 
-    if ($row['type'] == 'file') {
-        $name = "customfield_" . $row['id'];
-    } else {
-        $name = "customfield[" . $row['id'] . "]";
+        if ($row['type'] == 'file') {
+            $name = "customfield_" . $row['id'];
+        } else {
+            $name = "customfield[" . $row['id'] . "]";
+        }
+
+        $obj = new stdClass();
+
+        $obj->value    = $value;
+        $obj->nameattr = $id . $name;
+        $obj->type     = $row['type'];
+        $obj->idattr   = 'customfield_' . $row['id'];
+        $obj->prompt   = $row['name'];
+        $obj->size     = min(80, $row['max_length']);
+        $obj->max_len  = max(1, (int)$row['max_length']);
+        $obj->delete   = $id . 'delete_customfield[' . $row['id'] . ']';
+        $obj->options  = $options;
+/* FIXME - If we create inputs with hmtl markup in smarty template, what's the use of switch and form API here?
+        switch( $row['type'] ) {
+            case 'textbox' :
+                $size = min(50, $row['max_length']);
+                $obj->field = $this->CreateInputText($id, $name, $value, $size, $row['max_length']);
+                break;
+            case 'checkbox' :
+                $obj->field = $this->CreateInputHidden($id, $name, 0) . $this->CreateInputCheckbox($id, $name, 1, (int)$value);
+                break;
+            case 'textarea' :
+                $obj->field = $this->CreateTextArea(true, $id, $value, $name);
+                break;
+            case 'file' :
+                $del = '';
+                if ($value != '') {
+                    $deln = 'delete_customfield[' . $row['id'] . ']';
+                    $del = '&nbsp;' . $this->Lang('delete') . $this->CreateInputCheckbox($id, $deln, 'delete');
+                }
+                $obj->field = $value . '&nbsp;' . $this->CreateFileUploadInput($id, $name) . $del;
+                break;
+            case 'dropdown' :
+                $obj->field = $this->CreateInputDropdown($id, $name, array_flip($options), -1, $value);
+                break;
+        }
+*/
+        $custom_flds[$row['name']] = $obj;
     }
-
-    $obj = new stdClass();
-
-    $obj->value    = $value;
-    $obj->nameattr = $id . $name;
-    $obj->type     = $row['type'];
-    $obj->idattr   = 'customfield_' . $row['id'];
-    $obj->prompt   = $row['name'];
-    $obj->size     = min(80, $row['max_length']);
-    $obj->max_len  = max(1, (int)$row['max_length']);
-    $obj->delete   = $id . 'delete_customfield[' . $row['id'] . ']';
-    $obj->options  = $options;
-    // FIXME - If we create inputs with hmtl markup in smarty template, whats the use of switch and form API here?
-    /*
-    switch( $row['type'] ) {
-        case 'textbox' :
-            $size = min(50, $row['max_length']);
-            $obj->field = $this->CreateInputText($id, $name, $value, $size, $row['max_length']);
-            break;
-        case 'checkbox' :
-            $obj->field = $this->CreateInputHidden($id, $name, 0) . $this->CreateInputCheckbox($id, $name, 1, (int)$value);
-            break;
-        case 'textarea' :
-            $obj->field = $this->CreateTextArea(true, $id, $value, $name);
-            break;
-        case 'file' :
-            $del = '';
-            if ($value != '') {
-                $deln = 'delete_customfield[' . $row['id'] . ']';
-                $del = '&nbsp;' . $this->Lang('delete') . $this->CreateInputCheckbox($id, $deln, 'delete');
-            }
-            $obj->field = $value . '&nbsp;' . $this->CreateFileUploadInput($id, $name) . $del;
-            break;
-        case 'dropdown' :
-            $obj->field = $this->CreateInputDropdown($id, $name, array_flip($options), -1, $value);
-            break;
-    }
-    */
-
-    $custom_flds[$row['name']] = $obj;
+    $rst->Close();
 }
 
 /*--------------------
