@@ -40,7 +40,7 @@
 <div class="dialog invisible" role="dialog" title="{lang('bookmarks')}">
 	<ul>
 	{foreach $marks as $mark}
-		<li{if $mark.spacer} class="spaced"{/if}><a{if $mark.bookmark_id > 0} class="bookmark"{/if} href="{$mark.url}" target="_blank">{if $mark.icon}{$mark.icon}{else}&nbsp;{/if} {$mark.title}</a></li>
+		<li{if !empty($mark.spacer)} class="spaced"{/if}><a{if $mark.bookmark_id > 0} class="bookmark"{/if} href="{$mark.url}" target="_blank">{if $mark.icon}{$mark.icon}{else}&nbsp;{/if} {$mark.title}</a></li>
 	{/foreach}
 	</ul>
 </div>
@@ -52,7 +52,7 @@
   <ul>
 	{foreach $my_alerts as $one}
 	<li class="alert-box" data-alert-name="{$one->get_prefname()}">
-  	<div class="alert-head ui-corner-all {if $one->priority == '_high'}ui-state-error red{elseif $one->priority == '_normal'}ui-state-highlight orange{else}ui-state-highlightblue{/if}">
+	<div class="alert-head ui-corner-all {if $one->priority == '_high'}ui-state-error red{elseif $one->priority == '_normal'}ui-state-highlight orange{else}ui-state-highlightblue{/if}">
 	{$icon=$one->get_icon()}
 	{if $icon}
 		<img class="alert-icon ui-icon" alt="" src="{$icon}" title="{lang('remove_alert')}">
