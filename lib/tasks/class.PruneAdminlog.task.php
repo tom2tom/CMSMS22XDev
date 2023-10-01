@@ -6,7 +6,7 @@ class PruneAdminlogTask implements CmsRegularTask
 
     public function get_name()
     {
-        return get_class();
+        return get_class($this);
     }
 
     public function get_description()
