@@ -22,10 +22,10 @@
 		{if !empty($my_alerts)}
 			{$num_alerts=count($my_alerts)}
 			{if $num_alerts > 0}
-			   {if $num_alerts > 10}{$txt='&#2295'}{else}{$num=1+$num_alerts}{$txt="{$num_alerts}"}{/if}
-	 		   <li class="notifications">
+			{if $num_alerts > 10}{$txt='&#2295'}{else}{$num=1+$num_alerts}{$txt="{$num_alerts}"}{/if}
+			<li class="notifications">
 				<a id="alerts" title="{lang('notifications_to_handle2',$num_alerts)}"><span class="bubble">{$txt}</span></a>
-			   </li>
+			</li>
 			{/if}
 		{/if}
 		<li class="view-site">
@@ -40,7 +40,7 @@
 <div class="dialog invisible" role="dialog" title="{lang('bookmarks')}">
 	<ul>
 	{foreach $marks as $mark}
-		<li{if !empty($mark.spacer)} class="spaced"{/if}><a{if $mark.bookmark_id > 0} class="bookmark"{/if} href="{$mark.url}" target="_blank">{if $mark.icon}{$mark.icon}{else}&nbsp;{/if} {$mark.title}</a></li>
+		<li{if !empty($mark.spacer)} class="spaced"{/if}><a{if $mark.bookmark_id > 0} class="bookmark"{/if} href="{$mark.url}" target="_blank" title="{$mark.title}">{if !empty($mark.icon)}{$mark.icon}{else}&nbsp;{/if} {$mark.title}</a></li>
 	{/foreach}
 	</ul>
 </div>
