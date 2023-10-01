@@ -8,15 +8,18 @@
 		<ul class="links">
 			<li>
 				<a href="https://docs.cmsmadesimple.org/" rel="external" title="{lang('documentation')}">{lang('documentation')}</a>
-			</li>			
+			</li>
+			<li>
+				<a href="https://www.cmsmadesimple.org/support/options/" rel="external" title="{lang('help')}">{lang('help')}</a>
+			</li>
 			<li>
 				<a href="https://forum.cmsmadesimple.org/" rel="external" title="{lang('forums')}">{lang('forums')}</a>
 			</li>
 			<li>
-				<a href="http://www.cmsmadesimple.org/about-link/" rel="external" title="{lang('about')}">{lang('about')}</a>
+				<a href="https://www.cmsmadesimple.org/about-link/" rel="external" title="{lang('about')}">{lang('about')}</a>
 			</li>
 			<li>
-				<a href="http://www.cmsmadesimple.org/about-link/about-us/" rel="external" title="{lang('team')}">{lang('team')}</a>
+				<a href="https://www.cmsmadesimple.org/about-link/about-us/" rel="external" title="{lang('team')}">{lang('team')}</a>
 			</li>
 		</ul>
 	</div>
