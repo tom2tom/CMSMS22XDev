@@ -193,7 +193,7 @@ class wizard
 
         $str = $this->get_step_var($idx);
         if( !$str ) {
-            $str = base_convert(bin2hex(random_bytes(7)),16,36);
+            $str = $this->get_step_alias();
             $this->set_step_var($idx,$str);
         }
         $parts = array();
@@ -221,7 +221,7 @@ class wizard
 
         $str = $this->get_step_var($idx);
         if( !$str ) {
-            $str = base_convert(bin2hex(random_bytes(7)),16,36);
+            $str = $this->get_step_alias();
             $this->set_step_var($idx,$str);
         }
         $parts = array();
@@ -249,7 +249,7 @@ class wizard
 
         $str = $this->get_step_var($idx);
         if( !$str ) {
-            $str = base_convert(bin2hex(random_bytes(7)),16,36);
+            $str = $this->get_step_alias();
             $this->set_step_var($idx,$str);
         }
 
@@ -265,5 +265,18 @@ class wizard
         return $url;
     }
 
+    private function get_step_alias()
+    {
+        $str = sha1(uniqid((string)mt_rand(),true));
+        $offset = ord($str[0]);
+        if( $offset > 57 ) { //'9'
+            $offset -= 86; // 11..16
+        } else {
+            $offset -= 47; // 1..10
+        }
+        $bytes = substr($str,$offset,14);
+        $alias = base_convert($bytes,16,36); // 10+ bytes
+        return $alias;
+    }
 } // end of class
 ?>
