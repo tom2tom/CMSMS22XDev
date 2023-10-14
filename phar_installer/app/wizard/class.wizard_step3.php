@@ -5,6 +5,7 @@ namespace cms_autoinstaller;
 use __appbase\tests as _tests_;
 use __appbase\utils;
 use cms_autoinstaller\wizard_step;
+use Exception;
 use function __appbase\get_app;
 use function __appbase\lang;
 use function __appbase\smarty;
@@ -33,9 +34,16 @@ class wizard_step3 extends wizard_step
         // required test... php version
         $v = PHP_VERSION;
         $obj = new _tests_\version_range_test('php_version',$v);
-        $obj->minimum = '7.1.0'; //CMSMS itself doesn't currently need 7+, but Smarty needs 7.1
+         //CMSMS itself doesn't currently need 7+, but Smarty4+ needs 7.1
+        $smarty = smarty();
+        if( version_compare($smarty::SMARTY_VERSION,'4') >= 0 ) {
+            $obj->minimum = '7.1.0';
+        }
+        else {
+            $obj->minimum = '5.6.0';
+        }
         // set this to the current minimum security-supported micro-version
-        // via www.php.net/supported-versions.php and www.php.net/releases/index.php
+        // see www.php.net/supported-versions.php and www.php.net/releases/index.php
         $app_config = $app->get_config();
         $prefphp = (!empty($app_config['livephpmin'])) ? $app_config['livephpmin'] : '8.0';
         $obj->recommended = $prefphp;

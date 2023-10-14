@@ -74,11 +74,19 @@ function getSupportedDBDriver()
  */
 function getTestValues( $property )
 {
-	// CMSMS itself doesn't currently need PHP 7+, but Smarty4 needs 7.1 PHP 7.2 EOL late 2020, 7.3 EOL late 2021
-	// TODO set recommended PHP = earliest current-security-supported micro-version
-	// via https://www.php.net/supported-versions.php and https://www.php.net/releases/index.php
+	// CMSMS itself doesn't currently need PHP 7+, but Smarty4 needs 7.1.
+	//  PHP 7.2 EOL late 2020, 7.3 EOL late 2021
+	$smarty = Smarty_CMS::get_instance();
+	if( version_compare($smarty::SMARTY_VERSION, '4') >= 0 ) {
+		$minphp = '7.1.0';
+	}
+	else {
+		$minphp = '5.6.0';
+	}
+	// TODO manually set recommended PHP = earliest current-security-supported micro-version
+	// see https://www.php.net/supported-versions.php and https://www.php.net/releases/index.php
 	$range = array(
-		'php_version'			=> array('minimum'=>'7.1.0', 'recommended'=>'8.0.30'),
+		'php_version'			=> array('minimum'=>$minphp, 'recommended'=>'8.0.30'),
 		'gd_version'			=> array('minimum'=>2),
 		'memory_limit'			=> array('minimum'=>'16M', 'recommended'=>'24M'),
 		'max_execution_time'	=> array('minimum'=>30, 'recommended'=>60),
