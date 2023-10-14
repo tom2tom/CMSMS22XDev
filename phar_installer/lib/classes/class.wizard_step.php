@@ -36,7 +36,9 @@ abstract class wizard_step
   public function run()
   {
     $request = request::get();
-    if( $request->is_post() ) $res = $this->process();
+    if( $request->is_post() ) {
+        $res = $this->process();
+    }
     $this->display();
     return wizard::STATUS_OK;
   }
