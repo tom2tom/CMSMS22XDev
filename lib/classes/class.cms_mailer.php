@@ -150,7 +150,7 @@ class cms_mailer
    */
   public function reset()
   {
-    $prefs = unserialize(cms_siteprefs::get('mailprefs'), ['allowed_classes' => false]);
+    $prefs = unserialize(cms_siteprefs::get('mailprefs'));
     $this->_mailer->Mailer = get_parameter_value($prefs, 'mailer', 'mail');
     $this->_mailer->Sendmail = get_parameter_value($prefs, 'sendmail', '/usr/sbin/sendmail');
     $this->_mailer->Timeout = get_parameter_value($prefs, 'timeout', 60);
