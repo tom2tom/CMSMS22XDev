@@ -231,6 +231,8 @@ function cms_stylesheet_writeCache($filename, $list, $trimbackground, $smarty)
     if( is_string($list) && !is_array($list) ) $list = array($list);
 
 	// Smarty processing
+	$ol = $smarty->left_delimiter;
+	$or = $smarty->right_delimiter;
 	$smarty->left_delimiter = '[[';
 	$smarty->right_delimiter = ']]';
 
@@ -245,14 +247,16 @@ function cms_stylesheet_writeCache($filename, $list, $trimbackground, $smarty)
 	}
 	catch (SmartyException $e) {
             // why not just re-throw the exception as it may have a smarty error in it.
+            $smarty->left_delimiter = $ol;
+            $smarty->right_delimiter = $or;
             debug_to_log('Error Processing Stylesheet');
             debug_to_log($e->GetMessage());
             audit('','Plugin: cms_stylesheet', 'Smarty Compile process failed, an error in the template?');
             return '';
 	}
 
-	$smarty->left_delimiter = '{';
-	$smarty->right_delimiter = '}';
+	$smarty->left_delimiter = $ol;
+	$smarty->right_delimiter = $or;
 
 	// Fix background
 	if($trimbackground) {

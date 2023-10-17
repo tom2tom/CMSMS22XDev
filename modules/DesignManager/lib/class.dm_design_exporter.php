@@ -449,11 +449,13 @@ EOT;
             $nvalue = $value;
             if( strpos($value,'[[') !== FALSE ) {
                 // smarty syntax with [[ and ]] as delimiters
+                $ol = $smarty->left_delimiter;
+                $or = $smarty->right_delimiter;
                 $smarty->left_delimiter = '[[';
                 $smarty->right_delimiter = ']]';
                 $nvalue = $smarty->fetch('string:'.$value);
-                $smarty->left_delimiter = '{';
-                $smarty->right_delimiter = '}';
+                $smarty->left_delimiter = $ol;
+                $smarty->right_delimiter = $or;
             }
             else if( strpos($value,'{') !== FALSE ) {
                 // smarty syntax with { and } as delimiters
