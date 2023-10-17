@@ -500,7 +500,7 @@ public static function execSpecialize($val)
     //TODO maybe disable SmartyBC-supported {php}{/php}
     //$val = preg_replace('~\{/?php\}~i', '', $val); but with current smarty delim's
     $val = str_replace('`', '&#96;', $val);
-    $val = preg_replace_callback_array([
+    foreach ([
          // script tags like <script or <script> or <script X> X = e.g. 'defer'
         '/<\s*(scrip)t([^>]*)(>?)/i' => function($matches) {
             return '&#60;'.$matches[1].'&#116;'.($matches[2] ? ' '.trim($matches[2]) : '').($matches[3] ? '&#62;' : '');
@@ -517,11 +517,17 @@ public static function execSpecialize($val)
         '/\b(on[\w.:\-]{4,})\s*=\s*(["\']?.+?["\']?)/i' => function($matches) {
             return $matches[1].'&#61;'.strtr($matches[2], ['"' => '&#34;', "'" => '&#39;', '(' => '&#40;', ')' => '&#41;']);
         },
+        //callables like class::func
+        '/([a-zA-Z0-9_\x80-\xff]+?)\s*?::\s*?([a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*?)\s*?\(/' => function($matches) {
+            return $matches[1] . '&#58;&#58;' . $matches[1] . '&#40;';
+        },
         // embeds
         '/(embe)(d)/i' => function($matches) {
             return $matches[1].'&#'.ord($matches[2]).';';
-        },
-        ], $val);
+        }
+        ] as $regex => $replacer) {
+            $val = preg_replace_callback($regex, $replacer, $val);
+        }
 
     if ($revert) {
         return htmlentities($val, $flags, 'UTF-8', false);
