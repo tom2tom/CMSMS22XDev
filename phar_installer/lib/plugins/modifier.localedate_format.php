@@ -37,13 +37,13 @@ function smarty_modifier_localedate_format($datevar, $format = '%b %e, %Y', $def
     }
 
     $outfmt = localedate_adjust($format);
-    $tmp = date($outfmt, $st);
-    $text = preg_replace_callback_array(array(
+    $text = date($outfmt, $st);
+    foreach ([
         '~[\x01-\x08\x0e\x0f]~' => function($m) use($st, $locale) {
             return localedate_ise ($st, $m[0], $locale);
         },
         '~\x11~' => function($m) use($st) { // two-digit century
-            return floor(date('Y', $st) / 100);
+            return floor(date('Y', $st) / 100 + 0.001); // OR just (int)
         },
         '~\x12~' => function($m) use($st) { // week of year, per ISO8601
             return substr(date('o', $st), -2);
@@ -52,16 +52,17 @@ function smarty_modifier_localedate_format($datevar, $format = '%b %e, %Y', $def
              $n1 = date('Y', $st);
              $n2 = date('z', strtotime('first monday of january '.$n1));
              $n1 = date('z', $st);
-             return floor(($n2-$n1) / 7) + 1;
+             return floor(($n1-$n2) / 7 + 0.001) + 1; // OR just (int)
          },
         '~\x13~' => function($m) use($st) { // week of year, assuming the first Sunday is day 0
             $n1 = date('Y', $st);
             $n2 = date('z', strtotime('first sunday of january '.$n1));
             $n1 = date('z', $st);
-            return floor(($n2-$n1) / 7) + 1;
+            return floor(($n1-$n2) / 7 + 0.001) + 1; // OR just (int)
         }
-    ), $tmp);
-
+    ] as $regex => $replacer) {
+        $text = preg_replace_callback($regex, $replacer, $text);
+    }
     return $text;
 }
 
@@ -162,6 +163,7 @@ function localedate_adjust($fmt)
 /* see
 https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/strftime-wcsftime-strftime-l-wcsftime-l?redirectedfrom=MSDN&view=msvc-170
 re other uses of '#' modifier
+https://stackoverflow.com/questions/203090/how-do-i-get-current-date-time-on-the-windows-command-line-in-a-suitable-format
 */
         $to[3] = '#d'; // per php.net: correctly relace %e on Windows
     }
@@ -170,8 +172,8 @@ re other uses of '#' modifier
 
 function localedate_ise($st, $mode, $locale)
 {
-    if (extension_loaded('Intl')) {
-        $dt = new DateTime();
+    if (class_exists('IntlDateFormatter')) {
+        $dt = new DateTime(); //current zone
         $dt->setTimestamp($st);
         if (!$locale) {
             $locale = translator()->get_selected_language();
@@ -261,25 +263,25 @@ function localedate_ise($st, $mode, $locale)
             return 'Unknown Format';
         }
     } else {
-// TODO robustly derive values for Windows OS
+// TODO robustly derive localised values for Windows OS
         switch ($mode) {
-        case "\1": // short day name
+        case "\1": // short day name c.f. C# DateTime 'ddd'
             return date('D', $st);
-        case "\2": // normal day name
+        case "\2": // normal day name c.f. C# DateTime 'dddd'
             return date('l', $st);
-        case "\3": // short month name
+        case "\3": // short month name c.f. C# DateTime 'MMM'
             return date('M', $st);
-        case "\4": // normal month name
+        case "\4": // normal month name c.f. C# DateTime 'MMMM'
             return date('F', $st);
-        case "\6": // date only
+        case "\6": // date only c.f. C# DateTime 'd' or 'D'
             return date('j F Y', $st);
-        case "\7": // time only
+        case "\7": // time only c.f. C# DateTime 't' or 'T'
             return date('H:i:s', $st);
-        case "\x8": // date and time
+        case "\x8": // date and time c.f. C# DateTime 'g' or 'G'
             return date('j F Y h:i a', $st);
-        case "\x0e": // am/pm, upper-case
+        case "\x0e": // am/pm, upper-case c.f. C# DateTime 'tt'
             return date('A', $st);
-        case "\x0f": // am/pm, lower-case
+        case "\x0f": // am/pm, lower-case c.f. C# DateTime 'tt'
             return date('a', $st);
         default:
             return 'Unknown Format';
