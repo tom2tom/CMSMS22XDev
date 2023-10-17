@@ -13,7 +13,7 @@ Core - General
  - Validate entered bookmark-URLs.
  - Deprecated use of PHP function umask();
  - Added missing nls files, allowing installation of extra translations.
- - Smarty upgraded to version 4.3.0.
+ - Smarty upgraded to version 4.3.4.
  - Enabled use of PHP function rawurlencode in Smarty templates.
  - Added Smarty modifier plugin 'adjust' to handle deprecated modifier-function-calls in templates.
  - PHPMailer upgraded to version 6.7.1.

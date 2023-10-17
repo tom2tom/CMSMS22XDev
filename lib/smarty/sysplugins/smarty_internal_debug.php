@@ -45,7 +45,7 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
     public $offset = 0;
 
     /**
-     * Start logging template processing
+     * Start logging template
      *
      * @param \Smarty_Internal_Template $template template
      * @param null                      $mode     true: display   false: fetch  null: subtemplate
@@ -62,7 +62,7 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
     }
 
     /**
-     * End logging template processing
+     * End logging of cache time
      *
      * @param \Smarty_Internal_Template $template cached template
      */
@@ -141,7 +141,7 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
     }
 
     /**
-     * End logging of render time
+     * End logging of compile time
      *
      * @param \Smarty_Internal_Template $template
      */
@@ -222,8 +222,8 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
         // copy the working dirs from application
         $debObj->setCompileDir($smarty->getCompileDir());
         // init properties by hand as user may have edited the original Smarty class
-        $dirn = dirname(__DIR__) . '/plugins';
-        $debObj->setPluginsDir(is_dir($dirn) ? $dirn : $smarty->getPluginsDir());
+        $path = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'plugins';
+        $debObj->setPluginsDir(is_dir($path) ? $path : $smarty->getPluginsDir());
         $debObj->force_compile = false;
         $debObj->compile_check = Smarty::COMPILECHECK_ON;
         $debObj->left_delimiter = '{';
@@ -250,9 +250,12 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
         $_config_vars = $ptr->config_vars;
         ksort($_config_vars);
         $debugging = $smarty->debugging;
+        $templateName = $obj->source->type . ':' . $obj->source->name;
+        $displayMode = $debugging === 2 || !$full;
+        $offset = $this->offset * 50;
         $_template = new Smarty_Internal_Template($debObj->debug_tpl, $debObj);
         if ($obj->_isTplObj()) {
-            $_template->assign('template_name', $obj->source->type . ':' . $obj->source->name);
+            $_template->assign('template_name', $templateName);
         }
         if ($obj->_objType === 1 || $full) {
             $_template->assign('template_data', $this->template_data[ $this->index ]);
@@ -262,8 +265,8 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
         $_template->assign('assigned_vars', $_assigned_vars);
         $_template->assign('config_vars', $_config_vars);
         $_template->assign('execution_time', microtime(true) - $smarty->start_time);
-        $_template->assign('display_mode', $debugging === 2 || !$full);
-        $_template->assign('offset', $this->offset * 50);
+        $_template->assign('targetWindow', $displayMode ? md5("$offset$templateName") : '__Smarty__');
+        $_template->assign('offset', $offset);
         echo $_template->fetch();
         if (isset($full)) {
             $this->index--;

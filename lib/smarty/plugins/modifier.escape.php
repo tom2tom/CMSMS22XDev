@@ -113,12 +113,11 @@ function smarty_modifier_escape($string, $esc_type = 'html', $char_set = null, $
                     "\n" => '\\n',
                     '</' => '<\/',
                     // see https://html.spec.whatwg.org/multipage/scripting.html#restrictions-for-contents-of-script-elements
-                    //TODO more-rigorous XSS-ptotection, if such is intended here
                     '<!--' => '<\!--',
                     '<s'   => '<\s',
-                    '<S'   => '<\S'
-//proposal          '`' => '\`', TOO LOOSE for ES2015 template literals
-//proposal          '${' => '\$\{' TOO LOOSE for ES2015 template literals
+                    '<S'   => '<\S',
+	                "`" => "\\\\`",
+	                "\${" => "\\\\\\$\\{"
                 )
             );
         case 'mail':
