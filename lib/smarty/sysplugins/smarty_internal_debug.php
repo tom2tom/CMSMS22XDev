@@ -62,18 +62,20 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
     }
 
     /**
-     * End logging of cache time
+     * End logging template
      *
      * @param \Smarty_Internal_Template $template cached template
+     * @throws \SmartyException
      */
     public function end_template(Smarty_Internal_Template $template)
     {
         $key = $this->get_key($template);
-        //if processing happened (?) record total duration
-        if (isset($this->template_data[ $this->index ][ $key ][ 'start_time' ])) {
-            $this->template_data[ $this->index ][ $key ][ 'total_time' ] +=
-            microtime(true) - $this->template_data[ $this->index ][ $key ][ 'start_template_time' ];
+        if (!isset($this->template_data[ $this->index ][ $key ][ 'total_time' ])) {
+            // ['total_time'] might have been initialised in get_key() CHECKME NOT in start_compile()?
+            throw new SmartyException('total_time parameter not initialised in '.__METHOD__);
         }
+        $this->template_data[ $this->index ][ $key ][ 'total_time' ] +=
+            microtime(true) - $this->template_data[ $this->index ][ $key ][ 'start_template_time' ];
         //$this->template_data[$this->index][$key]['properties'] = $template->properties;
     }
 
@@ -111,6 +113,7 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
      * End logging of compile time
      *
      * @param \Smarty_Internal_Template $template
+     * @throws \SmartyException
      */
     public function end_compile(Smarty_Internal_Template $template)
     {
@@ -122,11 +125,12 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
             }
             $key = $this->get_key($template);
         }
-        //if compilation happened (?), record its duration
-        if (isset($this->template_data[ $this->index ][ $key ][ 'start_time' ])) {
-            $this->template_data[ $this->index ][ $key ][ 'compile_time' ] +=
-            microtime(true) - $this->template_data[ $this->index ][ $key ][ 'start_time' ];
+        if (!isset($this->template_data[ $this->index ][ $key ][ 'compile_time' ])) {
+            // ['compile_time'] might have been initialised in start_compile(), get_key()
+            throw new SmartyException('complile_time parameter not initialised in '.__METHOD__);
         }
+        $this->template_data[ $this->index ][ $key ][ 'compile_time' ] +=
+            microtime(true) - $this->template_data[ $this->index ][ $key ][ 'start_time' ];
     }
 
     /**
@@ -144,15 +148,17 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
      * End logging of compile time
      *
      * @param \Smarty_Internal_Template $template
+     * @throws \SmartyException
      */
     public function end_render(Smarty_Internal_Template $template)
     {
         $key = $this->get_key($template);
-        //if rendering happened (?), record its duration
-        if (isset($this->template_data[ $this->index ][ $key ][ 'start_time' ])) {
-            $this->template_data[ $this->index ][ $key ][ 'render_time' ] +=
-            microtime(true) - $this->template_data[ $this->index ][ $key ][ 'start_time' ];
+        if (!isset($this->template_data[ $this->index ][ $key ][ 'render_time' ])) {
+            // ['render_time'] might have been initialised in start_compile(), get_key()
+            throw new SmartyException('render_time parameter not initialised in '.__METHOD__);
         }
+        $this->template_data[ $this->index ][ $key ][ 'render_time' ] +=
+            microtime(true) - $this->template_data[ $this->index ][ $key ][ 'start_time' ];
     }
 
     /**
@@ -170,15 +176,17 @@ class Smarty_Internal_Debug extends Smarty_Internal_Data
      * End logging of cache time
      *
      * @param \Smarty_Internal_Template $template cached template
+     * @throws \SmartyException
      */
     public function end_cache(Smarty_Internal_Template $template)
     {
         $key = $this->get_key($template);
-        //if cache processing happened (?), record its duration
-        if (isset($this->template_data[ $this->index ][ $key ][ 'start_time' ])) {
-            $this->template_data[ $this->index ][ $key ][ 'cache_time' ] +=
-            microtime(true) - $this->template_data[ $this->index ][ $key ][ 'start_time' ];
+        if (!isset($this->template_data[ $this->index ][ $key ][ 'cache_time' ])) {
+            // ['cache_time'] might have been initialised in start_compile(), get_key()
+            throw new SmartyException('cache_time parameter not initialised in '.__METHOD__);
         }
+        $this->template_data[ $this->index ][ $key ][ 'cache_time' ] +=
+            microtime(true) - $this->template_data[ $this->index ][ $key ][ 'start_time' ];
     }
 
     /**
