@@ -15,13 +15,12 @@ use function __appbase\translator;
  *
  * @return string
  */
-
 function smarty_modifier_localedate_format($datevar, $format = '%b %e, %Y', $default_date = '', $locale = '')
 {
-    if (empty($datevar)) {
+    if (!$datevar) {
         $datevar = $default_date;
     }
-    if (empty($datevar)) {
+    if (!$datevar) {
         $st = time();
     } elseif (is_numeric($datevar)) {
         $st = (int)$datevar;
@@ -38,30 +37,34 @@ function smarty_modifier_localedate_format($datevar, $format = '%b %e, %Y', $def
 
     $outfmt = localedate_adjust($format);
     $text = date($outfmt, $st);
-    foreach ([
-        '~[\x01-\x08\x0e\x0f]~' => function($m) use($st, $locale) {
+    $text = preg_replace_callback('~[\x01-\x08\x0e\x0f]~',
+         function($m) use($st, $locale) {
             return localedate_ise ($st, $m[0], $locale);
+        }, $text);
+    foreach ([
+        "\x11" => function($st) { // two-digit century
+            return (int)(date('Y', $st) / 100 + 0.001);
         },
-        '~\x11~' => function($m) use($st) { // two-digit century
-            return floor(date('Y', $st) / 100 + 0.001); // OR just (int)
-        },
-        '~\x12~' => function($m) use($st) { // week of year, per ISO8601
+        "\x12" => function($st) { // week of year, per ISO8601
             return substr(date('o', $st), -2);
         },
-        '~\x10~' => function($m) use($st) { // week of year, assuming the first Monday is day 0
+        "\x10" => function($st) { // week of year, assuming the first Monday is day 0
              $n1 = date('Y', $st);
              $n2 = date('z', strtotime('first monday of january '.$n1));
              $n1 = date('z', $st);
-             return floor(($n1-$n2) / 7 + 0.001) + 1; // OR just (int)
+             return floor(($n1-$n2) / 7 + 0.001) + 1; // can be 0
          },
-        '~\x13~' => function($m) use($st) { // week of year, assuming the first Sunday is day 0
+        "\x13" => function($st) { // week of year, assuming the first Sunday is day 0
             $n1 = date('Y', $st);
             $n2 = date('z', strtotime('first sunday of january '.$n1));
             $n1 = date('z', $st);
-            return floor(($n1-$n2) / 7 + 0.001) + 1; // OR just (int)
+            return floor(($n1-$n2) / 7 + 0.001) + 1; // can be 0
         }
-    ] as $regex => $replacer) {
-        $text = preg_replace_callback($regex, $replacer, $text);
+    ] as $from => $replacer) {
+        if (strpos($text, $from) !== false) {
+            $to = $replacer($st);
+            $text = strtr($text, [$from => $to]);
+        }
     }
     return $text;
 }
