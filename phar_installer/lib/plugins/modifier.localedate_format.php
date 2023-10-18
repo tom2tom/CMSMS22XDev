@@ -49,16 +49,18 @@ function smarty_modifier_localedate_format($datevar, $format = '%b %e, %Y', $def
             return substr(date('o', $st), -2);
         },
         "\x10" => function($st) { // week of year, assuming the first Monday is day 0
-             $n1 = date('Y', $st);
-             $n2 = date('z', strtotime('first monday of january '.$n1));
-             $n1 = date('z', $st);
-             return floor(($n1-$n2) / 7 + 0.001) + 1; // can be 0
+            $n1 = date('Y', $st);
+            $n2 = date('z', strtotime('first monday of january '.$n1));
+            $n1 = date('z', $st);
+            $w = ($n1-$n2) / 7 + 0.001; // can be <0, for end of prior year
+            return ($w > 0) ? (int)$w + 1 : 52;
          },
         "\x13" => function($st) { // week of year, assuming the first Sunday is day 0
             $n1 = date('Y', $st);
             $n2 = date('z', strtotime('first sunday of january '.$n1));
             $n1 = date('z', $st);
-            return floor(($n1-$n2) / 7 + 0.001) + 1; // can be 0
+            $w = ($n1-$n2) / 7 + 0.001; // can be <0, for end of prior year
+            return ($w > 0) ? (int)$w + 1 : 52;
         }
     ] as $from => $replacer) {
         if (strpos($text, $from) !== false) {
