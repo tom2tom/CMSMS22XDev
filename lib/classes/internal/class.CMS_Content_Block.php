@@ -152,13 +152,13 @@ final class CMS_Content_Block
         // {content_module} tag encountered.
         if( !isset($params['block']) || empty($params['block']) ) throw new CmsEditContentException('{content_module} tag requires block parameter');
 
-        $rec = array('type'=>'module','id'=>'','name'=>'','module'=>'','label'=>'', 'blocktype'=>'','tab'=>'','priority'=>'');
+        $rec = array('type'=>'module','id'=>'','name'=>'','module'=>'','label'=>'','blocktype'=>'','tab'=>'','priority'=>'');
         $parms = array();
         foreach( $params as $key => $value ) {
             if( $key == 'block' ) $key = 'name';
 
             $value = trim(trim($value,'"\''));
-            if( isset($rec[$key]) ) {
+            if( $key != 'type' && isset($rec[$key]) ) { // a provided 'type' is for the handler
                 $rec[$key] = $value;
             }
             else {
@@ -331,7 +331,7 @@ final class CMS_Content_Block
 
     public static function smarty_fetch_imageblock($params,$smarty)
     {
-        $ignored = [ 'block','type','name','label','upload','dir','default','tab','priority','exclude','sort', 'profile', 'urlonly','assign' ];
+        $ignored = [ 'block','type','name','label','upload','dir','default','tab','priority','exclude','sort','profile','urlonly','assign' ];
         $gCms = CmsApp::get_instance();
         $contentobj = $gCms->get_content_object();
         if( !is_object($contentobj) || $contentobj->Id() <= 0 ) return self::content_return('', $params, $smarty);
