@@ -5,8 +5,8 @@ if( CmsApp::get_instance()->is_frontend_request() ) exit;
 try {
     $name = get_parameter_value($params,'name');
     $value = get_parameter_value($params,'value');
-    $type = get_parameter_value($params,'type');
-    $type = 'image';
+    $type = get_parameter_value($params,'type'); //WHAT??
+    $type = 'image'; //WHAT??
 
     $profile = $this->get_default_profile();
     if( $type ) {
