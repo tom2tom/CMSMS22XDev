@@ -41,7 +41,6 @@ function smarty_function_cms_filepicker($params,$template)
         $profile = $profile->overrideWith( $parms );
     }
 
-    // todo: something with required.
     $out = $filepicker->get_html( $prefix.$name, $value, $profile, $required );
     if( isset($params['assign']) ) {
         $template->assign( $params['assign'], $out );
