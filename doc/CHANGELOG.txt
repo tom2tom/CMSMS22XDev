@@ -48,6 +48,7 @@ FileManager
 FilePicker
  - BR #12621 - FilePicker upload bug
  - BR #12628 - Add missing changelog and retriever
+ - Add missing ContentBlockField API methods
 
 MenuManager 1.50.4
  - Exported from core to a normal CMSMS module in Forge
