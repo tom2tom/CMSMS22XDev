@@ -20,7 +20,7 @@ function smarty_function_cms_filepicker($params,$template)
     $filepicker = \cms_utils::get_filepicker_module();
     if( !$filepicker ) return '';
 
-    $name = trim(get_parameter_value($params,'name'));
+    $name = trim(get_parameter_value($params,'name','picker')); //default name, since 2.2.19
     if( !$name ) return '';
     $profile_name = trim(get_parameter_value($params,'profile'));
     $prefix = trim(get_parameter_value($params,'prefix'));
