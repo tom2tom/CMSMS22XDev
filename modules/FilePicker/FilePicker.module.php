@@ -90,16 +90,40 @@ final class FilePicker extends \CMSModule implements CMSMS\FilePickerInterface
 
     public function GetContentBlockFieldInput($blockName, $value, $params, $adding, ContentBase $content_obj)
     {
-        if( empty($blockName) ) return FALSE;
+        if( !$blockName ) return '';
+        // workaround $adding not set in ContentManager v1.0 action admin_editcontent
+        if (!$adding && version_compare(CMS_VERSION, '2.1') < 0 && $content_obj->Id() == 0) {
+            $adding = true; //TODO no profile-relevance
+        }
         $uid = get_userid(FALSE);
-        //$adding = (bool)( $adding || ($content_obj->Id() < 1) ); // hack for the core. Have to ask why though (JM)
-
         $profile_name = get_parameter_value($params,'profile');
-        $profile = $this->get_profile_or_default($profile_name);
+        $profile = $this->get_profile_or_default($profile_name, '', $uid);
+        if( $params ) {
+            unset($params['top']); // no top-folder change allowed here TODO any other relevant limitations?
+            $profile = $profile->overrideWith($params);
+        }
+        return $this->get_html($blockName, $value, $profile);
+    }
 
-        // todo: optionally allow further overriding the profile
-        $out = $this->get_html($blockName, $value, $profile);
-        return $out;
+    public function GetContentBlockFieldValue($blockName, $blockParams, $inputParams, ContentBase $content_obj)
+    {
+        if( $blockName && isset($inputParams[$blockName]) ) {
+            return $inputParams[$blockName];
+        }
+        return '';
+    }
+
+    public function ValidateContentBlockFieldValue($blockName, $value, $blockparams, ContentBase $content_obj)
+    {
+        if( !$blockName || !$value ) { return lang('informationmissing'); }
+        //TODO additional relevant checks
+        return '';
+    }
+
+    public function RenderContentBlockField($blockName, $value, $blockparams, ContentBase $content_obj)
+    {
+        if( !$blockName ) return '';
+        return $value;//TODO more than a placeholder
     }
 
     public function GetFileList($path = '')
