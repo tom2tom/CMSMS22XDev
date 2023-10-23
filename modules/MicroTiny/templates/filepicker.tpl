@@ -57,11 +57,11 @@
 						<li class="filepicker-item{if $file.isdir} dir{else} {$file.filetype}{/if}" title="{if $file.isdir}{$mod->Lang('dirinfo')}: {/if}{$file.name}" data-fb-ext='{$file.ext}'>
 							<div class="filepicker-thumb{if !empty($file.thumbnail) || $file.isdir} no-background{/if}">
 							{if $showthumbnails && !empty($file.thumbnail)}
-								<a class="filepicker-file-action js-trigger-insert" href="{$file.fullurl}" title="{if $file.isdir}{$mod->Lang('dirinfo')}: {/if}{$file.name}">{$file.thumbnail}</a>
+								<a class="filepicker-file-action js-trigger-insert" href="{$file.fullurl}" title="{if $file.isdir}{$mod->Lang('dirinfo')}: {/if}{$file.name}" data-fb-fileurl="{$file.fullurl}">{$file.thumbnail}</a>
 							{elseif $file.isdir}
 								<a class="icon-no-thumb" href="{$file.chdir_url}" title="{if $file.isdir}{$mod->Lang('dirinfo')}: {/if}{$file.name}"><i class="cmsms-fp-folder-close"></i></a>
 							{else}
-								<a class="filepicker-file-action js-trigger-insert icon-no-thumb" title="{if $file.isdir}{$mod->Lang('dirinfo')}: {/if}{$file.name}" href="{$file.fullurl}">
+								<a class="filepicker-file-action js-trigger-insert icon-no-thumb" title="{if $file.isdir}{$mod->Lang('dirinfo')}: {/if}{$file.name}" href="{$file.fullurl}" data-fb-fileurl="{$file.fullurl}">
 									{if $file.filetype == 'image'}
 										<i class="cmsms-fp-picture"></i>
 									{elseif $file.filetype == 'video'}
@@ -81,7 +81,7 @@
 								{if $file.isdir}
 									<a class="filepicker-dir-action" href="{$file.chdir_url}" title="{if $file.isdir}{$mod->Lang('dirinfo')}: {/if}{$file.name}">{$file.name}</a>
 								{else}
-									<a class="filepicker-file-action js-trigger-insert" href="{$file.fullurl}" title="{if $file.isdir}{$mod->Lang('dirinfo')}: {/if}{$file.name}" data-fb-filetype="{$file.filetype}">{$file.name}</a>
+									<a class="filepicker-file-action js-trigger-insert" href="{$file.fullurl}" title="{if $file.isdir}{$mod->Lang('dirinfo')}: {/if}{$file.name}" data-fb-filetype="{$file.filetype}" data-fb-fileurl="{$file.fullurl}">{$file.name}</a>
 								{/if}
 								</h4>
 							</div>
@@ -103,8 +103,8 @@
 			</div>
 		</div>
 {/strip}
-		{cms_jquery exclude='json,migrate,nestedSortable,cms_admin,cms_autorefresh,cms_dirtyform,cms_filepicker,cms_hiersel,cms_js_setup,cms_lock'}
-		<script src="{$mod->GetModuleURLPath()}/lib/js/tinymce/plugins/cmsms_filebrowser/filebrowser.js"></script>
+		{cms_jquery exclude='json,migrate,nestedSortable,cms_autorefresh,cms_dirtyform,cms_filepicker,cms_hiersel,cms_js_setup,cms_lock'}
+		<script src="{$mod->GetModuleURLPath()}/lib/js/tinymce/plugins/cmsms_filebrowser/filebrowser.js"></script>{*TODO plugin and script don't exist*}
 		<script>
 			var filebrowser_global = {
 				field_id : '{$field}'

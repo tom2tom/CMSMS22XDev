@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta http-equiv="Content-type" content="text/html;charset=utf-8">
 		<title>{$mod->Lang('filepickertitle')}</title>
-		{cms_jquery exclude='json,migrate,nestedSortable,cms_admin,cms_autorefresh,cms_dirtyform,cms_filepicker,cms_hiersel,cms_js_setup,cms_lock'}
+		{cms_jquery exclude='json,migrate,nestedSortable,cms_autorefresh,cms_dirtyform,cms_filepicker,cms_hiersel,cms_lock'}
 		<link rel="stylesheet" href="{$cssurl}">
 	</head>
 	<body class="cmsms-filepicker">
@@ -74,7 +74,7 @@
 							</div>
 						</li>
 						{foreach $files as $file}
-						<li class="filepicker-item{if $file.isdir} dir{else} {$file.filetype}{/if}" title="{if $file.isdir}{$mod->Lang('changedir')}: {/if}{$file.name}" data-fb-ext='{$file.ext}' data-fb-fname="{$file.name}">
+						<li class="filepicker-item{if $file.isdir} dir{else} {$file.filetype}{/if}" title="{if $file.isdir}{$mod->Lang('changedir')}: {/if}{$file.name}" data-fb-ext="{$file.ext}" data-fb-fname="{$file.name}">
 							<div class="filepicker-thumb{if ($profile->show_thumbs && !empty($file.thumbnail)) || $file.isdir || ($profile->show_thumbs && $file.is_thumb)} no-background{/if}">
 							{if !$file.isdir && $profile->can_delete && !$file.isparent}
 								<span class="filepicker-delete filepicker-cmd cmsms-fp-delete" data-cmd="del" title="{$mod->Lang('delete')}">
@@ -83,12 +83,12 @@
 							{/if}
 							{if $file.isdir}
 								<a class="icon-no-thumb" href="{$file.chdir_url}" title="{if $file.isdir}{$mod->Lang('changedir')}: {/if}{$file.name}"><i class="cmsms-fp-folder-close"></i></a>
-							{elseif $profile->show_thumbs && !empty($file.thumbnail)}
-								<a class="filepicker-file-action js-trigger-insert" href="{$file.relurl}" title="{$file.name}">{$file.thumbnail}</a>
+							{elseif $profile->show_thumbs && !empty($file.thumbnail)}{* NOTE .relurl alone is useless for retrieving/recording a selected item via the js filepicker widget *}
+								<a class="filepicker-file-action js-trigger-insert" href="{$file.relurl}" title="{$file.name}" data-fb-fileurl="{$file.fullurl}">{$file.thumbnail}</a>
 							{elseif $profile->show_thumbs && $file.is_thumb}
-								<a class="filepicker-file-action js-trigger-insert" href="{$file.relurl}" title="{$file.name}"><img src="{$file.fullurl}" alt="{$file.name}"></a>
+								<a class="filepicker-file-action js-trigger-insert" href="{$file.relurl}" title="{$file.name}" data-fb-fileurl="{$file.fullurl}"><img src="{$file.fullurl}" alt="{$file.name}"></a>
 							{else}
-								<a class="filepicker-file-action js-trigger-insert icon-no-thumb" title="{$file.name}" href="{$file.relurl}">
+								<a class="filepicker-file-action js-trigger-insert icon-no-thumb" href="{$file.relurl}" title="{$file.name}" data-fb-fileurl="{$file.fullurl}">
 									{if $file.filetype == 'image'}
 										<i class="cmsms-fp-picture"></i>
 									{elseif $file.filetype == 'video'}
@@ -108,8 +108,8 @@
 								<h4 class="filepicker-file-title">
 								{if $file.isdir}
 									<a class="filepicker-dir-action" href="{$file.chdir_url}" title="{if $file.isdir}{$mod->Lang('changedir')}: {/if}{$file.name}">{$file.name}</a>
-								{else}
-									<a class="filepicker-file-action js-trigger-insert" href="{$file.relurl}" title="{if $file.isdir}{$mod->Lang('changedir')}: {/if}{$file.name}" data-fb-filetype="{$file.filetype}">{$file.name}</a>
+								{else}{* NOTE see .relurl comment above *}
+									<a class="filepicker-file-action js-trigger-insert" href="{$file.relurl}" title="{if $file.isdir}{$mod->Lang('changedir')}: {/if}{$file.name}" data-fb-filetype="{$file.filetype}" data-fb-fileurl="{$file.fullurl}">{$file.name}</a>
 								{/if}
 								</h4>
 							</div>
