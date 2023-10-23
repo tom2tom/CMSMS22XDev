@@ -10,6 +10,7 @@ Various places
 Core - General
  - Corrected filter applied to $_GET, $_SERVER at the start of each request.
  - Corrected page-selector widget operation.
+ - BR #12647 Incorrect default-action value
  - BR #12657 {content_module} tag property-collision
  - Validate entered bookmark-URLs.
  - Deprecated use of PHP function umask();
