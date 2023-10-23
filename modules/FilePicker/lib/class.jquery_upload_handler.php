@@ -284,7 +284,7 @@ abstract class jquery_upload_handler
 
     public function get() {
         $file_name = isset($_REQUEST['file']) ?
-            basename(stripslashes($_REQUEST['file'])) : null;
+            basename(stripslashes($_REQUEST['file'])) : '';
         if ($file_name) {
             $info = $this->get_file_object($file_name);
         } else {
@@ -307,7 +307,7 @@ abstract class jquery_upload_handler
         }
 
         $upload = isset($_FILES[$this->options['param_name']]) ?
-            $_FILES[$this->options['param_name']] : null;
+            $_FILES[$this->options['param_name']] : [];
         $info = array();
         if ($upload && is_array($upload['tmp_name'])) {
             foreach ($upload['tmp_name'] as $index => $value) {
@@ -315,7 +315,7 @@ abstract class jquery_upload_handler
                     $upload['tmp_name'][$index],
                     isset($_SERVER['HTTP_X_FILE_NAME']) ?
                         $_SERVER['HTTP_X_FILE_NAME'] : $upload['name'][$index],
-                    $total_file_size ? $total_file_size : $upload['size'][$index],
+                    $total_file_size ?: $upload['size'][$index],
                     isset($_SERVER['HTTP_X_FILE_TYPE']) ?
                         $_SERVER['HTTP_X_FILE_TYPE'] : $upload['type'][$index],
                     $upload['error'][$index]
@@ -324,11 +324,11 @@ abstract class jquery_upload_handler
             }
         } elseif ($upload || isset($_SERVER['HTTP_X_FILE_NAME'])) {
             $res = $this->handle_file_upload(
-                isset($upload['tmp_name']) ? $upload['tmp_name'] : null,
-                isset($_SERVER['HTTP_X_FILE_NAME']) ? $_SERVER['HTTP_X_FILE_NAME'] : (isset($upload['name']) ? isset($upload['name']) : null),
-                $total_file_size ? $total_file_size : $upload['size'],
-                isset($_SERVER['HTTP_X_FILE_TYPE']) ? $_SERVER['HTTP_X_FILE_TYPE'] : (isset($upload['type']) ? isset($upload['type']) : null),
-                isset($upload['error']) ? $upload['error'] : null
+                isset($upload['tmp_name']) ? $upload['tmp_name'] : '',
+                isset($_SERVER['HTTP_X_FILE_NAME']) ? $_SERVER['HTTP_X_FILE_NAME'] : (isset($upload['name']) ? $upload['name'] : ''),
+                $total_file_size ?: $upload['size'],
+                isset($_SERVER['HTTP_X_FILE_TYPE']) ? $_SERVER['HTTP_X_FILE_TYPE'] : (isset($upload['type']) ? $upload['type'] : ''),
+                isset($upload['error']) ? $upload['error'] : ''
             );
             $info[] = $res;
         }
@@ -336,7 +336,7 @@ abstract class jquery_upload_handler
         header('Vary: Accept');
         $json = json_encode($info);
         $redirect = isset($_REQUEST['redirect']) ?
-            stripslashes($_REQUEST['redirect']) : null;
+            stripslashes($_REQUEST['redirect']) : '';
         if ($redirect) {
             header('Location: '.sprintf($redirect, rawurlencode($json)));
             return;
@@ -352,7 +352,7 @@ abstract class jquery_upload_handler
 
     public function delete() {
         $file_name = isset($_REQUEST['file']) ?
-            basename(stripslashes($_REQUEST['file'])) : null;
+            basename(stripslashes($_REQUEST['file'])) : '';
         $file_path = $this->options['upload_dir'].$file_name;
         $success = is_file($file_path) && $file_name[0] !== '.' && unlink($file_path);
         if ($success) {

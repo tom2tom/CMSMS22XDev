@@ -45,7 +45,7 @@ $passwordagain     = isset($_POST["passwordagain"]) ? trim($_POST["passwordagain
 $firstname         = isset($_POST["firstname"]) ? cleanValue($_POST["firstname"]) : '';
 $lastname          = isset($_POST["lastname"]) ? cleanValue($_POST["lastname"]) : '';
 $email             = isset($_POST["email"]) ? trim(strip_tags($_POST["email"])) : '';
-$copyusersettings  = isset($_POST['copyusersettings']) ? (int)$_POST['copyusersettings'] : null;
+$copyusersettings  = isset($_POST['copyusersettings']) ? (int)$_POST['copyusersettings'] : 0;
 $sel_groups        = (isset($_POST['sel_groups']) && is_array($_POST['sel_groups'])) ? $_POST['sel_groups'] : $sel_groups;
 
 /*--------------------

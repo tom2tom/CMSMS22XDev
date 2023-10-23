@@ -771,7 +771,7 @@ class CmsLayoutStylesheet
 				}
 
 				$id = $found['id'];
-				$tmp = self::_load_from_data($found,(isset($designs_by_css[$id]))?$designs_by_css[$id]:null);
+				$tmp = self::_load_from_data($found,(isset($designs_by_css[$id]))?$designs_by_css[$id]:[]);
 				if( is_object($tmp) ) $out[] = $tmp;
 			}
 		}

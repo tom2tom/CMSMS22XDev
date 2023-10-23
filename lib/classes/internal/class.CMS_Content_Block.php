@@ -224,13 +224,13 @@ final class CMS_Content_Block
             $modulename = '';
             $action = '';
             $inline = false;
-            $assign = (isset($params['assign'])) ? trim($params['assign']) : null;
+            $assign = (isset($params['assign'])) ? trim($params['assign']) : '';
             if (isset($_REQUEST['mact'])) {
                 $ary = explode(',', cms_htmlentities($_REQUEST['mact']), 4);
-                $modulename = (isset($ary[0])?$ary[0]:'');
-                $id = (isset($ary[1])?$ary[1]:'');
-                $action = (isset($ary[2])?$ary[2]:'');
-                $inline = (isset($ary[3]) && $ary[3] == 1?true:false);
+                $modulename = ($ary[0])?:'';
+                $id = (!empty($ary[1])?$ary[1]:'');
+                $action = (!empty($ary[2])?$ary[2]:'');
+                $inline = !empty($ary[3]);
             }
 
             //Only consider doing module processing if
@@ -404,7 +404,7 @@ final class CMS_Content_Block
         if( is_object($content_obj) ) {
             $result = $content_obj->GetPropertyValue($block);
             if( $result == -1 ) $result = '';
-            $module = isset($params['module']) ? trim($params['module']) : null;
+            $module = isset($params['module']) ? trim($params['module']) : '';
             if( $module ) {
                 $mod = \cms_utils::get_module($module);
                 if( is_object($mod) ) $result = $mod->RenderContentBlockField($block,$result,$params,$content_obj);

@@ -863,7 +863,7 @@ listable,created,modified) VALUES (?,?,?,?,?,?,?,?,?,?)';
 			$dbr = $db->GetArray($query);
 			if( is_array($dbr) && count($dbr) ) {
 				foreach( $dbr as $row ) {
-					self::_load_from_data($row,(isset($designs_by_tpl[$row['id']]))?$designs_by_tpl[$row['id']]:null);
+					self::_load_from_data($row,(isset($designs_by_tpl[$row['id']]))?$designs_by_tpl[$row['id']]:[]);
 				}
 			}
 		}
