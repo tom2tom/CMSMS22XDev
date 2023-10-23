@@ -39,13 +39,13 @@ $smarty = \Smarty_CMS::get_instance();
 
 $id = 'm1_';
 $module = '';
-$action = 'defaultadmin';
+$action = 'defaultadmin'; // or 'default' if this is ultimately a frontend request
 $suppressOutput = false;
 if (isset($_REQUEST['mact'])) {
     $ary = explode(',', cms_htmlentities($_REQUEST['mact']), 4);
-    $module = (isset($ary[0])?$ary[0]:'');
-    $id = (isset($ary[1])?$ary[1]:'m1_');
-    $action = (isset($ary[2])?$ary[2]:'');
+    if ($ary[0]) $module = $ary[0];
+    if (!empty($ary[1])) $id = $ary[1];
+    if (!empty($ary[2])) $action = $ary[2];
 }
 
 $modinst = ModuleOperations::get_instance()->get_module_instance($module);
