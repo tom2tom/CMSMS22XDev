@@ -299,7 +299,7 @@ abstract class jquery_upload_handler
             return $this->delete();
         }
 
-        $total_file_size = (isset($_SERVER['HTTP_X_FILE_NAME']) && isset($_SERVER['HTTP_X_FILE_SIZE']) ) ? (int) $_SERVER['HTTP_X_FILE_SIZE'] : null;
+        $total_file_size = (isset($_SERVER['HTTP_X_FILE_NAME']) && isset($_SERVER['HTTP_X_FILE_SIZE']) ) ? (int) $_SERVER['HTTP_X_FILE_SIZE'] : 0;
         if( !$total_file_size ) {
             $content_range_header = isset($_SERVER['HTTP_CONTENT_RANGE']) ? trim($_SERVER['HTTP_CONTENT_RANGE']) : '';
             $content_range = $content_range_header ? preg_split('/[^0-9]+/', $content_range_header) : [];
