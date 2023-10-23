@@ -114,7 +114,7 @@ $accept_file = function(\CMSMS\FilePickerProfile $profile,$cwd,$path,$filename) 
     }
     if( is_dir($fullpath) ) {
         if( !$profile->show_hidden && ( startswith($filename,'.') || startswith($filename,'_') ) ) return FALSE;
-        if( !$assistant->is_relative( $fullpath ) ) return FALSE;
+        if( !$assistant->is_relative($fullpath) ) return FALSE;
         return TRUE;
     }
     $res = $this->is_acceptable_filename( $profile, $filename );
@@ -175,7 +175,11 @@ while( false !== ($filename = $dh->read()) ) {
         if( $filename == '..' ) $file['isparent'] = true;
         $file['relurl'] = $file['fullurl'];
     } else {
-        $file['relurl'] = $assistant->to_relative($fullname);
+        //NOTE relative urls for selected items are pretty much useless
+        //unless a suitable base-url (== func(profile->top) or assistant->_topurl or ? )
+        //is available in context but such base-url is typically absent
+        $relpath = $assistant->to_relative($fullname);
+        $file['relurl'] = strtr($relpath,'\\','/');
     }
     $file['ext'] = strtolower(substr($filename,strrpos($filename,".")+1));
     $file['is_image'] = $this->_typehelper->is_image($fullname);
