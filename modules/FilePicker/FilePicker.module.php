@@ -23,13 +23,17 @@
 #-------------------------------------------------------------------------
 # END_LICENSE
 
-use FilePicker\TemporaryProfileStorage;
-//use CMSMS\FilePickerProfile as Profile;
+use CMSMS\FilePickerInterface;
+use CMSMS\FilePickerProfile as Profile;
 use CMSMS\FileType;
+use CMSMS\FileTypeHelper;
+use FilePicker\PathAssistant;
+use FilePicker\ProfileDAO;
+use FilePicker\TemporaryProfileStorage;
 
 require_once(__DIR__.'/lib/class.ProfileDAO.php');
 
-final class FilePicker extends \CMSModule implements CMSMS\FilePickerInterface
+final class FilePicker extends CMSModule implements FilePickerInterface
 {
     protected $_dao;
     protected $_typehelper;
@@ -37,8 +41,8 @@ final class FilePicker extends \CMSModule implements CMSMS\FilePickerInterface
     public function __construct()
     {
         parent::__construct();
-        $this->_dao = new \FilePicker\ProfileDAO( $this );
-        $this->_typehelper = new \CMSMS\FileTypeHelper( \cms_config::get_instance() );
+        $this->_dao = new ProfileDAO( $this );
+        $this->_typehelper = new FileTypeHelper( cms_config::get_instance() );
     }
 
     private function _encodefilename($filename)
@@ -51,7 +55,7 @@ final class FilePicker extends \CMSModule implements CMSMS\FilePickerInterface
         return base64_decode($encodedfilename . '==');
     }
 
-    function VisibleToAdminUser()
+    public function VisibleToAdminUser()
     {
         return $this->CheckPermission('Modify Site Preferences');
     }
@@ -62,10 +66,6 @@ final class FilePicker extends \CMSModule implements CMSMS\FilePickerInterface
         if( is_object($ret) ) return $ret;
         return cmsms()->GetSmarty();
     }
-
-    /**
-     * end of private methods
-     */
 
     public function GetAdminDescription() { return $this->Lang('moddescription'); }
     public function GetAdminSection() { return 'extensions'; }
@@ -99,6 +99,7 @@ final class FilePicker extends \CMSModule implements CMSMS\FilePickerInterface
         $profile_name = get_parameter_value($params,'profile');
         $profile = $this->get_profile_or_default($profile_name, '', $uid);
         if( $params ) {
+            unset($params['profile']);
             unset($params['top']); // no top-folder change allowed here TODO any other relevant limitations?
             $profile = $profile->overrideWith($params);
         }
@@ -108,7 +109,16 @@ final class FilePicker extends \CMSModule implements CMSMS\FilePickerInterface
     public function GetContentBlockFieldValue($blockName, $blockParams, $inputParams, ContentBase $content_obj)
     {
         if( $blockName && isset($inputParams[$blockName]) ) {
-            return $inputParams[$blockName];
+            //return $inputParams[$blockName];
+            // derive absolute URL from relative $inputParams[$blockName] TODO OR in RenderContentBlockField()?
+            $config = cms_config::get_instance();
+            $uid = get_userid(FALSE);
+            $profile_name = get_parameter_value($blockParams, 'profile');
+            $profile = $this->get_profile_or_default($profile_name, '', $uid);
+            $topdir = $profile->top;
+            if( !$topdir ) $topdir = $config['uploads_path'];
+            $assistant = new \FilePicker\PathAssistant($config, $topdir);
+            return $assistant->get_top_url().'/'.$inputParams[$blockName];
         }
         return '';
     }
@@ -116,14 +126,16 @@ final class FilePicker extends \CMSModule implements CMSMS\FilePickerInterface
     public function ValidateContentBlockFieldValue($blockName, $value, $blockparams, ContentBase $content_obj)
     {
         if( !$blockName || !$value ) { return lang('informationmissing'); }
-        //TODO additional relevant checks
+        //TODO additional relevant checks e.g. filepath is readable
         return '';
     }
 
     public function RenderContentBlockField($blockName, $value, $blockparams, ContentBase $content_obj)
     {
-        if( !$blockName ) return '';
-        return $value;//TODO more than a placeholder
+        if( $blockName ) {
+            return (string)$value;//TODO e.g. tailor url-path separators, ensure url is absolute
+        }
+        return '';
     }
 
     public function GetFileList($path = '')
@@ -146,7 +158,7 @@ final class FilePicker extends \CMSModule implements CMSMS\FilePickerInterface
         $profile = $this->_dao->loadDefault();
         if( $profile ) return $profile;
 
-        $profile = new \CMSMS\FilePickerProfile();
+        $profile = new Profile();
         return $profile;
     }
 
@@ -155,7 +167,7 @@ final class FilePicker extends \CMSModule implements CMSMS\FilePickerInterface
         return $this->create_url('m1_','filepicker');
     }
 
-    public function get_html( $name, $value, \CMSMS\FilePickerProfile $profile, $required = false )
+    public function get_html( $name, $value, Profile $profile, $required = false )
     {
         $_instance = 'i'.uniqid();
         if( $value === '-1' ) $value = '';
@@ -211,7 +223,7 @@ final class FilePicker extends \CMSModule implements CMSMS\FilePickerInterface
     }
 
     // INTERNAL UTILITY FUNCTION
-    public function is_acceptable_filename( \CMSMS\FilePickerProfile $profile, $filename )
+    public function is_acceptable_filename( Profile $profile, $filename )
     {
         $filename = trim($filename);
         $filename = basename($filename);  // in case it's a path
@@ -223,30 +235,30 @@ final class FilePicker extends \CMSModule implements CMSMS\FilePickerInterface
         if( $profile->exclude_prefix && startswith( $filename, $profile->exclude_prefix) ) return FALSE;
 
         switch( $profile->type ) {
-        case \CMSMS\FileType::TYPE_IMAGE:
+        case FileType::TYPE_IMAGE:
             return ( $this->_typehelper->is_image( $filename ) );
 
-        case \CMSMS\FileType::TYPE_AUDIO:
+        case FileType::TYPE_AUDIO:
             return ( $this->_typehelper->is_audio( $filename ) );
 
-        case \CMSMS\FileType::TYPE_VIDEO:
+        case FileType::TYPE_VIDEO:
             return ( $this->_typehelper->is_video( $filename ) );
 
-        case \CMSMS\FileType::TYPE_MEDIA:
+        case FileType::TYPE_MEDIA:
             return ( $this->_typehelper->is_media( $filename) );
 
-        case \CMSMS\FileType::TYPE_XML:
+        case FileType::TYPE_XML:
             return ( $this->_typehelper->is_xml( $filename) );
 
-        case \CMSMS\FileType::TYPE_DOCUMENT:
+        case FileType::TYPE_DOCUMENT:
             return ( $this->_typehelper->is_document( $filename) );
 
-        case \CMSMS\FileType::TYPE_ARCHIVE:
+        case FileType::TYPE_ARCHIVE:
             return ( $this->_typehelper->is_archive( $filename ) );
 
         default:
             if( $this->_typehelper->is_executable( $filename ) ) {
-                $config = \cms_config::get_instance();
+                $config = cms_config::get_instance();
                 if( !$config['developer_mode'] ) {
                     return FALSE;
                 }
