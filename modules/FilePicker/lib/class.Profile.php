@@ -66,13 +66,15 @@ class Profile extends FilePickerProfile
         case 'relative_top':
         case 'reltop':
             // parent top is checked for relative or absolute
-            // return relative to uploads path
+            // if relative, return relative to uploads path
             $val = parent::__get('top');
-            if( startswith($val,'/') ) {
+            if( $val && preg_match('~^ *(?:\/|\\\\|\w:\\\\|\w:\/)~',$val) ) { //general test for absolute path
                 $config = cms_config::get_instance();
                 $uploads_path = $config['uploads_path'];
-                if( startswith( $val, $uploads_path ) ) $val = substr($val,strlen($uploads_path));
-                if( startswith( $val, '/') ) $val = substr($val,1);
+                if( startswith( $val, $uploads_path ) ) {
+                    $val = substr($val,strlen($uploads_path));
+                    $val = ltrim($val, ' \\/');
+                }
             }
             return $val;
 
@@ -80,9 +82,14 @@ class Profile extends FilePickerProfile
             // parent top is checked for relative or absolute
             // if relative, prepend uploads path
             $val = parent::__get('top');
-            if( !startswith($val,'/') ) {
+            if( !$val || !preg_match('~^ *(?:\/|\\\\|\w:\\\\|\w:\/)~',$val) ) { //general test for non-absolute path
                 $config = cms_config::get_instance();
-                $val = $config['uploads_path'].'/'.$val;
+                if( $val ) {
+                    $val = $config['uploads_path'].DIRECTORY_SEPARATOR.$val;
+                }
+                else {
+                    $val = $config['uploads_path'];
+                }
             }
             return $val;
 
