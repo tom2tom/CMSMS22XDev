@@ -1,10 +1,11 @@
 <ul>
  <li>v2.2.6 (CMSMS 2.2.19)
   <ul>
+   <li>Depends on FilePicker, not FileManager</li>
+   <li>Deprecate function mt_jsbool</li>
    <li>Update TinyMCE to version 4.9.11</li>
    <li>Add plugins: help, directionality, nonbreaking</li>
    <li>Fix configuration: element_format, schema</li>
-   <li>Deprecate function mt_jsbool</li>
   </ul>
  </li>
  <li>v2.2.5 (CMSMS 2.2.15)<br>
