@@ -24,7 +24,7 @@ interface FilePickerInterface
      * @param string $profile_name the desired profile name to load
      * @param string $dir A suitable top location
      * @param int $uid An optional admin user id.
-     * @return FilePickerProfile
+     * @return \FilePicker\Profile
      */
     public function get_profile_or_default( $profile_name, $dir = '', $uid = 0 );
 
@@ -32,7 +32,7 @@ interface FilePickerInterface
      * Get the default profile for the specified data.
      * @param string $dir A suitable top location
      * @param int $uid An optional admin user id.
-     * @return FilePickerProfile
+     * @return \FilePicker\Profile
      */
     public function get_default_profile( $dir = '', $uid = 0 );
 
@@ -48,7 +48,8 @@ interface FilePickerInterface
      *
      * @param string $name The name for the input field.
      * @param string $value the current value for the input filed
-     * @param FilePickerProfile $profile The profile to use when building the filepicker interface.
+     * @param \FilePicker\Profile $profile The profile to use when building the filepicker interface.
+     * @return string
      */
-    public function get_html( $name, $value, \CMSMS\FilePickerProfile $profile );
-} // end of class
+    public function get_html( $name, $value, \FilePicker\Profile $profile );
+} // end of interface
