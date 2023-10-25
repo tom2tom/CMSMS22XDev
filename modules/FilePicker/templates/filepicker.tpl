@@ -83,12 +83,12 @@
 							{/if}
 							{if $file.isdir}
 								<a class="icon-no-thumb" href="{$file.chdir_url}" title="{if $file.isdir}{$mod->Lang('changedir')}: {/if}{$file.name}"><i class="cmsms-fp-folder-close"></i></a>
-							{elseif $profile->show_thumbs && !empty($file.thumbnail)}{* NOTE .relurl alone is useless for retrieving/recording a selected item via the js filepicker widget *}
-								<a class="filepicker-file-action js-trigger-insert" href="{$file.relurl}" title="{$file.name}" data-fb-fileurl="{$file.fullurl}">{$file.thumbnail}</a>
+							{elseif $profile->show_thumbs && !empty($file.thumbnail)}
+								<a class="filepicker-file-action js-trigger-insert" href="{$file.relurl}" title="{$file.name}">{$file.thumbnail}</a>
 							{elseif $profile->show_thumbs && $file.is_thumb}
-								<a class="filepicker-file-action js-trigger-insert" href="{$file.relurl}" title="{$file.name}" data-fb-fileurl="{$file.fullurl}"><img src="{$file.fullurl}" alt="{$file.name}"></a>
+								<a class="filepicker-file-action js-trigger-insert" href="{$file.relurl}" title="{$file.name}"><img src="{$file.fullurl}" alt="{$file.name}"></a>
 							{else}
-								<a class="filepicker-file-action js-trigger-insert icon-no-thumb" href="{$file.relurl}" title="{$file.name}" data-fb-fileurl="{$file.fullurl}">
+								<a class="filepicker-file-action js-trigger-insert icon-no-thumb" href="{$file.relurl}" title="{$file.name}">
 									{if $file.filetype == 'image'}
 										<i class="cmsms-fp-picture"></i>
 									{elseif $file.filetype == 'video'}
@@ -108,8 +108,8 @@
 								<h4 class="filepicker-file-title">
 								{if $file.isdir}
 									<a class="filepicker-dir-action" href="{$file.chdir_url}" title="{if $file.isdir}{$mod->Lang('changedir')}: {/if}{$file.name}">{$file.name}</a>
-								{else}{* NOTE see .relurl comment above *}
-									<a class="filepicker-file-action js-trigger-insert" href="{$file.relurl}" title="{if $file.isdir}{$mod->Lang('changedir')}: {/if}{$file.name}" data-fb-filetype="{$file.filetype}" data-fb-fileurl="{$file.fullurl}">{$file.name}</a>
+								{else}
+									<a class="filepicker-file-action js-trigger-insert" href="{$file.relurl}" title="{if $file.isdir}{$mod->Lang('changedir')}: {/if}{$file.name}" data-fb-filetype="{$file.filetype}">{$file.name}</a>
 								{/if}
 								</h4>
 							</div>
@@ -150,8 +150,8 @@
 			cwd: '{$cwd}',
 			sig: '{$sig}',
 			inst: '{$inst}',
-			lang: {$lang_js},
-			prefix: '{$profile->prefix}'
+			prefix: '{$prefix}',
+			lang: {$lang_js}
 			});
 		});
 		</script>
