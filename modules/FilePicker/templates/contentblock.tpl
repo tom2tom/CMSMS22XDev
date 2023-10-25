@@ -1,16 +1,16 @@
 <div class="cmsfp_cont">
-  {* the instance is important, it uniquely identifies this field, and will tie it to the proper popup *}
-  <input type="text" name="{$blockName}" value="{$value}" data-cmsfp-instance="{$instance}" size="80">
+{* the instance uniquely identifies this field, and associates it with the corresponding popup *}
+  <input type="text" id="{$instance}" name="{$blockName}" value="{$value}" data-cmsfp-instance="{$instance}" size="{if !empty($inputlength)}{$inputlength}{else}80{/if}">
   <script>
   $(function() {
-   var sel = '[data-cmsfp-instance="{$instance}"]';
-   $(sel).filepicker({
-      param_sig: '{$sig}',
-      title: '{$title}',
-      required: {if $required}1{else}0{/if},
+    $('#{$instance}').filepicker({
+      title: "{$title}",
       remove_title: "{$mod->Lang('clear')}",
-      remove_label: "{$mod->Lang('clear')}"
+      remove_label: "{$mod->Lang('clear')}",
+      required: {if $required}true{else}false{/if},
+      param_sig: "{$sig}",
+      param_useprefix: true
    });
   });
   </script>
-</div>{* .cmsfp *}
+</div>
