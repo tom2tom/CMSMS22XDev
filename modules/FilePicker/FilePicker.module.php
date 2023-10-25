@@ -24,14 +24,14 @@
 # END_LICENSE
 
 use CMSMS\FilePickerInterface;
-use CMSMS\FilePickerProfile as Profile;
 use CMSMS\FileType;
 use CMSMS\FileTypeHelper;
 use FilePicker\PathAssistant;
+use FilePicker\Profile;
 use FilePicker\ProfileDAO;
 use FilePicker\TemporaryProfileStorage;
 
-require_once(__DIR__.'/lib/class.ProfileDAO.php');
+require_once cms_join_path(__DIR__, 'lib', 'class.ProfileDAO.php');
 
 final class FilePicker extends CMSModule implements FilePickerInterface
 {
@@ -96,7 +96,7 @@ final class FilePicker extends CMSModule implements FilePickerInterface
             $adding = true; //TODO no profile-relevance
         }
         $uid = get_userid(FALSE);
-        $profile_name = get_parameter_value($params,'profile');
+        $profile_name = get_parameter_value($params, 'profile');
         $profile = $this->get_profile_or_default($profile_name, '', $uid);
         if( $params ) {
             unset($params['profile']);
@@ -109,18 +109,20 @@ final class FilePicker extends CMSModule implements FilePickerInterface
     public function GetContentBlockFieldValue($blockName, $blockParams, $inputParams, ContentBase $content_obj)
     {
         if( $blockName && isset($inputParams[$blockName]) ) {
-            //return $inputParams[$blockName];
-            // derive absolute URL from relative $inputParams[$blockName] TODO OR in RenderContentBlockField()?
+            if( startswith($inputParams[$blockName], CMS_ROOT_URL) ) {
+                return $inputParams[$blockName];
+            }
+            // derive absolute URL from relative (should never be needed)
             $config = cms_config::get_instance();
             $uid = get_userid(FALSE);
             $profile_name = get_parameter_value($blockParams, 'profile');
             $profile = $this->get_profile_or_default($profile_name, '', $uid);
             $topdir = $profile->top;
             if( !$topdir ) $topdir = $config['uploads_path'];
-            $assistant = new \FilePicker\PathAssistant($config, $topdir);
+            $assistant = new PathAssistant($config, $topdir);
             return $assistant->get_top_url().'/'.$inputParams[$blockName];
         }
-        return '';
+        return ''; // should never happen
     }
 
     public function ValidateContentBlockFieldValue($blockName, $value, $blockparams, ContentBase $content_obj)
@@ -164,7 +166,7 @@ final class FilePicker extends CMSModule implements FilePickerInterface
 
     public function get_browser_url()
     {
-        return $this->create_url('m1_','filepicker');
+        return $this->create_url('m1_', 'filepicker');
     }
 
     public function get_html( $name, $value, Profile $profile, $required = false )
@@ -175,39 +177,40 @@ final class FilePicker extends CMSModule implements FilePickerInterface
         // store the profile as a 'useonce' and add it's signature to the params on the url
         $sig = TemporaryProfileStorage::set( $profile );
         $smarty = cmsms()->GetSmarty(); // $this->_GetTemplateObject();
-        $tpl_ob = $smarty->CreateTemplate($this->GetTemplateResource('contentblock.tpl'),null,null,$smarty);
-        $tpl_ob->assign('mod',$this);
-        $tpl_ob->assign('sig',$sig);
-        $tpl_ob->assign('blockName',$name);
-        $tpl_ob->assign('value',$value);
-        $tpl_ob->assign('instance',$_instance);
-        $tpl_ob->assign('profile',$profile);
-        $tpl_ob->assign('required',$required);
+        $tpl_ob = $smarty->CreateTemplate($this->GetTemplateResource('contentblock.tpl'), null, null, $smarty);
+        $tpl_ob->assign('mod', $this);
+        $tpl_ob->assign('sig', $sig);
+        $tpl_ob->assign('blockName', $name);
+        $tpl_ob->assign('value', $value);
+        $tpl_ob->assign('instance', $_instance);
+        $tpl_ob->assign('profile', $profile);
+        $tpl_ob->assign('required', $required);
+        //TODO tailored useprefix variable for template & backend js, without clobbering $profile
         switch( $profile->type ) {
         case FileType::TYPE_IMAGE:
-            $tpl_ob->assign('title',$this->Lang('select_an_image'));
+            $tpl_ob->assign('title', $this->Lang('select_an_image'));
             break;
         case FileType::TYPE_AUDIO:
-            $tpl_ob->assign('title',$this->Lang('select_an_audio_file'));
+            $tpl_ob->assign('title', $this->Lang('select_an_audio_file'));
             break;
         case FileType::TYPE_VIDEO:
-            $tpl_ob->assign('title',$this->Lang('select_a_video_file'));
+            $tpl_ob->assign('title', $this->Lang('select_a_video_file'));
             break;
         case FileType::TYPE_MEDIA:
-            $tpl_ob->assign('title',$this->Lang('select_a_media_file'));
+            $tpl_ob->assign('title', $this->Lang('select_a_media_file'));
             break;
         case FileType::TYPE_XML:
-            $tpl_ob->assign('title',$this->Lang('select_an_xml_file'));
+            $tpl_ob->assign('title', $this->Lang('select_an_xml_file'));
             break;
         case FileType::TYPE_DOCUMENT:
-            $tpl_ob->assign('title',$this->Lang('select_a_document'));
+            $tpl_ob->assign('title', $this->Lang('select_a_document'));
             break;
         case FileType::TYPE_ARCHIVE:
-            $tpl_ob->assign('title',$this->Lang('select_an_archive_file'));
+            $tpl_ob->assign('title', $this->Lang('select_an_archive_file'));
             break;
         case FileType::TYPE_ANY:
         default:
-            $tpl_ob->assign('title',$this->Lang('select_a_file'));
+            $tpl_ob->assign('title', $this->Lang('select_a_file'));
             break;
         }
         return $tpl_ob->fetch();
@@ -230,7 +233,7 @@ final class FilePicker extends CMSModule implements FilePickerInterface
         if( !$filename ) return FALSE;
         if( endswith( $filename, '.' ) ) return FALSE;
 
-        if( !$profile->show_hidden && (startswith($filename,'.') || startswith($filename,'_') || $filename == 'index.html') ) return FALSE;
+        if( !$profile->show_hidden && (startswith($filename, '.') || startswith($filename, '_') || $filename == 'index.html') ) return FALSE;
         if( $profile->match_prefix && !startswith( $filename, $profile->match_prefix) ) return FALSE;
         if( $profile->exclude_prefix && startswith( $filename, $profile->exclude_prefix) ) return FALSE;
 
@@ -245,13 +248,13 @@ final class FilePicker extends CMSModule implements FilePickerInterface
             return ( $this->_typehelper->is_video( $filename ) );
 
         case FileType::TYPE_MEDIA:
-            return ( $this->_typehelper->is_media( $filename) );
+            return ( $this->_typehelper->is_media( $filename ) );
 
         case FileType::TYPE_XML:
-            return ( $this->_typehelper->is_xml( $filename) );
+            return ( $this->_typehelper->is_xml( $filename ) );
 
         case FileType::TYPE_DOCUMENT:
-            return ( $this->_typehelper->is_document( $filename) );
+            return ( $this->_typehelper->is_document( $filename ) );
 
         case FileType::TYPE_ARCHIVE:
             return ( $this->_typehelper->is_archive( $filename ) );
