@@ -41,8 +41,8 @@ $lang['fileview'] = 'File view';
 $lang['friendlyname'] = 'File Picker';
 
 // H
-$lang['hdr_add_profile'] = 'Add profile';
-$lang['hdr_edit_profile'] = 'Edit profile';
+$lang['hdr_add_profile'] = 'Add Profile';
+$lang['hdr_edit_profile'] = 'Edit Profile';
 $lang['HelpPopupTitle_ProfileName'] = 'Profile Name';
 $lang['HelpPopup_ProfileName'] = 'Each profile should have a simple, unique name.  Names should only contain alphanumeric characters, and/or the Underscore character.';
 $lang['HelpPopupTitle_ProfileCan_Delete'] = 'Allow deleting files';
@@ -94,7 +94,7 @@ $lang['th_last_edited'] = 'Last Edited';
 $lang['th_name'] = 'Name';
 $lang['th_reltop'] = 'Top Directory';
 $lang['title_mkdir'] = 'Create Directory';
-$lang['topdir'] = 'Top Directory';
+$lang['topdir'] = 'Top directory';
 $lang['type'] = 'Type';
 
 // U
