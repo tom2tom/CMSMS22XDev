@@ -82,8 +82,8 @@ $sanitize_fn = function (&$param) use (&$sanitize_fn)
     array_walk($param, $sanitize_fn);
   }
   else {
-    $param = preg_replace('/<[^>]*>/', '', $param);
-    return str_replace(["\0", "'", '"'], ['', '&#39;', '&#34;'], $param);
+    $tmp = preg_replace(['/<[^>]*>/', '/<\s*\?\s*php.*$/i', '/<\s*\?\s*=?.*$/'], ['', '', ''], $param);
+    return strtr($tmp, ["\0"=>'', "'"=>'&#39;', '"'=>'&#34;']);
   }
 };
 array_walk($_SERVER, $sanitize_fn);
