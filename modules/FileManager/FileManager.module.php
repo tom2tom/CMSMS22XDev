@@ -34,7 +34,7 @@ final class FileManager extends CMSModule {
     public function IsAdminOnly() { return false; }
     public function GetAdminSection() { return 'content'; }
     public function GetAdminDescription() { return $this->Lang('moddescription'); }
-    public function MinimumCMSVersion() { return "2.2.2"; }
+    public function MinimumCMSVersion() { return '2.2.2'; }
     public function InstallPostMessage() { return $this->Lang('postinstall'); }
     public function UninstallPostMessage() { return $this->Lang('uninstalled'); }
     public function UninstallPreMessage() { return $this->Lang('really_uninstall'); }
@@ -43,6 +43,16 @@ final class FileManager extends CMSModule {
     public function VisibleToAdminUser() { return $this->AccessAllowed(); }
     public function AccessAllowed() { return $this->CheckPermission("Modify Files"); }
     public function AdvancedAccessAllowed() { return $this->CheckPermission('Use FileManager Advanced',0); }
+
+    public function HasCapability($capability, $params = array()) {
+        switch( $capability ) {
+            case 'plugin': //aka CmsCoreCapabilities::PLUGIN_MODULE
+            case 'upload':
+                return true;
+            default:
+                return false;
+        }
+    }
 
     public function GetFileIcon($extension,$isdir=false) {
         if (empty($extension)) $extension = '---'; // hardcode extension to something.
@@ -199,8 +209,7 @@ final class FileManager extends CMSModule {
         return $result;
     }
 
-    protected function _output_header_javascript()
-    {
+    protected function _output_header_javascript() {
         $out = '';
         $urlpath = $this->GetModuleURLPath()."/js";
         $jsfiles = array('jquery-file-upload/jquery.iframe-transport.js');
@@ -231,25 +240,24 @@ final class FileManager extends CMSModule {
         if( sha1($this->config['dbpassword'].__FILE__.$filename) == $sig ) return $filename;
     }
 
-  public function GetAdminMenuItems()
-  {
-      $out = array();
+    public function GetAdminMenuItems() {
+        $out = array();
 
-      if( $this->CheckPermission('Modify Files') ) {
-          $out[] = CmsAdminMenuItem::from_module($this);
-      }
+        if( $this->CheckPermission('Modify Files') ) {
+            $out[] = CmsAdminMenuItem::from_module($this);
+        }
 
-      if( $this->CheckPermission('Modify Site Preferences') ) {
-          $obj = new CmsAdminMenuItem();
-          $obj->module = $this->GetName();
-          $obj->section = 'siteadmin';
-          $obj->title = $this->Lang('title_filemanager_settings');
-          $obj->description = $this->Lang('desc_filemanager_settings');
-          $obj->action = 'admin_settings';
-          $obj->url = $this->create_url('m1_',$obj->action);
-          $out[] = $obj;
-      }
+        if( $this->CheckPermission('Modify Site Preferences') ) {
+            $obj = new CmsAdminMenuItem();
+            $obj->module = $this->GetName();
+            $obj->section = 'siteadmin';
+            $obj->title = $this->Lang('title_filemanager_settings');
+            $obj->description = $this->Lang('desc_filemanager_settings');
+            $obj->action = 'admin_settings';
+            $obj->url = $this->create_url('m1_',$obj->action);
+            $out[] = $obj;
+        }
 
-      return $out;
-  }
+        return $out;
+    }
 } // end of class
