@@ -4,7 +4,7 @@
 		&nbsp;
 	</div>
 	{if count($items)}
-		<a href="javascript:void(0);" class="open" title="{lang('notifications')}"><span>{$cnt=$items|@count}{if $items|@count > 1}{lang('notifications_to_handle',$cnt)}{else}{lang('notification_to_handle',$cnt)}{/if}</span></a>
+		<a href="javascript:void(0);" class="open" title="{lang('notifications')}"><span>{$cnt=count($items)}{if $cnt > 1}{lang('notifications_to_handle',$cnt)}{else}{lang('notification_to_handle',$cnt)}{/if}</span></a>
 		<div class="alert-dialog dialog" role="alertdialog" title="{lang('alerts')}">
 			<ul>
 			{foreach $items as $one}
