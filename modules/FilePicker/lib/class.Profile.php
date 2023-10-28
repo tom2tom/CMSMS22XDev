@@ -76,7 +76,7 @@ class Profile extends FilePickerProfile
                     $val = ltrim($val, ' \\/');
                 }
             }
-            return $val;
+            return $val; //empty or non-absolute
 
         case 'top':
             // parent top is checked for relative or absolute
@@ -91,7 +91,7 @@ class Profile extends FilePickerProfile
                     $val = $config['uploads_path'];
                 }
             }
-            return $val;
+            return $val; // absolute
 
         default:
             return parent::__get($key);
