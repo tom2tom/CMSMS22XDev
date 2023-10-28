@@ -115,7 +115,7 @@
 							</div>
 							<div class="filepicker-file-details visuallyhidden">
 								<span class="filepicker-file-dimension">
-									{$file.dimensions}
+									{if !$file.isdir}{$file.dimensions}{/if}
 								</span>
 								<span class="filepicker-file-size">
 									{if !$file.isdir}{$file.size}{/if}
