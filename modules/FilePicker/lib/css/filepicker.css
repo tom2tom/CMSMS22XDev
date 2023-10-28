@@ -177,7 +177,6 @@ img {
 	font-size:18px;
 }
 
-
 .filepicker-navbar {
 	position: fixed;
 	width: 100%;
@@ -544,7 +543,6 @@ img {
 .list-view.filepicker-list a:hover {
 	text-decoration:underline;
 }
-
 
 .filepicker-delete {
 	cursor:pointer;
