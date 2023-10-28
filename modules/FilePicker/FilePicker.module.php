@@ -68,24 +68,36 @@ final class FilePicker extends CMSModule implements FilePickerInterface
     }
 
     public function GetAdminDescription() { return $this->Lang('moddescription'); }
-    public function GetAdminSection() { return 'extensions'; }
-    public function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.htm'); }
+//  public function GetAdminSection() { return 'extensions'; } default
+    public function GetChangeLog() { return file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'changelog.htm'); }
+    public function GetDependencies() { return array('FileManager' => '0.4'); }
     public function GetFriendlyName() { return $this->Lang('friendlyname'); }
     public function GetHelp() { return $this->Lang('help'); }
     public function GetVersion() { return '1.0.7'; }
     public function HasAdmin() { return TRUE; }
-    public function IsPluginModule() { return FALSE; }
+//  public function IsAdminOnly() { return FALSE; } default
+//  public function IsPluginModule() { return FALSE; } default
+    public function MinimumCMSVersion() { return '2.2'; }
 
     public function HasCapability( $capability, $params = array() )
     {
         switch( $capability ) {
-        case 'contentblocks':
-        case 'filepicker':
-        case 'upload':
-            return TRUE;
-        default:
-            return FALSE;
+            case 'contentblocks': // aka CmsCoreCapabilities::CONTENT_BLOCKS
+            case 'filepicker':
+            case 'upload':
+                return TRUE;
+            default:
+                return FALSE;
         }
+    }
+
+    public function GetAdminMenuItems()
+    {
+        $out = array();
+        if( $this->VisibleToAdminUser() ) {
+            $out[] = CmsAdminMenuItem::from_module($this);
+        }
+        return $out;
     }
 
     public function GetContentBlockFieldInput($blockName, $value, $params, $adding, ContentBase $content_obj)
@@ -166,10 +178,10 @@ final class FilePicker extends CMSModule implements FilePickerInterface
 
     public function get_browser_url()
     {
-        return $this->create_url('m1_', 'filepicker');
+        return $this->create_url('m1_', 'filepicker', '', ['useprefix'=>0]); //useprefix disabled for back-compatibility
     }
 
-    public function get_html( $name, $value, Profile $profile, $required = false )
+    public function get_html( $name, $value, Profile $profile, $required = false ) //TODO support $useprefix
     {
         $_instance = 'i'.uniqid();
         if( $value === '-1' ) $value = '';
