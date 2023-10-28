@@ -154,7 +154,7 @@ class microtiny_utils
       $tpl_ob->assign('languageid',$languageid);
       $tpl_ob->assign('langdir',$langdir);
       $tpl_ob->assign('root_url',$config->smart_root_url());
-      $fp = \cms_utils::get_filepicker_module();
+      $fp = cms_utils::get_filepicker_module();
       if( $fp ) {
           $url = $fp->get_browser_url();
           $url = $ajax_url($url);
