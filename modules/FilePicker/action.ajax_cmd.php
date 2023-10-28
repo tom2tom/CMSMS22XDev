@@ -14,7 +14,7 @@ try {
     $val = strip_tags(get_parameter_value($_POST,'val'));
     $cwd = strip_tags(get_parameter_value($_POST,'cwd'));
 
-    // get the profile.
+    // get the profile
     $profile = null; // no object
     if( $sig ) $profile = TemporaryProfileStorage::get($sig);
     if( !$profile ) $profile = $this->get_default_profile();
@@ -32,37 +32,37 @@ try {
         if( !$profile->can_mkdir ) throw new \LogicException('Internal error: mkdir command executed, but profile says we cannot do this');
         if( startswith($val,'.') || startswith($val,'_') ) throw new \RuntimeException($this->Lang('error_ajax_invalidfilename'));
         if( !is_writable($fullpath) ) throw new \RuntimeException($this->Lang('error_ajax_writepermission'));
-        $destpath = $fullpath.'/'.$val;
+        $destpath = $fullpath.DIRECTORY_SEPARATOR.$val;
         if( is_dir($destpath) || is_file($destpath) ) throw new \RuntimeException($this->Lang('error_ajax_fileexists'));
-        if( !@mkdir($destpath) ) throw new \RuntimeException($this->Lang('error_ajax_mkdir ',$cwd.'/'.$val));
+        if( !@mkdir($destpath) ) throw new \RuntimeException($this->Lang('error_ajax_mkdir ',$cwd.DIRECTORY_SEPARATOR.$val)); // TODO $destpath ?
         break;
 
     case 'del':
         if( !$profile->can_delete ) throw new \LogicException('Internal error: del command executed, but profile says we cannot do this');
-	$val = basename($val);
+        $val = basename($val);
         if( startswith($val,'.') || startswith($val,'_') ) throw new \RuntimeException($this->Lang('error_ajax_invalidfilename'));
         //if( !is_writable($fullpath) ) throw new \RuntimeException($this->Lang('error_ajax_writepermission'));
-        $destpath = $fullpath.'/'.$val;
+        $destpath = $fullpath.DIRECTORY_SEPARATOR.$val;
         if( !is_writable($destpath) ) throw new \RuntimeException($this->Lang('error_ajax_writepermission').' '.$destpath);
         if( is_dir($destpath) ) {
             // check if the directory is empty
             if( count(scandir($destpath)) > 2 ) throw new \RuntimeException($this->Lang('error_ajax_dirnotempty'));
-            @rmdir($destpath);
+            if( @rmdir($destpath) ) { audit('', 'FilePicker', 'Removed directory: '.$destpath); }
         } else {
             if( $this->is_image( $destpath ) ) {
-                $thumbnail = $fullpath.'/thumb_'.$val;
+                $thumbnail = $fullpath.DIRECTORY_SEPARATOR.'thumb_'.$val;
                 if( is_file($thumbnail) ) {
                     @unlink($thumbnail);
                 }
             }
-            @unlink($destpath);
+            if( @unlink($destpath) ) { audit('', 'FilePicker', 'Removed file: '.$destpath); }
         }
         break;
 
     case 'upload':
-        if( !$profile->can_upload ) throw new \LogicException('Internal error: upload command executed, but profile says we cannot upload');
+        if( !$profile->can_upload ) throw new \LogicException('Internal error: upload command executed, but profile says you cannot upload');
         // todo: checks for upload functionality
-        $upload_handler = new UploadHandler( $this, $profile, $fullpath );
+        $upload_handler = new UploadHandler($this, $profile, $fullpath);
 
         header('Pragma: no-cache');
         header('Cache-Control: private, no-cache');
@@ -100,4 +100,4 @@ catch( \Exception $e ) {
     debug_to_log($e->GetTraceAsString());
     header("HTTP/1.1 500 ".$e->GetMessage());
 }
-exit();
+exit;
