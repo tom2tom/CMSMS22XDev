@@ -6,30 +6,28 @@ function CMSFileBrowser(_settings) {
   var listview_btn = $('.filepicker-view-option .view-list');
   var progress_bar = $('#filepicker-progress');
   var progress_text = $('#filepicker-progress-text');
+  var settings;
 
-  var settings = _settings;
-  if(top.document.CMSFileBrowser) {
-    settings = $.extend({}, top.document.CMSFileBrowser, settings);
+  if(top.document.CMSFileBrowser) { // object containing settings or empty
+    settings = $.extend({}, _settings || {}, top.document.CMSFileBrowser); //TODO this reverses priority
+  } else {
+    settings = _settings || {};
   }
 
   function enable_sendValue() {
     $('a.js-trigger-insert').on('click', function(e) {
-      var $this = $(this),
-        $elm = $this.closest('li'),
-        $data = $elm.data(),
-        $ext = $data.fbExt,
-        file = $this.attr('href');
-
       e.preventDefault();
-      var selector;
-      var instance = $('html').data('cmsfp-inst');
-      if(settings.prefix) file = settings.prefix + file;
+      var instance = $('html').data('cmsfp-inst'),
+        file = $(this).attr('href');
+      if(settings && settings.prefix) {
+        file = settings.prefix + file;
+      }
       if(settings && settings.onselect) {
         settings.onselect(instance, file);
         return;
       }
 
-      selector = '[data-cmsfp-instance="' + instance + '"]';
+      var selector = '[data-cmsfp-instance="' + instance + '"]';
       var target = parent.$(selector);
       if(target && target.length) {
         if(target.is(':input')) {
@@ -78,10 +76,7 @@ function CMSFileBrowser(_settings) {
   function enable_filetypeFilter() {
     if($('.filepicker-type-filter').length < 1) return;
 
-    var $items = $('#filepicker-items > li:not(.filepicker-item-heading):not(.dir)'),
-      $container = $('#filepicker-items'),
-      $trigger,
-      $data;
+    var $items = $('#filepicker-items > li:not(.filepicker-item-heading):not(.dir)');
 
     $('.filepicker-type-filter .js-trigger').on('click', function(e) {
       var $trigger = $(this),
@@ -116,7 +111,7 @@ function CMSFileBrowser(_settings) {
         'cmd': 'upload',
         'cwd': settings.cwd,
         'inst': settings.inst,
-        'sig': settings.sig,
+        'sig': settings.sig
       },
       start: function(ev) {
         n_errors = 0;
@@ -218,15 +213,15 @@ function CMSFileBrowser(_settings) {
         },
         click: function() {
           var val = $('#fld_mkdir').val().trim();
+          // ajax call to create the directory
+          // then refresh the screen
+          // then close the dialog
           _ajax_cmd('mkdir', val).done(function(msg) {
             var url = window.location.href + '&nosub=1';
             window.location.href = url;
           }).fail(function(jqXHR, textStatus, msg) {
             console.debug('filepicker mkdir failed: ' + msg);
           });
-          // ajax call to create the directory
-          // then ajax call to refresh the screen
-          // then close the dialog.
         }
       }]
     });
