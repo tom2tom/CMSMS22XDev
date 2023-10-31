@@ -164,7 +164,7 @@ $lang['kb'] = 'kb';
 $lang['largeicons'] = 'Large icons';
 
 // M
-$lang['mb'] = 'mb';
+$lang['mb'] = 'Mb';
 $lang['mimetype'] = 'Mime Type';
 $lang['moddescription'] = 'Handling of files and directories in the upload-file section of CMSMS';
 $lang['morethanonefiledirselected'] = 'Only one file or directory should be marked for this action.';
