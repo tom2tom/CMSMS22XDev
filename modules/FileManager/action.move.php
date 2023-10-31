@@ -56,7 +56,7 @@ if( isset($params['submit']) ) {
 
     if( count($errors) == 0 ) {
         foreach( $selall as $file ) {
-            $src = filemanager_utils::join_path($config['root_path'],$cwd,$file);
+            $src = filemanager_utils::join_path(CMS_ROOT_PATH,$cwd,$file);
             $dest = filemanager_utils::join_path($basedir,$destdir,$file);
 
             if( !file_exists($src) ) {
@@ -81,7 +81,7 @@ if( isset($params['submit']) ) {
             $dest_thumb = '';
             if( filemanager_utils::is_image_file($file) ) {
                 $tmp = 'thumb_'.$file;
-                $src_thumb = filemanager_utils::join_path($config['root_path'],$cwd,$tmp);
+                $src_thumb = filemanager_utils::join_path(CMS_ROOT_PATH,$cwd,$tmp);
                 $dest_thumb = filemanager_utils::join_path($basedir,$destdir,$tmp);
 
                 if( file_exists($src_thumb) ) {
