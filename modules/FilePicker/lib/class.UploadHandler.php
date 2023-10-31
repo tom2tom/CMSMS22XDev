@@ -1,13 +1,19 @@
 <?php
 namespace FilePicker;
 
+use CMSMS\HookManager;
+use FilePicker; //module class in global namespace
+use FilePicker\Profile;
+use cms_utils;
+use filemanager_utils;
+
 class UploadHandler extends jquery_upload_handler
 {
     private $_path;
     private $_mod;
     private $_profile;
 
-    public function __construct( \FilePicker $mod, \CMSMS\FilePickerProfile $profile, $path )
+    public function __construct( FilePicker $mod, Profile $profile, $path )
     {
         $this->_mod = $mod;
         $this->_profile = $profile;
@@ -36,20 +42,24 @@ class UploadHandler extends jquery_upload_handler
     public function after_uploaded_file( $fileobject )
     {
         if( !is_object($fileobject) || !$fileobject->name ) return;
-        if( !$this->_profile->show_thumbs ) return;
         $complete_path = $this->_path.$fileobject->name;
 
         $parms['file'] = $complete_path;
-        $parms = \CMSMS\HookManager::do_hook( 'FileManager::OnFileUploaded', $parms );
+        $parms = HookManager::do_hook( 'FileManager::OnFileUploaded', $parms );
         if( is_array($parms) && isset($parms['file']) ) $file = $parms['file']; // file name could have changed.
 
         if( !is_file($complete_path) ) return;
-        if( !$this->_mod->is_image( $complete_path ) ) return;
+        $str = basename($complete_path).' uploaded to '.filemanager_utils::get_full_cwd();
+        if( !$this->_mod->is_image( $complete_path ) ) {
+            audit('',$this->_mod->GetName(),$str);
+            return;
+        }
 
-        $mod = \cms_utils::get_module('FileManager');
-        $thumb = \filemanager_utils::create_thumbnail($complete_path, NULL, TRUE);
+        if( !$this->_profile->show_thumbs ) return;
 
-        $str = basename($complete_path).' uploaded to '.\filemanager_utils::get_full_cwd();
+        $mod = cms_utils::get_module('FileManager');
+        $thumb = filemanager_utils::create_thumbnail($complete_path, NULL, TRUE);
+
         if( $thumb ) $str .= ' and a thumbnail was generated';
         audit('',$this->_mod->GetName(),$str);
 /*
