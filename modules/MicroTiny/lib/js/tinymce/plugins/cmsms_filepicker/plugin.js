@@ -1,6 +1,6 @@
 tinymce.PluginManager.add('cmsms_filepicker', function(editor) {
 
-    editor.settings.file_picker_type = 'file image media'; //is this valid?
+    editor.settings.file_picker_type = 'file image media'; //TODO multi-types valid?
     editor.settings.file_picker_callback = _callback;
 
     function _callback(callback, value, meta) {
@@ -22,10 +22,9 @@ tinymce.PluginManager.add('cmsms_filepicker', function(editor) {
         var inst = 'i'+(new Date().getTime()).toString(16);
         tinymce.activeEditor.dom.setAttrib(tinyMCE.activeEditor.dom.select('html'),'data-cmsfp-instance',inst);
 
-        if( !top.document.CMSFileBrowser ) {
-            top.document.CMSFileBrowser = {prefix: ''}; //setting for relative url for selected items
-        }
+        if( !top.document.CMSFileBrowser ) top.document.CMSFileBrowser = {type:'image'};
         top.document.CMSFileBrowser.onselect = function(inst,file) {
+            file = cms_data.root_url + file;
             function basename(str) {
                 var sw, pp, base,
                  last = str.charAt(str.length - 1);
@@ -42,9 +41,6 @@ tinymce.PluginManager.add('cmsms_filepicker', function(editor) {
                 return base;
             }
 
-            if (file.indexOf(cms_data.root_url) !== 0) { // should never happen
-                file = cms_data.uploads_url + '/' + file;
-            }
             var opts = {};
             if( meta.filetype === 'file' ) {
                 opts.text = basename(file);
@@ -58,7 +54,7 @@ tinymce.PluginManager.add('cmsms_filepicker', function(editor) {
 
 
         // here we open the filepicker window.
-        var url = cmsms_tiny.filepicker_url + '&inst=' + inst + '&type='+meta.filetype; //OLD BACKEND! >> + '&useprefix=1';
+        var url = cmsms_tiny.filepicker_url + '&inst=' + inst + '&type='+meta.filetype + '&useprefix=1';
         mywin = tinymce.activeEditor.windowManager.open({
             title : cmsms_tiny.filepicker_title,
             file : url,
