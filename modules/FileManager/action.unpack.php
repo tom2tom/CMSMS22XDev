@@ -16,9 +16,6 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-//TODO use INI open_basedir setting where relevant e.g. to prevent zip-slip
-//see https://www.php.net/manual/en/ini.core.php#ini.open-basedir
-
 if (!function_exists("cmsms")) exit;
 if (!$this->CheckPermission("Modify Files") && !$this->AdvancedAccessAllowed()) exit;
 
@@ -39,19 +36,19 @@ if (count($selall)>1) {
 }
 
 $filename=$this->decodefilename($selall[0]);
-$src= cms_join_path(CMS_ROOT_PATH,filemanager_utils::get_cwd(),$filename);
+$src = filemanager_utils::join_path(CMS_ROOT_PATH,filemanager_utils::get_cwd(),$filename);
 if( !file_exists($src) ) {
   $params["fmerror"]="filenotfound";
   $this->Redirect($id,"defaultadmin",$returnid,$params);
 }
 
-$destdir = cms_join_path(CMS_ROOT_PATH,filemanager_utils::get_cwd());
+$destdir = filemanager_utils::join_path(CMS_ROOT_PATH,filemanager_utils::get_cwd());
 $old = ini_get('open_basedir');
 
-include_once(__DIR__.'/easyarchives/EasyArchive.class.php');
+include_once(__DIR__.'/easyarchives/EasyArchive.class.php'); //TODO join_path()
 $archive = new EasyArchive();
 ini_set('open_basedir',$destdir);
-if( !endswith($destdir,DIRECTORY_SEPARATOR) ) $destdir.=DIRECTORY_SEPARATOR;
+if( !endswith($destdir,DIRECTORY_SEPARATOR) ) $destdir .= DIRECTORY_SEPARATOR;
 
 $res = $archive->extract($src,$destdir);
 ini_set('open_basedir',$old);

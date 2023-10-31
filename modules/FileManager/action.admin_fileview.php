@@ -167,7 +167,7 @@ for ($i = 0; $i < count($filelist); $i++) {
 if( isset($params['viewfile']) && $params['viewfile'] ) {
   foreach( $files as $file ) {
     if( $file->urlname == $params['viewfile'] ) {
-      $fn = cms_join_path(filemanager_utils::get_full_cwd(),$file->name);
+      $fn = filemanager_utils::join_path(filemanager_utils::get_full_cwd(),$file->name);
       if( in_array('text',$file->type) ) {
         if( file_exists($fn) ) $data = @file_get_contents($fn);
         if( $data ) {
