@@ -170,12 +170,12 @@ $(function () {
 			<tr class="{$rowclass}">
 				<td style="vertical-align:middle">{if isset($file->thumbnail) && $file->thumbnail!=''}{$file->thumbnail}{else}{$file->iconlink}{/if}</td>
 				<td class="clickable" style="vertical-align:middle">{$file->txtlink}</td>
-				<td class="clickable" style="vertical-align:middle">{$file->mime}</td>
+				<td class="clickable" style="vertical-align:middle">{$file->mime}</td>{*TODO migrate these styles to external css for rtl etc *}
 				<td class="clickable" style="padding-right:8px;white-space:pre;vertical-align:middle">{$file->fileinfo}</td>
 				<td class="clickable" style="padding-right:8px;white-space:pre;vertical-align:middle">{if isset($file->fileowner)}{$file->fileowner}{else}&nbsp;{/if}</td>
 				<td class="clickable" style="padding-right:8px;vertical-align:middle">{$file->filepermissions}</td>
-				<td class="clickable" style="padding-right:8px;white-space:pre;text-align:right;vertical-align:middle">{$file->filesize}</td>
-				<td class="clickable" style="padding-right:8px;vertical-align:middle">{if isset($file->filesizeunit)}{$file->filesizeunit}{else}&nbsp;{/if}</td>
+				<td class="clickable" style="padding-right:4px;white-space:pre;text-align:right;vertical-align:middle">{$file->filesize}</td>
+				<td class="clickable" style="padding-left:0;vertical-align:middle">{if isset($file->filesizeunit)}{$file->filesizeunit}{else}&nbsp;{/if}</td>
 				<td class="clickable" style="padding-right:8px;white-space:pre;vertical-align:middle">{$thedate}</td>
 				<td>
 				{if !isset($file->noCheckbox)}
