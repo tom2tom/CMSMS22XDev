@@ -70,9 +70,6 @@ class FileManagerUploadHandler extends jquery_upload_handler
   }
 }
 
-//TODO use INI open_basedir setting where relevant e.g. to prevent zip-slip
-//see https://www.php.net/manual/en/ini.core.php#ini.open-basedir
-
 $options = array('param_name'=>$id.'files');
 $upload_handler = new FileManagerUploadHandler($options);
 

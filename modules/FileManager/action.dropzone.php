@@ -16,9 +16,6 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-//TODO use INI open_basedir setting where relevant e.g. to prevent zip-slip
-//see https://www.php.net/manual/en/ini.core.php#ini.open-basedir
-
 if (!function_exists("cmsms")) exit;
 if (!$this->CheckPermission('Modify Files')) return;
 
