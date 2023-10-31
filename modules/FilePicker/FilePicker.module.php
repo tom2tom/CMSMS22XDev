@@ -24,9 +24,9 @@
 # END_LICENSE
 
 use CMSMS\FilePickerInterface;
+//use CMSMS\FilePickerProfile;
 use CMSMS\FileType;
 use CMSMS\FileTypeHelper;
-use FilePicker\PathAssistant;
 use FilePicker\Profile;
 use FilePicker\ProfileDAO;
 use FilePicker\TemporaryProfileStorage;
@@ -112,7 +112,14 @@ final class FilePicker extends CMSModule implements FilePickerInterface
         $profile = $this->get_profile_or_default($profile_name, '', $uid);
         if( $params ) {
             unset($params['profile']);
-            unset($params['top']); // no top-folder change allowed here TODO any other relevant limitations?
+            unset($params['top']); // no top-folder change allowed here
+/* TODO any other relevant limitations? e.g.
+            if( !$this->CheckPermission('Modify Files') ) {
+                $params['can_upload'] = FilePickerProfile::FLAG_NONE;
+                $params['can_delete'] = FilePickerProfile::FLAG_NONE;
+                $params['can_mkdir'] = FilePickerProfile::FLAG_NONE;
+            }
+*/
             $profile = $profile->overrideWith($params);
         }
         return $this->get_html($blockName, $value, $profile);
@@ -121,33 +128,26 @@ final class FilePicker extends CMSModule implements FilePickerInterface
     public function GetContentBlockFieldValue($blockName, $blockParams, $inputParams, ContentBase $content_obj)
     {
         if( $blockName && isset($inputParams[$blockName]) ) {
-            if( startswith($inputParams[$blockName], CMS_ROOT_URL) ) {
-                return $inputParams[$blockName];
-            }
-            // derive absolute URL from relative (should never be needed)
-            $config = cms_config::get_instance();
-            $uid = get_userid(FALSE);
-            $profile_name = get_parameter_value($blockParams, 'profile');
-            $profile = $this->get_profile_or_default($profile_name, '', $uid);
-            $topdir = $profile->top;
-            if( !$topdir ) $topdir = $config['uploads_path'];
-            $assistant = new PathAssistant($config, $topdir);
-            return $assistant->get_top_url().'/'.$inputParams[$blockName];
+            return $inputParams[$blockName];
         }
         return ''; // should never happen
     }
 
     public function ValidateContentBlockFieldValue($blockName, $value, $blockparams, ContentBase $content_obj)
     {
-        if( !$blockName || !$value ) { return lang('informationmissing'); }
-        //TODO additional relevant checks e.g. filepath is readable
+        if( !$blockName || !$value ) {
+            return lang('informationmissing');
+        }
+        //TODO additional relevant checks e.g. URL is valid
         return '';
     }
 
     public function RenderContentBlockField($blockName, $value, $blockparams, ContentBase $content_obj)
     {
         if( $blockName ) {
-            return (string)$value;//TODO e.g. tailor url-path separators, ensure url is absolute
+            //TODO is there any merit in a constant-format relative url, applied here?
+            // or some specific format applied via extra arg(s) from upstream?
+            return (string)$value;
         }
         return '';
     }
@@ -157,16 +157,15 @@ final class FilePicker extends CMSModule implements FilePickerInterface
         return filemanager_utils::get_file_list($path);
     }
 
-    public function get_profile_or_default( $profile_name, $dir = '', $uid = 0 )
+    public function get_profile_or_default($profile_name, $dir = '', $uid = 0)
     {
-        $profile_name = trim($profile_name);
-        $profile = null; // no object
-        if( $profile_name ) $profile = $this->_dao->loadByName( $profile_name );
+        $profile_name = trim((string)$profile_name);
+        $profile = ( $profile_name ) ? $this->_dao->loadByName( $profile_name ) : null;
         if( !$profile ) $profile = $this->get_default_profile( $dir, $uid );
         return $profile;
     }
 
-    public function get_default_profile( $dir = '', $uid = 0 )
+    public function get_default_profile($dir = '', $uid = 0)
     {
         /* $dir is absolute */
         $profile = $this->_dao->loadDefault();
@@ -178,15 +177,16 @@ final class FilePicker extends CMSModule implements FilePickerInterface
 
     public function get_browser_url()
     {
-        return $this->create_url('m1_', 'filepicker', '', ['useprefix'=>0]); //useprefix disabled for back-compatibility
+        return $this->create_url('m1_', 'filepicker');
     }
 
-    public function get_html( $name, $value, Profile $profile, $required = false ) //TODO support $useprefix
+    //TODO support optional tailored useprefix variable for template & backend js, without clobbering $profile
+    public function get_html($name, $value, Profile $profile, $required = false)
     {
         $_instance = 'i'.uniqid();
         if( $value === '-1' ) $value = '';
 
-        // store the profile as a 'useonce' and add it's signature to the params on the url
+        // store the profile as a 'useonce' and add its signature to the params on the url
         $sig = TemporaryProfileStorage::set( $profile );
         $smarty = cmsms()->GetSmarty(); // $this->_GetTemplateObject();
         $tpl_ob = $smarty->CreateTemplate($this->GetTemplateResource('contentblock.tpl'), null, null, $smarty);
@@ -197,7 +197,6 @@ final class FilePicker extends CMSModule implements FilePickerInterface
         $tpl_ob->assign('instance', $_instance);
         $tpl_ob->assign('profile', $profile);
         $tpl_ob->assign('required', $required);
-        //TODO tailored useprefix variable for template & backend js, without clobbering $profile
         switch( $profile->type ) {
         case FileType::TYPE_IMAGE:
             $tpl_ob->assign('title', $this->Lang('select_an_image'));
@@ -229,50 +228,50 @@ final class FilePicker extends CMSModule implements FilePickerInterface
     }
 
     // INTERNAL UTILITY FUNCTION
-    public function is_image( $filespec )
+    public function is_image($fullpath)
     {
-        $filespec = trim($filespec);
-        if( !$filespec ) return FALSE;
+        $fullpath = trim((string)$fullpath);
+        if( !$fullpath ) return FALSE;
 
-        return $this->_typehelper->is_image( $filespec );
+        return $this->_typehelper->is_image($fullpath);
     }
 
     // INTERNAL UTILITY FUNCTION
-    public function is_acceptable_filename( Profile $profile, $filename )
+    public function is_acceptable_filename(Profile $profile, $filename)
     {
-        $filename = trim($filename);
+        $filename = trim((string)$filename);
         $filename = basename($filename);  // in case it's a path
-        if( !$filename ) return FALSE;
-        if( endswith( $filename, '.' ) ) return FALSE;
-
-        if( !$profile->show_hidden && (startswith($filename, '.') || startswith($filename, '_') || $filename == 'index.html') ) return FALSE;
-        if( $profile->match_prefix && !startswith( $filename, $profile->match_prefix) ) return FALSE;
-        if( $profile->exclude_prefix && startswith( $filename, $profile->exclude_prefix) ) return FALSE;
+        if( !$filename ) { return FALSE; }
+        if( strncasecmp($filename, 'index.htm', 9) == 0 ) { return FALSE; }
+        if( endswith($filename, '.') ) { return FALSE; }
+        if( !$profile->show_hidden && (startswith($filename, '.') || startswith($filename, '_')) ) { return FALSE; }// TODO valid test for windows hidden files
+        if( $profile->match_prefix && !startswith($filename, $profile->match_prefix) ) { return FALSE; }
+        if( $profile->exclude_prefix && startswith($filename, $profile->exclude_prefix) ) { return FALSE; }
 
         switch( $profile->type ) {
         case FileType::TYPE_IMAGE:
-            return ( $this->_typehelper->is_image( $filename ) );
+            return $this->_typehelper->is_image($filename);
 
         case FileType::TYPE_AUDIO:
-            return ( $this->_typehelper->is_audio( $filename ) );
+            return $this->_typehelper->is_audio($filename);
 
         case FileType::TYPE_VIDEO:
-            return ( $this->_typehelper->is_video( $filename ) );
+            return $this->_typehelper->is_video($filename);
 
         case FileType::TYPE_MEDIA:
-            return ( $this->_typehelper->is_media( $filename ) );
+            return $this->_typehelper->is_media($filename);
 
         case FileType::TYPE_XML:
-            return ( $this->_typehelper->is_xml( $filename ) );
+            return $this->_typehelper->is_xml($filename);
 
         case FileType::TYPE_DOCUMENT:
-            return ( $this->_typehelper->is_document( $filename ) );
+            return $this->_typehelper->is_document($filename);
 
         case FileType::TYPE_ARCHIVE:
-            return ( $this->_typehelper->is_archive( $filename ) );
+            return $this->_typehelper->is_archive($filename);
 
         default:
-            if( $this->_typehelper->is_executable( $filename ) ) {
+            if( $this->_typehelper->is_executable($filename) ) {
                 $config = cms_config::get_instance();
                 if( !$config['developer_mode'] ) {
                     return FALSE;
@@ -280,7 +279,6 @@ final class FilePicker extends CMSModule implements FilePickerInterface
             }
             break;
         }
-
         // passed
         return TRUE;
     }
