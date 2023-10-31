@@ -47,20 +47,20 @@ class EasyArchive
 	public function __construct()
 	{
 		if (class_exists('ZipArchive')) {
-			require_once __DIR__.'/EasyZip.class.php';
+			require_once __DIR__.DIRECTORY_SEPARATOR.'EasyZip.class.php';
 		}
 		else {
 			unset($this->WathArchive['.zip']);
 		}
-		require_once __DIR__.'/EasyTar.class.php';
+		require_once __DIR__.DIRECTORY_SEPARATOR.'EasyTar.class.php';
 		if (function_exists('gzopen')) {
-			require_once __DIR__.'/EasyGzip.class.php';
+			require_once __DIR__.DIRECTORY_SEPARATOR.'EasyGzip.class.php';
 		}
 		else {
 			unset($this->WathArchive['.gz'],$this->WathArchive['.tgz'],$this->WathArchive['.tgzip'],$this->WathArchive['.tbzip']);
 		}
 		if (function_exists('bzopen')) {
-			require_once __DIR__.'/EasyBzip2.class.php';
+			require_once __DIR__.DIRECTORY_SEPARATOR.'EasyBzip2.class.php';
 		}
 		else {
 			unset($this->WathArchive['.bzip2'],$this->WathArchive['.bz2'],$this->WathArchive['tbzip2'],$this->WathArchive['tbz2']);
@@ -82,6 +82,7 @@ class EasyArchive
 	public function make ($src, $name="Archive.tgz", $returnFile=true)
 	{
 		$ext = '.'.pathinfo ($name, PATHINFO_EXTENSION);
+		$comp = '';
 		foreach ($this->WathArchive as $key=>$val)
 			if (stripos($ext, $key)!==false) $comp=$val;
 		if ($comp == 'zip')
@@ -128,6 +129,7 @@ class EasyArchive
 	public function infos ($src, $data=false)
 	{
 		$ext = '.'.pathinfo ($src, PATHINFO_EXTENSION);
+		$comp = '';
 		foreach ($this->WathArchive as $key=>$val)
 			if (stripos($ext, $key)!==false) $comp=$val;
 		if ($comp == 'zip')
@@ -180,6 +182,7 @@ class EasyArchive
 			$dest = $path_parts['dirname'].'/';
 		$ext = '.'.$path_parts['extension'];
 		$name = $path_parts['filename'];
+		$comp = '';
 		foreach ($this->WathArchive as $key=>$val)
 			if (stripos($ext, $key)!==false) $comp=$val;
 		if ($comp == 'zip')

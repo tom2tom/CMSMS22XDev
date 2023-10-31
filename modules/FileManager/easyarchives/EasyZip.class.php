@@ -15,50 +15,49 @@
  | See the GNU General Public License for more details on http://www.gnu.org/licenses/
  +--------------------------------------------------
  http://www.phpclasses.org/browse/package/4239.html **/
+//updated to replace PHP8+ deprecated methods
 class zip
 {
-/**
-// You can use this class like that.
-$test = new zip;
-$test->makeZip('./','./toto.zip');
-var_export($test->infosZip('./toto.zip'));
-$test->extractZip('./toto.zip', './new/');
-**/
 	public function infosZip ($src, $data=true)
 	{
-		//PHP 7.4.3+ , ZipArchive::RDONLY
-		$zip = new ZipArchive(realpath($src));
-		if ($zip) {
-//TODO revised API
-			while (($zip_entry = zip_read($zip)))
+		$zip = new ZipArchive();
+		if ($zip->open(realpath($src)) === true)
+		{
+			$content = [];
+			for ($i = 0, $l = $zip->numFiles; $i < $l; $i++)
 			{
-				$path = zip_entry_name($zip_entry);
-				if (zip_entry_open($zip, $zip_entry, "r"))
-				{
-					$content[$path] = array (
-						'Ratio' => zip_entry_filesize($zip_entry) ? round(100-zip_entry_compressedsize($zip_entry) / zip_entry_filesize($zip_entry)*100, 1) : false,
-						'Size' => zip_entry_compressedsize($zip_entry),
-						'UnCompSize' => zip_entry_filesize($zip_entry));
-					if ($data)
-						$content[$path]['Data'] = zip_entry_read($zip_entry, zip_entry_filesize($zip_entry));
-					zip_entry_close($zip_entry);
+				$file_name = $zip->getNameIndex($i);
+				// skip directories
+				if (in_array(substr($file_name, -1), ['/', '\\'], true)) {
+					continue;
 				}
-				else
-					$content[$path] = false;
+				$entry = $zip->statIndex($i);
+				$path = $entry['name'];
+				$ins = $entry['comp_size'];
+				$outs = $entry['size'];
+				$ratio = ($outs > 0) ? round(($ins / $outs), 1) : 0.0;
+				$content[$path] = [
+					'Ratio' => 1.0 - $ratio,
+					'Size' => $ins,
+					'UnCompSize' => $outs
+				];
+				if ($data)
+				{
+					$content[$path]['Data'] = $zip->getFromIndex($i, $outs); //, flags?
+				}
 			}
-			zip_close($zip);
+			$zip->close();
 			return $content;
 		}
-		return false;
+		return [];
 	}
 
 	public function extractZip ($src, $dest)
 	{
-		//PHP 7.4.3+ , ZipArchive::RDONLY
-		$zip = new ZipArchive($src);
-		if ($zip)
+		$zip = new ZipArchive();
+		if ($zip->open(realpath($src)) === true)
 		{
-			$zip->extractTo($dest);
+			$zip->extractTo($dest); // TODO prevent zip-slip
 			$zip->close();
 			return true;
 		}
@@ -67,16 +66,27 @@ $test->extractZip('./toto.zip', './new/');
 
 	public function makeZip ($src, $dest)
 	{
-		$zip = new ZipArchive($dest, ZipArchive::CREATE);
-		if ($zip)
+		$zip = new ZipArchive();
+		if ($zip->open($dest, ZipArchive::CREATE | ZipArchive::EXCL) === true)
 		{
-			$src = is_array($src) ? $src : array($src);
+			if (!is_array($src)) { $src = array($src); }
 			foreach ($src as $item)
 			{
-				if (is_dir($item))
-					$this->addZipItem($zip, realpath(dirname($item)).'/', realpath($item).'/');
-				elseif(is_file($item))
-					$zip->addFile(realpath($item), basename(realpath($item)));
+				$real = realpath($item);
+				if ($real) {
+					$tmp = strtr($real, '\\', '/'); //TODO if Windows absolute path c.f. C:\over\there.ext
+					if (is_dir($item)) {
+						$real = realpath(dirname($item));
+						$tmp2 = strtr($real, '\\', '/'); // ibid
+						$this->addZipItem($zip, $tmp2.'/', $tmp.'/');
+					}
+					elseif (is_file($item)) {
+						$zip->addFile($tmp);
+					}
+				}
+				else {
+					//TODO handle error
+				}
 			}
 			$zip->close();
 			return true;
@@ -90,13 +100,22 @@ $test->extractZip('./toto.zip', './new/');
 		{
 			$zip->addEmptyDir(str_replace($racine, '', $dir));
 			$lst = scandir($dir);
-			array_shift($lst);
-			array_shift($lst);
+			if (!empty($lst[0])) {
+				if ($lst[0] == '.' || $lst[0] == '..') {
+					array_shift($lst);
+					if (!empty($lst[0])) {
+						if ($lst[0] == '..' || $lst[0] == '.') {
+							array_shift($lst);
+						}
+					}
+				}
+			}
 			foreach ($lst as $item) {
-				$this->addZipItem($zip, $racine, $dir.$item.(is_dir($dir.$item)?'/':''));
+				$this->addZipItem($zip, $racine, $dir.$item.(is_dir($dir.$item) ? '/' : ''));
 			}
 		}
-		elseif (is_file($dir)) {
+		elseif (is_file($dir))
+		{
 			$zip->addFile($dir, str_replace($racine, '', $dir));
 		}
 	}

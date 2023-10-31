@@ -24,33 +24,47 @@ $test->makeBzip2('./','./toto.bzip2');
 var_export($test->infosBzip2('./toto.bzip2'));
 $test->extractBzip2('./toto.bzip2', './new/');
 **/
-	public function makeBzip2($src, $dest=false)
+	public function makeBzip2($src, $dest='')//: string|int|false
 	{
-		$Bzip2 = bzcompress((strpos(chr(0),$src) ? file_get_contents ($src) : $src), 6);
+		$Bzip2 = bzcompress((strpos(chr(0),$src) ? file_get_contents ($src) : $src), 6);// compressed string or int error no.
 		if (empty($dest)) return $Bzip2;
 		elseif (file_put_contents($dest, $Bzip2)) return $dest;
 		return false;
 	}
 
-	public function infosBzip2 ($src, $data=true)
+	public function infosBzip2 ($src, $data=true)//: array
 	{
-		$data = $this->extractBzip2 ($src);
-		$content = array(
-			'UnCompSize'=>strlen($data),
-			'Size'=>filesize($src),
-			'Ratio'=>strlen($data) ? round(100 - filesize($src) / strlen($data)*100, 1) : false,);
+		$all = $this->extractBzip2($src);
+		$outs = strlen($all);
+		$ins = filesize($src);
+		$ratio = ($outs > 0) ? round(100 - ($ins / $outs * 100), 1) : 1.0;
+		$content = [
+			'UnCompSize'=>$outs,
+			'Size'=>$ins,
+			'Ratio'=>$ratio
+		];
 		if ($data) $content['Data'] = $data;
 		return $content;
 	}
 
-	public function extractBzip2($src, $dest=false)
+	public function extractBzip2($src, $dest='')//: string | false
 	{
 		$bz = bzopen($src, "r");
 		$data = '';
-		while (!feof($bz))
-			$data .= bzread($bz, 1024*1024);
+		while (!feof($bz)) {
+			$block = bzread($bz, 1048576); // aka 1024*1024, too bad about huge content!
+			if ($block === false) {
+				bzclose($bz);
+				throw new Exception('Bzip2 archive read failed : '.$src);
+			}
+			if (bzerrno($bz) !== 0) {
+				bzclose($bz);
+				throw new Exception('Bzip2 archive compression problem : '.$src);
+			}
+			$data .= $block;
+		}
 		bzclose($bz);
-		if (empty($dest)) return $data;
+		if (!$dest) return $data;
 		elseif (file_put_contents($dest, $data)) return $dest;
 		return false;
 	}

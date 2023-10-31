@@ -186,9 +186,9 @@ $test->extractTar('./toto.Tar', './new/');
 		$block = fread($ptr, 512);
 		if (strlen($block)!=512) return false;
 		$hdr = unpack ("a100name/a8mode/a8uid/a8gid/a12size/a12mtime/a8checksum/a1type/a100symlink/a6magic/a2version/a32uname/a32gname/a8devmajor/a8devminor/a155prefix/a12temp", $block);
-		$hdr['mode']=$hdr['mode']+0;
-		$lvl = error_reporting();
-		error_reporting($lvl & ~E_DEPRECATED); //PHP 7.4+ silence
+//		$lvl = error_reporting();
+//		error_reporting($lvl & ~E_DEPRECATED); //PHP 7.4+ silence
+		$hdr['mode']=(int)$hdr['mode'];
 		$hdr['uid']=octdec($hdr['uid']);
 		$hdr['gid']=octdec($hdr['gid']);
 		$hdr['size']=octdec($hdr['size']);
@@ -199,7 +199,7 @@ $test->extractTar('./toto.Tar', './new/');
 		for ($i = 0; $i < 512; $i++) {
 			$checksum += ord(substr($block, $i, 1));
 		}
-		error_reporting($lvl);
+//		error_reporting($lvl);
 		if (isset($hdr['name']) && $hdr['checksum']==$checksum)
 		{
 			if ($hdr['name']=='././@LongLink' && $hdr['type']=='L')
