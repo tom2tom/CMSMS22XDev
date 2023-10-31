@@ -38,23 +38,26 @@ if (count($selall)>1) {
   $this->Redirect($id,"defaultadmin",$returnid,$params);
 }
 
-
-$config=cmsms()->GetConfig();
 $filename=$this->decodefilename($selall[0]);
-$src = filemanager_utils::join_path($config['root_path'],filemanager_utils::get_cwd(),$filename);
+$src= cms_join_path(CMS_ROOT_PATH,filemanager_utils::get_cwd(),$filename);
 if( !file_exists($src) ) {
   $params["fmerror"]="filenotfound";
   $this->Redirect($id,"defaultadmin",$returnid,$params);
 }
 
+$destdir = cms_join_path(CMS_ROOT_PATH,filemanager_utils::get_cwd());
+$old = ini_get('open_basedir');
+
 include_once(__DIR__.'/easyarchives/EasyArchive.class.php');
 $archive = new EasyArchive();
-$destdir = filemanager_utils::join_path($config['root_path'],filemanager_utils::get_cwd());
-if( !endswith($destdir,'/') ) $destdir .= '/';
+ini_set('open_basedir',$destdir);
+if( !endswith($destdir,DIRECTORY_SEPARATOR) ) $destdir.=DIRECTORY_SEPARATOR;
+
 $res = $archive->extract($src,$destdir);
+ini_set('open_basedir',$old);
 
 $paramsnofiles["fmmessage"]="unpacksuccess"; //strips the file data
-$this->Audit('',"File Manager", "Unpacked file: ".$src);
+$this->Audit('',"File Manager","Unpacked file: ".$src);
 $this->Redirect($id,"defaultadmin",$returnid,$paramsnofiles);
 
 #
