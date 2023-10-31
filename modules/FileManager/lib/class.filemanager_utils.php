@@ -129,22 +129,29 @@ final class filemanager_utils
         cms_userprefs::set('filemanager_cwd',$newpath);
     }
 
-
-    public static function join_path()
+    //this is NOT intended for URLs
+    public static function join_path(...$args)
     {
-        $args = func_get_args();
-        if( count($args) < 1 ) return '';
+        if( !$args ) return '';
         if( count($args) < 2 ) return $args[0];
 
+        $tmp = cms_join_path(...$args);
+        return preg_replace('~[\\\\/]+~',DIRECTORY_SEPARATOR,$tmp);
+/*
         $args2 = array();
         for( $i = 0; $i < count($args); $i++ ) {
             if( $args[$i] == '' ) continue;
-            if( $i != 0 && (startswith($args[$i],'/') || startswith($args[$i],'\\')) ) $args[$i] = substr($args[$i],1);
-            if( endswith($args[$i],'/') || endswith($args[$i],'\\') ) $args[$i] = substr($args[$i],0,-1);
+            if( $i != 0 && (startswith($args[$i],'/') || startswith($args[$i],'\\')) ) {
+                $args[$i] = substr($args[$i],1);
+            }
+            if( endswith($args[$i],'/') || endswith($args[$i],'\\') ) {
+                $args[$i] = substr($args[$i],0,-1);
+            }
             $args2[] = $args[$i];
         }
 
-        return implode(DIRECTORY_SEPARATOR,$args2);
+        return implode(DIRECTORY_SEPARATOR,$args2); //TODO '/' if it's an URL
+*/
     }
 
     public static function get_full_cwd()
@@ -162,7 +169,7 @@ final class filemanager_utils
         $path = self::get_cwd();
         $config = cmsms()->GetConfig();
         if( !self::test_valid_path($path) ) $path = self::get_default_cwd();
-        $url = $config['root_url'].'/'.$path;
+        $url = $config['root_url'].'/'.strtr($path,'\\','/');
         return $url;
     }
 
@@ -172,14 +179,14 @@ final class filemanager_utils
         $ext = substr(strrchr($file, '.'), 1);
         if( !$ext ) return FALSE;
 
-        $tmp = array('gif','jpg','jpeg','png');
+        $tmp = array('gif','jpg','jpeg','png'); //TODO c.f. Filetype helper
         if( in_array(strtolower($ext),$tmp) ) return TRUE;
         return FALSE;
     }
 
     public static function is_archive_file($file)
     {
-        $tmp = array('.tar.gz','.tar.bz2','.zip','.tgz');
+        $tmp = array('.tar.gz','.tar.bz2','.zip','.tgz'); //TODO c.f. Filetype helper
         foreach( $tmp as $t2 ) {
             if( endswith(strtolower($file),$t2) ) return TRUE;
         }
@@ -219,24 +226,24 @@ final class filemanager_utils
             // build the file info array.
             $fullname = self::join_path($realpath,$file);
             $info=array();
-            $info['name']=$file;
+            $info['name'] = $file;
             $info['dir'] = FALSE;
             $info['image'] = FALSE;
             $info['archive'] = FALSE;
             $info['mime'] = self::mime_content_type($fullname);
-            $statinfo=stat($fullname);
+            $statinfo = stat($fullname);
 
             if (is_dir($fullname)) {
-                $info['dir']=true;
-                $info['ext']='';
+                $info['dir'] = true;
+                $info['ext'] = '';
                 $info['fileinfo']=GetFileInfo($fullname,'',true);
             } else {
-                $info['size']=$statinfo['size'];
-                $info['date']=$statinfo['mtime'];
-                $info['url']=self::join_path($config['root_url'], $path, $file);
-                $info['url'] = str_replace('\\','/',$info['url']); // windoze both sucks, and blows.
-                $explodedfile=explode('.', $file); $info['ext']=array_pop($explodedfile);
-                $info['fileinfo']=GetFileInfo(self::join_path($realpath,$file),$info['ext'],false);
+                $info['size'] = $statinfo['size'];
+                $info['date'] = $statinfo['mtime'];
+                $info['url'] = implode('/', [$config['root_url'], trim($path, ' /'), $file]);
+                $explodedfile = explode('.', $file);
+                $info['ext'] = array_pop($explodedfile);
+                $info['fileinfo'] = GetFileInfo(self::join_path($realpath,$file),$info['ext'],false);
             }
 
             // test for archive
@@ -270,7 +277,8 @@ final class filemanager_utils
         return $result;
     }
 
-    private static function _FileManagerCompareFiles($a,$b,$forcesort="") {
+    private static function _FileManagerCompareFiles($a, $b, $forcesort = '')
+    {
         $filemod = cms_utils::get_module('FileManager');
         $sortby=$filemod->GetPreference("sortby","nameasc");
         if ($forcesort!="") $sortby=$forcesort;
@@ -502,7 +510,8 @@ final class filemanager_utils
         return TRUE;
     }
 
-    public static function format_filesize($_size) {
+    public static function format_filesize($_size)
+    {
         $mod = cms_utils::get_module('FileManager');
         $unit=$mod->Lang("bytes");
         $size=$_size;
@@ -526,7 +535,8 @@ final class filemanager_utils
         return $result;
     }
 
-    public static function format_permissions($mode,$style='xxx') {
+    public static function format_permissions($mode, $style='xxx')
+    {
         switch ($style) {
         case 'xxx':
             $owner=0;
