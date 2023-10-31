@@ -146,12 +146,13 @@
 		<script>
 		$(function() {
 			var filepicker = new CMSFileBrowser({
-			cmd_url: '{cms_action_url action=ajax_cmd forjs=1}&showtemplate=false',
-			cwd: '{$cwd}',
-			sig: '{$sig}',
-			inst: '{$inst}',
-			prefix: '{$prefix}',
-			lang: {$lang_js}
+				cmd_url: '{cms_action_url action=ajax_cmd forjs=1}&showtemplate=false',
+				cwd: '{$cwd}',
+				sig: '{$sig}',
+				inst: '{$inst}',
+				prefix: '{$prefix}',
+				type: '{$type}',
+				lang: {$lang_js}
 			});
 		});
 		</script>
