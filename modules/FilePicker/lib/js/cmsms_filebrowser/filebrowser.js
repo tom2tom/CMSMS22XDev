@@ -8,8 +8,8 @@ function CMSFileBrowser(_settings) {
   var progress_text = $('#filepicker-progress-text');
   var settings;
 
-  if(top.document.CMSFileBrowser) { // object containing settings or empty
-    settings = $.extend({}, _settings || {}, top.document.CMSFileBrowser); //TODO this reverses priority
+  if(top.document.CMSFileBrowser) { //object containing runtime 'custom' settings, or empty
+    settings = $.extend({}, top.document.CMSFileBrowser, _settings || {});
   } else {
     settings = _settings || {};
   }
@@ -138,6 +138,8 @@ function CMSFileBrowser(_settings) {
             cms_alert(msg);
           }
         }
+        //TODO success-advice to user if the uploaded type is not currently displayed
+        //i.e. excluded manually or automatically (per settings.type)
       },
       stop: function(ev) {
         progress_bar.children().show();
@@ -182,7 +184,7 @@ function CMSFileBrowser(_settings) {
         'val': val,
         'cwd': settings.cwd,
         'inst': settings.inst,
-        'sig': settings.sig,
+        'sig': settings.sig
       }
     });
   }
