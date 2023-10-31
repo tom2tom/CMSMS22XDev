@@ -46,8 +46,8 @@ class FilePickerProfile
     /**
      * @ignore
      */
-    private $_data = [ 'top'=>null, 'type'=>FileType::TYPE_ANY, 'can_upload'=>self::FLAG_YES, 'show_thumbs'=>1, 'can_delete'=>self::FLAG_YES,
-                       'match_prefix'=>null, 'show_hidden'=>FALSE, 'exclude_prefix'=>null, 'sort'=>TRUE, 'can_mkdir'=>TRUE ];
+    private $_data = [ 'top'=>'', 'type'=>FileType::TYPE_ANY, 'can_upload'=>self::FLAG_YES, 'show_thumbs'=>TRUE, 'can_delete'=>self::FLAG_YES,
+                       'match_prefix'=>'', 'show_hidden'=>FALSE, 'exclude_prefix'=>'', 'sort'=>TRUE, 'can_mkdir'=>TRUE ];
 
     /**
      * Set a value into this profile
@@ -81,6 +81,7 @@ class FilePickerProfile
             case FileType::TYPE_ANY:
                 $this->_data[$key] = $val;
                 break;
+            case '':
             case 'file':
                 $this->_data[$key] = FileType::TYPE_ANY;
                 break;

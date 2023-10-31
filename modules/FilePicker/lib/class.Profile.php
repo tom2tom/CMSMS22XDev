@@ -12,7 +12,7 @@ class ProfileException extends Exception {}
 
 class Profile extends FilePickerProfile
 {
-    private $_data = [ 'id'=>null, 'name'=>null, 'create_date'=>null, 'modified_date'=>null, 'file_extensions'=>null, 'prefix'=>null ];
+    private $_data = [ 'id'=>'', 'name'=>'', 'create_date'=>null, 'modified_date'=>null, 'file_extensions'=>'', 'prefix'=>'' ];
 
     protected function setValue( $key, $val )
     {
