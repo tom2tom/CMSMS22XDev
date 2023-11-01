@@ -166,22 +166,18 @@ function microtime_diff($a, $b)
  * This method should NOT be used for building URLS.
  *
  * This method accepts a variable number of string arguments.
- * e.g.: $out = cms_join_path($dir1,$dir2,$dir3,$filename)
- * or $out = cms_join_path($dir1,$dir2,$filename)
+ * e.g.: cms_join_path($dir1,$dir2,$dir3,$filename)
+ * or cms_join_path($dir1,$dir2,$filename)
+ * It does not deal with adjacent separators resulting from
+ * empty argument or argument already including separator(s)
  *
  * @since 0.14
  * @return string
  */
-function cms_join_path(...$args)
+function cms_join_path()
 {
-    if( $args ) {
-        return implode(DIRECTORY_SEPARATOR, $args);
-        //OR this removes multiple adjacent separators,
-        //and so it ignores any empty arg except if 1st or last
-        //$val = implode('/', $args);
-        //return preg_replace('~[\\\\/]+~', DIRECTORY_SEPARATOR, $val);
-    }
-    return '';
+    $args = func_get_args();
+    return implode(DIRECTORY_SEPARATOR, $args);
 }
 
 
