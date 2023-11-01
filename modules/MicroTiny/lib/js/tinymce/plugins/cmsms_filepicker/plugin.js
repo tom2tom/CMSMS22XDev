@@ -22,7 +22,7 @@ tinymce.PluginManager.add('cmsms_filepicker', function(editor) {
         var inst = 'i'+(new Date().getTime()).toString(16);
         tinymce.activeEditor.dom.setAttrib(tinyMCE.activeEditor.dom.select('html'),'data-cmsfp-instance',inst);
 
-        if( !top.document.CMSFileBrowser ) top.document.CMSFileBrowser = {type:'image'};
+        if( !top.document.CMSFileBrowser ) top.document.CMSFileBrowser = {type:meta.filetype};
         top.document.CMSFileBrowser.onselect = function(inst,file) {
             file = cms_data.root_url + file;
             function basename(str) {
@@ -54,9 +54,10 @@ tinymce.PluginManager.add('cmsms_filepicker', function(editor) {
 
 
         // here we open the filepicker window.
-        var url = cmsms_tiny.filepicker_url + '&inst=' + inst + '&type='+meta.filetype + '&useprefix=1';
+        var key = meta.filetype === 'image' ? 'imagebrowser_title' : 'filebrowser_title';
+        var url = cmsms_tiny.filepicker_url + '&m1_inst=' + encodeURIComponent(inst) + '&m1_type='+meta.filetype + '&m1_useprefix=1';
         mywin = tinymce.activeEditor.windowManager.open({
-            title : cmsms_tiny.filepicker_title,
+            title : cmsms_tiny[key],
             file : url,
             classes : 'filepicker',
             height : height,
@@ -68,9 +69,10 @@ tinymce.PluginManager.add('cmsms_filepicker', function(editor) {
             onFileSelected: function(filename) {
                 console.debug('woot got callback with '+filename);
             }
+        // TODO if meta.filetype === 'image' trigger a click on the images-filter element
+        //iframe find <span class="js-trigger filepicker-button" data-fb-type="image"</span>
+        //OR if needed for all types: iframe find <span class="js-trigger filepicker-button" data-fb-type="reset"</span>
         });
-
-
     }
     return false;
 });
