@@ -12,6 +12,7 @@ Core - General
  - Corrected page-selector widget operation.
  - BR #12647 Incorrect default-action value
  - BR #12657 {content_module} tag property-collision
+ - BR #12660 output filter not working
  - Validate entered bookmark-URLs.
  - Deprecated use of PHP function umask();
  - Added missing nls files, allowing installation of extra translations.
