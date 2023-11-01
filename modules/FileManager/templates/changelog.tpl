@@ -6,6 +6,10 @@
     Use html5 syntax
     <br>
     Modify easyarchives classes for PHP8+ compatibility
+    <br>
+    Bullet-proof file-extension determination
+    <br>
+    filemanager_utils::join_path() for filepaths, not urls
   </li>
   <li><b>Version 1.4.0</b> <em>(silmarillion)</em></li>
   <li>
