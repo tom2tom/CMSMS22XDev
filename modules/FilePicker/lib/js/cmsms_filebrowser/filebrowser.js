@@ -6,6 +6,17 @@ function CMSFileBrowser(_settings) {
   var listview_btn = $('.filepicker-view-option .view-list');
   var progress_bar = $('#filepicker-progress');
   var progress_text = $('#filepicker-progress-text');
+/* recognised settings members are
+ cmd_url
+ cwd
+ inst
+ lang.confirm_delete
+ lang.error_problem_upload
+ onselect
+ prefix
+ sig
+ type
+*/
   var settings;
 
   if(top.document.CMSFileBrowser) { //object containing runtime 'custom' settings, or empty
@@ -173,6 +184,8 @@ function CMSFileBrowser(_settings) {
     } else {
       gridview_btn.trigger('click');
     }
+    //TODO support initial filter-element click
+    //$('.filepicker-type-filter .js-trigger WITH [data-fb-type="whatever"] = "image"..."reset" trigger('click')
   }
 
   function _ajax_cmd(cmd, val) {
