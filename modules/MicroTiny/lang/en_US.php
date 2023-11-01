@@ -33,7 +33,7 @@ $lang['error_nopage'] = 'No page alias selected';
 $lang['example'] = 'MicroTiny example';
 
 // F
-$lang['filepickertitle'] = 'CMSMS File Picker';
+$lang['filepickertitle'] = 'CMSMS File Picker'; //TODO c.f. title_cmsms_filebrowser
 $lang['friendlyname'] = 'MicroTiny WYSIWYG editor';
 $lang['fileview'] = 'File View';
 $lang['filename'] = 'File Name';
@@ -232,7 +232,8 @@ $lang['switchreset'] = 'Show all';
 // T
 $lang['tooltip_selectedalias'] = 'This field is read only';
 $lang['title_cmsms_linker'] = 'Insert/edit link to site page';
-$lang['title_cmsms_filebrowser'] = 'Select a file';
+$lang['title_cmsms_filebrowser'] = 'Select a File'; //not used c.f. filepickertitle
+$lang['title_cmsms_imagebrowser'] = 'Select an Image';// new, not used c.f. filepickertitle
 $lang['title_edit_profile'] = 'Edit profile';
 $lang['title_mailto'] = 'Insert/edit email link';
 $lang['tmpnotwritable'] = 'The configuration could not be written to the tmp directory! Please fix this...';

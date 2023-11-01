@@ -3,6 +3,7 @@ var cmsms_tiny = {
     filebrowser_title: "{$MT->Lang('title_cmsms_filebrowser')|escape:'javascript'}",
     filepicker_title: "{$MT->Lang('filepickertitle')|escape:'javascript'}",
     filepicker_url: "{$filepicker_url}&field=",
+    imagebrowser_title: "{$MT->Lang('title_cmsms_imagebrowser')|escape:'javascript'}",
     linker_autocomplete_url: "{$getpages_url}",
     linker_heading: "{$MT->Lang('cmsms_linker2')|escape:'javascript'}",
     linker_image: "{$MT->GetModuleURLPath()}/lib/images/cmsmslink.gif",
