@@ -106,7 +106,7 @@ if( !$this->CheckPermission('Modify Files') ) { //TODO is this the relevant perm
 //Since CMSMS 2.2.3, any supplied 'type' parameter has been ignored here
 //and the profile-default type has been FileType::TYPE_ANY, so the picker
 //shows everything and allows 'filtering'
-//For back-compatibility, we retain that arrangement. Perhaps to be reconsidered
+//For back-compatibility, we retain that arrangement. Perhaps to be reconsidered.
 //$type = isset($params['type']) ? $clean_str($params['type']) : FileType::TYPE_ANY;
 //$custom['type'] = $type; //profile type may be unchanged
 $custom['type'] = FileType::TYPE_ANY;
@@ -183,7 +183,7 @@ while( FALSE !== ($filename = $dh->read()) ) {
         $file['icon'] = $filemanager->GetFileIcon('-',TRUE);
         $file['isparent'] = ($filename == '..');
         $parms = ['subdir'=>$filename,'inst'=>$inst,'sig'=>$sig];
-        if( $type ) { $parms['type'] = $type; } // pass-thru, not for directory-selection
+//      if( $type ) { $parms['type'] = $type; } // pass-thru, not for directory-selection
         //to avoid lots of urlencode changes, we simply merge all the params
         $url = $this->create_url($id,'filepicker',$returnid,['_enc'=>base64_encode(json_encode($parms))]).'&showtemplate=false';
         $file['chdir_url'] = $url;
@@ -257,7 +257,7 @@ $smarty->assign('inst',$inst);
 $smarty->assign('mod',$this);
 $smarty->assign('prefix',$prefix);
 $smarty->assign('profile',$profile2);
-$smarty->assign('type',$type);
+$smarty->assign('type',FileType::TYPE_ANY); //$type);
 $lang = [];
 $lang['confirm_delete'] = $this->Lang('confirm_delete');
 $lang['ok'] = $this->Lang('ok');
