@@ -103,8 +103,14 @@ if( !$this->CheckPermission('Modify Files') ) { //TODO is this the relevant perm
      'can_delete'=>FilePickerProfile::FLAG_NONE,
      'can_mkdir'=>FilePickerProfile::FLAG_NONE];
 }
-$type = isset($params['type']) ? $clean_str($params['type']) : FileType::TYPE_ANY;
-$custom['type'] = $type; //profile type may be unchanged
+//Since CMSMS 2.2.3, any supplied 'type' parameter has been ignored here
+//and the profile-default type has been FileType::TYPE_ANY, so the picker
+//shows everything and allows 'filtering'
+//For back-compatibility, we retain that arrangement. Perhaps to be reconsidered
+//$type = isset($params['type']) ? $clean_str($params['type']) : FileType::TYPE_ANY;
+//$custom['type'] = $type; //profile type may be unchanged
+$custom['type'] = FileType::TYPE_ANY;
+
 $profile2 = $profile->overrideWith($custom); //CHECKME replacement object cached anywhere? OK?
 
 // get our absolute top directory
