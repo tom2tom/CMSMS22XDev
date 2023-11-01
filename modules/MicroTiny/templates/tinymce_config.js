@@ -1,7 +1,7 @@
 // data
+//filepicker_title: "{$MT->Lang('filepickertitle')|escape:'javascript'}", usage replaced by a specific *browser_title
 var cmsms_tiny = {
     filebrowser_title: "{$MT->Lang('title_cmsms_filebrowser')|escape:'javascript'}",
-    filepicker_title: "{$MT->Lang('filepickertitle')|escape:'javascript'}",
     filepicker_url: "{$filepicker_url}&field=",
     imagebrowser_title: "{$MT->Lang('title_cmsms_imagebrowser')|escape:'javascript'}",
     linker_autocomplete_url: "{$getpages_url}",
