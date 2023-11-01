@@ -30,9 +30,11 @@ final class filemanager_utils
         if( strpos($name,'\\') !== false ) return FALSE;
         if( strpos($name,'..') !== false ) return FALSE;
         if( $name[0] == '.' || $name[0] == ' ' ) return FALSE;
-	      if( endswith( $name, '.' ) ) return FALSE;
+        if( endswith( $name, '.' ) ) return FALSE;
 
-        $ext = strtolower(substr(strrchr($name, '.'), 1));
+        $a = strrpos($name,'.');
+        $ext = ($a > 0) ? substr($name,$a + 1) : '';
+        if( $ext ) $ext = strtolower($ext);
         if( startswith($ext,'php') || endswith($ext,'php') ) return FALSE;
 
         if( preg_match('/[\n\r\t\[\]\&\?\<\>\!\@\#\$\%\*\(\)\{\}\|\"\'\:\;\+]/',$name) ) {
@@ -96,7 +98,7 @@ final class filemanager_utils
         }
         else {
             // advanced mode, path has to start with the root path.
-            $rprp = realpath($config['root_path']);
+            $rprp = realpath(CMS_ROOT_PATH);
             if (startswith($path,$rprp)) return true;
         }
         return false;
@@ -129,29 +131,14 @@ final class filemanager_utils
         cms_userprefs::set('filemanager_cwd',$newpath);
     }
 
-    //this is NOT intended for URLs
+    //this is NOT for constructing URLs
     public static function join_path(...$args)
     {
         if( !$args ) return '';
         if( count($args) < 2 ) return $args[0];
 
         $tmp = cms_join_path(...$args);
-        return preg_replace('~[\\\\/]+~',DIRECTORY_SEPARATOR,$tmp);
-/*
-        $args2 = array();
-        for( $i = 0; $i < count($args); $i++ ) {
-            if( $args[$i] == '' ) continue;
-            if( $i != 0 && (startswith($args[$i],'/') || startswith($args[$i],'\\')) ) {
-                $args[$i] = substr($args[$i],1);
-            }
-            if( endswith($args[$i],'/') || endswith($args[$i],'\\') ) {
-                $args[$i] = substr($args[$i],0,-1);
-            }
-            $args2[] = $args[$i];
-        }
-
-        return implode(DIRECTORY_SEPARATOR,$args2); //TODO '/' if it's an URL
-*/
+        return preg_replace('~[\\\\/]+~',DIRECTORY_SEPARATOR,$tmp); // scrub adjacent separators
     }
 
     public static function get_full_cwd()
@@ -176,7 +163,8 @@ final class filemanager_utils
     public static function is_image_file($file)
     {
         // it'd be nice to check mime type here.
-        $ext = substr(strrchr($file, '.'), 1);
+        $a = strrpos($file,'.');
+        $ext = ($a > 0) ? substr($file,$a + 1) : '';
         if( !$ext ) return FALSE;
 
         $tmp = array('gif','jpg','jpeg','png'); //TODO c.f. Filetype helper
@@ -225,7 +213,7 @@ final class filemanager_utils
 
             // build the file info array.
             $fullname = self::join_path($realpath,$file);
-            $info=array();
+            $info = array();
             $info['name'] = $file;
             $info['dir'] = FALSE;
             $info['image'] = FALSE;
@@ -236,13 +224,14 @@ final class filemanager_utils
             if (is_dir($fullname)) {
                 $info['dir'] = true;
                 $info['ext'] = '';
-                $info['fileinfo']=GetFileInfo($fullname,'',true);
+                $info['fileinfo'] = GetFileInfo($fullname,'',true);
             } else {
                 $info['size'] = $statinfo['size'];
                 $info['date'] = $statinfo['mtime'];
-                $info['url'] = implode('/', [$config['root_url'], trim($path, ' /'), $file]);
-                $explodedfile = explode('.', $file);
-                $info['ext'] = array_pop($explodedfile);
+                $tmp = trim(strtr($path,'\\','/'),' /');
+                $info['url'] = implode('/',[CMS_ROOT_URL,$tmp,$file]);
+                $a = strrpos($file,'.');
+                $info['ext'] = ($a > 0) ? substr($file,$a + 1) : '';
                 $info['fileinfo'] = GetFileInfo(self::join_path($realpath,$file),$info['ext'],false);
             }
 
@@ -378,8 +367,9 @@ final class filemanager_utils
                     'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
                     );
 
-                $ext = explode('.',$filename);
-                $ext = strtolower(array_pop($ext));
+                $a = strrpos($filename,'.');
+                $ext = ($a > 0) ? substr($filename,$a + 1) : '';
+                if( $ext ) $ext = strtolower($ext);
                 if (array_key_exists($ext, $mime_types)) {
                     return $mime_types[$ext];
                 }
