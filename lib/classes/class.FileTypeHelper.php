@@ -40,7 +40,7 @@ class FileTypeHelper
     /**
      * @ignore
      */
-    private $_archive_extensions = ['.zip', '.tar.gz', '.tar.bz2', '.7z', '.rar', '.s7z', '.gz', '.z' ];
+    private $_archive_extensions = ['zip','tar.gz','tar.bz2','7z','rar','s7z','z','tar'];
     /**
      * @ignore
      */
@@ -187,7 +187,8 @@ class FileTypeHelper
     {
         // extensions only.
         $ext = $this->get_extension( $filename );
-        return in_array( $ext, $this->_archive_extensions );
+        if( in_array($ext, $this->_archive_extensions) ) return TRUE;
+        return in_array('tar.'.$ext, $this->_archive_extensions);
     }
 
     /**
