@@ -36,7 +36,7 @@ if (!empty($params["fmerror"])) {
 if (isset($params["newsort"])) $this->SetPreference("sortby",$params["newsort"]);
 
 $path = trim(ltrim(filemanager_utils::get_cwd(),'/'));
-if( \filemanager_utils::can_do_advanced() && $this->GetPreference('advancedmode',0) ) {
+if( filemanager_utils::can_do_advanced() && $this->GetPreference('advancedmode',0) ) {
     $path = '::top::/'.$path;
 }
 $tmp_path_parts = explode('/',$path);
