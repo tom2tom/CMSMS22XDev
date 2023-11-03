@@ -26,9 +26,9 @@ final class filemanager_utils
     public static function is_valid_filename($name)
     {
         if( $name == '' ) return FALSE;
-        if( strpos($name,'/') !== false ) return FALSE;
-        if( strpos($name,'\\') !== false ) return FALSE;
-        if( strpos($name,'..') !== false ) return FALSE;
+        if( strpos($name,'/') !== FALSE ) return FALSE;
+        if( strpos($name,'\\') !== FALSE ) return FALSE;
+        if( strpos($name,'..') !== FALSE ) return FALSE;
         if( $name[0] == '.' || $name[0] == ' ' ) return FALSE;
         if( endswith( $name, '.' ) ) return FALSE;
 
@@ -47,8 +47,8 @@ final class filemanager_utils
     {
         if( self::$_can_do_advanced < 0 ) {
             $filemod = cms_utils::get_module('FileManager');
-            $config = cmsms()->GetConfig();
-            if( startswith($config['uploads_path'],$config['root_path']) && $filemod->AdvancedAccessAllowed() ) {
+            $config = \cms_config::get_instance();
+            if( startswith($config['uploads_path'],CMS_ROOT_PATH) && $filemod->AdvancedAccessAllowed() ) {
                 self::$_can_do_advanced = 1;
             }
             else {
@@ -63,17 +63,21 @@ final class filemanager_utils
         $filemod = cms_utils::get_module('FileManager');
         $a = self::can_do_advanced();
         $b = $filemod->GetPreference('advancedmode',0);
-        if( $a && $b ) return TRUE;
-        return FALSE;
+        return ( $a && $b );
     }
 
     public static function get_default_cwd()
     {
-        $config = \cms_config::get_instance();
-        $advancedmode=filemanager_utils::check_advanced_mode();
-        $dir = $config['uploads_path'];
-        if( !startswith($dir,CMS_ROOT_PATH) ) $dir = self::join_path(CMS_ROOT_PATH, 'uploads');
-        if( $advancedmode ) $dir = CMS_ROOT_PATH;
+        if( self::check_advanced_mode() ) {
+            $dir = CMS_ROOT_PATH;
+        }
+        else { 
+            $config = \cms_config::get_instance();
+            $dir = $config['uploads_path'];
+            if( !startswith($dir,CMS_ROOT_PATH) ) {
+                $dir = self::join_path(CMS_ROOT_PATH, 'uploads');
+            }
+        }
 
         $dir = cms_relative_path( $dir, CMS_ROOT_PATH );
         return $dir;
@@ -82,26 +86,24 @@ final class filemanager_utils
     public static function test_valid_path($path)
     {
         // returns false if invalid.
-        $config = \cms_config::get_instance();
-        $advancedmode = filemanager_utils::check_advanced_mode();
-
         $prefix = CMS_ROOT_PATH;
         if( $path === '/' ) $path = '';
         $path = self::join_path($prefix,$path);
         $rpath = realpath($path);
-        if( !$rpath ) return false;
+        if( !$rpath ) return FALSE;
 
-        if (!$advancedmode) {
+        if( !self::check_advanced_mode() ) {
             // uploading in 'non advanced mode', path has to start with the upload dir.
+            $config = \cms_config::get_instance();
             $uprp = realpath($config['uploads_path']);
-            if (startswith($rpath,$uprp)) return true;
+            if( startswith($rpath,$uprp) ) return TRUE;
         }
         else {
             // advanced mode, path has to start with the root path.
             $rprp = realpath(CMS_ROOT_PATH);
-            if (startswith($path,$rprp)) return true;
+            if( startswith($path,$rprp) ) return TRUE;
         }
-        return false;
+        return FALSE;
     }
 
     public static function get_cwd()
@@ -118,7 +120,6 @@ final class filemanager_utils
     public static function set_cwd($path)
     {
         if( startswith($path,CMS_ROOT_PATH) ) $path = cms_relative_path($path,CMS_ROOT_PATH);
-        $advancedmode = self::check_advanced_mode();
 
         // validate the path.
         $tmp = self::join_path(CMS_ROOT_PATH,$path);
@@ -144,9 +145,8 @@ final class filemanager_utils
     public static function get_full_cwd()
     {
         $path = self::get_cwd();
-        $config = cmsms()->GetConfig();
         if( !self::test_valid_path($path) ) $path = self::get_default_cwd();
-        $base = $config['root_path'];
+        $base = CMS_ROOT_PATH;
         $realpath = self::join_path($base,$path);
         return $realpath;
     }
@@ -154,10 +154,36 @@ final class filemanager_utils
     public static function get_cwd_url()
     {
         $path = self::get_cwd();
-        $config = cmsms()->GetConfig();
         if( !self::test_valid_path($path) ) $path = self::get_default_cwd();
-        $url = $config['root_url'].'/'.strtr($path,'\\','/');
+        $url = CMS_ROOT_URL.'/'.strtr($path,'\\','/');
         return $url;
+    }
+
+    public static function is_hidden_file($file)
+    {
+        static $macos = null;// whether running on some flavour of MacOS
+        static $winos = null;// whether running on some flavour of Windows
+        if( !isset($macos) ) {
+            $tmp = php_uname('s');
+            $macos = stripos($tmp,'darwin') !== FALSE;
+            $winos = !$macos && stripos($tmp,'windo') !== FALSE;
+        }
+        $base = basename($file);
+        if( !($macos || $winos) ) {
+            return $base[0] == '.';
+        }
+        if( $winos ) {
+            if( $base[0] == '~' ) return TRUE;
+            $file = str_replace('/','\\',$file);
+            exec('attrib ' . escapeshellarg($file),$res);
+            if( $res && ($p = strpos($res,'H')) !== FALSE ) {
+                return preg_match('~\s.*?:?\\~',$res,null,0,$p + 1); //want whitespace after 'H' and before ':\'
+            }
+        }
+        if( $macos ) {
+            return $base[0] == '.' || $base[0] == '_';
+        }
+        return FALSE;
     }
 
     public static function is_image_file($file)
@@ -168,8 +194,7 @@ final class filemanager_utils
         if( !$ext ) return FALSE;
 
         $tmp = array('gif','jpg','jpeg','png'); //TODO c.f. Filetype helper
-        if( in_array(strtolower($ext),$tmp) ) return TRUE;
-        return FALSE;
+        return in_array(strtolower($ext),$tmp);
     }
 
     public static function is_archive_file($file)
@@ -186,24 +211,21 @@ final class filemanager_utils
         if( !$path ) $path = self::get_cwd();
         $advancedmode = self::check_advanced_mode();
         $filemod = cms_utils::get_module('FileManager');
-        $showhiddenfiles=$filemod->GetPreference('showhiddenfiles','1');
+        $showhiddenfiles = $filemod->GetPreference('showhiddenfiles','1');
         $result = array();
-        $config = \cms_config::get_instance();
 
         // convert the cwd into a real path... slightly different for advanced mode.
-        $realpath = self::join_path($config['root_path'],$path);
+        $realpath = self::join_path(CMS_ROOT_PATH,$path);
 
-        $dir=@opendir($realpath);
+        $dir = @opendir($realpath);
         if (!$dir) return [];
-        while ($file=readdir($dir)) {
-            if ($file=='.') continue;
-            if ($file=='..') {
+        while ($file = readdir($dir)) {
+            if ($file == '.') continue;
+            if ($file == '..') {
                 // can we go up.
                 if( $path == self::get_default_cwd() || $path == '/' ) continue;
-            } else {
-                if ($file[0]=='.' || $file[0] == '_' || $file[0] == '~') {
-                    if (($showhiddenfiles!=1) || (!$advancedmode)) continue;
-                }
+            } elseif (self::is_hidden_file($realpath.DIRECTORY_SEPARATOR.$file)) {
+                if (!($showhiddenfiles || $advancedmode)) continue;
             }
 
             if (substr($file,0,6)=='thumb_') {
@@ -232,7 +254,7 @@ final class filemanager_utils
                 $info['url'] = implode('/',[CMS_ROOT_URL,$tmp,$file]);
                 $a = strrpos($file,'.');
                 $info['ext'] = ($a > 0) ? substr($file,$a + 1) : '';
-                $info['fileinfo'] = GetFileInfo(self::join_path($realpath,$file),$info['ext'],false);
+                $info['fileinfo'] = GetFileInfo(self::join_path($realpath,$file),$info['ext'],FALSE);
             }
 
             // test for archive
@@ -250,7 +272,7 @@ final class filemanager_utils
 
             $info['writable']=is_writable(self::join_path($realpath,$file));
             if (function_exists('posix_getpwuid')) {
-                $info['permissions']=filemanager_utils::format_permissions($statinfo['mode'],$filemod->GetPreference('permissionstyle','xxx'));
+                $info['permissions']=self::format_permissions($statinfo['mode'],$filemod->GetPreference('permissionstyle','xxx'));
             } else {
                 if ($info['writable']) {
                     $info['permissions']='R';
@@ -413,25 +435,25 @@ final class filemanager_utils
 
     public static function get_dirlist()
     {
-        $config = CmsApp::get_instance()->GetConfig();
         $mod = cms_utils::get_module('FileManager');
         $showhiddenfiles = $mod->GetPreference('showhiddenfiles');
+        $config = \cms_config::get_instance();
         $startdir = $config['uploads_path'];
         $advancedmode = self::check_advanced_mode();
-        if( $advancedmode ) $startdir = $config['root_path'];
+        if( $advancedmode ) $startdir = CMS_ROOT_PATH;
 
-        // now get a simple list of all of the directories we have 'write' access to.
+        // get a simple list of all directories the user may 'write' to.
         function fmutils_get_dirs($startdir,$prefix = '/') {
             $res = array();
             if( !is_dir($startdir) ) return [];
 
             global $showhiddenfiles;
             $dh = opendir($startdir);
-            while( false !== ($entry = readdir($dh)) ) {
+            while( FALSE !== ($entry = readdir($dh)) ) {
                 if( $entry == '.' ) continue;
-                $full = filemanager_utils::join_path($startdir,$entry);
+                $full = filemanager_utils::join_path($startdir,$entry); // embedded func so not self::
                 if( !is_dir($full) ) continue;
-                if( !$showhiddenfiles && ($entry[0] == '.' || $entry[0] == '_') ) continue;
+                if( !$showhiddenfiles && filemanager_utils::is_hidden_file($full) ) continue;
 
                 if( $entry == '.svn' || $entry == '.git' ) continue;
                 $res[$prefix.$entry] = $prefix.$entry;
@@ -483,7 +505,7 @@ final class filemanager_utils
         imagesavealpha($i_dest,TRUE);
         imagecopyresampled($i_dest,$i_src,0,0,0,0,$width,$height,imagesx($i_src),imagesy($i_src));
 
-        $res = false;
+        $res = FALSE;
         switch( $info['mime'] ) {
         case 'image/gif':
             $res = imagegif($i_dest,$dest);
@@ -506,13 +528,13 @@ final class filemanager_utils
         $unit=$mod->Lang("bytes");
         $size=$_size;
 
-        if ($size>10000 && $size<(1024*1024)) {
+        if ($size>10000 && $size<=1048576) { //aka 1024*1024
             $size=round($size/1024);
             $unit=$mod->Lang("kb");
         }
 
-        if ($size>(1024*1024)) {
-            $size=round($size/(1024*1024),1);
+        if ($size>1048576) {
+            $size=round($size/1048576,1);
             $unit=$mod->Lang("mb");
         }
 
