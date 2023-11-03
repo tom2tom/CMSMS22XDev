@@ -15,6 +15,8 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+// THIS PLUGIN DEPRECATED SINCE CMSMS 2.2 INSTEAD USE {page_image ...}
+
 function smarty_function_image($params, $smarty)
 {
   $gCms = CmsApp::get_instance();
@@ -22,7 +24,7 @@ function smarty_function_image($params, $smarty)
   $imgstart = '<img src=';
   $imgend = '>';
   if( !empty($params['src'] ) ) {
-      $text = $imgstart .= '"'.$gCms->config['image_uploads_url'].'/'.$params['src'].'"';
+      $text = $imgstart .= '"'.$gCms->config['image_uploads_url'].'/'.$params['src'].'"'; //TODO c.f. cms_siteprefs::get('content_imagefield_path')) ?
       $size = @getimagesize($gCms->config['image_uploads_path'].'/'.$params['src']);
 
       if( !empty($params['width'] ) ) {
@@ -75,6 +77,7 @@ function smarty_cms_about_function_image()
 		<li>Initial release</li>
 		<li>Added alt param and removed the &lt;/img&gt;</li>
 		<li>Added default width, height and alt <small>(contributed by Walter Wlodarski)</small></li>
+		<li>Deprecated 2017-06-10, instead use page_image tag</li>
 	</ul>
 <?php
 }
