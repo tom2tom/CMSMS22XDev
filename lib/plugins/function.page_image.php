@@ -44,7 +44,7 @@ function smarty_function_page_image($params, $smarty)
     if( $val ) {
         $orig_val = $val;
         $config = \cms_config::get_instance();
-        if( $full ) $val = $config['image_uploads_url'].'/'.$val;
+        if( $full ) $val = $config['image_uploads_url'].'/'.$val; //TODO c.f. cms_siteprefs::get('content_imagefield_path')) to url
         if( ! $tag ) {
             $out = $val;
         } else {
