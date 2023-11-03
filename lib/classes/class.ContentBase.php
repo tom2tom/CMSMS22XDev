@@ -2399,7 +2399,8 @@ abstract class ContentBase
 			break;
 
 		case 'image':
-			$dir = cms_join_path($config['image_uploads_path'],cms_siteprefs::get('content_imagefield_path'));
+			$dir = $config['image_uploads_path'];
+			if( ($tmp = cms_siteprefs::get('content_imagefield_path')) ) { $dir .= DIRECTORY_SEPARATOR . trim($tmp, ' \\/'); }
 			$data = $this->GetPropertyValue('image');
 			$filepicker = \cms_utils::get_filepicker_module();
 			if( $filepicker ) {
@@ -2408,13 +2409,13 @@ abstract class ContentBase
 				$input = $filepicker->get_html( 'image', $data, $profile);
 			}
 			else {
-				$input = create_file_dropdown('image',$dir,$data,'jpg,jpeg,png,gif','',true,'','thumb_',0,1);
+				$input = create_file_dropdown('image',$dir,$data,'jpg,jpeg,png,gif','',true,'','thumb_',0,1); //c,f, FileTypeHelper 'jpg','jpeg','bmp','wbmp','gif','png','webp', 'svg'
 			}
 			if( !$input ) return [];
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_image',lang('help_title_content_image'));
 			return array('<label for="image">'.lang('image').':</label>'.$help,$input);
 /*
-			$dir = cms_join_path($config['image_uploads_path'],cms_siteprefs::get('content_imagefield_path'));
+			$dir = $config['image_uploads_path']; if appropriate, .= DIRECTORY_SEPARATOR. trim cms_siteprefs::get('content_imagefield_path'));
 			$data = $this->GetPropertyValue('image');
 			$dropdown = create_file_dropdown('image',$dir,$data,'jpg,jpeg,png,gif','',true,'','thumb_',1,1);
 			if( !$dropdown ) return [];
@@ -2423,7 +2424,8 @@ abstract class ContentBase
 */
 
 		case 'thumbnail':
-			$dir = cms_join_path($config['image_uploads_path'],cms_siteprefs::get('content_thumbnailfield_path'));
+			$dir = $config['image_uploads_path'];
+			if( ($tmp = cms_siteprefs::get('content_imagefield_path')) ) { $dir .= DIRECTORY_SEPARATOR . trim($tmp, ' \\/'); }
 			$data = $this->GetPropertyValue('thumbnail');
 			$filepicker = \cms_utils::get_filepicker_module();
 			if( $filepicker ) {

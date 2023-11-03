@@ -535,13 +535,13 @@ class Content extends ContentBase
 			if( !$res ) return '';
 		}
 		$config = \cms_config::get_instance();
+		$dir = $config['uploads_path'];
 		$adddir = get_site_preference('contentimage_path');
-		if( $blockInfo['dir'] != '' ) $adddir = $blockInfo['dir'];
-		$dir = cms_join_path($config['uploads_path'],$adddir);
+		if( $blockInfo['dir'] ) { $adddir = $blockInfo['dir']; }
+		if( $adddir ) { $dir .= DIRECTORY_SEPARATOR . trim($adddir, ' \\/'); }
 		$rp1 = realpath($config['uploads_path']);
 		$rp2 = realpath($dir);
 
-		$dropdown = [];
 		if( !startswith($rp2,$rp1) ) {
 			$err = lang('err_invalidcontentimgpath');
 			return '<div class="red">'.$err.'</div>';
@@ -565,8 +565,8 @@ class Content extends ContentBase
 		} else {
 			$dropdown = create_file_dropdown($inputname,$dir,$value,'jpg,jpeg,png,gif','',true,'',$prefix,1,$sort);
 			if( !$dropdown ) $dropdown = lang('error_retrieving_file_list');
+			return $dropdown;
 		}
-		return $dropdown;
 	}
 
 	/**
