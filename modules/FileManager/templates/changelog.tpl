@@ -9,6 +9,8 @@
     <br>
     Bullet-proof file-extension determination
     <br>
+    Filenames beginning with '_' are hidden on MacOS only
+    <br>
     filemanager_utils::join_path() for filepaths, not urls
   </li>
   <li><b>Version 1.4.0</b> <em>(silmarillion)</em></li>
