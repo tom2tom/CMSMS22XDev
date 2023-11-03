@@ -37,6 +37,8 @@ final class FilePicker extends CMSModule implements FilePickerInterface
 {
     protected $_dao;
     protected $_typehelper;
+    protected $macos;
+    protected $winos;
 
     public function __construct()
     {
@@ -244,7 +246,14 @@ final class FilePicker extends CMSModule implements FilePickerInterface
         if( !$filename ) { return FALSE; }
         if( strncasecmp($filename, 'index.htm', 9) == 0 ) { return FALSE; }
         if( endswith($filename, '.') ) { return FALSE; }
-        if( !$profile->show_hidden && (startswith($filename, '.') || startswith($filename, '_')) ) { return FALSE; }// TODO valid test for windows hidden files
+        if( !$profile->show_hidden ) {
+            if( !isset($this->macos) ) {
+                $tmp = php_uname('s');
+                $this->macos = stripos($tmp, 'darwin') !== false;//running on some flavour of MacOS
+                $this->winos = !$this->macos && stripos($tmp, 'windo') !== false;//running on some flavour of Windows
+            }
+            if( $filename[0] == '.' || ($filename[0] == '_' && $this->macos) || ($filename[0] == '~' && $this->winos) ) { return FALSE; }//generally useless on Windows OS
+        }
         if( $profile->match_prefix && !startswith($filename, $profile->match_prefix) ) { return FALSE; }
         if( $profile->exclude_prefix && startswith($filename, $profile->exclude_prefix) ) { return FALSE; }
 

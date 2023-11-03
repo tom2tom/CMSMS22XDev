@@ -121,10 +121,12 @@ class wizard_step1 extends wizard_step
             if( !is_readable( $start ) ) return [];
             $dh = opendir($start);
             if( !$dh ) return [];
+            $macos = stripos(php_uname('s'),'darwin') !== false;// running on some flavour of MacOS
+            $winos = stripos(php_uname('s'),'wind') !== false;// running on some flavour of Windows
             $out = array();
             while( ($file = readdir($dh)) !== FALSE ) {
                 if( $file == '.' || $file == '..' ) continue;
-                if( startswith($file,'.') || startswith($file,'_') ) continue;
+                if( ($file[0] == '.' && !$winos) || ($file[0] == '_' && $macos) || ($file[0] == '~' && $winos) ) continue; // TODO real hidden check on Win
                 $dn = $start.DIRECTORY_SEPARATOR.$file;  // cuz windows blows, and windoze guys are whiners :)
                 if( !@is_readable($dn) ) continue;
                 if( !@is_dir($dn) ) continue;

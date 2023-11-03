@@ -26,11 +26,15 @@ try {
 
     $fullpath = $assistant->to_absolute($cwd);
     if( ! $assistant->is_relative($fullpath) ) throw new \RuntimeException('Invalid cwd '.$cwd);
-
+    if( !isset($this->macos) ) {
+        $tmp = php_uname('s');
+        $this->macos = stripos($tmp,'darwin') !== false;// running on some flavour of MacOS
+        $this->winos = !$this->macos && stripos($tmp, 'windo') !== false;//running on some flavour of Windows
+    }
     switch( $cmd ) {
     case 'mkdir':
         if( !$profile->can_mkdir ) throw new \LogicException('Internal error: mkdir command executed, but profile says we cannot do this');
-        if( startswith($val,'.') || startswith($val,'_') ) throw new \RuntimeException($this->Lang('error_ajax_invalidfilename'));
+        if( $val[0] == '.' || ($val[0] == '_' && $this->macos) || ($val[0] == '~' && $this->winos) ) throw new \RuntimeException($this->Lang('error_ajax_invalidfilename'));
         if( !is_writable($fullpath) ) throw new \RuntimeException($this->Lang('error_ajax_writepermission'));
         $destpath = $fullpath.DIRECTORY_SEPARATOR.$val;
         if( is_dir($destpath) || is_file($destpath) ) throw new \RuntimeException($this->Lang('error_ajax_fileexists'));
@@ -40,7 +44,7 @@ try {
     case 'del':
         if( !$profile->can_delete ) throw new \LogicException('Internal error: del command executed, but profile says we cannot do this');
         $val = basename($val);
-        if( startswith($val,'.') || startswith($val,'_') ) throw new \RuntimeException($this->Lang('error_ajax_invalidfilename'));
+        if( $val[0] == '.' || ($val[0] == '_' && $this->macos) || ($val[0] == '~' && $this->winos) ) throw new \RuntimeException($this->Lang('error_ajax_invalidfilename'));
         //if( !is_writable($fullpath) ) throw new \RuntimeException($this->Lang('error_ajax_writepermission'));
         $destpath = $fullpath.DIRECTORY_SEPARATOR.$val;
         if( !is_writable($destpath) ) throw new \RuntimeException($this->Lang('error_ajax_writepermission').' '.$destpath);
