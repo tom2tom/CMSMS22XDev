@@ -33,7 +33,7 @@ function smarty_function_cms_filepicker($params,$template)
     $parms = [];
     if( $top ) {
         // TODO $top might be Windoze-style absolute path and separator might be \ or /
-        if( !startswith($top,'/') ) $top = cmsms()->GetConfig()['uploads_path'].'/'.$top;
+        if( !startswith($top,'/') ) $top = cmsms()->GetConfig()['uploads_path'].'/'.$top; //TODO bad for windows OS >> proper test for absolute path
         if( startswith($top, CMS_ROOT_PATH ) ) $parms['top'] = $top;
     }
     if( $type ) $parms['type'] = $type;
