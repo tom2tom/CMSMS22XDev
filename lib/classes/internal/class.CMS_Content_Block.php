@@ -331,16 +331,23 @@ final class CMS_Content_Block
 
     public static function smarty_fetch_imageblock($params,$smarty)
     {
-        $ignored = [ 'block','type','name','label','upload','dir','default','tab','priority','exclude','sort','profile','urlonly','assign' ];
         $gCms = CmsApp::get_instance();
         $contentobj = $gCms->get_content_object();
         if( !is_object($contentobj) || $contentobj->Id() <= 0 ) return self::content_return('', $params, $smarty);
 
         $config = \cms_config::get_instance();
-        $adddir = \cms_siteprefs::get('contentimage_path');
-        if( isset($params['dir']) && $params['dir'] != '' ) $adddir = $params['dir'];
-        $dir = cms_join_path($config['uploads_path'],$adddir);
-        $basename = basename($config['uploads_path']);
+        $dir = $config['uploads_path'];
+        $basename = basename($dir);
+
+        if( !empty($params['dir']) ) {
+            $adddir = strtr($params['dir'],'\\/',DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR); //TODO current relevance of this ?
+        }
+        else {
+            $adddir = \cms_siteprefs::get('contentimage_path');
+        }
+        if( $adddir ) {
+            $dir .= DIRECTORY_SEPARATOR . trim($adddir,' \\/');
+        }
 
         $result = '';
         if( isset($params['block']) ) {
@@ -353,20 +360,28 @@ final class CMS_Content_Block
 
         $out = '';
         if( startswith(realpath($dir),realpath($basename)) ) {
-            if( ($img == -1 || empty($img)) && isset($params['default']) && $params['default'] ) $img = $params['default'];
-
-            if( $img != -1 && !empty($img) ) {
-                // create the absolute url.
-                $orig_val = $img;
-                $img = $config['uploads_url'].'/';
-                if( $adddir ) $img .= $adddir.'/';
-                $img .= $orig_val;
+            if( (!$img || $img == -1) && !empty($params['default']) ) {
+                $img = $params['default'];
+            }
+            if( $img && $img != -1 ) {
+                // create absolute url.
+                if( $img[0] == '/' ) {
+                    $img = CMS_ROOT_URL . $img;
+                }
+                else {
+                    $tmp = $config['uploads_url'];
+//                    if( $adddir ) {
+//                        $tmp .= '/' . strtr($adddir,'\\','/');
+//                    }
+                    $img = $tmp . '/' . $img;
+                }
 
                 $urlonly = cms_to_bool(get_parameter_value($params,'urlonly'));
                 if( $urlonly ) {
                     $out = $img;
                 }
                 else {
+                    $ignored = [ 'block','type','name','label','upload','dir','default','tab','priority','exclude','sort','profile','urlonly','assign' ];
                     $tagparms = [];
                     foreach( $params as $key => $val ) {
                         $key = trim($key);
