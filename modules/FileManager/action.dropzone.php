@@ -45,9 +45,14 @@ if( strlen($advancedmode) > 1 ) $advancedmode = 0;
     $basedir = dirname($startdir);
     function get_dirs($startdir,$prefix = '/') {
         $res = array();
-        if( !is_dir($startdir) ) return;
+        if( !is_dir($startdir) ) return $res;
 
         global $showhiddenfiles;
+        if( !$showhiddenfiles ) {
+            $tmp = php_uname('s');
+            $macos = stripos($tmp,'darwin') !== false;// running on some flavour of MacOS
+            $winos = !$macos && stripos($tmp,'windo') !== false;// running on some flavour of Windows
+        }
         $dh = opendir($startdir);
         while( false !== ($entry = readdir($dh)) ) {
             if( $entry == '.' ) continue;
@@ -55,8 +60,7 @@ if( strlen($advancedmode) > 1 ) $advancedmode = 0;
             $full = filemanager_utils::join_path($startdir,$entry);
             if( !is_dir($full) ) continue;
             if( !is_readable($full) ) continue;
-            if( !$showhiddenfiles && ($entry[0] == '.' || $entry[0] == '_') ) continue;
-
+            if( !$showhiddenfiles && ($entry[0] == '.' || ($entry[0] == '_' && $macos) || ($entry[0] == '~' && $winos)) ) continue; //useless on Windows OS
             if( $entry == '.svn' || $entry == '.git' ) continue;
             if( is_writable($full) ) $res[$prefix.$entry] = $prefix.$entry;
             $tmp = get_dirs($full,$prefix.$entry.'/');
