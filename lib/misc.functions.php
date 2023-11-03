@@ -177,7 +177,7 @@ function microtime_diff($a, $b)
 function cms_join_path()
 {
     $args = func_get_args();
-    return implode(DIRECTORY_SEPARATOR, $args);
+    return implode(DIRECTORY_SEPARATOR,$args);
 }
 
 
@@ -880,7 +880,7 @@ function can_admin_upload()
   $file_index = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.'index.php';
   $file_moduleinterface = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.
     $config['admin_dir'].DIRECTORY_SEPARATOR.'moduleinterface.php';
-  $dir_uploads = $config['uploads_path'];
+  $dir_uploads = $config['uploads_path']; //for {content_image} tags c.f. 'image_uploads_path' for content
   $dir_modules = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.'modules';
 
   $stat_index = @stat($file_index);
