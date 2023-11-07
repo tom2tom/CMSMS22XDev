@@ -50,12 +50,14 @@ $data['root_url'] = $config['root_url'];
 $data['uploads_url'] = $config['uploads_url'];
 $data['secure_param_name'] = CMS_SECURE_PARAM_NAME;
 $data['user_key'] = $_SESSION[CMS_USER_KEY];
-
-// todo: use a preference
+// todo: support a preference instead of default picker?
 $fp = ModuleOperations::get_instance()->GetFilePickerModule();
 if( $fp ) {
-    $data['filepicker_url'] = $fp->get_browser_url();
-    $data['filepicker_url'] = str_replace('&amp;','&',$data['filepicker_url']).'&showtemplate=false';
+    $value = $fp->get_browser_url();
+    $data['filepicker_url'] = str_replace('&amp;','&',$value).'&showtemplate=false';
+}
+else {
+    $data['filepicker_url'] = '';
 }
 
 // output some javascript
