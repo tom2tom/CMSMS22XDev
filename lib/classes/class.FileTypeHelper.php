@@ -36,11 +36,12 @@ class FileTypeHelper
     /**
      * @ignore
      */
-    private $_image_extensions = ['jpg','jpeg','bmp','wbmp','gif','png','webp', 'svg'];
+    private $_image_extensions = ['jpg','jpeg','bmp','wbmp','gif','png','webp','svg'];
     /**
      * @ignore
+     * TODO formerly supported 'gz' alone, reinstate? if so, 'bz2' and its aliases? 'xz'?
      */
-    private $_archive_extensions = ['zip','tar.gz','tar.bz2','7z','rar','s7z','z','tar'];
+    private $_archive_extensions = ['zip','tar.gz','tar.bz2','tar.xz','7z','rar','s7z','z','tar'];
     /**
      * @ignore
      */
