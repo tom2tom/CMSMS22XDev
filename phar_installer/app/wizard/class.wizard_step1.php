@@ -117,16 +117,18 @@ class wizard_step1 extends wizard_step
             return '';
         };
 
-        $_find_dirs = function($start,$depth = 0) use( &$_find_dirs, &$_get_annotation, $_is_valid_dir ) {
+        $str = php_uname('s');
+        $winos = stripos($str,'windo') !== false;// running on some flavour of Windows
+        $macos = !$winos && stripos($str,'darwin') !== false;// running on some flavour of MacOS
+
+        $_find_dirs = function($start,$depth = 0) use( &$_find_dirs, &$_get_annotation, $_is_valid_dir, $winos, $macos ) {
             if( !is_readable( $start ) ) return [];
             $dh = opendir($start);
             if( !$dh ) return [];
-            $macos = stripos(php_uname('s'),'darwin') !== false;// running on some flavour of MacOS
-            $winos = stripos(php_uname('s'),'wind') !== false;// running on some flavour of Windows
-            $out = array();
+            $out = [];
             while( ($file = readdir($dh)) !== FALSE ) {
                 if( $file == '.' || $file == '..' ) continue;
-                if( ($file[0] == '.' && !$winos) || ($file[0] == '_' && $macos) || ($file[0] == '~' && $winos) ) continue; // TODO real hidden check on Win
+                if( ($file[0] == '.' && !$winos) || ($file[0] == '_' && $macos) || ($file[0] == '~' && $winos) ) continue; // TODO hidden-attribute check on Windows
                 $dn = $start.DIRECTORY_SEPARATOR.$file;  // cuz windows blows, and windoze guys are whiners :)
                 if( !@is_readable($dn) ) continue;
                 if( !@is_dir($dn) ) continue;
