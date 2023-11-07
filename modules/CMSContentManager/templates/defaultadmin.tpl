@@ -17,7 +17,7 @@ function cms_CMloadUrl(link, lang) {
     e.preventDefault();
     $('#ajax_find').val('');
 
-    if (typeof lang == 'string' && lang.length > 0) {
+    if (typeof lang === 'string' && lang.length > 0) {
       cms_confirm(lang).done(_do_ajax);
     } else {
       _do_ajax();

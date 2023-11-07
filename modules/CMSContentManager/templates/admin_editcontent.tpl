@@ -37,7 +37,7 @@ $(function() {
 
 {if $content_obj->HasPreview()}
   $('#_preview_').on('click', function() {
-    if( typeof tinyMCE != 'undefined') tinyMCE.triggerSave();
+    if( typeof tinymce !== 'undefined') tinymce.triggerSave();
     // serialize the form data
     var data = $('#Edit_Content').find('input:not([type="submit"]), select, textarea').serializeArray();
     data.push({
@@ -126,7 +126,7 @@ $(function() {
   // handle apply (ajax submit)
   $(document).on('click', '[name$="apply"]', function() {
     // apply does not do an unlock.
-    if( typeof tinyMCE != 'undefined') tinyMCE.triggerSave(); // TODO this needs better approach, create a common "ajax save" function that can be reused
+    if( typeof tinymce !== 'undefined') tinymce.triggerSave(); // TODO this needs better approach, create a common "ajax save" function that can be reused
     var data = $('#Edit_Content').find('input:not([type="submit"]), select, textarea').serializeArray();
     data.push({
       'name': '{$actionid}ajax',
@@ -165,7 +165,7 @@ $(function() {
     var lastValue = $(this).data('lastValue');
     var data = { '{$actionid}design_id': v };
     $.get('{$designchanged_ajax_url}',data,function(data,text) {
-      if( typeof data == 'object' ) {
+      if( typeof data === 'object' ) {
         var sel = $('#template_id').val();
         var fnd = false;
         var first = null;
@@ -194,7 +194,7 @@ $(function() {
           else if( first ) {
             $('#template_id').val(first);
           }
-          if( typeof edata == 'undefined' || typeof edata.skip_fallthru == 'undefined' ) {
+          if( typeof edata === 'undefined' || typeof edata.skip_fallthru === 'undefined' ) {
             $('#template_id').trigger('change');
           }
         }

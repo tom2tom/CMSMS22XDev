@@ -23,7 +23,7 @@ $(function() {
         var r,d,e;
         try {
           var x = $.parseJSON(resultdata);
-          if( typeof x.response != 'undefined' ) {
+          if( typeof x.response !== 'undefined' ) {
             r = x.response;
             d = x.details;
           } else {
