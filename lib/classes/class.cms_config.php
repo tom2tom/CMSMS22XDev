@@ -204,6 +204,7 @@ final class cms_config implements ArrayAccess
     $this->_types['permissive_smarty']         = self::TYPE_BOOL;
     $this->_types['startup_mact_processing']   = self::TYPE_BOOL;
     $this->_types['host_whitelist']            = self::TYPE_MIXED; // since 2.2.17
+//  $this->_types['admin_csp_header']          = self::TYPE_STRING; not useful
 
     $config = array();
     if( defined('CONFIG_FILE_LOCATION') && is_file(CONFIG_FILE_LOCATION) ) {
@@ -506,6 +507,7 @@ final class cms_config implements ArrayAccess
       case 'locale':
       case 'page_extension':
       case 'timezone':
+//not useful case 'admin_csp_header':
         return '';
 
       case 'assets_dir':
