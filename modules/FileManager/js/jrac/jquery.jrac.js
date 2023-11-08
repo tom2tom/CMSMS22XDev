@@ -1,6 +1,13 @@
-/* jQuery Resize And Crop (jrac)
- * A jQuery 1.4+ and jQueryUi 1.8+ plugin under GNU GENERAL PUBLIC LICENSE version 2 lisense.
- * Copyright (c) 2011 Cedric Gampert - cgampert@gmail.com
+/*
+ * jQuery Resize And Crop (jrac) 1.0.2
+ * with some jquery deprecations replaced and scope-bugs corrected
+ *
+ * A jquery+jquery-ui plugin under GNU GENERAL PUBLIC LICENSE version 2 license.
+ * Copyright (c) 2011-2015 Cedric Gampert - cgampert@gmail.com
+ *
+ * Dependencies:
+ *  jquery 1.4.4
+ *  jquery-ui 1.8.7 (draggable, resizable, slider)
  */
 
 (function( $ ){
@@ -21,6 +28,7 @@
       'image_height': null,
       'zoom_min': 100,
       'zoom_max': 3000,
+      'zoom_label': '',
       'viewport_image_surrounding': false, // Set the viewport to surround the image on load
       'viewport_width': null,
       'viewport_height': null,
@@ -43,7 +51,7 @@
 
       // Read options
       var destroy = false;
-      if ( typeof options === 'object' ) {
+      if (typeof options === 'object') {
         $.extend( settings, options );
       }
       else if (options == 'destroy') {
@@ -117,10 +125,14 @@
         // Set the viewport content position for the image
         $image.css({'left': settings.viewport_content_left, 'top': settings.viewport_content_top});
 
-        // Create the zoom widget which permit to resize the image
+        // Create the zoom widget which permits resizing the image
+        var $crop, $zoom_widget;
         if (!jrac_loaded) {
-          var $zoom_widget = $('<div class="jrac_zoom_slider"><div class="ui-slider-handle"></div></div>')
-          .width($viewport.width())
+          if (settings.zoom_label) {
+            var $zoom_label = $('<div class="jrac_zoom_slider_label">'+settings.zoom_label+'</div>');
+            $container.append($zoom_label);
+          }
+          $zoom_widget = $('<div class="jrac_zoom_slider"><div class="ui-slider-handle"></div></div>')
           .slider({
             value: $image.width(),
             min: settings.zoom_min,
@@ -129,7 +141,7 @@
               $.extend($zoom_widget,{
                 on_start_width_value: ui.value,
                 on_start_height_value: $image.height()
-              })
+              });
             },
             slide: function(event, ui) {
               var height = Math.round($zoom_widget.on_start_height_value * ui.value / $zoom_widget.on_start_width_value);
@@ -143,11 +155,7 @@
 
           // Make the viewport resizeable
           if (settings.viewport_resize) {
-            $viewport.resizable({
-              resize: function(event, ui) {
-                $zoom_widget.width(ui.size.width);
-              }
-            });
+            $viewport.resizable();
           }
 
           // Enable the image draggable interaction
@@ -163,7 +171,7 @@
           });
 
           // Build the crop element
-          var $crop = $('<div class="jrac_crop"><div class="jrac_crop_drag_handler"></div></div>')
+          $crop = $('<div class="jrac_crop"><div class="jrac_crop_drag_handler"></div></div>')
           .css({
             'width': settings.crop_width,
             'height': settings.crop_height,
@@ -193,12 +201,17 @@
                   $viewport.observator.notify('jrac_crop_height', $crop.height());
                 }
               }
-            })
+            });
           }
           $viewport.append($crop);
         }
+        else {
+          $crop = $viewport.find('.jrac_crop');
+          if ($crop.length === 0) throw ("jrac internal error");
+          $zoom_widget = $container.find('.jrac_zoom_slider');
+        }
 
-        // Extend viewport witch usefull objects as it will be exposed to user
+        // Extend viewport with useful objects as it will be exposed to user
         // functions interface
         $.extend($viewport, {
           $container: $container,
@@ -237,7 +250,7 @@
             notify_all: function() {
               this.notify('jrac_crop_x', this.crop_position_x());
               this.notify('jrac_crop_y', this.crop_position_y());
-              this.notify('jrac_crop_width', $crop.width());
+              this.notify('jrac_crop_width', $crop.width()); //TODO out of scope
               this.notify('jrac_crop_height', $crop.height());
               this.notify('jrac_image_width', $image.width());
               this.notify('jrac_image_height', $image.height());
@@ -250,11 +263,12 @@
             crop_position_y: function() {
               return $crop.position().top - $image.position().top;
             },
-            // Does the crop is completely inside the image?
+            // Is the crop completely inside the image?
             crop_consistent: function() {
-              return this.crop_position_x()>=0 && this.crop_position_y()>=0
-              && this.crop_position_x() + $crop.width()<=$image.width()
-              && this.crop_position_y() + $crop.height()<=$image.height();
+              return this.crop_position_x()>=0 &&
+                this.crop_position_y()>=0 &&
+                this.crop_position_x() + $crop.width() + parseInt($crop.css('border-width'),10)*2  <=$image.width() &&
+                this.crop_position_y() + $crop.height() + parseInt($crop.css('border-width'),10)*2 <=$image.height();
             },
             // Set a property (which his name is one of the event) with a given
             // value then notify this operation
