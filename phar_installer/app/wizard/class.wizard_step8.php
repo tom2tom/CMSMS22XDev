@@ -18,7 +18,6 @@ use function __appbase\get_app;
 use function __appbase\lang;
 use function __appbase\smarty;
 use function cmsms;
-use function set_site_preference;
 
 class wizard_step8 extends wizard_step
 {
@@ -168,7 +167,7 @@ class wizard_step8 extends wizard_step
             $contentops->SetAllHierarchyPositions();
 
             // todo: install default preferences
-            set_site_preference('global_umask','022');
+            cms_siteprefs::set('global_umask','022');
         }
         catch( Exception $e ) {
             $this->error($e->GetMessage());
