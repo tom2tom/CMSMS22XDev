@@ -32,7 +32,7 @@ define('__CMS_PREVIEW_PAGE__',-100);
  * Base level content object.
  *
  * This is the base level content class.  It is an abstract object and cannot be instantiated directly.
- * All content pages in the database are required to be drived from this class.
+ * All content pages in the database are required to be derived from this class.
  *
  * @since		0.8
  * @package		CMS

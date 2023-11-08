@@ -158,7 +158,7 @@ final class CmsLangOperations
             !isset($CMS_STYLESHEET) && !isset($CMS_INSTALL_PAGE) &&
             !self::$_allow_nonadmin_lang ) {
             trigger_error('Attempt to load admin realm from non admin action');
-            return FALSE; // useless here
+            return FALSE;
         }
 
         $curlang = CmsNlsOperations::get_current_language();
