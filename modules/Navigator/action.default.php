@@ -120,17 +120,17 @@ if( !$tpl->isCached() ) {
             break;
 
         case 'show_all':
-            // show all items, even if marked as 'not shown in menu'
+            // show all items, even if marked as 'not shown in menu' TODO all including excludes ?
             $show_all = cms_to_bool($value);
             break;
 
         case 'show_root_siblings':
-            // given a start element or start page ... show it's siblings too
+            // given a start element or start page ... show its siblings too
             $show_root_siblings = cms_to_bool($value);
             break;
 
         case 'start_element':
-            $start_element = trim($value);
+            $start_element = trim((string)$value);
             $start_page = '';
             $start_level = 0;
             $childrenof = '';
@@ -139,7 +139,7 @@ if( !$tpl->isCached() ) {
 
         case 'start_page':
             $start_element = '';
-            $start_page = trim($value);
+            $start_page = trim((string)$value);
             $start_level = 0;
             $childrenof = '';
             $items = '';
