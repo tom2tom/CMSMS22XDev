@@ -42,7 +42,7 @@ class PruneAdminlogTask implements CmsRegularTask
     public function on_success($time = '')
     {
         if( !$time ) $time = time();
-        set_site_preference(self::LASTEXECUTE_SITEPREF,$time);
+        cms_siteprefs::set(self::LASTEXECUTE_SITEPREF,$time);
     }
 
     public function on_failure($time = '')
