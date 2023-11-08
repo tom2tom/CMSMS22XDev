@@ -32,7 +32,7 @@
 
 final class Nav_utils
 {
-    private static $_excludes = null; // a.k.a. unset
+    private static $_excludes = [];
     private function __construct() {}
 
     public static function set_excludes($data)
@@ -43,20 +43,24 @@ final class Nav_utils
                 $one = trim($one);
             }
             $data = array_unique($data);
-            if( count($data) ) self::$_excludes = $data;
+            self::$_excludes = $data; // possibly empty
+        }
+        else {
+            self::$_excludes = [];
         }
     }
 
     public static function clear_excludes()
     {
-        self::$_excludes = null; // a.k.a. unset
+        self::$_excludes = [];
     }
 
     public static function is_excluded($alias)
     {
-        if( !is_array(self::$_excludes) || count(self::$_excludes) == 0 ) return FALSE;
-        foreach( self::$_excludes as $one ) {
-            if( startswith($alias,$one) ) return TRUE;
+        if( self::$_excludes ) {
+            foreach( self::$_excludes as $one ) {
+                if( startswith($alias,$one) ) return TRUE;
+            }
         }
         return FALSE;
     }
