@@ -985,12 +985,13 @@ final class ContentListBuilder
   }
 
   /**
-   * Master function, returns an array of display data for viewable/editable content
+   * Master function, returns an array of display data for viewable/editable content, or empty
    */
   public function get_content_list()
   {
     $pagelist = $this->_load_editable_content();
     if( is_array($pagelist) && count($pagelist) ) return $this->_get_display_data($pagelist);
+    return [];
   }
 
   /**
@@ -999,7 +1000,7 @@ final class ContentListBuilder
   public function supports_multiselect()
   {
     $cols = $this->get_display_columns();
-    return (isset($cols['multiselect']) && $cols['multiselect']);
+    return (!empty($cols['multiselect']));
   }
 
 } // end of class
