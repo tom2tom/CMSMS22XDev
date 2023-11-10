@@ -59,7 +59,7 @@ $accept_file = function(Profile $profile,$assistant,$path,$filename) {
         return FALSE;
     }
     $fullpath = cms_join_path($path,$filename);
-    if( $filename == '..' || $this->is_acceptable_filename($profile,$filename) ) {
+    if( $filename == '..' || $this->is_acceptable_filename($profile,$fullpath) ) { //OR $profile->is_filename_acceptable($fullpath) if optional extra filtering were to be supported
         return $assistant->is_relative($fullpath);
     }
     return FALSE;
@@ -77,6 +77,7 @@ and/or none|some|all profile properties, some of which may override correspondin
 //
 // initialization
 //
+if( count($params) == 1 && reset($params) == 'filepicker' ) { $params = $_GET; } // back-compatibility, process unprefixed params in $_GET[] instead
 if( isset($params['_enc']) ) {
     $diropts = json_decode(base64_decode($params['_enc']),TRUE);
     unset($params['_enc']);
