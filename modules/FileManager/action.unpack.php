@@ -16,46 +16,56 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-if (!function_exists("cmsms")) exit;
-if (!$this->CheckPermission("Modify Files") && !$this->AdvancedAccessAllowed()) exit;
+if (!function_exists('cmsms')) exit;
+if (!$this->CheckPermission('Modify Files') && !$this->AdvancedAccessAllowed()) exit;
 
-if (isset($params["cancel"])) {
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+if (isset($params['cancel'])) {
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 $selall = $params['selall'];
-if( !is_array($selall) ) {
+if (!is_array($selall) ) {
   $selall = unserialize($selall);
 }
-if (count($selall)==0) {
-  $params["fmerror"]="nofilesselected";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+if (!$selall) {
+  $params['fmerror'] = 'nofilesselected';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
-if (count($selall)>1) {
-  $params["fmerror"]="morethanonefiledirselected";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+if (count($selall) > 1) {
+  $params['fmerror'] = 'morethanonefiledirselected';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 
-$filename=$this->decodefilename($selall[0]);
+$filename = $this->decodefilename($selall[0]);
 $src = filemanager_utils::join_path(CMS_ROOT_PATH,filemanager_utils::get_cwd(),$filename);
-if( !file_exists($src) ) {
-  $params["fmerror"]="filenotfound";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+if (!file_exists($src)) {
+  $params['fmerror'] = 'filenotfound';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 
-$destdir = filemanager_utils::join_path(CMS_ROOT_PATH,filemanager_utils::get_cwd());
-$old = ini_get('open_basedir');
+$paramsnofiles = [];
+$ext = strtolower(pathinfo($filename,PATHINFO_EXTENSION));
 
-include_once(__DIR__.'/easyarchives/EasyArchive.class.php'); //TODO join_path()
-$archive = new EasyArchive();
-ini_set('open_basedir',$destdir);
-if( !endswith($destdir,DIRECTORY_SEPARATOR) ) $destdir .= DIRECTORY_SEPARATOR;
+require_once cms_join_path(__DIR__,'easyarchives','EasyArchive.class.php');
+$worker = new EasyArchive();
 
-$res = $archive->extract($src,$destdir);
-ini_set('open_basedir',$old);
+if (!isset($worker->WathArchive['.'.$ext])) {
+  $paramsnofiles['fmerror'] = 'packfileopenfail'; //TODO expects filename
+  $this->Redirect($id,'defaultadmin',$returnid,$paramsnofiles);
+}
+try {
+  $res = $worker->extract($src,dirname($src).DIRECTORY_SEPARATOR);
+  if ($res) {
+    $paramsnofiles['fmmessage'] = 'unpacksuccess';
+    audit('','File Manager','Unpacked file: '.$src);
+  }
+  else {
+    $paramsnofiles['fmerror'] = 'unpackfail'; //TODO some detail
+  }
+} catch (Exception $e) {
+  $paramsnofiles['fmerror'] = 'unpackfail'; //TODO $res = $e->getMessage();
+}
 
-$paramsnofiles["fmmessage"]="unpacksuccess"; //strips the file data
-$this->Audit('',"File Manager","Unpacked file: ".$src);
-$this->Redirect($id,"defaultadmin",$returnid,$paramsnofiles);
+$this->Redirect($id,'defaultadmin',$returnid,$paramsnofiles);
 
 #
 # EOF
