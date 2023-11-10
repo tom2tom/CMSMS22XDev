@@ -141,7 +141,7 @@
 				<label for="fld_mkdir">{$mod->Lang('name')}:</label> <input type="text" id="fld_mkdir" size="40">
 			</div>
 		</div>
-		<script src="{$mod->GetModuleURLPath()}/js/ext/jquery.fileupload.js"></script>
+		<script src="{$mod->GetModuleURLPath()}/js/ext/jquery.fileupload.min.js"></script>
 		<script src="{$mod->GetModuleURLPath()}/lib/js/cmsms_filebrowser/filebrowser.js"></script>
 		<script>
 		$(function() {
