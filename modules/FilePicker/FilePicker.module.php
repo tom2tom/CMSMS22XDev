@@ -44,7 +44,7 @@ final class FilePicker extends CMSModule implements FilePickerInterface
     {
         parent::__construct();
         $this->_dao = new ProfileDAO( $this );
-        $this->_typehelper = new FileTypeHelper( cms_config::get_instance() );
+        $this->_typehelper = new FileTypeHelper();
     }
 
     private function _encodefilename($filename)
@@ -201,31 +201,32 @@ final class FilePicker extends CMSModule implements FilePickerInterface
         $tpl_ob->assign('required', $required);
         switch( $profile->type ) {
         case FileType::TYPE_IMAGE:
-            $tpl_ob->assign('title', $this->Lang('select_an_image'));
+            $key = 'select_an_image';
             break;
         case FileType::TYPE_AUDIO:
-            $tpl_ob->assign('title', $this->Lang('select_an_audio_file'));
+            $key = 'select_an_audio_file';
             break;
         case FileType::TYPE_VIDEO:
-            $tpl_ob->assign('title', $this->Lang('select_a_video_file'));
+            $key = 'select_a_video_file';
             break;
         case FileType::TYPE_MEDIA:
-            $tpl_ob->assign('title', $this->Lang('select_a_media_file'));
+            $key = 'select_a_media_file';
             break;
         case FileType::TYPE_XML:
-            $tpl_ob->assign('title', $this->Lang('select_an_xml_file'));
+            $key = 'select_an_xml_file';
             break;
         case FileType::TYPE_DOCUMENT:
-            $tpl_ob->assign('title', $this->Lang('select_a_document'));
+            $key ='select_a_document';
             break;
         case FileType::TYPE_ARCHIVE:
-            $tpl_ob->assign('title', $this->Lang('select_an_archive_file'));
+            $key = 'select_an_archive_file';
             break;
-        case FileType::TYPE_ANY:
+//      case FileType::TYPE_ANY:
         default:
-            $tpl_ob->assign('title', $this->Lang('select_a_file'));
+            $key = 'select_a_file';
             break;
         }
+        $tpl_ob->assign('title', $this->Lang($key));
         return $tpl_ob->fetch();
     }
 
@@ -239,54 +240,48 @@ final class FilePicker extends CMSModule implements FilePickerInterface
     }
 
     // INTERNAL UTILITY FUNCTION
-    public function is_acceptable_filename(Profile $profile, $filename)
+    public function is_acceptable_filename(Profile $profile, $fullpath)
     {
-        $filename = trim((string)$filename);
-        $filename = basename($filename);  // in case it's a path
-        if( !$filename ) { return FALSE; }
-        if( strncasecmp($filename, 'index.htm', 9) == 0 ) { return FALSE; }
-        if( endswith($filename, '.') ) { return FALSE; }
+        $fullpath = trim((string)$fullpath);
+        $basename = basename($fullpath);
+        if( !$basename ) { return FALSE; }
+        if( strncasecmp($basename, 'index.htm', 9) == 0 ) { return FALSE; }
+        if( endswith($basename, '.') ) { return FALSE; }
         if( !$profile->show_hidden ) {
-            if( !isset($this->macos) ) {
-                $tmp = php_uname('s');
-                $this->macos = stripos($tmp, 'darwin') !== false;//running on some flavour of MacOS
-                $this->winos = !$this->macos && stripos($tmp, 'windo') !== false;//running on some flavour of Windows
-            }
-            if( $filename[0] == '.' || ($filename[0] == '_' && $this->macos) || ($filename[0] == '~' && $this->winos) ) { return FALSE; }//generally useless on Windows OS
+            if( filemanager_utils::is_hidden_file($fullpath) ) { return FALSE; }
         }
-        if( $profile->match_prefix && !startswith($filename, $profile->match_prefix) ) { return FALSE; }
-        if( $profile->exclude_prefix && startswith($filename, $profile->exclude_prefix) ) { return FALSE; }
+        if( $profile->match_prefix && !startswith($basename, $profile->match_prefix) ) { return FALSE; }
+        if( $profile->exclude_prefix && startswith($basename, $profile->exclude_prefix) ) { return FALSE; }
 
         switch( $profile->type ) {
         case FileType::TYPE_IMAGE:
-            return $this->_typehelper->is_image($filename);
+            return $this->_typehelper->is_image($fullpath);
 
         case FileType::TYPE_AUDIO:
-            return $this->_typehelper->is_audio($filename);
+            return $this->_typehelper->is_audio($fullpath);
 
         case FileType::TYPE_VIDEO:
-            return $this->_typehelper->is_video($filename);
+            return $this->_typehelper->is_video($fullpath);
 
         case FileType::TYPE_MEDIA:
-            return $this->_typehelper->is_media($filename);
+            return $this->_typehelper->is_media($fullpath);
 
         case FileType::TYPE_XML:
-            return $this->_typehelper->is_xml($filename);
+            return $this->_typehelper->is_xml($fullpath);
 
         case FileType::TYPE_DOCUMENT:
-            return $this->_typehelper->is_document($filename);
+            return $this->_typehelper->is_document($fullpath);
 
         case FileType::TYPE_ARCHIVE:
-            return $this->_typehelper->is_archive($filename);
+            return $this->_typehelper->is_archive($fullpath);
 
         default:
-            if( $this->_typehelper->is_executable($filename) ) {
+            if( $this->_typehelper->is_executable($fullpath) ) {
                 $config = cms_config::get_instance();
                 if( !$config['developer_mode'] ) {
                     return FALSE;
                 }
             }
-            break;
         }
         // passed
         return TRUE;
