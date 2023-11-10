@@ -352,31 +352,34 @@ class ContentOperations
 
 	/**
 	 * Returns a hash of valid content types (classes that extend ContentBase)
-	 * The key is the name of the class that would be saved into the database.  The
-	 * value would be the text returned by the type's FriendlyName() method.
+	 * Each key is the identifier of the class recorded in the database, or else the actual class name.
+	 * Each value is the text returned by the type's FriendlyName() method.
 	 *
-	 * @param bool $byclassname optionally return keys as class names.
-	 * @param bool $allowed optionally trim the list of content types that are allowed by the site preference.
-	 * @param bool $system return only system content types.
-	 * @return array List of content types registered in the system.
+	 * @param bool $byclassname Optional flag, whether to use classname as array key. Default false.
+	 * @param bool $allowed Optional flag, whether to filter the listed types
+	 *  in accord with the 'disallowed_contenttypes' site preference. Default false.
+	 * @param bool $system Optional flag, whether to report only system content types. Default false.
+	 * @return array content types registered in the system.
 	 */
-	function ListContentTypes($byclassname = false,$allowed = false,$system = FALSE)
+	function ListContentTypes($byclassname = false,$allowed = false,$system = false)
 	{
 		$disallowed_a = array();
-		$tmp = cms_siteprefs::get('disallowed_contenttypes');
-		if( $tmp ) $disallowed_a = explode(',',$tmp);
+		if( $allowed ) {
+			$tmp = cms_siteprefs::get('disallowed_contenttypes');
+			if( $tmp ) $disallowed_a = explode(',',$tmp);
+		}
 
 		$result = array();
 		$this->_get_content_types();
 		$types = $this->_content_types;
-		if ( isset($types) ) {
+		if( $types ) {
 			foreach( $types as $obj ) {
 				global $CMS_ADMIN_PAGE;
 				if( !isset($obj->friendlyname) && isset($obj->friendlyname_key) && isset($CMS_ADMIN_PAGE) ) {
 					$txt = lang($obj->friendlyname_key);
 					$obj->friendlyname = $txt;
 				}
-				if( !$allowed || count($disallowed_a) == 0 || !in_array($obj->type,$disallowed_a) ) {
+				if( !$allowed || !$disallowed_a || !in_array($obj->type,$disallowed_a) ) {
 					if( $byclassname ) {
 						$result[$obj->class] = $obj->friendlyname;
 					}
@@ -391,7 +394,7 @@ class ContentOperations
 
 
 	/**
-	 * Updates the hierarchy position of one item
+	 * Does nothing UNUSED
 	 *
 	 * @internal
 	 * @ignore
