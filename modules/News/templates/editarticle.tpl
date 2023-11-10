@@ -5,8 +5,8 @@
 
       e.preventDefault();
 
-      if (typeof tinyMCE !== 'undefined') {
-        tinyMCE.triggerSave();
+      if (typeof tinymce !== 'undefined') {
+        tinymce.triggerSave();
       }
 
       var fm =  $('form'),
@@ -114,8 +114,8 @@
 
   function news_dopreview() {
 
-    if (typeof tinyMCE !== 'undefined') {
-      tinyMCE.triggerSave();
+    if (typeof tinymce !== 'undefined') {
+      tinymce.triggerSave();
     }
 
     var fm = $('form'),
