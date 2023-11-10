@@ -1,21 +1,17 @@
-{if !isset($noform)}{*TODO <style/> invalid here - migrate to <head/>*}
+{if !isset($noform)}{*TODO <style/> invalid here - migrate to <head/> or external .css*}
 <style>
 a.filelink:visited {
-   color: #000;
+  color: #000;
 }
 </style>
 <script>
-var refresh_url = '{$refresh_url}'+'&showtemplate=false';
-refresh_url = refresh_url.replace(/amp;/g,'');
 function enable_button(idlist) {
-  $(idlist).prop('disabled',false).removeClass('ui-state-disabled ui-button-disabled');
+    $(idlist).prop('disabled',false).removeClass('ui-state-disabled ui-button-disabled');
 }
 function disable_button(idlist) {
-  $(idlist).prop('disabled',true).addClass('ui-state-disabled ui-button-disabled');
+    $(idlist).prop('disabled',true).addClass('ui-state-disabled ui-button-disabled');
 }
-
 function enable_action_buttons() {
-
     var files = $('#filesarea input[type="checkbox"].fileselect').filter(':checked').length,
         dirs = $('#filesarea input[type="checkbox"].dir').filter(':checked').length,
         arch = $('#filesarea input[type="checkbox"].archive').filter(':checked').length,
@@ -24,19 +20,19 @@ function enable_action_buttons() {
 
     disable_button('button.filebtn');
     $('button.filebtn').prop('disabled',true);
-    if (files == 0 && dirs == 0) {
+    if (files === 0 && dirs === 0) {
         // nothing selected, enable anything with select_none
         enable_button('#btn_newdir');
-    } else if (files == 1) {
+    } else if (files === 1) {
         // 1 selected, enable anything with select_one
         enable_button('#btn_rename');
         enable_button('#btn_move');
         enable_button('#btn_delete');
 
-        if (dirs == 0) enable_button('#btn_copy');
-        if (arch == 1) enable_button('#btn_unpack');
-        if (imgs == 1) enable_button('#btn_view,#btn_thumb,#btn_resizecrop,#btn_rotate');
-        if (text == 1) enable_button('#btn_view');
+        if (dirs === 0) enable_button('#btn_copy');
+        if (arch === 1) enable_button('#btn_unpack');
+        if (imgs === 1) enable_button('#btn_view,#btn_thumb,#btn_resizecrop,#btn_rotate');
+        if (text === 1) enable_button('#btn_view');
     } else if (files > 1 && dirs == 0) {
         // multiple files selected
         enable_button('#btn_delete,#btn_copy,#btn_move');
@@ -49,9 +45,11 @@ function enable_action_buttons() {
 $(function () {
     enable_action_buttons();
 
-    $('#refresh').off('click').on('click', function() {
+    $('#refresh').off('click').on('click', function(e) {
         // ajaxy reload for the files area.
-        $('#filesarea').load(refresh_url);
+//        var url = '{$refresh_url}'+'&showtemplate=false'; needed?
+//        $('#filesarea').load(url);
+        $('#filesarea').load('{$refresh_url}');
         return false;
     });
 
@@ -65,9 +63,9 @@ $(function () {
     });
 
     $(document).on('change', '#filesarea input[type="checkbox"].fileselect', function (e) {
-        // find the parent row
         e.stopPropagation();
         var t = $(this).prop('checked');
+        // adjust the parent row
         if (t) {
             $(this).closest('tr').addClass('selected');
         } else {
@@ -76,7 +74,7 @@ $(function () {
         enable_action_buttons();
     });
 
-    $(document).on('change', '#tagall', function (event) {
+    $(document).on('change', '#tagall', function () {
         if ($(this).is(':checked')) {
             $('#filesarea input:checkbox.fileselect').prop('checked', true).trigger('change');
         } else {
@@ -88,7 +86,6 @@ $(function () {
         // find the selected item.
         var tmp = $('#filesarea input[type="checkbox"]').filter(':checked').val();
         var url = '{$viewfile_url}&showtemplate=false&{$actionid}viewfile=' + tmp;
-        url = url.replace(/amp;/g, '');
         $('#popup_contents').load(url);
         $('#popup').dialog({
           minWidth: 380,
@@ -109,14 +106,15 @@ $(function () {
 </script>
 
 {function filebtn icon='ui-icon-circle-check'}
-{$addclass='ui-button-icon-primary'}
-{if isset($text) && $text != ''}
+{if !empty($text)}
   {$addclass='ui-button-text-icon-primary'}
-  {if !isset($title) || $title == ''}{$title=$text}{/if}
+  {if empty($title)}{$title=$text}{/if}
+{else}
+  {$addclass='ui-button-icon-primary'}
 {/if}
 <button type="submit" name="{$iname}" id="{$id}" title="{$title|default:''}" class="filebtn ui-button ui-widget ui-state-default ui-corner-all {$addclass}">
   <span class="ui-icon ui-button-icon-primary {$icon}"></span>
-  {if isset($text) && $text != ''}<span class="ui-button-text">{$text}</span>{/if}
+  {if !empty($text)}<span class="ui-button-text">{$text}</span>{/if}
 </button>
 {/function}
 
@@ -125,9 +123,9 @@ $(function () {
 </div>
 
 <div>
-  {$formstart}
-
-<div>
+	{$formstart}
+	{*$hiddenpath*}
+	<div>
 	<fieldset>
 		{filebtn id='btn_newdir' iname="{$actionid}fileactionnewdir" icon='ui-icon-circle-plus' text=$mod->Lang('newdir') title=$mod->Lang('title_newdir')}
 		{filebtn id='btn_view' iname="{$actionid}fileactionview" icon='ui-icon-circle-zoomin' text=$mod->Lang('view') title=$mod->Lang('title_view')}
@@ -140,23 +138,21 @@ $(function () {
 		{filebtn id='btn_resizecrop' iname="{$actionid}fileactionresizecrop" icon='ui-icon-image' text=$mod->Lang('resizecrop') title=$mod->Lang('title_resizecrop')}
 		{filebtn id='btn_rotate' iname="{$actionid}fileactionrotate" icon='ui-icon-image' text=$mod->Lang('rotate') title=$mod->Lang('title_rotate')}
 	</fieldset>
-</div>
-{$hiddenpath}
-{/if}
-
+	</div>
+{/if}{* NOT noform *}
 {if !empty($files)}
-<div id="filesarea">
+{if !isset($noform)}<div id="filesarea">{/if}
 	<table style="width:100%" class="pagetable scrollable">
 		<thead>
 			<tr>
 				<th class="pageicon">&nbsp;</th>
 				<th>{$filenametext}</th>
-				<th class="pageicon">{$mod->Lang('mimetype')}</th>
+				<th class="pageicon">{$filetypetext}</th>
 				<th class="pageicon">{$fileinfotext}</th>
 				<th class="pageicon" title="{$mod->Lang('title_col_fileowner')}">{$fileownertext}</th>
 				<th class="pageicon" title="{$mod->Lang('title_col_fileperms')}">{$filepermstext}</th>
 				<th class="pageicon" title="{$mod->Lang('title_col_filesize')}" style="text-align:right;">{$filesizetext}</th>
-				<th class="pageicon"></th>
+				<th></th>
 				<th class="pageicon" title="{$mod->Lang('title_col_filedate')}">{$filedatetext}</th>
 				<th class="pageicon">
 					<input type="checkbox" name="tagall" value="tagall" id="tagall" title="{$mod->Lang('title_tagall')}">
@@ -165,9 +161,13 @@ $(function () {
 		</thead>
 		<tbody>
 		{foreach $files as $file}
-			{cycle values="row1,row2" assign=rowclass}
-			{$thedate=str_replace(' ','&nbsp;',(string)$file->filedate|cms_date_format)}{$thedate=str_replace('-','&minus;',(string)$thedate)}
-			<tr class="{$rowclass}">
+{strip}		{cycle values="row1,row2" assign=rowclass}
+			{if $file->filedate !== ''}
+			{$thedate=$file->filedate|cms_date_format}{$thedate=str_replace([' ','-'],['&nbsp;','&minus;'],$thedate)}
+			{else}
+			{$thedate='&nbsp;'}
+			{/if}
+			{/strip}<tr class="{$rowclass}">
 				<td style="vertical-align:middle">{if isset($file->thumbnail) && $file->thumbnail!=''}{$file->thumbnail}{else}{$file->iconlink}{/if}</td>
 				<td class="clickable" style="vertical-align:middle">{$file->txtlink}</td>
 				<td class="clickable" style="vertical-align:middle">{$file->mime}</td>{*TODO migrate these styles to external css for rtl etc *}
@@ -193,9 +193,8 @@ $(function () {
 			</tr>
 		</tfoot>
 	</table>
-</div>
-{/if}
-
+{if !isset($noform)}</div>{/if}
+{else}{$countstext}{/if}{*files*}
 {if !isset($noform)}
 	{*{$actiondropdown}{$targetdir}{$okinput}*}
 	{$formend}
