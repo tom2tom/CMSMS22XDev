@@ -62,12 +62,12 @@ $(function() {
 				<fieldset>
 					<legend>{$FileManager->Lang('change_working_folder')}</legend>
 					<label for="fm_newdir">{$FileManager->Lang('folder')}: </label>
-					<input type="hidden" name="m1_path" value="{$cwd}">
-					<input type="hidden" name="m1_ajax" value="1">
-					<select class="cms_dropdown" id="fm_newdir" name="m1_newdir">
+					<input type="hidden" name="{$actionid}path" value="{$cwd}">
+					<input type="hidden" name="{$actionid}ajax" value="1">
+					<select class="cms_dropdown" id="fm_newdir" name="{$actionid}newdir">
 						{html_options options=$dirlist selected="/`$cwd`"}
 					</select>
-					<input type="submit" name="m1_submit" value="{$FileManager->lang('submit')}">
+					<input type="submit" name="{$actionid}submit" value="{$FileManager->lang('submit')}">
 				</fieldset>
 				</form>
 		</div>
