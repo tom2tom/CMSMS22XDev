@@ -32,6 +32,7 @@ class PageLink extends ContentBase
 
 	public function IsCopyable() { return TRUE; }
 	public function IsViewable() { return FALSE; }
+//	public function IsDefaultPossible() { return TRUE; } OK?
 	public function HasSearchableContent() { return FALSE; }
 	public function FriendlyName() { return lang('contenttype_pagelink'); }
 
