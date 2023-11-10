@@ -43,16 +43,11 @@ if( strlen($advancedmode) > 1 ) $advancedmode = 0;
 
     // now get a simple list of all of the directories we have 'write' access to.
     $basedir = dirname($startdir);
-    function get_dirs($startdir,$prefix = '/') {
-        $res = array();
-        if( !is_dir($startdir) ) return $res;
-
+    function get_dirs($startdir,$prefix = DIRECTORY_SEPARATOR) {
         global $showhiddenfiles;
-        if( !$showhiddenfiles ) {
-            $tmp = php_uname('s');
-            $macos = stripos($tmp,'darwin') !== false;// running on some flavour of MacOS
-            $winos = !$macos && stripos($tmp,'windo') !== false;// running on some flavour of Windows
-        }
+
+        if( !is_dir($startdir) ) return [];
+        $res = [];
         $dh = opendir($startdir);
         while( false !== ($entry = readdir($dh)) ) {
             if( $entry == '.' ) continue;
@@ -60,18 +55,18 @@ if( strlen($advancedmode) > 1 ) $advancedmode = 0;
             $full = filemanager_utils::join_path($startdir,$entry);
             if( !is_dir($full) ) continue;
             if( !is_readable($full) ) continue;
-            if( !$showhiddenfiles && ($entry[0] == '.' || ($entry[0] == '_' && $macos) || ($entry[0] == '~' && $winos)) ) continue; //useless on Windows OS
+            if( !$showhiddenfiles && filemanager_utils::is_hidden_file($full) ) continue;
             if( $entry == '.svn' || $entry == '.git' ) continue;
             if( is_writable($full) ) $res[$prefix.$entry] = $prefix.$entry;
-            $tmp = get_dirs($full,$prefix.$entry.'/');
-            if( is_array($tmp) && count($tmp) ) $res = array_merge($res,$tmp);
+            $tmp = get_dirs($full,$prefix.$entry.DIRECTORY_SEPARATOR);
+            if( $tmp && is_array($tmp) ) $res = array_merge($res,$tmp);
         }
         closedir($dh);
         return $res;
     }
 
-    $output = get_dirs($startdir,'/'.basename($startdir).'/');
-    $output['/'.basename($startdir)] = '/'.basename($startdir);
+    $output = get_dirs($startdir,DIRECTORY_SEPARATOR.basename($startdir).DIRECTORY_SEPARATOR);
+    $output[DIRECTORY_SEPARATOR.basename($startdir)] = DIRECTORY_SEPARATOR.basename($startdir);
     if( count($output) ) {
         ksort($output);
         $smarty->assign('dirlist',$output);
@@ -82,6 +77,6 @@ $smarty->assign('FileManager',$this);
 $template = 'dropzone.tpl';
 if( isset($params['template']) ) {
     $template = trim($params['template']);
-    if( !endswith($template,'.tp;') )  $template .= '.tpl';
+    if( !endswith($template,'.tp;') ) $template .= '.tpl';
 }
 echo $this->ProcessTemplate($template);
