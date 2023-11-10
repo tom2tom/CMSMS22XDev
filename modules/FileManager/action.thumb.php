@@ -70,8 +70,8 @@ $smarty->assign('thumb',$thumb);
 $smarty->assign('thumbexists',file_exists($thumb));
 if( is_array($selall) ) $params['selall'] = serialize($selall);
 $smarty->assign('startform', $this->CreateFormStart($id, 'fileaction', $returnid,"post","",false,"",$params));
-$smarty->assign('mod',$this);
 $smarty->assign('endform', $this->CreateFormEnd());
+//$smarty->assign('mod',$this);
 echo $this->ProcessTemplate('filethumbnail.tpl');
 
 #
