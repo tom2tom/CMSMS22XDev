@@ -16,24 +16,27 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-if (!function_exists("cmsms")) exit;
+if (!function_exists('cmsms')) exit;
 
 if (!$this->CheckPermission('Modify Files')) exit;
 
-$smarty->assign('formstart',$this->CreateFormStart($id, 'upload', $returnid,"post","multipart/form-data"));
-$smarty->assign('actionid',$id);
-$smarty->assign('maxfilesize',$config["max_upload_size"]);
-$smarty->assign('submit',$this->CreateInputSubmit($id,"submit",$this->Lang("submit"),"",""));
+$smarty->assign('formstart',$this->CreateFormStart($id, 'upload', $returnid,'post','multipart/form-data'));
 $smarty->assign('formend',$this->CreateFormEnd());
-
+$smarty->assign('submit',$this->CreateInputSubmit($id,'submit',$this->Lang('submit'),'',''));
+$smarty->assign('maxfilesize',$config['max_upload_size']);
 
 $post_max_size = filemanager_utils::str_to_bytes(ini_get('post_max_size'));
 $upload_max_filesize = filemanager_utils::str_to_bytes(ini_get('upload_max_filesize'));
 $smarty->assign('max_chunksize',min($upload_max_filesize,$post_max_size-1024));
-if (isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {
+if (isset($_SERVER['HTTP_USER_AGENT'])) {
+  if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Trident') !== false ) {
     $smarty->assign('is_ie',1);
+    $smarty->assign('ie_upload_message',$this->Lang('ie_upload_message'));
+  }
 }
-$smarty->assign('action_url',$this->create_url('m1_','upload',$returnid));
-$smarty->assign('ie_upload_message',$this->Lang('ie_upload_message'));
+$url = $this->create_url('m1_','upload',$returnid);
+$smarty->assign('action_url', str_replace('&amp;', '&', $url));
+$url = $this->create_url($id, 'admin_fileview', '', ['noform' => 1]);
+$smarty->assign('refresh_url', str_replace('&amp;', '&', $url)); //? &showtemplate=false ?
 
 echo $this->ProcessTemplate('uploadview.tpl');
