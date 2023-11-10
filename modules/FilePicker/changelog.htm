@@ -1,12 +1,13 @@
 <ul>
 <li>2023 v.1.0.7 Bugfixes
 <ul>
-<li>BR #12621 - Upload bug.</li>
 <li>BR #12628 - Missing module tip and changelog.</li>
+<li>BR #12621 - Upload bug.</li>
 <li>Add missing API methods GetContentBlockFieldValue, ValidateContentBlockFieldValue, RenderContentBlockField.</li>
 <li>Corrected PathAssistant.</li>
 <li>Filenames beginning with '_' are hidden on MacOS only</li>
-<li>Picking might be from anywhere at the site, so filebrowser js consistently generates site-root-relative URL with leading /, instead of e.g. uploads-relative without /.</li>
+<li>URL-parameters supplied to the picker action should include 'm1_' prefix. Non-prefixed parameters are deprecated.</li>
+<li>Picking might be from anywhere at the site, so filebrowser consistently generates site-root-relative URL with leading /, instead of e.g. uploads-relative without /.</li>
 </ul>
 </li>
 <li>Jun 13 2023 v.1.0.6 Bugfixes 
