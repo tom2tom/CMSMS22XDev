@@ -16,6 +16,9 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+//TODO current js backend (jrac) is elderly, poorly-maintained if at all, and GPL2 only
+//consider replacement e.g. from https://github.com/Traackr/resizeAndCrop
+
 if (!function_exists("cmsms")) exit;
 if (!$this->CheckPermission("Modify Files") && !$this->AdvancedAccessAllowed()) exit;
 
@@ -34,10 +37,8 @@ if (count($selall)>1) {
   $this->Redirect($id,"defaultadmin",$returnid,$params);
 }
 
-$config = cmsms()->getConfig();
-$basedir = $config['root_path'];
 $filename=$this->decodefilename($selall[0]);
-$src = filemanager_utils::join_path($basedir,filemanager_utils::get_cwd(),$filename);
+$src = filemanager_utils::join_path(CMS_ROOT_PATH,filemanager_utils::get_cwd(),$filename);
 if( !file_exists($src) ) {
   $params["fmerror"]="filenotfound";
   $this->Redirect($id,"defaultadmin",$returnid,$params);
