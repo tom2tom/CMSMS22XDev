@@ -27,7 +27,7 @@ $lang['confirmselected'] = 'Are you sure?';
 $lang['confirmsingledelete'] = 'Are you sure?';
 $lang['confirmsingledirdelete'] = 'Are you sure this directory should be deleted?';
 $lang['confirm_delete'] = 'Are you sure you want to remove this file?';
-$lang['confirm_unpack'] = 'Are you sure you want to unpack this file?';
+//$lang['confirm_unpack'] = 'Are you sure you want to unpack this file?';
 $lang['copiedto'] = 'copied to';
 $lang['copy'] = 'Copy';
 $lang['copyfailed'] = 'Copy operation failed on %s';
@@ -61,7 +61,8 @@ $lang['dirtreedeletefail'] = 'An error occurred when deleting this directory. So
 $lang['dirtreedeletesuccess'] = 'The directory including content was successfully deleted.';
 
 // E
-$lang['enableadvanced'] = 'Enable advanced mode?';
+$lang['emptydirectory'] = 'This directory is empty'; //new
+$lang['enableadvanced'] = 'Enable advanced mode';
 $lang['error_dirnotempty'] = 'Directory %s is not empty';
 $lang['error_notwritable'] = 'No write permission to %s';
 $lang['error_thumbnotwritable'] = '%s has a thumbnail that does not have write permission';
@@ -276,6 +277,7 @@ $lang['space'] = 'space';
 $lang['subdir'] = 'subdirectory';
 $lang['subdirs'] = 'subdirectories';
 $lang['submit'] = 'Submit';
+$lang['summary'] = '%s %s in %s %s and %s %s'; // new
 $lang['switchtofileview'] = 'Switch to file view';
 
 // T
