@@ -10,12 +10,13 @@ Various places
 Core - General
  - Corrected filter applied to $_GET, $_SERVER at the start of each request.
  - Corrected page-selector widget operation.
- - BR #12647 Incorrect default-action value
- - BR #12657 {content_module} tag property-collision
- - BR #12660 output filter not working
- - BR #12662 file picker does not filter archives properly
+ - BR #12647 Incorrect default-action value.
+ - BR #12657 {content_module} tag property-collision.
+ - BR #12660 output filter not working.
+ - BR #12662 file picker does not filter archives properly.
  - Validate entered bookmark-URLs.
- - Deprecated use of PHP function umask();
+ - Include .phar files in executables test.
+ - Deprecated use of PHP function umask().
  - Added missing nls files, allowing installation of extra translations.
  - Smarty upgraded to version 4.3.4.
  - Enabled use of PHP function rawurlencode in Smarty templates.
@@ -45,8 +46,9 @@ ContentManager 1.1.11
 DesignManager
  - Corrected new template creation
 
-FileManager
+FileManager 1.6.14
  - BR #12535 - File Manager Unpack archive .tar.gz
+ - Corrected filelist sorting after upload
 
 FilePicker
  - BR #12621 - FilePicker upload bug
@@ -57,6 +59,9 @@ MenuManager 1.50.4
  - Exported from core to a normal CMSMS module in Forge
  - BR #12619 - Wrong assignment of $prevdepth.
  - BR #12620 - Version 2 breaks MenuManager with childrenof.
+
+Navigator 1.0.10
+ - BR #12528 - Sometimes doesn't clear excluded prefixes
 
 News
  - Sanitise news-item strings (title, summary, content) before display
