@@ -6,24 +6,25 @@ use cms_utils;
 use CMSMS\FilePickerProfile;
 use Exception;
 use LogicException;
+use function endswith;
 use function startswith;
 
 class ProfileException extends Exception {}
 
 class Profile extends FilePickerProfile
 {
-    private $_data = [ 'id'=>'', 'name'=>'', 'create_date'=>null, 'modified_date'=>null, 'file_extensions'=>'', 'prefix'=>'' ];
+    private $_data = [ 'id'=>0, 'name'=>'', 'create_date'=>0, 'modified_date'=>0, 'file_extensions'=>'', 'prefix'=>'' ];
 
     protected function setValue( $key, $val )
     {
         switch( $key ) {
-        case 'name':
+          case 'name':
           case 'prefix':
           case 'file_extensions':
             $this->_data[$key] = trim((string)$val);
             break;
-        case 'create_date':
-        case 'modified_date':
+          case 'create_date':
+          case 'modified_date':
             $this->_data[$key] = (int)$val;
             break;
           default:
@@ -40,7 +41,7 @@ class Profile extends FilePickerProfile
         foreach( $in as $key => $value ) {
             switch( $key ) {
             case 'id':
-                $this->_data[$key] = (int) $value;
+                $this->_data[$key] = (int)$value;
                 break;
             default:
                 $this->setValue( $key, $value );
@@ -148,29 +149,23 @@ class Profile extends FilePickerProfile
     }
 
   /**
-   * Note: Doesn't seem to be used anywhere
-   *       we may keep this for external API purposes though (JoMorg)
+   * This can impose extra checks on top of FilePicker::is_acceptable_filename()
+   * if this object's file_extensions property is not empty
    *
-   * @param $file_name
+   * @param $fullpath
    *
    * @return bool
    */
-    public function is_filename_acceptable( $file_name )
+    public function is_filename_acceptable( $fullpath )
     {
         $mod = cms_utils::get_module('FilePicker');
-        if( !$mod->is_acceptable_filename($this, $file_name) ) return FALSE;
-        if( !$this->file_extensions ) return FALSE; // OR TRUE if we don't have anything to care about?
+        if( !$mod->is_acceptable_filename($this, $fullpath) ) return FALSE;
+        if( !$this->file_extensions ) return TRUE; // nothing more to check
 
-        // file must have an extension
-        $ext = strtolower(substr(strrchr($file_name, '.'), 1));
-        if( !$ext ) return FALSE; // file has no extension.
-        $list = explode(',',$this->_profile->file_extensions);
-
+        $lcf = strtolower($fullpath);
+        $list = explode(',',$this->file_extensions);
         foreach( $list as $one ) {
-            $one = strtolower(trim($one));
-            if( !$one ) continue;
-            if( startswith( $one, '.') ) $one = substr($one,1);
-            if( $ext == $one ) return TRUE;
+            if( endswith($lcf,$one) ) return TRUE;
         }
         return FALSE;
     }
