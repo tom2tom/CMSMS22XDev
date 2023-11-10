@@ -11,6 +11,9 @@
 
 namespace CMSMS;
 
+use cms_config;
+use function startswith;
+
 /**
  * A class to provide utilities for manipulating files by their type.
  *
@@ -60,19 +63,20 @@ class FileTypeHelper
     private $_document_extensions = ['doc','docx','odt','ods','odp','odg','odf','txt','pdf','text','xls','xlsx','ppt','pptx'];
     /**
      * @ignore
-     * browser-executable text-file extensions (also text)
+     * browser-executable text-file extensions (also text) and non-text
      */
-    private $_exe_extensions = ['php','php4','php5','phps','phtml'];
+    private $_exe_extensions = ['php','php4','php5','phps','phtml','phar'];
 
     /**
      * Constructor
      *
-     * @param cms_config $config
+     * @param mixed $config cms_config | null
      */
-    public function __construct( \cms_config $config )
+    public function __construct(cms_config $config = null)
     {
-        $this->_use_mimetype = $this->_mime_ok = (function_exists('finfo_open') && function_exists('finfo_file'));
-        $this->_use_mimetype = $this->_use_mimetype && !$config['FileTypeHelper_usemimetype'];
+        if (!$config) { $config = cms_config::get_instance(); }
+        $this->_mime_ok = (function_exists('finfo_open') && function_exists('finfo_file'));
+        $this->_use_mimetype = $this->_mime_ok && !$config['FileTypeHelper_usemimetype'];
 
         $this->update_config_extensions('_image_extensions', $config['FileTypeHelper_image_extensions']);
         $this->update_config_extensions('_audio_extensions', $config['FileTypeHelper_audio_extensions']);
