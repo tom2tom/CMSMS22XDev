@@ -57,7 +57,7 @@ class zip
 		$zip = new ZipArchive();
 		if ($zip->open(realpath($src)) === true)
 		{
-			$zip->extractTo($dest); // TODO prevent zip-slip
+			$zip->extractTo($dest); // TODO prevent zip-slip NOTE temporary chage of 'open_basedir' ini setting causes problems later?  
 			$zip->close();
 			return true;
 		}
