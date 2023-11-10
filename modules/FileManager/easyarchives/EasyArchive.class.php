@@ -84,7 +84,9 @@ class EasyArchive
 		$ext = '.'.pathinfo ($name, PATHINFO_EXTENSION);
 		$comp = '';
 		foreach ($this->WathArchive as $key=>$val)
-			if (stripos($ext, $key)!==false) $comp=$val;
+		{
+			if (stripos($ext, $key)!==false) { $comp=$val; break; }
+		}
 		if ($comp == 'zip')
 		{
 			$zip = new zip();
@@ -92,7 +94,7 @@ class EasyArchive
 				$result = $zip->makeZip($src, $name);
 			else
 			{
-				$tmpZip = TMP_CACHE_LOCATION.'/'.md5(serialize($src)).'.zip';
+				$tmpZip = TMP_CACHE_LOCATION.DIRECTORY_SEPARATOR.md5(serialize($src)).'.zip';
 				$result = $zip->makeZip($src, $tmpZip);
 				$result = file_get_contents($tmpZip);
 				unlink($tmpZip);
@@ -175,16 +177,17 @@ class EasyArchive
 		return array('Items'=>$result['Items'], 'UnCompSize'=>$result['UnCompSize'], 'Size'=>$result['Size'], 'Ratio'=>$result['Ratio'],);
 	}
 
-	public function extract ($src, $dest=false)
+	public function extract ($src, $dest=false)//: mixed maybe false
 	{
 		$path_parts = pathinfo ($src);
 		if (!$dest)
-			$dest = $path_parts['dirname'].'/';
+			$dest = $path_parts['dirname'].DIRECTORY_SEPARATOR;
 		$ext = '.'.$path_parts['extension'];
 		$name = $path_parts['filename'];
 		$comp = '';
-		foreach ($this->WathArchive as $key=>$val)
-			if (stripos($ext, $key)!==false) $comp=$val;
+		foreach ($this->WathArchive as $key=>$val) {
+			if (stripos($ext, $key)!==false) { $comp=$val; break; }
+		}
 		if ($comp == 'zip')
 		{
 			$zip = new zip();
