@@ -67,22 +67,28 @@ $test->extractTar('./toto.Tar', './new/');
 			file_put_contents ($tmp=TMP_CACHE_LOCATION.'/~tmp('.microtime().').tar', $src);
 			$src = $tmp;
 		}
+		$result = [];
 		$ptr = fopen($src, 'r');
-		while (!feof($ptr))
+		if ($ptr)
 		{
-			$infos = $this->readTarHeader ($ptr);
-			$name = trim($infos['name']);
-			if ($infos['type']=='5' && @mkdir($dest.$name, 0775, true)) {
-				$result[]=$dest.$infos['name'];
+// TODO prevent zip-slip NOTE temporary chage of 'open_basedir' ini setting causes problems later?  
+			while (!feof($ptr))
+			{
+				$infos = $this->readTarHeader ($ptr);
+				$name = trim($infos['name']);
+				if ($infos['type']=='5' && @mkdir($dest.$name, 0775, true)) {
+					$result[]=$dest.$infos['name'];
+				}
+				elseif (($infos['type']=='0' || $infos['type']==chr(0)) && file_put_contents($dest.$name, $infos['data'])) {
+					$result[]=$dest.$name;
+				}
+				if ($infos)
+					chmod($dest.$name, 0775);
+//					chmod(, $infos['mode']);
+//					chgrp(, $infos['uname']);
+//					chown(, $infos['gname']);
 			}
-			elseif (($infos['type']=='0' || $infos['type']==chr(0)) && file_put_contents($dest.$name, $infos['data'])) {
-				$result[]=$dest.$name;
-			}
-			if ($infos)
-				chmod($dest.$name, 0775);
-// 				chmod(, $infos['mode']);
-// 				chgrp(, $infos['uname']);
-// 				chown(, $infos['gname']);
+			fclose($ptr);
 		}
 		if (is_file($tmp)) unlink($tmp);
 		return $result;
@@ -101,8 +107,7 @@ $test->extractTar('./toto.Tar', './new/');
 			$checksum += ord(substr($block, $i, 1));
 		}
 		error_reporting($lvl);
-		if ($realchecksum==$checksum) return true;
-		return false;
+		return ($realchecksum==$checksum);
 	}
 
 	public function tarHeader512($infos)
