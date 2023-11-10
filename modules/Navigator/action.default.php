@@ -244,18 +244,18 @@ if( !$tpl->isCached() ) {
         if( $hm->has_children() ) $rootnodes = $hm->get_children();
     }
 
-    if( count($rootnodes) == 0 ) return; // nothing to do.
-
-    // ready to fill the nodes
-    $outtree = [];
-    foreach( $rootnodes as $node ) {
-        if( Nav_utils::is_excluded($node->get_tag('alias')) ) continue;
-        $tmp = Nav_utils::fill_node($node,$deep,$nlevels,$show_all,$collapse);
-        if( $tmp ) $outtree[] = $tmp;
+    if( $rootnodes ) { 
+        // fill the nodes
+        $outtree = [];
+        foreach( $rootnodes as $node ) {
+            if( Nav_utils::is_excluded($node->get_tag('alias')) ) continue;
+            $tmp = Nav_utils::fill_node($node,$deep,$nlevels,$show_all,$collapse);
+            if( $tmp ) $outtree[] = $tmp;
+        }
+        $tpl->assign('nodes',$outtree);
     }
 
     Nav_utils::clear_excludes();
-    $tpl->assign('nodes',$outtree);
 }
 
 $tpl->display();
