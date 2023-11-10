@@ -158,8 +158,8 @@ function CMSFileBrowser(_settings) {
         progress_bar.progressbar('destroy');
         cms_busy(false);
         if(n_errors === 0) {
-          var url = window.location.href + '&m1_nosub=1';
-          window.location.href = url; // TODO ok for moduleinterface?
+          var url = window.location.href + '&m1_nosub=1'; // TODO ok for moduleinterface?
+          window.location.href = url;
         }
       }
     });
@@ -208,8 +208,8 @@ function CMSFileBrowser(_settings) {
     var file = $(target).data('fb-fname');
     cms_confirm(settings.lang.confirm_delete).done(function() {
       _ajax_cmd('del', file).done(function(msg) {
-        var url = window.location.href + '&m1_nosub=1';
-        window.location.href = url; // TODO ok for moduleinterface?
+        var url = window.location.href + '&m1_nosub=1';// TODO ok for moduleinterface?
+        window.location.href = url;
       }).fail(function(jqXHR, textStatus, msg) {
         console.debug('filepicker command failed: ' + msg);
       });
@@ -232,8 +232,8 @@ function CMSFileBrowser(_settings) {
           // then refresh the screen
           // then close the dialog
           _ajax_cmd('mkdir', val).done(function(msg) {
-            var url = window.location.href + '&m1_nosub=1';
-            window.location.href = url; // TODO ok for moduleinterface?
+            var url = window.location.href + '&m1_nosub=1';// TODO ok for moduleinterface?
+            window.location.href = url;
           }).fail(function(jqXHR, textStatus, msg) {
             console.debug('filepicker mkdir failed: ' + msg);
           });
