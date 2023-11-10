@@ -157,7 +157,7 @@ class microtiny_utils
       $fp = cms_utils::get_filepicker_module();
       if( $fp ) {
           $url = $fp->get_browser_url();
-          $url = $ajax_url($url) . '&m1_type=image&m1_useprefix=0';
+          $url = $ajax_url($url);
       }
       else {
           $url = '';
