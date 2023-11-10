@@ -277,10 +277,10 @@ try {
         $contentarray = $content_obj->GetTabElements($currenttab, $content_obj->Id() < 1 );
         if( $currenttab == $content_obj::TAB_MAIN ) {
             // first tab... prepend a content-type selector.
-            // unless the user is merely an additional-editor.
+            // unless the user is merely an additional-editor. TODO always display, but disabled for additional editor
             if( ($this->CheckPermission('Manage All Content') || $content_obj->Owner() == $user_id) )  {
                 $dflt = $content_obj->DefaultContent();
-                $dflttypes = array('content','pagelink');
+                $dflttypes = ['content']; //TODO poll all type-classes corresponding to $existingtypes ->IsDefaultPossible()
                 $selcount = 0;
                 $tmp2 = "<select id=\"content_type\" name=\"{$id}content_type\">";
                 foreach( $existingtypes as $type => $label ) {
