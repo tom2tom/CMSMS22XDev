@@ -664,6 +664,7 @@ final class ContentListBuilder
                   $hier_b = $node_b->getHierarchy();
                   return strcmp($hier_a,$hier_b);
               }
+              return 0;
           });
 
       $this->_pagelist = $display;
