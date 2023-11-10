@@ -1,17 +1,24 @@
 <ul>
   <li><b>Version 1.6.14</b> <em>(tomph)</em>
     <br>
-    Add missing API method
-    <br>
     Use html5 syntax
+    <br>
+    Use FileTypeHelper-class methods where relevant
     <br>
     Modify easyarchives classes for PHP8+ compatibility
     <br>
-    Bullet-proof file-extension determination
-    <br>
-    Filenames beginning with '_' are hidden on MacOS only
-    <br>
     filemanager_utils::join_path() for filepaths, not urls
+    <br>
+    Bug fixes
+    <ul>
+    <li>Add missing API method</li>
+    <li>Correct filelist sorting</li>
+    <li>Update jQueryRotate to v.2.3</li>
+    <li>Update to latest (but still elderly) jrac javascript</li>
+    <li>Update to latest (and last-ever) blueimp uploader javascript</li>
+    <li>Bullet-proof file-extension determination</li>
+    <li>Filenames beginning with '_' are hidden on MacOS only</li>
+    </ul>
   </li>
   <li><b>Version 1.4.0</b> <em>(silmarillion)</em></li>
   <li>
@@ -51,10 +58,10 @@
     <br>
     Closed a small security hole
   </li>
-  
+
   <li><b>Version 0.4.5</b> <em>(silmarillion)</em></li>
   <li>Now won't accept / and \ and .. in newdir names</li>
-  
+
   <li><b>Version 0.4.3</b> <em>(silmarillion)</em></li>
   <li>Fixed a syntax problem with the padlock-icon. Thanks tristan!</li>
   <li>Fixed a small problem rendering no filtype icons for othermodules using the API.</li>
