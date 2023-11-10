@@ -83,16 +83,6 @@ class ErrorPage extends Content
         $this->mPreview = true;
     }
 
-    public function IsCopyable()
-    {
-        return false;
-    }
-
-    public function IsDefaultPossible()
-    {
-        return false;
-    }
-
     public function HasUsableLink()
     {
         return false;
