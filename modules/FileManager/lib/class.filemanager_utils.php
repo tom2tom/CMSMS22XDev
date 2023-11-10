@@ -455,7 +455,7 @@ final class filemanager_utils
             if( !$showhiddenfiles && self::is_hidden_file($full) ) continue;
 
             $res[$prefix.$entry] = $prefix.$entry;
-            $tmp = self::get_dirs($full,$showhiddenfiles,$prefix.$entry.DIRECORY_SEPARATOR); //recurse
+            $tmp = self::get_dirs($full,$showhiddenfiles,$prefix.$entry.DIRECTORY_SEPARATOR); //recurse
             if( $tmp && is_array($tmp) ) $res = array_merge($res,$tmp);
         }
         closedir($dh);
@@ -474,7 +474,7 @@ final class filemanager_utils
             $config = cms_config::get_instance();
             $startdir = $config['uploads_path'];
         }
-        $output = self::get_dirs($startdir,$showhiddenfiles,DIRECORY_SEPARATOR);
+        $output = self::get_dirs($startdir,$showhiddenfiles,DIRECTORY_SEPARATOR);
         if( $output && is_array($output) ) {
             ksort($output);
             $tmp = [];
