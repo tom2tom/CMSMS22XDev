@@ -37,7 +37,7 @@ $(function() {
 
 {if $content_obj->HasPreview()}
   $('#_preview_').on('click', function() {
-    if( typeof tinymce !== 'undefined') tinymce.triggerSave();
+    if( typeof tinymce !== 'undefined') tinymce.triggerSave(); // TODO create a "save editor content" API that can be generally used
     // serialize the form data
     var data = $('#Edit_Content').find('input:not([type="submit"]), select, textarea').serializeArray();
     data.push({
@@ -126,7 +126,7 @@ $(function() {
   // handle apply (ajax submit)
   $(document).on('click', '[name$="apply"]', function() {
     // apply does not do an unlock.
-    if( typeof tinymce !== 'undefined') tinymce.triggerSave(); // TODO this needs better approach, create a common "ajax save" function that can be reused
+    if( typeof tinymce !== 'undefined') tinymce.triggerSave(); // TODO create a "save editor content" API that can be generally used
     var data = $('#Edit_Content').find('input:not([type="submit"]), select, textarea').serializeArray();
     data.push({
       'name': '{$actionid}ajax',
