@@ -46,9 +46,8 @@ ContentManager 1.1.11
 DesignManager
  - Corrected new template creation
 
-FileManager 1.6.14
+FileManager
  - BR #12535 - File Manager Unpack archive .tar.gz
- - Corrected filelist sorting after upload
 
 FilePicker
  - BR #12621 - FilePicker upload bug
@@ -59,9 +58,6 @@ MenuManager 1.50.4
  - Exported from core to a normal CMSMS module in Forge
  - BR #12619 - Wrong assignment of $prevdepth.
  - BR #12620 - Version 2 breaks MenuManager with childrenof.
-
-Navigator 1.0.10
- - BR #12528 - Sometimes doesn't clear excluded prefixes
 
 News
  - Sanitise news-item strings (title, summary, content) before display
