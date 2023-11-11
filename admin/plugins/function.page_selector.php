@@ -20,7 +20,7 @@ function smarty_function_page_selector($params,$template)
     $value = (isset($params['value']) ) ? (int)$params['value'] : 0; // selected-page id
     $name = (isset($params['name']) ) ? trim($params['name']) : 'parent_id'; //input-element name
     $allowcurrent = (isset($params['allowcurrent']) ) ? cms_to_bool($params['allowcurrent']) : false;
-    $allow_all = (isset($params['allowall']) ) ? cms_to_bool($params['allowall']) : false;
+    $allow_all = (isset($params['allow_all']) ) ? cms_to_bool($params['allow_all']) : false;
     $for_child = (isset($params['for_child']) ) ? cms_to_bool($params['for_child']) : false;
     // no current-page
     $out = ContentOperations::get_instance()->CreateHierarchyDropdown(0,$value,$name,$allowcurrent,false,false,$allow_all,$for_child);
