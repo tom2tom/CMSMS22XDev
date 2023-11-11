@@ -76,6 +76,9 @@ class FileTypeHelper
     {
         if (!$config) { $config = cms_config::get_instance(); }
         $this->_mime_ok = (function_exists('finfo_open') && function_exists('finfo_file'));
+        //TODO extension tailoring etc for this class should be a site administrator
+        //responsibility (and use data recorded in site-preferences, not in config
+        //which are essentially developer-specified)
         $this->_use_mimetype = $this->_mime_ok && !$config['FileTypeHelper_usemimetype'];
 
         $this->update_config_extensions('_image_extensions', $config['FileTypeHelper_image_extensions']);
