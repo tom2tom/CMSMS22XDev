@@ -143,7 +143,7 @@ class OneElevenTheme extends CmsAdminThemeBase {
 			}
 			if (file_exists($path)) {
 				$config = cms_config::get_instance();
-				$url = $config->smart_root_url() . "/modules/{$module}/images/icon.{$ext}";
+				$url = $config->smart_root_url() . "/modules/{$module}/images/icon.{$ext}"; //TODO root deprecated since 2.2
 				$this->set_value('module_icon_url', $url);
 			}
 
@@ -211,7 +211,7 @@ class OneElevenTheme extends CmsAdminThemeBase {
 				$path = substr($path, 0, -3) . 'gif';
 			}
 			if (file_exists($path)) {
-				$one['img'] = $config->smart_root_url() . "/modules/{$nm}/images/icon.{$ext}";
+				$one['img'] = $config->smart_root_url() . "/modules/{$nm}/images/icon.{$ext}"; //TODO root deprecated since 2.2
 			} else if (isset($this->_topaliases[$nm])) {
 				$one['img'] = "themes/{$this->themeName}/images/icons/topfiles/{$this->_topaliases[$nm]}";
 			}

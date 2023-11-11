@@ -175,7 +175,7 @@ final class FileManager extends CMSModule {
         $imagepath = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.$path.DIRECTORY_SEPARATOR.'thumb_'.$file['name'];
         if (file_exists($imagepath)) {
             $config = cms_config::get_instance();
-            $url = $config->smart_root_url().'/'.strtr($path,'\\','/'); //TODO deprecated >> CMS_ROOT_URL
+            $url = $config->smart_root_url().'/'.strtr($path,'\\','/'); //TODO deprecated since 2.2
             $imageurl = $url.'/thumb_'.$file['name'];
             $image = '<img src="'.$imageurl.'" alt="'.$file['name'].'" title="'.$file['name'].'">';
             $url = $this->create_url('m1_','view','',['file' => $this->encodefilename($file['name'])]);

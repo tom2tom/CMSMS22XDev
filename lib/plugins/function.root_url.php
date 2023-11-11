@@ -21,7 +21,7 @@ function smarty_function_root_url($params, $smarty)
 
 	if( !isset($params['autossl']) || $params['autossl'] != 0 )	{
         $config = CmsApp::get_instance()->GetConfig();
-		$str = $config->smart_root_url();
+		$str = $config->smart_root_url(); //TODO root deprecated since 2.2
 	}
 
     if( isset($params['assign']) ) {

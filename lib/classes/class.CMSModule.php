@@ -418,9 +418,9 @@ abstract class CMSModule
     {
         $config = \cms_config::get_instance();
         if( $use_ssl ) {
-            return $this->config['ssl_url'].'/modules/'.$this->GetName();
+            return $config['ssl_url'].'/modules/'.$this->GetName(); //TODO root deprecated since 2.2
         } else {
-            return $config->smart_root_url().'/modules/'.$this->GetName();
+            return $config->smart_root_url().'/modules/'.$this->GetName(); //TODO root deprecated since 2.2
         }
     }
 

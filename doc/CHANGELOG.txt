@@ -17,6 +17,7 @@ Core - General
  - Validate entered bookmark-URLs.
  - Include .phar files in executables test.
  - Deprecated use of PHP function umask().
+ - Since CMSMS 2.2, config parameters 'ssl_url','ssl_uploads_url' and 'ssl_image_uploads_url', and methods which use those, have internally but not publicly been flagged as deprecated.
  - Added missing nls files, allowing installation of extra translations.
  - Smarty upgraded to version 4.3.4.
  - Enabled use of PHP function rawurlencode in Smarty templates.

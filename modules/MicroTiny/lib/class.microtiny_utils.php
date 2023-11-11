@@ -90,7 +90,7 @@ class microtiny_utils
       if( $first_time ) {
           // only once per request.
           $first_time = false;
-          $output .= '<script src="'.$config->smart_root_url().'/modules/MicroTiny/lib/js/tinymce/tinymce.min.js"></script>';
+          $output .= '<script src="'.$config->smart_root_url().'/modules/MicroTiny/lib/js/tinymce/tinymce.min.js"></script>'; //TODO root deprecated since 2.2
       }
 
       if( $frontend ) {
@@ -153,7 +153,7 @@ class microtiny_utils
       $tpl_ob->assign('isfrontend',$frontend);
       $tpl_ob->assign('languageid',$languageid);
       $tpl_ob->assign('langdir',$langdir);
-      $tpl_ob->assign('root_url',$config->smart_root_url());
+      $tpl_ob->assign('root_url',$config->smart_root_url()); //TODO deprecated since 2.2
       $fp = cms_utils::get_filepicker_module();
       if( $fp ) {
           $url = $fp->get_browser_url();

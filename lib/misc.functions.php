@@ -1145,8 +1145,8 @@ function cms_get_jquery($exclude = '',$ssl = FALSE,$cdn = FALSE,$append = '',$cu
 {
   $config = cms_config::get_instance();
   $scripts = array();
-  $base_url = $config->smart_root_url();
-  if( $ssl === true || $ssl === TRUE ) $base_url = $config['ssl_url'];
+  $base_url = $config->smart_root_url(); //TODO deprecated since 2.2
+  if( $ssl === true ) $base_url = $config['ssl_url']; //TODO deprecated since 2.2
   $basePath=$custom_root!=''?trim($custom_root,'/'):$base_url;
 
   // Scripts to include NOTE keep {cms_jquery} tag help reconciled with the following

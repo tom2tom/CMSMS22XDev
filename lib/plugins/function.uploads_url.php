@@ -19,7 +19,7 @@ function smarty_function_uploads_url($params, $smarty)
 {
 	$config = CmsApp::get_instance()->GetConfig();
 
-    $out = $config->smart_uploads_url();
+    $out = $config->smart_uploads_url(); //TODO root deprecated since 2.2
 	if( isset($params['assign']) ) {
 		$smarty->assign(trim($params['assign']),$out);
 		return '';
