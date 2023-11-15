@@ -293,7 +293,7 @@ class OneElevenTheme extends CmsAdminThemeBase {
 
 		$userid = get_userid();
 		// module_help_url
-		if (!cms_userprefs::get_for_user($userid,'hide_help_links',0)) {
+		if (!cms_userprefs::get_for_user($userid, 'hide_help_links', 0)) {
 			if (($module_help_url = $this->get_value('module_help_url'))) {
 				$smarty->assign('module_help_url', $module_help_url);
 			}
@@ -301,7 +301,7 @@ class OneElevenTheme extends CmsAdminThemeBase {
 
 		// user preferences
 		if (check_permission($userid,'Manage My Settings')) {
-			$smarty->assign('myaccount',1);
+			$smarty->assign('myaccount', 1);
 		}
 
 		// bookmarks
@@ -311,12 +311,13 @@ class OneElevenTheme extends CmsAdminThemeBase {
 		$ops = CmsApp::get_instance()->GetBookmarkOperations();
 		$list = $ops->LoadBookmarks($userid);
 		if ($list) {
-			$icon = $this->DisplayImage('icons/system/bookmark.png','' ,'' ,'' ,'systemicon');
+			$icon = $this->DisplayImage('icons/system/bookmark.png', 'bookmark', '', '', 'systemicon'); //TODO relevant alt
 			foreach ($list as $obj) {
 				$one = (array)$obj;
 				unset($one['user_id']);
 				$one['icon'] = $icon;
 //				if (sometest) { $one['spacer'] = 1; }
+//				$one['title'] = ?; open this display this ... 
 //TODO smart root url relevance ?
 				if (startswith($one['url'], $config['admin_url'])) {
 					$one['admin'] = 1;
@@ -332,7 +333,7 @@ class OneElevenTheme extends CmsAdminThemeBase {
 				$marks[] = $one;
 			}
 			$path = substr($_SERVER['SCRIPT_FILENAME'],strlen(CMS_ROOT_PATH));
-			$source = $config['root_url'] . strtr($path,'\\','/'); // TODO c.f. $this->_url.$this->_query which has no scheme or host
+			$source = $config['root_url'] . strtr($path, '\\', '/'); // TODO c.f. $this->_url.$this->_query which has no scheme or host
 			if( !empty($_SERVER['QUERY_STRING']) ) { $source .= '?'.$_SERVER['QUERY_STRING']; }
 			$source = str_replace($urlext,'[SECURITYTAG]',$source);
 			$url = 'addbookmark.php?'.$urlext;
@@ -340,22 +341,24 @@ class OneElevenTheme extends CmsAdminThemeBase {
 				$url .= '&title='.rawurlencode($title);
 			}
 			$url .= '&ref='.base64_encode($source);
+			$tmp = lang('addthismark');
 			$marks[] = [
 				'bookmark_id' => 0,
-				'title' => lang('addthismark'),
+				'title' => $tmp,
 				'url' => $url,
-				'icon' => $this->DisplayImage('icons/system/newobject.gif','' ,'' ,'' ,'systemicon'),
+				'icon' => $this->DisplayImage('icons/system/newobject.gif', $tmp, '', '', 'systemicon'),
 			];
+			$tmp = lang('managebookmarks');
 			$marks[] = [
 				'bookmark_id' => 0,
-				'title' => lang('managebookmarks'),
+				'title' => $tmp,
 				'url' => 'listbookmarks.php?'.$urlext,
-				'icon' => $this->DisplayImage('icons/system/document-list.png','' ,'' ,'' ,'systemicon')
+				'icon' => $this->DisplayImage('icons/system/document-list.png', $tmp, '', '', 'systemicon')
 			];
 		}
 		$smarty->assign('marks',$marks);
-		$smarty->assign('headertext',$this->get_headtext());
-		$smarty->assign('footertext',$this->get_footertext());
+		$smarty->assign('headertext', $this->get_headtext());
+		$smarty->assign('footertext', $this->get_footertext());
 
 		// and some other common variables
 		$smarty->assign('content', str_replace('</body></html>', '', $html));
@@ -379,7 +382,7 @@ class OneElevenTheme extends CmsAdminThemeBase {
 		// get language direction
 		$lang = CmsNlsOperations::get_current_language();
 		$info = CmsNlsOperations::get_language_info($lang);
-		$smarty->assign('lang_dir',$info->direction());
+		$smarty->assign('lang_dir', $info->direction());
 
 		if (is_array($this->_errors) && count($this->_errors))
 			$smarty->assign('errors', $this->_errors);
