@@ -34,18 +34,25 @@ function smarty_function_page_image($params, $smarty)
     if( $tag ) $full = true;
 
     $contentobj = cms_utils::get_current_content();
-    $val = null; //mixed value not yet known
+    $val = '';
     if( is_object($contentobj) ) {
         $val = $contentobj->GetPropertyValue($propname);
-        if( $val == -1 ) $val = null;
+        if( !$val || $val == -1 ) $val = '';
     }
 
     $out = '';
     if( $val ) {
         $orig_val = $val;
-        $config = \cms_config::get_instance();
-        if( $full ) $val = $config['image_uploads_url'].'/'.$val; //TODO c.f. cms_siteprefs::get('content_imagefield_path')) to url
-        if( ! $tag ) {
+        if( $full ) {
+            if( $val[0] == '/' ) {
+                $val = CMS_ROOT_URL.$val;
+            }
+            else {
+                $config = cms_config::get_instance();
+                $val = $config['image_uploads_url'].'/'.$val; //TODO c.f. cms_siteprefs::get('content_imagefield_path')) relative to url
+            }
+        }
+        if( !$tag ) {
             $out = $val;
         } else {
             if( !isset($params['alt']) ) $params['alt'] = $orig_val;
@@ -74,6 +81,7 @@ function smarty_cms_about_function_page_image() {
 
     <p>Change History:</p>
     <ul>
+        <li>Support absolute and relative image-urls</li>
         <li>Fix for CMSMS 1.9</li>
         <li>Jan 2016 <em>(calguy1000)</em> - Adds the full param for CMSMS 2.2</li>
     </ul>
