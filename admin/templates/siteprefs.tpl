@@ -431,7 +431,7 @@ $(function() {
 					<div class="pageoverflow">
 						<p class="pagetext"><label for="password">{lang('settings_authpassword')}:</label></p>
 						<p class="pageinput">
-							<input type="password" id="password" name="mailprefs_password" value="{$mailprefs.password}" size="50" maxlength="50">
+							<input type="password" id="password" name="mailprefs_password" value="{$mailprefs.password}" size="50" maxlength="100">
 							&nbsp;{cms_help key2='settings_mailprefs_smtppassword' title=lang('settings_authpassword')}
 						</p>
 					</div>
