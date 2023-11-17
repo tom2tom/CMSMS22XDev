@@ -8,7 +8,7 @@ $lang['browse'] = 'Browse';
 // C
 $lang['cancel'] = 'Cancel';
 $lang['class'] = 'Class';
-$lang['cmsms_linker'] = 'Link to site page'; // menu label
+$lang['cmsms_linker'] = 'Site-page link'; // menu label
 $lang['cmsms_linker2'] = 'Link to Page on this Website'; // dialog heading
 $lang['css_styles_help'] = 'CSS-stylenames specified here are added to a dropdown box in the editor. Leaving the input field empty will keep the dropdown box hidden (default behavior).';
 $lang['css_styles_help2'] = 'The styles can either be just the class name, or a classname with a new name to show.<br>
@@ -33,7 +33,6 @@ $lang['error_nopage'] = 'No page alias selected';
 $lang['example'] = 'MicroTiny example';
 
 // F
-$lang['filepickertitle'] = 'CMSMS File Picker'; //c.f. type-specific alternate: title_cmsms_filebrowser etc
 $lang['friendlyname'] = 'MicroTiny WYSIWYG editor';
 $lang['fileview'] = 'File View';
 $lang['filename'] = 'File Name';
@@ -162,7 +161,8 @@ EOT;
 
 // I
 $lang['image'] = 'Image';
-$lang['info_linker_autocomplete'] = 'This is an auto complete field. Begin by typing a few characters of the desired page alias, menu text, or title. Any matching items will be displayed in a list.';
+$lang['info_linker_autocomplete'] = 'This is an auto complete field. Begin by typing a few characters of the desired page alias, menu text or title.  Matching page(s) will be displayed in a list.';
+$lang['info_linker_autocomplete2'] = 'Auto-completion operates here';//NEW input-element placeholder
 
 // L
 $lang['loading_info'] = 'Loading...';
@@ -220,20 +220,10 @@ $lang['settings'] = 'Settings';
 $lang['settingssaved'] = 'Settings saved';
 $lang['size'] = 'Size';
 $lang['submit'] = 'Submit';
-$lang['switchgrid'] = 'Switch to grid view';
-$lang['switchlist'] = 'Switch to list view';
-$lang['switchimage'] = 'Show image files';
-$lang['switchvideo'] = 'Show video files';
-$lang['switchaudio'] = 'Show audio files';
-$lang['switcharchive'] = 'Show archive files';
-$lang['switchfiles'] = 'Show files';
-$lang['switchreset'] = 'Show all';
 
 // T
 $lang['tooltip_selectedalias'] = 'This field is read only';
 $lang['title_cmsms_linker'] = 'Insert/edit link to site page';
-$lang['title_cmsms_filebrowser'] = 'Select a file'; //c.f. Filepicker module title
-$lang['title_cmsms_imagebrowser'] = 'Select an image'; //c.f. Filepicker module title
 $lang['title_edit_profile'] = 'Edit profile';
 $lang['title_mailto'] = 'Insert/edit email link';
 $lang['tmpnotwritable'] = 'The configuration could not be written to the tmp directory! Please fix this...';

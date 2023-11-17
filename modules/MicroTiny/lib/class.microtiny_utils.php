@@ -81,10 +81,10 @@ class microtiny_utils
       // if this is an action for MicroTiny disable caching
       $smarty = CmsApp::get_instance()->GetSmarty();
       $module = $smarty->get_template_vars('actionmodule');
-      if( $module == $mod->GetName() ) $mtime = time() + 60; // do not cache when we're using this from within the MT module.
+      if( $module == $mod->GetName() ) $mtime = time() + 10; // do not cache when we're using this from within the MT module.
 
       // also disable caching if told to by config.php
-      if( isset($config['mt_disable_cache']) && cms_to_bool($config['mt_disable_cache']) ) $mtime = time() + 60;
+      if( isset($config['mt_disable_cache']) && cms_to_bool($config['mt_disable_cache']) ) $mtime = time() + 10;
 
       $output = '';
       if( $first_time ) {
@@ -153,14 +153,21 @@ class microtiny_utils
       $tpl_ob->assign('isfrontend',$frontend);
       $tpl_ob->assign('languageid',$languageid);
       $tpl_ob->assign('langdir',$langdir);
-      $tpl_ob->assign('root_url',$config->smart_root_url()); //TODO deprecated since 2.2
+      $tpl_ob->assign('rooturl',CMS_ROOT_URL);
+      $tpl_ob->assign('uploadsurl',$config['uploads_url']);
       $fp = cms_utils::get_filepicker_module();
       if( $fp ) {
           $url = $fp->get_browser_url();
           $url = $ajax_url($url);
+          $st1 = $fp->Lang('select_a_file');
+          $st2 = $fp->Lang('select_an_image');
+          $st3 = $fp->Lang('select_a_media_file');
       }
       else {
-          $url = '';
+          $url = ''; //TODO abort any picker setup
+          $st1 = '';//$mod->Lang('title_cmsms_filebrowser');
+          $st2 = '';//$mod->Lang('title_cmsms_imagebrowser');
+          $st3 = '';//$mod->Lang('title_cmsms_mediabrowser');
       }
       $tpl_ob->assign('filepicker_url',$url);
       $url = $mod->create_url('m1_','linker',$page_id);
@@ -168,6 +175,9 @@ class microtiny_utils
       $url = $mod->create_url('m1_','ajax_getpages',$page_id);
       $tpl_ob->assign('getpages_url',$ajax_url($url));
       if( $selector ) $tpl_ob->assign('mt_selector',$selector);
+      $tpl_ob->assign('filebrowse_title', $st1);
+      $tpl_ob->assign('imagebrowse_title', $st2);
+      $tpl_ob->assign('mediabrowse_title', $st3);
 
       try {
           if( $frontend ) {
@@ -182,7 +192,7 @@ class microtiny_utils
       }
       catch( Exception $e ) {
           // oops, we gots a problem.
-          die($e->Getmessage());
+          exit($e->Getmessage());
       }
 
       return $tpl_ob->fetch();
