@@ -119,10 +119,10 @@ function CMSFileBrowser(_settings) {
       dataType: 'json',
       maxChunkSize: 1800000,
       formData: {
-        'cmd': 'upload',
-        'cwd': settings.cwd,
-        'inst': settings.inst,
-        'sig': settings.sig
+        cmd: 'upload',
+        cwd: settings.cwd,
+        inst: settings.inst,
+        sig: settings.sig
       },
       start: function(ev) {
         n_errors = 0;
@@ -184,8 +184,6 @@ function CMSFileBrowser(_settings) {
     } else {
       gridview_btn.trigger('click');
     }
-    //TODO support initial filter-element click
-    //$('.filepicker-type-filter .js-trigger WITH [data-fb-type="whatever"] = "image"..."reset" trigger('click')
   }
 
   function _ajax_cmd(cmd, val) {
@@ -193,11 +191,11 @@ function CMSFileBrowser(_settings) {
       url: settings.cmd_url,
       method: 'POST',
       data: {
-        'cmd': cmd,
-        'val': val,
-        'cwd': settings.cwd,
-        'inst': settings.inst,
-        'sig': settings.sig
+        cmd: cmd,
+        val: val,
+        cwd: settings.cwd,
+        inst: settings.inst,
+        sig: settings.sig
       }
     });
   }
@@ -248,4 +246,8 @@ function CMSFileBrowser(_settings) {
   enable_commands();
   enable_upload();
   setup_view();
+  // trigger a filter per settings.type after? before? content population TODO no 200ms delay if pre-population
+  if (typeof settings.type !== 'undefined' && settings.type && settings.type !== 'file') {
+    $('.filepicker-type-filter .js-trigger[data-fb-type="' + settings.type + '"]').trigger('click');
+  }
 } /* object */
