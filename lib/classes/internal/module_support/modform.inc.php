@@ -51,7 +51,7 @@ function cms_module_CreateFormStart($modinstance, $id, $action='default', $retur
         if( $content_obj ) $goto = $content_obj->GetURL();
     }
   }
-  if( CmsApp::get_instance()->is_https_request() && strpos($goto,':') !== FALSE ) $goto = str_replace('http:','https:',$goto);
+  if( $gCms->is_https_request() && strpos($goto,':') !== FALSE ) $goto = str_replace('http:','https:',$goto);
   $goto = ' action="'.$goto.'"';
 
   $text = '<form id="'.$id.'moduleform_'.$idsuffix.'" method="'.$method.'"'.$goto;
@@ -61,7 +61,7 @@ function cms_module_CreateFormStart($modinstance, $id, $action='default', $retur
   $text .= '>'."\n".'<div class="hidden">'."\n".'<input type="hidden" name="mact" value="'.$modinstance->GetName().','.$id.','.$action.','.($inline == true?1:0).'">'."\n";
   if ($returnid != '') {
     $text .= '<input type="hidden" name="'.$id.'returnid" value="'.$returnid.'">'."\n";
-    if ($inline) $text .= '<input type="hidden" name="'.$modinstance->cms->config['query_var'].'" value="'.$returnid.'">'."\n";
+    if ($inline) $text .= '<input type="hidden" name="'.$gCms->config['query_var'].'" value="'.$returnid.'">'."\n";
   }
   else {
     $text .= '<input type="hidden" name="'.CMS_SECURE_PARAM_NAME.'" value="'.$_SESSION[CMS_USER_KEY].'">'."\n";
