@@ -1,5 +1,6 @@
 @font-face {
 	font-family: 'cmsms-filepicker';
+	src: url('../fonts/cmsms-filepicker.eot');
 	src: url('../fonts/cmsms-filepicker.woff2') format('woff2'),
 		url('../fonts/cmsms-filepicker.woff') format('woff'),
 		url('../fonts/cmsms-filepicker.ttf') format('truetype'),
