@@ -2739,9 +2739,6 @@ a.toggle-dropzone:focus {
 	}
 }
 /* TinyMCE override for filepicker iframe*/
-.mce-container-body iframe {
-	max-width: none !important;
-}
 .cmsfp_dlg {
 	padding: 0 !important;
 	overflow: hidden !important;
