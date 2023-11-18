@@ -268,7 +268,7 @@ if( !$tpl_ob->IsCached() ) {
             //
             $onerow->fields = news_ops::get_fields($row['news_id'],TRUE); //TODO sanitize untrusted content
             $onerow->fieldsbyname = $onerow->fields; // dumb, I know.
-            $onerow->file_location = config['uploads_url'].'/news/id'.$row['news_id'];
+            $onerow->file_location = $config['uploads_url'].'/news/id'.$row['news_id'];
 
             $moretext = isset($params['moretext'])?trim($params['moretext']):$this->Lang('more');
             $sendtodetail = array('articleid'=>$row['news_id']);
