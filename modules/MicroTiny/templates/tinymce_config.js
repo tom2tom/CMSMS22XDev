@@ -57,7 +57,6 @@ tinymce.init({
 {/if}
     },
 {else}    menubar: false,{/if}
-    paste_block_drop: true,
     paste_text_use_dialog: true,
     removed_menuitems: "newdocument",
     resize: {if ($mt_profile.showstatusbar && $mt_profile.allowresize)}"both"{else}false{/if},
