@@ -60,7 +60,7 @@ hr {
  * 2. Correct the odd `em` font sizing in all browsers.
  */
 pre {
-  font-family: monospace, monospace; /* 1 */
+  font-family: monospace; /* 1 */
   font-size: 1em; /* 2 */
 }
 /* Text-level semantics
@@ -94,7 +94,7 @@ strong {
 code,
 kbd,
 samp {
-  font-family: monospace, monospace; /* 1 */
+  font-family: monospace; /* 1 */
   font-size: 1em; /* 2 */
 }
 /**
@@ -620,7 +620,7 @@ div.pagecontainer .h-inside {
 }
 /* Format code chunks */
 pre, code, samp, kbd {
-	font-family: Consolas, 'Andale Mono WT', 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'Courier New', monospace;
+	font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'Courier New', monospace;
 	text-align: right;
 	color: #232323;
 	height: auto;
@@ -1933,7 +1933,7 @@ textarea.pagebigtextarea {
 */
 .pageinput textarea {
 	width: 90%;
-	font-family: Consolas, 'Andale Mono WT', 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'Courier New', monospace;
+	font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'Courier New', monospace;
 	font-size: 13px;
 	line-height: 1.6
 }
@@ -2101,7 +2101,7 @@ ul.sortable .placeholder {
 	border: 1px solid #ddd;
 	margin: 15px 0;
 	padding: 20px;
-	font-family: Consolas, 'Andale Mono WT', 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'Courier New', monospace;
+	font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'Courier New', monospace;
 	line-height: 1.5
 }
 .version h3 {
@@ -2738,12 +2738,12 @@ a.toggle-dropzone:focus {
 		display: none
 	}
 }
-/* TinyMCE override for filepicker iframe*/
+/* override .ui-dialog for cmsms.filepicker widget */
 .cmsfp_dlg {
 	padding: 0 !important;
 	overflow: hidden !important;
 }
-.cmsfp_dlg iframe {
+.cmsfp_dlg iframe { /*OR cmsfp_frame*/
 	height: 100% !important;
 	width: 100% !important;
 	max-width: none !important;

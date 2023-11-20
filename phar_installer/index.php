@@ -70,7 +70,7 @@ catch( \Exception $e ) {
     <title>CMS Made Simple Installer : Fatal Error</title>
   </head>
   <body>
-    <div style="border-radius: 3px; max-width: 85%; margin: 10% auto; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; background-color: #f2dede; border: 1px solid #ebccd1; color: #a94442; padding: 15px;">
+    <div style="border-radius: 3px; max-width: 85%; margin: 10% auto; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; background-color: #f2dede; border: 1px solid #ebccd1; color: #a94442; padding: 15px;">
       <h1>Fatal Error</h1>
       <p>[message]</p>
     </div>
