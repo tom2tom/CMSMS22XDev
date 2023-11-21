@@ -90,7 +90,25 @@ class microtiny_utils
       if( $first_time ) {
           // only once per request.
           $first_time = false;
-          $output .= '<script src="'.$config->smart_root_url().'/modules/MicroTiny/lib/js/tinymce/tinymce.min.js"></script>'; //TODO root deprecated since 2.2
+          $baseurl = $mod->GetModuleURLPath().'/lib/js';
+          // TMCE6 needs ES6. Deploy this after last css link in the header
+          $output .= <<<EOS
+<script id="shimsource">
+ if (typeof Symbol === 'undefined') {
+  var xjS = document.createElement('script');
+  xjS.src = '$baseurl/es6-shim.min.js';
+  var el = document.getElementById('shimsource'); // TODO better way to get this current node
+  el.parentNode.insertBefore(xjS, el.nextSibling); // insert after
+  if (typeof String.prototype.trim === 'undefined') {
+   var xjS5 = document.createElement('script');
+   xjS5.src = '$baseurl/es5-shim.min.js';
+   el.parentNode.insertBefore(xjS5, xjS);
+  }
+ }
+</script>
+<script src="$baseurl/tinymce/tinymce.min.js"></script>
+
+EOS;
       }
 
       if( $frontend ) {

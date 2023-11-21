@@ -3,8 +3,8 @@
   <ul>
    <li>Depends on FilePicker, not FileManager</li>
    <li>Deprecate function mt_jsbool</li>
-   <li>Update TinyMCE to version 5.10.9</li>
-   <li>Add plugins: help, directionality, hr, nonbreaking</li>
+   <li>Update TinyMCE to version 6.7.3</li>
+   <li>Add plugins: help, directionality, nonbreaking</li>
    <li>Fix configuration: element_format, schema</li>
   </ul>
  </li>

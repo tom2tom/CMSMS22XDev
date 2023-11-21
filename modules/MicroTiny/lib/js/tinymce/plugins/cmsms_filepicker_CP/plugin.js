@@ -1,9 +1,14 @@
 tinymce.PluginManager.add('cmsms_filepicker_CP', function(editor) {
 
-  editor.settings.file_picker_types = 'file image media';
-  editor.settings.file_picker_callback = _callback;
+  editor.options.register('file_picker_types', {
+    processor: 'string'
+  });
+  editor.options.set('file_picker_types', 'file image media');
 
-  function _callback(callback, value, meta) {
+  editor.options.register('file_picker_callback', {
+    processor: 'function'
+  });
+  editor.options.set('file_picker_callback', function(callback, value, meta) {
 
     var mywin;
     var sz = window.innerHeight;
@@ -12,7 +17,7 @@ tinymce.PluginManager.add('cmsms_filepicker_CP', function(editor) {
     var width = (sz < 950) ? Math.max(sz * 0.8, 250) : 900;
     // generate a unique id for the active editor so we can access it later.
     var inst = 'i' + (new Date().getTime()).toString(16);
-    tinymce.activeEditor.dom.setAttrib(tinymce.activeEditor.dom.select('html'), 'data-cmsfp-instance', inst);
+    editor.dom.setAttrib(editor.dom.select('html'), 'data-cmsfp-instance', inst);
 
     if (!top.document.CMSFileBrowser) top.document.CMSFileBrowser = {
       type: meta.filetype
@@ -72,7 +77,7 @@ tinymce.PluginManager.add('cmsms_filepicker_CP', function(editor) {
           key = 'filebrowser_title';
           break;
       }
-      mywin = tinymce.activeEditor.windowManager.openUrl({
+      mywin = editor.windowManager.openUrl({
         title: cmsms_tiny[key],
         url: url,
         height: height,
@@ -84,5 +89,5 @@ tinymce.PluginManager.add('cmsms_filepicker_CP', function(editor) {
         }]
       });
     }
-  }
+  });
 });

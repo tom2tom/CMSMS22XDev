@@ -1,7 +1,6 @@
 tinymce.PluginManager.add('mailto_CP', function(editor) {
 
   function mailto_showDialog() {
-
     var anchorElm;
     var email_val;
     var text_val;
@@ -92,10 +91,12 @@ tinymce.PluginManager.add('mailto_CP', function(editor) {
     };
   }
   // TODO does this [de]activate the menuitem & button on tag change ? should affect only mailto links and the unlink action
-  function toggleMailtoState(editor) {
+  function toggleMailtoState(api) {
+    // Do stuff here on component render
     return function(api) {
+      // Do stuff here on component teardown
       var updateState = function() {
-        return api.setDisabled(getAnchorElement(editor, editor.selection.getNode()) === null);
+        return api.setEnabled(getAnchorElement(editor, editor.selection.getNode()) !== null);
       };
       updateState();
       return toggleState(editor, updateState);
@@ -106,7 +107,7 @@ tinymce.PluginManager.add('mailto_CP', function(editor) {
   editor.ui.registry.addMenuItem('mailto_CP', {
     icon: 'mailto',
     onAction: mailto_showDialog,
-    onSetup: toggleMailtoState(editor),
+    onSetup: toggleMailtoState,
     stateSelector: 'a[href^="mailto:"]',
     text: cmsms_tiny.mailto_text + '...'
   });
@@ -114,7 +115,7 @@ tinymce.PluginManager.add('mailto_CP', function(editor) {
   editor.ui.registry.addButton('mailto_CP', {
     icon: 'mailto',
     onAction: mailto_showDialog,
-    onSetup: toggleMailtoState(editor),
+    onSetup: toggleMailtoState,
     stateSelector: 'a[href^="mailto:"]',
     tooltip: cmsms_tiny.mailto_title
   });

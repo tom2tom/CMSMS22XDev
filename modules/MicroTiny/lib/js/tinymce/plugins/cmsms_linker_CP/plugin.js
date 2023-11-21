@@ -9,34 +9,32 @@ tinymce.PluginManager.add('cmsms_linker_CP', function(editor) {
       anchorElm,
       initialText, //selected-<a/> text or non-<a/> selected text or empty if no selection
       win,
-      targetOptions,
       pageinput, //jQuery selection inside dialog
       pagehref, //fake url like {cms_selflink href="a-page-alias"}
       pagevalue = '';//, //auto-completion value
 //    compinit = false; //auto-completion status
 
-    // build target attribute dropdown
+    // setup content for target attribute dropdown
     function buildTargetList(targetValue) {
       var targetListItems = [{
         text: cmsms_tiny.target_none,
-        value: '' //TODO V5 OK?
+        value: ''
       }];
 
-      if (!editor.settings.target_list) {
+      if (editor.options.isRegistered('target_list') && editor.options.isSet('target_list')) {
+        tinymce.each(editor.options.get('target_list'), function(target) {
+          targetListItems.push({
+            text: target.text || target.title,
+            value: target.value,
+            selected: targetValue === target.value
+          });
+        });
+      } else {
         targetListItems.push({
           text: cmsms_tiny.target_new_window,
-          value: '_blank' //TODO V5 OK?
+          value: '_blank'
         });
       }
-
-      tinymce.each(editor.settings.target_list, function(target) {
-        targetListItems.push({
-          text: target.text || target.title,
-          value: target.value, //TODO V5 OK?
-          selected: targetValue === target.value
-        });
-      });
-
       return targetListItems;
     }
 
@@ -185,18 +183,6 @@ tinymce.PluginManager.add('cmsms_linker_CP', function(editor) {
       data.text = initialText = ' ';
     }
 
-    // setup link-target value options for dialog
-    if (editor.settings.target_list !== false) {
-      targetOptions = {
-        name: 'target',
-        type: 'listbox',
-        label: cmsms_tiny.prompt_target,
-        items: buildTargetList(data.target)
-      };
-    } else {
-      targetOptions = {};
-    }
-
     // run tinymce dialog
     win = editor.windowManager.open({
       title: cmsms_tiny.linker_heading,
@@ -204,7 +190,7 @@ tinymce.PluginManager.add('cmsms_linker_CP', function(editor) {
         page: data.page,
         alias: data.alias,
         text: data.text,
-        target: data.target, //TODO if(targetOptions)
+        target: data.target,
         classname: data.classname,
         rel: data.rel
       },
@@ -248,7 +234,12 @@ tinymce.PluginManager.add('cmsms_linker_CP', function(editor) {
           name: 'advanced',
           type: 'form',
           items: [
-            targetOptions, // possibly empty
+            {
+              name: 'target',
+              type: 'listbox',
+              label: cmsms_tiny.prompt_target,
+              items: buildTargetList(data.target)
+            },
             {
               name: 'classname',
               type: 'input',
@@ -305,9 +296,9 @@ tinymce.PluginManager.add('cmsms_linker_CP', function(editor) {
   function getAnchorElement(editor, selectedElm) {
     selectedElm = selectedElm || editor.selection.getNode();
     if (selectedElm) {//TODO && some relevant test applied to selectedElm
-      return editor.dom.select('a[href*="cms_selflink"]', selectedElm)[0]; //? 'a[href*="cms_selflink"]' OR just 'a[href]' 
+      return editor.dom.select('a[href*="cms_selflink"]', selectedElm)[0]; //? 'a[href*="cms_selflink"]' OR just 'a[href]'
     } else {
-      return editor.dom.getParent(selectedElm, 'a[href*="cms_selflink"]'); //? 'a[href*="cms_selflink"]' OR just 'a[href]' 
+      return editor.dom.getParent(selectedElm, 'a[href*="cms_selflink"]'); //? 'a[href*="cms_selflink"]' OR just 'a[href]'
     }
   }
 
@@ -318,10 +309,12 @@ tinymce.PluginManager.add('cmsms_linker_CP', function(editor) {
     };
   }
   // TODO does this [de]activate the menuitem & button on tag change ? should affect only sitepage links and the unlink action
-  function toggleLinkerState(editor) {
+  function toggleLinkerState(api) {
+    // Do stuff here on component render
     return function(api) {
+      // Do stuff here on component teardown
       var updateState = function() {
-        return api.setDisabled(getAnchorElement(editor, editor.selection.getNode()) === null);
+        return api.setEnabled(getAnchorElement(editor, editor.selection.getNode()) !== null);
       };
       updateState();
       return toggleState(editor, updateState);
@@ -332,7 +325,7 @@ tinymce.PluginManager.add('cmsms_linker_CP', function(editor) {
   editor.ui.registry.addMenuItem('cmsms_linker_CP', {
     icon: 'pagelink',
     onAction: linker_showDialog,
-    onSetup: toggleLinkerState(editor),
+    onSetup: toggleLinkerState,
     stateSelector: 'a[href*="cms_selflink"]',//'implicit-url' anchors
     text: cmsms_tiny.linker_text + '...'
   });
@@ -340,7 +333,7 @@ tinymce.PluginManager.add('cmsms_linker_CP', function(editor) {
   editor.ui.registry.addButton('cmsms_linker_CP', {
     icon: 'pagelink',
     onAction: linker_showDialog,
-    onSetup: toggleLinkerState(editor),
+    onSetup: toggleLinkerState,
     stateSelector: 'a[href*="cms_selflink"]',//'implicit-url' anchors
     tooltip: cmsms_tiny.linker_title
   });

@@ -1,4 +1,4 @@
-// runtime data
+// runtime 
 var cmsms_tiny = {
     filebrowser_title: "{$filebrowse_title|escape:'javascript'}",
     filepicker_url: "{$filepicker_url}",
@@ -58,25 +58,25 @@ tinymce.init({
     },
 {else}    menubar: false,{/if}
     paste_text_use_dialog: true,
-    removed_menuitems: "newdocument",
+    promotion: false,
+    removed_menuitems: "newdocument print",
     resize: {if ($mt_profile.showstatusbar && $mt_profile.allowresize)}"both"{else}false{/if},
     schema: "html5",
     selector: "{if !empty($mt_selector)}{$mt_selector}{else}textarea.MicroTiny{/if}",
     statusbar: {if $mt_profile.showstatusbar}true{else}false{/if},
+//  templates: TODO URL or object
 {if $isfrontend}
-    plugins: "anchor autolink autoresize{if $langdir=='rtl'} directionality{/if} help hr{if $mt_profile.allowimages} image media{/if} link lists mailto_CP nonbreaking paste tabfocus{if $mt_profile.allowtables} table{/if} wordcount",
+    plugins: "anchor autolink autoresize{if $langdir=='rtl'} directionality{/if} help{if $mt_profile.allowimages} image media{/if} link lists mailto_CP nonbreaking{if $mt_profile.allowtables} table{/if} wordcount",
     toolbar: "undo redo | bold italic underline | alignleft aligncenter alignright alignjustify indent outdent | bullist numlist{if $mt_profile.allowtables} | table{/if} | anchor link mailto_CP unlink{if $mt_profile.allowimages} | image{/if}",
 {else}
-    plugins: "anchor autolink autoresize charmap{if $mt_profile.allowimages} cmsms_filepicker_CP image media{/if} cmsms_linker_CP code{if $langdir=='rtl'} directionality{/if} fullscreen help hr insertdatetime link lists mailto_CP nonbreaking paste searchreplace tabfocus{if $mt_profile.allowtables} table{/if} wordcount",
+    plugins: "anchor autolink autoresize charmap{if $mt_profile.allowimages} cmsms_filepicker_CP image media{/if} cmsms_linker_CP code{if $langdir=='rtl'} directionality{/if} fullscreen help insertdatetime link lists mailto_CP nonbreaking searchreplace{if $mt_profile.allowtables} table{/if} wordcount",
     toolbar: "undo redo | cut copy paste | styleselect | bold italic underline | alignleft aligncenter alignright alignjustify indent outdent | bullist numlist{if $mt_profile.allowtables} | table{/if} | anchor link mailto_CP cmsms_linker_CP unlink{if $mt_profile.allowimages} | image{/if}",
 {/if}
 //TODO templates URL
     // callback functions
     urlconverter_callback: function(url, elm, onsave, name) {
-        var self = this;
-        var settings = self.settings;
-
-        if (!settings.convert_urls || ( elm && elm.nodeName == 'LINK' ) || url.indexOf('file:') === 0 || url.length === 0) {
+        var setting = tinymce.activeEditor.options.get('convert_urls');
+        if (!setting || ( elm && elm.nodeName == 'LINK' ) || url.indexOf('file:') === 0 || url.length === 0) {
             return url;
         }
 
@@ -86,13 +86,16 @@ tinymce.init({
             url = url.replace('%20', ' ');
             return url;
         }
-        // convert to relative
-        if (settings.relative_urls) {
-            return self.documentBaseURI.toRelative(url);
+
+        setting = tinymce.activeEditor.options.get('relative_urls');
+        // convert to relative ?
+        if (setting) {
+            url = new tinymce.util.URI('{$rooturl}').toRelative(url);
+            return url;
         }
         // convert to absolute
-        url = self.documentBaseURI.toAbsolute(url, settings.remove_script_host);
-
+        setting = tinymce.activeEditor.options.get('remove_script_host');
+        url = new tinymce.util.URI('{$rooturl}').toAbsolute(url, setting);
         return url;
     },
     setup: function(editor) {
