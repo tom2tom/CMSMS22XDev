@@ -620,7 +620,7 @@ div.pagecontainer .h-inside {
 }
 /* Format code chunks */
 pre, code, samp, kbd {
-	font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'Courier New', monospace;
+	font-family: 'Lucida Console', 'Lucida Sans Typewriter', 'Courier New', monospace;
 	text-align: left;
 	color: #232323;
 	height: auto;
@@ -1932,7 +1932,7 @@ textarea.pagebigtextarea {
 */
 .pageinput textarea {
 	width: 90%;
-	font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'Courier New', monospace;
+	font-family: 'Lucida Console', 'Lucida Sans Typewriter', 'Courier New', monospace;
 	font-size: 13px;
 	line-height: 1.6
 }
@@ -2100,7 +2100,7 @@ ul.sortable .placeholder {
 	border: 1px solid #ddd;
 	margin: 15px 0;
 	padding: 20px;
-	font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'Courier New', monospace;
+	font-family: 'Lucida Console', 'Lucida Sans Typewriter', 'Courier New', monospace;
 	line-height: 1.5
 }
 .version h3 {

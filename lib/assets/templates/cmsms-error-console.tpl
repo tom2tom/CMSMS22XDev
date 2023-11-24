@@ -24,7 +24,7 @@
 				margin: 0;
 				color: #ddd;
 				font-size: 112px;
-				font-family: Impact, Haettenschweiler, "Franklin Gothic Bold", Charcoal, "Helvetica Inserat", "Bitstream Vera Sans Bold", "Arial Black", sans serif;
+				font-family: Impact, Haettenschweiler, "Franklin Gothic Bold", Charcoal, "Helvetica Inserat", "Bitstream Vera Sans Bold", "Arial Black", sans-serif;
 			}
 			h2 {
 				border-radius: 6px;
@@ -39,7 +39,7 @@
 				border-left: 7px solid #d5d5d5;
 				font-size: 13px;
 				color: #333;
-				font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'Courier New', monospace;
+				font-family: 'Lucida Console', 'Lucida Sans Typewriter', 'Courier New', monospace;
 				padding: 15px;
 				overflow: auto;
 				word-wrap: break-word;
