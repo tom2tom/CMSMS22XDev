@@ -1,4 +1,4 @@
-tinymce.PluginManager.add('cmsms_linker_CP', function(editor) {
+tinymce.PluginManager.add('cmsms_linker', function(editor) {
 
   function linker_showDialog() {
 
@@ -322,7 +322,7 @@ tinymce.PluginManager.add('cmsms_linker_CP', function(editor) {
   }
 
   // add a menu item
-  editor.ui.registry.addMenuItem('cmsms_linker_CP', {
+  editor.ui.registry.addMenuItem('cmsms_linker', {
     icon: 'pagelink',
     onAction: linker_showDialog,
     onSetup: toggleLinkerState,
@@ -330,7 +330,7 @@ tinymce.PluginManager.add('cmsms_linker_CP', function(editor) {
     text: cmsms_tiny.linker_text + '...'
   });
   // and a button
-  editor.ui.registry.addButton('cmsms_linker_CP', {
+  editor.ui.registry.addButton('cmsms_linker', {
     icon: 'pagelink',
     onAction: linker_showDialog,
     onSetup: toggleLinkerState,

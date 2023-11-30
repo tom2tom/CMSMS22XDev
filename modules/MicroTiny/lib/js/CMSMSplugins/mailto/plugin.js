@@ -1,4 +1,4 @@
-tinymce.PluginManager.add('mailto_CP', function(editor) {
+tinymce.PluginManager.add('mailto', function(editor) {
 
   function mailto_showDialog() {
     var anchorElm;
@@ -104,7 +104,7 @@ tinymce.PluginManager.add('mailto_CP', function(editor) {
   }
 
   // add a menu item
-  editor.ui.registry.addMenuItem('mailto_CP', {
+  editor.ui.registry.addMenuItem('mailto', {
     icon: 'mailto',
     onAction: mailto_showDialog,
     onSetup: toggleMailtoState,
@@ -112,7 +112,7 @@ tinymce.PluginManager.add('mailto_CP', function(editor) {
     text: cmsms_tiny.mailto_text + '...'
   });
   // and a button
-  editor.ui.registry.addButton('mailto_CP', {
+  editor.ui.registry.addButton('mailto', {
     icon: 'mailto',
     onAction: mailto_showDialog,
     onSetup: toggleMailtoState,
