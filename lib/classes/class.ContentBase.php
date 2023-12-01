@@ -103,10 +103,11 @@ abstract class ContentBase
 	protected $mParentId = -2;
 
 	/**
-	 * The old parent id...
+	 * The old parent id.
+	 * Integer
 	 *
-	 * Used to be used only on update to detect reparenting... now since SetAllHierarchyPositions is efficient
-	 * it is not needed.
+	 * Formerly used only on update to detect reparenting.
+	 * Now since SetAllHierarchyPositions is efficient it is not needed. WHAAT? SetAllHierarchyPositions() is crapola for large sites
 	 *
 	 * @internal
 	 * @deprecated
@@ -157,7 +158,7 @@ abstract class ContentBase
 
 	/**
 	 * The full hierarchy of the content
-	 * String of the form : 1.4.3
+	 * String of the form : 00003.00007.00002
 	 *
 	 * @internal
 	 */
@@ -173,7 +174,7 @@ abstract class ContentBase
 
 	/**
 	 * The full path through the hierarchy
-	 * String of the form : parent/parent/child
+	 * String of the form : grandparentalias/parentalias/childalias
 	 *
 	 * @internal
 	 */
@@ -686,7 +687,7 @@ abstract class ContentBase
 
 	/**
 	 * Returns the Hierarchy of the current page.
-	 * A string like #.##.## indicating the path to this page and it's order
+	 * A string like #.##.## indicating the path to this page and its order
 	 * this value uses the item order when calculating the output i.e:  3.3.3
 	 * to indicate the third grandchild of the third child of the third root page.
 	 *
@@ -1428,7 +1429,6 @@ abstract class ContentBase
 	 * the calling function is responsible for ensuring that page hierarchies are
 	 * updated.
 	 *
-	 * @see ContentOperations::SetAllHierarchyPositions()
 	 * @todo this function should return something, or throw an exception.
 	 */
 	protected function Update()
@@ -1516,17 +1516,14 @@ abstract class ContentBase
 	/**
 	 * Initially save a content object with no id to the database.
 	 *
-	 * Like the Update method this method will determine a new item order
-	 * save the record, save properties and additional editors, but will not
-	 * update the hierarchy positions.
-	 *
-	 * @see ContentOperations::SetAllHierarchyPositions()
+	 * Like the Update method this method will determine an item order,
+	 * save the record, save properties and additional editors.
 	 */
 	protected function Insert()
 	{
-		# :TODO: This function should return something
-		# :TODO: Take care bout hierarchy here, it has no value !
-		# :TODO: Figure out proper item_order
+		// TODO: This function should return something
+		// TODO: Handle hierarchy-related properties here, they start as empty strings !
+		// TODO: Figure out proper item_order
 		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
 
