@@ -9,6 +9,8 @@
  * Licensed under the MIT license:
  * http://www.opensource.org/licenses/MIT
  */
+//NOTE this class is a bit different from the corresponding FileManager class
+//This version and the FileManager version are both long-dead
 namespace FilePicker;
 
 abstract class jquery_upload_handler
@@ -18,19 +20,19 @@ abstract class jquery_upload_handler
     function __construct($options=[]) {
         $this->options = array(
             'script_url' => $this->getFullUrl().'/'.basename(__FILE__),
-            'upload_dir' => __DIR__.'/files/',
-            'upload_url' => $this->getFullUrl().'/files/',
+            'upload_dir' => __DIR__.'/files/', //useless - a value suitable for cmsms usage must be in $options
+            'upload_url' => $this->getFullUrl().'/files/', //ditto
             'param_name' => 'files',
             // The php.ini settings upload_max_filesize and post_max_size
-            // take precedence over the following max_file_size setting:
-            'max_file_size' => null,
+            // take precedence over the following max_file_size setting
+            'max_file_size' => null, // effectively unset
             'min_file_size' => 1,
             'accept_file_types' => '/.+$/i',
-            'max_number_of_files' => null,
-            // Set the following option to false to enable non-multipart uploads:
+            'max_number_of_files' => null, // unset
+            // Set the following option to false to enable non-multipart uploads
             'discard_aborted_uploads' => false,
-            'orient_image'=>false,
-            'image_versions'=>[]
+            'orient_image' => false,
+            'image_versions' => []
         );
         if (is_array($options) && count($options)) {
             foreach( $options as $key => $value ) {
@@ -38,7 +40,7 @@ abstract class jquery_upload_handler
             }
         }
 
-        // tweak some headers (done because we're using an older version of this class)
+        // tweak a header (because we're using an older version of this class)
         if( !isset($_SERVER['HTTP_X_FILE_SIZE']) && isset($_SERVER['HTTP_CONTENT_RANGE']) ) {
             $tmp = explode('/',trim($_SERVER['HTTP_CONTENT_RANGE']));
             if( count($tmp) == 2 ) {
