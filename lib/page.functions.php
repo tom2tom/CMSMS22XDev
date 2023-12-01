@@ -387,7 +387,7 @@ function create_file_dropdown($name,$dir,$value,$allowed_extensions,$optprefix='
 
 /**
  * A function that, given the current request information will return
- * a pageid or an alias that should be used for the display
+ * a pageid or an alias to be used for the display
  * This method also handles matching routes and specifying which module
  * should be called with what parameters
  *
@@ -398,7 +398,6 @@ function create_file_dropdown($name,$dir,$value,$allowed_extensions,$optprefix='
  */
 function get_pageid_or_alias_from_url()
 {
-    $gCms = CmsApp::get_instance();
     $config = \cms_config::get_instance();
     $contentops = ContentOperations::get_instance();
     $smarty = \Smarty_CMS::get_instance();
@@ -409,6 +408,7 @@ function get_pageid_or_alias_from_url()
         $smarty->id = (isset($ary[1])?$ary[1]:'');
     }
 
+    $ugly = FALSE;
     $page = '';
     $query_var = $config['query_var'];
     if (isset($smarty->id) && isset($params[$smarty->id . 'returnid'])) {
@@ -418,11 +418,12 @@ function get_pageid_or_alias_from_url()
     else if( isset($_REQUEST[$query_var]) ) {
         // using non friendly urls... get the page alias/id from the query var.
         $page = @trim((string) $_REQUEST[$query_var]);
+        $ugly = TRUE;
     }
     else {
         // either we're using pretty urls
         // or this is the default page.
-        if (isset($_SERVER["REQUEST_URI"]) && !endswith($_SERVER['REQUEST_URI'], 'index.php')) {
+        if (isset($_SERVER['REQUEST_URI']) && !endswith($_SERVER['REQUEST_URI'], 'index.php')) {
             $matches = array();
             if (preg_match('/.*index\.php\/(.*?)$/', $_SERVER['REQUEST_URI'], $matches)) {
                 // pretty urls... grab all the stuff after the index.php
@@ -431,83 +432,75 @@ function get_pageid_or_alias_from_url()
         }
     }
 
-    unset($_GET['query_var']);
+    unset($_REQUEST[$query_var],$_GET[$query_var]);
 
-    // by here, if page is empty, use the default page id
-    if ($page == '') $page = $contentops->GetDefaultContent(); // assume default content
+    // by here, if page is falsy, use the default page id
+    if( $page == '' ) $page = $contentops->GetDefaultContent();
 
     // by here, if we're not assuming pretty urls of any sort
-    // and we have a value... we're done.
-    if( $config['url_rewriting'] == 'none' ) return $page;
+    // and we have a $page value... we might be done.
+    if( !$ugly && $config['url_rewriting'] == 'none' ) return $page;
 
-    // some kind of a pretty url.
+    // might be some kind of a pretty url.
     // strip off GET params.
     if( ($tmp = strpos($page,'?')) !== FALSE ) $page = substr($page,0,$tmp);
 
     // strip off page extension
-    if ($config['page_extension'] != '' && endswith($page, $config['page_extension'])) {
-        $page = substr($page, 0, strlen($page) - strlen($config['page_extension']));
+    if ($config['page_extension'] && endswith($page, $config['page_extension'])) {
+        $page = substr($page, 0, 0-strlen($config['page_extension']));
     }
 
     // trim trailing and leading /
-    // it appears that some servers leave in the first / of a request some times which will stop rout matching.
+    // it appears that some servers leave in the first / of a request sometimes which will stop route matching.
     $page = trim($page, '/');
 
-    // see if there's a route that matches.
-    $matched = false;
+    // check whether a route matches
     $route = cms_route_manager::find_match($page);
     if( is_object($route) ) {
-        $matched = true;
-        if( $route['key1'] == '__CONTENT__' ) {
-            // a route to a page.
-            $page = (int)$route['key2'];
+        if( $route->is_content() ) {
+            // a route to a page
+            $page = (int)$route->get_content();
         }
         else {
+            // a module-action route
             $matches = $route->get_results();
-
-            // it's a module route
-            //Now setup some assumptions
-            if (!isset($matches['id'])) $matches['id'] = 'cntnt01';
-            if (!isset($matches['action'])) $matches['action'] = 'default';
-            if (!isset($matches['inline'])) $matches['inline'] = 0;
-            if (!isset($matches['returnid'])) $matches['returnid'] = ''; //Look for default page
-            if (!isset($matches['module'])) $matches['module'] = $route->get_dest();
-
-            //Get rid of numeric matches
-            foreach ($matches as $key=>$val) {
-                if (is_int($key)) {
+            if( empty($matches['module']) ) {
+                //$_REQUEST['mact'] set below cannot be valid
+                return 0; //OR better, trigger a 404 immediately
+            }
+            // include some defaults if necessary
+            $matches += [
+            'id' => 'cntnt01',
+            // This one is deliberately distinct from the usual 'default' action.
+            // The module's default route-processor-action might actually
+            // be 'defaulturl', or it might be aliased from that in the module
+            'action' => 'defaulturl',
+            'inline' => 0,
+            'returnid' => '' // becomes the default page, below
+            ];
+            // get rid of numeric matches
+            foreach( $matches as $key=>$val ) {
+                if( is_int($key) ) {
                     unset($matches[$key]);
                 }
-                else {
-                    if ($key != 'id') $_REQUEST[$matches['id'] . $key] = $val;
-                }
-            }
-
-            //Now set any defaults that might not have been in the url
-            $tmp = $route->get_defaults();
-            if (is_array($tmp) && count($tmp) > 0) {
-                foreach ($tmp as $key=>$val) {
+                elseif( $key != 'id' ) {
                     $_REQUEST[$matches['id'] . $key] = $val;
-                    if (array_key_exists($key, $matches)) $matches[$key] = $val;
                 }
             }
-
-            //Get a decent returnid
-            if( $matches['returnid'] == '' ) $matches['returnid'] = $contentops->GetDefaultContent();
-
-            // Put the resulting mact into the request so that the subsequent smarty plugins can grab it...
+            // add a mact to $_REQUEST so that subsequent operations can grab it
             $_REQUEST['mact'] = $matches['module'] . ',' . $matches['id'] . ',' . $matches['action'] . ',' . $matches['inline'];
 
-            $page = $matches['returnid'];
             $smarty->id = $matches['id'];
+            $page = $matches['returnid'];
         }
     }
+    elseif( ($pos = strrpos($page,'/')) !== false ) {
+        // no route matched, try an alias from the last /
+        $page = substr($page, $pos + 1);
+    }
 
-    // if no route matched... grab the alias from the last /
-    if( $matched == false && ($pos = strrpos($page,'/')) !== FALSE ) $page = substr($page, $pos + 1);
-
-    // if there's nothing use the default content.
-    if( empty($page) ) $page = $contentops->GetDefaultContent(); // maybe it's the home page.
+    // if there's nothing, use the default content
+    if( !$page ) $page = $contentops->GetDefaultContent();
     return $page;
 }
 
