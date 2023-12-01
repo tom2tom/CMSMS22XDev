@@ -1,4 +1,4 @@
-// runtime 
+{*// runtime data *}
 var cmsms_tiny = {
     filebrowser_title: "{$filebrowse_title|escape:'javascript'}",
     filepicker_url: "{$filepicker_url}",
@@ -33,9 +33,9 @@ var cmsms_tiny = {
     uploads_url: "{$uploadsurl}"
 };
 
-// tinymce initialization
+{*// tinymce initialization
 //custom svg icons in ...TMCEBASE/icons/cmsms/icons.js
-//branding disabled (TMCE can't impose that, due to LGPL licence)
+//branding disabled (TMCE can't impose that, due to LGPL licence)*}
 tinymce.init({
     branding: false,
     browser_spellcheck: true,
@@ -52,7 +52,7 @@ tinymce.init({
     image_title: true,
     language: "{$languageid}",
 {if $mt_profile.menubar}    menu: {
-      insert: { title: "Insert", items: "image link mailto_CP{if !$isfrontend} cmsms_linker_CP{/if} media{if $mt_profile.allowtables} inserttable{/if} | charmap emoticons | hr nonbreaking anchor | insertdatetime" },
+      insert: { title: "Insert", items: "image link mailto{if !$isfrontend} cmsms_linker{/if} media{if $mt_profile.allowtables} inserttable{/if} | nonbreaking charmap emoticons | hr anchor | insertdatetime" },
 {if $mt_profile.allowtables}      table: { title: "Table", items: "inserttable | cell row column | advtablesort | tableprops deletetable" },
 {/if}
     },
@@ -66,13 +66,22 @@ tinymce.init({
     statusbar: {if $mt_profile.showstatusbar}true{else}false{/if},
 //  templates: TODO URL or object
 {if $isfrontend}
-    plugins: "anchor autolink autoresize{if $langdir=='rtl'} directionality{/if} help{if $mt_profile.allowimages} image media{/if} link lists mailto_CP nonbreaking{if $mt_profile.allowtables} table{/if} wordcount",
-    toolbar: "undo redo | bold italic underline | alignleft aligncenter alignright alignjustify indent outdent | bullist numlist{if $mt_profile.allowtables} | table{/if} | anchor link mailto_CP unlink{if $mt_profile.allowimages} | image{/if}",
+    external_plugins: {
+      "mailto": "{$plugbase}/mailto/plugin.min.js",
+      "nonbreaking": "{$plugbase}/nonbreaking/plugin.min.js"
+    },
+    plugins: "anchor autolink autoresize{if $langdir=='rtl'} directionality{/if} help{if $mt_profile.allowimages} image media{/if} link lists{if $mt_profile.allowtables} table{/if} wordcount",
+    toolbar: "undo redo | bold italic underline | alignleft aligncenter alignright alignjustify indent outdent | bullist numlist{if $mt_profile.allowtables} | table{/if} | anchor link mailto unlink{if $mt_profile.allowimages} | image{/if}",
 {else}
-    plugins: "anchor autolink autoresize charmap{if $mt_profile.allowimages} cmsms_filepicker_CP image media{/if} cmsms_linker_CP code{if $langdir=='rtl'} directionality{/if} fullscreen help insertdatetime link lists mailto_CP nonbreaking searchreplace{if $mt_profile.allowtables} table{/if} wordcount",
-    toolbar: "undo redo | cut copy paste | styleselect | bold italic underline | alignleft aligncenter alignright alignjustify indent outdent | bullist numlist{if $mt_profile.allowtables} | table{/if} | anchor link mailto_CP cmsms_linker_CP unlink{if $mt_profile.allowimages} | image{/if}",
+    external_plugins: {
+      "mailto": "{$plugbase}/mailto/plugin.min.js",
+      "nonbreaking": "{$plugbase}/nonbreaking/plugin.min.js",
+      "cmsms_linker": "{$plugbase}/cmsms_linker/plugin.min.js"{if $mt_profile.allowimages},
+      "cmsms_filepicker": "{$plugbase}/cmsms_filepicker/plugin.min.js"{/if}
+    },
+    plugins: "anchor autolink autoresize charmap{if $mt_profile.allowimages} image media{/if} code{if $langdir=='rtl'} directionality{/if} fullscreen help insertdatetime link lists searchreplace{if $mt_profile.allowtables} table{/if} wordcount",
+    toolbar: "undo redo | cut copy paste | styleselect | bold italic underline | alignleft aligncenter alignright alignjustify indent outdent | bullist numlist{if $mt_profile.allowtables} | table{/if} | anchor link mailto cmsms_linker unlink{if $mt_profile.allowimages} | image{/if}",
 {/if}
-//TODO templates URL
     // callback functions
     urlconverter_callback: function(url, elm, onsave, name) {
         var setting = tinymce.activeEditor.options.get('convert_urls');
