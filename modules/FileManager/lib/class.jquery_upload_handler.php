@@ -9,6 +9,8 @@
  * Licensed under the MIT license:
  * http://www.opensource.org/licenses/MIT
  */
+//NOTE this class is a bit different from the corresponding FilePicker class
+//This version and the FilePicker version are both long-dead
 
 abstract class jquery_upload_handler
 {
@@ -17,7 +19,7 @@ abstract class jquery_upload_handler
     function __construct($options = []) {
         $this->options = array(
             'script_url' => $this->getFullUrl().'/'.basename(__FILE__),
-            'upload_dir' => __DIR__.'/files/', //TODO prob. wrong, might be unwritable in this context
+            'upload_dir' => __DIR__.'/files/', //useless in cmsms context, replacement must be in $options 
             'upload_url' => $this->getFullUrl().'/files/', //ditto
             'param_name' => 'files',
             // The php.ini settings upload_max_filesize and post_max_size
@@ -27,7 +29,9 @@ abstract class jquery_upload_handler
             'accept_file_types' => '/.+$/i',
             'max_number_of_files' => null, // unset
             // Set the following option to false to enable non-multipart uploads
-            'discard_aborted_uploads' => false
+            'discard_aborted_uploads' => false,
+            'orient_image' => false,
+            'image_versions' => []
         );
         if (is_array($options) && count($options)) {
             foreach( $options as $key => $value ) {
