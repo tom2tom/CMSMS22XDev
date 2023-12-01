@@ -467,8 +467,20 @@ $smarty->assign('extra', $extra);
 $smarty->assign('urltext', $this->Lang('url'));
 $smarty->assign('news_url', $news_url);
 $smarty->assign('title', $title);
-$smarty->assign('inputcontent', $this->CreateTextArea(true, $id, $content, 'content'));
-$smarty->assign('inputsummary', $this->CreateTextArea($this->GetPreference('allow_summary_wysiwyg', 1), $id, $summary, 'summary', '', '', '', '', '80', '3'));
+$smarty->assign('inputcontent', CmsFormUtils::create_textarea([
+    'enablewysiwyg' => 1,
+    'name' => $id . 'content',
+    'text' => $content,
+    'rows' => 10,
+    'cols' => 80
+]));
+$smarty->assign('inputsummary', CmsFormutils::create_textarea([
+    'enablewysiwyg' => $this->GetPreference('allow_summary_wysiwyg', 1),
+    'name' => $id . 'summary',
+    'text' => $summary,
+    'rows' => 3,
+    'cols' => 80
+]));
 $smarty->assign('useexp', $useexp);
 $smarty->assign('actionid', $id);
 $smarty->assign('inputexp', $this->CreateInputCheckbox($id, 'useexp', '1', $useexp, 'class="pagecheckbox"'));
