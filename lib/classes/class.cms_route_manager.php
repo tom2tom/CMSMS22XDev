@@ -84,8 +84,8 @@ final class cms_route_manager
 		// split the haystack into an array of 'absolute' or 'regex' matches
 		$absolute = array();
 		$regex = array();
-		foreach( $haystack as $sig => $rec ) {
-			if( $exact || (isset($rec['absolute']) && $rec['absolute']) ) {
+		foreach( $haystack as $rec ) {
+			if( $exact || !empty($rec['absolute']) ) {
 				$absolute[] = $rec;
 			}
 			else {
@@ -97,7 +97,7 @@ final class cms_route_manager
 		usort($absolute,'_internal_cmp_routes');
 
 		// do a binary search on the absolute routes
-		if( count($absolute) ) {
+		if( $absolute ) {
 			$res = self::route_binarySearch($needle,$absolute,'strcmp');
 			if( $res !== FALSE ) return $absolute[$res];
 		}
@@ -120,16 +120,16 @@ final class cms_route_manager
 
 		// credits: temporal dot pl at gmail dot com
 		// reference: http://php.net/manual/en/function.array-search.php
-		$high = Count( $haystack ) -1;
+		$high = count($haystack) -1;
 		$low = 0;
-		while ( $high >= $low ) {
-			$probe = (int)Floor( ( $high + $low ) / 2 );
-			$comparison = $comparator( $haystack[$probe]['term'], $needle );
-			if ( $comparison < 0 ) {
-				$low = $probe +1;
+		while( $high >= $low ) {
+			$probe = (int)floor(($high + $low) / 2);
+			$comparison = $comparator($haystack[$probe]['term'],$needle);
+			if( $comparison < 0 ) {
+				$low = $probe + 1;
 			}
-			elseif ( $comparison > 0 ) {
-				$high = $probe -1;
+			elseif( $comparison > 0 ) {
+				$high = $probe - 1;
 			}
 			else {
 				return $probe;
@@ -138,7 +138,7 @@ final class cms_route_manager
 
 		//The loop ended without a match
 		//Compensate for needle greater than highest haystack element
-		if($comparator($haystack[count($haystack)-1]['term'], $needle) < 0) $probe = count($haystack);
+		if( $comparator($haystack[count($haystack)-1]['term'], $needle) < 0 ) $probe = count($haystack);
 		return FALSE;
 	}
 
@@ -168,25 +168,31 @@ final class cms_route_manager
 	/**
 	 * Find a route that matches the specified string
 	 *
-	 * @param string $str The string to test against (usually an incoming url request)
+	 * @param string $str The string to test against (usually part of an incoming url request)
 	 * @param bool $exact Perform an exact string match rather than a regex match.
 	 * @param bool $static_only A flag indicating that only static routes should be checked.
 	 * @return CmsRoute the matching route, or null.
 	 */
-	public static function find_match($str,$exact = false,$static_only = FALSE)
+	public static function find_match($str,$exact = FALSE,$static_only = FALSE)
 	{
 		self::_load_static_routes();
 
 		if( is_array(self::$_routes) ) {
 			$res = self::_find_match($str,self::$_routes,$exact);
-			if( is_object($res) ) return $res;
+			if( is_object($res) ) {
+				$res->matches($str,$exact); //populate
+				return $res;
+			}
 		}
 
-		if( $static_only ) return null; // no ojbect
+		if( $static_only ) return null; // no object
 
 		if( is_array(self::$_dynamic_routes) ) {
 			$res = self::_find_match($str,self::$_dynamic_routes,$exact);
-			if( is_object($res) ) return $res;
+			if( is_object($res) ) {
+				$res->matches($str,$exact); //populate
+				return $res;
+			}
 		}
 		return null; // no object
 	}
@@ -213,7 +219,7 @@ final class cms_route_manager
 		$dbr = $db->Execute($query,array($route['term'], $route['key1'], $route['key2'], $route['key3'], serialize($route)));
 		if( !$dbr ) {
 			die($db->sql.' -- '.$db->ErrorMsg());
-			return FALSE;
+//			return FALSE;
 		}
 
 		self::_clear_cache();
