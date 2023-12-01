@@ -166,8 +166,7 @@ class wizard_step8 extends wizard_step
             $contentops = cmsms()->GetContentOperations();
             $contentops->SetAllHierarchyPositions();
 
-            // todo: install default preferences
-            cms_siteprefs::set('global_umask','022');
+//          cms_siteprefs::set('global_umask','022'); installed default preferences in base.php included above
         }
         catch( Exception $e ) {
             $this->error($e->GetMessage());
@@ -241,6 +240,8 @@ class wizard_step8 extends wizard_step
 
 // former order $this->write_config($destconfig,$destdir);
 //needed?   $this->connect_to_cmsms($destdir);
+// TODO if upgrade may change content-pages, or (better) actually has done so,
+// then update all hierarchy positions as for install operation
 
             $this->message(lang('done'));
         }
