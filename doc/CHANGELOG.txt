@@ -10,7 +10,6 @@ Various places
 Core - General
  - Corrected filter applied to $_GET, $_SERVER at the start of each request.
  - Corrected page-selector widget operation.
- - BR #12647 Incorrect default-action value.
  - BR #12657 {content_module} tag property-collision.
  - BR #12660 output filter not working.
  - BR #12661 page-selector plugin misnamed parameter.
