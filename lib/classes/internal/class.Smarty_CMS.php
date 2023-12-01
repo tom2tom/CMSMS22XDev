@@ -25,9 +25,9 @@
  */
 class Smarty_CMS extends CMSSmartyBase
 {
-    public $assign; // used by ancestor class(es)
-    public $id; // <- triggers error without | do search why is this needed
-    public $params; // <- triggers error without | do search why is this needed
+    public $assign; // TODO used by ancestor class(es)? plugin(s) ?
+    public $id; // for cacheing actionid prefix
+    public $params; // why ? assigned once, never read
     protected $_global_cache_id;
     private static $_instance;
 
@@ -39,7 +39,7 @@ class Smarty_CMS extends CMSSmartyBase
      */
     public function __construct()
     {
-        global $CMS_INSTALL_PAGE;
+//      global $CMS_INSTALL_PAGE; //see CmsApp::STATE_INSTALL usage
         parent::__construct();
 
 //Smarty 2,3      $this->direct_access_security = TRUE;
@@ -89,7 +89,7 @@ class Smarty_CMS extends CMSSmartyBase
             $this->addTemplateDir($config['assets_path'].'/templates');
 
             // Check if we are at install page, don't register anything if so, cause nothing below is needed.
-//see below            if(isset($CMS_INSTALL_PAGE)) return;
+//see STATE_INSTALL below            if(isset($CMS_INSTALL_PAGE)) return;
 
             if (is_sitedown()) {
                 $this->setCaching(false);
@@ -422,7 +422,7 @@ class Smarty_CMS extends CMSSmartyBase
      * isCached method
      * NOTE: Overwrites parent
      *
-     * @param mixed $template_name
+     * @param mixed $template
      * @param int $cache_id
      * @param int $compile_id
      * @param mixed $parent
