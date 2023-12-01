@@ -530,7 +530,10 @@ public static function execSpecialize($val)
         }
 
     if ($revert) {
-        return htmlentities($val, $flags, 'UTF-8', false);
+        // preserve valid content like <p>
+        $tmp = strtr($val, '<>', "\2\3");
+        $tmp2 = htmlentities($tmp, $flags, 'UTF-8', false);
+        $val = strtr($tmp2, "\2\3", '<>');
     }
     return $val;
 }
