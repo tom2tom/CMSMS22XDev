@@ -24,12 +24,14 @@ cms_siteprefs::set('browser_cache_expiry',60); // browser can cache pages for 60
 //
 verbose_msg(ilang('install_initsiteperms'));
 $all_perms = array();
-$perms = array('Add Pages','Manage Groups','Add Templates','Manage Users','Modify Any Page',
-	       'Modify Permissions','Modify Templates','Remove Pages',
-	       'Modify Modules','Modify Files','Modify Site Preferences',
-	       'Manage Stylesheets','Manage Designs','Modify User-defined Tags','Clear Admin Log',
-	       'Modify Events','View Tag Help','Manage All Content','Reorder Content','Manage My Settings',
-               'Manage My Account', 'Manage My Bookmarks');
+$perms = array(
+	'Add Pages','Manage Groups','Add Templates','Manage Users','Modify Any Page',
+	'Modify Permissions','Modify Templates','Remove Pages',
+	'Modify Modules','Modify Files','Modify Site Preferences',
+	'Manage Stylesheets','Manage Designs','Modify User-defined Tags','Clear Admin Log',
+	'Modify Events','View Tag Help','Manage All Content','Reorder Content','Manage My Settings',
+	'Manage My Account', 'Manage My Bookmarks'
+	);
 foreach( $perms as $one_perm ) {
   $permission = new CmsPermission();
   $permission->source = 'Core';
