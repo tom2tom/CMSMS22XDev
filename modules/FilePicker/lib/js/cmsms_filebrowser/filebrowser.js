@@ -247,7 +247,7 @@ function CMSFileBrowser(_settings) {
   enable_upload();
   setup_view();
   // trigger a filter per settings.type after? before? content population TODO no 200ms delay if pre-population
-  if (typeof settings.type !== 'undefined' && settings.type && settings.type !== 'file') {
+  if (settings.type && settings.type !== 'file') {
     $('.filepicker-type-filter .js-trigger[data-fb-type="' + settings.type + '"]').trigger('click');
   }
 } /* object */
