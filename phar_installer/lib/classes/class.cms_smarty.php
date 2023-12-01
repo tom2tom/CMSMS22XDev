@@ -16,22 +16,20 @@ class cms_smarty extends Smarty
     parent::__construct();
 
     $app = get_app();
-    $rootdir = $app->get_rootdir();
     $tmpdir = $app->get_tmpdir().'/m'.md5(__FILE__);
     $appdir = $app->get_appdir();
-    $basedir = \dirname(__DIR__,2);
 
     $this->setTemplateDir($appdir.'/templates');
     $this->setConfigDir($appdir.'/configs');
     $this->setCompileDir($tmpdir.'/templates_c');
     $this->setCacheDir($tmpdir.'/cache');
 
-//    $this->registerPlugin('modifier','tr',array($this,'modifier_tr'));
     $dirs = array($this->compile_dir,$this->cache_dir);
     for( $i = 0; $i < count($dirs); $i++ ) {
       @mkdir($dirs[$i],0777,TRUE);
       if( !is_dir($dirs[$i]) ) throw new Exception('Required directory '.$dirs[$i].' does not exist');
     }
+//    $this->registerPlugin('modifier','tr',array($this,'modifier_tr')); for Smarty5, wherein unregistered methods are not supported
   }
 
   public static function get_instance()
