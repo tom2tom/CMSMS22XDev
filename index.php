@@ -54,7 +54,7 @@ if (!is_writable(TMP_TEMPLATES_C_LOCATION) || !is_writable(TMP_CACHE_LOCATION)) 
 $_app = CmsApp::get_instance(); // internal use only, subject to change.
 $params = array_merge($_GET, $_POST);
 $smarty = $_app->GetSmarty();
-$smarty->params = $params;
+$smarty->params = $params; //why ? never used
 $page = get_pageid_or_alias_from_url();
 $contentops = ContentOperations::get_instance();
 $contentobj = null;
