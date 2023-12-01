@@ -23,14 +23,16 @@
 #-------------------------------------------------------------------------
 # END_LICENSE
 
+use FilePicker\UploadHandler;
+
 if( !defined('CMS_VERSION') ) exit;
 
-# just for tests purposes
-#this will be handled differently
-$fn = cms_join_path($this->GetModulePath(), 'lib', 'class.UploadHandler.php');
+// just for testing purposes
+//this will be handled differently
+$fn = cms_join_path(__DIR__, 'lib', 'class.UploadHandler.php');
 require_once($fn);
 
-$UploadHandler = new \FilePicker\UploadHandler();
+$UploadHandler = new UploadHandler();
 
 header('Pragma: no-cache');
 header('Cache-Control: private, no-cache');
