@@ -17,6 +17,9 @@
 #
 #$Id$
 
+use CMSMS\internal\global_cachable;
+use CMSMS\internal\global_cache;
+
 /**
  * Class for static methods related to content
  *
@@ -75,32 +78,32 @@ class ContentOperations
 	public static function setup_cache()
 	{
 		// two caches, the flat list, and the tree
-		$obj = new \CMSMS\internal\global_cachable('content_flatlist',
+		$obj = new global_cachable('content_flatlist',
 					function(){
 						$query = 'SELECT content_id,parent_id,item_order,content_alias,active FROM '.CMS_DB_PREFIX.'content ORDER BY hierarchy ASC';
-						$db = \CmsApp::get_instance()->GetDb();
+						$db = CmsApp::get_instance()->GetDb();
 						return $db->GetArray($query);
 					});
-		\CMSMS\internal\global_cache::add_cachable($obj);
+		global_cache::add_cachable($obj);
 
 		// two caches, the flat list, and the tree
-		$obj = new \CMSMS\internal\global_cachable('content_tree',
+		$obj = new global_cachable('content_tree',
 					function(){
-						$flatlist = \CMSMS\internal\global_cache::get('content_flatlist');
+						$flatlist = global_cache::get('content_flatlist');
 
 						// todo, embed this herer
-						$tree = \cms_tree_operations::load_from_list($flatlist);
+						$tree = cms_tree_operations::load_from_list($flatlist);
 						return $tree;
 					});
-		\CMSMS\internal\global_cache::add_cachable($obj);
+		global_cache::add_cachable($obj);
 
 		// two caches, the flat list, and the tree
-		$obj = new \CMSMS\internal\global_cachable('content_quicklist',
+		$obj = new global_cachable('content_quicklist',
 					function(){
-						$tree = \CMSMS\internal\global_cache::get('content_tree');
+						$tree = global_cache::get('content_tree');
 						return $tree->getFlatList();
 					});
-		\CMSMS\internal\global_cache::add_cachable($obj);
+		global_cache::add_cachable($obj);
 	}
 
 	/**
@@ -193,7 +196,7 @@ class ContentOperations
 	 * @param bool $loadprops Also load the properties of that content object. Defaults to false.
 	 * @return mixed The loaded content object. If nothing is found, returns NULL.
 	 */
-	function LoadContentFromId($id,$loadprops=false)
+	public function LoadContentFromId($id,$loadprops=false)
 	{
 		$id = (int) $id;
 		if( $id < 1 ) $id = $this->GetDefaultContent();
@@ -222,7 +225,7 @@ class ContentOperations
 	 * @param bool $only_active If true, only return the object if it's active flag is true. Defaults to false.
 	 * @return ContentBase The loaded content object. If nothing is found, returns NULL.
 	 */
-	function LoadContentFromAlias($alias, $only_active = false)
+	public function LoadContentFromAlias($alias, $only_active = false)
 	{
 		if( cms_content_cache::content_exists($alias) ) return cms_content_cache::get_content($alias);
 
@@ -239,9 +242,9 @@ class ContentOperations
 	 *
 	 * @return int The id of the default content page
 	 */
-	function GetDefaultContent()
+	public function GetDefaultContent()
 	{
-		return \CMSMS\internal\global_cache::get('default_content');
+		return global_cache::get('default_content');
 	}
 
 
@@ -349,7 +352,6 @@ class ContentOperations
 	}
 
 
-
 	/**
 	 * Returns a hash of valid content types (classes that extend ContentBase)
 	 * Each key is the identifier of the class recorded in the database, or else the actual class name.
@@ -361,7 +363,7 @@ class ContentOperations
 	 * @param bool $system Optional flag, whether to report only system content types. Default false.
 	 * @return array content types registered in the system.
 	 */
-	function ListContentTypes($byclassname = false,$allowed = false,$system = false)
+	public function ListContentTypes($byclassname = false,$allowed = false,$system = false)
 	{
 		$disallowed_a = array();
 		if( $allowed ) {
@@ -393,21 +395,21 @@ class ContentOperations
 	}
 
 
-	/**
+	/* *
 	 * Does nothing UNUSED
-	 *
+	 * removed since 2.2.19
 	 * @internal
 	 * @ignore
 	 * @param int $contentid The content id to update
 	 * @return array|null
 	 */
-	private function _SetHierarchyPosition($contentid)
+/*	private function _SetHierarchyPosition($contentid)
 	{
 		// do nothing
 	}
+*/
 
-
-	/**
+	/* * FORMER VERSION OF HIERARCHY UPDATEER
 	 * Updates the hierarchy position of one item
 	 *
 	 * @internal
@@ -416,7 +418,7 @@ class ContentOperations
 	 * @param array $hash A hash of all content objects (only certain fields)
 	 * @return array maybe empty
 	 */
-	private function _set_hierarchy_position($content_id,$hash)
+/*	private function _set_hierarchy_position($content_id,$hash)
 	{
 		$row = $hash[$content_id];
 		$saved_row = $row;
@@ -451,14 +453,15 @@ class ContentOperations
 		}
 		return [];
 	}
+*/
 
-
-	/**
+	/* *
 	 * Updates the hierarchy position of all content items.
 	 * This is an expensive operation on the database, but must be called once
 	 * each time one or more content pages are updated if positions have changed in
 	 * the page structure.
 	 */
+/*
 	function SetAllHierarchyPositions()
 	{
 		// load some data about all pages into memory... and convert into a hash.
@@ -484,8 +487,86 @@ class ContentOperations
 				$db->Execute($usql, array($changed['hierarchy'], $changed['id_hierarchy'], $changed['hierarchy_path'], $changed['content_id']));
 			}
 		}
-
 		$this->SetContentModified();
+	}
+*/
+
+	/**
+	 * Update the hierarchy position of all content items.
+	 * This is an expensive operation, but must be called each time one or more
+	 * content pages' position in the page structure has changed.
+	 */
+
+	public function SetAllHierarchyPositions()
+	{
+		// load some data about all pages
+		$db = CmsApp::get_instance()->GetDb();
+		$sql = 'SELECT content_id, parent_id, item_order, content_alias AS alias, hierarchy, id_hierarchy, hierarchy_path FROM '.CMS_DB_PREFIX.'content ORDER BY hierarchy';
+		$list = $db->GetAssoc($sql);
+		if( !$list ) {
+			return;// nothing to do, get outa here.
+		}
+		/*hierarchy-field order will be like
+		00001
+		00001.00001
+		00001.00002
+		00001.00003
+		00002
+		00002.00001
+		00002.00002
+		etc possibly with gap(s) in the numbering
+		normally, an item with parent id -1 would have a hierarcy like 00002, but things might be messed up after reordering
+		*/
+		$cnt = 0;
+		foreach( $list as $content_id => &$cur_row ) {
+			$current_id = $content_id;
+//			$item_order = 0; TODO eliminate any gap
+			$hier = $idhier = $pathhier = '';
+
+			while( $current_id > 0 ) {
+				$row = $list[$current_id]; //TODO ever need to handle a dangling or non-existent page?
+				//TODO teminate ASAP e.g. !empty($row['V'])
+				if( !empty($row['V']) ) {
+					$hier = $row['hierarchy'].'.'. $hier;
+					$idhier = $row['id_hierarchy'].'.'.$idhier;
+					$pathhier = $row['hierarchy_path'].'/'.$pathhier;
+					break;
+				}
+//				$item_order = min($item_order + 1, $row['item_order']);
+				$item_order = max($row['item_order'],1);
+				$hier = str_pad($item_order, 5, '0', STR_PAD_LEFT) . '.' . $hier; // OR 3 or 2 0's would suffice
+				$idhier = $current_id . '.' . $idhier;
+				$pathhier = $row['alias'] . '/' . $pathhier;
+				$current_id = $row['parent_id'];
+			}
+			//strip trailing separators
+			if( $hier ) $hier = substr($hier, 0, -1);
+			if( $idhier ) $idhier = substr($idhier, 0, -1);
+			if( $pathhier ) $pathhier = substr($pathhier, 0, -1);
+			// if we changed something, record the change(s)
+			if( ($hier && $hier != $cur_row['hierarchy'])
+			 || ($idhier && $idhier != $cur_row['id_hierarchy'])
+			 || ($pathhier && $pathhier != $cur_row['hierarchy_path']) ) {
+				$cur_row['hierarchy'] = $hier;
+				$cur_row['id_hierarchy'] = $idhier;
+				$cur_row['hierarchy_path'] = $pathhier;
+				$cur_row['W'] = 1;
+				$cnt++;
+			}
+			$cur_row['V'] = 1;
+		}
+		unset($cur_row);
+		if( $cnt > 0 ) {
+			$stmt = $db->Prepare('UPDATE '.CMS_DB_PREFIX.'content SET hierarchy = ?, id_hierarchy = ?, hierarchy_path = ? WHERE content_id = ?');
+			foreach( $list as $content_id => $row ) {
+				if( !empty($row['W']) ) {
+					$stmt->Execute(array($row['hierarchy'], $row['id_hierarchy'], $row['hierarchy_path'], $content_id));
+				}
+			}
+			$this->SetContentModified();
+		}
+		unset($list); // assist gc
+		$list = null;
 	}
 
 
@@ -495,9 +576,9 @@ class ContentOperations
 	 * @since 2.0
 	 * @return unix timestamp representing the last time a content page was modified.
 	 */
-	function GetLastContentModification()
+	public function GetLastContentModification()
 	{
-		return \CMSMS\internal\global_cache::get('latest_content_modification');
+		return global_cache::get('latest_content_modification');
 	}
 
 	/**
@@ -508,11 +589,11 @@ class ContentOperations
 	 */
 	public function SetContentModified()
 	{
-		\CMSMS\internal\global_cache::clear('latest_content_modification');
-		\CMSMS\internal\global_cache::clear('default_content');
-		\CMSMS\internal\global_cache::clear('content_flatlist');
-		\CMSMS\internal\global_cache::clear('content_tree');
-		\CMSMS\internal\global_cache::clear('content_quicklist');
+		global_cache::clear('latest_content_modification');
+		global_cache::clear('default_content');
+		global_cache::clear('content_flatlist');
+		global_cache::clear('content_tree');
+		global_cache::clear('content_quicklist');
 		cms_content_cache::clear();
 	}
 
@@ -523,10 +604,9 @@ class ContentOperations
 	 * @return cms_content_tree The cached tree of content
 	 * @deprecated
 	 */
-	function GetAllContentAsHierarchy($loadcontent = false)
+	public function GetAllContentAsHierarchy($loadcontent = false)
 	{
-		$tree = \CMSMS\internal\global_cache::get('content_tree');
-		return $tree;
+		return global_cache::get('content_tree');
 	}
 
 
@@ -632,7 +712,7 @@ class ContentOperations
 	 * @param array   $explicit_ids (optional) array of explicit content ids to load
 	 * @author Ted Kulp
 	 */
-	function LoadChildren($id, $loadprops = false, $all = false, $explicit_ids = array() )
+	public function LoadChildren($id, $loadprops = false, $all = false, $explicit_ids = array() )
 	{
 		$db = CmsApp::get_instance()->GetDb();
 
@@ -723,7 +803,7 @@ class ContentOperations
 	 * @param int $id The id to set as default
 	 * @author Ted Kulp
 	 */
-	function SetDefaultContent($id)
+	public function SetDefaultContent($id)
 	{
 		$db = CmsApp::get_instance()->GetDb();
 		$query = "SELECT content_id FROM ".CMS_DB_PREFIX."content WHERE default_content=1";
@@ -748,7 +828,7 @@ class ContentOperations
 	 * @param bool $loadprops Not implemented
 	 * @return array The array of content objects
 	 */
-	function GetAllContent($loadprops=true)
+	public function GetAllContent($loadprops=true)
 	{
 		debug_buffer('get all content...');
 		$gCms = CmsApp::get_instance();
@@ -798,7 +878,7 @@ class ContentOperations
 	 * @return string Html for an input to be hidden plus js to populate
 	 * a dropdown of the hierarchy via ajax.
 	 */
-	function CreateHierarchyDropdown($current = 0, $value = 0, $name = 'parent_id', $allowcurrent = false,
+	public function CreateHierarchyDropdown($current = 0, $value = 0, $name = 'parent_id', $allowcurrent = false,
 									 $use_perms = false, $ignore_current = false, $allow_all = false, $for_child = false)
 	{
 		static $count = 0;
@@ -843,7 +923,7 @@ EOS;
 	 *
 	 * @return int The id of the default page. false if not found.
 	 */
-	function GetDefaultPageID()
+	public function GetDefaultPageID()
 	{
 		return $this->GetDefaultContent();
 	}
@@ -855,7 +935,7 @@ EOS;
 	 * @param string $alias The alias to query
 	 * @return int The resulting id.  null if not found.
 	 */
-	function GetPageIDFromAlias( $alias )
+	public function GetPageIDFromAlias( $alias )
 	{
 		$hm = CmsApp::get_instance()->GetHierarchyManager();
 		$node = $hm->sureGetNodeByAlias($alias);
@@ -869,7 +949,7 @@ EOS;
 	 * @param string $position The position to query
 	 * @return int The resulting id.  false if not found.
 	 */
-	function GetPageIDFromHierarchy($position)
+	public function GetPageIDFromHierarchy($position)
 	{
 		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
@@ -888,7 +968,7 @@ EOS;
 	 * @param int $id The content id to query
 	 * @return string The resulting content alias.  false if not found.
 	 */
-	function GetPageAliasFromID( $id )
+	public function GetPageAliasFromID( $id )
 	{
 		$node = $this->quickfind_node_by_id($id);
 		if( $node ) return $node->getTag('alias');
@@ -941,7 +1021,7 @@ EOS;
 	 * @param int $content_id The id of the current page, for used alias checks on existing pages
 	 * @return string The error, if any.  If there is no error, returns empty string.
 	 */
-	function CheckAliasError($alias, $content_id = -1)
+	public function CheckAliasError($alias, $content_id = -1)
 	{
 		if( !$this->CheckAliasValid($alias) ) return lang('invalidalias2');
 		if ($this->CheckAliasUsed($alias,$content_id)) return lang('aliasalreadyused');
@@ -955,7 +1035,7 @@ EOS;
 	 * @param string $position The hierarchy position to convert
 	 * @return string The unfriendly version of the hierarchy string
 	 */
-	function CreateFriendlyHierarchyPosition($position)
+	public function CreateFriendlyHierarchyPosition($position)
 	{
 		//Change padded numbers back into user-friendly values
 		$tmp = '';
@@ -974,7 +1054,7 @@ EOS;
 	 * @param string $position The hierarchy position to convert
 	 * @return string The friendly version of the hierarchy string
 	 */
-	function CreateUnfriendlyHierarchyPosition($position)
+	public function CreateUnfriendlyHierarchyPosition($position)
 	{
 		//Change user-friendly values into padded numbers
 		$tmp = '';
@@ -1158,12 +1238,13 @@ ORDER BY B.hierarchy';
 	 * This method will be moved to cms_content_tree at a later date.
 	 *
 	 * @param int $id The page id
-	 * @return cms_content_tree
+	 * @return mixed cms_content_tree | null
 	 */
 	public function quickfind_node_by_id($id)
 	{
-		$list = \CMSMS\internal\global_cache::get('content_quicklist');
+		$list = global_cache::get('content_quicklist');
 		if( isset($list[$id]) ) return $list[$id];
+		return null;
 	}
 }
 
