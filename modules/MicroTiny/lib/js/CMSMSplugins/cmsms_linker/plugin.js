@@ -308,9 +308,16 @@ tinymce.PluginManager.add('cmsms_linker', function(editor) {
       return editor.off('NodeChange', toggler);
     };
   }
-  // TODO does this [de]activate the menuitem & button on tag change ? should affect only sitepage links and the unlink action
+
   function toggleLinkerState(api) {
     // Do stuff here on component render
+/* TODO something to replace TMCE4 'a[href*="cms_selflink"]' stateSelector handling c.f.
+      var nodeChangeHandler = function() {
+        var selectedNode = editor.selection.getNode();
+        return api.setActive(selectedNode.id === constants.id);
+      }
+      editor.on('NodeChange', nodeChangeHandler);
+*/
     return function(api) {
       // Do stuff here on component teardown
       var updateState = function() {
@@ -326,7 +333,6 @@ tinymce.PluginManager.add('cmsms_linker', function(editor) {
     icon: 'pagelink',
     onAction: linker_showDialog,
     onSetup: toggleLinkerState,
-    stateSelector: 'a[href*="cms_selflink"]',//'implicit-url' anchors
     text: cmsms_tiny.linker_text + '...'
   });
   // and a button
@@ -334,7 +340,6 @@ tinymce.PluginManager.add('cmsms_linker', function(editor) {
     icon: 'pagelink',
     onAction: linker_showDialog,
     onSetup: toggleLinkerState,
-    stateSelector: 'a[href*="cms_selflink"]',//'implicit-url' anchors
     tooltip: cmsms_tiny.linker_title
   });
 });
