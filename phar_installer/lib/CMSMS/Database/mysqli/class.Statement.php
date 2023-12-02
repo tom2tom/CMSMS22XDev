@@ -89,7 +89,7 @@ class Statement extends \CMSMS\Database\Statement
         $conn = $this->db->get_inner_mysql();
         if( !$conn || !$this->db->IsConnected() ) throw new \LogicException('Attempt to create prepared statement when database is not connected');
         $this->_stmt = $conn->prepare( (string) $sql );
-	if( !$this->_stmt ) throw new \LogicException('Could not prepare a statement: '.$conn->error);
+        if( !$this->_stmt ) throw new \LogicException('Could not prepare a statement: '.$conn->error);
         $this->_row = [];
         $this->_pos = 0;
     }
@@ -138,7 +138,7 @@ class Statement extends \CMSMS\Database\Statement
 
     public function Execute()
     {
-        if( !$this->_stmt ) $this->prepare($this->_sql);
+        if( !$this->_stmt ) $this->prepare($this->sql);
         $args = func_get_args();
         if( count($args) == 1 && is_array($args) && is_array($args[0]) ) $args = $args[0];
 
