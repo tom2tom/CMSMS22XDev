@@ -43,6 +43,7 @@ tinymce.init({
     content_css: "{cms_stylesheet name=$mt_cssname nolinks=1}",
 {/if}
     contextmenu: false,
+    convert_urls: false,
     document_base_url: "{$rooturl}/",
     element_format: "html",
     icons: "cmsms",
