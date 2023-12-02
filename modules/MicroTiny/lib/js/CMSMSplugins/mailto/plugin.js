@@ -90,11 +90,18 @@ tinymce.PluginManager.add('mailto', function(editor) {
       return editor.off('NodeChange', toggler);
     };
   }
-  // TODO does this [de]activate the menuitem & button on tag change ? should affect only mailto links and the unlink action
+
   function toggleMailtoState(api) {
     // Do stuff here on component render
     return function(api) {
       // Do stuff here on component teardown
+/* TODO something to replace TMCE4 'a[href^="mailto:"]' stateSelector handling c.f.
+      var nodeChangeHandler = function() {
+        var selectedNode = editor.selection.getNode();
+        return api.setActive(selectedNode.id === constants.id);
+      }
+      editor.on('NodeChange', nodeChangeHandler);
+*/
       var updateState = function() {
         return api.setEnabled(getAnchorElement(editor, editor.selection.getNode()) !== null);
       };
@@ -108,7 +115,6 @@ tinymce.PluginManager.add('mailto', function(editor) {
     icon: 'mailto',
     onAction: mailto_showDialog,
     onSetup: toggleMailtoState,
-    stateSelector: 'a[href^="mailto:"]',
     text: cmsms_tiny.mailto_text + '...'
   });
   // and a button
@@ -116,7 +122,6 @@ tinymce.PluginManager.add('mailto', function(editor) {
     icon: 'mailto',
     onAction: mailto_showDialog,
     onSetup: toggleMailtoState,
-    stateSelector: 'a[href^="mailto:"]',
     tooltip: cmsms_tiny.mailto_title
   });
 });
