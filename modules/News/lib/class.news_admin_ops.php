@@ -107,38 +107,41 @@ final class news_admin_ops
 
         $query = "SELECT news_category_id, item_order, news_category_name FROM ".CMS_DB_PREFIX."module_news_categories";
         $dbresult = $db->Execute($query);
-        while ($dbresult && $row = $dbresult->FetchRow()) {
-            $current_hierarchy_position = "";
-            $current_long_name = "";
-            $content_id = $row['news_category_id'];
-            $current_parent_id = $row['news_category_id'];
-            $count = 0;
-
+        if( $dbresult ) {
             $query = "SELECT news_category_id, item_order, news_category_name, parent_id FROM ".CMS_DB_PREFIX."module_news_categories WHERE news_category_id = ?";
-            while ($current_parent_id > -1) {
-                $row2 = $db->GetRow($query, array($current_parent_id));
-                if ($row2) {
-                    //TODO prevent item_order null values ?
-                    $current_hierarchy_position = str_pad((string)$row2['item_order'], 5, '0', STR_PAD_LEFT) . "." . $current_hierarchy_position;
-                    $current_long_name = $row2['news_category_name'] . ' | ' . $current_long_name;
-                    $current_parent_id = $row2['parent_id'];
-                    $count++;
+            $stmt = $db->Prepare("UPDATE ".CMS_DB_PREFIX."module_news_categories SET hierarchy = ?, long_name = ? WHERE news_category_id = ?");
+            while( $row = $dbresult->FetchRow() ) {
+                $current_hierarchy_position = "";
+                $current_long_name = "";
+                $content_id = $row['news_category_id'];
+                $current_parent_id = $row['news_category_id'];
+                $count = 0;
+
+                while( $current_parent_id > -1 ) {
+                    $row2 = $db->GetRow($query, array($current_parent_id));
+                    if( $row2 ) {
+                        //TODO prevent item_order null values ?
+                        $current_hierarchy_position = str_pad((string)$row2['item_order'], 5, '0', STR_PAD_LEFT) . "." . $current_hierarchy_position;
+                        $current_long_name = $row2['news_category_name'] . ' | ' . $current_long_name;
+                        $current_parent_id = $row2['parent_id'];
+                        $count++;
+                    }
+                    else {
+                        $current_parent_id = 0;
+                    }
                 }
-                else {
-                    $current_parent_id = 0;
+
+                if( ($l = strlen($current_hierarchy_position)) > 0 ) {
+                    $current_hierarchy_position = substr($current_hierarchy_position, 0, $l - 1);
                 }
-            }
 
-            if (strlen($current_hierarchy_position) > 0) {
-                $current_hierarchy_position = substr($current_hierarchy_position, 0, strlen($current_hierarchy_position) - 1);
-            }
+                if( ($l = strlen($current_long_name)) > 0 ) {
+                    $current_long_name = substr($current_long_name, 0, $l - 3);
+                }
 
-            if (strlen($current_long_name) > 0) {
-                $current_long_name = substr($current_long_name, 0, strlen($current_long_name) - 3);
+                $stmt->Execute(array($current_hierarchy_position, $current_long_name, $content_id));
             }
-
-            $query = "UPDATE ".CMS_DB_PREFIX."module_news_categories SET hierarchy = ?, long_name = ? WHERE news_category_id = ?";
-            $db->Execute($query, array($current_hierarchy_position, $current_long_name, $content_id));
+            $dbresult->Close();
         }
     }
 
@@ -147,18 +150,17 @@ final class news_admin_ops
         return cms_route_manager::del_static('','News',$news_article_id);
     }
 
-    public static function register_static_route($news_url,$news_article_id,$detailpage = '')
+    public static function register_static_route($news_url,$news_article_id,$detailpage = 0)
     {
         if( $detailpage <= 0 ) {
-            $gCms = cmsms();
             $module = cms_utils::get_module('News');
             $detailpage = $module->GetPreference('detail_returnid',-1);
             if( $detailpage == -1 ) {
+                $gCms = cmsms();
                 $detailpage = $gCms->GetContentOperations()->GetDefaultContent();
             }
         }
         $parms = array('action'=>'detail','returnid'=>$detailpage,'articleid'=>$news_article_id);
-
         $route = CmsRoute::new_builder($news_url,'News',$news_article_id,$parms,TRUE);
         return cms_route_manager::add_static($route);
     }
