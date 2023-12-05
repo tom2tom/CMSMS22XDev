@@ -46,6 +46,7 @@ tinymce.init({
     convert_urls: false,
     document_base_url: "{$rooturl}/",
     element_format: "html",
+    icons_url: "{$rooturl}/modules/MicroTiny/lib/js/CMSMSicons/icons.js",
     icons: "cmsms",
 {if !$isfrontend}
     image_advtab: true,
