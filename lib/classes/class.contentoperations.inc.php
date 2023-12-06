@@ -612,7 +612,7 @@ class ContentOperations
 
 	/**
 	 * Load all content in the database into memory
-	 * Use with caution this can chew up alot of memory on larger sites.
+	 * Use with caution this can chew up a lot of memory on larger sites.
 	 *
 	 * @param bool $loadprops Load extended content properties or just the page structure and basic properties
 	 * @param bool $inactive  Load inactive pages as well
