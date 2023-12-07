@@ -1,4 +1,4 @@
-tinymce.PluginManager.add('cmsms_filepicker', function(editor) {
+tinymce.PluginManager.add('filepicker', function(editor) {
 
   editor.options.register('file_picker_types', {
     processor: 'string'
