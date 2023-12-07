@@ -1,4 +1,4 @@
-tinymce.PluginManager.add('page_link', function(editor) {
+tinymce.PluginManager.add('pagelink', function(editor) {
 
   function linker_showDialog() {
 
@@ -329,14 +329,14 @@ tinymce.PluginManager.add('page_link', function(editor) {
   }
 
   // add a menu item
-  editor.ui.registry.addMenuItem('page_link', {
+  editor.ui.registry.addMenuItem('pagelink', {
     icon: 'pagelink',
     onAction: linker_showDialog,
     onSetup: toggleLinkerState,
     text: cmsms_tiny.linker_text + '...'
   });
   // and a button
-  editor.ui.registry.addButton('page_link', {
+  editor.ui.registry.addButton('pagelink', {
     icon: 'pagelink',
     onAction: linker_showDialog,
     onSetup: toggleLinkerState,
