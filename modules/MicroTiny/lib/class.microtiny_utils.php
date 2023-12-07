@@ -172,7 +172,7 @@ EOS;
       $tpl_ob->assign('languageid',$languageid);
       $tpl_ob->assign('langdir',$langdir);
       $tpl_ob->assign('rooturl',CMS_ROOT_URL);
-      $tpl_ob->assign('plugbase',$mod->GetModuleURLPath().'/lib/js/CMSMSplugins');
+      $tpl_ob->assign('custombase',$mod->GetModuleURLPath().'/lib/js');
       $tpl_ob->assign('uploadsurl',$config['uploads_url']);
       $fp = cms_utils::get_filepicker_module();
       if( $fp ) {

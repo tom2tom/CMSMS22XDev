@@ -34,7 +34,6 @@ var cmsms_tiny = {
 };
 
 {*// tinymce initialization
-//custom svg icons in ...TMCEBASE/icons/cmsms/icons.js
 //branding disabled (TMCE can't impose that, due to LGPL licence)*}
 tinymce.init({
     branding: false,
@@ -46,7 +45,7 @@ tinymce.init({
     convert_urls: false,
     document_base_url: "{$rooturl}/",
     element_format: "html",
-    icons_url: "{$rooturl}/modules/MicroTiny/lib/js/CMSMSicons/icons.js",
+    icons_url: "{$custombase}/CMSMSicons/icons.js",
     icons: "cmsms",
 {if !$isfrontend}
     image_advtab: true,
@@ -54,7 +53,7 @@ tinymce.init({
     image_title: true,
     language: "{$languageid}",
 {if $mt_profile.menubar}    menu: {
-      insert: { title: "Insert", items: "image link mailto{if !$isfrontend} cmsms_linker{/if} media{if $mt_profile.allowtables} inserttable{/if} | nonbreaking charmap emoticons | hr anchor | insertdatetime" },
+      insert: { title: "Insert", items: "image link mailto{if !$isfrontend} page_link{/if} media{if $mt_profile.allowtables} inserttable{/if} | nonbreaking charmap emoticons | hr anchor | insertdatetime" },
 {if $mt_profile.allowtables}      table: { title: "Table", items: "inserttable | cell row column | advtablesort | tableprops deletetable" },
 {/if}
     },
@@ -69,25 +68,25 @@ tinymce.init({
 //  templates: TODO URL or object
 {if $isfrontend}
     external_plugins: {
-      "mailto": "{$plugbase}/mailto/plugin.min.js",
-      "nonbreaking": "{$plugbase}/nonbreaking/plugin.min.js"
+      "mailto": "{$custombase}/CMSMSplugins/mailto/plugin.min.js",
+      "nonbreaking": "{$custombase}/CMSMSplugins/nonbreaking/plugin.min.js"
     },
     plugins: "anchor autolink autoresize{if $langdir=='rtl'} directionality{/if} help{if $mt_profile.allowimages} image media{/if} link lists{if $mt_profile.allowtables} table{/if} wordcount",
     toolbar: "undo redo | bold italic underline | alignleft aligncenter alignright alignjustify indent outdent | bullist numlist{if $mt_profile.allowtables} | table{/if} | anchor link mailto unlink{if $mt_profile.allowimages} | image{/if}",
 {else}
     external_plugins: {
-      "mailto": "{$plugbase}/mailto/plugin.min.js",
-      "nonbreaking": "{$plugbase}/nonbreaking/plugin.min.js",
-      "cmsms_linker": "{$plugbase}/cmsms_linker/plugin.min.js"{if $mt_profile.allowimages},
-      "cmsms_filepicker": "{$plugbase}/cmsms_filepicker/plugin.min.js"{/if}
+      "mailto": "{$custombase}/CMSMSplugins/mailto/plugin.min.js",
+      "nonbreaking": "{$custombase}/CMSMSplugins/nonbreaking/plugin.min.js",
+      "page_link": "{$custombase}/CMSMSplugins/page_link/plugin.min.js"{if $mt_profile.allowimages},
+      "filepicker": "{$custombase}/CMSMSplugins/filepicker/plugin.min.js"{/if}
     },
     plugins: "anchor autolink autoresize charmap{if $mt_profile.allowimages} image media{/if} code{if $langdir=='rtl'} directionality{/if} fullscreen help insertdatetime link lists searchreplace{if $mt_profile.allowtables} table{/if} wordcount",
-    toolbar: "undo redo | cut copy paste | styleselect | bold italic underline | alignleft aligncenter alignright alignjustify indent outdent | bullist numlist{if $mt_profile.allowtables} | table{/if} | anchor link mailto cmsms_linker unlink{if $mt_profile.allowimages} | image{/if}",
+    toolbar: "undo redo | cut copy paste | styleselect | bold italic underline | alignleft aligncenter alignright alignjustify indent outdent | bullist numlist{if $mt_profile.allowtables} | table{/if} | anchor link mailto page_link unlink{if $mt_profile.allowimages} | image{/if}",
 {/if}
     // callback functions
     urlconverter_callback: function(url, elm, onsave, name) {
         var setting = tinymce.activeEditor.options.get('convert_urls');
-        if (!setting || ( elm && elm.nodeName == 'LINK' ) || url.indexOf('file:') === 0 || url.length === 0) {
+        if (!setting || (elm && elm.nodeName == 'LINK') || url.indexOf('file:') === 0 || url.length === 0) {
             return url;
         }
 
