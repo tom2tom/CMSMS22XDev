@@ -53,7 +53,7 @@ tinymce.init({
     image_title: true,
     language: "{$languageid}",
 {if $mt_profile.menubar}    menu: {
-      insert: { title: "Insert", items: "image link mailto{if !$isfrontend} page_link{/if} media{if $mt_profile.allowtables} inserttable{/if} | nonbreaking charmap emoticons | hr anchor | insertdatetime" },
+      insert: { title: "Insert", items: "image link mailto{if !$isfrontend} pagelink{/if} media{if $mt_profile.allowtables} inserttable{/if} | nonbreaking charmap emoticons | hr anchor | insertdatetime" },
 {if $mt_profile.allowtables}      table: { title: "Table", items: "inserttable | cell row column | advtablesort | tableprops deletetable" },
 {/if}
     },
@@ -77,11 +77,11 @@ tinymce.init({
     external_plugins: {
       "mailto": "{$custombase}/CMSMSplugins/mailto/plugin.min.js",
       "nonbreaking": "{$custombase}/CMSMSplugins/nonbreaking/plugin.min.js",
-      "page_link": "{$custombase}/CMSMSplugins/page_link/plugin.min.js"{if $mt_profile.allowimages},
+      "pagelink": "{$custombase}/CMSMSplugins/pagelink/plugin.min.js"{if $mt_profile.allowimages},
       "filepicker": "{$custombase}/CMSMSplugins/filepicker/plugin.min.js"{/if}
     },
     plugins: "anchor autolink autoresize charmap{if $mt_profile.allowimages} image media{/if} code{if $langdir=='rtl'} directionality{/if} fullscreen help insertdatetime link lists searchreplace{if $mt_profile.allowtables} table{/if} wordcount",
-    toolbar: "undo redo | cut copy paste | styleselect | bold italic underline | alignleft aligncenter alignright alignjustify indent outdent | bullist numlist{if $mt_profile.allowtables} | table{/if} | anchor link mailto page_link unlink{if $mt_profile.allowimages} | image{/if}",
+    toolbar: "undo redo | cut copy paste | styleselect | bold italic underline | alignleft aligncenter alignright alignjustify indent outdent | bullist numlist{if $mt_profile.allowtables} | table{/if} | anchor link mailto pagelink unlink{if $mt_profile.allowimages} | image{/if}",
 {/if}
     // callback functions
     urlconverter_callback: function(url, elm, onsave, name) {
