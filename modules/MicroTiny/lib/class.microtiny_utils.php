@@ -92,12 +92,13 @@ class microtiny_utils
           $first_time = false;
           $baseurl = $mod->GetModuleURLPath().'/lib/js';
           // TMCE6 needs ES6. Deploy this after last css link in the header
+          // TODO better way to get the current node from within it
           $output .= <<<EOS
 <script id="shimsource">
  if (typeof Symbol === 'undefined') {
   var xjS = document.createElement('script');
   xjS.src = '$baseurl/es6-shim.min.js';
-  var el = document.getElementById('shimsource'); // TODO better way to get this current node
+  var el = document.getElementById('shimsource');
   el.parentNode.insertBefore(xjS, el.nextSibling); // insert after
   if (typeof String.prototype.trim === 'undefined') {
    var xjS5 = document.createElement('script');
@@ -106,7 +107,7 @@ class microtiny_utils
   }
  }
 </script>
-<script src="$baseurl/tinymce/tinymce.min.js"></script>
+<script src="$baseurl/tinymce/tinymce.min.js" defer></script>
 
 EOS;
       }
@@ -127,7 +128,7 @@ EOS;
       }
 
       $configurl = $config['public_cache_url'].'/'.basename($fn);
-      $output .= '<script src="'.$configurl.'" defer="defer"></script>';
+      $output .= '<script src="'.$configurl.'" defer></script>';
 
       return $output;
   }
