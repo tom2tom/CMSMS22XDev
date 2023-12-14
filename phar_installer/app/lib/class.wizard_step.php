@@ -78,8 +78,8 @@ abstract class wizard_step extends parent_step
 
   public function error($msg)
   {
-      $msg = addslashes($msg);
-      echo '<script>add_error(\''.$msg.'\');</script>'."\n";
+      $msg = str_replace(['\\\\r\\\\n','\\\\n','\\\\r',"\n"],['\n','\n','\n','\n'],addslashes($msg));
+      echo "<script>add_error('$msg');</script>\n";
       flush();
   }
 
@@ -87,29 +87,30 @@ abstract class wizard_step extends parent_step
   {
       $verbose = wizard::get_instance()->get_data('verbose');
       if( $verbose ) {
-          $msg = addslashes($msg);
-          echo '<script>add_verbose(\''.$msg.'\');</script>'."\n";
+          $msg = str_replace(['\\\\r\\\\n','\\\\n','\\\\r',"\n"],['\n','\n','\n','\n'],addslashes($msg));
+          echo "<script>add_verbose('$msg');</script>\n";
           flush();
       }
   }
 
   public function message($msg)
   {
-      $msg = addslashes($msg);
-      echo '<script>add_message(\''.$msg.'\');</script>'."\n";
+      $msg = str_replace(['\\\\r\\\\n','\\\\n','\\\\r',"\n"],['\n','\n','\n','\n'],addslashes($msg));
+      echo "<script>add_message('$msg');</script>\n";
       flush();
   }
 
   public function set_block_html($id,$html)
   {
-      $html = addslashes($html);
-      echo '<script>set_block_html(\''.$id.'\',\''.$html.'\');</script>'."\n";
+      //$id is element id attribute, nothing fancy in there
+      $html = str_replace(['\\\\r\\\\n','\\\\n','\\\\r'],["\n","\n","\n"],addslashes($html));
+      echo "<script>set_block_html('$id','$html');</script>\n";
       flush();
   }
 
   protected function finish()
   {
-      echo '<script>finish();</script>'."\n";
+      echo "<script>finish();</script>\n";
       flush();
   }
 
