@@ -12,10 +12,9 @@ if (is_array($homepages) && count($homepages))  {
 
     foreach ($homepages as $homepage) {
 
-        
         $url = $homepage['value'];
         if (empty($url)) continue;
-        
+
         // quick hacks to remove old secure param name from homepage url
         // and replace with the correct one.
         $url = str_replace('&amp;','&',$url);
@@ -23,9 +22,9 @@ if (is_array($homepages) && count($homepages))  {
         @parse_str($tmp[1],$tmp2);
         if( in_array('_s_',array_keys($tmp2)) ) unset($tmp2['_s_']);
         if( in_array('sp_',array_keys($tmp2)) ) unset($tmp2['sp_']);
-        
+
         $tmp2['_CMSKEY_'] = 'XXXX'; // current secure param
-                
+
         foreach( $tmp2 as $k => $v ) {
             $tmp3[] = $k.'='.$v;
         }
@@ -35,7 +34,7 @@ if (is_array($homepages) && count($homepages))  {
         $url = preg_replace('@^/[^/]+/@','',$url); //remove admin folder from the url (if applicable)
 
         unset($tmp2,$tmp3);
-        
+
         $db->execute($update_statement,[$url,$homepage['user_id'],'homepage']);
     }
 }
