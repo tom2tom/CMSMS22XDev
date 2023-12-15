@@ -37,9 +37,13 @@ class wizard_step2 extends wizard_step
         $app = get_app();
         $app_config = $app->get_config();
         if( !isset($app_config['min_upgrade_version']) ) throw new Exception(lang('error_missingconfigvar','min_upgrade_version'));
-        if( version_compare($info['version'],$app_config['min_upgrade_version']) < 0 ) $info['error_status'] = 'too_old';
-        if( version_compare($info['version'],$app->get_dest_version()) == 0 ) $info['error_status'] = 'same_ver';
-        if( version_compare($info['version'],$app->get_dest_version()) > 0 ) $info['error_status'] = 'too_new';
+        if( version_compare($info['version'],$app_config['min_upgrade_version']) < 0 ) {
+            $info['error_status'] = 'too_old';
+        } else {
+            $n = version_compare($info['version'],$app->get_dest_version());
+            if( $n == 0 ) { $info['error_status'] = 'same_ver'; }
+            elseif( $n > 0 ) { $info['error_status'] = 'too_new'; }
+        }
 
         $fn = $dir.'/config.php';
         require_once $fn;
