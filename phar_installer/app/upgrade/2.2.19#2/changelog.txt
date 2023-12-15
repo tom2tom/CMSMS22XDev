@@ -1,14 +1,15 @@
-Version 2.2.19 - Inuvik
+Version 2.2.19#2 - Inuvik
 -------------------------------
-Compatibility fixes for PHP 8.2 (and 8.3).
+Compatibility fixes for PHP 8.2 and 8.3.
 Replaced deprecated Smarty syntax in templates.
 Replaced some of the deprecated jQuery syntax.
 Corrected html errors and inconsistencies.
 Corrected typos.
 Bugfixes.
 Allow installation of extra translations.
-Smarty upgraded to version 4.3.0.
+Smarty upgraded to version 4.3.4.
 PHPMailer upgraded to version 6.7.1.
+TinyMCE upgraded to version 6.8.2.
 jQuery upgraded to version 1.12.4.
 jQuery UI upgraded to version 1.12.1.
 jQuery migrate upgraded to version 1.4.1.
