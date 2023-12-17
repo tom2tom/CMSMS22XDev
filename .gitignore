@@ -11,7 +11,7 @@ moduleinfo.ini
 UNUSED*
 HIDE*
 #MANIFEST*
-#uploads/
+uploads/
 #work in progress
 build.ini
 build_release.ini
