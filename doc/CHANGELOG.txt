@@ -1,4 +1,4 @@
-Version 2.2.19 - Inuvik
+Version 2.2.19#2 - Inuvik
 -------------------------------
 Various places
  - Compatible with PHP 7.1 to 8.3, or 5.6 to 7.4 if Smarty3 is substituted for Smarty4.
@@ -78,6 +78,7 @@ Version 2.2.18 - Apex
 -------------------------------
 Core - General
  - Fallback function CMSMS\strftime. PHP Intl extension still recommended. The fallback solves issues on hosts that don't install it by default and don't allow users to install it.
+
 
 Version 2.2.17 - Iqaluit
 -------------------------------
