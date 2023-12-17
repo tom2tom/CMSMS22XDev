@@ -11,13 +11,15 @@ verbose_msg(ilang('install_setschemaver'));
 // site preferences
 //
 verbose_msg(ilang('install_initsiteprefs'));
-cms_siteprefs::set('sitedownmessage','<p>Site is currently down for maintenance</p>');
-cms_siteprefs::set('metadata',"<meta name=\"Generator\" content=\"CMS Made Simple - Copyright (C) 2004-" . date('Y') . ". All rights reserved.\">\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\r\n");
-cms_siteprefs::set('global_umask','022');
-cms_siteprefs::set('auto_clear_cache_age',60); // cache files for only 60 days by default
-cms_siteprefs::set('adminlog_lifetime',3600*24*31); // admin log entries only live for 60 days.
+cms_siteprefs::set('adminlog_lifetime',86400*31); // admin log entries only live for 31 days.
 cms_siteprefs::set('allow_browser_cache',1); // allow browser to cache cachable pages
+cms_siteprefs::set('auto_clear_cache_age',60); // cache files for only 60 days by default
 cms_siteprefs::set('browser_cache_expiry',60); // browser can cache pages for 60 minutes.
+cms_siteprefs::set('global_umask','022'); //deprecated since 2.2.19 (bad for multi-threaded servers)
+cms_siteprefs::set('metadata',"<meta name=\"Generator\" content=\"CMS Made Simple - Copyright (C) 2004-" . date('Y') . ". All rights reserved.\">\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\r\n");
+cms_siteprefs::set('sitedownmessage','<p>Site is currently down for maintenance</p>');
+cms_siteprefs::set('use_smartycache',0); // do not cache frontend pages
+cms_siteprefs::set('use_smartycompilecheck',0); // do not compile-check frontend page templates
 
 //
 // permissions
@@ -219,10 +221,11 @@ $move_directory_files = function($srcdir,$destdir) {
 
 // create the assets directory structure
 verbose_msg(ilang('install_createassets'));
-$create_private_dir('assets/templates');
-$create_private_dir('assets/configs');
 $create_private_dir('assets/admin_custom');
+$create_private_dir('assets/configs');
+$create_private_dir('assets/css');
+$create_private_dir('assets/images');
 $create_private_dir('assets/module_custom');
 $create_private_dir('assets/plugins');
-$create_private_dir('assets/images');
-$create_private_dir('assets/css');
+$create_private_dir('assets/templates');
+$create_private_dir('assets/themes'); // since 2.2.19
