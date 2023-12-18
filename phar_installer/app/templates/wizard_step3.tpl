@@ -72,8 +72,9 @@
     </tbody>
 </table>
 {/if}
-<div class="message {if $tests_failed}yellow{else}blue{/if}">{tr('warn_tests')}</div>
-
+{if !$tests_failed}
+<div class="message blue">{tr('warn_tests')}</div>
+{/if}
 <div id="bottom_nav">
 {if $tests_failed}
  <a id="btn_retry" class="action-button orange" title="{tr('retry')}">{tr('retry')} <i class="icon-loop"></i></a>
