@@ -67,8 +67,8 @@ while( $trycount < 2 ) {
     $trycount++;
     try {
         // preview
-        if( $page == -100) {
-            setup_session(false);
+        if( $page == -100) { //aka __CMS_PREVIEW_PAGE__
+            setup_session(false); //repeated below
             if( !isset($_SESSION['__cms_preview__']) ) throw new CmsException('preview selected, but temp data not found');
 
             // todo: get the content type, and load it.
@@ -98,10 +98,11 @@ while( $trycount < 2 ) {
         }
 
         if( $contentobj->Secure() && !$_app->is_https_request() ) {
-	    $url = $contentobj->GetURL();
-	    if( startswith($url,'http://') ) str_replace('http://','https://',$url);
-	    if( startswith($url,'//') ) $url = 'https:'.$url;
-            redirect($url); // if this page is marked to be secure, make sure we redirect to the secure page
+            // if this page is marked to be secure, make sure we redirect to the secure page
+            $url = $contentobj->GetURL(); //TODO handle empty $url
+            if( startswith($url,'http://') ) str_replace('http://','https://',$url);
+            if( startswith($url,'//') ) $url = 'https:'.$url;
+            redirect($url);
         }
 
         if( !$contentobj->IsPermitted() ) throw new CmsError403Exception('Permission denied');
