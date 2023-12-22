@@ -16,8 +16,8 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-$this->RemovePermission('MicroTiny View HTML Source');
-
+// remove all microtiny_profile objects
+$this->RemovePreference();
 #
 # EOF
 #
