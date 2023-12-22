@@ -34,12 +34,13 @@ var cmsms_tiny = {
 };
 
 {*// tinymce initialization
-//branding disabled (TMCE can't impose that, due to LGPL licence)*}
+//TODO is disabled branding acceptable TMCE violation?
+//TODO optional skin_url setting*}
 tinymce.init({
     branding: false,
     browser_spellcheck: true,
 {if !empty($mt_cssname)}
-    content_css: "{cms_stylesheet name=$mt_cssname nolinks=1}",
+    content_css: "{$mt_cssname}",
 {/if}
     contextmenu: false,
     convert_urls: false,
@@ -60,7 +61,7 @@ tinymce.init({
     menubar: {if $mt_profile.menubar}true{else}false{/if},
     paste_text_use_dialog: true,
     promotion: false,
-    removed_menuitems: "newdocument print",
+    removed_menuitems: "backcolor forecolor newdocument print",
     resize: {if ($mt_profile.showstatusbar && $mt_profile.allowresize)}"both"{else}false{/if},
     schema: "html5",
     selector: "{if !empty($mt_selector)}{$mt_selector}{else}textarea.MicroTiny{/if}",
