@@ -30,10 +30,10 @@ $lang['edit_profile'] = 'Edit Profile';
 $lang['error_cantchangesysprofilename'] = 'You cannot change the name of a system profile';
 $lang['error_missingparam'] = 'A required parameter was missing';
 $lang['error_nopage'] = 'No page alias selected';
-$lang['example'] = 'MicroTiny example';
+$lang['example'] = 'Example';
 
 // F
-$lang['friendlyname'] = 'MicroTiny WYSIWYG editor';
+$lang['friendlyname'] = 'MicroTiny HTML Editor';
 $lang['fileview'] = 'File View';
 $lang['filename'] = 'File Name';
 $lang['filterby'] = 'Filter by';
@@ -42,22 +42,22 @@ $lang['filterby'] = 'Filter by';
 $lang['height'] = 'Height';
 $lang['help'] = <<<EOT
 <h3>What Does This Do?</h3>
-<p>MicroTiny is a small, restricted version of the <a href="http://www.tinymce.com" target="_blank">TinyMCE</a> editor. allowing content editors a near WYSIWYG appearance for editing content.  It works with content blocks in CMSMS content pages (when a WYSIWYG has been allowed), in module Admin forms where WYSIWYG editors are allowed, and allows restricted capabilities for editing HTML blocks on frontend pages.</p>
-</p>In order for MicroTiny to be used as the WYSIWYG editor in the Admin console the MicroTiny WYSIWYG Editor needs to be selected in the users preferences.  Please select &quot;MicroTiny&quot; in the &quot;Select WYSIWYG to Use&quot; option under &quot;My Preferences &gt;&gt; User Preferences&quot; in the CMSMS Admin panel.  Additional options in various modules or in content page templates, and content pages themselves can control whether a text area or a WYSIWYG field is provided in various edit forms.</p>
-<p>For Frontend editing capabilities MicroTiny must be selected as the &quot;Frontend WYSIWYG&quot; in the global settings page of the CMSMS Admin console.</p>
+<p>MicroTiny is a slightly restricted version of the <a href="https://www.tiny.cloud" target="_blank">TinyMCE</a> editor, providing to content editors a near-WYSIWYG appearance for editing content.  It works with content blocks in CMSMS content pages (when a WYSIWYG has been allowed), in module Admin forms where WYSIWYG editors are allowed, and allows restricted capabilities for editing HTML blocks on frontend pages.</p>
+</p>In order for MicroTiny to be used as the HTML editor in the admin console, MicroTiny needs to be selected in the user\'s preferences.  Please select &quot;MicroTiny&quot; in the &quot;Select WYSIWYG to Use&quot; option under &quot;My Preferences &gt;&gt; User Preferences&quot; in the CMSMS Admin panel.  Additional options in various modules or in content page templates, and content pages themselves can control whether a text area or a WYSIWYG field is provided in various edit forms.</p>
+<p>For frontend editing capabilities MicroTiny must be selected as the &quot;Frontend WYSIWYG&quot; in the global settings page of the CMSMS Admin console.</p>
 <h3>Features:</h3>
 <ul>
   <li>Supports a subset of HTML5 block and inline elements.</li>
-  <li>Separate profiles for Admin editors and frontend editors.</li>
-  <li>A custom file picker for selecting previously uploaded media.</li>
-  <li>Custom plugin for creating links to CMSMS content pages <em>(Admin only)</em>.</li>
-  <li>Customizable (somewhat) profiles for Admin behavior and frontend behavior.</li>
+  <li>Separate profiles for admin editors and frontend editors.</li>
+  <li>Customizable (somewhat) profiles for admin behavior and frontend behavior.</li>
+  <li>A custom file picker for selecting uploaded media.</li>
+  <li>A custom plugin for creating links to this website's pages <em>(admin only)</em>.</li>
   <li>Customizable appearance by specifying a stylesheet to use for the editor.</li>
 </ul>
 <h3>How do I use it</h3>
   <ul>
     <li>Install and configure the module</li>
-    <li>Set MicroTiny as your WYSIWYG editor of choice in &quot;My Preferences&quot;</li>
+    <li>Set MicroTiny as your HTML editor of choice in &quot;My Preferences&quot;</li>
   </ul>
 <h3>About HTML, TinyMCE, and content editing:</h3>
   <ul>
@@ -99,7 +99,16 @@ $lang['help'] = <<<EOT
   <p>To enable frontend WYSIWYG editors, the <code>{cms_init_editor}</code> tag must be included in the head part of the template.  Additionally, this module must be set as the &quot;Frontend WYSIWYG&quot; in the global settings page of the CMSMS admin console.</p>
 
 <h3>About Styles and Colors:</h3>
-  <p>This module provides the <em>(optional)</em> ability to associate a stylesheet with the profile.  This provides the ability to style the edit portion WYSIWYG editor in a manner similar to the website style.  Providing a more WYSIWYG like experience for the content editor.</p>
+  <p>This module provides the <em>(optional)</em> ability to associate one or more custom stylesheet(s) with the profile. This provides the ability to style the edit portion WYSIWYG editor in a manner similar to the website style.  Providing a more WYSIWYG like experience for the content editor.</p>
+  <p>Valid values are:
+  <ol>
+  <li> name of a stylesheet recorded for this site</li>
+  <li> 'default','dark','document','writer' or some other custom-styles folder name, located in the .../skins/content folder in the TinyMCE sources tree, and in which is a styles-file 'content.min.css'</li>
+  <li> absolute url(s) or relative url(s) of relevant css file(s), comma-separated if &gt; 1</li>
+  </ol>
+  </p>
+  <p>See also <a href="https://www.tiny.cloud/docs/tinymce/6/add-css-options/#content_css" target="_blank">Edited content styling</a>.</p>
+  <p><strong>Note:</strong> the TinyMCE 'skin_url' setting affects styling of the editor elements, as distinct from the edited content.</p>
   <p>Additionally, in conjunction with the <code>classname</code> parameter of the <code>{cms_textarea}</code> and <code>{content}</code> tags this module allows the content editor module to override the specified stylesheet differently for each content block.  This allows the ability to style each WYSIWYG area differently, if there are multiple WYSIWYG areas on the page.  This functionality is restricted to the Admin interface only.</p>
   <p>For example, in a page template adding the cssname parameter to the {content} tag allows specifying a CMSMS stylesheet to use to customize the appearance of that content block.  i.e: <code>{content block='second block' cssname='whiteonblack'}</code>
   <p>Additionally, a setting in the content editing section of the &quot;Global Settings&quot; page allows automatically supplying the css name parameter with the name of the content block.</p>
@@ -155,7 +164,7 @@ h2 {
   <li><code>{content}</code> tag in &quot;Extensions >> Tags&quot;</li>
   <li><code>{cms_textarea}</code> tag in &quot;Extensions >> Tags&quot;</li>
   <li><code>{cms_init_editor}</code> tag in &quot;Extensions >> Tags&quot;</li>
-  <li>The <a href="http://www.tinymce.com" target="_blank">TinyMCE</a> editor itself.</li>
+  <li>The <a href="https://www.tiny.cloud" target="_blank">TinyMCE</a> editor itself.</li>
 </ul>
 EOT;
 
