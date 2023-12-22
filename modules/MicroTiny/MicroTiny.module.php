@@ -25,7 +25,7 @@ class MicroTiny extends CMSModule
   public function GetFriendlyName() { return $this->Lang("friendlyname"); }
   public function GetVersion() { return '2.2.6'; }
   public function HasAdmin() { return TRUE; }
-  public function IsPluginModule() { return TRUE; }
+  public function IsPluginModule() { return FALSE; }
   public function LazyLoadFrontend() { return TRUE; }
   public function LazyLoadAdmin() { return TRUE; }
   public function MinimumCMSVersion() { return '2.2.2'; }
@@ -36,6 +36,7 @@ class MicroTiny extends CMSModule
   public function GetChangeLog() { return $this->ProcessTemplate('changelog.tpl'); }
   public function VisibleToAdminUser() { return $this->CheckPermission('Modify Site Preferences'); }
   public function GetAdminDescription() { return $this->Lang('admindescription'); }
+  //TODO arguably migrate change-settings action to SiteAdmin section c.f. other modules' settings
 
   public function WYSIWYGGenerateHeader($selector = '',$cssname = '') {
     return microtiny_utils::WYSIWYGGenerateHeader($selector, $cssname);
