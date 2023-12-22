@@ -462,7 +462,7 @@ class ContentOperations
 	 * the page structure.
 	 */
 /*
-	function SetAllHierarchyPositions()
+	public function SetAllHierarchyPositions()
 	{
 		// load some data about all pages into memory... and convert into a hash.
 		$db = CmsApp::get_instance()->GetDb();
@@ -524,20 +524,25 @@ class ContentOperations
 			$hier = $idhier = $pathhier = '';
 
 			while( $current_id > 0 ) {
-				$row = $list[$current_id]; //TODO ever need to handle a dangling or non-existent page?
-				//TODO teminate ASAP e.g. !empty($row['V'])
-				if( !empty($row['V']) ) {
-					$hier = $row['hierarchy'].'.'. $hier;
-					$idhier = $row['id_hierarchy'].'.'.$idhier;
-					$pathhier = $row['hierarchy_path'].'/'.$pathhier;
-					break;
+				if( isset($list[$current_id]) ) {
+					$row = $list[$current_id];
+					//TODO teminate ASAP e.g. !empty($row['V'])
+					if( !empty($row['V']) ) {
+						$hier = $row['hierarchy'].'.'. $hier;
+						$idhier = $row['id_hierarchy'].'.'.$idhier;
+						$pathhier = $row['hierarchy_path'].'/'.$pathhier;
+						break;
+					}
+//					$item_order = min($item_order + 1, $row['item_order']);
+					$item_order = max($row['item_order'],1);
+					$hier = str_pad($item_order, 5, '0', STR_PAD_LEFT) . '.' . $hier; // OR 3 or 2 0's would suffice
+					$idhier = $current_id . '.' . $idhier;
+					$pathhier = $row['alias'] . '/' . $pathhier;
+					$current_id = $row['parent_id'];
 				}
-//				$item_order = min($item_order + 1, $row['item_order']);
-				$item_order = max($row['item_order'],1);
-				$hier = str_pad($item_order, 5, '0', STR_PAD_LEFT) . '.' . $hier; // OR 3 or 2 0's would suffice
-				$idhier = $current_id . '.' . $idhier;
-				$pathhier = $row['alias'] . '/' . $pathhier;
-				$current_id = $row['parent_id'];
+				else {
+					throw new RuntimeException('Internal error - No hierarchy data for page id '.$current_id); //a dangling or non-existent page - how to remediate?
+				}
 			}
 			//strip trailing separators
 			if( $hier ) $hier = substr($hier, 0, -1);
