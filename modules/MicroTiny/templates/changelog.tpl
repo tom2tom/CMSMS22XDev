@@ -1,5 +1,5 @@
 <ul>
- <li>v2.2.6 (CMSMS 2.2.19)
+ <li>v2.2.6 (CMSMS 2.2.19#2)
   <ul>
    <li>Depends on FilePicker, not FileManager</li>
    <li>Deprecate function mt_jsbool</li>
