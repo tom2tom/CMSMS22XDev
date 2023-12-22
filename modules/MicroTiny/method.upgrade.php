@@ -16,19 +16,21 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-if( version_compare($oldversion,'1.1') < 0 ) {
-  $this->CreatePermission('MicroTiny View HTML Source','MicroTiny View HTML Source');
-}
-
 if( version_compare($oldversion,'2.0') < 0 ) {
   $this->RemovePreference();
   $this->DeleteTemplate();
-  include_once(__DIR__.'/method.install.php');
+  include_once __DIR__.'/method.install.php';
+}
+else {
+  if( version_compare($oldversion,'2.2.6') < 0 ) {
+    //redundant permission might still exist
+    $this->RemovePermission('MicroTiny View HTML Source');
+  }
 }
 /*
 NOTE: when upgrading TinyMCE, ensure that all its related translation
 files (*.js) that also correspond to supported CMSMS translations (nls
-files exist, even if not currently installed) are isted in the translations
+files exist, even if not currently installed) are listed in the translations
 lookup file,
  __DIR__/lib/langs.manifest
 in each case, without a trailing '.js'
