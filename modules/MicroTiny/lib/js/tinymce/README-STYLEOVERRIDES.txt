@@ -7,6 +7,9 @@ inherit for non-iframe topmost class (.tox)
 consistent e.g. .9rem, for iframe body element
 some transparent and light borders >> consistent color e.g. #d9d9d9
 
+disabled-elements' styling, was rgba(34, 47, 62, .5) for light skin, now .3
+skin 10px border radii changed to 4px
+
 CSS4 :has selector (for tree component for dialogs)
 embedded in @supports, with fallbacks TODO for @supports not
 
