@@ -18,6 +18,7 @@ print
 
 plugins now premium
 imagetools
+importcss
 toc
 
 plugins omitted for MicroTiny
