@@ -148,6 +148,16 @@ EOS;
    * @param bool $frontend Default false
    * @param string $selector Default ''
    * @param string $css_name Default ''
+   * @see also https://www.tiny.cloud/docs/tinymce/6/add-css-options/#content_css
+   *  Valid values are:
+   *  1. name of a stylesheet recorded for this site, and containing
+   *    style-classes recognised by TinyMCE
+   *  2. 'default','dark','document','writer' or some other custom-styles
+   *    folder name, located in the .../skins/content folder in the
+   *    TMCE sources tree, and in which is a styles-file 'content.min.css'
+   *  3. absolute url(s) or relative url(s) of relevant css file(s),
+   *    comma-separated if > 1
+   * NOTE the TinyMCE 'skin_url' setting also affects TMCE styling
    * @param string $languageid Default 'en'
    * @param string $langdir Default 'ltr' Since 2.2.6
    * @return string
@@ -208,7 +218,24 @@ EOS;
           }
 
           $tpl_ob->assign('mt_profile',$profile);
-          if( $css_name ) $tpl_ob->assign('mt_cssname',$css_name);
+          if( $css_name ) {
+              // if is a recorded-stylesheet name TODO smarter check e.g. not url(s), no included '.css', no matching TMCE folder-name
+              $val = '';
+              $query = new CmsLayoutStylesheetQuery(['fullname'=>$css_name]);
+              if( $query && !$query->EOF ) {
+                  $val = $smarty->fetch("string:{cms_stylesheet name=$css_name nolinks=1}");
+              }
+              else {
+                  $bp = cms_join_path($mod->GetModulePath(),'lib','js','tinymce','skins','content',$css_name);
+                  if( is_dir($bp) && is_file($bp.DIRECTORY_SEPARATOR.'content.min.css') ) {
+                      $val = $css_name;
+                  }
+                  elseif( 1 ) {// TODO if valid absolute/relative url(s) of [min.]css file(s)
+                      $val = $css_name;
+                  }
+              }
+              if( $val ) $tpl_ob->assign('mt_cssname',$val);
+          }
       }
       catch( Exception $e ) {
           // oops, we gots a problem.
