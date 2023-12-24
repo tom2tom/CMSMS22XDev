@@ -89,7 +89,26 @@
 			</select>
 		</p>
 	</div>
-
+{*TODO for specifying content styling via a TMCE-specific parameter - dirname or url(s)
+		<div class="pageoverflow">
+			<p class="pagetext">
+				<label for="profile_X">*{$mod->Lang('profile_X')}:</label>&nbsp;{cms_help key2='mthelp_profileX' title=$mod->Lang('profile_X')}
+			</p>
+			<p class="pageinput">
+				<input type="text" size="50" id="profile_X" name="{$actionid}profile_X" value="{$data.X}">
+			</p>
+		</div>
+*}
+{*TODO for specifying editor skin
+		<div class="pageoverflow">
+			<p class="pagetext">
+				<label for="profile_X">*{$mod->Lang('profile_X')}:</label>&nbsp;{cms_help key2='mthelp_profileX' title=$mod->Lang('profile_X')}
+			</p>
+			<p class="pageinput">
+				<input type="text" size="30" id="profile_X" name="{$actionid}profile_X" value="{$data.X}">
+			</p>
+		</div>
+*}
 	<div class="pageoverflow">
 		<p class="pagetext">
 			<label for="profile_allowcssoverride">{$mod->Lang('profile_allowcssoverride')}:</label>&nbsp;{cms_help key2='mthelp_allowcssoverride' title=$mod->Lang('profile_allowcssoverride')}
