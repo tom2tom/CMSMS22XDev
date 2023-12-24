@@ -59,7 +59,7 @@ class langtools
   /**
    * Test if a language is available
    *
-   * @param string The language naem
+   * @param string The language name
    * @return boolean
    */
   final public function language_available($str)
@@ -306,7 +306,7 @@ class langtools
    * Return the absolute path to the language directory.
    * Throws an exception if the realm directory does not exist.
    *
-   * @param string The realm name.  If empty, the default realm can be assumed.
+   * @param string The realm name.  If empty or self::DFLT_REALM, the default realm ('app') will be used.
    * @returns string
    */
   public function get_lang_dir($realm = '')
@@ -343,7 +343,7 @@ class langtools
   }
 
   /**
-   * Unload the realm
+   * Unload a realm
    *
    * @param string, The realm name. If empty, the default realm is assumed.
    */
