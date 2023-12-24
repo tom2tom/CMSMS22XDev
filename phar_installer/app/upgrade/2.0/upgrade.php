@@ -1,5 +1,7 @@
 <?php
 
+use function __appbase\endswith;
+
 set_time_limit(3600);
 status_msg('Fixing errors with deprecated plugins in versions prior to CMSMS 2.0');
 $fn = $destdir.'/plugins/function.process_pagedata.php';
