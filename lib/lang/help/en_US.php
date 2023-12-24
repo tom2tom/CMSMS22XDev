@@ -323,7 +323,7 @@ $lang['help_cmscontentmanager_help'] = <<<EOT
     </li>
 
     <li>Url
-      <p>This property is used to specify a primary URL to this content item. Users can specify a complete path or a simple flat string.  <em>(i.e.: path/to/mypage or keywordstuffedpageurl)</em>.  This property (if specified) is used when building navigations and other links to this content item, when &quot;pretty urls&quot; are enabled in the config.php.  If not specified, then the page alias and other settings control the primary route to the content item.</p>
+      <p>This property is used to specify a primary URL to this content item. Users can specify a complete path or a simple flat string.  <em>(e.g. path/to/mypage or keywordstuffedpageurl)</em>.  This property (if specified) is used when building navigations and other links to this content item, when &quot;pretty urls&quot; are enabled in the config.php.  If not specified, then the page alias and other settings control the primary route to the content item.</p>
       <p>It is important to note for SEO purposes that this is only a primary URL <em>(route)</em> to the content items.  Site visitors can still navigate to this content item via other means, i.e:  mysite.com/index.php?page=alias or mysite.com/random/random/alias or mysite.com/alias.  Sites that are concerned with search engine rankings should ensure that the &lt;link rel=&quot;canonical&quot;&gt; tag is properly configured in their page templates.</p>
       <p>Users with restricted permissions may not have the ability to adjust or specify this property.</p>
     </li>

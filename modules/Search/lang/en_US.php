@@ -80,7 +80,7 @@ $lang['param_formtemplate'] = 'Used only for the default action, this parameter 
 $lang['param_inline'] = 'If true, the output from the search form will replace the original content of the \'search\' tag in the originating content block.  Use this parameter if your template has multiple content blocks, and you do not want the output of the search to replace the default content block';
 $lang['param_modules'] = 'Limit search results to values indexed from the specified (comma separated) list of modules';
 $lang['param_pageid'] = 'Applicable only with the keywords action, this parameter can be used to specify a different pageid to return results for';
-$lang['param_passthru'] = 'Pass named parameters down to specified modules.  The format of each of these parameters is: "passtru_MODULENAME_PARAMNAME=\'value\'" i.e.: passthru_News_detailpage=\'newsdetails\'"';
+$lang['param_passthru'] = 'Pass named parameters down to specified modules.  The format of each of these parameters is: "passtru_MODULENAME_PARAMNAME=\'value\'" e.g. passthru_News_detailpage=\'newsdetails\'"';
 $lang['param_resultpage'] = 'Page to display search results in.  This can either be a page alias or an id.  Used to allow search results to be displayed in a different template from the search form';
 $lang['param_resulttemplate'] = 'This parameter allows specifying the name of a non default template to use for displaying search results.';
 $lang['param_searchtext'] = 'Text to place into the search box';

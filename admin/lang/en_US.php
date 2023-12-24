@@ -855,13 +855,13 @@ $lang['event_help_stylesheetprecompile'] = "<h4>Parameters</h4>
 $lang['event_help_templatepostcompile'] = "<h4>Parameters</h4>
 <ul>
 <li>'template' - Reference to the affected template text.</li>
-<li>'type' - The type of template call.  i.e: template for a whole template, tpl_head, tpl_body, or tpl_top for a partial template.</li>
+<li>'type' - The type of template call i.e. template for a whole template, tpl_head, tpl_body, or tpl_top for a partial template.</li>
 </ul>
 ";
 $lang['event_help_templateprecompile'] = "<h4>Parameters</h4>
 <ul>
 <li>'template' - Reference to the affected template text.</li>
-<li>'type' - The type of template call.  i.e: template for a whole template, tpl_head, tpl_body, or tpl_top for a partial template.</li>
+<li>'type' - The type of template call i.e. template for a whole template, tpl_head, tpl_body, or tpl_top for a partial template.</li>
 </ul>
 ";
 $lang['event_help_templateprefetch'] = "<h4>Parameters</h4>
@@ -967,7 +967,7 @@ $lang['help_content_owner'] = "This field allows you to adjust the owner of this
 $lang['help_content_pagedata'] = "This is a field where you can enter Smarty tags or logic that are specific to this content page, will probably not generate any direct output, and must be processed before anything else on the page";
 $lang['help_content_pagemeta'] = "In this field you can enter HTML meta tags. They will be merged with the default meta tags and inserted in the head section of the generated HTML page.";
 $lang['help_content_parent'] = "Select an existing page in the content hierarchy which will be the parent page for this content page.  This relationship is used when building a navigation";
-$lang['help_content_secure'] = "Specify whether this page should be accessed via a secure (encrypted) connection.  i.e: via HTTPS";
+$lang['help_content_secure'] = "Specify whether this page should be accessed via a secure (encrypted) connection i.e. via HTTPS";
 $lang['help_content_showinmenu'] = "Select whether this page will be visible (by default) in the navigation.";
 $lang['help_systeminformation'] = "The information displayed below is collected from a variety of locations, and summarized here so that you may be able to conveniently find some of the information required when trying to diagnose a problem or request help with your CMS Made Simple&trade; installation.";
 $lang['hidefrommenu'] = "Hide From Menu";
@@ -1012,7 +1012,7 @@ $lang['hours'] = "hours";
 $lang['h_udtcode'] = 'Enter your PHP code here.  Keep in mind that a UDT <em>(User Defined Tag)</em> is in fact a Smarty function plugin.  It has limited scope.<br>
 <ul>
   <li><strong>Note:</strong> You have access to the full <a href=\"https://www.cmsmadesimple.org/APIDOC2_0\">CMSMS API</a> to interact with the system and with modules.</li>
-  <li>Tip: Parameters passed to the UDT i.e: <code>{myudt param1=value1 param2=value2}</code> are available via the $params associative array, which is in scope.</li>
+  <li>Tip: Parameters passed to the UDT e.g. <code>{myudt param1=value1 param2=value2}</code> are available via the $params associative array, which is in scope.</li>
   <li>Tip: It is best to do calculations and processing and return the results to Smarty for formatting via the $smarty->assign() method.  The Smarty object is also in scope.</li>
   <li>Tip: It is best to keep UDTs short, with a single and small piece of functionality.</li>
 </ul>';
@@ -1061,9 +1061,9 @@ $lang['info_settings_sitedown'] = "These options allow you to toggle the website
 $lang['info_sitedownexcludes'] = "This parameter allows listing a comma separated list of IP addresses or networks that should not be subject to the Site Down mechanism.  This allows administrators to work on a site whilst anonymous visitors receive a Site Down message.<br><br>Addresses can be specified in the following formats:<br>
 1. xxx.xxx.xxx.xxx -- (exact IP address)<br>
 2. xxx.xxx.xxx.[yyy-zzz] -- (IP address range)<br>
-3. xxx.xxx.xxx.xxx/nn -- (nnn = number of bits, cisco style.  i.e:  192.168.0.100/24 = entire 192.168.0 class C subnet)";
+3. xxx.xxx.xxx.xxx/nn -- (nnn = number of bits, cisco style e.g. 192.168.0.100/24 = entire 192.168.0 class C subnet)";
 $lang['info_smarty_cachemodules'] = "Select how to cache tags in various templates that call module actions.  If enabled, all module calls will be cached.  This may have negative effects on some modules, or modules with forms.  <em>(note: you can override this using the nocache option as described in the Smarty manual)</em>.  If disabled no module calls will be cached which may have an effect on performance.   If you select to allow the module to decide, the default is that caching is not performed.  The module can override this, and you can disable caching using the nocache parameter when calling the module.";
-$lang['info_smarty_cacheudt'] = "If enabled, all calls to user defined tags will be cached.  This will be useful for tags that display the output of database queries.  You can disable caching using the nocache parameter in the UDT call.  i.e: <code>{myusertag nocache}</code>";
+$lang['info_smarty_cacheudt'] = "If enabled, all calls to user defined tags will be cached.  This will be useful for tags that display the output of database queries.  You can disable caching using the nocache parameter in the UDT call e.g. <code>{myusertag nocache}</code>";
 $lang['info_smarty_options'] = "The following options have effect only when the above caching options are enabled";
 $lang['info_target'] = "This option may used by the Menu Manager to indicate when and how new frames or windows should be opened.  Some menu manager templates may ignore this option.";
 $lang['info_templateuser'] = "This account is the template user account.  New users will be created using this accounts settings";
@@ -1708,7 +1708,7 @@ $lang['help_page_alias'] = "The alias is used as an alternate to the page id to 
 $lang['help_page_cachable'] = "Performance can be increased by setting as many pages as possible to cachable.  However this cannot be used for pages where content may change on a per request basis";
 $lang['help_page_disablewysiwyg'] = "This option will disable the WYSIWYG editor for all content areas on this page independent of settings in the {content} block or user settings";
 $lang['help_page_searchable'] = "This setting indicates whether the content of this page should be indexed by the Search module";
-$lang['help_page_url'] = "Specify an alternate URL (relative to the root of your website) that can be used to uniquely identify this page.  i.e: path/to/mypage.  The page URL is only useful when pretty URLs are enabled.";
+$lang['help_page_url'] = "Specify an alternate URL (relative to the root of your website) that can be used to uniquely identify this page e.g. path/to/mypage.  The page URL is only useful when pretty URLs are enabled.";
 $lang['invalid_url2'] = "The page URL specified is invalid.  It should contain only alphanumeric characters, or - or /.  Extensions must contain only alphanumeric chars and be less than 5 characters in length.  It is also possible that the URL specified is already in use.";
 
 

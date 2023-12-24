@@ -32,7 +32,7 @@ $lang['help'] = <<<EOT
   <li>\$node->accesskey -- Access Key, if defined.</li>
   <li>\$node->tabindex -- Tab index, if defined.</li>
   <li>\$node->titleattribute -- Description, or Title attribute (title), if defined.</li>
-  <li>\$node->hierarchy -- Hierarchy position.  (i.e. 1.3.3)</li>
+  <li>\$node->hierarchy -- Hierarchy position.  (e.g. 1.3.3)</li>
   <li>\$node->default -- TRUE if this node refers to the default content object.</li>
   <li>\$node->menutext -- Menu Text</li>
   <li>\$node->raw_menutext -- Menu Text without having html entities converted</li>
