@@ -8,7 +8,6 @@ use Exception;
 use function __appbase\get_app;
 use function __appbase\lang;
 use function __appbase\smarty;
-use function __appbase\startswith;
 use function __appbase\translator;
 
 class wizard_step1 extends wizard_step
