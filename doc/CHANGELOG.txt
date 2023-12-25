@@ -16,6 +16,7 @@ Core - General
  - BR #12660 output filter not working.
  - BR #12661 page-selector plugin misnamed parameter.
  - BR #12662 file picker does not filter archives properly.
+ - BR #12677 UDT parse error can trigger 500 error.
  - Validate entered bookmark-URLs.
  - Include .phar files in executables test.
  - Deprecated use of PHP function umask().
