@@ -86,7 +86,7 @@ function getTestValues( $property )
 	// TODO manually set recommended PHP = earliest current-security-supported micro-version
 	// see https://www.php.net/supported-versions.php and https://www.php.net/releases/index.php
 	$range = array(
-		'php_version'			=> array('minimum'=>$minphp, 'recommended'=>'8.0.30'),
+		'php_version'			=> array('minimum'=>$minphp, 'recommended'=>'8.1.27'),
 		'gd_version'			=> array('minimum'=>2),
 		'memory_limit'			=> array('minimum'=>'16M', 'recommended'=>'24M'),
 		'max_execution_time'	=> array('minimum'=>30, 'recommended'=>60),
