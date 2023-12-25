@@ -8,25 +8,29 @@ if( ini_get('phar.readonly') ) throw new Exception('phar.readonly must be turned
 //if( $cli ) $script_file = basename($argv[0]);
 $owd = getcwd();
 //if( !file_exists("$owd/$script_file") ) throw new Exception('This script must be executed from the same directory as the '.$script_file.' script');
-$rootdir = dirname(__DIR__);
 $repos_root='http://svn.cmsmadesimple.org/svn/cmsmadesimple';
 //$repos_branch = "/trunk";
 $repos_branch = '';
-$srcdir = $rootdir;
-$tmpdir = $rootdir.'/tmp';
-$datadir = $rootdir.'/data';
-$outdir = $rootdir.'/out';
+//these folders may be redefined from .ini file
+$installerdir = dirname(__DIR__); //assumes we're running in the build subdir of the installer
+$srcdir = $installerdir;
+$tmpdir = $installerdir.'/tmp';
+$datadir = $installerdir.'/data';
+$outdir = $installerdir.'/out';
+
 $systmpdir = sys_get_temp_dir().'/'.basename(__FILE__,'php').getmypid();
 //TODO update these lists, per the following variables
 //do not skip class.cms_config.php or Smarty files like smarty_internal_method*config.php
 //TODO some of '~\.md$~i', might be redundant
 //'~\.htaccess$~', skip if re-created by installer
 //'~web\.config$~', ditto
-$exclude_patterns = array('/\.svn\//','/^ext\//','/^build\/.*/','/.*~$/','/tmp\/.*/','/\.\#.*/','/\#.*/','/^out\//','/^README*TXT/i');
-$exclude_from_zip = array('*~','tmp/','.#*','#*'.'*.bak');
-$src_excludes = array('/\/phar_installer\//','/\/config\.php$/', '/\/find-mime$/', '/\/installer\//', '/^\/tmp\/.*/', '/^#.*/', '/^\/scripts\/.*/', '/\.git/', '/\.svn/', '/svn-.*/',
-                      '/^\/tests\/.*/', '/^\/build\/.*/', '/^\.htaccess/', '/\.svn/', '/^config\.php$/','/.*~$/', '/\.\#.*/', '/\#.*/', '/.*\.bak/');
-
+$exclude_patterns = array('/\.svn\//','/^ext\//','/^build\/.*/','/.*~$/','/tmp\/.*/','/\.#[^\/]*$/','/^out\//','/^README*TXT/i'); //WAS ALSO ,'/\.\k.*/' but that looks like back reference
+$exclude_from_zip = array('*~','tmp/','.#*','*.bak'); //WAS ALSO '#*'
+//TODO this var redefined below
+//$src_excludes = array(
+//'/\/phar_installer\//','/\/config\.php$/', '/\/find-mime$/', '/\/installer\//', '/^\/tmp\/.*/', '/^\/scripts\/.*/', '/\.git/', '/\.svn/', '/svn-.*/',
+//'/^\/tests\/.*/', '/^\/build\/.*/', '/^\.htaccess/', '/\.svn/', '/^config\.php$/','/.*~$/', '/.*\.bak/'
+//); //WAS ALSO '/^#.*/', '/\.\#.*/', '/\#.*/',
 // regex patterns for source files/dirs to NOT be processed by the installer.
 // all exclusion checks are against sources-tree root-dir-relative filepaths,
 // after converting any windoze path-sep's to *NIX form
@@ -50,7 +54,7 @@ $all_excludes = [
 // members of $src_excludes which need double-check before exclusion to confirm they're 'ours'
 $src_checks = ['scripts', 'tmp', 'tests'];
 
-$s = basename($rootdir);
+$s = basename($installerdir);
 $src_excludes = [
 -4 => "~$s~",
 -3 => '~[\\/]scripts[\\/]~',
@@ -111,12 +115,32 @@ foreach( $xconfig as $k => $v ) {
         break;
     case 'sourceuri':
         $v = trim($v);
-        if( $v == "file://local" ) {
-            $indir = dirname($rootdir);
+        if( startswith($v, 'file://') ) {
+            $file = substr($v, 7);
+            if( $file === '' || $file == 'local' ) {
+                $sourceuri = 'file://local';
+                $indir = dirname($installerdir);
+            }
+            elseif (is_dir($file) && is_readable($file)) {
+                $sourceuri = $v;
+                $indir = $file;
+                //TODO confirm these dirs exist and are writable
+                $installerdir = $file.'/phar_installer';
+                $srcdir = $installerdir;
+                $tmpdir = $installerdir.'/tmp';
+                $datadir = $installerdir.'/data';
+                $outdir = $installerdir.'/out';
+            }
+            else {
+                fatal('Specified file-set source ' .$file. ' is not accessible');
+            } 
+        }
+        elseif( startswith($v, 'svn://') ) {
+            //TODO retrieve sources & assign folders in tmp place
+            fatal('svn-sourced source-files not supported yet');
         }
         else {
-            //TODO parse 'file://*','svn://*','git://*'
-            //$indir =
+            fatal('Unrecognised location of source-files');
         }
         break;
     case 'verbose':
@@ -494,7 +518,7 @@ try {
         $l = strlen($srcdir) + 1;
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
 
-        // a brand new phar file.
+        // new phar file
         $phar = new Phar("$outdir/$destname");
         $phar->startBuffering();
 
@@ -510,7 +534,7 @@ try {
             if( !is_file($fp) ) {
                 continue;
             }
-            // trivial exclusion.
+            // trivial exclusion
             foreach( $exclude_patterns as $patn ) {
                 if( preg_match($patn,$fp) ) {
                     continue 2;
@@ -570,8 +594,9 @@ try {
         $phar->setSignatureAlgorithm(Phar::SHA1);
         $phar->stopBuffering();
         unset($phar);
+        if( !is_file("$outdir/$destname") ) fatal("Phar file $outdir/$destname not created");
 
-        // rename it to a php file so it's executable on pretty much all hosts
+        // rename it to a .php file so it's executable on pretty much all hosts
         if( $rename ) {
             echo "INFO: Renaming phar file to php for execution purposes\n";
             rename("$outdir/$destname","$outdir/$destname2");
@@ -587,9 +612,9 @@ try {
             $arch->open($outfile,ZipArchive::OVERWRITE | ZipArchive::CREATE );
             $arch->addFile($infile,basename($infile));
             $arch->setExternalAttributesName(basename($infile), ZipArchive::OPSYS_UNIX, 0644 << 16);
-            $arch->addFile("$rootdir/README-PHAR.TXT",'README-PHAR.TXT');
+            $arch->addFile("$installerdir/README-PHAR.TXT",'README-PHAR.TXT');
             $arch->setExternalAttributesName('README-PHAR.TXT', ZipArchive::OPSYS_UNIX, 0644 << 16);
-            $arch->addFile("$rootdir/README-PHARDEBUG.TXT",'README-PHARDEBUG.TXT');
+            $arch->addFile("$installerdir/README-PHARDEBUG.TXT",'README-PHARDEBUG.TXT');
             $arch->setExternalAttributesName('README-PHARDEBUG.TXT', ZipArchive::OPSYS_UNIX, 0644 << 16);
             $arch->close();
             @unlink($infile);
@@ -607,12 +632,12 @@ try {
             $zipdir = $systmpdir.'/packer';
             mkdir($zipdir,0777,TRUE);
             chdir($zipdir);
-            copy($rootdir.'/README.TXT', './README.TXT');
+            copy($installerdir.'/README.TXT', './README.TXT');
             mkdir($zipdir.'/installer',0777,TRUE);
-            copy($rootdir.'/index.php', './installer/index.php');
-            $l = strlen($rootdir);
+            copy($installerdir.'/index.php', './installer/index.php');
+            $l = strlen($installerdir);
             foreach( ['app','lib','data'] as $top ) {
-                $from = $rootdir.'/'.$top;
+                $from = $installerdir.'/'.$top;
                 $rdi = new RecursiveDirectoryIterator($from,
                   FilesystemIterator::KEY_AS_FILENAME |
                   FilesystemIterator::CURRENT_AS_PATHNAME |
