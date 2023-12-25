@@ -110,9 +110,15 @@ class wizard
     final public function cur_step()
     {
         if( isset($_GET[self::SECURE_PARAM_NAME]) ) {
-            $str = $_GET[self::SECURE_PARAM_NAME];
             $sess = session::get();
+            if( !$sess ) {
+                return 1; //TODO or throw?
+            }
             $all = $sess[$this->_stepkeys];
+            if( !$all ) {
+                return 1; //TODO or throw?
+            }
+            $str = $_GET[self::SECURE_PARAM_NAME];
             if( ($stepnum = array_search($str,$all,true)) !== false ) {
                 for( $i = $stepnum+1, $n = count($all); $i < $n; $i++ ) {
                     $all[$i] = '';
