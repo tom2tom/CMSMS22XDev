@@ -60,7 +60,7 @@ if( isset($_POST['submit']) || isset($_POST['apply']) ) {
     if( $record['userplugin_name'] == '' ) {
         $error[] = lang('nofieldgiven',array(lang('name')));
     }
-    elseif(preg_match('<^[ a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$>',$record['userplugin_name'])==0) {
+    elseif( preg_match('<^[ a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$>',$record['userplugin_name']) == 0 ) { //TODO === 0 ? OR != 1?
         $error[] = lang('error_udt_name_chars');
         $validinfo = false;
     }
@@ -74,37 +74,59 @@ if( isset($_POST['submit']) || isset($_POST['apply']) ) {
         }
     }
 
-    if( $record['code'] == '' ) $error[] = lang('nofieldgiven', array(lang('code')));
+    if( $record['code'] == '' ) {
+        $error[] = lang('nofieldgiven', array(lang('code')));
+    }
+    else {
+        $code = $record['code'];
+        if( startswith($code,'<?') ) {
+            if( startswith($code,'<?php') ) { $code = substr($code,5); }
+            elseif( startswith($code,'<?=') ) { $code = substr($code,3); }
+            else { $code = substr($code,2); }
+        }
+        if( endswith($code,'?>') ) { $code = substr($code,0,-2); }
 
-    $code = $record['code'];
-    if( startswith($code,'<?php') ) $code = substr($code,5);
-    if( endswith($code,'?>') ) $code = substr($code,0,-2);
-
-    $lastopenbrace = strrpos($code, '{');
-    $lastclosebrace = strrpos($code, '}');
-    if ($lastopenbrace > $lastclosebrace) {
-        $error[] = lang('invalidcode');
-        $error[] = lang('invalidcode_brace_missing');
+        $lastopenbrace = strrpos($code, '{');
+        $lastclosebrace = strrpos($code, '}');
+        if( $lastopenbrace > $lastclosebrace ) {
+            $error[] = lang('invalidcode');
+            $error[] = lang('invalidcode_brace_missing');
+        }
     }
 
-    if( count($error) == 0 ) {
+    if( !$error ) {
         srand();
         ob_start();
-        if (eval('function testfunction'.rand().'() {'.$code."\n}") === FALSE) {
+        if( PHP_VERSION_ID < 70000 ) {
+            //a parse error causes eval() to return FALSE
+            $res = eval('function testfunction'.rand().'() {'.$code."\n}");
+        }
+        else {
+            //a parse error causes eval() to throw a ParseError exception
+            try {
+                eval('function testfunction'.rand().'() {'.$code."\n}");
+                $res = TRUE;
+            }
+            catch (Exception $e) {
+                $res = FALSE;
+                $error[] = $e->getMessage();
+            }
+        }
+        if( $res !== FALSE ) {
+            ob_get_clean();
+        }
+        else {
             $error[] = lang('invalidcode');
             $buffer = ob_get_clean();
             //add error
             $error[] = preg_replace('/<br ?\/?>/', '', $buffer);
             $validinfo = false;
         }
-        else {
-            ob_get_clean();
-        }
     }
 
-    if( count($error) == 0 ) {
+    if( !$error ) {
         $res = $tagops->SetUserTag($record['userplugin_name'],$record['code'],$record['description'],$userplugin_id);
-        if( !$res ) $error = lang('errorupdatingusertag');
+        if( !$res ) $error[] = lang('errorupdatingusertag');
     }
 
     $details = lang('usertagupdated');
