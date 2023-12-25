@@ -15,7 +15,6 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#
 #$Id$
 
 /**
@@ -295,17 +294,40 @@ final class UserTagOperations
 		if( !$row ) return '';
 		$functionname = 'cms_user_tag_'.$name;
 		if( !function_exists($functionname) ) {
-			if( startswith($row['code'],'<?php') ) $row['code'] = substr($row['code'],5);
-			if( endswith($row['code'],'?>') ) $row['code'] = substr($row['code'],0,-2);
+			// validate the UDT syntax
+			// TODO also validate potentially risky content
+			// the following should have happened when the tag was saved, but hey, it might be super old, or have been hacked ...
+			if( startswith($row['code'],'<?') ) {
+				if( strncasecmp($row['code'],'<?php',5) == 0 ) { $code = substr($row['code'],5); }
+				elseif( $row['code'][2] == '=' ) { $code = substr($row['code'],3); }
+				else { $code = substr($row['code'],2); }
+				$row['code'] = ltrim($code);
+				//TODO save it
+			}
+			//TODO possible '<%' or '<%=' tag
+			if( endswith($row['code'],'?>') ) {
+				$code = substr($row['code'],0,-2);
+				$row['code'] = rtrim($code);
+				//TODO save it
+			}
+			//TODO possible '%>' tag
 			$code = 'function '.$functionname.'($params,$smarty) {'.$row['code']."\n}";
-			@eval($code);
+			try {
+				$res = eval($code); // returns FALSE upon parse error PHP < 7
+				if( $res === false ) {
+					return '';
+				}
+			}
+			catch (Throwable $e) { //PHP7+ only
+				return '';
+			}
 		}
 		return $functionname;
 	}
 
 } // class
 
-/**
+/* *
  * @ignore
  * @package CMS
  * @license GPL

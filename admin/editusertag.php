@@ -60,12 +60,11 @@ if( isset($_POST['submit']) || isset($_POST['apply']) ) {
     if( $record['userplugin_name'] == '' ) {
         $error[] = lang('nofieldgiven',array(lang('name')));
     }
-    elseif( preg_match('<^[ a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$>',$record['userplugin_name']) == 0 ) { //TODO === 0 ? OR != 1?
+    elseif( preg_match('<^[ a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$>',$record['userplugin_name']) == 0 ) { //TODO === 0 OR != 1 ?
         $error[] = lang('error_udt_name_chars');
-        $validinfo = false;
     }
     else {
-        // check for duplicate name.
+        // check for duplicate name
         $all_tags = $tagops->ListUserTags();
         foreach( $all_tags as $id => $name ) {
             if( $name == $record['userplugin_name'] ) {
@@ -80,12 +79,17 @@ if( isset($_POST['submit']) || isset($_POST['apply']) ) {
     else {
         $code = $record['code'];
         if( startswith($code,'<?') ) {
-            if( startswith($code,'<?php') ) { $code = substr($code,5); }
-            elseif( startswith($code,'<?=') ) { $code = substr($code,3); }
+            if( strncasecmp($code,'<?php',5) == 0 ) { $code = substr($code,5); }
+            elseif( $code[2] == '=' ) { $code = substr($code,3); }
             else { $code = substr($code,2); }
+            $record['code'] = $code = ltrim($code);
         }
-        if( endswith($code,'?>') ) { $code = substr($code,0,-2); }
-
+        //TODO 'possible '<%' or '<%=' tag
+        if( endswith($code,'?>') ) {
+            $code = substr($code,0,-2);
+            $record['code'] = $code = rtrim($code);
+        }
+        //TODO possible '%>' tag
         $lastopenbrace = strrpos($code, '{');
         $lastclosebrace = strrpos($code, '}');
         if( $lastopenbrace > $lastclosebrace ) {
@@ -95,36 +99,37 @@ if( isset($_POST['submit']) || isset($_POST['apply']) ) {
     }
 
     if( !$error ) {
-        srand();
-        ob_start();
-        if( PHP_VERSION_ID < 70000 ) {
-            //a parse error causes eval() to return FALSE
-            $res = eval('function testfunction'.rand().'() {'.$code."\n}");
-        }
-        else {
-            //a parse error causes eval() to throw a ParseError exception
-            try {
-                eval('function testfunction'.rand().'() {'.$code."\n}");
-                $res = TRUE;
+        // validate UDT syntax
+        // TODO also validate content, especially before possible 'run' below
+        $old = ini_set('display_errors',1);
+        //for PHP < 7, a parse error causes eval() to return FALSE
+        //for PHP 7+, a parse error causes eval() to throw a ParseError
+        try {
+            $res = eval('function testfunction'.mt_rand().'($params,$smarty) {'.$code."\n}");
+            if( $res === FALSE && PHP_VERSION_ID < 70000 ) {
+                $error[] = lang('invalidcode');
+                $tmp = error_get_last();
+                if( $tmp ) {
+                    $l = $tmp['line'];
+                    $m = $tmp['message'];
+                    $error[] = "Parse error on line $l:\n$m"; //TODO \n or <br>?
+                }
+                else {
+                    $error[] = "Parse error (no detail reported)";
+                }
             }
-            catch (Exception $e) {
-                $res = FALSE;
-                $error[] = $e->getMessage();
-            }
         }
-        if( $res !== FALSE ) {
-            ob_get_clean();
-        }
-        else {
+        catch (Throwable $e) { //PHP7+ only
             $error[] = lang('invalidcode');
-            $buffer = ob_get_clean();
-            //add error
-            $error[] = preg_replace('/<br ?\/?>/', '', $buffer);
-            $validinfo = false;
+            $l = $e->getLine();
+            $m = $e->getMessage();
+            $error[] = "Parse error on line $l:\n$m";
         }
+        ini_set('display_errors',$old);
     }
 
     if( !$error ) {
+        // save the UDT
         $res = $tagops->SetUserTag($record['userplugin_name'],$record['code'],$record['description'],$userplugin_id);
         if( !$res ) $error[] = lang('errorupdatingusertag');
     }
@@ -133,21 +138,16 @@ if( isset($_POST['submit']) || isset($_POST['apply']) ) {
 
     if( !$error ) {
         if( isset($_POST['run']) ) {
+            //TODO this is potentially very risky, the UDT content could do anything!
             @ob_start();
             $params = array();
             $res = $tagops->CallUserTag($record['userplugin_name'],$params);
-            $tmp = @ob_get_contents();
-            @ob_end_clean();
-
-            if( $tmp )
-                $details = $tmp;
-            else
-                $details = $res;
+            $tmp = @ob_get_clean();
+            $details = $tmp ?: $res;
         }
     }
 
     if( !$error ) {
-        // save the UDT.
         if( isset($_POST['submit']) ) {
             redirect('listusertags.php'.$urlext);
         }
