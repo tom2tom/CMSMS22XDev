@@ -28,6 +28,7 @@ function smarty_function_cms_stylesheet($params, $smarty)
 	global $CMS_STYLESHEET;
 	$CMS_STYLESHEET = 1;
 	$name = '';
+	$id = -1;
 	$design_id = -1;
 	$use_https = 0;
 	$cache_dir = $config['css_path'];
@@ -49,10 +50,11 @@ function smarty_function_cms_stylesheet($params, $smarty)
 	#---------------------------------------------
 
     try {
-        if (isset($params['name']) && $params['name'] != '' ) {
+        if( !empty($params['name']) ) {
             $name = trim($params['name']);
-        }
-        else if (isset($params['designid']) && $params['designid']!='') {
+        } else if (!empty($params['id']) ) {
+            $id = (int)$params['id'];
+        } else if (!empty($params['designid']) ) {
             $design_id = (int)$params['designid'];
         } else {
             $content_obj = $gCms->get_content_object();
@@ -60,7 +62,7 @@ function smarty_function_cms_stylesheet($params, $smarty)
             $design_id = (int) $content_obj->GetPropertyValue('design_id');
             $use_https = (int) $content_obj->Secure();
         }
-        if( !$name && $design_id < 1 ) throw new \RuntimeException('Invalid parameters, or there is no design attached to the content page');
+        if( !$name && $id < 1 && $design_id < 1 ) throw new \RuntimeException('Invalid parameters, or there is no design attached to the content page');
 
         // @todo: change this stuff to just use // instead of protocol specific URL.
         if( isset($params['auto_https']) && $params['auto_https'] == 0 ) $auto_https = 0;
@@ -80,9 +82,12 @@ function smarty_function_cms_stylesheet($params, $smarty)
         #---------------------------------------------
 
         $query = null; // no object
-        if( $name != '' ) {
+        if( $name ) {
             // stylesheet by name
             $query = new CmsLayoutStylesheetQuery( [ 'fullname'=>$name ] );
+        } else if( $id > 0 ) {
+            // stylesheet by id
+            $query = new \CmsLayoutStylesheetQuery( [ 'id'=>$id ] );
         } else if( $design_id > 0 ) {
             // stylesheet by design id
             $query = new \CmsLayoutStylesheetQuery( [ 'design'=>$design_id ] );

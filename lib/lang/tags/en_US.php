@@ -333,6 +333,7 @@ $lang['help_function_cms_stylesheet'] = <<<'EOT'
 <p>Just insert the tag into your template/page's head section like: <code>{cms_stylesheet}</code></p>
 <h3>What parameters does it take?</h3>
 <ul>
+ <li><em>(optional)</em> id - Instead of getting all stylesheets for the given page, it will get only the one with that numeric idenfifier , whether or not it's attached to the current template.</li>
  <li><em>(optional)</em> name - Instead of getting all stylesheets for the given page, it will only get one specifically named one, whether or not it's attached to the current template.</li>
  <li><em>(optional)</em> nocombine - (boolean, default false) If enabled, and there are multiple stylesheets associated with the template, the stylesheets will be output as separate tags rather than combined into a single tag.</li>
  <li><em>(optional)</em> nolinks - (boolean, default false) If enabled, the stylesheets will be output as a URL without &lt;link&gt; tag.</li>
