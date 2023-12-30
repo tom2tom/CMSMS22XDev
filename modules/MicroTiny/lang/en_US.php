@@ -19,6 +19,7 @@ Note: No checking for the actual existence of the stylenames is done. They are u
 $lang['css_styles_text'] = 'CSS Styles';
 
 // D
+$lang['dark'] = 'Dark';
 $lang['description'] = 'Description';
 $lang['dimensions'] = 'WxH';
 $lang['dimension'] = 'Dimension';
@@ -107,7 +108,7 @@ $lang['help'] = <<<EOT
   <li> absolute url(s) or relative url(s) of relevant css file(s), comma-separated if &gt; 1</li>
   </ol>
   </p>
-  <p>See also <a href="https://www.tiny.cloud/docs/tinymce/6/add-css-options/#content_css" target="_blank">Edited content styling</a>.</p>
+  <p>See also <a href="https://www.tiny.cloud/docs/configure/content-appearance/#content_css" target="_blank">Edited content styling</a>.</p>
   <p><strong>Note:</strong> the TinyMCE 'skin_url' setting affects styling of the editor elements, as distinct from the edited content.</p>
   <p>Additionally, in conjunction with the <code>classname</code> parameter of the <code>{cms_textarea}</code> and <code>{content}</code> tags this module allows the content editor module to override the specified stylesheet differently for each content block.  This allows the ability to style each WYSIWYG area differently, if there are multiple WYSIWYG areas on the page.  This functionality is restricted to the Admin interface only.</p>
   <p>For example, in a page template adding the cssname parameter to the {content} tag allows specifying a CMSMS stylesheet to use to customize the appearance of that content block.  i.e: <code>{content block='second block' cssname='whiteonblack'}</code>
@@ -174,6 +175,7 @@ $lang['info_linker_autocomplete'] = 'This is an auto complete field. Begin by ty
 $lang['info_linker_autocomplete2'] = 'Auto-completion operates here';//NEW input-element placeholder
 
 // L
+$lang['light'] = 'Light';
 $lang['loading_info'] = 'Loading...';
 
 // M
@@ -181,14 +183,16 @@ $lang['mailto_text'] = 'Email link'; // menu label
 $lang['mailto_text2'] = 'Email Link'; //dialog heading, upper-cased version of 'mailto_text'
 $lang['msg_cancelled'] = 'Operation canceled';
 $lang['mthelp_allowcssoverride'] = 'If enabled, then any code that initializes a MicroTiny WYSIWYG area will be able to specify the name of a stylesheet to use instead of the default stylesheet specified above.';
-$lang['mthelp_dfltstylesheet'] = 'Associate a stylesheet with editors using this profile.  This allows the WYSIWYG editor to appear similar to the website appearance.';
+$lang['mthelp_dfltstylesheet'] = 'This choice governs the appearance of content displayed in the editor. This allows the edited content to appear similar to the website appearance. The choice may be overridden at runtime, if such is permitted and a stylesheet name is supplied.';
 $lang['mthelp_profileallowimages'] = 'Allow the editor to embed images and videos into the text area.  For very tightly controlled designs the content editors may only be able to select images, or videos for specific areas of a web page.';
 $lang['mthelp_profileallowtables'] = 'Allow the editor to embed and manipulate tables for tabular data.  Note:  This should not be used for controlling page layout, but only for tabular data.';
 $lang['mthelp_profilelabel'] = 'A description for this profile.  The description cannot be edited for system profiles.';
 $lang['mthelp_profilename'] = 'The name for this profile.  The name of system profiles cannot be edited.';
-$lang['mthelp_profilemenubar'] = 'Indicates if the menubar should be enabled in the viewable profiles.  The menubar typically has more options than the toolbar';
-$lang['mthelp_profilestatusbar'] = 'This flag indicates if the statusbar at the bottom of the WYSIWYG area should be enabled.  The status bar displays some useful scope information for advanced editors, and other useful information';
-$lang['mthelp_profileresize'] = 'This flag indicates if the WYSIWYG area can be resized.  In order for resize abilities to work the statusbar must be enabled';
+$lang['mthelp_profilemenubar'] = 'This flag indicates whether the menubar should be enabled in the viewable profiles.  The menubar typically has more options than the toolbar';
+$lang['mthelp_profilestatusbar'] = 'This flag indicates whether the statusbar at the bottom of the WYSIWYG area should be enabled.  The status bar displays some useful scope information for advanced editors, and other useful information';
+$lang['mthelp_profileresize'] = 'This flag indicates whether the edited content container may be resized.  In order for resize abilities to work the statusbar must be enabled';
+$lang['mthelp_profilestyler'] = 'This choice governs the appearance of content displayed in the editor. The choice may be overridden at runtime, if such is permitted and a stylesheet name is supplied.';
+$lang['mthelp_profiletheme'] = 'This choice governs the appearance of TinyMCE bars, buttons, menu-items etc';
 
 // N
 $lang['newwindow'] = 'New window';
@@ -205,12 +209,15 @@ $lang['profile_allowcssoverride'] = 'Allow blocks to override the selected style
 $lang['profile_allowimages'] = 'Allow images';
 $lang['profile_allowresize'] = 'Allow resize';
 $lang['profile_allowtables'] = 'Allow tables';
-$lang['profile_dfltstylesheet'] = 'Stylesheet for editor';
+$lang['profile_dfltstylesheet'] = 'Stylesheet for edited content';
 $lang['profile_frontend'] = 'Frontend Editors';
 $lang['profile_label'] = 'Label';
 $lang['profile_menubar'] = 'Show menubar';
 $lang['profile_name'] = 'Profile name';
 $lang['profile_showstatusbar'] = 'Show statusbar';
+$lang['profile_styler'] = 'Edited-content styler';
+$lang['profile_theme'] = 'Editor-elements theme';
+$lang['profile_usesheet'] = 'Selected stylesheet';
 $lang['prompt_anchortext'] = 'Anchor text';
 $lang['prompt_class'] = 'Class attribute';
 $lang['prompt_email'] = 'Email address';

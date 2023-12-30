@@ -65,7 +65,7 @@ class microtiny_utils
           // do nothing.
       }
 
-      // if we have a stylesheet name, use it's modification time as our mtime
+      // if we have a stylesheet name, use its modification time as our mtime
       if( $css_name ) {
           try {
               $css = CmsLayoutStylesheet::load($css_name);
@@ -90,26 +90,7 @@ class microtiny_utils
       if( $first_time ) {
           // only once per request.
           $first_time = false;
-          $baseurl = $mod->GetModuleURLPath().'/lib/js';
-          // TMCE6 needs ES6. Deploy this after last css link in the header
-          // TODO better way to get the current node from within it
-          $output .= <<<EOS
-<script id="shimsource">
- if (typeof Symbol === 'undefined') {
-  var xjS = document.createElement('script');
-  xjS.src = '$baseurl/es6-shim.min.js';
-  var el = document.getElementById('shimsource');
-  el.parentNode.insertBefore(xjS, el.nextSibling); // insert after
-  if (typeof String.prototype.trim === 'undefined') {
-   var xjS5 = document.createElement('script');
-   xjS5.src = '$baseurl/es5-shim.min.js';
-   el.parentNode.insertBefore(xjS5, xjS);
-  }
- }
-</script>
-<script src="$baseurl/tinymce/tinymce.min.js" defer></script>
-
-EOS;
+          $output .= '<script src="'.$config->smart_root_url().'/modules/MicroTiny/lib/js/tinymce/tinymce.min.js" defer></script>'; //TODO this form of root deprecated since 2.2
       }
 
       if( $frontend ) {
@@ -157,6 +138,12 @@ EOS;
    *    TMCE sources tree, and in which is a styles-file 'content.min.css'
    *  3. absolute url(s) or relative url(s) of relevant css file(s),
    *    comma-separated if > 1
+   *  url(s) in init property-values can be:
+   *    absolute e.g. https://www.example.com/plugin.min.js.
+   *    relative to the root directory of the web-server (include a leading "/") e.g. /plugin.min.js.
+   *    relative to the TMCE base_url (no leading "/") e.g. ../../myplugins/plugin.min.js.
+   *     The default base_url is the directory containing the main TMCE js file.
+   *
    * NOTE the TinyMCE 'skin_url' setting also affects TMCE styling
    * @param string $languageid Default 'en'
    * @param string $langdir Default 'ltr' Since 2.2.6
@@ -164,11 +151,25 @@ EOS;
    */
   private static function _generate_config($frontend=false, $selector='', $css_name='', $languageid='en', $langdir='ltr')
   {
+      try {
+          //TODO are non-default profiles ever relevant?
+          if( $frontend ) {
+              $profile = microtiny_profile::load(MicroTiny::PROFILE_FRONTEND);
+          }
+          else {
+              $profile = microtiny_profile::load(MicroTiny::PROFILE_ADMIN);
+          }
+      }
+      catch( Exception $e ) {
+          exit($e->Getmessage());
+      }
+
       $ajax_url = function($url) {
           return str_replace('&amp;','&',$url).'&showtemplate=false';
       };
 
       $mod = cms_utils::get_module('MicroTiny');
+      $custombase = $mod->GetModuleURLPath().'/lib/js';
       $_gCms = CmsApp::get_instance();
       $config = $_gCms->GetConfig();
       $smarty = $_gCms->GetSmarty();
@@ -176,14 +177,14 @@ EOS;
       $tpl_ob = $smarty->CreateTemplate('module_file_tpl:MicroTiny;tinymce_config.js',null,null,$smarty); // child of the global smarty
       $tpl_ob->assign('MT',$mod);
       $tpl_ob->assign('MicroTiny',$mod);
-      $tpl_ob->clear_assign('mt_profile');
-      $tpl_ob->clear_assign('mt_selector');
+//    $tpl_ob->clear_assign('mt_profile'); // ?
+      $tpl_ob->assign('mt_profile',$profile);
       $tpl_ob->assign('mt_actionid','m1_');
       $tpl_ob->assign('isfrontend',$frontend);
       $tpl_ob->assign('languageid',$languageid);
       $tpl_ob->assign('langdir',$langdir);
       $tpl_ob->assign('rooturl',CMS_ROOT_URL);
-      $tpl_ob->assign('custombase',$mod->GetModuleURLPath().'/lib/js');
+      $tpl_ob->assign('custombase',$custombase);
       $tpl_ob->assign('uploadsurl',$config['uploads_url']);
       $fp = cms_utils::get_filepicker_module();
       if( $fp ) {
@@ -194,54 +195,103 @@ EOS;
           $st3 = $fp->Lang('select_a_media_file');
       }
       else {
-          $url = ''; //TODO abort any picker setup
-          $st1 = '';//$mod->Lang('title_cmsms_filebrowser');
-          $st2 = '';//$mod->Lang('title_cmsms_imagebrowser');
-          $st3 = '';//$mod->Lang('title_cmsms_mediabrowser');
+          $url = ''; //TODO abort any downstream picker setup
+          $st1 = '';
+          $st2 = '';
+          $st3 = '';
       }
       $tpl_ob->assign('filepicker_url',$url);
+      $tpl_ob->assign('filebrowse_title', $st1);
+      $tpl_ob->assign('imagebrowse_title', $st2);
+      $tpl_ob->assign('mediabrowse_title', $st3);
+
       $url = $mod->create_url('m1_','linker',$page_id);
       $tpl_ob->assign('linker_url',$ajax_url($url));
       $url = $mod->create_url('m1_','ajax_getpages',$page_id);
       $tpl_ob->assign('getpages_url',$ajax_url($url));
       if( $selector ) $tpl_ob->assign('mt_selector',$selector);
-      $tpl_ob->assign('filebrowse_title', $st1);
-      $tpl_ob->assign('imagebrowse_title', $st2);
-      $tpl_ob->assign('mediabrowse_title', $st3);
+      else $tpl_ob->clear_assign('mt_selector'); // ?
 
-      try {
-          if( $frontend ) {
-              $profile = microtiny_profile::load(MicroTiny::PROFILE_FRONTEND);
-          }
-          else {
-              $profile = microtiny_profile::load(MicroTiny::PROFILE_ADMIN);
-          }
-
-          $tpl_ob->assign('mt_profile',$profile);
-          if( $css_name ) {
-              // if is a recorded-stylesheet name TODO smarter check e.g. not url(s), no included '.css', no matching TMCE folder-name
-              $val = '';
-              $query = new CmsLayoutStylesheetQuery(['fullname'=>$css_name]);
+      // styling
+      $done = false;
+      $val = $profile['styler'];
+      if( $val == 'sheet' ) {
+          $num = $profile['dfltstylesheet'];
+          if ( $num && $num != -1 ) {
+              $num = (int)$num;
+              $query = new CmsLayoutStylesheetQuery(['id'=>$num]);
               if( $query && !$query->EOF ) {
-                  $val = $smarty->fetch("string:{cms_stylesheet name=$css_name nolinks=1}");
-              }
-              else {
-                  $bp = cms_join_path($mod->GetModulePath(),'lib','js','tinymce','skins','content',$css_name);
-                  if( is_dir($bp) && is_file($bp.DIRECTORY_SEPARATOR.'content.min.css') ) {
-                      $val = $css_name;
+                  $val = $smarty->fetch("string:{cms_stylesheet id=$num nolinks=1}"); //requires updated cms_stylesheet tag
+                  if( $val ) {
+                      $tpl_ob->assign('mt_contentcss',$val);
                   }
-                  elseif( 1 ) {// TODO if valid absolute/relative url(s) of [min.]css file(s)
-                      $val = $css_name;
+/* for original tag
+                  $obj = $query->GetObject();
+                  if( $obj ) {
+                      $name = $obj->get_name();
+                      $val = $smarty->fetch("string:{cms_stylesheet name='$name' nolinks=1}");
+                      if( $val ) {
+                          $tpl_ob->assign('mt_contentcss',$val);
+                      }
                   }
+*/
               }
-              if( $val ) $tpl_ob->assign('mt_cssname',$val);
+          }
+          $done = true; //even if failed, no more tests
+      }
+      if( !$done ) {
+          $bp = $mod->GetModulePath().DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'js';
+          $places = glob(cms_join_path($bp,'CMSMSstyles','content','*'),GLOB_NOESCAPE|GLOB_ONLYDIR);
+          foreach( $places as $fp ) {
+              if( ($fn = basename($fp)) == $val ) {
+                 $tpl_ob->assign('mt_contentcss',$custombase.'/CMSMSstyles/content/'.$val);
+                 $done = true;
+                 break;
+              }
           }
       }
-      catch( Exception $e ) {
-          // oops, we gots a problem.
-          exit($e->Getmessage());
+      if( !$done ) {
+          $places = glob(cms_join_path($bp,'tinymce','skins','content','*'),GLOB_NOESCAPE|GLOB_ONLYDIR);
+          foreach( $places as $fp ) {
+              if( ($fn = basename($fp)) == $val ) {
+                 $tpl_ob->assign('mt_contentcss',$val);
+                 $done = true;
+                 break;
+              }
+          }
       }
 
+      if( $css_name && $profile['allowcssoverride'] ) {
+          // check if it's a recorded-stylesheet name
+          $query = new CmsLayoutStylesheetQuery(['fullname'=>$css_name]);
+          if( $query && !$query->EOF ) {
+              $val = $smarty->fetch("string:{cms_stylesheet name='$css_name' nolinks=1}");
+              if( $val ) {
+                 $tpl_ob->assign('mt_contentcss',$val);
+              }
+          }
+      }
+
+      $done = false;
+      $val = $profile['theme'];
+      $bp = $mod->GetModulePath().DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'js';
+      $places = glob(cms_join_path($bp,'CMSMSstyles','ui','*'),GLOB_NOESCAPE|GLOB_ONLYDIR);
+      foreach( $places as $fp ) {
+          if( ($fn = basename($fp)) == $val ) {
+             $tpl_ob->assign('mt_skinurl',$custombase.'/CMSMSstyles/ui/'.$val);
+             $done = true;
+             break;
+          }
+      }
+      if( !$done ) {
+          $places = glob(cms_join_path($bp,'tinymce','skins','ui','*'),GLOB_NOESCAPE|GLOB_ONLYDIR);
+          foreach( $places as $fp ) {
+              if( ($fn = basename($fp)) == $val ) {
+                 $tpl_ob->assign('mt_skin',$val);
+                 break;
+              }
+          }
+      }
       return $tpl_ob->fetch();
   }
 
