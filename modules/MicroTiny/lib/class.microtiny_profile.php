@@ -2,8 +2,21 @@
 
 class microtiny_profile implements ArrayAccess
 {
-  private static $_keys = array('menubar','allowimages','showstatusbar','allowresize','formats','name','label','system',
-                                'dfltstylesheet','allowcssoverride','allowtables');
+  private static $_keys = array(
+  'allowcssoverride',
+  'allowimages',
+  'allowresize',
+  'allowtables',
+  'dfltstylesheet',
+  'formats', //is this used?
+  'label',
+  'menubar',
+  'name',
+  'showstatusbar',
+  'styler',
+  'system',
+  'theme',
+  );
   private static $_module;
   private $_data = array();
 
@@ -36,6 +49,8 @@ class microtiny_profile implements ArrayAccess
 
     case 'name':
     case 'dfltstylesheet':
+    case 'styler':
+    case 'theme':
       if( isset($this->_data[$key]) ) return trim($this->_data[$key]);
       return '';
 
@@ -67,9 +82,11 @@ class microtiny_profile implements ArrayAccess
       if( is_array($value) ) $this->_data[$key] = $value;
       break;
 
-    case 'dfltstylesheet':
     case 'name':
     case 'label':
+    case 'dfltstylesheet':
+    case 'styler':
+    case 'theme':
       $value = trim($value);
       if( $value ) $this->_data[$key] = $value;
       break;
@@ -83,17 +100,19 @@ class microtiny_profile implements ArrayAccess
   public function offsetExists($key)
   {
     switch( $key ) {
-    case 'menubar':
-    case 'allowtables':
-    case 'allowimages':
-    case 'showstatusbar':
-    case 'allowresize':
     case 'allowcssoverride':
-    case 'formats':
+    case 'allowimages':
+    case 'allowresize':
+    case 'allowtables':
     case 'dfltstylesheet':
-    case 'name':
+    case 'formats':
     case 'label':
+    case 'menubar':
+    case 'name':
+    case 'showstatusbar':
+    case 'styler':
     case 'system':
+    case 'theme':
       return isset($this->_data[$key]);
 
     default:
@@ -105,20 +124,22 @@ class microtiny_profile implements ArrayAccess
   public function offsetUnset($key)
   {
     switch( $key ) {
-    case 'menubar':
-    case 'allowtables':
-    case 'allowimages':
-    case 'showstatusbar':
-    case 'allowresize':
     case 'allowcssoverride':
+    case 'allowimages':
+    case 'allowresize':
+    case 'allowtables':
     case 'dfltstylesheet':
     case 'formats':
     case 'label':
+    case 'menubar':
+    case 'showstatusbar':
+    case 'styler':
+    case 'theme':
       unset($this->_data[$key]);
       break;
 
-    case 'system':
     case 'name':
+    case 'system':
       throw new CmsLogicException('Cannot unset '.$key.' for '.__CLASS__);
 
     default:

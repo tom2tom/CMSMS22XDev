@@ -16,46 +16,80 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 if( !cmsms() ) exit;
-if (!$this->VisibleToAdminUser()) return;
+if( !$this->VisibleToAdminUser() ) return;
 $this->SetCurrentTab('settings');
+
+if( isset($params['cancel']) ) {
+  // handle cancel
+  $this->SetMessage($this->Lang('msg_cancelled'));
+  $this->RedirectToAdminTab();
+}
 
 try {
   $name = trim(get_parameter_value($params,'profile'));
   if( !$name ) throw new Exception($this->Lang('error_missingparam'));
 
-  if( isset($params['cancel']) ) {
-    // handle cancel
-    $this->SetMessage($this->Lang('msg_cancelled'));
-    $this->RedirectToAdminTab();
-  }
-
   // load the profile
   $profile = microtiny_profile::load($name);
 
   if( isset($params['submit']) ) {
-    //
     // handle submit
-    //
-
     foreach( $params as $key => $value ) {
       if( startswith($key,'profile_') ) {
-	$key = substr($key,strlen('profile_'));
-	$profile[$key] = $value;
+        $key = substr($key,strlen('profile_'));
+        $profile[$key] = $value;
       }
     }
 
-    // check if name changed, and if object is a system object, puke
-    if( isset($profile['system']) && $profile['system'] && $profile['name'] != $name ) {
+    // if name changed and object is a system object, puke
+    if( !empty($profile['system']) && $profile['name'] != $name ) {
       throw new CmsInvalidDataException($this->lang('error_cantchangesysprofilename'));
+    }
+
+    if( $profile['styler'] == 'sheet' && $profile['dfltstylesheet'] == -1 ) {
+      $profile['styler'] = 'One11';
     }
 
     $profile->save();
     $this->RedirectToAdminTab();
   }
 
-  // display data, strange formatting but it works...
   $smarty->assign('profile',$name);
   $smarty->assign('data',$profile);
+
+  $bp = __DIR__.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'js';
+  $vals = [];
+  $places = glob(cms_join_path($bp,'CMSMSstyles','ui','*'),GLOB_NOESCAPE|GLOB_ONLYDIR);
+  foreach( $places as $fp ) {
+    $vals[] = basename($fp);
+  }
+  $places = glob(cms_join_path($bp,'tinymce','skins','ui','*'),GLOB_NOESCAPE|GLOB_ONLYDIR);
+  foreach( $places as $fp ) {
+    $vals[] = basename($fp);
+  }
+  foreach( $vals as $name ) {
+    $themes[$name] = $name;
+  }
+  $themes['oxide'] = $this->lang('light');
+  $themes['oxide-dark'] = $this->lang('dark');
+  $smarty->assign('themes',$themes);
+
+  $vals = [];
+  $places = glob(cms_join_path($bp,'CMSMSstyles','content','*'),GLOB_NOESCAPE|GLOB_ONLYDIR);
+  foreach( $places as $fp ) {
+    $vals[] = basename($fp);
+  }
+  $places = glob(cms_join_path($bp,'tinymce','skins','content','*'),GLOB_NOESCAPE|GLOB_ONLYDIR);
+  foreach( $places as $fp ) {
+    $vals[] = basename($fp);
+  }
+  foreach( $vals as $name ) {
+    $stylers[$name] = $name;
+  }
+  $stylers['default'] = $this->lang('light');
+  $stylers['dark'] = $this->lang('dark');
+  $stylers['sheet'] = $this->Lang('profile_usesheet');
+  $smarty->assign('stylers',$stylers);
 
   $stylesheets = CmsLayoutStylesheet::get_all(TRUE);
   $stylesheets = array('-1'=>$this->Lang('none')) + $stylesheets;

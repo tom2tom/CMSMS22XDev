@@ -16,15 +16,29 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-$obj = new microtiny_profile(array('name'=>MicroTiny::PROFILE_FRONTEND,'label'=>$this->Lang('profile_frontend'),
-				   'menubar'=>false,'allowimages'=>false,'showstatusbar'=>false,
-				   'allowresize'=>false,'system'=>true));
+$obj = new microtiny_profile(array(
+ 'name'=>MicroTiny::PROFILE_FRONTEND,
+ 'label'=>$this->Lang('profile_frontend'),
+ 'menubar'=>false,
+ 'allowimages'=>false,
+ 'showstatusbar'=>false,
+ 'allowresize'=>false,
+ 'styler'=>'One11',
+ 'theme'=>'One11',
+ 'system'=>true));
 $obj->save();
 
 
-$obj = new microtiny_profile(array('name'=>MicroTiny::PROFILE_ADMIN,'label'=>$this->Lang('profile_admin'),
-				   'menubar'=>true,'allowimages'=>true,'showstatusbar'=>true,
-				   'allowresize'=>true,'system'=>true));
+$obj = new microtiny_profile(array(
+ 'name'=>MicroTiny::PROFILE_ADMIN,
+ 'label'=>$this->Lang('profile_admin'),
+ 'menubar'=>true,
+ 'allowimages'=>true,
+ 'showstatusbar'=>true,
+ 'allowresize'=>true,
+ 'styler'=>'One11',
+ 'theme'=>'One11',
+ 'system'=>true));
 $obj->save();
 #
 # EOF

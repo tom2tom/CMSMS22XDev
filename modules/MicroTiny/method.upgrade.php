@@ -25,13 +25,30 @@ else {
   if( version_compare($oldversion,'2.2.6') < 0 ) {
     //redundant permission might still exist
     $this->RemovePermission('MicroTiny View HTML Source');
+    //add extra profile-properties
+    foreach( [MicroTiny::PROFILE_FRONTEND,MicroTiny::PROFILE_ADMIN] as $name ) {
+      $val = $this->GetPreference('profile_'.$name);
+      $arr = unserialize($val);
+      if( empty($arr['dfltstylesheet']) ) {
+        $arr['dfltstylesheet'] = -1;
+      }
+      if( $arr['dfltstylesheet'] == -1) {
+        $arr['styler'] == 'One11';
+      }
+      else {
+        $arr['styler'] == 'sheet';
+      }
+      $arr['theme'] == 'One11';
+      ksort($arr,SORT_STRING);
+      $val = $this->SetPreference('profile_'$name,serialize($arr));
+    }
   }
 }
 /*
 NOTE: when upgrading TinyMCE, ensure that all its related translation
 files (*.js) that also correspond to supported CMSMS translations (nls
-files exist, even if not currently installed) are listed in the translations
-lookup file,
+files exist, even if not currently installed) are listed in the
+translations lookup file,
  __DIR__/lib/langs.manifest
 in each case, without a trailing '.js'
 */
