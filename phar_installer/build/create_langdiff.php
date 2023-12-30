@@ -19,13 +19,37 @@ $uri_from = 'svn://';
 $uri_to = 'file://';
 // other params
 $_debug = false;
-//$_compress = true;
 $_interactive = false; //$_cli && (DIRECTORY_SEPARATOR !== '/');  //always false on windows
 $_tmpdir = sys_get_temp_dir().DIRECTORY_SEPARATOR.basename(__FILE__,'php').getmypid();
 $_tmpfile = $_tmpdir.DIRECTORY_SEPARATOR.'tmp.out';
 $_configname = str_replace('.php', '.ini', $_scriptname);
 $_configfile = get_config_file();
 $outfile = '';
+$diff = 0;
+$verbose = 0;
+
+// translations @ http://svn.cmsmadesimple.org/svn/translatecenter/modules/*
+//FROM                 FOR
+$placesmap = [
+'Core_cms2'          =>'admin/lang',
+'cms_selflink'       =>'lib/lang/cms_selflink',
+'admin_cms2_help'    =>'lib/lang/help',
+'admin_cms2_tags'    =>'lib/lang/tags',
+'Tasks'              =>'lib/lang/tasks',
+'adminsearch_cms2'   =>'modules/AdminSearch/lang',
+'contentmanager_cms2'=>'modules/CMSContentManager/lang',
+'CmsJobManager'      =>'modules/CmsJobManager/lang',
+'cmsmailer_cms2'     =>'modules/CMSMailer/lang',
+'designmanager_cms2' =>'modules/DesignManager/lang',
+'filemanager_cms2'   =>'modules/FileManager/lang',
+'FilePicker_cms2'    =>'modules/FilePicker/lang',
+'microtiny_cms2'     =>'modules/MicroTiny/lang',
+'modulemanager_cms2' =>'modules/ModuleManager/lang',
+'navigator_cms2'     =>'modules/Navigator/lang',
+'news_cms2'          =>'modules/News/lang',
+'search_cms2'        =>'modules/Search/lang',
+'cmspharinstall'     =>'phar_installer/app/lang/app',
+];
 
 $src_excludes = [
 '~\.git.*~',
@@ -144,7 +168,7 @@ if ($_cli && $_interactive) {
         @pcntl_signal(SIGINT, 'sighandler');
     }
 
-    $uri_from = ask_string("Enter 'comparison' fileset uri", $uri_from);
+    $uri_from = ask_string("Enter 'comparison' fileset uri, or TC for translation-center files", $uri_from);
     $uri_to = ask_string("Enter 'release' fileset uri", $uri_to);
     if (startswith($uri_from, 'svn://') || startswith($uri_to, 'svn://')) {
         $svn_root = ask_string('Enter svn repository root url', $svn_root);
@@ -154,11 +178,11 @@ if ($_cli && $_interactive) {
 }
 
 // validate the config
-if (empty($uri_from)) {
+if (empty($uri_from)) { //TODO if sources from svn Translation Center
     fatal("No 'reference' file-set source provided");
 }
-if (!preg_match('~(file|svn|git)://~', $uri_from)) {
-    fatal("Unrecognised 'reference' file-set source. Specify file://... or git://... or svn://...");
+if (!preg_match('~((file|svn|git)://|TC)~', $uri_from)) {
+    fatal("Unrecognised 'reference' file-set source. Specify file://... or git://... or svn://... or TC");
 }
 if (empty($uri_to)) {
     fatal("No 'release' file-set source provided");
@@ -212,22 +236,45 @@ if (is_dir($_todir)) {
 mkdir($_todir, 0777);
 
 // retrieve sources
-try {
-    $res = get_sources($uri_from, $_fromdir);
-} catch (Throwable $t) {
-    info($t->GetMessage());
-    $res = false;
-}
-if (!$res) {
-    fatal('Retrieving files from ' .$uri_from. ' failed');
-}
-if (0) { //TODO from-version < 2.1 ?
-    if (!is_file(joinpath($_fromdir, 'version.php')) || !is_dir(joinpath($_fromdir, 'lib', 'adodb_lite'))) {
-        fatal('The files retrieved from ' .$uri_from. ' do not appear to be for a CMSMS installation');
+if ($uri_from == "TC") {
+    if ($verbose == 0) info('Retrieving translations from Translation Center svn');
+    $bp = $_fromdir.'/svntranslations';
+    foreach ($placesmap as $fromname => $toplace) {
+        $fp = joinpath($bp, $toplace, 'ext');
+        mkdir($fp, 0777, true);
+        verbose(1,"Fetching $fromname translations");
+        try {
+           $url = 'http://svn.cmsmadesimple.org/svn/translatecenter/modules/'.$fromname.'/lang/ext';
+           $cmd = "svn checkout $url@HEAD --force --non-interactive --trust-server-cert $fp";
+           $out = exec($cmd);
+           $res = ($out != false); // OR includes some specific content e.g. 'Retrieved...'
+        } catch (Throwable $t) {
+            info('Translation '.$fromname.': '.$t->GetMessage());
+            $res = false;
+            break;
+        }
+    }
+    if (!$res) {
+        fatal('Retrieving translations from svn failed');
     }
 } else {
-    if (!is_file(joinpath($_fromdir, 'lib', 'version.php')) || !is_dir(joinpath($_fromdir, 'lib', 'classes', 'Database'))) {
-        fatal('The files retrieved from ' .$uri_from. ' do not appear to be for a CMSMS installation');
+    try {
+        $res = get_sources($uri_from, $_fromdir);
+    } catch (Throwable $t) {
+        info($t->GetMessage());
+        $res = false;
+    }
+    if (!$res) {
+        fatal('Retrieving files from ' .$uri_from. ' failed');
+    }
+    if (0) { //TODO from-version < 2.1 ?
+        if (!is_file(joinpath($_fromdir, 'version.php')) || !is_dir(joinpath($_fromdir, 'lib', 'adodb_lite'))) {
+            fatal('The files retrieved from ' .$uri_from. ' do not appear to be for a CMSMS installation');
+        }
+    } else {
+        if (!is_file(joinpath($_fromdir, 'lib', 'version.php')) || !is_dir(joinpath($_fromdir, 'lib', 'classes', 'Database'))) {
+            fatal('The files retrieved from ' .$uri_from. ' do not appear to be for a CMSMS installation');
+        }
     }
 }
 
@@ -256,13 +303,24 @@ list($_to_ver, $_to_name) = get_version($_todir);
 
 // begin output
 output('LANG DIFF GENERATED: '.time());
-output('LANG DIFF FROM VERSION: '.$_from_ver);
-output('LANG DIFF FROM NAME: '.$_from_name);
+if ($uri_from == "TC") {
+    output('LANG DIFF FROM TRANSLATION CENTER'); 
+} else {
+    output('LANG DIFF FROM VERSION: '.$_from_ver); 
+    output('LANG DIFF FROM NAME: '.$_from_name); //ditto
+}
 output('LANG DIFF TO VERSION: '.$_to_ver);
 output('LANG DIFF TO NAME: '.$_to_name);
 
 $sep = DIRECTORY_SEPARATOR;
-$_outfile = __DIR__."{$sep}langs-{$_from_ver}-{$_to_ver}.diff";
+if ($uri_from == "TC") {
+    $_outfile = __DIR__."{$sep}langs-svntc-{$_to_ver}.diff";
+} else {
+    $_outfile = __DIR__."{$sep}langs-{$_from_ver}-{$_to_ver}.diff";
+}
+output('DIFF RESULTS IN: '.$_outfile);
+info('Diff results in: '.$_outfile);
+
 $processed = [];
 
 if (is_file($_outfile)) {
@@ -270,42 +328,48 @@ if (is_file($_outfile)) {
 }
 //check all lang-dirs in TO sources
 $langdirs = [
- "$_todir{$sep}admin{$sep}lang",
- "$_todir{$sep}lib{$sep}lang",
- "$_todir{$sep}phar_installer{$sep}app{$sep}lang",
-] + glob("$_todir{$sep}modules{$sep}*{$sep}lang", GLOB_NOESCAPE | GLOB_ONLYDIR);
+ "$_todir{$sep}admin{$sep}lang{$sep}ext",
+ "$_todir{$sep}lib{$sep}lang{$sep}ext",
+ "$_todir{$sep}phar_installer{$sep}app{$sep}lang{$sep}ext",
+] + glob("$_todir{$sep}modules{$sep}*{$sep}lang{$sep}ext", GLOB_NOESCAPE | GLOB_ONLYDIR);
 
 foreach ($langdirs as $tp) {
-    //TODO skip $tp's matching any $src_excludes[]
-    $fp = str_replace($_todir, $_fromdir, $tp);
+    //TODO skip $tp's matching any $src_excludes[] esp .svn
+    if ($uri_from == "TC") {
+        $fp = str_replace($_todir, $_fromdir.DIRECTORY_SEPARATOR.'svntranslations', $tp);
+    } else {
+        $fp = str_replace($_todir, $_fromdir, $tp);
+    }
     $processed[] = $fp;
     $cmd = "diff -rBZU 0 -x=*.htm? $fp $tp 2>&1";
     $res = shell_exec($cmd);
+    $res = preg_replace('/^diff.*$/m', '', $res);
     file_put_contents($_outfile, $res, FILE_APPEND);
 }
 
 //check for extra lang-dirs in FROM sources
 $langdirs = [
- "$_fromdir{$sep}admin{$sep}lang",
- "$_fromdir{$sep}lib{$sep}lang",
- "$_fromdir{$sep}phar_installer{$sep}app{$sep}lang",
-] + glob("$_fromdir{$sep}modules{$sep}*{$sep}lang", GLOB_NOESCAPE | GLOB_ONLYDIR);
+ "$_fromdir{$sep}admin{$sep}lang{$sep}ext",
+ "$_fromdir{$sep}lib{$sep}lang{$sep}ext",
+ "$_fromdir{$sep}phar_installer{$sep}app{$sep}lang{$sep}ext",
+] + glob("$_fromdir{$sep}modules{$sep}*{$sep}lang{$sep}ext", GLOB_NOESCAPE | GLOB_ONLYDIR);
 $first = true;
 foreach ($langdirs as $fp) {
-    //TODO skip $fp's matching any $src_excludes[]
-    if (!in_array($fp, $processed)) {
+    //TODO skip $fp's matching any $src_excludes[] esp .svn
+    if (is_dir($fp) && !in_array($fp, $processed)) {
         if ($first) {
-            file_put_contents($_outfile, "\n\n====== EXTRAS ======\n\n", FILE_APPEND);
+            file_put_contents($_outfile, "\n\n ====== EXTRAS ======\n\n", FILE_APPEND);
             $first = false;
         }
         $tp = str_replace($_fromdir, $_todir, $fp);
         $cmd = "diff -rBZU 0 -x=*.htm? $fp $tp 2>&1";
         $res = shell_exec($cmd);
+        $res = preg_replace('/^diff.*$/m', '', $res);
         file_put_contents($_outfile, $res, FILE_APPEND);
     }
 }
 
-//cleanup();
+//cleanup(); DEBUG
 info('DONE');
 exit(0);
 
@@ -355,6 +419,12 @@ function info($str)
     } else {
         echo("<br>INFO: $str");
     }
+}
+
+function verbose($lvl,$msg)
+{
+    global $verbose;
+    if( $verbose >= $lvl ) echo "VERBOSE: ".$msg."\n";
 }
 
 function debug($str)
@@ -624,11 +694,4 @@ function get_sources($sourceuri, $tmpdir)
         return ($retval == 0);
     }
     return false;
-}
-
-function get_svn_branch()
-{
-    $cmd = "svn info | grep '^URL:' | egrep -o '(tags|branches)/[^/]+|trunk'";
-    $out = exec($cmd);
-    return $out;
 }

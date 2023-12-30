@@ -1,6 +1,7 @@
 [config]
 ;non-default parameters
 ;svn_root = "http://svn.cmsmadesimple.org/svn/cmsmadesimple"
+;uri_from = "TC"
 ;uri_from = "svn://"
 ;uri_from = "svn://<pathto>"
 ;uri_from = "svn://trunk"
