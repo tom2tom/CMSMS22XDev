@@ -44,16 +44,14 @@ class microtiny_utils
       list($languageid,$ltr) = self::GetLanguageId();
       $mtime = time() - 300; // default cache for 5 minutes ?
 
-      // get the cssname that we're going to use (either passed in, or from profile)
+      // get the styling identifier that we're going to use (either passed in, or from profile)
       try {
-          $profile = [];
           if( $frontend ) {
               $profile = microtiny_profile::load(MicroTiny::PROFILE_FRONTEND);
           }
           else {
               $profile = microtiny_profile::load(MicroTiny::PROFILE_ADMIN);
           }
-
           if( empty($profile['allowcssoverride']) ) {
               // not allowing override
               $css_name = '';
@@ -61,20 +59,22 @@ class microtiny_utils
               if( $css_id > 0 ) $css_name = $css_id;
           }
       }
-      catch( \Exception $e ) {
+      catch( Exception $e ) {
           // do nothing.
       }
 
-      // if we have a stylesheet name, use its modification time as our mtime
       if( $css_name ) {
+          // if we have a stylesheet identifier, use its modification time as our mtime
           try {
               $css = CmsLayoutStylesheet::load($css_name);
               $css_name = $css->get_name();
               $mtime = $css->get_modified();
           }
           catch( Exception $e ) {
-              // couldn't load the stylesheet for some reason.
-              $css_name = '';
+              // couldn't load a stylesheet
+              // TODO if it's not a styling-related folder name or url(s), ignore it
+              //   $css_name = '';
+              //$mtime = TODO if not 5 mins life
           }
       }
 
@@ -128,23 +128,27 @@ class microtiny_utils
    * @since 1.0
    * @param bool $frontend Default false
    * @param string $selector Default ''
-   * @param string $css_name Default ''
-   * @see also https://www.tiny.cloud/docs/tinymce/6/add-css-options/#content_css
+   * @param mixed $css_name string | int Default ''
    *  Valid values are:
    *  1. name of a stylesheet recorded for this site, and containing
    *    style-classes recognised by TinyMCE
-   *  2. 'default','dark','document','writer' or some other custom-styles
-   *    folder name, located in the .../skins/content folder in the
-   *    TMCE sources tree, and in which is a styles-file 'content.min.css'
-   *  3. absolute url(s) or relative url(s) of relevant css file(s),
-   *    comma-separated if > 1
-   *  url(s) in init property-values can be:
-   *    absolute e.g. https://www.example.com/plugin.min.js.
-   *    relative to the root directory of the web-server (include a leading "/") e.g. /plugin.min.js.
-   *    relative to the TMCE base_url (no leading "/") e.g. ../../myplugins/plugin.min.js.
-   *     The default base_url is the directory containing the main TMCE js file.
-   *
+   *  2. numeric identifier of a stylesheet recorded for this site, and
+   *    containing style-classes recognised by TinyMCE
+   *  3. 'default','dark','document','writer' or another styles folder
+   *    name, located in the .../tinymce/skins/content folder in the
+   *    MicroTiny sources tree, and in which is a styles-file 'content.min.css'
+   *  4. a styles folder name located in the .../CMSMSstyles/skins/content
+   *    folder in the MicroTiny sources tree, and in which is a styles-file
+   *    'content.min.css'
+   *  5. absolute url(s) or relative url(s) of relevant css file(s),
+   *    comma-separated if > 1. Url(s) in init property-values can be:
+   *    * absolute e.g. https://www.example.com/content.min.css.
+   *    * relative to the root directory of the web-server (include a leading "/") e.g. /content.min.css.
+   *    * relative to the TMCE base_url (no leading "/") e.g. ../../mystyles/content.min.css.
+   *    The default base_url is the directory containing the main TMCE js file.
+   * @see also https://www.tiny.cloud/docs/configure/content-appearance/#content_css
    * NOTE the TinyMCE 'skin_url' setting also affects TMCE styling
+   *
    * @param string $languageid Default 'en'
    * @param string $langdir Default 'ltr' Since 2.2.6
    * @return string
@@ -152,7 +156,7 @@ class microtiny_utils
   private static function _generate_config($frontend=false, $selector='', $css_name='', $languageid='en', $langdir='ltr')
   {
       try {
-          //TODO are non-default profiles ever relevant?
+          //TODO are non-system/default profiles ever relevant?
           if( $frontend ) {
               $profile = microtiny_profile::load(MicroTiny::PROFILE_FRONTEND);
           }
@@ -212,32 +216,73 @@ class microtiny_utils
       if( $selector ) $tpl_ob->assign('mt_selector',$selector);
       else $tpl_ob->clear_assign('mt_selector'); // ?
 
-      // styling
+      // edited-content styling
       $done = false;
-      $val = $profile['styler'];
-      if( $val == 'sheet' ) {
-          $num = $profile['dfltstylesheet'];
-          if ( $num && $num != -1 ) {
-              $num = (int)$num;
-              $query = new CmsLayoutStylesheetQuery(['id'=>$num]);
-              if( $query && !$query->EOF ) {
-                  $val = $smarty->fetch("string:{cms_stylesheet id=$num nolinks=1}"); //requires updated cms_stylesheet tag
-                  if( $val ) {
-                      $tpl_ob->assign('mt_contentcss',$val);
+      if( $css_name && $profile['allowcssoverride'] ) {
+          // check if it's a recorded-stylesheet identifier
+          try {
+              $css = CmsLayoutStylesheet::load($css_name);
+              $val = $css->get_name();
+//TODO consider direct determination
+//include_once cms_join_path(CMS_ROOT_PATH,'lib','plugins','function.cms_stylesheet.php');
+//$val = smarty_function_cms_stylesheet(['name'=>$val,'nolinks'=>1],$smarty);
+              $val = $smarty->fetch("string:{cms_stylesheet name='$val' nolinks=1}");
+              if( $val ) {
+                 $tpl_ob->assign('mt_contentcss',$val);
+                 $done = true;
+              }
+          }
+          catch( Exception $e ) {
+              // possibly a style-folder name
+              $bp = $mod->GetModulePath().DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'js';
+              $fp = cms_join_path($bp,'CMSMSstyles','content',$css_name);
+              if( is_dir($fp) && is_readable($fp.DIRECTORY_SEPARATOR.'content.min.css') ) {
+                  $tpl_ob->assign('mt_contentcss',$custombase.'/CMSMSstyles/content/'.$css_name);
+                  $done = true;
+              }
+              if( !$done ) {
+                  $fp = cms_join_path($bp,'tinymce','skins','content',$css_name);
+                  if( is_dir($fp) && is_readable($fp.DIRECTORY_SEPARATOR.'content.min.css') ) {
+                      $tpl_ob->assign('mt_contentcss',$css_name);
+                      $done = true;
                   }
-/* for original tag
-                  $obj = $query->GetObject();
-                  if( $obj ) {
-                      $name = $obj->get_name();
-                      $val = $smarty->fetch("string:{cms_stylesheet name='$name' nolinks=1}");
+              }
+              if( !$done ) {
+                 // possibly style-folder url(s)
+                 if( 1 ) { $tpl_ob->assign('mt_contentcss',$css_name); } //TODO validate
+                 $done = true;
+              }
+          }
+      }
+      if( !$done ) {
+          $val = $profile['styler'];
+          if( $val == 'sheet' ) {
+              $num = $profile['dfltstylesheet'];
+              if ( $num && $num != -1 ) {
+                  $num = (int)$num;
+                  $query = new CmsLayoutStylesheetQuery(['id'=>$num]);
+                  if( $query && !$query->EOF ) {
+//TODO consider direct determination
+//include_once cms_join_path(CMS_ROOT_PATH,'lib','plugins','function.cms_stylesheet.php');
+//$val = smarty_function_cms_stylesheet(['id'=>$num,'nolinks'=>1],$smarty);
+                      $val = $smarty->fetch("string:{cms_stylesheet id=$num nolinks=1}"); //requires updated cms_stylesheet tag
                       if( $val ) {
                           $tpl_ob->assign('mt_contentcss',$val);
                       }
-                  }
+/* for original tag
+                      $obj = $query->GetObject();
+                      if( $obj ) {
+                          $name = $obj->get_name();
+                          $val = $smarty->fetch("string:{cms_stylesheet name='$name' nolinks=1}");
+                          if( $val ) {
+                              $tpl_ob->assign('mt_contentcss',$val);
+                          }
+                      }
 */
+                  }
               }
+              $done = true; //even if failed, no more tests
           }
-          $done = true; //even if failed, no more tests
       }
       if( !$done ) {
           $bp = $mod->GetModulePath().DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'js';
@@ -257,17 +302,6 @@ class microtiny_utils
                  $tpl_ob->assign('mt_contentcss',$val);
                  $done = true;
                  break;
-              }
-          }
-      }
-
-      if( $css_name && $profile['allowcssoverride'] ) {
-          // check if it's a recorded-stylesheet name
-          $query = new CmsLayoutStylesheetQuery(['fullname'=>$css_name]);
-          if( $query && !$query->EOF ) {
-              $val = $smarty->fetch("string:{cms_stylesheet name='$css_name' nolinks=1}");
-              if( $val ) {
-                 $tpl_ob->assign('mt_contentcss',$val);
               }
           }
       }
