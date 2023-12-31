@@ -55,7 +55,7 @@ tinymce.init({
     image_title: true,
     language: "{$languageid}",
     menu: {
-      insert: { title: "Insert", items: "image link mailto_CP{if !$isfrontend} pagelink_CP{/if} media{if $mt_profile.allowtables} inserttable{/if} | charmap emoticons | hr nonbreaking_CP anchor | insertdatetime" }{if $mt_profile.allowtables},
+      insert: { title: "Insert", items: "image link mailto_CP{if !$isfrontend} pagelink_CP{/if} media{if $mt_profile.allowtables} inserttable{/if} | nonbreaking_CP charmap emoticons | hr anchor | insertdatetime" }{if $mt_profile.allowtables},
       table: { title: "Table", items: "inserttable | cell row column | advtablesort | tableprops deletetable" }
 {else}
 {*this clunky format generates correct js*}
