@@ -100,18 +100,21 @@ $lang['help'] = <<<EOT
   <p>To enable frontend WYSIWYG editors, the <code>{cms_init_editor}</code> tag must be included in the head part of the template.  Additionally, this module must be set as the &quot;Frontend WYSIWYG&quot; in the global settings page of the CMSMS admin console.</p>
 
 <h3>About Styles and Colors:</h3>
-  <p>This module provides the <em>(optional)</em> ability to associate one or more custom stylesheet(s) with the profile. This provides the ability to style the edit portion WYSIWYG editor in a manner similar to the website style.  Providing a more WYSIWYG like experience for the content editor.</p>
+  <p>This module provides the <em>(optional)</em> ability to associate one or more custom stylesheet(s) with each profile. This association can enable styling of the edited content in a manner similar to the website style, and by so doing, provide a more-WYSIWYG-like experience for the content editor.</p>
   <p>Valid values are:
   <ol>
   <li> name of a stylesheet recorded for this site</li>
-  <li> 'default','dark','document','writer' or some other custom-styles folder name, located in the .../skins/content folder in the TinyMCE sources tree, and in which is a styles-file 'content.min.css'</li>
+  <li> numeric id of a stylesheet recorded for this site</li>
+  <li> 'default','dark','document','writer' or some other styles folder name, located in the .../tinymce/skins/content folder in the MicroTiny sources tree, and in which is a styles-file 'content.min.css'</li>
+  <li> the name of a custom-styles folder located in the .../CMSMSstyles/content folder in the MicroTiny sources tree, and in which is a styles-file 'content.min.css'</li>
   <li> absolute url(s) or relative url(s) of relevant css file(s), comma-separated if &gt; 1</li>
   </ol>
   </p>
+  <p>The folders available for selection per 3 and 4 above may be changed as appropriate.</p>
   <p>See also <a href="https://www.tiny.cloud/docs/configure/content-appearance/#content_css" target="_blank">Edited content styling</a>.</p>
   <p><strong>Note:</strong> the TinyMCE 'skin_url' setting affects styling of the editor elements, as distinct from the edited content.</p>
   <p>Additionally, in conjunction with the <code>classname</code> parameter of the <code>{cms_textarea}</code> and <code>{content}</code> tags this module allows the content editor module to override the specified stylesheet differently for each content block.  This allows the ability to style each WYSIWYG area differently, if there are multiple WYSIWYG areas on the page.  This functionality is restricted to the Admin interface only.</p>
-  <p>For example, in a page template adding the cssname parameter to the {content} tag allows specifying a CMSMS stylesheet to use to customize the appearance of that content block.  i.e: <code>{content block='second block' cssname='whiteonblack'}</code>
+  <p>For example, in a page template adding the cssname parameter to the {content} tag allows specifying a CMSMS stylesheet to use to customize the appearance of that content block e.g. <code>{content block='second block' cssname='whiteonblack'}</code>
   <p>Additionally, a setting in the content editing section of the &quot;Global Settings&quot; page allows automatically supplying the css name parameter with the name of the content block.</p>
 
   <h4>Styles for the WYSIWYG editor</h4>
@@ -139,9 +142,6 @@ h2 {
    <dt>Q: Where is the support for <em style="color: red;">&quot;some functionality&quot;</em> in the editor, and how do I activate it?</dt>
       <dd>A: You don't.  The version of TinyMCE distributed with MicroTiny is a trimmed down, custom package.  We have added our own custom plugins, but don't support the addition of custom plugins or the ability to customize the configuration in any way other than the edit profile form.  If you require additional functionality in a WYSIWYG editor you may have some success in a third party module.</dd>
     <br>
-    <dt>Q: Which HTML/HTML5 tags are supported by this module, and how do I change that?</dt>
-      <dd>A: The list of supported elements in the default TinyMCE editor can be found on the TinyMCE website <em>(though we don't have a correct link at the moment)</em>.  There is no mechanism in the MicroTiny module to extend that.</dd>
-    <br>
     <dt>Q: I cannot get the MicroTiny editor to work in the Admin interface, what can I do</dt>
       <dd>A: There are a few steps you can follow to diagnose this issue:
         <ol>
@@ -152,6 +152,7 @@ h2 {
           <li>Check the page template(s). The wysiwyg=false parameter may be specified on one or more content blocks in the page template(s) which will disable the WYSIWYG editor.</li>
         </ol>
       </dd>
+    <br>
     <dt>Q: How do I insert a &lt;br/&gt; instead of create new paragraphs?</dt>
       <dd>A: Press [shift]+Enter instead of just the Enter key.</dd>
     <br>
@@ -186,11 +187,11 @@ $lang['mthelp_allowcssoverride'] = 'If enabled, then any code that initializes a
 $lang['mthelp_dfltstylesheet'] = 'This choice governs the appearance of content displayed in the editor. This allows the edited content to appear similar to the website appearance. The choice may be overridden at runtime, if such is permitted and a stylesheet name is supplied.';
 $lang['mthelp_profileallowimages'] = 'Allow the editor to embed images and videos into the text area.  For very tightly controlled designs the content editors may only be able to select images, or videos for specific areas of a web page.';
 $lang['mthelp_profileallowtables'] = 'Allow the editor to embed and manipulate tables for tabular data.  Note:  This should not be used for controlling page layout, but only for tabular data.';
-$lang['mthelp_profilelabel'] = 'A description for this profile.  The description cannot be edited for system profiles.';
-$lang['mthelp_profilename'] = 'The name for this profile.  The name of system profiles cannot be edited.';
+$lang['mthelp_profilelabel'] = 'A description for this profile. The description cannot be edited for system profiles.';
+$lang['mthelp_profilename'] = 'The name for this profile. The name of system profiles cannot be edited.';
 $lang['mthelp_profilemenubar'] = 'This flag indicates whether the menubar should be enabled in the viewable profiles.  The menubar typically has more options than the toolbar';
 $lang['mthelp_profilestatusbar'] = 'This flag indicates whether the statusbar at the bottom of the WYSIWYG area should be enabled.  The status bar displays some useful scope information for advanced editors, and other useful information';
-$lang['mthelp_profileresize'] = 'This flag indicates whether the edited content container may be resized.  In order for resize abilities to work the statusbar must be enabled';
+$lang['mthelp_profileresize'] = 'This flag indicates whether the edited content container may be resized.  For resizing to work, the statusbar must be enabled.';
 $lang['mthelp_profilestyler'] = 'This choice governs the appearance of content displayed in the editor. The choice may be overridden at runtime, if such is permitted and a stylesheet name is supplied.';
 $lang['mthelp_profiletheme'] = 'This choice governs the appearance of TinyMCE bars, buttons, menu-items etc';
 
