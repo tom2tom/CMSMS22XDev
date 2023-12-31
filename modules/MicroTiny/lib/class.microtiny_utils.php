@@ -137,10 +137,11 @@ class microtiny_utils
    *  3. 'default','dark','document','writer' or another styles folder
    *    name, located in the .../tinymce/skins/content folder in the
    *    MicroTiny sources tree, and in which is a styles-file 'content.min.css'
-   *  4. a styles folder name located in the .../CMSMSstyles/skins/content
+   *  4. 'iight' which is treated as alias of 'default'
+   *  5. a styles folder name located in the .../CMSMSstyles/skins/content
    *    folder in the MicroTiny sources tree, and in which is a styles-file
    *    'content.min.css'
-   *  5. absolute url(s) or relative url(s) of relevant css file(s),
+   *  6. absolute url(s) or relative url(s) of relevant css file(s),
    *    comma-separated if > 1. Url(s) in init property-values can be:
    *    * absolute e.g. https://www.example.com/content.min.css.
    *    * relative to the root directory of the web-server (include a leading "/") e.g. /content.min.css.
@@ -215,7 +216,6 @@ class microtiny_utils
       $tpl_ob->assign('getpages_url',$ajax_url($url));
       if( $selector ) $tpl_ob->assign('mt_selector',$selector);
       else $tpl_ob->clear_assign('mt_selector'); // ?
-
       // edited-content styling
       $done = false;
       if( $css_name && $profile['allowcssoverride'] ) {
@@ -228,8 +228,8 @@ class microtiny_utils
 //$val = smarty_function_cms_stylesheet(['name'=>$val,'nolinks'=>1],$smarty);
               $val = $smarty->fetch("string:{cms_stylesheet name='$val' nolinks=1}");
               if( $val ) {
-                 $tpl_ob->assign('mt_contentcss',$val);
-                 $done = true;
+                  $tpl_ob->assign('mt_contentcss',$val);
+                  $done = true;
               }
           }
           catch( Exception $e ) {
@@ -241,16 +241,21 @@ class microtiny_utils
                   $done = true;
               }
               if( !$done ) {
-                  $fp = cms_join_path($bp,'tinymce','skins','content',$css_name);
+                  if( strcasecmp($css_name,'light') == 0 ) $val = 'default';
+                  elseif( strcasecmp($css_name,'dark') == 0 ) $val = 'dark';
+                  else $val = $css_name;
+                  $fp = cms_join_path($bp,'tinymce','skins','content',$val);
                   if( is_dir($fp) && is_readable($fp.DIRECTORY_SEPARATOR.'content.min.css') ) {
-                      $tpl_ob->assign('mt_contentcss',$css_name);
+                      $tpl_ob->assign('mt_contentcss',$val);
                       $done = true;
                   }
               }
               if( !$done ) {
-                 // possibly style-folder url(s)
-                 if( 1 ) { $tpl_ob->assign('mt_contentcss',$css_name); } //TODO validate
-                 $done = true;
+                  // possibly style-folder absolute or relative url(s)
+                  if( 1 ) {//TODO validate
+                      $tpl_ob->assign('mt_contentcss',$css_name);
+                      $done = true;
+                  }
               }
           }
       }
@@ -260,7 +265,7 @@ class microtiny_utils
               $num = $profile['dfltstylesheet'];
               if ( $num && $num != -1 ) {
                   $num = (int)$num;
-                  $query = new CmsLayoutStylesheetQuery(['id'=>$num]);
+                  $query = new CmsLayoutStylesheetQuery(['id'=>$num]); //OR try CmsLayoutStylesheet::load($num)
                   if( $query && !$query->EOF ) {
 //TODO consider direct determination
 //include_once cms_join_path(CMS_ROOT_PATH,'lib','plugins','function.cms_stylesheet.php');
@@ -269,7 +274,7 @@ class microtiny_utils
                       if( $val ) {
                           $tpl_ob->assign('mt_contentcss',$val);
                       }
-/* for original tag
+/* for former version of tag
                       $obj = $query->GetObject();
                       if( $obj ) {
                           $name = $obj->get_name();
@@ -286,44 +291,31 @@ class microtiny_utils
       }
       if( !$done ) {
           $bp = $mod->GetModulePath().DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'js';
-          $places = glob(cms_join_path($bp,'CMSMSstyles','content','*'),GLOB_NOESCAPE|GLOB_ONLYDIR);
-          foreach( $places as $fp ) {
-              if( ($fn = basename($fp)) == $val ) {
-                 $tpl_ob->assign('mt_contentcss',$custombase.'/CMSMSstyles/content/'.$val);
-                 $done = true;
-                 break;
-              }
+          $fp = cms_join_path($bp,'CMSMSstyles','content',$val);
+          if( is_dir($fp) && is_readable($fp.DIRECTORY_SEPARATOR.'content.min.css') ) {
+              $tpl_ob->assign('mt_contentcss',$custombase.'/CMSMSstyles/content/'.$val);
+              $done = true;
           }
       }
       if( !$done ) {
-          $places = glob(cms_join_path($bp,'tinymce','skins','content','*'),GLOB_NOESCAPE|GLOB_ONLYDIR);
-          foreach( $places as $fp ) {
-              if( ($fn = basename($fp)) == $val ) {
-                 $tpl_ob->assign('mt_contentcss',$val);
-                 $done = true;
-                 break;
-              }
+          $fp = cms_join_path($bp,'tinymce','skins','content',$val);
+          if( is_dir($fp) && is_readable($fp.DIRECTORY_SEPARATOR.'content.min.css') ) {
+              $tpl_ob->assign('mt_contentcss',$val);
           }
       }
-
+      // editor-elements styling
       $done = false;
       $val = $profile['theme'];
       $bp = $mod->GetModulePath().DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'js';
-      $places = glob(cms_join_path($bp,'CMSMSstyles','ui','*'),GLOB_NOESCAPE|GLOB_ONLYDIR);
-      foreach( $places as $fp ) {
-          if( ($fn = basename($fp)) == $val ) {
-             $tpl_ob->assign('mt_skinurl',$custombase.'/CMSMSstyles/ui/'.$val);
-             $done = true;
-             break;
-          }
+      $fp = cms_join_path($bp,'CMSMSstyles','ui',$val);
+      if( is_dir($fp) && is_readable($fp.DIRECTORY_SEPARATOR.'skin.min.css') ) {
+          $tpl_ob->assign('mt_skinurl',$custombase.'/CMSMSstyles/ui/'.$val);
+          $done = true;
       }
       if( !$done ) {
-          $places = glob(cms_join_path($bp,'tinymce','skins','ui','*'),GLOB_NOESCAPE|GLOB_ONLYDIR);
-          foreach( $places as $fp ) {
-              if( ($fn = basename($fp)) == $val ) {
-                 $tpl_ob->assign('mt_skin',$val);
-                 break;
-              }
+          $fp = cms_join_path($bp,'tinymce','skins','ui',$val);
+          if( is_dir($fp) && is_readable($fp.DIRECTORY_SEPARATOR.'skin.min.css') ) {
+              $tpl_ob->assign('mt_skin',$val);
           }
       }
       return $tpl_ob->fetch();
