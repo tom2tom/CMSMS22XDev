@@ -40,7 +40,7 @@ else {
       }
       $arr['theme'] == 'One11';
       ksort($arr,SORT_STRING);
-      $val = $this->SetPreference('profile_'$name,serialize($arr));
+      $this->SetPreference('profile_'.$name,serialize($arr));
     }
   }
 }
