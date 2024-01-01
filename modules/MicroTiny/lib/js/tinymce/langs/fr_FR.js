@@ -458,5 +458,11 @@ tinymce.addI18n('fr_FR',{
 "Prev": "Pr\u00e9c ",
 "Find and replace": "Trouver et remplacer",
 "Whole words": "Mots entiers",
-"Insert template": "Ajouter un th\u00e8me"
+"Insert template": "Ajouter un th\u00e8me",
+"Horizontal align":"Alignement horizontal",
+"Vertical align":"Alignement vertical",
+"Cut column":"Couper la colonne",
+"Copy column":"Copier la colonne",
+"Paste column before":"Coller la colonne avant",
+"Paste column after":"Coller la colonne apr\xe8s"
 });
