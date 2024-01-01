@@ -100,7 +100,7 @@ $lang['help'] = <<<EOT
   <p>To enable frontend WYSIWYG editors, the <code>{cms_init_editor}</code> tag must be included in the head part of the template.  Additionally, this module must be set as the &quot;Frontend WYSIWYG&quot; in the global settings page of the CMSMS admin console.</p>
 
 <h3>About Styles and Colors:</h3>
-  <p>This module provides the <em>(optional)</em> ability to associate one or more custom stylesheet(s) with each profile. This association can enable styling of the edited content in a manner similar to the website style, and by so doing, provide a more-WYSIWYG-like experience for the content editor.</p>
+  <p>This module provides the <em>(optional)</em> ability to associate one or more custom stylesheet(s) with each profile. This association can enable styling of edited content in a manner similar to the website style, and by so doing, provide a more-WYSIWYG-like experience for the content editor.</p>
   <p>Valid values are:
   <ol>
   <li> name of a stylesheet recorded for this site</li>
