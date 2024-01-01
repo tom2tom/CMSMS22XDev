@@ -26,19 +26,20 @@ else {
     //redundant permission might still exist
     $this->RemovePermission('MicroTiny View HTML Source');
     //add extra profile-properties
-    foreach( [MicroTiny::PROFILE_FRONTEND,MicroTiny::PROFILE_ADMIN] as $name ) {
+    $props = [MicroTiny::PROFILE_FRONTEND=>'Simplex',MicroTiny::PROFILE_ADMIN=>'One11']
+    foreach( $props as $name=>$style ) {
       $val = $this->GetPreference('profile_'.$name);
       $arr = unserialize($val);
       if( empty($arr['dfltstylesheet']) ) {
         $arr['dfltstylesheet'] = -1;
       }
-      if( $arr['dfltstylesheet'] == -1) {
-        $arr['styler'] == 'One11';
+      if( $arr['dfltstylesheet'] == -1 ) {
+        $arr['styler'] == $style;
       }
       else {
-        $arr['styler'] == 'sheet';
+        $arr['styler'] == $style;
       }
-      $arr['theme'] == 'One11';
+      $arr['theme'] == $style;
       ksort($arr,SORT_STRING);
       $this->SetPreference('profile_'.$name,serialize($arr));
     }
@@ -46,8 +47,8 @@ else {
 }
 /*
 NOTE: when upgrading TinyMCE, ensure that all its related translation
-files (*.js) that also correspond to supported CMSMS translations (nls
-files exist, even if not currently installed) are listed in the
+files (*.js) that also correspond to supported CMSMS translations
+(nls files exist, even if not currently installed) are listed in the
 translations lookup file,
  __DIR__/lib/langs.manifest
 in each case, without a trailing '.js'

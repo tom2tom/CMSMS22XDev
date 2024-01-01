@@ -23,11 +23,10 @@ $obj = new microtiny_profile(array(
  'allowimages'=>false,
  'showstatusbar'=>false,
  'allowresize'=>false,
- 'styler'=>'One11',
- 'theme'=>'One11',
+ 'styler'=>'Simplex',
+ 'theme'=>'Simplex',
  'system'=>true));
 $obj->save();
-
 
 $obj = new microtiny_profile(array(
  'name'=>MicroTiny::PROFILE_ADMIN,
