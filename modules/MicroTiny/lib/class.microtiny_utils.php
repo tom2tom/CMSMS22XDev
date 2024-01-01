@@ -237,7 +237,7 @@ class microtiny_utils
               $bp = $mod->GetModulePath().DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'js';
               $fp = cms_join_path($bp,'CMSMSstyles','content',$css_name);
               if( is_dir($fp) && is_readable($fp.DIRECTORY_SEPARATOR.'content.min.css') ) {
-                  $tpl_ob->assign('mt_contentcss',$custombase.'/CMSMSstyles/content/'.$css_name);
+                  $tpl_ob->assign('mt_contentcss',$custombase.'/CMSMSstyles/content/'.$css_name.'/content.min.css');
                   $done = true;
               }
               if( !$done ) {
@@ -293,7 +293,7 @@ class microtiny_utils
           $bp = $mod->GetModulePath().DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'js';
           $fp = cms_join_path($bp,'CMSMSstyles','content',$val);
           if( is_dir($fp) && is_readable($fp.DIRECTORY_SEPARATOR.'content.min.css') ) {
-              $tpl_ob->assign('mt_contentcss',$custombase.'/CMSMSstyles/content/'.$val);
+              $tpl_ob->assign('mt_contentcss',$custombase.'/CMSMSstyles/content/'.$val.'/content.min.css');
               $done = true;
           }
       }
