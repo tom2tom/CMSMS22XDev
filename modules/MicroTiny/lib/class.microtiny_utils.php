@@ -90,7 +90,20 @@ class microtiny_utils
       if( $first_time ) {
           // only once per request.
           $first_time = false;
-          $output .= '<script src="'.$config->smart_root_url().'/modules/MicroTiny/lib/js/tinymce/tinymce.min.js" defer></script>'; //TODO this form of root deprecated since 2.2
+          $custombase = $mod->GetModuleURLPath().'/lib/js';
+          // TMCE5 needs Promises. Deploy this after last css link in the header
+          $output = <<<EOS
+<script id="shimsource">
+ if (typeof Symbol === 'undefined') {
+  var xjS = document.createElement('script');
+  xjS.src = '$custombase/promise-polyfill.min.js';
+  var el = document.getElementById('shimsource');
+  el.parentNode.insertBefore(xjS, el.nextSibling);//insert after this
+ }
+</script>
+<script src="$custombase/tinymce/tinymce.min.js" defer></script>
+
+EOS;
       }
 
       if( $frontend ) {
@@ -252,7 +265,7 @@ class microtiny_utils
               }
               if( !$done ) {
                   // possibly style-folder absolute or relative url(s)
-                  if( 1 ) {//TODO validate
+                  if( 1 ) {//TODO validate e.g. comma-separated, trim'd acceptable-format
                       $tpl_ob->assign('mt_contentcss',$css_name);
                       $done = true;
                   }
@@ -309,7 +322,7 @@ class microtiny_utils
       $bp = $mod->GetModulePath().DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'js';
       $fp = cms_join_path($bp,'CMSMSstyles','ui',$val);
       if( is_dir($fp) && is_readable($fp.DIRECTORY_SEPARATOR.'skin.min.css') ) {
-          $tpl_ob->assign('mt_skinurl',$custombase.'/CMSMSstyles/ui/'.$val);
+          $tpl_ob->assign('mt_skinurl',$custombase.'/CMSMSstyles/ui/'.$val); //NOTE folder url i.e. no appended '/skin.min.css' or other file in that folder
           $done = true;
       }
       if( !$done ) {
