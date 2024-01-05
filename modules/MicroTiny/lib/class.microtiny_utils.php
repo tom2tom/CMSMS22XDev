@@ -94,7 +94,7 @@ class microtiny_utils
           // TMCE5 needs Promises. Deploy this after last css link in the header
           $output = <<<EOS
 <script id="shimsource">
- if (typeof Symbol === 'undefined') {
+ if (typeof Promise === 'undefined') {
   var xjS = document.createElement('script');
   xjS.src = '$custombase/promise-polyfill.min.js';
   var el = document.getElementById('shimsource');
