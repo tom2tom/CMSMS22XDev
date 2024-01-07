@@ -44,7 +44,7 @@ $lang['height'] = 'Height';
 $lang['help'] = <<<EOT
 <h3>What Does This Do?</h3>
 <p>MicroTiny is a slightly restricted version of the <a href="https://www.tiny.cloud" target="_blank">TinyMCE</a> editor, providing to content editors a near-WYSIWYG appearance for editing content.  It works with content blocks in CMSMS content pages (when a WYSIWYG has been allowed), in module Admin forms where WYSIWYG editors are allowed, and allows restricted capabilities for editing HTML blocks on frontend pages.</p>
-</p>In order for MicroTiny to be used as the HTML editor in the admin console, MicroTiny needs to be selected in the user\'s preferences.  Please select &quot;MicroTiny&quot; in the &quot;Select WYSIWYG to Use&quot; option under &quot;My Preferences &gt;&gt; User Preferences&quot; in the CMSMS Admin panel.  Additional options in various modules or in content page templates, and content pages themselves can control whether a text area or a WYSIWYG field is provided in various edit forms.</p>
+<p>In order for MicroTiny to be used as the HTML editor in the admin console, MicroTiny needs to be selected in the user's preferences.  Please select &quot;MicroTiny&quot; in the &quot;Select WYSIWYG to Use&quot; option under &quot;My Preferences &gt;&gt; User Preferences&quot; in the CMSMS Admin panel.  Additional options in various modules or in content page templates, and content pages themselves can control whether a text area or a WYSIWYG field is provided in various edit forms.</p>
 <p>For frontend editing capabilities MicroTiny must be selected as the &quot;Frontend WYSIWYG&quot; in the global settings page of the CMSMS Admin console.</p>
 <h3>Features:</h3>
 <ul>
@@ -153,7 +153,7 @@ h2 {
         </ol>
       </dd>
     <br>
-    <dt>Q: How do I insert a &lt;br/&gt; instead of create new paragraphs?</dt>
+    <dt>Q: How do I insert a &lt;br&gt; instead of create new paragraphs?</dt>
       <dd>A: Press [shift]+Enter instead of just the Enter key.</dd>
     <br>
     <dt>Q: Why is <em style="color: red;">&quot;some functionality&quot;</em> available in the menubar, and not the toolbar?</dt>
