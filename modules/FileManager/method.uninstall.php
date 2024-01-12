@@ -17,7 +17,6 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 if (!function_exists("cmsms")) exit;
-//$db = $this->GetDb();
 
 // remove the database table
 /*$dict = NewDataDictionary( $db );

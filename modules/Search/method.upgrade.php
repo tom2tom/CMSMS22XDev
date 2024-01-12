@@ -1,6 +1,5 @@
 <?php
 if (!isset($gCms)) exit;
-$db = $this->GetDb();
 
 $uid = 1;
 

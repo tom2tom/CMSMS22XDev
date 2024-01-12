@@ -1,6 +1,5 @@
 <?php
 if (!isset($gCms)) exit;
-$db = $this->GetDb();
 
 if( version_compare($oldversion,'2.50') < 0 ) {
     if( cmsms()->test_state(CmsApp::STATE_INSTALL) ) {

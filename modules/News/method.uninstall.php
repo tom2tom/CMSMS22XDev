@@ -1,7 +1,6 @@
 <?php
 if (!isset($gCms)) exit;
 
-$db = $this->GetDb();
 $this->DeleteTemplate('displaysummary');
 $this->DeleteTemplate('displaydetail');
 

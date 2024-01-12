@@ -1,7 +1,6 @@
 <?php
 if (!isset($gCms)) exit;
 
-$db = $this->GetDb();
 $dict = NewDataDictionary($db);
 
 $sqlarray = $dict->DropTableSQL(CMS_DB_PREFIX.'module_search_index');
