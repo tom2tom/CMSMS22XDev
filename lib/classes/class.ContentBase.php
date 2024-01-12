@@ -1367,7 +1367,7 @@ abstract class ContentBase
 		$out['titleattribute'] = $this->mTitleAttribute;
 		$out['accesskey'] = $this->mAccessKey;
 		$out['tabindex'] = $this->mTabIndex;
-		$out['default_content'] = ($this->mActive)?1:0;
+		$out['default_content'] = ($this->mDefaultContent && $this->mActive)?1:0;
 		$out['active'] = ($this->mActive)?1:0;
 		$out['show_in_menu'] = ($this->mShowInMenu)?1:0;
 		$out['cachable'] = ($this->mCachable)?1:0;
