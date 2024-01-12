@@ -247,7 +247,7 @@ EOS;
           }
           catch( Exception $e ) {
               // possibly a style-folder name
-              $bp = $mod->GetModulePath().DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'js';
+              $bp = __DIR__.DIRECTORY_SEPARATOR.'js';
               $fp = cms_join_path($bp,'CMSMSstyles','content',$css_name);
               if( is_dir($fp) && is_readable($fp.DIRECTORY_SEPARATOR.'content.min.css') ) {
                   $tpl_ob->assign('mt_contentcss',$custombase.'/CMSMSstyles/content/'.$css_name.'/content.min.css');
@@ -303,7 +303,7 @@ EOS;
           }
       }
       if( !$done ) {
-          $bp = $mod->GetModulePath().DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'js';
+          $bp = __DIR__.DIRECTORY_SEPARATOR.'js';
           $fp = cms_join_path($bp,'CMSMSstyles','content',$val);
           if( is_dir($fp) && is_readable($fp.DIRECTORY_SEPARATOR.'content.min.css') ) {
               $tpl_ob->assign('mt_contentcss',$custombase.'/CMSMSstyles/content/'.$val.'/content.min.css');
@@ -319,7 +319,7 @@ EOS;
       // editor-elements styling
       $done = false;
       $val = $profile['theme'];
-      $bp = $mod->GetModulePath().DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'js';
+      $bp = __DIR__.DIRECTORY_SEPARATOR.'js';
       $fp = cms_join_path($bp,'CMSMSstyles','ui',$val);
       if( is_dir($fp) && is_readable($fp.DIRECTORY_SEPARATOR.'skin.min.css') ) {
           $tpl_ob->assign('mt_skinurl',$custombase.'/CMSMSstyles/ui/'.$val); //NOTE folder url i.e. no appended '/skin.min.css' or other file in that folder
