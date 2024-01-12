@@ -304,9 +304,9 @@ list($_to_ver, $_to_name) = get_version($_todir);
 // begin output
 output('LANG DIFF GENERATED: '.time());
 if ($uri_from == "TC") {
-    output('LANG DIFF FROM TRANSLATION CENTER'); 
+    output('LANG DIFF FROM TRANSLATION CENTER');
 } else {
-    output('LANG DIFF FROM VERSION: '.$_from_ver); 
+    output('LANG DIFF FROM VERSION: '.$_from_ver);
     output('LANG DIFF FROM NAME: '.$_from_name); //ditto
 }
 output('LANG DIFF TO VERSION: '.$_to_ver);
