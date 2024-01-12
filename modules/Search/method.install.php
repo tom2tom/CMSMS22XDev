@@ -1,8 +1,6 @@
 <?php
 if (!isset($gCms)) exit;
 
-$db = $this->GetDb();
-
 if( cmsms()->test_state(CmsApp::STATE_INSTALL) ) {
     $uid = 1; // hardcode to first user
 } else {
@@ -128,7 +126,7 @@ catch( CmsException $e ) {
 # Permissions
 #---------------------
 
-$this->CreatePermission('Manage Search');
+$this->CreatePermission('Manage Search',lang('perm_Manage_Search'));//TODO migrate to module-lang
 
 $this->CreateEvent('SearchInitiated');
 $this->CreateEvent('SearchCompleted');

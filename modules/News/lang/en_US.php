@@ -324,6 +324,9 @@ $lang['optionsupdated'] = 'The options were successfully updated.';
 
 // P
 $lang['parent'] = 'Parent';
+//$lang['perm_Approve_News'] = 'Approve News for Frontend Display'; TODO migrate these from admin-lang
+//$lang['perm_Delete_News'] = 'Delete News Articles';
+//$lang['perm_Modify_News'] = 'Modify News Articles';
 $lang['postdate'] = 'Post Date';
 $lang['postinstall'] = 'Make sure to set the "Modify News" permission on users who will be administering News items.';
 $lang['post_date_asc'] = 'Post Date Ascending';

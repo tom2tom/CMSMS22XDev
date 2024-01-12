@@ -13,7 +13,6 @@ if( cmsms()->test_state(CmsApp::STATE_INSTALL) ) {
   $uid = get_userid();
 }
 
-$db = $this->GetDb();
 $dict = NewDataDictionary($db);
 $flds = "
 	news_id I KEY,
@@ -83,12 +82,12 @@ $flds = "
 $sqlarray = $dict->CreateTableSQL(CMS_DB_PREFIX."module_news_fieldvals", $flds, $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 
-#Set Permission
-$this->CreatePermission('Modify News', 'Modify News');
-$this->CreatePermission('Approve News', 'Approve News For Frontend Display');
-$this->CreatePermission('Delete News', 'Delete News Articles');
+// Set Permission
+$this->CreatePermission('Modify News', lang('perm_Modify_News'));//TODO migrate these to module-lang 
+$this->CreatePermission('Approve News', lang('perm_Approve_News_For_Frontend_Display'));
+$this->CreatePermission('Delete News', lang('perm_Delete_News_Articles'));
 
-# Setup summary template
+// Setup summary template
 try {
   $summary_template_type = new CmsLayoutTemplateType();
   $summary_template_type->set_originator($this->GetName());
@@ -277,26 +276,26 @@ catch( CmsException $e ) {
   audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
 }
 
-# Setup default email template and email preferences
+// Setup default email template and email preferences
 $this->SetPreference('email_subject',$this->Lang('subject_newnews'));
 $this->SetTemplate('email_template',$this->GetDfltEmailTemplate());
 
-# Other preferences
+// Other preferences
 $this->SetPreference('allowed_upload_types','gif,png,jpeg,jpg');
 $this->SetPreference('auto_create_thumbnails','gif,png,jpeg,jpg');
 
-# Setup General category
+// Setup General category
 $catid = $db->GenID(CMS_DB_PREFIX."module_news_categories_seq");
 $query = 'INSERT INTO '.CMS_DB_PREFIX.'module_news_categories (news_category_id, news_category_name, parent_id, create_date, modified_date) VALUES (?,?,?,'.$db->DBTimeStamp(time()).','.$db->DBTimeStamp(time()).')';
 $db->Execute($query, array($catid, 'General', -1));
 
-# Setup initial news article
+// Setup initial news article
 $articleid = $db->GenID(CMS_DB_PREFIX."module_news_seq");
 $query = 'INSERT INTO '.CMS_DB_PREFIX.'module_news ( NEWS_ID, NEWS_CATEGORY_ID, AUTHOR_ID, NEWS_TITLE, NEWS_DATA, NEWS_DATE, SUMMARY, START_TIME, END_TIME, STATUS, ICON, SEARCHABLE, CREATE_DATE, MODIFIED_DATE ) VALUES (?,?,?,?,?,'.$db->DBTimeStamp(time()).',?,?,?,?,?,?,'.$db->DBTimeStamp(time()).','.$db->DBTimeStamp(time()).')';
 $db->Execute($query, array($articleid, $catid, 1, 'News Module Installed', 'The news module was installed.  Exciting. This news article does not use a Summary field and therefore there is no link to read more. But you can click on the news heading to read the whole article.', null, null, null, 'published', null, 1));
 news_admin_ops::UpdateHierarchyPositions();
 
-# Setup permissions
+// Setup permissions
 $perm_id = $db->GetOne("SELECT permission_id FROM ".CMS_DB_PREFIX."permissions WHERE permission_name = 'Modify News'");
 $group_id = $db->GetOne("SELECT group_id FROM `".CMS_DB_PREFIX."groups` WHERE group_name = 'Admin'");
 
@@ -316,7 +315,7 @@ if ((int)$count == 0) {
   $db->Execute($query);
 }
 
-# Indexes
+// Indexes
 $sqlarray = $dict->CreateIndexSQL(CMS_DB_PREFIX.'news_postdate',
 				  CMS_DB_PREFIX.'module_news',
 				  'news_date');
@@ -342,7 +341,7 @@ $sqlarray = $dict->CreateIndexSQL(CMS_DB_PREFIX.'news_startenddate',
 				  'start_time,end_time');
 $dict->ExecuteSQLArray($sqlarray);
 
-#Setup events
+// Setup events
 $this->CreateEvent('NewsArticleAdded');
 $this->CreateEvent('NewsArticleEdited');
 $this->CreateEvent('NewsArticleDeleted');

@@ -86,6 +86,7 @@ $lang['param_resulttemplate'] = 'This parameter allows specifying the name of a 
 $lang['param_searchtext'] = 'Text to place into the search box';
 $lang['param_submit'] = 'Text to place into the submit button';
 $lang['param_useor'] = 'Change the default relationship from an OR relationship to an AND relationship';
+//$lang['perm_Manage_Search'] = 'Manage Search'; TODO migrate from admin-lang
 $lang['prompt_alpharesults'] = 'Sort results alphabetically instead of by weight';
 $lang['prompt_resetstopwords'] = 'Load default Stop Words from language';
 $lang['prompt_resultpage'] = 'Page for individual module results <em>(Note modules may optionally override this)</em>';

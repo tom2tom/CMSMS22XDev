@@ -14,6 +14,7 @@ $lang['jobs'] = 'Jobs';
 $lang['moddescription'] = 'A module for managing asynchronous processing jobs.';
 $lang['module'] = 'Module';
 $lang['name'] = 'Name';
+//$lang['perm_Manage_Jobs'] = 'Manage Asynchronous Jobs'; TODO migrate from admin-lang
 $lang['processing_freq'] = 'Maximum processing frequency (seconds)';
 $lang['recur_120m'] = 'Every 2 Hours';
 $lang['recur_15m'] = 'Every 15 Minutes';
