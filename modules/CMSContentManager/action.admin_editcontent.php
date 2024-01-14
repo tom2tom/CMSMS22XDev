@@ -306,7 +306,7 @@ try {
     }
 }
 catch( Exception $e ) {
-    if (!$tab_names) $tab_names = [];
+    if (!isset($tab_names)) $tab_names = [];
     $error = $e->GetMessage();
 }
 
@@ -327,9 +327,9 @@ if( $this->GetPreference('template_list_mode','designpage') != 'all') {
 
 $parms = array();
 if( $content_id > 0 ) $parms['content_id']=$content_id;
-$url = str_replace('&amp','&',$this->create_url($id,'admin_editcontent',$returnid,$parms)).'&showtemplate=false';
+$url = str_replace('&amp;','&',$this->create_url($id,'admin_editcontent',$returnid,$parms)).'&showtemplate=false';
 $smarty->assign('apply_ajax_url',$url);
-$url = str_replace('&amp','&',$this->create_url($id,'admin_editcontent',$returnid,array('preview'=>1)));
+$url = str_replace('&amp;','&',$this->create_url($id,'admin_editcontent',$returnid,array('preview'=>1)));
 $smarty->assign('preview_ajax_url',$url);
 $smarty->assign('lock_timeout',$this->GetPreference('locktimeout'));
 $smarty->assign('lock_refresh',$this->GetPreference('lockrefresh'));
