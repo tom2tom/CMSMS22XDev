@@ -26,7 +26,7 @@ else {
     //redundant permission might still exist
     $this->RemovePermission('MicroTiny View HTML Source');
     //add extra profile-properties
-    $props = [MicroTiny::PROFILE_FRONTEND=>'Simplex',MicroTiny::PROFILE_ADMIN=>'One11']
+    $props = [MicroTiny::PROFILE_FRONTEND=>'Simplex',MicroTiny::PROFILE_ADMIN=>'One11'];
     foreach( $props as $name=>$style ) {
       $val = $this->GetPreference('profile_'.$name);
       $arr = unserialize($val);
