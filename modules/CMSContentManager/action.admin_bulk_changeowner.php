@@ -77,7 +77,7 @@ if( isset($params['submit']) ) {
     if( $i != count($pagelist) ) {
       throw new CmsException('Bulk operation to change ownership did not adjust all selected pages');
     }
-    audit('','Core','Changed owner on '.count($pagelist).' pages');
+    audit('','Core','Changed owner of '.count($pagelist).' pages');
     $this->SetMessage($this->Lang('msg_bulk_successful'));
     $this->RedirectToAdminTab();
   }

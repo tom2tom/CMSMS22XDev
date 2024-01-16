@@ -63,7 +63,7 @@ try {
     $content->SetLastModifiedBy(get_userid());
     $content->Save();
   }
-  audit('','Core','Changed show-in-menu status on '.count($multicontent).' pages');
+  audit('','Core','Changed show-in-menu status of '.count($multicontent).' pages');
   $this->SetMessage($this->Lang('msg_bulk_successful'));
 }
 catch( Exception $e ) {
