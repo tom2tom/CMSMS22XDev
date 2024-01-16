@@ -177,18 +177,41 @@ function author_pages($userid)
 
 
 /**
- * Put an event into the audit (admin) log.  This should be
- * done on most admin events for consistency.
+ * Put an event into the audit (admin) log. This should be done on most
+ * admin events for consistency.
  *
  * @since 0.3
  * @param integer $itemid The item id (perhaps a content id, or a record id from a module)
- * @param string  $itemname The item name (perhaps Content, or the module name)
- * @param string  $action The action that needs to be audited
+ * @param mixed $itemname The item name string (perhaps Content, or the module name) or null
+ * @param mixed $action The action (string) that needs to be recorded or null
  * @return void
  */
 function audit($itemid, $itemname, $action)
 {
-    if( !isset($itemname) ) $itemname = '';
+    if( !isset($itemname) ) { // aka === null
+        $itemname = '';
+    }
+    elseif( strlen($itemname) > 50 ) {
+        //must fit it into the (utf8) db field
+        $words = array_filter(explode(' ', $itemname));
+        $n = count($words);
+        if( $n > 1 ) {
+            $out = '';
+            for( $i = 0; $i < $n; $i++ ) {
+                $tmp = $out.' '.$words[$i];
+                if( strlen($tmp) > 47 ) { //+1 for leading space
+                    break;
+                }
+                $out = $tmp;
+            }
+            $itemname = ltrim($out) . ' ...';
+        }
+        else {
+//          $tmp = preg_split('//u', $itemname, null, PREG_SPLIT_NO_EMPTY); // UTF-8 chars
+            $itemname = substr($itemname, 0, 46) . ' ...';
+        }
+    }
+
     if( !isset($action) ) $action = '-- unset --';
     $app = cmsms();
     $db = $app->GetDb();
@@ -408,8 +431,7 @@ function get_pageid_or_alias_from_url()
         $smarty->id = (isset($ary[1])?$ary[1]:'');
     }
 
-    $ugly = FALSE;
-    $page = '';
+    $wanted = FALSE;
     $query_var = $config['query_var'];
     if (isset($smarty->id) && isset($params[$smarty->id . 'returnid'])) {
         // get page from returnid parameter in module action
@@ -418,9 +440,10 @@ function get_pageid_or_alias_from_url()
     else if( isset($_REQUEST[$query_var]) ) {
         // using non friendly urls... get the page alias/id from the query var.
         $page = @trim((string) $_REQUEST[$query_var]);
-        $ugly = TRUE;
+        $wanted = TRUE;
     }
     else {
+        $page = '';
         // either we're using pretty urls
         // or this is the default page.
         if (isset($_SERVER['REQUEST_URI']) && !endswith($_SERVER['REQUEST_URI'], 'index.php')) {
@@ -439,7 +462,7 @@ function get_pageid_or_alias_from_url()
 
     // by here, if we're not assuming pretty urls of any sort
     // and we have a $page value... we might be done.
-    if( !$ugly && $config['url_rewriting'] == 'none' ) return $page;
+    if( !$wanted && $config['url_rewriting'] == 'none' ) return $page;
 
     // might be some kind of a pretty url.
     // strip off GET params.
