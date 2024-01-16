@@ -190,7 +190,14 @@ try {
             $content_obj->SetLastModifiedBy($user_id);
             $content_obj->Save();
             unset($_SESSION['__cms_copy_obj__']);
-            audit($content_obj->Id(),'Content Item: '.$content_obj->Name(),' Edited');
+            $tmp = $content_obj->Name();
+            if( $tmp ) {
+                $tmp = 'Content Item: '.$tmp;
+            }
+            else {
+                $tmp = 'Numbered page';
+            }
+            audit($content_obj->Id(),$tmp,' Edited');
             if( isset($params['submit']) ) {
                 $this->SetMessage($this->Lang('msg_editpage_success'));
                 $this->RedirectToAdminTab();
@@ -306,7 +313,7 @@ try {
     }
 }
 catch( Exception $e ) {
-    if (!isset($tab_names)) $tab_names = [];
+    if( !isset($tab_names) ) $tab_names = [];
     $error = $e->GetMessage();
 }
 
