@@ -192,12 +192,12 @@ try {
             unset($_SESSION['__cms_copy_obj__']);
             $tmp = $content_obj->Name();
             if( $tmp ) {
-                $tmp = 'Content Item: '.$tmp;
+                $tmp = 'Edited content page: '.$tmp;
             }
             else {
-                $tmp = 'Numbered page';
+                $tmp = 'Edited numbered page';
             }
-            audit($content_obj->Id(),$tmp,' Edited');
+            audit($content_obj->Id(),$this->GetName(),$tmp);
             if( isset($params['submit']) ) {
                 $this->SetMessage($this->Lang('msg_editpage_success'));
                 $this->RedirectToAdminTab();
