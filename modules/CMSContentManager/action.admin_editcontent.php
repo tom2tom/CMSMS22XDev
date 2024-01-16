@@ -195,7 +195,7 @@ try {
                 $tmp = 'Edited content page: '.$tmp;
             }
             else {
-                $tmp = 'Edited numbered page';
+                $tmp = 'Edited anonymous page';
             }
             audit($content_obj->Id(),$this->GetName(),$tmp);
             if( isset($params['submit']) ) {
