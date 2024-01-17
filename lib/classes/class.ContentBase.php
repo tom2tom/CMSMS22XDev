@@ -1372,12 +1372,12 @@ abstract class ContentBase
 		$out['show_in_menu'] = ($this->mShowInMenu)?1:0;
 		$out['cachable'] = ($this->mCachable)?1:0;
 		$out['secure'] = ($this->mSecure)?1:0;
-		$out['page_url'] = ($this->mURL)?1:0;
+		$out['page_url'] = $this->mURL;
 		$out['last_modified_by'] = $this->mLastModifiedBy;
 		$out['create_date'] = $this->mCreationDate;
 		$out['modified_date'] = $this->mModifiedDate;
-		$out['wants_children'] = $this->WantsChildren();
-		$out['has_usable_link'] = $this->HasUsableLink();
+		$out['wants_children'] = ($this->WantsChildren())?1:0;
+		$out['has_usable_link'] = ($this->HasUsableLink())?1:0;
 		return $out;
 	}
 
