@@ -181,45 +181,49 @@ function author_pages($userid)
  * admin events for consistency.
  *
  * @since 0.3
- * @param integer $itemid The item id (perhaps a content id, or a record id from a module)
- * @param mixed $itemname The item name string (perhaps Content, or the module name) or null
- * @param mixed $action The action (string) that needs to be recorded or null
+ * @param mixed $itemid Integer item identifier (perhaps a content id, or a record id from a module), or falsy
+ * @param mixed $itemname Item name string (perhaps Content, or the module name), or null
+ * @param mixed $action Action string, or null
  * @return void
  */
 function audit($itemid, $itemname, $action)
 {
-    if( !isset($itemname) ) { // aka === null
+    $mb = function_exists('mb_strlen');
+    $truncate = function($str, $maxl) use($mb) {
+        $fnl = ($mb) ? 'mb_strlen' : 'strlen';
+        $str = trim($str);
+        if( $fnl($str) > $maxl ) {
+            $fns = ($mb) ? 'mb_substr' : 'substr';
+            $str = $fns($str, 0, $maxl - 4);
+            $p = strrpos($str, ' ');
+            if( $p !== FALSE ) {
+                $str = substr($str, 0, $p);
+            }
+            return $str . ' ...';
+        }
+        return $str;
+    };
+
+    if( is_null($itemname) ) {
         $itemname = '';
     }
-    elseif( strlen($itemname) > 50 ) {
-        //must fit it into the (utf8) db field
-        $words = array_filter(explode(' ', $itemname));
-        $n = count($words);
-        if( $n > 1 ) {
-            $out = '';
-            for( $i = 0; $i < $n; $i++ ) {
-                $tmp = $out.' '.$words[$i];
-                if( strlen($tmp) > 47 ) { //+1 for leading space
-                    break;
-                }
-                $out = $tmp;
-            }
-            $itemname = ltrim($out) . ' ...';
-        }
-        else {
-//          $tmp = preg_split('//u', $itemname, null, PREG_SPLIT_NO_EMPTY); // UTF-8 chars
-            $itemname = substr($itemname, 0, 46) . ' ...';
-        }
+    else {
+        $itemname = $truncate($itemname, 50); // ensure value will fit into db utf8 field
+    }
+    if( is_null($action) ) {
+        $action = '-- unset --';
+    }
+    else {
+        $action = $truncate($action, 255);
     }
 
-    if( !isset($action) ) $action = '-- unset --';
     $app = cmsms();
     $db = $app->GetDb();
 
     $userid = get_userid(FALSE);
     if( $userid < 1 ) $userid = 0;
     $username = get_username(FALSE);
-    if( $itemid == '' ) $itemid = -1;
+    if( !$itemid ) $itemid = -1;
 
     $ip_addr = '';
     if( $userid > 0 && !$app->is_cli() ) $ip_addr = cms_utils::get_real_ip();
