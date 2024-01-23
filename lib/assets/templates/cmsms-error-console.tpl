@@ -7,7 +7,7 @@
 		<style>
 			body {
 				min-width: 900px;
-				font-family: sans-serif;
+				font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 				color: #232323;
 				line-height: 1.3;
 				font-size: 12px;
