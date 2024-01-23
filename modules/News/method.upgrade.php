@@ -145,7 +145,7 @@ if( version_compare($oldversion,'2.50') < 0 ) {
       }
   }
   catch( CmsException $e ) {
-    audit('',$this->GetName(),'Upgrade Error: '.$e->GetMessage());
+    audit('',$this->GetName(),'Upgrade error: '.$e->GetMessage());
     return;
   }
 
@@ -166,7 +166,7 @@ if( version_compare($oldversion,'2.50.8') < 0 ) {
     }
     catch( Exception $e ) {
         // log it
-        audit('',$this->GetName(),'Uninstall Error: '.$e->GetMessage());
+        audit('',$this->GetName(),'Upgrade error: '.$e->GetMessage());
         return FALSE;
     }
 }

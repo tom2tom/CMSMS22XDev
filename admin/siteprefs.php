@@ -328,10 +328,10 @@ if (isset($_POST['editsiteprefs'])) {
       if (isset($_POST['sitedownmessage'])) $sitedownmessage = $_POST['sitedownmessage'];
       if (isset($_POST['use_wysiwyg'])) $use_wysiwyg = $_POST['use_wysiwyg'];
       if( !$prevsitedown && $enablesitedownmessage ) {
-        audit('','Global Settings','Sitedown enabled');
+        audit('','Global settings','Sitedown enabled');
       }
       else if( $prevsitedown && !$enablesitedownmessage ) {
-        audit('','Global Settings','Sitedown disabled');
+        audit('','Global settings','Sitedown disabled');
       }
       $tmp = trim(strip_tags($sitedownmessage));
       if( !$tmp ) $error .= lang('error_sitedownmessage');
@@ -425,7 +425,7 @@ if (isset($_POST['editsiteprefs'])) {
 
     // put mention into the admin log
     if( !$error ) {
-      audit('', 'Global Settings', 'Edited');
+      audit('', 'Global settings', 'Edited');
       $message .= lang('siteprefsupdated');
     }
   }

@@ -460,7 +460,7 @@ class Smarty_CMS extends CMSSmartyBase
         $this->assign('loggedin',get_userid(FALSE));
 
         // put mention into the admin log
-        audit('', 'Smarty Error', substr( $e->getMessage(),0 ,200 ) );
+        audit('', 'Smarty', 'Error: '.$e->getMessage());
 
         $output = $this->fetch('cmsms-error-console.tpl');
 

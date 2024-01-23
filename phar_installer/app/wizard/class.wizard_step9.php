@@ -54,7 +54,7 @@ class wizard_step9 extends wizard_step
         // write protect config.php
         @chmod("$destdir/config.php",0444);  //TODO 0440 better c.f. global_umask site-preference
 
-        audit('','CMSMS version '.CMS_VERSION,'Upgraded');
+        audit('','CMSMS version','Upgraded to '.CMS_VERSION);
 
         // set the finished message.
         if( $app->has_custom_destdir() ) { // || !$app->in_phar()
@@ -65,7 +65,7 @@ class wizard_step9 extends wizard_step
             $root_url = $app->get_root_url();
             if( endswith($root_url,'/') ) $root_url = rtrim($root_url,' /');
             $admin_url = $root_url.'/admin';
-            $this->set_block_html('bottom_nav',lang('finished_upgrade_msg', $root_url, $admin_url));
+            $this->set_block_html('bottom_nav',lang('finished_upgrade_msg',$root_url,$admin_url));
         }
     }
 
@@ -124,7 +124,7 @@ class wizard_step9 extends wizard_step
                                  $adminacct['username'],
                                  $admin_url);
                 }
-                $body = html_entity_decode($body, ENT_QUOTES);
+                $body = html_entity_decode($body,ENT_QUOTES);
                 $mailer->SetBody($body);
                 if( $mailer->Send() ) {
                     $this->message(lang('send_admin_email'));
@@ -141,7 +141,7 @@ class wizard_step9 extends wizard_step
 
         // todo: set initial preferences.
 
-        audit('','CMSMS version '.CMS_VERSION,'Installed');
+        audit('','CMSMS version','Installed '.CMS_VERSION);
 
         cmsms()->clear_cached_files();
         $this->message(lang('msg_clearedcache'));
@@ -182,7 +182,7 @@ class wizard_step9 extends wizard_step
         cmsms()->clear_cached_files();
         $this->message(lang('msg_clearedcache'));
 
-        audit('','CMSMS version '.CMS_VERSION,'Refreshed');
+        audit('','CMSMS version','Refreshed '.CMS_VERSION);
 
         // set the finished message.
         if( $app->has_custom_destdir() ) {
@@ -192,7 +192,7 @@ class wizard_step9 extends wizard_step
             $root_url = $app->get_root_url();
             if( endswith($root_url,'/') ) $root_url = rtrim($root_url,' /');
             $admin_url = $root_url.'/admin';
-            $this->set_block_html('bottom_nav',lang('finished_freshen_msg', $root_url, $admin_url ));
+            $this->set_block_html('bottom_nav',lang('finished_freshen_msg',$root_url,$admin_url ));
         }
     }
 
@@ -203,7 +203,7 @@ class wizard_step9 extends wizard_step
             // this loads the standard CMSMS stuff, except smarty cuz it's already done.
             // we do this here because both upgrade and install stuff needs it.
             // NOTE in this connection, we don't disable database loading
-            global $CMS_INSTALL_PAGE, $DONT_LOAD_SMARTY, $CMS_VERSION;
+            global $CMS_INSTALL_PAGE,$DONT_LOAD_SMARTY,$CMS_VERSION;
             $CMS_INSTALL_PAGE = 1;
             $DONT_LOAD_SMARTY = 1;
             $CMS_VERSION = $app->get_dest_version();

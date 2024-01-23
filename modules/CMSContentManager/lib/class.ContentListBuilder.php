@@ -483,7 +483,7 @@ final class ContentListBuilder
       if( $content->DefaultContent() ) return $this->_module->Lang('error_delete_defaultcontent');
 
       $content->Delete();
-      audit($page_id,'Core','Deleted content page');
+      audit($page_id,$this->_module->GetName(),"Deleted page '".$node->get_tag('name')."'");
 
       if( $childcount == 1 && $parent_id > -1 ) $this->collapse_section($parent_id);
       $this->collapse_section($page_id);

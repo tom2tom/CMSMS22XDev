@@ -16,7 +16,7 @@ if (isset($params['detailtemplate'])) {
 else {
     $tpl = CmsLayoutTemplate::load_dflt_by_type('News::detail');
     if( !is_object($tpl) ) {
-        audit('',$this->GetName(),'No default summary template found');
+        audit('',$this->GetName().':detail','No default summary template found');
         return;
     }
     $template = $tpl->get_name();

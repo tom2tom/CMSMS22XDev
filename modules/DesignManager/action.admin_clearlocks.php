@@ -50,9 +50,9 @@ if( $is_admin ) {
     $db->Execute($sql,array($type));
     audit('',$this->GetName(),'Cleared all content locks');
 } else {
-    // clear only my locks
+    // clear only self-owned locks
     CmsLockOperations::delete_for_user($type);
-    audit('',$this->GetName(),'Cleared his own content locks');
+    audit($uid,$this->GetName(),'Cleared her/his own content locks');
 }
 
 $this->SetMessage($this->Lang('msg_lockscleared'));

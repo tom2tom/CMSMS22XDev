@@ -42,16 +42,15 @@ if (isset($params['submit'])) {
         $max = $db->GetOne('SELECT max(item_order) + 1 FROM ' . CMS_DB_PREFIX . 'module_news_fielddefs');
         if( $max == null ) $max = 1; //sql return value null
 
+        $now = trim($db->DBTimeStamp(time()), "'");
         $extra = array('options'=>$arr_options);
         $query = 'INSERT INTO '.CMS_DB_PREFIX.'module_news_fielddefs (name, type, max_length, item_order, create_date, modified_date, public, extra) VALUES (?,?,?,?,?,?,?,?)';
-        $parms = array($name, $type, $max_length, $max,
-                       trim($db->DBTimeStamp(time()), "'"),
-                       trim($db->DBTimeStamp(time()), "'"),
-                       $public, serialize($extra));
-        $db->Execute($query, $parms );
+        $parms = array($name, $type, $max_length, $max, $now, $now, $public, serialize($extra));
+        $db->Execute($query, $parms);
 
         // put mention into the admin log
-        audit('', 'News custom: '.$name, 'Field definition added');
+        $fdid = $db->Insert_ID();
+        audit($fdid, $this->GetName().' field definition', "Added '$name'");
 
         // done.
         $params = array('tab_message'=> 'fielddefadded', 'active_tab' => 'customfields');

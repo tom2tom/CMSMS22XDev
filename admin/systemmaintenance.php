@@ -97,7 +97,7 @@ if (isset($_POST["optimizeall"])) {
   }
 
   // put mention into the admin log
-  audit('', 'System Maintenance', 'All db-tables optimized');
+  audit('', 'System maintenance', 'All db-tables optimized');
   $themeObject->ShowMessage(lang("sysmain_tablesoptimized"));
   $smarty->assign("active_database", "true");
 }
@@ -115,7 +115,7 @@ if (isset($_POST["repairall"])) {
   }
 
   // put mention into the admin log
-  audit('', 'System Maintenance', 'All db-tables repaired');
+  audit('', 'System maintenance', 'All db-tables repaired');
   $themeObject->ShowMessage(lang("sysmain_tablesrepaired"));
   $smarty->assign("active_database", "true");
 }

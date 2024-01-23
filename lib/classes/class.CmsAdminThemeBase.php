@@ -296,7 +296,7 @@ abstract class CmsAdminThemeBase
 		$usermoduleinfo = $this->_get_user_module_info();
 		if( !is_array($usermoduleinfo) ) {
 			// put mention into the admin log
-			audit(get_userid(FALSE),'Admin Theme','No module information found for user');
+			audit(get_userid(FALSE),'Admin theme','No module information found for user');
 		}
 		else {
 			// Are there any modules with an admin interface?

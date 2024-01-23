@@ -208,7 +208,7 @@ function smarty_function_cms_stylesheet($params, $smarty)
             }
         }
     } catch( \Exception $e ) {
-        audit('','cms_stylesheet',$e->GetMessage());
+        audit('','Plugin:cms_stylesheet',$e->GetMessage());
         $stylesheet = '<!-- cms_stylesheet error: '.$e->GetMessage().' -->';
     }
 
@@ -256,7 +256,7 @@ function cms_stylesheet_writeCache($filename, $list, $trimbackground, $smarty)
             $smarty->right_delimiter = $or;
             debug_to_log('Error Processing Stylesheet');
             debug_to_log($e->GetMessage());
-            audit('','Plugin: cms_stylesheet', 'Smarty Compile process failed, an error in the template?');
+            audit('','Plugin:cms_stylesheet', 'Smarty compilation failed, an error in the template?');
             return '';
 	}
 

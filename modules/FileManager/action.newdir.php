@@ -43,7 +43,7 @@ if (isset($params["newdirname"])) {
     } else {
       if (mkdir($newdir)) {
         $params["fmmessage"] = "newdirsuccess"; //strips the file data
-        $this->Audit(0, "File Manager", "Created new directory: " . $newdirname);
+        audit('', 'FileManager', 'Created new directory ' . $newdirname);
         $this->Redirect($id, "defaultadmin", $returnid, $params);
       } else {
         $params["fmerror"] = "newdirfail";

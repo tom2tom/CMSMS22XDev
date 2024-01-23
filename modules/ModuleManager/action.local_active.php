@@ -25,7 +25,7 @@ if( $state ) {
 }
 else {
   $this->SetMessage($this->Lang('msg_module_deactivated',$module));
-  audit('',$this->GetName(),'Dectivated module '.$module);
+  audit('',$this->GetName(),'Deactivated module '.$module);
 }
 $this->RedirectToAdminTab();
 

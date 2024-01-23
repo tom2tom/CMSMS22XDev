@@ -53,7 +53,7 @@ try {
         if( is_dir($destpath) ) {
             // check if the directory is empty
             if( count(scandir($destpath)) > 2 ) throw new RuntimeException($this->Lang('error_ajax_dirnotempty'));
-            if( @rmdir($destpath) ) { audit('','FilePicker','Removed directory: '.$destpath); }
+            if( @rmdir($destpath) ) { audit('','FilePicker','Removed directory '.$destpath); }
         } else {
             if( $this->is_image( $destpath ) ) {
                 $thumbnail = $fullpath.DIRECTORY_SEPARATOR.'thumb_'.$val;
@@ -61,7 +61,7 @@ try {
                     @unlink($thumbnail);
                 }
             }
-            if( @unlink($destpath) ) { audit('','FilePicker','Removed file: '.$destpath); }
+            if( @unlink($destpath) ) { audit('','FilePicker','Removed file '.$destpath); }
         }
         break;
 

@@ -46,14 +46,14 @@ try {
           }
       }
       catch( Exception $e ) {
-          audit('',$this->GetName(),'Uninstall Error: '.$e->GetMessage());
+          audit('',$this->GetName(),'Uninstallation error: '.$e->GetMessage());
       }
       $type->delete();
   }
 }
 catch( CmsException $e ) {
     // log it
-    audit('',$this->GetName(),'Uninstall Error: '.$e->GetMessage());
+    audit('',$this->GetName(),'Uninstallation error: '.$e->GetMessage());
     return FALSE;
 }
 

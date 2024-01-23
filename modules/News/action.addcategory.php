@@ -29,9 +29,9 @@ if (isset($params['name'])) {
 
             news_admin_ops::UpdateHierarchyPositions();
 
-            \CMSMS\HookManager::do_hook('News::NewsCategoryAdded', [ 'category_id'=>$catid, 'name'=>$name ] );
+            \CMSMS\HookManager::do_hook('News::NewsCategoryAdded', [ 'category_id'=>$catid, 'name'=>$name ]);
             // put mention into the admin log
-            audit($catid, 'News category: '.$name, ' Category added');
+            audit($catid, $this->GetName().' category', "Added '$name'");
 
             $this->SetMessage($this->Lang('categoryadded'));
             $this->RedirectToAdminTab('categories','','admin_settings');

@@ -43,7 +43,7 @@ if (isset($_GET['clear']) && $access) {
     unset($_SESSION['adminlog_page']);
     echo $themeObject->ShowMessage(lang('adminlogcleared'));
     // put mention into the admin log
-    audit('', 'Admin Log', 'Cleared');
+    audit('', 'Admin log', 'Cleared');
 }
 
 $page = ( isset($_SESSION['adminlog_page']) ) ? (int) $_SESSION['adminlog_page'] : 1;

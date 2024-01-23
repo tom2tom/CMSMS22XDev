@@ -440,7 +440,7 @@ final class ModuleOperations
         unset( $moduledetails['filename'] );
         unset( $moduledetails['isdir'] );
 
-        if( !$brief ) audit('','Module', 'Expanded module: '.$moduledetails['name'].' version '.$moduledetails['version']);
+        if( !$brief ) audit('','Module', 'Expanded '.$moduledetails['name'].' version '.$moduledetails['version']);
 
         return $moduledetails;
     }
@@ -486,7 +486,7 @@ final class ModuleOperations
             $this->_moduleinfo = array();
             $gCms->clear_cached_files();
 
-            audit('', 'Module', 'Installed '.$module_obj->GetName().' version '.$module_obj->GetVersion());
+            audit('','Module','Installed '.$module_obj->GetName().' version '.$module_obj->GetVersion());
             \CMSMS\HookManager::do_hook('Core::ModuleInstalled', [ 'name' => $module_obj->GetName(), 'version' => $module_obj->GetVersion() ] );
             return array(TRUE,$module_obj->InstallPostMessage());
         }
@@ -526,7 +526,7 @@ final class ModuleOperations
         if( $res[0] == FALSE && $res[1] == '') {
             $res[1] = lang('errorinstallfailed');
             // put mention into the admin log
-            audit('', $module . ' module','Install failed');
+            audit('','Module',$module.' installation failed');
         }
         return $res;
     }
@@ -596,8 +596,8 @@ final class ModuleOperations
                     // get_module_instance may call _load_module.
                     $obj2 = $this->get_module_instance($name,$ver);
                     if( !is_object($obj2) ) {
-                        audit('','Core',"Cannot load module $module_name ... Problem loading dependent module $name version $ver");
-                        debug_buffer("Cannot load $module_name... cannot load it's dependants.");
+                        audit('','Module',"Cannot load $module_name ... Problem loading dependent module $name version $ver");
+                        debug_buffer("Cannot load module $module_name... cannot load its dependant(s).");
                         unset($obj);
                         return FALSE;
                     }
@@ -637,8 +637,8 @@ final class ModuleOperations
 
         if (version_compare($obj->MinimumCMSVersion(),CMS_VERSION) == 1 ) {
             // oops, not compatible.... can't load.
-            audit('','Module','Cannot load module '.$module_name.' it is not compatible wth this version of CMSMS');
-            debug_buffer("Cannot load $module_name... It is not compatible with this version of CMSMS");
+            audit('','Module','Cannot load '.$module_name.' which is not compatible wth this version of CMSMS');
+            debug_buffer("Cannot load module $module_name... It is not compatible with this version of CMSMS");
             unset($obj);
             return FALSE;
         }
@@ -842,12 +842,12 @@ final class ModuleOperations
             $this->_generate_moduleinfo( $module_obj );
             $this->_moduleinfo = array();
             $gCms->clear_cached_files();
-            audit('','Module', 'Upgraded module '.$module_obj->GetName().' to version '.$module_obj->GetVersion());
+            audit('','Module','Upgraded '.$module_obj->GetName().' to version '.$module_obj->GetVersion());
             \CMSMS\HookManager::do_hook('Core::ModuleUpgraded', [ 'name' => $module_obj->GetName(), 'oldversion' => $dbversion, 'newversion' => $module_obj->GetVersion() ] );
             return array(TRUE);
         }
 
-        audit('','Module','Upgrade failed for module '.$module_obj->GetName());
+        audit('','Module',$module_obj->GetName().' upgrade failed');
         return array(FALSE,$result);
     }
 
@@ -942,12 +942,12 @@ final class ModuleOperations
             // Removing module from info
             $this->_moduleinfo = array();
 
-            audit('','Module','Uninstalled module '.$module);
+            audit('','Module','Uninstalled '.$module);
             \CMSMS\HookManager::do_hook('Core::ModuleUninstalled', [ 'name' => $module ] );
             return array(TRUE);
         }
 
-        audit('','Module','Uninstall failed: '.$module);
+        audit('','Module', $module.' uninstallation failed');
         return array(FALSE,$result);
     }
 

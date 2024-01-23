@@ -97,7 +97,7 @@ if( isset($params['submit']) ) {
         if( $i > 0 ) {
             $contentops->SetAllHierarchyPositions();
             $contentops->SetContentModified();
-            audit('','Core','Deleted '.$i.' pages');
+            audit('',$this->GetName(),'Bulk-deleted '.$i.' pages');
             $this->SetMessage($this->Lang('msg_bulk_successful'));
         }
     }

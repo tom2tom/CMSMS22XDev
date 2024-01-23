@@ -48,35 +48,35 @@ use CMSMS\HookManager;
  */
 class CmsLayoutTemplateType
 {
-	/**
-	 * This constant indicates a core template type
-	 */
-	const CORE = '__CORE__';
+    /**
+     * This constant indicates a core template type
+     */
+    const CORE = '__CORE__';
 
-	/**
-	 * @ignore
-	 */
-	const TABLENAME = 'layout_tpl_type';
+    /**
+     * @ignore
+     */
+    const TABLENAME = 'layout_tpl_type';
 
-	/**
-	 * @ignore
-	 */
+    /**
+     * @ignore
+     */
     private $_dirty;
 
-	/**
-	 * @ignore
-	 */
+    /**
+     * @ignore
+     */
     private $_data = array();
 
-	/**
-	 * @ignore
-	 */
-	private static $_cache;
+    /**
+     * @ignore
+     */
+    private static $_cache;
 
-	/**
-	 * @ignore
-	 */
-	private static $_name_cache;
+    /**
+     * @ignore
+     */
+    private static $_name_cache;
 
     /**
      * @ignore
@@ -97,7 +97,7 @@ class CmsLayoutTemplateType
     /**
      * Get the template originator (this is usually a module name)
      *
-	 * @param  bool $viewable Should the originator name be the viewable (friendly) string?
+     * @param  bool $viewable Should the originator name be the viewable (friendly) string?
      * @return string
      */
     public function get_originator($viewable = FALSE)
@@ -359,28 +359,28 @@ class CmsLayoutTemplateType
         return null;
     }
 
-	/**
-	 * Get the content block flag
-	 * The content block flag indicates that this template type requires content blocks
-	 *
-	 * @return bool
-	 */
-	public function get_content_block_flag()
-	{
+    /**
+     * Get the content block flag
+     * The content block flag indicates that this template type requires content blocks
+     *
+     * @return bool
+     */
+    public function get_content_block_flag()
+    {
         if( isset($this->_data['requires_contentblocks']) ) return $this->_data['requires_contentblocks'];
         return FALSE;
-	}
+    }
 
-	/**
-	 * Set the content block flag to indicate that this template type requires content blocks
-	 *
-	 * @param bool $flag
-	 */
-	public function set_content_block_flag($flag)
-	{
-		$flag = (bool)$flag;
-		$this->_data['requires_contentblocks'] = $flag;
-	}
+    /**
+     * Set the content block flag to indicate that this template type requires content blocks
+     *
+     * @param bool $flag
+     */
+    public function set_content_block_flag($flag)
+    {
+        $flag = (bool)$flag;
+        $this->_data['requires_contentblocks'] = $flag;
+    }
 
     /**
      * Validate the integrity of a template type object.
@@ -397,9 +397,9 @@ class CmsLayoutTemplateType
     {
         if( !$this->get_originator() ) throw new CmsInvalidDataException('Invalid Type Originator');
         if( !$this->get_name() ) throw new CmsInvalidDataException('Invalid Type Name');
-		if( !preg_match('/[A-Za-z0-9_\,\.\ ]/',$this->get_name()) ) {
-			throw new CmsInvalidDataException('Name must contain only letters, numbers and underscores.');
-		}
+        if( !preg_match('/[A-Za-z0-9_\,\.\ ]/',$this->get_name()) ) {
+            throw new CmsInvalidDataException('Name must contain only letters, numbers and underscores.');
+        }
 
         if( !$is_insert ) {
             if( !isset($this->_data['id']) || (int)$this->_data['id'] < 1 ) throw new CmsInvalidDataException('id is not set');
@@ -447,8 +447,8 @@ class CmsLayoutTemplateType
         if( !$dbr ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
 
         $this->_data['id'] = $db->Insert_ID();
-		CmsTemplateCache::clear_cache();
-		audit($this->get_id(),'CMSMS','Template Type '.$this->get_name().' Created');
+        CmsTemplateCache::clear_cache();
+        audit($this->get_id(),'Template type', "Created '{$this->get_name()}'");
         $this->_dirty = FALSE;
     }
 
@@ -479,9 +479,9 @@ class CmsLayoutTemplateType
                                          $this->get_owner(), $now, $this->get_id()));
         if( !$dbr ) throw new CmsSQLErrorException($db->ErrorMsg());
 
-		CmsTemplateCache::clear_cache();
+        CmsTemplateCache::clear_cache();
         $this->_dirty = FALSE;
-		audit($this->get_id(),'CMSMS','Template Type '.$this->get_name().' Updated');
+        audit($this->get_id(),'Template type', "Updated '{$this->get_name()}'");
     }
 
     /**
@@ -493,7 +493,7 @@ class CmsLayoutTemplateType
             HookManager::do_hook('Core::AddTemplateTypePre', [ get_class($this) => &$this ]);
             $this->_insert();
             HookManager::do_hook('Core::AddTemplateTypePost', [ get_class($this) => &$this ]);
-			return;
+            return;
         }
         HookManager::do_hook('Core::EditTemplateTypePre', [ get_class($this) => &$this ]);
         $this->_update();
@@ -522,7 +522,7 @@ class CmsLayoutTemplateType
         if( !$this->get_id() ) return;
 
         HookManager::do_hook('Core::DeleteTemplateTypePre', [ get_class($this) => &$this ]);
-		$tmp = CmsLayoutTemplate::template_query(array('t:'.$this->get_id()));
+        $tmp = CmsLayoutTemplate::template_query(array('t:'.$this->get_id()));
         if( is_array($tmp) && count($tmp) ) throw new CmsInvalidDataException('Cannot delete a template type with existing templates');
         $db = CmsApp::get_instance()->GetDb();
         $query = 'DELETE FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE id = ?';
@@ -530,8 +530,8 @@ class CmsLayoutTemplateType
         if( !$dbr ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
 
         $this->_dirty = TRUE;
-		CmsTemplateCache::clear_cache();
-		audit($this->get_id(),'CMSMS','Template Type '.$this->get_name().' Deleted');
+        CmsTemplateCache::clear_cache();
+        audit($this->get_id(),'Template type', "Deleted '{$this->get_name()}'");
         HookManager::do_hook('Core::DeleteTemplateTypePost', [ get_class($this) => &$this ]);
         unset($this->_data['id']);
     }
@@ -595,10 +595,10 @@ class CmsLayoutTemplateType
         return $text;
     }
 
-	/**
-	 * Get a translated/pretty displayable name for this template type
-	 * including the originator.
-	 */
+    /**
+     * Get a translated/pretty displayable name for this template type
+     * including the originator.
+     */
     public function get_langified_display_value()
     {
         $t = $this->get_lang_callback();
@@ -614,12 +614,12 @@ class CmsLayoutTemplateType
         return $to.'::'.$tn;
     }
 
-	/**
-	 * Reset the default content of this template type back to factory default
+    /**
+     * Reset the default content of this template type back to factory default
      *
      * @throws CmsException
      * @throws CmsDataNotFoundException
-	 */
+     */
     public function reset_content_to_factory()
     {
         if( !$this->get_dflt_flag() ) throw new CmsException('This template type does not have default contents');
@@ -631,12 +631,12 @@ class CmsLayoutTemplateType
         $this->set_dflt_contents($content);
     }
 
-	/**
-	 * Given an array (typically read from the database) create a CmsLayoutTemplateType object
-	 *
-	 * @internal
-	 * @return CmsLayoutTemplateType
-	 */
+    /**
+     * Given an array (typically read from the database) create a CmsLayoutTemplateType object
+     *
+     * @internal
+     * @return CmsLayoutTemplateType
+     */
     private static function _load_from_data($row)
     {
         foreach( ['originator','name','dflt_contents','description'] as $fld ) {
@@ -671,16 +671,16 @@ class CmsLayoutTemplateType
         $row = [];
         if( is_numeric($val) && (int)$val > 0 ) {
             $val = (int) $val;
-			if( isset(self::$_cache[$val]) ) return self::$_cache[$val];
+            if( isset(self::$_cache[$val]) ) return self::$_cache[$val];
 
             $query = 'SELECT * FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE id = ?';
             $row = $db->GetRow($query,array($val));
         }
         elseif( strlen($val) > 0 ) {
-			if( isset(self::$_name_cache[$val]) ) {
-				$id = self::$_name_cache[$val];
-				return self::$_cache[$id];
-			}
+            if( isset(self::$_name_cache[$val]) ) {
+                $id = self::$_name_cache[$val];
+                return self::$_cache[$id];
+            }
 
             $tmp = explode('::',$val);
             if( count($tmp) == 2 ) {
@@ -719,24 +719,24 @@ class CmsLayoutTemplateType
             self::_load_from_data($row);
         }
 
-		$out = array();
-		foreach( self::$_cache as $id => $one ) {
-			if( $one->get_originator() == $originator ) $out[] = $one;
-		}
-		return $out;
+        $out = array();
+        foreach( self::$_cache as $id => $one ) {
+            if( $one->get_originator() == $originator ) $out[] = $one;
+        }
+        return $out;
     }
 
-	/**
-	 * Load all template types
-	 *
-	 * @return array Array of CmsLayoutTemplateType objects
-	 */
+    /**
+     * Load all template types
+     *
+     * @return array Array of CmsLayoutTemplateType objects
+     */
     public static function get_all()
     {
         $db = CmsApp::get_instance()->GetDb();
         $query = 'SELECT * FROM '.CMS_DB_PREFIX.self::TABLENAME;
-		if( self::$_cache && count(self::$_cache) ) $query .= ' WHERE id NOT IN ('.implode(',',array_keys(self::$_cache)).')';
-		$query .= '	ORDER BY modified ASC';
+        if( self::$_cache && count(self::$_cache) ) $query .= ' WHERE id NOT IN ('.implode(',',array_keys(self::$_cache)).')';
+        $query .= ' ORDER BY modified';
         $list = $db->GetArray($query);
         if( !is_array($list) || count($list) == 0 ) return [];
 
@@ -747,22 +747,22 @@ class CmsLayoutTemplateType
         return array_values(self::$_cache);
     }
 
-	/**
-	 * Load template type objects by specifying an array of ids
-	 *
-	 * @param int[] $list Array of template type ids
-	 */
-	public static function load_bulk($list)
-	{
-		if( !is_array($list) || count($list) == 0 ) return [];
+    /**
+     * Load template type objects by specifying an array of ids
+     *
+     * @param int[] $list Array of template type ids
+     */
+    public static function load_bulk($list)
+    {
+        if( !is_array($list) || count($list) == 0 ) return [];
 
-		$list2 = array();
-		foreach( $list as $one ) {
+        $list2 = array();
+        foreach( $list as $one ) {
             if( !is_numeric($one) || (int)$one < 1 ) continue;
-			$one = (int)$one;
-			if( isset(self::$_cache[$one]) ) continue;
-			$list2[] = $one;
-		}
+            $one = (int)$one;
+            if( isset(self::$_cache[$one]) ) continue;
+            $list2[] = $one;
+        }
 
         $db = CmsApp::get_instance()->GetDb();
         $query = 'SELECT * FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE id IN ('.implode(',',$list).')';
@@ -774,17 +774,17 @@ class CmsLayoutTemplateType
             $out[] = self::_load_from_data($row);
         }
         return $out;
-	}
+    }
 
-	/**
-	 * Return the names of all loaded template types
-	 *
-	 * @return array Associative array of loaded type objects.
-	 */
-	public static function get_loaded_types()
-	{
-		if( is_array(self::$_cache) ) return array_keys(self::$_cache);
-	}
+    /**
+     * Return the names of all loaded template types
+     *
+     * @return array Associative array of loaded type objects.
+     */
+    public static function get_loaded_types()
+    {
+        if( is_array(self::$_cache) ) return array_keys(self::$_cache);
+    }
 
     /**
      * Get the assistant object with utility methods for this template type (if such an assistant object can be instantiated)

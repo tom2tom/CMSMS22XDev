@@ -98,7 +98,7 @@ try {
         }
     }
     catch( Exception $e ) {
-        audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+        audit('',$this->GetName(),'Installation error: '.$e->GetMessage());
     }
 
     $searchresults_type = new CmsLayoutTemplateType();
@@ -119,7 +119,7 @@ try {
     $tpl->save();
 }
 catch( CmsException $e ) {
-    audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+    audit('',$this->GetName(),'Installation error: '.$e->GetMessage());
 }
 
 #---------------------

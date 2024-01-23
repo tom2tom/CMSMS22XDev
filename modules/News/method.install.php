@@ -83,7 +83,7 @@ $sqlarray = $dict->CreateTableSQL(CMS_DB_PREFIX."module_news_fieldvals", $flds, 
 $dict->ExecuteSQLArray($sqlarray);
 
 // Set Permission
-$this->CreatePermission('Modify News', lang('perm_Modify_News'));//TODO migrate these to module-lang 
+$this->CreatePermission('Modify News', lang('perm_Modify_News'));//TODO migrate these to module-lang
 $this->CreatePermission('Approve News', lang('perm_Approve_News_For_Frontend_Display'));
 $this->CreatePermission('Delete News', lang('perm_Delete_News_Articles'));
 
@@ -102,7 +102,7 @@ try {
 catch( CmsException $e ) {
   // log it
   debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
-  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+  audit('',$this->GetName(),'Installation error: '.$e->GetMessage());
 }
 
 try {
@@ -121,7 +121,7 @@ try {
 catch( CmsException $e ) {
   // log it
   debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
-  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+  audit('',$this->GetName(),'Installation error: '.$e->GetMessage());
 }
 
 try {
@@ -141,7 +141,7 @@ try {
 catch( CmsException $e ) {
   // log it
   debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
-  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+  audit('',$this->GetName(),'Installation error: '.$e->GetMessage());
 }
 
 try {
@@ -159,7 +159,7 @@ try {
 catch( CmsException $e ) {
   // log it
   debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
-  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+  audit('',$this->GetName(),'Installation error: '.$e->GetMessage());
 }
 
 try {
@@ -178,7 +178,7 @@ try {
 catch( CmsException $e ) {
   // log it
   debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
-  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+  audit('',$this->GetName(),'Installation error: '.$e->GetMessage());
 }
 
 try {
@@ -198,7 +198,7 @@ try {
 catch( CmsException $e ) {
   // log it
   debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
-  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+  audit('',$this->GetName(),'Installation error: '.$e->GetMessage());
 }
 
 try {
@@ -216,7 +216,7 @@ try {
 catch( CmsException $e ) {
   // log it
   debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
-  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+  audit('',$this->GetName(),'Installation error: '.$e->GetMessage());
 }
 
 try {
@@ -236,7 +236,7 @@ try {
 catch( CmsException $e ) {
   // log it
   debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
-  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+  audit('',$this->GetName(),'Installation error: '.$e->GetMessage());
 }
 
 try {
@@ -254,7 +254,7 @@ try {
 catch( CmsException $e ) {
   // log it
   debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
-  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+  audit('',$this->GetName(),'Installation error: '.$e->GetMessage());
 }
 
 try {
@@ -273,7 +273,7 @@ try {
 catch( CmsException $e ) {
   // log it
   debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
-  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+  audit('',$this->GetName(),'Installation error: '.$e->GetMessage());
 }
 
 // Setup default email template and email preferences

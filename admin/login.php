@@ -61,10 +61,10 @@ function send_recovery_email(\User $user)
     $obj->SetBody($body);
 
     if( $obj->Send() ) {
-    audit('','Core','Sent Lost Password Email for '.$user->username);
+        audit($user->id,'Core','Sent lost password email to '.$user->username);
         return true;
     }
-    audit('','Core','Failed to send Lost Password Email for '.$user->username);
+    audit($user->id,'Core','Failed to send lost password email to '.$user->username);
     return false;
 }
 
@@ -143,8 +143,8 @@ else if (isset($_REQUEST['forgotpwchangeform']) && $_REQUEST['forgotpwchangeform
                 // put mention into the admin log
                 \cms_userprefs::remove_for_user( $user->id, 'pwreset' );
                 $ip_passw_recovery = \cms_utils::get_real_ip();
-                audit('','Core','Completed lost password recovery for: '.$user->username.' (IP: '.$ip_passw_recovery.')');
-                \CMSMS\HookManager::do_hook('Core::LostPasswordReset', [ 'uid'=>$user->id, 'username'=>$user->username, 'ip'=>$ip_passw_recovery ] );
+                audit($user->id,'Core','Completed lost password recovery for '.$user->username.' (IP: '.$ip_passw_recovery.')');
+                \CMSMS\HookManager::do_hook('Core::LostPasswordReset', [ 'uid'=>$user->id, 'username'=>$user->username, 'ip'=>$ip_passw_recovery ]);
                 $acceptLogin = lang('passwordchangedlogin');
                 $changepwhash = '';
             }
@@ -170,7 +170,7 @@ if (isset($_SESSION['logout_user_now'])) {
     \CMSMS\HookManager::do_hook('Core::LogoutPre', [ 'uid'=>$userid, 'username'=>$username ] );
     $login_ops->deauthenticate(); // unset all the cruft needed to make sure we're logged in.
     \CMSMS\HookManager::do_hook('Core::LogoutPost', [ 'uid'=>$userid, 'username'=>$username ] );
-    audit($userid, "Admin Username: ".$username, 'Logged Out');
+    audit($userid, 'Admin user', "$username logged out");
 }
 
 if( isset($_POST['logincancel']) ) {
@@ -198,15 +198,15 @@ else if( isset($_POST['loginsubmit']) ) {
         if( !$oneuser ) throw new CmsLoginError(lang('usernameincorrect'));
 
         // do hooks for authentication
-        \CMSMS\HookManager::do_hook('Core::LoginPre', [ 'user'=>$oneuser  ] );
+        \CMSMS\HookManager::do_hook('Core::LoginPre', [ 'user'=>$oneuser ]);
 
         $login_ops->save_authentication($oneuser);
 
         // put mention into the admin log
-        audit($oneuser->id, "Admin Username: ".$oneuser->username, 'Logged In');
+        audit($oneuser->id, 'Admin user', "$oneuser->username logged in");
 
         // send the post login event
-        \CMSMS\HookManager::do_hook('Core::LoginPost', [ 'user'=>$oneuser ] );
+        \CMSMS\HookManager::do_hook('Core::LoginPost', [ 'user'=>$oneuser ]);
 
         // redirect outa hre somewhere
         if( isset($_SESSION['login_redirect_to']) ) {
@@ -236,7 +236,7 @@ else if( isset($_POST['loginsubmit']) ) {
         \CMSMS\HookManager::do_hook('Core::LoginFailed', [ 'user'=>$username ] );
         // put mention into the admin log
         $ip_login_failed = \cms_utils::get_real_ip();
-        audit('', '(IP: ' . $ip_login_failed . ') ' . "Admin Username: " . $username, 'Login Failed');
+        audit($oneuser->id, 'Admin user', "$username login failed (IP: $ip_login_failed)");
     }
 }
 

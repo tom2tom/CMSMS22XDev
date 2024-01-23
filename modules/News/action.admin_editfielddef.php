@@ -64,7 +64,7 @@ if (isset($params['submit'])) {
 
     if( !$res ) die( $db->ErrorMsg() );
     // put mention into the admin log
-    audit($name, 'News custom: '.$name, 'Field definition edited');
+    audit($fdid, $this->GetName().' field definition',"Edited '$name'");
     $this->SetMessage($this->Lang('fielddefupdated'));
     $this->RedirectToAdminTab('customfields','','admin_settings');
   }

@@ -69,7 +69,7 @@ if( isset($params['submit']) ) {
 
       \CMSMS\HookManager::do_hook('News::NewsCategoryEdited', [ 'category_id'=>$catid, 'name'=>$name, 'origname'=>$origname ] );
       // put mention into the admin log
-      audit($catid, 'News category: '.$name, ' Category edited');
+      audit($catid, $this->GetName().' category', "Edited '$name'");
 
       $this->SetMessage($this->Lang('categoryupdated'));
       $this->RedirectToAdminTab('categories','','admin_settings');

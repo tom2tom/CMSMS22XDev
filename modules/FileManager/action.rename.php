@@ -56,17 +56,17 @@ if (isset($params["newname"])) {
     } else {
       $fulloldname = filemanager_utils::join_path(filemanager_utils::get_full_cwd(),$oldname);
       if (@rename($fulloldname,$fullnewname)) {
-	$thumboldname = filemanager_utils::join_path(filemanager_utils::get_full_cwd(),'thumb_'.$oldname);
-	$thumbnewname = filemanager_utils::join_path(filemanager_utils::get_full_cwd(),'thumb_'.trim($params['newname']));
-	if( file_exists($thumboldname) ) {
-	  @rename($thumboldname,$thumbnewname);
-	}
-	$this->SetMessage($this->Lang('renamesuccess'));
-	$this->Audit('',"File Manager", "Renamed file: ".$fullnewname);
-	$this->Redirect($id,"defaultadmin",$returnid,$paramsnofiles);
+        $thumboldname = filemanager_utils::join_path(filemanager_utils::get_full_cwd(),'thumb_'.$oldname);
+        $thumbnewname = filemanager_utils::join_path(filemanager_utils::get_full_cwd(),'thumb_'.trim($params['newname']));
+        if( file_exists($thumboldname) ) {
+          @rename($thumboldname,$thumbnewname);
+        }
+        $this->SetMessage($this->Lang('renamesuccess'));
+        audit('','FileManager', 'Renamed file to '.$fullnewname);
+        $this->Redirect($id,"defaultadmin",$returnid,$paramsnofiles);
       } else {
-	$this->SetError($this->Lang('renameerror'));
-	$this->Redirect($id,"defaultadmin",$returnid,$params);
+        $this->SetError($this->Lang('renameerror'));
+        $this->Redirect($id,"defaultadmin",$returnid,$params);
       }
     }
   }

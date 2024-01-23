@@ -7,7 +7,7 @@ if (isset($params['browsecattemplate'])) {
 else {
   $tpl = CmsLayoutTemplate::load_dflt_by_type('News::browsecat');
   if( !is_object($tpl) ) {
-    audit('',$this->GetName(),'No default summary template found');
+    audit('',$this->GetName().':browsecat','No default summary template found');
     return;
   }
   $template = $tpl->get_name();

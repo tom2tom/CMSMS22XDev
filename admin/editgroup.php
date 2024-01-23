@@ -78,7 +78,7 @@ if ($access) {
                 \CMSMS\HookManager::do_hook('Core::EditGroupPost', [ 'group'=>&$groupobj ] );
 
                 // put mention into the admin log
-                audit($groupobj->id, 'Admin User Group: '.$groupobj->name, 'Edited');
+                audit($groupobj->id, 'Admin users group',"Edited '$groupobj->name'");
                 redirect("listgroups.php".$urlext);
                 return;
             }

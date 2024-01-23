@@ -652,7 +652,7 @@ WHERE id = ?';
 		}
 
 		CmsTemplateCache::clear_cache();
-		audit($this->get_id(),'CMSMS','Template '.$this->get_name().' Updated');
+		audit($this->get_id(),'Template',"Updated' {$this->get_name()}'");
 		$this->_dirty = FALSE;
 	}
 
@@ -701,7 +701,7 @@ listable,created,modified) VALUES (?,?,?,?,?,?,?,?,?,?)';
 
 		$this->_dirty = FALSE;
 		CmsTemplateCache::clear_cache();
-		audit($this->get_id(),'CMSMS','Template '.$this->get_name().' Created');
+		audit($this->get_id(),'Template',"Created '{$this->get_name()}'");
 	}
 
 	/**
@@ -738,8 +738,8 @@ listable,created,modified) VALUES (?,?,?,?,?,?,?,?,?,?)';
 		@unlink($this->get_content_filename());
 
 		CmsTemplateCache::clear_cache();
-		audit($this->get_id(),'CMSMS','Template '.$this->get_name().' Deleted');
-		HookManager::do_hook('Core::DeleteTemplatePost', [ get_class($this) => &$this ] );
+		audit($this->get_id(),'Template',"Deleted '{$this->get_name()}'");
+		HookManager::do_hook('Core::DeleteTemplatePost',[ get_class($this) => &$this ]);
 		unset($this->_data['id']);
 		$this->_dirty = TRUE;
 	}

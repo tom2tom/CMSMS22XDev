@@ -61,7 +61,7 @@ if ($access) {
 
             \CMSMS\HookManager::do_hook('Core::AddGroupPost', [ 'group'=>&$groupobj ] );
             // put mention into the admin log
-            audit($groupobj->id, 'Admin User Group: '.$groupobj->name, 'Added');
+            audit($groupobj->id, 'Admin users group', "Added '$groupobj->name'");
             redirect("listgroups.php".$urlext);
             return;
         }

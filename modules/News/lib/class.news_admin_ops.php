@@ -45,12 +45,12 @@ final class news_admin_ops
         //Update search index
         $mod = cms_utils::get_module('News');
         $module = cms_utils::get_search_module();
-        if ($module != FALSE) $module->DeleteWords($mod->GetName(), $articleid, 'article');
+        if ($module) $module->DeleteWords($mod->GetName(), $articleid, 'article');
 
         \CMSMS\HookManager::do_hook('News::NewsArticleDeleted', ['news_id'=>$articleid ] );
 
         // put mention into the admin log
-        audit($articleid, 'News: '.$articleid, 'Article deleted');
+        audit($articleid, $mod->GetName().' article', "Deleted $articleid");
     }
 
     public static function handle_upload($itemid,$fieldname,&$error)

@@ -135,7 +135,7 @@ if (isset($_POST["submit"])) {
             }
 
             // put mention into the admin log
-            audit($newuser->id, 'Admin Username: ' . $newuser->username, 'Added');
+            audit($newuser->id, 'Admin user', "Added $newuser->username");
             redirect("listusers.php" . $urlext);
         } else {
             $error .= "<li>" . lang('errorinsertinguser') . "</li>";

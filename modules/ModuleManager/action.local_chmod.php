@@ -14,7 +14,7 @@ if( !$result ) {
   $this->SetError($this->Lang('error_chmodfailed'));
 }
 else {
-  audit('',$this->GetName(),'Changed permissions on '.$module.' directory');
+  audit('',$this->GetName(),'Changed permissions of '.$module.' directory');
   $this->SetMessage($this->Lang('msg_module_chmod'));
 }
 

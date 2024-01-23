@@ -35,7 +35,7 @@ if (isset($params['bulk_action']) ) {
                 WHERE news_id IN ('.implode(',',$sel).')';
             $parms = array((int)$params['category']);
             $db->Execute($query,$parms);
-            audit('',$this->GetName(),'category changed on '.count($sel).' articles');
+            audit((int)$params['category'],$this->GetName(),'Category of '.count($sel).' articles changed');
             echo $this->ShowMessage($this->Lang('msg_success'));
             break;
 
@@ -43,7 +43,7 @@ if (isset($params['bulk_action']) ) {
             $query = 'UPDATE '.CMS_DB_PREFIX.'module_news SET status = ?, modified_date = NOW()
                 WHERE news_id IN ('.implode(',',$sel).')';
             $db->Execute($query,array('published'));
-            audit('',$this->GetName(),'status changed on '.count($sel).' articles');
+            audit('',$this->GetName(),'Status of '.count($sel)." articles changed to 'published'");
             echo $this->ShowMessage($this->Lang('msg_success'));
             break;
 
@@ -51,7 +51,7 @@ if (isset($params['bulk_action']) ) {
             $query = 'UPDATE '.CMS_DB_PREFIX.'module_news SET status = ?, modified_date = NOW()
                 WHERE news_id IN ('.implode(',',$sel).')';
             $db->Execute($query,array('draft'));
-            audit('',$this->GetName(),'status changed on '.count($sel).' articles');
+            audit('',$this->GetName(),'Status of '.count($sel)." articles changed to 'draft'");
             echo $this->ShowMessage($this->Lang('msg_success'));
             break;
 
@@ -173,7 +173,7 @@ while ($dbresult && $row = $dbresult->FetchRow()) {
     $onerow->id = $row['news_id'];
     $onerow->news_title = $row['news_title'] ? news_ops::execSpecialize($row['news_title']) : (string)$row['news_title'];
     $onerow->title = $this->CreateLink($id, 'editarticle', $returnid, $row['news_title'], array('articleid'=>$row['news_id']));
-    $onerow->data = $row['news_data'] ? news_ops::execSpecialize($row['news_data']) : (string)$row['news_data']; 
+    $onerow->data = $row['news_data'] ? news_ops::execSpecialize($row['news_data']) : (string)$row['news_data'];
     $onerow->expired = 0;
     if( ($row['end_time'] != '') && ($db->UnixTimeStamp($row['end_time']) < time()) ) $onerow->expired = 1;
     $onerow->postdate = $row['news_date'];

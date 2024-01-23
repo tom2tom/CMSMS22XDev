@@ -84,12 +84,12 @@ if( isset($params['submit']) ) {
         if( $i != count($pagelist) ) {
             throw new CmsException('Bulk operation to set design did not adjust all selected pages');
         }
-        audit('','Core','Changed template and design on '.count($pagelist).' pages');
+        audit('','CMSContentManager','Changed template and design on '.count($pagelist).' pages');
         $this->SetMessage($this->Lang('msg_bulk_successful'));
         $this->RedirectToAdminTab();
     }
     catch( Exception $e ) {
-        audit('','Core','Bulk setting design and template failed: '.$e->GetMessage());
+        audit('','CMSContentManager','Bulk setting design and template failed: '.$e->GetMessage());
         $this->SetError($e->GetMessage());
         $this->RedirectToAdminTab();
     }

@@ -38,7 +38,7 @@ try {
 	$response = 'success';
 }
 catch( CmsException $e ) {
-	audit('','CMSMS','Problem working with category in ajax: '.$e->GetMessage());
+	audit('',$this->GetName(),'Problem working with design category in ajax: '.$e->GetMessage());
 	$out = 'ERROR: '.$e->GetMessage();
 	$response = 'error';
 }

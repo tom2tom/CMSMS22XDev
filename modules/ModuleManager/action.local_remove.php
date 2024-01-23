@@ -15,7 +15,7 @@ if( !$result ) {
   $this->SetError($this->Lang('error_moduleremovefailed'));
 }
 else {
-  audit('',$this->GetName(),'Module '.$module.' removed');
+  audit('',$this->GetName(),'Removed module '.$module);
   $this->SetMessage($this->Lang('msg_module_removed'));
 }
 

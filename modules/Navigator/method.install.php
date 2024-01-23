@@ -51,7 +51,7 @@ try {
 catch( CmsException $e ) {
     // log it
     debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
-    audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+    audit('',$this->GetName(),'Installation error: '.$e->GetMessage());
     return $e->GetMessage();
 }
 
@@ -69,7 +69,7 @@ try {
 catch( CmsException $e ) {
     // log it
     debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
-    audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+    audit('',$this->GetName(),'Installation error: '.$e->GetMessage());
     return $e->GetMessage();
 }
 
@@ -165,12 +165,12 @@ try {
     }
     catch( \Exception $e ) {
         // if we got here, it's prolly because default content was not installed.
-        audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+        audit('',$this->GetName(),'Installation error: '.$e->GetMessage());
     }
 }
 catch( \Exception $e ) {
   debug_to_log(__FILE__.':'.__LINE__.' '.$e->GetMessage());
-  audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+  audit('',$this->GetName(),'Installation error: '.$e->GetMessage());
   return $e->GetMessage();
 }
 

@@ -126,7 +126,7 @@ if (isset($_POST['submit_account']) && check_permission($userid,'Manage My Accou
 
     if($result) {
       // put mention into the admin log
-        audit($userid, 'Admin Username: '.$userobj->username, 'Edited');
+        audit($userid, 'Admin user', "Edited $userobj->username");
         \CMSMS\HookManager::do_hook('Core::EditUserPost', [ 'user'=>&$userobj ] );
         $message = lang('accountupdated');
     } else {
@@ -172,7 +172,7 @@ if (isset($_POST['submit_prefs']) && check_permission($userid,'Manage My Setting
   cms_userprefs::set_for_user($userid, 'homepage', $homepage);
 
   // Audit, message, cleanup
-  audit($userid, 'Admin Username: '.$userobj->username, 'Edited');
+  audit($userid, 'Admin user', "Edited $userobj->username");
   $message = lang('prefsupdated');
   cmsms()->clear_cached_files();
 } // end of prefs submit

@@ -64,7 +64,7 @@ try {
     $content->Save();
     $i++;
   }
-  audit('','Core','Changed cachable status of '.count($multicontent).' pages');
+  audit('','CMSContentManager','Bulk-changed cachable status of '.count($multicontent).' pages');
   $this->SetMessage($this->Lang('msg_bulk_successful'));
 }
 catch( Exception $e ) {

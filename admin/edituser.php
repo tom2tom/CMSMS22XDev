@@ -139,7 +139,7 @@ if (isset($_POST["submit"])) {
             }
         }
 
-        audit($userid, 'Admin Username: ' . $thisuser->username, ' Edited');
+        audit($userid, 'Admin user', "Edited $thisuser->username");
         $message = lang('edited_user');
 
         if ($result) {
@@ -151,12 +151,12 @@ if (isset($_POST["submit"])) {
                     foreach ($prefs as $k => $v) {
                         cms_userprefs::set_for_user($user_id, $k, $v);
                     }
-                    audit($user_id, 'Admin Username: ' . $thisuser->username, 'settings copied from template user');
+                    audit($user_id, 'Admin user', 'Settings of user id '.(int)$_POST['copyusersettings'].' copied to '.$thisuser->username);
                     $message = lang('msg_usersettingscopied');
                 }
             } else if (isset($_POST['clearusersettings'])) {
                 // clear all preferences for this user.
-                audit($user_id, 'Admin Username: ' . $thisuser->username, ' settings cleared');
+                audit($user_id, 'Admin user', "All settings of $thisuser->username cleared");
                 cms_userprefs::remove_for_user($user_id);
                 $message = lang('msg_usersettingscleared');
             }

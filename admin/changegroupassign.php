@@ -15,7 +15,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: changegroupassign.php 12671 2021-12-13 03:05:01Z tomphantoo $
+#$Id$
 
 $CMS_ADMIN_PAGE=1;
 
@@ -23,6 +23,17 @@ require_once("../lib/include.php");
 $urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
 check_login();
+
+if (isset($_POST["cancel"])) {
+    redirect("changegroupassign.php".$urlext);
+}
+
+$userid = get_userid(false);
+$access = check_permission($userid, 'Manage Groups');
+if (!$access) {
+    die('Permission Denied');
+}
+
 $group_id= - 1;
 if (isset($_POST["group_id"])) $group_id = $_POST["group_id"];
 else if (isset($_GET["group_id"])) $group_id = $_GET["group_id"];
@@ -33,17 +44,6 @@ else if (isset($_GET["submitted"])) $submitted = $_GET["submitted"];
 
 $group_name="";
 
-if (isset($_POST["cancel"])) {
-    redirect("changegroupassign.php".$urlext);
-return;
-}
-
-$userid = get_userid();
-$access = check_permission($userid, 'Manage Groups');
-if (!$access) {
-    die('Permission Denied');
-    return;
-}
 $gCms = cmsms();
 $userops = $gCms->GetUserOperations();
 $adminuser = ($userops->UserInGroup($userid,1) || $userid == 1);
@@ -60,12 +60,10 @@ if( isset($_POST['filter']) ) {
 $disp_group = cms_userprefs::get_for_user($userid,'changegroupassign_group',-1);
 
 // always display the group pulldown
-$gCms = cmsms();
 $groupops = $gCms->GetGroupOperations();
-$userops = $gCms->GetUserOperations();
 $tmp = new stdClass();
 $tmp->name = lang('all_groups');
-$tmp->id=-1;
+$tmp->id = -1;
 $allgroups = array($tmp);
 $groups = array($tmp);
 $group_list = $groupops->LoadGroups();
@@ -106,16 +104,15 @@ if ($submitted == 1) {
         \CMSMS\HookManager::do_hook( 'Core::ChangeGroupAssignPost',
                                      [ 'group' => $thisGroup, 'users' => $userops->LoadUsersInGroup($thisGroup->id) ] );
         // put mention into the admin log
-        audit($group_id, 'Assignment Group ID: '.$group_id, 'Changed');
+        audit($group_id, 'Assignment Group ID: '.$group_id, 'Changed'); //TODO nonsense
     }
 
     // put mention into the admin log
-    audit($userid, 'Assignment User ID: '.$userid, 'Changed');
+    $usernm = get_username(false);
+    audit($userid, 'Admin user', "Changed group membership of $usernm");
     $message = lang('assignmentchanged');
     $gCms->clear_cached_files();
 }
-
-
 
 $query = "SELECT u.user_id, u.username, ug.group_id FROM ".
     CMS_DB_PREFIX."users u LEFT JOIN ".CMS_DB_PREFIX.

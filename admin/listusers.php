@@ -84,7 +84,7 @@ else if (isset($_GET["toggleactive"])) {
 
             if ($result) {
                 // put mention into the admin log
-                audit($userid, 'Admin Username: ' . $thisuser->username, 'Edited');
+                audit($userid, 'Admin user', "Edited $thisuser->username");
                 HookManager::do_hook('Core::EditUserPost', [ 'user' => &$thisuser ] );
             } else {
                 $error .= "<li>" . lang('errorupdatinguser') . "</li>";
@@ -112,7 +112,7 @@ else if (isset($_GET["toggleactive"])) {
                 HookManager::do_hook('Core::DeleteUserPre', [ 'user'=>&$oneuser ] );
                 $oneuser->Delete();
                 HookManager::do_hook('Core::DeleteUserPost', [ 'user'=>&$oneuser ] );
-                audit($uid, 'Admin Username: ' . $oneuser->username, 'Deleted');
+                audit($uid, 'Admin user', "Deleted $oneuser->username");
                 $ndeleted++;
             }
             if ($ndeleted > 0) {
@@ -132,7 +132,7 @@ else if (isset($_GET["toggleactive"])) {
                 HookManager::do_hook('Core::EditUserPre', [ 'user'=>&$oneuser ] );
                 cms_userprefs::remove_for_user($uid);
                 HookManager::do_hook('Core::EditUserPost', [ 'user'=>&$oneuser ] );
-                audit($uid, 'Admin Username: ' . $oneuser->username, 'Settings cleared');
+                audit($uid, 'Admin user', "All settings of $oneuser->username cleared");
                 $nusers++;
             }
             if ($nusers > 0) {
@@ -162,7 +162,7 @@ else if (isset($_GET["toggleactive"])) {
                                 cms_userprefs::set_for_user($uid, $k, $v);
                             }
                             HookManager::do_hook('Core::EditUserPost', [ 'user'=>&$oneuser ] );
-                            audit($uid, 'Admin Username: ' . $oneuser->username, 'Settings cleared');
+                            audit($uid, 'Admin user', "All settings of $oneuser->username cleared");
                             $nusers++;
                         }
                     }
@@ -189,7 +189,7 @@ else if (isset($_GET["toggleactive"])) {
                     $oneuser->active = 0;
                     $oneuser->save();
                     HookManager::do_hook('Core::EditUserPost', [ 'user'=>&$oneuser ] );
-                    audit($uid, 'Admin Username: ' . $oneuser->username, 'Disabled');
+                    audit($uid, 'Admin user', "Disabled $oneuser->username");
                     $nusers++;
                 }
             }
@@ -214,7 +214,7 @@ else if (isset($_GET["toggleactive"])) {
                     $oneuser->active = 1;
                     $oneuser->save();
                     HookManager::do_hook('Core::EditUserPost', [ 'user'=>&$oneuser ] );
-                    audit($uid, 'Admin Username: ' . $oneuser->username, 'Enabled');
+                    audit($uid, 'Admin user', "Enabled $oneuser->username");
                     $nusers++;
                 }
             }

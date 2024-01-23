@@ -212,7 +212,7 @@ final class modmgr_utils
             }
             else {
                 $req->clearCache();
-                audit($status,'ModuleManager','Cannot connect to ModuleRepository');
+                audit($status,$mod->GetName(),'Cannot connect to module repository');
             }
         }
         $ok = FALSE;

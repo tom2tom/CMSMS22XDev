@@ -18,6 +18,7 @@ $now          = time();
 $status       = 'draft';
 if ($this->CheckPermission('Approve News')) $status = 'published';
 $userid       = get_userid();
+$me           = $this->GetName();
 
 $content      = isset($params['content']) ? $params['content'] : '';
 $enddate      = strtotime(sprintf("+%d days", $ndays), $now);
@@ -184,7 +185,7 @@ if (isset($params['submit'])) {
                 }
 
                 $text .= $content . ' ' . $summary . ' ' . $title . ' ' . $title;
-                $module->AddWords($this->GetName(), $articleid, 'article', $text, ($useexp == 1 && $this->GetPreference('expired_searchable', 0) == 0) ? $enddate : NULL);
+                $module->AddWords($me, $articleid, 'article', $text, ($useexp == 1 && $this->GetPreference('expired_searchable', 0) == 0) ? $enddate : NULL);
             }
         }
 
@@ -202,7 +203,7 @@ if (isset($params['submit'])) {
                       'useexp' => $useexp,
                       'extra' => $extra ));
             // put mention into the admin log
-            audit($articleid, 'News: ' . $title, 'Article added');
+            audit($articleid, $me.' article', "Added '$title'");
             $this->SetMessage($this->Lang('articleadded'));
             $this->Redirect($id, 'defaultadmin', $returnid);
         } // !$error
@@ -217,7 +218,7 @@ if (isset($params['submit'])) {
     unset($params['ajax']);
 
     if (empty($error)) {
-        $tmpfname = tempnam(TMP_CACHE_LOCATION, $this->GetName() . '_preview');
+        $tmpfname = tempnam(TMP_CACHE_LOCATION, $me . '_preview');
         file_put_contents($tmpfname, serialize($params));
 
         $detail_returnid = $this->GetPreference('detail_returnid', -1);
@@ -422,7 +423,7 @@ $smarty->assign('preview_page_selector', $contentops->CreateHierarchyDropdown(''
 
 // get the list of detail templates.
 try {
-    $type = CmsLayoutTemplateType::load($this->GetName() . '::detail');
+    $type = CmsLayoutTemplateType::load($me . '::detail');
     $templates = $type->get_template_list();
     $list = array();
     if ($templates && is_array($templates)) {
@@ -439,7 +440,7 @@ try {
         $smarty->assign('end_tab_preview', $this->EndTab());
     }
 } catch( Exception $e ) {
-    audit('', $this->GetName(), 'No detail templates available for preview');
+    audit('', $me, 'No detail template available for preview');
 }
 echo $this->ProcessTemplate('editarticle.tpl');
 ?>

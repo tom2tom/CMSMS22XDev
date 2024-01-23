@@ -35,7 +35,7 @@ if (isset($params['formtemplate'])) {
 else {
   $tpl = CmsLayoutTemplate::load_dflt_by_type('News::form');
   if( !is_object($tpl) ) {
-    audit('',$this->GetName(),'No default form template found');
+    audit('',$this->GetName().':feusubmit','No default form template found');
     return;
   }
   $template = $tpl->get_name();
@@ -178,7 +178,7 @@ if( isset( $params['submit'] ) ) {
                                     'useexp' => 1));
 
             // put mention into the admin log
-            audit('', 'News Frontend Submit', 'Article added');
+            audit($articleid, $this->GetName(). ' article', "Added '$title' from frontend");
 
             // and we're done
             $tpl_ob->assign('message',$this->Lang('articleadded'));

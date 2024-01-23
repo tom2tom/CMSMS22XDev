@@ -120,11 +120,11 @@ try {
                 $this->delete_job($job);
             }
             $this->set_current_job(null);
-            if( $config['developer_mode'] ) audit('','CmsJobManager','Processed job '.$job->name);
+            if( $config['developer_mode'] ) audit('',$this->GetName(),'Processed job '.$job->name);
         }
         catch( \Exception $e ) {
             $job = $this->get_current_job();
-            audit('','CmsJobManager','An error occurred while processing: '.$job->name);
+            audit('',$this->GetName(),'An error occurred while processing: '.$job->name);
             _cmsjobmgr_joberrorhandler($job,$e->GetMessage(),$e->GetFile(),$e->GetLine());
         }
     }

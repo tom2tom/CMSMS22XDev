@@ -34,7 +34,6 @@ if (isset($_GET["group_id"])) {
         redirect("listgroups.php".$urlext);
     }
 
-    $group_name = "";
     $userid = get_userid();
     $access = check_permission($userid, 'Manage Groups');
 
@@ -67,7 +66,7 @@ if (isset($_GET["group_id"])) {
 
     if ($result == true) {
         // put mention into the admin log
-        audit($group_id, 'Admin User Group: '.$group_name, 'Deleted');
+        audit($group_id, 'Admin users group', "Deleted '$group_name'");
     }
 }
 

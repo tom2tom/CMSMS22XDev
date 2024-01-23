@@ -20,13 +20,17 @@ if (!isset($gCms)) exit;
 if (!$this->CheckPermission('Modify Site Preferences')) return;
 
 $fdid = '';
-if (isset($params['fdid']))	$fdid = $params['fdid'];
+if (isset($params['fdid'])) $fdid = $params['fdid'];
 
-// Get the category details
+//Get the field details
 $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_news_fielddefs WHERE id = ?';
 $row = $db->GetRow($query, array($fdid));
+if (!$row) {
+    $this->SetError(lang('missingparams'));
+    $this->RedirectToAdminTab('customfields','','admin_settings');
+}
 
-//Now remove the category
+//Now remove the field
 $query = "DELETE FROM ".CMS_DB_PREFIX."module_news_fielddefs WHERE id = ?";
 $db->Execute($query, array($fdid));
 
@@ -38,6 +42,6 @@ $db->Execute('UPDATE '.CMS_DB_PREFIX.'module_news_fielddefs SET item_order = (it
 
 $params = array('tab_message'=> 'fielddefdeleted', 'active_tab' => 'customfields');
 // put mention into the admin log
-audit('','News custom: '.$name, 'Field definition deleted');
+audit($fdid,$this->GetName().' field definition',"Deleted '{$row['name']}'");
 $this->Setmessage($this->Lang('fielddefdeleted'));
 $this->RedirectToAdminTab('customfields','','admin_settings');

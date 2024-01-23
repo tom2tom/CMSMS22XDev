@@ -9,6 +9,7 @@ if (isset($params['cancel'])) $this->Redirect($id, 'defaultadmin', $returnid);
  * Variables
  ---------------------*/
 $now = time();
+$me           = $this->GetName();
 $status       = 'draft';
 if ($this->CheckPermission('Approve News')) $status = 'published';
 
@@ -81,7 +82,7 @@ if (isset($params['submit']) || isset($params['apply'])) {
             $route = cms_route_manager::find_match($news_url, TRUE);
             if ($route) {
                 $dflts = $route->get_defaults();
-                if ($route['key1'] != $this->GetName() || !isset($dflts['articleid']) || $dflts['articleid'] != $articleid) {
+                if ($route['key1'] != $me || !isset($dflts['articleid']) || $dflts['articleid'] != $articleid) {
                     // any other matching route is bad.
                     $error = $this->Lang('error_invalidurl');
                 }
@@ -211,7 +212,7 @@ if (isset($params['submit']) || isset($params['apply'])) {
         $module = cms_utils::get_search_module();
         if (is_object($module)) {
             if ($status == 'draft' || !$searchable) {
-                $module->DeleteWords($this->GetName(), $articleid, 'article');
+                $module->DeleteWords($me, $articleid, 'article');
             } else {
                 if (!$useexp || ($enddate > time()) || $this->GetPreference('expired_searchable', 1) == 1) {
                     $text = '';
@@ -224,7 +225,7 @@ if (isset($params['submit']) || isset($params['apply'])) {
                     }
                 }
                 $text .= $content . ' ' . $summary . ' ' . $title . ' ' . $title;
-                $module->AddWords($this->GetName(), $articleid, 'article', $text, ($useexp == 1 && $this->GetPreference('expired_searchable', 0) == 0) ? $enddate : NULL);
+                $module->AddWords($me, $articleid, 'article', $text, ($useexp == 1 && $this->GetPreference('expired_searchable', 0) == 0) ? $enddate : NULL);
             }
         }
 
@@ -243,7 +244,7 @@ if (isset($params['submit']) || isset($params['apply'])) {
             'news_url' => $news_url
         ));
         // put mention into the admin log
-        audit($articleid, 'News: ' . $title, 'Article edited');
+        audit($articleid, $me.' article', "Edited '$title'");
     }// no error
 
     if (isset($params['apply']) && isset($params['ajax'])) {
@@ -284,7 +285,7 @@ if (isset($params['submit']) || isset($params['apply'])) {
     unset($params['ajax']);
 
     if (empty($error)) {
-        $tmpfname = tempnam(TMP_CACHE_LOCATION, $this->GetName() . '_preview');
+        $tmpfname = tempnam(TMP_CACHE_LOCATION, $me . '_preview');
         file_put_contents($tmpfname, serialize($params));
 
         $detail_returnid = $this->GetPreference('detail_returnid', -1);
@@ -532,7 +533,7 @@ $smarty->assign('preview_page_selector', $contentops->CreateHierarchyDropdown(''
 
 // get the list of detail templates.
 try {
-    $type = CmsLayoutTemplateType::load($this->GetName() . '::detail');
+    $type = CmsLayoutTemplateType::load($me . '::detail');
     $templates = $type->get_template_list();
     $list = array();
     if ($templates && is_array($templates)) {
@@ -549,7 +550,7 @@ try {
         $smarty->assign('end_tab_preview', $this->EndTab());
     }
 } catch( Exception $e ) {
-    audit('', $this->GetName(), 'No detail templates available for preview');
+    audit('', $me.':editarticle', 'No detail template available for preview');
 }
 
 // and display the template.

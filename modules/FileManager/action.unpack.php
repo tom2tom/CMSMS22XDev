@@ -56,7 +56,7 @@ try {
   $res = $worker->extract($src,dirname($src).DIRECTORY_SEPARATOR);
   if ($res) {
     $paramsnofiles['fmmessage'] = 'unpacksuccess';
-    audit('','File Manager','Unpacked file: '.$src);
+    audit('','FileManager','Unpacked file '.$src);
   }
   else {
     $paramsnofiles['fmerror'] = 'unpackfail'; //TODO some detail

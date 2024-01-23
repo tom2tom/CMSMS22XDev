@@ -61,7 +61,7 @@ if( version_compare($oldversion,'1.50') < 1 ) {
       }
   }
   catch( CmsException $e ) {
-    audit('',$this->GetName(),'Installation Error: '.$e->GetMessage());
+    audit('',$this->GetName(),'Upgrade error: '.$e->GetMessage());
   }
 }
 

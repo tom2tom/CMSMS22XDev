@@ -56,7 +56,7 @@ if (isset($_GET["user_id"])) {
             \CMSMS\HookManager::do_hook('Core::DeleteUserPost', [ 'user'=>&$oneuser] );
 
             // put mention into the admin log
-            audit($user_id, 'Admin Username: '.$user_name, 'Deleted');
+            audit($user_id, 'Admin user', "Deleted $user_name");
         }
     }
 }

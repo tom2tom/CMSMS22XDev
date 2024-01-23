@@ -24,21 +24,19 @@ $urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
 check_login();
 
-$submitted= - 1;
-if (isset($_POST["submitted"])) $submitted = $_POST["submitted"];
-else if (isset($_GET["submitted"])) $submitted = $_GET["submitted"];
-
 if (isset($_POST["cancel"])) {
     redirect("changegroupperm.php".$urlext);
-    return;
 }
 
-$userid = get_userid();
+$userid = get_userid(false);
 $access = check_permission($userid, 'Manage Groups');
 if (!$access) {
     die('Permission Denied');
-    return;
 }
+
+$submitted= - 1;
+if (isset($_POST["submitted"])) $submitted = $_POST["submitted"];
+else if (isset($_GET["submitted"])) $submitted = $_GET["submitted"];
 
 $gCms = cmsms();
 $userops = $gCms->GetUserOperations();
@@ -122,8 +120,6 @@ $group_perms = function($in_struct) {
     return $out;
 };
 
-if (!$access) die('permission denied');
-
 if( isset($_POST['filter']) ) {
     $disp_group = $_POST['groupsel'];
     cms_userprefs::set_for_user($userid,'changegroupassign_group',$disp_group);
@@ -192,7 +188,9 @@ if ($submitted == 1) {
     }
 
     // put mention into the admin log
-    audit($userid, 'Permission Group ID: '.$userid, 'Changed');
+//  audit($userid, 'Permission Group ID: '.$userid, 'Changed');
+    $usernm = get_username(false);
+    audit($userid, 'Admin user', "Changed permissions of $usernm");
     $message = lang('permissionschanged');
     $gCms->clear_cached_files();
 }
