@@ -465,7 +465,7 @@ final class cms_config implements ArrayAccess
         $tmp = $this->offsetGet('root_url');
         if( startswith($tmp,'http://') ) $tmp = str_replace('http://','https://',$tmp);
         $this->_cache[$key] = $tmp;
-        return $this->_cache[$key];
+        return $tmp;
 
       case 'uploads_path':
         $this->_cache[$key] = cms_join_path($this->offsetGet('root_path'),'uploads');
@@ -479,7 +479,7 @@ final class cms_config implements ArrayAccess
         $tmp = $this->offsetGet('uploads_url');
         if( startswith($tmp,'http://') ) $tmp = str_replace('http://','https://',$tmp);
         $this->_cache[$key] = $tmp;
-        return $this->_cache[$key];
+        return $tmp;
 
       case 'image_uploads_path':
         $this->_cache[$key] = cms_join_path($this->offsetGet('uploads_path'),'images');
@@ -493,7 +493,7 @@ final class cms_config implements ArrayAccess
         $tmp = $this->offsetGet('image_uploads_url');
         if( startswith($tmp,'http://') ) $tmp = str_replace('http://','https://',$tmp);
         $this->_cache[$key] = $tmp;
-        return $this->_cache[$key];
+        return $tmp;
 
       case 'previews_path':
         return TMP_CACHE_LOCATION;
