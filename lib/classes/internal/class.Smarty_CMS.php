@@ -261,7 +261,7 @@ class Smarty_CMS extends CMSSmartyBase
 
         if( CmsApp::get_instance()->is_frontend_request() ) {
             $row = cms_module_smarty_plugin_manager::load_plugin($name,$type);
-            if( $row && !empty($row['callback']) && //TODO can frontend calable ever be a simple function?
+            if( $row && !empty($row['callback']) &&
                 is_array($row['callback']) && count($row['callback']) == 2 &&
                 is_string($row['callback'][0]) && is_string($row['callback'][1]) ) {
                 $callback = $row['callback'][0].'::'.$row['callback'][1];
