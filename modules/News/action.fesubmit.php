@@ -178,7 +178,7 @@ if( isset( $params['submit'] ) ) {
                                     'useexp' => 1));
 
             // put mention into the admin log
-            audit($articleid, $this->GetName(). ' article', "Added '$title' from frontend");
+            audit($articleid,$this->GetName().' article',"Added: $title (from frontend)");
 
             // and we're done
             $tpl_ob->assign('message',$this->Lang('articleadded'));

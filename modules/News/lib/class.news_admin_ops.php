@@ -17,13 +17,15 @@
 #
 #$Id$
 
+use CMSMS\HookManager;
+
 final class news_admin_ops
 {
     protected function __construct() {}
 
     public static function delete_article($articleid)
     {
-        \CMSMS\HookManager::do_hook('News::NewsArticleDeletedPre', ['news_id'=>$articleid ] );
+        HookManager::do_hook('News::NewsArticleDeletedPre', ['news_id'=>$articleid ]);
 
         $db = cmsms()->GetDb();
 
@@ -47,10 +49,10 @@ final class news_admin_ops
         $module = cms_utils::get_search_module();
         if ($module) $module->DeleteWords($mod->GetName(), $articleid, 'article');
 
-        \CMSMS\HookManager::do_hook('News::NewsArticleDeleted', ['news_id'=>$articleid ] );
+        HookManager::do_hook('News::NewsArticleDeleted', ['news_id'=>$articleid ]);
 
         // put mention into the admin log
-        audit($articleid, $mod->GetName().' article', "Deleted $articleid");
+        audit($articleid, $mod->GetName().' article', "Deleted: $articleid");
     }
 
     public static function handle_upload($itemid,$fieldname,&$error)

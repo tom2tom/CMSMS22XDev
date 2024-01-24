@@ -17,6 +17,8 @@
 #
 #$Id: addgroup.php 12671 2021-12-13 03:05:01Z tomphantoo $
 
+use CMSMS\HookManager;
+
 $CMS_ADMIN_PAGE=1;
 
 require_once("../lib/include.php");
@@ -47,25 +49,25 @@ $access = check_permission($userid, 'Manage Groups');
 if ($access) {
     if (isset($_POST["addgroup"])) {
         try {
-            if ($group == '') throw new \CmsInvalidDataException(lang('nofieldgiven', lang('groupname')));
+            if ($group == '') throw new CmsInvalidDataException(lang('nofieldgiven', lang('groupname')));
 
             $groupobj = new Group();
             $groupobj->name = $group;
             $groupobj->description = $description;
             $groupobj->active = $active;
 
-            \CMSMS\HookManager::do_hook('Core::AddGroupPre', [ 'group'=>&$groupobj ] );
+            HookManager::do_hook('Core::AddGroupPre', [ 'group'=>&$groupobj ]);
 
             $result = $groupobj->save();
-            if( !$result ) throw new \RuntimeException(lang('errorinsertinggroup'));
+            if( !$result ) throw new RuntimeException(lang('errorinsertinggroup'));
 
-            \CMSMS\HookManager::do_hook('Core::AddGroupPost', [ 'group'=>&$groupobj ] );
+            HookManager::do_hook('Core::AddGroupPost', [ 'group'=>&$groupobj ]);
             // put mention into the admin log
-            audit($groupobj->id, 'Admin users group', "Added '$groupobj->name'");
+            audit($groupobj->id, 'Admin users group', "Added: $groupobj->name");
             redirect("listgroups.php".$urlext);
             return;
         }
-        catch( \Exception $e ) {
+        catch( Exception $e ) {
             $error .= '<li>'.$e->GetMessage().'</li>';
         }
     }

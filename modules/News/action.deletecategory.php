@@ -1,4 +1,7 @@
 <?php
+
+use CMSMS\HookManager;
+
 if (!isset($gCms)) exit;
 if (!$this->CheckPermission('Modify Site Preferences')) return;
 
@@ -25,8 +28,8 @@ $db->Execute($query, array($catid));
 $query = "UPDATE ".CMS_DB_PREFIX."module_news SET news_category_id = -1 WHERE news_category_id = ?";
 $db->Execute($query, array($catid));
 
-\CMSMS\HookManager::do_hook('News::NewsCategoryDeleted', [ 'category_id'=>$catid, 'name'=>$row['news_category_name'] ] );
-audit($catid, $this->GetName().' category', "Deleted '{$row['news_category_name']}'");
+HookManager::do_hook('News::NewsCategoryDeleted', [ 'category_id'=>$catid, 'name'=>$row['news_category_name'] ]);
+audit($catid,$this->GetName().' category', "Deleted: {$row['news_category_name']}");
 
 news_admin_ops::UpdateHierarchyPositions();
 $params = array('tab_message'=> 'categorydeleted', 'active_tab' => 'categories');

@@ -192,7 +192,7 @@ try {
             unset($_SESSION['__cms_copy_obj__']);
             $tmp = $content_obj->Name();
             if( $tmp ) {
-                $tmp = "Edited content page '$tmp'";
+                $tmp = "Edited content page: $tmp";
             }
             else {
                 $tmp = 'Edited anonymous page';

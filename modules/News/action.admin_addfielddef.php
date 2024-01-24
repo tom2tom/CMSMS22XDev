@@ -50,7 +50,7 @@ if (isset($params['submit'])) {
 
         // put mention into the admin log
         $fdid = $db->Insert_ID();
-        audit($fdid, $this->GetName().' field definition', "Added '$name'");
+        audit($fdid, $this->GetName().' field definition', "Added: $name");
 
         // done.
         $params = array('tab_message'=> 'fielddefadded', 'active_tab' => 'customfields');

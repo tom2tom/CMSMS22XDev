@@ -448,7 +448,7 @@ class CmsLayoutTemplateType
 
         $this->_data['id'] = $db->Insert_ID();
         CmsTemplateCache::clear_cache();
-        audit($this->get_id(),'Template type', "Created '{$this->get_name()}'");
+        audit($this->get_id(),'Template type', "Created: {$this->get_name()}");
         $this->_dirty = FALSE;
     }
 
@@ -481,7 +481,7 @@ class CmsLayoutTemplateType
 
         CmsTemplateCache::clear_cache();
         $this->_dirty = FALSE;
-        audit($this->get_id(),'Template type', "Updated '{$this->get_name()}'");
+        audit($this->get_id(),'Template type', "Updated: {$this->get_name()}");
     }
 
     /**
@@ -531,7 +531,7 @@ class CmsLayoutTemplateType
 
         $this->_dirty = TRUE;
         CmsTemplateCache::clear_cache();
-        audit($this->get_id(),'Template type', "Deleted '{$this->get_name()}'");
+        audit($this->get_id(),'Template type', "Deleted: {$this->get_name()}");
         HookManager::do_hook('Core::DeleteTemplateTypePost', [ get_class($this) => &$this ]);
         unset($this->_data['id']);
     }

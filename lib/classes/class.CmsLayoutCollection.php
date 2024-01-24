@@ -214,7 +214,7 @@ class CmsLayoutCollection
         if( !is_array($id_array) ) return;
 
         foreach( $id_array as $one ) {
-            if( !is_numeric($one) || $one < 1 ) throw new \CmsLogicException('CmsLayoutCollection::set_stylesheets expects an array of integers');
+            if( !is_numeric($one) || $one < 1 ) throw new CmsLogicException('CmsLayoutCollection::set_stylesheets expects an array of integers');
         }
 
         $this->_css_assoc = $id_array;
@@ -224,7 +224,7 @@ class CmsLayoutCollection
     /**
      * Adds a stylesheet to the theme
      *
-     * @throws \CmsLogicException
+     * @throws CmsLogicException
      * @param mixed $css Either an integer stylesheet id, or a CmsLayoutStylesheet object
      */
     public function add_stylesheet($css)
@@ -236,7 +236,7 @@ class CmsLayoutCollection
         else if( is_numeric($css) && $css > 0 ) {
             $css_t = (int) $css;
         }
-        if( $css_t < 1 ) throw new \CmsLogicException('Invalid css id specified to CmsLayoutCollection::add_stylesheet');
+        if( $css_t < 1 ) throw new CmsLogicException('Invalid css id specified to CmsLayoutCollection::add_stylesheet');
 
         if( !in_array($css_t,$this->_css_assoc) ) {
             $this->_css_assoc[] = (int) $css_t;
@@ -259,7 +259,7 @@ class CmsLayoutCollection
         else if( is_numeric($css) ) {
             $css_t = (int) $css;
         }
-        if( $css_t < 1 ) throw new \CmsLogicException('Invalid css id specified to CmsLayoutCollection::delete_stylesheet');
+        if( $css_t < 1 ) throw new CmsLogicException('Invalid css id specified to CmsLayoutCollection::delete_stylesheet');
 
         if( !in_array($css_t,$this->_css_assoc) ) return;
         $t = array();
@@ -310,7 +310,7 @@ class CmsLayoutCollection
         if( !is_array($id_array) ) return;
 
         foreach( $id_array as $one ) {
-            if( !is_numeric($one) && $one < 1 ) throw new \CmsLogicException('CmsLayoutCollection::set_templates expects an array of integers');
+            if( !is_numeric($one) && $one < 1 ) throw new CmsLogicException('CmsLayoutCollection::set_templates expects an array of integers');
         }
 
         $this->_tpl_assoc = $id_array;
@@ -437,7 +437,7 @@ class CmsLayoutCollection
         }
 
         $this->_dirty = FALSE;
-        audit($this->get_id(),'Design',"Created '{$this->get_name()}'");
+        audit($this->get_id(),'Design',"Created: {$this->get_name()}");
     }
 
     /**
@@ -482,7 +482,7 @@ class CmsLayoutCollection
         }
 
         $this->_dirty = FALSE;
-        audit($this->get_id(),'Design',"Updated '{$this->get_name()}'");
+        audit($this->get_id(),'Design',"Updated: {$this->get_name()}");
     }
 
     /**
@@ -493,14 +493,14 @@ class CmsLayoutCollection
     public function save()
     {
         if( $this->get_id() ) {
-            HookManager::do_hook('Core::EditDesignPre', [ get_class($this) => &$this ] );
+            HookManager::do_hook('Core::EditDesignPre', [ get_class($this) => &$this ]);
             $this->_update();
-            HookManager::do_hook('Core::EditDesignPost', [ get_class($this) => &$this ] );
+            HookManager::do_hook('Core::EditDesignPost', [ get_class($this) => &$this ]);
             return;
         }
-        HookManager::do_hook('Core::AddDesignPre', [ get_class($this) => &$this ] );
+        HookManager::do_hook('Core::AddDesignPre', [ get_class($this) => &$this ]);
         $this->_insert();
-        HookManager::do_hook('Core::AddDesignPost', [ get_class($this) => &$this ] );
+        HookManager::do_hook('Core::AddDesignPost', [ get_class($this) => &$this ]);
     }
 
     /**
@@ -516,7 +516,7 @@ class CmsLayoutCollection
 
         if( !$force && $this->has_templates() ) throw new CmsLogicException('Cannot Delete a Design that has Templates Attached');
 
-        HookManager::do_hook('Core::DeleteDesignPre', [ get_class($this) => &$this ] );
+        HookManager::do_hook('Core::DeleteDesignPre', [ get_class($this) => &$this ]);
         $db = CmsApp::get_instance()->GetDb();
         if( count($this->_css_assoc) ) {
             $query = 'DELETE FROM '.CMS_DB_PREFIX.self::CSSTABLE.' WHERE design_id = ?';
@@ -535,7 +535,7 @@ class CmsLayoutCollection
         $query = 'DELETE FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE id = ?';
         $dbr = $db->Execute($query,array($this->get_id()));
 
-        audit($this->get_id(),'Design',"Deleted '{$this->get_name()}'");
+        audit($this->get_id(),'Design',"Deleted: {$this->get_name()}");
         HookManager::do_hook('Core::DeleteDesignPost',[ get_class($this) => &$this ]);
         unset($this->_data['id']);
         $this->_dirty = TRUE;

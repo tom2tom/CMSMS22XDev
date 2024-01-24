@@ -190,7 +190,7 @@ class CmsLayoutTemplateCategory
         if( !$dbr ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
         $this->_data['id'] = $db->Insert_ID();
         $this->_dirty = FALSE;
-        audit($this->_data['id'],'Template category',"Created '{$this->get_name()}'");
+        audit($this->_data['id'],'Template category',"Created: {$this->get_name()}");
     }
 
     /**
@@ -209,7 +209,7 @@ class CmsLayoutTemplateCategory
                                          time(),(int)$this->get_id()));
         if( !$dbr ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
         $this->_dirty = FALSE;
-        audit($this->get_id(),'Template category',"Updated '{$this->get_name()}'");
+        audit($this->get_id(),'Template category',"Updated: {$this->get_name()}");
     }
 
     /**
@@ -243,7 +243,7 @@ class CmsLayoutTemplateCategory
         $query = 'UPDATE '.CMS_DB_PREFIX.self::TABLENAME.' SET item_order = item_order - 1 WHERE item_order > ?';
         $dbr = $db->GetOne($query,array($this->_data['item_order']));
 
-        audit($this->get_id(),'Template category',"Deleted '{$this->get_name()}'");
+        audit($this->get_id(),'Template category',"Deleted: {$this->get_name()}");
         unset($this->_data['item_order']);
         unset($this->_data['id']);
         $this->_dirty = TRUE;

@@ -652,7 +652,7 @@ WHERE id = ?';
 		}
 
 		CmsTemplateCache::clear_cache();
-		audit($this->get_id(),'Template',"Updated' {$this->get_name()}'");
+		audit($this->get_id(),'Template',"Updated: {$this->get_name()}");
 		$this->_dirty = FALSE;
 	}
 
@@ -701,7 +701,7 @@ listable,created,modified) VALUES (?,?,?,?,?,?,?,?,?,?)';
 
 		$this->_dirty = FALSE;
 		CmsTemplateCache::clear_cache();
-		audit($this->get_id(),'Template',"Created '{$this->get_name()}'");
+		audit($this->get_id(),'Template',"Created: {$this->get_name()}");
 	}
 
 	/**
@@ -710,14 +710,14 @@ listable,created,modified) VALUES (?,?,?,?,?,?,?,?,?,?)';
 	public function save()
 	{
 		if( $this->get_id() ) {
-			HookManager::do_hook('Core::EditTemplatePre', [ get_class($this) => &$this ] );
+			HookManager::do_hook('Core::EditTemplatePre', [ get_class($this) => &$this ]);
 			$this->_update();
-			HookManager::do_hook('Core::EditTemplatePost', [ get_class($this) => &$this ] );
+			HookManager::do_hook('Core::EditTemplatePost', [ get_class($this) => &$this ]);
 			return;
 		}
-		HookManager::do_hook('Core::AddTemplatePre', [ get_class($this) => &$this ] );
+		HookManager::do_hook('Core::AddTemplatePre', [ get_class($this) => &$this ]);
 		$this->_insert();
-		HookManager::do_hook('Core::AddTemplatePost', [ get_class($this) => &$this ] );
+		HookManager::do_hook('Core::AddTemplatePost', [ get_class($this) => &$this ]);
 	}
 
 	/**
@@ -727,7 +727,7 @@ listable,created,modified) VALUES (?,?,?,?,?,?,?,?,?,?)';
 	{
 		if( !$this->get_id() ) return;
 
-		HookManager::do_hook('Core::DeleteTemplatePre', [ get_class($this) => &$this ] );
+		HookManager::do_hook('Core::DeleteTemplatePre', [ get_class($this) => &$this ]);
 		$db = CmsApp::get_instance()->GetDb();
 		$query = 'DELETE FROM '.CMS_DB_PREFIX.CmsLayoutCollection::TPLTABLE.' WHERE tpl_id = ?';
 		$dbr = $db->Execute($query,array($this->get_id()));
@@ -738,7 +738,7 @@ listable,created,modified) VALUES (?,?,?,?,?,?,?,?,?,?)';
 		@unlink($this->get_content_filename());
 
 		CmsTemplateCache::clear_cache();
-		audit($this->get_id(),'Template',"Deleted '{$this->get_name()}'");
+		audit($this->get_id(),'Template',"Deleted: {$this->get_name()}");
 		HookManager::do_hook('Core::DeleteTemplatePost',[ get_class($this) => &$this ]);
 		unset($this->_data['id']);
 		$this->_dirty = TRUE;

@@ -1,4 +1,6 @@
 <?php
+
+use CMSMS\HookManager;
 #FileManager module action
 #(c) 2006-8 Morten Poulsen <morten@poulsen.org>
 #(c) 2008 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
@@ -70,15 +72,17 @@ if( isset($params['submit']) ) {
     // at this point, we should be good to delete.
     if( is_dir($fn) ) {
       @rmdir($fn);
+      $type = 'directory';
     } else {
       @unlink($fn);
+      $type = 'file';
     }
     if( $thumb != '' ) @unlink($thumb);
 
     $parms = array('file'=>$fn);
     if( $thumb ) $parms['thumb'] = $thumb;
-    audit('',"FileManager", "Removed item ".$fn);
-    \CMSMS\HookManager::do_hook('FileManager::OnFileDeleted', $parms);
+    audit('',"FileManager", "Removed $type: ".$fn);
+    HookManager::do_hook('FileManager::OnFileDeleted', $parms);
   } // foreach
 
   if( count($errors) == 0 ) {

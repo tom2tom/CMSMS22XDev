@@ -1,4 +1,7 @@
 <?php
+
+use CMSMS\HookManager;
+
 if (!isset($gCms)) exit;
 if (!$this->CheckPermission('Modify Site Preferences')) return;
 
@@ -29,9 +32,9 @@ if (isset($params['name'])) {
 
             news_admin_ops::UpdateHierarchyPositions();
 
-            \CMSMS\HookManager::do_hook('News::NewsCategoryAdded', [ 'category_id'=>$catid, 'name'=>$name ]);
+            HookManager::do_hook('News::NewsCategoryAdded', [ 'category_id'=>$catid, 'name'=>$name ]);
             // put mention into the admin log
-            audit($catid, $this->GetName().' category', "Added '$name'");
+            audit($catid, $this->GetName().' category', "Added: $name");
 
             $this->SetMessage($this->Lang('categoryadded'));
             $this->RedirectToAdminTab('categories','','admin_settings');

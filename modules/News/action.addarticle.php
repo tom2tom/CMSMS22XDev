@@ -203,7 +203,7 @@ if (isset($params['submit'])) {
                       'useexp' => $useexp,
                       'extra' => $extra ));
             // put mention into the admin log
-            audit($articleid, $me.' article', "Added '$title'");
+            audit($articleid, $me.' article', "Added: $title");
             $this->SetMessage($this->Lang('articleadded'));
             $this->Redirect($id, 'defaultadmin', $returnid);
         } // !$error

@@ -17,6 +17,8 @@
 #
 #$Id: editgroup.php 11053 2017-02-04 04:20:03Z calguy1000 $
 
+use CMSMS\HookManager;
+
 $CMS_ADMIN_PAGE=1;
 
 require_once("../lib/include.php");
@@ -71,14 +73,14 @@ if ($access) {
             $groupobj->name = $group;
             $groupobj->description = $description;
             $groupobj->active = $active;
-            \CMSMS\HookManager::do_hook('Core::EditGroupPre', [ 'group'=>&$groupobj ] );
+            HookManager::do_hook('Core::EditGroupPre', [ 'group'=>&$groupobj ]);
 
             $result = $groupobj->save();
             if ($result) {
-                \CMSMS\HookManager::do_hook('Core::EditGroupPost', [ 'group'=>&$groupobj ] );
+                HookManager::do_hook('Core::EditGroupPost', [ 'group'=>&$groupobj ]);
 
                 // put mention into the admin log
-                audit($groupobj->id, 'Admin users group',"Edited '$groupobj->name'");
+                audit($groupobj->id, 'Admin users group',"Edited: $groupobj->name");
                 redirect("listgroups.php".$urlext);
                 return;
             }

@@ -244,7 +244,7 @@ if (isset($params['submit']) || isset($params['apply'])) {
             'news_url' => $news_url
         ));
         // put mention into the admin log
-        audit($articleid, $me.' article', "Edited '$title'");
+        audit($articleid, $me.' article', "Edited: $title");
     }// no error
 
     if (isset($params['apply']) && isset($params['ajax'])) {

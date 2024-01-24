@@ -42,6 +42,6 @@ $db->Execute('UPDATE '.CMS_DB_PREFIX.'module_news_fielddefs SET item_order = (it
 
 $params = array('tab_message'=> 'fielddefdeleted', 'active_tab' => 'customfields');
 // put mention into the admin log
-audit($fdid,$this->GetName().' field definition',"Deleted '{$row['name']}'");
+audit($fdid,$this->GetName().' field definition',"Deleted: {$row['name']}");
 $this->Setmessage($this->Lang('fielddefdeleted'));
 $this->RedirectToAdminTab('customfields','','admin_settings');

@@ -17,6 +17,8 @@
 #
 #$Id$
 
+use CMSMS\HookManager;
+
 /**
  * Init variables / objects
  */
@@ -119,15 +121,15 @@ if (isset($_POST['submit_account']) && check_permission($userid,'Manage My Accou
     $userobj->firstname = $firstname;
     $userobj->lastname = $lastname;
     $userobj->email = $email;
-    \CMSMS\HookManager::do_hook('Core::EditUserPre', [ 'user'=>&$userobj ] );
+    HookManager::do_hook('Core::EditUserPre', [ 'user'=>&$userobj ]);
 
     if ($password) $userobj->SetPassword($password);
     $result = $userobj->Save();
 
     if($result) {
       // put mention into the admin log
-        audit($userid, 'Admin user', "Edited $userobj->username");
-        \CMSMS\HookManager::do_hook('Core::EditUserPost', [ 'user'=>&$userobj ] );
+        audit($userid, 'Admin user', "Edited: $userobj->username");
+        HookManager::do_hook('Core::EditUserPost', [ 'user'=>&$userobj ]);
         $message = lang('accountupdated');
     } else {
         // throw exception? update just failed.
@@ -172,7 +174,7 @@ if (isset($_POST['submit_prefs']) && check_permission($userid,'Manage My Setting
   cms_userprefs::set_for_user($userid, 'homepage', $homepage);
 
   // Audit, message, cleanup
-  audit($userid, 'Admin user', "Edited $userobj->username");
+  audit($userid, 'Admin user', "Edited: $userobj->username");
   $message = lang('prefsupdated');
   cmsms()->clear_cached_files();
 } // end of prefs submit

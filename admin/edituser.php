@@ -139,7 +139,7 @@ if (isset($_POST["submit"])) {
             }
         }
 
-        audit($userid, 'Admin user', "Edited $thisuser->username");
+        audit($userid, 'Admin user', "Edited: $thisuser->username");
         $message = lang('edited_user');
 
         if ($result) {
@@ -156,7 +156,7 @@ if (isset($_POST["submit"])) {
                 }
             } else if (isset($_POST['clearusersettings'])) {
                 // clear all preferences for this user.
-                audit($user_id, 'Admin user', "All settings of $thisuser->username cleared");
+                audit($user_id, 'Admin user', "Cleared all settings of $thisuser->username");
                 cms_userprefs::remove_for_user($user_id);
                 $message = lang('msg_usersettingscleared');
             }

@@ -17,6 +17,8 @@
 #
 #$Id$
 
+use CMSMS\HookManager;
+
 /**
  * A class to represent a stylesheet.
  *
@@ -345,7 +347,7 @@ class CmsLayoutStylesheet
 			$n = $design->get_id();
 		}
 		else {
-			throw new \CmsLogicException('Invalid data passed to '.__METHOD__);
+			throw new CmsLogicException('Invalid data passed to '.__METHOD__);
 		}
 
 		// note: should load designs before adding.
@@ -379,7 +381,7 @@ class CmsLayoutStylesheet
 			$n = $design->get_id();
 		}
 		else {
-			throw new \CmsLogicException('Invalid data passed to '.__METHOD__);
+			throw new CmsLogicException('Invalid data passed to '.__METHOD__);
 		}
 
 		$designs = $this->get_designs();
@@ -487,7 +489,7 @@ class CmsLayoutStylesheet
 		}
 
 		CmsTemplateCache::clear_cache();
-		audit($this->get_id(),'Stylesheet',"Updated '{$this->get_name()}'");
+		audit($this->get_id(),'Stylesheet',"Updated: {$this->get_name()}");
 		$this->_dirty = FALSE;
 	}
 
@@ -505,7 +507,7 @@ class CmsLayoutStylesheet
 		$query = 'INSERT INTO '.CMS_DB_PREFIX.self::TABLENAME.' (name,content,description,media_type,media_query, created,modified)
 			  VALUES (?,?,?,?,?,?,?)';
 		$db = CmsApp::get_instance()->GetDb();
-		$dbr = $db->Execute($query,    array($this->get_name(),$this->get_content(),$this->get_description(),
+		$dbr = $db->Execute($query, array($this->get_name(),$this->get_content(),$this->get_description(),
 										  $tmp,$this->get_media_query(), time(),time()));
 		if( !$dbr ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
 		$this->_data['id'] = $db->Insert_ID();
@@ -521,7 +523,7 @@ class CmsLayoutStylesheet
 
 		$this->_dirty = FALSE;
 		CmsTemplateCache::clear_cache();
-		audit($this->get_id(),'Stylesheet',"Created '{$this->get_name()}'");
+		audit($this->get_id(),'Stylesheet',"Created: {$this->get_name()}");
 	}
 
 	/**
@@ -539,14 +541,14 @@ class CmsLayoutStylesheet
 	public function save()
 	{
 		if( $this->get_id() ) {
-			\CMSMS\HookManager::do_hook('Core::EditStylesheetPre',array(get_class($this)=>&$this));
+			HookManager::do_hook('Core::EditStylesheetPre',array(get_class($this)=>&$this));
 			$this->_update();
-			\CMSMS\HookManager::do_hook('Core::EditStylesheetPost',array(get_class($this)=>&$this));
+			HookManager::do_hook('Core::EditStylesheetPost',array(get_class($this)=>&$this));
 			return;
 		}
-		\CMSMS\HookManager::do_hook('Core::AddStylesheetPre',array(get_class($this)=>&$this));
+		HookManager::do_hook('Core::AddStylesheetPre',array(get_class($this)=>&$this));
 		$this->_insert();
-		\CMSMS\HookManager::do_hook('Core::AddStylesheetPost',array(get_class($this)=>&$this));
+		HookManager::do_hook('Core::AddStylesheetPost',array(get_class($this)=>&$this));
 	}
 
 	/**
@@ -560,7 +562,7 @@ class CmsLayoutStylesheet
 	{
 		if( !$this->get_id() ) return;
 
-		\CMSMS\HookManager::do_hook('Core::DeleteStylesheetPre',array(get_class($this)=>&$this));
+		HookManager::do_hook('Core::DeleteStylesheetPre',array(get_class($this)=>&$this));
 		$db = CmsApp::get_instance()->GetDb();
 		$query = 'DELETE FROM '.CMS_DB_PREFIX.CmsLayoutCollection::CSSTABLE.' WHERE css_id = ?';
 		$dbr = $db->Execute($query,array($this->get_id()));
@@ -571,9 +573,9 @@ class CmsLayoutStylesheet
 		@unlink($this->get_content_filename());
 
 		CmsTemplateCache::clear_cache();
-		audit($this->get_id(),'Stylesheet',"Deleted '{$this->get_name()}'");
+		audit($this->get_id(),'Stylesheet',"Deleted: {$this->get_name()}");
 		// Events::SendEvent('Core','DeleteStylesheetPost',array(get_class($this)=>&$this));
-		\CMSMS\HookManager::do_hook('Core::DeleteStylesheetPost',array(get_class($this)=>&$this));
+		HookManager::do_hook('Core::DeleteStylesheetPost',array(get_class($this)=>&$this));
 		unset($this->_data['id']);
 		$this->_dirty = TRUE;
 	}
@@ -688,7 +690,7 @@ class CmsLayoutStylesheet
 			$query = 'SELECT id,name,content,description,media_type,media_query,created,modified FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE name = ?';
 			$row = $db->GetRow($query,array($a));
 		}
-		if( !is_array($row) || count($row) == 0 ) throw new \CmsInvalidDataException('Could not find stylesheet identified by '.$a);
+		if( !is_array($row) || count($row) == 0 ) throw new CmsInvalidDataException('Could not find stylesheet identified by '.$a);
 
 		return self::_load_from_data($row);
 	}
@@ -855,7 +857,7 @@ class CmsLayoutStylesheet
 	 */
 	public function get_content_filename()
 	{
-		$config = \cms_config::get_instance();
+		$config = cms_config::get_instance();
 		$name = munge_string_to_url($this->get_name()).'.'.$this->get_id().'.css';
 		return cms_join_path($config['assets_path'],'css',$name);
 	}

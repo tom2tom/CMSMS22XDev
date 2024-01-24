@@ -17,6 +17,8 @@
 #
 #$Id: deletegroup.php 12671 2021-12-13 03:05:01Z tomphantoo $
 
+use CMSMS\HookManager;
+
 $CMS_ADMIN_PAGE=1;
 
 require_once("../lib/include.php");
@@ -58,15 +60,15 @@ if (isset($_GET["group_id"])) {
     }
 
     // now do the work.
-    \CMSMS\HookManager::do_hook('Core::DeleteGroupPre', [ 'group'=>&$groupobj ] );
+    HookManager::do_hook('Core::DeleteGroupPre', [ 'group'=>&$groupobj ]);
 
     if ($groupobj) $result = $groupobj->Delete();
 
-    \CMSMS\HookManager::do_hook('Core::DeleteGroupPost', [ 'group'=>&$groupobj ] );
+    HookManager::do_hook('Core::DeleteGroupPost', [ 'group'=>&$groupobj ]);
 
     if ($result == true) {
         // put mention into the admin log
-        audit($group_id, 'Admin users group', "Deleted '$group_name'");
+        audit($group_id, 'Admin users group', "Deleted: $group_name");
     }
 }
 
