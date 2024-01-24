@@ -102,6 +102,7 @@ class microtiny_utils
  }
 </script>
 <script src="$custombase/tinymce/tinymce.min.js" defer></script>
+<script src="$custombase/tmcepluginsbundle.js" defer></script>
 
 EOS;
       }

@@ -3,7 +3,6 @@ https://docs.terminalfour.com/articles/migrating-tinymce4-plugins-to-tinymce5/
 extra plugins
  colorpicker (stub?)
  directionality
- emoticons
  help
  hr
  importcss
@@ -21,6 +20,7 @@ other omitted plugins
  codesample
  colorpicker
  contextmenu
+ emoticons
  fullpage
  imagetools
  legacyoutput

@@ -1,4 +1,7 @@
-tinymce.util.Tools.resolve('tinymce.PluginManager').add('nonbreaking_CP', function(editor) {
+function() {
+  'use strict';
+
+  tinymce.util.Tools.resolve('tinymce.PluginManager').add('nonbreaking_CP', function(editor) {
 /* RUBBISH
     function option(name,editor) {
       return editor.options.get(name);
@@ -87,7 +90,7 @@ tinymce.util.Tools.resolve('tinymce.PluginManager').add('nonbreaking_CP', functi
       icon: 'non-breaking',
       text: 'Nonbreaking space',
       onAction: nbspdoer//,
-//      onSetup: onSetupSpacer
+//    onSetup: onSetupSpacer
     });
 
     // and a button
@@ -95,7 +98,7 @@ tinymce.util.Tools.resolve('tinymce.PluginManager').add('nonbreaking_CP', functi
       icon: 'non-breaking',
       tooltip: 'Nonbreaking space',
       onAction: nbspdoer//,
-//      onSetup: onSetupSpacer
+//    onSetup: onSetupSpacer
     });
 /* RUBBISH
     var spaces = option('nonbreaking_force_tab',editor);
@@ -110,4 +113,5 @@ tinymce.util.Tools.resolve('tinymce.PluginManager').add('nonbreaking_CP', functi
       });
     }
 */
-});
+  });
+}();
