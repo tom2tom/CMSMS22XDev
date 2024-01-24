@@ -1,4 +1,4 @@
-function() {
+(function() {
   'use strict';
 
   tinymce.util.Tools.resolve('tinymce.PluginManager').add('pagelink_CP', function(editor) {
@@ -347,4 +347,4 @@ function() {
       tooltip: cmsms_tiny.linker_title
     });
   });
-}();
+})()

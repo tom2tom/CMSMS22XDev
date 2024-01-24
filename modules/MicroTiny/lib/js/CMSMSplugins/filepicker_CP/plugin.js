@@ -1,4 +1,4 @@
-function() {
+(function() {
   'use strict';
 
   tinymce.util.Tools.resolve('tinymce.PluginManager').add('filepicker_CP', function(editor) {
@@ -89,4 +89,4 @@ function() {
       }
     }
   });
-}();
+})()

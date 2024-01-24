@@ -1,4 +1,4 @@
-function() {
+(function() {
   'use strict';
 
   tinymce.util.Tools.resolve('tinymce.PluginManager').add('mailto_CP', function(editor) {
@@ -121,4 +121,4 @@ function() {
       tooltip: cmsms_tiny.mailto_title
     });
   });
-}();
+})()

@@ -1,4 +1,4 @@
-function() {
+(function() {
   'use strict';
 
   tinymce.util.Tools.resolve('tinymce.PluginManager').add('nonbreaking_CP', function(editor) {
@@ -114,4 +114,4 @@ function() {
     }
 */
   });
-}();
+})()
