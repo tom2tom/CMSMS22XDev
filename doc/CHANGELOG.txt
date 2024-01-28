@@ -16,7 +16,10 @@ Core - General
  - BR #12660 output filter not working.
  - BR #12661 page-selector plugin misnamed parameter.
  - BR #12662 file picker does not filter archives properly.
+ - BR #12666 missing admin-log data.
  - BR #12677 UDT parse error can trigger 500 error.
+ - BR #12683 admin-log data length management.
+ - Improved pages-hierarchy management.
  - Validate entered bookmark-URLs.
  - Include .phar files in executables test.
  - Deprecated use of PHP function umask().
@@ -35,7 +38,7 @@ Admin theme
  - Corrected content scrolling
 
 AdminSearch 1.0.7
- - Support exclusion of inactive pages from searches
+ - FR #12555 - Support exclusion of inactive pages from searches
 
 CmsJobManager 0.1.4
  - BR #12629 - Add missing changelog and retriever
@@ -46,6 +49,7 @@ CMSMailer
 ContentManager 1.1.11
  - BR #12474 - Taking the default page down by accident through the content type
  - BR #12635 - Apply button is shown for non-existing page and creates new pages
+ - FR #12487 - (partial) Page search also checks menu text
 
 DesignManager
  - Corrected new template creation
