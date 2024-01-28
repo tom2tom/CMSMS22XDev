@@ -190,12 +190,13 @@ try {
             $content_obj->SetLastModifiedBy($user_id);
             $content_obj->Save();
             unset($_SESSION['__cms_copy_obj__']);
+            $optype = ($content_id > 0) ? 'Edited' : 'Added';
             $tmp = $content_obj->Name();
             if( $tmp ) {
-                $tmp = "Edited content page: $tmp";
+                $tmp = "$optype content page: $tmp";
             }
             else {
-                $tmp = 'Edited anonymous page';
+                $tmp = "$optype anonymous page";
             }
             audit($content_obj->Id(),$this->GetName(),$tmp);
             if( isset($params['submit']) ) {
@@ -333,7 +334,7 @@ if( $this->GetPreference('template_list_mode','designpage') != 'all') {
 }
 
 $parms = array();
-if( $content_id > 0 ) $parms['content_id']=$content_id;
+if( $content_id > 0 ) $parms['content_id'] = $content_id;
 $url = str_replace('&amp;','&',$this->create_url($id,'admin_editcontent',$returnid,$parms)).'&showtemplate=false';
 $smarty->assign('apply_ajax_url',$url);
 $url = str_replace('&amp;','&',$this->create_url($id,'admin_editcontent',$returnid,array('preview'=>1)));
