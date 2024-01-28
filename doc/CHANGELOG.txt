@@ -22,10 +22,10 @@ Core - General
  - Deprecated use of PHP function umask().
  - Since CMSMS 2.2, config parameters 'ssl_url','ssl_uploads_url' and 'ssl_image_uploads_url', and methods which use those, have internally but not publicly been flagged as deprecated.
  - Added missing nls files, allowing installation of extra translations.
- - Smarty upgraded to version 4.3.4.
+ - Smarty upgraded to version 4.3.5.
  - Enabled use of PHP function rawurlencode in Smarty templates.
  - Added Smarty modifier plugin 'adjust' to handle deprecated modifier-function-calls in templates.
- - PHPMailer upgraded to version 6.8.1.
+ - PHPMailer upgraded to version 6.9.1.
  - TinyMCE upgraded to version 5.10.9, with support for theme-selection.
  - jQuery upgraded to version 1.12.4.
  - jQuery UI upgraded to version 1.12.1 (with previous styling).
