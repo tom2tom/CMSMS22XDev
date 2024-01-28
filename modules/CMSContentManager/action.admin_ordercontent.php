@@ -79,30 +79,35 @@ if( isset($params['orderlist']) && $params['orderlist'] != '' ) {
     // step 1, create a flat list of the content items, and their new orders, and new parents.
     $orderlist = ordercontent_create_flatlist($orderlist);
 
-    // step 2, merge in old orders, and old parents
+    // step 2, merge in old orders and old parents
     $hm = $gCms->GetHierarchyManager();
     $changelist = array();
     foreach( $orderlist as &$rec ) {
         $node = $hm->find_by_tag('id',$rec['id']);
         $content = $node->getContent(FALSE,TRUE,TRUE);
         if( $content ) {
-            $rec['old_parent'] = $content->ParentId();
-            $rec['old_order'] = $content->ItemOrder();
-
-            if( $rec['old_parent'] != $rec['parent_id'] || $rec['old_order'] != $rec['order'] ) $changelist[] = $rec;
+            $old_parent = $content->ParentId();
+            $old_order = $content->ItemOrder();
+            if( $old_parent != $rec['parent_id'] || $old_order != $rec['order'] ) {
+//              $rec['old_parent'] = $old_parent;
+//              $rec['old_order'] = $old_order;
+//              $rec['hierarchy'] = TODO;
+                $changelist[] = $rec;
+            }
         }
     }
+    unset($rec);
 
     if( !$changelist ) {
         echo $this->ShowErrors($this->Lang('error_ordercontent_nothingtodo'));
     }
     else {
-        $query = 'UPDATE '.CMS_DB_PREFIX.'content SET item_order = ?, parent_id = ? WHERE content_id = ?';
+        $query = 'UPDATE '.CMS_DB_PREFIX.'content SET item_order = ?, parent_id = ? WHERE content_id = ?'; //TODO use prepared statement
         foreach( $changelist as $rec ) {
-            $db->Execute($query,array($rec['order'],$rec['parent_id'],$rec['id']));
+            $db->Execute($query,array($rec['order'],$rec['parent_id'],$rec['id'])); //TODO record $rec['hierarchy'] instead of later SetAllHierarchyPositions
         }
         $contentops = $gCms->GetContentOperations();
-        $contentops->SetAllHierarchyPositions();
+        $contentops->SetAllHierarchyPositions(); // expensive
         audit('',$this->GetName(),'Content pages dynamically reordered');
         $this->RedirectToAdminTab('pages');
     }
