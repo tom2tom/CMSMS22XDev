@@ -1,6 +1,4 @@
 <?php
-
-use CMSMS\HookManager;
 #FileManager module action
 #(c) 2006-8 Morten Poulsen <morten@poulsen.org>
 #(c) 2008 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
@@ -17,6 +15,8 @@ use CMSMS\HookManager;
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+use CMSMS\HookManager;
 
 if (!function_exists("cmsms")) exit;
 if (!$this->CheckPermission("Modify Files") && !$this->AdvancedAccessAllowed()) exit;
