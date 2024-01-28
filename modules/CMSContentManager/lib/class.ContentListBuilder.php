@@ -401,16 +401,16 @@ final class ContentListBuilder
 
     $contentops = ContentOperations::get_instance();
     $content1 = $contentops->LoadContentFromId($page_id);
-    $page_id2 = ContentOperations::get_instance()->GetDefaultContent();
-    $content2 = $contentops->LoadContentFromId($page_id2);
 
     if( !$content1 ) return FALSE;
     if( !$content1->IsDefaultPossible() ) return FALSE;
     if( !$content1->Active() ) return FALSE;
 
+    $page_id2 = $contentops->GetDefaultContent();
     $content1->SetDefaultContent(TRUE);
     $content1->Save();
 
+    $content2 = $contentops->LoadContentFromId($page_id2);
     if( $page_id != $page_id2 && $content2 ) {
         $content2->SetDefaultContent(FALSE);
         $content2->Save();
@@ -482,19 +482,20 @@ final class ContentListBuilder
       $content = $node->GetContent(FALSE,FALSE,FALSE);
       if( $content->DefaultContent() ) return $this->_module->Lang('error_delete_defaultcontent');
 
+      $tophier = $content->ParentHierarchy();
       $content->Delete();
       audit($page_id,$this->_module->GetName(),'Deleted page: '.$node->get_tag('name'));
 
       if( $childcount == 1 && $parent_id > -1 ) $this->collapse_section($parent_id);
       $this->collapse_section($page_id);
 
-      $contentops->SetAllHierarchyPositions();
+      $contentops->SetAllHierarchyPositions($tophier);
   }
 
   public function pretty_urls_configured()
   {
       $config = \cms_config::get_instance();
-      return (isset($config['url_rewriting']) && $config['url_rewriting'] != 'none' ) ? TRUE : FALSE;
+      return (!empty($config['url_rewriting']) && $config['url_rewriting'] != 'none');
   }
 
   /**
