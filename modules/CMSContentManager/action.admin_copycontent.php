@@ -33,6 +33,7 @@ if( !isset($gCms) ) exit;
 //
 // init
 //
+$uid = get_userid();
 $this->SetCurrentTab('pages');
 
 //
@@ -70,16 +71,15 @@ if( !$from_obj ) {
 $from_obj->GetAdditionalEditors();
 $from_obj->HasProperty('anything'); // forces properties to be loaded.
 
-$to_obj = clone $from_obj;
-$to_obj->SetURL('');
+$to_obj = clone $from_obj; // resets some properties
 $to_obj->SetName('Copy of '.$from_obj->Name());
 $to_obj->SetMenuText('Copy of '.$from_obj->MenuText());
-$to_obj->SetAlias();
-$to_obj->SetDefaultContent(0);
-$to_obj->SetOwner(get_userid());
-$to_obj->SetLastModifiedBy(get_userid());
+$to_obj->SetDefaultContent(FALSE);
+$to_obj->SetItemOrder($from_obj->ItemOrder() + 1);
+$to_obj->SetOwner($uid);
+$to_obj->SetLastModifiedBy($uid);
 $_SESSION['__cms_copy_obj__'] = ['type'=>$to_obj->Type(), 'obj'=>serialize($to_obj)];
-$this->Redirect($id,'admin_editcontent','',array('content_id'=>-1)); // do not resemble a new page (id == 0)
+$this->Redirect($id,'admin_editcontent','',array('content_id'=>-1)); // do not resemble a new page (whose id == 0)
 
 #
 # EOF
