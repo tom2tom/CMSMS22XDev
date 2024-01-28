@@ -424,11 +424,12 @@ class Content extends ContentBase
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_page_disablewysiwyg',lang('help_title_page_disablewysiwyg'));
 			return array('<label for="id_disablewysiwyg">'.lang('disable_wysiwyg').':</label>'.$help,
 						 '<input type="hidden" name="disable_wysiwyg" value="0">
-						  <input id="id_disablewysiwyg" type="checkbox" name="disable_wysiwyg" value="1" '.($disable_wysiwyg==1?' checked':'').'>');
+						  <input id="id_disablewysiwyg" type="checkbox" name="disable_wysiwyg" value="1"'.($disable_wysiwyg==1?' checked':'').'>');
 
 		case 'wantschildren':
-			$showadmin = ContentOperations::get_instance()->CheckPageOwnership(get_userid(), $this->Id());
-			if ( check_permission(get_userid(),'Manage All Content') || $showadmin ) {
+			$uid = get_userid(FALSE);
+			if ( check_permission($uid,'Manage All Content') ||
+				ContentOperations::get_instance()->CheckPageOwnership($uid,$this->mId) ) {
 				$wantschildren = $this->WantsChildren();
 				$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_page_wantschildren',lang('help_title_page_wantschildren'));
 				return array('<label for="id_wantschildren">'.lang('wantschildren').':</label>'.$help,
@@ -537,7 +538,7 @@ class Content extends ContentBase
 		$config = \cms_config::get_instance();
 		$dir = $config['uploads_path'];
 		$adddir = get_site_preference('contentimage_path');
-		if( $blockInfo['dir'] ) { $adddir = $blockInfo['dir']; }
+		if( !empty($blockInfo['dir']) ) { $adddir = $blockInfo['dir']; }
 		if( $adddir ) { $dir .= DIRECTORY_SEPARATOR . trim($adddir, ' \\/'); }
 		$rp1 = realpath($config['uploads_path']);
 		$rp2 = realpath($dir);
