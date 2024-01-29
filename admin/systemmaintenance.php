@@ -157,7 +157,6 @@ if (isset($_POST['updateurls'])) {
 
 if (isset($_POST['clearcache'])) {
   cmsms()->clear_cached_files(-1);
-  // put mention into the admin log
   audit('', 'System maintenance', 'Cache cleared');
   $themeObject->ShowMessage(lang("cachecleared"));
   $smarty->assign("active_content", "true");
@@ -180,7 +179,6 @@ foreach ($contenttypes as $typeid => $typename) {
 
 
 if (isset($_POST["addaliases"])) {
-  //$contentops->SetAllHierarchyPositions();
   $count = 0;
   $query = "SELECT * FROM " . CMS_DB_PREFIX . "content";
   $allcontent = $db->Execute($query);
@@ -222,7 +220,7 @@ if (isset($_POST["addaliases"])) {
           }
           $alias .= '-' . $alias_num_add;
         }
-        $query2 = "UPDATE " . CMS_DB_PREFIX . "content SET content_alias=? WHERE content_id=?";
+        $query2 = "UPDATE " . CMS_DB_PREFIX . "content SET content_alias=? WHERE content_id=?"; //TODO prepared statement for this
         $params2 = array($alias, $content_id);
         $dbresult = $db->Execute($query2, $params2);
         $count++;
@@ -230,16 +228,15 @@ if (isset($_POST["addaliases"])) {
       }
     }
     $allcontent->Close();
+    if ($count > 0) { $contentops->SetAllHierarchyPositions(); } // update hierarchy_path's
   }
-  audit('', 'System maintenance', 'Fixed pages missing aliases, count:' . $count);
+  audit('', 'System maintenance', "Updated $count page(s) whose alias was missing");
   $themeObject->ShowMessage($count . " " . lang("sysmain_aliasesfixed"));
   $smarty->assign("active_content", "true");
 }
 
 
 if (isset($_POST["fixtypes"])) {
-  //$contentops->SetAllHierarchyPositions();
-
   $count = 0;
   $query = "SELECT content_id,type FROM " . CMS_DB_PREFIX . "content";
   $allcontent = $db->Execute($query);
@@ -256,7 +253,7 @@ if (isset($_POST["fixtypes"])) {
     $allcontent->Close();
   }
 
-  audit('', 'System maintenance', 'Converted pages with invalid content types, count:' . $count);
+  audit('', 'System maintenance', "Converted $count page(s) with invalid content type");
   $themeObject->ShowMessage($count . " " . lang("sysmain_typesfixed"));
   $smarty->assign("active_content", "true");
 }
