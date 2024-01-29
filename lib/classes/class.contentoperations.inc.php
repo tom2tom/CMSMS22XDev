@@ -21,7 +21,7 @@ use CMSMS\internal\global_cachable;
 use CMSMS\internal\global_cache;
 
 /**
- * Class for static methods related to content
+ * Singleton class of properties and methods related to content pages
  *
  * @abstract
  * @since 0.8
@@ -30,11 +30,6 @@ use CMSMS\internal\global_cache;
  */
 class ContentOperations
 {
-	/**
-	 * @ignore
-	 */
-	protected function __construct() {}
-
 	/**
 	 * @ignore
 	 */
@@ -61,7 +56,12 @@ class ContentOperations
 	private $_ownedpages;
 
 	/**
-	 * Return a reference to the only allowed instance of this singleton object
+	 * @ignore
+	 */
+	protected function __construct() {}
+
+	/**
+	 * Return the only allowed object of this class
 	 *
 	 * @return ContentOperations
 	 */
@@ -70,7 +70,6 @@ class ContentOperations
 		if( !self::$_instance ) self::$_instance = new self();
 		return self::$_instance;
 	}
-
 
 	/**
 	 * @ignore
@@ -117,7 +116,6 @@ class ContentOperations
 		return CmsApp::get_instance()->get_content_object();
 	}
 
-
 	/**
 	 * Given an array of content_type and serialized_content, reconstructs a
 	 * content object.  It will handled loading the content type if it hasn't
@@ -142,7 +140,6 @@ class ContentOperations
 		$contentobj = unserialize($data['serialized_content']);
 		return $contentobj;
 	}
-
 
 	/**
 	 * Load a specific content type
@@ -188,7 +185,6 @@ class ContentOperations
 		return $result;
 	}
 
-
 	/**
 	 * Given a content id, load and return the loaded content object.
 	 *
@@ -217,7 +213,6 @@ class ContentOperations
 		return null; //no object
 	}
 
-
 	/**
 	 * Given a content alias, load and return the loaded content object.
 	 *
@@ -236,7 +231,6 @@ class ContentOperations
 		return $this->LoadContentFromId($node->get_tag('id'));
 	}
 
-
 	/**
 	 * Returns the id of the content marked as default.
 	 *
@@ -246,7 +240,6 @@ class ContentOperations
 	{
 		return global_cache::get('default_content');
 	}
-
 
 	/**
 	 * Load standard CMS content types
@@ -287,7 +280,6 @@ class ContentOperations
 		return $result;
 	}
 
-
 	/**
 	 * @ignore
 	 */
@@ -311,7 +303,6 @@ class ContentOperations
 		return $this->_content_types;
 	}
 
-
 	/**
 	 * Function to return a content type given it's name
 	 *
@@ -333,7 +324,6 @@ class ContentOperations
 		return null; // no object
 	}
 
-
 	/**
 	 * Register a new content type
 	 *
@@ -350,7 +340,6 @@ class ContentOperations
 		$this->_content_types[$obj->type] = $obj;
 		return TRUE;
 	}
-
 
 	/**
 	 * Returns a hash of valid content types (classes that extend ContentBase)
@@ -394,119 +383,43 @@ class ContentOperations
 		return $result;
 	}
 
-
-	/* *
-	 * Does nothing UNUSED
-	 * removed since 2.2.19
-	 * @internal
-	 * @ignore
-	 * @param int $contentid The content id to update
-	 * @return array|null
-	 */
-/*	private function _SetHierarchyPosition($contentid)
-	{
-		// do nothing
-	}
-*/
-
-	/* * FORMER VERSION OF HIERARCHY UPDATEER
-	 * Updates the hierarchy position of one item
-	 *
-	 * @internal
-	 * @ignore
-	 * @param integer $content_id The content id to update
-	 * @param array $hash A hash of all content objects (only certain fields)
-	 * @return array maybe empty
-	 */
-/*	private function _set_hierarchy_position($content_id,$hash)
-	{
-		$row = $hash[$content_id];
-		$saved_row = $row;
-		$hier = $idhier = $pathhier = '';
-		$current_parent_id = $content_id;
-
-		while( $current_parent_id > 0 ) {
-			$item_order = max($row['item_order'],1);
-			$hier = str_pad($item_order, 5, '0', STR_PAD_LEFT) . "." . $hier;
-			$idhier = $current_parent_id . '.' . $idhier;
-			$pathhier = $row['alias'] . '/' . $pathhier;
-			$current_parent_id = $row['parent_id'];
-			if( $current_parent_id < 1 ) break;
-			$row = $hash[$current_parent_id];
-		}
-
-		if (strlen($hier) > 0) $hier = substr($hier, 0, strlen($hier) - 1);
-		if (strlen($idhier) > 0) $idhier = substr($idhier, 0, strlen($idhier) - 1);
-		if (strlen($pathhier) > 0) $pathhier = substr($pathhier, 0, strlen($pathhier) - 1);
-
-		// if we actually did something, return the row.
-		static $_cnt;
-		$a = ($hier == $saved_row['hierarchy']);
-		$b = ($idhier == $saved_row['id_hierarchy']);
-		$c = ($pathhier == $saved_row['hierarchy_path']);
-		if( !$a || !$b || !$c ) {
-			$_cnt++;
-			$saved_row['hierarchy'] = $hier;
-			$saved_row['id_hierarchy'] = $idhier;
-			$saved_row['hierarchy_path'] = $pathhier;
-			return $saved_row;
-		}
-		return [];
-	}
-*/
-
-	/* *
-	 * Updates the hierarchy position of all content items.
-	 * This is an expensive operation on the database, but must be called once
-	 * each time one or more content pages are updated if positions have changed in
-	 * the page structure.
-	 */
-/*
-	public function SetAllHierarchyPositions()
-	{
-		// load some data about all pages into memory... and convert into a hash.
-		$db = CmsApp::get_instance()->GetDb();
-		$sql = 'SELECT content_id, parent_id, item_order, content_alias AS alias, hierarchy, id_hierarchy, hierarchy_path FROM '.CMS_DB_PREFIX.'content ORDER BY hierarchy';
-		$list = $db->GetArray($sql);
-		if( !$list ) {
-			// nothing to do, get outa here.
-			return;
-		}
-		$hash = array();
-		foreach( $list as $row ) {
-			$hash[$row['content_id']] = $row;
-		}
-		unset($list);
-
-		// would be nice to use a transaction here.
-		static $_n;
-		$usql = "UPDATE ".CMS_DB_PREFIX."content SET hierarchy = ?, id_hierarchy = ?, hierarchy_path = ? WHERE content_id = ?";
-		foreach( $hash as $content_id => $row ) {
-			$changed = $this->_set_hierarchy_position($content_id,$hash);
-			if( $changed ) {
-				$db->Execute($usql, array($changed['hierarchy'], $changed['id_hierarchy'], $changed['hierarchy_path'], $changed['content_id']));
-			}
-		}
-		$this->SetContentModified();
-	}
-*/
-
 	/**
-	 * Update the hierarchy position of all content items.
-	 * This is an expensive operation, but must be called each time one or more
-	 * content pages' position in the page structure has changed.
+	 * Update the hierarchy position of all content items, or a subtree of them.
+	 * This is an expensive operation, but must be called each time one
+	 * or more content pages' position in the page structure has changed.
+	 *
+	 * @param string $tophier Optional topmost hierarchy-value to use, to
+	 *  enable processing a sub-tree of the entire pages hierarchy.
+	 *  Since 2.2.19
 	 */
-
-	public function SetAllHierarchyPositions()
+	public function SetAllHierarchyPositions($tophier = '')
 	{
 		// load some data about all pages
 		$db = CmsApp::get_instance()->GetDb();
-		$sql = 'SELECT content_id, parent_id, item_order, content_alias AS alias, hierarchy, id_hierarchy, hierarchy_path FROM '.CMS_DB_PREFIX.'content ORDER BY hierarchy';
-		$list = $db->GetAssoc($sql);
-		if( !$list ) {
-			return;// nothing to do, get outa here.
+		$query = 'SELECT content_id, parent_id, item_order, content_alias AS alias, hierarchy, id_hierarchy, hierarchy_path, COALESCE(modified_date,create_date) AS at FROM '.CMS_DB_PREFIX.'content';
+		if( $tophier ) {
+			$query .= " WHERE hierarchy LIKE '$tophier%'";
 		}
-		/*hierarchy-field order will be like
+		$query .= ' ORDER BY hierarchy'; // interim
+		$list = $db->GetAssoc($query);
+		if( !$list ) {
+			if( $tophier ) {
+				audit('','Pages hierarchy update','Cannot process unrecognised path '.$tophier);
+			}
+			return;// nothing to do
+		}
+		if( $tophier ) {
+			reset($list);
+			$current_id = key($list);
+			if( $list[$current_id]['hierarchy'] != $tophier ) {
+				audit('','Pages hierarchy update','Failed to find subtree for '.$tophier);
+				return;
+			}
+			if( count($list) == 1 ) {
+				return;// nothing to do
+			}
+		}
+		/*hierarchy-value order will be like
 		00001
 		00001.00001
 		00001.00002
@@ -514,28 +427,60 @@ class ContentOperations
 		00002
 		00002.00001
 		00002.00002
-		etc possibly with gap(s) in the numbering
-		normally, an item with parent id -1 would have a hierarcy like 00002, but things might be messed up after reordering
+		etc
+		possibly with gap(s) in the numbering (and if so, probably in the item_order's)
+		and possibly inconsistent item_order and last-segment of hierarchy (if so, here we assume item_order prevails)
+		normally, an item with parent id -1 would have a single-segment hierarchy like 00002, but things might be messed up after reordering
 		*/
+		foreach( $list as &$cur_row ) {
+			$cur_row['phier'] = substr($cur_row['hierarchy'],0,-6); // too bad this can't readily be populated by db server
+		}
+		unset($cur_row);
+
+		if( $tophier ) {
+			$list[$current_id]['parent_id'] = -1; // treat this one as top
+			$list[$current_id]['V'] = 1; // populated-indicator, no further up-walk
+		}
+
+		uasort($list,function($a,$b) {
+			$v = strcmp($a['phier'],$b['phier']);
+			if( $v == 0 ) {
+				$v = $a['item_order'] - $b['item_order'];
+				if( $v == 0 ) {
+					$v = strcmp($b['at'],$a['at']); //newer first
+				}
+			}
+			return $v;
+		});
+
+		$lvlorders = [];
+		$lastparent = '-'; // something unmatched in array TODO or $list[$current_id]['phier'] ?
 		$cnt = 0;
 		foreach( $list as $content_id => &$cur_row ) {
+			if( $tophier && $tophier == $cur_row['hierarchy'] ) {
+				continue; // no up-walk for this one
+			}
 			$current_id = $content_id;
-//			$item_order = 0; TODO eliminate any gap
-			$hier = $idhier = $pathhier = '';
+			$hier = $idhier = $pathhier = ''; // build these up from lowest level
 
 			while( $current_id > 0 ) {
 				if( isset($list[$current_id]) ) {
 					$row = $list[$current_id];
-					//TODO teminate ASAP e.g. !empty($row['V'])
+					// terminate ASAP
 					if( !empty($row['V']) ) {
 						$hier = $row['hierarchy'].'.'. $hier;
 						$idhier = $row['id_hierarchy'].'.'.$idhier;
 						$pathhier = $row['hierarchy_path'].'/'.$pathhier;
 						break;
 					}
-//					$item_order = min($item_order + 1, $row['item_order']);
-					$item_order = max($row['item_order'],1);
-					$hier = str_pad($item_order, 5, '0', STR_PAD_LEFT) . '.' . $hier; // OR 3 or 2 0's would suffice
+					if( $row['phier'] != $lastparent ) {
+						$lastparent = $row['phier']; //possibly '' or $tophier
+						if (!isset($lvlorders[$lastparent])) {
+							$lvlorders[$lastparent] = 1;
+						}
+					}
+					$item_order = $lvlorders[$lastparent]++;
+					$hier = str_pad($item_order,5,'0',STR_PAD_LEFT) . '.' . $hier; // in future, 3-wide would suffice
 					$idhier = $current_id . '.' . $idhier;
 					$pathhier = $row['alias'] . '/' . $pathhier;
 					$current_id = $row['parent_id'];
@@ -552,6 +497,7 @@ class ContentOperations
 			if( ($hier && $hier != $cur_row['hierarchy'])
 			 || ($idhier && $idhier != $cur_row['id_hierarchy'])
 			 || ($pathhier && $pathhier != $cur_row['hierarchy_path']) ) {
+				$cur_row['item_order'] = $item_order;
 				$cur_row['hierarchy'] = $hier;
 				$cur_row['id_hierarchy'] = $idhier;
 				$cur_row['hierarchy_path'] = $pathhier;
@@ -562,18 +508,19 @@ class ContentOperations
 		}
 		unset($cur_row);
 		if( $cnt > 0 ) {
-			$stmt = $db->Prepare('UPDATE '.CMS_DB_PREFIX.'content SET hierarchy = ?, id_hierarchy = ?, hierarchy_path = ? WHERE content_id = ?');
+			$stmt = $db->Prepare('UPDATE '.CMS_DB_PREFIX.'content SET item_order = ?, hierarchy = ?, id_hierarchy = ?, hierarchy_path = ? WHERE content_id = ?');
+			$v = false;
 			foreach( $list as $content_id => $row ) {
 				if( !empty($row['W']) ) {
-					$stmt->Execute(array($row['hierarchy'], $row['id_hierarchy'], $row['hierarchy_path'], $content_id));
+					$v = true;
+					$stmt->Execute(array($row['item_order'],$row['hierarchy'],$row['id_hierarchy'],$row['hierarchy_path'],$content_id));
 				}
 			}
-			$this->SetContentModified();
+			if( $v ) $this->SetContentModified();
 		}
 		unset($list); // assist gc
 		$list = null;
 	}
-
 
 	/**
 	 * Get the date of last content modification
@@ -613,7 +560,6 @@ class ContentOperations
 	{
 		return global_cache::get('content_tree');
 	}
-
 
 	/**
 	 * Load all content in the database into memory
@@ -730,7 +676,7 @@ class ContentOperations
 			$expr = 'content_id IN ('.implode(',',$explicit_ids).')';
 			if( !$all ) $expr .= ' AND active = 1';
 
-			// note, this is mysql specific...
+			// note, this is MySQL-specific SQL
 			$query = 'SELECT * FROM '.CMS_DB_PREFIX.'content FORCE INDEX ('.CMS_DB_PREFIX.'index_content_by_idhier) WHERE '.$expr.' ORDER BY hierarchy';
 			$contentrows = $db->GetArray($query);
 		}
@@ -810,19 +756,20 @@ class ContentOperations
 	 */
 	public function SetDefaultContent($id)
 	{
-		$db = CmsApp::get_instance()->GetDb();
-		$query = "SELECT content_id FROM ".CMS_DB_PREFIX."content WHERE default_content=1";
-		$old_id = $db->GetOne($query);
-		if (isset($old_id)) {
-			$one = $this->LoadContentFromId($old_id);
-			$one->SetDefaultContent(false);
+		if ($id > 0) {
+			$db = CmsApp::get_instance()->GetDb();
+			$query = "SELECT content_id FROM ".CMS_DB_PREFIX."content WHERE default_content=1";
+			$old_id = $db->GetOne($query);
+			if ($old_id && $old_id != $id) {
+				$one = $this->LoadContentFromId($old_id);
+				$one->SetDefaultContent(false);
+				$one->Save();
+			}
+			$one = $this->LoadContentFromId($id);
+			$one->SetDefaultContent(true);
 			$one->Save();
 		}
-		$one = $this->LoadContentFromId($id);
-		$one->SetDefaultContent(true);
-		$one->Save();
 	}
-
 
 	/**
 	 * Returns an array of all content objects in the system, active or not.
@@ -837,8 +784,8 @@ class ContentOperations
 	{
 		debug_buffer('get all content...');
 		$gCms = CmsApp::get_instance();
-		$tree = $gCms->GetHierarchyManager();
-		$list = $tree->getFlatList();
+		$hm = $gCms->GetHierarchyManager();
+		$list = $hm->getFlatList();
 
 		$this->LoadAllContent($loadprops);
 		$output = array();
@@ -846,11 +793,11 @@ class ContentOperations
 			$tmp = $one->GetContent(false,true,true);
 			if( is_object($tmp) ) $output[] = $tmp;
 		}
+		unset($one);
 
 		debug_buffer('end get all content...');
 		return $output;
 	}
-
 
 	/**
 	 * Create a hierarchical ordered dropdown of all the content objects in the system for use
@@ -933,7 +880,6 @@ EOS;
 		return $this->GetDefaultContent();
 	}
 
-
 	/**
 	 * Returns the content id given a valid content alias.
 	 *
@@ -946,7 +892,6 @@ EOS;
 		$node = $hm->sureGetNodeByAlias($alias);
 		if( $node ) return $node->get_tag('id');
 	}
-
 
 	/**
 	 * Returns the content id given a valid hierarchical position.
@@ -966,7 +911,6 @@ EOS;
 		return $row['content_id'];
 	}
 
-
 	/**
 	 * Returns the content alias given a valid content id.
 	 *
@@ -978,7 +922,6 @@ EOS;
 		$node = $this->quickfind_node_by_id($id);
 		if( $node ) return $node->getTag('alias');
 	}
-
 
 	/**
 	 * Check if a content alias is used
@@ -1182,8 +1125,8 @@ WHERE active = 1 AND default_content = 0 AND page_url != \'\'';
 			}
 
 			$db = CmsApp::get_instance()->GetDb();
-			$query = "SELECT A.content_id FROM ".CMS_DB_PREFIX."additional_users A
-LEFT JOIN ".CMS_DB_PREFIX.'content B ON A.content_id = B.content_id
+			$query = "SELECT A.content_id FROM ".CMS_DB_PREFIX.'additional_users A
+LEFT JOIN '.CMS_DB_PREFIX.'content B ON A.content_id = B.content_id
 WHERE A.user_id IN ('.implode(',',$list).')
 ORDER BY B.hierarchy';
 			$tmp = $db->GetCol($query);
@@ -1261,3 +1204,86 @@ ORDER BY B.hierarchy';
 class_alias ('ContentOperations', 'ContentManager', false);
 
 ?>
+
+<?php
+/* SUPERSEDED hierarchy updater, to be removed when there is definitely
+   no further need for validation of such updating
+	/* *
+	 * Update the hierarchy position of one item
+	 *
+	 * @internal
+	 * @ignore
+	 * @param integer $content_id The content id to update
+	 * @param array $hash A hash of all content objects (only certain fields)
+	 * @return array maybe empty
+	 * /
+	private function _set_hierarchy_position($content_id,$hash)
+	{
+		$row = $hash[$content_id];
+		$saved_row = $row;
+		$hier = $idhier = $pathhier = '';
+		$current_parent_id = $content_id;
+
+		while( $current_parent_id > 0 ) {
+			$item_order = max($row['item_order'],1);
+			$hier = str_pad($item_order, 5, '0', STR_PAD_LEFT) . "." . $hier;
+			$idhier = $current_parent_id . '.' . $idhier;
+			$pathhier = $row['alias'] . '/' . $pathhier;
+			$current_parent_id = $row['parent_id'];
+			if( $current_parent_id < 1 ) break;
+			$row = $hash[$current_parent_id];
+		}
+
+		if (strlen($hier) > 0) $hier = substr($hier, 0, strlen($hier) - 1);
+		if (strlen($idhier) > 0) $idhier = substr($idhier, 0, strlen($idhier) - 1);
+		if (strlen($pathhier) > 0) $pathhier = substr($pathhier, 0, strlen($pathhier) - 1);
+
+		// if we actually did something, return the row.
+		static $_cnt;
+		$a = ($hier == $saved_row['hierarchy']);
+		$b = ($idhier == $saved_row['id_hierarchy']);
+		$c = ($pathhier == $saved_row['hierarchy_path']);
+		if( !$a || !$b || !$c ) {
+			$_cnt++;
+			$saved_row['hierarchy'] = $hier;
+			$saved_row['id_hierarchy'] = $idhier;
+			$saved_row['hierarchy_path'] = $pathhier;
+			return $saved_row;
+		}
+		return [];
+	}
+
+	/* *
+	 * Update the hierarchy position of all content items.
+	 * This is an expensive operation on the database, but must be called
+	 * once each time one or more content pages are updated if positions
+	 * have changed in the page structure.
+	 * /
+	public function SetAllHierarchyPositions()
+	{
+		// load some data about all pages into memory... and convert into a hash.
+		$db = CmsApp::get_instance()->GetDb();
+		$query = 'SELECT content_id, parent_id, item_order, content_alias AS alias, hierarchy, id_hierarchy, hierarchy_path FROM '.CMS_DB_PREFIX.'content ORDER BY hierarchy';
+		$list = $db->GetArray($query);
+		if( !$list ) {
+			// nothing to do, get outa here.
+			return;
+		}
+		$hash = array();
+		foreach( $list as $row ) {
+			$hash[$row['content_id']] = $row;
+		}
+		unset($list);
+
+		// would be nice to use a transaction here.
+		static $_n;
+		$usql = "UPDATE ".CMS_DB_PREFIX."content SET hierarchy = ?, id_hierarchy = ?, hierarchy_path = ? WHERE content_id = ?";
+		foreach( $hash as $content_id => $row ) {
+			$changed = $this->_set_hierarchy_position($content_id,$hash);
+			if( $changed ) {
+				$db->Execute($usql, array($changed['hierarchy'], $changed['id_hierarchy'], $changed['hierarchy_path'], $changed['content_id']));
+			}
+		}
+		$this->SetContentModified();
+	}
+*/
