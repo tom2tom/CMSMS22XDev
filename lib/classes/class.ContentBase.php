@@ -591,7 +591,7 @@ abstract class ContentBase
 	 * Returns the id of this pages parent.
 	 * The parent id may be -2 to indicate a new page.
 	 * A parent id value of -1 indicates that the page has no parent.
-	 * oterwise a positive integer is returned.
+	 * otherwise a positive integer is returned.
 	 *
 	 * @return int
 	 */
