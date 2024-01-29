@@ -87,9 +87,15 @@ class Statement extends \CMSMS\Database\Statement
     protected function prepare($sql)
     {
         $conn = $this->db->get_inner_mysql();
-        if( !$conn || !$this->db->IsConnected() ) throw new \LogicException('Attempt to create prepared statement when database is not connected');
+        if( !$conn || !$this->db->IsConnected() ) {
+            $this->_conn->OnError($this->_conn::ERROR_CONNECT,-1,'Attempt to create prepared statement when database is not connected');
+            exit;
+        }
         $this->_stmt = $conn->prepare( (string) $sql );
-        if( !$this->_stmt ) throw new \LogicException('Could not prepare a statement: '.$conn->error);
+        if( !$this->_stmt ) {
+            $this->_conn->OnError($this->_conn::ERROR_EXECUTE,$conn->errno,'Could not prepare a statement: '.$conn->error);
+            exit;
+        }
         $this->_row = [];
         $this->_pos = 0;
     }
@@ -136,6 +142,7 @@ class Statement extends \CMSMS\Database\Statement
         return $row;
     }
 
+    //NOTE this API is inconsistent with ADOdb, which uses Connection->Execute(Statement,args)
     public function Execute()
     {
         if( !$this->_stmt ) $this->prepare($this->sql);
@@ -143,22 +150,30 @@ class Statement extends \CMSMS\Database\Statement
         if( count($args) == 1 && is_array($args) && is_array($args[0]) ) $args = $args[0];
 
         /* if we have param count, find some arguments... either via the execute method... or via bound params */
-        $pc = $this->_stmt->param_count;
-        $fc = $this->_stmt->field_count;
         if( $args ) {
             $this->_data = $args;
             $this->bind_params($args);
         }
+        $pc = $this->_stmt->param_count;
         if( $pc ) {
-            // we are expecting paramers
-            if( !count($args) ) {
+            // we are expecting parameter(s)
+            if( !$args ) {
                 // get the arguments via the bound data current row.
-                if( !$this->_bind ) throw new \LogicException('No bound parameters, and no arguments passed');
-                if( count($this->_bind) != $pc ) throw new \LogicException('Incorrect number of bound parameters.  Expecting '.$this->_stmt->field_count);
+                if( !$this->_bind ) {
+                    $this->_conn->OnError($this->_conn::ERROR_EXECUTE,-1,'No bound parameters, and no arguments passed');
+                    exit;
+                }
+                if( count($this->_bind) != $pc ) {
+                    $this->_conn->OnError($this->_conn::ERROR_EXECUTE,-1,'Incorrect number of bound parameters. Expecting '.$this->_stmt->field_count);
+                    exit;
+                }
                 $args = $this->Fields();
             }
         }
-        if( $pc != count($args) ) throw new \LogicException('Incorrect number of arguments. Expecting '.$pc);
+        if( $pc != count($args) ) {
+            $this->_conn->OnError($this->_conn::ERROR_EXECUTE,-1,'Incorrect number of arguments. Expecting '.$pc);
+            exit;
+        }
 
         if( $args ) {
             // update bound values
@@ -169,7 +184,10 @@ class Statement extends \CMSMS\Database\Statement
         }
 
         $res = $this->_stmt->execute();
-        if( !$res ) die('ERROR: '.$this->_stmt->error."\n");
+        if( !$res ) {
+            $this->_conn->OnError($this->_conn::ERROR_EXECUTE,$this->_stmt->errno,$this->_stmt->error);
+            exit;
+        }
 
         $this->_stmt->store_result();
 

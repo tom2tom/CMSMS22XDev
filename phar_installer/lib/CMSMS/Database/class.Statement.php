@@ -95,11 +95,20 @@ abstract class Statement
      */
     public function Bind(array $data)
     {
-        if( !is_array($data) || count($data) == 0 ) throw new \LogicException('Data passed to '.__METHOD__.' must be an associative array');
+        if( !$data ) {
+            $this->_conn->OnError($this->_conn::ERROR_EXECUTE,$TODO,'Data passed to '.__METHOD__.' must be an associative array');
+            exit;
+        }
         $first = $data[0];
-        if( !is_array($first) || count($first) == 0 ) throw new \LogicException('Data passed to '.__METHOD__.' must be an associative array');
+        if( !$first || !is_array($first) ) {
+            $this->_conn->OnError($this->_conn::ERROR_EXECUTE,$TODO,'Data passed to '.__METHOD__.' must be an associative array');
+            exit;
+        }
         $keys = array_keys($first);
-        if( is_numeric($keys[0]) && $keys[0] === 0 )  throw new \LogicException('Data passed to '.__METHOD__.' must be an associative array');
+        if( is_numeric($keys[0]) && $keys[0] === 0 ) {
+            $this->_conn->OnError($this->_conn::ERROR_EXECUTE,$TODO,'Data passed to '.__METHOD__.' must be an associative array');
+            exit;
+        }
 
         $this->set_bound_data($data);
     }
