@@ -680,6 +680,8 @@ namespace CMSMS\Database {
                 throw new DatabaseConnectionException($error_message,$error_number);
 
             case self::ERROR_EXECUTE:
+                $this->_connectionSpec->username = 'restricted';
+                $this->_connectionSpec->password = 'restricted';
                 throw new DatabaseException($error_message,$error_number,$this->sql,$this->_connectionSpec);
             }
         }
