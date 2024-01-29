@@ -17,6 +17,9 @@
 #
 #$Id$
 
+use CMSMS\HookManager;
+use CMSMS\internal\global_cache;
+
 /**
  * This file provides the basic abstract content class
  * @package CMS
@@ -105,12 +108,11 @@ abstract class ContentBase
 	/**
 	 * The old parent id.
 	 * Integer
-	 *
-	 * Formerly used only on update to detect reparenting.
-	 * Now since SetAllHierarchyPositions is efficient it is not needed. WHAAT? SetAllHierarchyPositions() is crapola for large sites
+	 * Formerly used only on update to detect re-parenting.
+	 * Not needed now.
 	 *
 	 * @internal
-	 * @deprecated
+	 * @deprecated since 2.2.x
 	 */
 	protected $mOldParentId = -1;
 
@@ -122,7 +124,7 @@ abstract class ContentBase
 	protected $mTemplateId = -1;
 
 	/**
-	 * The item order of the content in his level
+	 * The item order of the content in its level
 	 * Integer
 	 */
 	protected $mItemOrder = -1;
@@ -296,7 +298,7 @@ abstract class ContentBase
 	/************************************************************************/
 
 	/**
-	 * Generic constructor. Runs the SetInitialValues fuction.
+	 * Generic constructor. Runs the SetInitialValues function.
 	 */
 	public function __construct()
 	{
@@ -346,7 +348,6 @@ abstract class ContentBase
 		$this->AddProperty('owner',1,self::TAB_PERMS);
 		$this->AddProperty('additionaleditors',2,self::TAB_PERMS);
 	}
-
 
 	/************************************************************************/
 	/* Functions giving access to needed elements of the content			*/
@@ -658,7 +659,6 @@ abstract class ContentBase
 		if( $itemorder > 0 || $itemorder == -1 ) $this->mItemOrder = $itemorder;
 	}
 
-
 	/**
 	 * Returns the OldItemOrder.
 	 * The OldItemOrder is used to specify the item order before changes were done
@@ -686,17 +686,33 @@ abstract class ContentBase
 	}
 
 	/**
-	 * Returns the Hierarchy of the current page.
-	 * A string like #.##.## indicating the path to this page and its order
-	 * this value uses the item order when calculating the output i.e:  3.3.3
-	 * to indicate the third grandchild of the third child of the third root page.
+	 * Returns the Hierarchy of this page.
+	 * A string like ##.##.## indicating the path to this page and its order
+	 * This value uses the item order when calculating the output
+	 * e.g. 00003.00003.00003 to indicate the third grandchild of the
+	 * third child of the third root page.
 	 *
 	 * @return string
 	 */
 	public function Hierarchy()
 	{
-		$contentops = ContentOperations::get_instance();
-		return $contentops->CreateFriendlyHierarchyPosition($this->mHierarchy);
+		if( !($this->mHierarchy[0] == '0' || strpos($this->mHierarchy, '.0', 1)) ) { // should always fail
+			$contentops = ContentOperations::get_instance();
+			$this->mHierarchy = $contentops->CreateFriendlyHierarchyPosition($this->mHierarchy);
+		}
+		return $this->mHierarchy;
+	}
+
+	/**
+	 * Returns the Hierarchy of the parent of this page.
+	 * A string like ##.##.## indicating the path to that page
+	 * @since 2.2.19
+	 *
+	 * @return string, possibly empty
+	 */
+	public function ParentHierarchy()
+	{
+		return substr($this->Hierarchy(), 0, -6);
 	}
 
 	/**
@@ -712,10 +728,10 @@ abstract class ContentBase
 
 	/**
 	 * Returns the Id Hierarchy.
-	 * A string like #.##.## indicating the path to the page and it's order
-	 * this property uses the id's of pages when calculating the output i.e: 21.5.17
-	 * to indicate that page id 17 is the child of page with id 5 which is inturn the
-	 * child of the page with id 21
+	 * A string like ##.##.## indicating the path to the page and its order
+	 * This property uses the id's of pages when calculating the output
+	 * e.g. 21.5.17 to indicate that page id 17 is the child of the page
+	 * with id 5 which is in turn the child of the page with id 21
 	 *
 	 * @return string
 	 */
@@ -723,7 +739,6 @@ abstract class ContentBase
 	{
 		return $this->mIdHierarchy;
 	}
-
 
 	/**
 	 * Returns the Hierarchy Path.
@@ -993,10 +1008,10 @@ abstract class ContentBase
 	 * @param string $alias The alias
 	 * @param bool $doAutoAliasIfEnabled Whether an alias should be calculated or not.
 	 */
-	public function SetAlias($alias = '', $doAutoAliasIfEnabled = true)
+	public function SetAlias($alias = '',$doAutoAliasIfEnabled = true)
 	{
 		$contentops = ContentOperations::get_instance();
-		$config = \cms_config::get_instance();
+		$config = cms_config::get_instance();
 		if ($alias == '' && $doAutoAliasIfEnabled && $config['auto_alias_content'] == true) {
 			// auto generate an alias
 			$alias = trim($this->mMenuText);
@@ -1009,7 +1024,7 @@ abstract class ContentBase
 			if( !$res ) {
 				$alias = 'p'.$alias;
 				$res = $contentops->CheckAliasValid($alias);
-				if( !$res ) throw new \CmsContentException(lang('invalidalias2'));
+				if( !$res ) throw new CmsContentException(lang('invalidalias2'));
 			}
 		}
 
@@ -1018,7 +1033,7 @@ abstract class ContentBase
 
 			// make sure we start with a valid alias.
 			$res = $contentops->CheckAliasValid($alias);
-			if( !$res ) throw new \CmsContentException(lang('invalidalias2'));
+			if( !$res ) throw new CmsContentException(lang('invalidalias2'));
 
 			// now auto-increment the alias.
 			$prefix = $alias;
@@ -1037,13 +1052,13 @@ abstract class ContentBase
 				$num++;
 				$test = $prefix.'-'.$num;
 			} while( $testnum < 100 );
-			if( $testnum >= 100 && $test != $alias ) throw new \CmsContentException(lang('aliasalreadyused'));
+			if( $testnum >= 100 && $test != $alias ) throw new CmsContentException(lang('aliasalreadyused'));
 		}
 
 		$this->mAlias = $alias;
-		\CMSMS\internal\global_cache::clear('content_quicklist');
-		\CMSMS\internal\global_cache::clear('content_tree');
-		\CMSMS\internal\global_cache::clear('content_flatlist');
+		global_cache::clear('content_quicklist');
+		global_cache::clear('content_tree');
+		global_cache::clear('content_flatlist');
 	}
 
 	/**
@@ -1112,11 +1127,13 @@ abstract class ContentBase
 	 * Properties will be loaded from the database if necessary.
 	 *
 	 * @param string $name
-	 * @return mixed String value, or null if the property does not exist.
+	 * @param mixed $default fallback value Default null since 2.2.19
+	 * @return mixed String value, or $default if the property does not exist.
 	 */
-	public function GetPropertyValue($name)
+	public function GetPropertyValue($name,$default= null)
 	{
 		if( $this->HasProperty($name) ) return $this->_props[$name];
+		return $default;
 	}
 
 	/**
@@ -1152,7 +1169,7 @@ abstract class ContentBase
 	 */
 	private function _save_properties()
 	{
-		if( $this->mId <= 0 ) return false;
+		if( $this->mId <= 0 ) return false; //unsaved new or cloned page
 		if( !is_array($this->_props) || count($this->_props) == 0 ) return false;
 
 		$db = CmsApp::get_instance()->GetDb();
@@ -1185,7 +1202,7 @@ abstract class ContentBase
 	 * @param string $name The property name
 	 * @param string $value The property value.
 	 */
-	public function SetPropertyValue($name, $value)
+	public function SetPropertyValue($name,$value)
 	{
 		if( !is_array($this->_props) ) $this->_load_properties();
 		$this->_props[$name] = $value;
@@ -1281,11 +1298,11 @@ abstract class ContentBase
 	 * @param bool  $loadProperties Optionally load content properties at the same time.
 	 * @return bool
 	 */
-	function LoadFromData(&$data, $loadProperties = false)
+	function LoadFromData(&$data,$loadProperties = false)
 	{
 		foreach( [
 			'content_name',
-			'type',
+			'type', //cannot be usefully loaded
 			'hierarchy',
 			'menu_text',
 			'content_alias',
@@ -1307,7 +1324,7 @@ abstract class ContentBase
 		$this->mOldAlias				= $data["content_alias"];
 		$this->mOwner					= (int)$data["owner_id"];
 		$this->mParentId				= (int)$data["parent_id"];
-		$this->mOldParentId				= (int)$data["parent_id"];
+//		$this->mOldParentId				= (int)$data["parent_id"];
 		$this->mTemplateId				= (int)$data["template_id"];
 		$this->mItemOrder				= (int)$data["item_order"];
 		$this->mOldItemOrder			= (int)$data["item_order"];
@@ -1354,6 +1371,7 @@ abstract class ContentBase
 		$out = [];
 		$out['content_id'] = $this->mId;
 		$out['content_name'] = $this->mName;
+		$out['type'] = $this->Type();
 		$out['content_alias'] = $this->mAlias;
 		$out['owner_id'] = $this->mOwner;
 		$out['parent_id'] = $this->mParentId;
@@ -1393,41 +1411,44 @@ abstract class ContentBase
 
 	/**
 	 * Save or update the content.
+	 * This is generally used to change the value of one property (or one plus
+	 * ancillaries) of an existing page. Or to add a new page.
 	 *
 	 * @todo This function should return something (or throw an exception)
 	 */
 	public function Save()
 	{
-		\CMSMS\HookManager::do_hook('Core::ContentEditPre', [ 'content' => &$this ] );
+		HookManager::do_hook('Core::ContentEditPre', [ 'content' => &$this ]);
 
 		if( !is_array($this->_props) ) {
 			debug_buffer('save is loading properties');
 			$this->_load_properties();
 		}
 
-		if (-1 < $this->mId) {
+		if( $this->mId > 0 ) { // was >-1 : new-page mId = 0, cloned-page mId = -1
 			$this->Update();
 		}
 		else {
 			$this->Insert();
 		}
 
+		$tophier = $this->ParentHierarchy();
 		$contentops = ContentOperations::get_instance();
 		$contentops->SetContentModified();
-		$contentops->SetAllHierarchyPositions();
-		\CMSMS\HookManager::do_hook('Core::ContentEditPost', [ 'content' => &$this ] );
+		$contentops->SetAllHierarchyPositions($tophier);
+		HookManager::do_hook('Core::ContentEditPost', [ 'content' => &$this ]);
 	}
 
 	/**
 	 * Update the database with the contents of the content object.
 	 *
-	 * This method will calculate a new item order for the object if necessary and then
-	 * save the content record, the additional editors, and the properties.
-	 * Additionally, if a page url is specified a static route will be created
+	 * This method will calculate a new item order for the object if necessary
+	 * and then save the content record, the additional editors, and the properties.
+	 * Additionally, if a page url is specified a static route will be created.
 	 *
-	 * Because multiple content objects may be modified in one batch
-	 * the calling function is responsible for ensuring that page hierarchies are
-	 * updated.
+	 * Because multiple content objects may be modified in one batch, the
+	 * calling function is responsible for ensuring that page hierarchies
+	 * are updated.
 	 *
 	 * @todo this function should return something, or throw an exception.
 	 */
@@ -1435,61 +1456,100 @@ abstract class ContentBase
 	{
 		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
-		$result = false;
+//		$result = false;
 
 		// Figure out the item_order (if necessary)
 		if ($this->mItemOrder < 1) {
-			$query = "SELECT ".$db->IfNull('max(item_order)','0')." as new_order FROM ".CMS_DB_PREFIX."content WHERE parent_id = ?";
+			$query = "SELECT ".$db->IfNull('MAX(item_order)','0')." as new_order FROM ".CMS_DB_PREFIX."content WHERE parent_id = ?";
 			$row = $db->GetRow($query,array($this->mParentId));
-
-			if ($row) {
-				if ($row['new_order'] < 1) {
-					$this->mItemOrder = 1;
-				}
-				else {
-					$this->mItemOrder = $row['new_order'] + 1;
-				}
+			if ($row && $row['new_order'] > 0) {
+				$this->mItemOrder = $row['new_order'] + 1;
 			}
+			else {
+				$this->mItemOrder = 1;
+			}
+		}
+
+		$query = "SELECT hierarchy,id_hierarchy,hierarchy_path FROM ".CMS_DB_PREFIX."content WHERE content_id = ?";
+		$row = $db->GetRow($query,array($this->mParentId));
+		if ($row) {
+			$this->mHierarchy = $row['hierarchy'].'.'.str_pad($this->mItemOrder,5,'0',STR_PAD_LEFT); // OR in future, 3-wide would suffice
+			$this->mIdHierarchy = $row['id_hierarchy'].'.'.$this->mId;
+			$this->mHierarchyPath = $row['hierarchy_path'].'/'.$this->mAlias;
+		}
+		else {
+			$this->mHierarchy = str_pad($this->mItemOrder,5,'0',STR_PAD_LEFT); // OR 3
+			$this->mIdHierarchy = $this->mId;
+			$this->mHierarchyPath = $this->mAlias;
 		}
 
 		$this->mModifiedDate = trim($db->DBTimeStamp(time()), "'");
 
-		$query = "UPDATE ".CMS_DB_PREFIX."content SET content_name = ?, owner_id = ?, type = ?, template_id = ?, parent_id = ?, active = ?, default_content = ?, show_in_menu = ?, cachable = ?, secure = ?, page_url = ?, menu_text = ?, content_alias = ?, metadata = ?, titleattribute = ?, accesskey = ?, tabindex = ?, modified_date = ?, item_order = ?, last_modified_by = ? WHERE content_id = ?";
+		$query = "UPDATE ".CMS_DB_PREFIX."content SET
+content_name = ?,
+content_alias = ?,
+type = ?,
+owner_id = ?,
+template_id = ?,
+parent_id = ?,
+item_order = ?,
+hierarchy = ?,
+id_hierarchy = ?,
+hierarchy_path = ?,
+active = ?,
+default_content = ?,
+show_in_menu = ?,
+cachable = ?,
+secure = ?,
+page_url = ?,
+menu_text = ?,
+metadata = ?,
+titleattribute = ?,
+accesskey = ?,
+tabindex = ?,
+modified_date = ?,
+last_modified_by = ?
+WHERE content_id = ?";
 		$dbresult = $db->Execute($query, array(
-									$this->mName,
-									$this->mOwner,
-									$this->Type(),
-									$this->mTemplateId,
-									$this->mParentId,
-									($this->mActive ? 1 : 0),
-									($this->mDefaultContent ? 1 : 0),
-									($this->mShowInMenu ? 1 : 0),
-									($this->mCachable ? 1 : 0),
-									$this->mSecure,
-									$this->mURL,
-									$this->mMenuText,
-									$this->mAlias,
-									$this->mMetadata,
-									$this->mTitleAttribute,
-									$this->mAccessKey,
-									$this->mTabIndex,
-									$this->mModifiedDate,
-									$this->mItemOrder,
-									$this->mLastModifiedBy,
-									(int) $this->mId
-									));
+			$this->mName,
+			$this->mAlias,
+			$this->Type(),
+			$this->mOwner,
+			$this->mTemplateId,
+			$this->mParentId,
+			$this->mItemOrder,
+			$this->mHierarchy,
+			$this->mIdHierarchy,
+			$this->mHierarchyPath,
+			($this->mActive ? 1 : 0),
+			($this->mDefaultContent ? 1 : 0),
+			($this->mShowInMenu ? 1 : 0),
+			($this->mCachable ? 1 : 0),
+			($this->mSecure ? 1 : 0),
+			$this->mURL,
+			$this->mMenuText,
+			$this->mMetadata,
+			$this->mTitleAttribute,
+			$this->mAccessKey,
+			$this->mTabIndex,
+			$this->mModifiedDate,
+			$this->mLastModifiedBy,
+			(int) $this->mId
+		));
 
-/*
+/*		if (! $dbresult) { unreliable after UPDATE
+			die($db->sql.'<br>'.$db->ErrorMsg());
+		}
+
 		if ($this->mOldParentId != $this->mParentId) {
 			// Fix the item_order if necessary
 			$query = "UPDATE ".CMS_DB_PREFIX."content SET item_order = item_order - 1 WHERE parent_id = ? AND item_order > ?";
 			$result = $db->Execute($query, array($this->mOldParentId,$this->mOldItemOrder));
-
+			TODO AND corresponding effect on a segment of each hierarchy value?
 			$this->mOldParentId = $this->mParentId;
 			$this->mOldItemOrder = $this->mItemOrder;
 		}
 */
-
 		if (isset($this->mAdditionalEditors)) {
 			$query = "DELETE FROM ".CMS_DB_PREFIX."additional_users WHERE content_id = ?";
 			$db->Execute($query, array($this->Id()));
@@ -1514,80 +1574,115 @@ abstract class ContentBase
 	}
 
 	/**
-	 * Initially save a content object with no id to the database.
+	 * Initially save a content object in the database.
 	 *
 	 * Like the Update method this method will determine an item order,
 	 * save the record, save properties and additional editors.
+	 * Since 2.2.19, the saved page will NOT become the default page
+	 * if no other page is already the default.
 	 */
 	protected function Insert()
 	{
 		// TODO: This function should return something
-		// TODO: Handle hierarchy-related properties here, they start as empty strings !
-		// TODO: Figure out proper item_order
 		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
 
-		$result = false;
-
+//		$result = false;
+/* BAD!
 		$query = 'SELECT content_id FROM '.CMS_DB_PREFIX.'content WHERE default_content = 1';
 		$dflt_pageid = (int) $db->GetOne($query);
 		if( $dflt_pageid < 1 ) $this->SetDefaultContent(true);
-
-		// Figure out the item_order
+*/
+		// Figure out the item_order if necessary
 		if ($this->mItemOrder < 1) {
-			$query = "SELECT max(item_order) as new_order FROM ".CMS_DB_PREFIX."content WHERE parent_id = ?";
-			$row = $db->Getrow($query, array($this->mParentId));
-
-			if ($row) {
-				if ($row['new_order'] < 1) {
-					$this->mItemOrder = 1;
-				}
-				else {
-					$this->mItemOrder = $row['new_order'] + 1;
-				}
+			$query = "SELECT ".$db->IfNull('MAX(item_order)','0')." as new_order FROM ".CMS_DB_PREFIX."content WHERE parent_id = ?";
+			$row = $db->GetRow($query, array($this->mParentId));
+			if ($row && $row['new_order'] > 0) {
+				$this->mItemOrder = $row['new_order'] + 1;
+			}
+			else {
+				$this->mItemOrder = 1;
 			}
 		}
 
 		$newid = $db->GenID(CMS_DB_PREFIX."content_seq");
 		$this->mId = $newid;
 
+		$query = "SELECT hierarchy,id_hierarchy,hierarchy_path FROM ".CMS_DB_PREFIX."content WHERE content_id = ?";
+		$row = $db->GetRow($query,array($this->mParentId));
+		if ($row) {
+			$this->mHierarchy = $row['hierarchy'].'.'.str_pad($this->mItemOrder,5,'0',STR_PAD_LEFT); // OR 3 would suffice
+			$this->mIdHierarchy = $row['id_hierarchy'].'.'.$newid;
+			$this->mHierarchyPath = $row['hierarchy_path'].'/'.$this->mAlias;
+		}
+		else {
+			$this->mHierarchy = str_pad($this->mItemOrder,5,'0',STR_PAD_LEFT); // OR 3
+			$this->mIdHierarchy = $newid;
+			$this->mHierarchyPath = $this->mAlias;
+		}
+
 		$this->mModifiedDate = $this->mCreationDate = trim($db->DBTimeStamp(time()), "'");
 
-		$query = "INSERT INTO ".CMS_DB_PREFIX."content (content_id, content_name, content_alias, type, owner_id, parent_id, template_id, item_order, hierarchy, id_hierarchy, active, default_content, show_in_menu, cachable, secure, page_url, menu_text, metadata, titleattribute, accesskey, tabindex, last_modified_by, create_date, modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-
+		$query = "INSERT INTO ".CMS_DB_PREFIX."content (
+content_id,
+content_name,
+content_alias,
+type,
+owner_id,
+parent_id,
+template_id,
+item_order,
+hierarchy,
+id_hierarchy,
+hierarchy_path,
+active,
+default_content,
+show_in_menu,
+cachable,
+secure,
+page_url,
+menu_text,
+metadata,
+titleattribute,
+accesskey,
+tabindex,
+last_modified_by,
+create_date,
+modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		$dbresult = $db->Execute($query, array(
-									$newid,
-									$this->mName,
-									$this->mAlias,
-									$this->Type(),
-									$this->mOwner,
-									$this->mParentId,
-									$this->mTemplateId,
-									$this->mItemOrder,
-									$this->mHierarchy,
-									$this->mIdHierarchy,
-									($this->mActive ? 1 : 0),
-									($this->mDefaultContent ? 1 : 0),
-									($this->mShowInMenu ? 1 : 0),
-									($this->mCachable ? 1 : 0),
-									$this->mSecure,
-									$this->mURL,
-									$this->mMenuText,
-									$this->mMetadata,
-									$this->mTitleAttribute,
-									$this->mAccessKey,
-									$this->mTabIndex,
-									$this->mLastModifiedBy,
-									$this->mModifiedDate,
-									$this->mCreationDate
-									));
+				$newid,
+				$this->mName,
+				$this->mAlias,
+				$this->Type(),
+				$this->mOwner,
+				$this->mParentId,
+				$this->mTemplateId,
+				$this->mItemOrder,
+				$this->mHierarchy,
+				$this->mIdHierarchy,
+				$this->mHierarchyPath,
+				($this->mActive ? 1 : 0),
+				($this->mDefaultContent ? 1 : 0),
+				($this->mShowInMenu ? 1 : 0),
+				($this->mCachable ? 1 : 0),
+				($this->mSecure ? 1 : 0),
+				$this->mURL,
+				$this->mMenuText,
+				$this->mMetadata,
+				$this->mTitleAttribute,
+				$this->mAccessKey,
+				$this->mTabIndex,
+				$this->mLastModifiedBy,
+				$this->mCreationDate,
+				$this->mModifiedDate
+		));
 
 		if (! $dbresult) {
 			die($db->sql.'<br>'.$db->ErrorMsg());
 		}
 
 		if (is_array($this->_props) && count($this->_props)) {
-			// :TODO: There might be some error checking there
+			// TODO perhaps some error checking there
 			debug_buffer('save from ' . __LINE__);
 			$this->_save_properties();
 		}
@@ -1708,7 +1803,6 @@ abstract class ContentBase
 		return $errors;
 	}
 
-
 	/**
 	 * Delete the current content object from the database.
 	 *
@@ -1716,24 +1810,24 @@ abstract class ContentBase
 	 */
 	function Delete()
 	{
+		HookManager::do_hook('Core::ContentDeletePre', [ 'content' => &$this ]);
 		$gCms = CmsApp::get_instance();
-		\CMSMS\HookManager::do_hook('Core::ContentDeletePre', [ 'content' => &$this ] );
 		$db = $gCms->GetDb();
 
-		if ($this->mId > 0) {
+		if( $this->mId > 0 ) {
 			$query = "DELETE FROM ".CMS_DB_PREFIX."content WHERE content_id = ?";
 			$result = $db->Execute($query, array($this->mId));
 
-			// Fix the item_order if necessary
+			// Adjust item_orders as necessary
 			$query = "UPDATE ".CMS_DB_PREFIX."content SET item_order = item_order - 1 WHERE parent_id = ? AND item_order > ?";
-			$result = $db->Execute($query,array($this->ParentId(),$this->ItemOrder()));
+			$result = $db->Execute($query,array($this->mParentId,$this->mItemOrder));
 
-			// DELETE properties
+			// Delete properties
 			$query = 'DELETE FROM '.CMS_DB_PREFIX.'content_props WHERE content_id = ?';
 			$result = $db->Execute($query,array($this->mId));
 			$this->_props = null; // no object
 
-			// Delete additional editors.
+			// Delete additional editors
 			$query = 'DELETE FROM '.CMS_DB_PREFIX.'additional_users WHERE content_id = ?';
 			$result = $db->Execute($query,array($this->mId));
 			$this->mAdditionalEditors = null; //a.k.a unset, otherwise array
@@ -1742,7 +1836,7 @@ abstract class ContentBase
 			if( $this->mURL != '' ) cms_route_manager::del_static($this->mURL);
 		}
 
-		\CMSMS\HookManager::do_hook('Core::ContentDeletePost', [ 'content' => &$this ] );
+		HookManager::do_hook('Core::ContentDeletePost', [ 'content' => &$this ]);
 		$this->mId = -1;
 		$this->mItemOrder = -1;
 		$this->mOldItemOrder = -1;
@@ -1871,9 +1965,9 @@ abstract class ContentBase
 	 */
 	public function GetURL($rewrite = true)
 	{
-		$config = \cms_config::get_instance();
+		$config = cms_config::get_instance();
 		$url = "";
-		$alias = ($this->mAlias != ''?$this->mAlias:$this->mId);
+		$alias = $this->mAlias ?: $this->mId;
 
 		$base_url = CMS_ROOT_URL;
 		if( $this->Secure() ) $base_url = $config['ssl_url'];
@@ -1888,14 +1982,14 @@ abstract class ContentBase
 			$url_rewriting = $config['url_rewriting'];
 			$page_extension = $config['page_extension'];
 			if ($url_rewriting == 'mod_rewrite') {
-				$str = $this->HierarchyPath();
-				if( $this->mURL != '') $str = $this->mURL;	// we have a url path
+				$str = $this->mURL ?: // we have a url path
+					$this->mHierarchyPath;
 				$url = $base_url . '/' . $str . $page_extension;
 				return $url;
 			}
-			else if (isset($_SERVER['PHP_SELF']) && $url_rewriting == 'internal') {
-				$str = $this->HierarchyPath();
-				if( $this->mURL != '') $str = $this->mURL; // we have a url path
+			elseif (isset($_SERVER['PHP_SELF']) && $url_rewriting == 'internal') {
+				$str = $this->mURL ?: // we have a url path
+					$this->mHierarchyPath;
 				$url = $base_url . '/index.php/' . $str . $page_extension;
 				return $url;
 			}
@@ -1906,39 +2000,40 @@ abstract class ContentBase
 	}
 
 	/**
-	 * Move this content up, or down with respect to its peers.
-	 *
-	 * Note: This method modifies two content objects.
+	 * Move this content up or down relative to its peers.
+	 * Note: this method modifies two content objects.
 	 *
 	 * @since 2.0
-	 * @param int $direction direction. negative value indicates up, positive value indicates down.
+	 * @param int $direction negative value indicates up, positive value indicates down.
 	 */
 	public function ChangeItemOrder($direction)
 	{
-		$db = CmsApp::get_instance()->GetDb();
+		$order = $this->mItemOrder;
+		if( ($order < 2 && $direction < 0) || $direction == 0 ) { return; }
+
+		$gCms = CmsApp::get_instance();
+		$db = $gCms->GetDb();
 		$time = $db->DBTimeStamp(time());
-		$parentid = $this->ParentId();
-		$order = $this->ItemOrder();
-		if( $direction < 0 && $this->ItemOrder() > 1 ) {
+		$parentid = $this->mParentId;
+
+		if( $direction < 0 ) {
 			// up
-			$query = 'UPDATE '.CMS_DB_PREFIX.'content SET item_order = (item_order + 1), modified_date = '.$time.'
-				  WHERE item_order = ? AND parent_id = ?';
+			$query = 'UPDATE '.CMS_DB_PREFIX.'content SET item_order = (item_order + 1), modified_date = '.$time.' WHERE item_order = ? AND parent_id = ?';
 			$db->Execute($query,array($order-1,$parentid));
-			$query = 'UPDATE '.CMS_DB_PREFIX.'content SET item_order = (item_order - 1), modified_date = '.$time.'
-				  WHERE content_id = ?';
-			$db->Execute($query,array($this->Id()));
+			$query = 'UPDATE '.CMS_DB_PREFIX.'content SET item_order = (item_order - 1), modified_date = '.$time.' WHERE content_id = ?';
+			$db->Execute($query,array($this->mId));
 		}
-		else if( $direction > 0 ) {
-			// down.
-			$query = 'UPDATE '.CMS_DB_PREFIX.'content SET item_order = (item_order - 1), modified_date = '.$time.'
-				  WHERE item_order = ? AND parent_id = ?';
+		else {
+			// down
+			$query = 'UPDATE '.CMS_DB_PREFIX.'content SET item_order = (item_order - 1), modified_date = '.$time.' WHERE item_order = ? AND parent_id = ?';
 			$db->Execute($query,array($order+1,$parentid));
-			$query = 'UPDATE '.CMS_DB_PREFIX.'content SET item_order = (item_order + 1), modified_date = '.$time.'
-				  WHERE content_id = ?';
-			$db->Execute($query,array($this->Id()));
+			$query = 'UPDATE '.CMS_DB_PREFIX.'content SET item_order = (item_order + 1), modified_date = '.$time.' WHERE content_id = ?';
+			$db->Execute($query,array($this->mId));
 		}
-		\CMSMS\internal\global_cache::clear('content_tree');
-		\CMSMS\internal\global_cache::clear('content_flatlist');
+		// TODO these also cleared during upstream SetAllHierarchyPositions()
+//		global_cache::clear('content_quicklist');
+//		global_cache::clear('content_tree');
+//		global_cache::clear('content_flatlist');
 	}
 
 	/**
@@ -1960,7 +2055,7 @@ abstract class ContentBase
 	 * Other content types may override this method, but should call the base method at the start.
 	 *
 	 * @abstract
-	 * @return array Array of stdclass objects containing name (string), tab (string), priority (integer), required (bool) members
+	 * @return array Array of stdClass objects containing name (string), tab (string), priority (integer), required (bool) members
 	 */
 	public function GetEditableProperties()
 	{
@@ -1990,20 +2085,20 @@ abstract class ContentBase
 		// sort the properties.
 		// sort the attributes by tab, priority, name...
 		usort($props,function($a,$b) {
-				if( !isset($a->tab) || $a->tab == '' ) $a->tab = ContentBase::TAB_MAIN;
-				if( !isset($b->tab) || $b->tab == '' ) $b->tab = ContentBase::TAB_MAIN;
+			if( !isset($a->tab) || $a->tab == '' ) $a->tab = ContentBase::TAB_MAIN;
+			if( !isset($b->tab) || $b->tab == '' ) $b->tab = ContentBase::TAB_MAIN;
 
-				// sort elements by tabname, and then priority
-				$atab = $a->tab;
-				$btab = $b->tab;
+			// sort elements by tabname, and then priority
+			$atab = $a->tab;
+			$btab = $b->tab;
 
-				$res = 0;
-				if( ($r = strcmp($atab,$btab)) != 0 ) $res = $r;
-				else if( $a->priority < $b->priority ) $res = -1;
-				else if( $a->priority > $b->priority ) $res = 1;
-				else $res = strcmp($a->name,$b->name);
-				return $res;
-			});
+			$res = 0;
+			if( ($r = strcmp($atab,$btab)) != 0 ) $res = $r;
+			else if( $a->priority < $b->priority ) $res = -1;
+			else if( $a->priority > $b->priority ) $res = 1;
+			else $res = strcmp($a->name,$b->name);
+			return $res;
+		});
 
 		return $props;
 	}
@@ -2110,7 +2205,7 @@ abstract class ContentBase
 	public function GetAdditionalEditors()
 	{
 		if (!isset($this->mAdditionalEditors)) {
-			$db = \CmsApp::get_instance()->GetDb();
+			$db = CmsApp::get_instance()->GetDb();
 			$this->mAdditionalEditors = [];
 
 			$query = "SELECT user_id FROM ".CMS_DB_PREFIX."additional_users WHERE content_id = ?";
@@ -2319,7 +2414,7 @@ abstract class ContentBase
 	 */
 	protected function display_single_element($one,$adding)
 	{
-		$config = \cms_config::get_instance();
+		$config = cms_config::get_instance();
 
 		switch( $one ) {
 		case 'cachable':
@@ -2399,7 +2494,7 @@ abstract class ContentBase
 			$dir = $config['image_uploads_path'];
 			if( ($tmp = cms_siteprefs::get('content_imagefield_path')) ) { $dir .= DIRECTORY_SEPARATOR . trim($tmp, ' \\/'); }
 			$data = $this->GetPropertyValue('image');
-			$filepicker = \cms_utils::get_filepicker_module();
+			$filepicker = cms_utils::get_filepicker_module();
 			if( $filepicker ) {
 				$profile = $filepicker->get_default_profile( $dir, get_userid() );
 				$profile = $profile->overrideWith( ['top'=>$dir, 'type'=>'image'] );
@@ -2424,7 +2519,7 @@ abstract class ContentBase
 			$dir = $config['image_uploads_path'];
 			if( ($tmp = cms_siteprefs::get('content_imagefield_path')) ) { $dir .= DIRECTORY_SEPARATOR . trim($tmp, ' \\/'); }
 			$data = $this->GetPropertyValue('thumbnail');
-			$filepicker = \cms_utils::get_filepicker_module();
+			$filepicker = cms_utils::get_filepicker_module();
 			if( $filepicker ) {
 				$profile = $filepicker->get_default_profile( $dir, get_userid() );
 				$profile = $profile->overrideWith( ['top'=>$dir, 'type'=>'image', 'match_prefix'=>'thumb_' ] );
