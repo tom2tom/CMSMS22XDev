@@ -79,7 +79,7 @@ if( !empty($params['orderlist']) ) {
 
     $orderlist = json_decode($params['orderlist'],TRUE);
 
-    // step 1, create a flat list of the content items, and their new orders, and new parents.
+    // step 1, create a flat list of the content items, and their new orders and new parents.
     $orderlist = ordercontent_create_flatlist($orderlist);
 
     // step 2, merge in old orders and old parents
@@ -91,18 +91,27 @@ if( !empty($params['orderlist']) ) {
             if( $content ) {
                 $old_parent = $content->ParentId();
                 if( $old_parent != $rec['parent_id'] ) {
+                    $changelist[] = $rec;
+                }
+                else {
                     $old_order = $content->ItemOrder();
                     if( $old_order != $rec['order'] ) {
                         $changelist[] = $rec;
                     }
                 }
             }
-        } //TODO handle unfound-node error
+            else {
+                //TODO handle missing-content error
+            }
+        }
+        else {
+            //TODO handle missing-node error
+        }
     }
     unset($rec);
 
     if( !$changelist ) {
-        echo $this->ShowMessage($this->Lang('error_ordercontent_nothingtodo'));
+        $this->SetMessage($this->Lang('error_ordercontent_nothingtodo'));
     }
     else {
         $stmt = $db->Prepare('UPDATE '.CMS_DB_PREFIX.'content SET item_order = ?, parent_id = ? WHERE content_id = ?');
