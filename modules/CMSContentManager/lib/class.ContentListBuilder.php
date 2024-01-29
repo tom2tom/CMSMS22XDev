@@ -443,9 +443,9 @@ final class ContentListBuilder
     $content = $contentops->LoadContentFromId($page_id);
     if( !$content ) return FALSE;
 
+    $tophier = $content->ParentHierarchy();
     $content->ChangeItemOrder($direction);
-    $contentops = ContentOperations::get_instance();
-    $contentops->SetAllHierarchyPositions();
+    $contentops->SetAllHierarchyPositions($tophier);
     return TRUE;
   }
 
