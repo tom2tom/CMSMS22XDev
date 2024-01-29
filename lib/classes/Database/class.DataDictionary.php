@@ -367,8 +367,7 @@ abstract class DataDictionary
 		$rez = 2;
 		foreach($sql as $line) {
 			try {
-				$ok = $this->connection->Execute($line);
-				if (!$ok) {
+				if (!$this->connection->Execute($line)) {
 					if (!$continueOnError) return 0;
 					$rez = 1;
 				}
