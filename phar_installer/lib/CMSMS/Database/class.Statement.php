@@ -96,17 +96,17 @@ abstract class Statement
     public function Bind(array $data)
     {
         if( !$data ) {
-            $this->_conn->OnError($this->_conn::ERROR_EXECUTE,$TODO,'Data passed to '.__METHOD__.' must be an associative array');
+            $this->_conn->OnError($this->_conn::ERROR_EXECUTE,-1,'Data passed to '.__METHOD__.' must be an associative array');
             exit;
         }
         $first = $data[0];
         if( !$first || !is_array($first) ) {
-            $this->_conn->OnError($this->_conn::ERROR_EXECUTE,$TODO,'Data passed to '.__METHOD__.' must be an associative array');
+            $this->_conn->OnError($this->_conn::ERROR_EXECUTE,-1,'Data passed to '.__METHOD__.' must be an associative array');
             exit;
         }
         $keys = array_keys($first);
         if( is_numeric($keys[0]) && $keys[0] === 0 ) {
-            $this->_conn->OnError($this->_conn::ERROR_EXECUTE,$TODO,'Data passed to '.__METHOD__.' must be an associative array');
+            $this->_conn->OnError($this->_conn::ERROR_EXECUTE,-1,'Data passed to '.__METHOD__.' must be an associative array');
             exit;
         }
 
