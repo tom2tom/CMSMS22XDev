@@ -142,12 +142,12 @@ class Statement extends \CMSMS\Database\Statement
         return $row;
     }
 
-    //NOTE this API is inconsistent with ADOdb, which uses Connection->Execute(Statement,args)
+    //NOTE this API is akin to PDO's, but inconsistent with ADOdb, which uses Connection->Execute(Statement,args)
     public function Execute()
     {
         if( !$this->_stmt ) $this->prepare($this->sql);
         $args = func_get_args();
-        if( count($args) == 1 && is_array($args) && is_array($args[0]) ) $args = $args[0];
+        if( is_array($args) && count($args) == 1 && is_array($args[0]) ) $args = $args[0];
 
         /* if we have param count, find some arguments... either via the execute method... or via bound params */
         if( $args ) {
@@ -164,7 +164,7 @@ class Statement extends \CMSMS\Database\Statement
                     exit;
                 }
                 if( count($this->_bind) != $pc ) {
-                    $this->_conn->OnError($this->_conn::ERROR_EXECUTE,-1,'Incorrect number of bound parameters. Expecting '.$this->_stmt->field_count);
+                    $this->_conn->OnError($this->_conn::ERROR_EXECUTE,-1,'Incorrect number of bound parameters. Expecting '.$pc);
                     exit;
                 }
                 $args = $this->Fields();
