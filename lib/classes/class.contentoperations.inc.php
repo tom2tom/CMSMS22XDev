@@ -418,6 +418,8 @@ class ContentOperations
 			if( count($list) == 1 ) {
 				return;// nothing to do
 			}
+			$list[$current_id]['parent_id'] = -1; // treat this one as top
+			$list[$current_id]['V'] = 1; // populated-indicator, no further up-walk
 		}
 		/*hierarchy-value order will be like
 		00001
@@ -436,11 +438,6 @@ class ContentOperations
 			$cur_row['phier'] = substr($cur_row['hierarchy'],0,-6); // too bad this can't readily be populated by db server
 		}
 		unset($cur_row);
-
-		if( $tophier ) {
-			$list[$current_id]['parent_id'] = -1; // treat this one as top
-			$list[$current_id]['V'] = 1; // populated-indicator, no further up-walk
-		}
 
 		uasort($list,function($a,$b) {
 			$v = strcmp($a['phier'],$b['phier']);
@@ -1203,9 +1200,6 @@ ORDER BY B.hierarchy';
  */
 class_alias ('ContentOperations', 'ContentManager', false);
 
-?>
-
-<?php
 /* SUPERSEDED hierarchy updater, to be removed when there is definitely
    no further need for validation of such updating
 	/* *
@@ -1287,3 +1281,4 @@ class_alias ('ContentOperations', 'ContentManager', false);
 		$this->SetContentModified();
 	}
 */
+?>
