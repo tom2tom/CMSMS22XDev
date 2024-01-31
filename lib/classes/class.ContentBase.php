@@ -160,7 +160,7 @@ abstract class ContentBase
 
 	/**
 	 * The full hierarchy of the content
-	 * String of the form : 00003.00007.00002
+	 * A 0-padded string of the form : 00003.00007.00002
 	 *
 	 * @internal
 	 */
@@ -686,21 +686,17 @@ abstract class ContentBase
 	}
 
 	/**
-	 * Returns the Hierarchy of this page.
+	 * Returns the user-fiendly form of the Hierarchy of this page.
 	 * A string like ##.##.## indicating the path to this page and its order
-	 * This value uses the item order when calculating the output
-	 * e.g. 00003.00003.00003 to indicate the third grandchild of the
-	 * third child of the third root page.
+	 * e.g. 3.3.3 to indicate the third grandchild of the third child of
+	 * the third topmost page.
 	 *
 	 * @return string
 	 */
 	public function Hierarchy()
 	{
-		if( !($this->mHierarchy[0] == '0' || strpos($this->mHierarchy, '.0', 1)) ) { // should always fail
-			$contentops = ContentOperations::get_instance();
-			$this->mHierarchy = $contentops->CreateFriendlyHierarchyPosition($this->mHierarchy);
-		}
-		return $this->mHierarchy;
+		$contentops = ContentOperations::get_instance();
+		return $contentops->CreateFriendlyHierarchyPosition($this->mHierarchy);
 	}
 
 	/**
@@ -712,17 +708,23 @@ abstract class ContentBase
 	 */
 	public function ParentHierarchy()
 	{
-		return substr($this->Hierarchy(), 0, -6);
+		return substr($this->mHierarchy, 0, -6);
 	}
 
 	/**
-	 * Sets the Hierarchy
+	 * Sets the Hierarchy of this page.
 	 *
 	 * @internal
-	 * @param string $hierarchy
+	 * @param string $hierarchy either friendly- or unfriendly-format
 	 */
 	public function SetHierarchy($hierarchy)
 	{
+		$n = substr_count($hierarchy, '.');
+		$l = $n*6 + 5; //i.e. $n + ($n+1) * 5;
+		if( strlen($hierarchy) < $l ) {
+			$contentops = ContentOperations::get_instance();
+			$hierarchy = $contentops->CreateUnfriendlyHierarchyPosition($hierarchy);
+		}
 		$this->mHierarchy = $hierarchy;
 	}
 
