@@ -474,17 +474,25 @@ final class ContentListBuilder
       if( !$node ) return $this->_module->Lang('error_invalidpageid');
       if( $node->has_children() ) return $this->_module->Lang('error_delete_haschildren');
 
+      $content = $node->GetContent(FALSE,FALSE,FALSE);
+      if( $content->DefaultContent() ) return $this->_module->Lang('error_delete_defaultcontent');
+
       $parent = $node->get_parent();
       $parent_id = $node->get_tag('id');
       $childcount = 0;
       if( $parent ) $childcount = $parent->count_children();
 
-      $content = $node->GetContent(FALSE,FALSE,FALSE);
-      if( $content->DefaultContent() ) return $this->_module->Lang('error_delete_defaultcontent');
-
+      $tmp = $content->Name();
+      $type= $content->FriendlyName();
+      if( $tmp ) {
+          $tmp = "Deleted $type page: $tmp";
+      }
+      else {
+          $tmp = "Deleted anonymous $type page";
+      }
       $tophier = $content->ParentHierarchy();
       $content->Delete();
-      audit($page_id,$this->_module->GetName(),'Deleted page: '.$node->get_tag('name'));
+      audit($page_id,$this->_module->GetName(),$tmp);
 
       if( $childcount == 1 && $parent_id > -1 ) $this->collapse_section($parent_id);
       $this->collapse_section($page_id);
