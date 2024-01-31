@@ -76,26 +76,23 @@ class ContentOperations
 	 */
 	public static function setup_cache()
 	{
-		// two caches, the flat list, and the tree
+		// three caches, the flat list, the tree and the quicklist
 		$obj = new global_cachable('content_flatlist',function()
 			{
-				$query = 'SELECT content_id,parent_id,item_order,content_alias,active FROM '.CMS_DB_PREFIX.'content ORDER BY hierarchy ASC';
+				$query = 'SELECT content_id,parent_id,item_order,content_alias,active FROM '.CMS_DB_PREFIX.'content ORDER BY hierarchy';
 				$db = CmsApp::get_instance()->GetDb();
 				return $db->GetArray($query);
 			});
 		global_cache::add_cachable($obj);
 
-		// two caches, the flat list, and the tree
 		$obj = new global_cachable('content_tree',function()
 			{
 				$flatlist = global_cache::get('content_flatlist');
-
 				// todo, embed this herer
 				return cms_tree_operations::load_from_list($flatlist);
 			});
 		global_cache::add_cachable($obj);
 
-		// two caches, the flat list, and the tree
 		$obj = new global_cachable('content_quicklist',function()
 			{
 				$tree = global_cache::get('content_tree');
