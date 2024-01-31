@@ -1,5 +1,5 @@
 <?php
-#CMS Made Simple admin console script
+#CMS Made Simple admin console script used by jQueryUI widget cmsms.hierselector
 #(c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
@@ -145,11 +145,11 @@ try {
                         $content = $child->getContent(FALSE);
                         if( !is_object($content) ) continue;
                         if( !$allow_all && !$content->Active() ) continue;
-                        $res = $content->ToData();
+                        $rec = $content->ToData();
                         $rec['can_edit'] = check_permission($ruid,'Manage All Content') || $contentops->CheckPageAuthorship($ruid,$content->Id());
-                        $res['display'] = strip_tags($res['menu_text']);
-                        if( $display == 'title' ) $res['display'] = strip_tags($res['content_name']);
-                        $out[] = $res;
+                        $rec['display'] = strip_tags($rec['menu_text']);
+                        if( $display == 'title' ) $rec['display'] = strip_tags($rec['content_name']);
+                        $out[] = $rec;
                     }
                 }
             }
