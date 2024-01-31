@@ -440,8 +440,9 @@ class cms_content_tree extends cms_tree
 
 		$list = $this->_getHierarchyArray();
 		foreach( $list as &$one ) {
-			$one = sprintf('%05d',$one);
+			$one = sprintf('%05d',$one);// in future, 3-wide would suffice
 		}
+		unset($one);
 		$out = implode('.',array_reverse(array_splice($list,0,-1)));
 		$this->set_tag('hierarchy',$out);
 
