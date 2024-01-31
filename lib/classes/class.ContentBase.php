@@ -635,7 +635,10 @@ abstract class ContentBase
 
 	/**
 	 * Returns the ItemOrder
-	 * The ItemOrder is used to specify the order of this page amongst its peers
+	 * The ItemOrder specifies the order of this page relative to its peers
+	 * having the same parent.
+	 * A value of -1 indicates that a new item order will be calculated on save.
+	 * Otherwise a positive integer is expected.
 	 *
 	 * @return int
 	 */
@@ -646,9 +649,7 @@ abstract class ContentBase
 
 	/**
 	 * Sets the ItemOrder
-	 * The ItemOrder is used to specify the order of this page within the parent.
-	 * A value of -1 indicates that a new item order will be calculated on save.
-	 * Otherwise a positive integer is expected.
+	 * @see also ItemOrder()
 	 *
 	 * @internal
 	 * @param int $itemorder
@@ -660,10 +661,12 @@ abstract class ContentBase
 	}
 
 	/**
-	 * Returns the OldItemOrder.
+	 * Returns the ItemOrder. OR should it be OldItemOrder?
 	 * The OldItemOrder is used to specify the item order before changes were done
+	 * @see also ItemOrder()
 	 *
-	 * @deprecated
+	 * @internal
+	 * @deprecated since 2.2.19#2
 	 * @return int
 	 */
 	public function OldItemOrder()
@@ -672,12 +675,11 @@ abstract class ContentBase
 	}
 
 	/**
-	 * Sets the ItemOrder
-	 * The ItemOrder is used to specify the order of this page within the parent.
-	 * The OldItemOrder is used when editing pages.
+	 * Sets the OldItemOrder
+	 * @see also ItemOrder(), OldItemOrder()
 	 *
 	 * @internal
-	 * @deprecated
+	 * @deprecated since 2.2.19#2
 	 * @param int the itemorder.
 	 */
 	public function SetOldItemOrder($itemorder)
@@ -686,7 +688,7 @@ abstract class ContentBase
 	}
 
 	/**
-	 * Returns the user-fiendly form of the Hierarchy of this page.
+	 * Returns the user-friendly form of the Hierarchy of this page.
 	 * A string like ##.##.## indicating the path to this page and its order
 	 * e.g. 3.3.3 to indicate the third grandchild of the third child of
 	 * the third topmost page.
@@ -1271,8 +1273,8 @@ abstract class ContentBase
 	}
 
 	/**
-	 * Indicates whether ths page type uses a template.
-	 * i.e: some content types like sectionheader and separator do not.
+	 * Indicates whether this page type uses a template.
+	 * Some content types like sectionheader and separator do not.
 	 *
 	 * @since 2.0
 	 * @abstract
@@ -1319,41 +1321,41 @@ abstract class ContentBase
 		] as $fld ) {
 			if( !isset($data[$fld]) ) $data[$fld] = '';
 		}
-		$result = true;
-		$this->mId						= (int)$data["content_id"];
-		$this->mName					= $data["content_name"];
-		$this->mAlias					= $data["content_alias"];
-		$this->mOldAlias				= $data["content_alias"];
-		$this->mOwner					= (int)$data["owner_id"];
-		$this->mParentId				= (int)$data["parent_id"];
-//		$this->mOldParentId				= (int)$data["parent_id"];
-		$this->mTemplateId				= (int)$data["template_id"];
-		$this->mItemOrder				= (int)$data["item_order"];
-		$this->mOldItemOrder			= (int)$data["item_order"];
-		$this->mMetadata				= $data['metadata'];
-		$this->mHierarchy				= $data["hierarchy"];
-		$this->mIdHierarchy				= $data["id_hierarchy"];
-		$this->mHierarchyPath			= $data["hierarchy_path"];
-		$this->mMenuText				= $data['menu_text'];
-		$this->mTitleAttribute			= $data['titleattribute'];
-		$this->mAccessKey				= $data['accesskey'];
-		$this->mTabIndex				= $data['tabindex'];
-		$this->mDefaultContent			= ($data["default_content"] == 1);
-		$this->mActive					= ($data["active"] == 1);
-		$this->mShowInMenu				= ($data["show_in_menu"] == 1);
-		$this->mCachable				= ($data["cachable"] == 1);
-		if( isset($data['secure']) ) $this->mSecure = $data["secure"];
-		if( isset($data['page_url']) ) $this->mURL  = $data["page_url"];
-		$this->mLastModifiedBy			= (int)$data["last_modified_by"];
-		$this->mCreationDate			= $data["create_date"];
-		$this->mModifiedDate			= $data["modified_date"];
+
+		$this->mId				= (int)$data["content_id"];
+		$this->mName			= $data["content_name"];
+		$this->mAlias			= $data["content_alias"];
+		$this->mOldAlias		= $data["content_alias"];
+		$this->mOwner			= (int)$data["owner_id"];
+		$this->mParentId		= (int)$data["parent_id"];
+//		$this->mOldParentId		= (int)$data["parent_id"];
+		$this->mTemplateId		= (int)$data["template_id"];
+		$this->mItemOrder		= (int)$data["item_order"];
+		$this->mOldItemOrder	= (int)$data["item_order"]; //same as previous
+		$this->mMetadata		= $data['metadata'];
+		$this->mHierarchy		= $data["hierarchy"];
+		$this->mIdHierarchy		= $data["id_hierarchy"];
+		$this->mHierarchyPath	= $data["hierarchy_path"];
+		$this->mMenuText		= $data['menu_text'];
+		$this->mTitleAttribute	= $data['titleattribute'];
+		$this->mAccessKey		= $data['accesskey'];
+		$this->mTabIndex		= $data['tabindex'];
+		$this->mDefaultContent	= ($data["default_content"] == 1);
+		$this->mActive			= ($data["active"] == 1);
+		$this->mShowInMenu		= ($data["show_in_menu"] == 1);
+		$this->mCachable		= ($data["cachable"] == 1);
+		$this->mSecure			= !empty($data['secure']);
+		$this->mURL				= $data["page_url"];
+		$this->mLastModifiedBy	= (int)$data["last_modified_by"];
+		$this->mCreationDate	= $data["create_date"];
+		$this->mModifiedDate	= $data["modified_date"];
 
 		if ($loadProperties) {
 			$this->_load_properties();
-			if (!is_array($this->_props) ) $result = false;
+			if (!is_array($this->_props) ) {
+				$this->SetInitialValues();
+			}
 		}
-
-		if (false == $result) $this->SetInitialValues();
 
 		$this->Load();
 		return $result;
