@@ -159,10 +159,10 @@ try {
         $tmpobj->SetAlias($content_obj->Alias());
         $tmpobj->SetOwner($content_obj->Owner());
         $tmpobj->SetActive($content_obj->Active());
-        $tmpobj->SetItemOrder($content_obj->ItemOrder());
+        $tmpobj->SetItemOrder($content_obj->ItemOrder()); // hence next position
         $tmpobj->SetShowInMenu($content_obj->ShowInMenu());
         $tmpobj->SetCachable($content_obj->Cachable());
-        $tmpobj->SetHierarchy($content_obj->Hierarchy());
+        $tmpobj->SetHierarchy($content_obj->Hierarchy()); // friendly-format converted before store
         $tmpobj->SetLastModifiedBy($content_obj->LastModifiedBy());
         $tmpobj->SetAdditionalEditors($content_obj->GetAdditionalEditors());
         $tmpobj->Properties();
