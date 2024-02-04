@@ -26,11 +26,11 @@
  */
 class ErrorPage extends Content
 {
-    public $error_types;
-    public $doAliasCheck; // TODO relevance ? custom property?
-    public $doAutoAliasIfEnabled; //ditto
-    public $mType; //ditto
-    public $mPreview; //ditto
+    public $error_types = [];
+    public $doAliasCheck; //unused property
+    public $doAutoAliasIfEnabled; //unused property
+    public $mType; //property normally runtime generated for read & not written
+    public $mPreview; //unused property
 
     public function __construct()
     {
@@ -38,12 +38,12 @@ class ErrorPage extends Content
 
         global $CMS_ADMIN_PAGE;
         if( isset($CMS_ADMIN_PAGE) ) {
-            $this->error_types = array('404' => lang('404description'),
-                                       '403'=>lang('403description') );
+            $this->error_types = array('404'=>lang('404description'),
+                                       '403'=>lang('403description'));
         }
         $this->doAliasCheck = false;
         $this->doAutoAliasIfEnabled = false;
-        $this->mType = strtolower(get_class($this)) ;
+        $this->mType = strtolower(get_class($this)); //WHAAATT?
     }
 
     public function HandlesAlias()
@@ -59,8 +59,6 @@ class ErrorPage extends Content
     public function SetProperties()
     {
         parent::SetProperties();
-        $this->RemoveProperty('secure',0);
-        //$this->RemoveProperty('searchable',0);
         $this->RemoveProperty('parent',-1);
         $this->RemoveProperty('showinmenu',false);
         $this->RemoveProperty('menutext','');
@@ -73,13 +71,15 @@ class ErrorPage extends Content
         $this->RemoveProperty('accesskey','');
         $this->RemoveProperty('titleattribute','');
         $this->RemoveProperty('active',true);
+        $this->RemoveProperty('default',false);
         $this->RemoveProperty('cachable',false);
+        $this->RemoveProperty('secure',false);
+//      $this->RemoveProperty('searchable',false);
         $this->RemoveProperty('page_url','');
+        $this->RemoveProperty('alias',''); //change priority (to last position)
+        $this->AddProperty('alias',20,parent::TAB_OPTIONS,true);
 
-        $this->RemoveProperty('alias','');
-        $this->AddBaseProperty('alias',10,1);
-
-        //Turn on preview TODO relevance? property ?
+        //Turn on preview TODO relevance? unused property ?
         $this->mPreview = true;
     }
 
@@ -89,6 +89,11 @@ class ErrorPage extends Content
     }
 
     public function WantsChildren()
+    {
+        return false;
+    }
+
+    public function IsDefaultPossible()
     {
         return false;
     }
