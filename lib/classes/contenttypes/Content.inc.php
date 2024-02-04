@@ -99,18 +99,21 @@ class Content extends ContentBase
 	/**
 	 * Set up base property attributes for this content type
 	 *
-	 * This property type adds these properties: design_id, template, searchable, disable_wysiwyg, pagemetadata, pagedata
+	 * This property type adds these properties:
+	 *  design_id, template, default, wantschildren, searchable,
+	 *  disable_wysiwyg, pagemetadata, pagedata
 	 */
 	public function SetProperties()
 	{
 	  parent::SetProperties();
-	  $this->AddProperty('design_id',0,self::TAB_OPTIONS);
-	  $this->AddProperty('template',0,self::TAB_OPTIONS);
-	  $this->AddProperty('searchable',20,self::TAB_OPTIONS);
-	  $this->AddProperty('disable_wysiwyg',60,self::TAB_OPTIONS);
-	  $this->AddProperty('pagemetadata',1,self::TAB_LOGIC);
-	  $this->AddProperty('pagedata',2,self::TAB_LOGIC);
-	  $this->AddProperty('wantschildren',10,self::TAB_OPTIONS);
+	  $this->AddProperty('design_id',0,parent::TAB_OPTIONS);
+	  $this->AddProperty('template',0,parent::TAB_OPTIONS);
+	  $this->AddProperty('default',2,parent::TAB_OPTIONS,TRUE);
+	  $this->AddProperty('wantschildren',10,parent::TAB_OPTIONS);
+	  $this->AddProperty('searchable',20,parent::TAB_OPTIONS);
+	  $this->AddProperty('disable_wysiwyg',60,parent::TAB_OPTIONS);
+	  $this->AddProperty('pagemetadata',1,parent::TAB_LOGIC);
+	  $this->AddProperty('pagedata',2,parent::TAB_LOGIC);
 	}
 
 	/**
@@ -126,10 +129,9 @@ class Content extends ContentBase
 
 	public function WantsChildren()
 	{
-		// an empty/null response defaults to true.
 		$tmp = $this->GetPropertyValue('wantschildren');
-		if( $tmp === '0' ) return FALSE;
-		return TRUE;
+		// an empty/null value defaults to true
+		return $tmp !== '0';
 	}
 
 
@@ -231,7 +233,7 @@ class Content extends ContentBase
 				$prop = new stdClass();
 				$prop->name = $block['name'];
 				$prop->extra = $block;
-				if( !isset($block['tab']) || $block['tab'] == '' ) $block['tab'] = self::TAB_MAIN;
+				if( !isset($block['tab']) || $block['tab'] == '' ) $block['tab'] = parent::TAB_MAIN;
 				$prop->tab = $block['tab'];
 				if( isset($block['priority']) ) {
 					$prop->priority = $block['priority'];
