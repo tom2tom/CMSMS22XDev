@@ -157,7 +157,8 @@ if (isset($_POST['updateurls'])) {
 
 if (isset($_POST['clearcache'])) {
   cmsms()->clear_cached_files(-1);
-  audit('', 'System maintenance', 'Cache cleared');
+  audit('', 'System maintenance', 'Smarty page-content caches cleared');
+//TODO also do $contentops->SetContentModified();
   $themeObject->ShowMessage(lang("cachecleared"));
   $smarty->assign("active_content", "true");
 }
