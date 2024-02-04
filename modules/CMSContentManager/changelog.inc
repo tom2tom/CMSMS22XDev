@@ -1,5 +1,6 @@
 <ul>
-<li>2023-MM-DD v1.1.11<br>
+<li>2024-MM-DD v1.1.11<br>
+ Support changing the 'default page' property when editing suitable pages<br>
  BR #12474 - Taking the default page down by accident through the content type<br>
  BR #12635 - Apply button is shown for non-existing page and creates new pages
 </li> 
