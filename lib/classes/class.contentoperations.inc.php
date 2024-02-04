@@ -259,7 +259,7 @@ class ContentOperations
 				$type  = strtolower($class);
 
 				$obj->class = $class;
-				$obj->type = strtolower($class);
+				$obj->type = $type;
 				$obj->filename = $one;
 				$obj->loaded = false;
 				if( $obj->type == 'link' ) {
@@ -267,7 +267,7 @@ class ContentOperations
 					$obj->friendlyname_key = 'contenttype_redirlink';
 				}
 				else {
-					$obj->friendlyname_key = 'contenttype_'.$obj->type;
+					$obj->friendlyname_key = 'contenttype_'.$type;
 				}
 				$result[$type] = $obj;
 			}
@@ -527,7 +527,7 @@ class ContentOperations
 	}
 
 	/**
-	 * Set the last modified date of content so that on the next request the content cache will be loaded from the database
+	 * Clear all content-related caches so that during the next request they will be re-populated
 	 *
 	 * @internal
 	 * @access private
@@ -753,7 +753,7 @@ class ContentOperations
 			$db = CmsApp::get_instance()->GetDb();
 			$query = "SELECT content_id FROM ".CMS_DB_PREFIX."content WHERE default_content=1";
 			$old_id = $db->GetOne($query);
-			if ($old_id && $old_id != $id) {
+			if ($old_id > 0 && $old_id != $id) {
 				$one = $this->LoadContentFromId($old_id);
 				$one->SetDefaultContent(false);
 				$one->Save();
@@ -908,12 +908,29 @@ EOS;
 	 * Returns the content alias given a valid content id.
 	 *
 	 * @param int $id The content id to query
-	 * @return string The resulting content alias.  false if not found.
+	 * @return string The resulting content alias, or empty if not found.
 	 */
 	public function GetPageAliasFromID( $id )
 	{
 		$node = $this->quickfind_node_by_id($id);
 		if( $node ) return $node->getTag('alias');
+		return '';
+	}
+
+	/**
+	 * Returns the name or menu-label of the content whose id is specified.
+	 * @since 2.2.19#2
+	 *
+	 * @param int $id The content id to query
+	 * @return string The resulting identifier, or empty if nothing useful found.
+	 */
+	public function GetPageDescriptor($id)
+	{
+		$content = $this->LoadContentFromId($id);
+		if( $content ) {
+			return ($content->Name()) ?: (($content->MenuText()) ?: '');
+		}
+		return '';
 	}
 
 	/**
