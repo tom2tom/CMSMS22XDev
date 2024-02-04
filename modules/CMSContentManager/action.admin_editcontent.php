@@ -30,33 +30,34 @@
 #END_LICENSE
 if( !isset($gCms) ) exit;
 
+$user_id = get_userid();
+
 $this->SetCurrentTab('pages');
+
+if( isset($params['cancel']) ) {
+    $this->SetMessage($this->Lang('msg_cancelled'));
+    $this->RedirectToAdminTab();
+}
+
+$content_id = 0; //i.e. new-page
+$content_obj = null;
+$error = '';
+$active_tab = '';
 
 //
 // init
 //
 try {
-    $user_id = get_userid();
-    $content_id = 0;
-    $content_obj = null;
     $pagedefaults = CmsContentManagerUtils::get_pagedefaults();
     $content_type = $pagedefaults['contenttype'];
-    $error = '';
-    $active_tab = '';
 
     if( isset($params['content_id']) ) $content_id = (int)$params['content_id'];
-
-    if( isset($params['cancel']) ) {
-        unset($_SESSION['__cms_copy_obj__']);
-        $this->SetMessage($this->Lang('msg_cancelled'));
-        $this->RedirectToAdminTab();
-    }
 
     if( $content_id < 1 ) {
         // adding or copying.
         if( !$this->CheckPermission('Add Pages') ) {
-            // no permission to add pages.
-            $this->SetError($this->Lang('error_editpage_permission'));
+            // no permission to add page.
+            $this->SetError($this->Lang('error_editpage_permission')); // TODO something specific to add page
             $this->RedirectToAdminTab();
         }
     }
@@ -73,17 +74,34 @@ try {
     //
     // load or create the initial content object
     //
-    if( $content_id === -1 && isset($_SESSION['__cms_copy_obj__']) ) {
-        // we're copying a content object.
-        $tmp = $_SESSION['__cms_copy_obj__'];
-        $type_name = get_parameter_value($tmp,'type');
-        if( !$type_name ) throw new \LogicException('Invalid session data');
-        $ph = $contentops->LoadContentType($type_name);
-        if( !class_exists($ph->class) ) throw new \LogicException('Could not find class for content type');
-        if( !$ph ) throw new \LogicException('Could not find content type named '.$type_name);
-        $content_obj = unserialize($tmp['obj']);
-        $content_type = $content_obj->Type();
-        if( isset($params['content_type']) ) $content_type = trim($params['content_type']);
+    if( $content_id === -1 ) {
+        if( isset($_SESSION['__cms_copy_obj__']) ) {
+            // we're copying a content object.
+            $from_id = $_SESSION['__cms_copy_obj__'];
+            unset($_SESSION['__cms_copy_obj__']);
+            $content_obj = $contentops->LoadContentFromId($from_id,true);
+            if( !$content_obj ) throw new RuntimeException('Invalid session data');
+            $type_name = $content_obj->Type();
+            // can the following ever fail?
+            if( !$type_name ) throw new RuntimeException('Could not find content object\'s type');
+            $ph = $contentops->LoadContentType($type_name);
+            if( !$ph ) throw new RuntimeException('Could not find content type named '.$type_name);
+            if( !class_exists($ph->class) ) throw new RuntimeException('Could not find class for content type');
+
+            $content_obj->SetId(-1);
+            $content_obj->SetName('Copy of '.$content_obj->Name());
+            $content_obj->SetMenuText('Copy of '.$content_obj->MenuText());
+            $content_obj->SetAlias($content_obj->Alias().'_copy');
+            $content_obj->SetOldItemOrder(-1);
+            $content_obj->SetDefaultContent(false);
+            $content_obj->SetURL('');
+            $content_obj->SetOwner($user_id);
+            $content_obj->SetLastModifiedBy($user_id);
+            $content_type = $type_name;
+        }
+        else {
+            throw new \LogicException('Missing session data');
+        }
     }
     else if( $content_id === 0 ) {
         // creating a new content object
@@ -108,11 +126,11 @@ try {
         if( $dflt_parent < 1 ) $dflt_parent = -1;
         if( !$this->CheckPermission('Modify Any Page') || !$this->CheckPermission('Manage All Content') ) {
             // we get the list of pages that this user has access to.
-            // if he is not an editor of the default page, then we use the first page the user has access to, or -1
+            // if she is not an editor of the default page, then use the first page she has access to, or -1
             $list = $contentops->GetPageAccessForUser($user_id);
             if( count($list) && !in_array($dflt_parent,$list) ) $dflt_parent = $list[0];
         }
-        // double check if this parent is valid... if it is not, we use -1
+        // check if this parent is valid. If not, use -1
         if( $dflt_parent > 0 ) {
             $node = $contentops->quickfind_node_by_id( $dflt_parent );
             if( !$node ) $dflt_parent = -1;
@@ -129,7 +147,7 @@ try {
     }
 
     // validate the content type.
-    if( is_array($existingtypes) && count($existingtypes) > 0 && !in_array($content_type,array_keys($existingtypes)) ) {
+    if( $existingtypes && is_array($existingtypes) && !in_array($content_type,array_keys($existingtypes)) ) {
         $this->SetError($this->Lang('error_editpage_contenttype'));
         $this->RedirectToAdminTab();
     }
@@ -145,7 +163,7 @@ catch( Exception $e ) {
 // or a POST
 //
 try {
-    if( $content_id != -1 && $content_type != $content_obj->Type() ) {
+    if( $content_id > 0 && $content_type != $content_obj->Type() ) {
         // content type changed. create a new content object, but preserve the id.
         $tmpobj = $contentops->CreateNewContent($content_type);
         $tmpobj->SetId($content_obj->Id());
@@ -189,7 +207,6 @@ try {
         else if( isset($params['submit']) || isset($params['apply']) ) {
             $content_obj->SetLastModifiedBy($user_id);
             $content_obj->Save();
-            unset($_SESSION['__cms_copy_obj__']);
             $optype = ($content_id > 0) ? 'Edited' : 'Added';
             $tmp = $content_obj->Name();
             if( $tmp ) {
@@ -272,10 +289,10 @@ $tab_message_array = [];
 try {
     $tab_names = $content_obj->GetTabNames();
 
-    // the content object might not have a main tab, but we require one
-    if( !isset($tab_names[$content_obj::TAB_MAIN]) ) {
-        $tab_names = array($content_obj::TAB_MAIN=>lang($content_obj::TAB_MAIN))
-         + $tab_names;
+    // the content object might have no main tab, but we require one
+    $tmain = $content_obj::TAB_MAIN;
+    if( !isset($tab_names[$tmain]) ) {
+        $tab_names = array($tmain => lang($tmain)) + $tab_names;
     }
 
     foreach( $tab_names as $currenttab => $label ) {
@@ -283,24 +300,34 @@ try {
         if( $tmp ) $tab_message_array[$currenttab] = $tmp;
 
         $contentarray = $content_obj->GetTabElements($currenttab, $content_obj->Id() < 1 );
-        if( $currenttab == $content_obj::TAB_MAIN ) {
+        if( $currenttab == $tmain ) {
             // first tab... prepend a content-type selector.
             // unless the user is merely an additional-editor. TODO always display, but disabled for additional editor
-            if( ($this->CheckPermission('Manage All Content') || $content_obj->Owner() == $user_id) )  {
+            if( ($this->CheckPermission('Manage All Content') || $content_obj->Owner() == $user_id) ) {
+                // accumulate defaultable content-types
+                $dflttypes = [];
+                $typeclasses = $contentops->ListContentTypes(true,true); //c.f. $existingtypes which has type-keys
+                foreach( $typeclasses as $classname => $label ) {
+                    $obj = new $classname();
+                    if( $obj && $obj->IsDefaultPossible() ) {
+                        $type = strtolower($classname); //OR array_search($label,$existingtypes)
+                        $dflttypes[] = $type;
+                    }
+                }
                 $dflt = $content_obj->DefaultContent();
-                $dflttypes = ['content']; //TODO poll all type-classes corresponding to $existingtypes ->IsDefaultPossible()
                 $selcount = 0;
+                asort($existingtypes);
                 $tmp2 = "<select id=\"content_type\" name=\"{$id}content_type\">";
                 foreach( $existingtypes as $type => $label ) {
-                    if( !$dflt || in_array($type, $dflttypes )) {
+                    if( !$dflt || in_array($type, $dflttypes) ) {
                         $tmp2 .= CmsFormUtils::create_option(array('value'=>$type,'label'=>$label),$content_type);
                         $selcount++;
                     }
                 }
-                if( $selcount > 0) {
+                if( $selcount > 0 ) {
                     $tmp2 .= '</select>';
-                    $help = '&nbsp;'.cms_admin_utils::get_help_tag(array('key'=>'help_content_type','title'=>$this->Lang('help_title_content_type')));
-                    $tmp = array('<label for="content_type">*'.$this->Lang('prompt_editpage_contenttype').':</label>'.$help, $tmp2);
+                    $help = cms_admin_utils::get_help_tag(array('key'=>'help_content_type','title'=>$this->Lang('help_title_content_type')));
+                    $tmp = array('<label for="content_type">*'.$this->Lang('prompt_editpage_contenttype').':</label>&nbsp;'.$help,$tmp2);
                     if( $contentarray ) {
                         array_unshift($contentarray, $tmp);
                     }
