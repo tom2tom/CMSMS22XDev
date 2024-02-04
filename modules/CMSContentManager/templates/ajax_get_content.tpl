@@ -111,7 +111,7 @@
           <span class="text-red">{$row.url}</span>
         {/if}
       {elseif $column == 'template'}
-        {if isset($row.template) && $row.template != ''}
+        {if !empty($row.template)}
           {if $row.can_edit_tpl}
             <a href="{cms_action_url module='DesignManager' action='admin_edit_template' tpl=$row.template_id}" class="page_template" title="{$mod->Lang('prompt_page_template')}">
           {$row.template}
@@ -138,7 +138,7 @@
           <a href="{cms_action_url action='defaultadmin' setactive=$row.id}" class="page_setactive" accesskey="a">
             {admin_icon icon='false.gif' title=$mod->Lang('prompt_page_setactive')}
           </a>
-        {else if $row.active != 'default' && $row.active != ''}
+        {elseif $row.active && $row.active != 'default'}
           <a href="{cms_action_url action='defaultadmin' setinactive=$row.id}" class="page_setinactive" accesskey="a">
         {admin_icon icon='true.gif' title=$mod->Lang('prompt_page_setinactive')}
           </a>
@@ -146,7 +146,7 @@
       {elseif $column == 'default'}
         {if $row.default == 'yes'}
           {admin_icon icon='true.gif' class='page_default' title=$mod->Lang('prompt_page_default')}
-        {else if $row.default == 'no' && $row.can_edit}
+        {elseif $row.default == 'no' && $row.can_default}
           <a href="{cms_action_url action='defaultadmin' setdefault=$row.id}" class="page_setdefault" accesskey="d">
         {admin_icon icon='false.gif' class='page_setdefault' title=$mod->Lang('prompt_page_setdefault')}
           </a>
@@ -191,7 +191,7 @@
           {/if}
         {/if}
       {elseif $column == 'delete'}
-        {if $row.can_delete && $row.delete != ''}
+        {if $row.delete && $row.can_delete}
           <a href="{cms_action_url action='defaultadmin' delete=$row.id}" class="page_delete" accesskey="r">
         {admin_icon icon='delete.gif' class='page_delete' title=$mod->Lang('prompt_page_delete')}
            </a>
