@@ -390,7 +390,10 @@ final class ContentListBuilder
   }
 
   /**
-   * Set the specified page as the default page
+   * Set the specified page as the default page, if possible
+   * @param integer The page number
+   *
+   * @return bool
    */
   public function set_default($page_id)
   {
@@ -404,19 +407,22 @@ final class ContentListBuilder
 
     if( !$content1 ) return FALSE;
     if( !$content1->IsDefaultPossible() ) return FALSE;
-    if( !$content1->Active() ) return FALSE;
 
     $page_id2 = $contentops->GetDefaultContent();
-    $content1->SetDefaultContent(TRUE);
-    $content1->Save();
-
-    $content2 = $contentops->LoadContentFromId($page_id2);
-    if( $page_id != $page_id2 && $content2 ) {
-        $content2->SetDefaultContent(FALSE);
-        $content2->Save();
+    if( $page_id != $page_id2 ) {
+        $content1->SetDefaultContent(TRUE);
+        $content1->SetActive(TRUE); //ensure this one too
+        $content1->Save();
+        $content2 = $contentops->LoadContentFromId($page_id2);
+        if( $content2 ) {
+            $content2->SetDefaultContent(FALSE);
+            $content2->Save();
+        }
+        global_cache::clear('default_content');
+        audit($page_id,'Default page',"Changed to $page_id2: ".$contentops->GetPageDescriptor($page_id2));
+        return TRUE;
     }
-
-    return TRUE;
+    return FALSE;
   }
 
   /**
@@ -919,9 +925,11 @@ final class ContentListBuilder
                   break;
 
               case 'default':
+                  $rec['can_default'] = FALSE;
                   $rec[$column] = '';
                   if( $this->_module->CheckPermission('Manage All Content') && !$this->_is_locked($page_id) && !$this->_is_default_locked() ) {
-                      if( $content->IsDefaultPossible() && $content->Active() ) $rec[$column] = ($content->DefaultContent())?'yes':'no';
+                      $rec[$column] = ($content->DefaultContent())?'yes':'no';
+                      $rec['can_default'] = $content->IsDefaultPossible();
                   }
                   break;
 
