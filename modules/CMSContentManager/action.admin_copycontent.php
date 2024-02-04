@@ -63,22 +63,8 @@ if( !$node ) {
   $this->SetError($this->Lang('error_invalidpageid'));
   $this->RedirectToAdminTab();
 }
-$from_obj = $node->GetContent(FALSE,FALSE,FALSE);
-if( !$from_obj ) {
-  $this->SetError($this->Lang('error_invalidpageid'));
-  $this->RedirectToAdminTab();
-}
-$from_obj->GetAdditionalEditors();
-$from_obj->HasProperty('anything'); // forces properties to be loaded.
 
-$to_obj = clone $from_obj; // resets some properties
-$to_obj->SetName('Copy of '.$from_obj->Name());
-$to_obj->SetMenuText('Copy of '.$from_obj->MenuText());
-$to_obj->SetDefaultContent(FALSE);
-$to_obj->SetItemOrder($from_obj->ItemOrder()); // insert after from-page
-$to_obj->SetOwner($uid);
-$to_obj->SetLastModifiedBy($uid);
-$_SESSION['__cms_copy_obj__'] = ['type'=>$to_obj->Type(), 'obj'=>serialize($to_obj)];
+$_SESSION['__cms_copy_obj__'] = $content_id;
 $this->Redirect($id,'admin_editcontent','',array('content_id'=>-1)); // not a new page (whose id == 0)
 
 #
