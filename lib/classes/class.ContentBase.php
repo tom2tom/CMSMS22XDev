@@ -21,7 +21,7 @@ use CMSMS\HookManager;
 use CMSMS\internal\global_cache;
 
 /**
- * This file provides the basic abstract content class
+ * This file provides the base abstract content class
  * @package CMS
  */
 
@@ -34,8 +34,9 @@ define('__CMS_PREVIEW_PAGE__',-100);
 /**
  * Base level content object.
  *
- * This is the base level content class.  It is an abstract object and cannot be instantiated directly.
- * All content pages in the database are required to be derived from this class.
+ * This is the base content class. It is an abstract object and cannot be
+ * instantiated directly.
+ * All content pages are required to be derived from this class.
  *
  * @since		0.8
  * @package		CMS
@@ -68,15 +69,17 @@ abstract class ContentBase
 	const TAB_PERMS = 'zz_4perms_tab__';
 
 	/**
-	 * The unique ID identifier of the element
-	 * Integer
+	 * The unique identifier of this content item
+	 * Integer > -2.
+	 * -1 for an item being cloned, 0 for an item being added, > 0 for
+	 * a recorded item
 	 *
 	 * @ignore
 	 */
 	protected $mId = -1;
 
 	/**
-	 * The name of the element (like a filename)
+	 * The name of this content item
 	 * String
 	 *
 	 * @internal
@@ -84,29 +87,21 @@ abstract class ContentBase
 	protected $mName = '';
 
 	/**
-	 * The owner of the content
-	 * Integer
+	 * The owner of this content item
+	 * Integer > 0
 	 *
 	 * @internal
 	 */
 	protected $mOwner = -1;
 
 	/**
-	 * The properties part of the content. This is an object of the good type.
-	 * It should contain all treatments specific to this type of content
-	 *
-	 * @internal
-	 */
-	protected $_props;
-
-	/**
-	 * The ID of the parent, 0 if none
+	 * The ID of the parent object, -1 if none
 	 * Integer
 	 */
 	protected $mParentId = -2;
 
 	/**
-	 * The old parent id.
+	 * The old parent ID.
 	 * Integer
 	 * Formerly used only on update to detect re-parenting.
 	 * Not needed now.
@@ -117,20 +112,23 @@ abstract class ContentBase
 	protected $mOldParentId = -1;
 
 	/**
-	 * This is used too often to not be part of the base class
+	 * The unique identifier of the template used for this content item
+	 * Integer
 	 *
 	 * @internal
 	 */
 	protected $mTemplateId = -1;
 
 	/**
-	 * The item order of the content in its level
+	 * The item order of this content relative to its peers who have
+	 * the same (non-)parent
 	 * Integer
 	 */
 	protected $mItemOrder = -1;
 
 	/**
-	 * The old item order... only used on update
+	 * The former value of item order. Only used on update
+	 * Integer
 	 *
 	 * @internal
 	 */
@@ -138,29 +136,38 @@ abstract class ContentBase
 
 	/**
 	 * The metadata (head tags) for this content
+	 * String
 	 *
 	 * @internal
 	 */
 	protected $mMetadata = '';
 
 	/**
+	 * The title of this content item
+	 * String
+	 *
 	 * @internal
 	 */
 	protected $mTitleAttribute = '';
 
 	/**
+	 * The (single) key which may be pressed to display this item
+	 * String
+	 *
 	 * @internal
 	 */
 	protected $mAccessKey = '';
 
 	/**
+	 * Integer
+	 *
 	 * @internal
 	 */
-	protected $mTabIndex = '';
+	protected $mTabIndex = 0;
 
 	/**
 	 * The full hierarchy of the content
-	 * A 0-padded string of the form : 00003.00007.00002
+	 * A '0'-padded string of the form: 00003.00007.00002
 	 *
 	 * @internal
 	 */
@@ -168,7 +175,7 @@ abstract class ContentBase
 
 	/**
 	 * The full hierarchy of the content ids
-	 * String of the form : 1.4.3
+	 * String of the form: 1.4.3
 	 *
 	 * @internal
 	 */
@@ -191,42 +198,48 @@ abstract class ContentBase
 
 	/**
 	 * Is the content active ?
-	 * Integer : 0 / 1
+	 * Bool
 	 *
 	 * @internal
 	 */
 	protected $mActive = false;
 
 	/**
-	 * Alias of the content
+	 * Alias of this content item
+	 * String
 	 *
 	 * @internal
 	 */
-	protected $mAlias;
+	protected $mAlias = '';
 
 	/**
-	 * Old Alias of the content
+	 * Old alias of this item
+	 * String
 	 *
 	 * @internal
 	 */
 	protected $mOldAlias;
 
 	/**
-	 * Cachable?
+	 * Is this content cachable?
+	 * Bool
 	 *
 	 * @internal
 	 */
-	protected $mCachable;
+	protected $mCachable = false;
 
 	/**
-	 * Secure?
+	 * Is this content always accessed via https, regardless of the
+	 * site root url?
+	 * Bool
 	 *
 	 * @internal
 	 */
-	protected $mSecure = 0;
+	protected $mSecure = false;
 
 	/**
-	 * URL
+	 * The URL which may be accessed to display this content item
+	 * String
 	 *
 	 * @internal
 	 */
@@ -234,13 +247,15 @@ abstract class ContentBase
 
 	/**
 	 * Should it show up in the menu?
+	 * Bool
 	 *
 	 * @internal
 	 */
 	protected $mShowInMenu = false;
 
 	/**
-	 * Is this page the default?
+	 * Is this content item the site-default?
+	 * Bool
 	 *
 	 * @internal
 	 */
@@ -248,47 +263,64 @@ abstract class ContentBase
 
 	/**
 	 * Last user to modify this content
+	 * Integer
 	 *
 	 * @internal
 	 */
 	protected $mLastModifiedBy = -1;
 
 	/**
-	 * Creation date
-	 * Date
+	 * This item's creation date/time
+	 * String
 	 *
 	 * @internal
 	 */
 	protected $mCreationDate = '';
 
 	/**
-	 * Modification date
-	 * Date
+	 * This item's latest modification date/time
+	 * String
 	 *
 	 * @internal
 	 */
 	protected $mModifiedDate = '';
 
 	/**
-	 * Additional Editors Array
+	 * Authorized additional editors of this item
+	 * Array, when set. Maybe empty
 	 *
 	 * @internal
 	 */
-	protected $mAdditionalEditors; // if set, is array
+	protected $mAdditionalEditors;
 
 	/**
-	 * state or meta information
+	 * The extra properties of this content item
+	 * Array, when set. Maybe empty
+	 *
+	 * @internal
+	 */
+	protected $_props;
+
+	/**
+	 * Item property definitions
+	 * Array, when set
 	 *
 	 * @internal
 	 */
 	private $_attributes;
 
 	/**
+	 * Item-property default values
+	 * Array, when set
+	 *
 	 * @internal
 	 */
 	private $_prop_defaults;
 
 	/**
+	 * $_attributes or calculated basic attributes, sorted
+	 * Array, when set
+	 *
 	 * @internal
 	 */
 	private $_editable_properties;
@@ -298,7 +330,7 @@ abstract class ContentBase
 	/************************************************************************/
 
 	/**
-	 * Generic constructor. Runs the SetInitialValues function.
+	 * Constructor. Runs the SetInitialValues method, among other things.
 	 */
 	public function __construct()
 	{
@@ -307,7 +339,7 @@ abstract class ContentBase
 	}
 
 	/**
-	 * Sets object to some sane initial values
+	 * Sets object properties to sane initial values
 	 *
 	 * @abstract
 	 * @internal
@@ -317,28 +349,28 @@ abstract class ContentBase
 	}
 
 	/**
-	 * Subclasses should override this to set their property types using a lot
-	 * of mProperties.Add statements
+	 * Subclasses should override this to set their properties using
+	 * AddProperty(), RemoveProperty() etc
 	 *
 	 * @abstract
 	 */
 	protected function SetProperties()
 	{
-		$this->AddProperty('title',1,self::TAB_MAIN,1);
+		$this->AddProperty('title',1,self::TAB_MAIN,true);
 
-		$this->AddProperty('parent',2,self::TAB_NAV,1);
-		$this->AddProperty('menutext',1,self::TAB_NAV,1);
+		$this->AddProperty('menutext',1,self::TAB_NAV,true);
+		$this->AddProperty('showinmenu',1,self::TAB_NAV);
+		$this->AddProperty('parent',2,self::TAB_NAV,true);
 		$this->AddProperty('page_url',3,self::TAB_NAV);
-		$this->AddProperty('showinmenu',4,self::TAB_NAV);
-		$this->AddProperty('titleattribute',5,self::TAB_NAV);
+		$this->AddProperty('target',3,self::TAB_NAV);
 		$this->AddProperty('accesskey',6,self::TAB_NAV);
 		$this->AddProperty('tabindex',7,self::TAB_NAV);
-		$this->AddProperty('target',8,self::TAB_NAV);
 
 		$this->AddProperty('alias',1,self::TAB_OPTIONS);
+		$this->AddProperty('titleattribute',1,self::TAB_OPTIONS);
 		$this->AddProperty('active',2,self::TAB_OPTIONS);
-		$this->AddProperty('secure',3,self::TAB_OPTIONS);
 		$this->AddProperty('cachable',4,self::TAB_OPTIONS);
+		$this->AddProperty('secure',4,self::TAB_OPTIONS);
 		$this->AddProperty('image',5,self::TAB_OPTIONS);
 		$this->AddProperty('thumbnail',6,self::TAB_OPTIONS);
 		$this->AddProperty('extra1',7,self::TAB_OPTIONS);
@@ -555,7 +587,7 @@ abstract class ContentBase
 	/**
 	 * Set the title attribute of the page
 	 *
-	 * The title attribue can be used in navigations to set the "title=" attribute of a link
+	 * The title attribute can be used in navigations to set the "title=" attribute of a link
 	 * some menu templates may ignore this.
 	 *
 	 * @param string $titleattribute The title attribute
@@ -635,7 +667,7 @@ abstract class ContentBase
 
 	/**
 	 * Returns the ItemOrder
-	 * The ItemOrder specifies the order of this page relative to its peers
+	 * This property specifies the order of this page relative to its peers
 	 * having the same parent.
 	 * A value of -1 indicates that a new item order will be calculated on save.
 	 * Otherwise a positive integer is expected.
@@ -662,7 +694,7 @@ abstract class ContentBase
 
 	/**
 	 * Returns the ItemOrder. OR should it be OldItemOrder?
-	 * The OldItemOrder is used to specify the item order before changes were done
+	 * This property records the item order before changes were made
 	 * @see also ItemOrder()
 	 *
 	 * @internal
@@ -684,7 +716,7 @@ abstract class ContentBase
 	 */
 	public function SetOldItemOrder($itemorder)
 	{
-		$this->mOldItemOrder = $itemorder;
+		$this->mOldItemOrder = (int)$itemorder;
 	}
 
 	/**
@@ -704,7 +736,7 @@ abstract class ContentBase
 	/**
 	 * Returns the Hierarchy of the parent of this page.
 	 * A string like ##.##.## indicating the path to that page
-	 * @since 2.2.19
+	 * @since 2.2.19#2
 	 *
 	 * @return string, possibly empty
 	 */
@@ -722,7 +754,7 @@ abstract class ContentBase
 	public function SetHierarchy($hierarchy)
 	{
 		$n = substr_count($hierarchy, '.');
-		$l = $n*6 + 5; //i.e. $n + ($n+1) * 5;
+		$l = $n * 6 + 5; //i.e. $n + ($n+1) * 5;
 		if( strlen($hierarchy) < $l ) {
 			$contentops = ContentOperations::get_instance();
 			$hierarchy = $contentops->CreateUnfriendlyHierarchyPosition($hierarchy);
@@ -809,7 +841,7 @@ abstract class ContentBase
 	}
 
 	/**
-	 * Returns if the page is the default.
+	 * Returns whether this page is the default.
 	 * The default page is the one that is displayed when no alias or pageid is specified in the route
 	 * Only one content page can be the default.
 	 *
@@ -817,12 +849,12 @@ abstract class ContentBase
 	 */
 	final public function DefaultContent()
 	{
-		if( !$this->IsDefaultPossible() ) return false;
-		return $this->mDefaultContent;
+		if( $this->IsDefaultPossible() ) return $this->mDefaultContent;
+		return false;
 	}
 
 	/**
-	 * Sets if this page should be considered the default.
+	 * Sets whether this page should be considered the default.
 	 * Note: does not modify the flags for any other content page.
 	 *
 	 * @param bool $defaultcontent
@@ -1099,10 +1131,13 @@ abstract class ContentBase
 	}
 
 	/**
-	 * Content page objects only directly store enough information to build a basic navigation from content objects.
-	 * This method will return all of the other parts of the content object.
+	 * Content page objects only directly store enough information to
+	 * build a basic navigation from content objects.
+	 * This method will return all of the other properties of this content object.
 	 *
-	 * Note: this method does not directly load properties.
+	 * Note: this method does not itself load any properties. To do that,
+	 * use e.g. $this->HasProperty('anythingnonfalsy') before calling this
+	 * method.
 	 *
 	 * @return array
 	 */
@@ -1112,7 +1147,7 @@ abstract class ContentBase
 	}
 
 	/**
-	 * Test whether this content page has the named property.
+	 * Test whether this content item has the named extra property.
 	 * Properties will be loaded from the database if necessary.
 	 *
 	 * @param string $name
@@ -1122,16 +1157,16 @@ abstract class ContentBase
 	{
 		if( !$name ) return false;
 		if( !is_array($this->_props) ) $this->_load_properties();
-		if( !is_array($this->_props) ) return false;
+		if( !$this->_props ) return false;
 		return in_array($name,array_keys($this->_props));
 	}
 
 	/**
-	 * Get the value for the named property.
+	 * Get the value for the named extra property.
 	 * Properties will be loaded from the database if necessary.
 	 *
 	 * @param string $name
-	 * @param mixed $default fallback value Default null since 2.2.19
+	 * @param mixed $default fallback value Default null since 2.2.19#2
 	 * @return mixed String value, or $default if the property does not exist.
 	 */
 	public function GetPropertyValue($name,$default= null)
@@ -1141,11 +1176,14 @@ abstract class ContentBase
 	}
 
 	/**
+	 * Populate this page's 'extra' properties (if any), if this page is
+	 * not being added or cloned i.e. is already recorded in the database
 	 * @ignore
+	 * @return bool true always
 	 */
 	private function _load_properties()
 	{
-		if( $this->mId <= 0 ) return false;
+		if( $this->mId <= 0 ) return false; // unsaved new or cloned page
 
 		$this->_props = [];
 		$db = CmsApp::get_instance()->GetDb();
@@ -1300,7 +1338,7 @@ abstract class ContentBase
 	 *
 	 * @param array $data Data as loaded from the database
 	 * @param bool  $loadProperties Optionally load content properties at the same time.
-	 * @return bool
+	 * @return bool true always ATM
 	 */
 	function LoadFromData(&$data,$loadProperties = false)
 	{
@@ -1350,10 +1388,12 @@ abstract class ContentBase
 		$this->mCreationDate	= $data["create_date"];
 		$this->mModifiedDate	= $data["modified_date"];
 
-		if ($loadProperties) {
+		$result = true;
+		if( $loadProperties ) {
 			$this->_load_properties();
-			if (!is_array($this->_props) ) {
-				$this->SetInitialValues();
+			if( !is_array($this->_props) ) { //TODO always array, maybe empty
+				$result = false;
+				$this->SetInitialValues(); //TODO bad logic
 			}
 		}
 
@@ -1414,11 +1454,11 @@ abstract class ContentBase
 	}
 
 	/**
-	 * Save or update the content.
+	 * Insert or update the content.
 	 * This is generally used to change the value of one property (or one plus
 	 * ancillaries) of an existing page. Or to add a new page.
 	 *
-	 * @todo This function should return something (or throw an exception)
+	 * @todo return bool indicating success
 	 */
 	public function Save()
 	{
@@ -1430,17 +1470,23 @@ abstract class ContentBase
 		}
 
 		if( $this->mId > 0 ) { // was >-1 : new-page mId = 0, cloned-page mId = -1
+//			$result =
 			$this->Update();
 		}
 		else {
+//			$result =
 			$this->Insert();
 		}
+		$result = true; //TODO per above
 
-		$tophier = $this->ParentHierarchy();
-		$contentops = ContentOperations::get_instance();
-		$contentops->SetContentModified();
-		$contentops->SetAllHierarchyPositions($tophier);
-		HookManager::do_hook('Core::ContentEditPost', [ 'content' => &$this ]);
+		if( $result ) {
+			$tophier = $this->ParentHierarchy();
+			$contentops = ContentOperations::get_instance();
+			$contentops->SetContentModified();
+			$contentops->SetAllHierarchyPositions($tophier);
+			HookManager::do_hook('Core::ContentEditPost', [ 'content' => &$this ]);
+		}
+		return $result;
 	}
 
 	/**
@@ -1454,7 +1500,7 @@ abstract class ContentBase
 	 * calling function is responsible for ensuring that page hierarchies
 	 * are updated.
 	 *
-	 * @todo this function should return something, or throw an exception.
+	 * @todo return bool indicating success
 	 */
 	protected function Update()
 	{
@@ -1487,6 +1533,7 @@ abstract class ContentBase
 			$this->mHierarchyPath = $this->mAlias;
 		}
 
+		if ($this->mDefaultContent) $this->mActive = true; // ensure this
 		$this->mModifiedDate = trim($db->DBTimeStamp(time()), "'");
 
 		$query = "UPDATE ".CMS_DB_PREFIX."content SET
@@ -1514,7 +1561,7 @@ tabindex = ?,
 modified_date = ?,
 last_modified_by = ?
 WHERE content_id = ?";
-		$dbresult = $db->Execute($query, array(
+		$db->Execute($query, array(
 			$this->mName,
 			$this->mAlias,
 			$this->Type(),
@@ -1541,7 +1588,8 @@ WHERE content_id = ?";
 			(int) $this->mId
 		));
 
-/*		if (! $dbresult) { unreliable after UPDATE
+//TODO	$result = $db->Affected_Rows() == 1 && $db->ErrorNo() == 0; reliable after UPDATE
+/*		if (!$result) {
 			die($db->sql.'<br>'.$db->ErrorMsg());
 		}
 
@@ -1554,27 +1602,55 @@ WHERE content_id = ?";
 			$this->mOldItemOrder = $this->mItemOrder;
 		}
 */
-		if (isset($this->mAdditionalEditors)) {
+		if (!empty($this->mAdditionalEditors)) {
 			$query = "DELETE FROM ".CMS_DB_PREFIX."additional_users WHERE content_id = ?";
-			$db->Execute($query, array($this->Id()));
+			$db->Execute($query, array($this->mId));
 
 			foreach ($this->mAdditionalEditors as $oneeditor) {
 				$new_addt_id = $db->GenID(CMS_DB_PREFIX."additional_users_seq");
 				$query = "INSERT INTO ".CMS_DB_PREFIX."additional_users (additional_users_id, user_id, content_id) VALUES (?,?,?)";
-				$db->Execute($query, array($new_addt_id, $oneeditor, $this->Id()));
+				$db->Execute($query, array($new_addt_id, $oneeditor, $this->mId));
+//TODO			$result = $result && $dbr != false;
 			}
 		}
 
-		if( is_array($this->_props) && count($this->_props) ) {
-			// :TODO: There might be some error checking there
+		if( !empty($this->_props) ) {
+//TODO		$result = $result &&
 			$this->_save_properties();
 		}
 
 		cms_route_manager::del_static('','__CONTENT__',$this->mId);
 		if( $this->mURL != '' ) {
 			$route = CmsRoute::new_builder($this->mURL,'__CONTENT__',$this->mId,null,true);
+//TODO		$result = $result &&
 			cms_route_manager::add_static($route);
 		}
+
+		$pid = global_cache::get('default_content');
+		if( $this->mDefaultContent ) {
+			if( $pid != $this->mId ) {
+				$query = 'UPDATE '.CMS_DB_PREFIX.'content SET default_content=0 WHERE content_id=?';
+				$db->Execute($query, array($pid));
+				global_cache::clear('default_content');
+				audit($pid,'Default page','Changed to '.$this->mId.': '.$this->mName);
+			}
+		}
+		else if( $pid == $this->mId ) {
+			$query = 'SELECT content_id FROM '.CMS_DB_PREFIX.'content WHERE content_id!=? AND default_content=0 ORDER BY hierarchy';
+			$dbr = $db->GetOne($query, array($this->mId));
+			if( $dbr > 0 ) {
+				$query = 'UPDATE '.CMS_DB_PREFIX.'content SET default_content=0 WHERE content_id=?';
+				$db->Execute($query, array($dbr));
+				$contentops = ContentOperations::get_instance();
+				$pn = $contentops->GetPageDescriptor($dbr);
+				audit($pid,'Default page',"Interim change to $dbr: $pn");
+			}
+			else {
+				audit($pid,'Default page','Removed, no replacement set');
+			}
+			global_cache::clear('default_content');
+		}
+//TODO	return $result;
 	}
 
 	/**
@@ -1625,6 +1701,7 @@ WHERE content_id = ?";
 			$this->mHierarchyPath = $this->mAlias;
 		}
 
+		if ($this->mDefaultContent) $this->mActive = true; // ensure this
 		$this->mModifiedDate = $this->mCreationDate = trim($db->DBTimeStamp(time()), "'");
 
 		$query = "INSERT INTO ".CMS_DB_PREFIX."content (
@@ -1653,7 +1730,7 @@ tabindex,
 last_modified_by,
 create_date,
 modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-		$dbresult = $db->Execute($query, array(
+		$result = $db->Execute($query, array(
 				$newid,
 				$this->mName,
 				$this->mAlias,
@@ -1681,27 +1758,41 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				$this->mModifiedDate
 		));
 
-		if (! $dbresult) {
-			die($db->sql.'<br>'.$db->ErrorMsg());
+		if (!$result) {
+			die($db->sql.'<br>'.$db->ErrorMsg()); //TODO throw
 		}
 
 		if (is_array($this->_props) && count($this->_props)) {
 			// TODO perhaps some error checking there
 			debug_buffer('save from ' . __LINE__);
 			$this->_save_properties();
+//TODO		$result = $result && ;
 		}
-		if (isset($this->mAdditionalEditors)) {
+		if (!empty($this->mAdditionalEditors)) {
 			foreach ($this->mAdditionalEditors as $oneeditor) {
 				$new_addt_id = $db->GenID(CMS_DB_PREFIX."additional_users_seq");
 				$query = "INSERT INTO ".CMS_DB_PREFIX."additional_users (additional_users_id, user_id, content_id) VALUES (?,?,?)";
-				$db->Execute($query, array($new_addt_id, $oneeditor, $this->Id()));
+				$db->Execute($query, array($new_addt_id, $oneeditor, $newid));
+//TODO			$result = $result && $dbr != false;
 			}
 		}
 
-		if( $this->mURL != '' ) {
-			$route = CmsRoute::new_builder($this->mURL,'__CONTENT__',$this->mId,'',true);
+		if( $this->mURL ) {
+			$route = CmsRoute::new_builder($this->mURL,'__CONTENT__',$newid,'',true);
 			cms_route_manager::add_static($route);
+//TODO		$result = $result && ;
 		}
+
+		if( $this->mDefaultContent ) {
+			$pid = global_cache::get('default_content');
+			if( $pid > 0 ) {
+				$query = 'UPDATE '.CMS_DB_PREFIX.'content SET default_content=0 WHERE content_id=?';
+				$db->Execute($query, array($pid));
+			}
+			global_cache::clear('default_content');
+			audit($pid, 'Default page', "Changed to $newid: ".$this->mName);
+		}
+//TODO	return $result;
 	}
 
 	/**
@@ -1829,15 +1920,15 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			// Delete properties
 			$query = 'DELETE FROM '.CMS_DB_PREFIX.'content_props WHERE content_id = ?';
 			$result = $db->Execute($query,array($this->mId));
-			$this->_props = null; // no object
+			unset($this->_props);
 
 			// Delete additional editors
 			$query = 'DELETE FROM '.CMS_DB_PREFIX.'additional_users WHERE content_id = ?';
 			$result = $db->Execute($query,array($this->mId));
-			$this->mAdditionalEditors = null; //a.k.a unset, otherwise array
+			unset($this->mAdditionalEditors);
 
 			// Delete route
-			if( $this->mURL != '' ) cms_route_manager::del_static($this->mURL);
+			if( $this->mURL ) cms_route_manager::del_static($this->mURL);
 		}
 
 		HookManager::do_hook('Core::ContentDeletePost', [ 'content' => &$this ]);
@@ -1847,9 +1938,9 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	}
 
 	/**
-	 * Function for the subclass to parse out data for it's parameters.
-	 * This method is typically called from an editor form to allow modifying the content object from
-	 * form input fields (usually $_POST)
+	 * Function for a subclass to parse out data for its parameters.
+	 * This method is typically called from an editor form to allow modifying
+	 * this content object from form input fields (usually $_POST)
 	 *
 	 * @param array $params The input array (usually from $_POST)
 	 * @param bool  $editing Indicates wether this is an edit or add operation.
@@ -2053,13 +2144,13 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	}
 
 	/**
-	 * Return a list of all the properties that may be edited by the current user when editing this content item
-	 * in a content editor form.
+	 * Return a list of properties of this object that may be edited by
+	 * the current user i.e. all the properties or just the 'basic' ones.
+	 * Content types may override this method, but must call this
+	 * base method at the start of their GetEditableProperties().
 	 *
-	 * Other content types may override this method, but should call the base method at the start.
-	 *
-	 * @abstract
-	 * @return array Array of stdClass objects containing name (string), tab (string), priority (integer), required (bool) members
+	 * @return array stdClass objects each containing members
+	 *  'name' (string), 'tab' (string), 'priority' (integer), 'required' (bool)
 	 */
 	public function GetEditableProperties()
 	{
@@ -2073,56 +2164,60 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 			$out = [];
 			foreach( $this->_attributes as $one ) {
+				// TODO also omit basic elements that the user is not allowed to process, if there is such a setting.
 				if( $one->basic || in_array($one->name,$basic_attributes) ) $out[] = $one;
 			}
 			return $out;
 		}
 		return $this->_attributes;
-		// todo: filter out the elements that this user isn't allowed to see.
 	}
 
 	/**
+	 * Sort the supplied property definitions by tabname, priority, property-name
 	 * @ignore
+	 *
+	 * @param mixed $props populated array or falsy value
+	 * @return Array, maybe empty
 	 */
 	private function _SortProperties($props)
 	{
-		// sort the properties.
-		// sort the attributes by tab, priority, name...
-		usort($props,function($a,$b) {
-			if( !isset($a->tab) || $a->tab == '' ) $a->tab = ContentBase::TAB_MAIN;
-			if( !isset($b->tab) || $b->tab == '' ) $b->tab = ContentBase::TAB_MAIN;
+		if( $props ) {
+			usort($props,function($a,$b) {
+				$atab = ( !empty($a->tab) ) ? $a->tab : ContentBase::TAB_MAIN;
+				$btab = ( !empty($b->tab) ) ? $b->tab : ContentBase::TAB_MAIN;
 
-			// sort elements by tabname, and then priority
-			$atab = $a->tab;
-			$btab = $b->tab;
-
-			$res = 0;
-			if( ($r = strcmp($atab,$btab)) != 0 ) $res = $r;
-			else if( $a->priority < $b->priority ) $res = -1;
-			else if( $a->priority > $b->priority ) $res = 1;
-			else $res = strcmp($a->name,$b->name);
-			return $res;
-		});
-
-		return $props;
+				if( ($r = strcmp($atab,$btab)) != 0 ) { return $r; }
+				if( ($r = $a->priority - $b->priority) != 0 ) { return $r; }
+				return strcmp($a->name,$b->name);
+			});
+			return $props;
+		}
+		return [];
 	}
 
 	/**
 	 * @ignore
+	 * @return Array, maybe empty
 	 */
 	private function _GetEditableProperties()
 	{
 		if( isset($this->_editable_properties) ) return $this->_editable_properties;
 
-		$props = $this->_SortProperties($this->GetEditableProperties());
+		$arr = $this->GetEditableProperties();
+		if( $arr ) {
+			$props = $this->_SortProperties($arr);
+		}
+		else {
+			$props = [];
+		}
 		$this->_editable_properties = $props;
 		return $props;
 	}
 
 	/**
 	 * Used from a page that allows content editing.
-	 * This method provides a list of distinct sections that divides up the various logical sections
-	 * that this content type supports for editing.
+	 * This method provides a list of distinct sections that divides up the
+	 * various logical sections that this content type supports for editing.
 	 *
 	 * @abstract
 	 * @return Array associative array list of tab keys and labels.
@@ -2204,7 +2299,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	 * Return a list of additional editors.
 	 * Note: in the returned array, group id's are specified as negative integers.
 	 *
-	 * @return mixed Array of uids and group ids, or null
+	 * @return array user ids and/or group ids, or possibly empty
 	 */
 	public function GetAdditionalEditors()
 	{
@@ -2229,16 +2324,21 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	 * Set the list of additional editors.
 	 * Note: in the provided array, group id's are specified as negative integers.
 	 *
-	 * @param mixed $editorarray Array of uids and group ids, or null
+	 * @param mixed $editorarray array of user ids and/or group ids, or empty, or null
 	 */
 	public function SetAdditionalEditors($editorarray)
 	{
-		$this->mAdditionalEditors = $editorarray;
+		if( is_array($editorarray) ) {
+			$this->mAdditionalEditors = $editorarray;
+		}
+		else {
+			unset($this->mAdditionalEditors);
+		}
 	}
 
 	/**
-	 * A utility method to return all of the userid and group ids in a format that is
-	 * suitable to be used in a select field.
+	 * A utility method to return all of the user ids and group ids in a format
+	 * suitable for use in a select element.
 	 * Note: group ids are expressed as negative integers in the keys.
 	 * @return array
 	 */
@@ -2304,18 +2404,21 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	}
 
 	/**
-	 * Handles setting the value (by member) of a base (not addon property) property of the content object
-	 * for base properties that have been removed from the form.
-	 *
+	 * Tries to set the value of a base (not 'extra') property of this content
+	 * object when that property has been removed from the form.
 	 * @ignore
+	 *
+	 * @param string $name The property-definition name
+	 * @param string $member The corresponding class-property name
+	 * @return bool
 	 */
 	private function _handleRemovedBaseProperty($name,$member)
 	{
-		if( !is_array($this->_attributes) ) return false;
+		if( empty($this->_attributes) ) return false;
 		$fnd = false;
 		foreach( $this->_attributes as $attr ) {
 			if( $attr->name == $name ) {
-				$fnd = true;
+				$fnd = true; // i.e. return false;
 				break;
 			}
 		}
@@ -2329,15 +2432,15 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	}
 
 	/**
-	 * Remove a property from the known property list.
-	 * Specify a default value to use if the property is called.
+	 * Remove a named property-definition from this object's property-definitions.
+	 * Specify a default value to use if that property is called for.
 	 *
 	 * @param string $name The property name
 	 * @param string $dflt The default value.
 	 */
 	protected function RemoveProperty($name,$dflt)
 	{
-		if( !is_array($this->_attributes) ) return;
+		if( empty($this->_attributes) ) return;
 		$tmp = [];
 		for( $i = 0, $n = count($this->_attributes); $i < $n; $i++ ) {
 			if( is_object($this->_attributes[$i]) && $this->_attributes[$i]->name == $name ) continue;
@@ -2366,61 +2469,65 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		$ob->required = (bool) $required;
 		$ob->basic = $basic;
 
-		if( !is_array($this->_attributes) ) $this->_attributes = [];
+		if( !isset($this->_attributes) ) $this->_attributes = [];
 		$this->_attributes[] = $ob;
 	}
 
 	/**
-	 * Get all of the properties for this content object.  independent of whether the user is entitled to view them, or not.
+	 * Get all properties of this content object, regardless whether the user is entitled to view them.
 	 *
 	 * @since 2.0
-	 * @return array of stdClass objects
+	 * @return array of stdClass objects, or empty
 	 */
 	public function GetProperties()
 	{
-		return $this->_SortProperties($this->_attributes);
+		if( !empty($this->_attributes) ) {
+			return $this->_SortProperties($this->_attributes);
+		}
+		return [];
 	}
 
 	/**
 	 * Add a property that is directly associated with a field in the content table.
-	 * @alias for AddProperty
+	 * Always populates the options tab.
 	 *
 	 * @param string $name The property name
-	 * @param int    $priority The priority
-	 * @param bool   $is_required Whether this field is required for this content type
-	 * @deprecated
+	 * @param int    $priority The order of the property's UI elements in the editor form tab
+	 * @param bool   $is_required Whether a value must be recorded for the property in the editor form. Default false
+	 * @deprecated since 2.0
 	 */
-	protected function AddBaseProperty($name,$priority,$is_required = 0)
+	protected function AddBaseProperty($name,$priority,$is_required = false)
 	{
 		$this->AddProperty($name,$priority,self::TAB_OPTIONS,$is_required);
 	}
 
 	/**
 	 * Alias for AddBaseProperty.
+	 * Always populates the options tab.
 	 *
 	 * @param string $name
 	 * @param int    $priority
 	 * @param bool   $is_required
-	 * @deprecated
+	 * @deprecated since 2.0
 	 */
-	protected function AddContentProperty($name,$priority,$is_required = 0)
+	protected function AddContentProperty($name,$priority,$is_required = false)
 	{
-		return $this->AddProperty($name,$priority,self::TAB_OPTIONS,$is_required);
+		$this->AddProperty($name,$priority,self::TAB_OPTIONS,$is_required);
 	}
 
 	/**
-	 * A method to display a single input element for an object basic, or extended property.
+	 * Generate input elements for displaying/editing a property of this object.
 	 *
 	 * @abstract
-	 * @param string $one The property name
-	 * @param bool $adding Whether or not we are in add or edit mode.
-	 * @return array consisting of two elements (normally a label and input element(s)) or empty.
+	 * @param string $name The property name
+	 * @param bool $adding Whether or not we are in add-content mode (otherwise, edit).
+	 * @return array consisting of two elements (normally label and input) or empty.
 	 */
-	protected function display_single_element($one,$adding)
+	protected function display_single_element($name,$adding)
 	{
 		$config = cms_config::get_instance();
 
-		switch( $one ) {
+		switch( $name ) {
 		case 'cachable':
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_cachable',lang('help_title_content_cachable'));
 			return array('<label for="in_cachable">'.lang('cachable').':</label>'.$help,
@@ -2439,11 +2546,32 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		case 'parent':
 			$contentops = ContentOperations::get_instance();
 			$tmp = $contentops->CreateHierarchyDropdown($this->mId, $this->mParentId, 'parent_id', ($this->mId > 0) ? 0 : 1, 1, 0, 1, 1);
-			if( empty($tmp) && !check_permission(get_userid(),'Manage All Content') ) {
+			if( $tmp ) {
+				$help = cms_admin_utils::get_help_tag('core','help_content_parent',lang('help_title_content_parent'));
+				return array('<label for="parent_id">*'.lang('parent').':</label>&nbsp;'.$help,$tmp);
+			}
+			if( !check_permission(get_userid(),'Manage All Content') ) {
 				return array('','<input type="hidden" name="parent_id" value="'.$this->mParentId.'">');
 			}
-			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_parent',lang('help_title_content_parent'));
-			if( !empty($tmp) ) return array('<label for="parent_id">*'.lang('parent').':</label>'.$help,$tmp);
+			break;
+
+		case 'default': //since 2.2.19#2
+			$help = cms_admin_utils::get_help_tag('core','help_content_default',lang('help_title_content_default'));
+			if( !$this->mDefaultContent ) {
+				$contentops = ContentOperations::get_instance();
+				$pid = $contentops->GetDefaultContent();
+				if( $pid > 0 ) {
+					$pn = $contentops->GetPageDescriptor($pid);
+					$xmsg = '<br>'.lang('info_default_page',$pn,$pid);
+				}
+				else {
+					$xmsg = '<br>'.lang('info_default_none');
+				}
+			}
+			else {
+				$xmsg = '';
+			}
+			return array('<label for="id_default">'.lang('default').':</label>&nbsp;'.$help,'<input type="hidden" name="default" value="0"><input class="pagecheckbox" type="checkbox" name="default" id="id_default" value="1"'.($this->mDefaultContent?' checked':'').'>'.$xmsg);
 			break;
 
 		case 'active':
@@ -2483,14 +2611,19 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 		case 'page_url':
 			if( !$this->DefaultContent() ) {
-				$pretty_urls = $config['url_rewriting'] == 'none' ? 0 : 1;
-				if ($pretty_urls != 0) {
-					$str = '<input type="text" name="page_url" id="page_url" value="'.$this->mURL.'" size="50" maxlength="255">';
-					$prompt = '<label for="page_url">'.lang('page_url').':</label>';
-					if( cms_siteprefs::get('content_mandatory_urls',0) ) $prompt = '*'.$prompt;
-					$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_page_url',lang('help_title_page_url'));
-					return array($prompt.$help,$str);
+				$must = ( cms_siteprefs::get('content_mandatory_urls',0) ) ? '*' : '';
+				$prompt = "<label for=\"page_url\">$must".lang('page_url');
+				if( $config['url_rewriting'] == 'none' ) {
+					$prompt .= ' ('.lang('nouse').')';
 				}
+				$prompt .= ':</label>&nbsp;';
+				$help = cms_admin_utils::get_help_tag('core','help_page_url',lang('help_title_page_url'));
+				$str = '<input type="text" name="page_url" id="page_url" value="'.$this->mURL.'" size="50" maxlength="255">';
+				return array($prompt.$help,$str);
+			}
+			else {
+				return array('<label for="page_url" disabled>'.lang('page_url').':</label>',
+							'<input type="text" id="page_url" value="" size="50" disabled>');
 			}
 			break;
 
@@ -2567,7 +2700,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 						 '<input type="text" name="extra3" id="extra3" maxlength="255" size="80" value="'.cms_htmlentities($this->GetPropertyValue('extra3')).'">');
 
 		case 'owner':
-			$showadmin = ContentOperations::get_instance()->CheckPageOwnership(get_userid(), $this->Id());
+			$showadmin = ContentOperations::get_instance()->CheckPageOwnership(get_userid(),$this->mId);
 			if (!$adding && (check_permission(get_userid(),'Manage All Content') || $showadmin) ) {
 				$userops = UserOperations::get_instance();
 				$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_owner',lang('help_title_content_owner'));
@@ -2578,13 +2711,13 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		case 'additionaleditors':
 			// do owner/additional-editor stuff
 			if( $adding || check_permission(get_userid(),'Manage All Content') ||
-				ContentOperations::get_instance()->CheckPageOwnership(get_userid(),$this->Id()) ) {
+				ContentOperations::get_instance()->CheckPageOwnership(get_userid(),$this->mId) ) {
 				return $this->ShowAdditionalEditors();
 			}
 			break;
 
 		default:
-			throw new CmsInvalidDataException('Attempt to display invalid property '.$one);
+			throw new CmsInvalidDataException('Attempt to display invalid property '.$name);
 		}
 		return [];
 	}
