@@ -153,7 +153,7 @@ $obj = new \CMSMS\internal\global_cachable('default_content',
                function() {
                    $db = \CmsApp::get_instance()->GetDb();
                    $query = 'SELECT content_id FROM '.CMS_DB_PREFIX.'content WHERE default_content = 1';
-                   return $db->GetOne($query);
+                   return (int)$db->GetOne($query); // 0 if not found
                });
 \CMSMS\internal\global_cache::add_cachable($obj);
 $obj = new \CMSMS\internal\global_cachable('modules',
