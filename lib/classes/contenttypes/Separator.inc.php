@@ -33,7 +33,7 @@ class Separator extends ContentBase
 	public function SetProperties()
 	{
 		parent::SetProperties();
-		$this->RemoveProperty('secure',0);
+		$this->RemoveProperty('secure',false);
 		$this->RemoveProperty('template','-1');
 		$this->RemoveProperty('alias','');
 		$this->RemoveProperty('title','');

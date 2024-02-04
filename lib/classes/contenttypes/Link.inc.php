@@ -20,8 +20,8 @@
 /**
  * Implementation of the CMS Made Simple link content type
  *
- * Links are content objects that appear in navigations and implement a link to an externl
- * page or site.
+ * Links are content objects that appear in navigations and implement a link to
+ * an external page or site.
  *
  * @package CMS
  * @subpackage content_types
@@ -37,9 +37,9 @@ class Link extends ContentBase
     public function SetProperties()
     {
 		parent::SetProperties();
-		$this->RemoveProperty('secure',0);
-		$this->RemoveProperty('cachable',true);
-		$this->AddProperty('url',3,self::TAB_MAIN,TRUE,TRUE);
+		$this->RemoveProperty('secure',FALSE);
+		$this->RemoveProperty('cachable',TRUE);
+		$this->AddProperty('url',3,parent::TAB_MAIN,TRUE,TRUE);
     }
 
     public function FillParams($params,$editing = false)

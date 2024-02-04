@@ -46,11 +46,11 @@ class PageLink extends ContentBase
 	public function SetProperties()
 	{
 		parent::SetProperties();
-		$this->RemoveProperty('cachable',1);
-		//$this->RemoveProperty('showinmenu',1);
-		$this->RemoveProperty('secure',0);
-		$this->AddProperty('page',3,self::TAB_MAIN,TRUE,TRUE);
-		$this->AddProperty('params',4,self::TAB_OPTIONS,TRUE,TRUE);
+		$this->RemoveProperty('cachable',true);
+		$this->RemoveProperty('secure',false);
+//TODO	$this->AddProperty('default',2,parent::TAB_OPTIONS,TRUE); c.f.IsDefaultPossible()
+		$this->AddProperty('page',3,parent::TAB_MAIN,TRUE,TRUE);
+		$this->AddProperty('params',4,parent::TAB_OPTIONS,TRUE,TRUE);
 
 		//Turn off caching
 		$this->mCachable = false;
