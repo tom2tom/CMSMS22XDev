@@ -1238,7 +1238,7 @@ abstract class ContentBase
 	}
 
 	/**
-	 * Set the value of a the named property.
+	 * Set the value of the named extra property.
 	 * This method will load properties for this content page if necessary.
 	 *
 	 * @param string $name The property name
@@ -1251,7 +1251,7 @@ abstract class ContentBase
 	}
 
 	/**
-	 * Set the value of a the named property.
+	 * Set the value of a the named extra property.
 	 * This method will not load properties
 	 *
 	 * @param string $name The property name
@@ -1520,17 +1520,24 @@ abstract class ContentBase
 			}
 		}
 
-		$query = "SELECT hierarchy,id_hierarchy,hierarchy_path FROM ".CMS_DB_PREFIX."content WHERE content_id = ?";
-		$row = $db->GetRow($query,array($this->mParentId));
-		if ($row) {
-			$this->mHierarchy = $row['hierarchy'].'.'.str_pad($this->mItemOrder,5,'0',STR_PAD_LEFT); // OR in future, 3-wide would suffice
-			$this->mIdHierarchy = $row['id_hierarchy'].'.'.$this->mId;
-			$this->mHierarchyPath = $row['hierarchy_path'].'/'.$this->mAlias;
-		}
-		else {
+		if( $this->mParentId == -1 ) {
 			$this->mHierarchy = str_pad($this->mItemOrder,5,'0',STR_PAD_LEFT); // OR 3
 			$this->mIdHierarchy = $this->mId;
 			$this->mHierarchyPath = $this->mAlias;
+		}
+		else {
+			$query = "SELECT hierarchy,id_hierarchy,hierarchy_path FROM ".CMS_DB_PREFIX."content WHERE content_id = ?";
+			$row = $db->GetRow($query,array($this->mParentId));
+			if ($row) {
+				$this->mHierarchy = $row['hierarchy'].'.'.str_pad($this->mItemOrder,5,'0',STR_PAD_LEFT); // OR in future, 3-wide would suffice
+				$this->mIdHierarchy = $row['id_hierarchy'].'.'.$this->mId;
+				$this->mHierarchyPath = $row['hierarchy_path'].'/'.$this->mAlias;
+			}
+			else {
+				$this->mHierarchy = str_pad($this->mItemOrder,5,'0',STR_PAD_LEFT); // OR 3
+				$this->mIdHierarchy = $this->mId;
+				$this->mHierarchyPath = $this->mAlias;
+			}
 		}
 
 		if ($this->mDefaultContent) $this->mActive = true; // ensure this
@@ -1629,17 +1636,17 @@ WHERE content_id = ?";
 		$pid = global_cache::get('default_content');
 		if( $this->mDefaultContent ) {
 			if( $pid != $this->mId ) {
-				$query = 'UPDATE '.CMS_DB_PREFIX.'content SET default_content=0 WHERE content_id=?';
-				$db->Execute($query, array($pid));
+				$query = 'UPDATE '.CMS_DB_PREFIX.'content SET default_content=0 WHERE content_id!=?';
+				$db->Execute($query, array($this->mId));
 				global_cache::clear('default_content');
 				audit($pid,'Default page','Changed to '.$this->mId.': '.$this->mName);
 			}
 		}
-		else if( $pid == $this->mId ) {
+		else if( $pid == 0 || $pid == $this->mId ) {
 			$query = 'SELECT content_id FROM '.CMS_DB_PREFIX.'content WHERE content_id!=? AND default_content=0 ORDER BY hierarchy';
 			$dbr = $db->GetOne($query, array($this->mId));
 			if( $dbr > 0 ) {
-				$query = 'UPDATE '.CMS_DB_PREFIX.'content SET default_content=0 WHERE content_id=?';
+				$query = 'UPDATE '.CMS_DB_PREFIX.'content SET default_content=1 WHERE content_id=?';
 				$db->Execute($query, array($dbr));
 				$contentops = ContentOperations::get_instance();
 				$pn = $contentops->GetPageDescriptor($dbr);
@@ -1688,17 +1695,24 @@ WHERE content_id = ?";
 		$newid = $db->GenID(CMS_DB_PREFIX."content_seq");
 		$this->mId = $newid;
 
-		$query = "SELECT hierarchy,id_hierarchy,hierarchy_path FROM ".CMS_DB_PREFIX."content WHERE content_id = ?";
-		$row = $db->GetRow($query,array($this->mParentId));
-		if ($row) {
-			$this->mHierarchy = $row['hierarchy'].'.'.str_pad($this->mItemOrder,5,'0',STR_PAD_LEFT); // OR 3 would suffice
-			$this->mIdHierarchy = $row['id_hierarchy'].'.'.$newid;
-			$this->mHierarchyPath = $row['hierarchy_path'].'/'.$this->mAlias;
+		if( $this->mParentId == -1 ) {
+			$this->mHierarchy = str_pad($this->mItemOrder,5,'0',STR_PAD_LEFT); // OR 3
+			$this->mIdHierarchy = $this->mId;
+			$this->mHierarchyPath = $this->mAlias;
 		}
 		else {
-			$this->mHierarchy = str_pad($this->mItemOrder,5,'0',STR_PAD_LEFT); // OR 3
-			$this->mIdHierarchy = $newid;
-			$this->mHierarchyPath = $this->mAlias;
+			$query = "SELECT hierarchy,id_hierarchy,hierarchy_path FROM ".CMS_DB_PREFIX."content WHERE content_id = ?";
+			$row = $db->GetRow($query,array($this->mParentId));
+			if ($row) {
+				$this->mHierarchy = $row['hierarchy'].'.'.str_pad($this->mItemOrder,5,'0',STR_PAD_LEFT); // OR 3 would suffice
+				$this->mIdHierarchy = $row['id_hierarchy'].'.'.$newid;
+				$this->mHierarchyPath = $row['hierarchy_path'].'/'.$this->mAlias;
+			}
+			else {
+				$this->mHierarchy = str_pad($this->mItemOrder,5,'0',STR_PAD_LEFT); // OR 3
+				$this->mIdHierarchy = $newid;
+				$this->mHierarchyPath = $this->mAlias;
+			}
 		}
 
 		if ($this->mDefaultContent) $this->mActive = true; // ensure this
@@ -1948,7 +1962,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	 */
 	public function FillParams($params,$editing = false)
 	{
-		// content property parameters
+		// content extra properties to be saved
 		$parameters = array('extra1','extra2','extra3','image','thumbnail');
 		foreach ($parameters as $oneparam) {
 			if (isset($params[$oneparam])) $this->SetPropertyValue($oneparam, $params[$oneparam]);
@@ -1976,7 +1990,15 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		// active
 		if (isset($params['active'])) {
 			$this->mActive = (int) $params['active'];
-			if( $this->DefaultContent() ) $this->mActive = 1;
+		}
+
+		// default
+		if (isset($params['default'])) {
+			$this->mDefaultContent = (int)$params['default'];
+			if( $this->mDefaultContent) $this->mActive = 1;
+		}
+		elseif( $this->DefaultContent() ) {
+			$this->mActive = 1;
 		}
 
 		// show in menu
