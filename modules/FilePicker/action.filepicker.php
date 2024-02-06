@@ -153,7 +153,7 @@ if( isset($params['useprefix']) && cms_to_bool($params['useprefix']) ) {
     $relpath = substr($fullname, strlen($assistant->get_top_dir()));
     $fullurl = $starturl.'/XAZ';
 //  $prefix = substr($fullurl, 0, (strlen($fullurl) - strlen($relpath) + 1)); //includes CMS_ROOT_URL
-    $l1 = strlen($fullurl) -strlen($relpath) + 1;
+    $l1 = strlen($fullurl) - strlen($relpath) + 1;
     $l2 = strlen(CMS_ROOT_URL);
     $prefix = substr($fullurl, $l2, $l1-$l2);
 } else {

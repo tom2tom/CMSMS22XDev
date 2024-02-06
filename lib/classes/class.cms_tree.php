@@ -80,7 +80,7 @@ class cms_tree
 					$this->set_tag($k,$v);
 				}
 			}
-			}
+		}
 	}
 
 
