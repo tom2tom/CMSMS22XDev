@@ -69,7 +69,7 @@ try {
 
     // Get a list of content types and pick a default if necessary
     $contentops = \ContentOperations::get_instance();
-    $existingtypes = $contentops->ListContentTypes(false,true);
+    $typeclasses = $contentops->ListContentTypes(true,true);
 
     //
     // load or create the initial content object
@@ -147,7 +147,8 @@ try {
     }
 
     // validate the content type.
-    if( $existingtypes && is_array($existingtypes) && !in_array($content_type,array_keys($existingtypes)) ) {
+    $existingtypes = array_map('strtolower',array_keys($typeclasses)); //NOTE conform this if relation between class and type ever changes
+    if( $existingtypes && !in_array($content_type,$existingtypes) ) {
         $this->SetError($this->Lang('error_editpage_contenttype'));
         $this->RedirectToAdminTab();
     }
@@ -301,25 +302,24 @@ try {
 
         $contentarray = $content_obj->GetTabElements($currenttab, $content_obj->Id() < 1 );
         if( $currenttab == $tmain ) {
-            // first tab... prepend a content-type selector.
-            // unless the user is merely an additional-editor. TODO always display, but disabled for additional editor
+            // main tab... prepend a content-type selector, unless the user
+            // is merely an additional-editor
+            // TODO always display a selector, but disabled for additional editors
             if( ($this->CheckPermission('Manage All Content') || $content_obj->Owner() == $user_id) ) {
-                // accumulate defaultable content-types
-                $dflttypes = [];
-                $typeclasses = $contentops->ListContentTypes(true,true); //c.f. $existingtypes which has type-keys
-                foreach( $typeclasses as $classname => $label ) {
-                    $obj = new $classname();
-                    if( $obj && $obj->IsDefaultPossible() ) {
-                        $type = strtolower($classname); //OR array_search($label,$existingtypes)
-                        $dflttypes[] = $type;
-                    }
-                }
                 $dflt = $content_obj->DefaultContent();
                 $selcount = 0;
-                asort($existingtypes);
+                asort($typeclasses);
                 $tmp2 = "<select id=\"content_type\" name=\"{$id}content_type\">";
-                foreach( $existingtypes as $type => $label ) {
-                    if( !$dflt || in_array($type, $dflttypes) ) {
+                foreach( $typeclasses as $classname => $label ) {
+                    if( $dflt ) {
+                        $obj = new $classname();
+                        $flag = $obj && $obj->IsDefaultPossible();
+                    }
+                    else {
+                        $flag = true;
+                    }
+                    if( $flag ) {
+                        $type = strtolower($classname); //NOTE conform this if relation between class and type ever changes
                         $tmp2 .= CmsFormUtils::create_option(array('value'=>$type,'label'=>$label),$content_type);
                         $selcount++;
                     }
