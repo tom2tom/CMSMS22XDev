@@ -139,14 +139,14 @@ class Content extends ContentBase
 	 * Set content attribute values (from parameters received from admin add/edit form)
 	 *
 	 * @param array $params Hash of parameters to load into content attributes
-	 * @param bool  $editing Whether we in an add or edit operation.
+	 * @param bool  $editing Whether this is an edit-content operation. Default false i.e. add-operation
 	 */
 	public function FillParams($params,$editing = false)
 	{
 		if (isset($params)) {
 			$parameters = array('pagedata','searchable','disable_wysiwyg','design_id','wantschildren');
 
-			//pick up the template id before we do parameters
+			//process the template id before other parameters
 			if (isset($params['template_id'])) {
 				if ($this->mTemplateId != $params['template_id']) $this->_contentBlocks = null;
 				$this->mTemplateId = (int) $params['template_id'];
@@ -168,16 +168,16 @@ class Content extends ContentBase
 				}
 			}
 
-			// do the content property parameters
+			// do the content extra properties
 			foreach ($parameters as $oneparam) {
 				if( !isset($params[$oneparam]) ) continue;
 				$val = $params[$oneparam];
 				switch( $oneparam ) {
 				case 'pagedata':
-					// nothing
+					// verbatim
 					break;
 				default:
-					if( count($blocks) && isset($blocks[$oneparam]) ) {
+					if( $blocks && isset($blocks[$oneparam]) ) {
 						// it's a content block.
 						$val = $val;
 					} else {
