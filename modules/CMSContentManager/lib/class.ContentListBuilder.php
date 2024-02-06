@@ -418,7 +418,7 @@ final class ContentListBuilder
             $content2->SetDefaultContent(FALSE);
             $content2->Save();
         }
-        global_cache::clear('default_content');
+        \CMSMS\internal\global_cache::clear('default_content');
         audit($page_id,'Default page',"Changed to $page_id2: ".$contentops->GetPageDescriptor($page_id2));
         return TRUE;
     }
