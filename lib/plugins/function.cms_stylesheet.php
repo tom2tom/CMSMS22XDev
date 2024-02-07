@@ -84,7 +84,7 @@ function smarty_function_cms_stylesheet($params, $smarty)
         $query = null; // no object
         if( $name ) {
             // stylesheet by name
-            $query = new CmsLayoutStylesheetQuery( [ 'fullname'=>$name ] );
+            $query = new \CmsLayoutStylesheetQuery( [ 'fullname'=>$name ] );
         } else if( $id > 0 ) {
             // stylesheet by id
             $query = new \CmsLayoutStylesheetQuery( [ 'id'=>$id ] );
@@ -99,7 +99,9 @@ function smarty_function_cms_stylesheet($params, $smarty)
         #---------------------------------------------
 
         $nrows = $query->TotalMatches();
-        if( !$nrows ) throw new \RuntimeException('No stylesheets matched the criteria specified');
+        if( $nrows == 0 ) {
+            throw new \RuntimeException('No stylesheet matched the criterion specified');
+        }
         $res = $query->GetMatches();
 
         // we have some output, and the stylesheet objects have already been loaded.
