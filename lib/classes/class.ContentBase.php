@@ -1635,9 +1635,9 @@ WHERE content_id = ?";
 
 		$pid = global_cache::get('default_content');
 		if( $this->mDefaultContent ) {
-			if( $pid != $this->mId ) {
-				$query = 'UPDATE '.CMS_DB_PREFIX.'content SET default_content=0 WHERE content_id!=?';
-				$db->Execute($query, array($this->mId));
+			if( $pid != $this->mId && $pid > 0 ) {
+				$query = 'UPDATE '.CMS_DB_PREFIX.'content SET default_content=0 WHERE content_id=?';
+				$db->Execute($query, array($pid));
 				global_cache::clear('default_content');
 				audit($pid,'Default page','Changed to '.$this->mId.': '.$this->mName);
 			}
@@ -1799,7 +1799,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 		if( $this->mDefaultContent ) {
 			$pid = global_cache::get('default_content');
-			if( $pid > 0 ) {
+			if( $pid != $newid && $pid > 0 ) {
 				$query = 'UPDATE '.CMS_DB_PREFIX.'content SET default_content=0 WHERE content_id=?';
 				$db->Execute($query, array($pid));
 			}
