@@ -547,7 +547,7 @@ ContentOperations::get_instance()->LoadContentType('content');
 /////////////////////////
 
 verbose_msg(ilang('install_createcontentpages'));
-// Home / -1 / NCleanBlue  DEFAULT
+// Home / -1 / Simplex  DEFAULT
 $contentobj = new Content();
 $contentobj->SetName('Home');
 $contentobj->SetAlias();
@@ -555,10 +555,10 @@ $contentobj->SetMenuText('Home');
 $contentobj->SetPropertyValue('searchable',1);
 $contentobj->SetPropertyValue('design_id',$simplex_theme->get_id());
 $contentobj->SetTemplateId($template_list['Simplex']);
-$contentobj->SetDefaultContent(TRUE); // this is the default page.
 $contentobj->SetOwner(1);
 $contentobj->SetParentId(-1);
 $contentobj->SetActive(TRUE);
+$contentobj->SetDefaultContent(TRUE); // this will be the default page
 $contentobj->SetShowInMenu(TRUE);
 $contentobj->SetCachable(TRUE);
 $contentobj->SetPropertyValue('content_en',
