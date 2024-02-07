@@ -172,7 +172,7 @@ if (isset($_SESSION['logout_user_now'])) {
     HookManager::do_hook('Core::LogoutPre', [ 'uid'=>$userid, 'username'=>$username ]);
     $login_ops->deauthenticate(); // unset all the cruft needed to make sure we're logged in.
     HookManager::do_hook('Core::LogoutPost', [ 'uid'=>$userid, 'username'=>$username ]);
-    audit($userid, 'Admin user logout', $username);
+    audit($userid, 'Admin user', 'Logged out');
 }
 
 if( isset($_POST['logincancel']) ) {
@@ -205,7 +205,7 @@ else if( isset($_POST['loginsubmit']) ) {
         $login_ops->save_authentication($oneuser);
 
         // put mention into the admin log
-        audit($oneuser->id, 'Admin user login', $oneuser->username);
+        audit($oneuser->id, 'Admin user', 'Logged in');
 
         // send the post login event
         HookManager::do_hook('Core::LoginPost', [ 'user'=>$oneuser ]);
@@ -234,11 +234,11 @@ else if( isset($_POST['loginsubmit']) ) {
     }
     catch( Exception $e ) {
         $error = $e->GetMessage();
-        debug_buffer("Login failed.  Error is: " . $error);
+        debug_buffer("Login failed. Error was: " . $error);
         HookManager::do_hook('Core::LoginFailed', [ 'user'=>$username ]);
         // put mention into the admin log
         $ip_login_failed = cms_utils::get_real_ip();
-        audit($oneuser->id, 'Admin user login failed', "$username (IP: $ip_login_failed)");
+        audit($oneuser->id, 'Admin user', "Login failed (IP: $ip_login_failed)");
     }
 }
 
