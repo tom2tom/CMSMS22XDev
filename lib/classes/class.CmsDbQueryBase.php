@@ -104,6 +104,7 @@ abstract class CmsDbQueryBase
     {
         $this->execute();
         if( $this->_rs ) return $this->_totalmatchingrows;
+        return 0;
     }
 
 	/**
@@ -118,6 +119,7 @@ abstract class CmsDbQueryBase
     {
         $this->execute();
         if( $this->_rs ) return $this->_rs->RecordCount();
+        return 0;
     }
 
 
@@ -130,6 +132,7 @@ abstract class CmsDbQueryBase
     {
         $this->execute();
         if( $this->_rs ) return $this->_rs->MoveNext();
+        return FALSE;
     }
 
 	/**
@@ -141,6 +144,7 @@ abstract class CmsDbQueryBase
     {
         $this->execute();
         if( $this->_rs ) return $this->_rs->MoveFirst();
+        return FALSE;
     }
 
 	/**
@@ -155,6 +159,7 @@ abstract class CmsDbQueryBase
     {
         $this->execute();
         if( $this->_rs ) return $this->_rs->MoveFirst();
+        return FALSE;
     }
 
 	/**
@@ -166,6 +171,7 @@ abstract class CmsDbQueryBase
     {
         $this->execute();
         if( $this->_rs ) return $this->_rs->MoveLast();
+        return FALSE;
     }
 
 	/**
@@ -227,13 +233,15 @@ abstract class CmsDbQueryBase
     public function __get($key)
     {
         $this->execute();
-        if( $key == 'fields' && $this->_rs && !$this->_rs->EOF() ) return $this->_rs->fields;
-        if( $key == 'EOF' ) return $this->_rs->EOF();
-        if( $key == 'limit' ) return $this->_limit;
-        if( $key == 'offset' ) return $this->_offset;
-        if( $key == 'totalrows' ) return $this->_totalmatchingrows;
-        if( $key == 'numpages' ) return ceil($this->_totalmatchingrows / $this->_limit);
-        return null; //no recognised property
+        switch( $key ) {
+            case 'fields': return ( $this->_rs && !$this->_rs->EOF() ) ? $this->_rs->fields : [];
+            case 'EOF': return $this->_rs->EOF();
+            case 'limit': return $this->_limit;
+            case 'offset': return $this->_offset;
+            case 'totalrows': return $this->_totalmatchingrows;
+            case 'numpages': return ceil($this->_totalmatchingrows / $this->_limit);
+            default: return null; // any unrecognised property
+        }
     }
 
 } // end of class
