@@ -29,7 +29,12 @@ class wizard_step3 extends wizard_step
         // informational messages...
         $informational[] = new _tests_\informational_test('server_software',$_SERVER['SERVER_SOFTWARE'],'info_server_software');
         $informational[] = new _tests_\informational_test('server_api',PHP_SAPI,'info_server_api');
-        $informational[] = new _tests_\informational_test('server_os',array(PHP_OS,php_uname('r'),php_uname('m')));
+        if( function_exists('php_uname') ) {
+            $informational[] = new _tests_\informational_test('server_os',array(PHP_OS,php_uname('r'),php_uname('m'))); // NOTE PHP_OS is the build-system
+        }
+        else {
+            $informational[] = new _tests_\informational_test('server_os',array('Unknown')); // TODO fallack mechanism
+        }
 
         // required test... php version
         $v = PHP_VERSION;

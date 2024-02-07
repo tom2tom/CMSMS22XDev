@@ -116,9 +116,14 @@ class wizard_step1 extends wizard_step
             return '';
         };
 
-        $str = php_uname('s');
-        $winos = stripos($str,'windo') !== false;// running on some flavour of Windows
-        $macos = !$winos && stripos($str,'darwin') !== false;// running on some flavour of MacOS
+        if( function_exists('php_uname') && ($str = php_uname('s')) ) { //might return null (undocumented)
+            $winos = stripos($str,'windo') !== false;// running on some flavour of Windows
+            $macos = !$winos && stripos($str,'darwin') !== false;// running on some flavour of MacOS
+        }
+        else {
+            $winos = (PATH_SEPARATOR == ';');
+            $macos = !$winos && 0; // TODO fallack mechanism
+        }
 
         $_find_dirs = function($start,$depth = 0) use( &$_find_dirs, &$_get_annotation, $_is_valid_dir, $winos, $macos ) {
             if( !is_readable( $start ) ) return [];

@@ -166,7 +166,7 @@ $tmp[0]['E_ALL'] = testIntegerMask(0,lang('test_error_eall'), 'error_reporting',
 $tmp[0]['E_STRICT'] = testIntegerMask(0,lang('test_error_estrict'), 'error_reporting',E_STRICT,lang('test_estrict_failed'),true,true,false);
 if( defined('E_DEPRECATED') ) {
     $tmp[0]['E_DEPRECATED'] =  testIntegerMask(0,lang('test_error_edeprecated'), 'error_reporting',E_DEPRECATED,lang('test_edeprecated_failed'),true,true,false);
-  }
+}
 
 $_tmp = _testTimeSettings1();
 $tmp[0]['test_file_timedifference'] = ($_tmp->value) ? testDummy('test_file_timedifference',lang('msg_notimedifference2'),'green') : testDummy('test_file_timedifference',lang('error_timedifference2'),'red');
@@ -274,7 +274,12 @@ $tmp = array(0=>array(), 1=>array());
 
 $tmp[0]['server_software'] = testDummy('', $_SERVER['SERVER_SOFTWARE'], '');
 $tmp[0]['server_api'] = testDummy('', PHP_SAPI, '');
-$tmp[0]['server_os'] = testDummy('', PHP_OS . ' ' . php_uname('r') .' '. lang('on') .' '. php_uname('m'), '');
+if( function_exists('php_uname') ) {
+    $tmp[0]['server_os'] = testDummy('', PHP_OS . ' ' . php_uname('r') .' '. lang('on') .' '. php_uname('m'), ''); // NOTE PHP_OS is the build-system
+}
+else {
+    $tmp[0]['server_os'] = 'Unknown'; // TODO fallack mechanism
+}
 
 switch($config['dbms']) { //workaround: ServerInfo() is unsupported in adodblite
  case 'mysqli':

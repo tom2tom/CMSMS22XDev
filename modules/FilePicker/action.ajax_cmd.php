@@ -28,9 +28,14 @@ try {
     $fullpath = $assistant->to_absolute($cwd);
     if( ! $assistant->is_relative($fullpath) ) throw new RuntimeException('Invalid cwd '.$cwd);
     if( !isset($this->macos) ) {
-        $tmp = php_uname('s');
-        $this->winos = stripos($tmp,'windo') !== false;// running on some flavour of Windows
-        $this->macos = !$this->winos && stripos($tmp,'darwin') !== false;// running on some flavour of MacOS
+        if( function_exists('php_uname') && ($tmp = php_uname('s')) ) { //might return null (undocumented)
+            $this->winos = stripos($tmp,'windo') !== false;// running on some flavour of Windows
+            $this->macos = !$this->winos && stripos($tmp,'darwin') !== false;// running on some flavour of MacOS
+        }
+        else {
+            $this->winos = (PATH_SEPARATOR == ';');
+            $this->macos = !$this->winos && 0; // TODO fallack mechanism
+        }
     }
     switch( $cmd ) {
     case 'mkdir':

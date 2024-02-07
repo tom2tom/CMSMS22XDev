@@ -168,9 +168,14 @@ final class filemanager_utils
         static $macos; // whether running on some flavour of MacOS
         static $winos; // whether running on some flavour of Windows
         if( !isset($macos) ) {
-            $tmp = php_uname('s');
-            $winos = stripos($tmp,'windo') !== FALSE;
-            $macos = !$winos && stripos($tmp,'darwin') !== FALSE;
+            if( function_exists('php_uname') && ($tmp = php_uname('s')) ) { //might return null (undocumented)
+                $winos = stripos($tmp,'windo') !== FALSE;
+                $macos = !$winos && stripos($tmp,'darwin') !== FALSE;
+            }
+            else {
+                $winos = (PATH_SEPARATOR == ';');
+                $macos = !$winos && 0; // TODO fallack mechanism
+            }
         }
 
         $tmp = basename($path);
@@ -272,7 +277,7 @@ final class filemanager_utils
                 $userinfo = @posix_getpwuid($statinfo['uid']);
                 $info['fileowner'] = isset($userinfo['name']) ? $userinfo['name'] : $mod->Lang('unknown');
             } else {
-                $info['fileowner'] = lang['n_a'];
+                $info['fileowner'] = lang('n_a');
             }
 
             $info['writable'] = is_writable($fullname);
