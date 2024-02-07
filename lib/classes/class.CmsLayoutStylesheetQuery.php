@@ -174,7 +174,7 @@ class CmsLayoutStylesheetQuery extends CmsDbQueryBase
     public function GetMatches()
     {
         $this->execute();
-        if( !$this->_rs ) throw new CmsLogicException('Cannot get template from invalid template query object');
+        if( !$this->_rs ) throw new CmsLogicException('Cannot get stylesheet from invalid stylesheet query object');
 
         $tmp = array();
         while( !$this->EOF() ) {
@@ -182,7 +182,7 @@ class CmsLayoutStylesheetQuery extends CmsDbQueryBase
             $this->MoveNext();
         }
 
-        $deep = (!empty($this->_args['deep']) && $this->_args['deep']) ? TRUE : FALSE;
+        $deep = !empty($this->_args['deep']);
         return CmsLayoutStylesheet::load_bulk($tmp,$deep);
     }
 } // end of class
