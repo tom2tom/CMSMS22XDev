@@ -302,39 +302,44 @@ try {
 
         $contentarray = $content_obj->GetTabElements($currenttab, $content_obj->Id() < 1 );
         if( $currenttab == $tmain ) {
-            // main tab... prepend a content-type selector, unless the user
-            // is merely an additional-editor
-            // TODO always display a selector, but disabled for additional editors
+            // main tab... prepend a content-type selector, or content-text if
+            // there's no choice or the user is merely an additional-editor
+            $tmp2 = '';
             if( ($this->CheckPermission('Manage All Content') || $content_obj->Owner() == $user_id) ) {
                 $dflt = $content_obj->DefaultContent();
-                $selcount = 0;
-                asort($typeclasses);
-                $tmp2 = "<select id=\"content_type\" name=\"{$id}content_type\">";
+                natcasesort($typeclasses);
+                $choices = [];
                 foreach( $typeclasses as $classname => $label ) {
                     if( $dflt ) {
                         $obj = new $classname();
-                        $flag = $obj && $obj->IsDefaultPossible();
+                        $opt = $obj && $obj->IsDefaultPossible();
                     }
                     else {
-                        $flag = true;
+                        $opt = true;
                     }
-                    if( $flag ) {
-                        $type = strtolower($classname); //NOTE conform this if relation between class and type ever changes
-                        $tmp2 .= CmsFormUtils::create_option(array('value'=>$type,'label'=>$label),$content_type);
-                        $selcount++;
+                    if( $opt ) {
+                        $choices[strtolower($classname)] = $label;//NOTE conform this if relation between class and type ever changes
                     }
                 }
-                if( $selcount > 0 ) {
-                    $tmp2 .= '</select>';
+                if( count($choices) > 1 ) {
+                    $tmp2 = CmsFormUtils::create_dropdown($id.'content_type',$choices,$content_type,['id'=>'content_type']);
                     $help = cms_admin_utils::get_help_tag(array('key'=>'help_content_type','title'=>$this->Lang('help_title_content_type')));
                     $tmp = array('<label for="content_type">*'.$this->Lang('prompt_editpage_contenttype').':</label>&nbsp;'.$help,$tmp2);
-                    if( $contentarray ) {
-                        array_unshift($contentarray, $tmp);
-                    }
-                    else {
-                        $contentarray = [$tmp];
-                    }
                 }
+            }
+            if( $tmp2 == '' ) {
+                $help = cms_admin_utils::get_help_tag(array('key'=>'help_content_type','title'=>$this->Lang('help_title_content_type')));
+                foreach( $typeclasses as $classname => $label ) {
+                    if( $content_type == strtolower($classname) ) break;//NOTE conform this if relation between class and type ever changes
+                }
+                $tmp = array('<label for="content_type">*'.$this->Lang('prompt_editpage_contenttype').':</label>&nbsp;'.$help,
+                "<p id=\"content_type\" class=\"pageinput\">$label</p><input type=\"hidden\" name=\"{$id}content_type\" value=\"$content_type\">");
+            }
+            if( $contentarray ) {
+                array_unshift($contentarray, $tmp);
+            }
+            else {
+                $contentarray = [$tmp];
             }
         }
         $tab_contents_array[$currenttab] = $contentarray;
