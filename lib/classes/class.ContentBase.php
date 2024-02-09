@@ -326,7 +326,7 @@ abstract class ContentBase
 	private $_editable_properties;
 
 	/************************************************************************/
-	/* Constructor related													*/
+	/* Construction related													*/
 	/************************************************************************/
 
 	/**
@@ -336,6 +336,18 @@ abstract class ContentBase
 	{
 		$this->SetInitialValues();
 		$this->SetProperties();
+	}
+
+	/**
+	 * @ignore
+	 */
+	public function __clone()
+	{
+		$this->mId = -1;
+		$this->mItemOrder = -1;
+		$this->mOldItemOrder = -1;
+		$this->mURL = '';
+		$this->mAlias = '';
 	}
 
 	/**
@@ -386,19 +398,7 @@ abstract class ContentBase
 	/************************************************************************/
 
 	/**
-	 * @ignore
-	 */
-	public function __clone()
-	{
-		$this->mId = -1;
-		$this->mItemOrder = -1;
-		$this->mOldItemOrder = -1;
-		$this->mURL = '';
-		$this->mAlias = '';
-	}
-
-	/**
-	 * Returns the ID
+	 * Returns the numeric ID
 	 */
 	public function Id()
 	{
@@ -455,6 +455,68 @@ abstract class ContentBase
 	public function Alias()
 	{
 		return $this->mAlias;
+	}
+
+	/**
+	 * Set the alias for this content page.
+	 * If an empty alias is supplied, and depending upon the doAutoAliasIfEnabled flag, and config entries
+	 * a suitable alias may be calculated from other data in the page object
+	 * This method relies on the menutext and the name of the content page already being set.
+	 *
+	 * @param string $alias The alias
+	 * @param bool $doAutoAliasIfEnabled Whether an alias should be calculated or not.
+	 */
+	public function SetAlias($alias = '',$doAutoAliasIfEnabled = true)
+	{
+		$contentops = ContentOperations::get_instance();
+		$config = cms_config::get_instance();
+		if ($alias == '' && $doAutoAliasIfEnabled && $config['auto_alias_content'] == true) {
+			// auto generate an alias
+			$alias = trim($this->mMenuText);
+			if ($alias == '') $alias = trim($this->mName);
+			$alias = strip_tags($alias ); // since 2.2.18 = breaker?
+			$alias = preg_replace('/&#?[a-z0-9]{2,8};/i','',$alias); // ditto
+			$tolower = true;
+			$alias = munge_string_to_url($alias, $tolower);
+			$res = $contentops->CheckAliasValid($alias);
+			if( !$res ) {
+				$alias = 'p'.$alias;
+				$res = $contentops->CheckAliasValid($alias);
+				if( !$res ) throw new CmsContentException(lang('invalidalias2'));
+			}
+		}
+
+		if( $alias ) {
+			// Make sure auto-generated new alias is not already in use on a different page, if it does, add "-2" to the alias
+
+			// make sure we start with a valid alias.
+			$res = $contentops->CheckAliasValid($alias);
+			if( !$res ) throw new CmsContentException(lang('invalidalias2'));
+
+			// now auto-increment the alias.
+			$prefix = $alias;
+			$num = 1;
+			if( preg_match('/(.*)-([0-9]*)$/',$alias,$matches) ) {
+				$prefix = $matches[1];
+				$num = (int) $matches[2];
+			}
+			$test = $alias;
+			$testnum = 1;
+			do {
+				if( !$contentops->CheckAliasUsed($test,$this->Id()) ) {
+					$alias = $test;
+					break;
+				}
+				$num++;
+				$test = $prefix.'-'.$num;
+			} while( $testnum < 100 );
+			if( $testnum >= 100 && $test != $alias ) throw new CmsContentException(lang('aliasalreadyused'));
+		}
+
+		$this->mAlias = $alias;
+		global_cache::clear('content_quicklist');
+		global_cache::clear('content_tree');
+		global_cache::clear('content_flatlist');
 	}
 
 	/**
@@ -565,6 +627,19 @@ abstract class ContentBase
 	}
 
 	/**
+	 * Set the title attribute of the page
+	 *
+	 * The title attribute can be used in navigations to set the "title=" attribute of a link
+	 * some menu templates may ignore this.
+	 *
+	 * @param string $titleattribute The title attribute
+	 */
+	public function SetTitleAttribute($titleattribute)
+	{
+		$this->mTitleAttribute = $titleattribute;
+	}
+
+	/**
 	 * Retrieve the creation date of this content object.
 	 *
 	 * @return int Unix Timestamp of the creation date
@@ -582,19 +657,6 @@ abstract class ContentBase
 	public function GetModifiedDate()
 	{
 		return strtotime($this->mModifiedDate);
-	}
-
-	/**
-	 * Set the title attribute of the page
-	 *
-	 * The title attribute can be used in navigations to set the "title=" attribute of a link
-	 * some menu templates may ignore this.
-	 *
-	 * @param string $titleattribute The title attribute
-	 */
-	public function SetTitleAttribute($titleattribute)
-	{
-		$this->mTitleAttribute = $titleattribute;
 	}
 
 	/**
@@ -1036,68 +1098,6 @@ abstract class ContentBase
 	}
 
 	/**
-	 * Set the page alias for this content page.
-	 * If an empty alias is supplied, and depending upon the doAutoAliasIfEnabled flag, and config entries
-	 * a suitable alias may be calculated from other data in the page object
-	 * This method relies on the menutext and the name of the content page already being set.
-	 *
-	 * @param string $alias The alias
-	 * @param bool $doAutoAliasIfEnabled Whether an alias should be calculated or not.
-	 */
-	public function SetAlias($alias = '',$doAutoAliasIfEnabled = true)
-	{
-		$contentops = ContentOperations::get_instance();
-		$config = cms_config::get_instance();
-		if ($alias == '' && $doAutoAliasIfEnabled && $config['auto_alias_content'] == true) {
-			// auto generate an alias
-			$alias = trim($this->mMenuText);
-			if ($alias == '') $alias = trim($this->mName);
-			$alias = strip_tags($alias ); // since 2.2.18 = breaker?
-			$alias = preg_replace('/&#?[a-z0-9]{2,8};/i','',$alias); // ditto
-			$tolower = true;
-			$alias = munge_string_to_url($alias, $tolower);
-			$res = $contentops->CheckAliasValid($alias);
-			if( !$res ) {
-				$alias = 'p'.$alias;
-				$res = $contentops->CheckAliasValid($alias);
-				if( !$res ) throw new CmsContentException(lang('invalidalias2'));
-			}
-		}
-
-		if( $alias ) {
-			// Make sure auto-generated new alias is not already in use on a different page, if it does, add "-2" to the alias
-
-			// make sure we start with a valid alias.
-			$res = $contentops->CheckAliasValid($alias);
-			if( !$res ) throw new CmsContentException(lang('invalidalias2'));
-
-			// now auto-increment the alias.
-			$prefix = $alias;
-			$num = 1;
-			if( preg_match('/(.*)-([0-9]*)$/',$alias,$matches) ) {
-				$prefix = $matches[1];
-				$num = (int) $matches[2];
-			}
-			$test = $alias;
-			$testnum = 1;
-			do {
-				if( !$contentops->CheckAliasUsed($test,$this->Id()) ) {
-					$alias = $test;
-					break;
-				}
-				$num++;
-				$test = $prefix.'-'.$num;
-			} while( $testnum < 100 );
-			if( $testnum >= 100 && $test != $alias ) throw new CmsContentException(lang('aliasalreadyused'));
-		}
-
-		$this->mAlias = $alias;
-		global_cache::clear('content_quicklist');
-		global_cache::clear('content_tree');
-		global_cache::clear('content_flatlist');
-	}
-
-	/**
 	 * Returns the menu text for this content page.
 	 * The MenuText is by default used as the text portion of a navigation link.
 	 *
@@ -1264,8 +1264,9 @@ abstract class ContentBase
 	}
 
 	/**
-	 * An abstract method that extended content types can use to indicate whether or not they want children.
-	 * Some content types, such as a separator do not want to have any children.
+	 * An abstract method that content types can use to indicate whether
+	 * pages of that type may have child-page(s).
+	 * Some content types such as separator do not have any children.
 	 *
 	 * @since 0.11
 	 * @abstract
@@ -1311,7 +1312,7 @@ abstract class ContentBase
 	}
 
 	/**
-	 * Indicates whether this page type uses a template.
+	 * An abstract method that indicates whether this page type uses a template.
 	 * Some content types like sectionheader and separator do not.
 	 *
 	 * @since 2.0
@@ -1458,7 +1459,7 @@ abstract class ContentBase
 	 * This is generally used to change the value of one property (or one plus
 	 * ancillaries) of an existing page. Or to add a new page.
 	 *
-	 * @todo return bool indicating success
+	 * @return bool indicating success
 	 */
 	public function Save()
 	{
@@ -1470,14 +1471,11 @@ abstract class ContentBase
 		}
 
 		if( $this->mId > 0 ) { // was >-1 : new-page mId = 0, cloned-page mId = -1
-//			$result =
-			$this->Update();
+			$result = $this->Update();
 		}
 		else {
-//			$result =
-			$this->Insert();
+			$result = $this->Insert();
 		}
-		$result = true; //TODO per above
 
 		if( $result ) {
 			$tophier = $this->ParentHierarchy();
@@ -1485,6 +1483,9 @@ abstract class ContentBase
 			$contentops->SetContentModified();
 			$contentops->SetAllHierarchyPositions($tophier);
 			HookManager::do_hook('Core::ContentEditPost', [ 'content' => &$this ]);
+		}
+		else {
+			//TODO handle error e.g. warning to user
 		}
 		return $result;
 	}
@@ -1500,13 +1501,12 @@ abstract class ContentBase
 	 * calling function is responsible for ensuring that page hierarchies
 	 * are updated.
 	 *
-	 * @todo return bool indicating success
+	 * @return bool indicating success
 	 */
 	protected function Update()
 	{
 		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
-//		$result = false;
 
 		// Figure out the item_order (if necessary)
 		if ($this->mItemOrder < 1) {
@@ -1521,7 +1521,7 @@ abstract class ContentBase
 		}
 
 		if( $this->mParentId == -1 ) {
-			$this->mHierarchy = str_pad($this->mItemOrder,5,'0',STR_PAD_LEFT); // OR 3
+			$this->mHierarchy = str_pad($this->mItemOrder,5,'0',STR_PAD_LEFT); // OR 3 if 3-wide suffices in future
 			$this->mIdHierarchy = $this->mId;
 			$this->mHierarchyPath = $this->mAlias;
 		}
@@ -1595,11 +1595,12 @@ WHERE content_id = ?";
 			(int) $this->mId
 		));
 
-//TODO	$result = $db->Affected_Rows() == 1 && $db->ErrorNo() == 0; reliable after UPDATE
-/*		if (!$result) {
-			die($db->sql.'<br>'.$db->ErrorMsg());
+		$result = $db->Affected_Rows() == 1 && $db->ErrorNo() == 0; //reliable after UPDATE
+		if (!$result) {
+//			die($db->sql.'<br>'.$db->ErrorMsg()); TODO handle per Connection error methods
+			return false;
 		}
-
+/*
 		if ($this->mOldParentId != $this->mParentId) {
 			// Fix the item_order if necessary
 			$query = "UPDATE ".CMS_DB_PREFIX."content SET item_order = item_order - 1 WHERE parent_id = ? AND item_order > ?";
@@ -1616,8 +1617,8 @@ WHERE content_id = ?";
 			foreach ($this->mAdditionalEditors as $oneeditor) {
 				$new_addt_id = $db->GenID(CMS_DB_PREFIX."additional_users_seq");
 				$query = "INSERT INTO ".CMS_DB_PREFIX."additional_users (additional_users_id, user_id, content_id) VALUES (?,?,?)";
-				$db->Execute($query, array($new_addt_id, $oneeditor, $this->mId));
-//TODO			$result = $result && $dbr != false;
+				$dbr = $db->Execute($query, array($new_addt_id, $oneeditor, $this->mId));
+				$result = $result && $dbr != false;
 			}
 		}
 
@@ -1657,7 +1658,7 @@ WHERE content_id = ?";
 			}
 			global_cache::clear('default_content');
 		}
-//TODO	return $result;
+		return $result;
 	}
 
 	/**
@@ -1667,14 +1668,12 @@ WHERE content_id = ?";
 	 * save the record, save properties and additional editors.
 	 * Since 2.2.19, the saved page will NOT become the default page
 	 * if no other page is already the default.
+	 * @return bool indicating success
 	 */
 	protected function Insert()
 	{
-		// TODO: This function should return something
 		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
-
-//		$result = false;
 /* BAD!
 		$query = 'SELECT content_id FROM '.CMS_DB_PREFIX.'content WHERE default_content = 1';
 		$dflt_pageid = (int) $db->GetOne($query);
@@ -1773,28 +1772,29 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		));
 
 		if (!$result) {
-			die($db->sql.'<br>'.$db->ErrorMsg()); //TODO throw
+//			die($db->sql.'<br>'.$db->ErrorMsg()); //TODO handle per Connection error methods
+			return false;
 		}
 
 		if (is_array($this->_props) && count($this->_props)) {
 			// TODO perhaps some error checking there
 			debug_buffer('save from ' . __LINE__);
+//TODO		$result = $result && 
 			$this->_save_properties();
-//TODO		$result = $result && ;
 		}
 		if (!empty($this->mAdditionalEditors)) {
 			foreach ($this->mAdditionalEditors as $oneeditor) {
 				$new_addt_id = $db->GenID(CMS_DB_PREFIX."additional_users_seq");
 				$query = "INSERT INTO ".CMS_DB_PREFIX."additional_users (additional_users_id, user_id, content_id) VALUES (?,?,?)";
-				$db->Execute($query, array($new_addt_id, $oneeditor, $newid));
-//TODO			$result = $result && $dbr != false;
+				$dbr = $db->Execute($query, array($new_addt_id, $oneeditor, $newid));
+				$result = $result && $dbr != false;
 			}
 		}
 
 		if( $this->mURL ) {
 			$route = CmsRoute::new_builder($this->mURL,'__CONTENT__',$newid,'',true);
+//TODO		$result = $result && 
 			cms_route_manager::add_static($route);
-//TODO		$result = $result && ;
 		}
 
 		if( $this->mDefaultContent ) {
@@ -1806,7 +1806,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			global_cache::clear('default_content');
 			audit($pid, 'Default page', "Changed to $newid: ".$this->mName);
 		}
-//TODO	return $result;
+		return $result;
 	}
 
 	/**
