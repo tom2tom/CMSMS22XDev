@@ -918,22 +918,6 @@ EOS;
 	}
 
 	/**
-	 * Returns the name or menu-label of the content whose id is specified.
-	 * @since 2.2.19#2
-	 *
-	 * @param int $id The content id to query
-	 * @return string The resulting identifier, or empty if nothing useful found.
-	 */
-	public function GetPageDescriptor($id)
-	{
-		$content = $this->LoadContentFromId($id);
-		if( $content ) {
-			return ($content->Name()) ?: (($content->MenuText()) ?: '');
-		}
-		return '';
-	}
-
-	/**
 	 * Check if a content alias is used
 	 *
 	 * @param string $alias The alias to check
@@ -1203,6 +1187,22 @@ ORDER BY B.hierarchy';
 		$list = global_cache::get('content_quicklist');
 		if( isset($list[$id]) ) return $list[$id];
 		return null;
+	}
+
+	/**
+	 * Return the name or menu-label of the content whose id is specified.
+	 * @since 2.2.19#2
+	 *
+	 * @param int $id The content id to query
+	 * @return string The resulting identifier, or 'Anonymous' if nothing useful found.
+	 */
+	public function GetPageDescriptor($id)
+	{
+		$content = $this->LoadContentFromId($id);
+		if( $content ) {
+			return ($content->Name()) ?: (($content->MenuText()) ?: 'Anonymous');
+		}
+		return '';
 	}
 }
 
