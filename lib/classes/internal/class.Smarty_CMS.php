@@ -112,7 +112,7 @@ class Smarty_CMS extends CMSSmartyBase
             $this->autoloadFilters();
 
             // compile check can only be enabled, if using smarty cache... just for safety.
-            if( \cms_siteprefs::get('use_smartycache',0) ) $this->setCompileCheck(\cms_siteprefs::get('use_smartycompilecheck',1));
+            if( \cms_siteprefs::get('use_smartycache',0) ) $this->setCompileCheck(\cms_siteprefs::get('use_smartycompilecheck',1)); //i.e. default COMPILECHECK_ON c.f. COMPILECHECK_CACHEMISS (2)
 
             // Enable custom security, permissive or not
             $this->enableSecurity('CMSSmartySecurityPolicy');

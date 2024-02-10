@@ -170,7 +170,7 @@ try {
             else {
                 $out = $contentobj->ToData();
                 if( $display == 'title' ) { $out['display'] = $out['content_name']; }
-                else { $out['display'] = $out['menu_text']; }
+                else { $out['display'] = $out['menu_text']; } //too bad if empty!
             }
         }
         break;
@@ -208,7 +208,7 @@ try {
                     $rec['id_hierarchy'] = $content_obj->IdHierarchy();
                     $rec['wants_children'] = $content_obj->WantsChildren();
                     $rec['has_children'] = $children[$i]->has_children();
-                    $rec['display'] = ($display == 'title') ? $content_obj->Name() : $content_obj->MenuText();
+                    $rec['display'] = ($display == 'title') ? $content_obj->Name() : $content_obj->MenuText(); //too bad if empty!
                     $out[$one][] = $rec;
                 }
             }

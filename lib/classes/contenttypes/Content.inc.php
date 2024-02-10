@@ -191,7 +191,7 @@ class Content extends ContentBase
 			// metadata
 			if (isset($params['metadata'])) $this->mMetadata = $params['metadata'];
 		}
-		parent::FillParams($params,$editing);
+		parent::FillParams($params,$editing); //TODO to start of this method?
 	}
 
 	/**

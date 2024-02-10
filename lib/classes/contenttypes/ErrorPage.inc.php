@@ -110,6 +110,7 @@ class ErrorPage extends Content
         $this->mShowInMenu = false;
         $this->mCachable = false;
         $this->mActive = true;
+        //TODO others e.g. $mDefaultContent ?
     }
 
     public function display_single_element($one,$adding)
