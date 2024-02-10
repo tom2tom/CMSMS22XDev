@@ -35,6 +35,7 @@ $user_id = get_userid();
 $this->SetCurrentTab('pages');
 
 if( isset($params['cancel']) ) {
+    unset($_SESSION['__cms_copy_obj__']); // if any
     $this->SetMessage($this->Lang('msg_cancelled'));
     $this->RedirectToAdminTab();
 }
@@ -75,10 +76,9 @@ try {
     // load or create the initial content object
     //
     if( $content_id === -1 ) {
-        if( isset($_SESSION['__cms_copy_obj__']) ) {
-            // we're copying a content object.
-            $from_id = $_SESSION['__cms_copy_obj__'];
-            unset($_SESSION['__cms_copy_obj__']);
+        // copying a content object
+        if( !empty($params['copy_id']) ) {
+            $from_id = (int)$params['copy_id'];
             $content_obj = $contentops->LoadContentFromId($from_id,true);
             if( !$content_obj ) throw new RuntimeException('Invalid session data');
             $type_name = $content_obj->Type();
@@ -97,7 +97,12 @@ try {
             $content_obj->SetURL('');
             $content_obj->SetOwner($user_id);
             $content_obj->SetLastModifiedBy($user_id);
+            $_SESSION['__cms_copy_obj__'] = serialize($content_obj);
             $content_type = $type_name;
+        }
+        elseif( $_POST && !empty($_SESSION['__cms_copy_obj__']) ) {
+            $content_obj = unserialize($_SESSION['__cms_copy_obj__']);
+            unset($_SESSION['__cms_copy_obj__']);
         }
         else {
             throw new \LogicException('Missing session data');
@@ -188,7 +193,7 @@ try {
         $content_obj = $tmpobj;
     }
 
-    if( strtoupper($_SERVER['REQUEST_METHOD']) == 'POST' ) {
+    if( $_POST ) {
         // if we're in a POST action, another item may have changed that requires reloading the page
         // filling the params will make sure that no edited content was lost.
         $content_obj->FillParams($_POST,($content_id > 0));
