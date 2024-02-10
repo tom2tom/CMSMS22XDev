@@ -64,8 +64,7 @@ if( !$node ) {
   $this->RedirectToAdminTab();
 }
 
-$_SESSION['__cms_copy_obj__'] = $content_id;
-$this->Redirect($id,'admin_editcontent','',array('content_id'=>-1)); // not a new page (whose id == 0)
+$this->Redirect($id,'admin_editcontent','',array('content_id'=>-1,'copy_id'=>$content_id)); // not a new page (whose id == 0)
 
 #
 # EOF
