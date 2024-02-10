@@ -1779,7 +1779,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		if (is_array($this->_props) && count($this->_props)) {
 			// TODO perhaps some error checking there
 			debug_buffer('save from ' . __LINE__);
-//TODO		$result = $result && 
+//TODO		$result = $result &&
 			$this->_save_properties();
 		}
 		if (!empty($this->mAdditionalEditors)) {
@@ -1793,7 +1793,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 		if( $this->mURL ) {
 			$route = CmsRoute::new_builder($this->mURL,'__CONTENT__',$newid,'',true);
-//TODO		$result = $result && 
+//TODO		$result = $result &&
 			cms_route_manager::add_static($route);
 		}
 
@@ -1981,10 +1981,10 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		if( isset($params['parent_id']) ) {
 			if( $params['parent_id'] == -2 && !$editing ) $params['parent_id'] = -1;
 			if ($this->mParentId != $params['parent_id']) {
+				$this->mParentId = (int) $params['parent_id'];
 				$this->mHierarchy = '';
 				$this->mItemOrder = -1;
 			}
-			$this->mParentId = (int) $params['parent_id'];
 		}
 
 		// active
@@ -1995,7 +1995,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		// default
 		if (isset($params['default'])) {
 			$this->mDefaultContent = (int)$params['default'];
-			if( $this->mDefaultContent) $this->mActive = 1;
+			if ($this->mDefaultContent) $this->mActive = 1;
 		}
 		elseif( $this->DefaultContent() ) {
 			$this->mActive = 1;
