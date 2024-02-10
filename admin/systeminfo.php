@@ -122,21 +122,23 @@ $smarty->assign('config_info', $tmp);
 /* Performance Information */
 $tmp = array(0=>array(), 1=>array());
 
-$res = get_site_preference('allow_browser_cache',0);
-$tmp[0]['allow_browser_cache'] = testBoolean(0, lang('allow_browser_cache'),$res,lang('test_allow_browser_cache'), FALSE);
+$res = (bool)get_site_preference('allow_browser_cache',false);
+$tmp[0]['allow_browser_cache'] = testBoolean(0, lang('allow_browser_cache'), $res, lang('test_allow_browser_cache'), FALSE);
 $res = get_site_preference('browser_cache_expiry',60);
-$tmp[0]['browser_cache_expiry'] = testRange(0, lang('browser_cache_expiry'),$res,lang('test_browser_cache_expiry'),1,60,FALSE);
-
-if( version_compare(phpversion(),'5.5') >= 0 ) {
-    $opcache = ini_get('opcache.enable');
-    $tmp[0]['php_opcache'] = testBoolean(0, lang('php_opcache'), $opcache, '', false, false, 'opcache_enabled');
-} else {
-    $tmp[0]['php_opcache'] = testBoolean(0, lang('php_opcache'), false, '', false, false, 'opcache_notavailable');
+$tmp[0]['browser_cache_expiry'] = testRange(0, lang('browser_cache_expiry'), $res, lang('test_browser_cache_expiry'), 1, 60, FALSE);
+$v = phpversion();
+if( version_compare($v,'7.0') < 0 ) {
+    if( version_compare($v,'5.5') >= 0 ) {
+        $opcache = ini_get('opcache.enable');
+        $tmp[0]['php_opcache'] = testBoolean(0, lang('php_opcache'), $opcache, '', false, false, 'opcache_enabled');
+    } else {
+        $tmp[0]['php_opcache'] = testBoolean(0, lang('php_opcache'), false, '', false, false, 'opcache_notavailable');
+    }
 }
 $res = (bool) get_site_preference('use_smartycache', FALSE);
 $tmp[0]['smarty_cache'] = testBoolean(0, lang('prompt_use_smartycaching'),$res,lang('test_smarty_caching'), FALSE);
-$res = get_site_preference('use_smartycompilecheck', FALSE);
-$tmp[0]['smarty_compilecheck'] = testBoolean(0, lang('prompt_smarty_compilecheck'),$res,lang('test_smarty_caching'),FALSE,TRUE);
+$res = (bool)get_site_preference('use_smartycompilecheck', false);
+$tmp[0]['smarty_compilecheck'] = testBoolean(false, lang('prompt_smarty_compilecheck'), $res, lang('test_smarty_compiled'), false, true);
 $res = get_site_preference('auto_clear_cache_age', 0);
 $tmp[0]['auto_clear_cache_age'] = testBoolean(0, lang('autoclearcache2'),$res,lang('test_auto_clear_cache_age'), FALSE);
 
@@ -151,7 +153,7 @@ $session_save_path = ini_get('session.save_path');
 $open_basedir = ini_get('open_basedir');
 
 list($minimum, $recommended) = getTestValues('php_version');
-$tmp[0]['phpversion'] = testVersionRange(0, 'phpversion', phpversion(), '', $minimum, $recommended, false);
+$tmp[0]['phpversion'] = testVersionRange(0, 'phpversion', $v, '', $minimum, $recommended, false);
 
 $tmp[0]['md5_function'] = testBoolean(0, 'md5_function', function_exists('md5'), '', false, false, 'Function_md5_disabled');
 $tmp[0]['json_function'] = testBoolean(0, 'json_function', function_exists('json_decode'), '', false, false, 'json_disabled');
@@ -184,14 +186,12 @@ $tmp[0]['max_execution_time'] = testRange(0, 'max_execution_time', 'max_executio
 $tmp[0]['register_globals'] = testBoolean(0, lang('register_globals'), 'register_globals', '', true, true, 'register_globals_enabled');
 
 $ob = ini_get('output_buffering');
-if( strtolower($ob) == 'off' || strtolower($ob) == 'on' )
-  {
+if( strtolower($ob) == 'off' || strtolower($ob) == 'on' ) {
     $tmp[0]['output_buffering'] = testBoolean(0, lang('output_buffering'), 'output_buffering', '', true, false, 'output_buffering_disabled');
-  }
-else
-  {
+}
+else {
     $tmp[0]['output_buffering'] = testInteger(0, lang('output_buffering'), 'output_buffering', '', true, true, 'output_buffering_disabled');
-  }
+}
 
 $tmp[0]['disable_functions'] = testString(0, lang('disable_functions'), 'disable_functions', '', true, 'green', 'yellow', 'disable_functions_not_empty');
 
@@ -208,16 +208,13 @@ list($minimum, $recommended) = getTestValues('upload_max_filesize');
 $tmp[0]['upload_max_filesize'] = testRange(0, 'upload_max_filesize', 'upload_max_filesize', '', $minimum, $recommended, true, true, null, 'min_upload_max_filesize');
 
 $session_save_path = testSessionSavePath('');
-if(empty($session_save_path))
-{
+if( empty($session_save_path) ) {
 	$tmp[0]['session_save_path'] = testDummy('session_save_path', lang('os_session_save_path'), 'yellow', '', 'session_save_path_empty', '');
 }
-elseif (! empty($open_basedir))
-{
+elseif( !empty($open_basedir) ) {
 	$tmp[0]['session_save_path'] = testDummy('session_save_path', lang('open_basedir_active'), 'yellow', '', 'No_check_session_save_path_with_open_basedir', '');
 }
-else
-{
+else {
 	$tmp[0]['session_save_path'] = testDirWrite(0, lang('session_save_path'), $session_save_path, $session_save_path, 1);
 }
 $tmp[0]['session_use_cookies'] = testBoolean(0, 'session.use_cookies', 'session.use_cookies');
