@@ -35,7 +35,7 @@ $user_id = get_userid();
 $this->SetCurrentTab('pages');
 
 if( isset($params['cancel']) ) {
-    unset($_SESSION['__cms_copy_obj__']); // if any
+    unset($_SESSION['__cms_copy_id__']); // if any
     $this->SetMessage($this->Lang('msg_cancelled'));
     $this->RedirectToAdminTab();
 }
@@ -79,34 +79,35 @@ try {
         // copying a content object
         if( !empty($params['copy_id']) ) {
             $from_id = (int)$params['copy_id'];
-            $content_obj = $contentops->LoadContentFromId($from_id,true);
-            if( !$content_obj ) throw new RuntimeException('Invalid session data');
-            $type_name = $content_obj->Type();
-            // can the following ever fail?
-            if( !$type_name ) throw new RuntimeException('Could not find content object\'s type');
-            $ph = $contentops->LoadContentType($type_name);
-            if( !$ph ) throw new RuntimeException('Could not find content type named '.$type_name);
-            if( !class_exists($ph->class) ) throw new RuntimeException('Could not find class for content type');
-
-            $content_obj->SetId(-1);
-            $content_obj->SetName('Copy of '.$content_obj->Name());
-            $content_obj->SetMenuText('Copy of '.$content_obj->MenuText());
-            $content_obj->SetAlias($content_obj->Alias().'_copy');
-            $content_obj->SetOldItemOrder(-1);
-            $content_obj->SetDefaultContent(false);
-            $content_obj->SetURL('');
-            $content_obj->SetOwner($user_id);
-            $content_obj->SetLastModifiedBy($user_id);
-            $_SESSION['__cms_copy_obj__'] = serialize($content_obj);
-            $content_type = $type_name;
         }
-        elseif( $_POST && !empty($_SESSION['__cms_copy_obj__']) ) {
-            $content_obj = unserialize($_SESSION['__cms_copy_obj__']);
-            unset($_SESSION['__cms_copy_obj__']);
+        elseif( !empty($_SESSION['__cms_copy_id__']) ) {
+            $from_id = (int)$_SESSION['__cms_copy_id__'];
+            unset($_SESSION['__cms_copy_id__']);
         }
         else {
-            throw new \LogicException('Missing session data');
+            throw new \LogicException('Missing object-copy data');
         }
+
+        $content_obj = $contentops->LoadContentFromId($from_id,true);
+        if( !$content_obj ) throw new RuntimeException('Could not find content object to copy');
+        $type_name = $content_obj->Type();
+        // can the following ever fail?
+        if( !$type_name ) throw new RuntimeException('Could not find content object\'s type');
+        $ph = $contentops->LoadContentType($type_name);
+        if( !$ph ) throw new RuntimeException('Could not find content type named '.$type_name);
+        if( !class_exists($ph->class) ) throw new RuntimeException('Could not find class for content type');
+        $content_type = $type_name;
+        if( !$_POST ) $_SESSION['__cms_copy_id__'] = $from_id; // park it for next time
+        // re-populate the content object
+        $content_obj->SetId(-1);
+        $content_obj->SetName('Copy of '.$content_obj->Name());
+        $content_obj->SetMenuText('Copy of '.$content_obj->MenuText());
+        $content_obj->SetAlias($content_obj->Alias().'_copy');
+        $content_obj->SetOldItemOrder(-1);
+        $content_obj->SetDefaultContent(false);
+        $content_obj->SetURL('');
+        $content_obj->SetOwner($user_id);
+        $content_obj->SetLastModifiedBy($user_id);
     }
     else if( $content_id === 0 ) {
         // creating a new content object
@@ -133,7 +134,7 @@ try {
             // we get the list of pages that this user has access to.
             // if she is not an editor of the default page, then use the first page she has access to, or -1
             $list = $contentops->GetPageAccessForUser($user_id);
-            if( count($list) && !in_array($dflt_parent,$list) ) $dflt_parent = $list[0];
+            if( $list && !in_array($dflt_parent,$list) ) $dflt_parent = $list[0];
         }
         // check if this parent is valid. If not, use -1
         if( $dflt_parent > 0 ) {
@@ -301,7 +302,7 @@ try {
         $tab_names = array($tmain => lang($tmain)) + $tab_names;
     }
 
-    foreach( $tab_names as $currenttab => $label ) {
+    foreach( $tab_names as $currenttab => $label ) { // $label unused here
         $tmp = $content_obj->GetTabMessage($currenttab);
         if( $tmp ) $tab_message_array[$currenttab] = $tmp;
 
@@ -314,7 +315,7 @@ try {
                 $dflt = $content_obj->DefaultContent();
                 natcasesort($typeclasses);
                 $choices = [];
-                foreach( $typeclasses as $classname => $label ) {
+                foreach( $typeclasses as $classname => $publicname ) {
                     if( $dflt ) {
                         $obj = new $classname();
                         $opt = $obj && $obj->IsDefaultPossible();
@@ -323,7 +324,7 @@ try {
                         $opt = true;
                     }
                     if( $opt ) {
-                        $choices[strtolower($classname)] = $label;//NOTE conform this if relation between class and type ever changes
+                        $choices[strtolower($classname)] = $publicname;//NOTE conform key if relation between classname and type ever changes
                     }
                 }
                 if( count($choices) > 1 ) {
@@ -334,11 +335,11 @@ try {
             }
             if( $tmp2 == '' ) {
                 $help = cms_admin_utils::get_help_tag(array('key'=>'help_content_type','title'=>$this->Lang('help_title_content_type')));
-                foreach( $typeclasses as $classname => $label ) {
-                    if( $content_type == strtolower($classname) ) break;//NOTE conform this if relation between class and type ever changes
+                foreach( $typeclasses as $classname => $publicname ) {
+                    if( $content_type == strtolower($classname) ) break;//NOTE conform this if relation between classname and type ever changes
                 }
                 $tmp = array('<label for="content_type">*'.$this->Lang('prompt_editpage_contenttype').':</label>&nbsp;'.$help,
-                "<p id=\"content_type\" class=\"pageinput\">$label</p><input type=\"hidden\" name=\"{$id}content_type\" value=\"$content_type\">");
+                "<p id=\"content_type\" class=\"pageinput\">$publicname</p><input type=\"hidden\" name=\"{$id}content_type\" value=\"$content_type\">");
             }
             if( $contentarray ) {
                 array_unshift($contentarray, $tmp);
