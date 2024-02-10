@@ -325,6 +325,14 @@ abstract class ContentBase
 	 */
 	private $_editable_properties;
 
+	/**
+	 * Hierarchy property of the former parent of a re-parented item
+	 * String
+	 *
+	 * @internal
+	 */
+	private $_fromparent_hier = '';
+
 	/************************************************************************/
 	/* Construction related													*/
 	/************************************************************************/
@@ -1482,6 +1490,9 @@ abstract class ContentBase
 			$contentops = ContentOperations::get_instance();
 			$contentops->SetContentModified();
 			$contentops->SetAllHierarchyPositions($tophier);
+			if( $this->_fromparent_hier ) {
+				$contentops->SetAllHierarchyPositions($this->_fromparent_hier);
+			}
 			HookManager::do_hook('Core::ContentEditPost', [ 'content' => &$this ]);
 		}
 		else {
@@ -1969,7 +1980,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		}
 
 		// go through the list of base parameters
-		// setting them from params
+		// setting them from $params
 
 		// title
 		if (isset($params['title'])) $this->mName = strip_tags($params['title']);
@@ -1981,9 +1992,18 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		if( isset($params['parent_id']) ) {
 			if( $params['parent_id'] == -2 && !$editing ) $params['parent_id'] = -1;
 			if ($this->mParentId != $params['parent_id']) {
-				$this->mParentId = (int) $params['parent_id'];
-				$this->mHierarchy = '';
+				$gCms = CmsApp::get_instance();
+				$db = $gCms->GetDb();
+				$query = 'SELECT hierarchy FROM '.CMS_DB_PREFIX.'content WHERE content_id = ?';
+				$this->_fromparent_hier = $db->GetOne($query,[$this->mParentId]);
+				$query = 'UPDATE '.CMS_DB_PREFIX.'content SET item_order = item_order-1 WHERE parent_id = ? AND item_order > ?';
+				$db->Execute($query,[$this->mParentId,$this->mItemOrder]);
+				$this->mParentId = (int)$params['parent_id'];
 				$this->mItemOrder = -1;
+				$this->mHierarchy = '';
+				$this->mIdHierarchy = '';
+				$this->mHierarchyPath = '';
+				//TODO arrange for refreshing only the hierarchy-data below both old parentId and new parentId
 			}
 		}
 
@@ -2008,14 +2028,18 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		// alias field can exist if the user has manage all content... OR alias is a basic property
 		// and this user has other edit rights to the content page.
 		// empty value on the alias field means we need to generate a new alias
-		$new_alias = '';
-		$alias_field_exists = isset( $params['alias'] );
-		if( $alias_field_exists ) {
+		if( isset($params['alias']) ) {
+			$old_alias = $this->mAlias;
 			$new_alias = trim(strip_tags($params['alias'])); //TODO also scrub entities
-		}
-		// if we are adding or we have a new alias, set alias to the field value, or calculate one, adjust as needed
-		if( !$editing || $new_alias || $alias_field_exists ) {
 			$this->SetAlias($new_alias);
+			if( $old_alias != $this->mAlias ) {
+				//TODO arrange to update only the idhierarchy values below $mId
+			}
+		}
+		elseif( !$editing ) {
+			// if we are adding or we have a new alias
+			$this->SetAlias('');
+			//adding will update all idhierarchy values below parent of this
 		}
 
 		// target
