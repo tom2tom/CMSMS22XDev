@@ -3,7 +3,7 @@ Here be no dragons. Merely an effective, good-looking, bugfixed, extensively-tes
 
 Suitable for PHP's 7.1 to 8.3.
 
-Once destined to become a CMSMS 2.2 micro-release.
+Formerly destined to become a CMSMS 2.2 micro-release.
 
 The one that got away. Anyone interested, put a line in the water and reel this one in.
 
