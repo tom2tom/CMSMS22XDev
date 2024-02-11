@@ -18,7 +18,7 @@ build_release.ini
 create_manifest.ini
 create_manifest.ini.bak
 assets/resources/
-phar_installer/out/
+#phar_installer/out/
 phar_installer/assets/install/uploadfiles/
 #non-en translations
 **/lang/ext
