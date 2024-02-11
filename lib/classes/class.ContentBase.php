@@ -1995,15 +1995,9 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				$gCms = CmsApp::get_instance();
 				$db = $gCms->GetDb();
 				$query = 'SELECT hierarchy FROM '.CMS_DB_PREFIX.'content WHERE content_id = ?';
-				$this->_fromparent_hier = $db->GetOne($query,[$this->mParentId]);
-				$query = 'UPDATE '.CMS_DB_PREFIX.'content SET item_order = item_order-1 WHERE parent_id = ? AND item_order > ?';
-				$db->Execute($query,[$this->mParentId,$this->mItemOrder]);
+				$this->_fromparent_hier = (string)$db->GetOne($query,[$this->mParentId]);
 				$this->mParentId = (int)$params['parent_id'];
-				$this->mItemOrder = -1;
-				$this->mHierarchy = '';
-				$this->mIdHierarchy = '';
-				$this->mHierarchyPath = '';
-				//TODO arrange for refreshing only the hierarchy-data below both old parentId and new parentId
+				$this->mItemOrder = -1; // last position
 			}
 		}
 
