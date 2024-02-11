@@ -1989,15 +1989,12 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		if (isset($params['menutext'])) $this->mMenuText = strip_tags(trim($params['menutext']));
 
 		// parent id
-		if( isset($params['parent_id']) ) {
-			if( $params['parent_id'] == -2 && !$editing ) $params['parent_id'] = -1;
+		if (isset($params['parent_id'])) {
+			if ($params['parent_id'] == -2 && !$editing) $params['parent_id'] = -1;
 			if ($this->mParentId != $params['parent_id']) {
-				$gCms = CmsApp::get_instance();
-				$db = $gCms->GetDb();
-				$query = 'SELECT hierarchy FROM '.CMS_DB_PREFIX.'content WHERE content_id = ?';
-				$this->_fromparent_hier = (string)$db->GetOne($query,[$this->mParentId]);
+				$this->_fromparent_hier = $this->ParentHierarchy(); // for 2-part hierarchy refresh
 				$this->mParentId = (int)$params['parent_id'];
-				$this->mItemOrder = -1; // last position
+				$this->mItemOrder = -1; // last position in new parent
 			}
 		}
 
@@ -2026,9 +2023,9 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			$old_alias = $this->mAlias;
 			$new_alias = trim(strip_tags($params['alias'])); //TODO also scrub entities
 			$this->SetAlias($new_alias);
-			if( $old_alias != $this->mAlias ) {
-				//TODO arrange to update only the idhierarchy values below $mId
-			}
+//			if( $old_alias != $this->mAlias ) {
+//TODO arrange to update only the idhierarchy values below $mId
+//			}
 		}
 		elseif( !$editing ) {
 			// if we are adding or we have a new alias
