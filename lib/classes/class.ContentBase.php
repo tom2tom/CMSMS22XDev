@@ -331,7 +331,7 @@ abstract class ContentBase
 	 *
 	 * @internal
 	 */
-	private $_fromparent_hier = '';
+	private $_otherparent_hier = '';
 
 	/************************************************************************/
 	/* Construction related													*/
@@ -1490,8 +1490,10 @@ abstract class ContentBase
 			$contentops = ContentOperations::get_instance();
 			$contentops->SetContentModified();
 			$contentops->SetAllHierarchyPositions($tophier);
-			if( $this->_fromparent_hier ) {
-				$contentops->SetAllHierarchyPositions($this->_fromparent_hier);
+			if( $this->_otherparent_hier ) {
+				if( $tophier !== '' && 1 ) { //TODO avoid repeated coverage
+					$contentops->SetAllHierarchyPositions($this->_otherparent_hier);
+				}
 			}
 			HookManager::do_hook('Core::ContentEditPost', [ 'content' => &$this ]);
 		}
@@ -1992,7 +1994,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		if (isset($params['parent_id'])) {
 			if ($params['parent_id'] == -2 && !$editing) $params['parent_id'] = -1;
 			if ($this->mParentId != $params['parent_id']) {
-				$this->_fromparent_hier = $this->ParentHierarchy(); // for 2-part hierarchy refresh
+				$this->_otherparent_hier = $this->ParentHierarchy(); // for 2-part hierarchy refresh
 				$this->mParentId = (int)$params['parent_id'];
 				$this->mItemOrder = -1; // last position in new parent
 			}
