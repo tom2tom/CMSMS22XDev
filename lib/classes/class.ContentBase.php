@@ -2022,7 +2022,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		// and this user has other edit rights to the content page.
 		// empty value on the alias field means we need to generate a new alias
 		if( isset($params['alias']) ) {
-			$old_alias = $this->mAlias;
+//			$old_alias = $this->mAlias;
 			$new_alias = trim(strip_tags($params['alias'])); //TODO also scrub entities
 			$this->SetAlias($new_alias);
 //			if( $old_alias != $this->mAlias ) {
@@ -2030,7 +2030,6 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 //			}
 		}
 		elseif( !$editing ) {
-			// if we are adding or we have a new alias
 			$this->SetAlias('');
 			//adding will update all idhierarchy values below parent of this
 		}
