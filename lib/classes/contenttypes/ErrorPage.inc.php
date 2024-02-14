@@ -25,7 +25,7 @@
  */
 class ErrorPage extends Content
 {
-    public $error_types = [];
+    public $error_types;
 
     public function __construct()
     {
@@ -51,6 +51,7 @@ class ErrorPage extends Content
         $this->RemoveProperty('showinmenu',false);
         $this->RemoveProperty('menutext','');
         $this->RemoveProperty('target','');
+        $this->RemoveProperty('disable_wysiwyg',true);
         $this->RemoveProperty('extra1','');
         $this->RemoveProperty('extra2','');
         $this->RemoveProperty('extra3','');
@@ -64,6 +65,7 @@ class ErrorPage extends Content
         $this->RemoveProperty('secure',false);
 //      $this->RemoveProperty('searchable',false);
         $this->RemoveProperty('page_url','');
+        $this->RemoveProperty('wantschildren',false);
         $this->RemoveProperty('alias',''); //change priority (to last position)
         $this->AddProperty('alias',20,parent::TAB_OPTIONS,true);
     }
