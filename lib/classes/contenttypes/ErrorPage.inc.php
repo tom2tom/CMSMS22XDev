@@ -21,29 +21,17 @@
  * Main class for CMS Made Simple ErrorPage content type
  *
  * @package CMS
- * @version $Revision$
  * @license GPL
  */
 class ErrorPage extends Content
 {
     public $error_types = [];
-    public $doAliasCheck; //unused property
-    public $doAutoAliasIfEnabled; //unused property
-    public $mType; //property normally runtime generated for read & not written
-    public $mPreview; //unused property
 
     public function __construct()
     {
         parent::__construct();
-
-        global $CMS_ADMIN_PAGE;
-        if( isset($CMS_ADMIN_PAGE) ) {
-            $this->error_types = array('404'=>lang('404description'),
-                                       '403'=>lang('403description'));
-        }
-        $this->doAliasCheck = false;
-        $this->doAutoAliasIfEnabled = false;
-        $this->mType = strtolower(get_class($this)); //WHAAATT?
+        $this->error_types = array('404'=>lang('404description'),
+                                   '403'=>lang('403description'));
     }
 
     public function HandlesAlias()
@@ -78,9 +66,6 @@ class ErrorPage extends Content
         $this->RemoveProperty('page_url','');
         $this->RemoveProperty('alias',''); //change priority (to last position)
         $this->AddProperty('alias',20,parent::TAB_OPTIONS,true);
-
-        //Turn on preview TODO relevance? unused property ?
-        $this->mPreview = true;
     }
 
     public function HasUsableLink()
@@ -110,7 +95,7 @@ class ErrorPage extends Content
         $this->mShowInMenu = false;
         $this->mCachable = false;
         $this->mActive = true;
-        //TODO others e.g. $mDefaultContent ?
+        //TODO others e.g. $mDefaultContent false ?
     }
 
     public function display_single_element($one,$adding)
@@ -128,7 +113,7 @@ class ErrorPage extends Content
                 }
                 $dropdownopts .= ">{$name} ({$code})</option>";
             }
-            return array(lang('error_type').':', '<select name="alias">'.$dropdownopts.'</select>');
+            return array('*'.lang('error_type').' ('.lang('alias').'}:', '<select name="alias">'.$dropdownopts.'</select>');
             break;
 
         default:
@@ -148,7 +133,7 @@ class ErrorPage extends Content
         {
             $errors[] = lang('nofieldgiven', array(lang('error_type')));
         }
-        else if (in_array($this->mAlias, $this->error_types))
+        else if (in_array($this->mAlias, $this->error_types)) //TODO can never succeed
         {
             $errors[] = lang('nofieldgiven', array(lang('error_type')));
         }
@@ -173,6 +158,4 @@ class ErrorPage extends Content
         return $errors;
     }
 }
-
-# vim:ts=4 sw=4 noet
 ?>
