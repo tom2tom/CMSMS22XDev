@@ -73,6 +73,7 @@ $lang['allow_browser_cache'] = "Allow Browser to Cache Pages";
 $lang['allpagesmodified'] = "All pages modified!";
 $lang['all_groups'] = "All Groups";
 $lang['always'] = "Always";
+$lang['anonymous'] = 'Anonymous';
 $lang['applied'] = 'Applied';
 $lang['apply'] = "Apply";
 $lang['applydescription'] = "Save changes and continue to edit";
