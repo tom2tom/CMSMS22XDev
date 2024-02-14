@@ -47,38 +47,38 @@ try {
     case 'userpages':
         $tmplist = $contentops->GetPageAccessForUser($ruid);
         if( count($tmplist) ) {
-            $display = $pagelist = [];
+            $out = $pagelist = [];
             foreach( $tmplist as $item ) {
-                // get all the parents
+                // get all ancestors
                 $parents = [];
                 $startnode = $node = $contentops->quickfind_node_by_id($item);
                 while( $node && $node->get_tag('id') > 0 ) {
                     $content = $node->getContent(FALSE);
                     $rec = $content->ToData();
                     $rec['can_edit'] = $can_edit_any || $contentops->CheckPageAuthorship($ruid,$content->Id());
-                    $rec['display'] = strip_tags($rec['menu_text']);
-                    if( $display == 'title' ) $rec['display'] = strip_tags($rec['content_name']);
+                    $val = ( $display == 'title' ) ? $rec['content_name'] : $rec['menu_text'];
+                    $rec['display'] = ( $val ) ? strip_tags($val) : lang('anonymous');
                     $rec['has_children'] = $node->has_children();
                     $parents[] = $rec;
                     $node = $node->get_parent();
                 }
                 // start at root
-                // push items from list on the stack if they are root, or the previous item is in the opened array.
+                // push items from list onto the stack if they are root, or the previous item is in the opened array.
                 $parents = array_reverse($parents);
                 for( $i = 0; $i < count($parents); $i++ ) {
                     $content_id = $parents[$i]['content_id'];
                     if( !in_array($content_id,$pagelist) ) {
                         $pagelist[] = $content_id;
-                        $display[] = $parents[$i];
+                        $out[] = $parents[$i];
                     }
                 }
                 unset($parents);
             }
-            usort($display,function($a,$b) {
+            if( count($out) > 1 ) {
+                usort($out,function($a,$b) {
                     return strcmp($a['hierarchy'],$b['hierarchy']);
                 });
-            $out = $display;
-            unset($display);
+            }
         }
         break;
 
@@ -88,7 +88,7 @@ try {
         if( !isset($_REQUEST['page']) ) throw new Exception('missingparams');
 
         $children_to_data = function($node) use ($display,$allow_all,$for_child,$ruid,$contentops,$can_edit_any,$allowcurrent,$current) {
-            $children = $node->getChildren(false,$allow_all);
+            $children = $node->getChildren(FALSE,$allow_all);
             if( empty($children) ) return [];
 
             $child_info = [];
@@ -100,8 +100,8 @@ try {
                 if( !$allowcurrent && $current == $content->Id() ) continue;
                 $rec = $content->ToData();
                 $rec['can_edit'] = $can_edit_any || $contentops->CheckPageAuthorship($ruid,$content->Id());
-                $rec['display'] = strip_tags($rec['menu_text']);
-                if( $display == 'title' ) $rec['display'] = strip_tags($rec['content_name']);
+                $val = ( $display == 'title' ) ? $rec['content_name'] : $rec['menu_text'];
+                $rec['display'] = ( $val ) ? strip_tags($val) : lang('anonymous');
                 $rec['has_children'] = $child->has_children();
                 $child_info[] = $rec;
             }
@@ -147,8 +147,8 @@ try {
                         if( !$allow_all && !$content->Active() ) continue;
                         $rec = $content->ToData();
                         $rec['can_edit'] = check_permission($ruid,'Manage All Content') || $contentops->CheckPageAuthorship($ruid,$content->Id());
-                        $rec['display'] = strip_tags($rec['menu_text']);
-                        if( $display == 'title' ) $rec['display'] = strip_tags($rec['content_name']);
+                        $val = ( $display == 'title' ) ? $rec['content_name'] : $rec['menu_text'];
+                        $rec['display'] = ( $val ) ? strip_tags($val) : lang('anonymous');
                         $out[] = $rec;
                     }
                 }
@@ -163,14 +163,14 @@ try {
         else {
             $page = (int)$_REQUEST['page']; // value < 1 treated as default page
             // get the page info
-            $contentobj = $contentops->LoadContentFromId($page);
-            if( !is_object($contentobj) ) {
+            $content = $contentops->LoadContentFromId($page);
+            if( !is_object($content) ) {
                 $error = 'errorgettingcontent';
             }
             else {
-                $out = $contentobj->ToData();
-                if( $display == 'title' ) { $out['display'] = $out['content_name']; }
-                else { $out['display'] = $out['menu_text']; } //too bad if empty!
+                $out = $content->ToData();
+                $val = ( $display == 'title' ) ? $out['content_name'] : $out['menu_text'];
+                $out['display'] = ( $val ) ? strip_tags($val) : lang('anonymous');
             }
         }
         break;
@@ -197,18 +197,19 @@ try {
                 // get the parent
                 $parent_node = $node->get_parent();
 
-                // and get it's children
+                // and get its children
                 $out[$one] = [];
                 $children = $parent_node->getChildren(FALSE,$allow_all);
                 for( $i = 0, $n = count($children); $i < $n; $i++ ) {
-                    $content_obj = $children[$i]->getContent(FALSE);
-                    if( ! $content_obj->IsViewable() ) continue;
+                    $content = $children[$i]->getContent(FALSE);
+                    if( !$content->IsViewable() ) continue;
                     $rec = [];
-                    $rec['content_id'] = $content_obj->Id();
-                    $rec['id_hierarchy'] = $content_obj->IdHierarchy();
-                    $rec['wants_children'] = $content_obj->WantsChildren();
+                    $rec['content_id'] = $content->Id();
+                    $rec['id_hierarchy'] = $content->IdHierarchy();
+                    $rec['wants_children'] = $content->WantsChildren();
                     $rec['has_children'] = $children[$i]->has_children();
-                    $rec['display'] = ($display == 'title') ? $content_obj->Name() : $content_obj->MenuText(); //too bad if empty!
+                    $val = ( $display == 'title' ) ? $content->Name() : $content->MenuText();
+                    $rec['display'] = ( $val ) ? strip_tags($val) : lang('anonymous');
                     $out[$one][] = $rec;
                 }
             }
