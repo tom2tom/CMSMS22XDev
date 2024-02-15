@@ -17,19 +17,18 @@
 #
 #$Id$
 
-$CMS_ADMIN_PAGE=1;
+$CMS_ADMIN_PAGE = 1;
 require_once("../lib/include.php");
 
 $op = 'pageinfo';
-if( isset($_REQUEST['op']) ) $op = trim($_REQUEST['op']);
+if( isset($_GET['op']) ) $op = trim($_GET['op']);
 $gCms = CmsApp::get_instance();
 $hm = $gCms->GetHierarchyManager();
 $contentops = $gCms->GetContentOperations();
-$allow_all = 1; //until 2.2.18, this always applied
-if( isset($_REQUEST['allow_all']) && !cms_to_bool($_REQUEST['allow_all']) ) $allow_all = 0;
-$for_child = (isset($_REQUEST['for_child']) && cms_to_bool($_REQUEST['for_child'])) ? 1 : 0;
-$allowcurrent = (isset($_REQUEST['allowcurrent']) && cms_to_bool($_REQUEST['allowcurrent'])) ? 1 : 0;
-$current = (isset($_REQUEST['current']) ) ? (int)$_REQUEST['current'] : 0;
+//in many contexts across the core where a hierselector is initiated,
+//$allow_all is set FALSE
+$allow_all = TRUE; //in 2.2 to 2.2.18 this always applied, probably a bug
+if( isset($_GET['allow_all']) && !cms_to_bool($_GET['allow_all']) ) $allow_all = FALSE;
 
 $display = 'title';
 $mod = cms_utils::get_module('CMSContentManager');
@@ -37,17 +36,16 @@ if( $mod ) $display = CmsContentManagerUtils::get_pagenav_display();
 
 $ruid = get_userid(FALSE);
 try {
-    if( $ruid < 1 ) throw new Exception('permissiondenied'); // should throw a 403
+    if( $ruid < 1 ) throw new CmsError403Exception('permissiondenied');
     $can_edit_any = check_permission($ruid,'Manage All Content') || check_permission($ruid,'Modify Any Page');
 
     $out = [];
-    $error = '';
     switch( $op ) {
-    case 'userlist':
+//  case 'userlist': unused in cmsms.hierselector
     case 'userpages':
         $tmplist = $contentops->GetPageAccessForUser($ruid);
-        if( count($tmplist) ) {
-            $out = $pagelist = [];
+        if( $tmplist ) {
+            $pagelist = [];
             foreach( $tmplist as $item ) {
                 // get all ancestors
                 $parents = [];
@@ -63,8 +61,8 @@ try {
                     $node = $node->get_parent();
                 }
                 // start at root
-                // push items from list onto the stack if they are root, or the previous item is in the opened array.
                 $parents = array_reverse($parents);
+                // push items from list onto the stack if they are root, or the previous item is in the opened array.
                 for( $i = 0; $i < count($parents); $i++ ) {
                     $content_id = $parents[$i]['content_id'];
                     if( !in_array($content_id,$pagelist) ) {
@@ -83,21 +81,25 @@ try {
         break;
 
     case 'here_up':
-        // given a page id, get all info for all ancestors, and their peers.
-        // as well as the info for the page's current children.
-        if( !isset($_REQUEST['page']) ) throw new Exception('missingparams');
+        // given a page id, get all info for it, its peers, and all
+        // ancestors and their peers.
+        if( !isset($_GET['page']) ) throw new CmsException('missingparams');
+//      $for_child = isset($_GET['for_child']) && cms_to_bool($_GET['for_child']); // unused in func here
+        $allowcurrent = isset($_GET['allowcurrent']) && cms_to_bool($_GET['allowcurrent']);
+        $current = ( isset($_GET['current']) ) ? (int)$_GET['current'] : 0;
 
-        $children_to_data = function($node) use ($display,$allow_all,$for_child,$ruid,$contentops,$can_edit_any,$allowcurrent,$current) {
+        $children_to_data = function($node) use ($display,$allow_all,/*$for_child,*/$ruid,$contentops,$can_edit_any,$allowcurrent,$current) {
             $children = $node->getChildren(FALSE,$allow_all);
-            if( empty($children) ) return [];
+            if( !$children ) return [];
 
             $child_info = [];
             foreach( $children as $child ) {
                 $content = $child->getContent(FALSE);
                 if( !is_object($content) ) continue;
-                if( !$allow_all && !$content->Active() ) continue;
-                if( !$allow_all && !$content->HasUsableLink() ) continue;
                 if( !$allowcurrent && $current == $content->Id() ) continue;
+                if( !($allow_all || $content->Active() || $content->HasUsableLink()) ) { //TODO always ignore non-navigable pages ?
+                    continue;
+                }
                 $rec = $content->ToData();
                 $rec['can_edit'] = $can_edit_any || $contentops->CheckPageAuthorship($ruid,$content->Id());
                 $val = ( $display == 'title' ) ? $rec['content_name'] : $rec['menu_text'];
@@ -108,45 +110,45 @@ try {
             return $child_info;
         };
 
-        $out = [];
-        $page = (int)$_REQUEST['page'];
+        $page = (int)$_GET['page'];
         if( $page < 1 ) $page = -1;
 
         if( $page == -1 ) {
-            $node = $hm; // root
+            $node = $hm; // TODO process -1 as tree-root, or default page c.f. pageinfo op?
         } else {
             $node = $contentops->quickfind_node_by_id($page);
         }
         do {
-            $out[] = $children_to_data($node); // get children of current page.
+            $out[] = $children_to_data($node); // populate child-data of this node
             $node = $node->get_parent();
         } while( $node );
         $out = array_reverse($out);
         break;
 
-    case 'childrenof':
-        if( !isset($_REQUEST['page']) ) {
-            $error = 'missingparams';
+/*  case 'childrenof': // unused in cmsms.hierselector
+        if( !isset($_GET['page']) ) {
+            throw new CmsException('missingparams');
         }
         else {
-            $page = (int)$_REQUEST['page'];
+            $page = (int)$_GET['page'];
             if( $page < 1 ) $page = -1;
             if( $page == -1 ) {
-                $node = $hm;
+                $node = $hm; // TODO process -1 as tree-root, or default page c.f. pageinfo op?
             }
             else {
                 $node = $contentops->quickfind_node_by_id($page);
             }
             if( $node ) {
                 $children = $node->getChildren(FALSE,$allow_all);
-                if( is_array($children) && count($children) ) {
-                    $out = array();
+                if( $children && is_array($children) ) {
                     foreach( $children as $child ) {
                         $content = $child->getContent(FALSE);
                         if( !is_object($content) ) continue;
-                        if( !$allow_all && !$content->Active() ) continue;
+                        if( !($allow_all || $content->Active() || $content->HasUsableLink()) ) { TODO always ignore non-navigable pages ?
+                            continue;
+                        }
                         $rec = $content->ToData();
-                        $rec['can_edit'] = check_permission($ruid,'Manage All Content') || $contentops->CheckPageAuthorship($ruid,$content->Id());
+                        $rec['can_edit'] = $can_edit_any || $contentops->CheckPageAuthorship($ruid,$content->Id());
                         $val = ( $display == 'title' ) ? $rec['content_name'] : $rec['menu_text'];
                         $rec['display'] = ( $val ) ? strip_tags($val) : lang('anonymous');
                         $out[] = $rec;
@@ -155,17 +157,17 @@ try {
             }
         }
         break;
-
+*/
     case 'pageinfo':
-        if( !isset($_REQUEST['page']) ) {
-            $error = 'missingparams';
+        if( !isset($_GET['page']) ) {
+            throw new CmsException('missingparams');
         }
         else {
-            $page = (int)$_REQUEST['page']; // value < 1 treated as default page
+            $page = (int)$_GET['page']; // value < 1 treated as default page
             // get the page info
             $content = $contentops->LoadContentFromId($page);
             if( !is_object($content) ) {
-                $error = 'errorgettingcontent';
+                throw new CmsException('errorgettingcontent');
             }
             else {
                 $out = $content->ToData();
@@ -175,21 +177,20 @@ try {
         }
         break;
 
-    case 'pagepeers':
-        if( !isset($_REQUEST['pages']) || !is_array($_REQUEST['pages']) ) {
-            $error = 'missingparams';
+/*  case 'pagepeers': // unused in cmsms.hierselector
+        if( !isset($_GET['pages']) || !is_array($_GET['pages']) ) { // never set in cmsms.hierselector
+            throw new CmsException('missingparams');
         }
         else {
             // clean up the data a bit
             $tmp = array();
-            foreach( $_REQUEST['pages'] as $one ) {
+            foreach( $_GET['pages'] as $one ) {
                 $one = (int)$one;
-                // discard negative values
+                // ignore negative values (clone in-the-making?)
                 if( $one > 0 ) $tmp[] = $one;
             }
             $peers = array_unique($tmp);
 
-            $out = [];
             foreach( $peers as $one ) {
                 $node = $hm->find_by_tag('id',$one);
                 if( !$node ) continue;
@@ -215,27 +216,20 @@ try {
             }
         }
         break;
-
+*/
     default:
-        throw new Exception('missingparam');
+        throw new CmsException('missingparam');
     }
 }
 catch( Exception $e ) {
-    $error = $e->GetMessage();
+    $out = array('status'=>'error','message'=>$e->GetMessage());
+    $error = TRUE;
 }
 
-if( $error ) {
-    $out = array('status'=>'error','message'=>lang($error));
-}
-else {
+if( empty($error) ) {
     $out = array('status'=>'success','op'=>$op,'data'=>$out);
 }
 
-header('Pragma: public');
-header('Expires: 0');
-header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-header('Cache-Control: private',false);
-header('Content-Type: application/json');
 echo json_encode($out);
 exit;
 
