@@ -71,10 +71,8 @@
                 </p>
 	</div>
 	<div class="pageoverflow">
-		<p class="pagetext"><label for="fld10">{$title_fesubmit_redirect}:</label> {cms_help key='help_fesubmit_redirect' title=$title_fesubmit_redirect}</p>
-		<p class="pageinput">
-                   <input type="text" id="fld10" name="{$actionid}fesubmit_redirect" value="{$fesubmit_redirect}" size="20" maxlength="20">
-                </p>
+		<p class="pagetext">{$title_fesubmit_redirect}: {cms_help key='help_fesubmit_redirect' title=$title_fesubmit_redirect}</p>
+		<p class="pageinput">{$input_fesubmit_redirect}</p>
 	</div>
 
   <fieldset>
@@ -107,7 +105,7 @@
 <legend>{$title_detail_settings}:</legend>
 	<div class="pageoverflow">
 		<p class="pagetext">{$title_detail_returnid}: {cms_help key='info_detail_returnid' title=$title_detail_returnid}</p>
-		<p class="pageinput">{$input_detail_returnid}
+		<p class="pageinput">{$input_detail_returnid}</p>
 	</div>
 	<div class="pageoverflow">
 		<p class="pagetext"><label for="fld12">{$title_expired_searchable}:</label> {cms_help key='info_expired_searchable' title=$title_expired_searchable}</p>

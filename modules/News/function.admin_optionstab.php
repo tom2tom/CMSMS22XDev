@@ -58,24 +58,11 @@ $smarty->assign('fesubmit_status',$this->GetPreference('fesubmit_status'));
 $smarty->assign('input_fesubmit_status',
 		$this->CreateInputDropdown($id,'fesubmit_status',$statusdropdown,-1,$this->GetPreference('fesubmit_status','draft')));
 
-$smarty->assign('title_fesubmit_redirect',$this->Lang('fesubmit_redirect'));
-$smarty->assign('fesubmit_redirect',$this->GetPreference('fesubmit_redirect'));
-/* TODO page selector
-$val = $this->GetPreference('fesubmit_redirect',-1);
-if( !is_numeric($val) ) {
-	$manager = $gCms->GetHierarchyManager();
-	$node = $manager->sureGetNodeByAlias($val);
-	if( isset($node) ) {
-		$val = $node->getID();
-	}
-	else {
-		throw new XTODO();
-	}
-}
-$smarty->assign('input_fesubmit_redirect',
-		$contentops->CreateHierarchyDropdown(0,$val,$id.'fesubmit_redirect',true));
-*/
 $contentops = $gCms->GetContentOperations();
+$smarty->assign('title_fesubmit_redirect',$this->Lang('fesubmit_redirect'));
+$smarty->assign('input_fesubmit_redirect',
+		$contentops->CreateHierarchyDropdown(0,$this->GetPreference('fesubmit_redirect',-1),$id.'fesubmit_redirect',true));
+
 $smarty->assign('title_detail_returnid',$this->Lang('title_detail_returnid'));
 $smarty->assign('input_detail_returnid',
 		$contentops->CreateHierarchyDropdown(0,$this->GetPreference('detail_returnid',-1),$id.'detail_returnid',true));
