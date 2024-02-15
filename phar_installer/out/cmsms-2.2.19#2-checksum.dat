@@ -464,7 +464,7 @@ b94eb1589e3ceb609484a1e79588680f --::-- /modules/News/doc/tpltype_form.inc
 54da2b7067641f88ce391402988505be --::-- /modules/News/action.default.php
 12499793b780bb54098e0e19fc6a9c81 --::-- /modules/News/function.admin_categoriestab.php
 8a8043174df2337aad58ee7bc4244f83 --::-- /modules/News/action.admin_settings.php
-3380bbcf3584fb0a669d0dac6b3b6c58 --::-- /modules/News/function.admin_optionstab.php
+971396d961db40d5d70079308141c245 --::-- /modules/News/function.admin_optionstab.php
 85e08208091bd52fa29319f11ffa4ebf --::-- /modules/News/action.detail.php
 13c90b1dc2a6ba087dc7687f0d13b82a --::-- /modules/News/action.editarticle.php
 b3467122df3a625cc0062caf8aca130b --::-- /modules/CmsJobManager/method.uninstall.php
@@ -1180,7 +1180,7 @@ ef5d44564b8ab3924ace295360b244a8 --::-- /admin/edituser.php
 46a78e8ac4e27e7649f3d74c9e37e69b --::-- /admin/deletebookmark.php
 88c93504295bf2f6cac765de3d3f8f88 --::-- /admin/listgroups.php
 eddd2ab1e44b87411027bcc209790868 --::-- /admin/deleteuserplugin.php
-3574775789496a99926f33d31336ea2f --::-- /admin/ajax_content.php
+f4dc37b21e188de51dc4ea778f7754bf --::-- /admin/ajax_content.php
 2f659579545712f4d9e6b1d467c2867e --::-- /admin/listbookmarks.php
 aaf034cfb505cad6c621b2dc7c3efce0 --::-- /admin/footer.php
 8da6dec7eba4dd8a8aee3772d793d589 --::-- /admin/templates/siteprefs.tpl
@@ -2123,7 +2123,7 @@ a63097dabcd738ecfebe3c43cfe063cb --::-- /doc/htaccess.txt
 7d4a0a60a3ca21afb394cec0717895b4 --::-- /doc/robots.txt
 a34217afe6bc02700c499a799e9f2770 --::-- /doc/COPYING.txt
 8a46ac9fa0ea5f14ec02b2eedeb5986f --::-- /doc/README.txt
-126789e7425496fb3dd050c165ccd244 --::-- /doc/CHANGELOG.txt
+e1d5cd07ae90268ea6e6b1bcbee00f3b --::-- /doc/CHANGELOG.txt
 8b68ae2b57e1a989255912f233722bba --::-- /doc/.htaccess
 134529b44bbf77334622c05ea9110022 --::-- /doc/AUTHORS.txt
 e15e5bc3ef631fc2288d27ee769c2ffd --::-- /favicon_cms.ico
