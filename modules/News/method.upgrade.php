@@ -171,4 +171,19 @@ if( version_compare($oldversion,'2.50.8') < 0 ) {
     }
 }
 
+if( version_compare($oldversion,'2.51.13') < 0 ) {
+    // migrate 'fesubmit_redirect' preference from page alias to page id,
+    // to allow use of a hierarcy-selector for setting that pref.
+    $mgr = $gCms->GetHierarchyManager();
+    $val = $this->GetPreference('fesubmit_redirect',-1);
+    $node = $mgr->sureGetNodeByAlias($val);
+    if( $node ) {
+        $val = $node->getID();
+        $this->SetPreference('fesubmit_redirect',$val);
+    }
+    elseif( $val != -1 ) {
+        $this->RemovePreference('fesubmit_redirect');
+    }
+}
+
 ?>
