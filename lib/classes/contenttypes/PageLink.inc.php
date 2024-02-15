@@ -106,7 +106,7 @@ class PageLink extends ContentBase
 		switch($one) {
 		case 'page':
 			$contentops = ContentOperations::get_instance();
-			$tmp = $contentops->CreateHierarchyDropdown($this->mId, $this->GetPropertyValue('page'), 'page', 1, 0, 0, 0);
+			$tmp = $contentops->CreateHierarchyDropdown($this->mId, $this->GetPropertyValue('page'), 'page', true);
 			if( !empty($tmp) ) return array(lang('destination_page').':',$tmp);
 			break;
 

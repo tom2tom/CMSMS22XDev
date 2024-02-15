@@ -2583,7 +2583,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 		case 'parent':
 			$contentops = ContentOperations::get_instance();
-			$tmp = $contentops->CreateHierarchyDropdown($this->mId, $this->mParentId, 'parent_id', ($this->mId > 0) ? 0 : 1, 1, 0, 1, 1);
+			$tmp = $contentops->CreateHierarchyDropdown($this->mId, $this->mParentId, 'parent_id', $adding, true, false, true, true);
 			if( $tmp ) {
 				$help = cms_admin_utils::get_help_tag('core','help_content_parent',lang('help_title_content_parent'));
 				return array('<label for="parent_id">*'.lang('parent').':</label>&nbsp;'.$help,$tmp);

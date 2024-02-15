@@ -419,7 +419,7 @@ if ($this->CheckPermission('Approve News')) {
 }
 
 $contentops = cmsms()->GetContentOperations();
-$smarty->assign('preview_page_selector', $contentops->CreateHierarchyDropdown('', $this->GetPreference('detail_returnid', -1), $id.'previewpage'));
+$smarty->assign('preview_page_selector', $contentops->CreateHierarchyDropdown(0, $this->GetPreference('detail_returnid', -1), $id.'previewpage', TRUE));
 
 // get the list of detail templates.
 try {

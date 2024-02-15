@@ -65,8 +65,8 @@ else if (isset($params['submit'])) {
 echo $this->StartTabHeaders();
 $tab = '';
 if (!empty($params['active_tab'])) $tab = $params['active_tab'];
-echo $this->SetTabHeader('statistics',$this->Lang('statistics'),('statistics' == $tab)?true:false);
-echo $this->SetTabHeader('options',$this->Lang('options'), ('options' == $tab)?true:false);
+echo $this->SetTabHeader('statistics',$this->Lang('statistics'),('statistics' == $tab));
+echo $this->SetTabHeader('options',$this->Lang('options'), ('options' == $tab));
 echo $this->EndTabHeaders();
 
 #The content of the tabs
@@ -112,7 +112,7 @@ $contentops = $gCms->GetContentOperations();
 $smarty->assign('prompt_resultpage',$this->Lang('prompt_resultpage'));
 /*
 $smarty->assign('input_resultpage',
-                $contentops->CreateHierarchyDropdown('',$this->GetPreference('resultpage',-1),$id.'resultpage',1));
+                $contentops->CreateHierarchyDropdown(0,$this->GetPreference('resultpage',-1),$id.'resultpage',true));
 */
 
 $smarty->assign('submit',$this->CreateInputSubmit($id, 'submit', $this->Lang('submit')));

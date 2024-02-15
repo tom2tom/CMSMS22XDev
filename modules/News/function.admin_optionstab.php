@@ -64,8 +64,7 @@ $smarty->assign('fesubmit_redirect',$this->GetPreference('fesubmit_redirect'));
 $contentops = $gCms->GetContentOperations();
 $smarty->assign('title_detail_returnid',$this->Lang('title_detail_returnid'));
 $smarty->assign('input_detail_returnid',
-		$contentops->CreateHierarchyDropdown('',$this->GetPreference('detail_returnid',-1),
-						     $id.'detail_returnid'));
+		$contentops->CreateHierarchyDropdown(0,$this->GetPreference('detail_returnid',-1),$id.'detail_returnid',true));
 $smarty->assign('info_detail_returnid',$this->Lang('info_detail_returnid'));
 
 $smarty->assign('title_submission_settings',$this->Lang('title_submission_settings'));

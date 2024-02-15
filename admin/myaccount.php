@@ -255,7 +255,7 @@ $smarty->assign('hide_help_links', $hide_help_links);
 $smarty->assign('indent', $indent);
 $smarty->assign('paging', $paging);
 $smarty->assign('date_format_string', $date_format_string);
-$smarty->assign('default_parent', $contentops->CreateHierarchyDropdown(0, $default_parent, 'parent_id', 0, 1));
+$smarty->assign('default_parent', $contentops->CreateHierarchyDropdown(0, $default_parent, 'parent_id', false, true));
 $smarty->assign('homepage', $themeObject->GetAdminPageDropdown('homepage', $homepage, 'homepage'));
 $tmp = array(10 => 10, 20 => 20, 50 => 50, 100 => 100);
 $smarty->assign('pagelimit_opts', $tmp);
