@@ -24,7 +24,7 @@ class News extends CMSModule
     public function GetFriendlyName() { return $this->Lang('news'); }
     public function IsPluginModule() { return true; }
     public function HasAdmin() { return true; }
-    public function GetVersion() { return '2.51.12'; }
+    public function GetVersion() { return '2.51.13'; }
     public function MinimumCMSVersion() { return '2.1.6'; }
     public function GetAdminDescription() { return $this->Lang('description'); }
     public function GetAdminSection() { return 'content'; }
