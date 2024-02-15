@@ -6,6 +6,7 @@ Various places
  - Replaced some of the deprecated jQuery syntax.
  - Corrected html errors and inconsistencies.
  - Corrected typos.
+ - Reconciled page-hierarchy-selector parameters.
 
 Core - General
  - Corrected filter applied to $_GET, $_SERVER at the start of each request.
