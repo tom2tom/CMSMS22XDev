@@ -411,7 +411,7 @@ d188d87d93343c592d8017aad9b8a5f5 --::-- /modules/News/lang/ext/tr_TR.php
 f7c34bc5733971ea270d07cc5fba7ef4 --::-- /modules/News/lang/ext/es_ES.php
 d5286391b944032a443ab064c9f936a5 --::-- /modules/News/lang/ext/fa_IR.php
 52e50c863b29437e5d9cf24947836e4d --::-- /modules/News/lang/en_US.php
-02c5a5e4cc95f6c39f834b5482824331 --::-- /modules/News/action.addarticle.php
+c458990e429d3de3047d40eca4ed4fc4 --::-- /modules/News/action.addarticle.php
 6a783a8bc3940a4ac125b1fe129f6f8b --::-- /modules/News/action.admin_editfielddef.php
 a9b3c4583a3b5eb8a9d5fc778be95851 --::-- /modules/News/action.browsecat.php
 2d782cb1e603cca5c0673b2392a552cf --::-- /modules/News/action.defaultadmin.php
@@ -464,9 +464,9 @@ b94eb1589e3ceb609484a1e79588680f --::-- /modules/News/doc/tpltype_form.inc
 54da2b7067641f88ce391402988505be --::-- /modules/News/action.default.php
 12499793b780bb54098e0e19fc6a9c81 --::-- /modules/News/function.admin_categoriestab.php
 8a8043174df2337aad58ee7bc4244f83 --::-- /modules/News/action.admin_settings.php
-3f54d44e4b6ee71caf1461d252343312 --::-- /modules/News/function.admin_optionstab.php
+3380bbcf3584fb0a669d0dac6b3b6c58 --::-- /modules/News/function.admin_optionstab.php
 85e08208091bd52fa29319f11ffa4ebf --::-- /modules/News/action.detail.php
-8b75f130d96204ddbef64a2705563b3a --::-- /modules/News/action.editarticle.php
+13c90b1dc2a6ba087dc7687f0d13b82a --::-- /modules/News/action.editarticle.php
 b3467122df3a625cc0062caf8aca130b --::-- /modules/CmsJobManager/method.uninstall.php
 e0ddcfea3597b94f2a0164d70060148b --::-- /modules/CmsJobManager/lang/ext/nl_NL.php
 f0827b67e7ac3334978f6dfae604af43 --::-- /modules/CmsJobManager/lang/ext/ru_RU.php
@@ -939,7 +939,7 @@ dd42bfc2390d42312f0ef1dd35df9005 --::-- /modules/Search/lang/ext/cs_CZ.php
 32d5e7c2efdeed4b82acf1f7dadc5c0a --::-- /modules/Search/lang/ext/es_ES.php
 c47be64d56dab129391d7327b60c0f00 --::-- /modules/Search/lang/ext/fa_IR.php
 b17cff644948fe2107ebd857c024488f --::-- /modules/Search/lang/en_US.php
-72b56477a36ceef0d201178e41e04286 --::-- /modules/Search/action.defaultadmin.php
+b2db5dd79353f0c5032bf1413988e564 --::-- /modules/Search/action.defaultadmin.php
 603783ec26584fdce0696364ef6549a9 --::-- /modules/Search/images/icon.png
 14e4dd826aa3c4d508fa33b14c92ebd0 --::-- /modules/Search/images/icon.gif
 840056cedd295d4cd8d60be181f2b89b --::-- /modules/Search/templates/options_tab.tpl
@@ -1121,7 +1121,7 @@ db138ddf2932e45c6b01bc10be0e1c66 --::-- /modules/CMSMailer/changelog.inc
 124ecb34171fc68e8a3a5cdfcb3f8d17 --::-- /admin/changegroupperm.php
 382142dff9fb8ee972d9345aab02ad91 --::-- /admin/systemmaintenance.php
 5221bb6ceb059f7617c58e7c6e3290a8 --::-- /admin/ajax_alerts.php
-f5d95809353981dcc4941e67c226d028 --::-- /admin/systeminfo.php
+54df581a7253c3837c513a0b2421d6f2 --::-- /admin/systeminfo.php
 2d342c4de80b205803c3e364d0f51382 --::-- /admin/deleteuser.php
 3d486649e1a709accee62c852f9c3019 --::-- /admin/loginstyle.php
 cbdedf0f3594e3a925f7ca56f5e06ae9 --::-- /admin/listusers.php
@@ -1180,7 +1180,7 @@ ef5d44564b8ab3924ace295360b244a8 --::-- /admin/edituser.php
 46a78e8ac4e27e7649f3d74c9e37e69b --::-- /admin/deletebookmark.php
 88c93504295bf2f6cac765de3d3f8f88 --::-- /admin/listgroups.php
 eddd2ab1e44b87411027bcc209790868 --::-- /admin/deleteuserplugin.php
-96f95a84089c6f363bdb690967057e78 --::-- /admin/ajax_content.php
+3574775789496a99926f33d31336ea2f --::-- /admin/ajax_content.php
 2f659579545712f4d9e6b1d467c2867e --::-- /admin/listbookmarks.php
 aaf034cfb505cad6c621b2dc7c3efce0 --::-- /admin/footer.php
 8da6dec7eba4dd8a8aee3772d793d589 --::-- /admin/templates/siteprefs.tpl
@@ -1462,7 +1462,7 @@ cd937ec889121bcee9e458e886bd0001 --::-- /admin/changegroupassign.php
 d9c985566956e744f0057593a0c6ea19 --::-- /admin/editbookmark.php
 9001052e5e1ccdc0a8e9e1d490294eea --::-- /admin/listusertags.php
 b75e2b18e566bbd448841ee70ac2bba1 --::-- /admin/deletegroup.php
-de9a380306847bff4577538c6f00fd34 --::-- /admin/myaccount.php
+3ef42644aa860b8907d81681ebd66869 --::-- /admin/myaccount.php
 1b50fe088c68b3ac32af1c1d9a4dd4b9 --::-- /admin/ajax_lock.php
 2486d8c02b61fddcd60048cbc2435e2c --::-- /admin/editusertag.php
 50d19586259b7aa0654ce4e92dc1ec71 --::-- /admin/header.php
@@ -1715,7 +1715,7 @@ d6a3e86a9382e7fa4873fd9739aba616 --::-- /lib/jquery/css/smoothness/jquery-ui-cus
 5e629896f6540584d984af3f54991107 --::-- /lib/jquery/js/jquery-1.12.4.min.js
 eeb40dc6d3a7ef2e500a0e6b4848c8f1 --::-- /lib/jquery/js/jquery.ui.touch-punch.js
 6447393c8fdbe58083c2e32bb66a5561 --::-- /lib/jquery/js/jquery.mjs.nestedSortable.js
-adb01541b76d3eaba0d19fb2ff72d1be --::-- /lib/jquery/js/jquery.cmsms_hierselector.js
+e24b400f0109d92ecb3f4a4510b4aca7 --::-- /lib/jquery/js/jquery.cmsms_hierselector.js
 594ad42e2143a1b74776acd587ffdbb8 --::-- /lib/jquery/js/jquery.cmsms_autorefresh.js
 ec2d90d3403deae84ff7009ef9d79aec --::-- /lib/jquery/js/jquery.cms_admin.js
 c051ed41132f9ddb075efa0f5bb9b387 --::-- /lib/jquery/js/jquery-migrate-1.4.1.min.js
@@ -2002,7 +2002,7 @@ f5e4ebb3be35060272d756007023adf9 --::-- /lib/tasks/class.ReduceAdminlog.task.php
 e3ac3f630da75f656e692112f06ef561 --::-- /lib/tasks/class.PruneAdminlog.task.php
 ce347e745937fef2049b31054874ba01 --::-- /lib/tasks/class.ClearCache.task.php
 47672a220fa73dbd9cc9ba79100826c5 --::-- /lib/html_entity_decode_php4.php
-26647f496b5d64e72412102716bc0ff8 --::-- /lib/classes/contenttypes/PageLink.inc.php
+4ad2b9bf4fd29175c575e545643c5053 --::-- /lib/classes/contenttypes/PageLink.inc.php
 b0a1c1ba98ba541b78779d229dff3dbc --::-- /lib/classes/contenttypes/SectionHeader.inc.php
 1ea739c478e47305b540c2644cb53991 --::-- /lib/classes/contenttypes/Separator.inc.php
 e5178a92540223b38322a892f34ca858 --::-- /lib/classes/contenttypes/Content.inc.php
@@ -2087,9 +2087,9 @@ f5b2a6fb50f289a54d690c00f31fdb60 --::-- /lib/classes/Database/class.Connection.p
 6ef30a9cd1fe8e811e82acae4dfa9a6e --::-- /lib/classes/Database/class.Statement.php
 0aa9a50d5e7f17a97dd63c03688328cb --::-- /lib/classes/Database/class.ConnectionSpec.php
 5069a06e00be4ba7b814dd09d9b3378e --::-- /lib/classes/Database/class.ResultSet.php
-2f8abef1270efec5246d212a818e762f --::-- /lib/classes/class.contentoperations.inc.php
+1c1eeb5833c7d5787fad486210a3d93a --::-- /lib/classes/class.contentoperations.inc.php
 9a02af549ac1772e662ba1bf4a0ab634 --::-- /lib/classes/class.CmsLock.php
-678cfa4818dfb19a63e0fbc2a1713d85 --::-- /lib/classes/class.ContentBase.php
+d311e4660dad60ac56412b40423ec1e0 --::-- /lib/classes/class.ContentBase.php
 f5461d300a29b8928dfe9807348bcbbf --::-- /lib/classes/Async/class.CronJobInterface.php
 e011318fde49af72e62f144c2a495461 --::-- /lib/classes/Async/class.CronJobTrait.php
 864ee923820f43cde336631ac6f6ee9f --::-- /lib/classes/Async/class.RegularTask.php
