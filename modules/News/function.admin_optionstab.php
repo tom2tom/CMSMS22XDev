@@ -60,7 +60,21 @@ $smarty->assign('input_fesubmit_status',
 
 $smarty->assign('title_fesubmit_redirect',$this->Lang('fesubmit_redirect'));
 $smarty->assign('fesubmit_redirect',$this->GetPreference('fesubmit_redirect'));
-
+/* TODO page selector
+$val = $this->GetPreference('fesubmit_redirect',-1);
+if( !is_numeric($val) ) {
+	$manager = $gCms->GetHierarchyManager();
+	$node = $manager->sureGetNodeByAlias($val);
+	if( isset($node) ) {
+		$val = $node->getID();
+	}
+	else {
+		throw new XTODO();
+	}
+}
+$smarty->assign('input_fesubmit_redirect',
+		$contentops->CreateHierarchyDropdown(0,$val,$id.'fesubmit_redirect',true));
+*/
 $contentops = $gCms->GetContentOperations();
 $smarty->assign('title_detail_returnid',$this->Lang('title_detail_returnid'));
 $smarty->assign('input_detail_returnid',
