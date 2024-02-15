@@ -164,7 +164,7 @@ $lang['extra'] = 'Extra';
 $lang['extra_label'] = 'Extra:';
 
 // F
-$lang['fesubmit_redirect'] = 'PageID or alias to redirect to after a news article has been submitted via the fesubmit action';
+$lang['fesubmit_redirect'] = 'Page to redirect to after a news article has been submitted via the frontend';
 $lang['fesubmit_status'] = 'The status of news articles submitted via the frontend';
 $lang['fielddef'] = 'Field Definition';
 $lang['fielddefadded'] = 'Field Definition Successfully Added';
@@ -249,7 +249,7 @@ $lang['help_articles_pagelimit'] = 'Select the number of articles to show in one
 $lang['help_articles_sortby'] = 'Select how articles will be initially sorted.';
 $lang['help_category_name'] = 'Enter a name for this category.  The name should be safe for use in URLS and have no special characters.';
 $lang['help_category_parent'] = 'Optionally specify a parent category to build a hierarchy of categories.';
-$lang['help_fesubmit_redirect'] = 'Page ID or alias to redirect to after a succuessful frontend submission';
+$lang['help_fesubmit_redirect'] = 'Page to redirect to after a successful frontend submission';
 $lang['help_fielddef_maxlen'] = 'For text fields you can specify the maximum length of user input (in characters)';
 $lang['help_fielddef_name'] = 'Each field definition must have a name.  Though not strictly necessary, the field name should contain only alphanumeric characters and the underscore.  Refrain from using whitespace in the field name.';
 $lang['help_fielddef_options'] = 'Here you may specify the valid options for dropdown fields.';
@@ -266,7 +266,7 @@ $lang['help_pagelimit'] = 'Maximum number of items to display (per page).  If th
 $lang['hide_summary_field'] = 'Hide the summary field when adding or editing articles';
 
 // I
-$lang['info_allow_fesubmit'] = 'This option controls wether the fesubmit action will be allowed to function at all for this site.  Use caution when enabling this.';
+$lang['info_allow_fesubmit'] = 'This option controls whether frontend submission of articles will function at all for this site. Be careful about enabling this.';
 $lang['info_categories'] = 'For organization purposes news articles can be organized into hierarchical categories';
 $lang['info_detail_returnid'] = 'This preference is used to determine a page (and therefore a template) to use to view detail pages.  Custom news Detail URLS will not work if this parameter is not set to a valid page.  Additionally, if this preference is set, and no detailpage parameter is provided on the news tag, then this value will be used for detail links';
 $lang['info_expired_searchable'] = 'If enabled, expired articles may continue to be indexed by the search module, and appear in search results';
@@ -335,7 +335,7 @@ $lang['preview'] = 'Preview';
 $lang['prevpage'] = '&lt;';
 $lang['print'] = 'Print';
 $lang['prompt_alert_drafts'] = 'Alert on Unapproved Articles';
-$lang['prompt_allow_fesubmit'] = 'Allow news articles to be submitted by the frontend';
+$lang['prompt_allow_fesubmit'] = 'Allow news articles to be submitted via the frontend';
 $lang['prompt_default'] = 'Default';
 $lang['prompt_go'] = 'Go';
 $lang['prompt_name'] = 'Name';
