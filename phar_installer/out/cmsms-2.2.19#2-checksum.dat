@@ -397,7 +397,7 @@ c2a6fbdf56be4cfe63c9143b44745693 --::-- /modules/News/lang/ext/eu_ES.php
 6ca1ebed83eb7726a17ce5381eaa016f --::-- /modules/News/lang/ext/it_IT.php
 2b228b6478e27ee4623230db1c88ef0a --::-- /modules/News/lang/ext/el_GR.php
 0806691d09c1440090c954d0e1584fe3 --::-- /modules/News/lang/ext/pl_PL.php
-f3b206bbd969583545e87fcf0e891755 --::-- /modules/News/lang/ext/fr_FR.php
+03857e4520ef0a88907358de956faa2d --::-- /modules/News/lang/ext/fr_FR.php
 00e782e7682ca4d2dc4f439917873d23 --::-- /modules/News/lang/ext/sr_YU.php
 561fcc2ba42ec33b087cec75f2079d4a --::-- /modules/News/lang/ext/fi_FI.php
 c7345b982f09fd7ac4f471db12e34178 --::-- /modules/News/lang/ext/zh_TW.php
@@ -410,7 +410,7 @@ d188d87d93343c592d8017aad9b8a5f5 --::-- /modules/News/lang/ext/tr_TR.php
 428564254256cfaf8168f3ac750183a4 --::-- /modules/News/lang/ext/mn_MN.php
 f7c34bc5733971ea270d07cc5fba7ef4 --::-- /modules/News/lang/ext/es_ES.php
 d5286391b944032a443ab064c9f936a5 --::-- /modules/News/lang/ext/fa_IR.php
-52e50c863b29437e5d9cf24947836e4d --::-- /modules/News/lang/en_US.php
+12739526d00ef1edefd3a2a1b970ef49 --::-- /modules/News/lang/en_US.php
 c458990e429d3de3047d40eca4ed4fc4 --::-- /modules/News/action.addarticle.php
 6a783a8bc3940a4ac125b1fe129f6f8b --::-- /modules/News/action.admin_editfielddef.php
 a9b3c4583a3b5eb8a9d5fc778be95851 --::-- /modules/News/action.browsecat.php
@@ -423,7 +423,7 @@ ec561e2d2f5600c626a0954d1b530953 --::-- /modules/News/templates/categorylist.tpl
 40445773683cd20e71cd8233fe983103 --::-- /modules/News/templates/edittemplates.tpl
 5b609130a2d26e36dbe472c099b85ced --::-- /modules/News/templates/Simplex_Detail_template.tpl
 2dbb502b25ba895d619a84939e08a3e7 --::-- /modules/News/templates/editarticle.tpl
-8ec53f8e7cc1b0226e181a596aed50a8 --::-- /modules/News/templates/adminprefs.tpl
+326f66b67915636e6b869edfd9ca5706 --::-- /modules/News/templates/adminprefs.tpl
 f6b97227dd77277d356d5702b6e08da7 --::-- /modules/News/templates/orig_form_template.tpl
 6e0949c64ee01ee69369e2e74ffac030 --::-- /modules/News/templates/customfieldstab.tpl
 719bc310288ac1a930377a90099fbd20 --::-- /modules/News/templates/admin_reorder_cats.tpl
@@ -439,7 +439,7 @@ f1606d4b10cdd8827b8469ded4186b10 --::-- /modules/News/templates/orig_summary_tem
 16cc8ab9b15fa17f9fc1300032f42106 --::-- /modules/News/action.admin_deletefielddef.php
 383bdd8a5b9e029b9c72e8a5abcc5a87 --::-- /modules/News/action.fesubmit.php
 a07cb0e25ca3aca1591c641927c731d8 --::-- /modules/News/action.editcategory.php
-417f4a7f2775b3650af03bc519aff68b --::-- /modules/News/method.upgrade.php
+e9e8c12f7b9808962899ef6e60727d5a --::-- /modules/News/method.upgrade.php
 1f197bdfeb8cdd2b131bf560945a1c99 --::-- /modules/News/action.admin_reorder_cats.php
 6d21712b855d6ea5bb2935a5ad88bfbc --::-- /modules/News/action.defaulturl.php
 91f87b688ca9e425e448294a3c98980a --::-- /modules/News/action.admin_addfielddef.php
@@ -452,7 +452,7 @@ c0eb1378c2e9bd117cda2e88a5de6e3c --::-- /modules/News/changelog.inc
 88857182a16ae9bd3e017b0e8a8b4baf --::-- /modules/News/lib/class.news_field.php
 783aba6c3b5fd2460d5e8d33ebf79f4a --::-- /modules/News/lib/class.News_AdminSearch_slave.php
 ff1798e98e62c7b7e7b17de75090ef38 --::-- /modules/News/lib/class.news_admin_ops.php
-4c31b3426ed00b8744dcbde3cfa931cf --::-- /modules/News/News.module.php
+b0631fe7904a2fc026129495ac977ecd --::-- /modules/News/News.module.php
 5d4667faddab3d59208abe4394100c52 --::-- /modules/News/action.admin_movefielddef.php
 b8e23dec76c11989bbdeaf231a70aee2 --::-- /modules/News/action.deletecategory.php
 724dff9af8988ddeea24f4fb6037065c --::-- /modules/News/action.updateoptions.php
@@ -464,7 +464,7 @@ b94eb1589e3ceb609484a1e79588680f --::-- /modules/News/doc/tpltype_form.inc
 54da2b7067641f88ce391402988505be --::-- /modules/News/action.default.php
 12499793b780bb54098e0e19fc6a9c81 --::-- /modules/News/function.admin_categoriestab.php
 8a8043174df2337aad58ee7bc4244f83 --::-- /modules/News/action.admin_settings.php
-971396d961db40d5d70079308141c245 --::-- /modules/News/function.admin_optionstab.php
+48e04a3647c20af3e1d6138ab962d82b --::-- /modules/News/function.admin_optionstab.php
 85e08208091bd52fa29319f11ffa4ebf --::-- /modules/News/action.detail.php
 13c90b1dc2a6ba087dc7687f0d13b82a --::-- /modules/News/action.editarticle.php
 b3467122df3a625cc0062caf8aca130b --::-- /modules/CmsJobManager/method.uninstall.php
