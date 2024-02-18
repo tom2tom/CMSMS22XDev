@@ -767,10 +767,11 @@ class ContentOperations
 	/**
 	 * Returns an array of all content objects in the system, active or not.
 	 *
-	 * Caution:  it is entirely possible that this method (and other similar methods of loading content) will result in a memory outage
-	 * if there are large amounts of content objects AND/OR large amounts of content properties.  Use with caution.
+	 * Caution: it is entirely possible that this method (and other similar
+	 * methods for loading content) will result in a memory outage if there is a
+	 * large number of content objects and/or large number of content properties.
 	 *
-	 * @param bool $loadprops Not implemented
+	 * @param bool $loadprops Whether to also load extended properties. Default true.
 	 * @return array The array of content objects
 	 */
 	public function GetAllContent($loadprops=true)
@@ -794,9 +795,9 @@ class ContentOperations
 
 	/**
 	 * Create a hierarchical ordered dropdown of content objects.
-	 * If $current (or $parent/$value TBA) variables are passed, care is taken
-	 * to ensure that children which could cause a loop are hidden from a
-	 * dropdown created for changing a content object's parent.
+	 * If $current (or $parent/$selected TBA) variables are passed, care is taken
+	 * to ensure that children which could cause a loop are omitted from
+	 * a dropdown created for changing a content object's parent.
 	 *
 	 * This method was rewritten for 2.0 to use the jquery hierselector widget
 	 * to better accommodate larger websites, and rewritten again for 2.2 with
@@ -806,52 +807,52 @@ class ContentOperations
 	 * @param int $current Numeric id of the content object we are working with.
 	 *  Used with $allowcurrent to omit children of the current content object
 	 *  or itself. Default 0
-	 * @param int $value Numeric id of the currently selected content object (new in 2.2). Default 0
-	 * (Before 2.2 this parameter was $parent)
+	 * @param int $selected Numeric id of the currently selected content object (new in 2.2). Default 0
+	 *  (Before 2.2 this parameter was $parent)
 	 * @param string $name The html name of the dropdown. Default 'parent_id'
 	 * @param bool $allowcurrent If false, $current cannot be selected, nor
-	 * can its children. Used to prevent circular deadlocks. Default false
-	 * @param bool $use_perms If true, checks authorship permissions on pages
-	 *  and only shows those which the current user has authorship of (can edit)
-	 * Default false
-	 * @param bool $ignore_current (ignored as of 2.0) Default false
-	 * @param bool $allow_all If true, show all items, even if the content object
-	 *  is inactive or doesn't have a valid link. Default false.
+	 *  can its children. Used to prevent circular deadlocks. Default false
+	 * @param bool $use_perms If true, shows only the items which the current
+	 *  user is authorized to edit. Default false
+	 * @param bool $ignore_current UNUSED since 2.0 See $allow_all
+	 *  If true, totally ignore the $current parameter by treating every item as valid. Default false
+	 * @param bool $allow_all If true, show all items, even the ones which
+	 *  are inactive or don't have a valid link. Default false.
 	 * @param bool $for_child If true, assume that we want to add a new child
 	 *  and obey the WantsChildren property of each content page (new in 2.2). Default false
 	 *  (Before 2.2 this parameter was $use_name)
 	 * @return string Html for an input to be hidden plus js to populate a
 	 *  dropdown of the hierarchy via ajax and the hierselector widget.
 	 */
-	public function CreateHierarchyDropdown($current = 0, $value = 0,
+	public function CreateHierarchyDropdown($current = 0, $selected = 0,
 			$name = 'parent_id', $allowcurrent = false, $use_perms = false,
 			$ignore_current = false, $allow_all = false, $for_child = false)
 	{
 		static $count = 0;
 		$count++;
-		$id = 'cms_hierdropdown'.$count;
+		$id = 'cms_hierdropdown'.$count; //TODO API to allow setting this via method args
 		$uid = get_userid(FALSE);
 		$ttl = lang('title_hierselect');
 
 		$opts = [
 		 'current' => (int)$current,
-		 'value' => (int)$value,
+		 'value' => (int)$selected,
 		 'allowcurrent' => (bool)$allowcurrent,
 		 'allow_all' => (bool)$allow_all,
 		 'use_perms' => (bool)$use_perms,
 		 'for_child' => (bool)$for_child
 		];
-		$opts['use_simple'] = !(check_permission($uid,'Manage All Content') || check_permission($uid,'Modify Any Page'));
-		$opts['is_manager'] = !$opts['use_simple'];
+//		$opts['use_simple'] = API to indicate that a 'userpages' selector is wanted
+		$opts['is_manager'] = check_permission($uid,'Manage All Content') || check_permission($uid,'Modify Any Page');
 		$str = '';
-		foreach($opts as $key => $val) {
+		foreach( $opts as $key => $val ) {
 			if( is_bool($val) ) $val = ($val) ? 'true' : 'false';
 			$str .= "$key:$val, ";
 		}
 		$str = rtrim($str,' ,'); // no redundant trailer
 
 		$out = <<<EOS
-<input type="text" id="$id" name="$name" class="cms_hierdropdown" title="$ttl" value="$value" size="50" maxlength="50">
+<input type="text" id="$id" name="$name" class="cms_hierdropdown" title="$ttl" value="$selected" size="50" maxlength="50">
 <script>
 $(function() {
  $('#$id').hierselector({
