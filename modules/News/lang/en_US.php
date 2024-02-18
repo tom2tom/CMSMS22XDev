@@ -69,8 +69,8 @@ $lang['edit'] = 'Edit';
 $lang['editarticle'] = 'Edit Article';
 $lang['editcategory'] = 'Edit Category';
 $lang['editfielddef'] = 'Edit Field Definition';
-$lang['email_subject'] = 'The Subject of the outgoing email';
-$lang['email_template'] = 'The format of the email message';
+$lang['email_subject'] = 'Subject of the outgoing email';
+$lang['email_template'] = 'Format of the outgoing email';
 $lang['enddate'] = 'End Date';
 $lang['endrequiresstart'] = 'Entering an end date requires a start date also';
 $lang['entries'] = '%s Entries';
@@ -98,7 +98,7 @@ $lang['eventhelp-NewsArticleAdded'] = '<h4>Parameters</h4>
 <li>"title" - Title of the article</li>
 <li>"content" - Content of the article</li>
 <li>"summary" - Summary of the article</li>
-<li>"status" - Status of the article ("draft" or "publish")</li>
+<li>"status" - Status of the article ("draft" or "published")</li>
 <li>"start_time" - Date the article should start being displayed</li>
 <li>"end_time" - Date the article should stop being displayed</li>
 <li>"useexp" - Whether the expiration date should be ignored or not</li>
@@ -271,7 +271,7 @@ $lang['info_categories'] = 'For organization purposes news articles can be organ
 $lang['info_detail_returnid'] = 'This preference is used to determine a page (and therefore a template) to use to view detail pages.  Custom news Detail URLS will not work if this parameter is not set to a valid page.  Additionally, if this preference is set, and no detailpage parameter is provided on the news tag, then this value will be used for detail links';
 $lang['info_expired_searchable'] = 'If enabled, expired articles may continue to be indexed by the search module, and appear in search results';
 $lang['info_expired_viewable'] = 'If enabled, expired articles can be viewed in detail mode (this is reproducing older functionality).  the showall parameter can be used on the URL (when not using pretty urls) to also indicate that expired articles can be viewed';
-$lang['info_fesubmit_notification'] = 'You may optionally send an email to a single email address when a new article is submitted via the fesubmit action.';
+$lang['info_fesubmit_notification'] = 'You may optionally send an email to a single email address when a new article is submitted via the frontend.';
 $lang['info_maxlength'] = 'The maximum length only applies to text input fields.';
 $lang['info_public'] = 'Only Public fields are available for frontend editing, and/or for display in summary or detail views.';
 $lang['info_reorder_categories'] = 'Drag and drop each item into the correct order to change category relationships';
