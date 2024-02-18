@@ -23,11 +23,10 @@ require_once("../lib/include.php");
 $op = 'pageinfo';
 if( isset($_GET['op']) ) $op = trim($_GET['op']);
 $gCms = CmsApp::get_instance();
-$hm = $gCms->GetHierarchyManager();
 $contentops = $gCms->GetContentOperations();
-//in many contexts across the core where a hierselector is initiated,
-//$allow_all is set FALSE
-$allow_all = TRUE; //in 2.2 to 2.2.18 this always applied, probably a bug
+
+//in many contexts where a hierselector is initiated, $allow_all is set FALSE
+$allow_all = TRUE; //in 2.2 to 2.2.18 this always applied, probably a workaround/bug
 if( isset($_GET['allow_all']) && !cms_to_bool($_GET['allow_all']) ) $allow_all = FALSE;
 
 $display = 'title';
@@ -42,14 +41,15 @@ try {
     $out = [];
     switch( $op ) {
 //  case 'userlist': unused in cmsms.hierselector
-    case 'userpages':
-        $tmplist = $contentops->GetPageAccessForUser($ruid);
+/*  case 'userpages': never initiated via cmsms.hierselector
+        // used when a selector was initiated with use_simple = true, ATM no such case across the CMSMS core
+        $tmplist = $contentops->GetPageAccessForUser($ruid); //ids of pages which the user may edit
         if( $tmplist ) {
             $pagelist = [];
-            foreach( $tmplist as $item ) {
+            foreach( $tmplist as $one ) {
                 // get all ancestors
                 $parents = [];
-                $startnode = $node = $contentops->quickfind_node_by_id($item);
+                $node = $contentops->quickfind_node_by_id($one);
                 while( $node && $node->get_tag('id') > 0 ) {
                     $content = $node->getContent(FALSE);
                     $rec = $content->ToData();
@@ -60,9 +60,8 @@ try {
                     $parents[] = $rec;
                     $node = $node->get_parent();
                 }
-                // start at root
+                // accumulate unique ancestor items, starting from the root
                 $parents = array_reverse($parents);
-                // push items from list onto the stack if they are root, or the previous item is in the opened array.
                 for( $i = 0; $i < count($parents); $i++ ) {
                     $content_id = $parents[$i]['content_id'];
                     if( !in_array($content_id,$pagelist) ) {
@@ -79,16 +78,17 @@ try {
             }
         }
         break;
-
+*/
     case 'here_up':
         // given a page id, get all info for it, its peers, and all
         // ancestors and their peers.
+        // used when a selector was initiated with use_simple = false or unspecified
         if( !isset($_GET['page']) ) throw new CmsException('missingparams');
-//      $for_child = isset($_GET['for_child']) && cms_to_bool($_GET['for_child']); // unused in func here
+//      $for_child = isset($_GET['for_child']) && cms_to_bool($_GET['for_child']); // unused here TODO what is it intended to achieve in backend?
         $allowcurrent = isset($_GET['allowcurrent']) && cms_to_bool($_GET['allowcurrent']);
         $current = ( isset($_GET['current']) ) ? (int)$_GET['current'] : 0;
 
-        $children_to_data = function($node) use ($display,$allow_all,/*$for_child,*/$ruid,$contentops,$can_edit_any,$allowcurrent,$current) {
+        $children_to_data = function($node) use ($contentops,$allow_all,$display,$ruid,$can_edit_any,$out,/*$for_child,*/$allowcurrent,$current) {
             $children = $node->getChildren(FALSE,$allow_all);
             if( !$children ) return [];
 
@@ -97,7 +97,7 @@ try {
                 $content = $child->getContent(FALSE);
                 if( !is_object($content) ) continue;
                 if( !$allowcurrent && $current == $content->Id() ) continue;
-                if( !($allow_all || $content->Active() || $content->HasUsableLink()) ) { //TODO always ignore non-navigable pages ?
+                if( !($out || $allow_all || $content->Active()) ) { //TODO skip if || $content->HasUsableLink() ? when is inactive but navigable ok?
                     continue;
                 }
                 $rec = $content->ToData();
@@ -112,17 +112,16 @@ try {
 
         $page = (int)$_GET['page'];
         if( $page < 1 ) $page = -1;
-
         if( $page == -1 ) {
-            $node = $hm; // TODO process -1 as tree-root, or default page c.f. pageinfo op?
+            $node = $gCms->GetHierarchyManager(); // TODO process -1 as content-tree-root, OR as default page c.f. pageinfo op?
         } else {
             $node = $contentops->quickfind_node_by_id($page);
         }
         do {
-            $out[] = $children_to_data($node); // populate child-data of this node
+            $out[] = $children_to_data($node); // populate child-data of this node i.e. the node and its peers
             $node = $node->get_parent();
         } while( $node );
-        $out = array_reverse($out);
+        $out = array_reverse($out); //TODO any further filtering etc
         break;
 
 /*  case 'childrenof': // unused in cmsms.hierselector
@@ -133,7 +132,7 @@ try {
             $page = (int)$_GET['page'];
             if( $page < 1 ) $page = -1;
             if( $page == -1 ) {
-                $node = $hm; // TODO process -1 as tree-root, or default page c.f. pageinfo op?
+                $node = $gCms->GetHierarchyManager(); // TODO process -1 as content-tree-root, OR as default page c.f. pageinfo op?
             }
             else {
                 $node = $contentops->quickfind_node_by_id($page);
@@ -144,7 +143,7 @@ try {
                     foreach( $children as $child ) {
                         $content = $child->getContent(FALSE);
                         if( !is_object($content) ) continue;
-                        if( !($allow_all || $content->Active() || $content->HasUsableLink()) ) { TODO always ignore non-navigable pages ?
+                        if( !($allow_all || $content->Active()) ) { //TODO when is inactive but navigable ok? ? when is inactive ok, regardless?
                             continue;
                         }
                         $rec = $content->ToData();
@@ -192,7 +191,7 @@ try {
             $peers = array_unique($tmp);
 
             foreach( $peers as $one ) {
-                $node = $hm->find_by_tag('id',$one);
+                $node = $contentops->quickfind_node_by_id($one);
                 if( !$node ) continue;
 
                 // get the parent
