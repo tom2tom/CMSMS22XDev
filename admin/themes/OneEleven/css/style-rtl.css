@@ -2749,3 +2749,19 @@ a.toggle-dropzone:focus {
 	max-width: none !important;
 	border: none;
 }
+/* cmsms_hierselector widget options - probably have no effect on browser <select/> styling */
+.cms_selhier > .selected {
+	background: #77ab13;
+	color: #fff
+}
+.cms_selhier > .current {
+	background: #fa8004;
+	color: #fff
+}
+.cms_selhier > .hilite {
+	background: #058dc7
+}
+/*.cms_selhier > .nochildren {
+	background: #00f;
+	color: #fff
+}*/
