@@ -1902,7 +1902,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 					$this->mURL = implode('/',$stack);
 					if( $parent_url ) {
-						// woot, we got a prent url.
+						// woot, we got a parent url.
 						$this->mURL = $parent_url.'/'.$this->mAlias;
 					}
 				}
@@ -1910,7 +1910,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		}
 		if( $this->mURL == '' && cms_siteprefs::get('content_mandatory_urls') && !$this->mDefaultContent &&
 			$this->HasUsableLink() ) {
-			// page url is empty and mandatory
+			// page is navigable and its url is mandatory but empty
 			$errors[] = lang('content_mandatory_urls');
 		}
 		else if( $this->mURL != '' ) {
@@ -2583,7 +2583,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 		case 'parent':
 			$contentops = ContentOperations::get_instance();
-			$tmp = $contentops->CreateHierarchyDropdown($this->mId, $this->mParentId, 'parent_id', $adding, true, false, true, true);
+			$tmp = $contentops->CreateHierarchyDropdown($this->mId, $this->mParentId, 'parent_id', false, true, false, true, true);
 			if( $tmp ) {
 				$help = cms_admin_utils::get_help_tag('core','help_content_parent',lang('help_title_content_parent'));
 				return array('<label for="parent_id">*'.lang('parent').':</label>&nbsp;'.$help,$tmp);
