@@ -397,7 +397,7 @@ c2a6fbdf56be4cfe63c9143b44745693 --::-- /modules/News/lang/ext/eu_ES.php
 6ca1ebed83eb7726a17ce5381eaa016f --::-- /modules/News/lang/ext/it_IT.php
 2b228b6478e27ee4623230db1c88ef0a --::-- /modules/News/lang/ext/el_GR.php
 0806691d09c1440090c954d0e1584fe3 --::-- /modules/News/lang/ext/pl_PL.php
-03857e4520ef0a88907358de956faa2d --::-- /modules/News/lang/ext/fr_FR.php
+276287882cfeb410cc0b93b95344ec79 --::-- /modules/News/lang/ext/fr_FR.php
 00e782e7682ca4d2dc4f439917873d23 --::-- /modules/News/lang/ext/sr_YU.php
 561fcc2ba42ec33b087cec75f2079d4a --::-- /modules/News/lang/ext/fi_FI.php
 c7345b982f09fd7ac4f471db12e34178 --::-- /modules/News/lang/ext/zh_TW.php
@@ -410,7 +410,7 @@ d188d87d93343c592d8017aad9b8a5f5 --::-- /modules/News/lang/ext/tr_TR.php
 428564254256cfaf8168f3ac750183a4 --::-- /modules/News/lang/ext/mn_MN.php
 f7c34bc5733971ea270d07cc5fba7ef4 --::-- /modules/News/lang/ext/es_ES.php
 d5286391b944032a443ab064c9f936a5 --::-- /modules/News/lang/ext/fa_IR.php
-12739526d00ef1edefd3a2a1b970ef49 --::-- /modules/News/lang/en_US.php
+596b593dba5a54809481f5998c017f46 --::-- /modules/News/lang/en_US.php
 c458990e429d3de3047d40eca4ed4fc4 --::-- /modules/News/action.addarticle.php
 6a783a8bc3940a4ac125b1fe129f6f8b --::-- /modules/News/action.admin_editfielddef.php
 a9b3c4583a3b5eb8a9d5fc778be95851 --::-- /modules/News/action.browsecat.php
@@ -1180,7 +1180,7 @@ ef5d44564b8ab3924ace295360b244a8 --::-- /admin/edituser.php
 46a78e8ac4e27e7649f3d74c9e37e69b --::-- /admin/deletebookmark.php
 88c93504295bf2f6cac765de3d3f8f88 --::-- /admin/listgroups.php
 eddd2ab1e44b87411027bcc209790868 --::-- /admin/deleteuserplugin.php
-f4dc37b21e188de51dc4ea778f7754bf --::-- /admin/ajax_content.php
+9b2302a2f2c4f7d4fe037ac919d907ff --::-- /admin/ajax_content.php
 2f659579545712f4d9e6b1d467c2867e --::-- /admin/listbookmarks.php
 aaf034cfb505cad6c621b2dc7c3efce0 --::-- /admin/footer.php
 8da6dec7eba4dd8a8aee3772d793d589 --::-- /admin/templates/siteprefs.tpl
@@ -1413,7 +1413,7 @@ a87edb9ccecebfb6e6527d8ed7797c84 --::-- /admin/themes/OneEleven/includes/standar
 679a95226cbac5008f4523206e55823a --::-- /admin/themes/OneEleven/includes/standard.min.js
 b62a8bca27398feeec2c08535e728405 --::-- /admin/themes/OneEleven/includes/login.js
 9eaa7048e463a4edd8231fd2f6379f3b --::-- /admin/themes/OneEleven/includes/jquery.cookie.min.js
-210f477bcb7554934597ebaa69c2f26f --::-- /admin/themes/OneEleven/css/style-rtl.css
+3db315bff31c18ffcfa4de30daf5ad51 --::-- /admin/themes/OneEleven/css/style-rtl.css
 a20bb48698c9bf8100f71ad6c77f3b19 --::-- /admin/themes/OneEleven/css/default-cmsms/images/ui-icons_fa8004_256x240.png
 e15d3496e6edb63754e99285f6046ba9 --::-- /admin/themes/OneEleven/css/default-cmsms/images/ui-icons_147fdb_256x240.png
 b6f3f54e845891d30cf74abbb918f4b7 --::-- /admin/themes/OneEleven/css/default-cmsms/images/ui-bg_highlight-soft_65_ffffff_1x100.png
@@ -1427,7 +1427,7 @@ b813661b1fe662aae7fc7852141e75ab --::-- /admin/themes/OneEleven/css/default-cmsm
 7484e6dca82336e8f856d7d2a674a76d --::-- /admin/themes/OneEleven/css/default-cmsms/images/ui-bg_highlight-soft_25_232323_1x100.png
 d8ba0b278d6ad4933329f8ab62fbe75f --::-- /admin/themes/OneEleven/css/default-cmsms/images/ui-icons_ffffff_256x240.png
 e58fa771f07b78c62fa0de11cc02dc04 --::-- /admin/themes/OneEleven/css/default-cmsms/jquery-ui-1.12.1.custom.min.css
-7dd9fc646c68330fa4aa75098e28fbb7 --::-- /admin/themes/OneEleven/css/style.css
+2a05cddad3fcc708532eddf13c77e943 --::-- /admin/themes/OneEleven/css/style.css
 53e2831f2b3ededa281b1e3078256f59 --::-- /admin/themes/OneEleven/OneElevenTheme.php
 e93ef8476e35e4932cf9ce09a03c0869 --::-- /admin/themes/OneEleven/doc/dashboard-small-screen.JPG
 e855edd3a566f980d69da77da36b68e6 --::-- /admin/themes/OneEleven/doc/README.txt
@@ -1715,7 +1715,7 @@ d6a3e86a9382e7fa4873fd9739aba616 --::-- /lib/jquery/css/smoothness/jquery-ui-cus
 5e629896f6540584d984af3f54991107 --::-- /lib/jquery/js/jquery-1.12.4.min.js
 eeb40dc6d3a7ef2e500a0e6b4848c8f1 --::-- /lib/jquery/js/jquery.ui.touch-punch.js
 6447393c8fdbe58083c2e32bb66a5561 --::-- /lib/jquery/js/jquery.mjs.nestedSortable.js
-e24b400f0109d92ecb3f4a4510b4aca7 --::-- /lib/jquery/js/jquery.cmsms_hierselector.js
+14b95389e3cb0939f6c2727e4de32323 --::-- /lib/jquery/js/jquery.cmsms_hierselector.js
 594ad42e2143a1b74776acd587ffdbb8 --::-- /lib/jquery/js/jquery.cmsms_autorefresh.js
 ec2d90d3403deae84ff7009ef9d79aec --::-- /lib/jquery/js/jquery.cms_admin.js
 c051ed41132f9ddb075efa0f5bb9b387 --::-- /lib/jquery/js/jquery-migrate-1.4.1.min.js
@@ -2087,9 +2087,9 @@ f5b2a6fb50f289a54d690c00f31fdb60 --::-- /lib/classes/Database/class.Connection.p
 6ef30a9cd1fe8e811e82acae4dfa9a6e --::-- /lib/classes/Database/class.Statement.php
 0aa9a50d5e7f17a97dd63c03688328cb --::-- /lib/classes/Database/class.ConnectionSpec.php
 5069a06e00be4ba7b814dd09d9b3378e --::-- /lib/classes/Database/class.ResultSet.php
-1c1eeb5833c7d5787fad486210a3d93a --::-- /lib/classes/class.contentoperations.inc.php
+b33ba87709d6a4a83954cae3bfed5f5b --::-- /lib/classes/class.contentoperations.inc.php
 9a02af549ac1772e662ba1bf4a0ab634 --::-- /lib/classes/class.CmsLock.php
-d311e4660dad60ac56412b40423ec1e0 --::-- /lib/classes/class.ContentBase.php
+2b74454fce597d192a149a9f03e77969 --::-- /lib/classes/class.ContentBase.php
 f5461d300a29b8928dfe9807348bcbbf --::-- /lib/classes/Async/class.CronJobInterface.php
 e011318fde49af72e62f144c2a495461 --::-- /lib/classes/Async/class.CronJobTrait.php
 864ee923820f43cde336631ac6f6ee9f --::-- /lib/classes/Async/class.RegularTask.php
