@@ -37,7 +37,7 @@ final class ModuleOperations
      * @access private
      * @internal
      */
-    protected $cmssystemmodules =  array('AdminSearch', 'CMSContentManager', 'CmsJobManager', 'CMSMailer', 'DesignManager', 'FileManager', 'FilePicker', 'ModuleManager', 'MicroTiny', 'Navigator', 'News', 'Search');
+    protected $cmssystemmodules =  array('AdminSearch', 'CMSContentManager', 'CmsJobManager', 'CMSMailer', 'DesignManager', 'FileManager', 'FilePicker', 'ModuleManager', 'MicroTiny', 'Navigator', 'News', 'Search'); // UserGuide omitted
 
     /**
      * @ignore
@@ -716,9 +716,9 @@ final class ModuleOperations
 
 
     /**
-     * A function to return a list of all modules that appear to exist properly in the modules directory.
+     * Return all modules whose code is present in the modules directory.
      *
-     * @return array of module names for all modules that exist in the module directory.
+     * @return array sorted module names.
      */
     public function FindAllModules()
     {
@@ -750,14 +750,17 @@ final class ModuleOperations
 
 
     /**
-     * Finds all modules that are available to be loaded...
-     * this method uses the information in the database to load the modules that are necessary to load
-     * it also, will go through any queued installs/upgrades and force those modules to load, which
-     * will in turn do the upgrading and installing if necessary.
+     * Loads all modules that are available to be loaded.
+     * This method uses the information in the database to load the modules
+     * that are necessary to load
+     * It also will go through any queued installs/upgrades and force those
+     * modules to load, which will in turn do upgrading and installing
+     * as necessary.
      *
      * @access public
      * @internal
-     * @param noadmin boolean indicates that modules marked as admin_only in the database should not be loaded, default is false
+     * @param noadmin boolean whether to ignore modules marked as
+     *  admin_only in the database. Default false i.e. load all
      */
     public function LoadModules($noadmin = false)
     {
@@ -854,12 +857,10 @@ final class ModuleOperations
 
     /**
      * Upgrade a module
+     * @internal This should never be called for upgrading arbitrary modules.
+     * Use of this function by third party code is not supported.
+     * Use at your own risk and do not report bugs or issues related to its use.
      *
-     * This is an internal method, subject to change in later releases.  It should never be called for upgrading arbitrary modules.
-     * Any use of this function by third party code will not be supported.  Use at your own risk and do not report bugs or issues
-     * related to your use of this module.
-     *
-     * @internal
      * @param string $module_name The name of the module to upgrade
      * @param string $to_version The destination version
      * @return bool Whether or not the upgrade was successful
@@ -1260,25 +1261,25 @@ final class ModuleOperations
 
 
     /**
-     * Check if a module is queued for install.
-     *
-     * This is an internal method, subject to change in later releases.  It should never be called for upgrading arbitrary modules.
-     * Any use of this function by third party code will not be supported.  Use at your own risk and do not report bugs or issues
-     * related to your use of this module.
-     *
+     * Check whether a module is queued for install.
+     * @internal This should never be called for upgrading arbitrary modules.
+     * Use of this method by third party code is not be supported.
+     * Use at your own risk and do not report bugs or issues related to its use.
      * @ignore
+     * @param string $module_name
+     * @return bool
      */
     public function IsQueuedForInstall($module_name)
     {
         $module_name = trim((string)$module_name);
         if( !$module_name ) return FALSE;
         if( !isset($_SESSION['moduleoperations']) ) return FALSE;
-        if( !isset($_SESSION['moduleoperations'][$module_name]) ) return FALSE;
-        return TRUE;
+        return isset($_SESSION['moduleoperations'][$module_name]);
     }
 
     /**
      * @ignore
+     * @param string $module_name
      */
     private function _unqueue_install($module_name)
     {
@@ -1289,9 +1290,9 @@ final class ModuleOperations
 
     /**
      * Queue a module for install
-     *
      * @internal
      * @since 1.10
+     *
      * @param string $module_name
      */
     public function QueueForInstall($module_name)
