@@ -221,7 +221,7 @@
       <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
       &nbsp;<input type="submit" id="{$actionid}cancel" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
       {if isset($articleid)}
-        &nbsp;<input type="submit" name="{$actionid}apply" value="{$mod->Lang('apply')}">
+        &nbsp;<input type="submit" name="{$actionid}apply" data-ui-icon="ui-icon-disk" value="{$mod->Lang('apply')}">
       {/if}
     </p>
   </div>
@@ -425,7 +425,7 @@
       <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
       &nbsp;<input type="submit" id="{$actionid}cancel" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
       {if isset($articleid)}
-        &nbsp;<input type="submit" name="{$actionid}apply" value="{$mod->Lang('apply')}">
+        &nbsp;<input type="submit" name="{$actionid}apply" data-ui-icon="ui-icon-disk" value="{$mod->Lang('apply')}">
       {/if}
     </p>
   </div>

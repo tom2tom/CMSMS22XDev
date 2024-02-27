@@ -25,7 +25,7 @@ $(function() {
     <p class="pagetext"><label for="mr_url">{$ModuleManager->Lang('prompt_repository_url')}:</label></p>
     <p class="pageinput">
       <input type="text" name="{$actionid}url" id="mr_url" maxlength="255" value="{$module_repository}">
-      <input type="submit" id="reseturl" value="{$ModuleManager->Lang('reset')}">
+      <input type="submit" id="reseturl" data-ui-icon="ui-icon-arrowrefresh-1-n" value="{$ModuleManager->Lang('reset')}">
     </p>
   </div>
 

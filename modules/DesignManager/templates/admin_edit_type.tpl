@@ -71,7 +71,7 @@
   </p>
 
   <div class="pagecontainer">
-    <input type="submit" name="{$actionid}reset" value="{$mod->Lang('reset_factory')}" onclick="return confirm('{$mod->Lang("confirm_reset_type")|escape:"javascript"}');">
+    <input type="submit" name="{$actionid}reset" data-ui-icon="ui-icon-arrowrefresh-1-n" value="{$mod->Lang('reset_factory')}" onclick="return confirm('{$mod->Lang("confirm_reset_type")|escape:"javascript"}');">
   </div>
 </div>
 {/if}

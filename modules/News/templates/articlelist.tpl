@@ -80,7 +80,7 @@ $(function() {
 	<div class="pageoverflow">
 	<p class="pageinput">
 		<input type="submit" name="{$actionid}submitfilter" value="{$mod->Lang('submit')}">
-		<input type="submit" name="{$actionid}resetfilter" value="{$mod->Lang('reset')}">
+		<input type="submit" name="{$actionid}resetfilter" data-ui-icon="ui-icon-arrowrefresh-1-n" value="{$mod->Lang('reset')}">
 	</p>
 	</div>
 	{$formend}
@@ -102,7 +102,7 @@ $(function() {
 		<select name="{$actionid}pagenumber">
 		{cms_pageoptions numpages=$pagecount curpage=$pagenumber}
 		</select>&nbsp;
-		<input type="submit" name="{$actionid}paginate" value="{$mod->Lang('prompt_go')}">
+		<input type="submit" name="{$actionid}paginate" data-ui-icon="ui-icon-triangle-2-e-w" value="{$mod->Lang('prompt_go')}">
 		{form_end}
 	</div>
 	{/if}

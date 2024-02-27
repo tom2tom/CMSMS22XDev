@@ -15,7 +15,7 @@
   <p class="pagetext"></p>
   <p class="pageinput">
     {if empty($errors)}
-    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('delete')}">
+    <input type="submit" name="{$actionid}submit" data-ui-icon="ui-icon-trash" value="{$mod->Lang('delete')}">
     {/if}
     <input type="submit" name="{$actionid}cancel" value="{$cancellabel}">
   </p>

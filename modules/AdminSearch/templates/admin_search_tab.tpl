@@ -48,7 +48,7 @@
 <div class="pageoverflow">
   <p class="pagetext"></p>
   <p class="pageinput">
-    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('search')}" id="searchbtn">
+    <input id="searchbtn" type="submit" name="{$actionid}submit" data-ui-icon="ui-icon-search" value="{$mod->Lang('search')}">
   </p>
 </div>
 </td>

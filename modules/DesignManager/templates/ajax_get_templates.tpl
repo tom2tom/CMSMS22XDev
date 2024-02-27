@@ -24,7 +24,7 @@ $('#tpl_selall').cmsms_checkall();
         <select id="tpl_page" name="{$actionid}tpl_page">
           {cms_pageoptions numpages=$tpl_nav.numpages curpage=$tpl_nav.curpage}
         </select>
-        &nbsp;<input type="submit" value="{$mod->Lang('go')}">
+        &nbsp;<input type="submit" data-ui-icon="ui-icon-triangle-2-e-w" value="{$mod->Lang('go')}">
     </div>
   {/if}
 </div>

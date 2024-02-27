@@ -316,8 +316,8 @@ $(function() {
 			<div class="pageoverflow">
 				<p class="pagetext"></p>
 				<p class="pageinput">
-					<input id="testsend" type="submit" name="sendtest" value="{lang('sendtest')}">
-					<input id="testcancel" type="submit" value="{lang('cancel')}">
+					<input id="testsend" type="submit" name="sendtest" data-ui-icon="ui-icon-mail-closed" value="{lang('sendtest')}">
+					<input id="testcancel" type="submit" name="cancel" value="{lang('cancel')}">
 				</p>
 			</div>
 		</form>
@@ -332,7 +332,7 @@ $(function() {
 		<div class="pageoverflow">
 			<p class="pageinput">
 				<input type="submit" name="submit" value="{lang('submit')}" class="pagebutton">
-				<input id="mailertest" type="submit" name="testemail" value="{lang('test')}" class="pagebutton">
+				<input id="mailertest" type="submit" name="testemail" data-ui-icon="ui-icon-gear" value="{lang('test')}" class="pagebutton">
 				<input type="submit" name="cancel" value="{lang('cancel')}" class="pagebutton">
 			</p>
 			<br>
@@ -518,7 +518,7 @@ $(function() {
 				{/if}
 				<div class="pageoverflow">
 					<p class="pagetext">&nbsp;</p>
-					<p class="pageinput"><input type="submit" name="testumask" value="{lang('test')}" class="pagebutton"></p>
+					<p class="pageinput"><input type="submit" name="testumask" data-ui-icon="ui-icon-gear" value="{lang('test')}" class="pagebutton"></p>
 				</div>
 				<div class="pageoverflow">
 					<p class="pagetext"><label for="lock_timeout">{lang('admin_lock_timeout')}:</label></p>

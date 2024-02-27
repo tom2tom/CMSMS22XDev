@@ -17,7 +17,7 @@
 				<div class="pageoverflow">
 					<p class="pagetext">{lang('clearcache')}:</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" name="clearcache" value="{lang('clear')}">
+						<input class="pagebutton" type="submit" name="clearcache" data-ui-icon="ui-icon-circle-minus" value="{lang('clear')}">
 					</p>
 				</div>
 			</fieldset>
@@ -31,7 +31,7 @@
 				<div class="pageoverflow">
 					<p class="pagetext">{lang('sysmain_updatehierarchy')}:</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" name="updatehierarchy" value="{lang('sysmain_update')}">
+						<input class="pagebutton" type="submit" name="updatehierarchy" data-ui-icon="ui-icon-gear" value="{lang('sysmain_update')}">
 					</p>
 				</div>
 			</form>
@@ -40,7 +40,7 @@
 				<div class="pageoverflow">
 					<p class="pagetext">{lang('sysmain_updateurls')}:</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" name="updateurls" value="{lang('sysmain_update')}">
+						<input class="pagebutton" type="submit" name="updateurls" data-ui-icon="ui-icon-gear" value="{lang('sysmain_update')}">
 					</p>
 				</div>
 			</form>
@@ -54,7 +54,7 @@
 								{*{$page.count}.*} {$page.content_name}<br>
 							{/foreach}
 							<br>
-							<input class="pagebutton" type="submit" name="addaliases" value="{lang('sysmain_fixaliases')}">
+							<input class="pagebutton" type="submit" name="addaliases" data-ui-icon="ui-icon-wrench" value="{lang('sysmain_fixaliases')}">
 						</p>
 					</div>
 				</form>
@@ -69,7 +69,7 @@
 								{$page.content_name} <em>({$page.content_alias}) - {$page.type}</em><br>
 							{/foreach}
 							<br>
-							<input class="pagebutton" type="submit" name="fixtypes" value="{lang('sysmain_fixtypes')|escape:'javascript'}">
+							<input class="pagebutton" type="submit" name="fixtypes" data-ui-icon="ui-icon-wrench" value="{lang('sysmain_fixtypes')|escape:'javascript'}">
 						</p>
 					</div>
 				</form>
@@ -97,13 +97,13 @@
 				<div class="pageoverflow">
 					<p class="pagetext">{lang('sysmain_optimizetables')}:</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" name="optimizeall" value="{lang('sysmain_optimize')}">
+						<input class="pagebutton" type="submit" name="optimizeall" data-ui-icon="ui-icon-star" value="{lang('sysmain_optimize')}">
 					</p>
 				</div>
 				<div class="pageoverflow">
 					<p class="pagetext">{lang('sysmain_repairtables')}:</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" name="repairall" value="{lang('sysmain_repair')}">
+						<input class="pagebutton" type="submit" name="repairall" data-ui-icon="ui-icon-wrench" value="{lang('sysmain_repair')}">
 					</p>
 				</div>
 			</fieldset>

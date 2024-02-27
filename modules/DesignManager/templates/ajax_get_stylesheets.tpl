@@ -22,7 +22,7 @@ $('#css_selall').cmsms_checkall();
         <select id="css_page" name="{$actionid}css_page">
         {cms_pageoptions numpages=$css_nav.numpages curpage=$css_nav.curpage}
         </select>
-        &nbsp;<input type="submit" value="{$mod->Lang('go')}">
+        &nbsp;<input type="submit" data-ui-icon="ui-icon-triangle-2-e-w" value="{$mod->Lang('go')}">
       {form_end}
     </div>
   {/if}

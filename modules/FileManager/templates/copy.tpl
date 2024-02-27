@@ -30,7 +30,7 @@
 <div class="pageoverflow">
   <p class="pagetext"></p>
   <p class="pageinput">
-    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('copy')}">
+    <input type="submit" name="{$actionid}submit" data-ui-icon="ui-icon-copy" value="{$mod->Lang('copy')}">
     <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
   </p>
 </div>

@@ -25,7 +25,7 @@
     {/if}
   {/foreach}
   </select>&nbsp;
-  <input type="submit" name="filter" value="{$apply}">
+  <input type="submit" name="filter" data-ui-icon="ui-icon-disk" value="{$apply}">
 </form>
 </div><br>
 

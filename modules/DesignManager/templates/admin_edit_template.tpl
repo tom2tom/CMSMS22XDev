@@ -128,7 +128,7 @@ $(function() {
                 <input type="submit" id="submitbtn" name="{$actionid}submit" value="{$mod->Lang('submit')}"{$disable|strip}>
                 <input type="submit" id="cancelbtn" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
                 {if $template->get_id()}
-                <input type="submit" id="applybtn" name="{$actionid}apply" value="{$mod->Lang('apply')}"{$disable|strip}>
+                <input type="submit" id="applybtn" name="{$actionid}apply" data-ui-icon="ui-icon-disk" value="{$mod->Lang('apply')}"{$disable|strip}>
                 {/if}
             </p>
         </div>
@@ -264,9 +264,9 @@ $(function() {
             <p class="pagetext">{$mod->Lang('prompt_filetemplate')}:</p>
             <p class="pageinput">
             {if $template->has_content_file()}
-            <input type="submit" id="importbtn" name="{$actionid}import" value="{$mod->Lang('import')}">
+            <input type="submit" id="importbtn" name="{$actionid}import" data-ui-icon="ui-icon-arrowreturnthick-1-s" value="{$mod->Lang('import')}">
             {elseif $template->get_id() > 0}
-            <input type="submit" id="exportbtn" name="{$actionid}export" value="{$mod->Lang('export')}">
+            <input type="submit" id="exportbtn" name="{$actionid}export" data-ui-icon="ui-icon-arrowreturnthick-1-n" value="{$mod->Lang('export')}">
             {/if}
         </p>
         </div>
