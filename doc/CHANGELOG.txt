@@ -71,6 +71,9 @@ MenuManager 1.50.4
 News
  - Sanitise news-item strings (title, summary, content) before display
 
+UserGuide
+ - Bundled in installer, but not automatically installed
+
 Phar Installer 1.4
  - Added missing nls files, enabling installer sessions using extra translations
  - Install translation files (core, TinyMCE, PHPMailer) only for wanted translations
