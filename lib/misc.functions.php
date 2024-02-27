@@ -666,8 +666,9 @@ function get_recursive_file_list ( $path , $excludes, $maxdepth = -1 , $mode = "
     $fn = function( $file, $excludes ) {
         // strip the path from the file
         if( empty($excludes) ) return false;
+        $bn = basename($file);
         foreach( $excludes as $excl ) {
-            if( @preg_match( "/".$excl."/i", basename($file) ) ) return true;
+            if( @preg_match( "/$excl/i", $bn ) ) return true;
         }
         return false;
     };
