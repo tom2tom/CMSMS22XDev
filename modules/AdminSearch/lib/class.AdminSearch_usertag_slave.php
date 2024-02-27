@@ -32,7 +32,7 @@ final class AdminSearch_usertag_slave extends AdminSearch_slave
 
     private function get_mod()
     {
-        static $_mod;
+        static $_mod = null;
         if( !$_mod ) $_mod = \cms_utils::get_module('AdminSearch');
         return $_mod;
     }
