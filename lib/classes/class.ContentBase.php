@@ -1272,9 +1272,9 @@ abstract class ContentBase
 	}
 
 	/**
-	 * An abstract method that content types can use to indicate whether
-	 * pages of that type may have child-page(s).
-	 * Some content types such as separator do not have any children.
+	 * An abstract method which indicates whether this content (i.e. pages
+	 * of this one's type) may have child-page(s). More 'allows' children than 'wants'.
+	 * Some content types such as Separator do not have any children.
 	 *
 	 * @since 0.11
 	 * @abstract
@@ -1286,7 +1286,14 @@ abstract class ContentBase
 	}
 
 	/**
-	 * An abstract method that indicates that this content type is navigable and generates a useful URL.
+	 * An abstract method which indicates whether users might usefully
+	 * choose to open/display this content (i.e. pages of this one's type).
+	 * A confusing name, perhaps. Nothing to do with having an url property
+	 * or being possible to navigate to the page (any active page can of
+	 * course be displayed by a GET request having the page's id or alias).
+	 * Across the core, all content-types with a false value of this property
+	 * are system-pages - Separator, ErrorPage etc.
+	 * @see ContentBase::IsSystemPage()
 	 *
 	 * @abstract
 	 * @return bool Default true
@@ -1297,7 +1304,8 @@ abstract class ContentBase
 	}
 
 	/**
-	 * An abstract method indicating whether the content type is copyable.
+	 * An abstract method which indicates whether this content (i.e. pages
+	 * of this one's type) is copyable.
 	 *
 	 * @abstract
 	 * @return bool default false
@@ -1308,8 +1316,9 @@ abstract class ContentBase
 	}
 
 	/**
-	 * An abstract method to indicate whether this content type generates a system page.
-	 * System pages are used to handle things like 404 errors etc.
+	 * An abstract method which indicates whether this content (i.e. pages
+	 * of this one's type) is a system page.
+	 * System pages are used to handle things like 404 errors.
 	 *
 	 * @abstract
 	 * @return bool default false
@@ -1320,8 +1329,9 @@ abstract class ContentBase
 	}
 
 	/**
-	 * An abstract method that indicates whether this page type uses a template.
-	 * Some content types like sectionheader and separator do not.
+	 * An abstract method which indicates whether this content (i.e. pages
+	 * of this one's type) uses a template.
+	 * Some content types like SectionHeader and Separator do not.
 	 *
 	 * @since 2.0
 	 * @abstract

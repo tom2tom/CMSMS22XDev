@@ -818,8 +818,8 @@ class ContentOperations
 	 *  If true, totally ignore the $current parameter by treating every item as valid. Default false
 	 * @param bool $allow_all If true, show all items, even the ones which
 	 *  are inactive or don't have a valid link. Default false.
-	 * @param bool $for_child If true, assume that we want to add a new child
-	 *  and obey the WantsChildren property of each content page (new in 2.2). Default false
+	 * @param bool $for_child If true, assume that we want to select a new child
+	 *  item and obey the WantsChildren property of each ancestor item (new in 2.2). Default false
 	 *  (Before 2.2 this parameter was $use_name)
 	 * @return string Html for an input to be hidden plus js to populate a
 	 *  dropdown of the hierarchy via ajax and the hierselector widget.
