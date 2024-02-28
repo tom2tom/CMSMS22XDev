@@ -88,7 +88,7 @@ try {
         $allowcurrent = isset($_GET['allowcurrent']) && cms_to_bool($_GET['allowcurrent']);
         $current = ( isset($_GET['current']) ) ? (int)$_GET['current'] : 0;
 
-        $children_to_data = function($node) use ($contentops,$allow_all,$display,$ruid,$can_edit_any,$out,/*$for_child,*/$allowcurrent,$current) {
+        $children_to_data = function($node) use ($contentops,$allow_all,$display,$ruid,$can_edit_any,/*$out,*$for_child,*/$allowcurrent,$current) {
             $children = $node->getChildren(FALSE,$allow_all);
             if( !$children ) return [];
 
@@ -97,9 +97,7 @@ try {
                 $content = $child->getContent(FALSE);
                 if( !is_object($content) ) continue;
                 if( !$allowcurrent && $current == $content->Id() ) continue;
-                if( !($out || $allow_all || $content->Active()) ) { //TODO skip if || $content->HasUsableLink() ? when is inactive but navigable ok?
-                    continue;
-                }
+                if( !$allow_all && (!$content->Active() || !$content->HasUsableLink()) ) continue;
                 $rec = $content->ToData();
                 $rec['can_edit'] = $can_edit_any || $contentops->CheckPageAuthorship($ruid,$content->Id());
                 $val = ( $display == 'title' ) ? $rec['content_name'] : $rec['menu_text'];
