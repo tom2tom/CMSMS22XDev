@@ -32,17 +32,35 @@ class wizard_step9 extends wizard_step
 
         // upgrade modules
         $this->message(lang('msg_upgrademodules'));
+        $app_config = $app->get_config();
+        // non-core modules bundled with the installer, to be processed last
+        $defers = (!empty($app_config['extramodules'])) ? $app_config['extramodules'] : [];
         $modops = ModuleOperations::get_instance();
-        $allmodules = $modops->FindAllModules();
+        $allmodules = $modops->FindAllModules(); //includes non-cores
+        // force-load all system/core modules
+        // each one that needs upgrade should automagically do so
+        // after handling its dependencies
         foreach( $allmodules as $name ) {
-            // we force all system modules to be loaded, if it's a system module
-            // and needs upgrade, then it should automagically upgrade.
-            // additionally, upgrade any specific modules specified by the upgrade routine.
-            if( $modops->IsSystemModule($name) || $modops->IsQueuedForInstall($name) ) {
+            if( ($modops->IsSystemModule($name) || $modops->IsQueuedForInstall($name))
+                && !in_array($name, $defers) ) {
                 $this->verbose(lang('msg_upgrade_module',$name));
                 $module = $modops->get_module_instance($name,'',TRUE);
                 if( !is_object($module) ) {
-                    $this->error("FATAL ERROR: could not load module {$name} for upgrade");
+                    $this->error("FATAL ERROR: could not load module $name for upgrade");
+                }
+            }
+        }
+
+        if( $defers ) {
+            // upgrade any bundled and installed non-core modules
+            // no dependency processing here
+            $info = $modops->GetInstalledModules(TRUE);
+            foreach( $defers as $name ) {
+                if( in_array($name, $info) ) {
+                    $this->verbose(lang('msg_upgrade_module',$name));
+                    if( !$modops->UpgradeModule($name) ) {
+                        $this->error("ERROR: could not upgrade module $name");
+                    }
                 }
             }
         }
@@ -52,7 +70,7 @@ class wizard_step9 extends wizard_step
         $this->message(lang('msg_clearedcache'));
 
         // write protect config.php
-        @chmod("$destdir/config.php",0444);  //TODO 0440 better c.f. global_umask site-preference
+        @chmod("$destdir/config.php",0444); //TODO 0440 better c.f. global_umask site-preference
 
         audit('','CMSMS version','Upgraded to '.CMS_VERSION);
 
@@ -86,10 +104,10 @@ class wizard_step9 extends wizard_step
         $this->message(lang('install_modules'));
         $this->connect_to_cmsms($destdir);
         $modops = cmsms()->GetModuleOperations();
-        $allmodules = $modops->FindAllModules();
+        $allmodules = $modops->FindAllModules(); //includes non-core(s)
         foreach( $allmodules as $name ) {
-            // we force all system modules to be loaded, if it's a system module
-            // and needs upgrade, then it should automagically upgrade.
+            // force-load all core/system modules
+            // each one should automagically install
             if( $modops->IsSystemModule($name) ) {
                 $this->verbose(lang('install_module',$name));
                 $module = $modops->get_module_instance($name,'',TRUE);
