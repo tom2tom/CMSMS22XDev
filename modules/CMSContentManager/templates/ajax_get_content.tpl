@@ -30,7 +30,7 @@
           {html_options options=$pagelist selected=$curpage}
         </select>
         <button name="{$actionid}submitpage" class="invisible ui-button ui-widget ui-corner-all ui-state-default ui-button-text-icon-primary">
-          <span class="ui-button-icon-primary ui-icon ui-icon-circle-check"></span>
+          <span class="ui-button-icon-primary ui-icon ui-icon-check"></span>
           <span class="ui-button-text">{$mod->Lang('go')}</span>
         </button>
         </span>

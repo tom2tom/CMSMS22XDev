@@ -401,7 +401,7 @@ License GPL2+
             // Standard input buttons
             $('input[type=submit], :button[data-ui-icon]').each(function() {
                 var button = $(this),
-                    icon = button.data('uiIcon') || 'ui-icon-circle-check',
+                    icon = button.data('uiIcon') || 'ui-icon-check',
                     label = button.val(),
                     $btn = $('<button></button>');
 
@@ -409,7 +409,7 @@ License GPL2+
                     if (button.is('[name*=apply]')) {
                         icon = button.data('uiIcon') || 'ui-icon-disk';
                     } else if (button.is('[name*=cancel]')) {
-                        icon = button.data('uiIcon') || 'ui-icon-circle-close';
+                        icon = button.data('uiIcon') || 'ui-icon-cancel';
                     } else if (button.is('[name*=resettodefault]') || button.attr('id') === 'refresh') {
                         icon = button.data('uiIcon') || 'ui-icon-refresh';
                     }

@@ -105,7 +105,7 @@ $(function () {
 });
 </script>
 
-{function filebtn icon='ui-icon-circle-check'}
+{function filebtn icon='ui-icon-check'}
 {if !empty($text)}
   {$addclass='ui-button-text-icon-primary'}
   {if empty($title)}{$title=$text}{/if}
