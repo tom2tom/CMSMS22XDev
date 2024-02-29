@@ -264,9 +264,9 @@ $(function() {
             <p class="pagetext">{$mod->Lang('prompt_filetemplate')}:</p>
             <p class="pageinput">
             {if $template->has_content_file()}
-            <input type="submit" id="importbtn" name="{$actionid}import" data-ui-icon="ui-icon-arrowreturnthick-1-s" value="{$mod->Lang('import')}">
+            <input type="submit" id="importbtn" name="{$actionid}import" data-ui-icon="ui-icon-arrowreturnthick-1-n" value="{$mod->Lang('import')}">
             {elseif $template->get_id() > 0}
-            <input type="submit" id="exportbtn" name="{$actionid}export" data-ui-icon="ui-icon-arrowreturnthick-1-n" value="{$mod->Lang('export')}">
+            <input type="submit" id="exportbtn" name="{$actionid}export" data-ui-icon="ui-icon-arrowreturnthick-1-s" value="{$mod->Lang('export')}">
             {/if}
         </p>
         </div>
