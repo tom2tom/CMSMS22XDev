@@ -56,9 +56,8 @@ $(function() {
 		<select id="filter_category" name="{$actionid}category">
 		{html_options options=$categorylist selected=$curcategory}
 		</select>
-		<label for="filter_allcategories">{$prompt_showchildcategories}:</label>
+		<label for="filter_allcategories">{$prompt_showchildcategories}:</label> {cms_help key='help_articles_filterchildcats' title=$prompt_showchildcategories}
 		<input id="filter_allcategories" type="checkbox" name="{$actionid}allcategories" value="yes"{if $allcategories=="yes"} checked{/if}>
-		{cms_help key='help_articles_filterchildcats' title=$prompt_showchildcategories}
 	</p>
 	</div>
 	<div class="pageoverflow">

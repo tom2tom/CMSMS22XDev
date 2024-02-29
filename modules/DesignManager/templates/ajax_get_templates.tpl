@@ -158,13 +158,13 @@ $('#tpl_selall').cmsms_checkall();
     <div class="half options-menu"></div>
     <div class="half options-menu">
       <p class="pageinput" style="text-align: right;">
-        <label for="tpl_bulk_action">{$mod->Lang('prompt_with_selected')}:</label>&nbsp;
+        <label for="tpl_bulk_action">{$mod->Lang('prompt_with_selected')}:</label> {cms_help key2='help_bulk_templates' title=$mod->lang('prompt_delete')}
         <select name="{$actionid}bulk_action" id="tpl_bulk_action" class="tpl_bulk_action" title="{$mod->Lang('title_tpl_bulkaction')}">
           <option value="delete">{$mod->lang('prompt_delete')}</option>
           <option value="export">{$mod->lang('export')}</option>
           <option value="import">{$mod->lang('import')}</option>
         </select>
-        <input id="tpl_bulk_submit" class="tpl_bulk_action" type="submit" name="{$actionid}submit_bulk" value="{$mod->Lang('submit')}">&nbsp;{cms_help key2='help_bulk_templates' title=$mod->lang('prompt_delete')}
+        <input id="tpl_bulk_submit" class="tpl_bulk_action" type="submit" name="{$actionid}submit_bulk" value="{$mod->Lang('submit')}">
       </p>
     </div>
     <div class="clearb"></div>

@@ -8,9 +8,9 @@
 <fieldset>
   <div style="width: 49%; float: left;">
   <div class="pageoverflow">
-    <p class="pagetext"><label for="tpl_name">*{$mod->Lang('prompt_name')}:</label></p>
+    <p class="pagetext"><label for="tpl_name">*{$mod->Lang('prompt_name')}:</label> {cms_help key2='help_copytemplate_name' title=$mod->Lang('prompt_name')}</p>
     <p class="pageinput">
-      <input id="tpl_name" type="text" size="50" maxlength="50" value="{$tpl->get_name()}" readonly>&nbsp;{cms_help key2='help_copytemplate_name' title=$mod->Lang('prompt_name')}
+      <input id="tpl_name" type="text" size="50" maxlength="50" value="{$tpl->get_name()}" readonly>
     </p>
   </div>
 

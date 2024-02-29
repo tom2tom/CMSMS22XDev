@@ -124,13 +124,13 @@ $('#css_selall').cmsms_checkall();
 
   {capture assign='stylesheet_dropdown_options'}
     <div class="pageoptions" id="bulkoptions" style="text-align: right;">
-      <label for="css_bulk_action">{$mod->Lang('prompt_with_selected')}:</label>&nbsp;
+      <label for="css_bulk_action">{$mod->Lang('prompt_with_selected')}:</label> {cms_help key2='help_css_bulk' title=$mod->lang('prompt_delete')}
       <select name="{$actionid}css_bulk_action" id="css_bulk_action" class="cssx_bulk_action">
         <option value="delete" title="{$mod->Lang('title_delete')}">{$mod->lang('prompt_delete')}</option>
         <option value="export">{$mod->lang('export')}</option>
         <option value="import">{$mod->lang('import')}</option>
       </select>
-      <input id="css_bulk_submit" class="css_bulk_action" type="submit" name="{$actionid}submit_bulk_css" value="{$mod->Lang('submit')}">&nbsp;{cms_help key2='help_css_bulk' title=$mod->lang('prompt_delete')}
+      <input id="css_bulk_submit" class="css_bulk_action" type="submit" name="{$actionid}submit_bulk_css" value="{$mod->Lang('submit')}">
     </div>
   {/capture}
 

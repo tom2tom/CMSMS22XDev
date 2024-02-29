@@ -13,10 +13,9 @@ $(function() {
 <div class="pageinfo">{$mod->Lang('info_import_xml_step1')}</div>
 
 <div class="pageoverflow">
-  <p class="pagetext"><label for="import_xml_file">{$mod->Lang('prompt_import_xml_file')}:</label></p>
+  <p class="pagetext"><label for="import_xml_file">{$mod->Lang('prompt_import_xml_file')}:</label> {cms_help key2='help_import_xml_file' title=$mod->Lang('prompt_import_xml_file')}</p>
   <p class="pageinput">
     <input type="file" id="import_xml_file" name="{$actionid}import_xml_file" size="50">
-    {cms_help key2='help_import_xml_file' title=$mod->Lang('prompt_import_xml_file')}
   </p>
 </div>
 

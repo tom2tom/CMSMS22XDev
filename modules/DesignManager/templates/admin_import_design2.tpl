@@ -35,10 +35,9 @@ $(function() {
 <fieldset>
   <div style="width: 49%; float: left;">
     <div class="pageoverflow">
-      <p class="pagetext"><label for="import_newname">{$mod->Lang('prompt_name')}:</label></p>
+      <p class="pagetext"><label for="import_newname">{$mod->Lang('prompt_name')}:</label> {cms_help key2='help_import_newname' title=$mod->Lang('prompt_name')}</p>
       <p class="pageinput">
         <input id="import_newname" type="text" name="{$actionid}newname" value="{$new_name}" size="50" maxlength="50">
-        &nbsp;{cms_help key2='help_import_newname' title=$mod->Lang('prompt_name')}
         <br>
         {$mod->Lang('prompt_orig_name')}: {$design_info.name}
       </p>

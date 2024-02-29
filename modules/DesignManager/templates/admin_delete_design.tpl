@@ -6,10 +6,9 @@
 {if $design->has_templates() && $tpl_permission}
 <div class="pagewarning">{$mod->Lang('warning_deletetemplate_attachments')}</div>
 <div class="pageoverflow">
-  <p class="pagetext"><label for="opt_rm_tpl">{$mod->Lang('delete_attached_templates')}:</label></p>
+  <p class="pagetext"><label for="opt_rm_tpl">{$mod->Lang('delete_attached_templates')}:</label> {cms_help key2='help_rm_tpl' title=$mod->Lang('delete_attached_templates')}</p>
   <p class="pageinput">
-    <input type="checkbox" id="opt_rm_tpl" value="yes" name="{$actionid}delete_templates">&nbsp;
-    {cms_help key2='help_rm_tpl' title=$mod->Lang('delete_attached_templates')}
+    <input type="checkbox" id="opt_rm_tpl" value="yes" name="{$actionid}delete_templates">
   </p>
 </div>
 {/if}
@@ -17,10 +16,9 @@
 {if $design->has_stylesheets() && $css_permission}
 <div class="pagewarning">{$mod->Lang('warning_deletestylesheet_attachments')}</div>
 <div class="pageoverflow">
-  <p class="pagetext"><label for="opt_rm_css">{$mod->Lang('delete_attached_stylesheets')}:</label></p>
+  <p class="pagetext"><label for="opt_rm_css">{$mod->Lang('delete_attached_stylesheets')}:</label> {cms_help key2='help_rm_css' title=$mod->Lang('delete_attached_stylesheets')}</p>
   <p class="pageinput">
     <input type="checkbox" id="opt_rm_css" value="yes" name="{$actionid}delete_stylesheets">&nbsp;
-    {cms_help key2='help_rm_css' title=$mod->Lang('delete_attached_stylesheets')}
   </p>
 </div>
 {/if}
