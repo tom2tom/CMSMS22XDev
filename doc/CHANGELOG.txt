@@ -52,13 +52,13 @@ ContentManager 1.1.11
  - BR #12635 - Apply button is shown for non-existing page and creates new pages
  - FR #12487 - (partial) Page search also checks menu text
 
-DesignManager
+DesignManager 1.1.10
  - Corrected new template creation
 
-FileManager
+FileManager 1.6.14
  - BR #12535 - File Manager Unpack archive .tar.gz
 
-FilePicker
+FilePicker 1.0.7
  - BR #12621 - FilePicker upload bug
  - BR #12628 - Add missing changelog and retriever
  - Add missing ContentBlockField API methods
@@ -68,7 +68,7 @@ MenuManager 1.50.4
  - BR #12619 - Wrong assignment of $prevdepth.
  - BR #12620 - Version 2 breaks MenuManager with childrenof.
 
-News
+News 2.51.13
  - Sanitise news-item strings (title, summary, content) before display
 
 UserGuide
