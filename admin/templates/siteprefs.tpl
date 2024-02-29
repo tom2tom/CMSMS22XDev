@@ -227,11 +227,11 @@
 				</select>
 		</div>
 		<div class="pageoverflow">
-			<p class="pagetext">{lang('sitedownmessage')}: {cms_help key2='settings_sitedownmessage' title=lang('sitedownmessage')}</p>
+			<p class="pagetext"><label for="sitedownmessage">{lang('sitedownmessage')}:</label> {cms_help key2='settings_sitedownmessage' title=lang('sitedownmessage')}</p>
 			<p class="pageinput">{$textarea_sitedownmessage}</p>
 		</div>
 		<div class="pageoverflow">
-			<p class="pagetext">{lang('sitedownexcludeadmins')}: {cms_help key2='settings_sitedownexcludeadmins' title=lang('sitedownexcludeadmins')}</p>
+			<p class="pagetext"><label for="sitedownexcludeadmins">{lang('sitedownexcludeadmins')}:</label> {cms_help key2='settings_sitedownexcludeadmins' title=lang('sitedownexcludeadmins')}</p>
 			<p class="pageinput">
 				<select id="sitedownexcludeadmins" name="sitedownexcludeadmins">
 					{cms_yesno selected=$sitedownexcludeadmins}
@@ -245,8 +245,8 @@
 				<br><strong>{lang('your_ipaddress')}:</strong>&nbsp;<span style="color:red">{$site_ipaddr}</span><br>{$lang_info_sitedownexcludes}
 			</p>
 		</div>
+		<br>
 		<div class="pageoverflow">
-			<br>
 			<p class="pageinput">
 				<input type="submit" name="submit" value="{lang('submit')}" class="pagebutton">
 				<input type="submit" name="cancel" value="{lang('cancel')}" class="pagebutton">
