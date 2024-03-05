@@ -17,7 +17,7 @@
 				<div class="pageoverflow">
 					<p class="pagetext">{lang('clearcache')}:</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" name="clearcache" data-ui-icon="ui-icon-circle-minus" value="{lang('clear')}">
+						<input class="pagebutton" type="submit" name="clearcache" data-ui-icon="ui-icon-minusthick" value="{lang('clear')}">
 					</p>
 				</div>
 			</fieldset>

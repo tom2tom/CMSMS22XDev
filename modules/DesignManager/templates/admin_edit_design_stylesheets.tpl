@@ -46,7 +46,7 @@
                     {foreach $cssl as $one}
                         <li class="ui-state-default cf sortable-item" data-cmsms-item-id="{$one}">
                             <a href="{cms_action_url action=admin_edit_css css=$one}" class="edit_css" title="{$mod->Lang('edit_stylesheet')}">{$list_stylesheets.$one}</a>
-                            <a href="javascript:void(0);" title="{$mod->Lang('remove')}" class="ui-icon ui-icon-circle-minus sortable-remove" title="{$mod->Lang('remove')}">{$mod->Lang('remove')}</a>
+                            <a href="javascript:void(0);" title="{$mod->Lang('remove')}" class="ui-icon ui-icon-minusthick sortable-remove" title="{$mod->Lang('remove')}">{$mod->Lang('remove')}</a>
                             <input class="hidden" type="checkbox" name="{$actionid}assoc_css[]" value="{$one}" checked tabindex="-1">
                         </li>
                     {/foreach}
@@ -92,7 +92,7 @@
             $(elements).removeClass('selected ui-state-hover')
                        .append($('<a></a>', {
                           href: '#', // link to page-top?
-                          'class': 'ui-icon-circle-minus sortable-remove',
+                          'class': 'ui-icon-minusthick sortable-remove',
                           text: "{$mod->Lang('remove')}"
                        }))
                        .find('input[type="checkbox"]').prop('checked', true);
@@ -143,7 +143,7 @@
                  .addClass('unsaved no-sort')
                  .append($('<a></a>', {
                    href:'#', // link to page-top, unless js prevails
-                   'class':'ui-icon ui-icon-circle-minus sortable-remove',
+                   'class':'ui-icon ui-icon-minusthick sortable-remove',
                    title:"{$mod->Lang('remove')}",
                    text:"{$mod->Lang('remove')}"
                  }))

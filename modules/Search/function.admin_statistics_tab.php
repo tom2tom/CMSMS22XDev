@@ -9,7 +9,7 @@ $smarty->assign('exportcsv',
 			'data-ui-icon="ui-icon-arrowreturnthick-1-s"'));
 $smarty->assign('clearwordcount',
 		$this->CreateInputSubmit($id,'clearwordcount',$this->Lang('clear'),
-			'data-ui-icon="ui-icon-circle-minus"','',$this->Lang('confirm_clearstats')));
+			'data-ui-icon="ui-icon-minusthick"','',$this->Lang('confirm_clearstats')));
 
 $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_search_words ORDER BY count DESC';
 $results = array();

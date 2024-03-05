@@ -51,7 +51,7 @@
                                 {else}
                                 <span>{$tpl->get_name()}</span>
                                 {/if}
-                                <a href="javascript:void(0);" title="{$mod->Lang('remove')}" class="ui-icon ui-icon-circle-minus sortable-remove">{$mod->Lang('remove')}</a>
+                                <a href="javascript:void(0);" title="{$mod->Lang('remove')}" class="ui-icon ui-icon-minusthick sortable-remove">{$mod->Lang('remove')}</a>
                                 <input class="hidden" type="checkbox" name="{$actionid}assoc_tpl[]" value="{$tpl->get_id()}" checked>
                             </li>
                         {/if}
@@ -128,7 +128,7 @@ $(function() {
                        .addClass('unsaved no-sort')
                        .append($('<a></a>', {
                           href:'#',
-                          'class':'ui-icon ui-icon-circle-minus sortable-remove',
+                          'class':'ui-icon ui-icon-minusthick sortable-remove',
                           text:"{$mod->Lang('remove')}"
                        }))
                        .find('input[type="checkbox"]').prop('checked', true);
@@ -185,7 +185,7 @@ $(function() {
                        .addClass('unsaved no-sort')
                        .append($('<a></a>', {
                          href:'#',
-                        'class':'ui-icon ui-icon-circle-minus sortable-remove',
+                        'class':'ui-icon ui-icon-minusthick sortable-remove',
                         text:"{$mod->Lang('remove')}",
                         title:"{$mod->Lang('remove')}"
                        }))

@@ -12,7 +12,7 @@
 </div>
 <div class="pageoverflow">
   <p class="pageinput">
-    <input type="submit" name="{$actionid}submit" data-ui-icon="ui-icon-circle-minus" value="{$ModuleManager->Lang('uninstall')}">
+    <input type="submit" name="{$actionid}submit" data-ui-icon="ui-icon-minusthick" value="{$ModuleManager->Lang('uninstall')}">
     <input type="submit" name="{$actionid}cancel" value="{$ModuleManager->Lang('cancel')}">
   </p>
 </div>
