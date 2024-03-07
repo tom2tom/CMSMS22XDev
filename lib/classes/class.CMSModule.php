@@ -1394,7 +1394,7 @@ abstract class CMSModule
             $gCms = CmsApp::get_instance();
             $db = $gCms->GetDb();
             $config = $gCms->GetConfig();
-            $smarty = ( $this->_action_tpl ) ? $this->_action_tpl : $smarty = $gCms->GetSmarty()->get_template_parent();
+            $smarty = ( $this->_action_tpl ) ?: $gCms->GetSmarty()->get_template_parent();
             include($filename);
         }
     }
