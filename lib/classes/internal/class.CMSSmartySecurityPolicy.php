@@ -28,6 +28,8 @@
 final class CMSSmartySecurityPolicy extends Smarty_Security
 {
     public $smarty; // used by ancestor, prevent undeclared property
+    //if Smarty5 is used, this property is N/A upstream
+//  public $php_functions = ['count', 'empty', 'in_array', 'is_array', 'isset', 'sizeof', 'time'];
 
     public function __construct($smarty)
     {
