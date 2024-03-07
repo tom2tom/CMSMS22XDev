@@ -29,7 +29,9 @@ class cms_smarty extends Smarty
       @mkdir($dirs[$i],0777,TRUE);
       if( !is_dir($dirs[$i]) ) throw new Exception('Required directory '.$dirs[$i].' does not exist');
     }
-//    $this->registerPlugin('modifier','tr',array($this,'modifier_tr')); for Smarty5, wherein unregistered methods are not supported
+    $this->registerPlugin('modifier','tr',array($this,'modifier_tr')); //for Smarty5, wherein unregistered methods are not supported
+    $this->assignGlobal('_call', new Install_TemplateCaller($this)); //for Smarty5, wherein PHP function-calls are not supported
+    // in templates use $_call->func(args) instead of just func(args)
   }
 
   public static function get_instance()
@@ -37,12 +39,32 @@ class cms_smarty extends Smarty
     if( !self::$_instance ) self::$_instance = new self();
     return self::$_instance;
   }
-/*
+
   public function modifier_tr(...$args)
   {
     return langtools::get_instance()->translate(...$args);
   }
-*/
+}
+
+/**
+ * Workaround for Smarty5's disabling of all PHP function calls
+ * @since 2.2.19#2
+ */
+class Install_TemplateCaller
+{
+    private $php_functions; // empty means no restriction
+
+    public function __construct($smarty)
+    {
+        $this->php_functions = &$smarty->security_policy->php_functions; //TODO check with Smarty5
+    }
+
+    public function __call($name, $args) {
+        if (!$this->php_functions || in_array($name, $this->php_functions)) {
+            return $name(...$args);
+        }
+        return "<!-- prohibited function $name called -->";
+    }
 }
 
 ?>

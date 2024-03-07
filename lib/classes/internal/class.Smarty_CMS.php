@@ -130,6 +130,8 @@ class Smarty_CMS extends CMSSmartyBase
             $this->addTemplateDir($config['assets_path'].'/templates');
             // no change to default security during installer run
         }
+        $this->assignGlobal('_call', new Smarty_TemplateCaller($this));
+        // in templates we can use $_call->func(args) instead of just func(args) for Smarty5
     }
 
     /**
@@ -546,3 +548,24 @@ class Smarty_CMS extends CMSSmartyBase
         return false;
     }
 } // end of class
+
+/**
+ * Workaround for Smarty5's disabling of all PHP function calls
+ * @since 2.2.19#2
+ */
+class Smarty_TemplateCaller
+{
+    private $php_functions; // empty means no restriction
+
+    public function __construct($smarty)
+    {
+        $this->php_functions = &$smarty->security_policy->php_functions; //TODO check with Smarty5
+    }
+
+    public function __call($name, $args) {
+        if (!$this->php_functions || in_array($name, $this->php_functions)) {
+            return $name(...$args);
+        }
+        return "<!-- prohibited function $name called -->";
+    }
+}
