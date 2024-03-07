@@ -37,6 +37,7 @@ if( !$tpl_ob->IsCached() ) {
     }
 
     $entryarray = array();
+    // SQL_CALC_FOUND_ROWS is deprecated. Instead exectute the query with LIMIT, and then again with COUNT(*) for the FOUND_ROWS()
     $query1 = "
             SELECT SQL_CALC_FOUND_ROWS
                 mn.*,

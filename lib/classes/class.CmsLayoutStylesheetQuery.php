@@ -37,12 +37,13 @@ class CmsLayoutStylesheetQuery extends CmsDbQueryBase
 	/**
 	 * Execute the query in this object.
 	 *
-     * @throws CmsInvalidDataException
+	 * @throws CmsInvalidDataException
 	 * @throws CmsSQLErrorException
 	 */
     public function execute()
     {
         if( !is_null($this->_rs) ) return;
+        // SQL_CALC_FOUND_ROWS is deprecated. Instead exectute the query with LIMIT, and then again with COUNT(*) for the FOUND_ROWS()
         $query = 'SELECT SQL_CALC_FOUND_ROWS S.id FROM '.CMS_DB_PREFIX.CmsLayoutStylesheet::TABLENAME.' S';
 
         // if we are using a design id argument
@@ -154,7 +155,7 @@ class CmsLayoutStylesheetQuery extends CmsDbQueryBase
      *
      * This method is not as efficient as the GetMatches() method when the resultset has multiple items.
      *
-	 * @throws CmsLogicException
+     * @throws CmsLogicException
      * @return CmsLayoutStylesheet
      */
     public function GetObject()

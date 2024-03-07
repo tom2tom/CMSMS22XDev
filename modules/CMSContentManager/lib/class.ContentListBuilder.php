@@ -114,6 +114,7 @@ final class ContentListQuery extends CmsDbQueryBase
     {
         if( $this->_rs ) return;
 
+        // SQL_CALC_FOUND_ROWS is deprecated. Instead exectute the query with LIMIT, and then again with COUNT(*) for the FOUND_ROWS()
         $sql = 'SELECT SQL_CALC_FOUND_ROWS C.content_id FROM '.CMS_DB_PREFIX.'content C';
         $where = $parms = [];
         switch( $this->_filter->type ) {

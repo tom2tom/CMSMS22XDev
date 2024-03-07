@@ -68,6 +68,7 @@ o	 * @throws CmsInvalidDataException
     {
         if( !is_null($this->_rs) ) return;
 
+        // SQL_CALC_FOUND_ROWS is deprecated. Instead exectute the query with LIMIT, and then again with COUNT(*) for the FOUND_ROWS()
         $query = 'SELECT SQL_CALC_FOUND_ROWS tpl.id FROM '.CMS_DB_PREFIX.CmsLayoutTemplate::TABLENAME.' tpl
               LEFT JOIN '.CMS_DB_PREFIX.CmsLayoutTemplateType::TABLENAME.' type ON tpl.type_id = type.id';
         $where = array('id'=>array(),'type'=>array(),'category'=>array(),'user'=>array(),'design'=>array());
@@ -221,8 +222,8 @@ o	 * @throws CmsInvalidDataException
 
 	/**
 	 * Get the template object for the current member of the resultset (if any).
-     *
-     * This method is not as efficient as GetMatches() when the resultset has multiple items.
+	 *
+	 * This method is not as efficient as GetMatches() when the resultset has multiple items.
 	 *
 	 * This method calls the execute method.
 	 *
