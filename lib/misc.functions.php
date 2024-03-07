@@ -652,14 +652,14 @@ function get_matching_files($dir,$extensions = '',$excludedot = true,$excludedir
 
 
 /**
- * Return an array containing a list of files in a directory performs a recursive search.
+ * Return a list of files and/or directories in and below the specified directory.
  *
  * @param  string  $path     Start Path.
- * @param  array   $excludes Array of regular expressions indicating files to exclude.
+ * @param  array   $excludes Array of regular expressions indicating items to exclude.
  * @param  int     $maxdepth How deep to browse (-1=unlimited)
  * @param  string  $mode     "FULL"|"DIRS"|"FILES"
- * @param  d       $d        for internal use only
- * @return string[]
+ * @param  int     $d        Recursion depth, for internal use only
+ * @return string[] folder-paths end with a DIRECTORY_SEPARATOR !
 **/
 function get_recursive_file_list ( $path , $excludes, $maxdepth = -1 , $mode = "FULL" , $d = 0 )
 {
