@@ -38,7 +38,7 @@ abstract class CmsDbQueryBase
 {
 	/**
 	 * The total number of rows matching the query.
-	 * This value is populated after execute() is called.
+	 * This property is populated after execute() is called.
 	 *
 	 * @see execute()
 	 */
@@ -55,20 +55,21 @@ abstract class CmsDbQueryBase
     protected $_limit = 1000;
 
 	/**
-	 * This member stores the raw database resultset object.
+	 * This property stores the raw database resultset object.
 	 */
     protected $_rs;
 
 	/**
-	 * This member stores the original arguments passed to the constructor and used when generating
-	 * the query.
+	 * This property stores the original arguments passed to the constructor
+	 * and used when generating the query.
 	 */
     protected $_args = array();
 
 	/**
 	 * Constructor
 	 *
-	 * @param mixed $args Accepts an associative array (key=>value) with arguments for the query, or a comma separated string of arguments.
+	 * @param mixed $args associative array (key=>value) with arguments for the query,
+	 *  or a comma-separated string of those arguments.
 	 */
     public function __construct($args = '')
     {
@@ -85,18 +86,18 @@ abstract class CmsDbQueryBase
 	/**
 	 * Execute the query.
 	 *
-	 * This method should read the parameters, build and execute the database query and populate
-	 * the $_totalmatchingrows and $_rs members.
+	 * This method should read the parameters, build and execute the database
+	 * query and populate the $_totalmatchingrows and $_rs properties.
 	 *
-	 * This method should be smart enough to not execute the database query more than once
-	 * independent of how many times it is called.
+	 * This method should be smart enough to not execute the database query
+	 * more than once regardless of how many times it is called.
 	 */
     abstract public function execute();
 
     /**
      * Return the total number of matching records that match the current query
      *
-	 * If execute has not already been called, this method will call it.
+	 * If execute has not already been called, this method will do so.
 	 *
 	 * @return int
 	 */
@@ -109,9 +110,10 @@ abstract class CmsDbQueryBase
 
 	/**
 	 * Return the number of records that match the the current query
-	 * subject to page limits, this method will return either the pagelimit or a lesser value.
+	 * Subject to page limits, this method will return either the pagelimit
+	 * or a smaller number.
 	 *
-	 * If execute has not already been called, this method will call it.
+	 * If execute has not already been called, this method will do so.
 	 *
 	 * @return int
 	 */
@@ -124,9 +126,9 @@ abstract class CmsDbQueryBase
 
 
 	/**
-	 * Modify the resultset object and point to the next record of the matched rows.
+	 * Modify the resultset property/object to point to the next one of the matched rows.
 	 *
-	 * If execute has not been called yet, this method will call it.
+	 * If execute has not been called yet, this method will do so.
 	 */
     public function MoveNext()
     {
@@ -136,9 +138,9 @@ abstract class CmsDbQueryBase
     }
 
 	/**
-	 * Modify the resultset object and point to the first record of the matched rows.
+	 * Modify the resultset property/object to point to the first of the matched rows.
 	 *
-	 * If execute has not been called yet, this method will call it.
+	 * If execute has not been called yet, this method will do so.
 	 */
     public function MoveFirst()
     {
@@ -148,10 +150,10 @@ abstract class CmsDbQueryBase
     }
 
 	/**
-	 * Modify the resultset object and point to the first record of the matched rows.
-	 * This is a synonym for MoveFirst()
+	 * Modify the resultset property/object to point to the first of the matched rows.
+	 * This is an alias of MoveFirst()
 	 *
-	 * If execute has not been called yet, this method will call it.
+	 * If execute has not been called yet, this method will do so.
 	 *
 	 * @see MoveFirst()
 	 */
@@ -163,9 +165,9 @@ abstract class CmsDbQueryBase
     }
 
 	/**
-	 * Modify the resultset object and point to the last record of the matched rows.
+	 * Modify the resultset property/object to point to the last of the matched rows.
 	 *
-	 * If execute has not been called yet, this method will call it.
+	 * If execute has not been called yet, this method will do so.
 	 */
     public function MoveLast()
     {
@@ -206,13 +208,13 @@ abstract class CmsDbQueryBase
 
 	/**
 	 * Return an array of matched objects.
-     *
-     * This method will iterate through all of the rows of the resultset, and convert each resulting
-     * row into an object.
+	 *
+	 * This method will iterate through all of the rows of the resultset,
+	 * and convert each resulting row into an object.
 	 *
 	 * The output of this method depends on the derived class.
 	 *
-     * @see GetObject()
+	 * @see GetObject()
 	 * @return array maybe empty
 	 */
     public function GetMatches()
