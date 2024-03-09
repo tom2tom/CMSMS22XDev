@@ -243,7 +243,7 @@ class wizard_step8 extends wizard_step
 // TODO if upgrade may change content-pages, or (better) actually has done so,
 // then update all hierarchy positions as for install operation
 
-            $this->message(lang('done'));
+//          $this->verbose(lang('done'));
         }
         catch( Exception $e ) {
             $this->error($e->GetMessage());
