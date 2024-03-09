@@ -52,11 +52,16 @@ class cms_smarty extends Smarty
  */
 class Install_TemplateCaller
 {
-    private $php_functions; // empty means no restriction
+    private $php_functions; // normally, unset means no use, empty array means no restriction
 
     public function __construct($smarty)
     {
-        $this->php_functions = &$smarty->security_policy->php_functions; //TODO check with Smarty5
+        if ($smarty->security_policy) {
+            $this->php_functions = &$smarty->security_policy->php_functions; //TODO check with Smarty5
+        } else {
+            // Smarty4 defaults + tr = OK here?
+            $this->php_functions = ['count', 'empty', 'in_array', 'is_array', 'isset', 'sizeof', 'time', 'tr'];
+        }
     }
 
     public function __call($name, $args) {
