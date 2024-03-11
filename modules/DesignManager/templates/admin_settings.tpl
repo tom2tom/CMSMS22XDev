@@ -1,10 +1,4 @@
 {form_start}
-<div class="pageoverflow">
-  <p class="pagetext"></p>
-  <p class="pageinput">
-    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
-  </p>
-</div>
 <fieldset>
   <legend>{$mod->Lang('prompt_locksettings')}:</legend>
   <div class="pageoverflow">
@@ -20,4 +14,10 @@
     </p>
   </div>
 </fieldset>
+<div class="pageoverflow">
+  <p class="pageinput">
+    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
+    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
+  </p>
+</div>
 {form_end}

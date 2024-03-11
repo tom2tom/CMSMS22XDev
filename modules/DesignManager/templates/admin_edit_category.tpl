@@ -8,8 +8,8 @@
 {if $category->get_id() != ''}
   <input type="hidden" name="{$actionid}cat" value="{$category->get_id()}">
 {/if}
+<br>
 <div class="pageoverflow">
-  <p class="pagetext"></p>
   <p class="pageinput">
     <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
     <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">

@@ -1,4 +1,4 @@
-<h3>{$mod->Lang('prompt_bulk_changeowner')}:</h3>
+<h3>{$mod->Lang('prompt_bulk_changeowner')}</h3>
 
 {form_start multicontent=$multicontent}
 <div class="pageoverflow">

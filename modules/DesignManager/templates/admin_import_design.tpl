@@ -18,9 +18,8 @@ $(function() {
     <input type="file" id="import_xml_file" name="{$actionid}import_xml_file" size="50">
   </p>
 </div>
-
+<br>
 <div class="pageoverflow">
-  <p class="pagetext"></p>
   <p class="pageinput">
     <input type="submit" name="{$actionid}next1" data-ui-icon="ui-icon-triangle-2-e-w" value="{$mod->Lang('next')}">
     <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">

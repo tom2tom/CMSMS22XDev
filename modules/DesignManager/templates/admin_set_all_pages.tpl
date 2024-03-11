@@ -71,8 +71,8 @@
     <input type="checkbox" name="{$actionid}check2" value="1" id="check2">&nbsp;<label for="check2">{$mod->Lang('confirm_setall_3')}</label>
   </p>
 </div>
+<br>
 <div class="pageoverflow">
-  <p class="pagetext"></p>
   <p class="pageinput">
     <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
     <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">

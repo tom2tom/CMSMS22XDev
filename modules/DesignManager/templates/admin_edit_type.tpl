@@ -1,16 +1,7 @@
-<h3>{$mod->Lang('edit_type')}:</h3>
+<h3>{$mod->Lang('edit_type')}</h3>
 
-{form_start}
 <fieldset>
   <div class="pagecontainer" style="width:49%;float:left;">{* left container *}
-    <div class="pageoverflow">
-      <p class="pagetext"></p>
-      <p class="pageinput">
-        <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
-        <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
-      </p>
-    </div>
-
     <div class="pageoverflow">
       <p class="pagetext"><label for="originator">{$mod->Lang('prompt_originator')}:</label>&nbsp;{cms_help key2='help_type_originator' title=$mod->Lang('prompt_originator')}</p>
       <p class="pageinput" id="originator">{$type->get_originator(TRUE)}</p>
@@ -25,7 +16,6 @@
       <p class="pagetext"><label for="descname">{$mod->Lang('prompt_descriptive_name')}:</label>&nbsp;{cms_help key2='help_type_descriptive_name' title=$mod->Lang('prompt_descriptive_name')}</p>
       <p class="pageinput" id="descname">{$type->get_langified_display_value()}</p>
     </div>
-
   </div>{* left container *}
 
   {* right container *}
@@ -52,7 +42,15 @@
   <div style="clear: both;"></div>
 </fieldset>{* container *}
 
+{form_start}
 <input type="hidden" name="{$actionid}type" value="{$type->get_id()}">
+
+<div class="pageoverflow">
+  <p class="pageinput">
+    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
+    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
+  </p>
+</div>
 
 {if $type->get_content_callback() != ''}
 {tab_header name='content' label=$mod->Lang('prompt_proto_template')}

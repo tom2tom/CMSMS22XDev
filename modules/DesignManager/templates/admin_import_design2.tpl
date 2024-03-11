@@ -154,8 +154,8 @@ $(function() {
     <input type="checkbox" name="{$actionid}check1" value="1" id="check1">&nbsp;<label for="check1">{$mod->Lang('confirm_import_1')}</label>
   </p>
 </div>
+<br>
 <div class="pageoverflow">
-  <p class="pagetext"></p>
   <p class="pageinput">
     <input type="submit" name="{$actionid}next2" data-ui-icon="ui-icon-triangle-2-e-w" value="{$mod->Lang('next')}">
     <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">

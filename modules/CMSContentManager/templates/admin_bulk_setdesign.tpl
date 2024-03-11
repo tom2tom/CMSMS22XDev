@@ -5,7 +5,7 @@ $(function() {
    });
 });
 </script>
-<h3>{$mod->Lang('prompt_bulk_setdesign')}:</h3>
+<h3>{$mod->Lang('prompt_bulk_setdesign')}</h3>
 
 {form_start multicontent=$multicontent}
 <div class="pageoverflow">

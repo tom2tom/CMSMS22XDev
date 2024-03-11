@@ -5,7 +5,7 @@
 {/if}
 
 <div class="warning">
-  <h3>{$ModuleManager->Lang('notice')}:</h3>
+  <h3>{$ModuleManager->Lang('notice')}</h3>
   <p>{$ModuleManager->Lang('time_warning')}</p>
 </div>
 <div class="clearb"></div>

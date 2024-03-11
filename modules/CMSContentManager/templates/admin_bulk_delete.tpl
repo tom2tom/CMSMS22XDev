@@ -1,5 +1,5 @@
-<h3>{$mod->Lang('prompt_bulk_delete_content')}:</h3>
-<h4>{$mod->Lang('prompt_bulk_delete_content2')}:</h4>
+<h3>{$mod->Lang('prompt_bulk_delete_content')}</h3>
+<h4>{$mod->Lang('prompt_bulk_delete_content2')}</h4>
 
 {form_start multicontent=$multicontent}
 <div class="pageoverflow">

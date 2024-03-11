@@ -1,4 +1,4 @@
-<h3>{$mod->Lang('actiondelete')}:</h3>
+<h3>{$mod->Lang('actiondelete')}</h3>
 {$cancellabel=$mod->Lang('cancel')}
 {if !empty($errors)}
 {$cancellabel=$mod->Lang('return')}

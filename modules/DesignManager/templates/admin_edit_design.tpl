@@ -1,17 +1,16 @@
 {form_start id="admin_edit_design"}<input type="hidden" name="{$actionid}design" value="{$design->get_id()}">
 <input type="hidden" name="{$actionid}ajax" id="ajax">
 
+<div class="pageoverflow">
+  <p class="pageinput">
+    <input id="submitme" type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
+    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
+    <input id="applyme" type="submit" name="{$actionid}apply" data-ui-icon="ui-icon-disk" value="{$mod->Lang('apply')}">
+  </p>
+</div>
+
 <fieldset>
   <div style="width: 49%; float: left;">
-    <div class="pageoverflow">
-      <p class="pagetext"></p>
-      <p class="pageinput">
-        <input id="submitme" type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
-        <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
-        <input id="applyme" type="submit" name="{$actionid}apply" data-ui-icon="ui-icon-disk" value="{$mod->Lang('apply')}">
-      </p>
-    </div>
-
     <div class="pageoverflow">
       <p class="pagetext"><label for="design_name">{$mod->Lang('prompt_name')}</label>:&nbsp;{cms_help key2='help_design_name' title=$mod->Lang('prompt_name')}</p>
       <p class="pageinput">
