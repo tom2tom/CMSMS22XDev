@@ -1803,7 +1803,7 @@ td.icons_wide {
 }
 #oe_mainarea .sortable-list li .sortable-remove {
 	float: left;
-	display: inline-block;
+	margin: 0;
 }
 #oe_mainarea .available-templates li .sortable-remove,
 #oe_mainarea .available-stylesheets li .sortable-remove {
