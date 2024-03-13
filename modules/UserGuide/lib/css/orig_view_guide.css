@@ -1,0 +1,78 @@
+.guide {
+ position: relative;
+ font-size: 1rem
+}
+.guide h1 {
+ margin: 0 0 1rem;
+ font-size: 1.8rem;
+ color: #024c64 /*for light background*/
+}
+.guide h2 {
+ margin: 0 0 .5rem;
+ font-size: 1.4rem;
+ color: #024c64
+}
+.guide h3 {
+ margin: 0 0 .25rem;
+ font-size: 1.15rem;
+ color: #024c64
+}
+.guide h4 {
+ margin: 0;
+ font-size: 1rem;
+ color: #024c64
+}
+.guide p {
+ font-size: 1rem;
+ margin-bottom: 1rem
+}
+.guide li {
+ margin: 0 0 .3rem 2rem
+}
+.guide .font-extra-large {
+ font-size: 1.25rem
+}
+.guide .font-larger {
+ font-size: 1.125rem
+}
+.guide .font-smaller {
+ font-size: .875rem
+}
+.guide .image-left {
+ float: left;
+ margin: 0 .6rem .6rem 0
+}
+.guide .image-center,
+.guide .image-center img {
+ display: block;
+ margin: 0 auto .6rem
+}
+.guide .image-right {
+ float: right;
+ margin: 0 0 .6rem .6rem
+}
+.guide .image-max-50 {
+ max-width: 50%
+}
+.guide .image-inline {
+ display: inline
+}
+.guide blockquote {
+ padding: 1rem 2rem;
+ background-color: rgba(0, 0, 0, .1)
+}
+.guide fieldset {
+ border: 0;
+ margin: 0;
+ padding: 0
+}
+.guide hr {
+ -moz-box-sizing: content-box;
+ -webkit-box-sizing: content-box;
+ box-sizing: content-box;
+ height: 1px
+}
+.pageoverflow {
+ width: auto;
+ overflow: auto
+}

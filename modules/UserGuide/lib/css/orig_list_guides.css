@@ -1,0 +1,53 @@
+/*for light background*/
+.guidetable {
+ max-width: 90%;
+ width: max-content;
+ margin: 1rem auto;
+ border-collapse: collapse;
+ border-spacing: 0;
+ border: 1px solid #b3b3b3;
+ font-size: inherit
+}
+.guidetable > th > tr {
+ height: 0.1px;
+ opacity: 0
+}
+.guidetable td {
+ padding: .5em .75em
+}
+.guidetable td.pagepos {
+ padding: 0;
+ text-align: center
+}
+.guidetable tr.row1 {
+ background: #f2f2f2
+}
+.guidetable tr.row2 {
+ background: #e6e6e6
+}
+.guidetable tr.row1:hover,
+.guidetable tr.row2:hover {
+ background: #ccc
+}
+.pageicon {
+ min-width: 1rem;
+ width: 1%;
+ border: none
+}
+.viewicon {
+ border: none;
+ height: 2em;
+ width: 2em;
+ vertical-align: top
+}
+.information {
+ display: inline-block;
+ width: auto;
+ margin: .75rem 0;
+ padding: .25rem;
+ border: 1px solid #058dc7;
+ border-radius: .25rem;
+ background-color: #cee6f2;
+ color: #03587c;
+ font-size: .875rem
+}

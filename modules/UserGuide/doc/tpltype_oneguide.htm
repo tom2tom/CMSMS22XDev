@@ -1,0 +1,32 @@
+<h2>Single User Guide Display Template Help</h2>
+
+<h3>Assigned Variables</h3>
+<ul class="helptext">
+  <li>item (object) empty or populated item being added/edited</li>
+  <li>newitem (bool) true when creating a new guide</li>
+  <li>input_content (html elements) for WYSIWYG editing of item content, if that's wanted</li>
+  <li>sheets_list (array) numeric id(s) and name(s) of stylesheets any of which can be selected for application to the item</li>
+  <li>templates_list (array) numeric id(s) and name(s) of templates one of which can be selected for application to the item<</li>
+  <li>tab (string) identifier of the active tab, possibly empty</li>
+</ul>
+
+<h3>Properties of Each Item</h3>
+<ul class="helptext">
+  <li>active (bool) whether the guide is enabled/active<li>
+  <li>admin (bool) whether the guide is for display only in the admin-console<li>
+  <li>author (string) identifier of the creator or some later modifier<li>
+  <li>author_id (int) numeric id of the latest modifier<li>
+  <li>content (string) what is displayed<li>
+  <li>create_date (string) item creation date-time, formatted as in the database, like Y-m-D H:i:s<li>
+  <li>id (int) numeric identifier 0 for new item, > 0 for existing<li>
+  <li>name (string) displayed identifier<li>
+  <li>modified_date (string) date-time of latest modification if any, formatted as in the database, like Y-m-D H:i:s <li>
+  <li>position (int) list display sort-order index<li>
+  <li>revision (string) suppementary identifier, for version control etc<li>
+  <li>restricted (int) type of restriction, if any, that applies to displaying the guide in the Admin Console<li>
+  <li>search (bool) whether the name and content can be accessed by the AdminSearch module<li>
+  <li>sheets (string) comma-separated numeric id(s) of styleheet(s) to use for frontend display<li>
+  <li>smarty (bool) whether to process the content via Smarty before display<li>
+  <li>template_id (int) <li>
+  <li>wysiwyg (bool) whether the item normally is edited using the WYSIWYG editor<li>
+</ul>
