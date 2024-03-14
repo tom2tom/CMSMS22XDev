@@ -223,7 +223,6 @@ try {
   $fn = __DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'orig_form_template.tpl';
   if( file_exists( $fn ) ) {
 	$template = @file_get_contents($fn);
-	$template = @file_get_contents($fn);
 	$tpl = new CmsLayoutTemplate();
 	$tpl->set_name('News Fesubmit Form Sample');
 	$tpl->set_owner($uid);
