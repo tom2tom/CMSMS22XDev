@@ -75,7 +75,7 @@ $(function() {
     $('#Edit_Content').dirtyForm('disable');
     if( this_id != 'content_type') $('#active_tab').val('{$options_tab_name}');
     if( do_locking ) {
-      if( do_locking) $('#Edit_Content').lockManager('unlock',1).done(function() {
+      if( do_locking) $('#Edit_Content').lockManager('unlock').done(function() {
         $(self).closest('form').trigger('submit');
       });
     } else {
@@ -93,7 +93,7 @@ $(function() {
       var self = this;
       var form = $(this).closest('form');
       ev.preventDefault();
-      $('#Edit_Content').lockManager('unlock',1).done(function() {
+      $('#Edit_Content').lockManager('unlock').done(function() {
         $('<input/>',{
          type: 'hidden',
          name: $(self).attr('name'),
@@ -112,7 +112,7 @@ $(function() {
       var self = this;
       ev.preventDefault();
       var form = $(this).closest('form');
-      $('#Edit_Content').lockManager('unlock',1).done(function() {
+      $('#Edit_Content').lockManager('unlock').done(function() {
         $('<input/>',{
          type: 'hidden',
          name: $(self).attr('name'),
