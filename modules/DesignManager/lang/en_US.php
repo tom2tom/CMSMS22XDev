@@ -507,6 +507,7 @@ $lang['unknown'] = 'Unknown';
 #V
 
 #W
+$lang['warn_bulk_delete_sheets'] = '<strong>Warning:</strong> Deleting multiple stylesheets at once is probably a bad idea.  No checks are performed to see if these stylesheets are actually used in the system.  This operation might mangle a working website!';
 $lang['warn_bulk_delete_templates'] = '<strong>Warning:</strong> Deleting multiple templates at once is usually a bad idea.  No checks are performed to see if these templates are actually used in the system.  This operation may break a working website!';
 $lang['warn_setall_nocontentblocks'] = '<strong>Warning:</strong> No content blocks were detected in the destination template.  This will prevent editing content in all current content pages.';
 $lang['warn_template_used'] = '<strong>Warning:</strong> This template is in use by one or more pages, and/or designs.  It may also be included by other templates.  Deleting this template may break a working website. <strong>Use Extreme Caution!</strong>';
@@ -515,10 +516,11 @@ $lang['warning_deletetemplate_attachments'] = 'This design has templates attache
 $lang['warning_deletedesign'] = '<strong>Warning:  Use extreme caution.</strong>  Deleting a design may break a functioning website.';
 $lang['warning_deletestylesheet_attachments'] = 'This design has stylesheets attached to it.  Some of the templates in use by the system but not necessarily attached to this design may rely on these stylesheets.  Deleting these stylesheets, even if they are attached to no other design may break an otherwise working site. Please exercise extreme caution!';
 $lang['warning_editdesign_nostylesheets'] = 'There are no stylesheets available in the system.';
-$lang['warning_edittemplate_nostylesheets'] = 'No stylesheets attached';
+//$lang['warning_edittemplate_nostylesheets'] = 'No stylesheets attached';
 $lang['warning_edittemplate_notemplates'] = 'Sorry, we could not find any templates that you have permission to edit';
-$lang['warning_no_templates_available'] = 'We could find no templates that match the selected criteria or that you have permission to edit';
-$lang['warning_no_stylesheets'] = 'We could find no stylesheets that match the selected criteria or that you have permission to edit';
+$lang['warning_no_design'] = 'No design is recorded';
+$lang['warning_no_templates_available'] = 'We could find no template that matches the filter criteria (if any) and that you have permission to edit';
+$lang['warning_no_stylesheets'] = 'We could find no stylesheet that matches the filter criteria (if any) and that you have permission to edit';
 $lang['warning_set_all_pages'] = '<strong>Warning:</strong> This is a potentially destructive operation!  You are asking that all content pages be set use this template.  Please confirm this action.';
 $lang['whats_this'] = 'What\'s this?';
 
