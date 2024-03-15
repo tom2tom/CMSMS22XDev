@@ -259,7 +259,7 @@ EOS;
         if ($filesFolder) {
             $dir .= DIRECTORY_SEPARATOR.$filesFolder;
             if (!is_dir($dir)) {
-                return; // file or N/A, assume not wanted
+                return; // is file or N/A, assume not wanted
             }
         } else {
             return;
