@@ -10,7 +10,7 @@ $(function() {
         }
     });
 
-    // initialize lock manager
+    // initialize lock manager (oid == 0 does nothing)
     if( do_locking ) {
       $('#form_edittemplate').lockManager({
         type: 'template',
@@ -52,7 +52,7 @@ $(function() {
        ev.preventDefault();
        var form = $(this).closest('form');
        $('#form_edittemplate').lockManager('unlock').done(function() {
-           console.debug('item unlocked');
+//         console.debug('item unlocked'); only if was successful i.e. locked and matched
            $('<input/>', {
             type:'hidden',
             name:$(self).attr('name'),
@@ -121,27 +121,28 @@ $(function() {
 {/if}
 
 {form_start id="form_edittemplate" extraparms=$extraparms}
-<fieldset class="cf">
-    <div class="grid_6">
-        <div class="pageoverflow">
-            <p class="pageinput">
-                <input type="submit" id="submitbtn" name="{$actionid}submit" value="{$mod->Lang('submit')}"{$disable|strip}>
-                <input type="submit" id="cancelbtn" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
-                {if $template->get_id()}
-                <input type="submit" id="applybtn" name="{$actionid}apply" data-ui-icon="ui-icon-disk" value="{$mod->Lang('apply')}"{$disable|strip}>
-                {/if}
-            </p>
-        </div>
-
+<div class="cf">{$tplid=$template->get_id()}
+    <div class="pageoverflow">
+        <p class="pageinput">
+            <input type="submit" id="submitbtn" name="{$actionid}submit" value="{$mod->Lang('submit')}"{$disable|strip}>
+            <input type="submit" id="cancelbtn" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
+{if $tplid > 0}
+            <input type="submit" id="applybtn" name="{$actionid}apply" data-ui-icon="ui-icon-disk" value="{$mod->Lang('apply')}"{$disable|strip}>
+{/if}
+        </p>
+    </div>
+{if $tplid > 0}
+    <fieldset>
+    <div class="grid_6" style="margin-left:0;margin-right:0">
+{/if}
         <div class="pageoverflow">
             <p class="pagetext"><label for="tpl_name">*{$mod->Lang('prompt_name')}:</label>&nbsp;{cms_help key2=help_template_name title=$mod->Lang('prompt_name')}</p>
             <p class="pageinput">
                 <input id="tpl_name" type="text" name="{$actionid}name" size="50" maxlength="90" value="{$template->get_name()}"{if !$has_manage_right} readonly{/if} placeholder="{$mod->Lang('new_template')}">
             </p>
         </div>
-
-    {$usage_str=$template->get_usage_string()}
-    {if !empty($usage_str)}
+{$usage_str=$template->get_usage_string()}
+    {if $usage_str}
         <div class="pageoverflow">
             <p class="pagetext"><label>{$mod->Lang('prompt_usage')}:</label>&nbsp;{cms_help key2='help_tpl_usage' title=$mod->Lang('prompt_usage')}</p>
             <p class="pageinput">
@@ -149,10 +150,9 @@ $(function() {
             </p>
         </div>
     {/if}
-
+{if $tplid > 0}
     </div>{* column *}
     <div class="grid_6">
-    {if $template->get_id()}
         <div class="pageoverflow">
             <p class="pagetext"><label for="tpl_created">{$mod->Lang('prompt_created')}:</label>&nbsp;{cms_help key2='help_tpl_created' title=$mod->Lang('prompt_created')}</p>
             <p class="pageinput">
@@ -165,12 +165,12 @@ $(function() {
                 {$template->get_modified()|cms_date_format}
             </p>
         </div>
-    {/if}
     </div>{* column *}
-</fieldset>
+    </fieldset>
+{/if}
+</div>
 
-
-{tab_header name='template' label=$mod->Lang('prompt_template')}
+{tab_header name='template' label=lang('content')}
 {tab_header name='description' label=$mod->Lang('prompt_description')}
 {if $has_themes_right}
     {tab_header name='designs' label=$mod->Lang('prompt_designs')}
@@ -185,7 +185,7 @@ $(function() {
 {tab_start name='template'}
 <div class="pageoverflow">
     <p class="pagetext">
-      <label for="content">{$mod->Lang('prompt_template_content')}:</label>&nbsp;{cms_help key2=help_template_contents title=$mod->Lang('prompt_template_content')}
+      <label for="content">{lang('content')}:</label>&nbsp;{cms_help key2=help_template_contents title=lang('content')}
       {if !empty($helptext)}
         <a id="a_helptext" href="javascript:void(0);" style="float: right;">{$mod->Lang('prompt_template_help')}</a>
       {/if}
@@ -259,19 +259,19 @@ $(function() {
             </p>
         </div>
         {/if}
-    {if $template->get_id() > 0}
+{if $tplid > 0}
         <div class="pageoverflow">
             <p class="pagetext">{$mod->Lang('prompt_filetemplate')}:</p>
             <p class="pageinput">
-            {if $template->has_content_file()}
+ {if $template->has_content_file()}
             <input type="submit" id="importbtn" name="{$actionid}import" data-ui-icon="ui-icon-arrowreturnthick-1-n" value="{$mod->Lang('import')}">
-            {elseif $template->get_id() > 0}
+ {else}
             <input type="submit" id="exportbtn" name="{$actionid}export" data-ui-icon="ui-icon-arrowreturnthick-1-s" value="{$mod->Lang('export')}">
-            {/if}
+ {/if}
         </p>
         </div>
-    {/if}
 {/if}
+{/if}{*$has_manage_right*}
 
 {if ($has_manage_right || $template->get_owner_id() == $userid)}
     {tab_start name='permissions'}

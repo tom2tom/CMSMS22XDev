@@ -9,13 +9,15 @@ $('#tpl_selall').cmsms_checkall();
     {if $has_add_right && !empty($list_types)}
       <a id="addtemplate" accesskey="a" title="{$mod->Lang('create_template')}">{admin_icon icon='newobject.gif' alt=$mod->Lang('create_template')}&nbsp;{$mod->Lang('create_template')}</a>&nbsp;&nbsp;
     {/if}
-    <a id="edittplfilter" accesskey="f" title="{$mod->Lang('prompt_editfilter')}">{admin_icon icon='view.gif' alt=$mod->Lang('prompt_editfilter')}&nbsp;{$mod->Lang('filter')}</a>&nbsp;&nbsp;
+{if !empty($templates) || !empty($tpl_filter[0])}
+     <a id="edittplfilter" accesskey="f" title="{$mod->Lang('prompt_editfilter')}">{admin_icon icon='view.gif' alt=$mod->Lang('prompt_editfilter')}&nbsp;{$mod->Lang('filter')}</a>&nbsp;&nbsp;
     {if $have_locks}
       <a id="clearlocks" accesskey="l" title="{$mod->Lang('title_clearlocks')}" href="{cms_action_url action='admin_clearlocks' type='template'}">{admin_icon icon='run.gif' alt=''}&nbsp;{$mod->Lang('prompt_clearlocks')}</a>&nbsp;&nbsp;
     {/if}
     {if !empty($tpl_filter[0])}
       <span style="color: green;" title="{$mod->Lang('title_filterapplied')}">{$mod->Lang('filterapplied')}</span>
     {/if}
+{/if}
   </div>
 
   {if !empty($tpl_nav) && $tpl_nav.numpages > 1}
@@ -171,7 +173,7 @@ $('#tpl_selall').cmsms_checkall();
   </div>
 
 {else}
-  {page_warning msg=$mod->Lang('warning_no_templates_available')}
+  <p class="information">{$mod->Lang('warning_no_templates_available')}</p>
 {/if}
 
 {/strip}{form_end}

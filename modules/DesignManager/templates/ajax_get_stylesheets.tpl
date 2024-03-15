@@ -5,14 +5,15 @@ $('#css_selall').cmsms_checkall();
 <div class="row">
   <div class="pageoptions options-menu half">
       <a id="addcss" accesskey="a" href="{cms_action_url action='admin_edit_css'}" title="{$mod->Lang('create_stylesheet')}">{admin_icon icon='newobject.gif'} {$mod->Lang('create_stylesheet')}</a>&nbsp;&nbsp;
+{if !empty($stylesheets) || ($css_filter && $css_filter.design)}
       <a id="editcssfilter" accesskey="f" title="{$mod->Lang('prompt_editfilter')}">{admin_icon icon='view.gif' alt=$mod->Lang('prompt_editfilter')} {$mod->Lang('filter')}</a>&nbsp;&nbsp;
       {if $have_css_locks}
          <a id="cssclearlocks" accesskey="l" title="{$mod->Lang('title_clearlocks')}" href="{cms_action_url action='admin_clearlocks' type='stylesheet'}">{admin_icon icon='run.gif' alt=''}&nbsp;{$mod->Lang('prompt_clearlocks')}</a>&nbsp;&nbsp;
       {/if}
-      {if $css_filter != '' && $css_filter.design != ''}
+      {if $css_filter && $css_filter.design}
       <span style="color: green;" title="{$mod->Lang('title_filterapplied')}">{$mod->Lang('filterapplied')}</span>
       {/if}
-    </ul>
+{/if}
   </div>
 
   {if !empty($css_nav) && $css_nav.numpages > 1}
@@ -141,5 +142,5 @@ $('#css_selall').cmsms_checkall();
   </div>
   {form_end}
 {else}
-  <div class="warning">{$mod->Lang('warning_no_stylesheets')}</div>
+  <p class="information">{$mod->Lang('warning_no_stylesheets')}</p>
 {/if}

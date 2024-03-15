@@ -1,4 +1,4 @@
-{* stylesheets tab for edit template *}{*TODO <style/> invalid here - migrate to <head/>*}
+{* stylesheets tab for edit design *}{*TODO <style/> invalid here - deploy script to migrate to <head/>*}
 <style>
 #available-stylesheets li.selected {
    background-color: #147fdb;
@@ -14,11 +14,11 @@
 }
 </style>
 
-<div class="information">{$mod->Lang('info_edittemplate_stylesheets_tab')}</div>
 {if empty($all_stylesheets)}
-  <div class="warning" style="width: 95%;">{$mod->Lang('warning_editdesign_nostylesheets')}</div>
-{else}
-  {$cssl=$design->get_stylesheets()}
+  <p class="information">{$mod->Lang('warning_editdesign_nostylesheets')}</p>
+{else}{$cssl=$design->get_stylesheets()}
+  <p class="information">{$mod->Lang('info_edittemplate_stylesheets_tab')}</p>
+  <br>
   <div class="c_full cf">
     <div class="grid_6 draggable-area">
         <fieldset>
@@ -57,7 +57,7 @@
   </div>
 
   <script>
-    $(function() {
+   $(function() {
     //TODO conventional use of .draggable and .droppable would assist maintainability
     $('ul.sortable-stylesheets').sortable({
         connectWith: '#selected-stylesheets ul',
@@ -179,6 +179,6 @@
        }
     });
 
-    });
+   });
   </script>
 {/if}

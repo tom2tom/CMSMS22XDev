@@ -24,7 +24,7 @@
 
 {form_start allparms=$allparms}
 {if $bulk_op == 'bulk_action_delete_css'}
-  <div class="pagewarning">{$mod->Lang('warn_bulk_delete_templates')}</div>
+  <p class="pagewarning">{$mod->Lang('warn_bulk_delete_sheets')}</p>
   <br>
   <div class="pageoverflow">
     <p class="pageinput">

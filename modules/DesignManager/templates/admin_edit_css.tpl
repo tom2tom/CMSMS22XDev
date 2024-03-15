@@ -3,14 +3,14 @@ $(function() {
     var do_locking = {if $css_id|default:0 > 0 && isset($lock_timeout) && $lock_timeout > 0}1{else}0{/if};
     $('#form_editcss').dirtyForm({
         beforeUnload: function() {
-            if( do_locking )$('#form_editcss').lockManager('unlock');
+            if( do_locking ) $('#form_editcss').lockManager('unlock');
         },
         unloadCancel: function() {
-            if( do_locking )$('#form_editcss').lockManager('relock');
+            if( do_locking ) $('#form_editcss').lockManager('relock');
         }
     });
 
-    // initialize lock manager
+    // initialize lock manager (oid == 0 does nothing)
     if( do_locking ) {
       $('#form_editcss').lockManager({
         type: 'stylesheet',
@@ -19,7 +19,7 @@ $(function() {
         lock_timeout: {$lock_timeout|default:0},
         lock_refresh: {$lock_refresh|default:0},
         error_handler: function(err) {
-            cms_alert('got error '+err.type+' // '+err.msg);
+            cms_alert('Lock error '+err.type+' // '+err.msg);
         },
         lostlock_handler: function(err) {
             // we lost the lock on this stylesheet... make sure we can't save anything.
@@ -135,26 +135,29 @@ $(function() {
 {/if}
 
 {form_start id='form_editcss' extraparms=$extraparms}
-<fieldset class="cf">
-    <div class="grid_6">
-        <div class="pageoverflow">
-            <p class="pageinput">
-                <input type="submit" id="submitbtn" name="{$actionid}submit" value="{$mod->Lang('submit')}" {$disable|strip}>
-                <input type="submit" id="cancelbtn" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
-                {if $css->get_id()}
-                <input type="submit" id="applybtn" name="{$actionid}apply" data-ui-icon="ui-icon-disk" value="{$mod->Lang('apply')}" {$disable|strip}>
-                {/if}
-            </p>
-        </div>
+<div class="cf">
+    <div class="pageoverflow">
+        <p class="pageinput">
+            <input type="submit" id="submitbtn" name="{$actionid}submit" value="{$mod->Lang('submit')}" {$disable|strip}>
+            <input type="submit" id="cancelbtn" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
+            {if $css->get_id()}
+            <input type="submit" id="applybtn" name="{$actionid}apply" data-ui-icon="ui-icon-disk" value="{$mod->Lang('apply')}" {$disable|strip}>
+            {/if}
+        </p>
+    </div>
+{if $css->get_id()}
+    <fieldset>
+    <div class="grid_6" style="margin-left:0;margin-right:0">
+{/if}
         <div class="pageoverflow">
             <p class="pagetext"><label for="css_name">*{$mod->Lang('prompt_name')}:</label>&nbsp;{cms_help key2=help_stylesheet_name title=$mod->Lang('prompt_name')}</p>
             <p class="pageinput">
                 <input id="css_name" type="text" name="{$actionid}name" size="50" maxlength="90" value="{$css->get_name()}" placeholder="{$mod->Lang('new_stylesheet')}">
             </p>
         </div>
+{if $css->get_id()}
     </div>{* column *}
     <div class="grid_6">
-    {if $css->get_id()}
         <div class="pageoverflow">
             <p class="pagetext"><label for="css_created">{$mod->Lang('prompt_created')}:</label>&nbsp;{cms_help key2=help_stylesheet_created title=$mod->Lang('prompt_created')}</p>
             <p class="pageinput" id="css_created">
@@ -167,31 +170,37 @@ $(function() {
                 {$css->get_modified()|localedate_format:'%x %X'}
             </p>
         </div>
-    {/if}
     </div>{* column *}
-</fieldset>
+    </fieldset>
+{/if}
+</div>
 
-{tab_header name='content' label=$mod->Lang('prompt_stylesheet')}
+{tab_header name='content' label=lang('content')}
+{tab_header name='description' label=$mod->Lang('prompt_description')}
 {tab_header name='media_type' label=$mod->Lang('prompt_media_type')}
 {tab_header name='media_query' label=$mod->Lang('prompt_media_query')}
-{tab_header name='description' label=$mod->Lang('prompt_description')}
 {if $has_designs_right}
     {tab_header name='designs' label=$mod->Lang('prompt_designs')}
 {/if}
 {tab_header name='advanced' label=$mod->Lang('prompt_advanced')}
-
 {tab_start name='content'}
 {if $css->has_content_file()}
   <div class="information">{$mod->Lang('info_css_content_file',$css->get_content_filename())}</div>
 {else}
   <div class="pageoverflow">
-      <p class="pagetext"><label for="stylesheet">{$mod->Lang('prompt_stylesheet')}:</label>&nbsp;{cms_help key2=help_stylesheet_content title=$mod->Lang('prompt_stylesheet')}</p>
+      <p class="pagetext"><label for="stylesheet">{lang('content')}:</label>&nbsp;{cms_help key2=help_stylesheet_content title=lang('content')}</p>
       <p class="pageinput">
           {cms_textarea id='stylesheet' prefix=$actionid name='content' value=$css->get_content() type='css' rows=20 cols=80}
       </p>
   </div>
 {/if}
-
+{tab_start name='description'}
+<div class="pageoverflow">
+    <p class="pagetext"><label for="txt_description">{$mod->Lang('prompt_description')}:</label>&nbsp;{cms_help key2=help_css_description title=$mod->Lang('prompt_description')}</p>
+    <p class="pageinput">
+        <textarea id="txt_description" name="{$actionid}description" rows="10" cols="80">{$css->get_description()}</textarea>
+    </p>
+</div>
 {tab_start name='media_type'}
 <!-- media -->
 <div class="pagewarning">{$mod->Lang('info_editcss_mediatype_tab')}</div>
@@ -210,21 +219,12 @@ $(function() {
     {/strip}{/foreach}
     </p>
 </div>
-
 {tab_start name='media_query'}
 <div class="pagewarning">{$mod->Lang('info_editcss_mediaquery_tab')}</div>
 <div class="pageoverflow">
     <p class="pagetext"><label for="mediaquery">{$mod->Lang('prompt_media_query')}:</label>&nbsp;{cms_help key2=help_css_mediaquery title=$mod->Lang('prompt_media_query')}</p>
     <p class="pageinput">
         <textarea id="mediaquery" name="{$actionid}media_query" rows="10" cols="80">{$css->get_media_query()}</textarea>
-    </p>
-</div>
-
-{tab_start name='description'}
-<div class="pageoverflow">
-    <p class="pagetext"><label for="txt_description">{$mod->Lang('prompt_description')}:</label>&nbsp;{cms_help key2=help_css_description title=$mod->Lang('prompt_description')}</p>
-    <p class="pageinput">
-        <textarea id="txt_description" name="{$actionid}description" rows="10" cols="80">{$css->get_description()}</textarea>
     </p>
 </div>
 
@@ -243,16 +243,16 @@ $(function() {
 
 {tab_start name='advanced'}
 {if $css->get_id() > 0}
-  <div class="pageoverflow">
+<div class="pageoverflow">
     <p class="pagetext">{$mod->Lang('prompt_cssfile')}:</p>
     <p class="pageinput">
-        {if $css->has_content_file()}
-            <input type="submit" id="importbtn" name="{$actionid}import" data-ui-icon="ui-icon-arrowreturnthick-1-n" value="{$mod->Lang('import')}">
-        {else}
-            <input type="submit" id="exportbtn" name="{$actionid}export" data-ui-icon="ui-icon-arrowreturnthick-1-s" value="{$mod->Lang('export')}">
-        {/if}
+ {if $css->has_content_file()}
+        <input type="submit" id="importbtn" name="{$actionid}import" data-ui-icon="ui-icon-arrowreturnthick-1-n" value="{$mod->Lang('import')}">
+ {else}
+        <input type="submit" id="exportbtn" name="{$actionid}export" data-ui-icon="ui-icon-arrowreturnthick-1-s" value="{$mod->Lang('export')}">
+ {/if}
     </p>
-  </div>
+</div>
 {/if}
 {tab_end}
 

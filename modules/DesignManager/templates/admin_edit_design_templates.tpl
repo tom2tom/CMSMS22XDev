@@ -1,4 +1,4 @@
-{*TODO <style/> invalid here - migrate to <head/>*}
+{* templates tab for edit design*}{*TODO <style/> invalid here - deploy script to migrate to <head/>*}
 <style>
 #available-templates li.selected {
    background-color: #147fdb;
@@ -14,11 +14,11 @@
 }
 </style>
 
-<div class="information">{$mod->Lang('info_edittemplate_templates_tab')}</div>
 {if empty($all_templates)}
-<div class="pagewarning">{$mod->Lang('warning_edittemplate_notemplates')}</div>
-{else}
-{$tmpl=$design->get_templates()}
+<p class="information">{$mod->Lang('warning_edittemplate_notemplates')}</p>
+{else}{$tmpl=$design->get_templates()}
+<p class="information">{$mod->Lang('info_edittemplate_templates_tab')}</p>
+<br>
 <div class="c_full cf" id="template_sel">
     <div class="grid_6 draggable-area">
         <fieldset>
