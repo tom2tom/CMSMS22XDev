@@ -55,7 +55,7 @@ if ($row['smarty']) {
     try {
         $content2 = $smarty->fetch('string:'.$content);
     } catch (Exception $e) {
-        $this->SetError('Smarty processing failed. '.$e->GetMessage()); //TODO langify
+        $this->SetError($this->Lang('err_smarty').' ('.$e->GetMessage().')');
         $this->RedirectToAdminTab('list');
     }
     $tpl = $smarty->CreateTemplate($this->GetTemplateResource('view_guide.tpl'), null, null, $smarty);
@@ -68,6 +68,9 @@ if ($row['smarty']) {
         $this->RedirectToAdminTab('list');
     }
 } else {
-    echo $name, '<br><br>', '<div class="guide">', $content, '</div>';
+    $tpl = $smarty->CreateTemplate($this->GetTemplateResource('view_guide.tpl'), null, null, $smarty);
+    $tpl->assign('content', $content);
+    $tpl->assign('name', $name);
+    $tpl->display();
 }
 ?>
