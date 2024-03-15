@@ -58,6 +58,7 @@ $lang['item_notsaved2'] = 'This User Guide was not saved'; // displayed after er
 $lang['item_saved'] = 'The User Guide has been saved';
 $lang['listStyles'] = 'Default Stylesheet for Displayed List';
 $lang['modified'] = 'Latest Modification';
+$lang['msg_cancelled'] = 'Operation canceled';
 $lang['no_guide'] = 'No guide is recorded';
 $lang['no_sheet'] = 'No suitable stylesheet is recorded';
 $lang['no_template'] = 'No suitable template is recorded';

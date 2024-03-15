@@ -13,6 +13,7 @@ if (!($this->CheckPermission(UserGuide::MANAGE_PERM) ||
     $this->Redirect($id, 'defaultadmin', $returnid);
 }
 if (isset($params['cancel'])) {
+    $this->SetMessage($this->Lang('msg_cancelled'));
     $this->RedirectToAdminTab('settings');
 }
 
