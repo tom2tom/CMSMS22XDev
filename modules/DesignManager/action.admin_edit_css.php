@@ -25,7 +25,7 @@ $this->SetCurrentTab('stylesheets');
 $css_id = (int) get_parameter_value($params,'css');
 
 if( isset($params['cancel']) ) {
-    if( $params['cancel'] == $this->Lang('cancel') ) $this->SetMessage($this->Lang('msg_cancelled'));
+    $this->SetMessage($this->Lang('msg_cancelled'));
     $this->RedirectToAdminTab();
 }
 

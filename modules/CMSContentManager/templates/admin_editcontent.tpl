@@ -14,8 +14,8 @@ $(function() {
     }
   });
 
-  // initialize lock manager
   if( do_locking ) {
+    // initialize lock manager (oid < 1 does nothing)
     $('#Edit_Content').lockManager({
       type: 'content',
       oid: {$content_id|default:-1},
