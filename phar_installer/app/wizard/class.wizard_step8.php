@@ -26,26 +26,26 @@ class wizard_step8 extends wizard_step
         // nothing here
     }
 
-    private function db_connect($destconfig)
+    private function db_connect($choices)
     {
         $spec = new ConnectionSpec();
-        if( isset($destconfig['dbms']) ) {
-            $spec->type = $destconfig['dbms'];
-            $spec->host = $destconfig['db_hostname'];
-            $spec->username = $destconfig['db_username'];
-            $spec->password = $destconfig['db_password'];
-            $spec->dbname = $destconfig['db_name'];
-            $spec->port = isset($destconfig['db_port']) ? $destconfig['db_port'] : 0; //TODO mysqli default null not 0
-            $spec->prefix = $destconfig['db_prefix'];
+        if( isset($choices['dbms']) ) {
+            $spec->type = $choices['dbms'];
+            $spec->host = $choices['db_hostname'];
+            $spec->username = $choices['db_username'];
+            $spec->password = $choices['db_password'];
+            $spec->dbname = $choices['db_name'];
+            $spec->port = isset($choices['db_port']) ? $choices['db_port'] : 0; //TODO mysqli default null not 0
+            $spec->prefix = $choices['db_prefix'];
         }
         else {
-            $spec->type = $destconfig['dbtype'];
-            $spec->host = $destconfig['dbhost'];
-            $spec->username = $destconfig['dbuser'];
-            $spec->password = $destconfig['dbpass'];
-            $spec->dbname = $destconfig['dbname'];
-            $spec->port = isset($destconfig['dbport']) ? $destconfig['dbport'] : 0; // TODO default null ?
-            $spec->prefix = $destconfig['dbprefix'];
+            $spec->type = $choices['dbtype'];
+            $spec->host = $choices['dbhost'];
+            $spec->username = $choices['dbuser'];
+            $spec->password = $choices['dbpass'];
+            $spec->dbname = $choices['dbname'];
+            $spec->port = isset($choices['dbport']) ? $choices['dbport'] : 0; // TODO default null ?
+            $spec->prefix = $choices['dbprefix'];
         }
         if( !defined('CMS_DB_PREFIX') ) { //sometimes undefined when installer is running
             define('CMS_DB_PREFIX',$spec->prefix);
@@ -103,17 +103,17 @@ class wizard_step8 extends wizard_step
             $adminaccount = $wiz->get_data('adminaccount');
             if( !$adminaccount ) throw new Exception(lang('error_internal',801));
 
-            $destconfig = $wiz->get_data('config');
-            if( !$destconfig ) throw new Exception(lang('error_internal',803));
+            $choices = $wiz->get_data('config');
+            if( !$choices ) throw new Exception(lang('error_internal',803));
 
             $siteinfo = $wiz->get_data('siteinfo');
             if( !$siteinfo ) throw new Exception(lang('error_internal',804));
 
-            $this->write_config($destconfig,$destdir);
+            $this->write_config($choices,$destdir);
             $this->connect_to_cmsms($destdir);
 
             // connect to the database, ready for downstream use
-            $db = $this->db_connect($destconfig);
+            $db = $this->db_connect($choices);
 
             require_once __DIR__.'/msg_functions.php';
 
@@ -155,7 +155,7 @@ class wizard_step8 extends wizard_step
 
             $this->message(lang('install_defaultcontent'));
             $fn = $dir.'/initial.php';
-            if( $destconfig['samplecontent'] ) $fn = $dir.'/extra.php';
+            if( $choices['samplecontent'] ) $fn = $dir.'/extra.php';
             require_once $fn;
 
             $this->verbose(lang('install_setsitename'));
@@ -180,8 +180,8 @@ class wizard_step8 extends wizard_step
         if( !$destdir ) throw new Exception(lang('error_internal',811));
 
         $wiz = $this->get_wizard();
-        $destconfig = $wiz->get_data('config');
-        if( !$destconfig ) throw new Exception(lang('error_internal',812));
+        $choices = $wiz->get_data('config');
+        if( !$choices ) throw new Exception(lang('error_internal',812));
 
         // get the list of all available versions that this upgrader knows about
         $dir =  $app->get_appdir().'/upgrade';
@@ -219,10 +219,10 @@ class wizard_step8 extends wizard_step
         }
 
         try {
-            $this->write_config($destconfig,$destdir);
+            $this->write_config($choices,$destdir);
             $this->connect_to_cmsms($destdir);
             // setup database connection
-            $db = $this->db_connect($destconfig);
+            $db = $this->db_connect($choices);
 
             $this->conform_langs($wiz,$db);
 
@@ -238,7 +238,7 @@ class wizard_step8 extends wizard_step
                 }
             }
 
-// former order $this->write_config($destconfig,$destdir);
+// former order $this->write_config($choices,$destdir);
 //needed?   $this->connect_to_cmsms($destdir);
 // TODO if upgrade may change content-pages, or (better) actually has done so,
 // then update all hierarchy positions as for install operation
@@ -256,19 +256,19 @@ class wizard_step8 extends wizard_step
         $destdir = $app->get_destdir();
         if( !$destdir ) throw new Exception(lang('error_internal',828));
         $wiz = $this->get_wizard();
-        $destconfig = $wiz->get_data('config');
-        if( !$destconfig ) throw new Exception(lang('error_internal',829));
+        $choices = $wiz->get_data('config');
+        if( !$choices ) throw new Exception(lang('error_internal',829));
         $this->connect_to_cmsms($destdir);
         // global flags $CMS_INSTALL_PAGE etc are still set, from prior method-call
         $config = cms_config::get_instance();
-        if( $config['timezone'] != $destconfig['timezone'] ) {
-            $this->write_config($destconfig,$destdir);
+        if( $config['timezone'] != $choices['timezone'] ) {
+            $this->write_config($choices,$destdir);
             // cleanup any message-creation scripts
             for( $i = 0,$n = count(ob_list_handlers()); $i < $n; $i++ ) {
                 ob_end_clean();
             }
         }
-        $db = $this->db_connect($destconfig);
+        $db = $this->db_connect($choices);
         $this->conform_langs($wiz,$db);
     }
 
@@ -284,7 +284,7 @@ class wizard_step8 extends wizard_step
         $db->execute($sql,$havelangs);
     }
 
-    private function write_config($destconfig,$destdir)
+    private function write_config($choices,$destdir)
     {
         // [re]create config file
         // so that CMSMS can connect to the database.
@@ -296,16 +296,16 @@ class wizard_step8 extends wizard_step
         }
 
         $newconfig = [];
-        $newconfig['dbms'] = trim($destconfig['dbtype']);
-        $newconfig['db_hostname'] = trim($destconfig['dbhost']);
-        $newconfig['db_username'] = trim($destconfig['dbuser']);
-        $newconfig['db_password'] = trim($destconfig['dbpass']);
-        $newconfig['db_name'] = trim($destconfig['dbname']);
-        $newconfig['db_prefix'] = trim($destconfig['dbprefix']);
-        $newconfig['timezone'] = trim($destconfig['timezone']);
-        if( $destconfig['query_var'] ) $newconfig['query_var'] = trim($destconfig['query_var']);
-        if( isset($destconfig['dbport']) ) {
-            $num = (int)$destconfig['dbport'];
+        $newconfig['dbms'] = trim($choices['dbtype']);
+        $newconfig['db_hostname'] = trim($choices['dbhost']);
+        $newconfig['db_username'] = trim($choices['dbuser']);
+        $newconfig['db_password'] = trim($choices['dbpass']);
+        $newconfig['db_name'] = trim($choices['dbname']);
+        $newconfig['db_prefix'] = trim($choices['dbprefix']);
+        $newconfig['timezone'] = trim($choices['timezone']);
+        if( $choices['query_var'] ) $newconfig['query_var'] = trim($choices['query_var']);
+        if( isset($choices['dbport']) ) {
+            $num = (int)$choices['dbport'];
             if( $num > 0 ) { $newconfig['db_port'] = $num; }
         }
 
