@@ -62,6 +62,11 @@ $(function() {
 {/literal}
 <h3>{if $newitem}{$mod->Lang('add_item')}{else}{$mod->Lang('edit_item')}{/if}</h3>
 {form_start gid=$item->id}
+  <div class="pageinput" style="position:relative;margin-bottom:-1em">
+    <input type="submit" name="{$actionid}submit" value="{lang('submit')}">
+    <input type="submit" name="{$actionid}cancel" value="{lang('cancel')}">
+    <input type="submit" name="{$actionid}apply" data-ui-icon="ui-icon-disk" value="{lang('apply')}">
+  </div>
 {tab_header name='props' label=$mod->Lang('tab_properties') active=$tab}
 {tab_header name='content' label=$mod->Lang('tab_content') active=$tab}
   {tab_start name='props'}
@@ -159,11 +164,9 @@ $(function() {
     </div>
   </div>
   {tab_end}
-  <div class="pageoverflow">
-    <div class="pageinput">
-      <input type="submit" name="{$actionid}submit" value="{lang('submit')}">
-      <input type="submit" name="{$actionid}cancel" value="{lang('cancel')}">
-      <input type="submit" name="{$actionid}apply" data-ui-icon="ui-icon-disk" value="{lang('apply')}">
-    </div>
+  <div class="pageinput" style="margin-top:0.5em">
+    <input type="submit" name="{$actionid}submit" value="{lang('submit')}">
+    <input type="submit" name="{$actionid}cancel" value="{lang('cancel')}">
+    <input type="submit" name="{$actionid}apply" data-ui-icon="ui-icon-disk" value="{lang('apply')}">
   </div>
 </form>
