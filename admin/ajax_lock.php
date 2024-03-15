@@ -37,8 +37,8 @@ if( !is_array($data) ) {
 
 $opt = get_parameter_value($data,'opt','setup');
 $type = get_parameter_value($data,'type');
-$oid = get_parameter_value($data,'oid');
-$uid = get_parameter_value($data,'uid');
+$oid = get_parameter_value($data,'oid'); // might be 0 or -1
+$uid = get_parameter_value($data,'uid'); // might be 0
 $lock_id = get_parameter_value($data,'lock_id');
 $lifetime = (int) get_parameter_value($data,'lifetime',cms_siteprefs::get('lock_timeout',60));
 
@@ -65,7 +65,7 @@ try {
   case 'is_locked': // alias for check
   case 'check':
       if( !$type ) throw new CmsInvalidDataException(lang('missingparams'));
-      if( $oid ) {
+      if( $oid != 0 ) { // TODO if $oid == -1?
           $out['lock_id'] = CmsLockOperations::is_locked($type,$oid) ? 1 : 0;
       }
       else {
@@ -76,7 +76,7 @@ try {
 
   case 'lock':
       if( $lifetime < 1 ) break; // do not lock, basically a noop
-      if( !$type || !$oid || !$uid ) throw new CmsInvalidDataException(lang('missingparams'));
+      if( !$type || $oid == 0 || $uid < 1 ) throw new CmsInvalidDataException(lang('missingparams')); // TODO if $oid == -1?
       if( $uid != $ruid ) throw new CmsLockOwnerException(lang('CMSEX_L006'));
 
       // see if we can get this lock... if we can, it's just a touch
@@ -94,13 +94,13 @@ try {
       break;
 
   case 'touch':
-      if( !$type || !$oid || !$uid || $lock_id < 1 ) throw new CmsInvalidDataException(lang('missingparams'));
+      if( !$type || $oid == 0 || $uid < 1 || $lock_id < 1 ) throw new CmsInvalidDataException(lang('missingparams')); // TODO if $oid == -1?
       if( $uid != $ruid ) throw new CmsLockOwnerException(lang('CMSEX_L006'));
       $out['lock_expires'] = CmsLockOperations::touch($lock_id,$type,$oid);
       break;
 
   case 'unlock':
-      if( !$type || !$oid || !$uid || $lock_id < 1 ) throw new CmsInvalidDataException(lang('missingparams'));
+      if( !$type || $oid == 0 || $uid < 1 || $lock_id < 1 ) throw new CmsInvalidDataException(lang('missingparams')); // TODO if oid == -1?
       if( $uid != $ruid ) throw new CmsLockOwnerException(lang('CMSEX_L006'));
       CmsLockOperations::delete($lock_id,$type,$oid);
       break;
