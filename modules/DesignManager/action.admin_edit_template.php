@@ -31,13 +31,13 @@ if (!$this->CheckPermission('Modify Templates')) {
 }
 
 $this->SetCurrentTab('templates');
-$tpl_id = (int) get_parameter_value($params,'tpl');
 
 if (isset($params['cancel'])) {
-    if ($params['cancel'] == $this->Lang('cancel')) $this->SetMessage($this->Lang('msg_cancelled'));
+    $this->SetMessage($this->Lang('msg_cancelled'));
     $this->RedirectToAdminTab();
 }
 
+$tpl_id = (int) get_parameter_value($params,'tpl');
 $userid = get_userid();
 try {
     $type_is_readonly = false;

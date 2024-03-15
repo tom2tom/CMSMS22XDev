@@ -51,7 +51,6 @@ else if( isset($params['submit_create']) ) {
         $tmp = substr($tmp, 2); // only the type-id is useful
     }
     $this->Redirect($id,'admin_edit_template',$returnid,array('import_type'=>$tmp));
-//    return; // useless here
 }
 else if( isset($params['submit_bulk']) ) {
     $tmp = array('allparms'=>base64_encode(json_encode($params)));
