@@ -5,7 +5,7 @@
  </div>
 </div>
 {form_start}
- <p class="pageinput">
+ <div class="pageinput" style="margin-top:0.5em">
   <input type="submit" name="{$actionid}close" data-ui-icon="ui-icon-close" value="{lang('close')}">
- </p>
+ </div>
 </form>
