@@ -205,7 +205,7 @@ $(function() {
 <!-- media -->
 <div class="pagewarning">{$mod->Lang('info_editcss_mediatype_tab')}</div>
 <div class="pageoverflow">
-    <p class="patetext">{$mod->Lang('prompt_media_type')}:</p>
+    <p class="pagetext">{$mod->Lang('prompt_media_type')}:</p>
     {assign var='tmp' value='all,aural,speech,braille,embossed,handheld,print,projection,screen,tty,tv'}
     {assign var='all_types' value=explode(',',$tmp)}
 
