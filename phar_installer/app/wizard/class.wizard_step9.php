@@ -11,6 +11,7 @@ use ModuleOperations;
 use RuntimeException;
 use function __appbase\endswith;
 use function __appbase\get_app;
+use function __appbase\joinpath;
 use function __appbase\lang;
 use function __appbase\smarty;
 use function cmsms;
@@ -116,6 +117,21 @@ class wizard_step9 extends wizard_step
             }
         }
 
+        // special case: force-install non-core News module if installing example content
+        $choices = $this->get_wizard()->get_data('config');
+        if( $choices['samplecontent'] ) {
+            if( !empty($choices['extramodules']) && in_array('News',$choices['extramodules']) ) {
+                $modops->QueueForInstall('News');
+                $module = $modops->get_module_instance('News','',TRUE);
+                if( $module ) {
+                    $this->verbose(lang('install_module','News'));
+                }
+                else {
+                    $this->error("ERROR: failed to install News module"); // involve $res[1]?
+                }
+            }
+        }
+
         // write protect config.php
         @chmod("$destdir/config.php",0444); // TODO 0440 better c.f. global_umask site-preference
 
@@ -218,7 +234,8 @@ class wizard_step9 extends wizard_step
 
     private function connect_to_cmsms($destdir)
     {
-        if( is_file("$destdir/lib/include.php") ) {
+        $fp = joinpath($destdir,'lib','include.php');
+        if( is_file($fp) ) {
             $app = get_app();
             // this loads the standard CMSMS stuff, except smarty cuz it's already done.
             // we do this here because both upgrade and install stuff needs it.
@@ -233,7 +250,7 @@ class wizard_step9 extends wizard_step
             }
             // setup and initialize the cmsms API's
             // note DONT_LOAD_DB and DONT_LOAD_SMARTY are used.
-            require_once "$destdir/lib/include.php";
+            require_once $fp;
             // $config does [did?] not define this when installer is running.
             if( !defined('CMS_DB_PREFIX') ) {
                 $config = cms_config::get_instance();

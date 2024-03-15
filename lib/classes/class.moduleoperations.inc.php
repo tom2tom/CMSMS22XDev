@@ -32,22 +32,21 @@ define( "MODULE_DTD_VERSION", "1.3" );
 final class ModuleOperations
 {
     /**
-     * System Modules - a list (hardcoded) of all system modules
+     * @ignore
+     */
+    const CLASSMAP_PREF = 'module_classmap';
+
+    /**
+     * System Modules - a list of all system/core modules
      *
-     * @access private
      * @internal
      */
-    protected $cmssystemmodules =  array('AdminSearch', 'CMSContentManager', 'CmsJobManager', 'CMSMailer', 'DesignManager', 'FileManager', 'FilePicker', 'ModuleManager', 'MicroTiny', 'Navigator', 'News', 'Search'); // UserGuide omitted
+    protected $cmssystemmodules =  array('AdminSearch', 'CMSContentManager', 'CmsJobManager', 'CMSMailer', 'DesignManager', 'FileManager', 'FilePicker', 'ModuleManager', 'MicroTiny', 'Navigator', 'Search'); // News, UserGuide omitted
 
     /**
      * @ignore
      */
     private static $_instance;
-
-    /**
-     * @ignore
-     */
-    const CLASSMAP_PREF = 'module_classmap';
 
     /**
      * @ignore
@@ -67,6 +66,12 @@ final class ModuleOperations
     /**
      * @ignore
      */
+    private $_module_class_map;
+
+    /**
+     * @ignore
+     */
+    //TODO these are file-basename patterns, so descendents of .svn, .git would be allowed?
     private $xml_exclude_files = array('^\.svn' , '^CVS$' , '^\#.*\#$' , '~$', '\.bak$', '^\.git', '^\.tmp$');
 
     /**
@@ -95,12 +100,6 @@ final class ModuleOperations
      * @ignore
      */
     private function __construct() {}
-
-
-    /**
-     * @ignore
-     */
-    private $_module_class_map;
 
     /**
      * Get the only permitted instance of this object.  It will be created if necessary
@@ -500,8 +499,7 @@ final class ModuleOperations
      * Install a module into the database
      *
      * @param string $module The name of the module to install
-     * @param bool $loadifnecessary If true, loads the module before trying to install it
-     * @return array Returns a tuple of whether the install was successful and a message if applicable
+     * @return array a tuple of whether the install was successful and a message if applicable
      */
     public function InstallModule($module)
     {
@@ -511,7 +509,7 @@ final class ModuleOperations
 
         // check for dependencies
         $deps = $modinstance->GetDependencies();
-        if( is_array($deps) && count($deps) ) {
+        if( $deps && is_array($deps) ) {
             foreach( $deps as $mname => $mversion ) {
                 if( $mname == '' || $mversion == '' ) continue; // invalid entry.
                 $newmod = $this->get_module_instance($mname);
@@ -1107,7 +1105,7 @@ final class ModuleOperations
      *
      * @param string $module_name The module name
      * @param string $version an optional version string.
-     * @param bool $force an optional flag to indicate wether the module should be force loaded if necesary.
+     * @param bool $force an optional flag to indicate whether the module should be force loaded if necessary.
      * @return mixed CMSModule | null
      */
     public function get_module_instance($module_name,$version = '',$force = FALSE)
