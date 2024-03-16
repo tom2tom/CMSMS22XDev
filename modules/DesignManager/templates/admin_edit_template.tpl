@@ -1,126 +1,114 @@
 <script>
 $(function() {
-    var do_locking = {if !empty($tpl_id) && $tpl_id > 0 && isset($lock_timeout) && $lock_timeout > 0}1{else}0{/if};
+{$locker=$tpl_id > 0 && isset($lock_timeout) && $lock_timeout > 0}
+{if $locker}
     $('#form_edittemplate').dirtyForm({
         beforeUnload: function(is_dirty) {
-            if( do_locking ) $('#form_edittemplate').lockManager('unlock');
+            $('#form_edittemplate').lockManager('unlock');
         },
         unloadCancel: function() {
-            if( do_locking ) $('#form_edittemplate').lockManager('relock');
+            $('#form_edittemplate').lockManager('relock');
         }
-    });
-
+    })
     // initialize lock manager (oid == 0 does nothing)
-    if( do_locking ) {
-      $('#form_edittemplate').lockManager({
+    .lockManager({
         type: 'template',
         oid: {$tpl_id|default:0},
         uid: {$userid},
         lock_timeout: {$lock_timeout|default:0},
         lock_refresh: {$lock_refresh|default:0},
         error_handler: function(err) {
-            cms_alert('Lock Error '+err.type+' // '+err.msg);
+            cms_alert('Lock error '+err.type+' // '+err.msg);
         },
         lostlock_handler: function(err) {
-            // we lost the lock on this content... make sure we can't save anything.
-            // and display a nice message.
-            $('[name$="cancel"]').fadeOut().val('{$mod->Lang("cancel")}').fadeIn();
+            // lost the lock on this template, prevent the user saving
+            // anything and display a message
+            $('#submitbtn,#applybtn').prop('disabled',true);
+{*          $('#submitbtn,#applybtn').button({ 'disabled' : true });TODO extra .button needed?*}
+            $('#cancelbtn').fadeOut().val('{lang("close")}').fadeIn();
             $('#form_edittemplate').dirtyForm('option','dirty',false);
-            $('#submitbtn, #applybtn').prop('disabled',true);
-{*          $('#submitbtn, #applybtn').button({ 'disabled' : true });TODO extra .button needed?*}
             $('.lock-warning').removeClass('hidden-item');
             cms_alert("{$mod->Lang('msg_lostlock')|escape:'javascript'}");
         }
-      });
-    } // do_locking
-
-    $(document).on('cmsms_textchange',function(event) {
-        // editor textchange, set the form dirty.
+    });
+{/if}
+    $(document).on('cmsms_textchange',function() {
+        // editor textchange, set the form dirty
         $('#form_edittemplate').dirtyForm('option','dirty',true);
     });
-
-    $('#form_edittemplate').on('click','[name$="apply"],[name$="submit"],[name$="cancel"]',function() {
-        // if we manually click on one of these buttons, the form is no longer considered dirty for the purposes of warnings.
+    // if user clicks one of these buttons, the form is no longer considered dirty for the purposes of warnings
+    $('#submitbtn,#cancelbtn,#applybtn').on('click',function() {
         $('#form_edittemplate').dirtyForm('option','dirty',false);
     });
-
-/*
-    $(document).on('click', '#submitbtn, #cancelbtn, #importbtn, #exportbtn', function(ev) {
-       if( ! do_locking ) return;
-       // unlock the item, and submit the form
-       var self = this;
-       ev.preventDefault();
-       var form = $(this).closest('form');
-       $('#form_edittemplate').lockManager('unlock').done(function() {
-//         console.debug('item unlocked'); only if was successful i.e. locked and matched
-           $('<input/>', {
-            type:'hidden',
-            name:$(self).attr('name'),
-            val:$(self).val()
-           })
-           .appendTo(form);
-           form.trigger('submit');
-       });
-    });
-*/
-    $(document).on('click', '#applybtn', function(e) {
+{if $locker}
+    // only one of #importbtn, #exportbtn will exist
+    // no lock-removal for #applybtn click
+    $('#submitbtn,#cancelbtn,#importbtn,#exportbtn').on('click',function(e) {
+        // async unlock might interfere with next-displayed page?
+//      $('#form_edittemplate').lockManager('unlock');
         e.preventDefault();
-        var url = $('#form_edittemplate').attr('action')+'?showtemplate=false&m1_apply=1',
-        data = $('#form_edittemplate').serializeArray();
+        // unlock the item before submitting the form
+        var self = this;
+        $('#form_edittemplate').lockManager('unlock').done(function() {
+            $(self).off('click').trigger('click');
+        });
+    });
+{/if}
+    $('#applybtn').on('click',function(e) {
+        e.preventDefault();
+        var tform = $('#form_edittemplate'),
+          url = tform.attr('action')+'?showtemplate=false&{$actionid}apply=1',
+          data = tform.serializeArray();
 
-        $.post(url, data, function(data,textStatus,jqXHR) {
-
-            var response = $('<aside></aside>', { 'class':'message' });
+        $.post(url,data,function(data,textStatus) {
+            var response = $('<aside></aside>',{ 'class':'message' });
             if (data.status === 'success') {
                 response.addClass('pagemcontainer')
-                    .append($('<span></span>',{ 'class':'close-warning',text:'Close' }))
+                    .append($('<span></span>',{ 'class':'close-warning',text:'{lang("close")}' }))
                     .append($('<p></p>',{ text:data.message }));
             } else if (data.status === 'error') {
                 response.addClass('pageerrorcontainer')
-                    .append($('<span></span>',{ 'class':'close-warning',text:'Close' }))
+                    .append($('<span></span>',{ 'class':'close-warning',text:'{lang("close")}' }))
                     .append($('<p></p>',{ text:data.message }));
             }
 
             $('body').append(response.hide());
-            response.slideDown(1000, function() {
+            response.slideDown(1000,function() {
                 window.setTimeout(function() {
                     response.slideUp();
                     response.remove();
-                }, 10000);
+                },10000);
             });
 
-            $('#cancelbtn').button('option','label','{$mod->Lang('cancel')}');
+            $('#cancelbtn').button('option','label','{$mod->Lang("cancel")}');
             $('#tpl_modified_cont').hide();
             $('#content').trigger('focus');
         });
     });
-
-    $(document).on('click','#a_helptext',function(e) {
+    $('#a_helptext').on('click',function(e) {
         e.preventDefault();
-        $('#helptext_dlg').dialog({ 'width': 'auto' });
+        var dlg = $('#helptext_dlg');
+        if (dlg.length >0 ) dlg.dialog({ 'width': 'auto' });
     });
 });
 </script>
 
 {$helptext=$type_obj->get_template_helptext($type_obj->get_name())}
-{if !empty($helptext)}
-  <div id="helptext_dlg" title="{$mod->Lang('prompt_template_help')}" style="display: none;">
-  {$helptext}
-  </div>
+{if $helptext}
+<div id="helptext_dlg" title="{$mod->Lang('prompt_template_help')}" style="display: none;">
+    {$helptext}
+</div>
 {/if}
-{$get_lock = $template->get_lock()}
 
+{$get_lock = $template->get_lock()}
 {capture assign='disable'}
 {if (isset($get_lock) && ($userid != $get_lock.uid))} disabled{/if}
 {/capture}
-
 {if isset($get_lock)}
-    <div class="warning lock-warning">
-        {$mod->Lang('lock_warning')}
-    </div>
+<p class="warning lock-warning">{$mod->Lang('lock_warning')}</p>
 {/if}
 
-{form_start id="form_edittemplate" extraparms=$extraparms}
+{form_start id='form_edittemplate' extraparms=$extraparms}
 <div class="cf">{$tplid=$template->get_id()}
     <div class="pageoverflow">
         <p class="pageinput">
@@ -170,19 +158,19 @@ $(function() {
 {/if}
 </div>
 
-{tab_header name='template' label=lang('content')}
+{tab_header name='content' label=lang('content')}
 {tab_header name='description' label=$mod->Lang('prompt_description')}
 {if $has_themes_right}
-    {tab_header name='designs' label=$mod->Lang('prompt_designs')}
-{/if}
-{if $has_manage_right}
-    {tab_header name='advanced' label=$mod->Lang('prompt_advanced')}
+ {tab_header name='designs' label=$mod->Lang('prompt_designs')}
 {/if}
 {if ($has_manage_right || $template->get_owner_id() == $userid)}
-    {tab_header name='permissions' label=$mod->Lang('prompt_permissions')}
+ {tab_header name='permissions' label=$mod->Lang('prompt_permissions')}
+{/if}
+{if $has_manage_right}
+ {tab_header name='advanced' label=$mod->Lang('prompt_advanced')}
 {/if}
 
-{tab_start name='template'}
+{tab_start name='content'}
 <div class="pageoverflow">
     <p class="pagetext">
       <label for="content">{lang('content')}:</label>&nbsp;{cms_help key2=help_template_contents title=lang('content')}
@@ -219,6 +207,29 @@ $(function() {
     </div>
 {/if}
 
+{if ($has_manage_right || $template->get_owner_id() == $userid)}
+    {tab_start name='permissions'}
+    {if !empty($user_list)}
+    <div class="pageoverflow">
+        <p class="pagetext"><label for="tpl_owner">{$mod->Lang('prompt_owner')}:</label>&nbsp;{cms_help key2=help_template_owner title=$mod->Lang('prompt_owner')}</p>
+        <p class="pageinput">
+            <select id="tpl_owner" name="{$actionid}owner_id">
+                {html_options options=$user_list selected=$template->get_owner_id()}
+            </select>
+        </p>
+    </div>
+    {/if}
+    {if !empty($addt_editor_list)}
+    <div class="pageoverflow">
+        <p class="pagetext"><label for="tpl_addeditor">{$mod->Lang('additional_editors')}:</label>&nbsp;{cms_help key2=help_template_addteditors title=$mod->Lang('additional_editors')}</p>
+        <p class="pageinput">
+            <select id="tpl_addeditor" name="{$actionid}addt_editors[]" multiple size="5">
+                {html_options options=$addt_editor_list selected=$template->get_additional_editors()}
+            </select>
+        </p>
+    </div>
+    {/if}
+{/if}
 {if $has_manage_right}
     {tab_start name='advanced'}
         <div class="pageoverflow">
@@ -260,42 +271,19 @@ $(function() {
         </div>
         {/if}
 {if $tplid > 0}
+{if $template->has_content_file()}{$inid='importbtn'}{else}{$inid='exportbtn'}{/if}
         <div class="pageoverflow">
-            <p class="pagetext">{$mod->Lang('prompt_filetemplate')}:</p>
+            <p class="pagetext"><label for="{$inid}">{$mod->Lang('prompt_filetemplate')}:</label>&nbsp;{cms_help key2=help_template_file title=$mod->Lang('prompt_filetemplate')}</p>
             <p class="pageinput">
  {if $template->has_content_file()}
-            <input type="submit" id="importbtn" name="{$actionid}import" data-ui-icon="ui-icon-arrowreturnthick-1-n" value="{$mod->Lang('import')}">
+            <input type="submit" id="importbtn" name="{$actionid}import" data-ui-icon="ui-icon-circle-arrow-n" value="{$mod->Lang('import')}">
  {else}
-            <input type="submit" id="exportbtn" name="{$actionid}export" data-ui-icon="ui-icon-arrowreturnthick-1-s" value="{$mod->Lang('export')}">
+            <input type="submit" id="exportbtn" name="{$actionid}export" data-ui-icon="ui-icon-circle-arrow-s" value="{$mod->Lang('export')}">
  {/if}
-        </p>
+            </p>
         </div>
 {/if}
 {/if}{*$has_manage_right*}
-
-{if ($has_manage_right || $template->get_owner_id() == $userid)}
-    {tab_start name='permissions'}
-    {if !empty($user_list)}
-    <div class="pageoverflow">
-        <p class="pagetext"><label for="tpl_owner">{$mod->Lang('prompt_owner')}:</label>&nbsp;{cms_help key2=help_template_owner title=$mod->Lang('prompt_owner')}</p>
-        <p class="pageinput">
-            <select id="tpl_owner" name="{$actionid}owner_id">
-                {html_options options=$user_list selected=$template->get_owner_id()}
-            </select>
-        </p>
-    </div>
-    {/if}
-    {if !empty($addt_editor_list)}
-    <div class="pageoverflow">
-        <p class="pagetext"><label for="tpl_addeditor">{$mod->Lang('additional_editors')}:</label>&nbsp;{cms_help key2=help_template_addteditors title=$mod->Lang('additional_editors')}</p>
-        <p class="pageinput">
-            <select id="tpl_addeditor" name="{$actionid}addt_editors[]" multiple size="5">
-                {html_options options=$addt_editor_list selected=$template->get_additional_editors()}
-            </select>
-        </p>
-    </div>
-    {/if}
-{/if}
 {tab_end}
 
 {form_end}
