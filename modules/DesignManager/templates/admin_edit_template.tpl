@@ -273,7 +273,7 @@ $(function() {
 {if $tplid > 0}
 {if $template->has_content_file()}{$inid='importbtn'}{else}{$inid='exportbtn'}{/if}
         <div class="pageoverflow">
-            <p class="pagetext"><label for="{$inid}">{$mod->Lang('prompt_filetemplate')}:</label>&nbsp;{cms_help key2=help_template_file title=$mod->Lang('prompt_filetemplate')}</p>
+            <p class="pagetext"><label style="pointer-events:none" for="{$inid}">{$mod->Lang('prompt_filetemplate')}:</label>&nbsp;{cms_help key2=help_template_file title=$mod->Lang('prompt_filetemplate')}</p>
             <p class="pageinput">
  {if $template->has_content_file()}
             <input type="submit" id="importbtn" name="{$actionid}import" data-ui-icon="ui-icon-circle-arrow-n" value="{$mod->Lang('import')}">
