@@ -8,6 +8,17 @@ Refer to license and other details at the top of file UserGuide.module.php
 use UserGuide\UserGuideUtils;
 
 if (!isset($gCms)) exit;
+
+$getcssurl = function($css) use($config) {
+    $basename = 'userguidestyles_'.md5(__DIR__.$css).'.min.css';
+    $fp = $config['css_path'].$basename; // NOTE this $config value has trailing separator
+    if (!file_exists($fp)) {
+        $min = UserGuideUtils::minCSS($css);
+        file_put_contents($fp, $min, LOCK_EX);
+    }
+    return $config['css_url'].'/'.$basename;
+};
+
 /* allowed $params
  'gid' int
  'list' string
@@ -56,14 +67,14 @@ if ($list) {
         $sht = CmsLayoutStylesheet::load(trim($params['stylesheet_name']));
         if (!is_object($sht)) {
             audit('', $this->GetName().':'.$params['stylesheet_name'], 'No matching userguide stylesheet found');
-            echo 'No userguide stylesheet '.$params['stylesheet_name'].' found';
+            echo 'Internal error: stylesheet '.$params['stylesheet_name'].' not found';
             return;
         }
     } elseif (isset($params['sheetid'])) {
         $sht = CmsLayoutStylesheet::load((int)$params['sheetid']);
         if (!is_object($sht)) {
             audit($params['sheetid'], $this->GetName(), 'No matching userguide stylesheet found');
-            echo 'No userguide stylesheet '.$params['sheetid'].' found';
+            echo 'Internal error: stylesheet '.$params['sheetid'].' not found';
             return;
         }
     } else {
@@ -72,7 +83,7 @@ if ($list) {
             $sht = CmsLayoutStylesheet::load($name);
             if (!is_object($sht)) {
                 audit('', $this->GetName().':listStyles-preference', 'No matching userguide stylesheet found');
-                echo 'No userguide stylesheet '.$name.' found';
+                echo 'Internal error: stylesheet '.$name.' not found';
                 return;
             }
         } else {
@@ -80,14 +91,18 @@ if ($list) {
         }
     }
     if ($sht) {
-        // inject its contents into page head TODO some better approach
+        // inject its content into page head
+        //TODO consider e.g. processing event Core::TemplatePreCompile
+        //or hook Core::PageBodyPreRender instead of js-driven css installation
+        //create a temp-file, add <link/> to page head c.f. {cms_stylesheet}
         $css = $sht->get_content();
-        $min = UserGuideUtils::minCSS($css);
+        $url = $getcssurl($css);
         echo <<<EOS
 <script>
-var ds = document.createElement('style');
-document.head.appendChild(ds);
-ds.innerHTML = '$min';
+var dl = document.createElement('link');
+dl.rel = 'stylesheet';
+document.head.appendChild(dl);
+dl.href = '$url';
 </script>
 EOS;
     }
@@ -97,7 +112,7 @@ EOS;
         $tplobj = CmsLayoutTemplate::load($template);
         if (!is_object($tplobj)) {
             audit('', $this->GetName().':'.$template, 'No matching userguide template found');
-            echo 'No userguide template '.$template.' found';
+            echo 'Internal error: template '.$template.' not found';
             return;
         }
     } elseif (isset($params['tplid'])) {
@@ -106,7 +121,7 @@ EOS;
             $template = $tplobj->get_name();
         } else {
             audit($params['tplid'], $this->GetName(), 'No matching userguide template found');
-            echo 'TODO error 6 advice';
+            echo 'Internal error: template '.$params['tplid'].' not found';
             return;
         }
     } else {
@@ -115,7 +130,7 @@ EOS;
             $template = $tplobj->get_name();
         } else {
             audit('', $this->GetName().':default', 'No default userguide template found');
-            echo 'TODO error 7 advice';
+            echo 'Internal error: default userguide template not found';
             return;
         }
     }
@@ -129,53 +144,57 @@ else { //single guide
     $sql = 'SELECT name,smarty,template_id,sheets,content FROM '.CMS_DB_PREFIX.'module_userguide WHERE id=? AND active!=0 AND admin=0';
     $row = $db->GetRow($sql, [$params['gid']]);
     if (!$row) {
-        echo 'TODO error 8 advice';
+        echo 'Internal error: userguide '.$params['gid'].' not found';
         return;
     }
 
     if ($row['sheets']) {
-        $allmin = '';
+        $allcss = '';
         $allids = explode(',', $row['sheets']);
         foreach ($allids as $one) {
             $sht = CmsLayoutStylesheet::load($one);
             if ($sht) {
-                $css = $sht->get_content();
-                $min = UserGuideUtils::minCSS($css);
-                $allmin .= $min;
+                $allcss .= $sht->get_content();
             }
         }
-        if ($allmin) {
+        if ($allcss) {
+            // inject into page head
+            // TODO some better approach
+            $url = $getcssurl($allcss);
             echo <<<EOS
 <script>
-var ds = document.createElement('style');
-document.head.appendChild(ds);
-ds.innerHTML = '$allmin';
+var dl = document.createElement('link');
+dl.rel = 'stylesheet';
+document.head.appendChild(dl);
+dl.href = '$url';
 </script>
 EOS;
         }
     } else {
-        $allmin = false;
+        $allcss = false;
         audit('', $this->GetName().':stylesheets', 'No matching sheet(s) found');
     }
-    if (!$allmin) {
+    if (!$allcss) {
         //apply default, if any
         $name = $this->GetPreference('guideStyles');
         if ($name) {
             $sht = CmsLayoutStylesheet::load($name);
             if (is_object($sht)) {
-                // inject its contents into page head TODO some better approach
+                // inject its content into page head
+                // TODO some better approach
                 $css = $sht->get_content();
-                $min = UserGuideUtils::minCSS($css);
+                $url = $getcssurl($css);
                 echo <<<EOS
 <script>
-var ds = document.createElement('style');
-document.head.appendChild(ds);
-ds.innerHTML = '$min';
+var dl = document.createElement('link');
+dl.rel = 'stylesheet';
+document.head.appendChild(dl);
+dl.href = '$url';
 </script>
 EOS;
             } else {
                 audit('', $this->GetName().':guideStyles-preference', 'No matching stylesheet found');
-                echo 'TODO error 9 advice';
+                echo 'Internal error: stylesheet '.$name.' not found';
                 return;
             }
         }
@@ -218,7 +237,7 @@ EOS;
                 $template = $tplobj->get_name();
             } else {
                 audit($row['template_id'], $this->GetName(), 'No matching userguide template found');
-                echo 'Template '.$row['template_id'].' not found';
+                echo 'Internal error: template '.$row['template_id'].' not found';
                 return;
             }
         } else {
@@ -227,7 +246,7 @@ EOS;
                 $template = $tplobj->get_name();
             } else {
                 audit('', $this->GetName().':default', 'No default userguide template found');
-                echo 'No default userguide template found';
+                echo 'Internal error: default userguide template not found';
                 return;
             }
         }
