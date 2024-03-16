@@ -1,40 +1,40 @@
 <script>
 $(function() {
-  var do_locking = {if isset($content_id) && $content_id > 0 && isset($lock_timeout) && $lock_timeout > 0}1{else}0{/if};
-
+{$locker=$content_id > 0 && isset($lock_timeout) && $lock_timeout > 0}
+  var do_locking = {$locker};
+{if $locker}
   // initialize the dirtyform stuff.
   $('#Edit_Content').dirtyForm({
     beforeUnload: function(is_dirty) {
-      if( do_locking ) $('#Edit_Content').lockManager('unlock').done(function() {
+      $('#Edit_Content').lockManager('unlock').done(function() {
         console.log('after dirtyform unlock');
       });
     },
     unloadCancel: function() {
-      if( do_locking ) $('#Edit_Content').lockManager('relock');
+      $('#Edit_Content').lockManager('relock');
+    }
+  })
+  // initialize lock manager (oid < 1 does nothing)
+  .lockManager({
+    type: 'content',
+    oid: {$content_id|default:-1},
+    uid: {$userid},
+    lock_timeout: {$lock_timeout|default:0},
+    lock_refresh: {$lock_refresh|default:0},
+    error_handler: function(err) {
+      cms_alert('Locking error: ' + err.type + ' -- ' + err.msg);
+    },
+    lostlock_handler: function(err) {
+      // lost the lock on this content, prevent the user saving anything
+      // and display a message
+      $('#submitbtn,#applybtn').prop('disabled', true);
+{*    $('#submitbtn,#applybtn').button({ 'disabled' : true });TODO extra .button needed?*}
+      $('#cancelbtn').fadeOut().val('{$mod->Lang("close")}').fadeIn();
+      $('#Edit_Content').dirtyForm('option', 'dirty', false);
+      cms_alert('{$mod->Lang("msg_lostlock")|escape:"javascript"}');
     }
   });
-
-  if( do_locking ) {
-    // initialize lock manager (oid < 1 does nothing)
-    $('#Edit_Content').lockManager({
-      type: 'content',
-      oid: {$content_id|default:-1},
-      uid: {$userid},
-      lock_timeout: {$lock_timeout|default:0},
-      lock_refresh: {$lock_refresh|default:0},
-      error_handler: function(err) {
-        cms_alert('Locking error: ' + err.type + ' -- ' + err.msg);
-      },
-      lostlock_handler: function(err) {
-        // we lost the lock on this content... make sure we can't save anything.
-        // and display a nice message.
-        $('[name$="cancel"]').fadeOut().val('{$mod->Lang("close")}').fadeIn();
-        $('#Edit_Content').dirtyForm('option', 'dirty', false);
-        cms_alert('{$mod->Lang("msg_lostlock")|escape:"javascript"}');
-      }
-    });
-  }
-
+{/if}
 {if $content_obj->HasPreview()}
   $('#_preview_').on('click', function() {
     if( typeof tinymce !== 'undefined') tinymce.triggerSave(); // TODO create a "save editor content" API that can be generally used
@@ -66,7 +66,6 @@ $(function() {
     },'json');
   });
 {/if}
-
   // submit the form if disable wysiwyg, template id, and/or content-type fields are changed.
   $('#id_disablewysiwyg, #template_id, #content_type').on('change', function() {
     // disable the dirty form stuff, and unlock because we're gonna relockit on reload.
@@ -75,7 +74,7 @@ $(function() {
     $('#Edit_Content').dirtyForm('disable');
     if( this_id != 'content_type') $('#active_tab').val('{$options_tab_name}');
     if( do_locking ) {
-      if( do_locking) $('#Edit_Content').lockManager('unlock').done(function() {
+      $('#Edit_Content').lockManager('unlock').done(function() {
         $(self).closest('form').trigger('submit');
       });
     } else {
@@ -84,50 +83,38 @@ $(function() {
   });
 
   // handle cancel/close ... and unlock
-  $(document).on('click', '[name$="cancel"]', function(ev) {
+  $('#cancelbtn').on('click', function(ev) {
     // turn off all required elements, we're cancelling
     $('#Edit_Content :hidden').removeAttr('required');
-    // do not touch the dirty flag, so that theunload handler stuff can warn us.
+    // do not touch the dirty flag, so that the unload handler stuff can warn us.
     if( do_locking ) {
-      // unlock the item, and submit the form.
-      var self = this;
-      var form = $(this).closest('form');
+      // wait for unlocked item then submit the form
       ev.preventDefault();
+      var self = this;
       $('#Edit_Content').lockManager('unlock').done(function() {
-        $('<input/>',{
-         type: 'hidden',
-         name: $(self).attr('name'),
-         val: $(self).val()
-        }).appendTo(form);
-        form.trigger('submit');
+        $(self).off('click').trigger('click');
       });
     }
   });
 
-  $(document).on('click', '[name$="submit"]', function(ev) {
+  $('#submitbtn').on('click', function(ev) {
     // set the form to not dirty.
     $('#Edit_Content').dirtyForm('option','dirty',false);
     if( do_locking ) {
-      // unlock the item, and submit the form
-      var self = this;
       ev.preventDefault();
-      var form = $(this).closest('form');
+      // wait for unlocked item then submit the form
+      var self = this;
       $('#Edit_Content').lockManager('unlock').done(function() {
-        $('<input/>',{
-         type: 'hidden',
-         name: $(self).attr('name'),
-         val: $(self).val()
-        }).appendTo(form);
-        form.trigger('submit');
+        $(self).off('click').trigger('click');
       });
     }
   });
 
   // handle apply (ajax submit)
-  $(document).on('click', '[name$="apply"]', function() {
+  $('#applybtn').on('click', function() {
     // apply does not do an unlock.
     if( typeof tinymce !== 'undefined') tinymce.triggerSave(); // TODO create a "save editor content" API that can be generally used
-    var data = $('#Edit_Content').find('input:not([type="submit"]), select, textarea').serializeArray();
+    var data = $('#Edit_Content').find('input:not([type=submit]), select, textarea').serializeArray();
     data.push({
       'name': '{$actionid}ajax',
       'value': 1
@@ -218,26 +205,20 @@ $(function() {
   <h3>{$mod->Lang('prompt_editpage_editcontent')}&nbsp;<em>({$content_id})</em></h3>
 {/if}
 
-{function submit_buttons}
-  <p class="pagetext"></p>
-  <p class="pageinput">
-  <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" class="pagebutton" title="{$mod->Lang('title_editpage_submit')}">
-  <input type="submit" name="{$actionid}cancel" formnovalidate value="{$mod->Lang('cancel')}" class="pagebutton" title="{$mod->Lang('title_editpage_cancel')}">
-  {if $content_id > 0}
-  <input type="submit" name="{$actionid}apply" data-ui-icon="ui-icon-disk" value="{$mod->Lang('apply')}" class="pagebutton" title="{$mod->Lang('title_editpage_apply')}">
-  {/if}
-  {if $content_id > 0 && $content_obj->IsViewable() && $content_obj->Active()}
-  <a id="viewpage" rel="external" href="{$content_obj->GetURL()}" title="{$mod->Lang('title_editpage_view')}">{admin_icon icon='view.gif' alt=lang('view_page')}</a>
-  {/if}
-</p>
-{/function}
-
 <div id="Edit_Content_Result"></div>
 <div id="Edit_Content">
 {form_start content_id=$content_id}
   <input type="hidden" id="active_tab" name="{$actionid}active_tab">
-  {submit_buttons}
-
+  <div class="pageinput">
+    <input type="submit" id="submitbtn" name="{$actionid}submit" value="{$mod->Lang('submit')}" class="pagebutton" title="{$mod->Lang('title_editpage_submit')}">
+    <input type="submit" id="cancelbtn" name="{$actionid}cancel" formnovalidate value="{$mod->Lang('cancel')}" class="pagebutton" title="{$mod->Lang('title_editpage_cancel')}">
+ {if $content_id > 0}
+    <input type="submit" id="applybtn" name="{$actionid}apply" data-ui-icon="ui-icon-disk" value="{$mod->Lang('apply')}" class="pagebutton" title="{$mod->Lang('title_editpage_apply')}">
+ {/if}
+ {if $content_id > 0 && $content_obj->IsViewable() && $content_obj->Active()}
+    <a id="viewpage" rel="external" href="{$content_obj->GetURL()}" title="{$mod->Lang('title_editpage_view')}">{admin_icon icon='view.gif' alt=lang('view_page')}</a>
+ {/if}
+   </div>
   {* tab headers *}
   {foreach $tab_names as $key => $tabname}
     {tab_header name=$key label=$tabname active=$active_tab}
@@ -245,7 +226,6 @@ $(function() {
   {if $content_obj->HasPreview()}
     {tab_header name='_preview_' label=$mod->Lang('prompt_preview')}
   {/if}
-
   {* tab content *}
   {foreach $tab_names as $key => $tabname}
     {tab_start name=$key}
