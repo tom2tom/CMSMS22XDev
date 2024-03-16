@@ -265,32 +265,26 @@ catch( CmsContentException $e ) {
     }
 }
 
-//
-// BUILD THE DISPLAY
-//
 if( $content_id > 0 && CmsContentManagerUtils::locking_enabled() ) {
-    try {
-        $lock_id = 0;
-        for( $i = 0; $i < 3; $i++ ) {
-            // check if this thing is already locked.
-            $lock_id = CmsLockOperations::is_locked('content',$content_id);
-            if( $lock_id == 0 ) break;
-            usleep(500);
-        }
-        if( $lock_id > 0 ) {
-            // it's locked... by somebody, make sure it's expired before we allow stealing it.
-            $lock = CmsLock::load('content',$content_id);
-            if( !$lock->expired() ) throw new CmsLockException('CMSEX_L010');
-            // lock is expired, we can just remove it.
+    // check whether this thing is locked
+    $lock_id = CmsLockOperations::is_locked('content',$content_id);
+    if( $lock_id > 0 ) {
+        $lock = CmsLock::load('content',$content_id);
+        if( $lock['uid'] == $user_id || $lock->expired() ) {
+            // remove it, ready to start again
             CmsLockOperations::unlock($lock_id,'content',$content_id);
         }
-    }
-    catch( CmsException $e ) {
-        $this->SetError($e->getMessage());
-        $this->RedirectToAdminTab();
+        else {
+            // somebody else owns the lock
+            $this->SetError(lang('CMSEX_L010'));
+            $this->RedirectToAdminTab();
+        }
     }
 }
 
+//
+// BUILD THE DISPLAY
+//
 $tab_contents_array = [];
 $tab_message_array = [];
 try {
