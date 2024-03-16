@@ -785,15 +785,16 @@ class CmsLayoutStylesheet
 	 * Load all stylesheet objects
 	 *
 	 * @param bool $as_list a flag indicating the output format
-	 * @return mixed If $as_list is true then the output will be an associated array of stylesheet id and stylesheet name suitable for use in an html select element
-	 *   otherwise, an array of CmsLayoutStylesheet objects is returned
+	 * @return mixed If $as_list is true then the output will be an associated array
+	 *  of stylesheet id and stylesheet name suitable for use in an html select element.
+	 *  Otherwise, an array of CmsLayoutStylesheet objects is returned
 	 */
 	public static function get_all($as_list = FALSE)
 	{
 		$db = CmsApp::get_instance()->GetDb();
 
-		$out = array();
 		if( $as_list ) {
+			$out = array();
 			$query = 'SELECT id,name FROM '.CMS_DB_PREFIX.self::TABLENAME.' ORDER BY modified DESC';
 			$dbr = $db->GetArray($query);
 			foreach( $dbr as $row ) {

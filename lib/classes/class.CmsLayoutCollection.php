@@ -615,7 +615,7 @@ class CmsLayoutCollection
      * Load all themes
      *
      * @param string $quick Do not load the templates and stylesheets.
-     * @return array Array of CmsLayoutCollection objects.
+     * @return array CmsLayoutCollection objects ordered by their design_id, or maybe empty
      */
     public static function get_all($quick = FALSE)
     {

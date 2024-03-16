@@ -729,7 +729,7 @@ class CmsLayoutTemplateType
     /**
      * Load all template types
      *
-     * @return array Array of CmsLayoutTemplateType objects
+     * @return array CmsLayoutTemplateType objects ordered by their modification time, or maybe empty
      */
     public static function get_all()
     {
