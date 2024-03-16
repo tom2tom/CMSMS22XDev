@@ -75,9 +75,9 @@ try {
     }
 
     // build a display.
-    $cats = CmsLayoutTemplateCategory::get_all();
     $out = array();
     $out[0] = $this->Lang('prompt_none');
+    $cats = CmsLayoutTemplateCategory::get_all();
     if( is_array($cats) && count($cats) ) {
         foreach( $cats as $one ) {
             $out[$one->get_id()] = $one->get_name();
