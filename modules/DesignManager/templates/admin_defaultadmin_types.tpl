@@ -25,7 +25,7 @@
       </td>
       {if $has_add_right}
       <td>{cms_action_url action='admin_edit_template' import_type=$type->get_id() assign='create_url'}
-        <a href="{$create_url}" title="{$mod->Lang('prompt_import')}">{admin_icon icon='import.gif'}</a>
+        <a href="{$create_url}" title="{$mod->Lang('prompt_import')}">{admin_icon icon='newobject.gif'}</a>
       </td>
       {/if}
       <td><a href="{$edit_url}" title="{$mod->Lang('prompt_edit')}">{admin_icon icon='edit.gif'}</a></td>
