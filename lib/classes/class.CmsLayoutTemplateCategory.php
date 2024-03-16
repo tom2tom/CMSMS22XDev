@@ -290,7 +290,7 @@ class CmsLayoutTemplateCategory
      * Load a set of categories from the database
      *
      * @param string $prefix An optional category name prefix.
-     * @return array Array of CmsLayoutTemplateCategory objects
+     * @return array CmsLayoutTemplateCategory objects ordered by their item_order, or maybe empty
      */
     public static function get_all($prefix = '')
     {
@@ -303,13 +303,13 @@ class CmsLayoutTemplateCategory
             $query = 'SELECT * FROM '.CMS_DB_PREFIX.self::TABLENAME.' ORDER BY item_order ASC';
             $res = $db->GetArray($query);
         }
-        if( is_array($res) && count($res) ) {
-            $out = array();
+        $out = array();
+        if( $res ) {
             foreach( $res as $row ) {
                 $out[] = self::_load_from_data($row);
             }
-            return $out;
         }
+        return $out;
     }
 } // end of class,
 

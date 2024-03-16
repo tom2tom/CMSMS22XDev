@@ -99,7 +99,7 @@ final class CmsLockOperations
    *
    * @param string $type The type of object being locked
    * @param int $oid The object identifier
-   * @return bool
+   * @return int, possibly 0
    */
   public static function is_locked($type,$oid)
   {
@@ -110,7 +110,7 @@ final class CmsLockOperations
           return $lock['id'];
       }
       catch( CmsNoLockException $e ) {
-          return FALSE;
+          return 0;
       }
   }
 
