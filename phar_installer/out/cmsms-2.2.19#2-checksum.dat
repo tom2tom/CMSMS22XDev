@@ -283,7 +283,7 @@ aef4e72b2f36be44bdbd0003041e877d --::-- /modules/UserGuide/action.toggle_admin_g
 3c84d58350eb7806c558e28e36f548f2 --::-- /modules/UserGuide/UserGuide.module.php
 f155b4ed601e7498dba467cec4054a76 --::-- /modules/UserGuide/action.xml_export.php
 2fdf0f8f3fe165b3e3e3f4210a794d9c --::-- /modules/UserGuide/lang/ext/de_DE.php
-ea079f58c625c80677349a361b4392e9 --::-- /modules/UserGuide/lang/ext/fr_FR.php
+ff45b3e5689704ec494efc0a13e05d14 --::-- /modules/UserGuide/lang/ext/fr_FR.php
 10a0c1530397fc4b3cab20863c7511c2 --::-- /modules/UserGuide/lang/en_US.php
 62ea96952c45a6d365a161c577d7c23b --::-- /modules/UserGuide/action.defaultadmin.php
 0adf28fc6a15f86169dd454cfb09053c --::-- /modules/UserGuide/images/icon.png
@@ -312,7 +312,7 @@ cde8c873c53d7053c46736d33f568929 --::-- /modules/UserGuide/lib/css/orig_view_gui
 21587497348e1e30f535d5aafc1e00f8 --::-- /modules/UserGuide/lib/class.UserGuideUtils.php
 92faf6f2637401ab51859ae2f610ac6f --::-- /modules/UserGuide/lib/class.UserGuideItem.php
 17a551e5e8b9f33d420ee4e49ed52e6b --::-- /modules/UserGuide/action.reorder_guides.php
-af1fa113934439c94a2de2b9c2476770 --::-- /modules/UserGuide/method.install.php
+76b665e281f1f1aab4ea3352b6194611 --::-- /modules/UserGuide/method.install.php
 3066cfe7c52232f7c2a8a0ce4cdea8f5 --::-- /modules/UserGuide/action.view_guide.php
 7e0da615f6458cab0881b7d6951d7730 --::-- /modules/UserGuide/doc/helplicense.htm
 6d0715180789d95a5c1622a765ef2fb7 --::-- /modules/UserGuide/doc/tpltype_oneguide.htm
@@ -321,7 +321,7 @@ af1fa113934439c94a2de2b9c2476770 --::-- /modules/UserGuide/method.install.php
 ba35fb82454ffbbd1fbc185e2361dafc --::-- /modules/UserGuide/action.default.php
 64893fbf9cb246fc131e4118eaafea21 --::-- /modules/UserGuide/action.import_module.php
 ac77f8b41f621cc2875f4a53a4cdac26 --::-- /modules/UserGuide/action.toggle_search_guide.php
-c34b4948c5698ba06a4147ad77c23ba5 --::-- /modules/UserGuide/action.save_settings.php
+8f8c1b54ea455de14a3df5c6ccd19000 --::-- /modules/UserGuide/action.save_settings.php
 3919c5f4becc0a5733616953a772d377 --::-- /modules/UserGuide/action.xml_import.php
 cb09232236379dad767a8101c25fc93f --::-- /modules/ModuleManager/action.local_chmod.php
 37bc80eb4f4cb054c94dc08bf2d50962 --::-- /modules/ModuleManager/lang/ext/nl_NL.php
@@ -441,7 +441,7 @@ c2a6fbdf56be4cfe63c9143b44745693 --::-- /modules/News/lang/ext/eu_ES.php
 6ca1ebed83eb7726a17ce5381eaa016f --::-- /modules/News/lang/ext/it_IT.php
 2b228b6478e27ee4623230db1c88ef0a --::-- /modules/News/lang/ext/el_GR.php
 0806691d09c1440090c954d0e1584fe3 --::-- /modules/News/lang/ext/pl_PL.php
-8ddc528da4da8445db0aedf12e8ac104 --::-- /modules/News/lang/ext/fr_FR.php
+ed7d806fb428b382b37a7d9396c41466 --::-- /modules/News/lang/ext/fr_FR.php
 00e782e7682ca4d2dc4f439917873d23 --::-- /modules/News/lang/ext/sr_YU.php
 561fcc2ba42ec33b087cec75f2079d4a --::-- /modules/News/lang/ext/fi_FI.php
 c7345b982f09fd7ac4f471db12e34178 --::-- /modules/News/lang/ext/zh_TW.php
@@ -1009,7 +1009,7 @@ ba0f97cb754a591014aacdc5ae36daa4 --::-- /modules/DesignManager/lang/ext/nb_NO.ph
 eabda70453d8cd3ea93bf976e982932d --::-- /modules/DesignManager/lang/ext/uk_UA.php
 bd0d16158a09882c8b156122ee573568 --::-- /modules/DesignManager/lang/ext/de_DE.php
 9df78fe536f764c4a263ad32f57ac6b9 --::-- /modules/DesignManager/lang/ext/it_IT.php
-758e7952e077dfda5740c9841e93abe1 --::-- /modules/DesignManager/lang/ext/fr_FR.php
+d98d4a7c5ea5d1bbb1faa3d7deea714f --::-- /modules/DesignManager/lang/ext/fr_FR.php
 cdea6dcf021c2c1be6f3582159291c5d --::-- /modules/DesignManager/lang/ext/zh_TW.php
 9c8d5b0cd85713730b8ab43f50d477ed --::-- /modules/DesignManager/lang/ext/cs_CZ.php
 a5e7f675427a5c32432cb625997c8ba5 --::-- /modules/DesignManager/lang/ext/tr_TR.php
@@ -1033,7 +1033,7 @@ da3c2d8d935cd6b6380e9fbfd8474109 --::-- /modules/DesignManager/templates/admin_d
 dcb9b9aa23d173e52ae9da53781bb85f --::-- /modules/DesignManager/templates/admin_set_all_pages.tpl
 0db2dd0507a89283bc3777dd19a17437 --::-- /modules/DesignManager/templates/admin_delete_template.tpl
 2f2a6c763b24d6160aa4e3bcd5d19948 --::-- /modules/DesignManager/templates/admin_import_design.tpl
-2c4cc57cff91f7247b100b5bef82a0f7 --::-- /modules/DesignManager/templates/admin_edit_css.tpl
+61f1339f88d7dc6ee7bcfc6f41d301e1 --::-- /modules/DesignManager/templates/admin_edit_css.tpl
 9b37ce3af603f1a973a8461a55e1486e --::-- /modules/DesignManager/templates/admin_defaultadmin_tpltooltip.tpl
 db30fae11286c6def792eec7ee4dac31 --::-- /modules/DesignManager/templates/admin_defaultadmin_tpltype_tooltip.tpl
 1dd747d0930ccd75fbd189d0e6563c55 --::-- /modules/DesignManager/templates/admin_edit_template.tpl
@@ -1199,7 +1199,7 @@ b6ff950d882011cf0680b5ee22772dba --::-- /admin/lang/ext/de_DE.php
 2744c4551df947000a7120ac6c85d0f4 --::-- /admin/lang/ext/it_IT.php
 f6fa4b198f9d0b021673d036719817ba --::-- /admin/lang/ext/el_GR.php
 a4f00e7bc361d31ac28114dcf5ed581b --::-- /admin/lang/ext/pl_PL.php
-aa52e9326c851aca2320e4c565d4e162 --::-- /admin/lang/ext/fr_FR.php
+1f83c9a75de8d68e3d23f71310bfe251 --::-- /admin/lang/ext/fr_FR.php
 8f4ea1f5f954c9ef4144846aca843e05 --::-- /admin/lang/ext/sr_YU.php
 85b34be830b7e828dbb4f18582f9870e --::-- /admin/lang/ext/fi_FI.php
 97ec719ad79740753bf63143e9f8e6a9 --::-- /admin/lang/ext/zh_TW.php
