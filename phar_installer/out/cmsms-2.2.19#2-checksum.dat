@@ -283,7 +283,7 @@ aef4e72b2f36be44bdbd0003041e877d --::-- /modules/UserGuide/action.toggle_admin_g
 3c84d58350eb7806c558e28e36f548f2 --::-- /modules/UserGuide/UserGuide.module.php
 f155b4ed601e7498dba467cec4054a76 --::-- /modules/UserGuide/action.xml_export.php
 2fdf0f8f3fe165b3e3e3f4210a794d9c --::-- /modules/UserGuide/lang/ext/de_DE.php
-10c8baed7966ae72f61ce92b64ebd4fc --::-- /modules/UserGuide/lang/ext/fr_FR.php
+ea079f58c625c80677349a361b4392e9 --::-- /modules/UserGuide/lang/ext/fr_FR.php
 10a0c1530397fc4b3cab20863c7511c2 --::-- /modules/UserGuide/lang/en_US.php
 62ea96952c45a6d365a161c577d7c23b --::-- /modules/UserGuide/action.defaultadmin.php
 0adf28fc6a15f86169dd454cfb09053c --::-- /modules/UserGuide/images/icon.png
@@ -318,7 +318,7 @@ af1fa113934439c94a2de2b9c2476770 --::-- /modules/UserGuide/method.install.php
 6d0715180789d95a5c1622a765ef2fb7 --::-- /modules/UserGuide/doc/tpltype_oneguide.htm
 66aa7d842ca6df1ae61cc4bf39dc9326 --::-- /modules/UserGuide/doc/tpltype_listguides.htm
 92071d51985b95ca746bc7092c8f177d --::-- /modules/UserGuide/doc/changelog.htm
-826aea633033b018df35c261814d5db7 --::-- /modules/UserGuide/action.default.php
+ba35fb82454ffbbd1fbc185e2361dafc --::-- /modules/UserGuide/action.default.php
 64893fbf9cb246fc131e4118eaafea21 --::-- /modules/UserGuide/action.import_module.php
 ac77f8b41f621cc2875f4a53a4cdac26 --::-- /modules/UserGuide/action.toggle_search_guide.php
 c34b4948c5698ba06a4147ad77c23ba5 --::-- /modules/UserGuide/action.save_settings.php
@@ -999,7 +999,7 @@ c4adeefe4fd94370e3223e8de5519735 --::-- /modules/Search/function.admin_statistic
 2de823a03c3e052655155fae270116fe --::-- /modules/Search/action.default.php
 14a395b3a49529ff7f0357c8d6af6ef8 --::-- /modules/Search/action.keywords.php
 a9084ae0b41240ca9ca702e111957fd8 --::-- /modules/DesignManager/method.uninstall.php
-1ae3c100d54fd6b314f9727d18c94b22 --::-- /modules/DesignManager/DesignManager.module.php
+8a3046a5ca13910df46702bb24b09973 --::-- /modules/DesignManager/DesignManager.module.php
 1e517152bfd3b6af3fba3567c5266c2d --::-- /modules/DesignManager/action.admin_edit_type.php
 f07487f927c88c4f9f006dce55728653 --::-- /modules/DesignManager/action.admin_reset_type.php
 90bfe45538b7b0bcc50244ee9a04e6fb --::-- /modules/DesignManager/lang/ext/nl_NL.php
@@ -1033,10 +1033,10 @@ da3c2d8d935cd6b6380e9fbfd8474109 --::-- /modules/DesignManager/templates/admin_d
 dcb9b9aa23d173e52ae9da53781bb85f --::-- /modules/DesignManager/templates/admin_set_all_pages.tpl
 0db2dd0507a89283bc3777dd19a17437 --::-- /modules/DesignManager/templates/admin_delete_template.tpl
 2f2a6c763b24d6160aa4e3bcd5d19948 --::-- /modules/DesignManager/templates/admin_import_design.tpl
-bcb2712a6deb167a7904a99d85c9520f --::-- /modules/DesignManager/templates/admin_edit_css.tpl
+2c4cc57cff91f7247b100b5bef82a0f7 --::-- /modules/DesignManager/templates/admin_edit_css.tpl
 9b37ce3af603f1a973a8461a55e1486e --::-- /modules/DesignManager/templates/admin_defaultadmin_tpltooltip.tpl
 db30fae11286c6def792eec7ee4dac31 --::-- /modules/DesignManager/templates/admin_defaultadmin_tpltype_tooltip.tpl
-faa1cb537a21f6c31e029c82ade77aa9 --::-- /modules/DesignManager/templates/admin_edit_template.tpl
+1dd747d0930ccd75fbd189d0e6563c55 --::-- /modules/DesignManager/templates/admin_edit_template.tpl
 5cfa781f49fd54b556a234133299e4e1 --::-- /modules/DesignManager/templates/admin_copy_css.tpl
 4160012deffccdeb4bcfed9fe15eda3c --::-- /modules/DesignManager/templates/admin_defaultadmin_csstooltip.tpl
 b2a5e8164efc4b5264f6c94c82162478 --::-- /modules/DesignManager/templates/admin_import_design2.tpl
@@ -1061,7 +1061,7 @@ ae1090617a7f71a8371176a96e63dacc --::-- /modules/DesignManager/action.admin_bulk
 13ba5752f9be75b3cbedb99ba0671c87 --::-- /modules/DesignManager/action.admin_bulk_css.php
 8f351900425aa5ff84fb6792b6edc7c1 --::-- /modules/DesignManager/action.admin_copy_css.php
 40f3f70aa76b358643692b637eab48a9 --::-- /modules/DesignManager/action.admin_delete_template.php
-719c3cbc299aa66a06b2f3af3229aa39 --::-- /modules/DesignManager/changelog.inc
+1d89e3efc63fca532627e69a470a8f8d --::-- /modules/DesignManager/changelog.inc
 bfea1a6d5070a42defc40918846e7034 --::-- /modules/DesignManager/lib/class.dm_xml_reader.php
 d645249f3db0003a58f8d60372846bea --::-- /modules/DesignManager/lib/class.dm_design_reader.php
 cfaab9ef2bdca00843e3b287a37d0342 --::-- /modules/DesignManager/lib/class.dm_design_exporter.php
