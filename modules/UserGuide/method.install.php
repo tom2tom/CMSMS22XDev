@@ -165,4 +165,8 @@ EOS;
 }
 
 $fn = cms_join_path($config['image_uploads_path'], $me); // basename is preference value
-@mkdir($fn, 0775, true);
+if (!file_exists($fn)) {
+    @mkdir($fn, 0775, true);
+} elseif (!is_dir($fn)) {
+    $this->SetPreference('filesFolder', ''); // user will need to set something else
+}
