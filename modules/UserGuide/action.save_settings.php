@@ -37,8 +37,8 @@ $valn = isset($params['filesFolder']) ? trim(cleanValue($params['filesFolder']))
 if ($valn != $val) {
     $bp = $config['image_uploads_path'];
     $diro = cms_join_path($bp, strtr($val, '\\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR));
+    $dirn = cms_join_path($bp, strtr($valn, '\\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR));
     if (is_dir($diro)) {
-        $dirn = cms_join_path($bp, strtr($valn, '\\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR));
         if (!file_exists($dirn)) {
             rename($diro, $dirn);
             $this->SetPreference('filesFolder', $valn);
@@ -53,6 +53,11 @@ if ($valn != $val) {
         } else {
             $errors[] = "Name conflict: cannot replace file $dirn";
         }
+    } elseif (!is_file($dirn)) {
+        if (!is_dir($dirn)) {
+            mkdir($dirn, 0775, true);
+        }
+        $this->SetPreference('filesFolder', $valn);
     }
 }
 $val = isset($params['guideStyles']) ? (int)$params['guideStyles'] : '';
