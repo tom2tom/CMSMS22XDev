@@ -227,7 +227,7 @@ $(function() {
 {tab_start name='advanced'}
 <div class="pageoverflow">
 {if $css->has_content_file()}{$inid='importbtn'}{else}{$inid='exportbtn'}{/if}
-    <p class="pagetext"><label style="pointer-events:none" for="{$inid}">{$mod->Lang('prompt_cssfile')}:</label>&nbsp;{cms_help key2=help_stylsheet_file title=$mod->Lang('prompt_cssfile')}</p>
+    <p class="pagetext"><label style="pointer-events:none" for="{$inid}">{$mod->Lang('prompt_cssfile')}:</label>&nbsp;{cms_help key2=help_stylesheet_file title=$mod->Lang('prompt_cssfile')}</p>
     <p class="pageinput">
 {if $css->has_content_file()}
         <input type="submit" id="importbtn" name="{$actionid}import" data-ui-icon="ui-icon-circle-arrow-n" value="{$mod->Lang('import')}">
