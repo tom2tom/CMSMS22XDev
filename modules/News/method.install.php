@@ -280,8 +280,8 @@ $this->SetPreference('email_subject',$this->Lang('subject_newnews'));
 $this->SetTemplate('email_template',$this->GetDfltEmailTemplate());
 
 // Other preferences
-$this->SetPreference('allowed_upload_types','gif,png,jpeg,jpg');
-$this->SetPreference('auto_create_thumbnails','gif,png,jpeg,jpg');
+$this->SetPreference('allowed_upload_types','bmp,jpg,jpeg,gif,png,svg,webp,ico'); // replicate FileTypeHelper
+$this->SetPreference('auto_create_thumbnails','gif,jpg,jpeg,png');
 
 // Setup General category
 $catid = $db->GenID(CMS_DB_PREFIX."module_news_categories_seq");
