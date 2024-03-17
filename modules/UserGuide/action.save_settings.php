@@ -35,29 +35,48 @@ if ($valn != $val) {
 $val = $this->GetPreference('filesFolder');
 $valn = isset($params['filesFolder']) ? trim(cleanValue($params['filesFolder'])) : '';
 if ($valn != $val) {
-    $bp = $config['image_uploads_path'];
-    $diro = cms_join_path($bp, strtr($val, '\\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR));
-    $dirn = cms_join_path($bp, strtr($valn, '\\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR));
-    if (is_dir($diro)) {
-        if (!file_exists($dirn)) {
-            rename($diro, $dirn);
-            $this->SetPreference('filesFolder', $valn);
-        } elseif (is_dir($dirn)) {
-            $res = UserGuideUtils::recursiveCopy($diro, $dirn);
-            if (!$res) {
-                recursive_delete($diro);
+    if ($valn === '') {
+        $this->SetPreference('filesFolder', '');
+    } else {
+        $bp = $config['image_uploads_path'];
+        $dirn = cms_join_path($bp, strtr($valn, '\\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR));
+        if ($val === '') {
+            if (!is_file($dirn)) {
+                if (!is_dir($dirn)) {
+                    mkdir($dirn, 0775, true);
+                }
                 $this->SetPreference('filesFolder', $valn);
             } else {
-                $errors = array_merge($errors, $res);
+                $errors[] = "Name conflict: cannot replace file $dirn";
             }
         } else {
-            $errors[] = "Name conflict: cannot replace file $dirn";
+            $diro = cms_join_path($bp, strtr($val, '\\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR));
+            if (!is_dir($diro)) {
+                if (!is_file($dirn)) {
+                    if (!is_dir($dirn)) {
+                        mkdir($dirn, 0775, true);
+                    }
+                    $this->SetPreference('filesFolder', $valn);
+                } else {
+                    $errors[] = "Name conflict: cannot replace file $dirn";
+                }
+            } else {
+                if (!file_exists($dirn)) {
+                    rename($diro, $dirn);
+                    $this->SetPreference('filesFolder', $valn);
+                } elseif (is_dir($dirn)) {
+                    $res = UserGuideUtils::recursiveCopy($diro, $dirn);
+                    if (!$res) {
+                        recursive_delete($diro);
+                        $this->SetPreference('filesFolder', $valn);
+                    } else {
+                        $errors = array_merge($errors, $res);
+                    }
+                } else {
+                    $errors[] = "Name conflict: cannot replace file $dirn";
+                }
+            }
         }
-    } elseif (!is_file($dirn)) {
-        if (!is_dir($dirn)) {
-            mkdir($dirn, 0775, true);
-        }
-        $this->SetPreference('filesFolder', $valn);
     }
 }
 $val = isset($params['guideStyles']) ? (int)$params['guideStyles'] : '';
