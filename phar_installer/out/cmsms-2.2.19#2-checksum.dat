@@ -321,7 +321,7 @@ cde8c873c53d7053c46736d33f568929 --::-- /modules/UserGuide/lib/css/orig_view_gui
 ba35fb82454ffbbd1fbc185e2361dafc --::-- /modules/UserGuide/action.default.php
 64893fbf9cb246fc131e4118eaafea21 --::-- /modules/UserGuide/action.import_module.php
 ac77f8b41f621cc2875f4a53a4cdac26 --::-- /modules/UserGuide/action.toggle_search_guide.php
-8f8c1b54ea455de14a3df5c6ccd19000 --::-- /modules/UserGuide/action.save_settings.php
+49d99756bb1d234f26d2ab4b181bf3d0 --::-- /modules/UserGuide/action.save_settings.php
 3919c5f4becc0a5733616953a772d377 --::-- /modules/UserGuide/action.xml_import.php
 cb09232236379dad767a8101c25fc93f --::-- /modules/ModuleManager/action.local_chmod.php
 37bc80eb4f4cb054c94dc08bf2d50962 --::-- /modules/ModuleManager/lang/ext/nl_NL.php
@@ -412,7 +412,7 @@ c0314ac9feb9b45f190ef4a5e773dcb4 --::-- /modules/ModuleManager/lib/class.ModuleM
 cb8b587a9f8edddf72022d9b0b195d50 --::-- /modules/ModuleManager/action.local_remove.php
 12f463cd1186c6c77e4a27102f3542a0 --::-- /modules/ModuleManager/function.admin_prefs_tab.php
 08b2afac14e8ea41cbdbe99039380cf8 --::-- /modules/ModuleManager/function.search.php
-0aaeafb3504ca23b5ccf4eee20154a81 --::-- /modules/News/method.uninstall.php
+9a48fea10194bfb632eab8563153b407 --::-- /modules/News/method.uninstall.php
 d0ce52b318ac1f6810868857bc2244b3 --::-- /modules/News/action.deletearticle.php
 71bae07af53ea69959d23171025c310c --::-- /modules/News/function.admin_customfieldstab.php
 3c30a08f9b84cef104bac8ce53bb7b98 --::-- /modules/News/lang/ext/nl_NL.php
@@ -500,7 +500,7 @@ b0631fe7904a2fc026129495ac977ecd --::-- /modules/News/News.module.php
 5d4667faddab3d59208abe4394100c52 --::-- /modules/News/action.admin_movefielddef.php
 b8e23dec76c11989bbdeaf231a70aee2 --::-- /modules/News/action.deletecategory.php
 724dff9af8988ddeea24f4fb6037065c --::-- /modules/News/action.updateoptions.php
-47d619a4ae6fc97d66625cee44a0ec42 --::-- /modules/News/method.install.php
+3f74fb7720e026c9e19105fc9718095c --::-- /modules/News/method.install.php
 90f9c2ff6d3bf47a9679f991e7f057d7 --::-- /modules/News/doc/tpltype_browsecat.inc
 2237661cefdb645d3e697a1e4c96b90f --::-- /modules/News/doc/tpltype_summary.inc
 f9538e18091dcc3d207d71f9c8265cdd --::-- /modules/News/doc/tpltype_detail.inc
