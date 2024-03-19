@@ -303,7 +303,7 @@ c705eed83637c5c4a2293aa5625d8865 --::-- /modules/UserGuide/action.toggle_active_
 668220583459c7957a90a9d642a56818 --::-- /modules/UserGuide/lib/class.UserGuideImportOldGuides.php
 0e67e1ce51e3cf712541a180917fead8 --::-- /modules/UserGuide/lib/class.UserGuideImportGuide2.php
 b39a0a1bce2934b05b38451e0da8daf7 --::-- /modules/UserGuide/lib/class.UserGuideSearch_slave.php
-9cbb2e6bfd80353940030450f5e84d64 --::-- /modules/UserGuide/lib/class.UserGuideXML.php
+5279c00281c1fe785e4e3ab1334dea4a --::-- /modules/UserGuide/lib/class.UserGuideXML.php
 9f9b2068d2fe6ad342886599fe200ada --::-- /modules/UserGuide/lib/class.UserGuideQuery.php
 c4da2d388d4434dae9f3561176f2fdfe --::-- /modules/UserGuide/lib/css/UserGuide_admin.css
 e12fbe793d4c4758a6ee90e3ca40a962 --::-- /modules/UserGuide/lib/css/orig_list_guides.css
