@@ -278,7 +278,7 @@ EOS;
             if ($file == '') {
                 continue;
             }
-            $filespec = $dir.DIRECTORY_SEPARATOR.$file;
+            $filespec = $dir.$file;
             if (@is_dir($filespec)) {
                 $file = rtrim($file, ' \\/');
                 if ($file == '') {
