@@ -303,7 +303,7 @@ c705eed83637c5c4a2293aa5625d8865 --::-- /modules/UserGuide/action.toggle_active_
 668220583459c7957a90a9d642a56818 --::-- /modules/UserGuide/lib/class.UserGuideImportOldGuides.php
 0e67e1ce51e3cf712541a180917fead8 --::-- /modules/UserGuide/lib/class.UserGuideImportGuide2.php
 b39a0a1bce2934b05b38451e0da8daf7 --::-- /modules/UserGuide/lib/class.UserGuideSearch_slave.php
-991b11469d7ea0a460f657b082a29ca3 --::-- /modules/UserGuide/lib/class.UserGuideXML.php
+9cbb2e6bfd80353940030450f5e84d64 --::-- /modules/UserGuide/lib/class.UserGuideXML.php
 9f9b2068d2fe6ad342886599fe200ada --::-- /modules/UserGuide/lib/class.UserGuideQuery.php
 c4da2d388d4434dae9f3561176f2fdfe --::-- /modules/UserGuide/lib/css/UserGuide_admin.css
 e12fbe793d4c4758a6ee90e3ca40a962 --::-- /modules/UserGuide/lib/css/orig_list_guides.css
@@ -1773,7 +1773,7 @@ c7268c1813ac568a3f7517812e517d8b --::-- /lib/jquery/js/jquery.cmsms_lock.js
 de464e447c42c4c5bd22320db1887435 --::-- /lib/jquery/js/jquery.json-2.4.min.js
 3d99269fb5030e9b30138f2ebdb5209e --::-- /lib/jquery/js/jquery.mjs.nestedSortable.min.js
 d5626dfa1853bdb98dac745af2246b6e --::-- /lib/jquery/README-CUSTOMJQUI.txt
-6ed3395ae15fbd8f4a6aec43e29c49bc --::-- /lib/smarty/VERSION
+5ffd043f7bf5184bcf2f3af6657c1898 --::-- /lib/smarty/VERSION
 195f70028e717cb07902834ab71bf557 --::-- /lib/smarty/debug.tpl
 b33ffc9b07eb13ca3b1f317923963d9a --::-- /lib/smarty/sysplugins/smarty_internal_resource_extends.php
 abd5e2f4836d796f1d84367b99039ebf --::-- /lib/smarty/sysplugins/smarty_template_resource_base.php
@@ -1862,7 +1862,7 @@ a71796d8c9667bde10ffba543c9aef32 --::-- /lib/smarty/sysplugins/smarty_internal_m
 1d568e45047104dccec5404f352905fe --::-- /lib/smarty/sysplugins/smarty_internal_method_createdata.php
 bccb61a399e4c217ad4f3e39c87cc326 --::-- /lib/smarty/sysplugins/smarty_internal_method_getautoloadfilters.php
 6986d1068ed3035777eaad189d5c6a06 --::-- /lib/smarty/sysplugins/smarty_cacheresource_keyvaluestore.php
-37d614b7d34596f194cd3669b64ac962 --::-- /lib/smarty/sysplugins/smarty_internal_testinstall.php
+5e9189935c42f22274408bc7ae82b773 --::-- /lib/smarty/sysplugins/smarty_internal_testinstall.php
 aac4fd3feb290da9fcb79c7a0568e0fc --::-- /lib/smarty/sysplugins/smarty_internal_compile_private_block_plugin.php
 23ef319b5ac6634cf4eb0332e143b642 --::-- /lib/smarty/sysplugins/smarty_internal_compilebase.php
 3e43903411b789ac7602999ef66ba567 --::-- /lib/smarty/sysplugins/smarty_internal_compile_insert.php
@@ -1876,7 +1876,7 @@ c6fe8499e8164040ee78a17bb3507897 --::-- /lib/smarty/sysplugins/smarty_internal_m
 849e094fde166d3d8bca999f2045c94c --::-- /lib/smarty/sysplugins/smarty_internal_compile_function.php
 7a6cb1bd4e76e08eefcb5167e9480fec --::-- /lib/smarty/sysplugins/smarty_internal_compile_private_foreachsection.php
 5f8dd18aa2b97f7e79285c5dedbba4a8 --::-- /lib/smarty/sysplugins/smarty_internal_runtime_make_nocache.php
-8139079685b95c7319e71413e8181c35 --::-- /lib/smarty/sysplugins/smarty_internal_compile_private_print_expression.php
+c9d7587300540cce92fd55d2c97cdd67 --::-- /lib/smarty/sysplugins/smarty_internal_compile_private_print_expression.php
 87a32301b9984e5a3ec7c439c6a6e689 --::-- /lib/smarty/sysplugins/smarty_template_cached.php
 8111ddb9d412d83317d251e290230bb4 --::-- /lib/smarty/sysplugins/smarty_internal_method_registerplugin.php
 92b011211d445e9df72a2cae43a8cec5 --::-- /lib/smarty/sysplugins/smarty_internal_runtime_filterhandler.php
@@ -1895,7 +1895,7 @@ caf3afdfa376590b03314fa7a6ad0283 --::-- /lib/smarty/sysplugins/smarty_internal_c
 f7cb9185d39608139574a4ecabdb6c4d --::-- /lib/smarty/sysplugins/smarty_internal_method_registerclass.php
 bbf4a0e7861a4bc5343902015a059ba0 --::-- /lib/smarty/sysplugins/smarty_internal_compile_debug.php
 bf44f44f7dda90c19ed5083b8a29506b --::-- /lib/smarty/sysplugins/smarty_internal_compile_private_object_block_function.php
-731335efbf87ff271bc1b3827baa37ac --::-- /lib/smarty/sysplugins/smarty_internal_debug.php
+cbb5baa3568b3c594edc7739e2310b65 --::-- /lib/smarty/sysplugins/smarty_internal_debug.php
 c953a2bcd60f7f832315052f1daab985 --::-- /lib/smarty/sysplugins/smarty_internal_compile_eval.php
 5158049fe2f6a110156ac161ee421c6c --::-- /lib/smarty/sysplugins/smarty_internal_method_setautoloadfilters.php
 5a20564770d8e7486e426f12967a3ec9 --::-- /lib/smarty/sysplugins/smarty_internal_method_unregisterplugin.php
@@ -1928,13 +1928,14 @@ bedd7aa4beeb0faf11bbed93158a2f81 --::-- /lib/smarty/sysplugins/smarty_cacheresou
 a5a6c5bb4de4e60fb47338e6b11fa2d8 --::-- /lib/smarty/LICENSE
 375ea6c4bd90d740dad8bad811e2b1a0 --::-- /lib/smarty/functions.php
 c50ac790aa71f497768ca77aa21e7c67 --::-- /lib/smarty/Autoloader.php
-7ebc5938587c8bf8fc8fe919a35f89a8 --::-- /lib/smarty/Smarty.class.php
+aa0aa2c46e44a8a51f5f701a5bc23eb8 --::-- /lib/smarty/Smarty.class.php
 a3a8955e949b3c3ab1db353d99d1b156 --::-- /lib/smarty/bootstrap.php
 ad850888759f1fe2f38669b46fb276a5 --::-- /lib/smarty/plugins/function.fetch.php
 3f093f8f6fc49126f78ca98c0a81a1d0 --::-- /lib/smarty/plugins/modifiercompiler.wordwrap.php
 fd967b09cc9468dc1d58d93ba4bc9694 --::-- /lib/smarty/plugins/modifiercompiler.to_charset.php
 4ad68d0bc8dcdc7f3df3ee6c299961c9 --::-- /lib/smarty/plugins/modifiercompiler.unescape.php
 9723ed7ada071ba91aaa71b46c47f6b3 --::-- /lib/smarty/plugins/modifiercompiler.escape.php
+143869af6e305f5153326dbb5c24b817 --::-- /lib/smarty/plugins/modifiercompiler.json_encode.php
 f0c265201245d3a84ca64041c6b96eab --::-- /lib/smarty/plugins/modifier.regex_replace.php
 325fb3105df37cb23236b14a713fb712 --::-- /lib/smarty/plugins/modifier.truncate.php
 4d38e0c1b74f1129b23c457ad0032735 --::-- /lib/smarty/plugins/function.html_image.php
@@ -1979,9 +1980,11 @@ fa64ad7cbaad1266ab3157b0b17a153b --::-- /lib/smarty/plugins/modifiercompiler.nop
 e28c02b31374f9a0084c74a970faf841 --::-- /lib/smarty/plugins/block.textformat.php
 5cec01faa2f84f972f3570e19f332f02 --::-- /lib/smarty/plugins/modifiercompiler.str_repeat.php
 ca31fa136fc3c705d442c49db5bf3333 --::-- /lib/smarty/plugins/modifier.explode.php
+0ce9fcdfdb5b06d3761654e25fd5050b --::-- /lib/smarty/plugins/modifiercompiler.substr.php
 dbead9c0c814ede6acb1c0d46b99a343 --::-- /lib/smarty/plugins/modifiercompiler.strlen.php
 407022037efb49f860f9b6cb5a8ecc99 --::-- /lib/smarty/plugins/function.html_select_time.php
 1c11efb987e1369c71ca9bd22c5580fc --::-- /lib/smarty/plugins/modifiercompiler.count_characters.php
+51b324e438629daba2ac86baadd9da59 --::-- /lib/smarty/plugins/modifier.implode.php
 38beafcbd996bfbf23279c5c562b81be --::-- /lib/smarty/plugins/modifiercompiler.strip.php
 de7e8be5727d25c5140e6dcc883d653d --::-- /lib/smarty/plugins/modifier.replace.php
 608d2e4d47e452b32dcc809b93f4d7d2 --::-- /lib/plugins/function.cms_yesno.php
@@ -2089,7 +2092,7 @@ e6ec0abcb3fb3736b713e1a1eeadd3f9 --::-- /lib/classes/internal/class.CMS_Smarty_T
 c7ca1927e3b675351c414783dc15b350 --::-- /lib/classes/internal/class.LoginOperations.php
 e18864e9e3f7f7b7171d677214f4d55b --::-- /lib/classes/internal/class.CMS_Content_Block.php
 977092135408de519c68f80cbb329135 --::-- /lib/classes/internal/class.global_cache.php
-ad9c8158294d040a067e0519c7b487d8 --::-- /lib/classes/internal/class.Smarty_CMS.php
+8f658e459c689cc8b1a0104fa6c3d919 --::-- /lib/classes/internal/class.Smarty_CMS.php
 de37f22f06ef0a8d9e8a1fd6f1a1b72a --::-- /lib/classes/internal/class.content_assistant.php
 51abea9b3e92d5472bda4ec97c94e82a --::-- /lib/classes/internal/class.page_template_parser.php
 60b43ba5559ddbadc06fa9b69af99890 --::-- /lib/classes/internal/class.bulkcontentoperations.php
@@ -2167,7 +2170,7 @@ a63097dabcd738ecfebe3c43cfe063cb --::-- /doc/htaccess.txt
 7d4a0a60a3ca21afb394cec0717895b4 --::-- /doc/robots.txt
 a34217afe6bc02700c499a799e9f2770 --::-- /doc/COPYING.txt
 8a46ac9fa0ea5f14ec02b2eedeb5986f --::-- /doc/README.txt
-aa02fd12b710aa8c4ce02667143a2cc5 --::-- /doc/CHANGELOG.txt
+ba643cef17d67b3661963eaf8fc079c6 --::-- /doc/CHANGELOG.txt
 8b68ae2b57e1a989255912f233722bba --::-- /doc/.htaccess
 134529b44bbf77334622c05ea9110022 --::-- /doc/AUTHORS.txt
 e15e5bc3ef631fc2288d27ee769c2ffd --::-- /favicon_cms.ico
