@@ -112,7 +112,7 @@ class Smarty_CMS extends CMSSmartyBase
             $this->autoloadFilters();
 
             // compile check can only be enabled, if using smarty cache... just for safety.
-            if( \cms_siteprefs::get('use_smartycache',0) ) $this->setCompileCheck(\cms_siteprefs::get('use_smartycompilecheck',1)); //i.e. default COMPILECHECK_ON c.f. COMPILECHECK_CACHEMISS (2)
+            if( cms_siteprefs::get('use_smartycache',0) ) $this->setCompileCheck(cms_siteprefs::get('use_smartycompilecheck',1)); //i.e. default COMPILECHECK_ON c.f. COMPILECHECK_CACHEMISS (2)
 
             // Enable custom security, permissive or not
             $this->enableSecurity('CMSSmartySecurityPolicy');
@@ -130,8 +130,10 @@ class Smarty_CMS extends CMSSmartyBase
             $this->addTemplateDir($config['assets_path'].'/templates');
             // no change to default security during installer run
         }
+        // $_call->func(args) can be used in templates instead of func(args) for Smarty 4.5.1+
         $this->assignGlobal('_call', new Smarty_TemplateCaller($this));
-        // in templates we can use $_call->func(args) instead of just func(args) for Smarty5
+        // _call::class__method(args) can be used in templates instead of class::method(args) for Smarty 4.5.1+
+        $this->registerClass('_call', Smarty_TemplateCaller::class);
     }
 
     /**
@@ -327,7 +329,7 @@ class Smarty_CMS extends CMSSmartyBase
      *
      * @since 2.0.1
      * @deprecated
-     * @return \smarty_internal_template
+     * @return Smarty_Internal_Template
      */
     public function get_template_parent()
     {
@@ -393,8 +395,8 @@ class Smarty_CMS extends CMSSmartyBase
     public function createTemplate($template, $cache_id = null, $compile_id = null, $parent = null, $do_clone = true)
     {
         if( !startswith($template,'eval:') && !startswith($template,'string:') ) {
-            if( ($pos = strpos($template,'*')) > 0 ) throw new \LogicException("$template is an invalid CMSMS resource specification");
-            if( ($pos = strpos($template,'/')) > 0 ) throw new \LogicException("$template is an invalid CMSMS resource specification");
+            if( ($pos = strpos($template,'*')) > 0 ) throw new LogicException("$template is an invalid CMSMS resource specification");
+            if( ($pos = strpos($template,'/')) > 0 ) throw new LogicException("$template is an invalid CMSMS resource specification");
         }
         return parent::createTemplate($template, $cache_id, $compile_id, $parent, $do_clone );
     }
@@ -555,17 +557,30 @@ class Smarty_CMS extends CMSSmartyBase
  */
 class Smarty_TemplateCaller
 {
-    private $php_functions; // empty means no restriction
+    private $php_functions; // empty array means no restriction
+    private static $static_classes; // ditto
 
     public function __construct($smarty)
     {
         $this->php_functions = &$smarty->security_policy->php_functions; //TODO check with Smarty5
+        self::$static_classes = &$smarty->security_policy->static_classes; //TODO check with Smarty5
     }
 
     public function __call($name, $args) {
-        if (!$this->php_functions || in_array($name, $this->php_functions)) {
+        if ($this->php_functions !== null && (!$this->php_functions || in_array($name, $this->php_functions))) {
             return $name(...$args);
         }
         return "<!-- prohibited function $name called -->";
+    }
+
+    public static function __callStatic($name, $args)
+    {
+        if (self::$static_classes !== null && (!self::$static_classes ||
+           ($classname = substr($name, 0, strpos($name, '__')) && in_array($classname, self::$static_classes)))) {
+            $num = 1;
+            $name = str_replace('__', '::', $name, $num);
+            return $name(...$args);
+        }
+        return "<!-- prohibited static function $name called -->";
     }
 }
