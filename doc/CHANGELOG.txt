@@ -27,10 +27,11 @@ Core - General
  - News module status changed to non-core, but still installed with demo content.
  - Since CMSMS 2.2, config parameters 'ssl_url','ssl_uploads_url' and 'ssl_image_uploads_url', and methods which use those, have internally but not publicly been flagged as deprecated.
  - Added missing nls files, allowing installation of extra translations.
- - Smarty upgraded to version 4.3.5.
+ - Smarty upgraded to version 4.4.1.
  - Enabled use of PHP function rawurlencode in Smarty templates.
  - Added Smarty modifier plugin 'adjust' to handle deprecated modifier-function-calls in templates.
- - Added variable '_call' to all Smarty template objects to handle Smarty5's removal of PHP function calling.
+ - Added variable '_call' to all Smarty template objects to work around Smarty 4.5's deprecation of and 5's blocking of all PHP function calls.
+ - Added Smarty registered-class '_call' to work around Smarty 4.5's deprecation of and 5's blocking of unregistered static calls.
  - PHPMailer upgraded to version 6.9.1.
  - TinyMCE upgraded to version 5.10.9, with support for theme-selection.
  - jQuery upgraded to version 1.12.4.
