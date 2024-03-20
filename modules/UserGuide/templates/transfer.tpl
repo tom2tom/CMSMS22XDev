@@ -15,7 +15,7 @@ $(function() {
 {if $have_xml}
 <div class="pageoverflow">
   <label class="pagetext" for="export">{$mod->Lang('exportxml')}</label><br>
-  <a id="export" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" href="{cms_action_url action=xml_export}">
+  <a id="export" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" href="{cms_action_url action=export}">
     <span class="ui-button-icon ui-icon ui-icon-arrowreturnthick-1-s"></span> {lang('export')}
   </a>
 </div>
@@ -25,12 +25,12 @@ $(function() {
 <br>
 {/if}
 {if $have_xml}
-<p class="pagetext">{$mod->Lang('importxml')}</p>
+<p class="pagetext" style="margin:0;cursor:default">{$mod->Lang('importxml')}</p>
 <label id="selectorlabel" class="ui-button ui-corner-all ui-widget" for="importxml">
  <span class="ui-button-icon ui-icon ui-icon-search"></span>
  <span class="ui-button-icon-space"></span>
  {$mod->Lang('selectfile')}...</label><br>
-{form_start action='xml_import'}
+{form_start action='import'}
   <input type="file" id="importxml" name="{$actionid}xmlfile" accept=".xml">
   <div class="pageinput">
     <p id="filesel">&nbsp;</p>

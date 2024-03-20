@@ -58,7 +58,7 @@ if ($row['smarty']) {
         $this->SetError($this->Lang('err_smarty').' ('.$e->GetMessage().')');
         $this->RedirectToAdminTab('list');
     }
-    $tpl = $smarty->CreateTemplate($this->GetTemplateResource('view_guide.tpl'), null, null, $smarty);
+    $tpl = $smarty->CreateTemplate($this->GetTemplateResource('view.tpl'), null, null, $smarty);
     $tpl->assign('content', $content2);
     $tpl->assign('name', $name);
     try {
@@ -68,7 +68,7 @@ if ($row['smarty']) {
         $this->RedirectToAdminTab('list');
     }
 } else {
-    $tpl = $smarty->CreateTemplate($this->GetTemplateResource('view_guide.tpl'), null, null, $smarty);
+    $tpl = $smarty->CreateTemplate($this->GetTemplateResource('view.tpl'), null, null, $smarty);
     $tpl->assign('content', $content);
     $tpl->assign('name', $name);
     $tpl->display();

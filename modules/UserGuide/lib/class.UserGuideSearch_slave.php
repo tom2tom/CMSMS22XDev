@@ -76,7 +76,7 @@ final class UserGuideSearch_slave extends AdminSearch_slave
     private function get_match_info($row, $mod)
     {
         $resultSet = $this->get_resultset($row['name'], '',
-            $mod->create_url('m1_', 'view_guide', '', ['gid'=>$row['id']]));
+            $mod->create_url('m1_', 'view', '', ['gid'=>$row['id']]));
         $from = $row['name'];
         $num = $this->get_number_of_occurrences($from);
         if ($num > 0) {

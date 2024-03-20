@@ -218,7 +218,7 @@ if ($newitem && !(isset($params['submit']) || isset($params['apply']))) {
 //element class will default to 'cms_textarea m1_content MicroTiny'
 $input = create_textarea(true, $item->content, $id.'content', '', 'editarea', '', '', 50, 30);
 
-$tpl = $smarty->CreateTemplate($this->GetTemplateResource('edit_guide.tpl'), null, null, $smarty);
+$tpl = $smarty->CreateTemplate($this->GetTemplateResource('edit.tpl'), null, null, $smarty);
 $tpl->assign('item', $item)
  ->assign('input_content', $input)
  ->assign('newitem', $newitem)

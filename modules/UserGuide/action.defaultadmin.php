@@ -41,7 +41,7 @@ if ($guides) {
 $tpl->assign('guides', $guides);
 
 if ($pmod) {
-    $url = $this->create_url($id, 'reorder_guides', $returnid, ['idlist'=>'XXX']);
+    $url = $this->create_url($id, 'reorder', $returnid, ['idlist'=>'XXX']);
     $tpl->assign('reorder_url', str_replace('&amp;', '&', $url));
     $tpl->assign('have_xml', class_exists('SimpleXMLElement', false));
     $tpl->assign('iconsbase', $this->GetModuleURLPath().'/images');

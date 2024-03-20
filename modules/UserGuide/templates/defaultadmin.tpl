@@ -10,14 +10,14 @@
 {if $pmod || $pset}
 {tab_start name='list'}
 {/if}
-{include file='module_file_tpl:UserGuide;admin_guideslist.tpl' scope='root'}
+{include file='module_file_tpl:UserGuide;guideslist.tpl' scope='root'}
 {if $pmod}
 {tab_start name='transfer'}
-{include file='module_file_tpl:UserGuide;admin_transfer.tpl' scope='root'}
+{include file='module_file_tpl:UserGuide;transfer.tpl' scope='root'}
 {/if}
 {if $pset}
 {tab_start name='settings'}
-{include file='module_file_tpl:UserGuide;admin_settings.tpl' scope='root'}
+{include file='module_file_tpl:UserGuide;settings.tpl' scope='root'}
 {/if}
 {if $pmod || $pset}
 {tab_end}
