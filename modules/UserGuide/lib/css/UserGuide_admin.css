@@ -104,6 +104,9 @@
 div.pagecontainer .fatinput {
   padding: 0.25rem
 }
+#inform {
+  display: none
+}
 /* prettified file selector */
 #infile {
   position: absolute;

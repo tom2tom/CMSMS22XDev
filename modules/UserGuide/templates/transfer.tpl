@@ -6,7 +6,7 @@ $(function() {
   var showsize = (sel.size / 1024).toFixed(2);
   var info = sel.name + ' - ' + showsize + 'kB';
   $('#filesel').text(info);
-  $('#filesubmit').css('visibility','visible');
+  $('#inform').css('display','block');
  });
 });
 </script>
@@ -29,12 +29,12 @@ $(function() {
 <label id="selectorlabel" class="ui-button ui-corner-all ui-widget" for="infile">
  <span class="ui-button-icon ui-icon ui-icon-search"></span>
  <span class="ui-button-icon-space"></span>
- {$mod->Lang('selectfile')}...</label><br>
-{form_start action='import'}
+ {$mod->Lang('selectfile')}...</label>
+{form_start action='import' id='inform'}
   <input type="file" id="infile" name="{$actionid}imported" accept="{$xmltype}">
   <div class="pageinput">
     <p id="filesel">&nbsp;</p>
-    <input type="submit" id="filesubmit" style="visibility:hidden" name="{$actionid}submit" data-ui-icon="ui-icon-arrowreturnthick-1-n" value="{$mod->Lang('import')}">
+    <input type="submit" id="filesubmit" name="{$actionid}submit" data-ui-icon="ui-icon-arrowreturnthick-1-n" value="{$mod->Lang('import')}">
   </div>
 </form>
 {elseif empty($guides)}
@@ -50,7 +50,6 @@ $(function() {
 </div>
 {/if}
 {if $have_UsersGuide}
-<br>
 <div class="pageoverflow">
   <label class="pagetext" for="importvold">{$mod->Lang('import_UsersGuide')}</label><br>
   <a id="importvold" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" href="{cms_action_url action='import_module' source='UsersGuide'}">
