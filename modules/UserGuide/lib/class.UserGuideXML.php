@@ -305,6 +305,10 @@ EOS;
      */
     private function output_xml()
     {
+        $n = count(ob_list_handlers());
+        for ($i = 0; $i < $n; $i++) { ob_end_clean(); }
+//      ob_end_clean(); // not all headers?
+
         $doc = new DOMDocument();
         $doc->preserveWhiteSpace = false;
         $doc->formatOutput = true;
@@ -316,7 +320,6 @@ EOS;
         $date = date('Y-m-d_H-i-s', time());
         $filename = 'UserGuide_Export_' . $date . '.xml';
 
-        ob_end_clean();
         header('Pragma: public');
         header('Expires: 0');
         header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
