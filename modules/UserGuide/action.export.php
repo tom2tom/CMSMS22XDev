@@ -14,8 +14,13 @@ if (!$this->CheckPermission(UserGuide::MANAGE_PERM)) {
     $this->Redirect($id, 'defaultadmin', $returnid);
 }
 
-$doer = new UserGuideXML($this);
-if ($doer->export()) {
+$done = false;
+if (class_exists('SimpleXMLElement')) {
+    $doer = new UserGuideXML($this);
+    $done = $doer->export();
+}
+// tarball export goes here somewhere ... must be in a separate request
+if ($done) {
     $this->SetMessage($this->Lang('export_completed'));
 } else {
     $this->SetError($this->Lang('err_export'));

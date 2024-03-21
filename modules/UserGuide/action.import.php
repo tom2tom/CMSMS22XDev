@@ -15,15 +15,26 @@ if (!$this->CheckPermission(UserGuide::MANAGE_PERM)) {
 }
 
 $errors = [];
-
-$xmlfield = $id . 'xmlfile';
-if (empty($_FILES[$xmlfield]['name']) || $_FILES[$xmlfield]['type'] != 'text/xml') {
-    $errors[] = $this->Lang('err_nofile');
-}
-
-$doer = new UserGuideXML($this);
-if (!$doer->import($_FILES[$xmlfield]['tmp_name'])) {
-    $errors[] = $this->Lang('err_import');
+$key = $id . 'imported';
+if (empty($_FILES[$key]['name']) ||
+    !$_FILES[$key]['tmp_name'] ||
+    !$_FILES[$key]['type'] ||
+    $_FILES[$key]['size'] == 0 ||
+    $_FILES[$key]['error'] != 0) {
+        $errors[] = $this->Lang('err_nofile');
+} else {
+    switch($_FILES[$key]['type']) {
+        // tarball processing goes here ...
+        case 'text/xml':
+            //TODO confirm actual content
+            $doer = new UserGuideXML($this);
+            if (!$doer->import($_FILES[$key]['tmp_name'])) {
+                $errors[] = $this->Lang('err_import');
+            }
+            break;
+        default:
+            $errors[] = lang('error_uploadproblem');
+    }
 }
 
 if ($errors) {
@@ -31,5 +42,4 @@ if ($errors) {
 } else {
     $this->SetMessage($this->Lang('import_completed'));
 }
-
 $this->RedirectToAdminTab('list');

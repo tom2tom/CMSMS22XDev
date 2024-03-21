@@ -43,7 +43,13 @@ $tpl->assign('guides', $guides);
 if ($pmod) {
     $url = $this->create_url($id, 'reorder', $returnid, ['idlist'=>'XXX']);
     $tpl->assign('reorder_url', str_replace('&amp;', '&', $url));
-    $tpl->assign('have_xml', class_exists('SimpleXMLElement', false));
+    $can = false;
+    if (class_exists('SimpleXMLElement', false)) {
+        $can = true;
+        $tpl->assign('xmltype', 'text/xml'); // input-file acceptor
+    }
+    //tarball processing goes here somewhere ...
+    $tpl->assign('have_import', $can);
     $tpl->assign('iconsbase', $this->GetModuleURLPath().'/images');
     // Imports
     $modops = ModuleOperations::get_instance();
