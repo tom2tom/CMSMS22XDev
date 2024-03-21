@@ -25,7 +25,7 @@ $lang['err_nofile'] = 'Filename error - not selected';
 $lang['err_noname'] = 'A name is required';
 $lang['err_smarty'] = 'This guide might include a Smarty tag that is not displaying correctly. Please either add {literal}{/literal} tags, remove, or turn off Smarty processing.';
 $lang['export_completed'] = 'User Guides have been exported';
-$lang['exportxml'] = 'Export Guide(s) as XML';
+$lang['exportdata'] = 'Export Guides Data';
 $lang['filesFolder'] = 'Media Files Folder';
 $lang['friendlyname'] = 'User Guidance';
 $lang['frontend_styles'] = 'Frontend Display Stylesheet(s)';
@@ -50,7 +50,7 @@ $lang['import'] = 'Import';
 $lang['import_UserGuide2'] = 'Import Guide(s) and Settings from UserGuide2 Module';
 $lang['import_UsersGuide'] = 'Import Guide(s) and Settings from Legacy UsersGuide Module';
 $lang['import_completed'] = 'User guides have been imported. Almost certainly, their frontend templates and stylesheets will need to be adjusted. Use DesignManager to set the type of each imported template, if any.';
-$lang['importxml'] = 'Import Guide(s) as XML';
+$lang['importdata'] = 'Import Guides Data';
 $lang['info_tpldefault'] = '<strong>Default templates</strong> for diplayed guides and lists are determined by the \'default\' property of recorded templates in the corresponding UserGuide-related template-types.';
 $lang['item_deleted'] = 'The User Guide has been deleted';
 $lang['item_notsaved'] = 'The User Guide was not saved'; // displayed after redirection
@@ -62,7 +62,7 @@ $lang['msg_cancelled'] = 'Operation canceled';
 $lang['no_guide'] = 'No guide is recorded';
 $lang['no_sheet'] = 'No suitable stylesheet is recorded';
 $lang['no_template'] = 'No suitable template is recorded';
-$lang['no_xml'] = 'PHP\'s XML capabilities are not available';
+$lang['no_importing'] = 'PHP\'s import-related capabilities are not available';
 $lang['param_guideid'] = 'The numeric id (&gt; 0) of a single guide to display';
 $lang['param_list'] = 'A comma-separated series of numeric id\'s of guides to list, or empty or \'*\' to list everything. If neither \'gid\' or \'list\' is specified, list all is assumed.';
 $lang['param_stylesheet_name'] = 'The name of a stylesheet to use for formatting the displayed list. (Guide stylesheets are recorded with respective guides.)';
@@ -76,7 +76,7 @@ $lang['restricted'] = 'Restricted Access';
 $lang['revision'] = 'Revision';
 $lang['save'] = 'Save';
 $lang['searchable'] = 'Searchable';
-$lang['selectfile'] = 'Select XML file';
+$lang['selectfile'] = 'Select file';
 $lang['settings_saved'] = 'The settings have been saved.';
 $lang['tab_content'] = 'Content';
 $lang['tab_list'] = 'Guides';
@@ -131,8 +131,8 @@ $lang['help'] = <<<'EOD'
 <p>To add custom styles for user guides, create the file '&lt;site-root&gt;/assets/module_custom/UserGuide/custom.css'. This will be applied in addition to admin-theme and UserGuide-module styling.</p>
 <p>You can use the '.guide' class in that file to target User Guide content.</p>
 <h3>Import/Export</h3>
-<p>The collection of all current guides can easily be exported to an XML file.</p>
-<p>A collection of guides can be imported to this module from another compatible module. Any imported guides will be added after any existing guides.</p>
+<p>The collection of all current guides and related data can easily be exported. Currently exported as an XML file, and other format(s) might be supported in future.</p>
+<p>Previously-exported guides and related data can easily be imported.</p>
 <p>If a 'Media Files Folder' is set then any export will include all files (images etc) in that folder. When importing, any media files will be stored in that same folder.</p>
 <h4>Import from UserGuide2 and/or UsersGuide module</h4>
 <p>If the UserGuide2 module is installed, an option will be shown to import all content from that module.</p>
