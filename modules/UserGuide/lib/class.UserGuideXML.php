@@ -460,6 +460,7 @@ EOS;
                 $row['type_dflt'] = 0;
                 $row['category_id'] = 0;
                 $row['owner_id'] = $userid; //omitted from export or now changed
+                //TODO any content sanitize needed ?
                 if ($newf) {
                     $row['content'] = str_replace($fromFolder, $toFolder, $row['content']);
                 }
@@ -515,6 +516,7 @@ VALUES (?,?,?,?,?,?,?)";
                 } else {
                     $existing[] = $row['name'];
                 }
+                //TODO any content sanitize needed ?
                 if ($newf) {
                     $row['content'] = str_replace($fromFolder, $toFolder, $row['content']);
                 }
