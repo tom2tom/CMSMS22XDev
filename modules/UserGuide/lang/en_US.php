@@ -24,7 +24,9 @@ $lang['err_import'] = 'Import error - file did not import correctly';
 $lang['err_nofile'] = 'Filename error - not selected';
 $lang['err_noname'] = 'A name is required';
 $lang['err_smarty'] = 'This guide might include a Smarty tag that is not displaying correctly. Please either add {literal}{/literal} tags, remove, or turn off Smarty processing.';
+$lang['export_archive'] = 'Gzip Archive';
 $lang['export_completed'] = 'User Guides have been exported';
+$lang['export_xml'] = 'XML File';
 $lang['exportdata'] = 'Export Guides Data';
 $lang['filesFolder'] = 'Media Files Folder';
 $lang['friendlyname'] = 'User Guidance';
@@ -76,7 +78,7 @@ $lang['restricted'] = 'Restricted Access';
 $lang['revision'] = 'Revision';
 $lang['save'] = 'Save';
 $lang['searchable'] = 'Searchable';
-$lang['selectfile'] = 'Select file';
+$lang['selectfile'] = 'Select File';
 $lang['settings_saved'] = 'The settings have been saved.';
 $lang['tab_content'] = 'Content';
 $lang['tab_list'] = 'Guides';
@@ -131,7 +133,7 @@ $lang['help'] = <<<'EOD'
 <p>To add custom styles for user guides, create the file '&lt;site-root&gt;/assets/module_custom/UserGuide/custom.css'. This will be applied in addition to admin-theme and UserGuide-module styling.</p>
 <p>You can use the '.guide' class in that file to target User Guide content.</p>
 <h3>Import/Export</h3>
-<p>The collection of all current guides and related data can easily be exported. Currently exported as an XML file, and other format(s) might be supported in future.</p>
+<p>The collection of all current guides and related data can easily be exported. Depending on available PHP functionality, export may be in the form of an XML file or a GZIP archive.</p>
 <p>Previously-exported guides and related data can easily be imported.</p>
 <p>If a 'Media Files Folder' is set then any export will include all files (images etc) in that folder. When importing, any media files will be stored in that same folder.</p>
 <h4>Import from UserGuide2 and/or UsersGuide module</h4>

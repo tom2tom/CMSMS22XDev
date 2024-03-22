@@ -43,13 +43,14 @@ $tpl->assign('guides', $guides);
 if ($pmod) {
     $url = $this->create_url($id, 'reorder', $returnid, ['idlist'=>'XXX']);
     $tpl->assign('reorder_url', str_replace('&amp;', '&', $url));
-    $can = false;
-    if (class_exists('SimpleXMLElement', false)) {
-        $can = true;
-        $tpl->assign('xmltype', 'text/xml'); // input-file acceptor
-    }
-    //tarball processing goes here somewhere ...
-    $tpl->assign('have_import', $can);
+    $seltypes = [];
+    $canxml = class_exists('SimpleXMLElement', false);
+    if ($canxml) { $seltypes[] = 'text/xml'; }// input-file acceptor
+    $cangz = class_exists('PharData', false) && function_exists('readgzfile');
+    if ($cangz) { $seltypes[] = 'application/gzip'; }// input-file acceptor
+    $tpl->assign('havexml', $canxml);
+    $tpl->assign('havegz', $cangz);
+    $tpl->assign('seltypes', implode(',', $seltypes));
     $tpl->assign('iconsbase', $this->GetModuleURLPath().'/images');
     // Imports
     $modops = ModuleOperations::get_instance();

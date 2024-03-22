@@ -5,6 +5,7 @@ Copyright (C) 2024 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 Refer to license and other details at the top of file UserGuide.module.php
 */
 
+use UserGuide\UserGuideIO;
 use UserGuide\UserGuideXML;
 
 if (!isset($gCms)) {
@@ -24,9 +25,15 @@ if (empty($_FILES[$key]['name']) ||
         $errors[] = $this->Lang('err_nofile');
 } else {
     switch($_FILES[$key]['type']) {
-        // tarball processing goes here ...
+        case 'application/gzip':
+            //TODO suitably validate actual content
+            $doer = new UserGuideIO($this);
+            if (!$doer->import($_FILES[$key])) {
+                $errors[] = $this->Lang('err_import');
+            }
+            break;
         case 'text/xml':
-            //TODO confirm actual content
+            //TODO suitably validate actual content
             $doer = new UserGuideXML($this);
             if (!$doer->import($_FILES[$key]['tmp_name'])) {
                 $errors[] = $this->Lang('err_import');

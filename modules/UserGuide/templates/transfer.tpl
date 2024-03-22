@@ -1,4 +1,4 @@
-{if $have_import}
+{if ($havexml || $havegz)}
 <script>
 $(function() {
  $('#infile').on('change', function(e) {
@@ -12,26 +12,34 @@ $(function() {
 </script>
 {/if}
 {if !empty($guides)}
-{if $have_import}
+{if ($havexml || $havegz)}
 <div class="pageoverflow">
-  <label class="pagetext" for="export">{$mod->Lang('exportdata')}</label><br>
-  <a id="export" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" href="{cms_action_url action=export}">
-    <span class="ui-button-icon ui-icon ui-icon-arrowreturnthick-1-s"></span> {lang('export')}
+  <label class="pagetext" for="{if $havegz}export{else}export2{/if}">{$mod->Lang('exportdata')}</label><br>
+{if $havegz}
+  <a id="export" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" href="{cms_action_url action=export type=gzip}">
+    <span class="ui-button-icon ui-icon ui-icon-arrowreturnthick-1-s"></span> {$mod->Lang('export_archive')}
   </a>
+{if $havexml}<span>&nbsp;</span>{/if}
+{/if}
+{if $havexml}
+  <a id="export2" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" href="{cms_action_url action=export type=xml}">
+    <span class="ui-button-icon ui-icon ui-icon-arrowreturnthick-1-s"></span> {$mod->Lang('export_xml')}
+  </a>
+{/if}
 </div>
 {else}
 <p class="error">{$mod->Lang('no_importing')}</p>
 {/if}
 <br>
 {/if}
-{if $have_import}
+{if ($havexml || $havegz)}
 <p class="pagetext" style="margin:0;cursor:default">{$mod->Lang('importdata')}</p>
 <label id="selectorlabel" class="ui-button ui-corner-all ui-widget" for="infile">
  <span class="ui-button-icon ui-icon ui-icon-search"></span>
  <span class="ui-button-icon-space"></span>
  {$mod->Lang('selectfile')}...</label>
 {form_start action='import' id='inform'}
-  <input type="file" id="infile" name="{$actionid}imported" accept="{$xmltype}">
+  <input type="file" id="infile" name="{$actionid}imported" accept="{$seltypes}">
   <div class="pageinput">
     <p id="filesel">&nbsp;</p>
     <input type="submit" id="filesubmit" name="{$actionid}submit" data-ui-icon="ui-icon-arrowreturnthick-1-n" value="{$mod->Lang('import')}">

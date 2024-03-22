@@ -120,6 +120,7 @@ div.pagecontainer .fatinput {
 }
 /* fake buttons */
 a#export,
+a#export2,
 a#importold,
 a#importvold {
   height: 1rem;
