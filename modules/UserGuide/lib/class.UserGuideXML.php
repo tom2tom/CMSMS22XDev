@@ -304,36 +304,29 @@ EOS;
 
     /**
      * Initiate download
+     * @return bool indicating success
      */
     private function output_xml()
     {
         $n = count(ob_list_handlers());
         for ($i = 0; $i < $n; $i++) { ob_end_clean(); }
-//      ob_end_clean(); // not all headers?
+//      ob_end_clean(); // not all handlers ?
 
         $doc = new DOMDocument();
         $doc->preserveWhiteSpace = false;
         $doc->formatOutput = true;
         $doc->loadXML($this->xml->asXML());
 
-        // create filename
-        // $dateformat = trim( get_preference( get_userid(), 'date_format_string', '%Y-%m-%d' ) );
-        // if( empty( $dateformat ) ) $dateformat = '%Y-%m-%d';
-        $date = date('Y-m-d_H-i-s', time());
-        $filename = 'UserGuide_Export_' . $date . '.xml';
+        $fwhen = date('Y-m-d_H-i-s', time());
 
-        header('Pragma: public');
+        header('Content-Type: text/xml; charset=utf-8');
+        header('Content-Disposition: attachment; filename=UserGuide_Export_' . $fwhen . '.xml');
         header('Expires: 0');
         header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
         header('Cache-Control: private', false);
-        header('Content-Description: Export');
-        header('Content-Description: File Transfer');
-        header('Content-Type: application/force-download');
-        header('Content-Disposition: attachment; filename='.$filename);
-        header('Content-Type: text/xml; charset=utf-8');
-
+        header('Pragma: public');
         echo $doc->saveXML();
-        exit;
+        return true;
     }
 
     /**
