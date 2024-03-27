@@ -46,9 +46,9 @@ if ($pmod) {
     $seltypes = [];
     $canxml = class_exists('SimpleXMLElement', false);
     if ($canxml) { $seltypes[] = 'text/xml'; }// input-file acceptor
+    $tpl->assign('havexml', $canxml);
     $cangz = class_exists('PharData', false) && function_exists('readgzfile');
     if ($cangz) { $seltypes[] = 'application/gzip'; }// input-file acceptor
-    $tpl->assign('havexml', $canxml);
     $tpl->assign('havegz', $cangz);
     $tpl->assign('seltypes', implode(',', $seltypes));
     $tpl->assign('iconsbase', $this->GetModuleURLPath().'/images');
