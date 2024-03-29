@@ -180,7 +180,7 @@ abstract class Resultset
      * Return the fields of the current resultset, or a single field of it.
      *
      * @param string $field An optional field name, if not specified, the entire row will be returned.
-     * @return mixed|array Either a single value, or an array
+     * @return mixed a single value, or null, or an array maybe empty
      */
     abstract public function Fields( $field = '' );
 
