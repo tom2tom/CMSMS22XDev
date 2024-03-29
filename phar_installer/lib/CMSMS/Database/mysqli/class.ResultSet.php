@@ -30,13 +30,19 @@ class ResultSet extends \CMSMS\Database\ResultSet
     public function Close()
     {
         if( is_object($this->_resultId) ) mysqli_free_result($this->_resultId);
-        $this->_fields = $this->_resultId = null; // no resource
+        $this->_fields = [];
+        $this->_resultId = null; // no resource
     }
 
     public function Fields( $key = '' )
     {
-        if( !$key ) return $this->_fields;
-        return $this->fields[(string)$key];
+        if( $this->_fields ) {
+            if( !$key ) return $this->_fields;
+            if( isset($this->fields[(string)$key]) ) {
+                return $this->fields[(string)$key];
+            }
+        }
+        return ( $key ) ? null : []; // no value
     }
 
     public function RecordCount()
