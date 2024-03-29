@@ -70,13 +70,16 @@ class Install_TemplateCaller
         }
     }
 
-    public function __call($name, $args) {
+    #[\ReturnTypeWillChange]
+    public function __call($name, $args)
+    {
         if (!$this->php_functions || in_array($name, $this->php_functions)) {
             return $name(...$args);
         }
         return "<!-- prohibited function $name called -->";
     }
 
+    #[\ReturnTypeWillChange]
     public static function __callStatic($name, $args)
     {
         if (self::$static_classes !== null && (!self::$static_classes ||
