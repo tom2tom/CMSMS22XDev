@@ -17,28 +17,28 @@ final class EmptyResultset extends Resultset
     /**
      * @ignore
      */
-    public function MoveFirst() {}
+    public function MoveFirst() { return FALSE; }
     /**
      * @ignore
      */
-    public function MoveNext() {}
+    public function MoveNext() { return FALSE; }
 
     /**
      * @ignore
      */
-    public function GetArray() {}
+    public function GetArray() { return []; }
     /**
      * @ignore
      */
-    public function GetRows() {}
+    public function GetRows() { return []; }
     /**
      * @ignore
      */
-    public function GetAll() {}
+    public function GetAll() { return []; }
     /**
      * @ignore
      */
-    public function GetAssoc() {}
+    public function GetAssoc() { return []; }
 
     /**
      * @ignore
@@ -47,7 +47,7 @@ final class EmptyResultset extends Resultset
     /**
      * @ignore
      */
-    public function Close() {}
+    public function Close() {} //TODO leakage
     /**
      * @ignore
      */
@@ -56,5 +56,5 @@ final class EmptyResultset extends Resultset
     /**
      * @ignore
      */
-    public function fields() {}
+    public function Fields($field = '') { return ($field) ? null : []; }
 } // end of class
