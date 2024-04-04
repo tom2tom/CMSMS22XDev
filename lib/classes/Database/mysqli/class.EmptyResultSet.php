@@ -1,18 +1,13 @@
 <?php
 
-/**
- * A file to describe an empty recordset
- *
- * @ignore
- */
-namespace CMSMS\Database;
+namespace CMSMS\Database\mysqli;
 
 /**
  * A final class to describe a special (empty) recordset.
  *
  * @ignore
  */
-final class EmptyResultset extends Resultset
+final class EmptyResultSet extends ResultSet
 {
     /**
      * @ignore
@@ -22,7 +17,6 @@ final class EmptyResultset extends Resultset
      * @ignore
      */
     public function MoveNext() { return FALSE; }
-
     /**
      * @ignore
      */
@@ -39,7 +33,6 @@ final class EmptyResultset extends Resultset
      * @ignore
      */
     public function GetAssoc() { return []; }
-
     /**
      * @ignore
      */
@@ -47,14 +40,13 @@ final class EmptyResultset extends Resultset
     /**
      * @ignore
      */
-    public function Close() {} //TODO leakage
-    /**
-     * @ignore
-     */
     public function RecordCount() { return 0; }
-
     /**
      * @ignore
      */
     public function Fields($field = '') { return ($field) ? null : []; }
+    /**
+     * @ignore
+     */
+    protected function fetch_row() {}
 } // end of class
