@@ -32,6 +32,12 @@ if( !isset($gCms) ) exit;
 
 $this->SetPreference('locktimeout',60);
 $this->SetPreference('lockrefresh',120);
+// default page-edit tabs display order
+$this->SetPreference('order_TAB_MAIN',10);
+$this->SetPreference('order_TAB_NAV',15);
+$this->SetPreference('order_TAB_LOGIC',20);
+$this->SetPreference('order_TAB_OPTIONS',25);
+$this->SetPreference('order_TAB_PERMS',30);
 
 #
 # EOF

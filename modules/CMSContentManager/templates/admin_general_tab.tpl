@@ -18,6 +18,15 @@
   </p>
 </div>
 <div class="pageoverflow">
+  <fieldset>
+    <legend>{$mod->Lang('legend_tabs')}</legend>
+{foreach $tab_orders as $key => $val}
+    <label class="pagetext" for="order{$key}">{$mod->Lang('prompt_taborder', ucfirst(strtolower($key)))}:</label><br>
+    <input type="text" id="order{$key}" name="{$actionid}taborders[{$key}]" value="{$val}" size="3" maxlength="3"><br>{if !$val@last}<br>{/if}
+{/foreach}
+  </fieldset>
+</div>
+<div class="pageoverflow">
   <p class="pagetext"><label for="lockrefresh">{$mod->Lang('prompt_template_list_mode')}:</label>&nbsp;{cms_help key2='help_general_templatelistmode' title=$mod->Lang('prompt_template_list_mode')}</p>
   <p class="pageinput">
     <select name="{$actionid}template_list_mode">

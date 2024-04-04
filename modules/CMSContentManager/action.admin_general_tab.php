@@ -40,6 +40,11 @@ $timeout = (int)$params['lockrefresh'];
 if( $timeout != 0 ) $timeout = max(30,min(3540,(int)$params['lockrefresh']));
 $this->SetPreference('lockrefresh',$timeout);
 
+foreach( $params['taborders'] as $name=>$val ) {
+    //TODO sanitize & validate $name
+    $this->SetPreference('order_TAB_'.$name,(int)$val);
+}
+
 $template_list_mode = get_parameter_value($params,'template_list_mode','designpage');
 $this->SetPreference('template_list_mode',$template_list_mode);
 

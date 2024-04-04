@@ -34,7 +34,21 @@ if( !$this->CheckPermission('Modify Site Preferences') ) return;
 $smarty->assign('locktimeout',$this->GetPreference('locktimeout'));
 $smarty->assign('lockrefresh',$this->GetPreference('lockrefresh'));
 
-$opts = array('all'=>$this->Lang('opt_alltemplates'),'alldesign'=>$this->Lang('opt_alldesign'),'allpage'=>$this->Lang('opt_allpage'),'designpage'=>$this->Lang('opt_designpage'));
+$tmp = [];
+$orders = $this->ListPreferencesByPrefix('order_TAB_');
+foreach( $orders as $key ) {
+  //TODO record key = lang($content_obj::TAB_MAIN etc), or equivalent from module lang
+  $tmp[$key] = (int)$this->GetPreference('order_TAB_'.$key);
+}
+asort($tmp,SORT_NUMERIC);
+$smarty->assign('tab_orders',$tmp);
+
+$opts = array(
+  'all'=>$this->Lang('opt_alltemplates'),
+  'alldesign'=>$this->Lang('opt_alldesign'),
+  'allpage'=>$this->Lang('opt_allpage'),
+  'designpage'=>$this->Lang('opt_designpage')
+);
 $smarty->assign('template_list_opts',$opts);
 $smarty->assign('template_list_mode',$this->GetPreference('template_list_mode','designpage'));
 echo $this->ProcessTemplate('admin_general_tab.tpl');

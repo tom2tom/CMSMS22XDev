@@ -288,13 +288,29 @@ if( $content_id > 0 && CmsContentManagerUtils::locking_enabled() ) {
 $tab_contents_array = [];
 $tab_message_array = [];
 try {
-    $tab_names = $content_obj->GetTabNames();
+    $tab_names = $content_obj->GetTabNames(); //members like 'aa_main_tab__' => 'Main'
 
     // the content object might have no main tab, but we require one
     $tmain = $content_obj::TAB_MAIN;
     if( !isset($tab_names[$tmain]) ) {
         $tab_names = array($tmain => lang($tmain)) + $tab_names;
     }
+    // sort $tab_names hence displayed tabs per preferences
+    $orders = $this->ListPreferencesByPrefix('order_TAB_');
+    $tmp = [];
+    foreach( $orders as $key ) {
+        $tmp[strtolower($key).'_tab__'] = (int)$this->GetPreference('order_TAB_'.$key);
+    }
+    uksort($tab_names, function($a, $b) use($tmp) {
+        $sa = substr($a, 3); // strip prefix
+        if( is_numeric($sa[0]) ) $sa = substr($sa, 1);
+        $na = (isset($tmp[$sa])) ? $tmp[$sa] : 100;
+        $sb = substr($b, 3);
+        if( is_numeric($sb[0]) ) $sb = substr($sb, 1);
+        $nb = (isset($tmp[$sb])) ? $tmp[$sb] : 100;
+        if( $na != $nb ) return $na - $nb;
+        return strcasecmp($a, $b);
+    });
 
     foreach( $tab_names as $currenttab => $label ) { // $label unused here
         $tmp = $content_obj->GetTabMessage($currenttab);

@@ -141,6 +141,7 @@ $lang['info_preview_notice'] = '<strong>Warning:</strong> This preview panel beh
 #K
 
 #L
+$lang['legend_tabs'] = 'Tabs Display';
 $lang['locked_by'] = 'Locked By';
 $lang['locked_since'] = 'Since';
 $lang['locked_steal'] = 'You can steal this lock';
@@ -244,6 +245,7 @@ $lang['prompt_settings'] = 'Settings';
 $lang['prompt_showinmenu'] = 'Shown in Navigations';
 $lang['prompt_showmore'] = 'Show more';
 $lang['prompt_steal_lock_edit'] = 'Steal this lock and edit the page';
+$lang['prompt_taborder'] = '%s Tab Order';
 $lang['prompt_template'] = 'Template';
 $lang['prompt_template_list_mode'] = 'Template list mode';
 $lang['prompt_title'] = 'Title';
