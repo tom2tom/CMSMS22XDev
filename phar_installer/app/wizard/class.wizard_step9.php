@@ -99,9 +99,9 @@ class wizard_step9 extends wizard_step
         $siteinfo = $this->get_wizard()->get_data('siteinfo');
         if( !$siteinfo ) throw new Exception(lang('error_internal',902));
 
-        $this->message(lang('install_createtmpdirs'));
-        @mkdir($destdir.'/tmp/cache',0777,TRUE); //TODO 0770 better c.f. global_umask site-preference ALSO DONE IN STEP 8 do_install()
-        @mkdir($destdir.'/tmp/templates_c',0777,TRUE); //ALSO DONE IN STEP 8 do_install()
+//      $this->message(lang('install_createtmpdirs')); DONE IN STEP 8 do_install()
+//      @mkdir($destdir.'/tmp/cache',0777,TRUE); //TODO 0770 better c.f. global_umask site-preference THESE ALSO DONE IN STEP 8 do_install()
+//      @mkdir($destdir.'/tmp/templates_c',0777,TRUE);
 
         // install modules
         $this->message(lang('install_modules'));
