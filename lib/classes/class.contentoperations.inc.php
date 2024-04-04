@@ -1212,10 +1212,10 @@ ORDER BY B.hierarchy';
  * @package CMS
  * @ignore
  */
-class_alias ('ContentOperations', 'ContentManager', false);
+class_alias ('ContentOperations','ContentManager',false);
 
 /* SUPERSEDED hierarchy updater, to be removed when there is definitely
-   no further need for validation of such updating
+ no further need for validation of such updating
 	/* *
 	 * Update the hierarchy position of one item
 	 *

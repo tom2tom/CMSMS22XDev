@@ -332,6 +332,6 @@ final class UserTagOperations
  * @package CMS
  * @license GPL
  */
-//class_alias('UserTagOperations','UserTags');
+//class_alias('UserTagOperations','UserTags',false);
 
 ?>
