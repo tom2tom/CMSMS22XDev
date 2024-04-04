@@ -601,12 +601,13 @@ class CmsLayoutStylesheet
 	/**
 	 * Get a lock (if any exist) for this object
 	 *
-	 * @return CmsLock
+	 * @return mixed CmsLock or null
 	 */
 	public function get_lock()
 	{
 		$locks = self::get_locks();
 		if( isset($locks[$this->get_id()]) ) return $locks[$this->get_id()];
+		return null;
 	}
 
 	/**

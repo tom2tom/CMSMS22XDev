@@ -52,6 +52,7 @@ class CmsLayoutTemplateCategory
     public function get_id()
     {
         if( isset($this->_data['id']) ) return $this->_data['id'];
+        return 0;
     }
 
     /**
@@ -62,6 +63,7 @@ class CmsLayoutTemplateCategory
     public function get_name()
     {
         if( isset($this->_data['name']) ) return $this->_data['name'];
+        return '';
     }
 
     /**
@@ -91,6 +93,7 @@ class CmsLayoutTemplateCategory
     public function get_description()
     {
         if( isset($this->_data['description']) ) return $this->_data['description'];
+        return '';
     }
 
     /**
@@ -114,6 +117,7 @@ class CmsLayoutTemplateCategory
     public function get_item_order()
     {
         if( isset($this->_data['item_order']) ) return $this->_data['item_order'];
+        return 0;
     }
 
     /**
@@ -141,6 +145,7 @@ class CmsLayoutTemplateCategory
     public function get_modified()
     {
         if( isset($this->_data['modified']) ) return $this->_data['modified'];
+        return 0;
     }
 
     /**
@@ -254,7 +259,7 @@ class CmsLayoutTemplateCategory
      */
     private static function _load_from_data($row)
     {
-        $ob = new CmsLayoutTemplateCategory();
+        $ob = new self();
         foreach( ['name','description','item_order'] as $fld ) {
             if( !isset($row[$fld]) ) $row[$fld] = '';
         }
@@ -311,7 +316,7 @@ class CmsLayoutTemplateCategory
         }
         return $out;
     }
-} // end of class,
+} // end of class
 
 #
 # EOF

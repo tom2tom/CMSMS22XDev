@@ -86,7 +86,7 @@ class CmsLayoutTemplateType
     /**
      * Get the template type id
      *
-     * @return int type id, or null if this record has no id.
+     * @return int type id or 0 if this object has no id.
      */
     public function get_id()
     {
@@ -98,7 +98,7 @@ class CmsLayoutTemplateType
      * Get the template originator (this is usually a module name)
      *
      * @param  bool $viewable Should the originator name be the viewable (friendly) string?
-     * @return string
+     * @return string maybe empty
      */
     public function get_originator($viewable = FALSE)
     {
@@ -109,10 +109,10 @@ class CmsLayoutTemplateType
     }
 
     /**
-     * Set the template originator string.
+     * Set the template originator
      *
      * @throws CmsInvalidDataException
-     * @param string $str The originator string, usually a module name.
+     * @param string $str The originator, usually a module name.
      */
     public function set_originator($str)
     {
@@ -123,9 +123,9 @@ class CmsLayoutTemplateType
     }
 
     /**
-     * Return the template type name.
+     * Return the template type name
      *
-     * @return string the template type
+     * @return string the template type, meybe empty
      */
     public function get_name()
     {
@@ -219,7 +219,7 @@ class CmsLayoutTemplateType
     /**
      * Get the owner of this template type.
      *
-     * @return int
+     * @return int, 0 if no owner is set
      */
     public function get_owner()
     {
@@ -243,7 +243,7 @@ class CmsLayoutTemplateType
     /**
      * Get the date that this object was created.
      *
-     * @return intUnix timestamp representing the creation date.  or null if this object has not been saved.
+     * @return intUnix timestamp representing the creation date, or 0 if this object has not been saved.
      */
     public function get_create_date()
     {
@@ -280,7 +280,7 @@ class CmsLayoutTemplateType
     /**
      * Return the callback used to translate the originator and name strings.
      *
-     * @return mixed
+     * @return mixed callable | null
      */
     public function get_lang_callback()
     {
@@ -302,7 +302,7 @@ class CmsLayoutTemplateType
     /**
      * Return the callback used to retrieve help for this template type.
      *
-     * @return mixed
+     * @return mixed callable | null
      */
     public function get_help_callback()
     {
@@ -320,7 +320,7 @@ class CmsLayoutTemplateType
     {
         if( !is_bool($flag) ) throw new CmsInvalidDataException('value is invalid for set_oneonly_flag');
         $this->_data['one_only'] = $flag;
-        $this->_dirty = true();
+        $this->_dirty = TRUE;
     }
 
     /**
@@ -702,7 +702,7 @@ class CmsLayoutTemplateType
      *
      * @throws CmsInvalidDataException
      * @param string $originator The originator name
-     * @return array An array of CmsLayoutTemplateType objects, or null if no matches are found.
+     * @return array CmsLayoutTemplateType objects, empty if no match is found.
      */
     public static function load_all_by_originator($originator)
     {
@@ -779,11 +779,12 @@ class CmsLayoutTemplateType
     /**
      * Return the names of all loaded template types
      *
-     * @return array Associative array of loaded type objects.
+     * @return array of loaded type objects, maybe empty
      */
     public static function get_loaded_types()
     {
         if( is_array(self::$_cache) ) return array_keys(self::$_cache);
+        return [];
     }
 
     /**

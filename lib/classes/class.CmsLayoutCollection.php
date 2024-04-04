@@ -668,7 +668,7 @@ class CmsLayoutCollection
     /**
      * Get a list of designs
      *
-     * @param array Array of designs
+     * @param array design names, maybe empty
      */
     public static function get_list()
     {
@@ -680,6 +680,7 @@ class CmsLayoutCollection
             }
             return $out;
         }
+        return [];
     }
 
     /**
@@ -727,7 +728,7 @@ class CmsLayoutCollection
 } // end of class
 
 // dunno if this should go here...
-class_alias('CmsLayoutCollection','CmsLayoutDesign')
+class_alias('CmsLayoutCollection','CmsLayoutDesign',false);
 
 #
 # EOF
