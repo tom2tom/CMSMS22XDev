@@ -29,41 +29,34 @@
  */
 class PageLink extends ContentBase
 {
-
-	public function IsCopyable() { return TRUE; }
-	public function IsViewable() { return FALSE; }
-//	public function IsDefaultPossible() { return TRUE; } OK?
-	public function HasSearchableContent() { return FALSE; }
+	public function IsCopyable() { return true; }
+	public function IsViewable() { return false; }
+//	public function IsDefaultPossible() { return true; } can true be valid for this type?
+	public function HasSearchableContent() { return false; }
+//	public function HasUsableLink() { return false; } is false valid for this type?
 	public function FriendlyName() { return lang('contenttype_pagelink'); }
-
-// calguy1000: commented this out so that this page can be seen in cms_selflink
-// but not sure what it's gonna mess up.
-//	function HasUsableLink()
-//	{
-//		return false;
-//	}
 
 	public function SetProperties()
 	{
 		parent::SetProperties();
 		$this->RemoveProperty('cachable',true);
 		$this->RemoveProperty('secure',false);
-//TODO	$this->AddProperty('default',2,parent::TAB_OPTIONS,TRUE); c.f.IsDefaultPossible()
-		$this->AddProperty('page',3,parent::TAB_MAIN,TRUE,TRUE);
-		$this->AddProperty('params',4,parent::TAB_OPTIONS,TRUE,TRUE);
+//TODO	$this->AddProperty('default',2,parent::TAB_OPTIONS,true); c.f. IsDefaultPossible()
+		$this->AddProperty('page',3,parent::TAB_MAIN,true,true);
+		$this->AddProperty('params',4,parent::TAB_OPTIONS,true,true);
 
 		//Turn off caching
 		$this->mCachable = false;
 	}
 
-	public function FillParams($params,$editing = false)
+	public function FillParams($params, $editing = false)
 	{
 		parent::FillParams($params,$editing);
 
 		if (isset($params)) {
-			$parameters = array('page', 'params' );
+			$parameters = array('page','params' );
 			foreach ($parameters as $oneparam) {
-				if (isset($params[$oneparam])) $this->SetPropertyValue($oneparam, $params[$oneparam]);
+				if (isset($params[$oneparam])) $this->SetPropertyValue($oneparam,$params[$oneparam]);
 			}
 		}
 	}
@@ -106,7 +99,7 @@ class PageLink extends ContentBase
 		switch($one) {
 		case 'page':
 			$contentops = ContentOperations::get_instance();
-			$tmp = $contentops->CreateHierarchyDropdown($this->mId, $this->GetPropertyValue('page'), 'page', true);
+			$tmp = $contentops->CreateHierarchyDropdown($this->mId,$this->GetPropertyValue('page'),'page',true);
 			if( !empty($tmp) ) return array(lang('destination_page').':',$tmp);
 			break;
 

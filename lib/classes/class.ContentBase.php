@@ -254,6 +254,14 @@ abstract class ContentBase
 	protected $mShowInMenu = false;
 
 	/**
+	 * Can it be selected?
+	 * Bool
+	 *
+	 * @internal
+	 */
+	protected $mSelectable = true;
+
+	/**
 	 * Is this content item the site-default?
 	 * Bool
 	 *
@@ -911,6 +919,28 @@ abstract class ContentBase
 	}
 
 	/**
+	 * Returns whether this content item is valid in page-selectors etc
+	 * @since 2.2.19#2
+	 * @abstract
+	 * @return bool
+	 */
+	public function Selectable()
+	{
+		//TODO other relevant props e.g. $mPermitted, ...
+		return $this->mSelectable;
+	}
+
+	/**
+	 * Sets whether this page is valid in page-selectors etc
+	 * @since 2.2.19#2
+	 * @param bool $select
+	 */
+	public function SetSelectable($select)
+	{
+		$this->mSelectable = (bool) $select;
+	}
+
+	/**
 	 * Returns whether this page is the default.
 	 * The default page is the one that is displayed when no alias or pageid is specified in the route
 	 * Only one content page can be the default.
@@ -1400,6 +1430,7 @@ abstract class ContentBase
 		$this->mDefaultContent	= ($data["default_content"] == 1);
 		$this->mActive			= ($data["active"] == 1);
 		$this->mShowInMenu		= ($data["show_in_menu"] == 1);
+		$this->mSelectable		= !empty($data['selectable']);
 		$this->mCachable		= ($data["cachable"] == 1);
 		$this->mSecure			= !empty($data['secure']);
 		$this->mURL				= $data["page_url"];
@@ -1457,6 +1488,7 @@ abstract class ContentBase
 		$out['last_modified_by'] = $this->mLastModifiedBy;
 		$out['create_date'] = $this->mCreationDate;
 		$out['modified_date'] = $this->mModifiedDate;
+		$out['selectable'] = ($this->Selectable())?1:0;
 		$out['wants_children'] = ($this->WantsChildren())?1:0;
 		$out['has_usable_link'] = ($this->HasUsableLink())?1:0;
 		return $out;

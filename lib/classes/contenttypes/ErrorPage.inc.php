@@ -34,11 +34,6 @@ class ErrorPage extends Content
                                    '403'=>lang('403description'));
     }
 
-    public function HandlesAlias()
-    {
-        return true;
-    }
-
     public function FriendlyName()
     {
         return lang('contenttype_errorpage');
@@ -70,25 +65,12 @@ class ErrorPage extends Content
         $this->AddProperty('alias',20,parent::TAB_OPTIONS,true);
     }
 
-    public function HasUsableLink()
-    {
-        return false;
-    }
-
-    public function WantsChildren()
-    {
-        return false;
-    }
-
-    public function IsDefaultPossible()
-    {
-        return false;
-    }
-
-    public function IsSystemPage()
-    {
-        return true;
-    }
+    public function HandlesAlias() { return true; }
+    public function HasUsableLink() { return false; }
+    public function WantsChildren() { return false; }
+    public function IsDefaultPossible() { return false; }
+    public function IsSystemPage() { return true; }
+    public function Selectable() { return false; }
 
     public function FillParams($params,$editing = false)
     {
