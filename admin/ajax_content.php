@@ -25,7 +25,7 @@ if( isset($_GET['op']) ) $op = trim($_GET['op']);
 $gCms = CmsApp::get_instance();
 $contentops = $gCms->GetContentOperations();
 
-//in many contexts where a hierselector is initiated, $allow_all is set FALSE
+//in many contexts where a hierselector is initiated, $allow_all defaults to or is set to FALSE
 $allow_all = TRUE; //in 2.2 to 2.2.18 this always applied, probably a workaround/bug
 if( isset($_GET['allow_all']) && !cms_to_bool($_GET['allow_all']) ) $allow_all = FALSE;
 
@@ -89,7 +89,7 @@ try {
         $current = ( isset($_GET['current']) ) ? (int)$_GET['current'] : 0;
 
         $children_to_data = function($node) use ($contentops,$allow_all,$display,$ruid,$can_edit_any,/*$out,*$for_child,*/$allowcurrent,$current) {
-            $children = $node->getChildren(FALSE,$allow_all);
+            $children = $node->getChildren(FALSE,$allow_all); //2nd arg distinguishes ACTIVE pages TODO is any inactive page ever selectable?
             if( !$children ) return [];
 
             $child_info = [];
@@ -136,12 +136,12 @@ try {
                 $node = $contentops->quickfind_node_by_id($page);
             }
             if( $node ) {
-                $children = $node->getChildren(FALSE,$allow_all);
+                $children = $node->getChildren(FALSE,TRUE|FALSE|$allow_all TODO);
                 if( $children && is_array($children) ) {
                     foreach( $children as $child ) {
                         $content = $child->getContent(FALSE);
                         if( !is_object($content) ) continue;
-                        if( !($allow_all || $content->Active()) ) { //TODO when is inactive but navigable ok? ? when is inactive ok, regardless?
+                        if( !($allow_all || $content->Active()) ) { //TODO is inactive ever selectable?
                             continue;
                         }
                         $rec = $content->ToData();
@@ -197,7 +197,7 @@ try {
 
                 // and get its children
                 $out[$one] = [];
-                $children = $parent_node->getChildren(FALSE,$allow_all);
+                $children = $parent_node->getChildren(FALSE,TRUE|FALSE|$allow_all TODO); //TODO is inactive ever selectable?
                 for( $i = 0, $n = count($children); $i < $n; $i++ ) {
                     $content = $children[$i]->getContent(FALSE);
                     if( !$content->IsViewable() ) continue;
