@@ -56,14 +56,19 @@ final class CmsLockOperations
    * @param int $lock_id The lock identifier
    * @param string $type The type of object being locked
    * @param int $oid The object identifier
-   * @return int The expiry timestamp of the lock.
+   * @return int The expiry timestamp of the lock, 0 if lock not found
    */
   public static function touch($lock_id,$type,$oid)
   {
     $uid = get_userid(FALSE);
-    $lock = CmsLock::load_by_id($lock_id,$type,$oid,$uid);
-    $lock->save();
-    return $lock['expires'];
+    try {
+        $lock = CmsLock::load_by_id($lock_id,$type,$oid,$uid);
+        $lock->save();
+        return $lock['expires'];
+    }
+    catch (Exception $e) {
+        return 0;
+    }
   }
 
   /**
@@ -87,10 +92,15 @@ final class CmsLockOperations
    */
   public static function unlock($lock_id,$type,$oid)
   {
-      if( $lock_id ) {
+      if( $lock_id > 0 ) {
           $uid = get_userid(FALSE);
-          $lock = CmsLock::load_by_id($lock_id,$type,$oid);
-          $lock->delete();
+          try {
+              $lock = CmsLock::load_by_id($lock_id,$type,$oid,$uid);
+              if( $lock ) $lock->delete();
+          }
+          catch (Exception $e) {
+              //nothing here
+          }
       }
   }
 
