@@ -5,7 +5,7 @@ namespace CMSMS\Database\mysqli;
 class ResultSet extends \CMSMS\Database\ResultSet
 {
     private $_connection; // mysqli object
-    private $_resultId; // bool or object
+    private $_resultId; // bool or object or null
     private $_fields;
     private $_nrows;
     private $_pos;
@@ -30,13 +30,19 @@ class ResultSet extends \CMSMS\Database\ResultSet
     public function Close()
     {
         if( is_object($this->_resultId) ) mysqli_free_result($this->_resultId);
-        $this->_fields = $this->_resultId = null; // no resource
+        $this->_resultId = null; // no resource
+        $this->_fields = [];
     }
 
     public function Fields( $key = '' )
     {
-        if( !$key ) return $this->_fields;
-        return $this->fields[(string)$key];
+        if( $this->_fields ) {
+            if( !$key ) return $this->_fields;
+            if( isset($this->fields[(string)$key]) ) {
+                return $this->fields[(string)$key];
+            }
+        }
+        return ( $key ) ? null : []; // no value
     }
 
     public function RecordCount()
@@ -78,5 +84,4 @@ class ResultSet extends \CMSMS\Database\ResultSet
     {
         if( !$this->EOF() ) $this->_fields = mysqli_fetch_array($this->_resultId, MYSQLI_ASSOC);
     }
-
 } // end of class
