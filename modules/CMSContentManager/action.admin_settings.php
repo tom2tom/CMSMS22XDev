@@ -51,7 +51,7 @@ echo $this->StartTab('pagedefaults',$params);
 include(__DIR__.'/function.admin_pagedefaults_tab.php');
 echo $this->EndTab();
 
-echo $this->EndTabHeaders();
+echo $this->EndTabContent();
 
 #
 # EOF
