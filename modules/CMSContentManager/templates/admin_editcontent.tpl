@@ -1,9 +1,6 @@
 <script>
 $(function() {
-{$locker=$content_id > 0 && isset($lock_timeout) && $lock_timeout > 0}
-  var do_locking = {$locker};
-{if $locker}
-  // initialize the dirtyform stuff.
+{if ($content_id > 0) && isset($lock_timeout) && ($lock_timeout > 0)}{$locker=1}{else}{{$locker=0}}{/if}
   $('#Edit_Content').dirtyForm({
     beforeUnload: function(is_dirty) {
       $('#Edit_Content').lockManager('unlock').done(function() {
@@ -13,11 +10,12 @@ $(function() {
     unloadCancel: function() {
       $('#Edit_Content').lockManager('relock');
     }
-  })
-  // initialize lock manager (oid < 1 does nothing)
+  }){if !$locker};
+{else}
+
   .lockManager({
     type: 'content',
-    oid: {$content_id|default:-1},
+    oid: {$content_id|default:-1}, //oid < 1 does nothing
     uid: {$userid},
     lock_timeout: {$lock_timeout|default:0},
     lock_refresh: {$lock_refresh|default:0},
@@ -38,7 +36,6 @@ $(function() {
 {if $content_obj->HasPreview()}
   $('#_preview_').on('click', function() {
     if( typeof tinymce !== 'undefined') tinymce.triggerSave(); // TODO create a "save editor content" API that can be generally used
-    // serialize the form data
     var data = $('#Edit_Content').find('input:not([type="submit"]), select, textarea').serializeArray();
     data.push({
       'name': '{$actionid}preview',
@@ -73,13 +70,13 @@ $(function() {
     var this_id = $(this).attr('id');
     $('#Edit_Content').dirtyForm('disable');
     if( this_id != 'content_type') $('#active_tab').val('{$options_tab_name}');
-    if( do_locking ) {
-      $('#Edit_Content').lockManager('unlock').done(function() {
-        $(self).closest('form').trigger('submit');
-      });
-    } else {
+  {if $locker}
+    $('#Edit_Content').lockManager('unlock').done(function() {
       $(self).closest('form').trigger('submit');
-    }
+    });
+  {else}
+    $(self).closest('form').trigger('submit');
+  {/if}
   });
 
   // handle cancel/close ... and unlock
@@ -87,27 +84,27 @@ $(function() {
     // turn off all required elements, we're cancelling
     $('#Edit_Content :hidden').removeAttr('required');
     // do not touch the dirty flag, so that the unload handler stuff can warn us.
-    if( do_locking ) {
-      // wait for unlocked item then submit the form
-      ev.preventDefault();
-      var self = this;
-      $('#Edit_Content').lockManager('unlock').done(function() {
-        $(self).off('click').trigger('click');
-      });
-    }
+  {if $locker}
+    // wait for unlocked item then submit the form
+    ev.preventDefault();
+    var self = this;
+    $('#Edit_Content').lockManager('unlock').done(function() {
+      $(self).off('click').trigger('click');
+    });
+  {/if}
   });
 
   $('#submitbtn').on('click', function(ev) {
     // set the form to not dirty.
     $('#Edit_Content').dirtyForm('option','dirty',false);
-    if( do_locking ) {
-      ev.preventDefault();
-      // wait for unlocked item then submit the form
-      var self = this;
-      $('#Edit_Content').lockManager('unlock').done(function() {
-        $(self).off('click').trigger('click');
-      });
-    }
+  {if $locker}
+    ev.preventDefault();
+    // wait for unlocked item then submit the form
+    var self = this;
+    $('#Edit_Content').lockManager('unlock').done(function() {
+      $(self).off('click').trigger('click');
+    });
+  {/if}
   });
 
   // handle apply (ajax submit)
