@@ -32,11 +32,11 @@ class PageLink extends ContentBase
 
 	public function IsCopyable() { return TRUE; }
 	public function IsViewable() { return FALSE; }
-//	public function IsDefaultPossible() { return TRUE; } OK?
+//	public function IsDefaultPossible() { return TRUE; } can this type validly be used for the default page?
 	public function HasSearchableContent() { return FALSE; }
 	public function FriendlyName() { return lang('contenttype_pagelink'); }
 
-// calguy1000: commented this out so that this page can be seen in cms_selflink
+// calguy1000 commented this out so that this page-type can be seen in cms_selflink and page-selector elements
 // but not sure what it's gonna mess up.
 //	function HasUsableLink()
 //	{
@@ -48,7 +48,7 @@ class PageLink extends ContentBase
 		parent::SetProperties();
 		$this->RemoveProperty('cachable',true);
 		$this->RemoveProperty('secure',false);
-//TODO	$this->AddProperty('default',2,parent::TAB_OPTIONS,TRUE); c.f.IsDefaultPossible()
+//TODO	$this->AddProperty('default',2,parent::TAB_OPTIONS,TRUE); c.f. IsDefaultPossible()
 		$this->AddProperty('page',3,parent::TAB_MAIN,TRUE,TRUE);
 		$this->AddProperty('params',4,parent::TAB_OPTIONS,TRUE,TRUE);
 
@@ -106,7 +106,7 @@ class PageLink extends ContentBase
 		switch($one) {
 		case 'page':
 			$contentops = ContentOperations::get_instance();
-			$tmp = $contentops->CreateHierarchyDropdown($this->mId, $this->GetPropertyValue('page'), 'page', true);
+			$tmp = $contentops->CreateHierarchyDropdown($this->mId, $this->GetPropertyValue('page'), 'page', true, false, false, true); // bogus allow_all to ensure picker-inclusion
 			if( !empty($tmp) ) return array(lang('destination_page').':',$tmp);
 			break;
 
