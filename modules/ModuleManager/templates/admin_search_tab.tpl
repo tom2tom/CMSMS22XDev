@@ -21,7 +21,7 @@ $(function() {
 
 {$formstart}
 <fieldset>
-<legend>{$ModuleManager->Lang('search_input')}:</legend>
+<legend>{$ModuleManager->Lang('search_input')}</legend>
 <div class="pageoverflow">
 	<p class="pagetext"><label for="searchterm">{$ModuleManager->Lang('searchterm')}:</label></p>
 	<p class="pageinput">
@@ -43,7 +43,7 @@ $(function() {
 
 {if !empty($search_data)}
 <fieldset>
-<legend>{$ModuleManager->Lang('search_results')}:</legend>
+<legend>{$ModuleManager->Lang('search_results')}</legend>
 <table class="pagetable scrollable">
 	<thead>
 		<tr>

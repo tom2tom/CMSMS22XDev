@@ -1,6 +1,6 @@
 {form_start}
 <fieldset>
-  <legend>{$mod->Lang('prompt_locksettings')}:</legend>
+  <legend>{$mod->Lang('prompt_locksettings')}</legend>
   <div class="pageoverflow">
     <p class="pagetext"><label for="locktimeout">{$mod->Lang('lock_timeout')}:</label>&nbsp;{cms_help key2='help_locktimeout' title=$mod->Lang('lock_timeout')}</p>
     <p class="pageinput">

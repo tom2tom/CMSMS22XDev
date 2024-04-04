@@ -85,7 +85,7 @@
 	{$theme->StartTab('database')}
 		<form action="{$formurl}" method="post">
 			<fieldset>
-				<legend>{lang('sysmain_database_status')}:&nbsp;</legend>
+				<legend>{lang('sysmain_database_status')}</legend>
 				<p>{$tablecount} {lang('sysmain_tablesfound',$nonseqcount)}</p>
 
 				{if $errorcount==0}

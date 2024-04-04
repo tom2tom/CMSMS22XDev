@@ -333,7 +333,7 @@ $(function() {
 		</div>
 
 		<fieldset id="set_general">
-			<legend>{lang('general_settings')}:</legend>
+			<legend>{lang('general_settings')}</legend>
 				<div class="pageoverflow">
 					<p class="pagetext"><label for="mailer">{lang('settings_mailer')}:</label> {cms_help key2='settings_mailprefs_mailer' title=lang('settings_mailer')}</p>
 					<p class="pageinput">
@@ -357,7 +357,7 @@ $(function() {
 		</fieldset>
 
 		<fieldset id="set_smtp">
-			<legend>{lang('smtp_settings')}:</legend>
+			<legend>{lang('smtp_settings')}</legend>
 				<div class="pageoverflow">
 					<p class="pagetext"><label for="host">{lang('settings_smtphost')}:</label> {cms_help key2='settings_mailprefs_smtphost' title=lang('settings_smtphost')}</p>
 					<p class="pageinput">
@@ -380,7 +380,7 @@ $(function() {
 				</div>
 
 				<fieldset>
-					<legend>{lang('settings_authentication')}:</legend>
+					<legend>{lang('settings_authentication')}</legend>
 					<div class="pageoverflow">
 						<p class="pagetext"><label for="smtpauth">{lang('settings_smtpauth')}:</label> {cms_help key2='settings_mailprefs_smtpauth' title=lang('settings_smtpauth')}</p>
 						<p class="pageinput">
@@ -426,7 +426,7 @@ $(function() {
 		</fieldset>
 
 		<fieldset id="set_sendmail">
-			<legend>{lang('sendmail_settings')}:</legend>
+			<legend>{lang('sendmail_settings')}</legend>
 				<div class="pageoverflow">
 					<p class="pagetext"><label for="sendmail">{lang('settings_sendmailpath')}:</label> {cms_help key2='settings_mailprefs_sendmail' title=lang('settings_sendmailpath')}</p>
 					<p class="pageinput">
@@ -460,7 +460,7 @@ $(function() {
 		</div>
 
 		<fieldset>
-			<legend>{lang('browser_cache_settings')}:&nbsp;</legend>
+			<legend>{lang('browser_cache_settings')}</legend>
 				<div class="pageoverflow">
 					<p class="pagetext"><label for="allow_browser_cache">{lang('allow_browser_cache')}:</label> {cms_help key2='settings_browsercache' title=lang('allow_browser_cache')}</p>
 					<p class="pageinput">
@@ -478,7 +478,7 @@ $(function() {
 		</fieldset>
 
 		<fieldset>
-			<legend>{lang('server_cache_settings')}:&nbsp;</legend>
+			<legend>{lang('server_cache_settings')}</legend>
 				<div class="pageoverflow">
 					<p class="pagetext"><label for="autoclearcache2">{lang('autoclearcache2')}:</label> {cms_help key2='settings_autoclearcache' title=lang('autoclearcache2')}</p>
 					<p class="pageinput">
@@ -487,7 +487,7 @@ $(function() {
 				</div>
 		</fieldset>
 		<fieldset>
-			<legend>{lang('general_operation_settings')}:&nbsp;</legend>
+			<legend>{lang('general_operation_settings')}</legend>
 				<div class="pageoverflow">
 					<p class="pagetext"><label for="umask">{lang('global_umask')}:</label> {cms_help key2='settings_umask' title=lang('global_umask')}</p>
 					<p class="pageinput">

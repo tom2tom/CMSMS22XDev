@@ -6,7 +6,7 @@
 </div>
 
 <fieldset>
-<legend>{$title_submission_settings}:</legend>
+<legend>{$title_submission_settings}</legend>
         <div class="pageoverflow">
 	    <p class="pagetext"><label for="alert_drafts">{$mod->Lang('prompt_alert_drafts')}:</label> {cms_help key='help_opt_alert_drafts' title=$mod->Lang('prompt_alert_drafts')}</p>
 	    <p class="pageinput">
@@ -51,7 +51,7 @@
 <br>
 
 <fieldset>
-<legend>{$title_fesubmit_settings}:</legend>
+<legend>{$title_fesubmit_settings}</legend>
 	<div class="pageoverflow">
 		<p class="pagetext"><label for="fld9_a">{$mod->Lang('prompt_allow_fesubmit')}:</label></p>
 		<p class="pageinput">
@@ -76,7 +76,7 @@
 	</div>
 
   <fieldset>
-  <legend>{$title_notification_settings}:</legend>
+  <legend>{$title_notification_settings}</legend>
         <div class="information">{$mod->Lang('info_fesubmit_notification')}</div>
 	<div class="pageoverflow">
 		<p class="pagetext"><label for="fld6">{$title_formsubmit_emailaddress}:</label></p>
@@ -102,7 +102,7 @@
 <br>
 
 <fieldset>
-<legend>{$title_detail_settings}:</legend>
+<legend>{$title_detail_settings}</legend>
 	<div class="pageoverflow">
 		<p class="pagetext">{$title_detail_returnid}: {cms_help key='info_detail_returnid' title=$title_detail_returnid}</p>
 		<p class="pageinput">{$input_detail_returnid}</p>

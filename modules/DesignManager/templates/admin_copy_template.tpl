@@ -2,7 +2,7 @@
 
 {form_start tpl=$actionparams.tpl}
 <fieldset>
-  <legend>{$mod->Lang('prompt_source_template')}:</legend>
+  <legend>{$mod->Lang('prompt_source_template')}</legend>
   <div style="width: 49%; float: left;">
   <div class="pageoverflow">
     <p class="pagetext"><label for="tpl_name">*{$mod->Lang('prompt_name')}:</label></p>

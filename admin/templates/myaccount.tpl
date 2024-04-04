@@ -73,7 +73,7 @@ $(function() {
       </p>
     </div>
     <fieldset>
-      <legend>{lang('lang_settings_legend')}:</legend>
+      <legend>{lang('lang_settings_legend')}</legend>
       <div class="pageoverflow">
         <p class="pagetext"><label for="language">{lang('language')}:</label>&nbsp;{cms_help key2='help_myaccount_language' title=lang('language')}</p>
         <p class="pageinput">
@@ -93,7 +93,7 @@ $(function() {
     </fieldset>
 
     <fieldset>
-      <legend>{lang('content_editor_legend')}:</legend>
+      <legend>{lang('content_editor_legend')}</legend>
       <div class="pageoverflow">
         <p class="pagetext"><label for="wysiwyg">{lang('wysiwygtouse')}:</label>&nbsp;{cms_help key2='help_myaccount_wysiwyg' title=lang('wysiwygtouse')}</p>
         <p class="pageinput">
@@ -140,7 +140,7 @@ $(function() {
     </fieldset>
 
     <fieldset>
-      <legend>{lang('admin_layout_legend')}:</legend>
+      <legend>{lang('admin_layout_legend')}</legend>
       <div class="pageoverflow">
         <p class="pagetext"><label for="admintheme">{lang('admintheme')}:</label>&nbsp;{cms_help key2='help_myaccount_admintheme' title=lang('admintheme')}</p>
         <p class="pageinput">

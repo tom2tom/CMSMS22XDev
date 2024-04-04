@@ -2,7 +2,7 @@
 
 {form_start css=$actionparams.css}
 <fieldset>
-  <legend>{$mod->Lang('prompt_source_css')}:</legend>
+  <legend>{$mod->Lang('prompt_source_css')}</legend>
   <div style="width: 49%; float: left;">
     <div class="pageoverflow">
       <p class="pagetext"><label for="css_name">{$mod->Lang('prompt_name')}:</label></p>
@@ -45,7 +45,7 @@
 <div class="information">{$mod->Lang('info_copy_css')}</div>
 
 <fieldset>
-  <legend>{$mod->Lang('prompt_dest_css')}:</legend>
+  <legend>{$mod->Lang('prompt_dest_css')}</legend>
   <div class="pageoverflow">
     <p class="pagetext"><label for="css_destname">*{$mod->Lang('prompt_name')}:</label></p>
     <p class="pageinput">
