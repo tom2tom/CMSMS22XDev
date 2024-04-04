@@ -84,5 +84,4 @@ class ResultSet extends \CMSMS\Database\ResultSet
     {
         if( !$this->EOF() ) $this->_fields = mysqli_fetch_array($this->_resultId, MYSQLI_ASSOC);
     }
-
 } // end of class
