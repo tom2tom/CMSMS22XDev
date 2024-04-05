@@ -2276,8 +2276,8 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		$arr = [];
 		foreach( $props as $one ) {
 			if( !isset($one->tab) || $one->tab == '' ) $one->tab = self::TAB_MAIN;
-			$key = $lbl = $one->tab;
-			if( endswith($key,'_tab__') ) $lbl = lang($key);
+			$key = $one->tab;
+			$lbl = ( endswith($key,'_tab__') ) ? lang($key) : $key;
 			$arr[$key] = $lbl;
 		}
 		return $arr;
