@@ -287,32 +287,39 @@ if( $content_id > 0 && CmsContentManagerUtils::locking_enabled() ) {
 //
 $tab_contents_array = [];
 $tab_message_array = [];
-try {
-    $tab_names = $content_obj->GetTabNames(); //members like 'aa_main_tab__' => 'Main'
+$tabkeys = []; //members like 'TAB_MAIN' => 'aa_main_tab__'
+foreach( ['MAIN','NAV','LOGIC','OPTIONS','PERMS'] as $key ) {
+    $tabkeys['TAB_'.$key] = constant('ContentBase::TAB_'.$key);
+}
+$orders = [];
+$tmp = $this->ListPreferencesByPrefix('order_TAB_');
+foreach( $tmp as $key ) {
+    $orders['TAB_'.$key] = (int)$this->GetPreference('order_TAB_'.$key);
+}
+// position non-standard tabs somewhere near the start of the order
+$deforder = min($orders);
+do {
+   ++$deforder;
+} while( in_array($deforder, $orders) );
 
+try {
+    $tab_names = $content_obj->GetTabNames(); //tabs used in this object, members like 'aa_main_tab__'(i.e. ContentBase::TAB_MAIN) => 'Main' (translated)
     // the content object might have no main tab, but we require one
-    $tmain = $content_obj::TAB_MAIN;
+    $tmain = $tabkeys['TAB_MAIN'];
     if( !isset($tab_names[$tmain]) ) {
-        $tab_names = array($tmain => lang($tmain)) + $tab_names;
+        $tab_names = [$tmain => lang($tmain)] + $tab_names;
     }
-    // sort $tab_names hence displayed tabs per preferences
-    $orders = $this->ListPreferencesByPrefix('order_TAB_');
-    $tmp = [];
-    foreach( $orders as $key ) {
-        $tmp[strtolower($key).'_tab__'] = (int)$this->GetPreference('order_TAB_'.$key);
-    }
-    uksort($tab_names, function($a, $b) use($tmp) {
-        $sa = substr($a, 3); // strip prefix
-        if( is_numeric($sa[0]) ) $sa = substr($sa, 1);
-        $na = (isset($tmp[$sa])) ? $tmp[$sa] : 100;
-        $sb = substr($b, 3);
-        if( is_numeric($sb[0]) ) $sb = substr($sb, 1);
-        $nb = (isset($tmp[$sb])) ? $tmp[$sb] : 100;
+    // sort $tab_names, hence displayed tabs, per preferences
+    uksort($tab_names, function($a, $b) use($tabkeys, $orders, $deforder) {
+        $key = array_search($a, $tabkeys);
+        $na = ($key !== false) ? $orders[$key] : $deforder;
+        $key = array_search($b, $tabkeys);
+        $nb = ($key !== false) ? $orders[$key] : $deforder;
         if( $na != $nb ) return $na - $nb;
         return strcasecmp($a, $b);
     });
-
-    foreach( $tab_names as $currenttab => $label ) { // $label unused here
+    // populate
+    foreach( $tab_names as $currenttab => $label ) { // $label unused here, but in template
         $tmp = $content_obj->GetTabMessage($currenttab);
         if( $tmp ) $tab_message_array[$currenttab] = $tmp;
 
