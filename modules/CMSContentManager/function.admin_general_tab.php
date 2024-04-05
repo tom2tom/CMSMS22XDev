@@ -35,6 +35,7 @@ $smarty->assign('locktimeout',$this->GetPreference('locktimeout'));
 $smarty->assign('lockrefresh',$this->GetPreference('lockrefresh'));
 
 $tmp = [];
+//TODO ensure this also covers any custom tab, which would have a custom display-name somewhere
 $orders = $this->ListPreferencesByPrefix('order_TAB_');
 foreach( $orders as $key ) {
   //TODO record key = lang($content_obj::TAB_MAIN etc), or equivalent from module lang

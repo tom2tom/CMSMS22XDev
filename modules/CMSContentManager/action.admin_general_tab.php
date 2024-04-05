@@ -44,6 +44,8 @@ foreach( $params['taborders'] as $name=>$val ) {
     //TODO sanitize & validate $name
     $this->SetPreference('order_TAB_'.$name,(int)$val);
 }
+//TODO process added custom-tab if any
+//$params['customtabid'] $params['customtabname'] $params['customtaborder']
 
 $template_list_mode = get_parameter_value($params,'template_list_mode','designpage');
 $this->SetPreference('template_list_mode',$template_list_mode);
