@@ -135,7 +135,7 @@ $lang['help_title_content_type'] = 'Content Type Selector';
 //I
 $lang['info_javascript_required'] = '<strong>Warning:</strong> In order to operate correctly, this module requires a browser with JavaScript support enabled.';
 $lang['info_ordercontent'] = 'Drag and drop elements to adjust their order in the content tree.  <strong>Note: </strong> Some content items, such as separators do not accept children';
-$lang['info_ordertabs'] = 'When editing a page, displayed tabs will be ordered in accord with the sequence of preference values displayed here. Any positive integer may be applied in each case.';
+$lang['info_ordertabs'] = 'When editing a page, displayed tabs will be ordered in accord with increasing value of order-preference values, as displayed here. Any positive integer may be applied in each case. They do not need to be sequential.';
 $lang['info_pagedflt'] = 'This panel allows setting default values for various content properties when creating a new page of type &quot;Content&quot; <em>or its derived types.  These settings will have no effect on existing pages, and user settings may override some settings.</em>';
 $lang['info_preview_notice'] = '<strong>Warning:</strong> This preview panel behaves much like a browser window allowing you to navigate away from the initially previewed page. However, if you do that, you may experience unexpected behavior. If you navigate away from the initial display and return, you may not see the un-committed content until you make a change to the content in the main tab, and then reload this tab. When adding content, if you navigate away from this page, you will be unable to return, and must refresh this panel.';
 
@@ -261,6 +261,7 @@ $lang['prompt_withselected'] = 'With Selected';
 
 //R
 $lang['reorderpages'] = 'Reorder Content';
+$lang['removetab'] = 'Remove This Custom Tab';
 $lang['revert'] = 'Revert';
 
 //S
