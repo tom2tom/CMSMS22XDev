@@ -30,10 +30,15 @@ $(function() {
     <legend>{$mod->Lang('legend_tabs')}</legend>
     <p class="information">{$mod->Lang('info_ordertabs')}</p><br>
 {foreach $tab_orders as $key => $val}
-    <label class="pagetext" for="order{$key}">{$mod->Lang('prompt_namedtab_order', ucfirst(strtolower($key)))}:</label>
+    <label class="pagetext" for="order{$key}">{$mod->Lang('prompt_namedtab_order',$val[1])}:</label>
     <p class="pageinput">
-      <input type="text" id="order{$key}" name="{$actionid}taborders[{$key}]" value="{$val}" size="3" maxlength="3">
+      <input type="text" id="order{$key}" name="{$actionid}taborders[{$key}]" value="{$val.0}" size="3" maxlength="3">
     </p>
+    {if !$val.2}
+    <p class="pageinput" style="margin-bottom:0.5em">
+      <input type="checkbox" name="{$actionid}deltabs[{$key}]" value="1"> {$mod->Lang('removetab')}
+    </p>
+    {/if}
 {/foreach}
     <br>{$t=$mod->Lang('addtab')}
     <a class="pageoptions" id="showadds" href="javascript:void(0)" title="{$t}">{admin_icon icon='newobject.gif' alt=$t}&nbsp;{$t}</a>

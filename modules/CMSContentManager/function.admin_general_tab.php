@@ -35,13 +35,23 @@ $smarty->assign('locktimeout',$this->GetPreference('locktimeout'));
 $smarty->assign('lockrefresh',$this->GetPreference('lockrefresh'));
 
 $tmp = [];
-//TODO ensure this also covers any custom tab, which would have a custom display-name somewhere
 $orders = $this->ListPreferencesByPrefix('order_TAB_');
 foreach( $orders as $key ) {
-  //TODO record key = lang($content_obj::TAB_MAIN etc), or equivalent from module lang
-  $tmp[$key] = (int)$this->GetPreference('order_TAB_'.$key);
+  $nm = $this->GetPreference('name_TAB_'.$key);
+  if( $nm ) {
+    $flag = false; // not a default tab
+  } else {
+    $nm = $key; //TODO translated names names have lang keys like '??_*_tab__'
+    $flag = true;
+  }
+  $tmp[$key] = [(int)$this->GetPreference('order_TAB_'.$key),ucfirst(strtolower($nm)),$flag]; //TODO UTF8 reformat name
 }
-asort($tmp,SORT_NUMERIC);
+uasort($tmp,function($a,$b) {
+  if( $a[0] != $b[0] ) {
+    return $a[0] - $b[0];
+  }
+  return strcmp($a[1],$b[1]); // TODO UTF8 comparison
+});
 $smarty->assign('tab_orders',$tmp);
 
 $opts = array(

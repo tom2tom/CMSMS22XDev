@@ -41,11 +41,33 @@ if( $timeout != 0 ) $timeout = max(30,min(3540,(int)$params['lockrefresh']));
 $this->SetPreference('lockrefresh',$timeout);
 
 foreach( $params['taborders'] as $name=>$val ) {
-    //TODO sanitize & validate $name
-    $this->SetPreference('order_TAB_'.$name,(int)$val);
+    if( empty($params['deltabs'][$name]) ) {
+        //TODO sanitize & validate $name
+        $this->SetPreference('order_TAB_'.$name,(int)$val);
+    } else {
+        $this->RemovePreference('order_TAB_'.$name);
+        $this->RemovePreference('name_TAB_'.$name);
+    }
 }
-//TODO process added custom-tab if any
-//$params['customtabid'] $params['customtabname'] $params['customtaborder']
+//process added custom-tab if any
+$newtab = get_parameter_value($params,'customtabid',''); // TODO sanitize
+if( $newtab ) {
+    $val = (int)$params['customtaborder'];
+    if( $val < 1 ) {
+        $val = 99; //placeholder, prob. last
+    }
+    $name = get_parameter_value($params,'customtabname','');
+    if( $name ) {
+        // TODO sanitize
+    } else {
+        $name = str_replace(['TAB','_'],['',''],strtoupper($newtab));
+        if( !$name ) {
+            $name = 'MissingName';
+        }
+    }
+    $this->SetPreference('order_TAB_'.$newtab,$val);
+    $this->SetPreference('name_TAB_'.$newtab,$name);
+}
 
 $template_list_mode = get_parameter_value($params,'template_list_mode','designpage');
 $this->SetPreference('template_list_mode',$template_list_mode);
