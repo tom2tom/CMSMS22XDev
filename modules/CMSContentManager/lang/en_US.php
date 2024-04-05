@@ -1,10 +1,11 @@
 <?php
 
-#A
+//A
 $lang['addcontent'] = 'Add New Content';
+$lang['addtab'] = 'Add Custom Tab';
 $lang['apply'] = 'Apply';
 
-#B
+//B
 $lang['bulk_active'] = 'Set Active';
 $lang['bulk_cachable'] = 'Set Cachable';
 $lang['bulk_changeowner'] = 'Change Owner';
@@ -17,7 +18,7 @@ $lang['bulk_secure'] = 'Set Secure (HTTPS)';
 $lang['bulk_setdesign'] = 'Set Design &amp; Template';
 $lang['bulk_showinmenu'] = 'Show In Menu';
 
-#C
+//C
 $lang['cancel'] = 'Cancel';
 $lang['close'] = 'Close';
 $lang['colhdr_id'] = 'Id';
@@ -69,10 +70,10 @@ $lang['confirm_viewpage'] = 'Are you sure you want to open a new window to view 
 $lang['contractall'] = 'Collapse All';
 $lang['critical_error'] = '** ERROR **';
 
-#D
+//D
 $lang['desc_contentmanager_settings'] = 'Adjust settings related to listing, or editing content pages';
 
-#E
+//E
 $lang['editcontent_confirm_cancel'] = 'Are you sure you want to cancel this operation?  Any changes will be lost!';
 $lang['error_action_contentlocked'] = 'This operation cannot be performed while there is locked content';
 $lang['error_bulk_permission'] = 'You do not have permission to perform this bulk action';
@@ -99,15 +100,15 @@ $lang['error_template_notavailable'] = 'Either there is no template associated w
 $lang['err_nomatchingcontent'] = 'Sorry... there does not appear to be any content that matches your criteria';
 $lang['expandall'] = 'Expand All';
 
-#F
+//F
 $lang['filter_applied'] = 'Filter Applied';
 $lang['find'] = 'Find';
 $lang['friendlyname'] = 'Content Manager';
 
-#G
+//G
 $lang['go'] = 'Go';
 
-#H
+//H
 $lang['help_content_type'] = 'The content type controls the overall function of an item.  Some content types are used for building HTML pages, while others are for building links or other navigation functions.';
 $lang['help_general_lockrefresh'] = 'Specify the number of seconds (at most) at which a lock should be refreshed.  Setting a value of 0 will disable refreshing of locks.<br><strong>Note:</strong> Locks are not refreshed unless there are some changes in the form.<br>The minimum value for this field (other than 0) is 30.';
 $lang['help_general_locktimeout'] = 'Specify the number of minutes after which a non-refreshed lock will expire.  Specifying a value of 0 will disable locking all together.  The minimum value for this field is 5 and the maximum value is 480.';
@@ -128,19 +129,21 @@ $lang['help_pagedflt_searchable'] = 'Specify whether new pages should be searcha
 $lang['help_pagedflt_secure'] = 'Specify whether new pages should be <em>(by default)</em> secure <em>(uses the HTTPS protocol)</em>.  For secure pages to work the site must have a valid certificate installed on the web server, and the site must be configured properly';
 $lang['help_pagedflt_showinmenu'] = 'Specify whether new pages should be visible in normal navigations by default';
 $lang['help_pagedflt_template_id'] = 'Specify the default template to use for the new content page.  The template controls page logic, and what content blocks are visible to the editor';
+$lang['help_tab_id'] = 'Enter something unique and distinctive, and which might be used to assist tabs-sorting. As an example, internal/default tabs have id\'s like \'aa_main\' or \'zz_2logic\'.';
 $lang['help_title_content_type'] = 'Content Type Selector';
 
-#I
+//I
 $lang['info_javascript_required'] = '<strong>Warning:</strong> In order to operate correctly, this module requires a browser with JavaScript support enabled.';
 $lang['info_ordercontent'] = 'Drag and drop elements to adjust their order in the content tree.  <strong>Note: </strong> Some content items, such as separators do not accept children';
+$lang['info_ordertabs'] = 'When editing a page, displayed tabs will be ordered in accord with the sequence of preference values displayed here. Any positive integer may be applied in each case.';
 $lang['info_pagedflt'] = 'This panel allows setting default values for various content properties when creating a new page of type &quot;Content&quot; <em>or its derived types.  These settings will have no effect on existing pages, and user settings may override some settings.</em>';
 $lang['info_preview_notice'] = '<strong>Warning:</strong> This preview panel behaves much like a browser window allowing you to navigate away from the initially previewed page. However, if you do that, you may experience unexpected behavior. If you navigate away from the initial display and return, you may not see the un-committed content until you make a change to the content in the main tab, and then reload this tab. When adding content, if you navigate away from this page, you will be unable to return, and must refresh this panel.';
 
-#J
+//J
 
-#K
+//K
 
-#L
+//L
 $lang['legend_tabs'] = 'Tabs Display';
 $lang['locked_by'] = 'Locked By';
 $lang['locked_since'] = 'Since';
@@ -148,7 +151,7 @@ $lang['locked_steal'] = 'You can steal this lock';
 $lang['lock_expired'] = 'Expired';
 $lang['lock_expires'] = 'Expires';
 
-#M
+//M
 $lang['moddescription'] = 'A module for managing content within CMSMS';
 $lang['msg_bulk_successful'] = 'Bulk content operation successful';
 $lang['msg_editpage_success'] = 'Content Updated';
@@ -157,17 +160,17 @@ $lang['msg_lockscleared'] = 'Locks cleared';
 $lang['msg_lostlock'] = 'The lock on this content page has expired and been lost.  You can no longer save changes to this content page.  Please return to the content list and re-edit this page.';
 $lang['msg_prefs_saved'] = 'Preferences saved';
 
-#N
+//N
 $lang['no'] = 'No';
 $lang['none'] = 'None';
 
-#O
+//O
 $lang['opt_alltemplates'] = 'All templates';
 $lang['opt_alldesign'] = 'All templates associated with the design';
 $lang['opt_allpage'] = 'All page templates';
 $lang['opt_designpage'] = 'All page templates associated with the design';
 
-#P
+//P
 $lang['page'] = 'Page';
 $lang['pages'] = 'Pages';
 $lang['postinstall'] = 'Content module installed';
@@ -208,6 +211,7 @@ $lang['prompt_lastmodifiedby'] = 'Last Modified By';
 $lang['prompt_listsettings'] = 'Content List Settings';
 $lang['prompt_list_namecolumn'] = 'Content Field to Display in Name Column';
 $lang['prompt_list_visiblecolumns'] = 'Visible Columns';
+$lang['prompt_namedtab_order'] = '%s Tab Order';
 $lang['prompt_pagedefaults'] = 'New Page Defaults';
 $lang['prompt_pagedflt_active'] = 'Is this page active?';
 $lang['prompt_pagedflt_addteditors'] = 'Additional Editors';
@@ -245,23 +249,25 @@ $lang['prompt_settings'] = 'Settings';
 $lang['prompt_showinmenu'] = 'Shown in Navigations';
 $lang['prompt_showmore'] = 'Show more';
 $lang['prompt_steal_lock_edit'] = 'Steal this lock and edit the page';
-$lang['prompt_taborder'] = '%s Tab Order';
+$lang['prompt_tab_id'] = 'New Tab Identifier';
+$lang['prompt_tab_name'] = 'New Tab Displayed Name';
+$lang['prompt_tab_order'] = 'New Tab Order';
 $lang['prompt_template'] = 'Template';
 $lang['prompt_template_list_mode'] = 'Template list mode';
 $lang['prompt_title'] = 'Title';
 $lang['prompt_withselected'] = 'With Selected';
 
-#Q
+//Q
 
-#R
+//R
 $lang['reorderpages'] = 'Reorder Content';
 $lang['revert'] = 'Revert';
 
-#S
+//S
 $lang['select_all'] = 'Select All';
 $lang['submit'] = 'Submit';
 
-#T
+//T
 $lang['title_clearlocks'] = 'Clear all content locks';
 $lang['title_contentmanager_settings'] = 'Settings - Content Manager';
 $lang['title_editpage_apply'] = 'Save the changes to this content page, and continue editing';
@@ -273,19 +279,19 @@ $lang['title_locked'] = 'This page is currently being edited by another user';
 $lang['title_userpageoptions'] = 'Page List Options';
 $lang['toggle'] = 'Toggle Selected';
 
-#U
+//U
 
-#V
+//V
 
-#W
+//W
 $lang['warn_destructive'] = 'This operation can have undesired side effects, please exercise extreme caution';
 $lang['warn_notemplates_for_design'] = 'Sorry, but it does not appear that there are any usable page templates for the selected design';
 
-#X
+//X
 
-#Y
+//Y
 $lang['yes'] = 'Yes';
 
-#Z
+//Z
 
 ?>
