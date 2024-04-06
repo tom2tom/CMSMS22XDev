@@ -84,9 +84,6 @@ class UserGuideImportGuide2
      */
     private function import_xml_v1()
     {
-        if (!$this->frommod) {
-            throw new Exception('UserGuide2 module not present');
-        }
         $db = CmsApp::get_instance()->GetDb();
         $totable = CMS_DB_PREFIX.'module_userguide';
         $existing = $db->GetCol("SELECT name FROM $totable");
@@ -96,7 +93,11 @@ class UserGuideImportGuide2
             $pos = 0;
         }
         $rev = 'Imported from User Guide 2';
-        $smarty = (int)$this->frommod->GetPreference('useSmarty', 0); // same for all guides
+        if ($this->frommod) {
+            $smarty = (int)$this->frommod->GetPreference('useSmarty', 0); // same for all guides
+        } else {
+            $smarty = 1; //old-module default
+        }
         $when = '2019-06-17 22:13:00'; //release date-time of UserGuide2 V.1.2.1
         //no placeholders for restricted, template_id, styles ?
         $sql = "INSERT INTO $totable
