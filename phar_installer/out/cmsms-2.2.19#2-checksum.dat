@@ -296,7 +296,7 @@ d0ac976120bdfea178c669277385e7fb --::-- /modules/UserGuide/lang/ext/fr_FR.php
 3177a8f33194a0c7e9bc3594dffccf28 --::-- /modules/UserGuide/templates/orig_list_template.tpl
 139cb9fb1fbaab6cba5b38ecf9270ba3 --::-- /modules/UserGuide/templates/defaultadmin.tpl
 67b35aaf2f0116680ddb256505a58a7d --::-- /modules/UserGuide/templates/admin_settings.tpl
-0ccf72992d34ce7a0338d3b97d585e12 --::-- /modules/UserGuide/method.upgrade.php
+1a65ed7ce5da7adb630067accaf4a1df --::-- /modules/UserGuide/method.upgrade.php
 1264d3257e7eb42814961093eabfdb61 --::-- /modules/UserGuide/action.edit_guide.php
 c705eed83637c5c4a2293aa5625d8865 --::-- /modules/UserGuide/action.toggle_active_guide.php
 816bb00cf7c0c56ee8174854f9cdf918 --::-- /modules/UserGuide/action.delete_guide.php
@@ -310,10 +310,10 @@ e12fbe793d4c4758a6ee90e3ca40a962 --::-- /modules/UserGuide/lib/css/orig_list_gui
 147fe6249771a66cffa473a882f75177 --::-- /modules/UserGuide/lib/css/orig_view_guide.css
 bc3a323ed90c3bc20226bbae532a1363 --::-- /modules/UserGuide/lib/css/UserGuide_admin.min.css
 21587497348e1e30f535d5aafc1e00f8 --::-- /modules/UserGuide/lib/class.UserGuideUtils.php
-e58c19cb9847042d9aeac290d041e0b0 --::-- /modules/UserGuide/lib/UserGuide_Default.xml
+b145f3973bbff712f9e54d5846651df5 --::-- /modules/UserGuide/lib/UserGuide_Default.xml
 92faf6f2637401ab51859ae2f610ac6f --::-- /modules/UserGuide/lib/class.UserGuideItem.php
 17a551e5e8b9f33d420ee4e49ed52e6b --::-- /modules/UserGuide/action.reorder_guides.php
-4999c03c4b5b164f7b5a45685e8711c3 --::-- /modules/UserGuide/method.install.php
+20a9129770604d90ec371652d3830375 --::-- /modules/UserGuide/method.install.php
 3066cfe7c52232f7c2a8a0ce4cdea8f5 --::-- /modules/UserGuide/action.view_guide.php
 7e0da615f6458cab0881b7d6951d7730 --::-- /modules/UserGuide/doc/helplicense.htm
 6d0715180789d95a5c1622a765ef2fb7 --::-- /modules/UserGuide/doc/tpltype_oneguide.htm
