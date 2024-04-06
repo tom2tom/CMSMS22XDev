@@ -171,8 +171,12 @@ if (!file_exists($fn)) {
     $this->SetPreference('filesFolder', ''); // user will need to set something else
 }
 // Import default guidance
-require_once __DIR__.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'class.UserGuideXML.php';
-$doer = new UserGuide\UserGuideXML($this);
-if (!$doer->import(__DIR__.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'UserGuide_Default.xml')) {
-    //TODO handle error
+if (class_exists('SimpleXMLElement')) {
+    require_once __DIR__.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'class.UserGuideXML.php';
+    $doer = new UserGuide\UserGuideXML($this);
+    if (!$doer->import(__DIR__.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'UserGuide_Default.xml')) {
+        audit('', $me, 'Default content installation failed');
+    }
+} else {
+    audit('', $me, 'Default content not installed: no SimpleXMLElement');
 }
