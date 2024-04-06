@@ -126,7 +126,7 @@ try {
     $css = new CmsLayoutStylesheet();
     //include a module-identifier-prefix in the name, in lieu of sheet type or originator property
     //see also CmsAdminUtils::is_valid_itemname
-    $css->set_name("${me}_Item");
+    $css->set_name("{$me}_Item");
     $css->set_description('Styles for displaying a single guide');
     $fn = cms_join_path(__DIR__, 'lib', 'css', 'orig_view_guide.css');
     $css->set_content(file_get_contents($fn));
@@ -169,4 +169,10 @@ if (!file_exists($fn)) {
     @mkdir($fn, 0775, true);
 } elseif (!is_dir($fn)) {
     $this->SetPreference('filesFolder', ''); // user will need to set something else
+}
+// Import default guidance
+require_once __DIR__.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'class.UserGuideXML.php';
+$doer = new UserGuide\UserGuideXML($this);
+if (!$doer->import(__DIR__.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'UserGuide_Default.xml')) {
+    //TODO handle error
 }

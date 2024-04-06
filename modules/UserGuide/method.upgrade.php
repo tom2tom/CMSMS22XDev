@@ -9,5 +9,9 @@ if (!defined('CMS_VERSION')) exit;
 if (!$this->CheckPermission('Modify Modules')) exit;
 
 //$current_version = $oldversion;
-
-//nothing here, yet
+if (version_compare($oldversion, '2.0' < 0)) {
+    $doer = new UserGuide\UserGuideXML($this);
+    if (!$doer->import(__DIR__.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'UserGuide_Default.xml')) {
+        //TODO handle error
+    }
+}
