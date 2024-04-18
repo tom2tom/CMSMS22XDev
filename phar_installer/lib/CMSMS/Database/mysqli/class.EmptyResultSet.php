@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * A class to describe an empty recordset
+ *
+ * @ignore
+ */
 namespace CMSMS\Database\mysqli;
 
 /**
