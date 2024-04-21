@@ -436,12 +436,12 @@ final class CmsApp
 	*/
 	public function GetSmarty()
 	{
-		global $CMS_PHAR_INSTALLER;
-		if( isset($CMS_PHAR_INSTALLER) ) { //TODO $CMS_INSTALL_PAGE ?
-			// we can't load the core version of Smarty during the installation.
-			return null; // no object
+		// we must not conflict with the installer version of Smarty
+		global $DONT_LOAD_SMARTY;
+		if( !isset($DONT_LOAD_SMARTY) ) { // was $CMS_PHAR_INSTALLER
+			return Smarty_CMS::get_instance();
 		}
-		return Smarty_CMS::get_instance();
+		return null; // no object
 	}
 
 	/**

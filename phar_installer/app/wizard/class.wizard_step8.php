@@ -72,7 +72,7 @@ class wizard_step8 extends wizard_step
             $app = get_app();
             if( $app->in_phar() ) {
                 global $CMS_PHAR_INSTALLER;
-                $CMS_PHAR_INSTALLER = 1; //TODO used only to block core Smarty use c.f. $DONT_LOAD_SMARTY
+                $CMS_PHAR_INSTALLER = 1; //TODO now unused
             }
             if( empty($CMS_VERSION) ) {
                 $CMS_VERSION = $app->get_dest_version(); // default value
@@ -204,7 +204,7 @@ class wizard_step8 extends wizard_step
         $CMS_VERSION = $app->get_dest_version();
         if( $app->in_phar() ) {
             global $CMS_PHAR_INSTALLER;
-            $CMS_PHAR_INSTALLER = 1; //TODO used only to block core Smarty use c.f. $DONT_LOAD_SMARTY
+            $CMS_PHAR_INSTALLER = 1; //TODO now unused
         }
 
         // setup and initialize the CMSMS API's
