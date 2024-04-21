@@ -569,7 +569,7 @@ namespace CMSMS\Database {
                 if ($date === 'null' || strncmp($date, "'", 1) === 0) return $date;
                 $date = $this->UnixDate($date);
             }
-            return \locale_ftime("'%x'",$date);
+            return \locale_ftime('%x',$date);
         }
 
         /**
