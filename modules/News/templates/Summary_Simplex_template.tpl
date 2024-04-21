@@ -26,7 +26,7 @@
             <div class="meta cf">
                 <time class="date" datetime="{$entry->postdate|date_format:'Y-m-d'}">
                     <span class="day"> {$entry->postdate|date_format:'d'} </span>
-                    <span class="month"> {$entry->postdate|localedate_format:'%b'} </span>
+                    <span class="month"> {$entry->postdate|localedate_format:'%h'} </span>
                 </time>
                 <span class="author"> {$author_label} {$entry->author} </span>
                 <span class="category"> {$category_label} {$entry->category}</span>

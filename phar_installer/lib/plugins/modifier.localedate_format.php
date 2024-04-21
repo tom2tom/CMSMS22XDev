@@ -9,13 +9,13 @@ use function __appbase\translator;
  * Purpose:  format date/time values
  *
  * @param mixed $datevar      input date-time string | timestamp | DateTime object
- * @param string $format      optional strftime() and/or date()-compatible format for output. Default '%b %e, %Y'
+ * @param string $format      optional strftime() and/or date()-compatible format for output. Default '%h %e, %Y'
  * @param mixed $default_date optional date-time to use if $datevar is empty. Default ''
  * @param mixed $locale       string | null optional locale to use instead of the default since 2.2.18
  *
  * @return string
  */
-function smarty_modifier_localedate_format($datevar, $format = '%b %e, %Y', $default_date = '', $locale = '')
+function smarty_modifier_localedate_format($datevar, $format = '%h %e, %Y', $default_date = '', $locale = '')
 {
     if (!$datevar) {
         $datevar = $default_date;
@@ -164,11 +164,9 @@ function localedate_adjust($fmt)
     'W',
     );
     if (strncasecmp(PHP_OS, 'WIN', 3) === 0) {
-// TODO robustly derive values for Windows OS
-/* see
+/* TODO see
 https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/strftime-wcsftime-strftime-l-wcsftime-l?redirectedfrom=MSDN&view=msvc-170
 re other uses of '#' modifier
-https://stackoverflow.com/questions/203090/how-do-i-get-current-date-time-on-the-windows-command-line-in-a-suitable-format
 */
         $to[3] = '#d'; // per php.net: correctly relace %e on Windows
     }
@@ -268,7 +266,10 @@ function localedate_ise($st, $mode, $locale)
             return 'Unknown Format';
         }
     } else {
-// TODO robustly derive localised values for Windows OS
+/* TODO robustly derive localised values for IIS/Windows OS. Some ASP batchlet?
+or see
+https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/strftime-wcsftime-strftime-l-wcsftime-l?redirectedfrom=MSDN&view=msvc-170
+*/
         switch ($mode) {
         case "\1": // short day name c.f. C# DateTime 'ddd'
             return date('D', $st);
@@ -301,7 +302,7 @@ function smarty_cms_help_modifier_localedate_format()
 <pre>{\$datetimevar|localedate_format[:&apos;optional params&apos;]}</pre>
 <p>Parameters</p>
 <ul>
-<li>(<em>optional</em>)string PHP date()- and/or strftime()-compatible format specifier. Default &apos;%b %e, %Y&apos;</li>
+<li>(<em>optional</em>)string PHP date()- and/or strftime()-compatible format specifier. Default &apos;%h %e, %Y&apos;</li>
 <li>(<em>optional</em>)stamp|string|DateTime object default datetime specifier to use if necessary</li>
 </ul>
 EOS;

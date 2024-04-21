@@ -21,7 +21,7 @@
 // to ensure that it's never cached
 function smarty_cms_function_current_date($params, $smarty)
 {
-	$format = '%b j, Y';
+	$format = '%h j, Y';
 	if( isset($params['format']) && !empty($params['format']) ) $format = trim($params['format']);
 
 	if( strpos($format, '%') !== false ) {
