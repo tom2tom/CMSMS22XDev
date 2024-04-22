@@ -55,8 +55,6 @@ class wizard_step9 extends wizard_step
         if( $defers ) {
             // upgrade any bundled and installed non-core modules
             // no dependency processing here
-            global $CMS_PHAR_INSTALLER; // TODO migrate downstream to check for $CMS_INSTALL_PAGE etc
-            $CMS_PHAR_INSTALLER = 1; //prevent attemped duplication of Smarty class
             $info = $modops->GetInstalledModules(TRUE);
             foreach( $defers as $name ) {
                 if( in_array($name, $info) ) {
@@ -246,7 +244,7 @@ class wizard_step9 extends wizard_step
             $CMS_VERSION = $app->get_dest_version();
             if( $app->in_phar() ) {
                 global $CMS_PHAR_INSTALLER;
-                $CMS_PHAR_INSTALLER = 1; //TODO used only to block core Smarty use c.f. $CMS_INSTALL_PAGE and $DONT_LOAD_SMARTY
+                $CMS_PHAR_INSTALLER = 1; //TODO now unused
             }
             // setup and initialize the cmsms API's
             // note DONT_LOAD_DB and DONT_LOAD_SMARTY are used.
