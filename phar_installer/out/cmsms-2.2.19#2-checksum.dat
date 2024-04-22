@@ -1008,7 +1008,7 @@ aee4479a6d1fd70ef1a450420b3cf29c --::-- /modules/DesignManager/lang/ext/ru_RU.ph
 6b0526875456a704c4b7dc30aad558f5 --::-- /modules/DesignManager/lang/ext/da_DK.php
 ba0f97cb754a591014aacdc5ae36daa4 --::-- /modules/DesignManager/lang/ext/nb_NO.php
 eabda70453d8cd3ea93bf976e982932d --::-- /modules/DesignManager/lang/ext/uk_UA.php
-bd0d16158a09882c8b156122ee573568 --::-- /modules/DesignManager/lang/ext/de_DE.php
+f28d6c94f0fef8f28f195a5b3de09840 --::-- /modules/DesignManager/lang/ext/de_DE.php
 9df78fe536f764c4a263ad32f57ac6b9 --::-- /modules/DesignManager/lang/ext/it_IT.php
 d98d4a7c5ea5d1bbb1faa3d7deea714f --::-- /modules/DesignManager/lang/ext/fr_FR.php
 cdea6dcf021c2c1be6f3582159291c5d --::-- /modules/DesignManager/lang/ext/zh_TW.php
@@ -1086,6 +1086,7 @@ c858d9fee795a131d7d3e9c28f1ff09d --::-- /modules/FilePicker/lang/ext/ru_RU.php
 7b587c2147347fe647434218313d4ead --::-- /modules/FilePicker/lang/ext/da_DK.php
 37e42e7bcf3504cf0badd677d9bafc10 --::-- /modules/FilePicker/lang/ext/nb_NO.php
 c14e666fc51eea89d38888b0fa5c127a --::-- /modules/FilePicker/lang/ext/uk_UA.php
+7dceafd81b8ae4306d9e57e9e3c3a55f --::-- /modules/FilePicker/lang/ext/de_DE.php
 e297bff52e8167756ead05f229e2c819 --::-- /modules/FilePicker/lang/ext/it_IT.php
 281ae68f4ba0b3eb26264ee3a2264ce8 --::-- /modules/FilePicker/lang/ext/fr_FR.php
 ec37ac86a366d5bffbd04aa964379429 --::-- /modules/FilePicker/lang/ext/tr_TR.php
@@ -1614,15 +1615,15 @@ b1317f7f5418f3362fb1d61f504b501c --::-- /lib/lang/help/ext/de_DE.php
 97a9ecbf12eda1844990ace845fed32a --::-- /lib/lang/help/ext/it_IT.php
 331b9773105642534572b4f4bab932d1 --::-- /lib/lang/help/ext/fr_FR.php
 773f9b8cefd488767ea6941e6e41717f --::-- /lib/lang/help/en_US.php
-69df846f12a682df2bf0a839c8f7517b --::-- /lib/lang/tags/ext/ru_RU.php
+549f9235841e90cff5221f3ece2167d2 --::-- /lib/lang/tags/ext/ru_RU.php
 2bd35a7f6926c9ad75a8fc72f635d53d --::-- /lib/lang/tags/ext/nb_NO.php
 cbb2091a905c150190e1aec2c32d4ce7 --::-- /lib/lang/tags/ext/uk_UA.php
 0385725c9b4071c8de0f850360f15a59 --::-- /lib/lang/tags/ext/pt_PT.php
 f676d91150f04d87c5645bd312310040 --::-- /lib/lang/tags/ext/de_DE.php
 ac5b6c04c26be8681ddffbf8a3688353 --::-- /lib/lang/tags/ext/it_IT.php
-e71f446722088a12f23057d52d112218 --::-- /lib/lang/tags/ext/fr_FR.php
+edd0112c58f15126e17f2a48449e2683 --::-- /lib/lang/tags/ext/fr_FR.php
 eb3ef62009a574e98528ce620c17c235 --::-- /lib/lang/tags/ext/tr_TR.php
-ed24ac0ba867999c4b3cab91cd41df9a --::-- /lib/lang/tags/en_US.php
+700dff7b854689a47b12320d5ed66074 --::-- /lib/lang/tags/en_US.php
 d251464fae07eb6f349de32f95614d54 --::-- /lib/lang/cms_selflink/ext/nl_NL.php
 f343bb1f06c5b654fdd704a5c8d4eb60 --::-- /lib/lang/cms_selflink/ext/ru_RU.php
 d00c28fe1e35d4bdd747d52af73fe984 --::-- /lib/lang/cms_selflink/ext/en_CY.php
@@ -1688,7 +1689,7 @@ bdfa48a3ec154206db2899b358080535 --::-- /lib/lang/tasks/ext/tr_TR.php
 5f488e39bb559df772ab2701cdbcebb4 --::-- /lib/lang/tasks/en_US.php
 71fbc2282bcc199287deabcad8917d77 --::-- /lib/autoloader.php
 4ffd091e1df916b857bdbdeb9efca1f2 --::-- /lib/content.functions.php
-753871780b01851126fa3e4c7e79ad5d --::-- /lib/test.functions.php
+42df006b87c6f160ab3e01e8d670bb4a --::-- /lib/test.functions.php
 674bd13e59395750f5cf50e0b2404a43 --::-- /lib/assets/images/cmsms-logo.png
 4c1064e26f2f4fff077dbb8cde9f3b36 --::-- /lib/assets/templates/cmsms-error-console.tpl
 d7f11566669d3958cc8e106151dbf17e --::-- /lib/version.php
@@ -1999,7 +2000,7 @@ d1917a4508160ab529560f468b5b7103 --::-- /lib/plugins/modifier.cms_escape.php
 149416ca4d1b635979dbd678d9c6ac00 --::-- /lib/plugins/function.cms_set_language.php
 76ebb09b4d16aa150323c2bc278b6827 --::-- /lib/plugins/function.thumbnail_url.php
 2dada12f296491fb6c5e6ca00251305a --::-- /lib/plugins/function.page_attr.php
-6ce7c4d5216a9b8fe497907ed3f80b0a --::-- /lib/plugins/modifier.cms_date_format.php
+070e84d24f92590b7104971cce710a5c --::-- /lib/plugins/modifier.cms_date_format.php
 26ee5573191cac9e950ef28f4603b819 --::-- /lib/plugins/function.global_content.php
 c7df189c6179910db121f3a04fac501d --::-- /lib/plugins/function.cms_init_editor.php
 0f7f6cb073b43afcd319e1ea1b3891ec --::-- /lib/plugins/function.cms_version.php
@@ -2026,7 +2027,7 @@ f3908aa56453cb95a257b3529f5d7e3f --::-- /lib/plugins/function.cms_action_url.php
 fe7a5b06397a48879f54fa8c25c8991c --::-- /lib/plugins/function.setlist.php
 bbaf2ab351ce714f83fb8e39776e0471 --::-- /lib/plugins/function.cms_module_hint.php
 ed65bd15635f70a53ea654563009ea60 --::-- /lib/plugins/function.file_url.php
-3c136d70684e77915341b38a5860aa88 --::-- /lib/plugins/modifier.localedate_format.php
+d0d6a588ac9f1f3cca2d6fe1b9bbd7f6 --::-- /lib/plugins/modifier.localedate_format.php
 9780a50126606db66a0a867c2a9ccdbc --::-- /lib/plugins/function.cms_get_language.php
 ac3bbc2be21cbc77e7315c1537bbe61b --::-- /lib/plugins/function.page_image.php
 581a0f870d39b54f01325d03161088f1 --::-- /lib/plugins/function.cms_selflink.php
@@ -2038,7 +2039,7 @@ ac3bbc2be21cbc77e7315c1537bbe61b --::-- /lib/plugins/function.page_image.php
 e03e5618f713d44309c262114bbfb2fd --::-- /lib/plugins/function.metadata.php
 9ae642a4fa9394a432f30a29415ad948 --::-- /lib/plugins/modifier.adjust.php
 1f0277aaba93b1f89f2b36bb9f59d87a --::-- /lib/plugins/function.image.php
-5b7f914045e8d460dcc100bd8b60fe0a --::-- /lib/plugins/function.current_date.php
+60c4e00160693522eb7b328c97e18866 --::-- /lib/plugins/function.current_date.php
 0cf38716efe03aedd64d187656913210 --::-- /lib/plugins/function.get_template_vars.php
 d5a9719bedf46d69959989e84ab8986d --::-- /lib/plugins/function.redirect_url.php
 7e546891e1a069c9ac2f21af2bd681a5 --::-- /lib/plugins/function.site_mapper.php
@@ -2106,7 +2107,7 @@ a8f8722bca5ffa0b025d9ce7a699f950 --::-- /lib/classes/internal/module_support/mod
 58ac305a2e1d9262dcd0ddac96979ea0 --::-- /lib/classes/class.CmsLayoutStylesheetQuery.php
 2fcdb152bad78b86a9e3b1e67414a264 --::-- /lib/classes/class.group.inc.php
 b0d795fa0a0280f3ea1651ad48c607ef --::-- /lib/classes/class.cms_tree_operations.php
-c5f793ee96b6720d08539f33e0e6df17 --::-- /lib/classes/class.CmsApp.php
+c9f6d951814d51ed8d11702c2261677e --::-- /lib/classes/class.CmsApp.php
 ee092a6b6db26beb07421cab10df4cc8 --::-- /lib/classes/class.CmsDbQueryBase.php
 9dd41a797d452b6fc42f33711ae62a32 --::-- /lib/classes/class.cms_route_manager.php
 3b765367e6a5b66a6d18352c41abe4e0 --::-- /lib/classes/class.CmsFormUtils.php
@@ -2130,7 +2131,7 @@ de082114f0fbb453715f7a39a2f83513 --::-- /lib/classes/Database/mysqli/class.DataD
 a7624d36ec8e4cc5937d9b25314d09b0 --::-- /lib/classes/Database/mysqli/class.Statement.php
 ddc71eabe3aaaec943f24f71dfe340ba --::-- /lib/classes/Database/mysqli/class.EmptyResultSet.php
 113ab13279f2f2b5460ad5ae0af9e96a --::-- /lib/classes/Database/mysqli/class.ResultSet.php
-f5b2a6fb50f289a54d690c00f31fdb60 --::-- /lib/classes/Database/class.Connection.php
+01b504fd15bf13c4520cc0086e282ae0 --::-- /lib/classes/Database/class.Connection.php
 951115cec63b90df43a5c6963f35e1dd --::-- /lib/classes/Database/class.DataDictionary.php
 6ef30a9cd1fe8e811e82acae4dfa9a6e --::-- /lib/classes/Database/class.Statement.php
 0aa9a50d5e7f17a97dd63c03688328cb --::-- /lib/classes/Database/class.ConnectionSpec.php
