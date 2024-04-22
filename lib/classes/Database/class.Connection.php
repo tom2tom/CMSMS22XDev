@@ -556,17 +556,18 @@ namespace CMSMS\Database {
         }
 
         /**
-         * Convert a date into something that is suitable for writing to a database.
+         * Convert a date into something suitable for writing to the database.
          *
-         * @param mixed $date Either a string date, or an integer timestamp
-         * @return string single-quoted localized date or 'null'
+         * @param mixed $date Either a (trimmed) string date,
+         *  or 'null' (any case), or an integer timestamp
+         * @return string single-quoted localized date-time or 'null'
          */
         public function DBDate($date)
         {
-            if (empty($date) && $date !== 0) return 'null';
-
+            if (!$date && $date !== 0) return 'null';
             if (is_string($date) && !is_numeric($date)) {
-                if ($date === 'null' || strncmp($date, "'", 1) === 0) return $date;
+                if ($date[0] == "'" || date[0] == '"') return "'".trim($date,' "\'')."'";
+                if (strcasecmp($date,'null') == 0) return 'null';
                 $date = $this->UnixDate($date);
             }
             return \locale_ftime("'%x'",$date);
