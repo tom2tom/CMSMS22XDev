@@ -42,12 +42,10 @@ function smarty_modifier_localedate_format($datevar, $format = '%h %e, %Y', $def
 
     $outfmt = localedate_adjust($format);
     $text = date($outfmt, $st);
-    $text = preg_replace_callback('~[\x01-\x09\x0b]~',
+    $text = preg_replace_callback('~[\x01-\x08\x0b-\x0c]~',
         function($m) use ($st, $locale) {
             return localedate_ise($st, $m[0], $locale);
-        },
-        $text
-    );
+        }, $text);
     $text = preg_replace_callback('~[\x11-\x14]~',
         function($m) use ($st) {
             switch ($m[0]) {
@@ -68,9 +66,7 @@ function smarty_modifier_localedate_format($datevar, $format = '%h %e, %Y', $def
                     $w = ($n1 - $n2) / 7 + 0.001; // can be <0, for end of prior year
                     return ($w >= 0) ? (int)$w + 1 : 52;
             }
-        },
-        $text
-    );
+        }, $text);
     return $text;
 }
 
@@ -103,15 +99,15 @@ function localedate_adjust($fmt)
     '%l',
     '%M',
     '%p', // \7
-    '%P', // \08
+    '%P', // \x8
     '%r',
     '%R',
     '%S',
     '%T',
-    '%X', // \09
+    '%X', // \b
     '%z',
     '%Z',
-    '%c', // \0b
+    '%c', // \c
     '%s',
     '%n',
     '%t',
@@ -147,15 +143,15 @@ function localedate_adjust($fmt)
     'g',
     'i',
     "\7",
-    "\x08",
+    "\x8",
     'h:i:s A',
     'H:i',
     's',
     'H:i:s',
-    "\x09",
+    "\xb",
     'O',
     'T',
-    "\x0b",
+    "\xc",
     'U',
     "\n",
     "\t",
@@ -197,27 +193,18 @@ function localedate_ise($st, $mode, $locale)
                 return IntlDateFormatter::formatObject($dt, 'MMM', $locale);
             case "\5": // normal month name
                 return IntlDateFormatter::formatObject($dt, 'MMMM', $locale);
-            case "\x0b": // date and time
-                return IntlDateFormatter::formatObject(
-                    $dt,
-                    [IntlDateFormatter::FULL, IntlDateFormatter::MEDIUM],
-                    $locale
-                );
+            case "\xc": // date and time
+                return IntlDateFormatter::formatObject($dt,
+                    [IntlDateFormatter::FULL, IntlDateFormatter::MEDIUM], $locale);
             case "\6": // date only
-                return IntlDateFormatter::formatObject(
-                    $dt,
-                    [IntlDateFormatter::FULL, IntlDateFormatter::NONE],
-                    $locale
-                );
-            case "\x09": // time only
-                return IntlDateFormatter::formatObject(
-                    $dt,
-                    [IntlDateFormatter::NONE, IntlDateFormatter::MEDIUM],
-                    $locale
-                );
-            case "\7": // AM/PM, upper-case
+                return IntlDateFormatter::formatObject($dt,
+                    [IntlDateFormatter::FULL, IntlDateFormatter::NONE], $locale);
+            case "\xb": // time only
+                return IntlDateFormatter::formatObject($dt,
+                    [IntlDateFormatter::NONE, IntlDateFormatter::MEDIUM], $locale);
+            case "\7": // AM/PM upper-case
             //no break
-            case "\x08": // am/pm, lower-case
+            case "\x8": // am/pm lower-case
                 $s = IntlDateFormatter::formatObject($dt, 'aa', $locale);
                 if ($mode == "\7") {
                     // force upper-case, any charset
@@ -258,7 +245,7 @@ function localedate_ise($st, $mode, $locale)
                 $n = date('n', $st);
                 $fmt = constant('MON_'.$n);
                 return nl_langinfo($fmt);
-            case "\x0b": // date and time
+            case "\xc": // date and time
                 $fmt = nl_langinfo(D_T_FMT);
                 $fmt = localedate_adjust($fmt);
                 return date($fmt);
@@ -266,13 +253,13 @@ function localedate_ise($st, $mode, $locale)
                 $fmt = nl_langinfo(D_FMT);
                 $fmt = localedate_adjust($fmt);
                 return date($fmt);
-            case "\x09": // time without date
+            case "\xb": // time without date
                 $fmt = nl_langinfo(T_FMT);
                 $fmt = localedate_adjust($fmt);
                 return date($fmt);
             case "\7": // AM/PM upper-case
             //no break
-            case "\x08": // am/pm lower-case
+            case "\x8": // am/pm lower-case
                 $s = date('A', $st);
                 $fmt = ($s == 'AM') ? AM_STR : PM_STR;
                 $s = nl_langinfo($fmt);
@@ -313,15 +300,15 @@ https://stackoverflow.com/questions/203090/how-do-i-get-current-date-time-on-the
                 return date('M', $st);
             case "\5": // normal month name c.f. C# DateTime 'MMMM'
                 return date('F', $st);
+            case "\xc": // date and time c.f. C# DateTime 'g' or 'G'
+                return date('j F Y h:i a', $st);
             case "\6": // date only c.f. C# DateTime 'd' or 'D'
                 return date('j F Y', $st);
-            case "\x09": // time only c.f. C# DateTime 't' or 'T'
+            case "\xb": // time only c.f. C# DateTime 't' or 'T'
                 return date('H:i:s', $st);
-            case "\x0b": // date and time c.f. C# DateTime 'g' or 'G'
-                return date('j F Y h:i a', $st);
-            case "\7": // AM/PM, upper-case c.f. C# DateTime 'tt'
+            case "\7": // AM/PM upper-case c.f. C# DateTime 'tt'
                 return date('A', $st);
-            case "\x08": // am/pm, lower-case c.f. C# DateTime 'tt'
+            case "\x8": // am/pm lower-case c.f. C# DateTime 'tt'
                 return date('a', $st);
             default:
                 return 'Unknown Format';
