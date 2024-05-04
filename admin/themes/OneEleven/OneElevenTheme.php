@@ -243,6 +243,13 @@ class OneElevenTheme extends CmsAdminThemeBase {
 		if (!$tmp) { $tmp = 'en'; } // default global english
 		$lang = CmsNlsOperations::get_lang_attribute($tmp);
 		$smarty->assign('lang', $lang);
+		if (strncasecmp($lang, 'en', 2) == 0) {
+			$ldir = 'ltr';
+		} else {
+			$tmp = CmsNlsOperations::get_language_info($lang);
+			$ldir = (is_object($tmp) && $tmp->direction() == 'rtl') ? 'rtl' : 'ltr';
+		}
+		$smarty->assign('lang_dir', $ldir);
 		$smarty->display('login.tpl');
 		$smarty->template_dir = $otd;
 	}
