@@ -47,14 +47,14 @@ class CMSSmartyBase extends Smarty
      */
 //see smarty_security class   public $trusted_dir = array();
 
-    /**
+    /* *
      * Pass any child-constructor up the tree
      */
-    public function __construct()
+/*    public function __construct()
     {
         parent::__construct();
     }
-
+*/
     /**
      * wrapper for assign_by_ref
      *
