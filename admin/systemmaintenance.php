@@ -23,9 +23,7 @@ $CMS_ADMIN_PAGE = 1;
 //
 
 require_once("../lib/include.php");
-$urlext = '?' . CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY];
 check_login();
-
 
 $userid = get_userid();
 $access = check_permission($userid, "Modify Site Preferences");
@@ -120,9 +118,8 @@ if (isset($_POST["repairall"])) {
   $smarty->assign("active_database", "true");
 }
 
-
+$urlext = '?' . CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY];
 $smarty->assign("formurl", "systemmaintenance.php" . $urlext);
-
 
 $query = "CHECK TABLE " . MakeCommaList($tables);
 //echo $query;
