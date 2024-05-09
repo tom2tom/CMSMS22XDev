@@ -21,28 +21,23 @@ if( version_compare($oldversion,'2.0') < 0 ) {
   $this->DeleteTemplate();
   include_once __DIR__.'/method.install.php';
 }
-else {
-  if( version_compare($oldversion,'2.2.6') < 0 ) {
-    //redundant permission might still exist
-    $this->RemovePermission('MicroTiny View HTML Source');
-    //add extra profile-properties
-    $props = [MicroTiny::PROFILE_FRONTEND=>'Simplex',MicroTiny::PROFILE_ADMIN=>'One11'];
-    foreach( $props as $name=>$style ) {
-      $val = $this->GetPreference('profile_'.$name);
-      $arr = unserialize($val);
-      if( empty($arr['dfltstylesheet']) ) {
-        $arr['dfltstylesheet'] = -1;
-      }
-      if( $arr['dfltstylesheet'] == -1 ) {
-        $arr['styler'] == $style;
-      }
-      else {
-        $arr['styler'] == $style;
-      }
-      $arr['theme'] == $style;
-      ksort($arr,SORT_STRING);
-      $this->SetPreference('profile_'.$name,serialize($arr));
+elseif( version_compare($oldversion,'2.2.6') < 0 ) {
+  //redundant permission might still exist
+  $this->RemovePermission('MicroTiny View HTML Source');
+  //add extra profile-properties
+  $props = [MicroTiny::PROFILE_FRONTEND=>'Simplex',MicroTiny::PROFILE_ADMIN=>'One11'];
+  foreach( $props as $name=>$style ) {
+    $val = $this->GetPreference('profile_'.$name);
+    $arr = unserialize($val);
+    if( empty($arr['dfltstylesheet']) ) {
+      $arr['dfltstylesheet'] = -1;
     }
+    if( $arr['dfltstylesheet'] == -1 || empty($arr['styler']) ) { // should always apply
+      $arr['styler'] = $style;
+    }
+    $arr['theme'] = $style;
+    ksort($arr,SORT_STRING);
+    $this->SetPreference('profile_'.$name,serialize($arr));
   }
 }
 /*
