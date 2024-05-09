@@ -116,7 +116,7 @@ f3d55e5405c539738750ac4fcd30543f --::-- /modules/MicroTiny/images/icon.png
 1b5f1aafa8ee2949c6c0c69ad506b37f --::-- /modules/MicroTiny/templates/tinymce_config.js
 b2f7c675b0619a4c46a75575ba3c53aa --::-- /modules/MicroTiny/action.admin_editprofile.php
 1c0428136716b45d459516b952d1f2e3 --::-- /modules/MicroTiny/function.admin_example.php
-41759eb5d0aad74df934ac6aff5ccb8b --::-- /modules/MicroTiny/method.upgrade.php
+d000188a5493cc8fe7cf87a1cdcd2717 --::-- /modules/MicroTiny/method.upgrade.php
 3c9f0d70f2466faaa2bdc1066cf5893c --::-- /modules/MicroTiny/action.savesettings.php
 951569ab92b9b68e9631c02324f4bdf1 --::-- /modules/MicroTiny/lib/langs.manifest
 0573620cfe1f98b22d611ca47454fbfc --::-- /modules/MicroTiny/lib/class.microtiny_utils.php
@@ -1220,7 +1220,7 @@ ad31ebeefd69a0d120f4abf517176964 --::-- /admin/lang/ext/is_IS.php
 688c86120f5efe70afffdfa618cc3c4f --::-- /admin/lang/ext/fa_IR.php
 d29bd8d450ae73fc2db73bff082ec379 --::-- /admin/lang/en_US.php
 56580f83556c69f73f4317b81fed6630 --::-- /admin/adminlog.php
-b218ebf5a3af119dac90d32ce3d298ad --::-- /admin/login.php
+238c7688cea065ffac33cc7384632df4 --::-- /admin/login.php
 44d1ba4540511fd45c9294d66fa25379 --::-- /admin/siteprefs.php
 ef5d44564b8ab3924ace295360b244a8 --::-- /admin/edituser.php
 46a78e8ac4e27e7649f3d74c9e37e69b --::-- /admin/deletebookmark.php
