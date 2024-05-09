@@ -220,7 +220,8 @@ else if( isset($_POST['loginsubmit']) ) {
             $url_ob->set_queryvar(CMS_SECURE_PARAM_NAME,$_SESSION[CMS_USER_KEY]);
             $url = (string) $url_ob;
             redirect($url);
-        } else {
+        }
+        else {
             // find the users homepage, if any, and redirect there.
             $homepage = cms_userprefs::get_for_user($oneuser->id,'homepage');
             if( !$homepage ) $homepage = $config['admin_url'];
@@ -235,10 +236,18 @@ else if( isset($_POST['loginsubmit']) ) {
     catch( Exception $e ) {
         $error = $e->GetMessage();
         debug_buffer("Login failed. Error was: " . $error);
-        HookManager::do_hook('Core::LoginFailed', [ 'user'=>$username ]);
+        if( $username ) {
+            HookManager::do_hook('Core::LoginFailed', [ 'user'=>$username ]);
+        }
         // put mention into the admin log
         $ip_login_failed = cms_utils::get_real_ip();
-        audit($oneuser->id, 'Admin user', "Login failed (IP: $ip_login_failed)");
+        if( $oneuser ) {
+            $id = $oneuser->id;
+        }
+        else {
+            $id = '';
+        }
+        audit($id, 'Admin user', "Login failed (IP: $ip_login_failed)");
     }
 }
 
