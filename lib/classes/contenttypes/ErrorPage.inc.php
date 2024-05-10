@@ -70,7 +70,7 @@ class ErrorPage extends Content
     public function WantsChildren() { return false; }
     public function IsDefaultPossible() { return false; }
     public function IsSystemPage() { return true; }
-    public function Selectable() { return false; }
+    public function Navigable() { return false; }
 
     public function FillParams($params,$editing = false)
     {

@@ -45,10 +45,11 @@ class SectionHeader extends ContentBase
 	}
 
 	public function HasUsableLink() { return false; }
-	public function RequiresAlias() { return TRUE; }
-	public function HasSearchableContent() { return FALSE; }
+	public function RequiresAlias() { return true; }
+	public function HasSearchableContent() { return false; }
 	public function GetURL($rewrite = true) { return '#'; }
-	public function IsViewable() { return FALSE; }
+	public function IsViewable() { return false; }
+	public function Navigable() { return false; }
 
 	public function TabNames()
 	{

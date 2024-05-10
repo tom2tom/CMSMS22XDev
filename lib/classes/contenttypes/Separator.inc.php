@@ -53,6 +53,7 @@ class Separator extends ContentBase
 	public function WantsChildren() { return false; }
 	public function RequiresAlias() { return false; }
 	public function HasSearchableContent() { return false; }
+	public function Navigable() { return false; }
 
 	public function TabNames()
 	{
