@@ -254,12 +254,13 @@ abstract class ContentBase
 	protected $mShowInMenu = false;
 
 	/**
-	 * Can it be selected?
+	 * Can it be navigated to?
+	 * @see also ContentBase::HasUsableLink()
 	 * Bool
 	 *
 	 * @internal
 	 */
-	protected $mSelectable = true;
+	protected $mNavigable = true;
 
 	/**
 	 * Is this content item the site-default?
@@ -924,10 +925,10 @@ abstract class ContentBase
 	 * @abstract
 	 * @return bool
 	 */
-	public function Selectable()
+	public function Navigable()
 	{
 		//TODO other relevant props e.g. $mPermitted, ...
-		return $this->mSelectable;
+		return $this->mNavigable;
 	}
 
 	/**
@@ -935,9 +936,9 @@ abstract class ContentBase
 	 * @since 2.2.19#2
 	 * @param bool $select
 	 */
-	public function SetSelectable($select)
+	public function SetNavigable($nav)
 	{
-		$this->mSelectable = (bool) $select;
+		$this->mNavigable = (bool) $nav;
 	}
 
 	/**
@@ -1324,6 +1325,7 @@ abstract class ContentBase
 	 * Across the core, all content-types with a false value of this property
 	 * are system-pages - Separator, ErrorPage etc.
 	 * @see ContentBase::IsSystemPage()
+	 * @see also ContentBase::Navigable()
 	 *
 	 * @abstract
 	 * @return bool Default true
@@ -1430,7 +1432,6 @@ abstract class ContentBase
 		$this->mDefaultContent	= ($data["default_content"] == 1);
 		$this->mActive			= ($data["active"] == 1);
 		$this->mShowInMenu		= ($data["show_in_menu"] == 1);
-		$this->mSelectable		= !empty($data['selectable']);
 		$this->mCachable		= ($data["cachable"] == 1);
 		$this->mSecure			= !empty($data['secure']);
 		$this->mURL				= $data["page_url"];
@@ -1488,7 +1489,7 @@ abstract class ContentBase
 		$out['last_modified_by'] = $this->mLastModifiedBy;
 		$out['create_date'] = $this->mCreationDate;
 		$out['modified_date'] = $this->mModifiedDate;
-		$out['selectable'] = ($this->Selectable())?1:0;
+		$out['navigable'] = ($this->Navigable())?1:0;
 		$out['wants_children'] = ($this->WantsChildren())?1:0;
 		$out['has_usable_link'] = ($this->HasUsableLink())?1:0;
 		return $out;
@@ -2308,8 +2309,8 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		$arr = [];
 		foreach( $props as $one ) {
 			if( !isset($one->tab) || $one->tab == '' ) $one->tab = self::TAB_MAIN;
-			$key = $lbl = $one->tab;
-			if( endswith($key,'_tab__') ) $lbl = lang($key);
+			$key = $one->tab;
+			$lbl = ( endswith($key,'_tab__') ) ? lang($key) : $key;
 			$arr[$key] = $lbl;
 		}
 		return $arr;
@@ -2625,7 +2626,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 		case 'parent':
 			$contentops = ContentOperations::get_instance();
-			$tmp = $contentops->CreateHierarchyDropdown($this->mId, $this->mParentId, 'parent_id', false, true, false, true, true);
+			$tmp = $contentops->CreateHierarchyDropdown($this->mId, $this->mParentId, 'parent_id', false, true, false, true, true); //TODO why allow_all, hence inactive pages selection?
 			if( $tmp ) {
 				$help = cms_admin_utils::get_help_tag('core','help_content_parent',lang('help_title_content_parent'));
 				return array('<label for="parent_id">*'.lang('parent').':</label>&nbsp;'.$help,$tmp);
