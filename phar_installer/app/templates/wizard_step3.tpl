@@ -7,7 +7,6 @@
 {/block}
 
 {block name='contents'}
-
 {if $tests_failed}
   {if !$can_continue}
     <div class="message red">{tr('step3_failed')}</div>
@@ -15,7 +14,6 @@
     <div class="message yellow">{tr('sometests_failed')}</div>
   {/if}
 {/if}
-
 {if $tests_failed || $verbose}
   <table class="table zebra-table bordered-table installer-test-information">
     <thead class="tbhead">
@@ -44,7 +42,6 @@
 {else}
   <div class="message green">{tr('step3_passed')}</div>
 {/if}
-
 {if $tests_failed}
 <table class="table bordered-table installer-test-legend small-font">
     <caption>
@@ -81,7 +78,6 @@
 {/if}
 {if $can_continue} <a href="{$next_url}" class="action-button positive" title="{tr('next')}">{tr('next')} &rarr;</a>{/if}
 </div>
-
 {/block}
 
 {if $tests_failed}
