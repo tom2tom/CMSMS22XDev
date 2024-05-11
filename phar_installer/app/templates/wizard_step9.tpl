@@ -5,8 +5,8 @@
     {$subtitle = tr('title_step9')}
     {$current_step = '9'}
 {/block}
-{block name='contents'}
 
+{block name='contents'}
 <div id="inner" style="overflow: auto; min-height: 10em; max-height: 35em;"></div>
 <div id="bottom_nav">{* bottom nav is needed here *}</div>
 {/block}

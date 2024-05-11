@@ -7,23 +7,21 @@
 {/block}
 
 {block name='contents'}
-
 <div class="installer-form">
 {wizard_form_start}
-    {if $action == 'install'}
-        <h3>{tr('prompt_sitename')}</h3>
-        <p>{tr('info_sitename')}</p>
+{if $action == 'install'}
+    <h3>{tr('prompt_sitename')}</h3>
+    <p>{tr('info_sitename')}</p>
 
-        <div class="row form-row">
-            <div class="twelve-col">
-                <input class="form-field required full-width" type="text" name="sitename" value="{$siteinfo.sitename}" placeholder="{tr('ph_sitename')}" required>
-                <div class="corner red">
-                    <i class="icon-asterisk"></i>
-                </div>
+    <div class="row form-row">
+        <div class="twelve-col">
+            <input class="form-field required full-width" type="text" name="sitename" value="{$siteinfo.sitename}" placeholder="{tr('ph_sitename')}" required>
+            <div class="corner red">
+                <i class="icon-asterisk"></i>
             </div>
         </div>
-    {/if}
-
+    </div>
+{/if}
 {if !empty($language_list)}
     <h3>{tr('prompt_addlanguages')}</h3>
     <p>{tr('info_addlanguages')}</p>
@@ -34,12 +32,9 @@
         </select>
     </div>
 {/if}
-
     <div id="bottom_nav">
     <input class="action-button positive" type="submit" name="next" value="{tr('next')} &rarr;">
     </div>
-
 {wizard_form_end}
 </div>
-
 {/block}

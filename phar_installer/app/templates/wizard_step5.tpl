@@ -8,7 +8,6 @@
 {/block}
 
 {block name='contents'}
-
 <div class="installer-form">
 {wizard_form_start}
     <p>{tr('info_adminaccount')}</p>
@@ -92,5 +91,4 @@
 
 {wizard_form_end}
 </div>
-
 {/block}

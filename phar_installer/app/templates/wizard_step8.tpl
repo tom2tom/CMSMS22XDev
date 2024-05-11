@@ -7,12 +7,10 @@
 {/block}
 
 {block name='contents'}
-
     <div id="inner" style="overflow: auto; min-height: 10em; max-height: 35em;"></div>
     <div id="bottom_nav">
-    {if !empty($next_url)}
+{if !empty($next_url)}
         <a class="action-button positive" href="{$next_url}" title="{tr('next')}">{tr('next')} &rarr;</a>
-    {/if}
+{/if}
     </div>
-
 {/block}
