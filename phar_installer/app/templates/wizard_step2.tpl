@@ -5,20 +5,8 @@
     {$title = tr('title_step2')}
     {$current_step = '2'}
 {/block}
+
 {block name='contents'}
-
-<script>
-$(function() {
-  $('#upgrade_info .link').css('cursor','pointer').on('click',function() {
-    var e = '#'+$(this).data('content');
-    $(e).dialog({
-      minWidth: 500,
-      modal: 'true'
-    });
-  });
-});
-</script>
-
 <div class="installer-form">
   {wizard_form_start}
   {$label=tr('install')}
@@ -129,4 +117,18 @@ $(function() {
     {/foreach}
   {/if}
 </div>
+{/block}
+
+{block name='javascript' append}
+<script>
+$(function() {
+  $('#upgrade_info .link').css('cursor','pointer').on('click',function() {
+    var e = '#'+$(this).data('content');
+    $(e).dialog({
+      minWidth: 500,
+      modal: 'true'
+    });
+  });
+});
+</script>
 {/block}
