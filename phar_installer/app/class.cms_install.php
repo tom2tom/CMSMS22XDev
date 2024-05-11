@@ -425,6 +425,7 @@ class cms_install extends app
     {
         if( $this->_custom_tmpdir ) {
             utils::rrmdir($this->_custom_tmpdir);
+            rmdir($this->_custom_tmpdir); //the parent too
         }
     }
 } // end of class
