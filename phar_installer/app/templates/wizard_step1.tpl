@@ -8,16 +8,6 @@
 {/block}
 
 {block name='contents'}
-<script>
-function redirect_langchange() {
-  var e = document.getElementById('lang_selector');
-  var v = e.options[e.selectedIndex].value;
-  var url = window.location.origin + window.location.pathname + '?curlang=' + v;
-  window.location.href = url;
-  return false;
-}
-</script>
-
 <p>{tr('welcome_message')}</p>
 
 <div class="installer-form">
@@ -66,6 +56,15 @@ function redirect_langchange() {
 
 {block name='javascript' append}
 <script>
- document.getElementById('lang_selector').addEventListener('change',redirect_langchange,true);
+ function redirect_langchange() {
+  var e = document.getElementById('lang_selector');
+  var v = e.options[e.selectedIndex].value;
+  var url = window.location.origin + window.location.pathname + '?curlang=' + v;
+  window.location.href = url;
+  return false;
+ }
+ $(function() {
+  document.getElementById('lang_selector').addEventListener('change',redirect_langchange,true);
+ });
 </script>
 {/block}
