@@ -292,8 +292,8 @@ if ($allcontent) {
   }
   $allcontent->Close();
 }
-$smarty->assign_by_ref("pagesmissingalias", $withoutalias);
-$smarty->assign_by_ref("pageswithinvalidtype", $invalidtypes);
+$smarty->assignByRef("pagesmissingalias", $withoutalias);
+$smarty->assignByRef("pageswithinvalidtype", $invalidtypes);
 
 $smarty->assign("pagecount", count($pages));
 $smarty->assign("invalidtypescount", count($invalidtypes));
