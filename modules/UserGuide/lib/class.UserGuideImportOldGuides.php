@@ -10,7 +10,7 @@ use cms_utils;
 use CmsApp;
 use CmsApp;
 use Exception;
-use UserGuide; //module class in global space
+//use UserGuide; //module class in global space
 use UserGuide\UserGuideUtils; //not strictly needed here
 use const CMS_DB_PREFIX;
 use function cleanValue;
@@ -20,7 +20,7 @@ class UserGuideImportOldGuides
     private $tomod;
     private $frommod;
 
-    public function __construct(UserGuide $mod = null)
+    public function __construct($mod = null) // OR ?UserGuide $mod for 8.4
     {
         $this->frommod = cms_utils::get_module('UsersGuide');
         if (!$this->frommod) {

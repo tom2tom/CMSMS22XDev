@@ -12,7 +12,7 @@ use CmsApp;
 use CmsFileSystemException;
 use Exception;
 use SimpleXMLElement;
-use UserGuide; // module class in global space
+//use UserGuide; // module class in global space
 use UserGuide\UserGuideUtils; // not really needed here
 use const CMS_DB_PREFIX;
 use function audit;
@@ -42,7 +42,7 @@ class UserGuideImportGuide2
      '\.js$',
     ];
 
-    public function __construct(UserGuide $mod = null)
+    public function __construct($mod = null) // OR ?UserGuide $mod for 8.4
     {
         $this->frommod = cms_utils::get_module('UserGuide2'); // might be N/A
         if ($mod) {
