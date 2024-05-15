@@ -797,8 +797,8 @@ class CmsLayoutTemplateType
     {
         if( !$this->_assistant ) {
             $classnames = [];
-            $classnames[] = '\\CMSMS\\internal\\'.$this->get_originator().$this->get_name().'_Type_Assistant';
-            $classnames[] = '\\CMSMS\\Layout\\'.$this->get_originator().$this->get_name().'_Type_Assistant';
+            $classnames[] = '\CMSMS\internal\\'.$this->get_originator().$this->get_name().'_Type_Assistant';
+            $classnames[] = '\CMSMS\Layout\\'.$this->get_originator().$this->get_name().'_Type_Assistant';
             $classnames[] = $this->get_originator().'_'.$this->get_name().'_Type_Assistant';
             foreach( $classnames as $cn ) {
                 if( class_exists($cn) ) {
