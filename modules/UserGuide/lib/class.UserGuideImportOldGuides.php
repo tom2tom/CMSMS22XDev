@@ -20,7 +20,7 @@ class UserGuideImportOldGuides
     private $tomod;
     private $frommod;
 
-    public function __construct(UserGuide $mod = null)
+    public function __construct($mod = null) // OR ?UserGuide $mod for 8.4
     {
         $this->frommod = cms_utils::get_module('UsersGuide');
         if (!$this->frommod) {

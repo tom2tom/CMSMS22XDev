@@ -52,7 +52,7 @@ class UserGuideIO
      '\.js$',
     ];
 
-    public function __construct(UserGuide $mod = null)
+    public function __construct($mod = null) // OR ?UserGuide $mod for 8.4
     {
         if ($mod) {
             $this->mod = $mod;

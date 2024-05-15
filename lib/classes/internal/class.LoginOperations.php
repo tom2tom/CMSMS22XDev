@@ -70,7 +70,7 @@ final class LoginOperations
         return TRUE;
     }
 
-    public function save_authentication(\User $user,\User $effective_user = null) // no object
+    public function save_authentication(\User $user, $effective_user = null) // no object OR ?\User $effective_user for 8.4
     {
         // saves session/cookie data
         if( $user->id < 1 || empty($user->password) ) throw new \LogicException('User information invalid for '.__METHOD__);
@@ -143,7 +143,7 @@ final class LoginOperations
         // now we validate that the request has the user key in it somewhere.
         if( !isset($_SESSION[CMS_USER_KEY]) ) throw new \LogicException('Internal: User key not found in session.');
 
-	// we check GET and POST vars specifically incase $_REQUEST also contains cookie values.
+        // we check GET and POST vars specifically incase $_REQUEST also contains cookie values.
         $v = '<no$!tgonna!$happen>';
         if( isset($_GET[CMS_SECURE_PARAM_NAME]) ) $v = $_GET[CMS_SECURE_PARAM_NAME];
         if( isset($_POST[CMS_SECURE_PARAM_NAME]) ) $v = $_POST[CMS_SECURE_PARAM_NAME];
@@ -194,7 +194,7 @@ final class LoginOperations
         return $this->get_loggedin_username();
     }
 
-    public function set_effective_user(\User $e_user = null) // no object
+    public function set_effective_user($e_user = null) // no object OR ?\User $e_user for 8.4
     {
         $li_user = $this->get_loggedin_user();
         if( $e_user && $e_user->id == $li_user->id ) return '';
