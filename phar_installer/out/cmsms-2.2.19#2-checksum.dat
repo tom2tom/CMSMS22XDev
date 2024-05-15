@@ -265,7 +265,7 @@ e334df74c4028a35da4cba87c8eb9add --::-- /modules/CMSContentManager/action.admin_
 760a9293de860d67f297e44abfab448e --::-- /modules/CMSContentManager/action.admin_general_tab.php
 c00fcb628b9cf6f574b8a080bf996e3f --::-- /modules/CMSContentManager/changelog.inc
 cd140b9f73883ff2b9919708606bffce --::-- /modules/CMSContentManager/action.admin_multicontent.php
-c192fdf8438f148d022042b0239c083b --::-- /modules/CMSContentManager/lib/class.ContentListBuilder.php
+827467e4f7a5f45b69d7688c37da4113 --::-- /modules/CMSContentManager/lib/class.ContentListBuilder.php
 5bd56075ea0b2ec23be12b2c6c9432ed --::-- /modules/CMSContentManager/lib/class.ContentAssistantFactory.php
 6cdd47c9d7883f1c72c71eefd66c81ef --::-- /modules/CMSContentManager/lib/class.EditContentAssistant.php
 adcefd1ca9025f44088b6b0f6c06f5b9 --::-- /modules/CMSContentManager/lib/class.CmsContentManagerUtils.php
@@ -300,10 +300,10 @@ d0ac976120bdfea178c669277385e7fb --::-- /modules/UserGuide/lang/ext/fr_FR.php
 1264d3257e7eb42814961093eabfdb61 --::-- /modules/UserGuide/action.edit_guide.php
 c705eed83637c5c4a2293aa5625d8865 --::-- /modules/UserGuide/action.toggle_active_guide.php
 816bb00cf7c0c56ee8174854f9cdf918 --::-- /modules/UserGuide/action.delete_guide.php
-668220583459c7957a90a9d642a56818 --::-- /modules/UserGuide/lib/class.UserGuideImportOldGuides.php
-c98b8de224d4f3ef6c21834d1f4f2b0a --::-- /modules/UserGuide/lib/class.UserGuideImportGuide2.php
+35e3c71d2cc82b68cdce6c3e4ee36d9a --::-- /modules/UserGuide/lib/class.UserGuideImportOldGuides.php
+b089929d2b9e110a2b7eba6ba921dc44 --::-- /modules/UserGuide/lib/class.UserGuideImportGuide2.php
 b39a0a1bce2934b05b38451e0da8daf7 --::-- /modules/UserGuide/lib/class.UserGuideSearch_slave.php
-5279c00281c1fe785e4e3ab1334dea4a --::-- /modules/UserGuide/lib/class.UserGuideXML.php
+5e2da221aa6c0ea412169ee3c2ba3454 --::-- /modules/UserGuide/lib/class.UserGuideXML.php
 9f9b2068d2fe6ad342886599fe200ada --::-- /modules/UserGuide/lib/class.UserGuideQuery.php
 55445b77f83a2af70e42e119588d90d6 --::-- /modules/UserGuide/lib/css/UserGuide_admin.css
 e12fbe793d4c4758a6ee90e3ca40a962 --::-- /modules/UserGuide/lib/css/orig_list_guides.css
@@ -2080,7 +2080,7 @@ c8b0eaf9dcb4e4fb62893dafec92f762 --::-- /lib/classes/internal/interface.ContentA
 6eccf6362b0aa41708d026ccd9ada7b8 --::-- /lib/classes/internal/class.__CORE__generic_Type_Assistant.php
 a1fd073873698974ef704636c59af0ae --::-- /lib/classes/internal/class.global_cachable.php
 b24e95e1bdae0c6e3562584ed84485e1 --::-- /lib/classes/internal/class.CMSSmartySecurityPolicy.php
-f2b0823352dd895b5050cd5b01786ad0 --::-- /lib/classes/internal/class.CMS_Fixed_Resource_Custom.php
+302570bf6c2688048b416e3ff89f6aa4 --::-- /lib/classes/internal/class.CMS_Fixed_Resource_Custom.php
 499ffbf976951de0bd47115b16ede8d0 --::-- /lib/classes/internal/class.Smarty_Parser.php
 721b5e97a05af99a0a10145eec808f72 --::-- /lib/classes/internal/class.CmsModuleInfo.php
 a035148fe6c7876dcab57ab56c984a54 --::-- /lib/classes/internal/class.CMSSmartyBase.php
@@ -2091,7 +2091,7 @@ a2d05eba927ac3de44e4858ff5a7b706 --::-- /lib/classes/internal/class.CMSModuleDbT
 e77ab1903c8e026070e0f71ab42029bf --::-- /lib/classes/internal/class.CmsExtendedModuleInfo.php
 ad00ba80569347a6c103c12901a1cb68 --::-- /lib/classes/internal/class.cms_content_cache.php
 e6ec0abcb3fb3736b713e1a1eeadd3f9 --::-- /lib/classes/internal/class.CMS_Smarty_Template.php
-c7ca1927e3b675351c414783dc15b350 --::-- /lib/classes/internal/class.LoginOperations.php
+879e42a050059871529888ece5cd36f6 --::-- /lib/classes/internal/class.LoginOperations.php
 e18864e9e3f7f7b7171d677214f4d55b --::-- /lib/classes/internal/class.CMS_Content_Block.php
 977092135408de519c68f80cbb329135 --::-- /lib/classes/internal/class.global_cache.php
 c9428abd45a475dd31de98f1a275d79f --::-- /lib/classes/internal/class.Smarty_CMS.php
@@ -2119,7 +2119,7 @@ ea53675f26c86fe38c7c3618faa6a72c --::-- /lib/classes/class.CmsLayoutCollection.p
 6d808bbee7c4cbc51cd6cc468dab8612 --::-- /lib/classes/class.cms_mailer.php
 3c89d44ba64b845348aaa853f61dbdad --::-- /lib/classes/class.Events.php
 3ee8277d8d63608beae74a12622eb6d2 --::-- /lib/classes/class.CmsLayoutTemplate.php
-c5f4752b51c4b41c7c16b86aef919ccd --::-- /lib/classes/class.FileTypeHelper.php
+16f658657d7bf712069acd7d62274259 --::-- /lib/classes/class.FileTypeHelper.php
 1b138fc6b981e790a58a8b438ad635f3 --::-- /lib/classes/class.cms_url.php
 9a48d290ba91e2a6747e6eb1032954d0 --::-- /lib/classes/class.CmsNlsOperations.php
 b16671e53347d57eb6578b2418de46d0 --::-- /lib/classes/class.CmsCoreCapabilities.php
