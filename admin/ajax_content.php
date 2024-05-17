@@ -97,7 +97,7 @@ try {
                 $content = $child->getContent(FALSE);
                 if( !is_object($content) ) continue;
                 if( !$allowcurrent && $current == $content->Id() ) continue;
-                if( !($allow_all || $content->Active()) || !$content->Selectable() ) continue;
+                if( !($allow_all || $content->Active()) || !$content->Navigable() ) continue;
                 $rec = $content->ToData();
                 $rec['can_edit'] = $can_edit_any || $contentops->CheckPageAuthorship($ruid,$content->Id());
                 $val = ( $display == 'title' ) ? $rec['content_name'] : $rec['menu_text'];
