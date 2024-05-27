@@ -1037,7 +1037,7 @@ dcb9b9aa23d173e52ae9da53781bb85f --::-- /modules/DesignManager/templates/admin_s
 61f1339f88d7dc6ee7bcfc6f41d301e1 --::-- /modules/DesignManager/templates/admin_edit_css.tpl
 9b37ce3af603f1a973a8461a55e1486e --::-- /modules/DesignManager/templates/admin_defaultadmin_tpltooltip.tpl
 db30fae11286c6def792eec7ee4dac31 --::-- /modules/DesignManager/templates/admin_defaultadmin_tpltype_tooltip.tpl
-1dd747d0930ccd75fbd189d0e6563c55 --::-- /modules/DesignManager/templates/admin_edit_template.tpl
+2b9bfa291773ed2bd28bda0a0b73b48c --::-- /modules/DesignManager/templates/admin_edit_template.tpl
 5cfa781f49fd54b556a234133299e4e1 --::-- /modules/DesignManager/templates/admin_copy_css.tpl
 4160012deffccdeb4bcfed9fe15eda3c --::-- /modules/DesignManager/templates/admin_defaultadmin_csstooltip.tpl
 b2a5e8164efc4b5264f6c94c82162478 --::-- /modules/DesignManager/templates/admin_import_design2.tpl
