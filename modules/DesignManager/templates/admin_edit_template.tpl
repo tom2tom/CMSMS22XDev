@@ -144,13 +144,13 @@ $(function() {
         <div class="pageoverflow">
             <p class="pagetext"><label for="tpl_created">{$mod->Lang('prompt_created')}:</label>&nbsp;{cms_help key2='help_tpl_created' title=$mod->Lang('prompt_created')}</p>
             <p class="pageinput">
-                {$template->get_created()|cms_date_format}
+                {$template->get_created()|localedate_format:'%x %X'}
             </p>
         </div>
         <div class="pageoverflow" id="tpl_modified_cont">
             <p class="pagetext"><label for="tpl_modified">{$mod->Lang('prompt_modified')}:</label>&nbsp;{cms_help key2='help_tpl_modified' title=$mod->Lang('prompt_modified')}</p>
             <p class="pageinput">
-                {$template->get_modified()|cms_date_format}
+                {$template->get_modified()|localedate_format:'%x %X'}
             </p>
         </div>
     </div>{* column *}
