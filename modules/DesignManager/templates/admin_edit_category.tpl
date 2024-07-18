@@ -1,14 +1,11 @@
-{if $category->get_id() == '' }
-<h3>{$mod->Lang('create_category')}</h3>
+{$catid=$category->get_id()}{if $catid > 0}
+<h3>{$mod->Lang('edit_category')}: {$category->get_name()} ({$catid})</h3>
 {else}
-<h3>{$mod->Lang('edit_category')}: {$category->get_name()} ({$category->get_id()})</h3>
+<h3>{$mod->Lang('new_category')}</h3>
 {/if}
 
 {form_start}
-{if $category->get_id() != ''}
-  <input type="hidden" name="{$actionid}cat" value="{$category->get_id()}">
-{/if}
-<br>
+<input type="hidden" name="{$actionid}cat" value="{$catid}">
 <div class="pageoverflow">
   <p class="pageinput">
     <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
