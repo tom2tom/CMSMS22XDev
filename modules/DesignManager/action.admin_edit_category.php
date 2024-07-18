@@ -31,7 +31,7 @@ try {
   $category = null; // no object
   if( !isset($params['cat']) || $params['cat'] == 0 ) {
     $category = new CmsLayoutTemplateCategory();
-    if( empty($params['name']) ) $category->set_name($this->Lang('newname'));
+    // no name yet
   }
   else {
     $category = CmsLayoutTemplateCategory::load(trim($params['cat']));
