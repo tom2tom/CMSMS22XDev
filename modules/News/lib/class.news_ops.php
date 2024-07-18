@@ -532,7 +532,7 @@ public static function execSpecialize($val)
     if ($revert) {
         // preserve valid content like <p>
         $tmp = strtr($val, '<>', "\2\3"); //TODO any other char(s) need preservation?
-        $tmp2 = htmlentities($tmp, $flags, 'UTF-8', false);
+        $tmp2 = htmlentities($tmp, $flags, 'UTF-8', false); //TODO can convert extra content, ok?
         $val = strtr($tmp2, "\2\3", '<>');
     }
     return $val;
