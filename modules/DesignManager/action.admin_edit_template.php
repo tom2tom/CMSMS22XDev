@@ -37,7 +37,7 @@ if (isset($params['cancel'])) {
     $this->RedirectToAdminTab();
 }
 
-$apply = isset($params['apply']) ? 1 : 0;
+$apply = isset($params['apply']);
 $extraparms = array();
 $message = $this->Lang('msg_template_saved');
 $response = 'success';
