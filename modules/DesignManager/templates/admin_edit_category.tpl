@@ -15,7 +15,7 @@
 <div class="pageoverflow">
   <p class="pagetext"><label for="cat_name">*{$mod->Lang('prompt_name')}:</label>&nbsp;{cms_help key='help_category_name' title=$mod->Lang('prompt_name')}</p>
   <p class="pageinput">
-    <input type="text" id="cat_name" name="{$actionid}name" value="{$category->get_name()}" size="50" maxlength="50" placeholder="{$mod->Lang('create_category')}">
+    <input type="text" id="cat_name" name="{$actionid}name" value="{$category->get_name()}" size="50" maxlength="50" placeholder="{$mod->Lang('newname')}">
   </p>
 </div>
 <div class="pageoverflow">
