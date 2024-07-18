@@ -519,7 +519,7 @@ final class filemanager_utils
         imagefill($i_dest, 0, 0, $color);
         imagesavealpha($i_dest, TRUE);
         imagecopyresampled($i_dest, $i_src, 0, 0, 0, 0, $width, $height, imagesx($i_src), imagesy($i_src));
-
+        // c.f. typehelper image types 'jpg','jpeg','bmp','wbmp','gif','png','webp','svg'
         switch( $info['mime'] ) {
         case 'image/gif':
             $res = imagegif($i_dest,$dest);
@@ -528,7 +528,13 @@ final class filemanager_utils
             $res = imagepng($i_dest,$dest,9);
             break;
         case 'image/jpeg':
-            $res = imagejpeg($i_dest,$dest,100);
+            $res = imagejpeg($i_dest,$dest,80);
+            break;
+        case 'image/bmp':
+            $res = imagebmp($i_dest,$dest);
+            break;
+        case 'image/webp':
+            $res = imagewebp($i_dest,$dest,80);
             break;
         default:
             $res = FALSE;
