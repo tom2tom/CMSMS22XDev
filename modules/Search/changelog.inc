@@ -67,4 +67,9 @@
     <li>Added 'Manage Search' permission</li>
   </ul>
 </li>
+<li>1.54 - June 2024
+  <ul>
+    <li>Bug fix non-array count</li>
+  </ul>
+</li>
 </ul>
