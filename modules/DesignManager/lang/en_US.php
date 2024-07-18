@@ -350,8 +350,9 @@ $lang['msg_type_saved'] = 'Template Type Saved';
 
 #N
 $lang['name'] = 'Name';
-$lang['newname'] =  'New Name';
+$lang['newname'] = 'New Name';
 $lang['next'] = 'Next';
+$lang['new_category'] = 'New Category';
 $lang['new_stylesheet'] = 'New Stylesheet';
 $lang['new_template'] = 'New Template';
 $lang['no'] = 'No';
