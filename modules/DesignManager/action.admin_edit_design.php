@@ -23,8 +23,8 @@ if( !$this->CheckPermission('Manage Designs') ) return;
 
 $this->SetCurrentTab('designs');
 if( isset($params['cancel']) ) {
-  $this->SetMessage($this->Lang('msg_cancelled'));
-  $this->RedirectToAdminTab();
+    $this->SetMessage($this->Lang('msg_cancelled'));
+    $this->RedirectToAdminTab();
 }
 
 $design = null; // no object
@@ -37,54 +37,54 @@ try {
         $design = CmsLayoutCollection::load($params['design']);
     }
 
-	try {
-		if( isset($params['submit']) || isset($params['apply']) || (isset($params['ajax']) && $params['ajax'] == '1') ) {
-			$design->set_name($params['name']);
-			$design->set_description($params['description']);
-			$tpl_assoc = array();
-			if( isset($params['assoc_tpl']) ) $tpl_assoc = $params['assoc_tpl'];
-			$design->set_templates($tpl_assoc);
+    try {
+        if( isset($params['submit']) || isset($params['apply']) || (isset($params['ajax']) && $params['ajax'] == '1') ) {
+            $design->set_name($params['name']);
+            $design->set_description($params['description']);
+            $tpl_assoc = array();
+            if( isset($params['assoc_tpl']) ) $tpl_assoc = $params['assoc_tpl'];
+            $design->set_templates($tpl_assoc);
 
-			$css_assoc = array();
-			if( isset($params['assoc_css']) ) $css_assoc = $params['assoc_css'];
-			$design->set_stylesheets($css_assoc);
-			$design->save();
+            $css_assoc = array();
+            if( isset($params['assoc_css']) ) $css_assoc = $params['assoc_css'];
+            $design->set_stylesheets($css_assoc);
+            $design->save();
 
-			if( isset($params['submit']) ) {
-				$this->SetMessage($this->Lang('msg_design_saved'));
-				$this->RedirectToAdminTab();
-			}
-			else {
-				echo $this->ShowMessage($this->Lang('msg_design_saved'));
-			}
-		}
-	}
-	catch( Exception $e ) {
-		echo $this->ShowErrors($e->GetMessage());
-	}
+            if( isset($params['submit']) ) {
+                $this->SetMessage($this->Lang('msg_design_saved'));
+                $this->RedirectToAdminTab();
+            }
+            else {
+                echo $this->ShowMessage($this->Lang('msg_design_saved'));
+            }
+        }
+    }
+    catch( Exception $e ) {
+        echo $this->ShowErrors($e->GetMessage());
+    }
 
     $templates = CmsLayoutTemplate::get_editable_templates(get_userid());
-    if( count($templates) ) {
+    if( $templates && count($templates) > 1 ) {
         usort($templates,function($a,$b) {
                 return strcasecmp($a->get_name(),$b->get_name());
             });
         $smarty->assign('all_templates',$templates);
     }
 
-	$stylesheets = CmsLayoutStylesheet::get_all();
-	if( is_array($stylesheets) && count($stylesheets) ) {
-        usort($stylesheets,function($a,$b){
+    $stylesheets = CmsLayoutStylesheet::get_all();
+    if( $stylesheets && count($stylesheets) > 1 ) {
+        usort($stylesheets,function($a,$b) {
                 return strcasecmp($a->get_name(),$b->get_name());
             });
-		$out = array();
-		$out2 = array();
-		for( $i = 0; $i < count($stylesheets); $i++ ) {
-			$out[$stylesheets[$i]->get_id()] = $stylesheets[$i]->get_name();
-			$out2[$stylesheets[$i]->get_id()] = $stylesheets[$i];
-		}
-		$smarty->assign('list_stylesheets',$out);
-		$smarty->assign('all_stylesheets',$out2);
-	}
+        $out = array();
+        $out2 = array();
+        for( $i = 0; $i < count($stylesheets); $i++ ) {
+            $out[$stylesheets[$i]->get_id()] = $stylesheets[$i]->get_name();
+            $out2[$stylesheets[$i]->get_id()] = $stylesheets[$i];
+        }
+        $smarty->assign('list_stylesheets',$out);
+        $smarty->assign('all_stylesheets',$out2);
+    }
 
     if( $design->get_id() > 0 ) {
         \CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('edit_design').': '.$design->get_name()." ({$design->get_id()})");
@@ -101,7 +101,6 @@ catch( CmsException $e ) {
   $this->SetError($e->GetMessage());
   $this->RedirectToAdminTab();
 }
-
 
 #
 # EOF
