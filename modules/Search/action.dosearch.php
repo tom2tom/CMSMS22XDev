@@ -74,9 +74,10 @@ $tpl_ob = $smarty->CreateTemplate($this->GetTemplateResource($template),null,nul
 
 if (isset($params['searchinput']) && $params['searchinput'] != '') {
     // Fix to prevent XSS like behaviour. See: http://www.securityfocus.com/archive/1/455417/30/0/threaded
+    //TODO robust sanitisation of user input c.f. news_ops::execSpecialize()
     $params['searchinput'] = cms_html_entity_decode($params['searchinput'],ENT_COMPAT,'UTF-8');
     $params['searchinput'] = strip_tags($params['searchinput']);
-    \CMSMS\HookManager::do_hook('Search::SearchInitiated', [ trim($params['searchinput'])] );
+    \CMSMS\HookManager::do_hook('Search::SearchInitiated', [trim($params['searchinput'])] );
 
     $searchstarttime = microtime(true);
 
@@ -87,7 +88,7 @@ if (isset($params['searchinput']) && $params['searchinput'] != '') {
 
     $searchphrase = '';
     if ($nb_words > 0) {
-        #$searchphrase = implode(' OR ', array_fill(0, $nb_words, 'word = ?'));
+        //$searchphrase = implode(' OR ', array_fill(0, $nb_words, 'word = ?'));
         $ary = array();
         foreach ($words as $word) {
             $word = trim($word);
@@ -100,33 +101,33 @@ if (isset($params['searchinput']) && $params['searchinput'] != '') {
     // Update the search words table
     if( $this->GetPreference('savephrases','false') == 'false' ) {
         foreach( $words as $word ) {
-            $q = 'SELECT count FROM '.CMS_DB_PREFIX.'module_search_words WHERE word = ?';
+            $q = 'SELECT `count` FROM '.CMS_DB_PREFIX.'module_search_words WHERE word = ?';
             $tmp = $db->GetOne($q,array($word));
             if( $tmp ) {
-                $q = 'UPDATE '.CMS_DB_PREFIX.'module_search_words SET count=count+1 WHERE word = ?';
+                $q = 'UPDATE '.CMS_DB_PREFIX.'module_search_words SET `count`=`count`+1 WHERE word = ?';
                 $db->Execute($q,array($word));
             }
             else {
-                $q = 'INSERT INTO '.CMS_DB_PREFIX.'module_search_words (word,count) VALUES (?,1)';
+                $q = 'INSERT INTO '.CMS_DB_PREFIX.'module_search_words (word,`count`) VALUES (?,1)';
                 $db->Execute($q,array($word));
             }
         }
     }
     else {
         $term = trim($params['searchinput']);
-        $q = 'SELECT count FROM '.CMS_DB_PREFIX.'module_search_words WHERE word = ?';
+        $q = 'SELECT `count` FROM '.CMS_DB_PREFIX.'module_search_words WHERE word = ?';
         $tmp = $db->GetOne($q,array($term));
         if( $tmp ) {
-            $q = 'UPDATE '.CMS_DB_PREFIX.'module_search_words SET count=count+1 WHERE word = ?';
+            $q = 'UPDATE '.CMS_DB_PREFIX.'module_search_words SET `count`=`count`+1 WHERE word = ?';
             $db->Execute($q,array($term));
         }
         else {
-            $q = 'INSERT INTO '.CMS_DB_PREFIX.'module_search_words (word,count) VALUES (?,1)';
+            $q = 'INSERT INTO '.CMS_DB_PREFIX.'module_search_words (word,`count`) VALUES (?,1)';
             $db->Execute($q,array($term));
         }
     }
 
-    $val = 100 * 100 * 100 * 100 * 25;
+//  $val = 100 * 100 * 100 * 100 * 25;
     $query = "SELECT DISTINCT i.module_name, i.content_id, i.extra_attr, COUNT(*) AS nb, SUM(idx.count) AS total_weight FROM ".CMS_DB_PREFIX."module_search_items i INNER JOIN ".CMS_DB_PREFIX."module_search_index idx ON idx.item_id = i.id WHERE (".$searchphrase.") AND (COALESCE(i.expires,NOW()) >= NOW())";
     if( isset( $params['modules'] ) ) {
         $modules = explode(",",$params['modules']);
@@ -138,7 +139,7 @@ if (isset($params['searchinput']) && $params['searchinput'] != '') {
     $query .= " GROUP BY i.module_name, i.content_id, i.extra_attr";
     if( !isset($params['use_or']) || $params['use_or'] == 0 ) {
         //This makes it an AND query
-        $query .= " HAVING count(*) >= $nb_words";
+        $query .= " HAVING COUNT(*) >= $nb_words";
     }
     $query .= " ORDER BY nb DESC, total_weight DESC";
 
@@ -179,7 +180,7 @@ if (isset($params['searchinput']) && $params['searchinput'] != '') {
                 //Start looking at modules...
                 $modulename = $result->fields['module_name'];
                 $moduleobj = $this->GetModuleInstance($modulename);
-                if ($moduleobj != FALSE) {
+                if ($moduleobj) {
                     if (method_exists($moduleobj, 'SearchResultWithParams' )) {
                         // search through the params, for all the passthru ones
                         // and get only the ones matching this module name
@@ -191,16 +192,16 @@ if (isset($params['searchinput']) && $params['searchinput'] != '') {
                                 if( $name != '' ) $parms[$name] = $value;
                             }
                         }
-                        $searchresult = $moduleobj->SearchResultWithParams( $thepageid, $result->fields['content_id'],
+                        $searchresult = $moduleobj->SearchResultWithParams($thepageid, $result->fields['content_id'],
                                                                             $result->fields['extra_attr'], $parms);
-                        if (count($searchresult) == 3) {
+                        if ($searchresult && count($searchresult) == 3) {
                             $col->AddItem($searchresult[0], $searchresult[2], $searchresult[1],
                                           $result->fields['total_weight'], $modulename, $result->fields['content_id']);
                         }
                     }
                     else if (method_exists($moduleobj, 'SearchResult')) {
-                        $searchresult = $moduleobj->SearchResult( $thepageid, $result->fields['content_id'], $result->fields['extra_attr']);
-                        if (count($searchresult) == 3) {
+                        $searchresult = $moduleobj->SearchResult($thepageid, $result->fields['content_id'], $result->fields['extra_attr']);
+                        if ($searchresult && count($searchresult) == 3) {
                             $col->AddItem($searchresult[0], $searchresult[2], $searchresult[1],
                                           $result->fields['total_weight'], $modulename, $result->fields['content_id']);
                         }
