@@ -90,7 +90,13 @@ class UploadHandler extends jquery_upload_handler
             $res = imagepng($i_dest,$complete_thumb,9);
             break;
         case 'image/jpeg':
-            $res = imagejpeg($i_dest,$complete_thumb,100);
+            $res = imagejpeg($i_dest,$complete_thumb,80);
+            break;
+        case 'image/bmp':
+            $res = imagebmp($i_dest,$dest);
+            break;
+        case 'image/webp':
+            $res = imagewebp($i_dest,$dest,80);
             break;
         }
 */

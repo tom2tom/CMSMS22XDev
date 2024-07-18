@@ -505,8 +505,14 @@ final class filemanager_utils
 
         if( !$force && (file_exists($dest) && !is_writable($dest) ) ) return FALSE;
 
-        $info = getimagesize($src);
-        if( !$info || !isset($info['mime']) ) return FALSE;
+        $mime = mime_content_type($dest);
+        if( !$mime ) return FALSE;
+
+        if( $mine == 'image/svg+xml' || $mine == 'image/svg' ) {
+//TODO support svg thumbnail FR #12737
+//            $dest = $src; //TODO replicate content as $dest
+//            return TRUE;
+        }
 
         $i_src = imagecreatefromstring(file_get_contents($src));
         $width = cms_siteprefs::get('thumbnail_width', 96);
@@ -519,8 +525,8 @@ final class filemanager_utils
         imagefill($i_dest, 0, 0, $color);
         imagesavealpha($i_dest, TRUE);
         imagecopyresampled($i_dest, $i_src, 0, 0, 0, 0, $width, $height, imagesx($i_src), imagesy($i_src));
-
-        switch( $info['mime'] ) {
+        // c.f. typehelper image types 'jpg','jpeg','bmp','wbmp','gif','png','webp','svg'
+        switch( $mime ) {
         case 'image/gif':
             $res = imagegif($i_dest,$dest);
             break;
@@ -528,7 +534,13 @@ final class filemanager_utils
             $res = imagepng($i_dest,$dest,9);
             break;
         case 'image/jpeg':
-            $res = imagejpeg($i_dest,$dest,100);
+            $res = imagejpeg($i_dest,$dest,80);
+            break;
+        case 'image/bmp':
+            $res = imagebmp($i_dest,$dest);
+            break;
+        case 'image/webp':
+            $res = imagewebp($i_dest,$dest,80);
             break;
         default:
             $res = FALSE;
