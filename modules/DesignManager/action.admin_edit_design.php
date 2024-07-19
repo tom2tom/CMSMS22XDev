@@ -31,7 +31,7 @@ $design = null; // no object
 try {
     if( !isset($params['design']) || $params['design'] == '' ) {
         $design= new CmsLayoutCollection();
-        $design->set_name('New Design');
+// no name yet $design->set_name('New Design');
     }
     else {
         $design = CmsLayoutCollection::load($params['design']);
@@ -64,7 +64,7 @@ try {
     }
 
     $templates = CmsLayoutTemplate::get_editable_templates(get_userid());
-    if( $templates && count($templates) > 1 ) {
+    if( $templates ) {
         usort($templates,function($a,$b) {
                 return strcasecmp($a->get_name(),$b->get_name());
             });
@@ -72,7 +72,7 @@ try {
     }
 
     $stylesheets = CmsLayoutStylesheet::get_all();
-    if( $stylesheets && count($stylesheets) > 1 ) {
+    if( $stylesheets ) {
         usort($stylesheets,function($a,$b) {
                 return strcasecmp($a->get_name(),$b->get_name());
             });
@@ -87,9 +87,9 @@ try {
     }
 
     if( $design->get_id() > 0 ) {
-        \CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('edit_design').': '.$design->get_name()." ({$design->get_id()})");
+        CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('edit_design').': '.$design->get_name()." ({$design->get_id()})");
     } else {
-        \CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('create_design'));
+        CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('new_design'));
     }
 
     $smarty->assign('manage_stylesheets',$this->CheckPermission('Manage Stylesheets'));
@@ -98,8 +98,8 @@ try {
     echo $this->ProcessTemplate('admin_edit_design.tpl');
 }
 catch( CmsException $e ) {
-  $this->SetError($e->GetMessage());
-  $this->RedirectToAdminTab();
+    $this->SetError($e->GetMessage());
+    $this->RedirectToAdminTab();
 }
 
 #
