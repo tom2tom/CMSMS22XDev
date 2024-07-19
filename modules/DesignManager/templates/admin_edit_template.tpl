@@ -126,7 +126,7 @@ $(function() {
         <div class="pageoverflow">
             <p class="pagetext"><label for="tpl_name">*{$mod->Lang('prompt_name')}:</label>&nbsp;{cms_help key2=help_template_name title=$mod->Lang('prompt_name')}</p>
             <p class="pageinput">
-                <input id="tpl_name" type="text" name="{$actionid}name" size="50" maxlength="90" value="{$template->get_name()}"{if !$has_manage_right} readonly{/if} placeholder="{$mod->Lang('newname')}">
+                <input id="tpl_name" type="text" name="{$actionid}name" size="50" maxlength="90" value="{$template->get_name()}" {if $has_manage_right}placeholder="{$mod->Lang('newname')}"{else}readonly{/if}>
             </p>
         </div>
 {$usage_str=$template->get_usage_string()}
