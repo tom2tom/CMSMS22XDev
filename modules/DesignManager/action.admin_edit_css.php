@@ -141,7 +141,7 @@ try {
         CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('edit_stylesheet').': '.$css_ob->get_name()." ($ssid)");
     }
     else {
-        CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('create_stylesheet'));
+        CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('new_stylesheet'));
     }
 
     $smarty->assign('has_designs_right', $this->CheckPermission('Manage Designs'));

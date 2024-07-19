@@ -168,7 +168,7 @@ try {
     if( $tid > 0 ) {
         CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('edit_template').': '.$tpl_obj->get_name()." ($tid)");
     } else {
-        CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('create_template'));
+        CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('new_template'));
     }
 
     $smarty->assign('type_obj', $type_obj);
