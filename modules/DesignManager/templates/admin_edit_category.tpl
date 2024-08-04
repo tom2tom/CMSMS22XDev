@@ -1,14 +1,11 @@
-{if $category->get_id() == '' }
-<h3>{$mod->Lang('create_category')}</h3>
+{$catid=$category->get_id()}{if $catid > 0}
+<h3>{$mod->Lang('edit_category')}: {$category->get_name()} ({$catid})</h3>
 {else}
-<h3>{$mod->Lang('edit_category')}: {$category->get_name()} ({$category->get_id()})</h3>
+<h3>{$mod->Lang('new_category')}</h3>
 {/if}
 
 {form_start}
-{if $category->get_id() != ''}
-  <input type="hidden" name="{$actionid}cat" value="{$category->get_id()}">
-{/if}
-<br>
+<input type="hidden" name="{$actionid}cat" value="{$catid}">
 <div class="pageoverflow">
   <p class="pageinput">
     <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
@@ -18,7 +15,7 @@
 <div class="pageoverflow">
   <p class="pagetext"><label for="cat_name">*{$mod->Lang('prompt_name')}:</label>&nbsp;{cms_help key='help_category_name' title=$mod->Lang('prompt_name')}</p>
   <p class="pageinput">
-    <input type="text" id="cat_name" name="{$actionid}name" value="{$category->get_name()}" size="50" maxlength="50" placeholder="{$mod->Lang('create_category')}">
+    <input type="text" id="cat_name" name="{$actionid}name" value="{$category->get_name()}" size="50" maxlength="50" placeholder="{$mod->Lang('newname')}">
   </p>
 </div>
 <div class="pageoverflow">
