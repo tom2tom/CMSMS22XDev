@@ -70,7 +70,7 @@ final class LoginOperations
         return TRUE;
     }
 
-    public function save_authentication(\User $user, $effective_user = null) // no object OR ?\User $effective_user for 8.4
+    public function save_authentication(\User $user, $effective_user = null) // no object OR ?User $effective_user for 8.4
     {
         // saves session/cookie data
         if( $user->id < 1 || empty($user->password) ) throw new \LogicException('User information invalid for '.__METHOD__);

@@ -18,7 +18,7 @@
 # Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
 #
 #-------------------------------------------------------------------------
-if (!isset($gCms)) exit ;
+if (!isset($gCms)) exit;
 if (!$this->CheckPermission('Modify Templates')) {
     // no manage templates permission
     if (!$this->CheckPermission('Add Templates')) {
@@ -65,7 +65,7 @@ try {
     $type_obj = CmsLayoutTemplateType::load($tpl_obj->get_type_id());
 
     try {
-        if (isset($params['submit']) || isset($params['apply']) ) {
+        if (isset($params['submit']) || $apply ) {
             // do the magic.
             if (isset($params['description'])) $tpl_obj->set_description($params['description']);
             if (isset($params['type'])) $tpl_obj->set_type($params['type']);
@@ -135,8 +135,6 @@ try {
 
     $tid = $tpl_obj->get_id();
     if ($tid > 0 && !$apply && dm_utils::locking_enabled()) {
-        $smarty->assign('lock_timeout', $this->GetPreference('lock_timeout'));
-        $smarty->assign('lock_refresh', $this->GetPreference('lock_refresh'));
         try {
             $lock_id = CmsLockOperations::is_locked('template', $tid);
             if ($lock_id > 0) {
@@ -157,7 +155,7 @@ try {
 
     // handle the response message
     if ($apply) {
-        $this->GetJSONResponse($response, $message);
+        $this->GetJSONResponse($response, $message); //TODO any additional data for frontend
     } elseif ($response == 'error') {
         $this->ShowErrors($message);
     }
@@ -207,8 +205,11 @@ try {
     }
 
     $smarty->assign('tpl_id', $tid);
+    $smarty->assign('lock_timeout', $this->GetPreference('lock_timeout'));
+    $smarty->assign('lock_refresh', $this->GetPreference('lock_refresh'));
     $smarty->assign('has_manage_right', $this->CheckPermission('Modify Templates'));
     $smarty->assign('has_themes_right', $this->CheckPermission('Manage Designs'));
+
     if ($this->CheckPermission('Modify Templates') || $tpl_obj->get_owner_id() == $userid) {
 
         $userops = cmsms()->GetUserOperations();

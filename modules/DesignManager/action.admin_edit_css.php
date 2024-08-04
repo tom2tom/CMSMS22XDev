@@ -28,14 +28,14 @@ if( isset($params['cancel']) ) {
     $this->RedirectToAdminTab();
 }
 
-$apply = isset($params['apply']) ? 1 : 0;
+$apply = isset($params['apply']);
 $extraparms = array();
 $message = $this->Lang('msg_stylesheet_saved');
 $response = 'success';
 $userid = get_userid();
 $ssid = (int)get_parameter_value($params,'css');
 try {
-    if( $ssid ) {
+    if( $ssid > 0 ) {
         $css_ob = CmsLayoutStylesheet::load($ssid); // might throw
         $extraparms['css'] = $ssid;
     }
@@ -44,7 +44,7 @@ try {
     }
 
     try {
-        if( isset($params['submit']) || isset($params['apply']) && $response !== 'error' ) {
+        if( isset($params['submit']) || $apply && $response !== 'error' ) {
             if( isset($params['name']) ) $css_ob->set_name($params['name']);
             if( isset($params['description']) ) $css_ob->set_description($params['description']);
             if( isset($params['content']) ) $css_ob->set_content($params['content']);
@@ -92,8 +92,6 @@ try {
 
     $ssid = $css_ob->get_id();
     if( $ssid > 0 && !$apply && dm_utils::locking_enabled() ) {
-        $smarty->assign('lock_timeout', $this->GetPreference('lock_timeout'));
-        $smarty->assign('lock_refresh', $this->GetPreference('lock_refresh'));
         try {
             $lock_id = CmsLockOperations::is_locked('stylesheet', $ssid);
             if( $lock_id > 0 ) {
@@ -119,7 +117,7 @@ try {
 
     // handle the response message
     if( $apply ) {
-        $this->GetJSONResponse($response, $message);
+        $this->GetJSONResponse($response, $message); //TODO any additional data for frontend
     }
     elseif( $response == 'error' ) {
         $this->ShowErrors($message);
@@ -149,6 +147,8 @@ try {
     $smarty->assign('css', $css_ob);
     $smarty->assign('css_id', $ssid);
     $smarty->assign('userid', $userid);
+    $smarty->assign('lock_timeout', $this->GetPreference('lock_timeout'));
+    $smarty->assign('lock_refresh', $this->GetPreference('lock_refresh'));
 
     echo $this->ProcessTemplate('admin_edit_css.tpl');
 } catch( CmsException $e ) {
