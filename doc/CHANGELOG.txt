@@ -1,3 +1,11 @@
+Version 2.2.20#2 - Yellowknife
+-------------------------------
+ - FR #12700 Configurable tabs-order during content edititing
+ - BR #12701 Correct page-types selector setup
+ - BR #12727 Search module error
+Correct lockmanager init during DM new-item creation
+Also support UserGuide content I/O in tar.gz format
+
 Version 2.2.19#2 - Inuvik
 -------------------------------
 Various places
