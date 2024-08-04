@@ -133,7 +133,7 @@ foreach( $xconfig as $k => $v ) {
             }
             else {
                 fatal('Specified file-set source ' .$file. ' is not accessible');
-            } 
+            }
         }
         elseif( startswith($v, 'svn://') ) {
             //TODO retrieve sources & assign folders in tmp place
@@ -299,6 +299,7 @@ function copy_source_files()
   // contents to be skipped but not in $excludes ?
   rrmdir($indir.'/tmp/cache');
   rrmdir($indir.'/tmp/templates_c');
+  rrmdir($indir.'/tmp/configs');
   $l = strlen($indir);
   @mkdir($tmpdir);
   echo "INFO: Copying source files from $indir to $tmpdir\n";
