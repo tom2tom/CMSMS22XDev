@@ -17,7 +17,7 @@
     <div class="pageoverflow">
       <p class="pagetext"><label for="design_name">{$mod->Lang('prompt_name')}</label>:&nbsp;{cms_help key2='help_design_name' title=$mod->Lang('prompt_name')}</p>
       <p class="pageinput">
-        <input type="text" id="design_name" name="{$actionid}name" value="{$design->get_name()}" size="50" maxlength="90">
+        <input type="text" id="design_name" name="{$actionid}name" value="{$design->get_name()}" size="50" maxlength="90" placeholder="{$mod->Lang('newname')}">
       </p>
     </div>
 {if $did > 0}
@@ -60,30 +60,30 @@
 <script>
 var __changed=0;
 function set_changed() {
-   __changed=1;
-   console.debug('design is changed');
+  __changed=1;
+  console.debug('design is changed');
 }
 function save_design() {
-   var form = $('#admin_edit_design');
-   var action = form.attr('action');
+  var form = $('#admin_edit_design');
+  var action = form.attr('action');
 
-   $('#ajax').val(1);
-   return $.ajax({
-      url: action,
-      data: form.serialize()
-   });
+  $('#ajax').val(1);
+  return $.ajax({
+    url: action,
+    data: form.serialize()
+  });
 }
 $(function() {
-    $('.sortable-list input[type="checkbox"]').hide();
-    $('ul.available-items').on('click', 'li', function () {
-        $(this).toggleClass('selected ui-state-hover');
-    });
-    $(document).on('click', '#submitme,#applyme', function() {
-        $('select.selall').attr('multiple','multiple');
-        $('select.selall option').prop('selected',true);
-    });
-    $(document).on('change',':input',function() {
-        set_changed();
-    });
+  $('.sortable-list input[type="checkbox"]').hide();
+  $('ul.available-items').on('click', 'li', function () {
+    $(this).toggleClass('selected ui-state-hover');
+  });
+  $(document).on('click', '#submitme,#applyme', function() {
+    $('select.selall').attr('multiple','multiple');
+    $('select.selall option').prop('selected',true);
+  });
+  $(document).on('change',':input',function() {
+    set_changed();
+  });
 });
 </script>
