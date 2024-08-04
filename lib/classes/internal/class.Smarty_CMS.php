@@ -28,6 +28,8 @@ class Smarty_CMS extends CMSSmartyBase
     public $assign; // TODO used by ancestor class(es)? plugin(s) ?
     public $id; // for cacheing actionid prefix
     public $params; // why ? assigned once, never read
+//    public $config_overwrite = false; // ditto refer to https://www.smarty.net/docs/en/variable.config.overwrite.tpl
+//    public $default_config_handler_func = null; //ditto refer to https://www.smarty.net/docs/en/variable.default.config.handler.func.tpl
     protected $_global_cache_id;
     private static $_instance;
 
@@ -51,7 +53,7 @@ class Smarty_CMS extends CMSSmartyBase
         if (CMS_DEBUG) $this->error_reporting = E_ALL;
 
         // set our own template class with some funky stuff in it
-        // note, can get rid of the CMS_Smarty_Template class and the Smarty_Parser classes.
+        // note, can get rid of the CMS_Smarty_Template class and the deprecated Smarty_Parser classes.
         $this->template_class = 'CMS_Smarty_Template';
 
         // common resources.

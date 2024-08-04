@@ -514,8 +514,8 @@ final class CmsApp
 	 *
 	 * @internal
 	 * @since 1.11.3
-	 * @return Smarty_Parser handle to the Smarty object
-	 * @deprecated
+	 * @deprecated since 2.0 any usage exits immediately
+	 * @return void was Smarty_Parser handle to the Smarty object
 	 */
 	final public function get_template_parser()
 	{
