@@ -1,7 +1,7 @@
 # CMSMS22XDev
 Here be no dragons. Merely an effective, good-looking, bugfixed, extensively-tested version of [CMS Made Simple](https://www.cmsmadesimple.org) version 2.2.
 
-Suitable for PHP's 7.1 to 8.3.
+Suitable for PHP's 7.1 to 8.4.
 
 Formerly destined to become a CMSMS 2.2 micro-release.
 
