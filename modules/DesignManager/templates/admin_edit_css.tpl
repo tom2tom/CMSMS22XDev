@@ -1,21 +1,20 @@
 <script>
 $(function() {
-{$locker=$css_id > 0 && isset($lock_timeout) && $lock_timeout > 0}
-{if $locker}
+{$locker=$css_id > 0 && isset($lock_timeout) && $lock_timeout > 0}{if $locker}
     $('#form_editcss').dirtyForm({
         beforeUnload: function() {
-            $('#form_editcss').lockManager('unlock');
+            $('#form_editcss').lockManager('unlock').done(function() {
+                console.log('after dirtyform unlock');
+            });
         },
         unloadCancel: function() {
             $('#form_editcss').lockManager('relock');
         }
-    })
-    // initialize lock manager (oid == 0 does nothing)
-    .lockManager({
+    }).lockManager({ // initialize lock manager
         type: 'stylesheet',
-        oid: {$css_id},
+        oid: {$css_id}, // oid < 1 does nothing
         uid: {$userid},
-        lock_timeout: {$lock_timeout|default:0},
+        lock_timeout: {$lock_timeout},
         lock_refresh: {$lock_refresh|default:0},
         error_handler: function(err) {
             cms_alert('Lock error '+err.type+' // '+err.msg);
@@ -23,7 +22,7 @@ $(function() {
         lostlock_handler: function(err) {
             // lost the lock on this stylesheet, prevent the user saving
             // anything and display a message
-            console.debug('lost lock handler');
+{*          console.debug('lost lock handler');*}
             $('#submitbtn,#applybtn').prop('disabled',true);
 {*          $('#submitbtn,#applybtn').button({ 'disabled' : true });TODO extra .button needed?*}
             $('#cancelbtn').fadeOut().val('{lang("close")}').fadeIn();
@@ -32,6 +31,8 @@ $(function() {
             cms_alert("{$mod->Lang('msg_lostlock')|escape:'javascript'}");
         }
     });
+{else}
+    $('#form_editcss').dirtyForm();
 {/if}
     $(document).on('cmsms_textchange',function() {
         // editor textchange, set the form dirty
@@ -132,7 +133,7 @@ $(function() {
         <div class="pageoverflow">
             <p class="pagetext"><label for="css_name">*{$mod->Lang('prompt_name')}:</label>&nbsp;{cms_help key2=help_stylesheet_name title=$mod->Lang('prompt_name')}</p>
             <p class="pageinput">
-                <input id="css_name" type="text" name="{$actionid}name" size="50" maxlength="90" value="{$css->get_name()}" placeholder="{$mod->Lang('new_stylesheet')}">
+                <input id="css_name" type="text" name="{$actionid}name" size="50" maxlength="90" value="{$css->get_name()}" placeholder="{$mod->Lang('newname')}">
             </p>
         </div>
 {if $css_id > 0}

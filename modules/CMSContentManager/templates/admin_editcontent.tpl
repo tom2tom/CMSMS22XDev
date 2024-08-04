@@ -1,6 +1,6 @@
 <script>
 $(function() {
-{if ($content_id > 0) && isset($lock_timeout) && ($lock_timeout > 0)}{$locker=1}{else}{{$locker=0}}{/if}
+{$locker = $content_id > 0 && isset($lock_timeout) && $lock_timeout > 0}{if $locker}
   $('#Edit_Content').dirtyForm({
     beforeUnload: function(is_dirty) {
       $('#Edit_Content').lockManager('unlock').done(function() {
@@ -10,14 +10,11 @@ $(function() {
     unloadCancel: function() {
       $('#Edit_Content').lockManager('relock');
     }
-  }){if !$locker};
-{else}
-
-  .lockManager({
+  }).lockManager({ // initialize lock manager
     type: 'content',
-    oid: {$content_id|default:-1}, //oid < 1 does nothing
+    oid: {$content_id}, //new content, hence oid < 1, does nothing
     uid: {$userid},
-    lock_timeout: {$lock_timeout|default:0},
+    lock_timeout: {$lock_timeout},
     lock_refresh: {$lock_refresh|default:0},
     error_handler: function(err) {
       cms_alert('Locking error: ' + err.type + ' -- ' + err.msg);
@@ -32,6 +29,8 @@ $(function() {
       cms_alert('{$mod->Lang("msg_lostlock")|escape:"javascript"}');
     }
   });
+{else}
+  $('#Edit_Content').dirtyForm();
 {/if}
 {if $content_obj->HasPreview()}
   $('#_preview_').on('click', function() {
