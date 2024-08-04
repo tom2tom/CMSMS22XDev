@@ -219,6 +219,7 @@ $move_directory_files = function($srcdir,$destdir) {
 };
 */
 
+$create_private_dir('admin/configs'); // since 2.2.20
 // create the assets directory structure
 verbose_msg(ilang('install_createassets'));
 $create_private_dir('assets/admin_custom');
