@@ -65,6 +65,8 @@ $src_excludes = [
 // root-relative sub-paths of source dirs whose actual contents are NOT for installation with sources in general.
 // instead their real contents will be handled by the site-importer, and pending that, just an empty 'index.html'
 $folder_excludes = [
+'admin/configs',
+'assets/configs',
 'assets/templates',
 'assets/styles',
 'assets/themes',
@@ -133,7 +135,7 @@ foreach( $xconfig as $k => $v ) {
             }
             else {
                 fatal('Specified file-set source ' .$file. ' is not accessible');
-            } 
+            }
         }
         elseif( startswith($v, 'svn://') ) {
             //TODO retrieve sources & assign folders in tmp place
@@ -299,6 +301,7 @@ function copy_source_files()
   // contents to be skipped but not in $excludes ?
   rrmdir($indir.'/tmp/cache');
   rrmdir($indir.'/tmp/templates_c');
+  rrmdir($indir.'/tmp/configs');
   $l = strlen($indir);
   @mkdir($tmpdir);
   echo "INFO: Copying source files from $indir to $tmpdir\n";
