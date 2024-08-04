@@ -2,25 +2,25 @@
 <li>
 <p>Version: 1.0</p>
 <p>This module is a hacked and extended version of <em>Ted Kulp\'s</em> News module.  I simply added another field to the database, and some more code to make that field worl.... I also re-cleaned the code a bit, so it was a little easier to read, other than that, it\'s Ted\'s code.</p>
-</li> 
-<li> 
-<p>Version: 1.1</p> 
-<p>Added the ability to set an automatic expiry date from a pulldown, moved the category selection, and on the main page you now filter the entries you want to see.</p> 
-</li> 
-<li> 
-<p>Version: 1.2</p> 
-<p>Added summary, no_anchor and length parameters.  In summary mode links are made to the real articles, tags are stripped, and links are insreted to the news page and the specific news item.</p> 
-</li> 
-<li> 
-<p>Version: 1.3</p> 
-<p>Minor cosmetic changes</p> 
-</li> 
-<li> 
-<p>Version 1.5</p> 
-<p>Merged into the trunk News module</p> 
-</li> 
-<li> 
-<p>Version 1.6</p> 
+</li>
+<li>
+<p>Version: 1.1</p>
+<p>Added the ability to set an automatic expiry date from a pulldown, moved the category selection, and on the main page you now filter the entries you want to see.</p>
+</li>
+<li>
+<p>Version: 1.2</p>
+<p>Added summary, no_anchor and length parameters.  In summary mode links are made to the real articles, tags are stripped, and links are insreted to the news page and the specific news item.</p>
+</li>
+<li>
+<p>Version: 1.3</p>
+<p>Minor cosmetic changes</p>
+</li>
+<li>
+<p>Version 1.5</p>
+<p>Merged into the trunk News module</p>
+</li>
+<li>
+<p>Version 1.6</p>
 <p>Added pagination, and moved the add button to the top (calguy)</p>
 </li>
 <li>
@@ -29,16 +29,16 @@
 </li>
 <li>
 <p>Version 2.0.1</p>
-<p>Minor tweaks to the RSS output to allow it to work correctly on different browsers, and to support non alpha numeric characters in the description.</p> 
-</li> 
+<p>Minor tweaks to the RSS output to allow it to work correctly on different browsers, and to support non alpha numeric characters in the description.</p>
+</li>
 <li>
 <p>Version 2.0.2</p>
 <p>- Add a "start" parameter to specify a start offset for news items</p>
 <p>- The template tabs now have a "reset to default" button on them</p>
 <p>- Start menu item is now required, but end date is optional when useexpirydate is on, </p>
-<p>- Change the permissions model significantly, The "Modify News" permission is only for articles and categories. "Modify Templates" permission is required to edit the templates, and "Modify Site Preferences" is required to edit the options.</p> 
+<p>- Change the permissions model significantly, The "Modify News" permission is only for articles and categories. "Modify Templates" permission is required to edit the templates, and "Modify Site Preferences" is required to edit the options.</p>
 <p>- Put the rss feed titile into the lang entries</p>
-</li> 
+</li>
 <li>
 <p>Version 2.0.3</p>
 <p>- Added the ability to track the original author of an article</p>
