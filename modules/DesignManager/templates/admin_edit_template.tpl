@@ -1,7 +1,6 @@
 <script>
 $(function() {
-{$locker=$tpl_id > 0 && isset($lock_timeout) && $lock_timeout > 0}
-{if $locker}
+{$locker=$tpl_id > 0 && isset($lock_timeout) && $lock_timeout > 0}{if $locker}
     $('#form_edittemplate').dirtyForm({
         beforeUnload: function(is_dirty) {
             $('#form_edittemplate').lockManager('unlock');
@@ -9,13 +8,11 @@ $(function() {
         unloadCancel: function() {
             $('#form_edittemplate').lockManager('relock');
         }
-    })
-    // initialize lock manager (oid == 0 does nothing)
-    .lockManager({
+    }).lockManager({ // initialize lock manager
         type: 'template',
-        oid: {$tpl_id|default:0},
+        oid: {$tpl_id}, // oid < 1 does nothing
         uid: {$userid},
-        lock_timeout: {$lock_timeout|default:0},
+        lock_timeout: {$lock_timeout},
         lock_refresh: {$lock_refresh|default:0},
         error_handler: function(err) {
             cms_alert('Lock error '+err.type+' // '+err.msg);
@@ -23,6 +20,7 @@ $(function() {
         lostlock_handler: function(err) {
             // lost the lock on this template, prevent the user saving
             // anything and display a message
+{*          console.debug('lost lock handler');*}
             $('#submitbtn,#applybtn').prop('disabled',true);
 {*          $('#submitbtn,#applybtn').button({ 'disabled' : true });TODO extra .button needed?*}
             $('#cancelbtn').fadeOut().val('{lang("close")}').fadeIn();
@@ -31,6 +29,8 @@ $(function() {
             cms_alert("{$mod->Lang('msg_lostlock')|escape:'javascript'}");
         }
     });
+{else}
+    $('#form_edittemplate').dirtyForm();
 {/if}
     $(document).on('cmsms_textchange',function() {
         // editor textchange, set the form dirty
@@ -109,17 +109,17 @@ $(function() {
 {/if}
 
 {form_start id='form_edittemplate' extraparms=$extraparms}
-<div class="cf">{$tplid=$template->get_id()}
+<div class="cf">{*$tplid=$template->get_id()*}
     <div class="pageoverflow">
         <p class="pageinput">
             <input type="submit" id="submitbtn" name="{$actionid}submit" value="{$mod->Lang('submit')}"{$disable|strip}>
             <input type="submit" id="cancelbtn" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
-{if $tplid > 0}
+{if $tpl_id > 0}
             <input type="submit" id="applybtn" name="{$actionid}apply" data-ui-icon="ui-icon-disk" value="{$mod->Lang('apply')}"{$disable|strip}>
 {/if}
         </p>
     </div>
-{if $tplid > 0}
+{if $tpl_id > 0}
     <fieldset>
     <div class="grid_6" style="margin-left:0;margin-right:0">
 {/if}
@@ -138,7 +138,7 @@ $(function() {
             </p>
         </div>
     {/if}
-{if $tplid > 0}
+{if $tpl_id > 0}
     </div>{* column *}
     <div class="grid_6">
         <div class="pageoverflow">
@@ -270,7 +270,7 @@ $(function() {
             </p>
         </div>
         {/if}
-{if $tplid > 0}
+{if $tpl_id > 0}
 {if $template->has_content_file()}{$inid='importbtn'}{else}{$inid='exportbtn'}{/if}
         <div class="pageoverflow">
             <p class="pagetext"><label style="pointer-events:none" for="{$inid}">{$mod->Lang('prompt_filetemplate')}:</label>&nbsp;{cms_help key2=help_template_file title=$mod->Lang('prompt_filetemplate')}</p>
