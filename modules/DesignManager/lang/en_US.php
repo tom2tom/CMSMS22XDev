@@ -350,8 +350,10 @@ $lang['msg_type_saved'] = 'Template Type Saved';
 
 #N
 $lang['name'] = 'Name';
-$lang['newname'] =  'New Name';
+$lang['newname'] = 'New Name';
 $lang['next'] = 'Next';
+$lang['new_category'] = 'New Category';
+$lang['new_design'] = 'New Design';
 $lang['new_stylesheet'] = 'New Stylesheet';
 $lang['new_template'] = 'New Template';
 $lang['no'] = 'No';
@@ -393,7 +395,7 @@ $lang['prompt_has_dflt'] = 'Has Default Template Contents';
 $lang['prompt_help'] = 'Help';
 $lang['prompt_group'] = 'Group';
 $lang['prompt_id'] = 'Id';
-$lang['prompt_import'] = 'Create a new template of this type'; //confusing. an icon title-attibute, nothing to do with importing
+$lang['prompt_import'] = 'Create a new template of this type'; //confusing key: an icon title-attribute, nothing to do with importing
 $lang['prompt_import_xml_file'] = 'Upload a Design XML File';
 $lang['prompt_lastpage'] = 'Last page';
 $lang['prompt_limit'] = 'Limit';
