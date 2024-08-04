@@ -66,7 +66,7 @@ try {
   case 'check':
       if( !$type ) throw new CmsInvalidDataException(lang('missingparams'));
       if( $oid != 0 ) { // TODO if $oid == -1?
-          $out['lock_id'] = CmsLockOperations::is_locked($type,$oid);
+          $out['lock_id'] = CmsLockOperations::is_locked($type,$oid) ? 1 : 0;
       }
       else {
           $tmp = CmsLockOperations::get_locks($type);
