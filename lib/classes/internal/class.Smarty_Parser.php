@@ -19,10 +19,11 @@
 
 /**
  * Extends the Smarty class for content.
- *
+ * Should never be used
  * @package CMS
  * @author Tapio Löytty
  * @since 1.11.3
+ * @deprecated since 2.0 constructor exits immediately
  */
 class Smarty_Parser extends Smarty_CMS
 {
