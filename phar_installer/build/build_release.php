@@ -24,7 +24,7 @@ $systmpdir = sys_get_temp_dir().'/'.basename(__FILE__,'php').getmypid();
 //TODO some of '~\.md$~i', might be redundant
 //'~\.htaccess$~', skip if re-created by installer
 //'~web\.config$~', ditto
-$exclude_patterns = array('/\.svn\//','/^ext\//','/^build\/.*/','/.*~$/','/tmp\/.*/','/\.#[^\/]*$/','/^out\//','/^README*TXT/i'); //WAS ALSO ,'/\.\k.*/' but that looks like back reference
+$exclude_patterns = array('/\.svn\//','/\/ext\/\.php/','/\/build\/.*/','/.*~$/','/\/tmp\/.*/','/\.#[^\/]*$/','/\/out\/.*/','/^README*TXT/i'); //WAS ALSO ,'/\.\k.*/' but that looks like back reference
 $exclude_from_zip = array('*~','tmp/','.#*','*.bak'); //WAS ALSO '#*'
 //TODO this var redefined below
 //$src_excludes = array(
@@ -65,6 +65,8 @@ $src_excludes = [
 // root-relative sub-paths of source dirs whose actual contents are NOT for installation with sources in general.
 // instead their real contents will be handled by the site-importer, and pending that, just an empty 'index.html'
 $folder_excludes = [
+'admin/configs',
+'assets/configs',
 'assets/templates',
 'assets/styles',
 'assets/themes',
