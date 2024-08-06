@@ -70,6 +70,8 @@ $src_excludes = [
 
 // TODO completely ignore some places c.f. build_release script:
 $folder_excludes = [
+'admin/configs',
+'assets/configs',
 'assets/templates',
 'assets/styles',
 'assets/themes',
