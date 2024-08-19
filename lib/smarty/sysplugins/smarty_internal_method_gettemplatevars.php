@@ -25,16 +25,16 @@ class Smarty_Internal_Method_GetTemplateVars
      * @link https://www.smarty.net/docs/en/api.get.template.vars.tpl
      *
      * @param \Smarty_Internal_Data|\Smarty_Internal_Template|\Smarty $data
-     * @param string                                                  $varName       variable name or null
-     * @param \Smarty_Internal_Data|\Smarty_Internal_Template|\Smarty $_ptr          optional pointer to data object
-     * @param bool                                                    $searchParents include parent templates?
+     * @param string|null                                             $varName       variable name or null
+     * @param \Smarty_Internal_Data|\Smarty_Internal_Template|\Smarty|null $_ptr     optional pointer to data object
+     * @param bool                                                    $searchParents include parent templates? Default true
      *
      * @return mixed variable value or or array of variables
      */
     public function getTemplateVars(
         Smarty_Internal_Data $data,
-        $varName = null,
-        Smarty_Internal_Data $_ptr = null,
+        ?string $varName = null,
+        ?Smarty_Internal_Data $_ptr = null,
         $searchParents = true
     ) {
         if (isset($varName)) {
@@ -78,16 +78,16 @@ class Smarty_Internal_Method_GetTemplateVars
      *
      * @param \Smarty_Internal_Data|\Smarty_Internal_Template|\Smarty $data
      * @param string                                                  $varName       the name of the Smarty variable
-     * @param \Smarty_Internal_Data|\Smarty_Internal_Template|\Smarty $_ptr          optional pointer to data object
-     * @param bool                                                    $searchParents search also in parent data
-     * @param bool                                                    $errorEnable
+     * @param \Smarty_Internal_Data|\Smarty_Internal_Template|\Smarty|null $_ptr     optional pointer to data object
+     * @param bool                                                    $searchParents search also in parent data Default true
+     * @param bool                                                    $errorEnable Default true
      *
      * @return \Smarty_Variable
      */
     public function _getVariable(
         Smarty_Internal_Data $data,
         $varName,
-        Smarty_Internal_Data $_ptr = null,
+        ?Smarty_Internal_Data $_ptr = null,
         $searchParents = true,
         $errorEnable = true
     ) {

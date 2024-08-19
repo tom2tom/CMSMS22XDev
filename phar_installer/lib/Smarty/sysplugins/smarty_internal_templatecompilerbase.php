@@ -377,7 +377,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
      * Method to compile a Smarty template
      *
      * @param Smarty_Internal_Template                  $template template object to compile
-     * @param bool                                      $nocache  true is shall be compiled in nocache mode
+     * @param null|bool                                 $nocache  whether to be compiled in nocache mode
      * @param null|Smarty_Internal_TemplateCompilerBase $parent_compiler
      *
      * @return bool true if compiling succeeded, false if it failed
@@ -386,7 +386,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
     public function compileTemplate(
         Smarty_Internal_Template $template,
         $nocache = null,
-        Smarty_Internal_TemplateCompilerBase $parent_compiler = null
+        ?Smarty_Internal_TemplateCompilerBase $parent_compiler = null
     ) {
         // get code frame of compiled template
         $_compiled_code = $template->smarty->ext->_codeFrame->create(
@@ -408,8 +408,8 @@ abstract class Smarty_Internal_TemplateCompilerBase
      * Compile template source and run optional post filter
      *
      * @param \Smarty_Internal_Template             $template
-     * @param null|bool                             $nocache flag if template must be compiled in nocache mode
-     * @param \Smarty_Internal_TemplateCompilerBase $parent_compiler
+     * @param null|bool                             $nocache flag whether template must be compiled in nocache mode
+     * @param \Smarty_Internal_TemplateCompilerBase|null $parent_compiler
      *
      * @return string
      * @throws \Exception
@@ -417,7 +417,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
     public function compileTemplateSource(
         Smarty_Internal_Template $template,
         $nocache = null,
-        Smarty_Internal_TemplateCompilerBase $parent_compiler = null
+        ?Smarty_Internal_TemplateCompilerBase $parent_compiler = null
     ) {
         try {
             // save template object in compiler class
