@@ -2,9 +2,9 @@
 
 namespace cms_autoinstaller;
 
-use __appbase\utils;
-use cms_autoinstaller\utils as utils2;
-use cms_autoinstaller\wizard_step;
+use __appbase\utils as utils2;
+//use cms_autoinstaller\utils;
+//use cms_autoinstaller\wizard_step;
 use Exception;
 use function __appbase\get_app;
 use function __appbase\lang;
@@ -68,7 +68,7 @@ class wizard_step2 extends wizard_step
         else {
             throw new Exception(lang('error_internal',200));
         }
-        utils::redirect($this->get_wizard()->next_url());
+        utils2::redirect($this->get_wizard()->next_url());
     }
 
     protected function display()
@@ -90,12 +90,12 @@ class wizard_step2 extends wizard_step
             $wizard->set_data('version_info',$info);
             $smarty->assign('cmsms_info',$info);
             if( !isset($info['error_status']) || $info['error_status'] != 'same_ver' ) {
-                $versions = utils2::get_upgrade_versions();
+                $versions = utils::get_upgrade_versions();
                 $out = array();
                 foreach( $versions as $version ) {
                     if( version_compare($version,$info['version']) < 1 ) continue;
-                    $readme = utils2::get_upgrade_readme($version);
-                    $changelog = utils2::get_upgrade_changelog($version);
+                    $readme = utils::get_upgrade_readme($version);
+                    $changelog = utils::get_upgrade_changelog($version);
                     if( $readme || $changelog ) $out[$version] = array('readme'=>$readme,'changelog'=>$changelog);
                 }
                 $smarty->assign('upgrade_info',$out);
