@@ -15,7 +15,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: listgroups.php 10298 2015-11-01 23:00:32Z calguy1000 $
+#$Id$
 
 $CMS_ADMIN_PAGE=1;
 

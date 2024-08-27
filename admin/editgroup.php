@@ -15,7 +15,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: editgroup.php 11053 2017-02-04 04:20:03Z calguy1000 $
+#$Id$
 
 use CMSMS\HookManager;
 

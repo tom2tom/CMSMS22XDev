@@ -15,7 +15,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: index.php 12537 2020-09-04 15:21:47Z ruudvdvelden $
+#$Id$
 
 $orig_memory = (function_exists('memory_get_usage')?memory_get_usage():0);
 

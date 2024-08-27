@@ -15,7 +15,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: module.functions.php 12740 2022-04-20 17:21:25Z JoMorg $
+#$Id$
 
 /**
  * Extend smarty for moduleinterface.php
@@ -30,7 +30,7 @@
  */
 function cms_module_plugin($params,$smarty)
 {
-    if( get_class($smarty) == 'Smarty_Parser' ) return ''; // if we are in the parser, we don't process module calls.
+    if( get_class($smarty) == 'Smarty_Parser' ) return ''; // (deprecated Smarty_Parser does nothing, should be UNUSED) if we are in the parser, we don't process module calls.
 
     $mid_cache = cms_utils::get_app_data('mid_cache');
     if( empty($mid_cache) ) $mid_cache = array();

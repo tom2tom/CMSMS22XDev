@@ -15,7 +15,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: class.group.inc.php 12663 2021-12-13 02:30:03Z tomphantoo $
+#$Id$
 
 /**
  * Generic group class. This can be used for any logged in group or group related function.

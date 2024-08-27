@@ -15,7 +15,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: moduleinterface.php 12564 2020-09-27 15:43:03Z ruudvdvelden $
+#$Id$
 
 $CMS_ADMIN_PAGE=1;
 $CMS_MODULE_PAGE=1;

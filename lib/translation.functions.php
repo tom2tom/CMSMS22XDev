@@ -15,17 +15,12 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: translation.functions.php 12671 2021-12-13 03:05:01Z tomphantoo $
+#$Id$
 
 /**
  * Translation functions/classes
  * @package CMS
  * @license GPL
- */
-
-
-/**
- * @package CMS
  */
 
 /**

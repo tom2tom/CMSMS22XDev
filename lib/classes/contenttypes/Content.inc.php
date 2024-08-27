@@ -16,7 +16,7 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-#$Id: Content.inc.php 11378 2017-07-10 21:30:18Z calguy1000 $
+#$Id$
 
 /**
  * Implements the Content (page) content type.

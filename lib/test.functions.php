@@ -15,7 +15,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: test.functions.php 5128 2008-10-08 21:14:46Z alby $
+#$Id$
 
 /**
  * Handles test functions and values for CMSMS
@@ -86,7 +86,7 @@ function getTestValues( $property )
 	// TODO manually set recommended PHP = earliest current-security-supported micro-version
 	// see https://www.php.net/supported-versions.php and https://www.php.net/releases/index.php
 	$range = array(
-		'php_version'			=> array('minimum'=>$minphp, 'recommended'=>'8.1.28'),
+		'php_version'			=> array('minimum'=>$minphp, 'recommended'=>'8.1.29'),
 		'gd_version'			=> array('minimum'=>2),
 		'memory_limit'			=> array('minimum'=>'16M', 'recommended'=>'24M'),
 		'max_execution_time'	=> array('minimum'=>30, 'recommended'=>60),

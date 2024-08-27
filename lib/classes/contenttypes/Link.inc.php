@@ -15,7 +15,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: Link.inc.php 11199 2017-04-01 15:19:16Z calguy1000 $
+#$Id$
 
 /**
  * Implementation of the CMS Made Simple link content type

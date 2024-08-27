@@ -15,7 +15,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: listusers.php 11099 2017-03-01 18:21:57Z calguy1000 $
+#$Id$
 
 use CMSMS\HookManager;
 
