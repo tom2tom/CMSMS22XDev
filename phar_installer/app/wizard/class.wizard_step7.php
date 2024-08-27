@@ -2,8 +2,8 @@
 
 namespace cms_autoinstaller;
 
-use cms_autoinstaller\utils;
-use cms_autoinstaller\wizard_step;
+//use cms_autoinstaller\utils;
+//use cms_autoinstaller\wizard_step;
 use Exception;
 use PharData;
 use RecursiveIteratorIterator;
