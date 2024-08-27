@@ -37,7 +37,7 @@ define('CMS_BASE', dirname(__DIR__));
 require_once cms_join_path(CMS_BASE, 'lib', 'test.functions.php');
 
 
-function installerHelpLanguage( $lang, $default_null=null )
+function installerHelpLanguage( $lang, $default_null = null )
 {
 	if( (!is_null($default_null)) && ($default_null == $lang) ) return '';
 	return substr($lang, 0, 2);
