@@ -39,7 +39,7 @@ class FileTypeHelper
     /**
      * @ignore
      */
-    private $_image_extensions = ['jpg','jpeg','bmp','wbmp','gif','png','webp','svg'];
+    private $_image_extensions = ['jpg', 'jpeg', 'jpe','bmp','wbmp','gif','png','tiff'.'tif','webp','avif','heif','svg'];
     /**
      * @ignore
      * TODO formerly supported 'gz' alone, reinstate? if so, 'bz2' and its aliases? 'xz'?
@@ -52,7 +52,7 @@ class FileTypeHelper
     /**
      * @ignore
      */
-    private $_video_extensions = ['swf','mov','mpg','mp4','mpeg','wmv','rm','avi'];
+    private $_video_extensions = ['swf','mov','mpg','mp4','mpeg','wmv','rm','avi','webm']; //c.f. 'mov', 'mpeg', 'mp4', 'avi', 'mpg','wma', 'flv', 'webm', 'wmv', 'qt', 'ogg'
     /**
      * @ignore
      */
@@ -72,7 +72,7 @@ class FileTypeHelper
      *
      * @param mixed $config cms_config | null
      */
-    public function __construct($config = null) //OR ?cms_config $config for 8.4
+    public function __construct(/*?cms_config */$config = null) //uncomment for PHP 7.1+ .. 8.4+
     {
         if (!$config) { $config = cms_config::get_instance(); }
         $this->_mime_ok = (function_exists('finfo_open') && function_exists('finfo_file'));

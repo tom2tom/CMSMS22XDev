@@ -337,91 +337,87 @@ final class filemanager_utils
 
     public static function mime_content_type($filename)
     {
+        if( function_exists('mime_content_type') ) {
+            $mime_type = mime_content_type($filename);
+            if( $mime_type ) return $mime_type;
+        }
         // this is effectively the same as FileTypeHelper->get_mime_type()
         if( function_exists('finfo_open') ) {
             $fh = finfo_open(FILEINFO_MIME_TYPE);
             if( $fh ) {
                 $mime_type = finfo_file($fh,$filename);
                 finfo_close($fh);
-                return $mime_type;
+                if( $mime_type ) return $mime_type;
             }
         }
-        // but with the following fallback
-        if( !function_exists('mime_content_type') ) {
+        // fall back to a simple extension-based mechanism
+        $a = strrpos($filename,'.');
+        $ext = ($a > 0) ? substr($filename,$a + 1) : '';
+        if( $ext ) {
+            $ext = strtolower($ext);
+            $mime_types = [
+                'txt' => 'text/plain',
+                'htm' => 'text/html',
+                'html' => 'text/html',
+                'php' => 'text/html',
+                'css' => 'text/css',
+                'js' => 'application/javascript',
+                'json' => 'application/json',
+                'xml' => 'application/xml',
+                'swf' => 'application/x-shockwave-flash',
+                'flv' => 'video/x-flv',
 
-            // Try to recreate a "very" simple mechanism for mime_content_type($filename);
-            function mime_content_type($filename) {
+                // images
+                'png' => 'image/png',
+                'jpeg' => 'image/jpeg',
+                'jpe' => 'image/jpeg',
+                'jpg' => 'image/jpeg',
+                'gif' => 'image/gif',
+                'bmp' => 'image/bmp',
+                'ico' => 'image/vnd.microsoft.icon',
+                'tiff' => 'image/tiff',
+                'tif' => 'image/tiff',
+                'svg' => 'image/svg+xml',
+                'svgz' => 'image/svg+xml',
+                'webp' => 'image/webp',
+                'avif' => 'image/avif',
 
-                $mime_types = [
-                    'txt' => 'text/plain',
-                    'htm' => 'text/html',
-                    'html' => 'text/html',
-                    'php' => 'text/html',
-                    'css' => 'text/css',
-                    'js' => 'application/javascript',
-                    'json' => 'application/json',
-                    'xml' => 'application/xml',
-                    'swf' => 'application/x-shockwave-flash',
-                    'flv' => 'video/x-flv',
+                // archives
+                'zip' => 'application/zip',
+                'rar' => 'application/x-rar-compressed',
+                'exe' => 'application/x-msdownload',
+                'msi' => 'application/x-msdownload',
+                'cab' => 'application/vnd.ms-cab-compressed',
 
-                    // images
-                    'png' => 'image/png',
-                    'jpe' => 'image/jpeg',
-                    'jpeg' => 'image/jpeg',
-                    'jpg' => 'image/jpeg',
-                    'gif' => 'image/gif',
-                    'bmp' => 'image/bmp',
-                    'ico' => 'image/vnd.microsoft.icon',
-                    'tiff' => 'image/tiff',
-                    'tif' => 'image/tiff',
-                    'svg' => 'image/svg+xml',
-                    'svgz' => 'image/svg+xml',
+                // audio/video
+                'mp3' => 'audio/mpeg',
+                'qt' => 'video/quicktime',
+                'mov' => 'video/quicktime',
+                'webm' => 'video/webm',
 
-                    // archives
-                    'zip' => 'application/zip',
-                    'rar' => 'application/x-rar-compressed',
-                    'exe' => 'application/x-msdownload',
-                    'msi' => 'application/x-msdownload',
-                    'cab' => 'application/vnd.ms-cab-compressed',
+                // adobe
+                'pdf' => 'application/pdf',
+                'psd' => 'image/vnd.adobe.photoshop',
+                'ai' => 'application/postscript',
+                'eps' => 'application/postscript',
+                'ps' => 'application/postscript',
 
-                    // audio/video
-                    'mp3' => 'audio/mpeg',
-                    'qt' => 'video/quicktime',
-                    'mov' => 'video/quicktime',
+                // ms office
+                'doc' => 'application/msword',
+                'rtf' => 'application/rtf',
+                'xls' => 'application/vnd.ms-excel',
+                'ppt' => 'application/vnd.ms-powerpoint',
 
-                    // adobe
-                    'pdf' => 'application/pdf',
-                    'psd' => 'image/vnd.adobe.photoshop',
-                    'ai' => 'application/postscript',
-                    'eps' => 'application/postscript',
-                    'ps' => 'application/postscript',
-
-                    // ms office
-                    'doc' => 'application/msword',
-                    'rtf' => 'application/rtf',
-                    'xls' => 'application/vnd.ms-excel',
-                    'ppt' => 'application/vnd.ms-powerpoint',
-
-                    // open office
-                    'odt' => 'application/vnd.oasis.opendocument.text',
-                    'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
-                    ];
-
-                $a = strrpos($filename,'.');
-                $ext = ($a > 0) ? substr($filename,$a + 1) : '';
-                if( $ext ) $ext = strtolower($ext);
-                if (array_key_exists($ext, $mime_types)) {
-                    return $mime_types[$ext];
-                }
-                else {
-                    //Nothing instead of "application/octet-stream"
-                    return '';
-                }
+                // open office
+                'odt' => 'application/vnd.oasis.opendocument.text',
+                'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
+            ];
+            if (array_key_exists($ext, $mime_types)) {
+                 return $mime_types[$ext];
             }
         }
-
-        // Now we can call this function
-        return mime_content_type($filename);
+        //empty instead of "application/octet-stream"
+        return '';
     }
 
     public static function str_to_bytes($val)
@@ -505,22 +501,30 @@ final class filemanager_utils
 
         if( !$force && (file_exists($dest) && !is_writable($dest) ) ) return FALSE;
 
-        $info = getimagesize($src);
-        if( !$info || !isset($info['mime']) ) return FALSE;
+        $mime = self::mime_content_type($src);
+        if( !$mime ) return FALSE;
+
+        if( $mime == 'image/svg+xml' || $mime == 'image/svg' ) {
+//TODO support svg thumbnail FR #12737
+//            $dest = $src; //TODO replicate content as $dest
+            return FALSE;
+        }
 
         $width = cms_siteprefs::get('thumbnail_width', 96);
         $height = cms_siteprefs::get('thumbnail_height', 96);
+        //TODO scale per min-dimention then crop, instead of simple scale FR #12739 c.f. FileManager action rotate
 
         $i_src = imagecreatefromstring(file_get_contents($src));
         $i_dest = imagecreatetruecolor($width, $height);
-        imagealphablending($i_dest, FALSE);
+        //TODO some of the following are type-spacific
+        imagealphablending($i_dest, FALSE); //TODO if relevant format
         $color = imageColorAllocateAlpha($i_src, 255, 255, 255, 127);
         imagecolortransparent($i_dest, $color);
         imagefill($i_dest, 0, 0, $color);
-        imagesavealpha($i_dest, TRUE);
+        imagesavealpha($i_dest, TRUE); //TODO for png, webp and avif only
         imagecopyresampled($i_dest, $i_src, 0, 0, 0, 0, $width, $height, imagesx($i_src), imagesy($i_src));
-
-        switch( $info['mime'] ) {
+        // c.f. typehelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff'.'tif','webp','avif','heif','svg'
+        switch( $mime ) {
         case 'image/gif':
             $res = imagegif($i_dest,$dest);
             break;
@@ -528,7 +532,21 @@ final class filemanager_utils
             $res = imagepng($i_dest,$dest,9);
             break;
         case 'image/jpeg':
-            $res = imagejpeg($i_dest,$dest,100);
+            $res = imagejpeg($i_dest,$dest,80);
+            break;
+        case 'image/bmp':
+        case 'image/x-ms-bmp':
+            if (PHP_VERSION_ID >= 70200) {
+                $res = imagebmp($i_dest,$dest);
+            } else $res = FALSE;
+            break;
+        case 'image/webp':
+            $res = imagewebp($i_dest,$dest,80);
+            break;
+        case 'image/avif':
+            if (PHP_VERSION_ID >= 80000 && function_exists('imageavif')) {
+                $res = imageavif($i_dest,$dest,80,6);
+            } else $res = FALSE;
             break;
         default:
             $res = FALSE;

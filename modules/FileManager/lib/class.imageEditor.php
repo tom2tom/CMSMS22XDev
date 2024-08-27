@@ -37,7 +37,8 @@ final class imageEditor
 	public static function resize($image, $mimeType, $image_width, $image_height){
 
 		$newImage = @imagecreatetruecolor($image_width, $image_height);
-		if ($mimeType && ($mimeType == image_type_to_mime_type(IMAGETYPE_GIF) || $mimeType == image_type_to_mime_type(IMAGETYPE_PNG))) {
+		// c.f. typehelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff'.'tif','webp','avif','heif','svg'
+		if ($mimeType && ($mimeType == 'image/gif' || $mimeType == 'image/png')) {
 			//Keep transparency
 			imagecolortransparent($newImage, imagecolorallocatealpha($newImage, 0, 0, 0, 127));
 			imagealphablending($newImage, false);
@@ -63,7 +64,8 @@ final class imageEditor
 	public static function crop($image, $mimeType, $crop_x, $crop_y, $crop_width, $crop_height){
 
 		$newImage = @imagecreatetruecolor($crop_width, $crop_height);
-		if ($mimeType && ($mimeType == image_type_to_mime_type(IMAGETYPE_GIF) || $mimeType == image_type_to_mime_type(IMAGETYPE_PNG))) {
+		// c.f. typehelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff'.'tif','webp','avif','heif','svg'
+		if ($mimeType && ($mimeType == 'image/gif' || $mimeType == 'image/png')) {
 			//Keep transparency
 			imagecolortransparent($newImage, imagecolorallocatealpha($newImage, 0, 0, 0, 127));
 			imagealphablending($newImage, false);
@@ -82,17 +84,24 @@ final class imageEditor
 	 * @return mime the mimetype of the file
 	 **/
 	public static function getMime($path){
-		$info = getimagesize($path);
+		$info = getimagesize($path); //TODO better approach c.f. FileManager
 		if (!$info) {
 			return '';
 		}
-		$mime = image_type_to_mime_type($info[2]);
-		if($mime != image_type_to_mime_type(IMAGETYPE_JPEG)
-			&& $mime != image_type_to_mime_type(IMAGETYPE_GIF)
-			&& $mime != image_type_to_mime_type(IMAGETYPE_PNG)){
+		// c.f. typehelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff'.'tif','webp','avif','heif','svg'
+		$mime = image_type_to_mime_type($info[2]); //OR mime_content_type($path)
+		switch ($mime) {
+			case 'image/jpeg':
+			case 'image/gif':
+			case 'image/png':
+			case 'image/bmp':
+			case 'image/x-ms-bmp':
+			case 'image/webp':
+			case 'image/avif':
+			return $mime;
+		default:
 			return '';
 		}
-		return $mime;
 	}
 
 	/**
@@ -115,7 +124,7 @@ final class imageEditor
 	 *
 	 * @param path the path of the file
 	 *
-	 * @return image instance of the image
+	 * @return image | null instance of the image
 	 **/
 	public static function open($path) {
 
@@ -123,18 +132,25 @@ final class imageEditor
 		if (!$mimeType){
 			return "INVALID IMAGE TYPE";
 		}
-
-		if ($mimeType == image_type_to_mime_type(IMAGETYPE_JPEG)) {
-			return imagecreatefromjpeg($path);
+		// c.f. typehelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff'.'tif','webp','avif','heif','svg'
+		switch ($mimeType) {
+			case 'image/jpeg':
+				return imagecreatefromjpeg($path);
+			case 'image/gif':
+				return imagecreatefromgif($path);
+			case 'image/png':
+				return imagecreatefrompng($path);
+//			case 'image/bmp':
+//				return x($path);
+//			case 'image/x-ms-bmp':
+//				return x($path);
+//			case 'image/webp':
+//				return x($path);
+//			case 'image/avif':
+//				return x($path);
+			default:
+				return NULL; // no image for unsupported filetype
 		}
-		else if ($mimeType == image_type_to_mime_type(IMAGETYPE_GIF)) {
-			return imagecreatefromgif($path);
-		}
-		else if ($mimeType == image_type_to_mime_type(IMAGETYPE_PNG)) {
-			return imagecreatefrompng($path);
-		}
-
-		return NULL; // no image for unsupported filetype
 	}
 
 	/**
@@ -146,15 +162,25 @@ final class imageEditor
 	 * @return bool
 	 **/
 	public static function save($image, $path, $mimeType){
-		if ($mimeType == image_type_to_mime_type(IMAGETYPE_JPEG)) {
-			return imagejpeg($image, $path);
-		} else if ($mimeType == image_type_to_mime_type(IMAGETYPE_GIF)) {
-			return imagegif($image, $path);
-		} else if ($mimeType == image_type_to_mime_type(IMAGETYPE_PNG)) {
-			imagesavealpha($image, true);
-			return imagepng($image, $path);
+		// TODO c.f. typehelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff'.'tif','webp','svg'
+		switch ($mimeType) {
+			case 'image/jpeg':
+				return imagejpeg($image, $path);
+			case 'image/gif':
+				return imagegif($image, $path);
+			case 'image/png':
+				imagesavealpha($image, true); //TODO also for webp and avif
+				return imagepng($image, $path);
+//			case 'image/bmp':
+//			case 'image/x-ms-bmp':
+//				return x($image, $path);
+//			case 'image/webp':
+//				return x($image, $path);
+//			case 'image/avif':
+//				return x($image, $path);
+			default:
+				return false;
 		}
-		return false;
 	}
 }
 ?>

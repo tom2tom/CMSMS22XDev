@@ -10,7 +10,7 @@
  * http://www.opensource.org/licenses/MIT
  */
 //NOTE this class is a bit different from the corresponding FilePicker class
-//This version and the FilePicker version are both long-dead
+//This version and the FilePicker version are both long-abandoned
 
 abstract class jquery_upload_handler
 {
@@ -19,7 +19,7 @@ abstract class jquery_upload_handler
     function __construct($options = []) {
         $this->options = array(
             'script_url' => $this->getFullUrl().'/'.basename(__FILE__),
-            'upload_dir' => __DIR__.'/files/', //useless in cmsms context, replacement must be in $options 
+            'upload_dir' => __DIR__.'/files/', //useless in cmsms context, replacement must be in $options
             'upload_url' => $this->getFullUrl().'/files/', //ditto
             'param_name' => 'files',
             // The php.ini settings upload_max_filesize and post_max_size
@@ -95,6 +95,7 @@ abstract class jquery_upload_handler
         $new_width = $img_width * $scale;
         $new_height = $img_height * $scale;
         $new_img = @imagecreatetruecolor($new_width, $new_height);
+        // TODO c.f. typehelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff'.'tif','webp','svg'
         switch (strtolower(substr(strrchr($file_name, '.'), 1))) {
             case 'jpg':
             case 'jpeg':
@@ -113,9 +114,38 @@ abstract class jquery_upload_handler
                 $src_img = @imagecreatefrompng($file_path);
                 $write_image = 'imagepng';
                 break;
+            case 'bmp':
+                if (PHP_VERSION_ID >= 70200) {
+            //TODO more here
+                    $src_img = @imagecreatefrombmp($file_path);
+                    $write_image = 'imagebmp';
+                } else {
+                    $src_img = false;
+                    $write_image = '';
+                }
+                break;
+            case 'webp':
+            //TODO more here
+                @imagecolortransparent($new_img, @imagecolorallocate($new_img, 0, 0, 0));
+                @imagesavealpha($new_img, true);
+                $src_img = @imagecreatefromwebp($file_path);;
+                $write_image = 'imagewebp';
+                break;
+            case 'avif':
+                if (PHP_VERSION_ID >= 80000 && function_exists('imageavif')) {
+            //TODO more here
+                    @imagecolortransparent($new_img, @imagecolorallocate($new_img, 0, 0, 0));
+                    @imagesavealpha($new_img, true);
+                    $src_img = @imagecreatefromavif($file_path);
+                    $write_image = 'imageavif';
+                } else {
+                    $src_img = false;
+                    $write_image = '';
+                }
+                break;
             default:
                 $src_img = false;
-                 $write_image = '';
+                $write_image = '';
         }
         $success = $src_img && @imagecopyresampled(
             $new_img,
@@ -188,13 +218,13 @@ abstract class jquery_upload_handler
         }
         $image = @imagecreatefromjpeg($file_path);
         switch ($orientation) {
-              case 3:
+            case 3:
                 $image = @imagerotate($image, 180, 0);
                 break;
-              case 6:
+            case 6:
                 $image = @imagerotate($image, 270, 0);
                 break;
-              case 8:
+            case 8:
                 $image = @imagerotate($image, 90, 0);
                 break;
             default:
@@ -220,7 +250,7 @@ abstract class jquery_upload_handler
         $error = $this->has_error($uploaded_file, $file, $error);
         if (!$error && $file->name) {
             $file_path = $this->options['upload_dir'].$file->name;
-        $tmp = (is_file($file_path))?filesize($file_path):0;
+            $tmp = (is_file($file_path))?filesize($file_path):0;
             $append_file = !$this->options['discard_aborted_uploads'] &&
                 is_file($file_path) && $file->size > filesize($file_path);
             clearstatcache();
@@ -252,7 +282,7 @@ abstract class jquery_upload_handler
                 foreach($this->options['image_versions'] as $version => $options) {
                     if ($this->create_scaled_image($file->name, $options)) {
                         $file->{$version.'_url'} = $options['upload_url']
-                           .rawurlencode($file->name);
+                            .rawurlencode($file->name);
                     }
                 }
             } else if ($this->options['discard_aborted_uploads']) {

@@ -44,6 +44,7 @@ if( !file_exists($src) ) {
   $params["fmerror"]="filenotfound";
   $this->Redirect($id,"defaultadmin",$returnid,$params);
 }
+//TODO file_manager_utils::mime_content_type
 $imageinfo = getimagesize($src);
 if( !$imageinfo || !isset($imageinfo['mime']) || !startswith($imageinfo['mime'],'image') ) {
   $params["fmerror"]="filenotimage";
@@ -53,11 +54,20 @@ if( !is_writable($src) ) {
   $params["fmerror"]="notwritable";
   $this->Redirect($id,"defaultadmin",$returnid,$params);
 }
-switch( $imageinfo['mime'] ) {
+// TODO c.f. typehelper image types 'jpg','jpeg','bmp','wbmp','gif','png','tiff'.'tif','webp','avif','heif'.'svg'
+switch( $imageinfo['mime'] ) { //OR  switch(mime_content_type($src));
  case 'image/gif':
  case 'image/jpeg':
  case 'image/png':
+ case 'image/webp':
    break;
+ case 'image/bmp':
+ case 'image/x-ms-bmp':
+   if (PHP_VERSION_ID >= 70200) break;
+   // no break here
+ case 'image/avif':
+   if (PHP_VERSION_ID >= 80000 && function_exists('imageavif')) break;
+   // no break here
  default:
    $params['fmerror'] = 'fileimagetype';
    $this->Redirect($id,"defaultadmin",$returnid,$params);
@@ -80,11 +90,11 @@ if( isset($params['save']) ) {
   $angle = max(-180,min(180,$angle))*-1;
   $source = imagecreatefromstring(file_get_contents($src));
   imagealphablending($source, false);
-  imagesavealpha($source, true);
+  imagesavealpha($source, true); //TODO for png, webp and avif only
   $bgcolor = imageColorAllocateAlpha($source, 255, 255, 255, 127);
   $rotated = imagerotate($source,$angle,$bgcolor);
   imagealphablending($rotated, false);
-  imagesavealpha($rotated, true);
+  imagesavealpha($rotated, true); //TODO for png, webp and avif only
 
   if( $postrotate == 'crop' ) {
     // calculates crop dimensions based on center of image
@@ -102,7 +112,7 @@ if( isset($params['save']) ) {
     imagealphablending($newimg,FALSE);
     imagecolortransparent($newimg,$bgcolor);
     imagefill($newimg,0,0,$bgcolor);
-    imagesavealpha($newimg,TRUE);
+    imagesavealpha($newimg,TRUE); //TODO for png, webp and avif only
     imagecopy($newimg,$rotated,0,0,$x0,$y0,$width,$height);
 
     imagedestroy($rotated);
@@ -126,14 +136,13 @@ if( isset($params['save']) ) {
     $x0 = (int)(($src_w - $new_w) / 2);
     $y0 = (int)(($src_h - $new_h) / 2);
 
+    // TODO c.f. typehelper image types 'jpg','jpeg','bmp','wbmp','gif','png','tiff'.'tif','webp','avif','heif','svg'
     //die("rotated={$src_w}x{$src_h} orig={$width}x{$height} new={$new_w},{$new_h} offset = $x0,$y0");
     $newimg = imagecreatetruecolor($new_w,$new_h);
     imagealphablending($newimg,FALSE);
     imagecolortransparent($newimg,$bgcolor);
     imagefill($newimg,0,0,$bgcolor);
-    imagesavealpha($newimg,TRUE);
-
-
+    imagesavealpha($newimg,TRUE);  //TODO for png, webp and avif only
     imagecopyresampled($newimg,$rotated,$x0,$y0,0,0,$new_w,$new_h,$src_w,$src_h);
 
     imagedestroy($rotated);
@@ -148,7 +157,22 @@ if( isset($params['save']) ) {
   case 'image/png':
     $res = imagepng($rotated,$src,9);
     break;
-  case 'image/jpeg':
+  case 'image/bmp':
+  case 'image/x-ms-bmp':
+    if (PHP_VERSION_ID >= 70200) {
+      $res = imagebmp($rotated,$dest);
+    }
+    break;
+  case 'image/webp':
+    $res = imagewebp($rotated,$dest,80);
+    break;
+  case 'image/avif':
+    if (PHP_VERSION_ID >= 80000 && function_exists('imageavif')) {
+        $res = imageavif($rotated,$dest,80,6);
+        break;
+    }
+  //no break here
+//case 'image/jpeg':
   default:
     $res = imagejpeg($rotated,$src,100);
     break;
@@ -163,8 +187,8 @@ if( isset($params['save']) ) {
 // build the form
 //
 $opts = array('none'=>$this->Lang('none'),
-	      'crop'=>$this->Lang('crop'),
-	      'resize'=>$this->Lang('resize'));
+            'crop'=>$this->Lang('crop'),
+            'resize'=>$this->Lang('resize'));
 $smarty->assign('opts',$opts);
 $url = filemanager_utils::get_cwd_url()."/$filename";
 $smarty->assign('postrotate',$postrotate);

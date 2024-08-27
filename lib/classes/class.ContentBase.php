@@ -2719,7 +2719,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				$input = $filepicker->get_html( 'image', $data, $profile);
 			}
 			else {
-				$input = create_file_dropdown('image',$dir,$data,'jpg,jpeg,png,gif','',true,'','thumb_',0,1); //c,f, FileTypeHelper 'jpg','jpeg','bmp','wbmp','gif','png','webp', 'svg'
+				$input = create_file_dropdown('image',$dir,$data,'jpg,jpeg,png,gif','',true,'','thumb_',0,1); //c,f, FileTypeHelper 'jpg','jpeg','bmp','wbmp','gif','png','tiff'.'tif','webp','avif','heif','svg'
 			}
 			if( !$input ) return [];
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_image',lang('help_title_content_image'));

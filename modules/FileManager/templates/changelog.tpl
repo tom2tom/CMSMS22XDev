@@ -79,7 +79,7 @@
   <li>Implemented quickmode for chmod functions (linux only)</li>
   <li>Moved changelog to template</li>
 
-  <li><b>Version 0.3.2</b> <em>(calguy1000)</em></li>
+  <li><b>Version 0.3.2</b> <em>(Robert Campbell)</em></li>
   <li>Is now an admin only module</li>
   <li>Completely remove the java postlet stuff</li>
   <li>Added some security with javaapplet upload</li>

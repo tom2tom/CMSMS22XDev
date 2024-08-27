@@ -78,7 +78,7 @@ class UploadHandler extends jquery_upload_handler
         $color = imageColorAllocateAlpha($i_src, 255, 255, 255, 127);
         imagecolortransparent($i_dest,$color);
         imagefill($i_dest,0,0,$color);
-        imagesavealpha($i_dest,TRUE);
+        imagesavealpha($i_dest,TRUE); TODO for png, WebP and avif only
         imagecopyresampled($i_dest,$i_src,0,0,0,0,$width,$height,imagesx($i_src),imagesy($i_src));
 
         $res = false;
@@ -90,7 +90,19 @@ class UploadHandler extends jquery_upload_handler
             $res = imagepng($i_dest,$complete_thumb,9);
             break;
         case 'image/jpeg':
-            $res = imagejpeg($i_dest,$complete_thumb,100);
+            $res = imagejpeg($i_dest,$complete_thumb,80);
+            break;
+        case 'image/bmp':
+        case 'image/x-ms-bmp':
+            $res = imagebmp($i_dest,$dest);
+            break;
+        case 'image/webp':
+            $res = imagewebp($i_dest,$dest,80);
+            break;
+        case 'image/avif':
+            if (PHP_VERSION_ID >= 80000) {
+                $res = imageavif($i_dest,$dest,80,6);
+            }
             break;
         }
 */

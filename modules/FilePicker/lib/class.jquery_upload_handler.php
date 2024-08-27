@@ -10,14 +10,14 @@
  * http://www.opensource.org/licenses/MIT
  */
 //NOTE this class is a bit different from the corresponding FileManager class
-//This version and the FileManager version are both long-dead
+//This version and the FileManager version are both long-abandoned
 namespace FilePicker;
 
 abstract class jquery_upload_handler
 {
     private $options;
 
-    function __construct($options=[]) {
+    function __construct($options = []) {
         $this->options = array(
             'script_url' => $this->getFullUrl().'/'.basename(__FILE__),
             'upload_dir' => __DIR__.'/files/', //useless - a value suitable for cmsms usage must be in $options
@@ -104,6 +104,7 @@ abstract class jquery_upload_handler
         $new_width = $img_width * $scale;
         $new_height = $img_height * $scale;
         $new_img = @imagecreatetruecolor($new_width, $new_height);
+        // TODO c.f. typehelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff'.'tif','webp','svg'
         switch (strtolower(substr(strrchr($file_name, '.'), 1))) {
             case 'jpg':
             case 'jpeg':
@@ -121,6 +122,33 @@ abstract class jquery_upload_handler
                 @imagesavealpha($new_img, true);
                 $src_img = @imagecreatefrompng($file_path);
                 $write_image = 'imagepng';
+                break;
+            case 'bmp':
+                if (PHP_VERSION_ID >= 70200) {
+            //TODO more here
+                    $src_img = @imagecreatefrombmp($file_path);
+                    $write_image = 'imagebmp';
+                } else {
+                    $src_img = false;
+                    $write_image = '';
+                }
+                break;
+            case 'webp':
+            //TODO more here
+                @imagesavealpha($new_img, true);
+                $src_img = @imagecreatefromwebp($file_path);;
+                $write_image = 'imagewebp';
+                break;
+            case 'avif':
+                if (PHP_VERSION_ID >= 80000 && function_exists('imageavif')) {
+            //TODO more here
+                    @imagesavealpha($new_img, true);
+                    $src_img = @imagecreatefromavif($file_path);
+                    $write_image = 'imageavif';
+                } else {
+                    $src_img = false;
+                    $write_image = '';
+                }
                 break;
             default:
                 $src_img = false;
@@ -263,7 +291,7 @@ abstract class jquery_upload_handler
                 foreach($this->options['image_versions'] as $version => $options) {
                     if ($this->create_scaled_image($file->name, $options)) {
                         $file->{$version.'_url'} = $options['upload_url']
-                                 .rawurlencode($file->name);
+                            .rawurlencode($file->name);
                     }
                 }
             } else if ($this->options['discard_aborted_uploads']) {
