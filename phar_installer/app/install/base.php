@@ -218,7 +218,6 @@ $move_directory_files = function($srcdir,$destdir) {
     @touch($dir.'/index.html');
 };
 */
-
 $create_private_dir('admin/configs'); // since 2.2.20
 // create the assets directory structure
 verbose_msg(ilang('install_createassets'));

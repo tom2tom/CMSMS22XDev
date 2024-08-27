@@ -170,7 +170,7 @@ abstract class filehandler
   }
 
   //$res optional, if non-null is the string value returned by is_langfile()
-  protected function is_accepted_lang($filespec,$res=null)
+  protected function is_accepted_lang($filespec,$res = null)
   {
     if( $res === null) { $res = $this->is_langfile($filespec); }
     if( !$res ) {
