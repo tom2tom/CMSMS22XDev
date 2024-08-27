@@ -72,7 +72,7 @@ class UserGuideXML
 ]>
 EOS;
 */
-    public function __construct(UserGuide $mod = null)
+    public function __construct(/*?UserGuide */$mod = null) //uncomment for PHP 7.1+ .. 8.4+
     {
         if ($mod) {
             $this->mod = $mod;

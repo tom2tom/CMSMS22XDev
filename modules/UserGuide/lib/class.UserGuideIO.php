@@ -15,7 +15,7 @@ use Phar;
 use PharData;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use UserGuide; //module class in global space
+//use UserGuide; //module class in global space
 use UserGuide\UserGuideUtils; //not strictly needed here
 use const CMS_DB_PREFIX;
 use function audit;
@@ -52,7 +52,7 @@ class UserGuideIO
      '\.js$',
     ];
 
-    public function __construct($mod = null) // OR ?UserGuide $mod for 8.4
+    public function __construct(/*?UserGuide */$mod = null) //uncomment for PHP 7.1+ .. 8.4+
     {
         if ($mod) {
             $this->mod = $mod;
