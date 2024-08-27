@@ -1,0 +1,7 @@
+New features
+ Configurable tabs-order during content edititing
+ UserGuide content I/O in tar.gz format
+Fixes
+ Correct page-types selector setup
+ Search module variable-type checks
+ lockManager init during DM new-item creation
