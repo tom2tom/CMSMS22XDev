@@ -20,10 +20,10 @@ final class utils
 
         $dir = $app->get_appdir().'/upgrade';
         if( !is_dir($dir) ) throw new Exception(lang('error_internal','u100'));
-
-        $versions = array();
         $dh = opendir($dir);
         if( !$dh ) throw new Exception(lang('error_internal','u101'));
+
+        $versions = array();
         while( ($file = readdir($dh)) !== false ) {
             if( $file == '.' || $file == '..' ) continue;
             if( is_dir($dir.'/'.$file) &&
@@ -33,7 +33,20 @@ final class utils
         }
         closedir($dh);
         if( count($versions) > 1 ) {
-            usort($versions,'version_compare');
+            //accommodate special sorting of versions including: 'dev' < 'a[lpha]< 'b[eta]' <'rc' < '#' < 'p[l]' pre?
+            $care = preg_grep('/([a-z]+)/i',$versions);
+            if( $care ) {
+                foreach( $care as $k => $fixer ) {
+                   $q = preg_replace('/([^a-z])([ce-oqs-z])/i','$1.0$2',$fixer);
+                   if( $q != $fixer ) {
+                       $versions[$k] = $q;
+                   }
+                }
+                uasort($versions,'version_compare');
+                $versions = array_values(array_replace($versions,$care));
+            } else {
+                usort($versions,'version_compare');
+            }
         }
         return $versions;
     }

@@ -136,13 +136,23 @@ final class CmsAdminUtils
     public static function site_needs_updating()
     {
         $remote_ver = self::fetch_latest_cmsms_ver();
-        if( version_compare(CMS_VERSION,$remote_ver) < 0 ) {
-            return TRUE;
-        }
-        else {
-            return FALSE;
+        if( $remote_ver == CMS_VERSION ) return FALSE;
+        //accommodate special comparison of versions including: 'dev' < 'a[lpha]< 'b[eta]' <'rc' < '#' < 'p[l]' pre?
+        $versions = [$remote_ver, CMS_VERSION];
+        $care = preg_grep('/([a-z]+)/i',$versions);
+        if( $care ) {
+            foreach( $care as $k => $fixer ) {
+               $q = preg_replace('/([^a-z])([ce-oqs-z])/i','$1.0$2',$fixer);
+               if( $q != $fixer ) {
+                   $versions[$k] = $q;
+               }
+            }
+            uasort($versions,'version_compare');
+            $versions = array_replace($versions,$care);
+            return reset($versions) == CMS_VERSION; //$remote_ver is considered later
+        } else {
+            return version_compare(CMS_VERSION,$remote_ver) < 0;
         }
     }
-
 }
 ?>
