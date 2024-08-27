@@ -19,7 +19,7 @@
 # Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
 #---------------------------------------------------------------------------
 
-$CMS_VERSION = '2.2.20#2';
+$CMS_VERSION = '2.2.20F2';
 $CMS_VERSION_NAME = 'Yellowknife';
 $CMS_SCHEMA_VERSION = '202';
 
