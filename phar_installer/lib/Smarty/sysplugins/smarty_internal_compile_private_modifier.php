@@ -81,6 +81,7 @@ class Smarty_Internal_Compile_Private_Modifier extends Smarty_Internal_CompileBa
                             // check if modifier allowed
                             if (!is_object($compiler->smarty->security_policy)
                                 || $compiler->smarty->security_policy->isTrustedModifier($modifier, $compiler)
+                                || !empty($compiler->smarty->registered_plugins[Smarty::PLUGIN_MODIFIERCOMPILER][$modifier][0]) //TODO [0] = callable
                             ) {
                                 $plugin = 'smarty_modifiercompiler_' . $modifier;
                                 $output = $plugin($single_modifier, $compiler);
@@ -95,6 +96,7 @@ class Smarty_Internal_Compile_Private_Modifier extends Smarty_Internal_CompileBa
                             // check if modifier allowed
                             if (!is_object($compiler->smarty->security_policy)
                                 || $compiler->smarty->security_policy->isTrustedModifier($modifier, $compiler)
+                                || !empty($compiler->smarty->registered_plugins[Smarty::PLUGIN_MODIFIER][$modifier][0]) //TODO [0] = callable
                             ) {
                                 $output = "{$function}({$params})";
                             }
@@ -107,14 +109,16 @@ class Smarty_Internal_Compile_Private_Modifier extends Smarty_Internal_CompileBa
                         if (is_callable($modifier)) {
                             // check if modifier allowed
                             if (!is_object($compiler->smarty->security_policy)
-                                || $compiler->smarty->security_policy->isTrustedPhpModifier($modifier, $compiler)
+                                || $compiler->smarty->security_policy->isTrustedPhpModifier($modifier, $compiler
+                                || !empty($compiler->smarty->registered_plugins[Smarty::PLUGIN_FUNCTION][$modifier][0]) //TODO [0] = callable
+                                )
                             ) {
-                                trigger_error('Using php-function "' . $modifier . '" as a modifier is deprecated and will be ' .
-                                    'removed in a future release. Use Smarty::registerPlugin to explicitly register ' .
-                                    'a custom modifier.', E_USER_DEPRECATED);
+//                                trigger_error('Using php-function "' . $modifier . '" as a modifier is deprecated and will be ' .
+//                                    'removed in a future release. Use Smarty::registerPlugin to explicitly register ' .
+//                                    'a custom modifier.', E_USER_DEPRECATED);
                                 $output = "{$modifier}({$params})";
+                                $compiler->known_modifier_type[ $modifier ] = $type;
                             }
-                            $compiler->known_modifier_type[ $modifier ] = $type;
                             break 2;
                         }
                         break;

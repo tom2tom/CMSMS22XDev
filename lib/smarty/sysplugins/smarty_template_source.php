@@ -148,24 +148,24 @@ class Smarty_Template_Source
      * initialize Source Object for given resource
      * Either [$_template] or [$smarty, $template_resource] must be specified
      *
-     * @param Smarty_Internal_Template $_template         template object
-     * @param Smarty                   $smarty            smarty object
-     * @param string                   $template_resource resource identifier
+     * @param Smarty_Internal_Template|null $_template         template object
+     * @param Smarty|null                   $smarty            smarty object
+     * @param string                        $template_resource resource identifier
      *
      * @return Smarty_Template_Source Source Object
      * @throws SmartyException
      */
     public static function load(
-        Smarty_Internal_Template $_template = null,
-        Smarty $smarty = null,
-        $template_resource = null
+        ?Smarty_Internal_Template $_template = null,
+        ?Smarty $smarty = null,
+        string $template_resource = ''
     ) {
         if ($_template) {
             $smarty = $_template->smarty;
             $template_resource = $_template->template_resource;
         }
         if (empty($template_resource)) {
-            throw new SmartyException('Source: Missing  name');
+            throw new SmartyException('Source: Missing name');
         }
         // parse resource_name, load resource handler, identify unique resource name
         if (preg_match('/^([A-Za-z0-9_\-]{2,})[:]([\s\S]*)$/', $template_resource, $match)) {

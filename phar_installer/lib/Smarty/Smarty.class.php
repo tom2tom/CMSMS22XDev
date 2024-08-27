@@ -96,8 +96,8 @@ require_once SMARTY_SYSPLUGINS_DIR . 'smarty_internal_resource_file.php';
  * The following methods will be dynamically loaded by the extension handler when they are called.
  * They are located in a corresponding Smarty_Internal_Method_xxxx class
  *
- * @method int clearAllCache(int $exp_time = null, string $type = null)
- * @method int clearCache(string $template_name, string $cache_id = null, string $compile_id = null, int $exp_time = null, string $type = null)
+ * @method int clearAllCache(?int $exp_time = null, ?string $type = null)
+ * @method int clearCache(string $template_name, ?string $cache_id = null, ?string $compile_id = null, ?int $exp_time = null, ?string $type = null)
  * @method int compileAllTemplates(string $extension = '.tpl', bool $force_compile = false, int $time_limit = 0, $max_errors = null)
  * @method int compileAllConfig(string $extension = '.conf', bool $force_compile = false, int $time_limit = 0, $max_errors = null)
  * @method int clearCompiledTemplate($resource_name = null, $compile_id = null, $exp_time = null)
@@ -107,7 +107,7 @@ class Smarty extends Smarty_Internal_TemplateBase
     /**
      * smarty version
      */
-    const SMARTY_VERSION = '4.4.1';
+    const SMARTY_VERSION = '4.4.1C';
     /**
      * define variable scopes
      */
@@ -1039,8 +1039,8 @@ class Smarty extends Smarty_Internal_TemplateBase
      * @param string                    $template_name
      * @param null|mixed                $cache_id
      * @param null|mixed                $compile_id
-     * @param null                      $caching
-     * @param \Smarty_Internal_Template $template
+     * @param null|int                  $caching
+     * @param null|\Smarty_Internal_Template $template
      *
      * @return string
      * @throws \SmartyException
@@ -1050,7 +1050,7 @@ class Smarty extends Smarty_Internal_TemplateBase
         $cache_id = null,
         $compile_id = null,
         $caching = null,
-        Smarty_Internal_Template $template = null
+        ?Smarty_Internal_Template $template = null
     ) {
         $template_name = (strpos($template_name, ':') === false) ? "{$this->default_resource_type}:{$template_name}" :
             $template_name;
