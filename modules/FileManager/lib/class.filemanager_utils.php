@@ -505,7 +505,7 @@ final class filemanager_utils
 
         if( !$force && (file_exists($dest) && !is_writable($dest) ) ) return FALSE;
 
-        $info = getimagesize($src);
+        $info = getimagesize($src); //TODO c.f. self::mime_content_type()
         if( !$info || !isset($info['mime']) ) return FALSE;
 
         $width = cms_siteprefs::get('thumbnail_width', 96);
