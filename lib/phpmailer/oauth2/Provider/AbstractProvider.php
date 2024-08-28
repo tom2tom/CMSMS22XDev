@@ -401,7 +401,7 @@ abstract class AbstractProvider
      */
     public function authorize(
         array $options = [],
-        callable $redirectHandler = null
+        /*?callable */$redirectHandler = null
     ) {
         $url = $this->getAuthorizationUrl($options);
         if ($redirectHandler) {
