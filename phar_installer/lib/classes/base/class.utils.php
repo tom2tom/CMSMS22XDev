@@ -3,8 +3,8 @@
 namespace __appbase;
 
 use Exception;
-use function __appbase\endswith;
-use function __appbase\startswith;
+//use function __appbase\endswith;
+//use function __appbase\startswith;
 
 class utils
 {
