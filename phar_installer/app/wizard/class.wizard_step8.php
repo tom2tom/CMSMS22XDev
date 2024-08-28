@@ -184,6 +184,7 @@ class wizard_step8 extends wizard_step
         if( !$choices ) throw new Exception(lang('error_internal',812));
 
         // get the list of all available versions that this upgrader knows about
+        //TODO c.f. cms_autoinstaller\utils::get_upgrade_versions() which records versions > $min_upgrade_version
         $dir =  $app->get_appdir().'/upgrade';
         if( !is_dir($dir) ) throw new Exception(lang('error_internal',813));
 
@@ -192,10 +193,27 @@ class wizard_step8 extends wizard_step
         $versions = array();
         while( ($file = readdir($dh)) !== false ) {
             if( $file == '.' || $file == '..' ) continue;
-            if( is_dir($dir.'/'.$file) && (is_file("$dir/$file/MANIFEST.DAT") || is_file("$dir/$file/MANIFEST.DAT.gz")) ) $versions[] = $file;
+            if( is_dir("$dir/$file") && (is_file("$dir/$file/MANIFEST.DAT") || is_file("$dir/$file/MANIFEST.DAT.gz")) ) {
+                $versions[] = $file; // ? check $min_upgrade_version
+            }
         }
         closedir($dh);
-        if( count($versions) > 1) usort($versions,'version_compare');
+        if( count($versions) > 1 ) {
+            //accommodate special sorting of versions including: 'dev' < 'a[lpha]< 'b[eta]' <'rc' < '#' < 'p[l]' pre?
+            $care = preg_grep('/([a-z]+)/i',$versions);
+            if( $care ) {
+                foreach( $care as $k => $fixer ) {
+                   $q = preg_replace('/([^a-z])([ce-oqs-z])/i','$1.0$2',$fixer);
+                   if( $q != $fixer ) {
+                       $versions[$k] = $q;
+                   }
+                }
+                uasort($versions,'version_compare');
+                $versions = array_values(array_replace($versions,$care));
+            } else {
+                usort($versions,'version_compare');
+            }
+        }
 
         global $CMS_INSTALL_PAGE, $DONT_LOAD_DB, $DONT_LOAD_SMARTY, $CMS_VERSION;
         $CMS_INSTALL_PAGE = 1;
