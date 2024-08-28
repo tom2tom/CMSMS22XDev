@@ -110,7 +110,7 @@ $lang['help'] = '<h3>What Does This Do?</h3>
 <p>As per the GPL, this software is provided as-is. Please read the text of the license for the full disclaimer.</p>
 <h3>Copyright and License</h3>
 <p>Copyright &copy; 2006 CMS Made Simple Foundation Inc &lt;foundation@cmsmadesimple.org&gt;. All rights reserved.</p>
-<p>This module has been released under the <a href="http://www.gnu.org/licenses/licenses.html#GPL">GNU General Public License</a>. You must agree to this license before using the module.</p>';
+<p>This module has been released under the <a href="http://www.gnu.org/licenses/licenses.html#GPL">GNU General Public License</a>. This module may not be used otherwise than in accordance with that license, or a later version of it if such is granted by the module\'s distributor..</p>';
 $lang['helptxt'] = 'Help';
 $lang['help_allowuninstall'] = 'If enabled, then this module can be uninstalled.  This option is provided to prevent the accidental removal of this module which would result in an unrecoverable error';
 $lang['help_disable_caching'] = 'TODO';
