@@ -517,7 +517,7 @@ final class filemanager_utils
         $color = imageColorAllocateAlpha($i_src, 255, 255, 255, 127);
         imagecolortransparent($i_dest, $color);
         imagefill($i_dest, 0, 0, $color);
-        imagesavealpha($i_dest, TRUE);
+        imagesavealpha($i_dest, TRUE); //TODO for png, WebP and avif only
         imagecopyresampled($i_dest, $i_src, 0, 0, 0, 0, $width, $height, imagesx($i_src), imagesy($i_src));
 
         switch( $info['mime'] ) {
