@@ -28,8 +28,8 @@ class Smarty_CMS extends CMSSmartyBase
     public $assign; // TODO used by ancestor class(es)? plugin(s) ?
     public $id; // for cacheing actionid prefix
     public $params; // why ? assigned once, never read
-//    public $config_overwrite = false; // ditto refer to https://www.smarty.net/docs/en/variable.config.overwrite.tpl
-//    public $default_config_handler_func = null; //ditto refer to https://www.smarty.net/docs/en/variable.default.config.handler.func.tpl
+//  public $config_overwrite = false; // ditto refer to https://www.smarty.net/docs/en/variable.config.overwrite.tpl
+//  public $default_config_handler_func = null; //ditto refer to https://www.smarty.net/docs/en/variable.default.config.handler.func.tpl
     protected $_global_cache_id;
     private static $_instance;
 
@@ -81,7 +81,6 @@ class Smarty_CMS extends CMSSmartyBase
         }
 
         $config = cms_config::get_instance();
-        $this->addConfigDir($config['assets_path'].'/configs');
         $this->addPluginsDir($config['assets_path'].'/plugins');
         $this->addPluginsDir(cms_join_path(CMS_ROOT_PATH,'plugins')); // deprecated
         $this->addPluginsDir(cms_join_path(CMS_ROOT_PATH,'lib','plugins'));
@@ -89,6 +88,7 @@ class Smarty_CMS extends CMSSmartyBase
 
         if( $_gCms->is_frontend_request()) {
             $this->addTemplateDir($config['assets_path'].'/templates');
+            $this->setConfigDir($config['assets_path'].'/configs');
 
             // Check if we are at install page, don't register anything if so, cause nothing below is needed.
 //see STATE_INSTALL below            if(isset($CMS_INSTALL_PAGE)) return;
@@ -124,7 +124,7 @@ class Smarty_CMS extends CMSSmartyBase
             $admin_dir = $config['admin_path'];
             $this->addPluginsDir($admin_dir.'/plugins');
             $this->setTemplateDir($admin_dir.'/templates');
-            $this->setConfigDir($admin_dir.'/configs');
+            $this->setConfigDir(array($config['assets_path'].'/configs', $admin_dir.'/configs'));
             // TODO custom security for admin might be a breaker
             $this->enableSecurity('CMSSmartySecurityPolicy');
         }
