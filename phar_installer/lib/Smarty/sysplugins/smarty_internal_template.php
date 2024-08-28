@@ -149,11 +149,11 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
     public function __construct(
         $template_resource,
         Smarty $smarty,
-        Smarty_Internal_Data $_parent = null,
+        ?Smarty_Internal_Data $_parent = null,
         $_cache_id = null,
         $_compile_id = null,
         $_caching = null,
-        $_cache_lifetime = null,
+        ?int $_cache_lifetime = null,
         $_isConfig = false
     ) {
         $this->smarty = $smarty;

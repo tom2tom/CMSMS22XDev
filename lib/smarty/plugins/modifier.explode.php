@@ -12,13 +12,13 @@
  * Name:     explode
  * Purpose:  split a string by a string
  *
- * @param string   $separator
- * @param string   $string
- * @param int|null $limit
+ * @param string      $separator
+ * @param string|null $string
+ * @param int|null    $limit
  *
  * @return array
  */
-function smarty_modifier_explode($separator, $string, ?int $limit = null)
+function smarty_modifier_explode($separator, ?string $string, ?int $limit = null)
 {
     // provide $string default to prevent deprecation errors in PHP >=8.1
     return explode($separator, $string ?? '', $limit ?? PHP_INT_MAX);

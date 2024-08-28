@@ -21,11 +21,11 @@ class Smarty_Internal_Resource_File extends Smarty_Resource
      * populate Source Object with meta data from Resource
      *
      * @param Smarty_Template_Source   $source    source object
-     * @param Smarty_Internal_Template $_template template object
+     * @param null|Smarty_Internal_Template $_template template object
      *
      * @throws \SmartyException
      */
-    public function populate(Smarty_Template_Source $source, Smarty_Internal_Template $_template = null)
+    public function populate(Smarty_Template_Source $source, ?Smarty_Internal_Template $_template = null)
     {
         $source->filepath = $this->buildFilepath($source, $_template);
         if ($source->filepath !== false) {
@@ -98,7 +98,7 @@ class Smarty_Internal_Resource_File extends Smarty_Resource
      * @return string fully qualified filepath
      * @throws SmartyException
      */
-    protected function buildFilepath(Smarty_Template_Source $source, Smarty_Internal_Template $_template = null)
+    protected function buildFilepath(Smarty_Template_Source $source, ?Smarty_Internal_Template $_template = null)
     {
         $file = $source->name;
         // absolute file ?

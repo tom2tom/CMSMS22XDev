@@ -145,7 +145,7 @@
                     {/if}
                 </td>
             </tr>
-         {/foreach}
+        {/foreach}
     </table>
 
     <h2>assigned config file variables</h2>
