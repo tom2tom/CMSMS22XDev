@@ -14,7 +14,7 @@ use CmsApp;
 use CmsLayoutTemplateType;
 use DOMDocument;
 use SimpleXMLElement;
-use UserGuide; //module class in global space
+//use UserGuide; //module class in global space
 use UserGuide\UserGuideImportGuide2; //not strictly needed here
 use UserGuide\UserGuideUtils; //ditto
 use const CMS_DB_PREFIX;
@@ -72,7 +72,7 @@ class UserGuideXML
 ]>
 EOS;
 */
-    public function __construct(UserGuide $mod = null)
+    public function __construct(/*?UserGuide */$mod = null) //uncomment for PHP 7.1+ .. 8.4+
     {
         if ($mod) {
             $this->mod = $mod;
