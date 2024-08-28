@@ -72,7 +72,7 @@ class FileTypeHelper
      *
      * @param mixed $config cms_config | null
      */
-    public function __construct($config = null) //OR (?cms_config $config) for 8.4
+    public function __construct(/*?cms_config */$config = null) // uncomment for PHP 7.1+ .. 8.4+
     {
         if (!$config) { $config = cms_config::get_instance(); }
         $this->_mime_ok = (function_exists('finfo_open') && function_exists('finfo_file'));
