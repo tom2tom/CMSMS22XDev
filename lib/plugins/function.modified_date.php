@@ -47,7 +47,7 @@ function smarty_cms_about_function_modified_date() {
 
 	<p>Change History:</p>
 		<ul>
-			<li>Added assign paramater (calguy1000)</li>
+			<li>Added assign paramater (Robert Campbell)</li>
 		</ul>
 <?php
 }

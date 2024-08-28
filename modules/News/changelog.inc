@@ -21,7 +21,7 @@
 </li>
 <li>
 <p>Version 1.6</p>
-<p>Added pagination, and moved the add button to the top (calguy)</p>
+<p>Added pagination, and moved the add button to the top (Robert Campbell)</p>
 </li>
 <li>
 <p>Version 2.0</p>

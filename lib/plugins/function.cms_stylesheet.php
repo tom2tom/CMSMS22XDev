@@ -317,7 +317,7 @@ function smarty_cms_about_function_cms_stylesheet()
 	<p>Change History:</p>
 	<ul>
 		<li>Rework from {stylesheet}</li>
-		<li>(Stikki and Calguy1000) Code cleanup, Added grouping by media type / media query, Fixed cache issues</li>
+		<li>(Stikki and Robert Campbell) Code cleanup, Added grouping by media type / media query, Fixed cache issues</li>
 	</ul>
 	<?php
 } // end of about

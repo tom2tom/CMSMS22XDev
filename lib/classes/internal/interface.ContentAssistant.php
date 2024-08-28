@@ -30,17 +30,13 @@
 #END_LICENSE
 
 /**
- * @package CMS
- */
-
-/**
  * An interface for a content assistant.
  *
  * ContentAssistant classes provide various extensions and utilities for content
  * objects.
  *
  * @since		2.0
- * @author              calguy1000
+ * @author		Robert Campbell
  * @abstract
  * @package		CMS
  */

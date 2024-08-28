@@ -55,7 +55,7 @@ function smarty_cms_about_function_last_modified_by() {
 
 	<p>Change History:</p>
 		<ul>
-			<li>Added assign parameter (calguy1000)</li>
+			<li>Added assign parameter (Robert Campbell)</li>
         </ul>
 	</p>
 <?php

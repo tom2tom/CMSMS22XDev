@@ -31,7 +31,7 @@
  */
 
 /*
- * This modifier modified by calguy1000 to be compatible with CMSMS.
+ * This modifier modified by Robert Campbell to be compatible with CMSMS.
  */
 function smarty_modifier_relative_time($timestamp)
 {

@@ -83,7 +83,7 @@ function smarty_cms_about_function_page_image() {
     <ul>
         <li>Support absolute and relative image-urls</li>
         <li>Fix for CMSMS 1.9</li>
-        <li>Jan 2016 <em>(calguy1000)</em> - Adds the full param for CMSMS 2.2</li>
+        <li>Jan 2016 <em>(Robert Campbell)</em> - Adds the full param for CMSMS 2.2</li>
     </ul>
 <?php
 }

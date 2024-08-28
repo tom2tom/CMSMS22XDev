@@ -210,7 +210,7 @@ final class CMS_Content_Block
 
     /**
      * @since 1.11
-     * @author calguy1000
+     * @author Robert Campbell
      * @internal
      * @ignore
      */

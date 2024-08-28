@@ -70,7 +70,7 @@ function cms_module_Redirect($modinstance, $id, $action, $returnid='', $params=a
 {
 	$name = $modinstance->GetName();
 
-	// Suggestion by Calguy to make sure 2 actions don't get sent
+	// Suggestion by Robert Campbell to make sure 2 actions don't get sent
 	if (isset($params['action']))unset($params['action']);
 	if (isset($params['id'])) unset($params['id']);
 	if (isset($params['module'])) unset($params['module']);

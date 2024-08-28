@@ -34,9 +34,9 @@
  * @param html|htmlall|url|quotes|hex|hexentity|javascript
  * @return string
  *
- * calguy1000: change default char-set to utf-8
+ * Robert Campbell: change default char-set to utf-8
  */
- 
+
 function smarty_modifier_cms_escape($string, $esc_type = 'html', $char_set = 'utf-8')
 {
     if (!$string) { return (string)$string; }

@@ -1,5 +1,5 @@
 <?php
-// calguy1000: this action is officially deprecated.
+// Robert Campbell: this action is officially deprecated.
 if (!isset($gCms)) exit;
 if( !$this->GetPreference('allow_fesubmit',0) ) return;
 

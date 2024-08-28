@@ -103,7 +103,7 @@ function smarty_cms_about_function_page_attr() {
 	<p>Change History:</p>
 	<ul>
 		<li>None</li>
-       <li>2015-06-02 - Added page parameter (calguy1000)</li>
+       <li>2015-06-02 - Added page parameter (Robert Campbell)</li>
 	</ul>
 <?php
 }
