@@ -42,8 +42,8 @@ class Smarty_Parser extends Smarty_CMS
 		stack_trace(); die();
 		parent::__construct();
 
-		$this->setTemplateDir(cms_join_path(CMS_ROOT_PATH,'tmp','templates'));
-		$this->setConfigDir(cms_join_path(CMS_ROOT_PATH,'tmp','templates'));
+//		$this->setTemplateDir(cms_join_path(CMS_ROOT_PATH,'tmp','templates')); TODO
+//		$this->setConfigDir(cms_join_path(CMS_ROOT_PATH,'tmp','templates'));
 
 		$this->setCaching(false);
 		$this->force_compile = true;
