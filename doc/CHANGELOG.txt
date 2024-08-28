@@ -1,7 +1,7 @@
-Version 2.2.19#2 - Inuvik
+Version 2.2.19F2 - Inuvik
 -------------------------------
 Various places
- - Compatible with PHP 7.1 to 8.3, or 5.6 to 7.4 if Smarty3 is substituted for Smarty4.
+ - Compatible with PHP 7.1 to 8.4, or 5.6 to 7.4 if Smarty3 is substituted for Smarty4.
  - Replaced deprecated Smarty syntax in templates.
  - Replaced some of the deprecated jQuery syntax.
  - Corrected html errors and inconsistencies.
@@ -27,7 +27,7 @@ Core - General
  - News module status changed to non-core, but still installed with demo content.
  - Since CMSMS 2.2, config parameters 'ssl_url','ssl_uploads_url' and 'ssl_image_uploads_url', and methods which use those, have internally but not publicly been flagged as deprecated.
  - Added missing nls files, allowing installation of extra translations.
- - Smarty upgraded to version 4.4.1.
+ - Smarty upgraded to forked version 4.4.1C.
  - Enabled use of PHP function rawurlencode in Smarty templates.
  - Added Smarty modifier plugin 'adjust' to handle deprecated modifier-function-calls in templates.
  - Added variable '_call' to all Smarty template objects to work around Smarty 4.5's deprecation of and 5's blocking of all PHP function calls.
