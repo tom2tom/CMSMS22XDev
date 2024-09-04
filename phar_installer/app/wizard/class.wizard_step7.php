@@ -118,7 +118,7 @@ class wizard_step7 extends wizard_step
         if( is_array($versions) && count($versions) ) {
             $this->message(lang('cleaning_files'));
             foreach( $versions as $one_version ) {
-                if( version_compare($one_version, $version_info['version']) < 1 ) continue;
+                if( utils::cms_version_compare($one_version, $version_info['version']) < 1 ) continue;
 
                 // open the manifest
                 // check the to version info

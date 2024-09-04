@@ -43,33 +43,11 @@ class CmsVersionCheckTask implements CmsRegularTask
         return $remote_ver;
     }
 
-    //see also: CmsAdminUtils::site_needs_updating()
-    private function later_cmsms_ver($remote_ver)
-    {
-        if( $remote_ver == CMS_VERSION ) { return false; }
-        //accommodate special comparison of versions including: 'dev' < 'a[lpha]< 'b[eta]' <'rc' < '#' < 'p[l]' pre?
-        $versions = [$remote_ver,CMS_VERSION];
-        $care = preg_grep('/([a-z]+)/i',$versions);
-        if( $care ) {
-            foreach( $care as $k => $fixer ) {
-                $q = preg_replace('/([^a-z])([ce-oqs-z])/i','$1.0$2',$fixer);
-                if( $q != $fixer ) {
-                    $versions[$k] = $q;
-                }
-            }
-            uasort($versions,'version_compare');
-            $versions = array_replace($versions,$care);
-            return reset($versions) == CMS_VERSION; //$remote_ver is considered later
-        } else {
-            return version_compare(CMS_VERSION,$remote_ver) < 0;
-        }
-    }
-
     public function execute($time = '')
     {
         // do the task.
         $remote_ver = $this->fetch_latest_cmsms_ver();
-        if( later_cmsms_ver($remote_ver) ) {
+        if( $remote_ver && $remote_ver != 'error' && cmsversion_compare(CMS_VERION,$remote_ver) < 0) {
             $alert = new \CMSMS\AdminAlerts\TranslatableAlert(['Modify Site Preferences']);
             $alert->name = 'CMSMS Version Check';
             $alert->titlekey = 'new_version_avail_title';

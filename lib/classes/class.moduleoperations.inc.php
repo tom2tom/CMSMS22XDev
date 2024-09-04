@@ -286,12 +286,12 @@ final class ModuleOperations
      * @param bool $brief If set to true, less checking is done and no errors are returned
      * @return array A hash of details about the installed module
      */
-    function ExpandXMLPackage( $xmluri, $overwrite = 0, $brief = 0 )
+    function ExpandXMLPackage( $xmluri, $overwrite = false, $brief = false )
     {
         // first make sure that we can actually write to the module directory
         $dir = dirname(__DIR__,2).DIRECTORY_SEPARATOR."modules";
 
-        if( !is_writable( $dir ) && $brief == 0 ) throw new CmsFileSystemException(lang('errordirectorynotwritable'));
+        if( !is_writable( $dir ) && !$brief ) throw new CmsFileSystemException(lang('errordirectorynotwritable'));
 
         $reader = new XMLReader();
         $ret = $reader->open($xmluri);
@@ -309,7 +309,7 @@ final class ModuleOperations
                     $reader->read();
                     $moduledetails['name'] = $reader->value;
                     // check if this module is already installed
-                    if( isset( $this->_modules[$moduledetails['name']] ) && $overwrite == 0 && $brief == 0 ) {
+                    if( isset( $this->_modules[$moduledetails['name']] ) && !$overwrite && !$brief ) {
                         throw new CmsLogicException('CMSEX_M001');
                     }
                     break;
@@ -324,7 +324,7 @@ final class ModuleOperations
                     $reader->read();
                     $moduledetails['version'] = $reader->value;
                     $tmpinst = $this->get_module_instance($moduledetails['name']);
-                    if( $tmpinst && $brief == 0 ) {
+                    if( $tmpinst && !$brief ) {
                         $version = $tmpinst->GetVersion();
                         if( version_compare($moduledetails['version'],$version) < 0 ) {
                             throw new CmsLogicException('CMSEX_M002');
@@ -338,7 +338,7 @@ final class ModuleOperations
                 case 'MINCMSVERSION':
                     $name = $reader->localName;
                     $reader->read();
-                    if( $brief == 0 && version_compare(CMS_VERSION,$reader->value) < 0 ) {
+                    if( !$brief && cmsversion_compare(CMS_VERSION,$reader->value) < 0 ) {
                         throw new CmsLogicException(lang('errormoduleversionincompatible'));
                     }
                     $moduledetails[$name] = $reader->value;
@@ -633,7 +633,7 @@ final class ModuleOperations
             return FALSE;
         }
 
-        if (version_compare($obj->MinimumCMSVersion(),CMS_VERSION) == 1 ) {
+        if (cmsversion_compare($obj->MinimumCMSVersion(),CMS_VERSION) > 0 ) {
             // oops, not compatible.... can't load.
             audit('','Module','Cannot load '.$module_name.' which is not compatible wth this version of CMSMS');
             debug_buffer("Cannot load module $module_name... It is not compatible with this version of CMSMS");
