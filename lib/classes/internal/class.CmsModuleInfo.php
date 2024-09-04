@@ -16,7 +16,7 @@ class CmsModuleInfo implements ArrayAccess
             break;
 
         case 'ver_compatible':
-            return version_compare($this['mincmsversion'],CMS_VERSION,'<=');
+            return cmsversion_compare($this['mincmsversion'],CMS_VERSION) <= 0;
 
         case 'dir':
             return cms_join_path(CMS_ROOT_PATH,'modules',$this['name']);

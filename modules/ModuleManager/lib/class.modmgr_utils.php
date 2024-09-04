@@ -153,8 +153,8 @@ final class modmgr_utils
         global $CMS_VERSION;
         $results2 = array();
         foreach( $results as $oneresult ) {
-            if( (!empty($oneresult['maxcmsversion']) && version_compare($CMS_VERSION,$oneresult['maxcmsversion']) > 0) ||
-                (!empty($oneresult['mincmsversion']) && version_compare($CMS_VERSION,$oneresult['mincmsversion']) < 0) ) {
+            if( (!empty($oneresult['maxcmsversion']) && cmsversion_compare($CMS_VERSION,$oneresult['maxcmsversion']) > 0) ||
+                (!empty($oneresult['mincmsversion']) && cmsversion_compare($CMS_VERSION,$oneresult['mincmsversion']) < 0) ) {
                 $oneresult['status'] = 'incompatible';
             }
             $results2[] = $oneresult;

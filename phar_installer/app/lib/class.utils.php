@@ -10,6 +10,32 @@ final class utils
 {
     private function __construct() {}
 
+    /**
+     * Compare 2 CMSMS-version numbers (etc ) which might include non-'standardized' chars
+     * hence special comparison of versions including letter(s) other than:
+     *  'dev' < 'a[lpha]< 'b[eta]' <'rc' < '#' < 'p[l]' pre?
+     *
+     * @param string $v1
+     * @param string $v2
+     * @return int -1, 0, 1
+     */
+    public static function cms_version_compare($v1, $v2)
+    {
+        if (strcasecmp($v1, $v2) == 0) {
+            return 0;
+        }
+        $versions = [$v1, $v2];
+        foreach ($versions as $i => $vi) {
+            if (preg_match('/([a-z]+)/i', $vi)) {
+               $c = preg_replace('/([^a-z])([ce-oqs-z])/i', '$1.0$2', $vi);
+               if ($c != $vi) {
+                   $versions[$i] = $c;
+               }
+            }
+        }
+        return version_compare($versions[0], $versions[1]);
+    }
+
     // get the list of versions we can upgrade from.
     public static function get_upgrade_versions()
     {
@@ -28,7 +54,7 @@ final class utils
             if( $file == '.' || $file == '..' ) continue;
             if( is_dir($dir.'/'.$file) &&
                 (is_file("$dir/$file/MANIFEST.DAT.gz") || is_file("$dir/$file/MANIFEST.DAT") || is_file("$dir/$file/upgrade.php")) ) {
-                if( version_compare($min_upgrade_version, $file) <= 0 ) $versions[] = $file;
+                if( self::cms_version_compare($min_upgrade_version, $file) <= 0 ) $versions[] = $file;
             }
         }
         closedir($dh);
