@@ -51,7 +51,7 @@ class cms_smarty extends Smarty
 /**
  * Workaround for Smarty5's disabling of all PHP function calls and
  * un-registered static-method calls
- * @since 2.2.19#2
+ * @since 2.2.19F2
  */
 class Install_TemplateCaller
 {

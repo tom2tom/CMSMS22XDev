@@ -555,7 +555,7 @@ class Smarty_CMS extends CMSSmartyBase
 
 /**
  * Workaround for Smarty5's disabling of all PHP function calls
- * @since 2.2.19#2
+ * @since 2.2.19F2
  */
 class Smarty_TemplateCaller
 {
