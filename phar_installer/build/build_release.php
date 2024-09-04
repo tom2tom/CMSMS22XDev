@@ -41,7 +41,6 @@ $all_excludes = [
 '~\.git.*~',
 '~\.svn~',
 '~svn\-~',
-'~[\\/]ext[\\/].*\.php~',
 '~index\.html?$~',
 '~[\\/]config\.php$~',
 '~\.bak$~',
@@ -50,6 +49,7 @@ $all_excludes = [
 '~UNUSED~',
 '~DEVELOP~',
 '~HIDE~',
+'~[\\/]ext[\\/].*\.php~',
 '~[\\/]configs[\\/].*\.conf~'
 ];
 
