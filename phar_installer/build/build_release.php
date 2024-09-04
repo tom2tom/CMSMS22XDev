@@ -42,13 +42,13 @@ $all_excludes = [
 '~svn\-~',
 '~index\.html?$~',
 '~[\\/]config\.php$~',
-'~siteuuid\.dat$~',
 '~\.bak$~',
 '/~$/',
 '~\.#~',
 '~UNUSED~',
 '~DEVELOP~',
 '~HIDE~',
+'~[\\/]ext[\\/].*\.php~',
 ];
 
 // members of $src_excludes which need double-check before exclusion to confirm they're 'ours'
@@ -65,10 +65,10 @@ $src_excludes = [
 // root-relative sub-paths of source dirs whose actual contents are NOT for installation with sources in general.
 // instead their real contents will be handled by the site-importer, and pending that, just an empty 'index.html'
 $folder_excludes = [
-'admin/configs',
-'assets/configs',
+'assets/admin_custom',
+'assets/css',
+'assets/module_custom',
 'assets/templates',
-'assets/styles',
 'assets/themes',
 'assets/user_plugins',
 ];
