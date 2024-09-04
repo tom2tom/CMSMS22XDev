@@ -431,7 +431,12 @@ class ContentOperations
 		normally, an item with parent id -1 would have a single-segment hierarchy like 00002, but things might be messed up after reordering
 		*/
 		foreach( $list as &$cur_row ) {
-			$cur_row['phier'] = substr($cur_row['hierarchy'],0,-6); // too bad this can't readily be populated by db server
+			if( $cur_row['hierarchy'] ) {
+				$cur_row['phier'] = substr($cur_row['hierarchy'],0,-6); // too bad this can't readily be populated by db server
+			}
+			else {
+				$cur_row['phier'] = '';
+			}
 		}
 		unset($cur_row);
 
@@ -1192,7 +1197,7 @@ ORDER BY B.hierarchy';
 
 	/**
 	 * Return the name or menu-label of the content whose id is specified.
-	 * @since 2.2.19#2
+	 * @since 2.2.19F2
 	 *
 	 * @param int $id The content id to query
 	 * @return string The resulting identifier, or 'Anonymous' if nothing useful found.
