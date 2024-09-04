@@ -54,7 +54,7 @@ final class utils
             if( $file == '.' || $file == '..' ) continue;
             if( is_dir($dir.'/'.$file) &&
                 (is_file("$dir/$file/MANIFEST.DAT.gz") || is_file("$dir/$file/MANIFEST.DAT") || is_file("$dir/$file/upgrade.php")) ) {
-                if( $this->cms_version_compare($min_upgrade_version, $file) <= 0 ) $versions[] = $file;
+                if( self::cms_version_compare($min_upgrade_version, $file) <= 0 ) $versions[] = $file;
             }
         }
         closedir($dh);
