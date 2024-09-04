@@ -2,7 +2,7 @@
 
 namespace cms_autoinstaller;
 
-use __appbase\utils;
+use __appbase\utils as Utils2;
 use cms_autoinstaller\wizard_step;
 use cms_config;
 use cms_siteprefs;
@@ -251,7 +251,7 @@ class wizard_step8 extends wizard_step
             $current_version = $version_info['version'];
             foreach( $versions as $ver ) {
                 $fn = "$dir/$ver/upgrade.php";
-                if( version_compare($current_version,$ver) < 0 && is_file($fn) ) {
+                if( utils::cms_version_compare($current_version,$ver) < 0 && is_file($fn) ) {
                     include_once($fn);
                 }
             }
@@ -376,7 +376,7 @@ class wizard_step8 extends wizard_step
                 case 'freshen':
                     $this->do_freshen();
                     $url = $wiz->next_url();
-                    utils::redirect($url);
+                    Utils2::redirect($url);
                     break;
                 case 'install':
                     $this->do_install();

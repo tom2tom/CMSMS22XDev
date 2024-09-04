@@ -828,7 +828,8 @@ function munge_string_to_url($alias, $tolower = false, $withslash = false)
  * @param string $val input value
  * @return string
  */
-function cleanValue($val) {
+function cleanValue($val)
+{
   if ($val == "") return $val;
   //Replace odd spaces with safe ones
   $val = str_replace(" ", " ", $val);
@@ -1052,6 +1053,31 @@ function cms_ipmatches($ip,$checklist)
     if( $_testip(trim($one),$ip) ) return TRUE;
   }
   return FALSE;
+}
+
+
+/**
+ * Extension of PHP version_compare which supports versions including
+ * non-'standardised' letters, which might be present in CMSMS version numbers etc
+ * @since 2.2.19F2
+ *
+ * @param string $v1
+ * @param string $v2
+ * @return int -1, 0 or 1 according to whether $v1 is regarded <, = or > $v2
+*/
+function cmsversion_compare($v1, $v2)
+{
+    if( strcasecmp($v1, $v2) == 0 ) { return 0; }
+    $comp = [$v1, $v2];
+    foreach( $comp as $i=>$vi ) {
+        if( preg_match('/([a-z]+)/i',$vi) ) {
+           $c = preg_replace('/([^a-z])([ce-oqs-z])/i','$1.0$2',$vi);
+           if( $c != $vi ) {
+               $comp[$i] = $c;
+           }
+        }
+    }
+    return version_compare($comp[0],$comp[1]);
 }
 
 

@@ -101,8 +101,8 @@ if( !empty($newversions) ) {
 				$moddir = $moduledir.DIRECTORY_SEPARATOR.$row['name'];
 				if( (($writable && is_dir($moddir) && is_directory_writable( $moddir )) ||
 					 ($writable && !file_exists( $moddir ) )) && $caninstall ) {
-					if( (!empty($row['maxcmsversion']) && version_compare($CMS_VERSION,$row['maxcmsversion']) > 0) ||
-						(!empty($row['mincmsversion']) && version_compare($CMS_VERSION,$row['mincmsversion']) < 0) ) {
+					if( (!empty($row['maxcmsversion']) && cmsversion_compare($CMS_VERSION,$row['maxcmsversion']) > 0) ||
+						(!empty($row['mincmsversion']) && cmsversion_compare($CMS_VERSION,$row['mincmsversion']) < 0) ) {
 						$onerow->status = 'incompatible';
 					} else {
 						$onerow->status = $this->CreateLink( $id, 'installmodule', $returnid,

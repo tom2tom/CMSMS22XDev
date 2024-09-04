@@ -37,12 +37,12 @@ class wizard_step2 extends wizard_step
         $app = get_app();
         $app_config = $app->get_config();
         if( !isset($app_config['min_upgrade_version']) ) throw new Exception(lang('error_missingconfigvar','min_upgrade_version'));
-        if( version_compare($info['version'],$app_config['min_upgrade_version']) < 0 ) {
+        if( utils::cms_version_compare($info['version'],$app_config['min_upgrade_version']) < 0 ) {
             $info['error_status'] = 'too_old';
         } else {
-            $n = version_compare($info['version'],$app->get_dest_version());
-            if( $n == 0 ) { $info['error_status'] = 'same_ver'; }
-            elseif( $n > 0 ) { $info['error_status'] = 'too_new'; }
+            $dvc = utils::cms_version_compare($info['version'],$app->get_dest_version());
+            if( $dvc == 0 ) { $info['error_status'] = 'same_ver'; }
+            elseif( $dvc > 0 ) { $info['error_status'] = 'too_new'; }
         }
 
         $fn = $dir.'/config.php';
@@ -93,7 +93,7 @@ class wizard_step2 extends wizard_step
                 $versions = utils::get_upgrade_versions();
                 $out = array();
                 foreach( $versions as $version ) {
-                    if( version_compare($version,$info['version']) < 1 ) continue;
+                    if( utils::cms_version_compare($version,$info['version']) < 1 ) continue;
                     $readme = utils::get_upgrade_readme($version);
                     $changelog = utils::get_upgrade_changelog($version);
                     if( $readme || $changelog ) $out[$version] = array('readme'=>$readme,'changelog'=>$changelog);
