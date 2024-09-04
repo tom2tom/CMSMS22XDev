@@ -156,7 +156,7 @@ class wizard_step3 extends wizard_step
         $tests[] = $obj;
 
         // only perform the check below PHP 7 (we'll be removing this check on 2.99+)
-        if(version_compare(PHP_VERSION, '7.0.0') < 0)
+        if( version_compare(PHP_VERSION, '7.0.0') < 0 )
         {
           // required test ... magic_quotes_runtime
           // TODO: remove on 2.99+ if not removed already as it was removed from PHP since v 5.4.0 (JM)
