@@ -48,9 +48,8 @@ $src_excludes = [
 '~svn\-.*~',
 '~index\.html?$~',
 '~[\\/]config\.php$~',
-'~siteuuid\.dat$~',
-'~master\.dat$~',
-'~master\.ini$~',
+'~[\\/]ext[\\/].*\.php~',
+'~[\\/]configs[\\/].*\.conf~',
 '~phar_installer~',
 '~installer~',
 '~scripts~',
@@ -70,10 +69,10 @@ $src_excludes = [
 
 // TODO completely ignore some places c.f. build_release script:
 $folder_excludes = [
-'admin/configs',
-'assets/configs',
+'assets/admin_custom',
+'assets/css',
+'assets/module_custom',
 'assets/templates',
-'assets/styles',
 'assets/themes',
 'assets/user_plugins',
 'uploads', // needed ?
