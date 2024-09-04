@@ -768,7 +768,7 @@ abstract class ContentBase
 	 * @see also ItemOrder()
 	 *
 	 * @internal
-	 * @deprecated since 2.2.19#2
+	 * @deprecated since 2.2.19F2
 	 * @return int
 	 */
 	public function OldItemOrder()
@@ -781,7 +781,7 @@ abstract class ContentBase
 	 * @see also ItemOrder(), OldItemOrder()
 	 *
 	 * @internal
-	 * @deprecated since 2.2.19#2
+	 * @deprecated since 2.2.19F2
 	 * @param int the itemorder.
 	 */
 	public function SetOldItemOrder($itemorder)
@@ -806,7 +806,7 @@ abstract class ContentBase
 	/**
 	 * Returns the Hierarchy of the parent of this page.
 	 * A string like ##.##.## indicating the path to that page
-	 * @since 2.2.19#2
+	 * @since 2.2.19F2
 	 *
 	 * @return string, possibly empty
 	 */
@@ -1174,7 +1174,7 @@ abstract class ContentBase
 	 * Properties will be loaded from the database if necessary.
 	 *
 	 * @param string $name
-	 * @param mixed $default fallback value Default null since 2.2.19#2
+	 * @param mixed $default fallback value Default null since 2.2.19F2
 	 * @return mixed String value, or $default if the property does not exist.
 	 */
 	public function GetPropertyValue($name,$default= null)
@@ -2603,7 +2603,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			}
 			break;
 
-		case 'default': //since 2.2.19#2
+		case 'default': //since 2.2.19F2
 			$help = cms_admin_utils::get_help_tag('core','help_content_default',lang('help_title_content_default'));
 			if( !$this->mDefaultContent ) {
 				$contentops = ContentOperations::get_instance();
