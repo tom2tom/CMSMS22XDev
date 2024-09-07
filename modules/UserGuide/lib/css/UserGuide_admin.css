@@ -1,5 +1,4 @@
 /*! UserGuide_admin.css */
-/*TODO rtl-variant needed*/
 #guide_content {
   float: left;
   width: 99%;
@@ -121,7 +120,7 @@ div.pagecontainer .fatinput {
   opacity: 0
 }
 #selectorlabel {
-  height: 1.2rem;
+/*height: 1.2rem;*/
   padding: 0.5rem 0.8rem 0.3rem
 }
 /* fake buttons */
@@ -129,7 +128,7 @@ a#export,
 a#export2,
 a#importold,
 a#importvold {
-  height: 1rem;
+/*height: 1rem;*/
   padding: 0.4rem 0.8rem
 }
 /* spinner */
