@@ -1,2 +1,2 @@
-Extra thumbnail formats
+Extra image and thumbnail types
 Deploy folders for Smarty config files
