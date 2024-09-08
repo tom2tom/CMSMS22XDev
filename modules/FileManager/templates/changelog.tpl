@@ -3,6 +3,8 @@
     <br>
     Use html5 syntax
     <br>
+    Support extra image types and intelligent thumbnailing
+    <br>
     Use FileTypeHelper-class methods where relevant
     <br>
     Modify easyarchives classes for PHP8+ compatibility

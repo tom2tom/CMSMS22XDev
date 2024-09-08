@@ -1,7 +1,7 @@
 Version 2.2.21F2 - Fredericton
 -------------------------------
- - FR #12720,#12737 Extra thumbnail formats
- Deploy folders for Smarty config files
+ - FR #12720,#12737 Extra image formats and intelligent thumbnailing
+ - Deploy folders for Smarty config files
 
 Version 2.2.20F2 - Yellowknife
 -------------------------------
