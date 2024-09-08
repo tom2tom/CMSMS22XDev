@@ -20,14 +20,15 @@
 $CMS_ADMIN_PAGE=1;
 require_once("../lib/include.php");
 check_login();
-$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 $userid = get_userid();
 if( !check_permission($userid, 'Modify User-defined Tags') ) return;
+
+$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+if( isset($_POST['cancel']) ) redirect('listusertags.php'.$urlext);
+
 $tagops = cmsms()->GetUserTagOperations();
 $themeObject = null; // object not yet set
 $userplugin_id = 0;
-
-if( isset($_POST['cancel']) ) redirect('listusertags.php'.$urlext);
 
 if( !isset($_POST['ajax']) ) {
     include_once('header.php');
