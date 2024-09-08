@@ -490,7 +490,7 @@ final class filemanager_utils
         return $output;
     }
 
-    public static function create_thumbnail($src, $dest = '', $force = FALSE)
+    public static function create_thumbnail($src,$dest = '',$force = FALSE)
     {
         if( !file_exists($src) ) return FALSE;
         if( !$dest ) {
@@ -505,7 +505,15 @@ final class filemanager_utils
         if( !$mime ) return FALSE;
 
         if( $mime == 'image/svg+xml' || $mime == 'image/svg' ) {
-            copy($src,$dest); //TODO suitably-replicate content as $dest
+            if( $force ) {
+                if( is_file($dest) ) {
+                    unlink($dest);
+                }
+                copy($src,$dest); //TODO suitably replicate content as $dest
+            }
+            elseif( !is_file($dest) ) {
+                copy($src,$dest);
+            }
             return TRUE;
         }
 
@@ -514,30 +522,37 @@ final class filemanager_utils
 
         $src_width = $info[0];
         $src_height = $info[1];
-        $thumb_width = cms_siteprefs::get('thumbnail_width', 96);
-        $thumb_height = cms_siteprefs::get('thumbnail_height', 96);
+        $thumb_width = cms_siteprefs::get('thumbnail_width',96);
+        $thumb_height = cms_siteprefs::get('thumbnail_height',96);
         $src_x = 0;
         $src_y = 0;
-        self::get_thumbnail_size($src_width, $src_height, $thumb_width, $thumb_height, $src_x, $src_y);
+        self::get_thumbnail_size($src_width,$src_height,$thumb_width,$thumb_height,$src_x,$src_y);
 
-        // if suitably-sized thumbnail exists, stet unless $force
-        if( !$force ) {
-            if( $info[0] == $thumb_width && $info[1] == $thumb_height ) {
-                return TRUE;
+        // if suitably-sized for thumbnail, copy it
+        if( $info[0] <= $thumb_width && $info[1] <= $thumb_height ) {
+            if( $force ) {
+                if( is_file($dest) ) {
+                    unlink($dest);
+                }
+                copy($src,$dest);
             }
+            elseif( !is_file($dest) ) {
+                copy($src,$dest);
+            }
+            return TRUE;
         }
 
         $i_src = imagecreatefromstring(file_get_contents($src));
-        $i_dest = imagecreatetruecolor($thumb_width, $thumb_height);
+        $i_dest = imagecreatetruecolor($thumb_width,$thumb_height);
 
         //TODO some of the following are type-spacific
-        imagealphablending($i_dest, FALSE); //TODO relevant if format has alpha channel
-        $color = imageColorAllocateAlpha($i_src, 255, 255, 255, 127); // ditto
-        imagecolortransparent($i_dest, $color);
-        imagefill($i_dest, 0, 0, $color);
-        imagesavealpha($i_dest, TRUE); //TODO for png, webp and avif only
+        imagealphablending($i_dest,FALSE); //TODO relevant if format has alpha channel
+        $color = imageColorAllocateAlpha($i_src,255,255,255,127); // ditto
+        imagecolortransparent($i_dest,$color);
+        imagefill($i_dest,0,0,$color);
+        imagesavealpha($i_dest,TRUE); //TODO for png, webp and avif only
 
-        imagecopyresampled($i_dest, $i_src, 0, 0, $src_x, $src_y, $thumb_width, $thumb_height, $src_width, $src_height);
+        imagecopyresampled($i_dest,$i_src,0,0,$src_x,$src_y,$thumb_width,$thumb_height,$src_width,$src_height);
         // c.f. typehelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff'.'tif','webp','avif','heif','svg'
         switch( $mime ) {
         case 'image/gif':
@@ -574,8 +589,8 @@ final class filemanager_utils
      * Size will be cropped to retain image ratio
      * @since 2.2.21F2
      *
-     * @param int $src_width width of the source image
-     * @param int $src_height height of the source image
+     * @param int $src_width width of the source image > 0
+     * @param int $src_height height of the source image > 0
      * @param int $thumb_width optional width of thumbnail to be created Default 0 hence sitepref
      * @param int $thumb_height optional height of thumbnail to be created Default 0 hence sitepref
      * @param int $src_x optional x-coordinate of source point Default 0
@@ -589,26 +604,31 @@ final class filemanager_utils
         &$src_x = 0,
         &$src_y = 0)
     {
-        // if one dimension not set calculate width/height ratio
+        // if one dimension not set, calculate width/height ratio
         if ($thumb_width > 0 && $thumb_height > 0) {
             $thumb_width = (int)$thumb_width;
             $thumb_height = (int)$thumb_height;
         } elseif ($thumb_width == 0) {  // but not $thumb_height
+            if ($src_height == 0) {
+                return;
+            }
             $thumb_width = (int)($src_width / $src_height * $thumb_height);
         } else { // $thumb_height == 0 but not $thumb_width
+            if ($src_width == 0) {
+                return;
+            }
             $thumb_height = (int)($src_height / $src_width * $thumb_width);
         }
-
-        if ($src_height == 0 || $thumb_height == 0) {
+        if ($thumb_height == 0) {
             return;
         }
-        // set $src_x/$src_y to crop width/height if required & set $src_width/$src_height
+        // set $src_x|$src_y, $src_width|$src_height to crop-related values if required 
         $ratio_src = $src_width / $src_height;
         $ratio_thumb = $thumb_width / $thumb_height;
-        if ($ratio_src >= $ratio_thumb) {    // src_wider_than_thumb
+        if ($ratio_src >= $ratio_thumb) { // width to be clipped
             $src_x = (int)(($src_width - $src_height * $ratio_thumb) / 2);
             $src_width = (int)($src_height * $ratio_thumb);
-        } else {                            // src_taller_than_thumb
+        } else { // height to be clipped
             $src_y = (int)(($src_height - $src_width / $ratio_thumb) / 2);
             $src_height = (int)($src_width / $ratio_thumb);
         }
