@@ -505,24 +505,39 @@ final class filemanager_utils
         if( !$mime ) return FALSE;
 
         if( $mime == 'image/svg+xml' || $mime == 'image/svg' ) {
-//TODO support svg thumbnail FR #12737
-//            $dest = $src; //TODO replicate content as $dest
-            return FALSE;
+            copy($src,$dest); //TODO suitably-replicate content as $dest
+            return TRUE;
         }
 
-        $width = cms_siteprefs::get('thumbnail_width', 96);
-        $height = cms_siteprefs::get('thumbnail_height', 96);
-        //TODO scale per min-dimention then crop, instead of simple scale FR #12739 c.f. FileManager action rotate
+        $info = getimagesize($src);
+        if( !$info ) return FALSE;
+
+        $src_width = $info[0];
+        $src_height = $info[1];
+        $thumb_width = cms_siteprefs::get('thumbnail_width', 96);
+        $thumb_height = cms_siteprefs::get('thumbnail_height', 96);
+        $src_x = 0;
+        $src_y = 0;
+        self::get_thumbnail_size($src_width, $src_height, $thumb_width, $thumb_height, $src_x, $src_y);
+
+        // if suitably-sized thumbnail exists, stet unless $force
+        if( !$force ) {
+            if( $info[0] == $thumb_width && $info[1] == $thumb_height ) {
+                return TRUE;
+            }
+        }
 
         $i_src = imagecreatefromstring(file_get_contents($src));
-        $i_dest = imagecreatetruecolor($width, $height);
+        $i_dest = imagecreatetruecolor($thumb_width, $thumb_height);
+
         //TODO some of the following are type-spacific
-        imagealphablending($i_dest, FALSE); //TODO if relevant format
-        $color = imageColorAllocateAlpha($i_src, 255, 255, 255, 127);
+        imagealphablending($i_dest, FALSE); //TODO relevant if format has alpha channel
+        $color = imageColorAllocateAlpha($i_src, 255, 255, 255, 127); // ditto
         imagecolortransparent($i_dest, $color);
         imagefill($i_dest, 0, 0, $color);
         imagesavealpha($i_dest, TRUE); //TODO for png, webp and avif only
-        imagecopyresampled($i_dest, $i_src, 0, 0, 0, 0, $width, $height, imagesx($i_src), imagesy($i_src));
+
+        imagecopyresampled($i_dest, $i_src, 0, 0, $src_x, $src_y, $thumb_width, $thumb_height, $src_width, $src_height);
         // c.f. typehelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff'.'tif','webp','avif','heif','svg'
         switch( $mime ) {
         case 'image/gif':
@@ -552,6 +567,51 @@ final class filemanager_utils
             $res = FALSE;
         }
         return ($res != FALSE);
+    }
+
+    /**
+     * Alters some/all of the provided parameters, based on their supplied values
+     * Size will be cropped to retain image ratio
+     * @since 2.2.21F2
+     *
+     * @param int $src_width width of the source image
+     * @param int $src_height height of the source image
+     * @param int $thumb_width optional width of thumbnail to be created Default 0 hence sitepref
+     * @param int $thumb_height optional height of thumbnail to be created Default 0 hence sitepref
+     * @param int $src_x optional x-coordinate of source point Default 0
+     * @param int $src_y optional y-coordinate of source point Default 0
+     */
+    private static function get_thumbnail_size(
+        &$src_width,
+        &$src_height,
+        &$thumb_width = 0,
+        &$thumb_height = 0,
+        &$src_x = 0,
+        &$src_y = 0)
+    {
+        // if one dimension not set calculate width/height ratio
+        if ($thumb_width > 0 && $thumb_height > 0) {
+            $thumb_width = (int)$thumb_width;
+            $thumb_height = (int)$thumb_height;
+        } elseif ($thumb_width == 0) {  // but not $thumb_height
+            $thumb_width = (int)($src_width / $src_height * $thumb_height);
+        } else { // $thumb_height == 0 but not $thumb_width
+            $thumb_height = (int)($src_height / $src_width * $thumb_width);
+        }
+
+        if ($src_height == 0 || $thumb_height == 0) {
+            return;
+        }
+        // set $src_x/$src_y to crop width/height if required & set $src_width/$src_height
+        $ratio_src = $src_width / $src_height;
+        $ratio_thumb = $thumb_width / $thumb_height;
+        if ($ratio_src >= $ratio_thumb) {    // src_wider_than_thumb
+            $src_x = (int)(($src_width - $src_height * $ratio_thumb) / 2);
+            $src_width = (int)($src_height * $ratio_thumb);
+        } else {                            // src_taller_than_thumb
+            $src_y = (int)(($src_height - $src_width / $ratio_thumb) / 2);
+            $src_height = (int)($src_width / $ratio_thumb);
+        }
     }
 
     public static function format_filesize($size)
