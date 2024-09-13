@@ -19,33 +19,33 @@
 
 $CMS_ADMIN_PAGE = 1;
 
-require_once("../lib/include.php");
+require_once '../lib/include.php';
 $urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
 check_login();
 
-if (isset($_POST["cancel"])) {
-	redirect("listbookmarks.php".$urlext);
+if (isset($_POST['cancel'])) {
+	redirect('listbookmarks.php'.$urlext);
 }
 
-$error = "";
-$title= "";
-if (isset($_POST["title"])) {
-	$title = trim(cleanValue($_POST["title"]));
+$error = '';
+$title = '';
+if (isset($_POST['title'])) {
+	$title = trim(cleanValue($_POST['title']));
 }
-elseif (isset($_GET["title"])) {
+elseif (isset($_GET['title'])) {
 	// adding an admin url from the bookmarks popup
-	$tmp = trim($_GET["title"]); //TODO support cleanValue()
+	$tmp = trim($_GET['title']); //TODO support cleanValue()
 	$title = urldecode($tmp);
 }
 
-$url = "";
-if (isset($_POST["url"])) {
-	$url = trim(cleanValue($_POST["url"]));
+$url = '';
+if (isset($_POST['url'])) {
+	$url = trim(cleanValue($_POST['url']));
 }
-elseif (isset($_GET["ref"])) {
+elseif (isset($_GET['ref'])) {
 	// adding an admin url
-	$tmp = trim(cleanValue($_GET["ref"]));
+	$tmp = trim(cleanValue($_GET['ref']));
 	$url = base64_decode($tmp, true);
 }
 if ($url) {
@@ -68,7 +68,9 @@ if ($url) {
 		$validurl = function($checkurl, $blockhosts) {
 			$parts = parse_url($checkurl);
 			if ($parts) {
-				if (empty($parts['scheme'])) return false;
+				if (empty($parts['scheme'])) {
+					return false;
+				}
 				$val = strtolower($parts['scheme']);
 				// lots of valid schemes https://en.wikipedia.org/wiki/List_of_URI_schemes
 				if (in_array($val, [
@@ -87,7 +89,9 @@ if ($url) {
 				'tel',
 				'tftp',
 				'view-source',
-				])) return false;
+				])) {
+					return false;
+				}
 				// some typo checks
 				similar_text($val, 'https', $p1);
 				$near = ($p1 > 60 && $p1 < 100);
@@ -95,14 +99,18 @@ if ($url) {
 					similar_text($val, 'http', $p2);
 					$near = ($p2 > 60 && $p2 < 100);
 				}
-				if ($near) return false;
+				if ($near) {
+					return false;
+				}
 
 				if (empty($parts['host'])
-				 || in_array($parts['host'], $blockhosts)) return false;
-//TODO other sanity checks, malevolence checks
-//e.g. refer to https://owasp.org/www-community/attacks/Forced_browsing
-//www.example.com/function.jsp?fwd=admin.jsp
-//www.example.com/example.php?url=http://malicious.example.com
+				 || in_array($parts['host'], $blockhosts)) {
+					return false;
+				}
+				//TODO other sanity checks, malevolence checks
+				//e.g. refer to https://owasp.org/www-community/attacks/Forced_browsing
+				//www.example.com/function.jsp?fwd=admin.jsp
+				//www.example.com/example.php?url=http://malicious.example.com
 				return true;
 			}
 			return false;
@@ -134,15 +142,15 @@ if ($url) {
 
 $userid = get_userid();
 
-if (isset($_POST["addbookmark"])) {
+if (isset($_POST['addbookmark'])) {
 	$validinfo = true;
 
-	if ($title == "") {
-		$error .= lang('nofieldgiven', array(lang('title')));
+	if ($title == '') {
+		$error .= lang('nofieldgiven', [lang('title')]);
 		$validinfo = false;
 	}
-	elseif ($url == "") {
-		$error .= lang('nofieldgiven', array(lang('url')));
+	elseif ($url == '') {
+		$error .= lang('nofieldgiven', [lang('url')]);
 		$validinfo = false;
 	}
 
@@ -155,7 +163,7 @@ if (isset($_POST["addbookmark"])) {
 		$result = $markobj->save();
 
 		if ($result) {
-			redirect("listbookmarks.php".$urlext);
+			redirect('listbookmarks.php'.$urlext);
 		}
 		else {
 			$error .= lang('errorinsertingbookmark');
@@ -163,9 +171,9 @@ if (isset($_POST["addbookmark"])) {
 	}
 }
 
-$urlhelp = cms_admin_utils::get_help_tag(['key2'=>'help_bookmark_url', 'title'=>lang('url')]);
+$urlhelp = cms_admin_utils::get_help_tag(['key2' => 'help_bookmark_url', 'title' => lang('url')]);
 
-include_once("header.php");
+include_once 'header.php';
 
 if ($error) {
 	echo '<div class="pageerrorcontainer"><p class="pageerror">'.$error.'</p></div>';
@@ -174,25 +182,25 @@ if ($error) {
 
 <div class="pagecontainer">
 	<div class="pageoverflow">
-		<?php echo $themeObject->ShowHeader('addbookmark') ?>
+		<?php echo $themeObject->ShowHeader('addbookmark'); ?>
 		<form method="post" action="addbookmark.php">
 			<div>
-				<input type="hidden" name="<?php echo CMS_SECURE_PARAM_NAME ?>" value="<?php echo $_SESSION[CMS_USER_KEY] ?>">
+				<input type="hidden" name="<?php echo CMS_SECURE_PARAM_NAME; ?>" value="<?php echo $_SESSION[CMS_USER_KEY]; ?>">
 				<input type="hidden" name="addbookmark" value="true">
 			</div>
 			<div class="pageoverflow">
-				<p class="pagetext"><?php echo lang('title') ?>:</p>
-				<p class="pageinput"><input type="text" name="title" maxlength="255" value="<?php echo $title ?>"></p>
+				<p class="pagetext"><?php echo lang('title'); ?>:</p>
+				<p class="pageinput"><input type="text" name="title" maxlength="255" value="<?php echo $title; ?>"></p>
 			</div>
 			<div class="pageoverflow">
-				<p class="pagetext"><?php echo lang('url').':&nbsp;'.$urlhelp ?></p>
-				<p class="pageinput"><input type="text" name="url" size="70" maxlength="255" value="<?php echo $url ?>" class="standard"></p>
+				<p class="pagetext"><?php echo lang('url').':&nbsp;'.$urlhelp; ?></p>
+				<p class="pageinput"><input type="text" name="url" size="70" maxlength="255" value="<?php echo $url; ?>" class="standard"></p>
 			</div>
 			<br>
 			<div class="pageoverflow">
 				<p class="pageinput">
-					<input type="submit" value="<?php echo lang('submit') ?>" class="pagebutton">
-					<input type="submit" name="cancel" value="<?php echo lang('cancel') ?>" class="pagebutton">
+					<input type="submit" value="<?php echo lang('submit'); ?>" class="pagebutton">
+					<input type="submit" name="cancel" value="<?php echo lang('cancel'); ?>" class="pagebutton">
 				</p>
 			</div>
 		</form>
@@ -200,6 +208,6 @@ if ($error) {
 </div>
 
 <?php
-include_once("footer.php");
+include_once 'footer.php';
 
 ?>
