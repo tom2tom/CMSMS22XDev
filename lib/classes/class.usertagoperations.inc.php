@@ -169,11 +169,14 @@ final class UserTagOperations
 
 	/**
 	 * Add or update a named user defined tag into the database
+	 * $text has been partially sanitized upstream, and further validation
+	 * of tag content is done in CreateTagFunction() i.e. during preparation
+	 * for tag usage
 	 *
 	 * @param string $name User defined tag name
 	 * @param string $text Body of user defined tag
-	 * @param string $description Description for the user defined tag.
-	 * @param int    $id ID of existing user tag (for updates).
+	 * @param string $description Description for the user defined tag
+	 * @param int    $id ID of existing user tag (for updates)
 	 * @return bool
 	 */
 	function SetUserTag( $name, $text, $description, $id = 0 )
@@ -296,21 +299,22 @@ final class UserTagOperations
 		if( !function_exists($functionname) ) {
 			// validate the UDT syntax
 			// TODO also validate potentially risky content
-			// the following should have happened when the tag was saved, but hey, it might be super old, or have been hacked ...
+			// The following did, or should have, happened when the tag was saved.
+			// TODO possible startswith short '<?' or TODO '<%' or '<%=' tag
+			// in princple, frontend Smarty-security-policy aught to apply to $code content 
 			if( startswith($row['code'],'<?') ) {
 				if( strncasecmp($row['code'],'<?php',5) == 0 ) { $code = substr($row['code'],5); }
-				elseif( $row['code'][2] == '=' ) { $code = substr($row['code'],3); }
+				elseif( $row['code'][2] == '=' ) { $code = substr($row['code'],3); } //'<?=' is also valid
 				else { $code = substr($row['code'],2); }
 				$row['code'] = ltrim($code);
-				//TODO save it
+				//TODO save tweaked $row['code']
 			}
-			//TODO possible '<%' or '<%=' tag
+			/*TODO possible endswith TODO '%>' tag*/
 			if( endswith($row['code'],'?>') ) {
 				$code = substr($row['code'],0,-2);
 				$row['code'] = rtrim($code);
-				//TODO save it
+				//TODO save tweaked $row['code']
 			}
-			//TODO possible '%>' tag
 			$code = 'function '.$functionname.'($params,$smarty) {'.$row['code']."\n}";
 			try {
 				$res = eval($code); // returns FALSE upon parse error PHP < 7
@@ -321,6 +325,7 @@ final class UserTagOperations
 			catch (Throwable $e) { //PHP7+ only
 				return '';
 			}
+			//TODO save tweaked $row['code']
 		}
 		return $functionname;
 	}

@@ -20,14 +20,15 @@
 $CMS_ADMIN_PAGE=1;
 require_once("../lib/include.php");
 check_login();
-$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 $userid = get_userid();
 if( !check_permission($userid, 'Modify User-defined Tags') ) return;
+
+$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+if( isset($_POST['cancel']) ) redirect('listusertags.php'.$urlext);
+
 $tagops = cmsms()->GetUserTagOperations();
 $themeObject = null; // object not yet set
 $userplugin_id = 0;
-
-if( isset($_POST['cancel']) ) redirect('listusertags.php'.$urlext);
 
 if( !isset($_POST['ajax']) ) {
     include_once('header.php');
@@ -78,24 +79,23 @@ if( isset($_POST['submit']) || isset($_POST['apply']) ) {
     }
     else {
         $code = $record['code'];
-        if( startswith($code,'<?') ) {
+        if( startswith($code,'<?') ) { //TODO 'possible '<%' or '<%=' tag
             if( strncasecmp($code,'<?php',5) == 0 ) { $code = substr($code,5); }
-            elseif( $code[2] == '=' ) { $code = substr($code,3); }
+            elseif( $code[2] == '=' ) { $code = substr($code,3); } //TODO echo insertion
             else { $code = substr($code,2); }
             $record['code'] = $code = ltrim($code);
         }
-        //TODO 'possible '<%' or '<%=' tag
-        if( endswith($code,'?>') ) {
+        if( endswith($code,'?>') ) { //TODO possible '%>' tag ?
             $code = substr($code,0,-2);
             $record['code'] = $code = rtrim($code);
         }
-        //TODO possible '%>' tag
         $lastopenbrace = strrpos($code, '{');
         $lastclosebrace = strrpos($code, '}');
         if( $lastopenbrace > $lastclosebrace ) {
             $error[] = lang('invalidcode');
             $error[] = lang('invalidcode_brace_missing');
         }
+        // more code validation when $record['code'] is saved, downstream
     }
 
     if( !$error ) {
