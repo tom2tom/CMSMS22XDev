@@ -427,5 +427,7 @@ class cms_install extends app
             utils::rrmdir($this->_custom_tmpdir);
             rmdir($this->_custom_tmpdir); //the parent too
         }
+        $sess = session::get();
+        $sess::clear();
     }
 } // end of class
