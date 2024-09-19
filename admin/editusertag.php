@@ -78,24 +78,23 @@ if( isset($_POST['submit']) || isset($_POST['apply']) ) {
     }
     else {
         $code = $record['code'];
-        if( startswith($code,'<?') ) {
+        if( startswith($code,'<?') ) { //TODO 'possible '<%' or '<%=' tag
             if( strncasecmp($code,'<?php',5) == 0 ) { $code = substr($code,5); }
-            elseif( $code[2] == '=' ) { $code = substr($code,3); }
+            elseif( $code[2] == '=' ) { $code = substr($code,3); } //TODO echo insertion
             else { $code = substr($code,2); }
             $record['code'] = $code = ltrim($code);
         }
-        //TODO 'possible '<%' or '<%=' tag
-        if( endswith($code,'?>') ) {
+        if( endswith($code,'?>') ) { //TODO possible '%>' tag ?
             $code = substr($code,0,-2);
             $record['code'] = $code = rtrim($code);
         }
-        //TODO possible '%>' tag
         $lastopenbrace = strrpos($code, '{');
         $lastclosebrace = strrpos($code, '}');
         if( $lastopenbrace > $lastclosebrace ) {
             $error[] = lang('invalidcode');
             $error[] = lang('invalidcode_brace_missing');
         }
+        // more code validation when $record['code'] is saved, downstream
     }
 
     if( !$error ) {
