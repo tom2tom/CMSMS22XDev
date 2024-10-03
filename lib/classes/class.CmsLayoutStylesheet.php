@@ -662,17 +662,18 @@ class CmsLayoutStylesheet
 	 * Load the specified stylesheet object
 	 *
 	 * @param mixed $a Either an integer stylesheet id, or a string stylesheet name.
+	 * @param bool $force  @since 2.2.21F2 Whether to always re-generate the stylesheet object, ignoring any cache. Defaults to false.
 	 * @return CmsLayoutStylesheet
 	 * @throws CmsInvalidDataException
 	 */
-	public static function load($a)
+	public static function load($a,$force=false)
 	{
 		// check the cache first..
 		$db = CmsApp::get_instance()->GetDb();
 		$row = [];
 		if( is_numeric($a) && (int)$a > 0 ) {
 			$a = (int)$a;
-			if( isset(self::$_css_cache[$a]) ) {
+			if( !$force && isset(self::$_css_cache[$a]) ) {
 				return self::$_css_cache[$a];
 			}
 			// not in cache
@@ -682,9 +683,8 @@ class CmsLayoutStylesheet
 		else if( is_string($a) && strlen($a) > 0 ) {
 			if( isset(self::$_name_cache[$a]) ) {
 				$b = (int)self::$_name_cache[$a];
-				if( isset(self::$_css_cache[$b]) ) {
-					$ret = self::$_css_cache[$b];
-					return $ret;
+				if( !$force && isset(self::$_css_cache[$b]) ) {
+					return self::$_css_cache[$b];
 				}
 			}
 			// not in cache
