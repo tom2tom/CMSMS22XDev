@@ -4,7 +4,7 @@ This file is part of CMS Made Simple module: UserGuide
 Copyright (C) 2024 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 Refer to license and other details at the top of file UserGuide.module.php
 */
-$lang['add_item'] = 'Add New Guide';
+$lang['add_item'] = 'Add Guide';
 $lang['admin'] = 'Admin Only';
 $lang['adminSection'] = 'Admin-Menu Section';
 $lang['admin_only_visible'] = 'viewable only in the Admin Console';

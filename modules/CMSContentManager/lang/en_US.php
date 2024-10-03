@@ -1,7 +1,7 @@
 <?php
 
 //A
-$lang['addcontent'] = 'Add New Content';
+$lang['addcontent'] = 'Add Content Page';
 $lang['addtab'] = 'Add Custom Tab';
 $lang['apply'] = 'Apply';
 
