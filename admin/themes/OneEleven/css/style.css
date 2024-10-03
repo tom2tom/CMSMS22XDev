@@ -471,6 +471,7 @@ body {
 	line-height: 1.4;
 	font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	font-size: 14px;
+	background: #f6f6f6;
 	overflow: hidden;
 }
 ins {
