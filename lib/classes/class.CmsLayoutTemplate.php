@@ -884,25 +884,27 @@ listable,created,modified) VALUES (?,?,?,?,?,?,?,?,?,?)';
 	 *
 	 * @throws CmsDataNotFoundException
 	 * @param mixed $a Either an integer template id, or a template name (string)
+	 * @param bool $force  @since 2.2.21F2 Whether to always re-generate the content object, ignoring any cache. Defaults to false.
 	 * @return CmsLayoutTemplate
 	 */
-	public static function load($a)
+	public static function load($a,$force = false)
 	{
 		static $_nn = 0;
 
 		$db = CmsApp::get_instance()->GetDb();
 		$row = [];
 		if( is_numeric($a) && $a > 0 ) {
-			if( isset(self::$_obj_cache[$a]) ) return self::$_obj_cache[$a];
+			if( !$force && isset(self::$_obj_cache[$a]) ) return self::$_obj_cache[$a];
+			// not in cache
 			$query = 'SELECT * FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE id = ?';
 			$row = $db->GetRow($query,array((int)$a));
 		}
 		else if( is_string($a) && strlen($a) > 0 ) {
-			if( isset(self::$_name_cache[$a]) ) {
+			if( !$force && isset(self::$_name_cache[$a]) ) {
 				$n = self::$_name_cache[$a];
 				return self::$_obj_cache[$n];
 			}
-
+			// not in cache
 			$query = 'SELECT * FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE name = ?';
 			$row = $db->GetRow($query,array($a));
 		}
