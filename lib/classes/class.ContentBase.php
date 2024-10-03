@@ -1262,18 +1262,20 @@ abstract class ContentBase
 					(content_id,type,prop_name,content,modified_date)
 					VALUES (?,?,?,?,$now)";
 		$uquery = 'UPDATE '.CMS_DB_PREFIX."content_props SET content = ?, modified_date = $now WHERE content_id = ? AND prop_name = ?";
-
+		$res = true;
 		foreach( $this->_props as $key => $value ) {
 			if( in_array($key,$gotprops) ) {
 				// update
 				$dbr = $db->Execute($uquery,array($value,$this->mId,$key));
+				$res = ($db->Affected_Rows() == 1 && $db->ErrorNo() == 0 && $res);
 			}
 			else {
 				// insert
 				$dbr = $db->Execute($iquery,array($this->mId,'string',$key,$value));
+				$res = ($dbr != false && $res);
 			}
 		}
-		return true;
+		return $res;
 	}
 
 	/**
