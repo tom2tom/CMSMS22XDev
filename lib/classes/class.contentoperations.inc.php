@@ -186,23 +186,25 @@ class ContentOperations
 	 *
 	 * @param int $id The id of the content object to load
 	 * @param bool $loadprops Also load the properties of that content object. Defaults to false.
+	 * @param bool $force  @since 2.2.21F2 Whether to always re-generate the content object, ignoring any cache. Defaults to false.
 	 * @return mixed The loaded content object. If nothing is found, returns NULL.
 	 */
-	public function LoadContentFromId($id,$loadprops=false)
+	public function LoadContentFromId($id,$loadprops=false,$force=false)
 	{
 		$id = (int) $id;
 		if( $id < 1 ) $id = $this->GetDefaultContent();
-		if( cms_content_cache::content_exists($id) ) return cms_content_cache::get_content($id);
+		$cached = cms_content_cache::content_exists($id);
+		if( $cached && !$force ) return cms_content_cache::get_content($id);
 
 		$db = CmsApp::get_instance()->GetDb();
 		$query = "SELECT * FROM ".CMS_DB_PREFIX."content WHERE content_id = ?";
 		$row = $db->GetRow($query, array($id));
-		if ($row) {
+		if( $row ) {
 			$classtype = strtolower($row['type']);
 			$contentobj = $this->CreateNewContent($classtype);
-			if ($contentobj) {
+			if( $contentobj ) {
 				$contentobj->LoadFromData($row, $loadprops);
-				cms_content_cache::add_content($id,$row['content_alias'],$contentobj);
+				if( !($cached || $force) ) cms_content_cache::add_content($id,$row['content_alias'],$contentobj);
 				return $contentobj;
 			}
 		}
