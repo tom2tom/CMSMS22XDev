@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 {capture assign='sitename'}{sitename}{/capture}
-<html{if $lang} lang="{$lang|truncate:5:''}"{/if} dir="{$lang_dir|default:'ltr'}">
+<html{if !empty($lang)} lang="{$lang|truncate:5:''}"{/if} dir="{$lang_dir|default:'ltr'}">
 	<head>
 		<meta charset="{$encoding}">
 		<title>{lang('logintitle',$sitename)}</title>

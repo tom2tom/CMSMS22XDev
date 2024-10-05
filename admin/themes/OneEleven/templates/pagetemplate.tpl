@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html{if $lang} lang="{$lang|truncate:5:''}"{/if} dir="{$lang_dir|default:'ltr'}">
+<html{if !empty($lang)} lang="{$lang|truncate:5:''}"{/if} dir="{$lang_dir|default:'ltr'}">
 	<head>
 	{$thetitle=$pagetitle}
 	{if $thetitle && $subtitle}{$thetitle="{$thetitle} - {$subtitle}"}{/if}
