@@ -913,15 +913,15 @@ aside .no-slide,
 	cursor: wait;
 }
 /* close notification */
-.close-warning {
+.close-warning { /*CHANGED*/
 	float: right;
-	display: inline-block;
-	width: 16px;
-	height: 16px;
+	width: 1.25em;
+	height: 1.25em;
+	margin-left: 0.5em;
+	border: 1px solid red;
 	text-indent: -9999em;
-	background: transparent url(themes/OneEleven/images/icons/extra/close.png) no-repeat;
+	background: transparent url(themes/OneEleven/images/icons/extra/close.png) no-repeat left 2px top 2px;
 	cursor: pointer;
-	margin: 5px;
 }
 /* --- LAYOUT --- */
 /* full height */
