@@ -1,2 +1,5 @@
 Extra image and thumbnail types
 Deploy folders for Smarty config files
+Page-content, templates and stylesheets may be loaded without checking cache
+Improved treatment of input user-related parameters and email preferences
+Later versions of jQuery and jQuery UI
