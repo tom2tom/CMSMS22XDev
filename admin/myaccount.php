@@ -35,12 +35,13 @@ $userid = get_userid(); // Also checks login - again!
 if( !check_permission($userid,'Manage My Settings') && !check_permission($userid,'Manage My Account') ) return;
 
 $urlext = '?' . CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY];
+if (isset($_POST["cancel"])) redirect("index.php" . $urlext);
+
 $thisurl = basename(__FILE__) . $urlext;
 $userobj = UserOperations::get_instance()->LoadUserByID($userid); // <- Safe to do, cause if $userid failed, it redirected to login.
 $db = cmsms()->GetDb();
 $error = '';
 $message = '';
-
 
 /**
  * Get preferences
@@ -50,7 +51,8 @@ $ce_navdisplay = cms_userprefs::get_for_user($userid,'ce_navdisplay');
 $syntaxhighlighter = cms_userprefs::get_for_user($userid, 'syntaxhighlighter');
 $default_cms_language = cms_userprefs::get_for_user($userid, 'default_cms_language');
 $old_default_cms_lang = $default_cms_language;
-$admintheme = cms_userprefs::get_for_user($userid, 'admintheme', CmsAdminThemeBase::GetDefaultTheme());
+$admintheme = cms_userprefs::get_for_user($userid, 'admintheme');
+if (!$admintheme) $admintheme = CmsAdminThemeBase::GetDefaultTheme();
 $bookmarks = cms_userprefs::get_for_user($userid, 'bookmarks', 0);
 $indent = cms_userprefs::get_for_user($userid, 'indent', true);
 $paging = cms_userprefs::get_for_user($userid, 'paging', 0);
@@ -60,14 +62,9 @@ $homepage = cms_userprefs::get_for_user($userid, 'homepage');
 $hide_help_links = cms_userprefs::get_for_user($userid, 'hide_help_links', 0);
 
 /**
- * Cancel
- */
-if (isset($_POST["cancel"])) redirect("index.php" . $urlext);
-
-/**
  * Check tab
  */
-$tab='';
+$tab = '';
 if( isset($_POST['active_tab']) ) $tab = trim(cleanValue($_POST['active_tab']));
 
 /**
@@ -76,25 +73,36 @@ if( isset($_POST['active_tab']) ) $tab = trim(cleanValue($_POST['active_tab']));
  * NOTE: assumes that we successfully acquired the user object.
  */
 if (isset($_POST['submit_account']) && check_permission($userid,'Manage My Account')) {
-
   // Collect params
-  $username = '';
-  if (isset($_POST["user"])) $username = cleanValue($_POST["user"]);
-
-  $password = '';
-  if (isset($_POST["password"])) $password = $_POST["password"];
-
+  $username    = '';
+  $password    = '';
   $passwordagain = '';
-  if (isset($_POST["passwordagain"])) $passwordagain = $_POST["passwordagain"];
-
-  $firstname = '';
-  if (isset($_POST["firstname"])) $firstname = cleanValue($_POST["firstname"]);
-
-  $lastname = '';
-  if (isset($_POST["lastname"])) $lastname = cleanValue($_POST["lastname"]);
-
-  $email = '';
-  if (isset($_POST["email"])) $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+  $firstname   = '';
+  $lastname    = '';
+  $email       = '';
+  foreach ($_POST as $key => $val) {
+    switch ($key) {
+      case 'user': //account
+        //TODO scrub malicious/XSS & invalid content
+        $username = preg_replace('/[^a-zA-Z0-9._ ]/', '', trim($val));
+        break;
+      case 'firstname':
+      case 'lastname':
+        //TODO scrub malicious/XSS & invalid
+        $tmp = preg_replace('/[\x00-\x1f\x7f]/', '', trim($val));
+        $$key = $sanitize_fn($tmp); //see include.php
+        break;
+      case 'password':
+      case 'passwordagain':
+        //TODO scrub malicious/XSS or just non-printables ?
+        $$key = preg_replace('/[\x00-\x1f\x7f]/', '', $val);
+        break;
+      case 'email':
+        //TODO scrub XSS & invalid
+        //PHP's FILTER_VALIDATE_EMAIL mechanism is incomplete (per RFC5321) - see notes at https://www.php.net/manual/en/function.filter-var.php
+        $email = filter_var(trim($val),FILTER_SANITIZE_EMAIL);
+    }
+  }
 
   // Do validations
   $validinfo = true;
@@ -102,21 +110,21 @@ if (isset($_POST['submit_account']) && check_permission($userid,'Manage My Accou
     $validinfo = false;
     $error = lang('nofieldgiven', array(lang('username')));
   }
-  else if ( !preg_match("/^[a-zA-Z0-9\._ ]+$/", $username) ) {
+  elseif ( $username != trim($_POST["user"])) {
     $validinfo = false;
     $error = lang('illegalcharacters', array(lang('username')));
   }
-  else if ($password != $passwordagain) {
+  elseif ($password && ($password != $passwordagain)) {
     $validinfo = false;
     $error = lang('nopasswordmatch');
   }
-  else if ($email && !is_email($email)) {
+  elseif ($email && ($email != trim($_POST['email']) || !is_email($email))) {
     $validinfo = false;
     $error = lang('invalidemail').': '.$email;
   }
 
   // If success do action
-  if($validinfo) {
+  if ($validinfo) {
     $userobj->username = $username;
     $userobj->firstname = $firstname;
     $userobj->lastname = $lastname;
@@ -126,7 +134,7 @@ if (isset($_POST['submit_account']) && check_permission($userid,'Manage My Accou
     if ($password) $userobj->SetPassword($password);
     $result = $userobj->Save();
 
-    if($result) {
+    if ($result) {
       // put mention into the admin log
         audit($userid, 'Admin user', "Edited: $userobj->username");
         HookManager::do_hook('Core::EditUserPost', [ 'user'=>&$userobj ]);
@@ -236,10 +244,10 @@ if( check_permission($userid,'Manage My Settings') ) {
 $out .= $themeObject->EndTabHeaders() . $themeObject->StartTabContent();
 $smarty->assign('tab_start',$out);
 
-$smarty->assign('tabs_end',$themeObject->EndTabContent());
-$smarty->assign('maintab_start',$themeObject->StartTab("maintab"));
-$smarty->assign('advancedtab_start',$themeObject->StartTab("advancedtab"));
-$smarty->assign('tab_end',$themeObject->EndTab());
+$smarty->assign('tabs_end', $themeObject->EndTabContent());
+$smarty->assign('maintab_start', $themeObject->StartTab("maintab"));
+$smarty->assign('advancedtab_start', $themeObject->StartTab("advancedtab"));
+$smarty->assign('tab_end', $themeObject->EndTab());
 
 // Prefs
 $smarty->assign('module_opts', $modules);
@@ -257,13 +265,12 @@ $smarty->assign('paging', $paging);
 $smarty->assign('date_format_string', $date_format_string);
 $smarty->assign('default_parent', $contentops->CreateHierarchyDropdown(0, $default_parent, 'parent_id', false, true));
 $smarty->assign('homepage', $themeObject->GetAdminPageDropdown('homepage', $homepage, 'homepage'));
-$tmp = array(10 => 10, 20 => 20, 50 => 50, 100 => 100);
-$smarty->assign('pagelimit_opts', $tmp);
+$smarty->assign('pagelimit_opts', [10 => 10, 20 => 20, 50 => 50, 100 => 100]);
 $smarty->assign('backurl', $themeObject -> backUrl());
 $smarty->assign('formurl', $thisurl);
 $smarty->assign('userobj', $userobj);
-$smarty->assign('manageaccount',check_permission($userid,'Manage My Account'));
-$smarty->assign('managesettings',check_permission($userid,'Manage My Settings'));
+$smarty->assign('manageaccount', check_permission($userid,'Manage My Account'));
+$smarty->assign('managesettings', check_permission($userid,'Manage My Settings'));
 
 // Output
 $smarty->display('myaccount.tpl');

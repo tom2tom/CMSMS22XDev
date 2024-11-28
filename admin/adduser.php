@@ -17,6 +17,8 @@
 #
 #$Id$
 
+use CMSMS\HookManager;
+
 $CMS_ADMIN_PAGE = 1;
 require_once ('../lib/include.php');
 
@@ -25,11 +27,14 @@ $userid = get_userid();
 
 if (!check_permission($userid, 'Manage Users')) die('Permission Denied');
 
+$urlext = '?' . CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY];
+if (isset($_POST['cancel'])) {
+    redirect('listusers.php' . $urlext);
+}
+
 /*--------------------
  * Variables
  ---------------------*/
-
-$urlext            = '?' . CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY];
 $gCms              = cmsms();
 $db                = $gCms->GetDb();
 $assign_group_perm = check_permission($userid, 'Manage Groups');
@@ -37,52 +42,91 @@ $groupops          = $gCms->GetGroupOperations();
 $error             = '';
 $adminaccess       = 1;
 $active            = 1;
-$sel_groups        = array();
-// Post data
+$sel_groups        = [];
+// POST[] data
+/*
 $user              = isset($_POST["user"]) ? cleanValue($_POST["user"]) : '';
-$password          = isset($_POST["password"]) ? trim($_POST["password"]) : '';
-$passwordagain     = isset($_POST["passwordagain"]) ? trim($_POST["passwordagain"]) : '';
+$password          = isset($_POST["password"]) ? $_POST["password"] : '';
+$passwordagain     = isset($_POST["passwordagain"]) ? $_POST["passwordagain"] : '';
 $firstname         = isset($_POST["firstname"]) ? cleanValue($_POST["firstname"]) : '';
 $lastname          = isset($_POST["lastname"]) ? cleanValue($_POST["lastname"]) : '';
 $email             = isset($_POST["email"]) ? trim(strip_tags($_POST["email"])) : '';
-$copyusersettings  = isset($_POST['copyusersettings']) ? (int)$_POST['copyusersettings'] : 0;
-$sel_groups        = (isset($_POST['sel_groups']) && is_array($_POST['sel_groups'])) ? $_POST['sel_groups'] : $sel_groups;
+*/
+$user          = '';
+$password      = '';
+$passwordagain = '';
+$firstname     = '';
+$lastname      = '';
+$email         = '';
+foreach ($_POST as $key => $val) {
+    switch ($key) {
+        case 'user': //account
+            //TODO scrub malicious/XSS & invalid content e.g. vanilla CMSMS2.2 preg_replace("/[^a-zA-Z0-9._ ]/", '', trim($val)) in future just clear non-printables ?
+            $user = preg_replace('/[^a-zA-Z0-9._ ]/', '', trim($val));
+            break;
+        case 'firstname':
+        case 'lastname':
+            //TODO scrub malicious/XSS & invalid
+            $tmp = preg_replace('/[\x00-\x1f\x7f]/', '', trim($val));
+            $$key = $sanitize_fn($tmp); //see include.php
+            break;
+        case 'password':
+        case 'passwordagain':
+            //TODO scrub malicious/XSS or just non-printables ?
+            $$key = preg_replace('/[\x00-\x1f\x7f]/', '', $val);
+            break;
+        case 'email':
+            //TODO scrub XSS & invalid
+            //PHP's FILTER_VALIDATE_EMAIL mechanism is incomplete (per RFC5321) - see notes at https://www.php.net/manual/en/function.filter-var.php
+            $email = filter_var(trim($val),FILTER_SANITIZE_EMAIL);
+    }
+}
+
+$copyusersettings = (isset($_POST['copyusersettings'])) ? (int)$_POST['copyusersettings'] : 0;
+$adminaccess      = (isset($_POST['adminaccess'])) ? 1 : 0;
+$active           = (isset($_POST['active'])) ? 1 : 0;
+$sel_groups       = (isset($_POST['sel_groups']) && is_array($_POST['sel_groups'])) ? $_POST['sel_groups'] : $sel_groups;
 
 /*--------------------
  * Variables
  ---------------------*/
 
-if (isset($_POST["cancel"])) {
-    redirect('listusers.php' . $urlext);
-    return;
-}
-
 if (isset($_POST["submit"])) {
 
-    $active      = !isset($_POST["active"]) ? 0 : 1;
-    $adminaccess = !isset($_POST["adminaccess"]) ? 0 : 1;
     $validinfo   = true;
 
-    if ($user == "") {
+    // check for errors
+    if ($user == "") { //falsy ok?
         $validinfo = false;
-        $error .= "<li>" . lang('nofieldgiven', array(lang('username'))) . "</li>";
-    } else if (!preg_match("/^[a-zA-Z0-9\._ ]+$/", $user)) {
+        $error .= "<li>" . lang('nofieldgiven', lang('username')) . "</li>";
+    } elseif ($user != trim($_POST['user'])) {
         $validinfo = false;
-        $error .= "<li>" . lang('illegalcharacters', array(lang('username'))) . "</li>";
+        $error .= "<li>" . lang('illegalcharacters', lang('username')) . "</li>";
+    } elseif (!preg_match("/^[a-zA-Z0-9._ ]+$/", $user)) { //space ok?
+        $validinfo = false;
+        $error .= "<li>" . lang('illegalcharacters', lang('username')) . "</li>";
     }
 
-    if ($password == "") {
+    if ($password == "") { //falsy ok?
         $validinfo = false;
-        $error .= "<li>" . lang('nofieldgiven', array(lang('password'))) . "</li>";
-    } else if ($password != $passwordagain) {
+        $error .= "<li>" . lang('nofieldgiven', lang('password')) . "</li>";
+    } elseif ($password != $_POST['password']) {
+        $validinfo = false;
+        $error .= "<li>" . lang('illegalcharacters', lang('password')) . "</li>";
+    } elseif ($password != $passwordagain) {
         // We don't want to see this if no password was given
         $validinfo = false;
         $error .= "<li>" . lang('nopasswordmatch') . "</li>";
     }
 
-    if (!empty($email) && !is_email($email)) {
-        $validinfo = false;
-        $error .= '<li>' . lang('invalidemail') . '</li>';
+    if ($email) {
+        if ($email != trim($_POST['email'])) {
+            $validinfo = false;
+            $error .= '<li>' . lang('invalidemail') . '</li>';
+        } elseif (!is_email($email)) {
+            $validinfo = false;
+            $error .= '<li>' . lang('invalidemail') . '</li>';
+        }
     }
 
     if ($validinfo) {
@@ -96,19 +140,19 @@ if (isset($_POST["submit"])) {
         $newuser->adminaccess = $adminaccess;
         $newuser->SetPassword($password);
 
-        \CMSMS\HookManager::do_hook('Core::AddUserPre', [ 'user'=>&$newuser ] );
+        HookManager::do_hook('Core::AddUserPre', [ 'user'=>&$newuser ] );
 
         $result = $newuser->save();
 
         if ($result) {
-            \CMSMS\HookManager::do_hook('Core::AddUserPost', [ 'user'=>&$newuser ] );
+            HookManager::do_hook('Core::AddUserPost', [ 'user'=>&$newuser ] );
 
             // set some default preferences, based on the user creating this user
             $adminid = get_userid();
             $userid = $newuser->id;
             if ($copyusersettings > 0) {
                 $prefs = cms_userprefs::get_all_for_user($copyusersettings);
-                if (is_array($prefs) && count($prefs)) {
+                if ($prefs && is_array($prefs)) {
                     foreach ($prefs as $k => $v) {
                         cms_userprefs::set_for_user($userid, $k, $v);
                     }

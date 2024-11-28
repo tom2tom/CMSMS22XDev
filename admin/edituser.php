@@ -16,6 +16,9 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #$Id$
+
+use CMSMS\HookManager;
+
 $CMS_ADMIN_PAGE = 1;
 require_once ('../lib/include.php');
 
@@ -24,10 +27,14 @@ $userid = get_userid();
 
 if (!check_permission($userid, 'Manage Users')) die('Permission Denied');
 
+$urlext = '?' . CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY];
+if (isset($_POST['cancel'])) {
+    redirect('listusers.php' . $urlext);
+}
+
 /*--------------------
  * Variables
  ---------------------*/
-$urlext            = CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY];
 $gCms              = cmsms();
 $db                = $gCms->GetDb();
 $error             = '';
@@ -38,18 +45,48 @@ $tplmaster         = 0;
 $copyfromtemplate  = 1;
 $message           = '';
 $user_id           = $userid;
-// Post data
+if (isset($_GET['user_id'])) {
+    $user_id = preg_replace('/[^a-zA-Z0-9._ ]/', '', trim($_GET['user_id']));
+}
+
+// POST[] data
+/*
 $user              = isset($_POST["user"]) ? cleanValue($_POST["user"]) : '';
 $password          = isset($_POST["password"]) ? $_POST["password"] : '';
 $passwordagain     = isset($_POST["passwordagain"]) ? $_POST["passwordagain"] : '';
 $firstname         = isset($_POST["firstname"]) ? cleanValue($_POST["firstname"]) : '';
 $lastname          = isset($_POST["lastname"]) ? cleanValue($_POST["lastname"]) : '';
 $email             = isset($_POST["email"]) ? trim(strip_tags($_POST["email"])) : '';
-
-if (isset($_POST["user_id"])) {
-    $user_id = cleanValue($_POST["user_id"]);
-} elseif (isset($_GET["user_id"])) {
-    $user_id = cleanValue($_GET["user_id"]);
+*/
+$user          = '';
+$password      = '';
+$passwordagain = '';
+$firstname     = '';
+$lastname      = '';
+$email         = '';
+foreach ($_POST as $key => $val) {
+    switch ($key) {
+        case 'user': //account
+        case 'user_id':
+            //TODO scrub malicious/XSS & invalid content
+            $$key = preg_replace('/[^a-zA-Z0-9._ ]/', '', trim($val));
+            break;
+        case 'firstname':
+        case 'lastname':
+            //TODO scrub malicious/XSS & invalid
+            $tmp = preg_replace('/[\x00-\x1f\x7f]/', '', trim($val));
+            $$key = $sanitize_fn($tmp); //see include.php
+            break;
+        case 'password':
+        case 'passwordagain':
+            //TODO scrub malicious/XSS or just non-printables ?
+            $$key = preg_replace('/[\x00-\x1f\x7f]/', '', $val);
+            break;
+        case 'email':
+            //TODO scrub XSS & invalid
+            //PHP's FILTER_VALIDATE_EMAIL mechanism is incomplete (per RFC5321) - see notes at https://www.php.net/manual/en/function.filter-var.php
+            $email = filter_var(trim($val),FILTER_SANITIZE_EMAIL);
+    }
 }
 
 // this is now always true... but we may want to change how things work, so I'll leave it
@@ -67,11 +104,6 @@ $thisuser          = $userops->LoadUserByID($user_id);
  * Logic
  ---------------------*/
 
-if (isset($_POST['cancel'])) {
-    redirect('listusers.php?' . $urlext);
-    return;
-}
-
 if (isset($_POST["submit"])) {
 
     if( !$access_user && isset($_POST['active']) ) $active = (int) $_POST['active'];
@@ -80,24 +112,32 @@ if (isset($_POST["submit"])) {
     $validinfo   = true;
 
     // check for errors
-    if ($user == '') {
+    if ($user == "") { //falsy ok?
         $validinfo = false;
-        $error .= "<li>" . lang('nofieldgiven', array(lang('username'))) . "</li>";
+        $error .= "<li>" . lang('nofieldgiven', lang('username')) . "</li>";
+    } elseif ($user != trim($_POST['user'])) {
+        $validinfo = false;
+        $error .= "<li>" . lang('illegalcharacters', lang('username')) . "</li>";
+    } elseif (!preg_match("/^[a-zA-Z0-9._ ]+$/", $user)) { //space ok?
+        $validinfo = false;
+        $error .= "<li>" . lang('illegalcharacters', lang('username')) . "</li>";
     }
 
-    if (!preg_match("/^[a-zA-Z0-9\._ ]+$/", $user)) {
-        $validinfo = false;
-        $error .= "<li>" . lang('illegalcharacters', array(lang('username'))) . "</li>";
-    }
-
-    if ($password != $passwordagain) {
+    if (isset($_POST["password"]) && $_POST['password'] != $password) {
+        $error .= "<li>" . lang('illegalcharacters', lang('password')) . "</li>";
+    } elseif ($password != $passwordagain) {
         $validinfo = false;
         $error .= "<li>" . lang('nopasswordmatch') . "</li>";
     }
 
-    if (!empty($email) && !is_email($email)) {
-        $validinfo = false;
-        $error .= '<li>' . lang('invalidemail') . ': ' . $email . '</li>';
+    if ($email) {
+        if ($email != trim($_POST['email'])) {
+            $validinfo = false;
+            $error .= '<li>' . lang('invalidemail') . '</li>';
+        } elseif (!is_email($email)) {
+            $validinfo = false;
+            $error .= '<li>' . lang('invalidemail') . '</li>';
+        }
     }
 
     if (isset($_POST['copyusersettings']) && $_POST['copyusersettings'] > 0) {
@@ -118,16 +158,16 @@ if (isset($_POST["submit"])) {
             $thisuser->email       = $email;
             $thisuser->adminaccess = $adminaccess;
             $thisuser->active      = $active;
-            if ($password != '')
+            if ($password != '') {
                 $thisuser->SetPassword($password);
-
-            \CMSMS\HookManager::do_hook('Core::EditUserPre', [ 'user'=>&$thisuser ] );
+            }
+            HookManager::do_hook('Core::EditUserPre', [ 'user'=>&$thisuser ] );
 
             $result = $thisuser->save();
             if ($assign_group_perm && isset($_POST['groups'])) {
-                $dquery = "delete from " . CMS_DB_PREFIX . "user_groups where user_id=?";
-                $iquery = "insert into " . CMS_DB_PREFIX . "user_groups (user_id,group_id) VALUES (?,?)";
+                $dquery = "DELETE FROM " . CMS_DB_PREFIX . "user_groups WHERE user_id=?";
                 $result = $db->Execute($dquery, array($thisuser->id));
+                $iquery = "INSERT INTO " . CMS_DB_PREFIX . "user_groups (user_id,group_id) VALUES (?,?)";
                 foreach ($group_list as $thisGroup) {
                     if (isset($_POST['g' . $thisGroup->id]) && $_POST['g' . $thisGroup->id] == 1) {
                         $result = $db->Execute($iquery, array(
@@ -162,7 +202,7 @@ if (isset($_POST["submit"])) {
             }
 
             // put mention into the admin log
-            \CMSMS\HookManager::do_hook('Core::EditUserPost', [ 'user'=>&$thisuser ] );
+            HookManager::do_hook('Core::EditUserPost', [ 'user'=>&$thisuser ] );
             $gCms->clear_cached_files();
             $url = 'listusers.php?' . $urlext;
             if ($message) {
