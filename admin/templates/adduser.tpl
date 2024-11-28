@@ -15,7 +15,7 @@
             <label for="username">*{lang('name')}:</label>&nbsp;{cms_help realm='admin' key='info_adduser_username' title=lang('name')}
         </p>
         <p class="pageinput">
-            <input id="username" type="text" name="user" maxlength="255" value="{$user}" class="standard">
+            <input id="username" type="text" name="user" maxlength="25" value="{$user}" class="standard" autocomplete="off">
         </p>
     </div>
     <div class="pageoverflow">
@@ -23,7 +23,7 @@
             <label for="password">*{lang('password')}:</label>&nbsp;{cms_help realm='admin' key='info_edituser_password' title=lang('password')}
         </p>
         <p class="pageinput">
-            <input type="password" id="password" name="password" maxlength="100" value="{$password}" class="standard">
+            <input type="password" id="password" name="password" maxlength="40" value="{$password}" class="standard" autocomplete="off">
         </p>
     </div>
     <div class="pageoverflow">
@@ -31,7 +31,7 @@
             <label for="passwordagain">*{lang('passwordagain')}:</label>&nbsp;{cms_help realm='admin' key='info_edituser_passwordagain' title=lang('passwordagain')}
         </p>
         <p class="pageinput">
-            <input type="password" id="passwordagain" name="passwordagain" maxlength="100" value="{$passwordagain}" class="standard">
+            <input type="password" id="passwordagain" name="passwordagain" maxlength="40" value="{$passwordagain}" class="standard" autocomplete="off">
         </p>
     </div>
     <div class="pageoverflow">
@@ -52,18 +52,19 @@
     </div>
     <div class="pageoverflow">
         <p class="pagetext">
-            <label for="email">{lang('email')}:</label>&nbsp;{cms_help key2='help_myaccount_email' title=lang('email')}
+            <label for="email">*{lang('email')}:</label>&nbsp;{cms_help key2='help_myaccount_email' title=lang('email')}
         </p>
         <p class="pageinput">
-            <input type="text" id="email" name="email" maxlength="255" value="{$email}" class="standard">
+            <input type="text" id="email" name="email" size="40" maxlength="255" value="{$email}" class="standard">
         </p>
     </div>
     <div class="pageoverflow">
+        <input type="hidden" name="active" value="0">
         <p class="pagetext">
-            {lang('active')}:&nbsp;{cms_help realm='admin' key='info_user_active' title=lang('active')}
+            <label for="chkact">{lang('active')}:</label>&nbsp;{cms_help realm='admin' key='info_user_active' title=lang('active')}
         </p>
         <p class="pageinput">
-            <input type="checkbox" class="pagecheckbox" name="active" value="1"{if $active} checked{/if}>
+            <input type="checkbox" id="chkact" class="pagecheckbox" name="active" value="1"{if $active} checked{/if}>
         </p>
     </div>
 

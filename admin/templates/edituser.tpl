@@ -44,10 +44,10 @@ $(function() {
         {tab_start name='user'}
         <div class="pageoverflow">
             <p class="pagetext">
-                <label for="username">{lang('name')}:</label>&nbsp;{cms_help realm='admin' key='info_adduser_username' title=lang('name')}
+                <label for="username">*{lang('name')}:</label>&nbsp;{cms_help realm='admin' key='info_adduser_username' title=lang('name')}
             </p>
             <p class="pageinput">
-                <input type="text" id="username" name="user" maxlength="25" value="{$user}" class="standard">
+                <input type="text" id="username" name="user" maxlength="25" value="{$user}" class="standard" autocomplete="off">
             </p>
         </div>
         <div class="pageoverflow">
@@ -55,9 +55,7 @@ $(function() {
                 <label for="password">{lang('password')}:</label>&nbsp;{cms_help realm='admin' key='info_edituser_password' title=lang('password')}
             </p>
             <p class="pageinput">
-                <input type="password" id="password" name="password" maxlength="100" value="" class="standard">
-                <br>
-                {lang('info_edituser_password')}
+                <input type="password" id="password" name="password" maxlength="40" value="" class="standard" autocomplete="off">
             </p>
         </div>
         <div class="pageoverflow">
@@ -65,9 +63,7 @@ $(function() {
                 <label for="passwordagain">{lang('passwordagain')}:</label>&nbsp;{cms_help realm='admin' key='info_edituser_passwordagain' title=lang('passwordagain')}
             </p>
             <p class="pageinput">
-                <input id="passwordagain" type="password" name="passwordagain" maxlength="100" value="" class="standard">
-                <br>
-                {lang('info_edituser_passwordagain')}
+                <input type="password" id="passwordagain" name="passwordagain" maxlength="40" value="" class="standard" autocomplete="off">
             </p>
         </div>
         <div class="pageoverflow">
@@ -88,23 +84,21 @@ $(function() {
         </div>
         <div class="pageoverflow">
             <p class="pagetext">
-                <label for="email">{lang('email')}:</label>&nbsp;{cms_help key2='help_myaccount_email' title=lang('email')}
+                <label for="email">*{lang('email')}:</label>&nbsp;{cms_help key2='help_myaccount_email' title=lang('email')}
             </p>
             <p class="pageinput">
-                <input id="email" type="text" name="email" maxlength="255" value="{$email}" class="standard">
+                <input id="email" type="text" name="email" size="40" maxlength="255" value="{$email}" class="standard">
             </p>
         </div>
 
         {if !$access_user}
         <div class="pageoverflow">
+            <input type="hidden" name="active" value="0">
             <p class="pagetext">
                 <label for="active">{lang('active')}:</label>&nbsp;{cms_help realm='admin' key='info_user_active' title=lang('active')}
             </p>
             <p class="pageinput">
-	        <input type="hidden" name="active" value="0">
                 <input id="active" type="checkbox" class="pagecheckbox" name="active" value="1"{if $active == 1} checked{/if}>
-                <br>
-                {lang('info_user_active')}
             </p>
         </div>
         {/if}
