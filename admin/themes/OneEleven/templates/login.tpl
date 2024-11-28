@@ -11,8 +11,8 @@
 		<meta name="viewport" content="initial-scale=1.0 maximum-scale=1.0 user-scalable=no">
 		<meta name="HandheldFriendly" content="True">
 		<link href="themes/OneEleven/images/favicon/cmsms-favicon.ico" rel="shortcut icon">
-		<!-- custom jQueryUI 1.12.1 styling See link in stylesheet for customisation reference //-->
-		<link href="themes/OneEleven/css/default-cmsms/jquery-ui-1.12.1.custom.min.css" rel="stylesheet">
+		<!-- custom jQueryUI styling See link in stylesheet for customisation reference -->
+		<link href="{$config.root_url}/lib/jquery/css/smoothness/jquery-ui-1.13.3.custom.min.css" rel="stylesheet">
 		<link href="loginstyle.php" rel="stylesheet">
 		<!-- teach IE html5 -->
 		<!--[if lt IE 9]>
@@ -26,7 +26,7 @@
 			<div class="login-container">
 				<div class="login-box cf"{if isset($error)} id="error"{/if}>
 					<div class="logo">
-						<img src="{$config.admin_url}/themes/OneEleven/images/layout/cmsms_login_logo.png" width="180" height="36" alt="CMS Made Simple&trade;">
+						<img src="themes/OneEleven/images/layout/cmsms_login_logo.png" width="180" height="36" alt="CMS Made Simple&trade;">
 					</div>
 					<div class="info-wrapper">
 						<aside class="info">
@@ -88,7 +88,7 @@
 						<div class="warning message">
 							{lang('passwordchange')}
 						</div>
-					{/if} <a href="{root_url}" title="{lang('goto')} {sitename}"> <img class="goback" width="16" height="16" src="{$config.admin_url}/themes/OneEleven/images/layout/goback.png" alt="{lang('goto')} {sitename}"> </a>
+					{/if} <a href="{$config.root_url}" title="{lang('goto')} {$sitename}"> <img class="goback" width="16" height="16" src="themes/OneEleven/images/layout/goback.png" alt="{lang('goto')} {$sitename}"> </a>
 					<p class="forgotpw">
 						<a href="login.php?forgotpw=1">{lang('lostpw')}</a>
 					</p>

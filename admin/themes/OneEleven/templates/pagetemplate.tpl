@@ -12,15 +12,15 @@
 		<meta name="referrer" content="origin">
 		<meta name="viewport" content="initial-scale=1.0 maximum-scale=1.0 user-scalable=no">
 		<meta name="HandheldFriendly" content="True">
-		<meta name="msapplication-TileImage" content="{$config.admin_url}/themes/OneEleven/images/favicon/ms-application-icon.png">
+		<meta name="msapplication-TileImage" content="themes/OneEleven/images/favicon/ms-application-icon.png">
 		<meta name="msapplication-TileColor" content="#f89938">
-		<link rel="shortcut icon" href="{$config.admin_url}/themes/OneEleven/images/favicon/cmsms-favicon.ico">
-		<link rel="apple-touch-icon" href="{$config.admin_url}/themes/OneEleven/images/favicon/apple-touch-icon-iphone.png">
-		<link rel="apple-touch-icon" sizes="72x72" href="{$config.admin_url}/themes/OneEleven/images/favicon/apple-touch-icon-ipad.png">
-		<link rel="apple-touch-icon" sizes="114x114" href="{$config.admin_url}/themes/OneEleven/images/favicon/apple-touch-icon-iphone4.png">
-		<link rel="apple-touch-icon" sizes="144x144" href="{$config.admin_url}/themes/OneEleven/images/favicon/apple-touch-icon-ipad3.png">
-		<!-- custom jQueryUI 1.12.1 styling See link in stylesheet for customisation reference //-->
-		<link href="themes/OneEleven/css/default-cmsms/jquery-ui-1.12.1.custom.min.css" rel="stylesheet">
+		<link rel="shortcut icon" href="themes/OneEleven/images/favicon/cmsms-favicon.ico">
+		<link rel="apple-touch-icon" href="themes/OneEleven/images/favicon/apple-touch-icon-iphone.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="themes/OneEleven/images/favicon/apple-touch-icon-ipad.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="themes/OneEleven/images/favicon/apple-touch-icon-iphone4.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="themes/OneEleven/images/favicon/apple-touch-icon-ipad3.png">
+		<!-- custom jQueryUI styling See link in stylesheet for customisation reference -->
+		<link href="{$config.root_url}/lib/jquery/css/smoothness/jquery-ui-1.13.3.custom.min.css" rel="stylesheet">
 		<link href="style.php" rel="stylesheet">
 		<!-- teach IE html5 -->
 		<!--[if lt IE 9]>
@@ -40,7 +40,7 @@
 				<div class="header-top cf">
 					<!-- logo -->
 					<div class="cms-logo">
-						<a href="http://www.cmsmadesimple.org" rel="external"><img src="{$config.admin_url}/themes/OneEleven/images/layout/cmsms-logo.jpg" width="205" height="69" alt="CMS Made Simple" title="CMS Made Simple"></a>
+						<a href="http://www.cmsmadesimple.org" rel="external"><img src="themes/OneEleven/images/layout/cmsms-logo.jpg" width="205" height="69" alt="CMS Made Simple" title="CMS Made Simple"></a>
 					</div>
 					<!-- title -->
 					<span class="admin-title"> {lang('adminpaneltitle')} - {sitename}</span>
