@@ -88,7 +88,7 @@ $(function() {
     $('#a_helptext').on('click',function(e) {
         e.preventDefault();
         var dlg = $('#helptext_dlg');
-        if (dlg.length >0 ) dlg.dialog({ 'width': 'auto' });
+        if (dlg.length > 0) dlg.dialog({ width: 'auto' });
     });
 });
 </script>

@@ -154,10 +154,10 @@ $(function() {
         </div>
         <div class="pageoverflow">
             <p class="pagetext">
-                <label for="clearusersettings" title="{lang('info_clearusersettings')}">{lang('clearusersettings')}</label>
+                <label for="clearusersettings" title="{lang('info_clearusersettings')}">{lang('clearusersettings')}:</label>
             </p>
             <p class="pageinput">
-                <input type="checkbox" name="clearusersettings" value="1" id="clearusersettings" title="{lang('info_clearusersettings')}:">
+                <input type="checkbox" name="clearusersettings" value="1" id="clearusersettings" title="{lang('info_clearusersettings')}">
             </p>
         </div>
         {/if}
