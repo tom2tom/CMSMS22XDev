@@ -815,9 +815,9 @@ listable,created,modified) VALUES (?,?,?,?,?,?,?,?,?,?)';
 			$ob->_data['modified'] = filemtime($fn);
 		}
 		if( $design_list && is_array($design_list) ) $ob->_design_assoc = $design_list;
-
-		self::$_obj_cache[$ob->get_id()] = $ob;
-		self::$_name_cache[$ob->get_name()] = $ob->get_id();
+		$tid = $ob->get_id(); // aka $row['id']
+		self::$_obj_cache[$tid] = $ob;
+		self::$_name_cache[$ob->get_name()] = $tid;
 		return $ob;
 	}
 
@@ -908,7 +908,7 @@ listable,created,modified) VALUES (?,?,?,?,?,?,?,?,?,?)';
 			$query = 'SELECT * FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE name = ?';
 			$row = $db->GetRow($query,array($a));
 		}
-		if( !is_array($row) || count($row) == 0 ) throw new CmsDataNotFoundException('Could not find template identified by '.$a);
+		if( !$row || !is_array($row) ) throw new CmsDataNotFoundException('Could not find template identified by '.$a);
 
 		return self::_load_from_data($row);
 	}
@@ -1066,16 +1066,18 @@ listable,created,modified) VALUES (?,?,?,?,?,?,?,?,?,?)';
 		if( !$t2 ) throw new CmsInvalidDataException('Invalid data passed to CmsLayoutTemplate::;load_dflt_by_type()');
 
 		// search our preloaded template first
-		if( is_array(self::$_obj_cache) && count(self::$_obj_cache) ) {
+		if( self::$_obj_cache && is_array(self::$_obj_cache) ) {
 			foreach( self::$_obj_cache as $tpl ) {
-				if( $tpl->get_type_id() == $t2->get_id() && $tpl->get_type_dflt() ) return $tpl;
+				if( $tpl->get_type_id() == $t2->get_id() && $tpl->get_type_dflt() ) {
+					return $tpl;
+				}
 			}
 		}
 
 		$db = CmsApp::get_instance()->GetDb();
 		$query = 'SELECT * FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE type_id = ? AND type_dflt = ?';
 		$tmp = $db->GetRow($query,array($t2->get_id(),1));
-		if( !is_array($tmp) || count($tmp) == 0 ) throw new CmsDataNotFoundException('Could not find default CmsLayoutTemplate row for type '.$t2->get_name());
+		if( !$tmp || !is_array($tmp) ) throw new CmsDataNotFoundException('Could not find default CmsLayoutTemplate row for type '.$t2->get_name());
 
 		return self::_load_from_data($tmp);
 	}
@@ -1092,7 +1094,7 @@ listable,created,modified) VALUES (?,?,?,?,?,?,?,?,?,?)';
 		$db = CmsApp::get_instance()->GetDb();
 		$query = 'SELECT * FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE type_id = ?';
 		$tmp = $db->GetArray($query,array($type->get_id()));
-		if( !is_array($tmp) || count($tmp) == 0 ) return [];
+		if( !$tmp || !is_array($tmp) ) return [];
 
 		$out = array();
 		foreach( $tmp as $row ) {
