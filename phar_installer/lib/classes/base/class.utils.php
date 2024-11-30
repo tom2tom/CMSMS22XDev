@@ -131,6 +131,7 @@ class utils
 
     public static function is_email($str)
     {
+        //PHP's FILTER_VALIDATE_EMAIL mechanism is incomplete (per RFC5321) - see notes at https://www.php.net/manual/en/function.filter-var.php
         return filter_var($str,FILTER_VALIDATE_EMAIL);
     }
 

@@ -199,7 +199,7 @@ if( isset($_POST['testmail']) ) {
   if( !$mail_is_set ) {
     $error .= '<li>'.lang('error_mailnotset_notest').'</li>';
   }
-  else if( $_POST['mailtest_testaddress'] == '' ) {
+  elseif( $_POST['mailtest_testaddress'] == '' ) {
     $error .= '<li>'.lang('error_mailtest_noaddress').'</li>';
   }
   else {
@@ -253,7 +253,8 @@ if (isset($_POST['testumask'])) {
         $username = isset($userinfo['name']) ? $userinfo['name'] : lang('unknown');
         $permsstr = siteprefs_display_permissions(siteprefs_interpret_permissions($filestat[2]));
         $testresults = sprintf("%s: %s<br>%s:<br>&nbsp;&nbsp;%s",lang('owner'),$username,lang('permissions'),$permsstr);
-      } else {
+      }
+      else {
         $testresults = sprintf("%s: %s<br>%s:<br>&nbsp;&nbsp;%s",lang('owner'),"N/A",lang('permissions'),"N/A");
       }
       @unlink($testfile);
@@ -324,13 +325,13 @@ if (isset($_POST['editsiteprefs'])) {
       if( isset($_POST['sitedownexcludes']) ) $sitedownexcludes = trim($_POST['sitedownexcludes']);
       $sitedownexcludeadmins = (int)$_POST['sitedownexcludeadmins'];
       $prevsitedown = $enablesitedownmessage;
-      if (isset($_POST['enablesitedownmessage'])) $enablesitedownmessage=$_POST['enablesitedownmessage'];
-      if (isset($_POST['sitedownmessage'])) $sitedownmessage = $_POST['sitedownmessage'];
-      if (isset($_POST['use_wysiwyg'])) $use_wysiwyg = $_POST['use_wysiwyg'];
+      if( isset($_POST['enablesitedownmessage']) ) $enablesitedownmessage=$_POST['enablesitedownmessage'];
+      if( isset($_POST['sitedownmessage']) ) $sitedownmessage = $_POST['sitedownmessage'];
+      if( isset($_POST['use_wysiwyg']) ) $use_wysiwyg = $_POST['use_wysiwyg'];
       if( !$prevsitedown && $enablesitedownmessage ) {
         audit('','Global settings','Sitedown enabled');
       }
-      else if( $prevsitedown && !$enablesitedownmessage ) {
+      elseif( $prevsitedown && !$enablesitedownmessage ) {
         audit('','Global settings','Sitedown disabled');
       }
       $tmp = trim(strip_tags($sitedownmessage));
@@ -351,23 +352,25 @@ if (isset($_POST['editsiteprefs'])) {
         $key = substr($key,strlen($prefix));
         switch ($key) {
           case'from':
-            //TODO no XSS or invalid content
+            //TODO scrub malicious/XSS, invalid content
+            //PHP FILTER_SANITIZE_EMAIL is not sufficient TODO
             $mclean[$key] = filter_var(trim($val),FILTER_SANITIZE_EMAIL);
             break;
           case 'fromuser':
           case 'username':
-            //TODO scrub XSS
+            //TODO scrub malicious/XSS
             $mclean[$key] = trim($val,'<> ');
             break;
           case 'password':
-            //TODO scrub XSS
+            //TODO scrub malicious/XSS
             $mclean[$key] = $val;
             break;
           default:
-            if (is_numeric($val)) {
-              // 'port 'smtpauth' 'smtpautotls' 'timeout'
+            if( is_numeric($val) ) {
+              // 'port' 'smtpauth' 'smtpautotls' 'timeout'
               $mclean[$key] = (int)$val;
-            } else {
+            }
+            else {
               // 'mailer' 'host' 'sendmail' 'secure' 'charset'
               $mclean[$key] = trim(cleanValue($val)); //OR custom filterer c.f. include.php
             }
@@ -377,9 +380,11 @@ if (isset($_POST['editsiteprefs'])) {
       // validate
       if( $mclean['from'] == '' ) {
         $error .= '<li>'.lang('error_fromrequired').'</li>';
-      } else if( $mclean['from'] != trim($_POST[$prefix.'from']) ) {
+      }
+      elseif( $mclean['from'] != trim($_POST[$prefix.'from']) ) {
         $error .= '<li>'.lang('error_frominvalid').'</li>';
-      } else if( !is_email($mclean['from']) ) {
+      }
+      elseif( !is_email($mclean['from']) ) {
         $error .= '<li>'.lang('error_frominvalid').'</li>';
       }
       if( $mclean['mailer'] == 'smtp' ) {
