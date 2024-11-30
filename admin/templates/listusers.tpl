@@ -27,7 +27,8 @@ $(function() {
         });
     });
 
-    $('#withselected, #bulksubmit').prop('disabled',true);
+    var st = $('.multiselect:checked').length === 0;
+    if( st ) { $('#withselected, #bulksubmit').prop('disabled',true); }
 {*  $('#bulksubmit').button({ 'disabled' : true });TODO extra .button needed?*}
     $('#sel_all, .multiselect').on('click',function() {
         if( !$(this).is(':checked') ) {
