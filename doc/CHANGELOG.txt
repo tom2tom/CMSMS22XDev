@@ -3,14 +3,17 @@ Version 2.2.21F2 - Fredericton
  - FR #12720,#12737 Extra image formats and intelligent thumbnailing
  - Deploy folders for Smarty config files
  - Page-content, templates and stylesheets may be loaded without checking cache
+ - Improved sanitisation of user-related parameters and email preference values
+ - jQuery upgraded to version 2.2.4 (1.12.4 also bundled)
+ - jQuery UI upgraded to version 1.13.3 (with previous styling)
 
 Version 2.2.20F2 - Yellowknife
 -------------------------------
  - FR #12700 Configurable tabs-order during content edititing
  - BR #12701 Correct page-types selector setup
  - BR #12727 Search module error
-Correct lockmanager init during DM new-item creation
-Also support UserGuide content I/O in tar.gz format
+ - Correct lockmanager init during DM new-item creation
+ - Also support UserGuide content I/O in tar.gz format
 
 Version 2.2.19F2 - Inuvik
 -------------------------------

@@ -344,42 +344,66 @@ if (isset($_POST['editsiteprefs'])) {
 
     case 'mail':
       // gather mailprefs
+      $mclean = [];
       $prefix = 'mailprefs_';
       foreach( $_POST as $key => $val ) {
         if( !startswith($key,$prefix) ) continue;
         $key = substr($key,strlen($prefix));
-        $mailprefs[$key] = trim(htmlspecialchars($val, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8', false)); //OR custom filterer c.f. include.php
+        switch ($key) {
+          case'from':
+            //TODO no XSS or invalid content
+            $mclean[$key] = filter_var(trim($val),FILTER_SANITIZE_EMAIL);
+            break;
+          case 'fromuser':
+          case 'username':
+            //TODO scrub XSS
+            $mclean[$key] = trim($val,'<> ');
+            break;
+          case 'password':
+            //TODO scrub XSS
+            $mclean[$key] = $val;
+            break;
+          default:
+            if (is_numeric($val)) {
+              // 'port 'smtpauth' 'smtpautotls' 'timeout'
+              $mclean[$key] = (int)$val;
+            } else {
+              // 'mailer' 'host' 'sendmail' 'secure' 'charset'
+              $mclean[$key] = trim(cleanValue($val)); //OR custom filterer c.f. include.php
+            }
+        }
       }
 
       // validate
-      if( $mailprefs['from'] == '' ) {
-        $error  .= '<li>'.lang('error_fromrequired').'</li>';
-      }
-      else if( !is_email($mailprefs['from']) ) {
+      if( $mclean['from'] == '' ) {
+        $error .= '<li>'.lang('error_fromrequired').'</li>';
+      } else if( $mclean['from'] != trim($_POST[$prefix.'from']) ) {
+        $error .= '<li>'.lang('error_frominvalid').'</li>';
+      } else if( !is_email($mclean['from']) ) {
         $error .= '<li>'.lang('error_frominvalid').'</li>';
       }
-      if( $mailprefs['mailer'] == 'smtp' ) {
-        if( $mailprefs['host'] == '' ) {
+      if( $mclean['mailer'] == 'smtp' ) {
+        if( $mclean['host'] == '' ) {
           $error .= '<li>'.lang('error_hostrequired').'</li>';
         }
-        if( $mailprefs['port'] == '' ) $mailprefs['port'] = 25; // convenience.
-        if( $mailprefs['port'] < 1 || $mailprefs['port'] > 10240 ) {
+        if( $mclean['port'] == '' ) $mclean['port'] = 25; // convenience
+        if( $mclean['port'] < 1 || $mclean['port'] > 10240 ) {
           $error .= '<li>'.lang('error_portinvalid').'</li>';
         }
-        if( $mailprefs['timeout'] == '' ) $mailprefs['timeout'] = 180;
-        if( $mailprefs['timeout'] < 1 || $mailprefs['timeout'] > 3600 ) {
+        if( $mclean['timeout'] == '' ) $mclean['timeout'] = 180;
+        if( $mclean['timeout'] < 1 || $mclean['timeout'] > 3600 ) {
           $error .= '<li>'.lang('error_timeoutinvalid').'</li>';
         }
-        if( $mailprefs['smtpauth'] ) {
-          if( $mailprefs['username'] == '' ) $error .= '<li>'.lang('error_usernamerequired').'</li>';
-          if( $mailprefs['password'] == '' ) $error .= '<li>'.lang('error_passwordrequired').'</li>';
+        if( $mclean['smtpauth'] ) {
+          if( $mclean['username'] == '' ) $error .= '<li>'.lang('error_usernamerequired').'</li>';
+          if( $mclean['password'] == '' ) $error .= '<li>'.lang('error_passwordrequired').'</li>';
         }
       }
 
-      // save.
+      // save
       if( !$error ) {
         cms_siteprefs::set('mail_is_set',1);
-        cms_siteprefs::set('mailprefs',serialize($mailprefs));
+        cms_siteprefs::set('mailprefs',serialize($mclean + $mailprefs));
       }
       break;
 
