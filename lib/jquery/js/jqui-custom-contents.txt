@@ -1,0 +1,39 @@
+jQuery UI - v1.10.4 - 2014-01-26 JS included:
+
+core
+position
+widget
+
+draggable
+droppable
+resizable
+selectable
+sortable
+
+accordion
+autocomplete
+button (needs checkboxradio, controlgroup)
+datepicker
+dialog
+menu
+mouse
+progressbar
+slider
+spinner
+tabs
+tooltip
+
+effects core
+blind
+bounce
+clip
+drop
+explode
+fade
+fold
+highlight
+pulsate
+scale (needs size)
+shake
+slide
+transfer
