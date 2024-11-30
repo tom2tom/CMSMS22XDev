@@ -1,20 +1,25 @@
-jQuery UI v1.10.4 - 2014-01-27
+jQuery UI v1.13.3
 Includes:
-jquery.ui.accordion.css
-jquery.ui.autocomplete.css
-jquery.ui.button.css
-jquery.ui.core.css
-jquery.ui.datepicker.css
-jquery.ui.dialog.css
-jquery.ui.menu.css
-jquery.ui.progressbar.css
-jquery.ui.resizable.css
-jquery.ui.selectable.css
-jquery.ui.slider.css
-jquery.ui.spinner.css
-jquery.ui.tabs.css
-jquery.ui.theme.css
-jquery.ui.tooltip.css
+draggable.css
+core.css
+resizable.css
+selectable.css
+sortable.css
+accordion.css
+autocomplete.css
+menu.css
+button.css
+controlgroup.css
+checkboxradio.css
+datepicker.css
+dialog.css
+progressbar.css
+selectmenu.css
+slider.css
+spinner.css
+tabs.css
+tooltip.css
+theme.css
 
 To view and modify this theme, visit
-http://jqueryui.com/themeroller/?ffDefault=Helvetica%2CArial%2Csans-serif&fwDefault=normal&fsDefault=1.1em&cornerRadius=4px&bgColorHeader=cccccc&bgTextureHeader=highlight_soft&bgImgOpacityHeader=75&borderColorHeader=aaaaaa&fcHeader=222222&iconColorHeader=222222&bgColorContent=ffffff&bgTextureContent=flat&bgImgOpacityContent=75&borderColorContent=aaaaaa&fcContent=222222&iconColorContent=222222&bgColorDefault=e6e6e6&bgTextureDefault=glass&bgImgOpacityDefault=75&borderColorDefault=d3d3d3&fcDefault=555555&iconColorDefault=888888&bgColorHover=dadada&bgTextureHover=glass&bgImgOpacityHover=75&borderColorHover=999999&fcHover=212121&iconColorHover=454545&bgColorActive=ffffff&bgTextureActive=glass&bgImgOpacityActive=65&borderColorActive=aaaaaa&fcActive=212121&iconColorActive=454545&bgColorHighlight=fbf9ee&bgTextureHighlight=glass&bgImgOpacityHighlight=55&borderColorHighlight=fcefa1&fcHighlight=363636&iconColorHighlight=2e83ff&bgColorError=fef1ec&bgTextureError=glass&bgImgOpacityError=95&borderColorError=cd0a0a&fcError=cd0a0a&iconColorError=cd0a0a&bgColorOverlay=aaaaaa&bgTextureOverlay=flat&bgImgOpacityOverlay=0&opacityOverlay=30&bgColorShadow=aaaaaa&bgTextureShadow=flat&bgImgOpacityShadow=0&opacityShadow=30&thicknessShadow=8px&offsetTopShadow=-8px&offsetLeftShadow=-8px&cornerRadiusShadow=8px
+https://jqueryui.com/themeroller/?ffDefault='Open%20Sans'%2C%20'Helvetica%20Neue'%2C%20Helvetica%2C%20Arial%2C%20sans-serif&fsDefault=14px&fwDefault=normal&cornerRadius=4px&bgColorHeader=%23232323&bgTextureHeader=flat&borderColorHeader=%23dddddd&fcHeader=%23f6f6f6&iconColorHeader=%23fa8004&bgColorContent=%23ffffff&bgTextureContent=flat&borderColorContent=%23dddddd&fcContent=%23232323&iconColorContent=%23fa8004&bgColorDefault=%23cecece&bgTextureDefault=flat&borderColorDefault=%23d3d3d3&fcDefault=%23555555&iconColorDefault=%23232323&bgColorHover=%23fa8004&bgTextureHover=flat&borderColorHover=%23fa6704&fcHover=%23ffffff&iconColorHover=%23ffffff&bgColorActive=%23ffffff&bgTextureActive=flat&borderColorActive=%23aaaaaa&fcActive=%23147fdb&iconColorActive=%23147fdb&bgColorHighlight=%23fbf9ee&bgTextureHighlight=flat&borderColorHighlight=%23fcefa1&fcHighlight=%23363636&iconColorHighlight=%23147fdb&bgColorError=%23fef1ec&bgTextureError=flat&borderColorError=%23cd0a0a&fcError=%23cd0a0a&iconColorError=%23cd0a0a&bgColorOverlay=%23aaaaaa&bgTextureOverlay=flat&bgImgOpacityOverlay=0&opacityOverlay=50&bgColorShadow=%23aaaaaa&bgTextureShadow=flat&bgImgOpacityShadow=0&opacityShadow=30&thicknessShadow=8px&offsetTopShadow=-8px&offsetLeftShadow=-8px&cornerRadiusShadow=8px&ctl=themeroller&bgImgOpacityError=95&bgImgOpacityHighlight=55&bgImgOpacityActive=65&bgImgOpacityHover=75&bgImgOpacityDefault=75&bgImgOpacityContent=75&bgImgOpacityHeader=25
