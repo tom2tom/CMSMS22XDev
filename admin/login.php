@@ -241,7 +241,7 @@ else if( isset($_POST['loginsubmit']) ) {
         }
         // put mention into the admin log
         $ip_login_failed = cms_utils::get_real_ip();
-        if( $oneuser ) {
+        if( !empty($oneuser) ) {
             $id = $oneuser->id;
         }
         else {
