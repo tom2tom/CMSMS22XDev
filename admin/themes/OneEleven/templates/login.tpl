@@ -12,7 +12,7 @@
 		<meta name="HandheldFriendly" content="True">
 		<link href="themes/OneEleven/images/favicon/cmsms-favicon.ico" rel="shortcut icon">
 		<!-- custom jQueryUI styling See link in stylesheet for customisation reference -->
-		<link href="{$config.root_url}/lib/jquery/css/smoothness/jquery-ui-1.13.3.custom.min.css" rel="stylesheet">
+		<link href="themes/OneEleven/css/default-cmsms/jquery-ui.min.css" rel="stylesheet">
 		<link href="loginstyle.php" rel="stylesheet">
 		<!-- teach IE html5 -->
 		<!--[if lt IE 9]>

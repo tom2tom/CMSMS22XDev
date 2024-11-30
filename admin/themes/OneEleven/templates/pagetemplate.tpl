@@ -20,7 +20,7 @@
 		<link rel="apple-touch-icon" sizes="114x114" href="themes/OneEleven/images/favicon/apple-touch-icon-iphone4.png">
 		<link rel="apple-touch-icon" sizes="144x144" href="themes/OneEleven/images/favicon/apple-touch-icon-ipad3.png">
 		<!-- custom jQueryUI styling See link in stylesheet for customisation reference -->
-		<link href="{$config.root_url}/lib/jquery/css/smoothness/jquery-ui-1.13.3.custom.min.css" rel="stylesheet">
+		<link href="themes/OneEleven/css/default-cmsms/jquery-ui.min.css" rel="stylesheet">
 		<link href="style.php" rel="stylesheet">
 		<!-- teach IE html5 -->
 		<!--[if lt IE 9]>
