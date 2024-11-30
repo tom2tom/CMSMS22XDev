@@ -675,6 +675,9 @@ menu {
 	border-left: 1px solid #ddd;
 	background: #f0f0f0;
 }
+select {
+	cursor: pointer;
+}
 textarea {
 	resize: both;
 }
@@ -709,6 +712,14 @@ checkbox:hover {
 	outline: 0;
 	background: #fff;
 }
+input:disabled,
+textarea:disabled,
+select:disabled,
+menu:disabled,
+checkbox:disabled {
+	pointer-events: none;
+	cursor: default;
+}
 input[type="text"],
 input[type="password"] {
 	padding: 5px;
@@ -733,6 +744,7 @@ input[type="submit"]:hover,
 	background: #fa8004 url(themes/OneEleven/css/default-cmsms/images/ui-bg_highlight-soft_75_fa8004_1x100.png) 50% 50% repeat-x;
 	cursor: pointer;
 }
+/*
 input[type="button"]:disabled,
 input[type="submit"]:disabled,
 .ui-button:disabled {
@@ -745,6 +757,12 @@ input[type="button"]:disabled .ui-button-icon,
 input[type="submit"]:disabled .ui-button-icon,
 .ui-button:disabled .ui-button-icon {
 	background-image: url(themes/OneEleven/css/default-cmsms/images/ui-icons_232323_256x240.png);
+}
+*/
+input[type="button"]:disabled,
+input[type="submit"]:disabled,
+.ui-button:disabled {
+	pointer-events: none;
 }
 .ui-button {
 	outline: none;
