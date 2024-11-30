@@ -53,16 +53,16 @@ function redirect($to)
         $to =  (isset($components['scheme']) && startswith($components['scheme'], 'http') ? $components['scheme'] : $schema) . '://';
         $to .= isset($components['host']) ? $components['host'] : $host;
         $to .= isset($components['port']) ? ':' . $components['port'] : '';
-        if(isset($components['path'])) {
-            if(in_array(substr($components['path'],0,1),array('\\','/'))) {
+        if( isset($components['path']) ) {
+            if( in_array(substr($components['path'],0,1),array('\\','/')) ) {
                 //Path is absolute, just append.
                 $to .= $components['path'];
             }
             //Path is relative, append current directory first.
-            else if (isset($_SERVER['PHP_SELF']) && !is_null($_SERVER['PHP_SELF'])) { //Apache
+            elseif( isset($_SERVER['PHP_SELF']) && !is_null($_SERVER['PHP_SELF']) ) { //Apache
                 $to .= (strlen(dirname($_SERVER['PHP_SELF'])) > 1 ?  dirname($_SERVER['PHP_SELF']).'/' : '/') . $components['path'];
             }
-            else if (isset($_SERVER['REQUEST_URI']) && !is_null($_SERVER['REQUEST_URI'])) { //Lighttpd
+            elseif( isset($_SERVER['REQUEST_URI']) && !is_null($_SERVER['REQUEST_URI']) ) { //Lighttpd
                 if( endswith($_SERVER['REQUEST_URI'], '/') ) {
                     $to .= (strlen($_SERVER['REQUEST_URI']) > 1 ? $_SERVER['REQUEST_URI'] : '/') . $components['path'];
                 }
@@ -90,7 +90,7 @@ function redirect($to)
         $debug = $config['debug'];
     }
 
-    if (headers_sent() && !$debug) {
+    if( headers_sent() && !$debug ) {
         // use javascript instead
         echo '<script>
           <!--location.replace("'.$to.'"); // -->
@@ -101,7 +101,7 @@ function redirect($to)
         exit;
     }
     else {
-        if ( $debug ) {
+        if( $debug ) {
             echo "Debug is on.  Redirecting disabled...  Please click this link to continue.<br>";
             echo "<a accesskey=\"r\" href=\"".$to."\">".$to."</a><br>";
             echo '<div id="DebugFooter">';
@@ -135,11 +135,11 @@ function redirect_to_alias($alias)
         return;
     }
     $content = $node->GetContent();
-    if (!is_object($content)) {
+    if( !is_object($content) ) {
         audit('','Core','Attempt to redirect to invalid alias: '.$alias);
         return;
     }
-    if ($content->GetURL() != '') redirect($content->GetURL());
+    if( $content->GetURL() != '' ) redirect($content->GetURL());
 }
 
 
@@ -218,21 +218,21 @@ function cms_relative_path($in,$relative_to = '')
  */
 function cms_htmlentities($val, $param=ENT_QUOTES, $charset="UTF-8", $convert_single_quotes = false)
 {
-    if ($val == "") return "";
+    if( $val == "" ) return "";
 
-    $val = str_replace( "&#032;", " ", $val );
-    $val = str_replace( "&"            , "&amp;"         , $val );
-    $val = str_replace( "<!--"         , "&#60;&#33;--"  , $val );
-    $val = str_replace( "-->"          , "--&#62;"       , $val );
-    $val = str_ireplace( "<script"     , "&#60;script"   , $val );
-    $val = str_replace( ">"            , "&gt;"          , $val );
-    $val = str_replace( "<"            , "&lt;"          , $val );
-    $val = str_replace( "\""           , "&quot;"        , $val );
-    $val = preg_replace( "/\\$/"       , "&#036;"        , $val );
-    $val = str_replace( "!"            , "&#33;"         , $val );
-    $val = str_replace( "'"            , "&#39;"         , $val );
+    $val = str_replace( "&#032;"   , " ", $val );
+    $val = str_replace( "&"        , "&amp;"         , $val );
+    $val = str_replace( "<!--"     , "&#60;&#33;--"  , $val );
+    $val = str_replace( "-->"      , "--&#62;"       , $val );
+    $val = str_ireplace( "<script" , "&#60;script"   , $val );
+    $val = str_replace( ">"        , "&gt;"          , $val );
+    $val = str_replace( "<"        , "&lt;"          , $val );
+    $val = str_replace( "\""       , "&quot;"        , $val );
+    $val = preg_replace( "/\\$/"   , "&#036;"        , $val );
+    $val = str_replace( "!"        , "&#33;"         , $val );
+    $val = str_replace( "'"        , "&#39;"         , $val );
 
-    if ($convert_single_quotes) {
+    if( $convert_single_quotes ) {
         $val = str_replace("\\'", "&apos;", $val);
         $val = str_replace("'", "&apos;", $val);
     }
@@ -329,9 +329,9 @@ function debug_display($var, $title="", $echo_to_screen = true, $use_html = true
 
     if( $showtitle ) {
         $titleText = "Debug: ";
-        if($title) $titleText = "Debug display of '$title':";
+        if( $title ) $titleText = "Debug display of '$title':";
         $titleText .= '(' . microtime_diff($starttime,microtime()) . ')';
-        if (function_exists('memory_get_usage')) {
+        if( function_exists('memory_get_usage') ) {
             $net = memory_get_usage() - $orig_memory;
             $titleText .= ' - (net usage: '.$net.')';
         }
@@ -339,7 +339,7 @@ function debug_display($var, $title="", $echo_to_screen = true, $use_html = true
         $memory_peak = (function_exists('memory_get_peak_usage')?memory_get_peak_usage():'');
         if( $memory_peak ) $titleText .= ' - (peak: '.$memory_peak.')';
 
-        if ($use_html) {
+        if( $use_html ) {
             echo "<div><b>$titleText</b>\n";
         }
         else {
@@ -347,16 +347,16 @@ function debug_display($var, $title="", $echo_to_screen = true, $use_html = true
         }
     }
 
-    if(!empty($var)) {
-        if ($use_html) echo '<pre>';
-        if(is_array($var)) {
+    if( !empty($var) ) {
+        if( $use_html ) echo '<pre>';
+        if( is_array($var) ) {
             echo "Number of elements: " . count($var) . "\n";
             print_r($var);
         }
-        elseif(is_object($var)) {
+        elseif( is_object($var) ) {
             print_r($var);
         }
-        elseif(is_string($var)) {
+        elseif( is_string($var) ) {
             if( $use_html ) {
                 print_r(htmlentities(str_replace("\t", '  ', $var)));
             }
@@ -364,20 +364,20 @@ function debug_display($var, $title="", $echo_to_screen = true, $use_html = true
                 print_r($var);
             }
         }
-        elseif(is_bool($var)) {
+        elseif( is_bool($var) ) {
             echo $var === true ? 'true' : 'false';
         }
         else {
             print_r($var);
         }
-        if ($use_html) echo '</pre>';
+        if( $use_html ) echo '</pre>';
     }
-    if ($use_html) echo "</div>\n";
+    if( $use_html ) echo "</div>\n";
 
     $output = ob_get_contents();
     ob_end_clean();
 
-    if($echo_to_screen) echo $output;
+    if( $echo_to_screen ) echo $output;
     return $output;
 }
 
@@ -446,24 +446,24 @@ function debug_buffer($var, $title="")
 */
 function _get_value_with_default($value, $default_value = '', $session_key = '')
 {
-    if($session_key != '') {
-        if(isset($_SESSION['default_values'][$session_key])) $default_value = $_SESSION['default_values'][$session_key];
+    if( $session_key != '' ) {
+        if( isset($_SESSION['default_values'][$session_key]) ) $default_value = $_SESSION['default_values'][$session_key];
     }
 
     // set our return value to the default initially and overwrite with $value if we like it.
     $return_value = $default_value;
 
-    if(isset($value)) {
-        if(is_array($value)) {
+    if( isset($value) ) {
+        if( is_array($value) ) {
             // $value is an array - validate each element.
             $return_value = array();
-            foreach($value as $element) {
+            foreach( $value as $element ) {
                 $return_value[] = _get_value_with_default($element, $default_value);
             }
         }
         else {
-            if(is_numeric($default_value)) {
-                if(is_numeric($value)) {
+            if( is_numeric($default_value) ) {
+                if( is_numeric($value) ) {
                     $return_value = $value;
                 }
             }
@@ -473,7 +473,7 @@ function _get_value_with_default($value, $default_value = '', $session_key = '')
         }
     }
 
-    if($session_key != '') $_SESSION['default_values'][$session_key] = $return_value;
+    if( $session_key != '' ) $_SESSION['default_values'][$session_key] = $return_value;
     return $return_value;
 }
 
@@ -492,35 +492,35 @@ function _get_value_with_default($value, $default_value = '', $session_key = '')
  */
 function get_parameter_value($parameters, $value, $default_value = '', $session_key = '')
 {
-    if($session_key != '') {
-        if(isset($_SESSION['parameter_values'][$session_key])) $default_value = $_SESSION['parameter_values'][$session_key];
+    if( $session_key != '' ) {
+        if( isset($_SESSION['parameter_values'][$session_key]) ) $default_value = $_SESSION['parameter_values'][$session_key];
     }
 
     // set our return value to the default initially and overwrite with $value if we like it.
     $return_value = $default_value;
-    if(isset($parameters[$value])) {
-        if(is_bool($default_value)) {
+    if( isset($parameters[$value]) ) {
+        if( is_bool($default_value) ) {
             // want a bool return_value
-            if(isset($parameters[$value])) $return_value = (bool)$parameters[$value];
+            if( isset($parameters[$value]) ) $return_value = (bool)$parameters[$value];
         }
         else {
             // is $default_value a number?
             $is_number = false;
-            if(is_numeric($default_value)) $is_number = true;
+            if( is_numeric($default_value) ) $is_number = true;
 
-            if(is_array($parameters[$value])) {
+            if( is_array($parameters[$value]) ) {
                 // $parameters[$value] is an array - validate each element.
                 $return_value = array();
-                foreach($parameters[$value] as $element) {
+                foreach( $parameters[$value] as $element ) {
                     $return_value[] = _get_value_with_default($element, $default_value);
                 }
             }
             else {
-                if(is_numeric($default_value)) {
+                if( is_numeric($default_value) ) {
                     // default value is a number, we only like $parameters[$value] if it's a number too.
-                    if(is_numeric($parameters[$value])) $return_value = $parameters[$value];
+                    if( is_numeric($parameters[$value]) ) $return_value = $parameters[$value];
                 }
-                elseif(is_string($default_value)) {
+                elseif( is_string($default_value) ) {
                     $return_value = trim($parameters[$value]);
                 }
                 else {
@@ -530,7 +530,7 @@ function get_parameter_value($parameters, $value, $default_value = '', $session_
         }
     }
 
-    if($session_key != '') $_SESSION['parameter_values'][$session_key] = $return_value;
+    if( $session_key != '' ) $_SESSION['parameter_values'][$session_key] = $return_value;
     return $return_value;
 }
 
@@ -591,7 +591,7 @@ function cms_mapi_create_permission($cms, $permission_name, $permission_text)
  */
 function is_directory_writable( $path )
 {
-    if ( substr ( $path , strlen ( $path ) - 1 ) != '/' ) $path .= '/' ;
+    if( substr ( $path , strlen ( $path ) - 1 ) != '/' ) $path .= '/' ;
 
     if( !is_dir($path) ) return FALSE;
     $result = TRUE;
@@ -673,24 +673,24 @@ function get_recursive_file_list ( $path , $excludes, $maxdepth = -1 , $mode = "
         return false;
     };
 
-    if ( substr ( $path , strlen ( $path ) - 1 ) != '/' ) { $path .= '/' ; }
+    if( substr ( $path , strlen ( $path ) - 1 ) != '/' ) { $path .= '/' ; }
     $dirlist = array () ;
-    if ( $mode != "FILES" ) { $dirlist[] = $path ; }
-    if ( $handle = opendir ( $path ) ) {
-        while ( false !== ( $file = readdir ( $handle ) ) ) {
+    if( $mode != "FILES" ) { $dirlist[] = $path ; }
+    if( $handle = opendir ( $path ) ) {
+        while( false !== ( $file = readdir ( $handle ) ) ) {
             if( $file == '.' || $file == '..' ) continue;
             if( $fn( $file, $excludes ) ) continue;
 
             $file = $path . $file ;
-            if ( ! @is_dir ( $file ) ) { if ( $mode != "DIRS" ) { $dirlist[] = $file ; } }
-            elseif ( $d >=0 && ($d < $maxdepth || $maxdepth < 0) ) {
+            if( ! @is_dir ( $file ) ) { if( $mode != "DIRS" ) { $dirlist[] = $file ; } }
+            elseif( $d >=0 && ($d < $maxdepth || $maxdepth < 0) ) {
                 $result = get_recursive_file_list ( $file . '/' , $excludes, $maxdepth , $mode , $d + 1 ) ;
                 $dirlist = array_merge ( $dirlist , $result ) ;
             }
         }
         closedir ( $handle ) ;
     }
-    if ( $d == 0 ) { natcasesort ( $dirlist ) ; }
+    if( $d == 0 ) { natcasesort ( $dirlist ) ; }
     return ( $dirlist ) ;
 }
 
@@ -706,9 +706,9 @@ function recursive_delete( $dirname )
     // all subdirectories and contents:
     if( !is_dir($dirname) ) return true;
     $dir_handle=opendir($dirname);
-    while($file=readdir($dir_handle)) {
-        if($file!="." && $file!="..") {
-            if(!is_dir($dirname."/".$file)) {
+    while( $file=readdir($dir_handle) ) {
+        if( $file!="." && $file!=".." ) {
+            if( !is_dir($dirname."/".$file) ) {
                 if( !@unlink ($dirname."/".$file) ) {
                     closedir( $dir_handle );
                     return false;
@@ -750,7 +750,7 @@ function chmod_r( $path, $mode )
                 return false;
             }
         }
-        else if( !is_link( $p ) ) {
+        elseif( !is_link( $p ) ) {
             if( !@chmod( $p, $mode ) ) {
                 closedir( $dh );
                 return false;
@@ -830,15 +830,16 @@ function munge_string_to_url($alias, $tolower = false, $withslash = false)
  */
 function cleanValue($val)
 {
-  if ($val == "") return $val;
+  if( $val == "" ) return $val;
   //Replace odd spaces with safe ones
   $val = str_replace(" ", " ", $val);
   $val = str_replace(chr(0xCA), "", $val);
   //Encode any HTML to entities (including \n --> <br>)
   $_cleanHtml = function($string,$remove = false) {
-    if ($remove) {
+    if( $remove ) {
       $string = strip_tags($string);
-    } else {
+    }
+    else {
       $patterns = array("/&(?!amp;)/", "/%/", "/</", "/>/", '/"/', "/'/", "/\(/", "/\)/", "/\+/", "/-/");
       $replacements = array("&amp;", "&#37;", "&lt;", "&gt;", "&quot;", "&#39;", "&#40;", "&#41;", "&#43;", "&#45;");
       $string = preg_replace($patterns, $replacements, $string);
@@ -1012,7 +1013,7 @@ function cms_ipmatches($ip,$checklist)
     // xxx.xxx.xxx.xx[yyy-zzz]  (range, partial octets nnnnnot supported)
 
     $regs = array();
-    if (preg_match("/([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)\/([0-9]+)/",$range,$regs)) {
+    if( preg_match("/([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)\/([0-9]+)/",$range,$regs) ) {
       // perform a mask match
       $ipl = ip2long($ip);
       $rangel = ip2long($regs[1] . "." . $regs[2] . "." . $regs[3] . "." . $regs[4]);
@@ -1020,15 +1021,12 @@ function cms_ipmatches($ip,$checklist)
       $maskl = 0;
 
       for ($i = 0; $i< 31; $i++) {
-        if ($i < $regs[5]-1) $maskl = $maskl + pow(2,(30-$i));
+        if( $i < $regs[5]-1) $maskl = $maskl + pow(2,(30-$i) );
       }
 
-      if (($maskl & $rangel) == ($maskl & $ipl)) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
+      return ($maskl & $rangel) == ($maskl & $ipl);
+    }
+    else {
       // range based
       $maskocts = explode('.',$range);
       $ipocts = explode('.',$ip);
@@ -1037,11 +1035,11 @@ function cms_ipmatches($ip,$checklist)
 
       // perform a range match
       for ($i=0; $i<4; $i++) {
-        if (preg_match("/\[([0-9]+)\-([0-9]+)\]/",$maskocts[$i],$regs)) {
-          if ( ($ipocts[$i] > $regs[2]) || ($ipocts[$i] < $regs[1])) $result = false;
+        if( preg_match("/\[([0-9]+)\-([0-9]+)\]/",$maskocts[$i],$regs) ) {
+          if( ($ipocts[$i] > $regs[2]) || ($ipocts[$i] < $regs[1]) ) $result = false;
         }
         else {
-          if ( isset($maskocts[$i]) && isset($ipocts[$i]) && ($maskocts[$i] <> $ipocts[$i]) ) $result = false;
+          if( isset($maskocts[$i]) && isset($ipocts[$i]) && ($maskocts[$i] <> $ipocts[$i]) ) $result = false;
         }
       }
     }
@@ -1090,14 +1088,14 @@ function cmsversion_compare($v1, $v2)
 */
 function is_email( $email, $checkDNS=FALSE )
 {
-   if( !filter_var($email,FILTER_VALIDATE_EMAIL) ) return FALSE;
-   if ($checkDNS && function_exists('checkdnsrr')) {
-       list($user,$domain) = explode('@',$email,2);
-       if( !$domain ) return FALSE;
-       if ( !(checkdnsrr($domain, 'A') || checkdnsrr($domain, 'MX'))) return FALSE; // Domain doesn't actually exist
-   }
-
-   return TRUE;
+    //PHP's FILTER_VALIDATE_EMAIL mechanism is incomplete (per RFC5321) - see notes at https://www.php.net/manual/en/function.filter-var.php
+    if( !filter_var($email,FILTER_VALIDATE_EMAIL) ) return FALSE;
+    list($user,$domain) = explode('@',$email,2);
+    if( !$user || !$domain ) return FALSE;
+    if( $checkDNS && function_exists('checkdnsrr') ) {
+        if( !(checkdnsrr($domain, 'A') || checkdnsrr($domain, 'MX')) ) return FALSE; // Domain doesn't actually exist
+    }
+    return TRUE;
 }
 
 
@@ -1173,21 +1171,25 @@ function cms_get_jquery($exclude = '',$ssl = FALSE,$cdn = FALSE,$append = '',$cu
   $config = cms_config::get_instance();
   $scripts = array();
   $base_url = $config->smart_root_url(); //TODO deprecated since 2.2
-  if( $ssl === true ) $base_url = $config['ssl_url']; //TODO deprecated since 2.2
-  $basePath=$custom_root!=''?trim($custom_root,'/'):$base_url;
+  if( $ssl ) $base_url = $config['ssl_url']; //TODO deprecated since 2.2
+  $basePath = ($custom_root != '') ? trim($custom_root,'/') : $base_url;
 
   // Scripts to include NOTE keep {cms_jquery} tag help reconciled with the following
-  $scripts['jquery'] = array('cdn'=>'https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js',
-                             'local'=>$basePath.'/lib/jquery/js/jquery-1.12.4.min.js',
+  $scripts['jquery'] = array('cdn'=>'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js',
+                             'sri'=>'sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=',
+                             'local'=>$basePath.'/lib/jquery/js/jquery-2.2.4.min.js',
                              'aliases'=>array('jquery.min.js','jquery',));
-  $scripts['jquery-ui'] = array('css_cdn'=>'https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js',
-                                'local'=>$basePath.'/lib/jquery/js/jquery-ui-1.12.1.custom.min.js',
+  $scripts['jquery-ui'] = array('cdn'=>'https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.3/jquery-ui.min.js',
+                                'sri'=>'sha256-sw0iNNXmOJbQhYFuC9OF2kOlD5KQKe1y5lfBn4C9Sjg=',
+                                'local'=>$basePath.'/lib/jquery/js/jquery-ui-1.13.3.custom.min.js',
                                 'aliases'=>array('jquery-ui.min.js','ui'),
-                                'css'=>$basePath.'/lib/jquery/css/smoothness/jquery-ui-1.12.1.custom.min.css');
+                                'css_cdn'=>'https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.3/jquery-ui.min.css',
+//                              'css_sri'=>'',
+                                'css'=>$basePath.'/lib/jquery/css/smoothness/jquery-ui-1.13.3.custom.min.css');
   $scripts['nestedSortable'] = array('local'=>$basePath.'/lib/jquery/js/jquery.mjs.nestedSortable.min.js');
-  //TODO discontinued. site says: Use native JSON.stringify (browsers since 2009), or json2.js from https://github.com/douglascrockford/JSON-js
+  //TODO Use native JSON.stringify (browsers since 2009)
   //CMSMS since 2.0 (OneEleven theme) has used JSON.stringify() directly
-  $scripts['json'] = array('local'=>$basePath.'/lib/jquery/js/jquery.json-2.4.min.js');
+  $scripts['json'] = array('local'=>$basePath.'/lib/jquery/js/json2.min.js');
   $scripts['migrate'] = array('local'=>$basePath.'/lib/jquery/js/jquery-migrate-1.4.1.min.js');
 
   if( CmsApp::get_instance()->test_state(CmsApp::STATE_ADMIN_PAGE) ) {
@@ -1244,17 +1246,38 @@ function cms_get_jquery($exclude = '',$ssl = FALSE,$cdn = FALSE,$append = '',$cu
   // Output
   $output = '';
   $fmt_js = '<script src="%s"></script>';
+  $fmt_sjs = '<script src="%s" integrity="%s" crossorigin="anonymous"></script>'; // CDN-sourced, not customised
   $fmt_css = '<link href="%s" rel="stylesheet">';
-  foreach($scripts as $script) {
+  $fmt_scss = '<link href="%s" integrity="%s" crossorigin="anonymous" rel="stylesheet">'; // CDN-sourced, not customised
+  foreach( $scripts as $script ) {
       //TODO check logic here
       if( !empty($script['css']) && $include_css ) {
-          $url_css = $script['css'];
-          if( $cdn && !empty($script['css_cdn']) ) $url_css = $script['css_cdn'];
-          $output .= sprintf($fmt_css,$url_css)."\n";
+          $url = $script['css'];
+          if( $cdn && !empty($script['css_cdn']) ) {
+              $url = $script['css_cdn'];
+              if( isset($script['css_sri']) ) {
+                  $hash = $script['css_sri'];
+                  $output .= sprintf($fmt_scss,$url,$hash)."\n";
+              }
+              else {
+                  $output .= sprintf($fmt_css,$url)."\n";
+              }
+          }
       }
-      $url_js = $script['local'];
-      if( $cdn && isset($script['cdn']) ) $url_js = $script['cdn'];
-      $output .= sprintf($fmt_js,$url_js)."\n";
+      if( $cdn && !empty($script['cdn']) ) {
+          $url = $script['cdn'];
+          if( isset($script['sri']) ) {
+              $hash = $script['sri'];
+              $output .= sprintf($fmt_sjs,$url,$hash)."\n";
+          }
+          else {
+             $output .= sprintf($fmt_js,$url)."\n";
+          }
+      }
+      else {
+          $url = $script['local'];
+          $output .= sprintf($fmt_js,$url)."\n";
+      }
   }
   return $output;
 }
@@ -1288,7 +1311,7 @@ function setup_session($cachable = FALSE)
         @session_cache_limiter('public');
     }
 
-    #Setup session with different id and start it
+    // setup session with different id and start it
     $session_name = 'CMSSESSID'.substr(md5(__DIR__.CMS_VERSION), 0, 12);
     if( !isset($CMS_INSTALL_PAGE) ) {
         @session_name($session_name);
@@ -1298,15 +1321,15 @@ function setup_session($cachable = FALSE)
 
     if( isset($_COOKIE[$session_name]) ) {
         // validate the contents of the cookie.
-        if (!preg_match('/^[a-zA-Z0-9,-]{22,40}$/', $_COOKIE[$session_name]) ) {
+        if( !preg_match('/^[a-zA-Z0-9,-]{22,40}$/', $_COOKIE[$session_name]) ) {
             session_id( uniqid() );
             session_start();
             session_regenerate_id();
         }
     }
-    if(!@session_id()) session_start();
+    if( !@session_id() ) session_start();
 
-    if($cachable) header_remove('Last-Modified');
+    if( $cachable ) header_remove('Last-Modified');
     $_setup_already = TRUE;
 }
 
