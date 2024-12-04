@@ -157,7 +157,7 @@ $(function() {
       <div class="pageoverflow">
         <input type="hidden" name="hide_help_links" value="0">
         <p class="pagetext"><label for="hidehelp">{lang('hide_help_links')}:</label>&nbsp;{cms_help key2='help_myaccount_hidehelp' title=lang('hide_help_links')}</p>
-        <p class="pageinput"><input class="pagenb" id="hidehelp" type="checkbox" name="" value="1"{if $hide_help_links} checked{/if}> {lang('hide_help_links_help')}</p>
+        <p class="pageinput"><input class="pagenb" id="hidehelp" type="checkbox" name="hide_help_links" value="1"{if $hide_help_links} checked{/if}> {lang('hide_help_links_help')}</p>
       </div>
     </fieldset>
 
