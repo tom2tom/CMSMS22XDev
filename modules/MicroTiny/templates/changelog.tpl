@@ -1,5 +1,8 @@
 <ul>
- <li>v2.2.6 (CMSMS 2.2.19#2)
+ <li>(CMSMS 2.2.21F2)<br>
+  Renamed template tinymce_config.js to tinymce_configjs.tpl.
+ </li>
+ <li>v2.2.6 (CMSMS 2.2.19F2)
   <ul>
    <li>Depends on FilePicker, not FileManager</li>
    <li>Deprecate function mt_jsbool</li>
