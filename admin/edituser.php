@@ -46,7 +46,7 @@ $copyfromtemplate  = 1;
 $message           = '';
 $user_id           = $userid;
 if (isset($_GET['user_id'])) {
-    $user_id = preg_replace('/[^a-zA-Z0-9._ ]/', '', trim($_GET['user_id']));
+    $user_id = preg_replace('/[^a-zA-Z0-9._ \p{L}\p{M}]/u', '', trim($_GET['user_id'])); 
 }
 
 // POST[] data
@@ -69,7 +69,7 @@ foreach ($_POST as $key => $val) {
         case 'user': //account
         case 'user_id':
             //TODO scrub malicious/XSS & invalid content
-            $$key = preg_replace('/[^a-zA-Z0-9._ ]/', '', trim($val));
+            $$key = preg_replace('/[^a-zA-Z0-9._ \p{L}\p{M}]/u', '', trim($val)); 
             break;
         case 'firstname':
         case 'lastname':
@@ -116,9 +116,6 @@ if (isset($_POST["submit"])) {
         $validinfo = false;
         $error .= "<li>" . lang('nofieldgiven', lang('username')) . "</li>";
     } elseif ($user != trim($_POST['user'])) {
-        $validinfo = false;
-        $error .= "<li>" . lang('illegalcharacters', lang('username')) . "</li>";
-    } elseif (!preg_match("/^[a-zA-Z0-9._ ]+$/", $user)) { //space ok?
         $validinfo = false;
         $error .= "<li>" . lang('illegalcharacters', lang('username')) . "</li>";
     }

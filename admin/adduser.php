@@ -62,7 +62,7 @@ foreach ($_POST as $key => $val) {
     switch ($key) {
         case 'user': //account
             //TODO scrub malicious/XSS & invalid content e.g. vanilla CMSMS2.2 preg_replace("/[^a-zA-Z0-9._ ]/", '', trim($val)) in future just clear non-printables ?
-            $user = preg_replace('/[^a-zA-Z0-9._ ]/', '', trim($val));
+            $user = preg_replace('/[^a-zA-Z0-9._ \p{L}\p{M}]/u', '', trim($val));
             break;
         case 'firstname':
         case 'lastname':
@@ -100,9 +100,6 @@ if (isset($_POST["submit"])) {
         $validinfo = false;
         $error .= "<li>" . lang('nofieldgiven', lang('username')) . "</li>";
     } elseif ($user != trim($_POST['user'])) {
-        $validinfo = false;
-        $error .= "<li>" . lang('illegalcharacters', lang('username')) . "</li>";
-    } elseif (!preg_match("/^[a-zA-Z0-9._ ]+$/", $user)) { //space ok?
         $validinfo = false;
         $error .= "<li>" . lang('illegalcharacters', lang('username')) . "</li>";
     }

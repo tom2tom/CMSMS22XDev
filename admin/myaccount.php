@@ -84,7 +84,7 @@ if (isset($_POST['submit_account']) && check_permission($userid,'Manage My Accou
     switch ($key) {
       case 'user': //account
         //TODO scrub malicious/XSS & invalid content
-        $username = preg_replace('/[^a-zA-Z0-9._ ]/', '', trim($val));
+        $username = preg_replace('/[^a-zA-Z0-9._ \p{L}\p{M}]/u', '', trim($val));
         break;
       case 'firstname':
       case 'lastname':
