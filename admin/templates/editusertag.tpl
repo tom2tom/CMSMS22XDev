@@ -22,7 +22,7 @@ $(function() {
       $.post('{$smarty.server.REQUEST_URI}',data,function(resultdata,text) {
         var r,d,e;
         try {
-          var x = $.parseJSON(resultdata);
+          var x = JSON.parse(resultdata);
           if( typeof x.response !== 'undefined' ) {
             r = x.response;
             d = x.details;
@@ -51,7 +51,7 @@ $(function() {
     data.push({ 'name': 'apply', 'value': 1 });
 
     $.post('{$smarty.server.REQUEST_URI}',data,function(resultdata,text) {
-      var x = $.parseJSON(resultdata);
+      var x = JSON.parse(resultdata);
       var r = x.response;
       var d = x.details;
       var txt = '';

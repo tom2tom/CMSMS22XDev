@@ -15,8 +15,8 @@
         $(document).on('click', '#btn_submit', function(ev) {
             ev.preventDefault();
             var form = $(this).closest('form');
-            cms_confirm('{$mod->Lang("confirm_reorder")|escape:"javascript"}').done(function(){
-                var tree = $.toJSON(parseTree($('#masterlist')));//TODO JSON.stringify() since 2009
+            cms_confirm('{$mod->Lang("confirm_reorder")|escape:"javascript"}').done(function() {
+                var tree = JSON.stringify(parseTree($('#masterlist')));
                 var ajax_res = false;
                 $('#orderlist').val(tree);
                 form.trigger('submit');
