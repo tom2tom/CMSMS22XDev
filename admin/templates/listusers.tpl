@@ -3,7 +3,7 @@ $(function() {
 
     $('#sel_all').cmsms_checkall();
 
-    $('.switchuser').on('click', function(ev){
+    $('.switchuser').on('click', function(ev) {
         ev.preventDefault();
         var _href = $(this).attr('href');
         cms_confirm("{lang('confirm_switchuser')|escape:'javascript'}").done(function() {
@@ -11,7 +11,7 @@ $(function() {
         });
     });
 
-    $('.toggleactive').on('click', function(ev){
+    $('.toggleactive').on('click', function(ev) {
         ev.preventDefault();
         var _href = $(this).attr('href');
         cms_confirm("{lang('confirm_toggleuseractive')|escape:'javascript'}").done(function() {
@@ -19,7 +19,7 @@ $(function() {
         });
     });
 
-    $(document).on('click', '.js-delete', function(ev){
+    $(document).on('click', '.js-delete', function(ev) {
         ev.preventDefault();
         var _href = $(this).attr('href');
         cms_confirm("{lang('confirm_delete_user')|escape:'javascript'}").done(function() {
@@ -42,7 +42,7 @@ $(function() {
         }
     });
 
-    $('#listusers').on('submit',function(ev){
+    $('#listusers').on('submit',function(ev) {
         ev.preventDefault();
         var v = $('#withselected').val();
         if( v === 'delete' ) {

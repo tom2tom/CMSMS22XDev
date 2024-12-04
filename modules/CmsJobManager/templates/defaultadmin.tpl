@@ -1,6 +1,6 @@
 <script>
 $(function() {
-  $('#simple1').on('click', function(ev){
+  $('#simple1').on('click', function(ev) {
      ev.preventDefault();
      cms_confirm('woot it works');
   });

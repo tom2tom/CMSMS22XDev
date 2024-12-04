@@ -108,7 +108,7 @@
         $('a',this).first().trigger('focus');
     });
 
-    $(document).on('keyup','#available-stylesheets li',function(ev){
+    $(document).on('keyup','#available-stylesheets li',function(ev) {
         if( ev.keyCode == $.ui.keyCode.ESCAPE ) {
           // escape
           $('#selected-stylesheets li').removeClass('selected');

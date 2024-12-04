@@ -40,12 +40,12 @@ $(function() {
         $('#edit_userplugin_runout').dialog({ modal: true, width: 'auto' });
       });
       return false;
-    }).fail(function(){
+    }).fail(function() {
       return false;
     });
   });
 
-  $(document).on('click', '#applybtn', function(){
+  $(document).on('click', '#applybtn', function() {
     var data = $('#edit_userplugin').find('input:not([type="submit"]), select, textarea').serializeArray();
     data.push({ 'name': 'ajax', 'value': 1 });
     data.push({ 'name': 'apply', 'value': 1 });

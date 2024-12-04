@@ -1,6 +1,6 @@
 <script>
 $(function() {
-   $('#showmore_ctl').on('click', function(){
+   $('#showmore_ctl').on('click', function() {
       $(this).closest('form').trigger('submit');
    });
 });

@@ -9,7 +9,7 @@ $(function() {
     $('.template_content',row).dialog({
       width: 'auto',
       close: function(ev, ui) {
-         $(this).dialog('destroy');
+        $(this).dialog('destroy');
       }
     });
     return false;
