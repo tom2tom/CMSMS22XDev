@@ -1020,7 +1020,7 @@ $lang['h_udtcode'] = 'Enter your PHP code here.  Keep in mind that a UDT <em>(Us
   <li>Tip: It is best to keep UDTs short, with a single and small piece of functionality.</li>
 </ul>';
 $lang['h_udtdesc'] = "This field allows you to enter details and notes about the UDT for future reference when debugging or transforming the tag.  More details are better than less";
-$lang['h_udtname'] = "Enter a name for the user defined tag.  Name should contain ASCII alphanumeric characters and digits and underscores.  The name must not start with a digit";
+$lang['h_udtname'] = "Enter a name for the user defined tag.  The name may contain ASCII letters, digits and/or underscores.  The name must not start with a digit.";
 
 ## I
 $lang['idnotvalid'] = "The given id is not valid";
@@ -1034,7 +1034,7 @@ $lang['inactive'] = "Inactive";
 $lang['indent'] = "Indent Pagelist to Emphasize Hierarchy";
 $lang['informationmissing'] = "Information missing";
 $lang['info_adduser'] = "Add a administrative new user account";
-$lang['info_adduser_username'] = "The username field may include only ASCII-alphanumeric characters, period(.)s, underscores and/or spaces, and must be unique";
+$lang['info_adduser_username'] = "The username field may include only alphanumeric characters, period(.)s, underscores and/or spaces, and must be unique";
 $lang['info_autoalias'] = "If this field is empty, an alias will be created automatically.";
 $lang['info_changegroupperms'] = "This page allows specifying which Admin user groups have which permission.  Keep in mind that an individual Admin user can belong to multiple Admin groups.<br><strong>Note:</strong> the &quot;Admin&quot; group is a special group and is automatically granted all permissions.";
 $lang['info_changeusergroup'] = "This page allows specifying the member groups for each Admin user.  Group membership determines the permissions the user has, and therefore his capabilities in the Admin Console.<br><strong>Note:</strong> the &quot;Admin&quot; group is a special group and is automatically granted all permissions.";
@@ -1253,7 +1253,7 @@ $lang['no_bulk_performed'] = "No bulk operation performed.";
 $lang['no_file_url'] = "None (Use URL Above)";
 $lang['no_files_scanned'] = "No files were scanned during the verification process (maybe the file is invalid)";
 //$lang['no_orders_changed'] = "You chose to reorder pages, but you did not change the order of any of them. Pages were not reordered.";
-$lang['no_permission'] = "You are not permitted to perform that function.";
+$lang['no_permission'] = "You are not permitted to perform that function.";//unused across core files
 $lang['no_shortcuts'] = "No shortcuts defined yet. You can add them by clicking the button below.";
 $lang['noaccessto'] = "No Access to %s";
 //$lang['nocss'] = "No Stylesheet";

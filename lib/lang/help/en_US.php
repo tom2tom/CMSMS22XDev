@@ -648,7 +648,7 @@ $lang['help_myaccount_lastname'] = 'Optionally specify your surname.  This may b
 $lang['help_myaccount_password'] = 'Please enter a unique, and secure password for this website.  The password should be more more than six characters long, and should use a combination of upper case, lower case, non alphanumeric, and digits.  Please leave this field blank if you do no wish to change your password.';
 $lang['help_myaccount_passwordagain'] = 'To reduce errors, please enter your password again.  Leave this field empty if you do not wish to change your password.';
 $lang['help_myaccount_syntax'] = 'Select which syntax highlighting module to use when editing HTML, or smarty code.  The list of available modules may change depending on what your site administrator has configured';
-$lang['help_myaccount_username'] = 'Your username is your unique name for the CMSMS Admin panel.  Please use only alphanumeric characters and the underscore';
+$lang['help_myaccount_username'] = 'Your username is your unique name for the CMSMS Admin Panel.  Please use only alphanumeric characters, period(.)s, underscores and/or spaces.';
 $lang['help_myaccount_wysiwyg'] = 'Select which WYSIWYG <em>(What You See Is What You Get)</em> module to use when editing HTML content.  You may also select &quot;None&quot; if you are comfortable with HTML.  The list of available WYSIWYG editors may change depending on what the site administrator has configured.';
 
 /* S */
