@@ -69,7 +69,7 @@ foreach ($_POST as $key => $val) {
         case 'user': //account
         case 'user_id':
             //TODO scrub malicious/XSS & invalid content
-            $$key = preg_replace('/[^a-zA-Z0-9._ \p{L}\p{M}]/u', '', trim($val)); 
+            $$key = preg_replace('/[^a-zA-Z0-9._ \x8c\x8e\x9c\x9e\x9f\xc0-\xd6\xd8-\xf6\xf8-\xff\p{L}\p{M}]/u', '', trim($val)); 
             break;
         case 'firstname':
         case 'lastname':
