@@ -190,7 +190,7 @@ abstract class Smarty_Internal_Data
      *
      * @return mixed variable value or or array of variables
      */
-    public function getTemplateVars($varName = null, /*mixed */$_ptr = null, $searchParents = true)
+    public function getTemplateVars(?string $varName = null, ?Smarty_Internal_Data $_ptr = null, $searchParents = true)
     {
         return $this->ext->getTemplateVars->getTemplateVars($this, $varName, $_ptr, $searchParents);
     }
