@@ -1090,10 +1090,11 @@ function is_email( $email, $checkDNS=FALSE )
 {
     //PHP's FILTER_VALIDATE_EMAIL mechanism is incomplete (per RFC5321) - see notes at https://www.php.net/manual/en/function.filter-var.php
     if( !filter_var($email,FILTER_VALIDATE_EMAIL) ) return FALSE;
-    list($user,$domain) = explode('@',$email,2);
-    if( !$user || !$domain ) return FALSE;
+    //$email = (string)$email; if( !preg_match('/\S+.*@[\w.\-\x80-\xff]+$/',$email) ) return FALSE;
+    $parts = explode('@',$email);
+    if( count($parts) != 2 || !$parts[0] || !$parts[1] ) return FALSE;
     if( $checkDNS && function_exists('checkdnsrr') ) {
-        if( !(checkdnsrr($domain, 'A') || checkdnsrr($domain, 'MX')) ) return FALSE; // Domain doesn't actually exist
+        if( !(checkdnsrr($parts[1], 'A') || checkdnsrr($parts[1], 'MX')) ) return FALSE; // Domain doesn't actually exist
     }
     return TRUE;
 }
