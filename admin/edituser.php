@@ -35,28 +35,28 @@ if (isset($_POST['cancel'])) {
 /*--------------------
  * Variables
  ---------------------*/
-$gCms              = cmsms();
-$db                = $gCms->GetDb();
-$error             = '';
-$dropdown          = '';
-$adminaccess       = 1;
-$active            = 1;
-$tplmaster         = 0;
-$copyfromtemplate  = 1;
-$message           = '';
-$user_id           = $userid;
+$gCms             = cmsms();
+$db               = $gCms->GetDb();
+$error            = '';
+$dropdown         = '';
+$adminaccess      = 1;
+$active           = 1;
+$tplmaster        = 0;
+$copyfromtemplate = 1;
+$message          = '';
+$user_id          = $userid;
 if (isset($_GET['user_id'])) {
-    $user_id = preg_replace('/[^a-zA-Z0-9._ \p{L}\p{M}]/u', '', trim($_GET['user_id'])); 
+    $user_id = preg_replace('/[^a-zA-Z0-9._ \x8c\x8e\x9c\x9e\x9f\xc0-\xd6\xd8-\xf6\xf8-\xff\p{L}\p{M}]/u', '', trim($_GET['user_id'])); 
 }
 
 // POST[] data
 /*
-$user              = isset($_POST["user"]) ? cleanValue($_POST["user"]) : '';
-$password          = isset($_POST["password"]) ? $_POST["password"] : '';
-$passwordagain     = isset($_POST["passwordagain"]) ? $_POST["passwordagain"] : '';
-$firstname         = isset($_POST["firstname"]) ? cleanValue($_POST["firstname"]) : '';
-$lastname          = isset($_POST["lastname"]) ? cleanValue($_POST["lastname"]) : '';
-$email             = isset($_POST["email"]) ? trim(strip_tags($_POST["email"])) : '';
+$user             = isset($_POST["user"]) ? cleanValue($_POST["user"]) : '';
+$password         = isset($_POST["password"]) ? $_POST["password"] : '';
+$passwordagain    = isset($_POST["passwordagain"]) ? $_POST["passwordagain"] : '';
+$firstname        = isset($_POST["firstname"]) ? cleanValue($_POST["firstname"]) : '';
+$lastname         = isset($_POST["lastname"]) ? cleanValue($_POST["lastname"]) : '';
+$email            = isset($_POST["email"]) ? trim(strip_tags($_POST["email"])) : '';
 */
 $user          = '';
 $password      = '';
@@ -68,24 +68,23 @@ foreach ($_POST as $key => $val) {
     switch ($key) {
         case 'user': //account
         case 'user_id':
-            //TODO scrub malicious/XSS & invalid content
-            $$key = preg_replace('/[^a-zA-Z0-9._ \x8c\x8e\x9c\x9e\x9f\xc0-\xd6\xd8-\xf6\xf8-\xff\p{L}\p{M}]/u', '', trim($val)); 
+            //scrub malicious/XSS & invalid content
+            $$key = preg_replace('/[^a-zA-Z0-9._ \x8c\x8e\x9c\x9e\x9f\xc0-\xd6\xd8-\xf6\xf8-\xff\p{L}\p{M}]/u', '', trim($val));
             break;
         case 'firstname':
         case 'lastname':
-            //TODO scrub malicious/XSS & invalid
-            $tmp = preg_replace('/[\x00-\x1f\x7f]/', '', trim($val));
-            $$key = $sanitize_fn($tmp); //see include.php
+            //scrub malicious/XSS & invalid
+            $$key = preg_replace(['/[\x00-\x1f\x7f]/', '/<[^>]*>/', '/<\s*\?\s*php.*$/i', '/<\s*\?\s*=?.*$/'], ['', '', '', ''], trim($val)); //c.f. $sanitize_fn in include.php
             break;
         case 'password':
         case 'passwordagain':
-            //TODO scrub malicious/XSS or just non-printables ?
-            $$key = preg_replace('/[\x00-\x1f\x7f]/', '', $val);
+            //scrub malicious/XSS & non-printables
+            $$key = preg_replace(['/[\x00-\x1f\x7f]/', '/<\s*\?\s*php.*$/i', '/<\s*\?\s*=?.*$/'], ['', '', ''], $val);
             break;
         case 'email':
             //TODO scrub XSS & invalid
             //PHP's FILTER_VALIDATE_EMAIL mechanism is incomplete (per RFC5321) - see notes at https://www.php.net/manual/en/function.filter-var.php
-            $email = filter_var(trim($val),FILTER_SANITIZE_EMAIL);
+            $email = filter_var(trim($val), FILTER_SANITIZE_EMAIL);
     }
 }
 
