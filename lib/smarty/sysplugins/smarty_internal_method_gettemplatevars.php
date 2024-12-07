@@ -31,12 +31,8 @@ class Smarty_Internal_Method_GetTemplateVars
      *
      * @return mixed variable value or or array of variables
      */
-    public function getTemplateVars(
-        Smarty_Internal_Data $data,
-        ?string $varName = null,
-        ?Smarty_Internal_Data $_ptr = null,
-        $searchParents = true
-    ) {
+    public function getTemplateVars(Smarty_Internal_Data $data, ?string $varName = null, ?Smarty_Internal_Data $_ptr = null, $searchParents = true)
+    {
         if (isset($varName)) {
             $_var = $this->_getVariable($data, $varName, $_ptr, $searchParents, false);
             if (is_object($_var)) {
