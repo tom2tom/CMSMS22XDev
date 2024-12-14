@@ -5,7 +5,7 @@
 		<meta charset="{$encoding}">
 		<title>{lang('logintitle',$sitename)}</title>
 		<base href="{$config.admin_url}/">
-		<meta name="generator" content="CMS Made Simple - Copyright (C) 2004-2023. All rights reserved.">
+		<meta name="generator" content="CMS Made Simple - Copyright (C) 2004-{$smarty.now|date_format:'Y'}. All rights reserved.">
 		<meta name="robots" content="noindex, nofollow">
 		<meta name="referrer" content="origin">
 		<meta name="viewport" content="initial-scale=1.0 maximum-scale=1.0 user-scalable=no">
@@ -94,7 +94,7 @@
 					</p>
 				</div>
 				<footer>
-					<small class="copyright">Copyright &copy; <a rel="external" href="http://www.cmsmadesimple.org">CMS Made Simple&trade;</a></small>
+					<small class="copyright">Copyright &copy; <a rel="external" href="http://www.cmsmadesimple.org">CMS Made Simple Foundation Inc</a></small>
 				</footer>
 			</div>
 		</div>
