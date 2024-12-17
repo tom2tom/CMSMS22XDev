@@ -20,8 +20,7 @@
       <div class="row message yellow">
         <label for="dirsel">{tr('destination_directory')}:</label>
         <select id="dirsel" class="form-field" name="destdir">
-          {html_options options=$dirlist selected=$destdir|default:''}
-        </select>
+          {html_options options=$dirlist selected=$destdir|default:''}        </select>
       </div>
       <hr>
     {/if}
@@ -31,8 +30,7 @@
     <div class="row">
         <label for="lang_selector">{tr('available_languages')}:</label>
         <select id="lang_selector" class="form-field" name="lang">
-            {html_options options=$languages selected=$curlang}
-        </select>
+            {html_options options=$languages selected=$curlang}        </select>
     </div>
 
     <hr>
@@ -43,8 +41,7 @@
     <div class="row">
         <label for="advsel">{tr('advanced_mode')}:</label>
         <select id="advsel" class="form-field" name="verbose">
-            {html_options options=$yesno selected=$verbose}
-        </select>
+            {html_options options=$yesno selected=$verbose}        </select>
     </div>
 
     <div id="bottom_nav">
