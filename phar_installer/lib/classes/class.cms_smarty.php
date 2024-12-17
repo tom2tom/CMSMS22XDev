@@ -5,7 +5,7 @@ namespace __appbase;
 use Exception;
 use Smarty;
 
-require_once \dirname(__DIR__).'/Smarty/Smarty.class.php';
+require_once \dirname(__DIR__).'/smarty/Smarty.class.php';
 
 class cms_smarty extends Smarty
 {

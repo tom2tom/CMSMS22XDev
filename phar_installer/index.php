@@ -37,7 +37,7 @@ try {
     // some basic system wide pre-requisites
     if(php_sapi_name() == "cli") throw new \Exception("CLI-based execution of this script is not supported.\nPlease browse to this script with a compatible browser");
 
-    $ver = trim(file_get_contents(__DIR__.'/lib/Smarty/VERSION'));
+    $ver = trim(file_get_contents(__DIR__.'/lib/smarty/VERSION'));
     if( $ver && version_compare($ver,'4') >= 0 ) {
        if( version_compare(phpversion(),'7.1.0') < 0 ) {
            throw new \Exception('This installer requires at least PHP 7.1');
