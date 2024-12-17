@@ -19,7 +19,7 @@ class __CORE__generic_Type_Assistant extends \CMSMS\Layout\TemplateTypeAssistant
     {
         $name = trim((string)$name);
         if( !$name ) return '';
-        $pattern = '{include file=\'cms_template:%s\'}';
+        $pattern = '{include \'cms_template:%s\'}';
         return sprintf($pattern,$name);
     }
 }

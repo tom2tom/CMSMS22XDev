@@ -58,7 +58,7 @@
 					{/if}
 					</div>
 					<!-- bookmarks -->
-					{include file='shortcuts.tpl'}
+					{include 'shortcuts.tpl'}
 				</div>
 				<!-- end header-bottom //-->
 			</header>
@@ -80,7 +80,7 @@
 				<!-- start main -->
 				<div id="oe_mainarea" class="cf">
 					{strip}
-					{include file='messages.tpl'}
+					{include 'messages.tpl'}
 					<article role="main" class="content-inner">
 						<header class="pageheader{if isset($is_ie)} drop-hidden{/if} cf">
 							{if isset($module_icon_url) or isset($pagetitle)}
@@ -102,7 +102,7 @@
 			</div>
 			<!-- end content //-->
 			<!-- start footer -->
-			{include file='footer.tpl'}
+			{include 'footer.tpl'}
 			<!-- end footer //-->
 			{$footertext|default:''}
 		</div>
