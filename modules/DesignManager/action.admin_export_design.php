@@ -108,7 +108,7 @@ function _get_sub_templates( $template )
   $regex='/\{.*MenuManager.*\}/';
   $template = preg_replace_callback( $regex, $replace_fn, $template );
 
-  $regex='/\{global_content.*\}/';
+  $regex='/\{global_content.*\}/'; //deprecated since CMSMS 2.2.0
   $template = preg_replace_callback( $regex, $replace_fn2, $template );
 
   $regex='/\{include.*\}/';
