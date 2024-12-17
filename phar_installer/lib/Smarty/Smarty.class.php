@@ -76,17 +76,17 @@ if (!class_exists('Smarty_Autoloader')) {
 }
 
 /**
- * Load always needed external class files
+ * Load immediately-needed class files
  */
 require_once SMARTY_SYSPLUGINS_DIR . 'smarty_internal_data.php';
-require_once SMARTY_SYSPLUGINS_DIR . 'smarty_internal_extension_handler.php';
+//require_once SMARTY_SYSPLUGINS_DIR . 'smarty_internal_extension_handler.php';
 require_once SMARTY_SYSPLUGINS_DIR . 'smarty_internal_templatebase.php';
-require_once SMARTY_SYSPLUGINS_DIR . 'smarty_internal_template.php';
-require_once SMARTY_SYSPLUGINS_DIR . 'smarty_resource.php';
-require_once SMARTY_SYSPLUGINS_DIR . 'smarty_variable.php';
-require_once SMARTY_SYSPLUGINS_DIR . 'smarty_template_source.php';
-require_once SMARTY_SYSPLUGINS_DIR . 'smarty_template_resource_base.php';
-require_once SMARTY_SYSPLUGINS_DIR . 'smarty_internal_resource_file.php';
+//require_once SMARTY_SYSPLUGINS_DIR . 'smarty_internal_template.php';
+//require_once SMARTY_SYSPLUGINS_DIR . 'smarty_resource.php';
+//require_once SMARTY_SYSPLUGINS_DIR . 'smarty_variable.php';
+//require_once SMARTY_SYSPLUGINS_DIR . 'smarty_template_source.php';
+//require_once SMARTY_SYSPLUGINS_DIR . 'smarty_template_resource_base.php';
+//require_once SMARTY_SYSPLUGINS_DIR . 'smarty_internal_resource_file.php';
 
 /**
  * This is the main Smarty class
@@ -107,7 +107,7 @@ class Smarty extends Smarty_Internal_TemplateBase
     /**
      * smarty version
      */
-    const SMARTY_VERSION = '4.4.1C';
+    const SMARTY_VERSION = '4.4.2';
     /**
      * define variable scopes
      */
@@ -764,8 +764,8 @@ class Smarty extends Smarty_Internal_TemplateBase
     /**
      * Get template directories
      *
-     * @param mixed $index    index of directory to get, null to get all
-     * @param bool  $isConfig true for config_dir
+     * @param mixed $index    index of directory to get, null to get all Default null
+     * @param bool  $isConfig true for config_dir Default false
      *
      * @return array|string list of template directories, or directory of $index
      */
@@ -789,7 +789,7 @@ class Smarty extends Smarty_Internal_TemplateBase
      * Set template directory
      *
      * @param string|array $template_dir directory(s) of template sources
-     * @param bool         $isConfig     true for config_dir
+     * @param bool         $isConfig     true for config_dir Default false
      *
      * @return \Smarty current Smarty instance for chaining
      */
@@ -810,7 +810,7 @@ class Smarty extends Smarty_Internal_TemplateBase
      * Add config directory(s)
      *
      * @param string|array $config_dir directory(s) of config sources
-     * @param mixed        $key        key of the array element to assign the config dir to
+     * @param mixed        $key        key of the array element to assign the config dir to Default null
      *
      * @return Smarty current Smarty instance for chaining
      */
@@ -822,7 +822,7 @@ class Smarty extends Smarty_Internal_TemplateBase
     /**
      * Get config directory
      *
-     * @param mixed $index index of directory to get, null to get all
+     * @param mixed $index index of directory to get, null to get all Default null
      *
      * @return array configuration directory
      */
@@ -846,7 +846,7 @@ class Smarty extends Smarty_Internal_TemplateBase
     /**
      * Adds directory of plugin files
      *
-     * @param null|array|string $plugins_dir
+     * @param mixed array|string|null $plugins_dir
      *
      * @return Smarty current Smarty instance for chaining
      */
@@ -1036,11 +1036,11 @@ class Smarty extends Smarty_Internal_TemplateBase
     /**
      * Get unique template id
      *
-     * @param string                    $template_name
-     * @param null|mixed                $cache_id
-     * @param null|mixed                $compile_id
-     * @param null|int                  $caching
-     * @param null|\Smarty_Internal_Template $template
+     * @param string                        $template_name
+     * @param string|null                   $cache_id Default null
+     * @param string|null                   $compile_id Default null
+     * @param int|null                      $caching mode Default null
+     * @param Smarty_Internal_Template|null $template Default null
      *
      * @return string
      * @throws \SmartyException
@@ -1075,11 +1075,11 @@ class Smarty extends Smarty_Internal_TemplateBase
      *  - remove /./ and /../
      *  - make it absolute if required
      *
-     * @param string $path     file path
-     * @param bool   $realpath if true - convert to absolute
+     * @param string    $path     file path
+     * @param bool|null $realpath if true - convert to absolute
      *                         false - convert to relative
      *                         null - keep as it is but
-     *                         remove /./ /../
+     *                         remove /./ /../ Default null
      *
      * @return string
      */
@@ -1282,7 +1282,7 @@ class Smarty extends Smarty_Internal_TemplateBase
     /**
      * Test install
      *
-     * @param null $errors
+     * @param array|null $errors Default null
      */
     public function testInstall(&$errors = null)
     {
