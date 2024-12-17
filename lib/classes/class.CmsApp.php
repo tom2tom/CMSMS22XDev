@@ -510,12 +510,12 @@ final class CmsApp
 
 
 	/**
-	 * Get handle to the Smarty parser object, meant for template parsing.
+	 * Get handle to the Smarty parser object, formerly meant for template parsing.
 	 *
 	 * @internal
 	 * @since 1.11.3
 	 * @deprecated since 2.0 any usage exits immediately
-	 * @return void was Smarty_Parser handle to the Smarty object
+	 * @return not at all - formerly Smarty_Parser handle to the Smarty object
 	 */
 	final public function get_template_parser()
 	{
