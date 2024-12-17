@@ -410,8 +410,6 @@ $lang['eventhandlers'] = "Event Manager";
 $lang['event_description'] = "Event Description";
 $lang['event_desc_adddesignpost'] = "Sent after a design/theme is saved";
 $lang['event_desc_adddesignpre'] = "Sent just before a design/theme is saved to the database";
-$lang['event_desc_addglobalcontentpost'] = "Sent after a new global content block is created";
-$lang['event_desc_addglobalcontentpre'] = "Sent before a new global content block is created";
 $lang['event_desc_addgrouppost'] = "Sent after a new group is created";
 $lang['event_desc_addgrouppre'] = "Sent before a new group is created";
 $lang['event_desc_addstylesheetpost'] = "Sent after a new stylesheet is created";
@@ -437,8 +435,6 @@ $lang['event_desc_contentprerender'] = "Sent before any Smarty processing is per
 $lang['event_desc_contentstylesheet'] = "Sent before the stylesheet is sent to the browser";
 $lang['event_desc_deletedesignpost'] = "Sent just after a design/theme is removed";
 $lang['event_desc_deletedesignpre'] = "Sent just prior to a design/theme being removed";
-$lang['event_desc_deleteglobalcontentpost'] = "Sent after a global content block is deleted from the system";
-$lang['event_desc_deleteglobalcontentpre'] = "Sent before a global content block is deleted from the system";
 $lang['event_desc_deletegrouppost'] = "Sent after a group is deleted from the system";
 $lang['event_desc_deletegrouppre'] = "Sent before a group is deleted from the system";
 $lang['event_desc_deletestylesheetpost'] = "Sent after a stylesheet is deleted from the system";
@@ -453,8 +449,6 @@ $lang['event_desc_deleteuserpost'] = "Sent after a user is deleted from the syst
 $lang['event_desc_deleteuserpre'] = "Sent before a user is deleted from the system";
 $lang['event_desc_editdesignpost'] = "Sent just after a design/theme is saved to the database";
 $lang['event_desc_editdesignpre'] = "Sent just before a design/theme is saved to the database";
-$lang['event_desc_editglobalcontentpost'] = "Sent after edits to a global content block are saved";
-$lang['event_desc_editglobalcontentpre'] = "Sent before edits to a global content block are saved";
 $lang['event_desc_editgrouppost'] = "Sent after edits to a group are saved";
 $lang['event_desc_editgrouppre'] = "Sent before edits to a group are saved";
 $lang['event_desc_editstylesheetpost'] = "Sent after edits to a stylesheet are saved";
@@ -467,8 +461,6 @@ $lang['event_desc_edituserdefinedtagpost'] = "Sent after a user defined tag is u
 $lang['event_desc_edituserdefinedtagpre'] = "Sent prior to a user defined tag update";
 $lang['event_desc_edituserpost'] = "Sent after edits to a user are saved";
 $lang['event_desc_edituserpre'] = "Sent before edits to a user are saved";
-$lang['event_desc_globalcontentpostcompile'] = "Sent after a global content block has been processed by Smarty";
-$lang['event_desc_globalcontentprecompile'] = "Sent before a global content block is sent to Smarty for processing";
 $lang['event_desc_loginfailed'] = "Sent after a user failed to login into the Admin panel";
 $lang['event_desc_loginpost'] = "Sent after a user logs into the Admin panel";
 $lang['event_desc_logoutpost'] = "Sent after a user logs out of the Admin panel";
@@ -494,16 +486,6 @@ $lang['event_help_adddesignpre'] = "<h4>Parameters</h4>
 $lang['event_help_adddesignpost'] = "<h4>Parameters</h4>
 <ul>
   <li>'CmsLayoutCollection' - Reference to the affected design/collection object.</li>
-</ul>
-";
-$lang['event_help_addglobalcontentpost'] = "<h4>Parameters</h4>
-<ul>
-<li>'global_content' - Reference to the affected global content block object.</li>
-</ul>
-";
-$lang['event_help_addglobalcontentpre'] = "<h4>Parameters</h4>
-<ul>
-<li>'global_content' - Reference to the affected global content block object.</li>
 </ul>
 ";
 $lang['event_help_addgrouppost'] = "<h4>Parameters</h4>
@@ -631,16 +613,6 @@ $lang['event_help_deletedesignpre'] = '<h4>Parameters</h4>
   <li>\'CmsLayoutCollection\' - A reference to the affected collection (aka design/theme) object.</li>
 </ul>
 ';
-$lang['event_help_deleteglobalcontentpost'] = "<h4>Parameters</h4>
-<ul>
-<li>'global_content' - Reference to the affected global content block object.</li>
-</ul>
-";
-$lang['event_help_deleteglobalcontentpre'] = "<h4>Parameters</h4>
-<ul>
-<li>'global_content' - Reference to the affected global content block object.</li>
-</ul>
-";
 $lang['event_help_deletegrouppost'] = "<h4>Parameters</h4>
 <ul>
 <li>'group' - Reference to the affected group object.</li>
@@ -709,16 +681,6 @@ $lang['event_help_editdesignpre'] = '<h4>Parameters</h4>
   <li>\'CmsLayoutCollection\' - A reference to the affected collection (aka design/theme) object.</li>
 </ul>
 ';
-$lang['event_help_editglobalcontentpost'] = "<h4>Parameters</h4>
-<ul>
-<li>'global_content' - Reference to the affected global content block object.</li>
-</ul>
-";
-$lang['event_help_editglobalcontentpre'] = "<h4>Parameters</h4>
-<ul>
-<li>'global_content' - Reference to the affected global content block object.</li>
-</ul>
-";
 $lang['event_help_editgrouppost'] = "<h4>Parameters</h4>
 <ul>
 <li>'group' - Reference to the affected group object.</li>
@@ -775,16 +737,6 @@ $lang['event_help_edituserpost'] = "<h4>Parameters</h4>
 $lang['event_help_edituserpre'] = "<h4>Parameters</h4>
 <ul>
 <li>'user' - Reference to the affected user object.</li>
-</ul>
-";
-$lang['event_help_globalcontentpostcompile'] = "<h4>Parameters</h4>
-<ul>
-<li>'global_content' - Reference to the affected global content block text.</li>
-</ul>
-";
-$lang['event_help_globalcontentprecompile'] = "<h4>Parameters</h4>
-<ul>
-<li>'global_content' - Reference to the affected global content block text.</li>
 </ul>
 ";
 $lang['event_help_loginfailed'] = "<h4>Parameters</h4>
