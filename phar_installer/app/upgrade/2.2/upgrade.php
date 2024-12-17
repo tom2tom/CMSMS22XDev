@@ -75,3 +75,19 @@ $srcdir = $destdir.'/tmp/templates';
 if( is_dir($srcdir) ) {
     $move_directory_files($srcdir,$destdir.'/assets/templates');
 }
+// redundant permissions
+verbose_msg('deleting old permissions');
+$tmp = array(
+'Add Global Content Blocks',
+'Modify Global Content Blocks',
+'Remove Global Content Blocks'
+);
+$query = 'SELECT permission_id FROM '.CMS_DB_PREFIX.'permissions WHERE permission_name IN('.implode(',',$tmp).')';
+$dbr = $db->GetCol($query);
+if ($dbr) {
+    //TODO ? add replacement group perms for templates generally i.e. 'Add Templates','Modify Templates'
+    $query = 'DELETE FROM '.CMS_DB_PREFIX.'group_perms WHERE permission_id IN('.implode(',',$dbr).')';
+    $db->Execute($query);
+    $query = 'DELETE FROM '.CMS_DB_PREFIX.'permissions WHERE permission_id IN('.implode(',',$dbr).')';
+    $db->Execute($query);
+}
