@@ -82,7 +82,7 @@ namespace CMSMS\Database {
             if( count($tmp) ) $spec->auto_exec = 'SET '.implode(',',$tmp);
 
             $obj = Connection::Initialize($spec);
-            $obj->SetErrorHandler( '\\CMSMS\Database\\compatibility::on_error' );
+            $obj->SetErrorHandler( '\CMSMS\Database\compatibility::on_error' );
             if( $spec->debug ) $obj->SetDebugCallback('debug_buffer');
             return $obj;
         }
