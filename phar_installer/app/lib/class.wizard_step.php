@@ -75,7 +75,7 @@ abstract class wizard_step extends parent_step
       smarty()->assign('wizard_steps',$this->get_wizard()->get_nav())
         ->assign('title',$this->get_primary_title());
   }
-
+  //TODO echo'd scripts past <html/> are invalid - insert at end of <body/> then run it
   public function error($msg)
   {
       $msg = str_replace(['\\\\r\\\\n','\\\\n','\\\\r',"\n"],['\n','\n','\n','\n'],addslashes($msg));
