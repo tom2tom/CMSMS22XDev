@@ -30,7 +30,7 @@ class Smarty_Parser extends Smarty_CMS
 	public $id; // <- triggers error without | do search why this is needed
 	public $params; // <- triggers error without | do search why this is needed
 	private static $_instance;
-	private static $_allowed_static_plugins = array('global_content');
+	private static $_allowed_static_plugins = array('global_content'); //deprecated since CMSMS 2.2.0
 
 	/**
 	* Constructor

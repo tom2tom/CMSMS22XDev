@@ -334,7 +334,7 @@ EOT;
         $regex='/\{.*Navigator.*\}/';
         $template = preg_replace_callback( $regex, $replace_navigator, $template );
 
-        $regex='/\{global_content.*\}/';
+        $regex='/\{global_content.*\}/'; //deprecated since CMSMS 2.2.0
         $template = preg_replace_callback( $regex, $replace_gcb, $template );
 
         $regex='/\{include.*\}/';

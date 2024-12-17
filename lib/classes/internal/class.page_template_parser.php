@@ -4,7 +4,7 @@ namespace CMSMS\internal;
 
 class page_template_parser extends \Smarty_Internal_Template
 {
-    private static $_allowed_static_plugins = array('global_content');
+    private static $_allowed_static_plugins = array('global_content'); //deprecated since CMSMS 2.2.0
 
     public function __construct($template_resource, $smarty, $_parent = null, $_cache_id = null, $_compile_id = null, $_caching = null, $_cache_lifetime = null)
     {
