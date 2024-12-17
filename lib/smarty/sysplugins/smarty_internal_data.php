@@ -184,9 +184,9 @@ abstract class Smarty_Internal_Data
      * @api  Smarty::getTemplateVars()
      * @link https://www.smarty.net/docs/en/api.get.template.vars.tpl
      *
-     * @param string                                                       $varName       variable name or null
-     * @param null|\Smarty_Internal_Data|\Smarty_Internal_Template|\Smarty $_ptr optional pointer to data object
-     * @param bool                                                         $searchParents include parent templates?
+     * @param string|null                                                  $varName       variable name Default null
+     * @param \Smarty_Internal_Data|\Smarty_Internal_Template|\Smarty|null $_ptr optional pointer to data object Default null
+     * @param bool                                                         $searchParents include parent templates? Default true
      *
      * @return mixed variable value or or array of variables
      */
@@ -198,7 +198,7 @@ abstract class Smarty_Internal_Data
     /**
      * Follow the parent chain an merge template and config variables
      *
-     * @param \Smarty_Internal_Data|null $data
+     * @param Smarty_Internal_Data|null $data Default null
      */
     public function _mergeVars(?Smarty_Internal_Data $data = null)
     {

@@ -26,9 +26,9 @@ class Smarty_Internal_Runtime_Foreach
      * @param mixed                     $from       values to loop over
      * @param string                    $item       variable name
      * @param bool                      $needTotal  flag if we need to count values
-     * @param null|string               $key        variable name
-     * @param null|string               $name       of named foreach
-     * @param array                     $properties of named foreach
+     * @param string|null               $key        variable name Default null
+     * @param string|null               $name       of named foreach Default null
+     * @param array                     $properties of named foreach Default []
      *
      * @return mixed $from
      */

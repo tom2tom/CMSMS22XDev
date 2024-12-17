@@ -95,9 +95,9 @@ class Smarty_Internal_Runtime_Inheritance
      * - if outer level is reached flush output buffer and switch to wait for parent template state
      *
      * @param \Smarty_Internal_Template $tpl
-     * @param null|string               $template optional name of inheritance parent template
-     * @param null|string               $uid      uid of inline template
-     * @param null|string               $func     function call name of inline template
+     * @param string|null               $template name of inheritance parent template Default null
+     * @param string|null               $uid      uid of inline template Default null
+     * @param string|null               $func     function call name of inline template Default null
      *
      * @throws \Exception
      * @throws \SmartyException
@@ -132,10 +132,10 @@ class Smarty_Internal_Runtime_Inheritance
      * - if outer level {block} of child template ($state === 1) save it as child root block
      * - otherwise process inheritance and render
      *
-     * @param \Smarty_Internal_Template $tpl
-     * @param                           $className
-     * @param string                    $name
-     * @param int|null                  $tplIndex index of outer level {block} if nested
+     * @param Smarty_Internal_Template $tpl
+     * @param string                   $className
+     * @param string                   $name
+     * @param int|null                 $tplIndex index of outer level {block} if nested Default null
      *
      * @throws \SmartyException
      */
@@ -161,7 +161,7 @@ class Smarty_Internal_Runtime_Inheritance
      *
      * @param \Smarty_Internal_Template   $tpl
      * @param \Smarty_Internal_Block      $block
-     * @param \Smarty_Internal_Block|null $parent
+     * @param \Smarty_Internal_Block|null     $parent Default null
      *
      * @throws \SmartyException
      */

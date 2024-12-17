@@ -10,11 +10,11 @@ class SmartyCompilerException extends SmartyException
     /**
      * The constructor of the exception
      *
-     * @param string         $message  The Exception message to throw.
-     * @param int            $code     The Exception code.
-     * @param string|null    $filename The filename where the exception is thrown.
-     * @param int|null       $line     The line number where the exception is thrown.
-     * @param Throwable|null $previous The previous exception used for the exception chaining.
+     * @param string         $message  The Exception message. Default ''
+     * @param int            $code     The Exception code. Default 0
+     * @param string|null    $filename The filename where the exception was thrown Default null
+     * @param int|null       $line     The line number where the exception was thrown. Default null
+     * @param Throwable|null $previous The previous exception used for the exception chaining. Default null
      */
     public function __construct(
         string $message = "",

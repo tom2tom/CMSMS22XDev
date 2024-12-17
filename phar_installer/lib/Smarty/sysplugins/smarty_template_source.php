@@ -67,7 +67,8 @@ class Smarty_Template_Source
     public $basename = null;
 
     /**
-     * The Components an extended template is made of
+     * The 'components' an extended template is built from.
+     * Ancestor-templates hierarchy, recorded highest to lowest
      *
      * @var \Smarty_Template_Source[]
      */

@@ -24,10 +24,10 @@ class Smarty_Internal_Method_CreateData
      * @api  Smarty::createData()
      * @link https://www.smarty.net/docs/en/api.create.data.tpl
      *
-     * @param mixed \Smarty_Internal_TemplateBase|\Smarty_Internal_Template|\Smarty      $obj
-     * @param mixed \Smarty_Internal_Template|\Smarty_Internal_Data|\Smarty_Data|\Smarty|null $parent next higher level of Smarty
-     *                                                                                   variables
-     * @param null|string                                                                $name   optional data block name
+     * @param mixed Smarty_Internal_TemplateBase|Smarty_Internal_Template|Smarty          $obj
+     * @param mixed Smarty_Internal_Template|Smarty_Internal_Data|Smarty_Data|Smarty|null $parent next higher level of Smarty
+     *                                                                                     variables Default null
+     * @param string|null                                                                 $name   optional data block name Default null
      *
      * @return \Smarty_Data data object
      */

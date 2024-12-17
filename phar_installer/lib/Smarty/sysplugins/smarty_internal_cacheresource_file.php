@@ -88,8 +88,8 @@ class Smarty_Internal_CacheResource_File extends Smarty_CacheResource
     /**
      * Read the cached template and process its header
      *
-     * @param \Smarty_Internal_Template   $_smarty_tpl do not change variable name, is used by compiled template
-     * @param Smarty_Template_Cached|null $cached      cached object UNUSED
+     * @param Smarty_Internal_Template    $_smarty_tpl do not change variable name, is used by compiled template
+     * @param Smarty_Template_Cached|null $cached      cached object Default null UNUSED
      * @param bool                        $update      flag whether called because cache update Default false
      *
      * @return boolean true or false if the cached content does not exist

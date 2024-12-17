@@ -43,7 +43,7 @@ abstract class Smarty_Resource_Custom extends Smarty_Resource
      * populate Source Object with meta data from Resource
      *
      * @param Smarty_Template_Source        $source    source object
-     * @param null|Smarty_Internal_Template $_template template object UNUSED
+     * @param Smarty_Internal_Template|null $_template template object Default null UNUSED
      */
     public function populate(Smarty_Template_Source $source, ?Smarty_Internal_Template $_template = null)
     {

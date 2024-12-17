@@ -142,8 +142,8 @@ class Smarty_Internal_Runtime_Capture
     /**
      * Return content of named capture buffer by key or as array
      *
-     * @param \Smarty_Internal_Template $_template
-     * @param string|null               $name
+     * @param Smarty_Internal_Template $_template
+     * @param string|null              $name Default null
      *
      * @return string|string[]|null
      */

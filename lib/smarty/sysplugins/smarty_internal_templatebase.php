@@ -140,11 +140,11 @@ abstract class Smarty_Internal_TemplateBase extends Smarty_Internal_Data
      * @api  Smarty::isCached()
      * @link https://www.smarty.net/docs/en/api.is.cached.tpl
      *
-     * @param null|string|\Smarty_Internal_Template $template   the resource handle of the template file or template
-     *                                                          object
-     * @param mixed                                 $cache_id   cache id to be used with this template
-     * @param mixed                                 $compile_id compile id to be used with this template
-     * @param object                                $parent     next higher level of Smarty variables
+     * @param string|Smarty_Internal_Template|null $template   the resource handle of the template file or
+     *                                                          template object Default null
+     * @param string|null                          $cache_id   cache id to be used with this template Default null
+     * @param string|null                          $compile_id compile id to be used with this template Default null
+     * @param object|null                          $parent     next higher level of Smarty variables Default null
      *
      * @return bool cache status
      * @throws \Exception

@@ -17,11 +17,11 @@ class Smarty_Internal_Runtime_CodeFrame
     /**
      * Create code frame for compiled and cached templates
      *
-     * @param Smarty_Internal_Template              $_template
-     * @param string                                $content   optional template content
-     * @param string                                $functions compiled template function and block code
-     * @param bool                                  $cache     flag for cache file Default false
-     * @param null|\Smarty_Internal_TemplateCompilerBase $compiler
+     * @param Smarty_Internal_Template                  $_template
+     * @param string                                    $content   optional template content Default ''
+     * @param string                                    $functions compiled template function and block code Default ''
+     * @param bool                                      $cache     flag for cache file Default false
+     * @param Smarty_Internal_TemplateCompilerBase|null $compiler Default null
      *
      * @return string
      */

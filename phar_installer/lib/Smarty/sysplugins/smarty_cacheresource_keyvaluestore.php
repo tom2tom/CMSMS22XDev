@@ -89,10 +89,10 @@ abstract class Smarty_CacheResource_KeyValueStore extends Smarty_CacheResource
      * Read the cached template and process the header
      *
      * @param Smarty_Internal_Template    $_smarty_tpl do not change variable name, is used by compiled template
-     * @param Smarty_Template_Cached|null $cached      cached object
+     * @param Smarty_Template_Cached|null $cached      cached object Default null
      * @param boolean                     $update      flag whether called during cache update Default false UNUSED
      *
-     * @return boolean                 true or false if the cached content does not exist
+     * @return boolean true or false if the cached content does not exist
      */
     public function process(
         Smarty_Internal_Template $_smarty_tpl,

@@ -21,7 +21,7 @@ class Smarty_Internal_Undefined
     /**
      * Smarty_Internal_Undefined constructor.
      *
-     * @param null|string $class name of undefined extension class
+     * @param string|null $class name of undefined extension class Default null
      */
     public function __construct($class = null)
     {

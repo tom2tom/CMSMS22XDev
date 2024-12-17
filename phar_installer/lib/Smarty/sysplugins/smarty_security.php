@@ -489,7 +489,7 @@ class Smarty_Security
      * Check if directory of file resource is trusted.
      *
      * @param string    $filepath
-     * @param null|bool $isConfig
+     * @param bool|null $isConfig Default null
      *
      * @return bool true if directory is trusted
      * @throws \SmartyException if directory is not trusted

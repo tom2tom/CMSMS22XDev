@@ -32,10 +32,10 @@ class Smarty_Internal_Method_RegisterFilter
      *
      * @link https://www.smarty.net/docs/en/api.register.filter.tpl
      *
-     * @param \Smarty_Internal_TemplateBase|\Smarty_Internal_Template|\Smarty $obj
-     * @param string                                                          $type filter type
-     * @param callback                                                        $callback
-     * @param string|null                                                     $name optional filter name
+     * @param mixed Smarty_Internal_TemplateBase|Smarty_Internal_Template|Smarty $obj
+     * @param string                                                             $type filter type
+     * @param callable                                                           $callback
+     * @param string|null                                                        $name optional filter name Default null
      *
      * @return \Smarty|\Smarty_Internal_Template
      * @throws \SmartyException

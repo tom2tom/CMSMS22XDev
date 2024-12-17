@@ -63,9 +63,9 @@ class Smarty_Template_Config extends Smarty_Template_Source
      * initialize Source Object for given resource
      * Either [$_template] or [$smarty, $template_resource] must be specified
      *
-     * @param Smarty_Internal_Template|null $_template    template object
-     * @param Smarty|null                   $smarty       smarty object
-     * @param string                        $template_resource resource identifier
+     * @param Smarty_Internal_Template|null $_template    template object Default null
+     * @param Smarty|null                   $smarty       smarty object Default null
+     * @param string|null                   $template_resource resource identifier Default null
      *
      * @return Smarty_Template_Config Source Object
      * @throws SmartyException
@@ -73,7 +73,7 @@ class Smarty_Template_Config extends Smarty_Template_Source
     public static function load(
         ?Smarty_Internal_Template $_template = null,
         ?Smarty $smarty = null,
-        string $template_resource = ''
+        ?string $template_resource = null
     ) {
         static $_incompatible_resources = array('extends' => true, 'php' => true);
         if ($_template) {

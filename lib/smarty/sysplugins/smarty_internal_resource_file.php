@@ -20,8 +20,8 @@ class Smarty_Internal_Resource_File extends Smarty_Resource
     /**
      * populate Source Object with meta data from Resource
      *
-     * @param Smarty_Template_Source   $source    source object
-     * @param null|Smarty_Internal_Template $_template template object
+     * @param Smarty_Template_Source        $source    source object
+     * @param Smarty_Internal_Template|null $_template template object Default null
      *
      * @throws \SmartyException
      */

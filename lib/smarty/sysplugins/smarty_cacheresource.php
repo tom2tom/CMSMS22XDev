@@ -45,7 +45,7 @@ abstract class Smarty_CacheResource
      * Read the cached template and process header
      *
      * @param Smarty_Internal_Template    $_template template object
-     * @param Smarty_Template_Cached|null $cached    cached object
+     * @param Smarty_Template_Cached|null $cached    cached object Default null
      * @param boolean                     $update    flag whether processing cache update Default false
      *
      * @return boolean true or false if the cached content does not exist
