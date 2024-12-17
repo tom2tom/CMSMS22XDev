@@ -27,8 +27,8 @@ class Smarty_Internal_Resource_Extends extends Smarty_Resource
     /**
      * populate Source Object with meta data from Resource
      *
-     * @param Smarty_     Template_Source   $source    source object
-     * @param null|Smarty_Internal_Template $_template template object
+     * @param Smarty_Template_Source         $source    source object
+     * @param Smarty_Internal_Template|null $_template template object Default null
      *
      * @throws SmartyException
      */
@@ -36,12 +36,11 @@ class Smarty_Internal_Resource_Extends extends Smarty_Resource
     {
         $uid = '';
         $sources = array();
-        $components = explode('|', $source->name);
-        $smarty = &$source->smarty;
+        $components = array_filter(explode('|', $source->name));
         $exists = true;
         foreach ($components as $component) {
             /* @var \Smarty_Template_Source $_s */
-            $_s = Smarty_Template_Source::load(null, $smarty, $component);
+            $_s = Smarty_Template_Source::load(null, $source->smarty, trim($component));
             if ($_s->type === 'php') {
                 throw new SmartyException("Resource type {$_s->type} cannot be used with the extends resource type");
             }
@@ -88,7 +87,7 @@ class Smarty_Internal_Resource_Extends extends Smarty_Resource
         if (!$source->exists) {
             throw new SmartyException("Unable to load template '{$source->type}:{$source->name}'");
         }
-        $_components = array_reverse($source->components);
+        $_components = array_reverse($source->components); //now lowest-to-highest
         $_content = '';
         /* @var \Smarty_Template_Source $_s */
         foreach ($_components as $_s) {
