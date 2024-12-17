@@ -36,7 +36,7 @@
  * @package CMS
  */
 
-namespace CMSMS\Database {
+namespace CMSMS\Database;
 
     /**
      * A class defining a database connection, and mechanisms for working with a database.
@@ -695,12 +695,12 @@ namespace CMSMS\Database {
          *
          * @param \CMSMS\Database\Connectionspec $spec An object describing the database to connect to.
          * @return \CMSMS\Database\Connection
-     * @todo  Move this into a factory class
+         * @todo  Move this into a factory class
          */
         public static function Initialize(ConnectionSpec $spec)
         {
             if( !$spec->valid() ) throw new ConnectionSpecException('Invalid or incorrect configuration information');
-            $connection_class = '\\CMSMS\\Database\\'.$spec->type.'\\Connection';
+            $connection_class = '\CMSMS\Database\\'.$spec->type.'\Connection';
             if( !class_exists($connection_class) ) throw new \LogicException('Could not find a database abstraction layer named '.$spec->type);
 
             $obj = new $connection_class($spec);
@@ -762,5 +762,3 @@ namespace CMSMS\Database {
      * A special exception indicating a problem connecting to the database.
      */
     class DatabaseConnectionException extends \Exception {}
-
-} // end namespace
