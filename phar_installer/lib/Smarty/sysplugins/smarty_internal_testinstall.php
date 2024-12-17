@@ -18,10 +18,10 @@ class Smarty_Internal_TestInstall
 {
     /**
      * diagnose Smarty setup
-     * If $errors is secified, the diagnostic report will be appended to the array, rather than being output.
+     * If $errors is specified, the diagnostic report will be appended to the array, rather than being output.
      *
-     * @param \Smarty $smarty
-     * @param array   $errors array to push results into rather than outputting them
+     * @param Smarty     $smarty
+     * @param array|null $errors array to push results into rather than outputting them
      *
      * @return bool status, true if everything is fine, false else
      */
@@ -144,7 +144,7 @@ class Smarty_Internal_TestInstall
         }
         // test if all registered plugins_dir are accessible
         // and if core plugins directory is still registered
-        $_core_plugins_dir = realpath(__DIR__ . '/../plugins');
+        $_core_plugins_dir = realpath(dirname(__DIR__) . '/plugins');
         $_core_plugins_available = false;
         foreach ($smarty->getPluginsDir() as $plugin_dir) {
             $_plugin_dir = $plugin_dir;
