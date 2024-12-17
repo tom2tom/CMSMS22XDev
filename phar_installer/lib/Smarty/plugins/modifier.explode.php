@@ -13,8 +13,8 @@
  * Purpose:  split a string by a string
  *
  * @param string      $separator
- * @param string|null $string
- * @param int|null    $limit
+ * @param string|null $string Default ''
+ * @param int|null    $limit Default null
  *
  * @return array
  */
