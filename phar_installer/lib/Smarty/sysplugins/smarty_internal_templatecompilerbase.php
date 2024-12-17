@@ -453,28 +453,24 @@ abstract class Smarty_Internal_TemplateCompilerBase
                     );
             }
             $this->smarty->_current_file = $this->template->source->filepath;
-            // get template source
             if (!empty($this->template->source->components)) {
-                // we have array of inheritance templates from an extends: resource
+                // we have ancestor resources derived from an extends: resource
                 $_compiled_code = "<?php \$_smarty_tpl->_loadInheritance();\n\$_smarty_tpl->inheritance->init(\$_smarty_tpl, true); ?>";
-                $reversed_components = array_reverse($this->template->source->components); //now lowest-to-highest source values
-                $nc = count($reversed_components);
-                $i = $nc - 1;
-                foreach ($reversed_components as $source) {
+                $ckeys = array_keys($this->template->source->components);
+                for ($i = count($ckeys) - 1; $i >= 0; --$i) {
                     if ($i == 0) { //highest ancestor
                         $_compiled_code .= '<?php $_smarty_tpl->inheritance->endChild($_smarty_tpl); ?>';
                     }
                     $_compiled_code .= $this->compileTag('include',
                         [
-                            var_export($source->resource, true),
+                            var_export($this->template->source->components[$ckeys[$i]]->resource, true),
                             ['scope' => 'parent'],
                         ]
                     );
-                    --$i;
                 }
                 $_compiled_code = $this->postFilter($_compiled_code, $this->template);
-            } else { // no components
-                // get template source
+            } else {
+                // no ancestors, get current template source
                 $_content = $this->template->source->getContent();
                 $_compiled_code = $this->postFilter($this->doCompile($this->preFilter($_content), true));
             }
