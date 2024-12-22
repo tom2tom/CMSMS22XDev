@@ -36,13 +36,13 @@ class Smarty_Internal_Resource_Extends extends Smarty_Resource
     {
         $uid = '';
         $sources = array();
-        $components = array_filter(explode('|', $source->name));
+        $components = array_filter(array_map('trim', explode('|', $source->name)));
         $exists = true;
         foreach ($components as $component) {
             /* @var \Smarty_Template_Source $_s */
-            $_s = Smarty_Template_Source::load(null, $source->smarty, trim($component));
+            $_s = Smarty_Template_Source::load(null, $source->smarty, $component);
             if ($_s->type === 'php') {
-                throw new SmartyException("Resource type {$_s->type} cannot be used with the extends resource type");
+                throw new SmartyException("Resource type 'php' cannot be used as part of an extends resource");
             }
             $sources[ $_s->uid ] = $_s;
             $uid .= $_s->filepath;

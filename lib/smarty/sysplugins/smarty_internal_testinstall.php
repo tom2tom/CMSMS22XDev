@@ -494,7 +494,7 @@ class Smarty_Internal_TestInstall
             }
             if ($expectedSysplugins) {
                 $status = false;
-                $message = "FAILED: files missing from libs/sysplugins: " . join(', ', array_keys($expectedSysplugins));
+                $message = "FAILED: files missing from libs/sysplugins: " . implode(', ', array_keys($expectedSysplugins));
                 if ($errors === null) {
                     echo $message . ".\n";
                 } else {
@@ -578,7 +578,7 @@ class Smarty_Internal_TestInstall
             }
             if ($expectedPlugins) {
                 $status = false;
-                $message = "FAILED: files missing from libs/plugins: " . join(', ', array_keys($expectedPlugins));
+                $message = "FAILED: files missing from libs/plugins: " . implode(', ', array_keys($expectedPlugins));
                 if ($errors === null) {
                     echo $message . ".\n";
                 } else {

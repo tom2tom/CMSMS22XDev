@@ -232,7 +232,7 @@ class Smarty_Internal_Compile_Section extends Smarty_Internal_Compile_Private_Fo
             } else {
                 $propType[ 'start' ] = 1;
             }
-            $propValue[ 'start' ] = join('', $start_code);
+            $propValue[ 'start' ] = implode('', $start_code);
         } else {
             $start_code =
                 array(
@@ -284,7 +284,7 @@ class Smarty_Internal_Compile_Section extends Smarty_Internal_Compile_Private_Fo
                     }
                 }
             }
-            $propValue[ 'start' ] = join('', $start_code);
+            $propValue[ 'start' ] = implode('', $start_code);
         }
         if ($propType[ 'start' ] !== 0) {
             $initLocal[ 'start' ] = $propValue[ 'start' ];
@@ -338,7 +338,7 @@ class Smarty_Internal_Compile_Section extends Smarty_Internal_Compile_Private_Fo
                         $total_code[ 5 ] = $total_code[ 6 ] = $total_code[ 7 ] = $total_code[ 8 ] = '';
                     }
                 }
-                $propValue[ 'total' ] = join('', $total_code);
+                $propValue[ 'total' ] = implode('', $total_code);
             }
         }
         if (isset($namedAttr[ 'loop' ])) {
@@ -357,7 +357,7 @@ class Smarty_Internal_Compile_Section extends Smarty_Internal_Compile_Private_Fo
         foreach ($initLocal as $key => $code) {
             $output .= "{$local}{$key} = {$code};\n";
         }
-        $_vars = 'array(' . join(', ', $initNamedProperty) . ')';
+        $_vars = 'array(' . implode(', ', $initNamedProperty) . ')';
         $output .= "{$sectionVar} = new Smarty_Variable({$_vars});\n";
         $cond_code = "{$propValue['total']} !== 0";
         if ($propType[ 'total' ] === 0) {
@@ -375,9 +375,9 @@ class Smarty_Internal_Compile_Section extends Smarty_Internal_Compile_Private_Fo
         } else {
             $output .= "if (false) {\n";
         }
-        $jinit = join(', ', $initFor);
-        $jcmp = join(', ', $cmpFor);
-        $jinc = join(', ', $incFor);
+        $jinit = implode(', ', $initFor);
+        $jcmp = implode(', ', $cmpFor);
+        $jinc = implode(', ', $incFor);
         $output .= "for ({$jinit}; {$jcmp}; {$jinc}){\n";
         if (isset($namedAttr[ 'rownum' ])) {
             $output .= "{$sectionVar}->value['rownum'] = {$propValue['iteration']};\n";

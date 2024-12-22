@@ -30,7 +30,7 @@ class Smarty_Internal_Compile_Extends extends Smarty_Internal_Compile_Shared_Inh
      *
      * @var array
      */
-    public $optional_attributes = array('extends_resource'); //4.5.3 has just array()
+    public $optional_attributes = array('extends_resource');
 
     /**
      * Attribute definition: Overwrites base class.
@@ -62,7 +62,38 @@ class Smarty_Internal_Compile_Extends extends Smarty_Internal_Compile_Shared_Inh
         }
         // add code to initialize inheritance
         $this->registerInit($compiler, true);
-        $this->compileEndChild($compiler, $_attr[ 'file' ]);
+        $file = trim((string)$_attr['file'], '\'"');
+        if (strlen($file) > 8 && strncmp($file, 'extends:', 8) == 0) {
+            // generate code for each template
+            $i = 0;
+            $components = array_filter(array_map('trim', explode('|', substr($file, 8))));
+            $nc = count($components);
+            foreach (array_reverse($components) as $file) {
+                if ($file[0] == '"') {
+                    $file = trim($file, '".');
+                } else {
+                    $file = "'$file'";
+                }
+                if (++$i == $nc && isset($_attr[ 'extends_resource' ])) {
+                    $this->compileEndChild($compiler);
+                }
+                $compiler->parser->template_postfix[] = new Smarty_Internal_ParseTree_Tag(
+                    $compiler->parser,
+                    $compiler->compileTag(
+                        'include',
+                        array(
+                            $file,
+                            array('scope' => 'parent')
+                        )
+                    )
+                );
+            }
+            if (!isset($_attr['extends_resource'])) {
+                $this->compileEndChild($compiler);
+            }
+        } else {
+            $this->compileEndChild($compiler, $_attr['file']);
+        }
         $compiler->has_code = false;
         return '';
     }

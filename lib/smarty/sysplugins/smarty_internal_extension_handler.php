@@ -91,7 +91,7 @@ class Smarty_Internal_Extension_Handler
                         if (!isset($this->resolvedProperties[ $match[ 0 ] ][ $objType ])) {
                             $property = $this->resolvedProperties['property'][$basename] ??
                                 $this->resolvedProperties['property'][$basename] = smarty_strtolower_ascii(
-                                join(
+                                implode(
                                     '_',
                                     preg_split(
                                         '/([A-Z][^A-Z]*)/',

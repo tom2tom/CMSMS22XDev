@@ -397,7 +397,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
                 $parent_compiler
             ),
             $this->postFilter($this->blockOrFunctionCode) .
-            join('', $this->mergedSubTemplatesCode),
+            implode('', $this->mergedSubTemplatesCode),
             false,
             $this
         );
@@ -455,25 +455,18 @@ abstract class Smarty_Internal_TemplateCompilerBase
             $this->smarty->_current_file = $this->template->source->filepath;
             if (!empty($this->template->source->components)) {
                 // we have ancestor resources derived from an extends: resource
-                $_compiled_code = "<?php \$_smarty_tpl->_loadInheritance();\n\$_smarty_tpl->inheritance->init(\$_smarty_tpl, true); ?>";
-                $ckeys = array_keys($this->template->source->components);
-                for ($i = count($ckeys) - 1; $i >= 0; --$i) {
-                    if ($i == 0) { //highest ancestor
-                        $_compiled_code .= '<?php $_smarty_tpl->inheritance->endChild($_smarty_tpl); ?>';
-                    }
-                    $_compiled_code .= $this->compileTag('include',
-                        [
-                            var_export($this->template->source->components[$ckeys[$i]]->resource, true),
-                            ['scope' => 'parent'],
-                        ]
-                    );
+                // generate corresponding source code sequence
+                $resources = array();
+                foreach ($this->template->source->components as $source) {
+                    $resources[] = $source->resource;
                 }
-                $_compiled_code = $this->postFilter($_compiled_code, $this->template);
+                $_content = $this->smarty->left_delimiter . 'extends file=\'extends:' . implode('|', $resources) .
+                    '\' extends_resource=true' . $this->smarty->right_delimiter;
             } else {
                 // no ancestors, get current template source
                 $_content = $this->template->source->getContent();
-                $_compiled_code = $this->postFilter($this->doCompile($this->preFilter($_content), true));
             }
+            $_compiled_code = $this->postFilter($this->doCompile($this->preFilter($_content), true));
             if (!empty($this->required_plugins[ 'compiled' ]) || !empty($this->required_plugins[ 'nocache' ])) {
                 $_compiled_code = '<?php ' . $this->compileRequiredPlugins() . "?>\n" . $_compiled_code;
             }
@@ -614,7 +607,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
         if (
             !$this->smarty->security_policy ||
             $this->smarty->security_policy->isTrustedPhpFunction($name, $this) ||
-            !empty($this->smarty->registered_plugins[Smarty::PLUGIN_FUNCTION][$name][0]) //TODO [0] = callable
+            !empty($this->smarty->registered_plugins[Smarty::PLUGIN_FUNCTION][$name][0]) //[0] = callable
             ) {
             if (strcasecmp($name, 'isset') === 0 || strcasecmp($name, 'empty') === 0
                 || strcasecmp($name, 'array') === 0 || is_callable($name)

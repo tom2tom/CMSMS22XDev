@@ -227,7 +227,7 @@ class Smarty_Internal_Compile_Include extends Smarty_Internal_CompileBase
             foreach ($_attr as $key => $value) {
                 $_pairs[] = "'$key'=>$value";
             }
-            $_vars = 'array(' . join(',', $_pairs) . ')';
+            $_vars = 'array(' . implode(',', $_pairs) . ')';
         }
         $update_compile_id = $compiler->template->caching && !$compiler->tag_nocache && !$compiler->nocache &&
                              $_compile_id !== '$_smarty_tpl->compile_id';
