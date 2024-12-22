@@ -85,7 +85,7 @@
                 <a href="https://forum.cmsmadesimple.org" target="_blank">{tr('title_forum')}</a> &bull; <a href="https://docs.cmsmadesimple.org" target="_blank">{tr('title_docs')}</a> &bull; <a href="http://apidoc.cmsmadesimple.org" target="_blank">{tr('title_api_docs')}</a>
             </div>
             <small>
-                Copyright &copy; 2004-{$smarty.now|date_format:'Y'} <a href="https://www.cmsmadesimple.org">CMS Made Simple Foundation Inc</a>. All rights reserved{if isset($installer_version)} - {tr('installer_ver')}:&nbsp;{$installer_version}{/if}{if isset($build_time)} - {tr('build_date')}:&nbsp;{$build_time|localedate_format:'j %h Y H:i:s'}{/if}
+                Copyright &copy; 2004-{$smarty.now|date_format:'Y'} <a href="https://www.cmsmadesimple.org">CMS Made Simple Foundation Inc</a>. All rights reserved{if isset($installer_version)} - {tr('installer_ver')}:&nbsp;{$installer_version}{/if}{if isset($build_time)} - {tr('build_date')}:&nbsp;{$build_time|localedate_format:'j %h Y'}{/if}
             </small>
         </footer>
     {block name='javascript'}
