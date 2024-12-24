@@ -89,12 +89,12 @@ if (isset($_POST['submit_account']) && check_permission($userid,'Manage My Accou
       case 'firstname':
       case 'lastname':
         //scrub malicious/XSS & invalid
-        $$key = preg_replace(['/[\x00-\x1f\x7f]/', '/<[^>]*>/', '/<\s*\?\s*php.*$/i', '/<\s*\?\s*=?.*$/'], ['', '', '', ''], trim($val)); //c.f. $sanitize_fn in include.php
+        $$key = preg_replace(['/[\x00-\x1f\x7f]/', '/<[^>]*>/', '/(<|%3c)(\?|%3f)php.*$/i', '/(<|%3c)(\?|%3f)=?.*$/i'], ['', '', '', ''], trim($val)); //c.f. $sanitize_fn in include.php
         break;
       case 'password':
       case 'passwordagain':
         //scrub malicious/XSS & non-printables
-        $$key = preg_replace(['/[\x00-\x1f\x7f]/', '/<\s*\?\s*php.*$/i', '/<\s*\?\s*=?.*$/'], ['', '', ''], $val);
+        $$key = preg_replace(['/[\x00-\x1f\x7f]/', '/(<|%3c)(\?|%3f)php.*$/i', '/(<|%3c)(\?|%3f)=?.*$/i'], ['', '', ''], $val);
         break;
       case 'email':
         //TODO scrub XSS & invalid

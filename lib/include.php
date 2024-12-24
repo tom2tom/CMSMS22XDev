@@ -70,7 +70,7 @@ if (!isset($CMS_INSTALL_PAGE) && (!file_exists(CONFIG_FILE_LOCATION) || filesize
  * and the original $_SERVER, $_GET values still available
  *
  * Note: the closure is recursive to allow for parameters with arrays
- * removal of unclosed PHP tags ('/<\s*\?\s*php.*$/i','/<\s*\?\s*=.*$/') is a crasher
+ * removal of unclosed PHP tags ('/<\?php.*$/i','/<\?=.*$/') is a crasher ?
  *
  * @param $param
  *
@@ -82,7 +82,7 @@ $sanitize_fn = function (&$param) use (&$sanitize_fn)
     array_walk($param, $sanitize_fn);
   }
   else {
-    $tmp = preg_replace(['/<[^>]*>/', '/<\s*\?\s*php.*$/i', '/<\s*\?\s*=?.*$/'], ['', '', ''], $param);
+    $tmp = preg_replace(['/<[^>]*>/', '/(<|%3c)(\?|%3f)php.*$/i', '/(<|%3c)(\?|%3f)=?.*$/i'], ['', '', ''], $param);
     return strtr($tmp, ["\0"=>'', "'"=>'&#39;', '"'=>'&#34;']);
   }
 };
