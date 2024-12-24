@@ -1256,7 +1256,7 @@ nav ul#oe_pagemenu {
 	max-height: -webkit-calc(100vh - 176px);
 	max-height: -moz-calc(var(--vh, 1vh) * 100 - 176px);
 	max-height: -moz-calc(100vh - 176px);
-	max-height: calc(var(--vh, 1vh) * 100 - 176px); /* fallback for older browsers without viewport support */
+	max-height: calc(var(--vh, 1vh) * 100 - 176px); /* fallback for (most) browsers without viewport support */
 	max-height: calc(100vh - 176px); /* head + toggler + foot fixed sizes total 176px */
 	border-bottom: 1px solid #adadad;
 	/*margin-top: 45px*/
@@ -1460,7 +1460,7 @@ nav ul#oe_pagemenu li.current li a:active {
 	max-height: -webkit-calc(100vh - 134px);
 	max-height: -moz-calc(var(--vh, 1vh) * 100 - 134px);
 	max-height: -moz-calc(100vh - 134px);
-	max-height: calc(var(--vh, 1vh) * 100 - 134px); /* fallback for older browsers without viewport support */
+	max-height: calc(var(--vh, 1vh) * 100 - 134px); /* fallback for (most) browsers without viewport support */
 	max-height: calc(100vh - 134px); /* head + foot fixed sizes total 134px */
 	padding: 0 12px;
 	overflow: auto;
@@ -2469,15 +2469,6 @@ a.toggle-dropzone:focus {
 	@-o-viewport {
 		width: device-width;
 	}
-	@-moz-viewport {
-		width: device-width;
-	}
-	@-webkit-viewport {
-		width: device-width;
-	}
-	@viewport {
-		width: device-width;
-	}
 	/* change tabs to full width on smaller screen size */
 	.sidebar-on #page_tabs div {
 		text-align: left;
@@ -2558,15 +2549,6 @@ a.toggle-dropzone:focus {
 		width: device-width;
 	}
 	@-o-viewport {
-		width: device-width;
-	}
-	@-moz-viewport {
-		width: device-width;
-	}
-	@-webkit-viewport {
-		width: device-width;
-	}
-	@viewport {
 		width: device-width;
 	}
 	/* override our predefined min-with for smaller screens and full height stuff */
@@ -2730,15 +2712,6 @@ a.toggle-dropzone:focus {
 		width: device-width;
 	}
 	@-o-viewport {
-		width: device-width;
-	}
-	@-moz-viewport {
-		width: device-width;
-	}
-	@-webkit-viewport {
-		width: device-width;
-	}
-	@viewport {
 		width: device-width;
 	}
 	aside.message,
