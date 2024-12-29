@@ -361,7 +361,17 @@ class Smarty_CMS extends CMSSmartyBase
      */
     public function fetch($template = null,$cache_id = null, $compile_id = null, $parent = null, $display = false, $merge_tpl_vars = true, $no_output_filter = false)
     {
-        $name = $template; if( startswith($name,'string:') ) $name = 'string:';
+        if( is_string($template) ) {
+            if( startswith($template,'string:') ) {
+                $name = 'string:';
+            } else {
+                $name = $template;
+            }
+        } elseif( is_object($template) ) {
+            $name = $template->source->name;
+        } else {
+            $name = 'UnknownTemplate'; // probably error
+        }
         debug_buffer('','Fetch '.$name.' start');
 
         // we called the root smarty fetch method instead of some template object's fetch method directly.
@@ -380,9 +390,9 @@ class Smarty_CMS extends CMSSmartyBase
         $this->_tpl_stack[] = $_tpl;
         if( $display ) {
             $tmp = '';
-            $_tpl->display();
+            $_tpl->display($_tpl);
         } else {
-            $tmp = $_tpl->fetch();
+            $tmp = $_tpl->fetch($_tpl);
         }
 
         // and pop off the stack again.
@@ -396,9 +406,9 @@ class Smarty_CMS extends CMSSmartyBase
 
     public function createTemplate($template, $cache_id = null, $compile_id = null, $parent = null, $do_clone = true)
     {
-        if( !startswith($template,'eval:') && !startswith($template,'string:') ) {
-            if( ($pos = strpos($template,'*')) > 0 ) throw new LogicException("$template is an invalid CMSMS resource specification");
-            if( ($pos = strpos($template,'/')) > 0 ) throw new LogicException("$template is an invalid CMSMS resource specification");
+        if( !(startswith($template,'string:') || startswith($template,'eval:')) ) {
+            if( (strpos($template,'*')) > 0 ) throw new LogicException("$template is an invalid CMSMS resource specification");
+            if( (strpos($template,'/')) > 0 ) throw new LogicException("$template is an invalid CMSMS resource specification");
         }
         return parent::createTemplate($template, $cache_id, $compile_id, $parent, $do_clone );
     }
