@@ -156,17 +156,17 @@ abstract class Smarty_Internal_TemplateBase extends Smarty_Internal_Data
     }
 
     /**
-     * fetches a rendered Smarty template
+     * process a rendered template
      *
-     * @param string $template   the resource handle of the template file or template object
-     * @param mixed  $cache_id   cache id to be used with this template
-     * @param mixed  $compile_id compile id to be used with this template
-     * @param object $parent     next higher level of Smarty variables
-     * @param string $function   function type 0 = fetch,  1 = display, 2 = isCache
+     * @param string|object|null $template   template resource handle or template object or null
+     * @param string|null        $cache_id   cache id to be used with this template
+     * @param string|null        $compile_id compile id to be used with this template
+     * @param object             $parent     next higher level of Smarty variables
+     * @param int                $function   operation type: 0 = fetch, 1 = display, 2 = isCache
      *
      * @return mixed
-     * @throws \Exception
-     * @throws \SmartyException
+     * @throws Exception
+     * @throws SmartyException
      */
     private function _execute($template, $cache_id, $compile_id, $parent, $function)
     {
@@ -174,14 +174,14 @@ abstract class Smarty_Internal_TemplateBase extends Smarty_Internal_Data
         $saveVars = true;
         if ($template === null) {
             if (!$this->_isTplObj()) {
-                throw new SmartyException($function . '():Missing \'$template\' parameter');
+                throw new SmartyException(__METHOD__ . '():Missing \'$template\' parameter');
             } else {
                 $template = $this;
             }
         } elseif (is_object($template)) {
             /* @var Smarty_Internal_Template $template */
             if (!isset($template->_objType) || !$template->_isTplObj()) {
-                throw new SmartyException($function . '():Template object expected');
+                throw new SmartyException(__METHOD__ . '():Template object expected');
             }
         } else {
             // get template object
@@ -241,7 +241,7 @@ abstract class Smarty_Internal_TemplateBase extends Smarty_Internal_Data
                     $template->tpl_vars = $savedTplVars;
                     $template->config_vars = $savedConfigVars;
                 } else {
-                    if (!$function && !isset(Smarty_Internal_Template::$tplObjCache[ $template->templateId ])) {
+                    if ($function == 0 && !isset(Smarty_Internal_Template::$tplObjCache[ $template->templateId ])) {
                         $template->parent = null;
                         $template->tpl_vars = $template->config_vars = array();
                         Smarty_Internal_Template::$tplObjCache[ $template->templateId ] = $template;
