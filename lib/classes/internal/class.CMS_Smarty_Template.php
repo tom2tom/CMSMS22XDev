@@ -16,6 +16,9 @@ class CMS_Smarty_Template extends Smarty_Internal_Template
             $cache_id = $global_cache_id . $cache_id;
         }
 
+        if (!$template) {
+            $template = $this;
+        }
         // send an event before fetching...this allows us to change template stuff.
         if( CmsApp::get_instance()->is_frontend_request() ) {
             $parms = array('template'=>&$template,'cache_id'=>&$cache_id,'compile_id'=>&$compile_id,'display'=>&$display);
