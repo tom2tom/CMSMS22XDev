@@ -50,7 +50,7 @@ class Smarty_CMS extends CMSSmartyBase
         $this->setCacheDir(TMP_CACHE_LOCATION);
         $this->assignGlobal('app_name','CMSMS');
 
-        if (CMS_DEBUG) $this->error_reporting = E_ALL;
+        if( CMS_DEBUG ) $this->error_reporting = E_ALL;
 
         // set our own template class with some funky stuff in it
         // note, can get rid of the CMS_Smarty_Template class and the deprecated Smarty_Parser classes.
@@ -64,7 +64,7 @@ class Smarty_CMS extends CMSSmartyBase
         $this->registerResource('cms_stylesheet',new CmsStylesheetResource());
 
         // register default plugin handler
-        $this->registerDefaultPluginHandler(array(&$this, 'defaultPluginHandler'));
+        $this->registerDefaultPluginHandler(array($this, 'defaultPluginHandler'));
 
         // Load User Defined Tags
         $_gCms = CmsApp::get_instance();
@@ -86,14 +86,14 @@ class Smarty_CMS extends CMSSmartyBase
         $this->addPluginsDir(cms_join_path(CMS_ROOT_PATH,'lib','plugins'));
         $this->addTemplateDir(cms_join_path(CMS_ROOT_PATH, 'lib', 'assets', 'templates'));
 
-        if( $_gCms->is_frontend_request()) {
+        if( $_gCms->is_frontend_request() ) {
             $this->addTemplateDir($config['assets_path'].'/templates');
             $this->setConfigDir($config['assets_path'].'/configs');
 
             // Check if we are at install page, don't register anything if so, cause nothing below is needed.
 //see STATE_INSTALL below            if(isset($CMS_INSTALL_PAGE)) return;
 
-            if (is_sitedown()) {
+            if( is_sitedown() ) {
                 $this->setCaching(false);
                 $this->force_compile = true;
             }
@@ -119,7 +119,7 @@ class Smarty_CMS extends CMSSmartyBase
             // Enable custom security, permissive or not
             $this->enableSecurity('CMSSmartySecurityPolicy');
         }
-        else if( $_gCms->test_state(CmsApp::STATE_ADMIN_PAGE) ) {
+        elseif( $_gCms->test_state(CmsApp::STATE_ADMIN_PAGE) ) {
             $this->setCaching(false);
             $admin_dir = $config['admin_path'];
             $this->addPluginsDir($admin_dir.'/plugins');
@@ -128,7 +128,7 @@ class Smarty_CMS extends CMSSmartyBase
             // TODO custom security for admin might be a breaker
             $this->enableSecurity('CMSSmartySecurityPolicy');
         }
-        else if( $_gCms->test_state(CmsApp::STATE_INSTALL) ) {
+        elseif( $_gCms->test_state(CmsApp::STATE_INSTALL) ) {
             $this->addTemplateDir($config['assets_path'].'/templates');
             // no change to default security during installer run
         }
@@ -219,7 +219,7 @@ class Smarty_CMS extends CMSSmartyBase
      */
     public function registerPlugin($type, $tag, $callback, $cacheable = true, $cache_attr = null)
     {
-        if (!isset($this->registered_plugins[$type][$tag])) {
+        if( !isset($this->registered_plugins[$type][$tag]) ) {
             return parent::registerPlugin($type,$tag,$callback,$cacheable,$cache_attr);
         }
         return $this;
@@ -309,7 +309,7 @@ class Smarty_CMS extends CMSSmartyBase
     }
 
     /**
-     * Get the global cacheid if any.
+     * Get the global cache id if any.
      *
      * @internal
      * @return int|null
@@ -336,46 +336,52 @@ class Smarty_CMS extends CMSSmartyBase
     public function get_template_parent()
     {
         // no parent specified, see if there is a stack of parents.
-        if( count($this->_tpl_stack) ) {
+        if( $this->_tpl_stack ) {
             $parent = $this->_tpl_stack[count($this->_tpl_stack)-1];
         }
         else {
-            // no stack, so use this (the Smarty_CMS) class.
+            // no stack, so use this (Smarty_CMS) class.
             $parent = $this;
         }
         return $parent;
     }
 
     /**
-     * fetch method
-     * NOTE: Overwrites parent
+     * fetch a rendered Smarty template
+     * for calling the global Smarty fetch method instead of a template-object's
+     * fetch method directly, which is the case for things like
+     * Module::ProcessTemplate and Module::ProcessTemplateFromDatabase etc
+     * NOTE: Overwrites ancestor method
      *
-     * @deprecated
-     * @param mixed $template
-     * @param int $cache_id
-     * @param mixed $parent
-     * @param bool $display
-     * @param bool $merge_tpl_vars
-     * @param bool $no_output_filter
-     * @return mixed
+     * @param mixed  $template   resource handle of the template file, or template object, or null Default null
+     * @param mixed  $cache_id   cache id to be used with this template Default null
+     * @param mixed  $compile_id compile id to be used with this template Default null
+     * @param object $parent     next higher level of Smarty variables Default null
+     *
+     * @throws Exception
+     * @throws SmartyException
+     * @return string rendered template output
      */
-    public function fetch($template = null,$cache_id = null, $compile_id = null, $parent = null, $display = false, $merge_tpl_vars = true, $no_output_filter = false)
+    public function fetch($template = null, $cache_id = null, $compile_id = null, $parent = null)
     {
-        if( is_string($template) ) {
-            if( startswith($template,'string:') ) {
-                $name = 'string:';
-            } else {
+        if( CMS_DEBUG ) {
+            if( is_object($template) ) {
+                $name = $template->source->resource;
+            }
+            elseif( is_string($template) ) {
                 $name = $template;
             }
-        } elseif( is_object($template) ) {
-            $name = $template->source->name;
-        } else {
-            $name = 'UnknownTemplate'; // probably error
+            else {
+                throw new Exception('Unknown template-value provided to '.__METHOD__);
+            }
+            if( startswith($name, 'string:') ) {
+                if( strlen($name) > 22 ) {
+                    $name = substr($name, 0, 22) . '...';
+                }
+            }
+            debug_buffer('','Fetch '.$name.' start');
         }
-        debug_buffer('','Fetch '.$name.' start');
 
-        // we called the root smarty fetch method instead of some template object's fetch method directly.
-        // which is the case for things like Module::ProcessTemplate and Module::ProcessTemplateFromDatabase etc..()
         if( is_object($template) ) {
             $_tpl = $template;
         } else {
@@ -383,27 +389,35 @@ class Smarty_CMS extends CMSSmartyBase
                 // get the parent off of the stack.
                 $parent = $this->get_template_parent();
             }
-            $_tpl = $this->CreateTemplate($template,$cache_id,$compile_id,$parent);
+            $_tpl = $this->CreateTemplate($template, $cache_id, $compile_id, $parent);
         }
 
-        //put the new template onto the stack, and do our work, to handle recursive calls.
+        //put the new template onto the stack, and do our work, to handle recursive calls
         $this->_tpl_stack[] = $_tpl;
-        if( $display ) {
-            $tmp = '';
-            $_tpl->display($_tpl);
-        } else {
-            $tmp = $_tpl->fetch($_tpl);
-        }
-
-        // and pop off the stack again.
+        $tmp = $_tpl->fetch(); //downstream needs to populate its template variable
+        // and pop off the stack again
         array_pop($this->_tpl_stack);
 
         // admin requests are a bit fugged up... lots of stuff relies on a single smarty scope.
         // gotta fix that.
-        debug_buffer('','Fetch '.$name.' end');
+        if( CMS_DEBUG ) {
+            debug_buffer('','Fetch '.$name.' end');
+        }
         return $tmp;
     }
 
+    /**
+     * create a template object
+     *
+     * @param string  $template   the resource handle of the template file
+     * @param mixed   $cache_id   cache id to be used with this template
+     * @param mixed   $compile_id compile id to be used with this template
+     * @param object  $parent     next higher level of Smarty variables
+     * @param boolean $do_clone   flag is Smarty object shall be cloned
+     *
+     * @return Smarty_Internal_Template object
+     * @throws LogicException or SmartyException
+     */
     public function createTemplate($template, $cache_id = null, $compile_id = null, $parent = null, $do_clone = true)
     {
         if( !(startswith($template,'string:') || startswith($template,'eval:')) ) {
@@ -415,7 +429,7 @@ class Smarty_CMS extends CMSSmartyBase
 
     /**
      * clearCache method
-     * NOTE: Overwrites parent
+     * NOTE: Smarty itself uses clearCache() methods having different API
      *
      * @param mixed $template_name
      * @param int $cache_id
@@ -487,7 +501,6 @@ class Smarty_CMS extends CMSSmartyBase
         return $output;
     }
 
-
     /**
      * Takes unknown classes and loads plugin files for them
      * class name format: Smarty_PluginType_PluginName
@@ -502,22 +515,22 @@ class Smarty_CMS extends CMSSmartyBase
     public function loadPlugin($plugin_name, $check = true)
     {
         // if function or class exists, exit silently (already loaded)
-        if ($check && (is_callable($plugin_name) || class_exists($plugin_name, false))) return true;
+        if( $check && (is_callable($plugin_name) || class_exists($plugin_name, false)) ) return true;
 
         // Plugin name is expected to be: Smarty_[Type]_[Name]
         $_name_parts = explode('_', $plugin_name, 3);
 
         // class name must have three parts to be valid plugin
         // count($_name_parts) < 3 === !isset($_name_parts[2])
-        if (!isset($_name_parts[2]) || strtolower($_name_parts[0]) !== 'smarty') {
+        if( !isset($_name_parts[2]) || strtolower($_name_parts[0]) !== 'smarty' ) {
             throw new SmartyException("plugin {$plugin_name} is not a valid name format");
-            return false;
+            return false; //useless
         }
 
         // if type is "internal", get plugin from sysplugins
-        if (strtolower($_name_parts[1]) == 'internal') {
+        if( strtolower($_name_parts[1]) == 'internal' ) {
             $file = SMARTY_SYSPLUGINS_DIR . strtolower($plugin_name) . '.php';
-            if (file_exists($file)) {
+            if( file_exists($file) ) {
                 require_once($file);
                 return $file;
             } else {
@@ -536,22 +549,22 @@ class Smarty_CMS extends CMSSmartyBase
                            $_plugin_dir . strtolower($_plugin_filename)
                 );
 
-            foreach ($names as $file) {
-                if (file_exists($file)) {
+            foreach( $names as $file ) {
+                if( file_exists($file) ) {
                     require_once($file);
                     if( is_callable($plugin_name) || class_exists($plugin_name, false) ) return $file;
                 }
 
-                if ($this->use_include_path &&
-                    !preg_match('/^([\/\\\\]|[a-zA-Z]:[\/\\\\])/', $_plugin_dir)) {
+                if( $this->use_include_path &&
+                    !preg_match('/^([\/\\\\]|[a-zA-Z]:[\/\\\\])/', $_plugin_dir) ) {
                     // try PHP include_path
-                    if ($_stream_resolve_include_path) {
+                    if( $_stream_resolve_include_path ) {
                         $file = stream_resolve_include_path($file);
                     } else {
                         $file = Smarty_Internal_Get_Include_Path::getIncludePath($file);
                     }
 
-                    if ($file) {
+                    if( $file ) {
                         require_once $file;
                         if( is_callable($plugin_name) || class_exists($plugin_name, false) ) return $file;
                     }
@@ -581,7 +594,7 @@ class Smarty_TemplateCaller
     #[\ReturnTypeWillChange]
     public function __call($name, $args)
     {
-        if ($this->php_functions !== null && (!$this->php_functions || in_array($name, $this->php_functions))) {
+        if( $this->php_functions !== null && (!$this->php_functions || in_array($name, $this->php_functions)) ) {
             return $name(...$args);
         }
         return "<!-- prohibited function $name called -->";
@@ -590,8 +603,8 @@ class Smarty_TemplateCaller
     #[\ReturnTypeWillChange]
     public static function __callStatic($name, $args)
     {
-        if (self::$static_classes !== null && (!self::$static_classes ||
-           ($classname = substr($name, 0, strpos($name, '__')) && in_array($classname, self::$static_classes)))) {
+        if( self::$static_classes !== null && (!self::$static_classes ||
+           ($classname = substr($name, 0, strpos($name, '__')) && in_array($classname, self::$static_classes))) ) {
             $num = 1;
             $name = str_replace('__', '::', $name, $num);
             return $name(...$args);
