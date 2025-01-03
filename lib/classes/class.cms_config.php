@@ -304,7 +304,7 @@ final class cms_config implements ArrayAccess
          *
          * @return bool
          */
-        define('CMS_DEBUG',self::$_instance['debug']);
+        define('CMS_DEBUG',(bool)self::$_instance['debug']);
 
         /**
          * A constant containing the directory where CMSMS is installed.

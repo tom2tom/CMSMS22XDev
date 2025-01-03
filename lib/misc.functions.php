@@ -428,8 +428,9 @@ function debug_to_log($var, $title='',$filename = '')
  */
 function debug_buffer($var, $title="")
 {
-    if( !defined('CMS_DEBUG') || CMS_DEBUG == 0 ) return;
-    CmsApp::get_instance()->add_error(debug_display($var, $title, false, true));
+    if( defined('CMS_DEBUG') && CMS_DEBUG ) { //might be not-yet-defined
+       CmsApp::get_instance()->add_error(debug_display($var, $title, false, true));
+    }
 }
 
 

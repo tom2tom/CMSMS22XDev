@@ -227,9 +227,14 @@ if( !isset($CMS_INSTALL_PAGE) ) {
 if( isset($CMS_ADMIN_PAGE) ) CmsNlsOperations::set_language();
 
 if( !isset($DONT_LOAD_SMARTY) ) {
-    debug_buffer('Initialize Smarty');
-    $smarty = $_app->GetSmarty();
-    debug_buffer('Done Initialing Smarty');
-    if( defined('CMS_DEBUG') && CMS_DEBUG ) $smarty->error_reporting = E_ALL;
+    if( CMS_DEBUG ) {
+        debug_buffer('Initialize Smarty');
+        $smarty = $_app->GetSmarty();
+        $smarty->error_reporting = E_ALL;
+        debug_buffer('Done Initializing Smarty');
+    }
+    else {
+        $smarty = $_app->GetSmarty();
+    }
     $smarty->assignGlobal('sitename', cms_siteprefs::get('sitename', 'CMSMS Site'));
 }

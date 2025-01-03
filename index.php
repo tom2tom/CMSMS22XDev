@@ -279,7 +279,7 @@ echo $html;
 
 if( $page == __CMS_PREVIEW_PAGE__ && isset($_SESSION['__cms_preview__']) ) unset($_SESSION['__cms_preview__']);
 
-$debug = (defined('CMS_DEBUG') && CMS_DEBUG)?TRUE:FALSE;
+$debug = CMS_DEBUG;
 if( $debug || isset($config['log_performance_info']) || (isset($config['show_performance_info']) && ($showtemplate == true)) ) {
     $memory = (function_exists('memory_get_usage')?memory_get_usage():0);
     $memory = $memory - $orig_memory;

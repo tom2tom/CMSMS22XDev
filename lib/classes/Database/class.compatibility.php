@@ -91,8 +91,9 @@ namespace CMSMS\Database {
         {
             debug_to_log("Database Error: $errtype($error_number) - $error_msg");
             debug_bt_to_log();
-            if( !defined('CMS_DEBUG') || CMS_DEBUG == 0 ) return;
-            \CmsApp::get_instance()->add_error(debug_display($error_msg, '', false, true));
+            if( defined('CMS_DEBUG') && CMS_DEBUG ) {
+                \CmsApp::get_instance()->add_error(debug_display($error_msg, '', false, true));
+            }
         }
 
         /**
