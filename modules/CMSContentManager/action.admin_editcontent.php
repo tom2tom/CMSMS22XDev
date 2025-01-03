@@ -237,7 +237,9 @@ try {
         else if( isset($params['preview']) && $content_obj->HasPreview() ) {
             $_SESSION['__cms_preview__'] = serialize($content_obj);
             $_SESSION['__cms_preview_type__'] = $content_type;
-            if( CMS_DEBUG ) debug_to_log($_SESSION,'before preview');
+            if( CMS_DEBUG ) {
+                debug_to_log($_SESSION,'before preview');
+            }
             exit;
         }
     }

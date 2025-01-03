@@ -1401,5 +1401,4 @@ class Smarty extends Smarty_Internal_TemplateBase
     public function isMutingUndefinedOrNullWarnings(): bool {
         return $this->isMutingUndefinedOrNullWarnings;
     }
-
 }
