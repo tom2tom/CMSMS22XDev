@@ -196,6 +196,7 @@ final class cms_config implements ArrayAccess
     $this->_types['admin_url']                 = self::TYPE_STRING;
     $this->_types['ignore_lazy_load']          = self::TYPE_BOOL;
     $this->_types['tmp_cache_location']        = self::TYPE_STRING;
+    $this->_types['tmp_config_location']       = self::TYPE_STRING;
     $this->_types['tmp_templates_c_location']  = self::TYPE_STRING;
     $this->_types['public_cache_location']     = self::TYPE_STRING;
     $this->_types['public_cache_url']          = self::TYPE_STRING;
@@ -293,7 +294,14 @@ final class cms_config implements ArrayAccess
         define('PUBLIC_CACHE_URL',self::$_instance['public_cache_url']);
 
         /**
-         * A constant containing the smarty template compile directory.
+         * A constant containing the default Smarty config-files directory.
+         *
+         * @return string
+         */
+        define('TMP_CONFIG_LOCATION',self::$_instance['tmp_config_location']);
+
+        /**
+         * A constant containing the Smarty template compile directory.
          *
          * @return string
          */
@@ -550,6 +558,10 @@ final class cms_config implements ArrayAccess
 
       case 'public_cache_url':
         $this->_cache[$key] = $this->offsetGet('root_url').'/tmp/cache';
+        return $this->_cache[$key];
+
+      case 'tmp_config_location':
+        $this->_cache[$key] = cms_join_path($this->offsetGet('root_path'),'tmp','config');
         return $this->_cache[$key];
 
       case 'tmp_templates_c_location':

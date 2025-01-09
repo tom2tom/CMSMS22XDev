@@ -88,7 +88,7 @@ class Smarty_CMS extends CMSSmartyBase
 
         if( $_gCms->is_frontend_request() ) {
             $this->addTemplateDir($config['assets_path'].'/templates');
-            $this->setConfigDir($config['assets_path'].'/configs');
+            $this->setConfigDir([$config['assets_path'].'/configs', TMP_CONFIG_LOCATION]);
 
             // Check if we are at install page, don't register anything if so, cause nothing below is needed.
 //see STATE_INSTALL below            if(isset($CMS_INSTALL_PAGE)) return;
@@ -124,7 +124,7 @@ class Smarty_CMS extends CMSSmartyBase
             $admin_dir = $config['admin_path'];
             $this->addPluginsDir($admin_dir.'/plugins');
             $this->setTemplateDir($admin_dir.'/templates');
-            $this->setConfigDir(array($config['assets_path'].'/configs', $admin_dir.'/configs'));
+            $this->setConfigDir([$config['assets_path'].'/configs', $admin_dir.'/configs', TMP_CONFIG_LOCATION]);
             // TODO custom security for admin might be a breaker
             $this->enableSecurity('CMSSmartySecurityPolicy');
         }
