@@ -240,11 +240,13 @@ class wizard_step3 extends wizard_step
             }
         }
 
-        // recommended test ... E_STRICT disabled
         $orig_error_level = $app->get_orig_error_level();
-        $obj = new _tests_\boolean_test('errorlevel_estrict',!($orig_error_level & E_STRICT));
-        $obj->warn_key = 'estrict_enabled';
-        $tests[] = $obj;
+        if (PHP_VERSION_ID < 80400) { //E_STRICT deprecated and useless since PHP 8.4
+            // recommended test ... E_STRICT disabled
+            $obj = new _tests_\boolean_test('errorlevel_estrict',!($orig_error_level & E_STRICT));
+            $obj->warn_key = 'estrict_enabled';
+            $tests[] = $obj;
+        }
 
         // recommended test ... E_DEPRECATED disabled
         $obj = new _tests_\boolean_test('errorlevel_edeprecated',!($orig_error_level & E_DEPRECATED));

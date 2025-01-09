@@ -126,14 +126,15 @@ $res = (bool)get_site_preference('allow_browser_cache',false);
 $tmp[0]['allow_browser_cache'] = testBoolean(0, lang('allow_browser_cache'), $res, lang('test_allow_browser_cache'), FALSE);
 $res = get_site_preference('browser_cache_expiry',60);
 $tmp[0]['browser_cache_expiry'] = testRange(0, lang('browser_cache_expiry'), $res, lang('test_browser_cache_expiry'), 1, 60, FALSE);
-$v = phpversion();
-if( version_compare($v,'7.0') < 0 ) {
-    if( version_compare($v,'5.5') >= 0 ) {
-        $opcache = ini_get('opcache.enable');
-        $tmp[0]['php_opcache'] = testBoolean(0, lang('php_opcache'), $opcache, '', false, false, 'opcache_enabled');
-    } else {
-        $tmp[0]['php_opcache'] = testBoolean(0, lang('php_opcache'), false, '', false, false, 'opcache_notavailable');
-    }
+$phpv = PHP_VERSION_ID;
+if( $phpv < 70000 ) {
+  if( $phpv >= 50500 ) {
+    $opcache = ini_get('opcache.enable');
+    $tmp[0]['php_opcache'] = testBoolean(0, lang('php_opcache'), $opcache, '', false, false, 'opcache_enabled');
+  }
+  else {
+    $tmp[0]['php_opcache'] = testBoolean(0, lang('php_opcache'), false, '', false, false, 'opcache_notavailable');
+  }
 }
 $res = (bool) get_site_preference('use_smartycache', FALSE);
 $tmp[0]['smarty_cache'] = testBoolean(0, lang('prompt_use_smartycaching'),$res,lang('test_smarty_caching'), FALSE);
@@ -153,7 +154,7 @@ $session_save_path = ini_get('session.save_path');
 $open_basedir = ini_get('open_basedir');
 
 list($minimum, $recommended) = getTestValues('php_version');
-$tmp[0]['phpversion'] = testVersionRange(0, 'phpversion', $v, '', $minimum, $recommended, false);
+$tmp[0]['phpversion'] = testVersionRange(0, 'phpversion', PHP_VERSION, '', $minimum, $recommended, false);
 
 $tmp[0]['md5_function'] = testBoolean(0, 'md5_function', function_exists('md5'), '', false, false, 'Function_md5_disabled');
 $tmp[0]['json_function'] = testBoolean(0, 'json_function', function_exists('json_decode'), '', false, false, 'json_disabled');
@@ -165,9 +166,11 @@ $tmp[0]['tempnam_function'] = testBoolean(0, 'tempnam_function', function_exists
 
 $tmp[0]['magic_quotes_runtime'] = testBoolean(0, 'magic_quotes_runtime', 'magic_quotes_runtime', lang('magic_quotes_runtime_on'), true, true, 'magic_quotes_runtime_On');
 $tmp[0]['E_ALL'] = testIntegerMask(0,lang('test_error_eall'), 'error_reporting',E_ALL,lang('test_eall_failed'),true,false,false);
-$tmp[0]['E_STRICT'] = testIntegerMask(0,lang('test_error_estrict'), 'error_reporting',E_STRICT,lang('test_estrict_failed'),true,true,false);
+if( $phpv < 80400 ) { //E_STRICT deprecated and useless since PHP 8.4
+  $tmp[0]['E_STRICT'] = testIntegerMask(0,lang('test_error_estrict'), 'error_reporting',E_STRICT,lang('test_estrict_failed'),true,true,false);
+}
 if( defined('E_DEPRECATED') ) {
-    $tmp[0]['E_DEPRECATED'] =  testIntegerMask(0,lang('test_error_edeprecated'), 'error_reporting',E_DEPRECATED,lang('test_edeprecated_failed'),true,true,false);
+  $tmp[0]['E_DEPRECATED'] = testIntegerMask(0,lang('test_error_edeprecated'), 'error_reporting',E_DEPRECATED,lang('test_edeprecated_failed'),true,true,false);
 }
 
 $_tmp = _testTimeSettings1();
@@ -187,10 +190,10 @@ $tmp[0]['register_globals'] = testBoolean(0, lang('register_globals'), 'register
 
 $ob = ini_get('output_buffering');
 if( strtolower($ob) == 'off' || strtolower($ob) == 'on' ) {
-    $tmp[0]['output_buffering'] = testBoolean(0, lang('output_buffering'), 'output_buffering', '', true, false, 'output_buffering_disabled');
+  $tmp[0]['output_buffering'] = testBoolean(0, lang('output_buffering'), 'output_buffering', '', true, false, 'output_buffering_disabled');
 }
 else {
-    $tmp[0]['output_buffering'] = testInteger(0, lang('output_buffering'), 'output_buffering', '', true, true, 'output_buffering_disabled');
+  $tmp[0]['output_buffering'] = testInteger(0, lang('output_buffering'), 'output_buffering', '', true, true, 'output_buffering_disabled');
 }
 
 $tmp[0]['disable_functions'] = testString(0, lang('disable_functions'), 'disable_functions', '', true, 'green', 'yellow', 'disable_functions_not_empty');
@@ -209,13 +212,13 @@ $tmp[0]['upload_max_filesize'] = testRange(0, 'upload_max_filesize', 'upload_max
 
 $session_save_path = testSessionSavePath('');
 if( empty($session_save_path) ) {
-	$tmp[0]['session_save_path'] = testDummy('session_save_path', lang('os_session_save_path'), 'yellow', '', 'session_save_path_empty', '');
+  $tmp[0]['session_save_path'] = testDummy('session_save_path', lang('os_session_save_path'), 'yellow', '', 'session_save_path_empty', '');
 }
 elseif( !empty($open_basedir) ) {
-	$tmp[0]['session_save_path'] = testDummy('session_save_path', lang('open_basedir_active'), 'yellow', '', 'No_check_session_save_path_with_open_basedir', '');
+  $tmp[0]['session_save_path'] = testDummy('session_save_path', lang('open_basedir_active'), 'yellow', '', 'No_check_session_save_path_with_open_basedir', '');
 }
 else {
-	$tmp[0]['session_save_path'] = testDirWrite(0, lang('session_save_path'), $session_save_path, $session_save_path, 1);
+  $tmp[0]['session_save_path'] = testDirWrite(0, lang('session_save_path'), $session_save_path, $session_save_path, 1);
 }
 $tmp[0]['session_use_cookies'] = testBoolean(0, 'session.use_cookies', 'session.use_cookies');
 
@@ -234,31 +237,31 @@ $curlgood = 0;
 $curl_version = '';
 $min_curlversion = '7.19.7';
 if( in_array('curl',get_loaded_extensions()) ) {
-    $hascurl = 1;
-    if( function_exists('curl_version') ) {
-        $t = curl_version();
-        if( isset($t['version']) ) {
-            $curl_version = $t['version'];
-            if( version_compare($t['version'],$min_curlversion) >= 0 ) {
-                $curlgood = 1;
-            }
-        }
+  $hascurl = 1;
+  if( function_exists('curl_version') ) {
+    $t = curl_version();
+    if( isset($t['version']) ) {
+      $curl_version = $t['version'];
+      if( version_compare($t['version'],$min_curlversion) >= 0 ) {
+        $curlgood = 1;
+      }
     }
+  }
 }
 if( !$hascurl ) {
-    $tmp[0]['curl'] = testDummy('curl',lang('off'),'yellow','','curl_not_available','');
+  $tmp[0]['curl'] = testDummy('curl',lang('off'),'yellow','','curl_not_available','');
 }
 else {
-    $tmp[0]['curl'] = testDummy('curl',lang('on'),'green');
-    if( $curlgood ) {
-        $tmp[1]['curlversion'] = testDummy('curlversion',
-                                           lang('curl_versionstr',$curl_version,$min_curlversion),
-                                           'green');
-    }
-    else {
-        $tmp[1]['curlversion'] = testDummy('curlversion',lang('test_curlversion'),'yellow',
-                                           lang('curl_versionstr',$curl_version,$min_curlversion));
-    }
+  $tmp[0]['curl'] = testDummy('curl',lang('on'),'green');
+  if( $curlgood ) {
+    $tmp[1]['curlversion'] = testDummy('curlversion',
+                             lang('curl_versionstr',$curl_version,$min_curlversion),
+                             'green');
+  }
+  else {
+    $tmp[1]['curlversion'] = testDummy('curlversion',lang('test_curlversion'),'yellow',
+                             lang('curl_versionstr',$curl_version,$min_curlversion));
+  }
 }
 $smarty->assign('count_php_information', count($tmp[0]));
 $smarty->assign('php_information', $tmp);
@@ -272,51 +275,49 @@ $tmp = array(0=>array(), 1=>array());
 $tmp[0]['server_software'] = testDummy('', $_SERVER['SERVER_SOFTWARE'], '');
 $tmp[0]['server_api'] = testDummy('', PHP_SAPI, '');
 if( function_exists('php_uname') ) {
-    $tmp[0]['server_os'] = testDummy('', PHP_OS . ' ' . php_uname('r') .' '. lang('on') .' '. php_uname('m'), ''); // NOTE PHP_OS is the build-system
+  $tmp[0]['server_os'] = testDummy('', PHP_OS . ' ' . php_uname('r') .' '. lang('on') .' '. php_uname('m'), ''); // NOTE PHP_OS is the build-system
 }
 else {
-    $tmp[0]['server_os'] = 'Unknown'; // TODO fallack mechanism
+  $tmp[0]['server_os'] = 'Unknown'; // TODO fallack mechanism
 }
 
 switch($config['dbms']) { //workaround: ServerInfo() is unsupported in adodblite
- case 'mysqli':
- case 'mysql':
-   $v = $db->GetOne('SELECT version()');
-   $tmp[0]['server_db_type'] = testDummy('', 'MySQL ('.$config['dbms'].')', '');
-   $_server_db = (false === strpos($v, "-")) ? $v : substr($v, 0, strpos($v, "-"));
-   list($minimum, $recommended) = getTestValues('mysql_version');
-   $tmp[0]['server_db_version'] = testVersionRange(0, 'server_db_version', $_server_db, '', $minimum, $recommended, false);
+  case 'mysqli':
+  case 'mysql':
+    $v = $db->GetOne('SELECT version()');
+    $tmp[0]['server_db_type'] = testDummy('', 'MySQL ('.$config['dbms'].')', '');
+    $_server_db = (false === strpos($v, "-")) ? $v : substr($v, 0, strpos($v, "-"));
+    list($minimum, $recommended) = getTestValues('mysql_version');
+    $tmp[0]['server_db_version'] = testVersionRange(0, 'server_db_version', $_server_db, '', $minimum, $recommended, false);
 
-   $grants = $db->GetArray('SHOW GRANTS FOR CURRENT_USER');
-   if( !is_array($grants) || count($grants) == 0 ) {
-     $tmp[0]['server_db_grants'] = testDummy('db_grants',lang('os_db_grants'),'yellow','','error_no_grantall_info');
-   }
-   else {
-     $found_grantall = 0;
-     function __check_grant_all($item,$key)
-     {
-       $item = strtoupper($item);
-       if( strstr($item,'GRANT ALL PRIVILEGES') !== FALSE )
-	 {
-	   global $found_grantall;
-	   $found_grantall = 1;
-	 }
-     }
-     array_walk_recursive($grants,'__check_grant_all');
-     if( !$found_grantall ) {
-       $tmp[0]['server_db_grants'] = testDummy('db_grants',lang('error_nograntall_found'),'yellow');
-     }
-     else {
-       $tmp[0]['server_db_grants'] = testDummy('db_grants',lang('msg_grantall_found'),'green');
-     }
-   }
-   break;
+    $grants = $db->GetArray('SHOW GRANTS FOR CURRENT_USER');
+    if( !is_array($grants) || count($grants) == 0 ) {
+      $tmp[0]['server_db_grants'] = testDummy('db_grants',lang('os_db_grants'),'yellow','','error_no_grantall_info');
+    }
+    else {
+      $found_grantall = 0;
+      function __check_grant_all($item,$key)
+      {
+        $item = strtoupper($item);
+        if( strstr($item,'GRANT ALL PRIVILEGES') !== FALSE )
+        {
+          global $found_grantall;
+          $found_grantall = 1;
+        }
+      }
+      array_walk_recursive($grants,'__check_grant_all');
+      if( !$found_grantall ) {
+        $tmp[0]['server_db_grants'] = testDummy('db_grants',lang('error_nograntall_found'),'yellow');
+      }
+      else {
+        $tmp[0]['server_db_grants'] = testDummy('db_grants',lang('msg_grantall_found'),'green');
+      }
+    }
+    break;
 }
-
 
 $smarty->assign('count_server_info', count($tmp[0]));
 $smarty->assign('server_info', $tmp);
-
 
 $tmp = array(0=>array(), 1=>array());
 
@@ -325,6 +326,9 @@ $tmp[0]['tmp'] = testDirWrite(0, $dir, $dir);
 
 $dir = TMP_CACHE_LOCATION;
 $tmp[0]['tmp_cache'] = testDirWrite(0, $dir, $dir);
+
+$dir = TMP_CONFIG_LOCATION;
+$tmp[0]['tmp_config'] = testDirWrite(0, $dir, $dir);
 
 $dir = TMP_TEMPLATES_C_LOCATION;
 $tmp[0]['templates_c'] = testDirWrite(0, $dir, $dir);
@@ -346,7 +350,6 @@ $tmp[0]['config_file'] = testDummy('', substr(sprintf('%o', fileperms(CONFIG_FIL
 $smarty->assign('count_permission_info', count($tmp[0]));
 $smarty->assign('permission_info', $tmp);
 
-
 if(isset($_GET['cleanreport']) && $_GET['cleanreport'] == 1) {
   $orig_lang = CmsNlsOperations::get_current_language();
   CmsNlsOperations::set_language('en_US');
@@ -355,7 +358,4 @@ if(isset($_GET['cleanreport']) && $_GET['cleanreport'] == 1) {
 }
 else echo $smarty->fetch('systeminfo.tpl');
 
-
 include_once("footer.php");
-
-?>
