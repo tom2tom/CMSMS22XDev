@@ -55,15 +55,15 @@ class UserGuideUtils
             $revert = true;
             $val = $tmp;
         }
-        // munge start-PHP tags
-        $val = preg_replace(['/<\s*\?\s*php/i', '/<\s*\?\s*=/', '/<\s*\?(\s|\n)/'], ['&#60;&#63;php', '&#60;&#63;=', '&#60;&#63; '], $val);
+        // munge start-PHP tags (TODO might be insufficient change)
+        $val = preg_replace(['/(<|%3c)(\?|%3f)php/i', '/(<|%3c)(\?|%3f)=/i', '/(<|%3c)(\?|%3f)(\s|\n)/i'], ['&#60;&#63;php', '&#60;&#63;=', '&#60;&#63; '], $val);
         //TODO maybe disable SmartyBC-supported {php}{/php}
         //$val = preg_replace('~\{/?php\}~i', '', $val); but with current smarty delim's
         $val = str_replace('`', '&#96;', $val);
         foreach ([
              // script tags like <script or <script> or <script X> X = e.g. 'defer'
-            '/<\s*(scrip)t([^>]*)(>?)/i' => function($matches) {
-                return '&#60;'.$matches[1].'&#116;'.($matches[2] ? ' '.trim($matches[2]) : '').($matches[3] ? '&#62;' : '');
+            '/(<|%3c)\s*(scrip)t([^>]*)((>|%3e)?)/i' => function($matches) {
+                return '&#60;'.$matches[2].'&#116;'.($matches[3] ? ' '.trim($matches[3]) : '').($matches[4] ? '&#62;' : '');
             },
             // explicit script
             '/jav(.+?)(scrip)t\s*:\s*(.+)?/i' => function($matches) {
