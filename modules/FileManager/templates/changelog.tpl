@@ -5,6 +5,8 @@
     <br>
     Support extra image types and intelligent thumbnailing
     <br>
+    Set file(s) permissions after upload
+    <br>
     Use FileTypeHelper-class methods where relevant
     <br>
     Modify easyarchives classes for PHP8+ compatibility

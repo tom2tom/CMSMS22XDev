@@ -59,18 +59,24 @@ class UploadHandler extends jquery_upload_handler
 
   protected function after_uploaded_file($fileobject)
   {
-    // here we may do image handling, and other cruft.
+    // here we might do image handling, and other cruft.
     if( is_object($fileobject) && $fileobject->name != '' ) {
-
-      $mod = cms_utils::get_module('FileManager');
+      $config = cms_config::get_instance();
+      $perms = octdec($config['default_upload_permission']);
       $file = filemanager_utils::join_path(filemanager_utils::get_full_cwd(),$fileobject->name);
-      $parms['file'] = $file;
-      $parms = HookManager::do_hook( 'FileManager::OnFileUploaded', $parms );
+      @chmod($file, $perms);
+      $parms = HookManager::do_hook( 'FileManager::OnFileUploaded', ['file' => $file] );
       if( is_array($parms) && isset($parms['file']) ) $file = $parms['file']; // file name could have changed.
 
       $thumb = FALSE;
+      $mod = cms_utils::get_module('FileManager');
       if( $mod->GetPreference('create_thumbnails') ) {
-          $thumb = filemanager_utils::create_thumbnail($file, NULL, TRUE);
+        $thumb = filemanager_utils::create_thumbnail($file, NULL, TRUE);
+        if( $thumb ) {
+          $str = basename($file);
+          $tfile = dirname($file).DIRECTORY_SEPARATOR.'thumb_'.$str;
+          @chmod($tfile, $perms);
+        }
       }
 
       $str = basename($file).' uploaded to '.filemanager_utils::get_full_cwd();
