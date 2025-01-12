@@ -122,7 +122,7 @@ class wizard_step1 extends wizard_step
         }
         else {
             $winos = (PATH_SEPARATOR == ';');
-            $macos = !$winos && 0; // TODO fallack mechanism
+            $macos = !$winos && (PHP_EOL == "\r" || 0); // TODO robust fallack mechanism for OS X +
         }
 
         $_find_dirs = function($start,$depth = 0) use( &$_find_dirs, &$_get_annotation, $_is_valid_dir, $winos, $macos ) {
@@ -132,7 +132,8 @@ class wizard_step1 extends wizard_step
             $out = [];
             while( ($file = readdir($dh)) !== FALSE ) {
                 if( $file == '.' || $file == '..' ) continue;
-                if( ($file[0] == '.' && !$winos) || ($file[0] == '_' && $macos) || ($file[0] == '~' && $winos) ) continue; // TODO hidden-attribute check on Windows
+                // TODO hidden-attribute check on $winos c.f. filemanager_utils::is_hidden_file()
+                if( ($file[0] == '.' && !$winos) || ($file[0] == '_' && $macos) || ($file[0] == '~' && $winos) ) continue;
                 $dn = $start.DIRECTORY_SEPARATOR.$file;  // cuz windows blows, and windoze guys are whiners :)
                 if( !@is_readable($dn) ) continue;
                 if( !@is_dir($dn) ) continue;
