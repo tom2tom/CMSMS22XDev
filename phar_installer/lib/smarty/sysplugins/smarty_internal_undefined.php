@@ -16,7 +16,14 @@ class Smarty_Internal_Undefined
      *
      * @var string|null
      */
-    public $class = null;
+    public $class;
+
+    /**
+     * Valid for all objects
+     *
+     * @var int
+     */
+    public $objMap = 7;
 
     /**
      * Smarty_Internal_Undefined constructor.
