@@ -174,7 +174,7 @@ final class filemanager_utils
             }
             else {
                 $winos = (PATH_SEPARATOR == ';');
-                $macos = !$winos && 0; // TODO fallack mechanism
+                $macos = !$winos && (PHP_EOL == "\r" || 0); // TODO robust fallack mechanism for OS X+
             }
         }
 
@@ -188,10 +188,14 @@ final class filemanager_utils
                 return $winos;
             default:
                 if( $winos ) {
-                    $path = str_replace('/','\\',$path);
-                    exec('attrib ' . escapeshellarg($path),$res);
-                    if( $res && ($p = strpos($res,'H')) !== FALSE ) {
-                        return preg_match('~\s.*?:?\\~',$res,null,0,$p + 1); //want whitespace after 'H' and before ':\'
+                    if( (int)ini_get('safe_mode_exec_dir') == 0 ) { //exec() not blocked
+                        $path = str_replace('/','\\',$path);
+                        if( ($res1 = exec('attrib ' . escapeshellarg($path),$outlines,$res)) !== FALSE ) {
+                            $res2 = reset($outlines); //TODO is the wanted member first? or use $res1?
+                            if( ($p = strpos($res2,'H')) !== FALSE ) {
+                                return preg_match('~ ([A-Z]{1,2}:)?\\~',$res2,null,0,$p + 1); //want whitespace after 'H' and before path-start
+                            }
+                        }
                     }
                 }
                 return FALSE;
@@ -622,7 +626,7 @@ final class filemanager_utils
         if ($thumb_height == 0) {
             return;
         }
-        // set $src_x|$src_y, $src_width|$src_height to crop-related values if required 
+        // set $src_x|$src_y, $src_width|$src_height to crop-related values if required
         $ratio_src = $src_width / $src_height;
         $ratio_thumb = $thumb_width / $thumb_height;
         if ($ratio_src >= $ratio_thumb) { // width to be clipped
