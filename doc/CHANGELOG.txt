@@ -7,7 +7,7 @@ Version 2.2.21F2 - Fredericton
  - jQuery upgraded to version 2.2.4 (1.12.4 also bundled)
  - jQuery UI upgraded to version 1.13.3 (with previous styling)
  - Replace deprecated jQuery usage in templates
- - Smarty upgraded to forked version 4.4.2 including back-ported 4.5.3 extends-tag processing
+ - Smarty upgraded to forked version 4.4.2
  - PHPMailer upgraded to version 6.9.3.
 
 Version 2.2.20F2 - Yellowknife
@@ -46,6 +46,7 @@ Core - General
  - Deprecated use of PHP function umask().
  - News module status changed to non-core, but still installed with demo content.
  - Since CMSMS 2.2, config parameters 'ssl_url','ssl_uploads_url' and 'ssl_image_uploads_url', and methods which use those, have internally but not publicly been flagged as deprecated.
+ - Added .htaccess file to uploads folder
  - Added missing nls files, allowing installation of extra translations.
  - Smarty upgraded to forked version 4.4.1C.
  - Enabled use of PHP function rawurlencode in Smarty templates.
