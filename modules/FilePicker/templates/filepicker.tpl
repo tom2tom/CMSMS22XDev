@@ -84,11 +84,11 @@
 							{if $file.isdir}
 								<a class="icon-no-thumb" href="{$file.chdir_url}" title="{if $file.isdir}{$mod->Lang('changedir')}: {/if}{$file.name}"><i class="cmsms-fp-folder-close"></i></a>
 							{elseif $profile->show_thumbs && !empty($file.thumbnail)}
-								<a class="filepicker-file-action js-trigger-insert" href="{$file.relurl}" title="{$file.name}">{$file.thumbnail}</a>
+								<a class="filepicker-file-action js-trigger-insert" href="{$file.fullurl}" title="{$file.name}" data-fb-relurl="{$file.relurl}">{$file.thumbnail}</a>
 							{elseif $profile->show_thumbs && $file.is_thumb}
-								<a class="filepicker-file-action js-trigger-insert" href="{$file.relurl}" title="{$file.name}"><img src="{$file.fullurl}" alt="{$file.name}"></a>
+								<a class="filepicker-file-action js-trigger-insert" href="{$file.fullurl}" title="{$file.name}" data-fb-relurl="{$file.relurl}"><img src="{$file.fullurl}" alt="{$file.name}"></a>
 							{else}
-								<a class="filepicker-file-action js-trigger-insert icon-no-thumb" href="{$file.relurl}" title="{$file.name}">
+								<a class="filepicker-file-action js-trigger-insert icon-no-thumb" href="{$file.fullurl}" title="{$file.name}" data-fb-relurl="{$file.relurl}">
 									{if $file.filetype == 'image'}
 										<i class="cmsms-fp-picture"></i>
 									{elseif $file.filetype == 'video'}
@@ -109,7 +109,7 @@
 								{if $file.isdir}
 									<a class="filepicker-dir-action" href="{$file.chdir_url}" title="{if $file.isdir}{$mod->Lang('changedir')}: {/if}{$file.name}">{$file.name}</a>
 								{else}
-									<a class="filepicker-file-action js-trigger-insert" href="{$file.relurl}" title="{if $file.isdir}{$mod->Lang('changedir')}: {/if}{$file.name}" data-fb-filetype="{$file.filetype}">{$file.name}</a>
+									<a class="filepicker-file-action js-trigger-insert" href="{$file.fullurl}" title="{if $file.isdir}{$mod->Lang('changedir')}: {/if}{$file.name}" data-fb-relurl="{$file.relurl}" data-fb-filetype="{$file.filetype}">{$file.name}</a>
 								{/if}
 								</h4>
 							</div>

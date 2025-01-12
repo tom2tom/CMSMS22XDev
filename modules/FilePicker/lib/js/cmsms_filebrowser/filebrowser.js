@@ -29,9 +29,13 @@ function CMSFileBrowser(_settings) {
     $('a.js-trigger-insert').on('click', function(e) {
       e.preventDefault();
       var instance = $('html').data('cmsfp-inst'),
+        file = $(this).data('fb-relurl');
+      if (file) {
+        if(settings && settings.prefix) {
+          file = settings.prefix + file;
+        }
+      } else {
         file = $(this).attr('href');
-      if(settings && settings.prefix) {
-        file = settings.prefix + file;
       }
       if(settings && settings.onselect) {
         settings.onselect(instance, file);
