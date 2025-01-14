@@ -247,13 +247,18 @@ class wizard_step8 extends wizard_step
 
             require_once __DIR__.'/msg_functions.php';
 
-           // ready to do the upgrading now (in a loop)
-           // only perform upgrades for the versions known by the installer that are greater than what is installed.
+            // NOTE included files might change $dir value but must not change $_upsdir_
+            $_upsdir_ = $dir;
+            // ready to do the upgrading now (in a loop)
+            // only perform upgrades for the versions known by the installer
+            // and that are greater than what is installed.
             $current_version = $version_info['version'];
             foreach( $versions as $ver ) {
-                $fn = "$dir/$ver/upgrade.php";
-                if( utils::cms_version_compare($current_version,$ver) < 0 && is_file($fn) ) {
-                    include_once($fn);
+                if( utils::cms_version_compare($ver,$current_version) > 0 ) {
+                    $fn = "$_upsdir_/$ver/upgrade.php";
+                    if( is_file($fn) ) {
+                        include_once $fn;
+                    }
                 }
             }
 
@@ -341,7 +346,7 @@ class wizard_step8 extends wizard_step
         $config = cms_config::get_instance();
         $config->merge($newconfig);
         if( !defined('CONFIG_FILE_LOCATION') ) {
-            define('CONFIG_FILE_LOCATION', "$destdir/config.php");
+            define('CONFIG_FILE_LOCATION', $destdir.DIRECTORY_SEPARATOR.'config.php');
         }
         $config->save();
         // double-check, in case there's PHP silliness
