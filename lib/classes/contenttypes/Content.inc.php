@@ -189,7 +189,17 @@ class Content extends ContentBase
 			}
 
 			// metadata
-			if (isset($params['metadata'])) $this->mMetadata = $params['metadata'];
+			if (!empty($params['metadata'])) {
+				$val = preg_replace('~>\s*<meta~i', ">\n<meta", trim($params['metadata']));
+				if (preg_match('~^(<meta(\s+[a-zA-Z]{2,}[\-\w]*\s*=\s*["\'][\w .:,/=\(\)\-]+["\'])+\s*/?>\s*)+$~i', $val)) {
+					$this->mMetadata = $val;
+				} else {
+					$this->mMetadata = ''; //TODO robustly handle malformed data
+					audit($this->mId,'Metadata','Invalid html provided');
+				}
+			} else {
+				$this->mMetadata = '';
+			}
 		}
 		parent::FillParams($params,$editing); //TODO to start of this method?
 	}

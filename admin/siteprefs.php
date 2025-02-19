@@ -274,8 +274,16 @@ if (isset($_POST['editsiteprefs'])) {
       cms_siteprefs::set('frontendlang', $frontendlang);
       if (isset($_POST['frontendwysiwyg'])) $frontendwysiwyg = cleanValue($_POST['frontendwysiwyg']);
       cms_siteprefs::set('frontendwysiwyg', $frontendwysiwyg);
-      if (isset($_POST['metadata'])) $metadata = $_POST['metadata'];
-      cms_siteprefs::set('metadata', $metadata);
+      if (!empty($_POST['metadata'])) {
+        $val = preg_replace('~>\s*<meta~i', ">\n<meta", trim($_POST['metadata']));
+        if (preg_match('~^(<meta(\s+[a-zA-Z]{2,}[\-\w]*\s*=\s*["\'][\w .:,/=\(\)\-]+["\'])+\s*/?>\s*)+$~i', $val)) {
+          cms_siteprefs::set('metadata', $val);
+        } else {
+          $error .= '<li>'.lang('error_badfield', 'metadata').'</li>';
+        }
+      } else {
+        cms_siteprefs::set('metadata', '');
+      }
       if (isset($_POST['logintheme'])) $logintheme = cleanValue($_POST['logintheme']);
       cms_siteprefs::set('logintheme', $logintheme);
       if (isset($_POST['backendwysiwyg'])) $backendwysiwyg = cleanValue($_POST['backendwysiwyg']);
