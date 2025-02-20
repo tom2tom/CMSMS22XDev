@@ -175,11 +175,13 @@ class Content extends ContentBase
 				switch( $oneparam ) {
 				case 'pagedata':
 					// verbatim
+					// TODO sanitize c.f. content parts of editusertag.php
 					break;
 				default:
 					if( $blocks && isset($blocks[$oneparam]) ) {
 						// it's a content block.
 						$val = $val;
+						// TODO sanitize c.f. DesignManager action.admin_edit_template
 					} else {
 						$val = (int) $val;
 					}

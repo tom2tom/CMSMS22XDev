@@ -87,8 +87,8 @@ try {
 
             // lastly, check for errors in the template before we save.
             if( isset($params['contents']) ) {
+/* TODO suitable check
                 cms_utils::set_app_data('tmp_template', $params['contents']);
-/*
                 $parser = new CMSMS\internal\page_template_parser('cms_template:appdata;tmp_template',$smarty);
                 $parser->compileTemplateSource();
                 if ($type_obj->get_content_block_flag()) {
