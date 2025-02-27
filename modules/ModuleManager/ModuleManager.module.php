@@ -59,9 +59,10 @@ class ModuleManager extends CMSModule
 
   protected function _DisplayErrorPage($id, &$params, $returnid, $message='')
   {
-    $this->smarty->assign('title_error', $this->Lang('error'));
-    $this->smarty->assign('message', $message);
-    $this->smarty->assign('link_back',$this->CreateLink($id,'defaultadmin',$returnid, $this->Lang('back_to_module_manager')));
+    $smarty = cmsms()->GetSmarty();
+    $smarty->assign('title_error', $this->Lang('error'));
+    $smarty->assign('message', $message);
+    $smarty->assign('link_back',$this->CreateLink($id,'defaultadmin',$returnid, $this->Lang('back_to_module_manager')));
 
     // Display the populated template
     echo $this->ProcessTemplate('error.tpl');
