@@ -275,13 +275,85 @@ if (isset($_POST['editsiteprefs'])) {
       if (isset($_POST['frontendwysiwyg'])) $frontendwysiwyg = cleanValue($_POST['frontendwysiwyg']);
       cms_siteprefs::set('frontendwysiwyg', $frontendwysiwyg);
       if (!empty($_POST['metadata'])) {
-        $val = preg_replace('~>\s*<meta~i', ">\n<meta", trim($_POST['metadata']));
-        if (preg_match('~^(<meta(\s+[a-zA-Z]{2,}[\-\w]*\s*=\s*["\'][\w .:,/=\(\)\-]+["\'])+\s*/?>\s*)+$~i', $val)) {
-          cms_siteprefs::set('metadata', $val);
-        } else {
-          $error .= '<li>'.lang('error_badfield', 'metadata').'</li>';
+        $matches = [];
+        $merr = [];
+        $val = addcslashes(trim($_POST['metadata']), '~+*?[]^$(){}\\|');
+        $arr = preg_split('~<meta\s+~i', $val);
+        foreach ($arr as &$val) {
+          if ($val) {
+            if (preg_match('~^(\s*[a-zA-Z]{2,}[\w\-.]*\s*=\s*(["\'])[^<>]+\2\s*)+/{0,1}>(.*)$~s', $val, $matches)) {
+              if ($matches[3]) {
+                $val = str_replace($matches[3], '', $val);
+                if (preg_match('~\S~', $matches[3])) {
+                  $merr[] = 'unqouted data';
+                }
+              }
+              $val = rtrim($val, "/>\r\n\t ") . '>'; //html5 format
+              $o = 0;
+              while (preg_match('~(.*?)([a-zA-Z]{2,}[\w\-.]*)\s*=\s*("(\\\\.|[^"])*"|\'(\\\\.|[^\'])*\')(\s+|\s*\/{0,1}>\s*)~', $val, $matches, PREG_OFFSET_CAPTURE, $o)) {
+                if (($s = strpbrk($matches[3][0], '`$'))) {
+                  $val = '';
+                  $merr[] = 'prohibited '. $s[0] . ' in data';
+                  break;
+                }
+                if ($matches[1][0]) {
+                  $s = str_repeat(' ', strlen($matches[1][0]));
+                  $val = str_replace($matches[1][0], $s, $val);
+                  $merr[] = 'unqouted data';
+                }
+                //filter per meta name TODO deal with all oWASP examples
+                switch ($matches[2][0]) {
+                  case 'content':
+                    $s = trim($matches[3][0], '"\'');
+                    if ($s == 'no-referrer') {
+                      if (($p = stripos($val, 'referrer')) !== false && $p < $matches[3][1]) {
+                        $val = '';
+                        $merr[] = 'no-referrer';
+                        break;
+                      }
+                    }
+                    if ($s == 'upgrade-insecure-requests') {
+                      if (($p = stripos($val, 'Content-Security-Policy')) !== false && $p < $matches[3][1]) {
+                        $val = '';
+                        $merr[] = 'insecure CSP override';
+                        break;
+                      }
+                    }
+                    if (stripos($s, 'url') !== false) {
+                      if (($p = stripos($val, 'refresh')) !== false && $p < $matches[3][1]) {
+                        $val = '';
+                        $merr[] = 'refresh URL';
+                        break;
+                      }
+                    }
+                    break;
+                  default:
+                    break;
+                }
+                if ($val !== '') {
+                  $o = $matches[6][1] + strlen($matches[6][0]);
+                }
+                else {
+                  continue 2;
+                }
+              }
+              $val = '<meta ' . stripcslashes(trim($val));
+            }
+            else {
+              $val = '';
+              $merr[] = 'invalid format';
+            }
+          }
         }
-      } else {
+        unset($val);
+        cms_siteprefs::set('metadata', implode("\n", array_filter($arr)));
+        if ($merr) {
+          $error .= '<li>'.lang('error_badfield', 'metadata').'</li>';
+          $val = implode(',', $merr);
+          audit('', 'Site metadata', 'Ignored some/all having '.$val);
+        }
+      }
+      else {
         cms_siteprefs::set('metadata', '');
       }
       if (isset($_POST['logintheme'])) $logintheme = cleanValue($_POST['logintheme']);
