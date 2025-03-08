@@ -47,6 +47,7 @@ tinymce.init({
     convert_urls: false,
     document_base_url: "{$rooturl}/",
     element_format: "html",
+    entity_encoding: "raw",
     icons_url: "{$custombase}/CMSMSicons/icons.js",
     icons: "cmsms",
 {if !$isfrontend}
