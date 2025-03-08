@@ -12,8 +12,8 @@ function news_reordercats_create_flatlist($tree,$parent_id = -1)
       $pid = substr($node[0],strlen('cat_'));
       $data[] = array('id'=>$pid,'parent_id'=>$parent_id,'order'=>$order);
       if( isset($node[1]) && is_array($node[1]) && count($node[1]) > 0 ) {
-	$tmp = news_reordercats_create_flatlist($node[1],$pid);
-	if( is_array($tmp) && count($tmp) ) $data = array_merge($data,$tmp);
+        $tmp = news_reordercats_create_flatlist($node[1],$pid);
+        if( is_array($tmp) && count($tmp) ) $data = array_merge($data,$tmp);
       }
     }
     else {
@@ -43,10 +43,8 @@ else if( isset($params['submit']) ) {
   }
 }
 
-
 $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_news_categories ORDER BY hierarchy';
 $allcats = $db->GetArray($query);
-
 
 $smarty->assign('allcats',$allcats);
 echo $this->ProcessTemplate('admin_reorder_cats.tpl');
