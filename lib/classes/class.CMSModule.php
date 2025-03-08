@@ -9,7 +9,7 @@
 #
 # This program is distributed in the hope that it will be useful,
 # BUT withOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
@@ -315,7 +315,7 @@ abstract class CMSModule
             // no lazy loading.
             $gCms = CmsApp::get_instance();
             $smarty = $gCms->GetSmarty();
-            $smarty->register_function($this->GetName(), array($this->GetName(),'function_plugin'), $cachable );
+            $smarty->register_function($this->GetName(), array($this->GetName(),'function_plugin'), $cachable);
             return TRUE;
         }
         else {
@@ -352,7 +352,7 @@ abstract class CMSModule
 
     /**
      * ------------------------------------------------------------------
-     * Basic Functions.	 Name and Version MUST be overridden.
+     * Basic Functions. Name and Version MUST be overridden.
      * ------------------------------------------------------------------
      */
 
@@ -642,7 +642,7 @@ abstract class CMSModule
 
     /**
      * This method can be used to perform initialization functions that should be done both for frontend and admin requests
-     * but not necessarily for lighweight module load requests (such as needed by ModuleManager).
+     * but not necessarily for lightweight module load requests (such as needed by ModuleManager).
      *
      * Note: This method is called from within the InitializeFrontend() and InitializeAdmin methods. so, if your module
      * overrides one or both of these methods be sure to call the appropriate parent method.
@@ -1051,7 +1051,7 @@ abstract class CMSModule
     }
 
     /**
-     * Display a message and a Yes/No dialog before doing an uninstall.	 Returning noting
+     * Display a message and a Yes/No dialog before doing an uninstall. Returning noting
      * (FALSE) will go right to the uninstall.
      *
      * @abstract
@@ -1118,7 +1118,7 @@ abstract class CMSModule
     }
 
     /**
-     * Checks to see if currently installed modules depend on this module.	This is
+     * Checks to see if currently installed modules depend on this module. This is
      * used by the plugins.php page to make sure that a module can't be uninstalled
      * before any modules depending on it are uninstalled first.
      *
@@ -1154,7 +1154,7 @@ abstract class CMSModule
     }
 
     /**
-     * Return true if there is an admin for the module.	 Returns false by
+     * Return true if there is an admin for the module. Returns false by
      * default.
      *
      * @abstract
@@ -1218,7 +1218,7 @@ abstract class CMSModule
 
     /**
      * Returns true if the module should be treated as a plugin module (like
-     * {cms_module module='name'}.	Returns false by default.
+     * {cms_module module='name'}. Returns false by default.
      *
      * @abstract
      * @return bool
@@ -1346,7 +1346,7 @@ abstract class CMSModule
      */
 
     /**
-     * Used for navigation between "pages" of a module.	 Forms and links should
+     * Used for navigation between "pages" of a module. Forms and links should
      * pass an action with them so that the module will know what to do next.
      * By default, DoAction will be passed 'default' and 'defaultadmin',
      * depending on where the module was called from.  If being used as a module
@@ -1520,7 +1520,7 @@ abstract class CMSModule
      * @param string $returnid The id to eventually return to when the module is finished it's task
      * @param string $contents The text that will have to be clicked to follow the link
      * @param string $tooltiptext The helptext to be shown as tooltip-popup
-     * @param string $params An array of params that should be inlucded in the URL of the link.	 These should be in a $key=>$value format.
+     * @param string $params An array of params that should be included in the URL of the link.	 These should be in a $key=>$value format.
      * @deprecated
      * @return string
      */
@@ -1621,14 +1621,14 @@ abstract class CMSModule
      * @param string $value The predefined value of the textbox, if any
      * @param string $size The number of columns wide the textbox should be displayed
      * @param string $maxlength The maximum number of characters that should be allowed to be entered
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @deprecated
      * @return string
      */
-    function CreateInputText($id, $name, $value='', $size='10', $maxlength='255', $addttext='')
+    function CreateInputText($id, $name, $value='', $size='10', $maxlength='255', $addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputText($this, $id, $name, $value, $size, $maxlength, $addttext);
+        return cms_module_CreateInputText($this, $id, $name, $value, $size, $maxlength, $addtext);
     }
 
     /**
@@ -1638,14 +1638,14 @@ abstract class CMSModule
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input field this label is associated to
      * @param string $labeltext The text in the label
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @deprecated
      * @return string
      */
-    function CreateLabelForInput($id, $name, $labeltext='', $addttext='')
+    function CreateLabelForInput($id, $name, $labeltext='', $addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateLabelForInput($this, $id, $name, $labeltext, $addttext);
+        return cms_module_CreateLabelForInput($this, $id, $name, $labeltext, $addtext);
     }
 
     /**
@@ -1657,16 +1657,16 @@ abstract class CMSModule
      * @param string $value The predefined value of the textbox, if any
      * @param string $size The number of columns wide the textbox should be displayed
      * @param string $maxlength The maximum number of characters that should be allowed to be entered
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @param string $label The text for label
      * @param string $labeladdtext Any additional text that should be added into the tag when rendered
      * @deprecated
      * @return string
      */
-    function CreateInputTextWithLabel($id, $name, $value='', $size='10', $maxlength='255', $addttext='', $label='', $labeladdtext='')
+    function CreateInputTextWithLabel($id, $name, $value='', $size='10', $maxlength='255', $addtext='', $label='', $labeladdtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputTextWithLabel($this, $id, $name, $value, $size, $maxlength, $addttext, $label, $labeladdtext);
+        return cms_module_CreateInputTextWithLabel($this, $id, $name, $value, $size, $maxlength, $addtext, $label, $labeladdtext);
     }
 
     /**
@@ -1676,13 +1676,13 @@ abstract class CMSModule
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input field
      * @param string $value The predefined value of the textbox, if any
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @return string
      */
-    function CreateInputColor($id, $name, $value='', $addttext='')
+    function CreateInputColor($id, $name, $value='', $addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputColor($this, $id, $name, $value, $addttext);
+        return cms_module_CreateInputColor($this, $id, $name, $value, $addtext);
     }
 
     /**
@@ -1692,14 +1692,14 @@ abstract class CMSModule
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input field
      * @param string $value The predefined value of the textbox, if any
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @deprecated
      * @return string
      */
-    function CreateInputDate($id, $name, $value='', $addttext='')
+    function CreateInputDate($id, $name, $value='', $addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputDate($this, $id, $name, $value, $addttext);
+        return cms_module_CreateInputDate($this, $id, $name, $value, $addtext);
     }
 
     /**
@@ -1709,14 +1709,14 @@ abstract class CMSModule
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input field
      * @param string $value The predefined value of the textbox, if any
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @deprecated
      * @return string
      */
-    function CreateInputDatetime($id, $name, $value='', $addttext='')
+    function CreateInputDatetime($id, $name, $value='', $addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputDatetime($this, $id, $name, $value, $addttext);
+        return cms_module_CreateInputDatetime($this, $id, $name, $value, $addtext);
     }
 
     /**
@@ -1726,14 +1726,14 @@ abstract class CMSModule
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input field
      * @param string $value The predefined value of the textbox, if any
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @deprecated
      * @return string
      */
-    function CreateInputDatetimeLocal($id, $name, $value='', $addttext='')
+    function CreateInputDatetimeLocal($id, $name, $value='', $addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputDatetimeLocal($this, $id, $name, $value, $addttext);
+        return cms_module_CreateInputDatetimeLocal($this, $id, $name, $value, $addtext);
     }
 
     /**
@@ -1743,14 +1743,14 @@ abstract class CMSModule
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input field
      * @param string $value The predefined value of the textbox, if any
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @deprecated
      * @return string
      */
-    function CreateInputMonth($id, $name, $value='', $addttext='')
+    function CreateInputMonth($id, $name, $value='', $addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputMonth($this, $id, $name, $value, $addttext);
+        return cms_module_CreateInputMonth($this, $id, $name, $value, $addtext);
     }
 
     /**
@@ -1760,14 +1760,14 @@ abstract class CMSModule
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input field
      * @param string $value The predefined value of the textbox, if any
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @deprecated
      * @return string
      */
-    function CreateInputWeek($id, $name, $value='', $addttext='')
+    function CreateInputWeek($id, $name, $value='', $addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputWeek($this, $id, $name, $value, $addttext);
+        return cms_module_CreateInputWeek($this, $id, $name, $value, $addtext);
     }
 
     /**
@@ -1777,14 +1777,14 @@ abstract class CMSModule
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input field
      * @param string $value The predefined value of the textbox, if any
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @deprecated
      * @return string
      */
-    function CreateInputTime($id, $name, $value='', $addttext='')
+    function CreateInputTime($id, $name, $value='', $addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputTime($this, $id, $name, $value, $addttext);
+        return cms_module_CreateInputTime($this, $id, $name, $value, $addtext);
     }
 
     /**
@@ -1794,13 +1794,13 @@ abstract class CMSModule
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input field
      * @param string $value The predefined value of the textbox, if any
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @return string
      */
-    function CreateInputNumber($id, $name, $value='', $addttext='')
+    function CreateInputNumber($id, $name, $value='', $addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputNumber($this, $id, $name, $value, $addttext);
+        return cms_module_CreateInputNumber($this, $id, $name, $value, $addtext);
     }
 
     /**
@@ -1810,14 +1810,14 @@ abstract class CMSModule
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input field
      * @param string $value The predefined value of the textbox, if any
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @deprecated
      * @return string
      */
-    function CreateInputRange($id, $name, $value='', $addttext='')
+    function CreateInputRange($id, $name, $value='', $addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputRange($this, $id, $name, $value, $addttext);
+        return cms_module_CreateInputRange($this, $id, $name, $value, $addtext);
     }
 
     /**
@@ -1829,14 +1829,14 @@ abstract class CMSModule
      * @param string $value The predefined value of the textbox, if any
      * @param string $size The number of columns wide the textbox should be displayed
      * @param string $maxlength The maximum number of characters that should be allowed to be entered
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @deprecated
      * @return string
      */
-    function CreateInputEmail($id, $name, $value='', $size='10', $maxlength='255', $addttext='')
+    function CreateInputEmail($id, $name, $value='', $size='10', $maxlength='255', $addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputEmail($this, $id, $name, $value, $size, $maxlength, $addttext);
+        return cms_module_CreateInputEmail($this, $id, $name, $value, $size, $maxlength, $addtext);
     }
 
     /**
@@ -1848,14 +1848,14 @@ abstract class CMSModule
      * @param string $value The predefined value of the textbox, if any
      * @param string $size The number of columns wide the textbox should be displayed
      * @param string $maxlength The maximum number of characters that should be allowed to be entered
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @deprecated
      * @return string
      */
-    function CreateInputTel($id, $name, $value='', $size='10', $maxlength='255', $addttext='')
+    function CreateInputTel($id, $name, $value='', $size='10', $maxlength='255', $addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputTel($this, $id, $name, $value, $size, $maxlength, $addttext);
+        return cms_module_CreateInputTel($this, $id, $name, $value, $size, $maxlength, $addtext);
     }
 
     /**
@@ -1867,14 +1867,14 @@ abstract class CMSModule
      * @param string $value The predefined value of the textbox, if any
      * @param string $size The number of columns wide the textbox should be displayed
      * @param string $maxlength The maximum number of characters that should be allowed to be entered
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @deprecated
      * @return string
      */
-    function CreateInputSearch($id, $name, $value='', $size='10', $maxlength='255', $addttext='')
+    function CreateInputSearch($id, $name, $value='', $size='10', $maxlength='255', $addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputSearch($this, $id, $name, $value, $size, $maxlength, $addttext);
+        return cms_module_CreateInputSearch($this, $id, $name, $value, $size, $maxlength, $addtext);
     }
 
     /**
@@ -1886,14 +1886,14 @@ abstract class CMSModule
      * @param string $value The predefined value of the textbox, if any
      * @param string $size The number of columns wide the textbox should be displayed
      * @param string $maxlength The maximum number of characters that should be allowed to be entered
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @deprecated
      * @return string
      */
-    function CreateInputUrl($id, $name, $value='', $size='10', $maxlength='255', $addttext='')
+    function CreateInputUrl($id, $name, $value='', $size='10', $maxlength='255', $addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputUrl($this, $id, $name, $value, $size, $maxlength, $addttext);
+        return cms_module_CreateInputUrl($this, $id, $name, $value, $size, $maxlength, $addtext);
     }
 
 
@@ -1905,14 +1905,14 @@ abstract class CMSModule
      * @param string $name The html name of the textbox
      * @param string $accept The MIME-type to be accepted, default is all
      * @param string $size The number of columns wide the textbox should be displayed
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @deprecated
      * @return string
      */
-    function CreateInputFile($id, $name, $accept='', $size='10',$addttext='')
+    function CreateInputFile($id, $name, $accept='', $size='10',$addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputFile($this, $id, $name, $accept, $size, $addttext);
+        return cms_module_CreateInputFile($this, $id, $name, $accept, $size, $addtext);
     }
 
     /**
@@ -1924,107 +1924,107 @@ abstract class CMSModule
      * @param string $value The predefined value of the textbox, if any
      * @param string $size The number of columns wide the textbox should be displayed
      * @param string $maxlength The maximum number of characters that should be allowed to be entered
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @deprecated
      * @return string
      */
-    function CreateInputPassword($id, $name, $value='', $size='10', $maxlength='255', $addttext='')
+    function CreateInputPassword($id, $name, $value='', $size='10', $maxlength='255', $addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputPassword($this, $id, $name, $value, $size, $maxlength, $addttext);
+        return cms_module_CreateInputPassword($this, $id, $name, $value, $size, $maxlength, $addtext);
     }
 
     /**
-     * Returns the xhtml equivalent of a hidden field.	This is basically a nice little wrapper
+     * Returns the xhtml equivalent of a hidden field. This is basically a nice little wrapper
      * to make sure that id's are placed in names and also that it's xhtml compliant.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the hidden field
      * @param string $value The predefined value of the field, if any
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @deprecated
      * @return string
      */
-    function CreateInputHidden($id, $name, $value='', $addttext='')
+    function CreateInputHidden($id, $name, $value='', $addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputHidden($this, $id, $name, $value, $addttext);
+        return cms_module_CreateInputHidden($this, $id, $name, $value, $addtext);
     }
 
     /**
-     * Returns the xhtml equivalent of a checkbox.	This is basically a nice little wrapper
+     * Returns the xhtml equivalent of a checkbox. This is basically a nice little wrapper
      * to make sure that id's are placed in names and also that it's xhtml compliant.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the checkbox
      * @param string $value The value returned from the input if selected
      * @param string $selectedvalue The current value. If equal to $value the checkbox is selected
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @deprecated
      * @return string
      */
-    function CreateInputCheckbox($id, $name, $value='', $selectedvalue='', $addttext='')
+    function CreateInputCheckbox($id, $name, $value='', $selectedvalue='', $addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputCheckbox($this, $id, $name, $value, $selectedvalue, $addttext);
+        return cms_module_CreateInputCheckbox($this, $id, $name, $value, $selectedvalue, $addtext);
     }
 
     /**
-     * Returns the xhtml equivalent of a submit button.	 This is basically a nice little wrapper
+     * Returns the xhtml equivalent of a submit button. This is basically a nice little wrapper
      * to make sure that id's are placed in names and also that it's xhtml compliant.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the button
      * @param string $value The predefined value of the button, if any
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @param string $image Use an image instead of a regular button
      * @param string $confirmtext Optional text to display in a confirmation message.
      * @deprecated
      * @return string
      */
-    function CreateInputSubmit($id, $name, $value='', $addttext='', $image='', $confirmtext='')
+    function CreateInputSubmit($id, $name, $value='', $addtext='', $image='', $confirmtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputSubmit($this, $id, $name, $value, $addttext, $image, $confirmtext);
+        return cms_module_CreateInputSubmit($this, $id, $name, $value, $addtext, $image, $confirmtext);
     }
 
     /**
-     * Returns the xhtml equivalent of a reset button.	This is basically a nice little wrapper
+     * Returns the xhtml equivalent of a reset button. This is basically a nice little wrapper
      * to make sure that id's are placed in names and also that it's xhtml compliant.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the button
      * @param string $value The predefined value of the button, if any
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @deprecated
      * @return string
      */
-    function CreateInputReset($id, $name, $value='Reset', $addttext='')
+    function CreateInputReset($id, $name, $value='Reset', $addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputReset($this, $id, $name, $value, $addttext);
+        return cms_module_CreateInputReset($this, $id, $name, $value, $addtext);
     }
 
     /**
-     * Returns the xhtml equivalent of a file upload input.	 This is basically a nice little wrapper
+     * Returns the xhtml equivalent of a file upload input. This is basically a nice little wrapper
      * to make sure that id's are placed in names and also that it's xhtml compliant.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @param int $size The size of the text field associated with the file upload field.  Some browsers may not respect this value.
      * @param int $maxlength The maximim length of the content of the text field associated with the file upload field.  Some browsers may not respect this value.
      * @deprecated
      * @return string
      */
-    function CreateFileUploadInput($id, $name, $addttext='',$size='10', $maxlength='255')
+    function CreateFileUploadInput($id, $name, $addtext='',$size='10', $maxlength='255')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateFileUploadInput($this, $id, $name, $addttext, $size, $maxlength);
+        return cms_module_CreateFileUploadInput($this, $id, $name, $addtext, $size, $maxlength);
     }
 
     /**
-     * Returns the xhtml equivalent of a dropdown list.	 This is basically a nice little wrapper
+     * Returns the xhtml equivalent of a dropdown list. This is basically a nice little wrapper
      * to make sure that id's are placed in names and also that it is xhtml compliant.
      *
      * @param string $id The id given to the module on execution
@@ -2032,14 +2032,14 @@ abstract class CMSModule
      * @param string $items An array of items to put into the dropdown list... they should be $key=>$value pairs
      * @param string $selectedindex The default selected index of the dropdown list.  Setting to -1 will result in the first choice being selected
      * @param string $selectedvalue The default selected value of the dropdown list.  Setting to '' will result in the first choice being selected
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @deprecated
      * @return string
      */
-    function CreateInputDropdown($id, $name, $items, $selectedindex=-1, $selectedvalue='', $addttext='')
+    function CreateInputDropdown($id, $name, $items, $selectedindex=-1, $selectedvalue='', $addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputDropdown($this, $id, $name, $items, $selectedindex, $selectedvalue, $addttext);
+        return cms_module_CreateInputDropdown($this, $id, $name, $items, $selectedindex, $selectedvalue, $addtext);
     }
 
     /**
@@ -2052,19 +2052,19 @@ abstract class CMSModule
      * @param string $items An array of items to put into the list... they should be $key=>$value pairs
      * @param string $size The number of columns wide the textbox should be displayed
      * @param string $maxlength The maximum number of characters that should be allowed to be entered
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @deprecated
      * @return string
      */
 
-    function CreateInputDataList($id, $name, $value='', $items=[], $size='10', $maxlength='255', $addttext='')
+    function CreateInputDataList($id, $name, $value='', $items=[], $size='10', $maxlength='255', $addtext='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputDataList($this, $id, $name, $value, $items, $size, $maxlength, $addttext);
+        return cms_module_CreateInputDataList($this, $id, $name, $value, $items, $size, $maxlength, $addtext);
     }
 
     /**
-     * Returns the xhtml equivalent of a multi-select list.	 This is basically a nice little wrapper
+     * Returns the xhtml equivalent of a multi-select list. This is basically a nice little wrapper
      * to make sure that id's are placed in names and also that it is xhtml compliant.
      *
      * @param string $id The id given to the module on execution
@@ -2072,37 +2072,37 @@ abstract class CMSModule
      * @param string $items An array of items to put into the list... they should be $key=>$value pairs
      * @param string $selecteditems An array of items in the list that should default to selected.
      * @param string $size The number of rows to be visible in the list (before scrolling).
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @param bool $multiple indicates whether multiple selections are allowed (defaults to true)
      * @return string
      * @deprecated
      */
-    function CreateInputSelectList($id, $name, $items, $selecteditems=array(), $size=3, $addttext='', $multiple = true)
+    function CreateInputSelectList($id, $name, $items, $selecteditems=array(), $size=3, $addtext='', $multiple = true)
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputSelectList($this, $id, $name, $items, $selecteditems, $size, $addttext, $multiple);
+        return cms_module_CreateInputSelectList($this, $id, $name, $items, $selecteditems, $size, $addtext, $multiple);
     }
 
     /**
-     * Returns the xhtml equivalent of a set of radio buttons.	This is basically a nice little wrapper
+     * Returns the xhtml equivalent of a set of radio buttons. This is basically a nice little wrapper
      * to make sure that id's are placed in names and also that it is xhtml compliant.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the radio group
      * @param string $items An array of items to create as radio buttons... they should be $key=>$value pairs
-     * @param string $selectedvalue The default selected index of the radio group.	 Setting to -1 will result in the first choice being selected
-     * @param string $addttext Any additional text that should be added into the tag when rendered
+     * @param string $selectedvalue The default selected index of the radio group. Setting to -1 will result in the first choice being selected
+     * @param string $addtext Any additional text that should be added into the tag when rendered
      * @param string $delimiter A delimiter to throw between each radio button, e.g., a <br> tag or something for formatting
      * @return string
      */
-    function CreateInputRadioGroup($id, $name, $items, $selectedvalue='', $addttext='', $delimiter='')
+    function CreateInputRadioGroup($id, $name, $items, $selectedvalue='', $addtext='', $delimiter='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateInputRadioGroup($this, $id, $name, $items, $selectedvalue, $addttext, $delimiter);
+        return cms_module_CreateInputRadioGroup($this, $id, $name, $items, $selectedvalue, $addtext, $delimiter);
     }
 
     /**
-     * Returns the xhtml equivalent of a textarea.	Also takes WYSIWYG preference into consideration if it's called from the admin side.
+     * Returns the xhtml equivalent of a textarea. Also takes WYSIWYG preference into consideration if it's called from the admin side.
      *
      * @param bool   $enablewysiwyg Should we try to create a WYSIWYG for this textarea?
      * @param string $id The id given to the module on execution
@@ -2111,7 +2111,7 @@ abstract class CMSModule
      * @param string $classname The CSS class to associate this textarea to
      * @param string $htmlid The html id to give to this textarea
      * @param string $encoding The encoding to use for the content
-     * @param string $stylesheet The text of the stylesheet associated to this content.	 Only used for certain WYSIWYGs
+     * @param string $stylesheet The text of the stylesheet associated to this content. Only used for certain WYSIWYGs
      * @param string $cols The number of characters wide (columns) the resulting textarea should be
      * @param string $rows The number of characters high (rows) the resulting textarea should be
      * @param string $forcewysiwyg The wysiwyg-system to be forced even if the user has chosen another one
@@ -2147,7 +2147,7 @@ abstract class CMSModule
 
 
     /**
-     * Returns the xhtml equivalent of a textarea.	Also takes Syntax hilighter preference
+     * Returns the xhtml equivalent of a textarea. Also takes syntax hilighter preference
      * into consideration if it's called from the admin side.
      *
      * @deprecated
@@ -2157,7 +2157,7 @@ abstract class CMSModule
      * @param string $classname The CSS class to associate this textarea to
      * @param string $htmlid The html id to give to this textarea
      * @param string $encoding The encoding to use for the content
-     * @param string $stylesheet The text of the stylesheet associated to this content.	 Only used for certain WYSIWYGs
+     * @param string $stylesheet The text of the stylesheet associated with this content. Only used for certain WYSIWYGs
      * @param string $cols The number of characters wide (columns) the resulting textarea should be
      * @param string $rows The number of characters high (rows) the resulting textarea should be
      * @param string $addtext Additional text for the text area tag.
@@ -2178,61 +2178,62 @@ abstract class CMSModule
      * @param string $returnid The id to eventually return to when the module is finished it's task
      * @param string $action The action that this form should do when the link is clicked
      * @param string $contents The text that will have to be clicked to follow the link
-     * @param string $params An array of params that should be inlucded in the URL of the link.	 These should be in a $key=>$value format.
+     * @param string $params An array of params that should be inlucded in the URL of the link. These should be in a $key=>$value format.
      * @param string $warn_message Text to display in a javascript warning box.  If they click no, the link is not followed by the browser.
      * @param bool $onlyhref A flag to determine if only the href section should be returned
-     * @param bool $inline A flag to determine if actions should be handled inline (no moduleinterface.php -- only works for frontend)
+     * @param bool $inline A flag to determine if actions should be handled inline (no moduleinterface.php -- only works for frontend) Default true
      * @param string $addtext Any additional text that should be added into the tag when rendered
      * @param bool $targetcontentonly A flag indicating that the output of this link should target the content area of the destination page.
      * @param string $prettyurl An optional pretty url segment (relative to the root of the site) to use when generating the link.
      * @return string
      */
-    function CreateFrontendLink( $id, $returnid, $action, $contents='', $params=array(),
+    function CreateFrontendLink($id, $returnid, $action, $contents='', $params=array(),
                                  $warn_message='', $onlyhref=false, $inline=true, $addtext='',
-                                 $targetcontentonly=false, $prettyurl='' )
+                                 $targetcontentonly=false, $prettyurl='')
     {
-        return $this->CreateLink( $id, $action, $returnid, $contents, $params, $warn_message, $onlyhref,
-                                  $inline, $addtext, $targetcontentonly, $prettyurl );
+        $this->_loadFormMethods();
+        return cms_module_CreateLink($this, $id, $action, $returnid, $contents, $params,
+            $warn_message, $onlyhref, $inline, $addtext, $targetcontentonly, $prettyurl);
     }
 
     /**
-     * Returns the xhtml equivalent of an href link	 This is basically a nice little wrapper
+     * Returns the xhtml equivalent of an href link. This is basically a nice little wrapper
      * to make sure that id's are placed in names and also that it's xhtml compliant.
      *
      * @param string $id The id given to the module on execution
      * @param string $action The action that this form should do when the link is clicked
-     * @param string $returnid The id to eventually return to when the module is finished it's task
-     * @param string $contents The text that will have to be clicked to follow the link
-     * @param string $params An array of params that should be inlucded in the URL of the link.	 These should be in a $key=>$value format.
-     * @param string $warn_message Text to display in a javascript warning box.  If they click no, the link is not followed by the browser.
-     * @param bool $onlyhref A flag to determine if only the href section should be returned
-     * @param bool $inline A flag to determine if actions should be handled inline (no moduleinterface.php -- only works for frontend)
-     * @param string $addttext Any additional text that should be added into the tag when rendered
-     * @param bool $targetcontentonly A flag to determine if the link should target the default content are of the destination page.
-     * @param string $prettyurl An optional pretty url segment (related to the root of the website) for a pretty url.
+     * @param string $returnid The id to eventually return to when the module is finished its task. Default ''
+     * @param string $contents The text that will have to be clicked to follow the link. Default ''
+     * @param array $params Parameters to be included in the URL-query of the link. These should be in a $key=>$value format. Default []
+     * @param string $warn_message Text to display in a javascript warning box. If non-empty, and the user clicks no, the link is not followed by the browser. Default ''
+     * @param bool $onlyhref Whether only the href section should be returned. Default false
+     * @param bool $inline Whether the action should be handled inline (no moduleinterface.php - only works for frontend). Default false
+     * @param string $addtext Any additional text that should be added into the tag when rendered. Default ''
+     * @param bool $targetcontentonly Whether the link targets the default content area of the destination page. Default false
+     * @param string $prettyurl Optional pretty-url segment (related to the root of the website) for a pretty url. Default ''
      * @return string
      */
     function CreateLink($id, $action, $returnid='', $contents='', $params=array(),
-                        $warn_message='', $onlyhref=false, $inline=false, $addttext='',
+                        $warn_message='', $onlyhref=false, $inline=false, $addtext='',
                         $targetcontentonly=false, $prettyurl='')
     {
         $this->_loadFormMethods();
-        return cms_module_CreateLink($this, $id, $action, $returnid, $contents, $params, $warn_message, $onlyhref, $inline, $addttext, $targetcontentonly, $prettyurl);
+        return cms_module_CreateLink($this, $id, $action, $returnid, $contents, $params,
+            $warn_message, $onlyhref, $inline, $addtext, $targetcontentonly, $prettyurl);
     }
-
 
     /**
      * Returns a URL to a module action
      * This method is called by the CreateLink methods when creating a link to a module action.
      *
      * @since 1.10
-     * @param string  $id The module action id (cntnt01 indicates that the defaul content block of the destination page should be used).
-     * @param string  $action The module action name
-     * @param int $returnid The destination page.
-     * @param hash    $params Areay of parameters for the URL.  These will be ignored if the prettyurl argument is specified.
-     * @param bool $inline whether the target of the output link is the same tag on the same page.
-     * @param bool $targetcontentonly whether the target of the output link targets the content area of the destination page.
-     * @param string  $prettyurl An optional url segment related to the root of the page for pretty url purposes.
+     * @param string $id The module action id (cntnt01 indicates that the default content block of the destination page should be used).
+     * @param string $action The module action name
+     * @param int $returnid The destination page. Default ''
+     * @param array $params Parameters for the URL-query. These will be ignored if the prettyurl argument is specified. Default []
+     * @param bool $inline Whether the target of the output link is the same tag on the same page. Default false
+     * @param bool $targetcontentonly Whether the link targets the default content area of the destination page. Default false
+     * @param string $prettyurl Optional url segment related to the root of the page for pretty url purposes. Default ''
      * @return string.
      */
     public function create_url($id,$action,$returnid='',$params=array(),
@@ -2251,8 +2252,8 @@ abstract class CMSModule
      * @abstract
      * @param string $id The module action id (cntnt01 indicates that the defaul content block of the destination page should be used).
      * @param string $action The module action name
-     * @param int $returnid The destination page.
-     * @param array   $params Areay of parameters for the URL.  These will be ignored if the prettyurl argument is specified.
+     * @param mixed $returnid int | '' | null The destination page.
+     * @param array $params Parameters for the URL-query. These will be ignored if the prettyurl argument is specified.
      * @param bool $inline whether the target of the output link is the same tag on the same page.
      * @return string
      */
@@ -2262,8 +2263,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the xhtml equivalent of an href link for content links.	This is basically a nice
-     * little wrapper to make sure that we go back to where we want and that it's xhtml complient
+     * Returns the xhtml equivalent of an href link for content links.This is basically a nice
+     * little wrapper to make sure that we go back to where we want and that it's xhtml compliant
      *
      * @param int $pageid the page id of the page we want to direct to
      * @param string $contents The optional text or XHTML contents of the generated link
@@ -2278,13 +2279,13 @@ abstract class CMSModule
 
 
     /**
-     * Returns the xhtml equivalent of an href link for Content links.	This is basically a nice little wrapper
+     * Returns the xhtml equivalent of an href link for Content links. This is basically a nice little wrapper
      * to make sure that we go back to where we want to and that it's xhtml compliant.
      *
      * @param string $id The id given to the module on execution
-     * @param string $returnid The id to return to when the module is finished it's task
+     * @param mixed $returnid int | '' | null The id to return to when the module is finished its task
      * @param string $contents The text that will have to be clicked to follow the link
-     * @param string $params An array of params that should be inlucded in the URL of the link.	 These should be in a $key=>$value format.
+     * @param array $params Parameters to be included in the URL-query of the link. These should be in a $key=>$value format.
      * @param bool $onlyhref A flag to determine if only the href section should be returned
      * @return string
      */
@@ -2328,10 +2329,10 @@ abstract class CMSModule
      * @param string $id The id given to the module on execution
      * @param string $returnid The action that this form should do when the form is submitted
      * @param string $action The id to eventually return to when the module is finished it's task
-     * @param string $params An array of params that should be inlucded in the URL of the link.	 These should be in a $key=>$value format.
+     * @param array $params Parameters to be included in the URL of the link. These should be in a $key=>$value format.
      * @param bool $inline A flag to determine if actions should be handled inline (no moduleinterface.php -- only works for frontend)
      */
-    public function RedirectForFrontEnd($id, $returnid, $action, $params = array(), $inline = true )
+    public function RedirectForFrontEnd($id, $returnid, $action, $params = array(), $inline = true)
     {
         return $this->Redirect($id, $action, $returnid, $params, $inline );
     }
@@ -2342,7 +2343,7 @@ abstract class CMSModule
      * @param string $id The id given to the module on execution
      * @param string $action The action that this form should do when the form is submitted
      * @param string $returnid The id to eventually return to when the module is finished it's task
-     * @param string $params An array of params that should be inlucded in the URL of the link.	 These should be in a $key=>$value format.
+     * @param array $params Parameters to be included in the URL of the link. These should be in a $key=>$value format.
      * @param bool $inline A flag to determine if actions should be handled inline (no moduleinterface.php -- only works for frontend)
      */
     public function Redirect($id, $action, $returnid='', $params=array(), $inline=false)
@@ -2364,7 +2365,7 @@ abstract class CMSModule
     }
 
     /**
-     * Redirects the user to a content page outside of the module.	The passed around returnid is
+     * Redirects the user to a content page outside of the module. The passed around returnid is
      * frequently used for this so that the user will return back to the page from which they first
      * entered the module.
      *
@@ -2824,7 +2825,7 @@ abstract class CMSModule
     }
 
     /**
-     * Put an event into the audit (admin) log.	 This should be
+     * Put an event into the audit (admin) log. This should be
      * done on most admin events for consistency.
      *
      * @final
