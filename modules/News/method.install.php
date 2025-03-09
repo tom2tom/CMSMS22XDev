@@ -9,77 +9,105 @@ if( !class_exists('news_admin_ops') ) {
 
 if( cmsms()->test_state(CmsApp::STATE_INSTALL) ) {
   $uid = 1; // hardcode to first user
-} else {
+}
+else {
   $uid = get_userid();
 }
 
 $dict = NewDataDictionary($db);
+// is icon used now?
 $flds = "
-	news_id I KEY,
-	news_category_id I,
-	news_title C(255),
-	news_data X,
-	news_date " . CMS_ADODB_DT . ",
-	summary X,
-	start_time " . CMS_ADODB_DT . ",
-	end_time " . CMS_ADODB_DT . ",
-	status C(25),
-	icon C(255),
-	create_date " . CMS_ADODB_DT . ",
-	modified_date " . CMS_ADODB_DT . ",
-	author_id I,
-	news_extra C(255),
-	news_url C(255),
-	searchable I1
-"; // icon is no longer used.
+news_id I KEY,
+news_category_id I,
+news_title C(255),
+news_data X,
+news_date DT,
+summary X,
+start_time DT,
+end_time DT,
+status C(25),
+icon C(255),
+create_date DT,
+modified_date DT,
+author_id I,
+news_extra C(255),
+news_url C(255),
+searchable I1 DEFAULT 0
+";
 
 $taboptarray = array('mysqli' => 'ENGINE=MyISAM', 'mysql' => 'ENGINE=MyISAM');
 $sqlarray = $dict->CreateTableSQL(CMS_DB_PREFIX."module_news", $flds, $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
+//CMSMS 2.2 DataDictionary can't handle extra field properties, so fallback to literal SQL for MySQL
+$pref = CMS_DB_PREFIX;
+$sql = <<<EOS
+ALTER TABLE `{$pref}module_news`
+CHANGE `create_date` `create_date` datetime NULL DEFAULT current_timestamp(),
+CHANGE `modified_date` `modified_date` datetime DEFAULT NULL ON UPDATE current_timestamp()
+EOS;
+$db->Execute($sql);
+
 $db->CreateSequence(CMS_DB_PREFIX."module_news_seq");
 
 $flds = "
-	news_category_id I KEY,
-	news_category_name C(255) NOTNULL,
-	parent_id I,
-	hierarchy C(255),
-	item_order I,
-	long_name X,
-	create_date T,
-	modified_date T
+news_category_id I KEY,
+news_category_name C(255) NOTNULL,
+parent_id I,
+hierarchy C(255) NOTNULL,
+item_order I,
+long_name X,
+create_date DT,
+modified_date DT
 ";
 
 //$taboptarray = array('mysql' => 'ENGINE=MyISAM', 'mysqli' => 'ENGINE=MyISAM');
 $sqlarray = $dict->CreateTableSQL(CMS_DB_PREFIX."module_news_categories",$flds, $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
+$sql = <<<EOS
+ALTER TABLE `{$pref}module_news_categories`
+CHANGE `hierarchy` `hierarchy` varchar(255) CHARACTER SET ascii COLLATE ascii_bin DEFAULT NULL,
+CHANGE `create_date` `create_date` datetime NULL DEFAULT current_timestamp(),
+CHANGE `modified_date` `modified_date` datetime DEFAULT NULL ON UPDATE current_timestamp()
+EOS;
+$db->Execute($sql);
 $db->CreateSequence(CMS_DB_PREFIX."module_news_categories_seq");
 
 $flds = "
-	id I KEY AUTO,
-	name C(255),
-	type C(50),
-	max_length I,
-	create_date " . CMS_ADODB_DT . ",
-	modified_date " . CMS_ADODB_DT . ",
-	item_order I,
-	public I,
-	extra  X
+id I KEY AUTO,
+name C(255),
+type C(50),
+max_length I,
+create_date DT,
+modified_date DT,
+item_order I,
+public I,
+extra X
 ";
 
 //$taboptarray = array('mysql' => 'ENGINE=MyISAM', 'mysqli' => 'ENGINE=MyISAM');
 $sqlarray = $dict->CreateTableSQL(CMS_DB_PREFIX."module_news_fielddefs", $flds, $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
+$sql = <<<EOS
+ALTER TABLE `{$pref}module_news_fielddefs`
+CHANGE `create_date` `create_date` datetime NULL DEFAULT current_timestamp(),
+CHANGE `modified_date` `modified_date` datetime DEFAULT NULL ON UPDATE current_timestamp()
+EOS;
 
 $flds = "
-	news_id I KEY NOT NULL,
-	fielddef_id I KEY NOT NULL,
-	value X,
-	create_date " . CMS_ADODB_DT . ",
-	modified_date " . CMS_ADODB_DT . "
+news_id I KEY NOT NULL,
+fielddef_id I KEY NOT NULL,
+value X,
+create_date DT,
+modified_date DT
 ";
 
 //$taboptarray = array('mysql' => 'ENGINE=MyISAM', 'mysqli' => 'ENGINE=MyISAM');
 $sqlarray = $dict->CreateTableSQL(CMS_DB_PREFIX."module_news_fieldvals", $flds, $taboptarray);
+$sql = <<<EOS
+ALTER TABLE `{$pref}module_news_fieldvals`
+CHANGE `create_date` `create_date` datetime NULL DEFAULT current_timestamp(),
+CHANGE `modified_date` `modified_date` datetime DEFAULT NULL ON UPDATE current_timestamp()
+EOS;
 $dict->ExecuteSQLArray($sqlarray);
 
 // Set Permission
@@ -108,14 +136,14 @@ catch( CmsException $e ) {
 try {
   $fn = __DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'orig_summary_template.tpl';
   if( file_exists( $fn ) ) {
-	$template = @file_get_contents($fn);
-	$tpl = new CmsLayoutTemplate();
-	$tpl->set_name('News Summary Sample');
-	$tpl->set_owner($uid);
-	$tpl->set_content($template);
-	$tpl->set_type($summary_template_type);
-	$tpl->set_type_dflt(TRUE);
-	$tpl->save();
+    $template = @file_get_contents($fn);
+    $tpl = new CmsLayoutTemplate();
+    $tpl->set_name('News Summary Sample');
+    $tpl->set_owner($uid);
+    $tpl->set_content($template);
+    $tpl->set_type($summary_template_type);
+    $tpl->set_type_dflt(TRUE);
+    $tpl->save();
   }
 }
 catch( CmsException $e ) {
@@ -128,14 +156,14 @@ try {
   // Setup Simplex Theme HTML5 sample summary template
   $fn = __DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'Summary_Simplex_template.tpl';
   if( file_exists( $fn ) ) {
-	$template = @file_get_contents($fn);
-	$tpl = new CmsLayoutTemplate();
-	$tpl->set_name('Simplex News Summary');
-	$tpl->set_owner($uid);
-	$tpl->set_content($template);
-	$tpl->set_type($summary_template_type);
-	$tpl->add_design('Simplex');
-	$tpl->save();
+    $template = @file_get_contents($fn);
+    $tpl = new CmsLayoutTemplate();
+    $tpl->set_name('Simplex News Summary');
+    $tpl->set_owner($uid);
+    $tpl->set_content($template);
+    $tpl->set_type($summary_template_type);
+    $tpl->add_design('Simplex');
+    $tpl->save();
   }
 }
 catch( CmsException $e ) {
@@ -165,14 +193,14 @@ catch( CmsException $e ) {
 try {
   $fn = __DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'orig_detail_template.tpl';
   if( file_exists( $fn ) ) {
-	$template = @file_get_contents($fn);
-	$tpl = new CmsLayoutTemplate();
-	$tpl->set_name('News Detail Sample');
-	$tpl->set_owner($uid);
-	$tpl->set_content($template);
-	$tpl->set_type($detail_template_type);
-	$tpl->set_type_dflt(TRUE);
-	$tpl->save();
+    $template = @file_get_contents($fn);
+    $tpl = new CmsLayoutTemplate();
+    $tpl->set_name('News Detail Sample');
+    $tpl->set_owner($uid);
+    $tpl->set_content($template);
+    $tpl->set_type($detail_template_type);
+    $tpl->set_type_dflt(TRUE);
+    $tpl->save();
   }
 }
 catch( CmsException $e ) {
@@ -185,14 +213,14 @@ try {
   // Setup Simplex Theme HTML5 sample detail template
   $fn = __DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'Simplex_Detail_template.tpl';
   if( file_exists( $fn ) ) {
-	$template = @file_get_contents($fn);
-	$tpl = new CmsLayoutTemplate();
-	$tpl->set_name('Simplex News Detail');
-	$tpl->set_owner($uid);
-	$tpl->set_content($template);
-	$tpl->set_type($detail_template_type);
-	$tpl->add_design('Simplex');
-	$tpl->save();
+    $template = @file_get_contents($fn);
+    $tpl = new CmsLayoutTemplate();
+    $tpl->set_name('Simplex News Detail');
+    $tpl->set_owner($uid);
+    $tpl->set_content($template);
+    $tpl->set_type($detail_template_type);
+    $tpl->add_design('Simplex');
+    $tpl->save();
   }
 }
 catch( CmsException $e ) {
@@ -222,14 +250,14 @@ catch( CmsException $e ) {
 try {
   $fn = __DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'orig_form_template.tpl';
   if( file_exists( $fn ) ) {
-	$template = @file_get_contents($fn);
-	$tpl = new CmsLayoutTemplate();
-	$tpl->set_name('News Fesubmit Form Sample');
-	$tpl->set_owner($uid);
-	$tpl->set_content($template);
-	$tpl->set_type($form_template_type);
-	$tpl->set_type_dflt(TRUE);
-	$tpl->save();
+    $template = @file_get_contents($fn);
+    $tpl = new CmsLayoutTemplate();
+    $tpl->set_name('News Fesubmit Form Sample');
+    $tpl->set_owner($uid);
+    $tpl->set_content($template);
+    $tpl->set_type($form_template_type);
+    $tpl->set_type_dflt(TRUE);
+    $tpl->save();
   }
 }
 catch( CmsException $e ) {
@@ -259,14 +287,14 @@ catch( CmsException $e ) {
 try {
   $fn = __DIR__.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'browsecat.tpl';
   if( file_exists( $fn ) ) {
-	  $template = @file_get_contents($fn);
-	  $tpl = new CmsLayoutTemplate();
-	  $tpl->set_name('News Browse Category Sample');
-	  $tpl->set_owner($uid);
-	  $tpl->set_content($template);
-	  $tpl->set_type($browsecat_template_type);
-	  $tpl->set_type_dflt(TRUE);
-	  $tpl->save();
+    $template = @file_get_contents($fn);
+    $tpl = new CmsLayoutTemplate();
+    $tpl->set_name('News Browse Category Sample');
+    $tpl->set_owner($uid);
+    $tpl->set_content($template);
+    $tpl->set_type($browsecat_template_type);
+    $tpl->set_type_dflt(TRUE);
+    $tpl->save();
   }
 }
 catch( CmsException $e ) {
@@ -281,36 +309,61 @@ $this->SetTemplate('email_template',$this->GetDfltEmailTemplate());
 
 // Other preferences
 $this->SetPreference('allowed_upload_types','bmp,jpg,jpeg,gif,png,svg,webp,ico'); // replicate FileTypeHelper
-$this->SetPreference('auto_create_thumbnails','gif,jpg,jpeg,png');
-
+$this->SetPreference('auto_create_thumbnails','gif,jpg,jpeg,png'); // UNUSED
+/* other possibles
+$this->SetPreference('alert_drafts',1);
+$this->SetPreference('allcategories',1);
+$this->SetPreference('allow_fesubmit',1);
+$this->SetPreference('allow_summary_wysiwyg',1);
+$this->SetPreference('article_category','');
+$this->SetPreference('article_pagelimit',10); //default 10 articles per displayed (expandable) page
+$this->SetPreference('article_sortby','news_date');
+$this->SetPreference('clear_category',0); //don't delete articles in category when category is deleted
+$this->SetPreference('current_detail_template',''); //no preferred 'News::detail'-type template for news-item previews (TODO never changed)
+$this->SetPreference('date_format','%e %B %Y %l:%M %p');
+$this->SetPreference('default_category',1);
+$this->SetPreference('detail_returnid',-1); //no default post-detail page
+$this->SetPreference('email_subject',$this->Lang('subject_newnews'));
+$this->SetPreference('email_template','Article Approval-Request Email'); // notice-body generator
+$this->SetPreference('email_to','');
+$this->SetPreference('expired_searchable',1);
+$this->SetPreference('expired_viewable',0);
+$this->SetPreference('expiry_interval',30); //default 30-days lifetime
+$this->SetPreference('fesubmit_redirect',0);
+$this->SetPreference('fesubmit_status',0);
+$this->SetPreference('formsubmit_emailaddress','');
+$this->SetPreference('hide_summary_field',0);
+*/
+$longnow = trim($db->DBTimeStamp(time()), '\'');
 // Setup General category
 $catid = $db->GenID(CMS_DB_PREFIX."module_news_categories_seq");
-$query = 'INSERT INTO '.CMS_DB_PREFIX.'module_news_categories (news_category_id, news_category_name, parent_id, create_date, modified_date) VALUES (?,?,?,'.$db->DBTimeStamp(time()).','.$db->DBTimeStamp(time()).')';
-$db->Execute($query, array($catid, 'General', -1));
+$query = 'INSERT INTO '.CMS_DB_PREFIX.'module_news_categories (news_category_id, news_category_name, parent_id, hierarchy, item_order, create_date, modified_date) VALUES (?,?,?,?,?,?,?)';
+$db->Execute($query, array($catid, 'General', -1, '001', 1, $longnow, $longnow));
 
 // Setup initial news article
 $articleid = $db->GenID(CMS_DB_PREFIX."module_news_seq");
-$query = 'INSERT INTO '.CMS_DB_PREFIX.'module_news ( NEWS_ID, NEWS_CATEGORY_ID, AUTHOR_ID, NEWS_TITLE, NEWS_DATA, NEWS_DATE, SUMMARY, START_TIME, END_TIME, STATUS, ICON, SEARCHABLE, CREATE_DATE, MODIFIED_DATE ) VALUES (?,?,?,?,?,'.$db->DBTimeStamp(time()).',?,?,?,?,?,?,'.$db->DBTimeStamp(time()).','.$db->DBTimeStamp(time()).')';
-$db->Execute($query, array($articleid, $catid, 1, 'News Module Installed', 'The news module was installed.  Exciting. This news article does not use a Summary field and therefore there is no link to read more. But you can click on the news heading to read the whole article.', null, null, null, 'published', null, 1));
+$query = 'INSERT INTO '.CMS_DB_PREFIX.'module_news ( news_id, news_category_id, author_id, news_title, news_data, news_date, summary, start_time, end_time, status, icon, searchable, create_date, modified_date ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+$db->Execute($query, array($articleid, $catid, 1, 'News Module Installed', 'The news module was installed.  Exciting. This news article does not use a Summary field and therefore there is no link to read more. But you can click on the news heading to read the whole article.', $longnow, null, null, null, 'published', null, 1, $longnow, $longnow));
+
 news_admin_ops::UpdateHierarchyPositions();
 
 // Setup permissions
 $perm_id = $db->GetOne("SELECT permission_id FROM ".CMS_DB_PREFIX."permissions WHERE permission_name = 'Modify News'");
 $group_id = $db->GetOne("SELECT group_id FROM `".CMS_DB_PREFIX."groups` WHERE group_name = 'Admin'");
 
-$count = $db->GetOne("SELECT count(*) FROM " . CMS_DB_PREFIX . "group_perms WHERE group_id = ? AND permission_id = ?", array($group_id, $perm_id));
+$count = $db->GetOne("SELECT COUNT(*) FROM " . CMS_DB_PREFIX . "group_perms WHERE group_id = ? AND permission_id = ?", array($group_id, $perm_id));
 if ((int)$count == 0) {
   $new_id = $db->GenID(CMS_DB_PREFIX."group_perms_seq");
-  $query = "INSERT INTO " . CMS_DB_PREFIX . "group_perms (group_perm_id, group_id, permission_id, create_date, modified_date) VALUES (".$new_id.", ".$group_id.", ".$perm_id.", ". $db->DBTimeStamp(time()) . ", " . $db->DBTimeStamp(time()) . ")";
+  $query = "INSERT INTO " . CMS_DB_PREFIX . "group_perms (group_perm_id, group_id, permission_id, create_date, modified_date) VALUES (".$new_id.", ".$group_id.", ".$perm_id.", ".$longnow.", ".$longnow.")";
   $db->Execute($query);
 }
 
 $group_id = $db->GetOne("SELECT group_id FROM `".CMS_DB_PREFIX."groups` WHERE group_name = 'Editor'");
 
-$count = $db->GetOne("SELECT count(*) FROM " . CMS_DB_PREFIX . "group_perms WHERE group_id = ? AND permission_id = ?", array($group_id, $perm_id));
+$count = $db->GetOne("SELECT COUNT(*) FROM " . CMS_DB_PREFIX . "group_perms WHERE group_id = ? AND permission_id = ?", array($group_id, $perm_id));
 if ((int)$count == 0) {
   $new_id = $db->GenID(CMS_DB_PREFIX."group_perms_seq");
-  $query = "INSERT INTO " . CMS_DB_PREFIX . "group_perms (group_perm_id, group_id, permission_id, create_date, modified_date) VALUES (".$new_id.", ".$group_id.", ".$perm_id.", ". $db->DBTimeStamp(time()) . ", " . $db->DBTimeStamp(time()) . ")";
+  $query = "INSERT INTO " . CMS_DB_PREFIX . "group_perms (group_perm_id, group_id, permission_id, create_date, modified_date) VALUES (".$new_id.", ".$group_id.", ".$perm_id.", ".$longnow.", ".$longnow.")";
   $db->Execute($query);
 }
 
