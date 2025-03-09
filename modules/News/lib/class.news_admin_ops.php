@@ -123,7 +123,8 @@ final class news_admin_ops
                     $row2 = $db->GetRow($query, array($current_parent_id));
                     if( $row2 ) {
                         //TODO prevent item_order null values ?
-                        $current_hierarchy_position = str_pad((string)$row2['item_order'], 5, '0', STR_PAD_LEFT) . "." . $current_hierarchy_position;
+                        //3-wide hierarchy positions are more than enough
+                        $current_hierarchy_position = str_pad((string)$row2['item_order'], 3, '0', STR_PAD_LEFT) . "." . $current_hierarchy_position;
                         $current_long_name = $row2['news_category_name'] . ' | ' . $current_long_name;
                         $current_parent_id = $row2['parent_id'];
                         $count++;
