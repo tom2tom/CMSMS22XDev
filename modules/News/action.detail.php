@@ -4,13 +4,7 @@ if (!isset($gCms)) exit;
 //
 // initialization
 //
-$article = null; // no object
-$preview = FALSE;
-$articleid = (isset($params['articleid']))?$params['articleid']:-1;
-$cache_id = 'nd'.md5(serialize($params));
-$compile_id = 'nd'.$articleid;
-
-if (isset($params['detailtemplate'])) {
+if (!empty($params['detailtemplate'])) {
     $template = trim($params['detailtemplate']);
 }
 else {
@@ -21,6 +15,12 @@ else {
     }
     $template = $tpl->get_name();
 }
+
+$article = null; // no object
+$preview = FALSE;
+$articleid = (isset($params['articleid'])) ? $params['articleid'] : -1;
+$cache_id = 'nd'.md5(serialize($params));
+$compile_id = 'nd'.$articleid;
 
 if( $id == '_preview_' && isset($_SESSION['news_preview']) && isset($params['preview']) ) {
     // see if our data matches.
@@ -42,13 +42,14 @@ if( $id == '_preview_' && isset($_SESSION['news_preview']) && isset($params['pre
 
 $tpl_ob = $smarty->CreateTemplate($this->GetTemplateResource($template),$cache_id,$compile_id,$smarty);
 if( $preview || !$tpl_ob->IsCached() ) {
-    // not cached... have to do to the work.
+//$tpl_ob = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
+//if( $preview ) {
     if( isset($params['articleid']) && $params['articleid'] == -1 ) {
         $article = news_ops::get_latest_article();
     }
     else if( isset($params['articleid']) && (int)$params['articleid'] > 0 ) {
         $show_expired = $this->GetPreference('expired_viewable',1);
-        if( isset($params['showall']) ) $show_expired = 1;
+        if( !empty($params['showall']) ) $show_expired = 1;
         $article = news_ops::get_article_by_id((int)$params['articleid'],TRUE,$show_expired);
     }
     if( !$article ) {
@@ -57,7 +58,13 @@ if( $preview || !$tpl_ob->IsCached() ) {
     }
     $article->set_linkdata($id,$params);
 
-    $return_url = $this->CreateReturnLink($id, isset($params['origid'])?(int)$params['origid']:$returnid, $this->lang('news_return'));
+    if( !empty($params['origid']) ) {
+        $returnid = (int)$params['origid'];
+        //cache it for use in action.default (passing via url param N/A here)
+        cms_utils::set_app_data('News::origid',$returnid);
+    }
+
+    $return_url = $this->CreateReturnLink($id, $returnid, $this->lang('news_return'));
     $tpl_ob->assign('return_url', $return_url);
     $tpl_ob->assign('entry', $article);
 
@@ -66,7 +73,7 @@ if( $preview || !$tpl_ob->IsCached() ) {
         $catName = $db->GetOne('SELECT news_category_name FROM '.CMS_DB_PREFIX . 'module_news_categories where news_category_id=?',array((int)$params['category_id']));
     }
     $tpl_ob->assign('category_name',$catName);
-    unset($params['article_id']);
+    unset($params['articleid']);
     $tpl_ob->assign('category_link',$this->CreateLink($id, 'default', $returnid, $catName, $params));
 
     $tpl_ob->assign('category_label', $this->Lang('category_label'));
