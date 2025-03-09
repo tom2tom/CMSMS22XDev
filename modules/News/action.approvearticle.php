@@ -40,7 +40,7 @@ if( is_object($search) ) {
       $t_end = $db->UnixTimeStamp($article['end_time']);
     }
 
-    if( $t_end > time() || $this->GetPreference('expired_searchble',1) == 1 ) {
+    if( $t_end > time() || $this->GetPreference('expired_searchable',1) == 1 ) {
       $text = $article['news_data'] . ' ' . $article['summary'] . ' ' . $article['news_title'] . ' ' . $article['news_title'];
       $query = 'SELECT value FROM '.CMS_DB_PREFIX.'module_news_fieldvals WHERE news_id = ?';
       $flds = $db->GetArray($query,array($articleid));
