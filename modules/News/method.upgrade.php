@@ -4,7 +4,8 @@ if (!isset($gCms)) exit;
 if( version_compare($oldversion,'2.50') < 0 ) {
     if( cmsms()->test_state(CmsApp::STATE_INSTALL) ) {
         $uid = 1; // hardcode to first user
-    } else {
+    }
+    else {
         $uid = get_userid();
     }
 
@@ -145,8 +146,8 @@ if( version_compare($oldversion,'2.50') < 0 ) {
       }
   }
   catch( CmsException $e ) {
-    audit('',$this->GetName(),'Upgrade error: '.$e->GetMessage());
-    return;
+      audit('',$this->GetName(),'Upgrade error: '.$e->GetMessage());
+      return FALSE;
   }
 
   $this->RegisterModulePlugin(TRUE);
@@ -171,7 +172,66 @@ if( version_compare($oldversion,'2.50.8') < 0 ) {
     }
 }
 
-if( version_compare($oldversion,'2.51.13') < 0 ) {
+if( version_compare($oldversion,'2.51.14') < 0 ) {
+    $tbl = CMS_DB_PREFIX.'module_news_categories';
+    // update hierarchy values from 5-wide levels to 3-wide
+    $data = $db->getArray('SELECT news_category_id,hierarchy FROM '.$tbl);
+    $query = 'UPDATE '.$tbl.' SET hierarchy=? WHERE news_category_id=?';
+    foreach( $data as $row ) {
+        $parts = explode('.',$row['hierarchy']);
+        foreach( $parts as &$one ) {
+            $one = substr(trim($one),-3);
+        }
+        unset($one);
+        $val = implode('.',$parts);
+        $db->execute($query,[$val,$row['news_category_id']]);
+    }
+    //CMSMS 2.2 DataDictionary can't handle extra field properties, so fallback to literal SQL for MySQL
+    $query = <<<EOS
+ALTER TABLE `{$tbl}`
+CHANGE `hierarchy` `hierarchy` varchar(255) CHARACTER SET ascii COLLATE ascii_bin DEFAULT NULL
+EOS;
+    $db->Execute($query);
+
+    // correct and modify category-fields' format
+    $when = $db->GetOne('SELECT MIN(create_date) FROM '.CMS_DB_PREFIX.'content WHERE create_date IS NOT NULL');
+    if ($when) {
+        $ywhen = substr($when, 0, 11);
+    }
+    else {
+        $ywhen = '2015-01-01 ';
+    }
+    $data = $db->GetArray('SELECT news_category_id,create_date,modified_date FROM '.$tbl);
+
+    if( !isset($dict) ) $dict = NewDataDictionary($db);
+    $sqlarray = $dict->AlterColumnSQL($tbl,'create_date DT');
+    $dict->ExecuteSQLArray($sqlarray);
+    $sqlarray = $dict->AlterColumnSQL($tbl,'modified_date DT');
+    $dict->ExecuteSQLArray($sqlarray);
+
+    $query = 'UPDATE '.$tbl.' SET create_date=?,modified_date=? WHERE news_category_id=?';
+    foreach( $data as $row ) {
+        $dc = $ywhen.$row['create_date'];
+        if( $row['modified_date'] ) {
+            $dm = $ywhen.$row['modified_date'];
+            if( strcmp($dm, $dc) < 0 ) {
+                $dm = $dc;
+            }
+        }
+        else {
+            $dm = null;
+        }
+        $res = $db->Execute($query, array($dc, $dm, $row['news_category_id']));
+    }
+    $pref = CMS_DB_PREFIX;
+    foreach( array('news','news_categories','news_fielddefs','news_fieldvals') as $tn) {
+        $query = <<<EOS
+ALTER TABLE `{$pref}module_{$tn}`
+CHANGE `create_date` `create_date` datetime NULL DEFAULT current_timestamp(),
+CHANGE `modified_date` `modified_date` datetime DEFAULT NULL ON UPDATE current_timestamp()
+EOS;
+        $db->Execute($query);
+    }
     // migrate 'fesubmit_redirect' preference from page alias to page id,
     // to allow use of a hierarcy-selector for setting that pref.
     $mgr = $gCms->GetHierarchyManager();
