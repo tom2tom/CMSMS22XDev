@@ -265,5 +265,4 @@ if( $do_send_email == true ) {
 
 if( $do_redirect ) $this->RedirectContent($dest_page);
 
-// END OF FILE
 ?>
