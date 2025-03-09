@@ -207,4 +207,79 @@
     <li>Security fix.</li>
   </ul>
 </li>
+<li>Version 2.50.1
+  <ul>
+    <li>Changes to createSmartyTemplate calls (now use $smarty->get_template_parent()).</li>
+    <li>Fix problem with custom fields not being assigned in fesubmit.</li>
+    <li>Fix minor problem with html entities in the detail template parameter.</li>
+  </ul>
+</li>
+<li>Version 2.50.3
+  <ul>
+    <li>Fix minor issue with pagination in News Admin console.</li>
+    <li>Fix errors in the default form template.</li>
+    <li>Fix URL to long issues on redirection after adding/editing article.</li>
+  </ul>
+</li>
+<li>Version 2.51
+  <ul>
+    <li>Minor fix to add category.</li>
+    <li>Remove GetNotificationOutput method.</li>
+    <li>Add a task that runs at least every 15 minutes to detect draft articles... create an alert for this.</li>
+    <li>Add an option to never create alerts about draft News articles.</li>
+    <li>Minor optimizations.</li>
+    <li>Add postdate parameter in events.</li>
+    <li>Output template help to Navigator.</li>
+    <li>Add new 'linked file' type field that allows selecting a file using the filepicker.</li>
+    <li>Change default summary and detail templates to support the linked_file field type, and use {thumbnail_url} and {file_url}.</li>
+  </ul>
+</li>
+<li>Version 2.51.4
+  <ul>
+    <li><Fix notices./li>
+  </ul>
+</li>
+<li>Version 2.51.5
+  <ul>
+    <li>Fix unauthenticated SQL injection vulnerability with the default action.</li>
+  </ul>
+</li>
+<li>Version 2.51.8
+  <ul>
+    <li>Fix a security issue in the default action with the idlist param.</li>
+  </ul>
+</li>
+<li>Version 2.51.9
+  <ul>
+    <li>Minor code fix.</li>
+    <li>Alert on unapproved articles disabled by default. Enable at Settings >> Options tab.</li>
+    <li>BR #12207 Cannot display image in news when using upload field.</li>
+    <li>BR #12228 Stored Cross-Site Scripting. Minor, because it can only be performed by a person that has access rights to the Admin panel.</li>
+  </ul>
+</li>
+<li>Version 2.51.11
+  <ul>
+    <li>Minor code fix to encoding title content.</li>
+    <li>BR #12322 - Stored Cross-Site Scripting. Minor, because it can only be performed by a person that has access rights to the Admin panel.</li>
+    <li>BR #12325 - Several XSS vulnerabilities.</li>
+  </ul>
+</li>
+<li>Version 2.51.12
+  <ul>
+    <li>BR #12543 - Lib file corrections.</li>
+    <li>Compatibility fixes for PHP 7, 8.0 and 8.1.</li>
+  </ul>
+</li>
+<li>Version 2.51.13
+  <ul>
+    <li>Sanitise news-item strings (title, summary, content) before display.</li>
+    <li>Enhanced default and detail actions to facilitate detail display.</li>
+  </ul>
+</li>
+<li>Version 2.51.14
+  <ul>
+    <li>Conform news-category table fields format.</li>
+    <li>Revise category hierarchy levels to 3-wide (max 999 cats per level).</li>
+  </ul>
+</li>
 </ul>
