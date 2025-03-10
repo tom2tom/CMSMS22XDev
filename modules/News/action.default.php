@@ -147,19 +147,19 @@ WHERE status = 'published' AND
     }
 
     if( !$sortrandom ) {
-        if( !isset($params['sortasc']) || strcasecmp($params['sortasc'], 'true') != 0 ) { //TODO support cms_to_bool value
+        if( !isset($params['sortasc']) || !cms_to_bool($params['sortasc']) ) {
             $query1 .= "DESC";
         }
     }
 
-    $pagelimit = 1000;
+    $pagelimit = 1000; // foolish default - 10 or 20 would be sensible
     if( isset($params['pagelimit']) ) {
         $pagelimit = (int)$params['pagelimit'];
     }
     else if( isset($params['number']) ) {
         $pagelimit = (int)$params['number'];
     }
-    $pagelimit = max(1, min(1000, $pagelimit)); // maximum of 1000 entries.
+    $pagelimit = max(1, min(1000, $pagelimit)); // maximum of 1000 entries per page
 
     // Get the number of rows (so we can determine the numer of pages)
     $pagecount = -1;
