@@ -74,6 +74,12 @@
 				<input id="thumbnail_height" class="pagenb" type="text" name="thumbnail_height" size="3" maxlength="3" value="{$thumbnail_height}">
 			</p>
 		</div>
+		<div class="pageoverflow">
+			<p class="pagetext"><label for="notice_timeout">{lang('notices_timeout')}:</label>  {cms_help key2='siteprefs_noticetimeout' title=lang('notices_timeout_short')}</p>
+			<p class="pageinput">
+				<input id="notice_timeout" class="pagenb" type="text" name="notices_timeout" size="3" maxlength="2" value="{$notices_timeout}">
+			</p>
+		</div>
 		{if !empty($search_modules)}
 			<p class="pagetext"><label for="search_module">{lang('search_module')}:</label> {cms_help key2='settings_searchmodule' title=lang('search_module')}</p>
 			<p class="pageinput">

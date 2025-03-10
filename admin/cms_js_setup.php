@@ -50,7 +50,8 @@ $data['root_url'] = $config['root_url'];
 $data['uploads_url'] = $config['uploads_url'];
 $data['secure_param_name'] = CMS_SECURE_PARAM_NAME;
 $data['user_key'] = $_SESSION[CMS_USER_KEY];
-// todo: support a preference instead of default picker?
+$data['noticetimeout'] = cms_siteprefs::get('notices_timeout', 10); //seconds or falsy
+// todo: a site-preference instead of default picker?
 $fp = ModuleOperations::get_instance()->GetFilePickerModule();
 if( $fp ) {
     $value = $fp->get_browser_url();

@@ -17,7 +17,7 @@
 #
 #$Id$
 
-/**
+/*
  * Init variables / objects
  */
 
@@ -103,6 +103,7 @@ $use_wysiwyg = 1;
 $sitedownmessage = '<p>Site is currently down.  Check back later.</p>';
 $sitedownmessagetemplate = '-1';
 $metadata = '';
+$notices_timeout = 10;
 $sitename = 'CMSMS Website';
 $frontendlang = '';
 $frontendwysiwyg = '';
@@ -164,6 +165,7 @@ $defaultdateformat = cms_siteprefs::get('defaultdateformat', $defaultdateformat)
 $logintheme = cms_siteprefs::get('logintheme', $logintheme);
 $backendwysiwyg = cms_siteprefs::get('backendwysiwyg', $backendwysiwyg);
 $metadata = cms_siteprefs::get('metadata', $metadata);
+$notices_timeout = cms_siteprefs::get('notices_timeout', $notices_timeout);
 $sitename = cms_html_entity_decode(cms_siteprefs::get('sitename', $sitename));
 $lock_timeout = (int)cms_siteprefs::get('lock_timeout', $lock_timeout);
 $sitedownexcludes = cms_siteprefs::get('sitedownexcludes', $sitedownexcludes);
@@ -356,6 +358,15 @@ if (isset($_POST['editsiteprefs'])) {
       else {
         cms_siteprefs::set('metadata', '');
       }
+      if (isset($_POST['notices_timeout'])) {
+        $notices_timeout = (int)$_POST['notices_timeout'];
+        if ($notices_timeout < 0) { $notices_timeout = 0; }  
+        elseif ($notices_timeout > 30) { $notices_timeout = 30; }
+      }
+      else {
+        $notices_timeout = 10;
+      }
+      cms_siteprefs::set('notices_timeout', $notices_timeout);
       if (isset($_POST['logintheme'])) $logintheme = cleanValue($_POST['logintheme']);
       cms_siteprefs::set('logintheme', $logintheme);
       if (isset($_POST['backendwysiwyg'])) $backendwysiwyg = cleanValue($_POST['backendwysiwyg']);
@@ -625,6 +636,7 @@ $smarty->assign('frontendlang',$frontendlang);
 $smarty->assign('frontendwysiwyg',$frontendwysiwyg);
 $smarty->assign('backendwysiwyg',$backendwysiwyg);
 $smarty->assign('metadata',$metadata);
+$smarty->assign('notices_timeout',$notices_timeout);
 $smarty->assign('enablesitedownmessage',$enablesitedownmessage);
 $smarty->assign('use_wysiwyg',$use_wysiwyg);
 $smarty->assign('textarea_sitedownmessage',create_textarea($use_wysiwyg,$sitedownmessage,'sitedownmessage','pagesmalltextarea'));

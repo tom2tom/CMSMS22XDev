@@ -5,8 +5,8 @@
  * @author Goran Ilic - uniqu3 <ja@ich-mach-das.at>
  * ========================================================== */
 /*!
-CMSMS OneEleven theme functions v.1.2
-(C) 2014-2023 CMS Made Simple Foundation <foundation@cmsmadesimple.org>
+CMSMS OneEleven theme functions v.1.3
+(C) 2014-2025 CMS Made Simple Foundation <foundation@cmsmadesimple.org>
 License GPL2+
 */
 (function(global, $) {
@@ -349,12 +349,26 @@ License GPL2+
                 $('.pagewarning').addClass('hidden');
             }
 
+            var msgtimeout;
+            if (cms_data.hasOwnProperty('noticetimeout')) {
+                msgtimeout = cms_data.noticetimeout;
+                if (msgtimeout) {
+                    msgtimeout = Math.min(Math.max(parseInt(msgtimeout), 5), 20);
+                } else {
+                    msgtimeout = 0; //falsy
+                }
+            } else {
+                msgtimeout = 10;
+            }
+
             $('.message:not(.no-slide), .pageerrorcontainer:not(.no-slide), .pagemcontainer:not(.no-slide)').each(function() {
                 var message = $(this);
-                $(message).hide().slideDown(1000, function() {
-                    window.setTimeout(function() {
-                        message.slideUp();
-                    }, 10000);
+                message.hide().slideDown(600, function() {
+                    if (msgtimeout > 0) {
+                        window.setTimeout(function() {
+                            message.slideUp();
+                        }, msgtimeout * 1000);
+                    }
                 });
             });
 
@@ -374,13 +388,15 @@ License GPL2+
                 }
 
                 var tid = 0;
-                $('body').append(htmlShow).slideDown(1000, function() {
-                    tid = window.setTimeout(function() {
-                        tid = 0;
-                        $('.message').slideUp(1000, function () {
-                            $(this).remove();
-                        });
-                    }, 10000);
+                $('body').append(htmlShow).slideDown(600, function() {
+                    if (msgtimeout > 0) {
+                        tid = window.setTimeout(function() {
+                            tid = 0;
+                            $('.message').slideUp(1000, function () {
+                                $(this).remove();
+                            });
+                        }, msgtimeout * 1000);
+                    }
                 });
                 // TODO reconcile with  .close-warning click-handlers above
                 $(document).on('click', '.close-warning', function() {
