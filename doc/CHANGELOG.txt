@@ -1,5 +1,6 @@
 Version 2.2.21F2 - Fredericton
 -------------------------------
+ - FR #12770 Close admin notifications by user action (as a site preference)
  - FR #12720,#12737 Extra image formats and intelligent thumbnailing
  - Deploy folders for Smarty config files
  - Page-content, templates and stylesheets may be loaded without checking cache
