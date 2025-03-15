@@ -18,11 +18,10 @@ class range_test extends test_base
   {
       switch( $key )
       {
-      case 'minimum':
+      case 'minimum': //redundant: parent property suffices
       case 'maximum':
           $this->$key = $value;
-          break;
-
+      //no break here
       default:
           parent::__set($key,$value);
       }
