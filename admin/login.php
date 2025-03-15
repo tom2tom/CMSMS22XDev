@@ -210,7 +210,7 @@ else if( isset($_POST['loginsubmit']) ) {
         // send the post login event
         HookManager::do_hook('Core::LoginPost', [ 'user'=>$oneuser ]);
 
-        // redirect outa hre somewhere
+        // redirect outa here somewhere
         if( isset($_SESSION['login_redirect_to']) ) {
             // we previously attempted a URL but didn't have the user key in the request.
             $url_ob = new cms_url($_SESSION['login_redirect_to']);
@@ -224,12 +224,20 @@ else if( isset($_POST['loginsubmit']) ) {
         else {
             // find the users homepage, if any, and redirect there.
             $homepage = cms_userprefs::get_for_user($oneuser->id,'homepage');
-            if( !$homepage ) $homepage = $config['admin_url'];
-
+            if( !$homepage ) {
+                $homepage = $config['admin_url'];
+            }
+/*          else if( 0 ) {
+                should be rel. to $config['admin_url']
+                //TODO somewhere, efficiently check page ok (FR#12400)
+                //e.g. after each system upgrade and after each module-uninstall or -deactivate
+                $homepage = $config['admin_url'];
+            }
+*/
             $homepage = CmsAdminUtils::get_session_url($homepage); // involves deprecated conversion of 'placeholders'. instead use verbatim
+            $homepage = html_entity_decode($homepage);
 
             // and redirect.
-            $homepage = html_entity_decode($homepage);
             redirect($homepage);
         }
     }
