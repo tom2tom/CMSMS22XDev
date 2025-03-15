@@ -317,7 +317,7 @@ final class ModuleOperations
                 case 'DTDVERSION':
                     $reader->read();
                     if( $reader->value != MODULE_DTD_VERSION ) throw new CmsInvalidDataException('CMSEX_XML002');
-                    $havedtdversion = true;
+                    $havedtdversion = TRUE;
                     break;
 
                 case 'VERSION':
@@ -466,16 +466,16 @@ final class ModuleOperations
             $lazyload_fe    = (method_exists($module_obj,'LazyLoadFrontend') && $module_obj->LazyLoadFrontend())?1:0;
             $lazyload_admin = (method_exists($module_obj,'LazyLoadAdmin') && $module_obj->LazyLoadAdmin())?1:0;
             $query = 'INSERT INTO '.CMS_DB_PREFIX.'modules
-                      (module_name,version,status,admin_only,active,allow_fe_lazyload,allow_admin_lazyload)
-                      VALUES (?,?,?,?,?,?,?)';
+(module_name,version,status,admin_only,active,allow_fe_lazyload,allow_admin_lazyload)
+VALUES (?,?,?,?,?,?,?)';
             $dbr = $db->Execute($query,array($module_obj->GetName(),$module_obj->GetVersion(),'installed',
-                                             ($module_obj->IsAdminOnly()==true)?1:0,
+                                             ($module_obj->IsAdminOnly())?1:0,
                                              1,$lazyload_fe,$lazyload_admin));
 
             $deps = $module_obj->GetDependencies();
             if( is_array($deps) && count($deps) ) {
                 $query = 'INSERT INTO '.CMS_DB_PREFIX.'module_deps (parent_module,child_module,minimum_version,create_date,modified_date)
-                          VALUES (?,?,?,NOW(),NOW())';
+VALUES (?,?,?,NOW(),NOW())';
                 foreach( $deps as $depname => $depversion ) {
                     if( !$depname || !$depversion ) continue;
                     $dbr = $db->Execute($query,array($depname,$module_obj->GetName(),$depversion));
@@ -823,8 +823,8 @@ final class ModuleOperations
             $lazyload_admin = (method_exists($module_obj,'LazyLoadAdmin') && $module_obj->LazyLoadAdmin())?1:0;
             $admin_only = ($module_obj->IsAdminOnly())?1:0;
 
-            $query = 'UPDATE '.CMS_DB_PREFIX.'modules SET version = ?, active = 1, allow_fe_lazyload = ?, allow_admin_lazyload = ?, admin_only = ?
-                      WHERE module_name = ?';
+            $query = 'UPDATE '.CMS_DB_PREFIX.'modules SET version = ?, allow_fe_lazyload = ?, allow_admin_lazyload = ?, admin_only = ?
+WHERE module_name = ?';
             $dbr = $db->Execute($query,array($to_version,$lazyload_fe,$lazyload_admin,$admin_only,$module_obj->GetName()));
 
             // upgrade dependencies
@@ -834,7 +834,7 @@ final class ModuleOperations
             $deps = $module_obj->GetDependencies();
             if( is_array($deps) && count($deps) ) {
                 $query = 'INSERT INTO '.CMS_DB_PREFIX.'module_deps (parent_module,child_module,minimum_version,create_date,modified_date)
-                          VALUES (?,?,?,NOW(),NOW())';
+VALUES (?,?,?,NOW(),NOW())';
                 foreach( $deps as $depname => $depversion ) {
                     if( !$depname || !$depversion ) continue;
                     $dbr = $db->Execute($query,array($depname,$module_obj->GetName(),$depversion));
@@ -971,10 +971,10 @@ final class ModuleOperations
      * Activate a module
      *
      * @param string $module_name
-     * @param bool $activate flag indicating wether to activate or deactivate the module
+     * @param bool $activate flag indicating whether to activate or deactivate the module
      * @return bool
      */
-    public function ActivateModule($module_name,$activate = true)
+    public function ActivateModule($module_name,$activate = TRUE)
     {
         if( !$module_name ) return FALSE;
         $info = $this->_get_module_info();
@@ -1098,7 +1098,7 @@ final class ModuleOperations
     }
 
     /**
-     * A function to return the object reference to the module object
+     * A function to return a module object
      * if the module is not already loaded, it will be loaded.  Version checks are done
      * with the module to allow only loading versions of modules that are greater than the
      * specified value.
@@ -1110,7 +1110,7 @@ final class ModuleOperations
      */
     public function get_module_instance($module_name,$version = '',$force = FALSE)
     {
-        if( empty($module_name) && isset($this->variables['module'])) $module_name = $this->variables['module'];
+        if( !$module_name && isset($this->variables['module'])) $module_name = $this->variables['module']; //TODO property $this->variables N/A
 
         $obj = null; // no object
         if( isset($this->_modules[$module_name]) ) {
