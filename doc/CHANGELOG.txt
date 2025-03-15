@@ -1,6 +1,7 @@
 Version 2.2.21F2 - Fredericton
 -------------------------------
  - FR #12350 Do not change module's active status during upgrade
+ - FR #12360 Extra links in installer
  - FR #12369 Clickable checkbox labels
  - FR #12720,#12737 Extra image formats and intelligent thumbnailing
  - FR #12770 Close admin notifications by user action (as a site preference)
