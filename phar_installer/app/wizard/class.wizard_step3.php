@@ -298,22 +298,23 @@ class wizard_step3 extends wizard_step
         $tests[] = $obj;
 
         // recommended test ... max_execution_time
-        $v = (int) ini_get('max_execution_time');
-        if( $v !== 0 ) {
+        $v = ini_get('max_execution_time');
+        if( (int)$v !== 0 ) {
             $obj = new _tests_\range_test('max_execution_time',$v);
-            $obj->minimum = 30;
-            $obj->recommended = 60;
+            $obj->minimum = '30';
+            $obj->recommended = '60';
             $obj->required = 1;
-            $obj->warn_msg = lang('warn_max_execution_time',ini_get('max_execution_time'),$obj->minimum,$obj->recommended);
-            $obj->fail_msg = lang('fail_max_execution_time',ini_get('max_execution_time'),$obj->minimum,$obj->recommended);
+            $obj->warn_msg = lang('warn_max_execution_time',$v,$obj->minimum,$obj->recommended);
+            $obj->fail_msg = lang('fail_max_execution_time',$v,$obj->minimum,$obj->recommended);
             $tests[] = $obj;
         }
 
         // recommended test ... post_max_size
-        $obj = new _tests_\range_test('post_max_size',ini_get('post_max_size'));
+        $v = ini_get('post_max_size');
+        $obj = new _tests_\range_test('post_max_size',$v);
         $obj->minimum = '2M';
         $obj->recommended = '10M';
-        $obj->warn_msg = lang('warn_post_max_size',ini_get('post_max_size'),$obj->minimum,$obj->recommended);
+        $obj->warn_msg = lang('warn_post_max_size',$v,$obj->minimum,$obj->recommended);
         $obj->fail_key = 'fail_post_max_size';
         $tests[] = $obj;
 
@@ -329,8 +330,9 @@ class wizard_step3 extends wizard_step
         $tests[] = $obj;
 
         // recommended test .... disable functions
-        $obj = new _tests_\boolean_test('disable_functions',ini_get('disable_functions') == '');
-        $obj->warn_msg = lang('warn_disable_functions',str_replace(',',', ',ini_get('disable_functions')));
+        $v = ini_get('disable_functions');
+        $obj = new _tests_\boolean_test('disable_functions',$v == '');
+        $obj->warn_msg = lang('warn_disable_functions',str_replace(',',', ',$v));
         $tests[] = $obj;
 
         // recommended test... remote_url
