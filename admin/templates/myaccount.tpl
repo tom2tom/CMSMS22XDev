@@ -132,6 +132,7 @@ $(function() {
 
     <fieldset>
       <legend>{lang('admin_layout_legend')}</legend>
+{if !empty($themes_opts)}
       <div class="pageoverflow">
         <p class="pagetext"><label for="admintheme">{lang('admintheme')}:</label>&nbsp;{cms_help key2='help_myaccount_admintheme' title=lang('admintheme')}</p>
         <p class="pageinput">
@@ -141,6 +142,7 @@ $(function() {
         </p>
       </div>
 
+{/if}
       <div class="pageoverflow">
         <p class="pagetext"><label for="homepage">{lang('homepage')}:</label>&nbsp;{cms_help key2='help_myaccount_homepage' title=lang('homepage')}</p>
         <p class="pageinput">

@@ -156,7 +156,8 @@ if (isset($_POST['submit_prefs']) && check_permission($userid,'Manage My Setting
   if (isset($_POST['default_cms_language'])) $default_cms_language = cleanValue($_POST['default_cms_language']);
   $old_default_cms_lang = '';
   if (isset($_POST['old_default_cms_lang'])) $old_default_cms_lang = cleanValue($_POST['old_default_cms_lang']);
-  $admintheme = cleanValue($_POST['admintheme']);
+  if (isset($_POST['admintheme'])) { $admintheme = cleanValue($_POST['admintheme']); }
+  else { $admintheme = null; } //aka unset
   $bookmarks = (isset($_POST['bookmarks']) ? 1 : 0);
   $indent = (isset($_POST['indent']) ? true : false);
   $paging = (isset($_POST['paging']) ? 1 : 0);
@@ -171,7 +172,7 @@ if (isset($_POST['submit_prefs']) && check_permission($userid,'Manage My Setting
   cms_userprefs::set_for_user($userid, 'ce_navdisplay', $ce_navdisplay);
   cms_userprefs::set_for_user($userid, 'syntaxhighlighter', $syntaxhighlighter);
   cms_userprefs::set_for_user($userid, 'default_cms_language', $default_cms_language);
-  cms_userprefs::set_for_user($userid, 'admintheme', $admintheme);
+  if (isset($admintheme)) cms_userprefs::set_for_user($userid, 'admintheme', $admintheme);
   cms_userprefs::set_for_user($userid, 'bookmarks', $bookmarks);
   cms_userprefs::set_for_user($userid, 'hide_help_links', $hide_help_links);
   cms_userprefs::set_for_user($userid, 'indent', $indent);
@@ -223,7 +224,7 @@ for ($i = 0; $i < count($tmp); $i++) {
 $smarty->assign('syntax_opts', $tmp2);
 
 // Admin themes
-$smarty->assign('themes_opts',CmsAdminThemeBase::GetAvailableThemes());
+$allthemes = (array)CmsAdminThemeBase::GetAvailableThemes();
 
 // Modules
 $allmodules = ModuleOperations::get_instance()->GetInstalledModules();
@@ -257,7 +258,10 @@ $smarty->assign('language_opts', get_language_list());
 $smarty->assign('default_cms_language', $default_cms_language);
 $smarty->assign('old_default_cms_lang', $old_default_cms_lang);
 $smarty->assign('bookmarks', $bookmarks);
-$smarty->assign('admintheme', $admintheme);
+if( count($allthemes) > 1 ) {
+  $smarty->assign('themes_opts', $allthemes);
+  $smarty->assign('admintheme', $admintheme);
+}
 $smarty->assign('hide_help_links', $hide_help_links);
 $smarty->assign('indent', $indent);
 $smarty->assign('paging', $paging);
