@@ -614,8 +614,10 @@ if ($dir = opendir(__DIR__ . "/themes/"))
       $themes[$file] = $file;
     }
   }
-  $smarty->assign('themes',$themes);
-  $smarty->assign('logintheme',cms_siteprefs::get('logintheme','default'));
+  if (count($themes) > 1) {
+    $smarty->assign('themes',$themes);
+    $smarty->assign('logintheme',cms_siteprefs::get('logintheme','default'));
+  }
 }
 
 $smarty->assign('tabs_end',$themeObject->EndTabContent());
@@ -636,7 +638,7 @@ $smarty->assign('frontendlang',$frontendlang);
 $smarty->assign('frontendwysiwyg',$frontendwysiwyg);
 $smarty->assign('backendwysiwyg',$backendwysiwyg);
 $smarty->assign('metadata',$metadata);
-$smarty->assign('notices_timeout',$notices_timeout);
+$smarty->assign('notices_timeout',($notices_timeout>0)?(int)$notices_timeout:'');
 $smarty->assign('enablesitedownmessage',$enablesitedownmessage);
 $smarty->assign('use_wysiwyg',$use_wysiwyg);
 $smarty->assign('textarea_sitedownmessage',create_textarea($use_wysiwyg,$sitedownmessage,'sitedownmessage','pagesmalltextarea'));
