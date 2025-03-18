@@ -195,7 +195,7 @@ function generate_checksum_file(&$report)
 $gCms = \CmsApp::get_instance();
 $theme = \cms_utils::get_theme_object();
 $smarty = $gCms->GetSmarty();
-$smarty->register_function('lang','checksum_lang');
+$smarty->registerPlugin('function','lang','checksum_lang');
 $smarty->caching = false;
 $smarty->force_compile = true;
 $db = $gCms->GetDb();

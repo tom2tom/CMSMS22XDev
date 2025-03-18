@@ -315,7 +315,7 @@ abstract class CMSModule
             // no lazy loading.
             $gCms = CmsApp::get_instance();
             $smarty = $gCms->GetSmarty();
-            $smarty->register_function($this->GetName(), array($this->GetName(),'function_plugin'), $cachable);
+            $smarty->registerPlugin('function', $this->GetName(), array($this->GetName(),'function_plugin'), $cachable);
             return TRUE;
         }
         else {

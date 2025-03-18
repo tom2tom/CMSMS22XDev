@@ -63,7 +63,7 @@ function systeminfo_lang($params, $smarty)
 
 $gCms = cmsms();
 $smarty = $gCms->GetSmarty();
-$smarty->register_function('si_lang','systeminfo_lang');
+$smarty->registerPlugin('function','si_lang','systeminfo_lang');
 $smarty->caching = false;
 $smarty->force_compile = true;
 $db = $gCms->GetDb();
