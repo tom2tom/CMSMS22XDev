@@ -67,10 +67,15 @@ final class CMS_Content_Block
         self::$_contentBlocks = null; // aka unset
     }
 
-    // {content} tag encountered
+    // Cache properties of a {content} tag
     // todo: could be in page_template_parser
     public static function smarty_compiler_contentblock($params,$compiler)
     {
+        if( preg_grep('/\$_smarty_tpl/', $params) ) {
+            //TODO handle blocks with parameter(s) defined in-template at display-time
+            $here = 1;
+        }
+
         $rec = array('type'=>'text','id'=>'','name'=>'','noedit'=>false, 'usewysiwyg'=>'true','oneline'=>'false','default'=>'','label'=>'',
                      'size'=>'50','tab'=>'','maxlength'=>'255','required'=>0,'placeholder'=>'','priority'=>'','cssname'=>'','adminonly'=>0);
         foreach( $params as $key => $value ) {
@@ -92,9 +97,9 @@ final class CMS_Content_Block
         }
         if( !$rec['id'] ) $rec['id'] = str_replace(' ','_',$rec['name']);
 
-        if( !isset(self::$_contentBlocks) ) self::$_contentBlocks = array();
+        if( !isset(self::$_contentBlocks) ) { self::$_contentBlocks = array(); }
         // check for duplicate
-        if( isset(self::$_contentBlocks[$rec['name']]) ) throw new CmsEditContentException('Duplicate content block: '.$rec['name']);
+        elseif( isset(self::$_contentBlocks[$rec['name']]) ) { throw new CmsEditContentException('Duplicate content block: '.$rec['name']); }
 
         // set priority
         if( empty($rec['priority']) || !$rec['priority'] ) {
@@ -102,18 +107,18 @@ final class CMS_Content_Block
             $rec['priority'] = self::$_priority++;
         }
 
-        if( preg_grep('/\$_smarty_tpl/', $rec) ) {
+        self::$_contentBlocks[$rec['name']] = $rec;
+    }
+
+    // Cache properties of a {content_image} tag
+    // todo: could be in page_template_parser
+    public static function smarty_compiler_imageblock($params,$compiler)
+    {
+        if( preg_grep('/\$_smarty_tpl/', $params) ) {
             //TODO handle blocks with parameter(s) defined in-template at display-time
             $here = 1;
         }
 
-        self::$_contentBlocks[$rec['name']] = $rec;
-    }
-
-    // {content_image} tag encountered
-    // todo: could be in page_template_parser
-    public static function smarty_compiler_imageblock($params,$compiler)
-    {
         if( !isset($params['block']) || empty($params['block']) ) throw new CmsEditContentException('{content_image} tag requires block parameter');
 
         $rec = [ 'type'=>'image','name'=>'','label'=>'','upload'=>true,'dir'=>'','default'=>'','tab'=>'',
@@ -138,9 +143,9 @@ final class CMS_Content_Block
             $rec['priority'] = self::$_priority++;
         }
 
-        if( !isset(self::$_contentBlocks) ) self::$_contentBlocks = array();
+        if( !isset(self::$_contentBlocks) ) { self::$_contentBlocks = array(); }
         // check for duplicate
-        if( isset(self::$_contentBlocks[$rec['name']]) ) throw new CmsEditContentException('Duplicate content block: '.$rec['name']);
+        elseif( isset(self::$_contentBlocks[$rec['name']]) ) { throw new CmsEditContentException('Duplicate content block: '.$rec['name']); }
 
         // set priority
         if( empty($rec['priority']) || $rec['priority'] == 0 ) {
@@ -148,18 +153,18 @@ final class CMS_Content_Block
             $rec['priority'] = self::$_priority++;
         }
 
-        if( preg_grep('/\$_smarty_tpl/', $rec) ) {
+        self::$_contentBlocks[$rec['name']] = $rec;
+    }
+
+    // Cache properties of a {content_module} tag
+    // todo: could be in page_template_parser
+    public static function smarty_compiler_moduleblock($params,$compiler)
+    {
+        if( preg_grep('/\$_smarty_tpl/', $params) ) {
             //TODO handle blocks with parameter(s) defined in-template at display-time
             $here = 1;
         }
 
-        self::$_contentBlocks[$rec['name']] = $rec;
-    }
-
-    // {content_module} tag encountered
-    // todo: could be in page_template_parser
-    public static function smarty_compiler_moduleblock($params,$compiler)
-    {
         if( !isset($params['block']) || empty($params['block']) ) throw new CmsEditContentException('{content_module} tag requires block parameter');
 
         $rec = array('type'=>'module','id'=>'','name'=>'','module'=>'','label'=>'','blocktype'=>'','tab'=>'','priority'=>'');
@@ -192,9 +197,9 @@ final class CMS_Content_Block
             $rec['priority'] = self::$_priority++;
         }
 
-        if( !isset(self::$_contentBlocks) ) self::$_contentBlocks = array();
+        if( !isset(self::$_contentBlocks) ) { self::$_contentBlocks = array(); }
         // check for duplicate
-        if( isset(self::$_contentBlocks[$rec['name']]) ) throw new CmsEditContentException('Duplicate content block: '.$rec['name']);
+        elseif( isset(self::$_contentBlocks[$rec['name']]) ) { throw new CmsEditContentException('Duplicate content block: '.$rec['name']); }
 
         // set priority
         if( empty($rec['priority']) || !$rec['priority'] ) {
@@ -202,15 +207,10 @@ final class CMS_Content_Block
             $rec['priority'] = self::$_priority++;
         }
 
-        if( preg_grep('/\$_smarty_tpl/', $rec) ) {
-            //TODO handle blocks with parameter(s) defined in-template at display-time
-            $here = 1;
-        }
-
         self::$_contentBlocks[$rec['name']] = $rec;
     }
 
-    // todo: could be in page_template_parser
+    // Compile a {content} tag for frontend use
     public static function smarty_compile_fecontentblock($params,$compiler)
     {
         $ptext = 'array(';
@@ -223,6 +223,7 @@ final class CMS_Content_Block
         return '<?php CMS_Content_Block::smarty_internal_fetch_contentblock('.$ptext.',$_smarty_tpl); ?>';
     }
 
+    // {content} plugin handler TODO frontend only ?
     public static function smarty_internal_fetch_contentblock($params,$template)
     {
         $result = '';
@@ -239,7 +240,7 @@ final class CMS_Content_Block
                 $modulename = ($ary[0])?:'';
                 $id = (!empty($ary[1])?$ary[1]:'');
                 $action = (!empty($ary[2])?$ary[2]:'');
-                $inline = !empty($ary[3]);
+                $inline = (!empty($ary[3])?1:0);
             }
 
             //Only consider doing module processing if
@@ -324,6 +325,7 @@ final class CMS_Content_Block
         return self::content_return($result, $params, $template);
     }
 
+    // {process_pagedata} plugin handler
     public static function smarty_fetch_pagedata($params,$template)
     {
         $contentobj = CmsApp::get_instance()->get_content_object();
@@ -337,6 +339,7 @@ final class CMS_Content_Block
         return $result;
     }
 
+    // {content_image} plugin handler
     public static function smarty_fetch_imageblock($params,$template)
     {
         $contentobj = CmsApp::get_instance()->get_content_object();
@@ -414,6 +417,7 @@ final class CMS_Content_Block
         return $out;
     }
 
+    // {content_module} plugin handler
     public static function smarty_fetch_moduleblock($params,$template)
     {
         $result = '';
