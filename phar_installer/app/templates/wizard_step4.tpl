@@ -100,7 +100,7 @@
         </select>
     </div>
 
-    {if $verbose}
+    {if $verbose && $action != 'freshen'}
     <h3>{tr('prompt_queryvar')}</h3>
     <p class="info">{tr('info_queryvar')}</p>
 
@@ -114,7 +114,7 @@
     </div>
     {/if}
 
-    {if $verbose and $action == 'install'}
+    {if $verbose && $action == 'install'}
     <h3>{tr('prompt_installcontent')}</h3>
     <p>{tr('info_installcontent')}</p>
 
