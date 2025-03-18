@@ -4,30 +4,6 @@ namespace __appbase\tests;
 
 class range_test extends test_base
 {
-  private $minimum;
-  private $maximum;
-
-  public function __construct($name,$value)
-  {
-      parent::__construct($name,$value);
-  }
-
-
-  #[\ReturnTypeWillChange]
-  public function __set($key,$value)
-  {
-      switch( $key )
-      {
-      case 'minimum': //redundant: parent property suffices
-      case 'maximum':
-          $this->$key = $value;
-      //no break here
-      default:
-          parent::__set($key,$value);
-      }
-  }
-
-
   public function execute()
   {
       if( $this->minimum )
