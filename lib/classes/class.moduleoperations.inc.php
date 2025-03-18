@@ -1110,7 +1110,8 @@ VALUES (?,?,?,NOW(),NOW())';
      */
     public function get_module_instance($module_name,$version = '',$force = FALSE)
     {
-        if( !$module_name && isset($this->variables['module'])) $module_name = $this->variables['module']; //TODO property $this->variables N/A
+//      if( !$module_name && isset($this->variables['module'])) $module_name = $this->variables['module']; property $this->variables N/A
+        if( !$module_name ) return null;
 
         $obj = null; // no object
         if( isset($this->_modules[$module_name]) ) {
@@ -1127,7 +1128,7 @@ VALUES (?,?,?,NOW(),NOW())';
             if( $res ) $obj = $this->_modules[$module_name];
         }
 
-        if( is_object($obj) && !empty($version) ) {
+        if( is_object($obj) && $version ) {
             $res = version_compare($obj->GetVersion(),$version);
             if( $res < 0 || $res === FALSE ) $obj = null;
         }
