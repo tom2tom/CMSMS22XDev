@@ -48,7 +48,7 @@ class Smarty_CMS extends CMSSmartyBase
         // Set template_c and cache dirs
         $this->setCompileDir(TMP_TEMPLATES_C_LOCATION);
         $this->setCacheDir(TMP_CACHE_LOCATION);
-        $this->assignGlobal('app_name','CMSMS');
+        $this->assignGlobal('app_name','CMSMS'); //deprecated Smarty5+
 
         if( CMS_DEBUG ) $this->error_reporting = E_ALL;
 
@@ -105,7 +105,7 @@ class Smarty_CMS extends CMSSmartyBase
             $this->registerResource('content',new CMSContentTemplateResource());
 
             // just for frontend actions.
-            $this->registerPlugin('compiler','content',array('CMS_Content_Block','smarty_compile_fecontentblock'),false);
+            $this->registerPlugin('compiler','content','CMS_Content_Block::smarty_compile_fecontentblock',false);
             $this->registerPlugin('function','content_image','CMS_Content_Block::smarty_fetch_imageblock',false);
             $this->registerPlugin('function','content_module','CMS_Content_Block::smarty_fetch_moduleblock',false);
             $this->registerPlugin('function','process_pagedata','CMS_Content_Block::smarty_fetch_pagedata',false);

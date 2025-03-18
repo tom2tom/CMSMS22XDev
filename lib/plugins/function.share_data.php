@@ -42,7 +42,7 @@ function smarty_cms_function_share_data($params,$template)
     switch( $dest ) {
     case 'global':
         $scope = $template->smarty;
-        $fn = 'assignGlobal';
+        $fn = 'assignGlobal'; //deprecated method Smarty5+
         break;
 
     default: // parent scope

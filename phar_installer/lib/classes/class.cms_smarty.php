@@ -31,7 +31,7 @@ class cms_smarty extends Smarty
     }
     $this->registerPlugin('modifier','tr',array($this,'modifier_tr')); //for Smarty5, wherein unregistered methods are not supported
     // $_call->func(args) can be used in templates instead of func(args) for Smarty5
-    $this->assignGlobal('_call', new Install_TemplateCaller($this)); //for Smarty 4.5.1+, wherein PHP function-calls are deprecated then (in 5+) blocked
+    $this->assignGlobal('_call', new Install_TemplateCaller($this)); //for Smarty 4.5.1+, wherein PHP function-calls are deprecated then (in 5+) blocked Deprecated method Smarty5+
     // _call::class__method(args) can be used in templates instead of unregistered class::method(args) for Smarty 4.5.1+
     $this->registerClass('_call', Install_TemplateCaller::class);
   }

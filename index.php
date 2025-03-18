@@ -108,7 +108,7 @@ while( $trycount < 2 ) {
         if( !$contentobj->IsPermitted() ) throw new CmsError403Exception('Permission denied');
 
         $_app->set_content_object($contentobj);
-        $smarty->assignGlobal('content_obj',$contentobj);
+        $smarty->assignGlobal('content_obj',$contentobj); //deprecated Smarty5+
         $smarty->assignGlobal('content_id', $contentobj->Id());
         $smarty->assignGlobal('page_id', $page);
         $smarty->assignGlobal('page_alias', $contentobj->Alias());

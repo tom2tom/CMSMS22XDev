@@ -236,5 +236,5 @@ if( !isset($DONT_LOAD_SMARTY) ) {
     else {
         $smarty = $_app->GetSmarty();
     }
-    $smarty->assignGlobal('sitename', cms_siteprefs::get('sitename', 'CMSMS Site'));
+    $smarty->assignGlobal('sitename', cms_siteprefs::get('sitename', 'CMSMS Site')); //deprecated Smarty5+
 }
