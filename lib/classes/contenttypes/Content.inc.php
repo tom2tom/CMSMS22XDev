@@ -293,28 +293,32 @@ class Content extends ContentBase
 	}
 
 	/**
-	 * Return a list of all of the properties that may be edited by the current user when editing this content item
-	 * in a content editor form.
+	 * Return all the properties that may be edited by the current user when
+	 * editing this content item in a content-editor form.
 	 *
-	 * This method calls the same method in the base class, then parses the content blocks in the templates and adds
-	 * the appropriate information for all detected content blocks.
+	 * This method calls the same method in the base class, then processes the
+	 * content blocks identified in the templates and adds the appropriate
+	 * parameters for editing those content blocks. This does not properly
+	 * process blocks specified at display-time in-template e.g. inside a loop
 	 *
 	 * @see ContentBase::GetEditableProperties()
-	 * @return array Array of stdClass objects containing name (string), tab (string), priority (integer), required (boolean) members
+	 * @return array stdClass objects each containing properties:
+	 *  name (string), tab (string), priority (integer),
+	 *  required (boolean) (omitted for blocks), basic (boolean)
 	 */
 	public function GetEditableProperties()
 	{
 		$props = parent::GetEditableProperties();
 
-		// add in content blocks
+		// add in identified content-blocks
 		$blocks = $this->get_content_blocks();
-		if( is_array($blocks) && count($blocks) ) {
+		if( $blocks && is_array($blocks) ) {
 			$priority = 100;
 			foreach( $blocks as $block ) {
 				// todo, skip this block if permissions don't allow.
 
 				$prop = new stdClass();
-				$prop->name = $block['name'];
+				$prop->name = $block['name']; //might contain Smarty compiler code
 				$prop->extra = $block;
 				if( !isset($block['tab']) || $block['tab'] == '' ) $block['tab'] = parent::TAB_MAIN;
 				$prop->tab = $block['tab'];
@@ -394,7 +398,7 @@ class Content extends ContentBase
 		$this->_contentBlocks = array();
 		try {
 			$smarty = Smarty_CMS::get_instance();
-			$parser = new \CMSMS\internal\page_template_parser('cms_template:'.$this->TemplateId(),$smarty);
+			$parser = new CMSMS\internal\page_template_parser('cms_template:'.$this->TemplateId(),$smarty);
 			$parser->compileTemplateSource();
 
 			$this->_contentBlocks = CMS_Content_Block::get_content_blocks();
