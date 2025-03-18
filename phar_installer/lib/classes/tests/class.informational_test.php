@@ -16,9 +16,12 @@ class informational_test extends test_base
   /**
    * Execute the test
    *
-   * @return integer -1 for fail
+   * @return string always '-1'
    */
-  public function execute() {}
+  public function execute()
+  {
+    return '-1';
+  }
 } // end of class
 
 ?>
