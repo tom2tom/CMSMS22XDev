@@ -56,19 +56,35 @@ abstract class test_base
   const TEST_FAIL = 'test_fail';
   const TEST_WARN = 'test_warn';
 
-  private static $_keys = array('name','name_key','status','value','required','minimum','maximum','recommended','pass_key','pass_msg','fail_msg',
-				'fail_key','warn_key','warn_msg','msg_key','msg');
+  private static $_keys = array(
+   'fail_key',
+   'fail_msg',
+   'maximum',
+   'minimum',
+   'msg',
+   'msg_key',
+   'name',
+   'name_key',
+   'pass_key',
+   'pass_msg',
+   'recommended',
+   'required',
+   'status',
+   'value',
+   'warn_key',
+   'warn_msg'
+  );
   private $_data = array();
 
-  public function __construct($name,$value,$key = '')
+  public function __construct($name,$value = '',$key = '')
   {
     if( !$name ) throw new Exception(lang('error_test_name'));
     $this->name = $name;
-    $this->name_key = $name;
+    if( $key ) { $this->name_key = $key; }
+    else { $this->name_key = $name; }
     $this->value = $value;
-    if( $key ) $this->name_key = $key;
     $this->status = self::TEST_UNTESTED;
-    $this->required = 0;
+    $this->required = false;
   }
 
   #[\ReturnTypeWillChange]
