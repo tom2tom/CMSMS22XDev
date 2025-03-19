@@ -43,11 +43,11 @@
   <div class="message green">{tr('step3_passed')}</div>
 {/if}
 {if $tests_failed}
-<table class="table bordered-table installer-test-legend small-font">
+<table class="table bordered-table installer-test-legend medium-font">
     <caption>
         {tr('legend')}
     </caption>
-    <thead>
+    <thead class="tbhead">
         <tr>
             <th>{tr('symbol')}</th>
             <th>{tr('meaning')}</th>
