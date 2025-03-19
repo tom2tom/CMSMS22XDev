@@ -21,10 +21,10 @@
  * Helper class to deal with parsing or fetching content blocks.
  *
  * @author      Robert Campbell
- * @since		1.11
+ * @since       1.11
  * @ignore
  * @internal
- * @package		CMS
+ * @package     CMS
  */
 final class CMS_Content_Block
 {
@@ -34,11 +34,11 @@ final class CMS_Content_Block
     private static $_primary_content_flag; // indicates that content has been generated once, do not repeat.  ready by preprocess_mact and here.
     private function __construct() {}
 
-    private static function content_return($result, &$params, $smarty)
+    // $smarty is a Template object, not the global Smarty instance
+    private static function content_return($result,$params,$smarty)
     {
         if ( !empty($params['assign']) ) {
-            // this is a smarty Template, not the global Smarty instance
-            $smarty->assign(trim($params['assign']), $result);
+            $smarty->assign(trim($params['assign']),$result);
         }
         else {
             echo $result;
@@ -71,27 +71,29 @@ final class CMS_Content_Block
     // todo: could be in page_template_parser
     public static function smarty_compiler_contentblock($params,$compiler)
     {
-        if( preg_grep('/\$_smarty_tpl/', $params) ) {
+        if( preg_grep('/\$_smarty_tpl/',$params) ) {
             //TODO handle blocks with parameter(s) defined in-template at display-time
+            //c.f. $compiler->smarty->fetch('content:pagedata', '', $contentobj->Id())
+            //OR 1) get tempate content 2) mask {content...} 3) fetch template with masked content 4) unmask {content...} 5) process result c.f. here
             $here = 1;
         }
 
-        $rec = array('type'=>'text','id'=>'','name'=>'','noedit'=>false, 'usewysiwyg'=>'true','oneline'=>'false','default'=>'','label'=>'',
+        $rec = array('type'=>'text','id'=>'','name'=>'','noedit'=>false,'usewysiwyg'=>'true','oneline'=>'false','default'=>'','label'=>'',
                      'size'=>'50','tab'=>'','maxlength'=>'255','required'=>0,'placeholder'=>'','priority'=>'','cssname'=>'','adminonly'=>0);
         foreach( $params as $key => $value ) {
             $value = trim($value,'"\''); //TODO handle compiler content e.g. "A".stuff
             if( $key == 'type' ) continue;
-            if( $key == 'block' ) $key = 'name';
-            if( $key == 'wysiwyg' ) $key = 'usewysiwyg';
-            if( startswith( $key, 'data-') ) {
+            if( startswith($key,'data-') ) {
                 $rec[$key] = $value;
                 continue;
             }
+            if( $key == 'block' ) $key = 'name';
+            if( $key == 'wysiwyg' ) $key = 'usewysiwyg';
             if( isset($rec[$key]) ) $rec[$key] = $value;
         }
 
         if( !$rec['name'] ) $rec['name'] = $rec['id'] = 'content_en';
-        if( strpos($rec['name'],' ') !== FALSE ) {
+        if( strpos($rec['name'],' ') !== false ) {
             if( !$rec['label'] ) $rec['label'] = $rec['name'];
             $rec['name'] = str_replace(' ','_',$rec['name']);
         }
@@ -101,8 +103,8 @@ final class CMS_Content_Block
         // check for duplicate
         elseif( isset(self::$_contentBlocks[$rec['name']]) ) { throw new CmsEditContentException('Duplicate content block: '.$rec['name']); }
 
-        // set priority
-        if( empty($rec['priority']) || !$rec['priority'] ) {
+        // ensure a priority
+        if( !$rec['priority'] ) {
             if( !self::$_priority ) self::$_priority = 100;
             $rec['priority'] = self::$_priority++;
         }
@@ -114,7 +116,7 @@ final class CMS_Content_Block
     // todo: could be in page_template_parser
     public static function smarty_compiler_imageblock($params,$compiler)
     {
-        if( preg_grep('/\$_smarty_tpl/', $params) ) {
+        if( preg_grep('/\$_smarty_tpl/',$params) ) {
             //TODO handle blocks with parameter(s) defined in-template at display-time
             $here = 1;
         }
@@ -122,7 +124,7 @@ final class CMS_Content_Block
         if( !isset($params['block']) || empty($params['block']) ) throw new CmsEditContentException('{content_image} tag requires block parameter');
 
         $rec = [ 'type'=>'image','name'=>'','label'=>'','upload'=>true,'dir'=>'','default'=>'','tab'=>'',
-                 'priority'=>'','exclude'=>'','sort'=>0, 'profile'=>'' ];
+                 'priority'=>'','exclude'=>'','sort'=>0,'profile'=>'' ];
         foreach( $params as $key => $value ) {
             if( $key == 'type' ) continue;
             if( $key == 'block' ) $key = 'name';
@@ -147,7 +149,7 @@ final class CMS_Content_Block
         // check for duplicate
         elseif( isset(self::$_contentBlocks[$rec['name']]) ) { throw new CmsEditContentException('Duplicate content block: '.$rec['name']); }
 
-        // set priority
+        // ensure a priority
         if( empty($rec['priority']) || $rec['priority'] == 0 ) {
             if( !self::$_priority ) self::$_priority = 100;
             $rec['priority'] = self::$_priority++;
@@ -160,7 +162,7 @@ final class CMS_Content_Block
     // todo: could be in page_template_parser
     public static function smarty_compiler_moduleblock($params,$compiler)
     {
-        if( preg_grep('/\$_smarty_tpl/', $params) ) {
+        if( preg_grep('/\$_smarty_tpl/',$params) ) {
             //TODO handle blocks with parameter(s) defined in-template at display-time
             $here = 1;
         }
@@ -201,8 +203,8 @@ final class CMS_Content_Block
         // check for duplicate
         elseif( isset(self::$_contentBlocks[$rec['name']]) ) { throw new CmsEditContentException('Duplicate content block: '.$rec['name']); }
 
-        // set priority
-        if( empty($rec['priority']) || !$rec['priority'] ) {
+        // ensure a priority
+        if( !$rec['priority'] ) {
             if( !self::$_priority ) self::$_priority = 100;
             $rec['priority'] = self::$_priority++;
         }
@@ -236,11 +238,11 @@ final class CMS_Content_Block
             $inline = false;
             $assign = (isset($params['assign'])) ? trim($params['assign']) : ''; //UNUSED
             if (isset($_REQUEST['mact'])) {
-                $ary = explode(',', cms_htmlentities($_REQUEST['mact']), 4);
+                $ary = explode(',',cms_htmlentities($_REQUEST['mact']),4);
                 $modulename = ($ary[0])?:'';
                 $id = (!empty($ary[1])?$ary[1]:'');
                 $action = (!empty($ary[2])?$ary[2]:'');
-                $inline = (!empty($ary[3])?1:0);
+                $inline = !empty($ary[3]);
             }
 
             //Only consider doing module processing if
@@ -265,7 +267,8 @@ final class CMS_Content_Block
 
                     if (!$modobj->IsPluginModule() ) {
                         @trigger_error('Attempt to access module '.$modulename.' which could not be found (is it properly installed and configured?');
-                        return self::content_return("<!-- Not a tag module -->\n", $params, $smarty);
+                        self::content_return("<!-- Not a tag module -->\n",$params,$template);
+                        return '';
                     }
 
                     $parms = [];
@@ -290,14 +293,14 @@ final class CMS_Content_Block
                             $parms[$key] = $value;
                         }
                     }
-                    $parms = array_merge($parms, $modops->GetModuleParameters($id));
+                    $parms = array_merge($parms,$modops->GetModuleParameters($id));
                     $returnid = $contentobj->Id();
                     if (isset($parms['returnid'])) $returnid = $parms['returnid'];
 
                     $oldcache = $template->caching;
                     $template->caching = Smarty::CACHING_OFF;
                     @ob_start();
-                    $result = $modobj->DoActionBase($action, $id, $parms, $returnid,$template);
+                    $result = $modobj->DoActionBase($action,$id,$parms,$returnid,$template);
                     $template->caching = $oldcache;
 
                     if( $result !== FALSE ) echo $result;
@@ -314,22 +317,26 @@ final class CMS_Content_Block
                     // note: content precompile/postcompile events will not be triggererd in preview.
                     //$val = $contentobj->Show($block);
                     //$result = $template->fetch('eval:'.$val);
-                    $result = $template->fetch(str_replace(' ', '_', 'content:' . $block), '|'.$block, $contentobj->Id().$block);
+                    $result = $template->fetch(str_replace(' ','_','content:' . $block),'|'.$block,$contentobj->Id().$block);
                 }
                 else {
-                    $result = $template->fetch(str_replace(' ', '_', 'content:' . $block), '|'.$block, $contentobj->Id().$block);
+                    $result = $template->fetch(str_replace(' ','_','content:' . $block),'|'.$block,$contentobj->Id().$block);
                 }
                 $template->caching = $oldvalue;
             }
         }
-        return self::content_return($result, $params, $template);
+        self::content_return($result,$params,$template);
+        return '';
     }
 
     // {process_pagedata} plugin handler
     public static function smarty_fetch_pagedata($params,$template)
     {
         $contentobj = CmsApp::get_instance()->get_content_object();
-        if( !is_object($contentobj) || $contentobj->Id() <= 0 ) return self::content_return('', $params, $template);
+        if( !is_object($contentobj) || $contentobj->Id() <= 0 ) {
+            self::content_return('',$params,$template);
+            return '';
+        }
 
         $result = $template->fetch('content:pagedata','',$contentobj->Id());
         if( isset($params['assign']) ){
@@ -343,8 +350,10 @@ final class CMS_Content_Block
     public static function smarty_fetch_imageblock($params,$template)
     {
         $contentobj = CmsApp::get_instance()->get_content_object();
-        if( !is_object($contentobj) || $contentobj->Id() <= 0 ) return self::content_return('', $params, $smarty);
-
+        if( !is_object($contentobj) || $contentobj->Id() <= 0 ) {
+            self::content_return('',$params,$template);
+            return '';
+        }
         $config = \cms_config::get_instance();
         $dir = $config['uploads_path'];
         $basename = basename($dir);
@@ -363,7 +372,7 @@ final class CMS_Content_Block
         if( isset($params['block']) ) {
             $oldvalue = $template->caching;
             $template->caching = Smarty::CACHING_OFF;
-            $result = $template->fetch(str_replace(' ', '_', 'content:' . $params['block']), '|'.$params['block'], $contentobj->Id().$params['block']);
+            $result = $template->fetch(str_replace(' ','_','content:' . $params['block']),'|'.$params['block'],$contentobj->Id().$params['block']);
             $template->caching = $oldvalue;
         }
         $img = $result;
