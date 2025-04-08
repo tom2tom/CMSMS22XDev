@@ -129,14 +129,14 @@ $(function () {
 	<fieldset>
 		{filebtn id='btn_newdir' iname="{$actionid}fileactionnewdir" icon='ui-icon-circle-plus' text=$mod->Lang('newdir') title=$mod->Lang('title_newdir')}
 		{filebtn id='btn_view' iname="{$actionid}fileactionview" icon='ui-icon-circle-zoomin' text=$mod->Lang('view') title=$mod->Lang('title_view')}
-		{filebtn id='btn_rename' iname="{$actionid}fileactionrename" text=$mod->Lang('rename') title=$mod->Lang('title_rename')}
+		{filebtn id='btn_rename' iname="{$actionid}fileactionrename" icon='ui-icon-gear' text=$mod->Lang('rename') title=$mod->Lang('title_rename')}
 		{filebtn id='btn_delete' iname="{$actionid}fileactiondelete" icon='ui-icon-trash' text=$mod->Lang('delete') title=$mod->Lang('title_delete')}
 		{filebtn id='btn_move' iname="{$actionid}fileactionmove" icon='ui-icon-arrow-4-diag' text=$mod->Lang('move') title=$mod->Lang('title_move')}
 		{filebtn id='btn_copy' iname="{$actionid}fileactioncopy" icon='ui-icon-copy' text=$mod->Lang('copy') title=$mod->Lang('title_copy')}
 		{filebtn id='btn_unpack' iname="{$actionid}fileactionunpack" icon='ui-icon-suitcase' text=$mod->Lang('unpack') title=$mod->Lang('title_unpack')}
 		{filebtn id='btn_thumb' iname="{$actionid}fileactionthumb" icon='ui-icon-star' text=$mod->Lang('thumbnail') title=$mod->Lang('title_thumbnail')}
 		{filebtn id='btn_resizecrop' iname="{$actionid}fileactionresizecrop" icon='ui-icon-image' text=$mod->Lang('resizecrop') title=$mod->Lang('title_resizecrop')}
-		{filebtn id='btn_rotate' iname="{$actionid}fileactionrotate" icon='ui-icon-image' text=$mod->Lang('rotate') title=$mod->Lang('title_rotate')}
+		{filebtn id='btn_rotate' iname="{$actionid}fileactionrotate" icon='ui-icon-arrowrefresh-1-s' text=$mod->Lang('rotate') title=$mod->Lang('title_rotate')}
 	</fieldset>
 	</div>
 {/if}{* NOT noform *}
