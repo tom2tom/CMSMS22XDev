@@ -16,75 +16,78 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-if (!function_exists("cmsms")) exit;
-if (!$this->CheckPermission("Modify Files") && !$this->AdvancedAccessAllowed()) exit;
-
-if (isset($params["cancel"])) {
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+if (!function_exists('cmsms')) {
+  exit;
+}
+if (!$this->CheckPermission('Modify Files') && !$this->AdvancedAccessAllowed()) {
+  exit;
 }
 
-$selall = $params['selall'];
-if( !is_array($selall) ) {
+if (isset($params['cancel'])) {
+  $this->Redirect($id, 'defaultadmin', $returnid, $params);
+}
+
+$selall = !empty($params['selall']) ? $params['selall'] : '';
+if ($selall && !is_array($selall)) {
   $selall = unserialize($selall);
 }
-if (count($selall)==0) {
-  $params["fmerror"]="nofilesselected";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+if (!$selall) {
+  $params['fmerror'] = 'nofilesselected';
+  $this->Redirect($id, 'defaultadmin', $returnid, $params);
 }
 //echo count($selall);
-if (count($selall)>1) {
+if (count($selall) > 1) {
   //echo "hi";die();
-  $params["fmerror"]="morethanonefiledirselected";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+  $params['fmerror'] = 'morethanonefiledirselected';
+  $this->Redirect($id, 'defaultadmin', $returnid, $params);
 }
 
-$config=cmsms()->GetConfig();
+//$config = cmsms()->GetConfig();
 
-$oldname=$this->decodefilename($selall[0]);
-$newname=$oldname; //for initial input box
+$oldname = $this->decodefilename($selall[0]);
+$newname = $oldname; //for initial input box
 
-if (isset($params["newname"])) {
-  $newname=strip_tags(trim($params["newname"]));
+if (!empty($params['newname'])) {
+  $barename = trim($params['newname']);
+  $newname = strip_tags($barename);
   if (!filemanager_utils::is_valid_filename($newname)) {
-    echo $this->ShowErrors($this->Lang("invaliddestname"));
+    echo $this->ShowErrors($this->Lang('invaliddestname'));
   } else {
     $cwd = filemanager_utils::get_cwd();
-    $fullnewname = filemanager_utils::join_path(filemanager_utils::get_full_cwd(),trim($params['newname']));
+    $fullnewname = filemanager_utils::join_path(filemanager_utils::get_full_cwd(), $barename);
     if (file_exists($fullnewname)) {
-      echo $this->ShowErrors($this->Lang("namealreadyexists"));
-      //fallthrough
+      echo $this->ShowErrors($this->Lang('namealreadyexists'));
     } else {
-      $fulloldname = filemanager_utils::join_path(filemanager_utils::get_full_cwd(),$oldname);
-      if (@rename($fulloldname,$fullnewname)) {
-        $thumboldname = filemanager_utils::join_path(filemanager_utils::get_full_cwd(),'thumb_'.$oldname);
-        $thumbnewname = filemanager_utils::join_path(filemanager_utils::get_full_cwd(),'thumb_'.trim($params['newname']));
-        if( file_exists($thumboldname) ) {
-          @rename($thumboldname,$thumbnewname);
+      $fulloldname = filemanager_utils::join_path(filemanager_utils::get_full_cwd(), $oldname);
+      if (@rename($fulloldname, $fullnewname)) {
+        $thumboldname = filemanager_utils::join_path(filemanager_utils::get_full_cwd(), 'thumb_'.$oldname);
+        $thumbnewname = filemanager_utils::join_path(filemanager_utils::get_full_cwd(), 'thumb_'.$barename);
+        if (file_exists($thumboldname)) {
+          @rename($thumboldname, $thumbnewname);
         }
         $this->SetMessage($this->Lang('renamesuccess'));
-        audit('','FileManager', 'Renamed file to '.$fullnewname);
-        $this->Redirect($id,"defaultadmin",$returnid,$paramsnofiles);
+        audit('', 'FileManager', 'Renamed file to '.$fullnewname);
+        $this->Redirect($id, 'defaultadmin', $returnid, $paramsnofiles);
       } else {
         $this->SetError($this->Lang('renameerror'));
-        $this->Redirect($id,"defaultadmin",$returnid,$params);
+        $this->Redirect($id, 'defaultadmin', $returnid, $params);
       }
     }
   }
- }
+}
 
-if( is_array($params['selall']) ) {
+if (is_array($params['selall'])) {
   $params['selall'] = serialize($params['selall']);
 }
-$this->smarty->assign('startform', $this->CreateFormStart($id, 'fileaction', $returnid,"post","",false,"",$params));
-//$this->CreateInputHidden($id,"fileaction","rename");
-$this->smarty->assign('newnametext',$this->lang("newname"));
-$smarty->assign('newname',$newname);
-$this->smarty->assign('newnameinput',$this->CreateInputText($id,"newname",$newname,40));
+//$params['fileaction'] = 'rename';
 
-$this->smarty->assign('endform', $this->CreateFormEnd());
+$tpl = $smarty->CreateTemplate($this->GetTemplateResource('renamefile.tpl'), null, null, $smarty);
+$tpl->assign('startform', $this->CreateFormStart($id, 'fileaction', $returnid, 'post', '', false, '', $params));
+$tpl->assign('newnametext', $this->lang('newname'));
+$tpl->assign('newname', $newname);
+$tpl->assign('newnameinput', $this->CreateInputText($id, 'newname', $newname, 40));
+$tpl->assign('endform', $this->CreateFormEnd());
+$tpl->assign('submit', $this->CreateInputSubmit($id, 'submit', $this->Lang('rename'))); //TODO different icon in button
+$tpl->assign('cancel', $this->CreateInputSubmit($id, 'cancel', $this->Lang('cancel')));
 
-$this->smarty->assign('submit', $this->CreateInputSubmit($id, 'submit', $this->Lang('rename')));
-$this->smarty->assign('cancel', $this->CreateInputSubmit($id, 'cancel', $this->Lang('cancel')));
-echo $this->ProcessTemplate('renamefile.tpl');
-
-?>
+$tpl->Display();
