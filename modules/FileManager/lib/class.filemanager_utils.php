@@ -35,11 +35,16 @@ final class filemanager_utils
         if( $name[0] == '.' || $name[0] == ' ' ) return FALSE;
         if( endswith( $name, '.' ) ) return FALSE;
 
-        $a = strrpos($name,'.');
-        $ext = ($a > 0) ? substr($name,$a + 1) : '';
-        if( $ext ) {
-            $ext = strtolower($ext);
-            if( startswith($ext,'php') || endswith($ext,'php') ) return FALSE;
+        $a = strrpos($name,'.'); //is_executable() checks file-extension
+        if( $a > 0 ) { //also exclude hidden file
+            if( !isset(self::$helper) ) {
+                self::$helper = new FileTypeHelper();
+            }
+            if( self::$helper->is_executable($name) ) {
+                if( !self::check_advanced_mode() ) {
+                    return FALSE;
+                }
+            }
         }
         if( preg_match('/[\n\r\t\[\]\&\?\<\>\!\@\#\$\%\*\(\)\{\}\|\"\'\:\;\+]/',$name) ) {
             return FALSE;
