@@ -16,6 +16,8 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+use CMSMS\FileTypeHelper;
+
 if (!function_exists('cmsms')) {
   exit;
 }
@@ -42,9 +44,19 @@ if (count($selall) > 1) {
   $this->Redirect($id, 'defaultadmin', $returnid, $params);
 }
 
-//$config = cmsms()->GetConfig();
-
 $oldname = $this->decodefilename($selall[0]);
+//renaming an executable file is normally prohibited
+$a = strrpos($oldname,'.'); //is_executable() checks file-extension
+if ($a > 0) { //also exclude hidden file
+  $helper = new FileTypeHelper();
+  if ($helper->is_executable($oldname)) {
+    if (!filemanager_utils::check_advanced_mode()) {
+      $params['fmerror'] = 'renameerror';
+      $this->Redirect($id, 'defaultadmin', $returnid, $params);
+    }
+  }
+}
+
 $newname = $oldname; //for initial input box
 
 if (!empty($params['newname'])) {
@@ -80,8 +92,8 @@ if (is_array($params['selall'])) {
   $params['selall'] = serialize($params['selall']);
 }
 //$params['fileaction'] = 'rename';
-
 $tpl = $smarty->CreateTemplate($this->GetTemplateResource('renamefile.tpl'), null, null, $smarty);
+
 $tpl->assign('startform', $this->CreateFormStart($id, 'fileaction', $returnid, 'post', '', false, '', $params));
 $tpl->assign('newnametext', $this->lang('newname'));
 $tpl->assign('newname', $newname);
