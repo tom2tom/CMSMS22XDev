@@ -196,7 +196,7 @@ final class cms_config implements ArrayAccess
     $this->_types['admin_url']                 = self::TYPE_STRING;
     $this->_types['ignore_lazy_load']          = self::TYPE_BOOL;
     $this->_types['tmp_cache_location']        = self::TYPE_STRING;
-    $this->_types['tmp_config_location']       = self::TYPE_STRING;
+    $this->_types['tmp_config_location']       = self::TYPE_STRING; //since 2.2.21
     $this->_types['tmp_templates_c_location']  = self::TYPE_STRING;
     $this->_types['public_cache_location']     = self::TYPE_STRING;
     $this->_types['public_cache_url']          = self::TYPE_STRING;
@@ -560,7 +560,7 @@ final class cms_config implements ArrayAccess
         $this->_cache[$key] = $this->offsetGet('root_url').'/tmp/cache';
         return $this->_cache[$key];
 
-      case 'tmp_config_location':
+      case 'tmp_config_location': // since 2.2.21
         $this->_cache[$key] = cms_join_path($this->offsetGet('root_path'),'tmp','config');
         return $this->_cache[$key];
 
@@ -613,23 +613,18 @@ final class cms_config implements ArrayAccess
   {
     $type = (isset($this->_types[$key])) ? $this->_types[$key] : self::TYPE_STRING;
 
-    $ret = '';
     switch( $type ) {
       case self::TYPE_STRING:
-        $ret = "'".$value."'";
-        break;
+        return "'".addcslashes($value,"'")."'";
 
       case self::TYPE_BOOL:
-        $ret = ($value)?'true':'false';
-        break;
+        return ($value)?'true':'false';
 
       case self::TYPE_INT:
-        $ret = (int)$value;
-        break;
+        return (int)$value;
     }
-    return $ret;
+    return '';
   }
-
 
   /**
    * A function to save the current state of the config.php file.  Any existing file is backed up
@@ -652,7 +647,7 @@ final class cms_config implements ArrayAccess
     }
 
     // header for the config file.
-    $output = "<?php\n# CMS Made Simple Configuration File\n# Documentation: https://docs.cmsmadesimple.org/configuration/config-file/config-reference\n\n";
+    $output = "<?php\n// CMS Made Simple Configuration File\n// Documentation: https://docs.cmsmadesimple.org/configuration/config-file/config-reference\n\n";
     // body
     foreach( $this->_data as $key => $value ) {
       $outvalue = $this->_printable_value($key,$value);
