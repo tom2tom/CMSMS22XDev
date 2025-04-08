@@ -86,7 +86,7 @@ function get_username($check = true)
 function check_login($no_redirect = false)
 {
     $do_redirect = !$no_redirect;
-    $uid = get_userid(!$no_redirect);
+    $uid = get_userid($do_redirect);
     $res = false;
     if( $uid > 0 ) {
         $res = true;
