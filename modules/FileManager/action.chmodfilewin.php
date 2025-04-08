@@ -17,7 +17,7 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 if (!function_exists("cmsms")) exit;
-if (!$this->AccessAllowed() && !$this->AdvancedAccessAllowed()) exit;
+if (!$this->CheckPermission("Modify Files") && !$this->AdvancedAccessAllowed()) exit;
 
 if(!isset($params["filename"]) || !isset($params["path"])) {
 	$this->Redirect($id, 'defaultadmin');
@@ -52,12 +52,11 @@ if (isset($params["newmode"])) {
 
 	$this->smarty->assign('modeswitch',
 		  $this->CreateInputRadioGroup($id,"newmode",array($this->Lang("writable")=>"777",$this->Lang("writeprotected")=>"444"),$currentmode));
-  $this->smarty->assign('modeswitchof', $this->GetModeTable($id,$this->GetPermissions($params["path"],$params["filename"])));
+	$this->smarty->assign('modeswitchof', $this->GetModeTable($id,$this->GetPermissions($params["path"],$params["filename"])));
 
 	$this->smarty->assign('submit', $this->CreateInputSubmit($id, 'submit', $this->Lang('setpermissions')));
 	$this->smarty->assign('cancel', $this->CreateInputSubmit($id, 'cancel', $this->Lang('cancel')));
 	echo $this->ProcessTemplate('chmodfilewin.tpl');
-
 }
 
 ?>

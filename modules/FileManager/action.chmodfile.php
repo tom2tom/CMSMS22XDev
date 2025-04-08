@@ -17,7 +17,7 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 if (!function_exists("cmsms")) exit;
-if (!$this->AccessAllowed() && !$this->AdvancedAccessAllowed()) exit;
+if (!$this->CheckPermission("Modify Files") && !$this->AdvancedAccessAllowed()) exit;
 
 if (!isset($params["filename"]) || !isset($params["path"])) {
   $this->Redirect($id, 'defaultadmin');
