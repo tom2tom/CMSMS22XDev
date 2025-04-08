@@ -20,11 +20,11 @@ if (!function_exists("cmsms")) exit;
 if (!$this->CheckPermission("Modify Files") && !$this->AdvancedAccessAllowed()) exit;
 
 if (!isset($params["filename"]) || !isset($params["path"])) {
-  $this->Redirect($id, 'defaultadmin');
+	$this->Redirect($id, 'defaultadmin');
 }
 
 if( !filemanager_utils::test_valid_path($params['path']) ) {
-  $this->Redirect($id, 'defaultadmin', $returnid, array("fmerror" => "fileoutsideuploads"));
+	$this->Redirect($id, 'defaultadmin', $returnid, array("fmerror" => "fileoutsideuploads"));
 }
 
 $config = $gCms->GetConfig();
@@ -33,39 +33,37 @@ $fullname = $this->Slash($config["root_path"], $fullname);
 
 
 if (isset($params["newmode"])) {
-  //echo deleting;die();
-  if (isset($params["cancel"])) {
-    $this->Redirect($id, "defaultadmin", $returnid, array("path" => $params["path"], "fmmessage" => "chmodcancelled"));
-  } else {
-    $newmode = $this->GetModeFromTable($params);
-    if (isset($params["quickmode"]) && ($params["quickmode"] != "")) {
-      $newmode = $params["quickmode"];
-    }
-    //echo $newmode;die();
-    if ($this->SetMode($newmode, $fullname)) {
-      $this->Redirect($id, "defaultadmin", $returnid, array("path" => $params["path"], "fmmessage" => "chmodsuccess"));
-    } else {
-      $this->Redirect($id, "defaultadmin", $returnid, array("path" => $params["path"], "fmerror" => "chmodfailure"));
-    }
-  }
+	//echo deleting;die();
+	if (isset($params["cancel"])) {
+		$this->Redirect($id, "defaultadmin", $returnid, array("path" => $params["path"], "fmmessage" => "chmodcancelled"));
+	} else {
+		$newmode = $this->GetModeFromTable($params);
+		if (isset($params["quickmode"]) && ($params["quickmode"] != "")) {
+			$newmode = $params["quickmode"];
+		}
+		//echo $newmode;die();
+		if ($this->SetMode($newmode, $fullname)) {
+			$this->Redirect($id, "defaultadmin", $returnid, array("path" => $params["path"], "fmmessage" => "chmodsuccess"));
+		} else {
+			$this->Redirect($id, "defaultadmin", $returnid, array("path" => $params["path"], "fmerror" => "chmodfailure"));
+		}
+	}
 } else {
-  $currentmode = $this->GetMode($params["path"], $params["filename"]);
-  $this->smarty->assign('startform', $this->CreateFormStart($id, 'chmodfile', $returnid));
+	$currentmode = $this->GetMode($params["path"], $params["filename"]);
+	$tpl = $smarty->CreateTemplate($this->GetTemplateResource('chmodfile.tpl'), null, null, $smarty);
 
-  $this->smarty->assign('filename', $this->CreateInputHidden($id, "filename", $params["filename"]));
-  $this->smarty->assign('path', $this->CreateInputHidden($id, "path", $params["path"]));
-  $this->smarty->assign('endform', $this->CreateFormEnd());
-  $this->smarty->assign('newmodetext', $this->Lang("newpermissions"));
+	$tpl->assign('startform', $this->CreateFormStart($id, 'chmodfile', $returnid));
+	$tpl->assign('filename', $this->CreateInputHidden($id, "filename", $params["filename"]));
+	$tpl->assign('path', $this->CreateInputHidden($id, "path", $params["path"]));
+	$tpl->assign('endform', $this->CreateFormEnd());
+	$tpl->assign('newmodetext', $this->Lang("newpermissions"));
+	$tpl->assign('newmode', $this->CreateInputHidden($id, "newmode", "newset"));
+	$tpl->assign('modetable', $this->GetModeTable($id, $this->GetPermissions($params["path"], $params["filename"])));
+	$tpl->assign('quickmodetext', $this->Lang("quickmode"));
+	$tpl->assign('quickmodeinput', $this->CreateInputText($id, "quickmode", "", 3, 3));
+	$tpl->assign('submit', $this->CreateInputSubmit($id, 'submit', $this->Lang('setpermissions')));
+	$tpl->assign('cancel', $this->CreateInputSubmit($id, 'cancel', $this->Lang('cancel')));
 
-  $this->smarty->assign('newmode', $this->CreateInputHidden($id, "newmode", "newset"));
-
-  $this->smarty->assign('modetable', $this->GetModeTable($id, $this->GetPermissions($params["path"], $params["filename"])));
-
-  $this->smarty->assign('quickmodetext', $this->Lang("quickmode"));
-  $this->smarty->assign('quickmodeinput', $this->CreateInputText($id, "quickmode", "", 3, 3));
-
-  $this->smarty->assign('submit', $this->CreateInputSubmit($id, 'submit', $this->Lang('setpermissions')));
-  $this->smarty->assign('cancel', $this->CreateInputSubmit($id, 'cancel', $this->Lang('cancel')));
-  echo $this->ProcessTemplate('chmodfile.tpl');
+	$tpl->Display();
 }
 ?>
