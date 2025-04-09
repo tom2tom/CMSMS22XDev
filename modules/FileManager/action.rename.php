@@ -49,11 +49,11 @@ $oldname = $this->decodefilename($selall[0]);
 $a = strrpos($oldname,'.'); //is_executable() checks file-extension
 if ($a > 0) { //also exclude hidden file
   $helper = new FileTypeHelper();
-  if ($helper->is_executable($oldname)) {
-    if (!filemanager_utils::check_advanced_mode()) {
-      $params['fmerror'] = 'renameerror';
-      $this->Redirect($id, 'defaultadmin', $returnid, $params);
-    }
+  $flag = $helper->is_executable($oldname) ||
+          substr_compare($oldname, '.js', $a, 3, true) == 0;
+  if ($flag && !filemanager_utils::check_advanced_mode()) {
+    $params['fmerror'] = 'renameerror';
+    $this->Redirect($id, 'defaultadmin', $returnid, $params);
   }
 }
 

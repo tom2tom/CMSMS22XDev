@@ -36,7 +36,7 @@ final class filemanager_utils
         if( endswith( $name, '.' ) ) return FALSE;
 
         $a = strrpos($name,'.'); //is_executable() checks file-extension
-        if( $a > 0 ) { //also exclude hidden file
+        if( $a > 0 ) { //also ignore a hidden file
             if( !isset(self::$helper) ) {
                 self::$helper = new FileTypeHelper();
             }
@@ -45,6 +45,11 @@ final class filemanager_utils
                     return FALSE;
                 }
             }
+            elseif( substr_compare($name,'.js',$a,3,TRUE) == 0 ) {
+                if( !self::check_advanced_mode() ) {
+                    return FALSE;
+                }
+            } 
         }
         if( preg_match('/[\n\r\t\[\]\&\?\<\>\!\@\#\$\%\*\(\)\{\}\|\"\'\:\;\+]/',$name) ) {
             return FALSE;
@@ -55,13 +60,13 @@ final class filemanager_utils
     public static function can_do_advanced()
     {
         if( self::$_can_do_advanced < 0 ) {
-            $mod = cms_utils::get_module('FileManager');
             $config = cms_config::get_instance();
-            if( startswith($config['uploads_path'],CMS_ROOT_PATH) && $mod->AdvancedAccessAllowed() ) {
-                self::$_can_do_advanced = 1;
+            if( empty($config['developer_mode']) ) {
+                $mod = cms_utils::get_module('FileManager');
+                self::$_can_do_advanced = (startswith($config['uploads_path'],CMS_ROOT_PATH) && $mod->AdvancedAccessAllowed()) ? 1 : 0;
             }
             else {
-                self::$_can_do_advanced = 0;
+                self::$_can_do_advanced = 1;
             }
         }
         return self::$_can_do_advanced;
@@ -69,10 +74,9 @@ final class filemanager_utils
 
     public static function check_advanced_mode()
     {
-        //TODO some sort of 'developer mode' config setting would be good
-        if( !self::can_do_advanced() ) return FALSE;
+        if( self::can_do_advanced() == 0 ) return FALSE;
         $mod = cms_utils::get_module('FileManager');
-        return ($mod->GetPreference('advancedmode') != FALSE);
+        return ($mod->GetPreference('advancedmode',FALSE) != FALSE);
     }
 
     public static function get_default_cwd()
