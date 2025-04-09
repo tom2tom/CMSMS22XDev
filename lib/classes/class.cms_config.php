@@ -180,6 +180,7 @@ final class cms_config implements ArrayAccess
     $this->_types['ssl_image_uploads_url']     = self::TYPE_STRING; // deprecated since 2.2
     $this->_types['debug']                     = self::TYPE_BOOL;
     $this->_types['debug_to_log']              = self::TYPE_BOOL;
+    $this->_types['developer_mode']            = self::TYPE_BOOL; //since 2.0
     $this->_types['timezone']                  = self::TYPE_STRING;
     $this->_types['persist_db_conn']           = self::TYPE_BOOL;
     $this->_types['max_upload_size']           = self::TYPE_INT;
@@ -427,6 +428,7 @@ final class cms_config implements ArrayAccess
       case 'permissive_smarty':
       case 'ignore_lazy_load':
       case 'debug':
+//    case 'developer_mode': NOPE many isset() checks
       case 'persist_db_conn':
         return false;
 
