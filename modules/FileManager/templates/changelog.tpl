@@ -7,6 +7,8 @@
     <br>
     Set file(s) permissions after upload
     <br>
+    More-general checks for executable files and consequential restrictions
+    <br>
     Use FileTypeHelper-class methods where relevant
     <br>
     Modify easyarchives classes for PHP8+ compatibility
