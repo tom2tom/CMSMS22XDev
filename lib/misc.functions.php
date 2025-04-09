@@ -779,7 +779,7 @@ function startswith( $str, $sub )
 
 
 /**
- * Similar to the startswith method, this function tests with string A ends with string B.
+ * Similar to the startswith method, this function tests whether one string ends with another.
  *
  * i.e: endswith('The Quick Brown Fox','Fox');
  *
