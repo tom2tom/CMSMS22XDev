@@ -165,6 +165,7 @@ if ($submitted == 1) {
                     $one = (int)$one;
                     if( $one > 0 ) $tmp[] = $one;
                 }
+                unset($one);
                 $query = 'DELETE FROM '.CMS_DB_PREFIX.'group_perms WHERE group_id IN ('.implode(',',$tmp).')';
                 $db->Execute($query);
             }

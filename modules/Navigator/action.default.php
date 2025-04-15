@@ -86,6 +86,7 @@ if( !$tpl->isCached() ) {
                 foreach( $list as &$one ) {
                     $one = trim($one);
                 }
+                unset($one);
                 $list = array_unique($list);
                 if( count($list) ) {
                     $flatlist = $hm->getFlatList();
@@ -97,6 +98,7 @@ if( !$tpl->isCached() ) {
                                 if( startswith( $alias, $t1 ) ) $tmp[] = $alias;
                             }
                         }
+                        unset($node);
                         if( is_array($tmp) && count($tmp) ) $items = implode(',',$tmp);
                     }
                 }
@@ -244,7 +246,7 @@ if( !$tpl->isCached() ) {
         if( $hm->has_children() ) $rootnodes = $hm->get_children();
     }
 
-    if( $rootnodes ) { 
+    if( $rootnodes ) {
         // fill the nodes
         $outtree = [];
         foreach( $rootnodes as $node ) {

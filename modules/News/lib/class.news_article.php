@@ -174,6 +174,7 @@ class news_article
                     if( !is_object($obj) ) continue;
                     if( $key == $obj->alias ) return $obj->value;
                 }
+                unset($obj);
             }
             //throw new Exception('Requesting invalid data from News article object '.$key);
         }

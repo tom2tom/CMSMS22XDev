@@ -276,6 +276,7 @@ class DataDictionary extends \CMSMS\Database\DataDictionary
                     $val = preg_replace('/TYPE\s?=/i','ENGINE=',$val);
                 }
             }
+            unset($val);
         }
         return $opts;
     }
@@ -340,6 +341,7 @@ class DataDictionary extends \CMSMS\Database\DataDictionary
         foreach( $tableoptions as $key => &$val ) {
             if( strpos($val,'TYPE=') !== FALSE ) $val = str_replace('TYPE=','ENGINE=',$val);
         }
+        unset($val);
         if( isset($tableoptions[$dbtype]) && strpos($tableoptions[$dbtype],'CHARACTER') === FALSE &&
             strpos($tableoptions[$dbtype],'COLLATE') === FALSE ) {
             // if no character set and collate options specified, force UTF8

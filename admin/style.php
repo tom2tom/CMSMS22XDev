@@ -56,6 +56,7 @@ if( is_array($allmodules) && count($allmodules) ) {
         if( !is_object($object) ) continue;
         if( $object->HasAdmin() ) echo $object->AdminStyle();
     }
+    unset($object);
 }
 
 ?>

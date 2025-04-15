@@ -250,7 +250,7 @@ foreach ($userlist as &$oneuser) {
     if ($userops->UserInGroup($oneuser->id, 1) && !$userops->UserInGroup($userid, 1)) $oneuser->access_to_user = 0;
     $oneuser->pagecount = $userops->CountPageOwnershipById($oneuser->id);
 }
-
+unset($oneuser);
 $smarty->assign('is_admin',$is_admin);
 $smarty->assign('users', $userlist);
 $smarty->assign('my_userid', get_userid());

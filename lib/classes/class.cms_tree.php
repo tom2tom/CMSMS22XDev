@@ -285,6 +285,7 @@ class cms_tree
 			foreach( $this->_children as &$one ) {
 				$n += $one->count_nodes();
 			}
+			unset($one);
 		}
 		return $n;
 	}

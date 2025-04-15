@@ -112,6 +112,7 @@ function smarty_block_textformat($params, $content, Smarty_Internal_Template $te
             $_paragraph = preg_replace('!^!m', str_repeat($indent_char, $indent), $_paragraph);
         }
     }
+    unset($_paragraph);
     $_output = implode($wrap_char . $wrap_char, $_paragraphs);
     if ($assign) {
         $template->assign($assign, $_output);

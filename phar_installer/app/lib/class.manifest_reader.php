@@ -47,6 +47,7 @@ class manifest_reader
         foreach( $cols as &$col ) {
             $col = trim($col);
         }
+        unset($col);
         if( count($cols) != 2 ) throw new Exception(lang('error_internal','mr102'));
 
         switch( $cols[0] ) {

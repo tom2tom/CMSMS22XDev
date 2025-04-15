@@ -334,6 +334,7 @@ final class cms_route_manager
 		foreach( $modules as $name => &$module ) {
 			$module->SetParameters();
 		}
+		unset($module);
 
 		if( $flag ) $CMS_ADMIN_PAGE = $flag;
 	}

@@ -228,6 +228,7 @@ final class cms_config implements ArrayAccess
         }
       }
       unset(
+        $value,
         $config['max_upload_size'],
         $config['upload_max_filesize']
       );

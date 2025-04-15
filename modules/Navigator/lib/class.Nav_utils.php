@@ -42,6 +42,7 @@ final class Nav_utils
             foreach( $data as &$one ) {
                 $one = trim($one);
             }
+            unset($one);
             $data = array_unique($data);
             self::$_excludes = $data; // possibly empty
         }
