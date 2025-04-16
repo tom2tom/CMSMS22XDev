@@ -45,7 +45,7 @@ $do_remove = false;
 if( count($files) == 0 ) $do_remove = true;
 if( count($files) == 1 ) {
     $bn = strtolower(basename($files[0]));
-    if( $bn == 'index.html' ) $do_remove == true;
+    if( $bn == 'index.html' ) $do_remove = true;
 }
 if( $do_remove ) \__appbase\utils::rrmdir($plugins_from);
 @touch($plugins_to.'/index.html');
