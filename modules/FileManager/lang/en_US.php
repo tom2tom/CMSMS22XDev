@@ -42,7 +42,7 @@ $lang['createnewdir'] = 'Create new directory';
 $lang['createthumbnail'] = 'Create <em>(or recreate)</em> an image thumbnail';
 $lang['create_thumbnails'] = 'Create thumbnails on upload';
 $lang['crop'] = 'Crop';
-$lang['currentpath'] = 'Current path:';
+$lang['currentpath'] = 'Current path';
 
 // D
 $lang['delete'] = 'Delete';
@@ -92,9 +92,9 @@ $lang['filedeletefail'] = ' was not deleted due to an error';
 $lang['filedeletesuccess'] = 'was successfully deleted';
 $lang['fileexistsdest'] = '%s already exists at the destination';
 $lang['fileimagetype'] = 'Cannot perform this action on this type of image';
-$lang['fileinfo'] = 'File info';
+$lang['fileinfo'] = 'File Info';
 $lang['filemovesame'] = 'Cannot move a directory';
-$lang['filename'] = 'File name';
+$lang['filename'] = 'File Name'; //OR 'Item Name' ?
 $lang['fileno'] = 'File no.';
 $lang['filenotfound'] = 'File not found';
 $lang['filenotimage'] = 'File specified is not an image (or there is some error with the file)';
@@ -181,9 +181,9 @@ $lang['move_destdir'] = 'Destination Directory';
 $lang['namealreadyexists'] = 'Name already exists';
 $lang['newdir'] = 'New directory';
 $lang['newdirfail'] = 'An error occurred while trying to create the directory';
-$lang['newdirname'] = 'Create new directory:';
+$lang['newdirname'] = 'Create new directory';
 $lang['newdirsuccess'] = 'The directory was created successfully';
-$lang['newname'] = 'New name:';
+$lang['newname'] = 'New name';
 $lang['newpermissions'] = 'New permissions';
 $lang['newunsupportedarchive'] = '%s is an unsupported archive format';
 $lang['newuploadfailed'] = '%s file(s) failed to upload (or possibly unpack) successfully';
@@ -322,7 +322,7 @@ $lang['upgraded'] = 'The FileManager module is upgraded to version %s';
 $lang['uploaderstandard'] = 'Standard HTML input-method (allows unpacking)';
 $lang['uploadfail'] = 'failed to upload successfully';
 $lang['uploadmethod'] = 'Upload method';
-$lang['uploadnewfile'] = 'Upload new file(s):';
+$lang['uploadnewfile'] = 'Upload new file(s)';
 $lang['uploadsuccess'] = 'is uploaded successfully';
 
 // V
