@@ -48,8 +48,8 @@ class Smarty_Internal_Method_ConfigLoad
      * @param string                                                  $config_file filename
      * @param mixed                                                   $sections    array of section names, single
      *                                                                             section or null
-     * @param int                                                     $scope       scope into which config variables
-     *                                                                             shall be loaded
+     * @param mixed                                                   $scope       int scope(s) into which config
+     *                                                                             variables shall be loaded or null
      *
      * @throws \Exception
      */
