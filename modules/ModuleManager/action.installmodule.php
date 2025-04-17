@@ -317,7 +317,6 @@ try {
 
     $smarty->assign('dependencies',$alldeps);
     echo $this->ProcessTemplate('installinfo.tpl');
-    return;
 }
 catch( Exception $e ) {
     $msg = $e->GetMessage();
