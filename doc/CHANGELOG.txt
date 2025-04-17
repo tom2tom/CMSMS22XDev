@@ -9,11 +9,13 @@ Version 2.2.21F2 - Fredericton
  - Page-content, templates and stylesheets may be loaded without checking cache
  - Improved sanitisation of user-related parameters and email preference values
  - Sanitize entered site- and page-metadata values
+ - Extra opportunity to change installed translations during installer sessions
+ - Supports PHP to 8.4 (and probably 8.5) without deprecation
  - jQuery upgraded to version 2.2.4 (1.12.4 also bundled)
  - jQuery UI upgraded to version 1.13.3 (with previous styling)
  - Replace deprecated jQuery usage in templates
  - Smarty upgraded to forked version 4.4.2
- - PHPMailer upgraded to version 6.9.3.
+ - PHPMailer upgraded to version 6.9.3
 
 Version 2.2.20F2 - Yellowknife
 -------------------------------
