@@ -992,7 +992,7 @@ class http_request
             $this->_parseHeaders($responseHeader);
 
             // Do we have a 301/302 redirect ?
-            if (($this->status == '301' || $this->status == '302') && $this->redirect == TRUE)
+            if (($this->status == '301' || $this->status == '302') && $this->redirect)
             {
                 if ($this->curRedirect < $this->maxRedirect)
                 {
