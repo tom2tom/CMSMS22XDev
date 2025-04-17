@@ -75,7 +75,7 @@
 			{capture assign='tmp2'}{$actionid}news_customfield_{$field->id}{/capture}
 			{cms_textarea id=$tmp1 name=$tmp2 enablewysiwyg=true}
 		{elseif $field->type == 'textbox'}
-			<input id="news_fld_{$field->id}" type="text"" name="{$actionid}news_customfield_{$field->id}" maxlength="{$field->max_length}">
+			<input id="news_fld_{$field->id}" type="text" name="{$actionid}news_customfield_{$field->id}" maxlength="{$field->max_length}">
 		{/if}
 		</p>
 		</div>
