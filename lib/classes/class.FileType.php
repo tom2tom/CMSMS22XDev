@@ -25,5 +25,6 @@ abstract class FileType
     const TYPE_XML   = 'xml';
     const TYPE_DOCUMENT = 'document';
     const TYPE_ARCHIVE = 'archive';
+    const TYPE_EXECUTABLE = 'executable';
     const TYPE_ANY = 'any';
 } // end of class.
