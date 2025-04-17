@@ -162,7 +162,7 @@ final class imageEditor
 	 * @return bool
 	 **/
 	public static function save($image, $path, $mimeType){
-		// TODO c.f. typehelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff'.'tif','webp','svg'
+		// TODO c.f. typehelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','webp','avif','heif','svg'
 		switch ($mimeType) {
 			case 'image/jpeg':
 				return imagejpeg($image, $path);
