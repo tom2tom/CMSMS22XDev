@@ -160,7 +160,7 @@ $(function () {
 			</tr>
 		</thead>
 		<tbody>
-		{foreach $files as $file}
+		{foreach $files as $idx => $file}
 {strip}		{cycle values="row1,row2" assign=rowclass}
 			{if $file->filedate !== ''}
 			{$thedate=$file->filedate|cms_date_format}{$thedate=str_replace([' ','-'],['&nbsp;','&minus;'],$thedate)}
@@ -179,8 +179,8 @@ $(function () {
 				<td class="clickable" style="padding-right:8px;white-space:pre;vertical-align:middle">{$thedate}</td>
 				<td>
 				{if !isset($file->noCheckbox)}
-					<label for="x_{$file->urlname}" style="display: none;">{$mod->Lang('toggle')}</label>
-					<input type="checkbox" title="{$mod->Lang('toggle')}" id="x_{$file->urlname}" name="{$actionid}selall[]" value="{$file->urlname}" class="fileselect {' '|adjust:'implode':$file->type}"{if isset($file->checked)} checked{/if}>
+					<label for="x_{$idx}" style="display:none;">{$mod->Lang('toggle')}</label>
+					<input type="checkbox" title="{$mod->Lang('toggle')}" id="x_{$idx}" name="{$actionid}selall[]" value="{$file->urlname}" class="fileselect {' '|adjust:'implode':$file->type}"{if isset($file->checked)} checked{/if}>
 				{/if}
 				</td>
 			</tr>
