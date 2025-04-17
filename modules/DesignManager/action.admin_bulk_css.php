@@ -119,7 +119,7 @@ try {
     $smarty->assign('bulk_op',$bulk_op);
     $allparms = base64_encode(json_encode(array('css_select'=>$params['css_select'],'css_bulk_action'=>$params['css_bulk_action'])));
     $smarty->assign('allparms',$allparms);
-    $smarty->assign('templates',$stylesheets);
+    $smarty->assign('sheets',$stylesheets);
 
     echo $this->ProcessTemplate('admin_bulk_css.tpl');
 }

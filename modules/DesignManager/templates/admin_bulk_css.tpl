@@ -1,6 +1,6 @@
 <h3>{$mod->Lang($bulk_op)}</h3>
 
-{if !empty($templates)}
+{if !empty($sheets)}
 <table class="pagetable">
   <thead>
    <tr>
@@ -10,11 +10,11 @@
    </tr>
   </thead>
   <tbody>
-  {foreach $templates as $tpl}
+  {foreach $sheets as $sht}
     <tr>
-      <td>{$tpl->get_id()}</td>
-      <td>{$tpl->get_name()}</td>
-      <td>{$tpl->get_modified()|localedate_format:'%x %X'}</td>
+      <td>{$sht->get_id()}</td>
+      <td>{$sht->get_name()}</td>
+      <td>{$sht->get_modified()|localedate_format:'%x %X'}</td>
     </tr>
   {/foreach}
   </tbody>
