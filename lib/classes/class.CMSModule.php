@@ -2480,10 +2480,12 @@ abstract class CMSModule
     }
 
     /**
-     * A function to return a resource identifier to a module specific template
-     * if the template specified ends in .tpl then a file template is assumed.
+     * A function to return a resource identifier for a module-specific template
+     * If the specified template ends in .tpl then a file template is assumed,
+     * otherwise a database template.
      *
-     * Note: Since 2.2.1 This function will throw a logic exception if a string or eval resource is supplied.
+     * Note: Since 2.2.1 This function will throw a logic exception if a
+     *  string or eval or extends resource is specified in the template name.
      *
      * @since 2.0
      * @author Robert Campbell
@@ -2501,7 +2503,6 @@ abstract class CMSModule
         if( endswith($template,'.tpl') ) return 'module_file_tpl:'.$this->GetName().';'.$template;
         return 'cms_template:'.$template;
     }
-
 
     /**
      * A function to return a resource identifier to a module specific file template
@@ -2531,11 +2532,11 @@ abstract class CMSModule
     }
 
     /**
-     * Returns a database saved template.  This should be used for admin functions only, as it doesn't
-     * follow any smarty caching rules.
+     * Returns a database-stored template. This should be used in admin contexts
+     * only, as it doesn't follow any smarty caching rules.
      *
      * @final
-     * @deprecated
+     * @deprecated since 2.0
      * @param string $tpl_name the template name.
      * @param string $modulename  If empty the current module name is used.
      * @return string
@@ -2547,7 +2548,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns contents of the template that resides in modules/ModuleName/templates/{template_name}.tpl
+     * Returns content of the template in this module's templates folder and
+     * whose name is like {template_name}.tpl
      * Code adapted from the Guestbook module
      *
      * @final
@@ -2562,10 +2564,10 @@ abstract class CMSModule
 
 
     /**
-     * Sets a smarty template into the database and associates it with a module.
+     * Stores a Smarty template into the database and associates it with a module.
      *
      * @final
-     * @deprecated
+     * @deprecated since 2.0
      * @param string $tpl_name The template name
      * @param string $content The template content
      * @param string $modulename The module name, if empty the current module name is used.
@@ -2581,8 +2583,8 @@ abstract class CMSModule
      * Delete a module template from the database
      *
      * @final
-     * @deprecated
-     * @param string $tpl_name The Template name, if empty all templates associated with the module are deleted.
+     * @deprecated since 2.0
+     * @param string $tpl_name The template name, if empty all templates associated with the module are deleted.
      * @param string $modulename The module name, if empty the current module name is used.
      * @return bool
      */
@@ -2593,32 +2595,30 @@ abstract class CMSModule
     }
 
     /**
-     * Process A File template through smarty
+     * Process a file template through Smarty
      *
      * @final
-     * @deprecated
-     * @param string  $tpl_name    Template name
-     * @param string  $designation Cache Designation
-     * @param bool $cache       Cache flag
-     * @param string  $cacheid     Unique cache flag
+     * @deprecated since 2.0 instead use CMSMS2 API for templates
+     * @param string  $tpl_name Template name
+     * @param string  $designation Used for template compile id
+     * @param bool $cache Cache flag
+     * @param string  $cacheid Unique cache identifier
      * @return string
      */
     final public function ProcessTemplate($tpl_name, $designation = '', $cache = false, $cacheid = '')
     {
         $this->_loadTemplateMethods();
-        return cms_module_ProcessTemplate($this, $tpl_name, $designation, $cache = false, $cacheid);
+        return cms_module_ProcessTemplate($this, $tpl_name, $designation, $cache, $cacheid);
     }
 
     /**
-     * Given a template in a variable, this method processes it through smarty
-     * note, there is no caching involved.
-     *
-     * Note: this function is deprecated and scheduled for removal.
+     * Given a template in a variable, this method processes it through Smarty
+     * Note, there is no caching involved.
      *
      * @final
+     * @deprecated since 2.0 instead use CMSMS2 API for templates
      * @param data $data Input template
      * @return string
-     * @deprecated
      */
     final public function ProcessTemplateFromData( $data )
     {
@@ -2630,9 +2630,9 @@ abstract class CMSModule
      * Process a smarty template associated with a module through smarty and return the results
      *
      * @final
-     * @deprecated
+     * @deprecated since 2.0 instead use CMSMS2 API for templates
      * @param string $tpl_name Template name
-     * @param string $designation (optional) Designation
+     * @param string $designation (optional) Used for template compile id
      * @param bool $cache (optional) Cachable flag
      * @param string $modulename (optional) module name, if empty the current module is used.
      * @return string
