@@ -50,7 +50,7 @@ class UploadHandler extends jquery_upload_handler
   protected function is_file_acceptable($file)
   {
     $config = cms_config::get_instance();
-    if( $config['developer_mode'] ) return TRUE;
+    if( !empty($config['developer_mode']) ) return TRUE;
     if( !isset($this->helper) ) {
       $this->helper = new FileTypeHelper($config);
     }
@@ -85,4 +85,3 @@ class UploadHandler extends jquery_upload_handler
     }
   }
 }
-
