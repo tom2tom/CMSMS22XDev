@@ -16,6 +16,8 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+//NOTE this action was actually used only in CMSMS 1.2 to 1.10 - TODO omit from 2.2+
+
 if (!function_exists("cmsms")) exit;
 if (!$this->CheckPermission("Modify Files") && !$this->AdvancedAccessAllowed()) exit;
 
@@ -28,8 +30,8 @@ if( !filemanager_utils::test_valid_path($params['path']) ) {
 }
 
 $config = $gCms->GetConfig();
-$fullname = $this->Slash($params["path"], $params["filename"]);
-$fullname = $this->Slash($config["root_path"], $fullname);
+$fullname = $this->Slash($params["path"], $params["filename"]); //TODO mistaken repetition ?
+$fullname = $this->Slash(CMS_ROOT_PATH, $fullname);
 
 
 if (isset($params["newmode"])) {
@@ -64,6 +66,6 @@ if (isset($params["newmode"])) {
 	$tpl->assign('submit', $this->CreateInputSubmit($id, 'submit', $this->Lang('setpermissions')));
 	$tpl->assign('cancel', $this->CreateInputSubmit($id, 'cancel', $this->Lang('cancel')));
 
-	$tpl->Display();
+	$tpl->display();
 }
 ?>

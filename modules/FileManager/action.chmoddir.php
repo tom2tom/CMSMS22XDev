@@ -16,6 +16,8 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+//NOTE this action was actually used only in CMSMS 1.2 to 1.10 - TODO omit from 2.2+
+
 if (!function_exists("cmsms")) exit;
 if (!$this->CheckPermission("Modify Files") && !$this->AdvancedAccessAllowed()) exit;
 
@@ -101,6 +103,6 @@ if (isset($params["newmode"])) {
 	$tpl->assign('submit', $this->CreateInputSubmit($id, 'submit', $this->Lang('setpermissions')));
 	$tpl->assign('cancel', $this->CreateInputSubmit($id, 'cancel', $this->Lang('cancel')));
 
-	$tpl->Display();
+	$tpl->display();
 }
 ?>

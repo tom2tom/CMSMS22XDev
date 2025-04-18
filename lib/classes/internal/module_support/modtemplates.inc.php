@@ -20,8 +20,8 @@
 /**
  * Methods for modules to do template related functions
  *
- * @since		1.0
- * @package		CMS
+ * @since   1.0
+ * @package CMS
  * @license GPL
  */
 function cms_module_ListTemplates($modinstance, $modulename = '')
@@ -71,6 +71,7 @@ function cms_module_GetTemplate($modinstance, $tpl_name, $modulename = '')
  * Returns contents of the template that resides in modules/ModuleName/templates/{template_name}.tpl
  * Code adapted from the Guestbook module
  * @access private
+ * @deprecated since 2.0
  */
 function cms_module_GetTemplateFromFile($modinstance, $template_name)
 {
@@ -126,6 +127,7 @@ function cms_module_DeleteTemplate($modinstance, $tpl_name = '', $modulename = '
 }
 
 /**
+ * @deprecated since 2.0
  * @access private
  */
 function cms_module_ProcessTemplate($modinstance, $tpl_name, $designation = '', $cache = false, $cacheid = '')
@@ -148,33 +150,36 @@ function cms_module_ProcessTemplate($modinstance, $tpl_name, $designation = '', 
 /**
  * Given a template in a variable, this method processes it through smarty
  * note, there is no caching involved.
+ * @deprecated since 2.0
  * @access private
  */
 function cms_module_ProcessTemplateFromData($modinstance, $data)
 {
-    $smarty = $modinstance->GetActionTemplateObject();
-    if( !$smarty ) $smarty = Smarty_CMS::get_instance();
-    $_contents = $smarty->fetch('string:'.$data);
-    return $_contents;
+	$smarty = $modinstance->GetActionTemplateObject();
+	if( !$smarty ) $smarty = Smarty_CMS::get_instance();
+	$_contents = $smarty->fetch('string:'.$data);
+	return $_contents;
 }
 
 /**
+ * note, caching depends on the module's cacheability. The $cache parameter is ignored
+ * @deprecated since 2.0
  * @access private
  */
 function cms_module_ProcessTemplateFromDatabase($modinstance, $tpl_name, $designation = '', $cache = false, $modulename = '')
 {
-    $smarty = $modinstance->GetActionTemplateObject();
-    if( !$smarty ) $smarty = Smarty_CMS::get_instance();
-    if( $modulename == '' ) $modulename = $modinstance->GetName();
+	$smarty = $modinstance->GetActionTemplateObject();
+	if( !$smarty ) $smarty = Smarty_CMS::get_instance();
+	if( $modulename == '' ) $modulename = $modinstance->GetName();
 
-    $oldcache = $smarty->caching;
-    if( $smarty->caching != Smarty::CACHING_OFF ) {
-        $smarty->caching = ($modinstance->can_cache_output())?Smarty::CACHING_LIFETIME_CURRENT:Smarty::CACHING_OFF;
-    }
-    $result = $smarty->fetch('module_db_tpl:'.$modulename.';'.$tpl_name, '', ($designation != ''?$designation:$modulename));
-    $smarty->caching = $oldcache;
+	$oldcache = $smarty->caching;
+	if( $smarty->caching != Smarty::CACHING_OFF ) {
+		$smarty->caching = ($modinstance->can_cache_output())?Smarty::CACHING_LIFETIME_CURRENT:Smarty::CACHING_OFF;
+	}
+	$result = $smarty->fetch('module_db_tpl:'.$modulename.';'.$tpl_name, '', ($designation != ''?$designation:$modulename));
+	$smarty->caching = $oldcache;
 
-    return $result;
+	return $result;
 }
 
 ?>

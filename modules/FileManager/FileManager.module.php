@@ -103,12 +103,16 @@ final class FileManager extends CMSModule {
         return $statinfo["mode"];
     }
 
+    //@deprecated since CMSMS 2.0
+    //this method used only in FileManager actions which are unused in CMSMS2+
     public function GetMode($path,$file) {
         $realpath = $this->Slash(CMS_ROOT_PATH,$path);
         $statinfo = stat($this->Slash($realpath,$file));
         return filemanager_utils::format_permissions($statinfo["mode"]);
     }
 
+    //@deprecated since CMSMS 2.0
+    //this method used only in FileManager actions which are unused in CMSMS2+
     public function GetModeWin($path,$file) {
         $realpath=$this->Slash($realpath,$file);
         if (is_writable($realpath)) {
@@ -118,6 +122,8 @@ final class FileManager extends CMSModule {
         }
     }
 
+    //@deprecated since CMSMS 2.0
+    //this method used only in FileManager actions which are unused in CMSMS2+
     public function GetModeTable($id,$permissions) {
         $this->smarty->assign('ownertext', $this->Lang("owner"));
         $this->smarty->assign('groupstext', $this->Lang("group"));
@@ -153,6 +159,8 @@ final class FileManager extends CMSModule {
         return $this->ProcessTemplate('modetable.tpl');
     }
 
+    //@deprecated since CMSMS 2.0
+    //this method used only in actions which are unused in CMSMS2+
     public function GetModeFromTable($params) {
         $owner = 0;
         if (isset($params["ownerr"])) $owner += 4;
