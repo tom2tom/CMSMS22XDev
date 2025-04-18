@@ -655,12 +655,12 @@ function get_matching_files($dir,$extensions = '',$excludedot = true,$excludedir
 /**
  * Return a list of files and/or directories in and below the specified directory.
  *
- * @param  string  $path     Start Path.
- * @param  array   $excludes Array of regular expressions indicating items to exclude.
+ * @param  string  $path     Start path, may have trailing '\' or '/' char.
+ * @param  array   $excludes Regular expression(s) indicating items to exclude.
  * @param  int     $maxdepth How deep to browse (-1=unlimited)
  * @param  string  $mode     "FULL"|"DIRS"|"FILES"
  * @param  int     $d        Recursion depth, for internal use only
- * @return string[] folder-paths end with a DIRECTORY_SEPARATOR !
+ * @return string[] each including DIRECTORY_SEPARATOR and folder-paths end with a DIRECTORY_SEPARATOR
 **/
 function get_recursive_file_list ( $path , $excludes, $maxdepth = -1 , $mode = "FULL" , $d = 0 )
 {
@@ -669,23 +669,23 @@ function get_recursive_file_list ( $path , $excludes, $maxdepth = -1 , $mode = "
         if( empty($excludes) ) return false;
         $bn = basename($file);
         foreach( $excludes as $excl ) {
-            if( @preg_match( "/$excl/i", $bn ) ) return true;
+            if( @preg_match( "~$excl~i", $bn ) ) return true;
         }
         return false;
     };
 
-    if( substr ( $path , strlen ( $path ) - 1 ) != '/' ) { $path .= '/' ; }
+    $path = rtrim($path, "/\\") . DIRECTORY_SEPARATOR;
     $dirlist = array () ;
     if( $mode != "FILES" ) { $dirlist[] = $path ; }
     if( $handle = opendir ( $path ) ) {
         while( false !== ( $file = readdir ( $handle ) ) ) {
             if( $file == '.' || $file == '..' ) continue;
-            if( $fn( $file, $excludes ) ) continue;
+            if( $excludes && $fn( $file, $excludes ) ) continue;
 
             $file = $path . $file ;
             if( ! @is_dir ( $file ) ) { if( $mode != "DIRS" ) { $dirlist[] = $file ; } }
             elseif( $d >=0 && ($d < $maxdepth || $maxdepth < 0) ) {
-                $result = get_recursive_file_list ( $file . '/' , $excludes, $maxdepth , $mode , $d + 1 ) ;
+                $result = get_recursive_file_list ( $file, $excludes, $maxdepth , $mode , $d + 1 ); //recurse
                 $dirlist = array_merge ( $dirlist , $result ) ;
             }
         }
@@ -764,7 +764,7 @@ function chmod_r( $path, $mode )
 
 
 /**
- * A convenience function to test wether one string starts with another.
+ * A convenience function to test whether one string starts with another.
  *
  * i.e:  startswith('The Quick Brown Fox','The');
  *
@@ -774,7 +774,7 @@ function chmod_r( $path, $mode )
  */
 function startswith( $str, $sub )
 {
-    return ( substr( $str, 0, strlen( $sub ) ) == $sub );
+    return ( strncmp( $str, $sub, strlen( $sub ) ) == 0 );
 }
 
 
