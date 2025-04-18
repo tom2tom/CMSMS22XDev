@@ -18,7 +18,7 @@
 
 if (!function_exists('cmsms')) exit;
 
-if (!$this->CheckPermission('Modify Files')) exit;
+if (!$this->CheckPermission('Modify Files') && !$this->AdvancedAccessAllowed()) exit;
 
 $smarty->assign('formstart',$this->CreateFormStart($id, 'upload', $returnid,'post','multipart/form-data'));
 $smarty->assign('formend',$this->CreateFormEnd());
