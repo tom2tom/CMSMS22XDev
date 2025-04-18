@@ -14,7 +14,7 @@ $lang['advancedsearch_help'] = 'Specify words to include or exclude from the sea
 $lang['allowuninstall'] = 'Allow Module Manager to be uninstalled? Be careful, the uninstallation is irreversible!';
 $lang['all_modules_up_to_date'] = 'There are no newer modules available in the repository';
 $lang['availablemodules'] = 'The current status of modules available from the current repository';
-$lang['available_updates'] = 'One or more modules are available for upgrade; Before upgrading, please read the about information for the release and make sure you have a current backup of your website.';
+$lang['available_updates'] = 'One or more modules are available for upgrade. Before upgrading, please read the about information for the release and make sure you have a current backup of your website.';
 $lang['availmodules'] = 'Available Modules';
 
 // B
