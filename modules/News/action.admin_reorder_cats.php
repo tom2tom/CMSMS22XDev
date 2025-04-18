@@ -22,6 +22,7 @@ function news_reordercats_create_flatlist($tree,$parent_id = -1)
     }
     $order++;
   }
+  unset($node);
   return $data;
 }
 

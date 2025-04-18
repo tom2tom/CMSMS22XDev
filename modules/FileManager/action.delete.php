@@ -24,7 +24,7 @@ if (isset($params["cancel"])) $this->Redirect($id,"defaultadmin",$returnid,$para
 
 $selall = $params['selall'];
 if( !is_array($selall) ) $selall = unserialize($selall);
-if( !is_array($selall) ) $selall = unserialize($selall);
+if( !is_array($selall) ) $selall = unserialize($selall); //nested serialize or mistake?
 
 if (count($selall)==0) {
   $params["fmerror"]="nofilesselected";
@@ -35,6 +35,7 @@ if (count($selall)==0) {
 foreach( $selall as &$one ) {
   $one = $this->decodefilename($one);
 }
+unset($one);
 
 // process form
 $errors = array();
@@ -57,8 +58,8 @@ if( isset($params['submit']) ) {
       // check to make sure it's empty
       $tmp = scandir($fn);
       if( count($tmp) > 2 ) { // account for . and ..
-	$errors[] = $this->Lang('error_dirnotempty',$file);
-	continue;
+        $errors[] = $this->Lang('error_dirnotempty',$file);
+        continue;
       }
     }
 
@@ -77,7 +78,7 @@ if( isset($params['submit']) ) {
       @unlink($fn);
       $type = 'file';
     }
-    if( $thumb != '' ) @unlink($thumb);
+    if( $thumb ) @unlink($thumb);
 
     $parms = array('file'=>$fn);
     if( $thumb ) $parms['thumb'] = $thumb;

@@ -71,7 +71,7 @@ try {
                 $rec['tmpfile'] = $xml_filename;
                 $res = $ops->ExpandXMLPackage( $xml_filename, 1 );
             }
-
+            unset($rec);
             // now put this data into the session and redirect for the install part
             $key = '_'.md5(__FILE__.time());
             $_SESSION[$key] = $modlist;
@@ -286,6 +286,7 @@ try {
                 unset($alldeps[$name]);
             }
         }
+        unset($rec);
     }
 
     // test to make sure we have the required info for each record.
