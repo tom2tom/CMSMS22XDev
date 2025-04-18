@@ -1,6 +1,7 @@
 <ul>
 <li>2024-MM-DD v1.1.12<br>
- FR #12700 - Support custom tabs-order when editing content<br>
+ FR #12700 - Support custom tabs-order when editing content
+</li>
 <li>2024-MM-DD v1.1.11<br>
  Support changing the 'default page' property when editing suitable pages<br>
  BR #12474 - Taking the default page down by accident through the content type<br>
