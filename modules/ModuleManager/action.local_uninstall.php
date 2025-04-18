@@ -36,17 +36,7 @@ try {
             $this->ShowErrors($e->GetMessage());
         }
     }
-/* TODO process all ModuleManager templates like this, or none of them
-    $tpl = $smarty->CreateTemplate($this->GetTemplateResource('local_uninstall.tpl'));
-//    $tpl->assign('mod',$this);
-//    $tpl->assign('actionid',$id);
-    $tpl->assign('module_name',$modinstance->GetName());
-    $tpl->assign('module_version',$modinstance->GetVersion());
-    $msg = $modinstance->UninstallPreMessage();
-    if( !$msg ) $msg = $this->Lang('msg_module_uninstall');
-    $tpl->assign('msg',$msg);
-    $tpl->display();
-*/
+
     $smarty->assign('module_name',$modinstance->GetName());
     $smarty->assign('module_version',$modinstance->GetVersion());
     $msg = $modinstance->UninstallPreMessage();

@@ -17,7 +17,6 @@
 #
 if( !cmsms() ) exit;
 if(!$this->VisibleToAdminUser() ) return;
-//TODO the following should all be in a template e.g. defaultadmin.tpl
 
 echo $this->StartTabHeaders();
 echo $this->SetTabHeader("example",$this->Lang("example"));

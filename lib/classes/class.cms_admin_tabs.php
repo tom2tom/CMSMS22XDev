@@ -1,12 +1,8 @@
 <?php
 /**
- * This file contains a class to aide in creating a tabbed interface in the CMSMS admin console
- * @package CMS
- * @license GPL
- */
-
-/**
  * A simple convenience class for creating a tabbed interface in the CMSMS admin console
+ * NOTE: it might be necessary to explicitly call cms_admin_tabs::reset()
+ * to get this to this work properly with > 1 tabs-layout in a single request
  *
  * @package CMS
  * @license GPL
@@ -15,7 +11,6 @@
  */
 final class cms_admin_tabs
 {
-
   /**
    * @ignore
    */
@@ -23,28 +18,31 @@ final class cms_admin_tabs
 
   /**
    * @ignore
+   * string active-tab key
    */
-  private static $_current_tab;
+  private static $_current_tab = '';
+
+  /**
+   * @ignore
+   * bool
+   */
+  private static $_start_headers_sent = FALSE;
 
   /**
    * @ignore
    */
-  private static $_start_headers_sent = null; // aka unset
+  private static $_end_headers_sent = FALSE;
 
   /**
    * @ignore
    */
-  private static $_end_headers_sent = null; // aka unset
+  private static $_start_content_sent = FALSE;
 
   /**
    * @ignore
+   * true from start_tab() until end_tab()
    */
-  private static $_start_content_sent = null; // aka unset
-
-  /**
-   * @ignore
-   */
-  private static $_in_tab = 0;
+  private static $_in_tab = FALSE;
 
   /**
    * @ignore
@@ -52,24 +50,42 @@ final class cms_admin_tabs
   private static $_tab_idx = 0;
 
   /**
+   * @since 2.2.21F2
+   */
+  public static function reset()
+  {
+    self::$_current_tab = '';
+    self::$_start_headers_sent = FALSE;
+    self::$_end_headers_sent = FALSE;
+    self::$_start_content_sent = FALSE;
+    self::$_in_tab = FALSE;
+    self::$_tab_idx = 0;
+  }
+
+  /**
    * Set the current active tab
    *
-   * @param string $tab The param key
+   * @param string $tabid The tab key
    */
-  public static function set_current_tab($tab)
+  public static function set_current_tab($tabid)
   {
-    self::$_current_tab = $tab;
+    self::$_current_tab = $tabid;
   }
 
   /**
    * Begin output of tab headers
    *
+   * @param bool $infill Whether to automatically interpolate related elements. Default false.
+   *
    * @return string
    */
-  public static function start_tab_headers()
+  public static function start_tab_headers($infill = FALSE)
   {
-    self::$_start_headers_sent = 1;
-    return '<div id="page_tabs">';
+    if( $infill ) {
+      self::reset();
+      self::$_start_headers_sent = TRUE;
+    }
+    return "\n<div id=\"page_tabs\"><!-- StartTabHeaders -->\n";
   }
 
   /**
@@ -77,75 +93,102 @@ final class cms_admin_tabs
    *
    * @param string $tabid The tab key
    * @param string $title The title to display in the tab
-   * @param bool   $active Wether the tab is active or not.  If the current active tag matches the $tabid then the tab will be marked as active.
+   * @param bool   $active Whether the tab is active. Default false.
+   *  If false, and $tabid matches the recorded active tab identifier,
+   *  then the tab will be treated as active.
+   * @param bool   $infill Whether to automatically interpolate related elements. Default false.
    * @return string
    */
-  public static function set_tab_header($tabid,$title,$active = FALSE)
+  public static function set_tab_header($tabid,$title,$active = FALSE,$infill = FALSE)
   {
-    if( $active == FALSE ) {
-      if( (self::$_tab_idx == 0 && self::$_current_tab == '') || $tabid == self::$_current_tab ) $active = TRUE;
-      self::$_tab_idx++;
+    $out = "\n";
+    if( $infill ) {
+      if( !self::$_start_headers_sent ) {
+        $out = self::start_tab_headers(TRUE); //might include a properties-reset
+      }
     }
 
-    $a="";
-    if (TRUE == $active) {
-      $a=" class='active'";
+    if( !$active ) {
+      if( (self::$_tab_idx == 0 && self::$_current_tab == '') || self::$_current_tab == $tabid ) {
+        $active = true;
+      }
+      self::$_tab_idx++;
+    }
+    if( $active ) {
       self::$_current_tab = $tabid;
+      $a = ' class="active"';
+    } else {
+      $a = '';
     }
     $tabid = strtolower(str_replace(' ','_',$tabid));
 
-    $out = '';
-    if( !self::$_start_headers_sent ) $out .= self::start_tab_headers();
-    $out .= '<div id="'.$tabid.'"'.$a.'>'.$title.'</div>';
-    return $out;
+    return $out . '<div id="'.$tabid.'"'.$a.'>'.$title."</div>\n";
   }
 
   /**
    * Finish outputting tab headers
    *
+   * @param bool $infill Whether to automatically interpolate related elements. Default false.
+   *
    * @return string
    */
-  public static function end_tab_headers()
+  public static function end_tab_headers($infill = FALSE)
   {
-    self::$_end_headers_sent = 1;
-    return "</div><!-- EndTabHeaders -->";
+    if( $infill ) {
+      self::$_end_headers_sent = TRUE;
+    }
+    return "\n</div><!-- EndTabHeaders -->\n";
   }
 
   /**
    * Start the content portion of the tabbed layout
    *
+   * @param bool $infill Whether to automatically interpolate related elements. Default false.
+   *
    * @return string
    */
-  public static function start_tab_content()
+  public static function start_tab_content($infill = FALSE)
   {
-    $out = '';
-    if( !self::$_end_headers_sent ) $out .= self::end_tab_headers();
-    $out .= '<div class="clearb"></div><div id="page_content">';
-    self::$_start_content_sent = 1;
-    return $out;
+    $out = "\n";
+    if( $infill ) {
+      if( !self::$_end_headers_sent ) {
+        $out = self::end_tab_headers(true);
+      }
+      self::$_start_content_sent = true;
+    }
+    return $out . "<div class=\"clearb\"></div>\n<div id=\"page_content\"><!-- StartTabContent-->\n";
   }
 
   /**
    * Finish the content portion of the tabbed layout
    *
+   * @param bool $infill Whether to automatically interpolate related elements. Default false.
+   *
    * @return string
    */
-  public static function end_tab_content()
+  public static function end_tab_content($infill = FALSE)
   {
-    $out = '';
-    if( self::$_in_tab ) $out .= self::end_tab();
-    $out .= '</div> <!-- EndTabContent -->';
-    return $out;
+    $out = "\n";
+    if( $infill ) {
+      if( self::$_in_tab ) {
+        $out = self::end_tab(TRUE);
+      }
+      self::reset(); // in case there will be more tab-layouts in this request
+    }
+    return $out . "</div><!-- EndTabContent -->\n";
   }
 
   /**
    * Start the content portion of a specific tab
    *
    * @param string $tabid The tab key
-   * @param array  $params Array of parameters for the tab
+   * @param array  $params parameters for the tab. Default empty.
+   *  Only the 'tab_message' parameter, if any, is used here
+   * @param bool $infill Whether to automatically interpolate related elements. Default false.
+   *
    * @return string
    */
-  public static function start_tab($tabid,$params = array())
+  public static function start_tab($tabid,$params = array(),$infill = FALSE)
   {
     $message = '';
     if( $tabid == self::$_current_tab && !empty($params['tab_message']) ) {
@@ -153,24 +196,34 @@ final class cms_admin_tabs
       if( is_object($theme) ) $message = $theme->ShowMessage($params['tab_message']);
     }
 
-    $out = '';
-    if( !self::$_start_content_sent ) $out .= self::start_tab_content();
-    if( self::$_in_tab ) $out .= self::end_tab();
-    self::$_in_tab = 1;
-    $out .= '<div id="' . strtolower(str_replace(' ', '_', $tabid)) . '_c">'.$message;
-    return $out;
+    if( $infill ) {
+      $out = '';
+      if( !self::$_start_content_sent ) $out .= self::start_tab_content(TRUE);
+      if( self::$_in_tab ) $out .= self::end_tab(TRUE);
+      if (!$out) { $out = "\n"; }
+      self::$_in_tab = TRUE;
+    } else {
+      $out = "\n";
+    }
+    return $out . '<div id="' . strtolower(str_replace(' ', '_', $tabid)) . "_c\"><!-- StartTab -->\n".$message;
   }
 
   /**
    * End the content portion of a single tab
    *
+   * @param bool $infill Whether to automatically interpolate related elements. Default false.
+   *
    * @return string
    */
-  public static function end_tab()
+  public static function end_tab($infill = FALSE)
   {
-    if( !self::$_in_tab ) return '';
-    self::$_in_tab = 0;
-    return '</div> <!-- EndTab -->';
+    if( $infill ) {
+      if( !self::$_in_tab ) {
+        return '';
+      }
+      self::$_in_tab = FALSE;
+    }
+    return "\n</div><!-- EndTab -->\n";
   }
 } // end of class
 

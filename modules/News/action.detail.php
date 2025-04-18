@@ -81,7 +81,6 @@ if( $preview || !$tpl_ob->IsCached() ) {
     $tpl_ob->assign('extra_label', $this->Lang('extra_label'));
 }
 
-//Display template
 $tpl_ob->display();
 
 ?>
