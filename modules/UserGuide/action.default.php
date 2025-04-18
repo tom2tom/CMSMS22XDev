@@ -19,6 +19,8 @@ $getcssurl = function($css) use($config) {
     return $config['css_url'].'/'.$basename;
 };
 
+$modname = $this->GetName();
+
 /* allowed $params
  'gid' int
  'list' string
@@ -57,7 +59,7 @@ if ($list) {
     $data = $db->GetArray($sql);
     if (!$data) {
         if ($db->ErrorNo() > 0) {
-            audit('', $this->GetName(), $db->ErrorMsg());
+            audit('', $modname, $db->ErrorMsg());
             echo 'Database error';
             return;
         }
@@ -66,14 +68,14 @@ if ($list) {
     if (isset($params['stylesheet_name'])) {
         $sht = CmsLayoutStylesheet::load(trim($params['stylesheet_name']));
         if (!is_object($sht)) {
-            audit('', $this->GetName().':'.$params['stylesheet_name'], 'No matching userguide stylesheet found');
+            audit('', $modname.':'.$params['stylesheet_name'], 'No matching userguide stylesheet found');
             echo 'Internal error: stylesheet '.$params['stylesheet_name'].' not found';
             return;
         }
     } elseif (isset($params['sheetid'])) {
         $sht = CmsLayoutStylesheet::load((int)$params['sheetid']);
         if (!is_object($sht)) {
-            audit($params['sheetid'], $this->GetName(), 'No matching userguide stylesheet found');
+            audit($params['sheetid'], $modname, 'No matching userguide stylesheet found');
             echo 'Internal error: stylesheet '.$params['sheetid'].' not found';
             return;
         }
@@ -82,7 +84,7 @@ if ($list) {
         if ($name) {
             $sht = CmsLayoutStylesheet::load($name);
             if (!is_object($sht)) {
-                audit('', $this->GetName().':listStyles-preference', 'No matching userguide stylesheet found');
+                audit('', $modname.':listStyles-preference', 'No matching userguide stylesheet found');
                 echo 'Internal error: stylesheet '.$name.' not found';
                 return;
             }
@@ -111,7 +113,7 @@ EOS;
         $template = trim($params['template_name']);
         $tplobj = CmsLayoutTemplate::load($template);
         if (!is_object($tplobj)) {
-            audit('', $this->GetName().':'.$template, 'No matching userguide template found');
+            audit('', $modname.':'.$template, 'No matching userguide template found');
             echo 'Internal error: template '.$template.' not found';
             return;
         }
@@ -120,22 +122,22 @@ EOS;
         if (is_object($tplobj)) {
             $template = $tplobj->get_name();
         } else {
-            audit($params['tplid'], $this->GetName(), 'No matching userguide template found');
+            audit($params['tplid'], $modname, 'No matching userguide template found');
             echo 'Internal error: template '.$params['tplid'].' not found';
             return;
         }
     } else {
-        $tplobj = CmsLayoutTemplate::load_dflt_by_type($this->GetName().'::listguides'); // might throw
+        $tplobj = CmsLayoutTemplate::load_dflt_by_type($modname.'::listguides'); // might throw
         if (is_object($tplobj)) {
             $template = $tplobj->get_name();
         } else {
-            audit('', $this->GetName().':default', 'No default userguide template found');
+            audit('', $modname.':default', 'No default userguide template found');
             echo 'Internal error: default userguide template not found';
             return;
         }
     }
 
-    $tpl = $smarty->CreateTemplate('cms_template:'.$template, null, null, $smarty); //TODO suitable cache parameters $cache_id, $compile_id
+    $tpl = $smarty->CreateTemplate('cms_template:'.$template, null, null, $smarty); //TODO suitable cache/compile parameters
     $tpl->assign('iconurl', $this->GetModuleURLPath().'/images/view.png');
     $tpl->assign('guides', $data);
     $tpl->display();
@@ -172,7 +174,7 @@ EOS;
         }
     } else {
         $allcss = false;
-        audit('', $this->GetName().':stylesheets', 'No matching sheet(s) found');
+        audit('', $modname.':stylesheets', 'No matching sheet(s) found');
     }
     if (!$allcss) {
         //apply default, if any
@@ -193,7 +195,7 @@ dl.href = '$url';
 </script>
 EOS;
             } else {
-                audit('', $this->GetName().':guideStyles-preference', 'No matching stylesheet found');
+                audit('', $modname.':guideStyles-preference', 'No matching stylesheet found');
                 echo 'Internal error: stylesheet '.$name.' not found';
                 return;
             }
@@ -236,22 +238,22 @@ EOS;
             if (is_object($tplobj)) {
                 $template = $tplobj->get_name();
             } else {
-                audit($row['template_id'], $this->GetName(), 'No matching userguide template found');
+                audit($row['template_id'], $modname, 'No matching userguide template found');
                 echo 'Internal error: template '.$row['template_id'].' not found';
                 return;
             }
         } else {
-            $tplobj = CmsLayoutTemplate::load_dflt_by_type($this->GetName().'::oneguide'); // might throw
+            $tplobj = CmsLayoutTemplate::load_dflt_by_type($modname.'::oneguide'); // might throw
             if (is_object($tplobj)) {
                 $template = $tplobj->get_name();
             } else {
-                audit('', $this->GetName().':default', 'No default userguide template found');
+                audit('', $modname.':default', 'No default userguide template found');
                 echo 'Internal error: default userguide template not found';
                 return;
             }
         }
 
-        $tpl = $smarty->CreateTemplate('cms_template:'.$template, null, null, $smarty); //TODO suitable cache parameters $cache_id, $compile_id
+        $tpl = $smarty->CreateTemplate('cms_template:'.$template, null, $modname, $smarty); //TODO suitable cache parameters $cache_id, $compile_id
         $tpl->assign('name', $name);
         $tpl->assign('content', $content2);
         $tpl->display();
