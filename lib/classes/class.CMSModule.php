@@ -1489,7 +1489,7 @@ abstract class CMSModule
      */
 
     /**
-     * Returns the xhtml equivalent of a tooltip help link.
+     * Returns html5 representing a tooltip help link.
      *
      * @final
      * @param string $helptext The help text to be shown on mouse over
@@ -1511,8 +1511,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the xhtml equivalent of a tooltip-enabled href link	 This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's xhtml compliant.
+     * Returns html5 representing a tooltip-enabled href link. This is basically a nice little wrapper
+     * to make sure that id's are placed in names and also that it's valid html.
      *
      * @final
      * @param string $id The id given to the module on execution
@@ -1530,8 +1530,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the xhtml equivalent of an fieldset and legend.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's xhtml compliant.
+     * Returns html5 representing an fieldset and legend.  This is basically a nice little wrapper
+     * to make sure that id's are placed in names and also that it's valid html.
      *
      * @final
      * @param string $id The id given to the module on execution (not really used yet, but might be later)
@@ -1613,8 +1613,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the xhtml equivalent of an input textbox.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's xhtml compliant.
+     * Returns html5 representing an input textbox.  This is basically a nice little wrapper
+     * to make sure that id's are placed in names and also that it's valid html.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the textbox
@@ -1632,8 +1632,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the xhtml equivalent of an label for input field.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's xhtml compliant.
+     * Returns html5 representing an label for input field.  This is basically a nice little wrapper
+     * to make sure that id's are placed in names and also that it's valid html.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input field this label is associated to
@@ -1649,8 +1649,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the xhtml equivalent of an input textbox with label.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's xhtml compliant.
+     * Returns html5 representing an input textbox with label.  This is basically a nice little wrapper
+     * to make sure that id's are placed in names and also that it's valid html.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the textbox
@@ -1879,7 +1879,7 @@ abstract class CMSModule
 
     /**
      * Returns the html5 equivalent of an input of type url.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's xhtml compliant.
+     * to make sure that id's are placed in names and also that it's valid html.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the textbox
@@ -1898,8 +1898,8 @@ abstract class CMSModule
 
 
     /**
-     * Returns the xhtml equivalent of a file-selector field.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's xhtml compliant.
+     * Returns html5 representing a file-selector field. This is basically a nice little wrapper
+     * to make sure that id's are placed in names and also that it's valid html.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the textbox
@@ -1916,8 +1916,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the xhtml equivalent of an input password-box.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's xhtml compliant.
+     * Returns html5 representing an input password-box. This is basically a nice little wrapper
+     * to make sure that id's are placed in names and also that it's valid html.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the textbox
@@ -1935,8 +1935,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the xhtml equivalent of a hidden field. This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's xhtml compliant.
+     * Returns html5 representing a hidden field. This is basically a nice little wrapper
+     * to make sure that id's are placed in names and also that it's valid html.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the hidden field
@@ -1952,8 +1952,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the xhtml equivalent of a checkbox. This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's xhtml compliant.
+     * Returns html5 representing a checkbox. This is basically a nice little wrapper
+     * to make sure that id's are placed in names and also that it's valid html.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the checkbox
@@ -1970,8 +1970,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the xhtml equivalent of a submit button. This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's xhtml compliant.
+     * Returns html5 representing a submit button. This is basically a nice little wrapper
+     * to make sure that id's are placed in names and also that it's valid html.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the button
@@ -1989,8 +1989,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the xhtml equivalent of a reset button. This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's xhtml compliant.
+     * Returns html5 representing a reset button. This is basically a nice little wrapper
+     * to make sure that id's are placed in names and also that it's valid html.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the button
@@ -2006,8 +2006,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the xhtml equivalent of a file upload input. This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's xhtml compliant.
+     * Returns html5 representing a file upload input. This is basically a nice little wrapper
+     * to make sure that id's are placed in names and also that it's valid html.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input
@@ -2024,8 +2024,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the xhtml equivalent of a dropdown list. This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it is xhtml compliant.
+     * Returns html5 representing a dropdown list. This is basically a nice little wrapper
+     * to make sure that id's are placed in names and also that it is valid html.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the dropdown list
@@ -2064,8 +2064,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the xhtml equivalent of a multi-select list. This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it is xhtml compliant.
+     * Returns html5 representing a multi-select list. This is basically a nice little wrapper
+     * to make sure that id's are placed in names and also that it is valid html.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the select list
@@ -2084,8 +2084,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the xhtml equivalent of a set of radio buttons. This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it is xhtml compliant.
+     * Returns html5 representing a set of radio buttons. This is basically a nice little wrapper
+     * to make sure that id's are placed in names and also that it is valid html.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the radio group
@@ -2102,7 +2102,7 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the xhtml equivalent of a textarea. Also takes WYSIWYG preference into consideration if it's called from the admin side.
+     * Returns html5 representing a textarea. Also takes WYSIWYG preference into consideration if it's called from the admin side.
      *
      * @param bool   $enablewysiwyg Should we try to create a WYSIWYG for this textarea?
      * @param string $id The id given to the module on execution
@@ -2147,7 +2147,7 @@ abstract class CMSModule
 
 
     /**
-     * Returns the xhtml equivalent of a textarea. Also takes syntax hilighter preference
+     * Returns html5 representing a textarea. Also takes syntax hilighter preference
      * into consideration if it's called from the admin side.
      *
      * @deprecated
@@ -2171,8 +2171,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the xhtml equivalent of an href link	 This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's xhtml compliant.
+     * Returns html5 representing an href link. This is basically a nice little wrapper
+     * to make sure that id's are placed in names and also that it's valid html.
      *
      * @param string $id The id given to the module on execution
      * @param string $returnid The id to eventually return to when the module is finished it's task
@@ -2197,8 +2197,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the xhtml equivalent of an href link. This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's xhtml compliant.
+     * Returns html5 representing an href link. This is basically a nice little wrapper
+     * to make sure that id's are placed in names and also that it's valid html.
      *
      * @param string $id The id given to the module on execution
      * @param string $action The action that this form should do when the link is clicked
@@ -2263,8 +2263,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the xhtml equivalent of an href link for content links.This is basically a nice
-     * little wrapper to make sure that we go back to where we want and that it's xhtml compliant
+     * Returns html5 representing an href link for content links. This is basically a nice
+     * little wrapper to make sure that we go back to where we want and that it's valid html
      *
      * @param int $pageid the page id of the page we want to direct to
      * @param string $contents The optional text or XHTML contents of the generated link
@@ -2279,8 +2279,8 @@ abstract class CMSModule
 
 
     /**
-     * Returns the xhtml equivalent of an href link for Content links. This is basically a nice little wrapper
-     * to make sure that we go back to where we want to and that it's xhtml compliant.
+     * Returns html5 representing an href link for Content links. This is basically a nice little wrapper
+     * to make sure that we go back to where we want to and that it's valid html.
      *
      * @param string $id The id given to the module on execution
      * @param mixed $returnid int | '' | null The id to return to when the module is finished its task
@@ -2532,8 +2532,9 @@ abstract class CMSModule
     }
 
     /**
-     * Returns a database-stored template. This should be used in admin contexts
-     * only, as it doesn't follow any smarty caching rules.
+     * Return content of a database-recorded template.
+     * This should be used in admin contexts only, as it doesn't follow any
+     * Smarty caching rules.
      *
      * @final
      * @deprecated since 2.0
@@ -2548,7 +2549,7 @@ abstract class CMSModule
     }
 
     /**
-     * Returns content of the template in this module's templates folder and
+     * Return content of the template in this module's templates folder and
      * whose name is like {template_name}.tpl
      * Code adapted from the Guestbook module
      *
@@ -2564,7 +2565,7 @@ abstract class CMSModule
 
 
     /**
-     * Stores a Smarty template into the database and associates it with a module.
+     * Record a Smarty template in the database and associate it with a module.
      *
      * @final
      * @deprecated since 2.0
@@ -2598,7 +2599,7 @@ abstract class CMSModule
      * Process a file template through Smarty
      *
      * @final
-     * @deprecated since 2.0 instead use CMSMS2 API for templates
+     * @deprecated since 2.0 instead fetch/display Template object having module-file resource
      * @param string  $tpl_name Template name
      * @param string  $designation Used for template compile id
      * @param bool $cache Cache flag
@@ -2616,7 +2617,7 @@ abstract class CMSModule
      * Note, there is no caching involved.
      *
      * @final
-     * @deprecated since 2.0 instead use CMSMS2 API for templates
+     * @deprecated since 2.0 instead fetch/display Template object having string resource
      * @param data $data Input template
      * @return string
      */
@@ -2630,10 +2631,11 @@ abstract class CMSModule
      * Process a smarty template associated with a module through smarty and return the results
      *
      * @final
-     * @deprecated since 2.0 instead use CMSMS2 API for templates
+     * @deprecated since 2.0 instead fetch/display Template object having
+     *  module_db_tpl resource and with Smarty caching per module's 'cachable' property
      * @param string $tpl_name Template name
      * @param string $designation (optional) Used for template compile id
-     * @param bool $cache (optional) Cachable flag
+     * @param bool $cache (optional) Cachable flag (ignored downstream)
      * @param string $modulename (optional) module name, if empty the current module is used.
      * @return string
      */
@@ -2692,10 +2694,10 @@ abstract class CMSModule
      *
      * Used for the various template forms, this method can be used to control the tab that is displayed by default
      * when redirecting to an admin action that displays multiple tabs.
-     *
      * @final
      * @since 1.11
      * @author Robert Campbell
+     *
      * @param string $tab The tab name
      * @see CMSModule::RedirectToAdminTab();)
      */
@@ -2708,90 +2710,101 @@ abstract class CMSModule
 
     /**
      * Output a string suitable for staring tab headers.
-     *
-     * i.e:  echo $this->StartTabHeaders();
-     *
+     * e.g. echo $this->StartTabHeaders();
      * @final
+     *
+     * @param bool $infill since 2.2.21F2 Whether to automatically
+     *  interpolate tab-related elements. Default false.
      * @return string
      */
-    public function StartTabHeaders()
+    public function StartTabHeaders($infill = false)
     {
-        return cms_admin_tabs::start_tab_headers();
+        return cms_admin_tabs::start_tab_headers($infill);
     }
 
     /**
      * Set a specific tab header.
-     *
-     * i.e:  echo $this->SetTabHeader('preferences',$this->Lang('preferences'));
-     *
+     * e.g. echo $this->SetTabHeader('preferences',$this->Lang('preferences'));
      * @final
+     *
      * @param string $tabid The tab id
      * @param string $title The tab title
-     * @param bool $active whether the tab is active or not.
-     * @param booleban A flag indicating whether this tab is active.
+     * @param bool $active A flag indicating whether this tab is active. Default false.
+     * @param bool $infill since 2.2.21F2 Whether to automatically
+     *  interpolate tab-related elements. Default false.
      * @return string
      */
-    public function SetTabHeader($tabid,$title,$active=false)
+    public function SetTabHeader($tabid, $title, $active = false, $infill = false)
     {
-        return cms_admin_tabs::set_tab_header($tabid,$title,$active);
+        return cms_admin_tabs::set_tab_header($tabid,$title,$active,$infill);
     }
 
     /**
      * Output a string to stop the output of headers and close the necessary XHTML div.
-     *
      * @final
+     *
+     * @param bool $infill since 2.2.21F2 Whether to automatically
+     *  interpolate tab-related elements. Default false.
      * @return string
      */
-    public function EndTabHeaders()
+    public function EndTabHeaders($infill = false)
     {
-        return cms_admin_tabs::end_tab_headers();
+        return cms_admin_tabs::end_tab_headers($infill);
     }
 
     /**
      * Output a string to indicate the start of XHTML areas for tabs.
-     *
      * @final
+     *
+     * @param bool $infill since 2.2.21F2 Whether to automatically
+     *  interpolate tab-related elements. Default false.
      * @return string
      */
-    public function StartTabContent()
+    public function StartTabContent($infill = false)
     {
-        return cms_admin_tabs::start_tab_content();
+        return cms_admin_tabs::start_tab_content($infill);
     }
 
     /**
-     * Output a string to indicate the end of XHTML areas for tabs.
-     *
+     * Output a string to indicate the end of tab-elements.
      * @final
+     *
+     * @param bool $infill since 2.2.21F2 Whether to automatically
+     *  interpolate tab-related elements. Default false.
      * @return string
      */
-    public function EndTabContent()
+    public function EndTabContent($infill = false)
     {
-        return cms_admin_tabs::end_tab_content();
+        return cms_admin_tabs::end_tab_content($infill);
     }
 
     /**
      * Output a string to indicate the start of the output for a specific tab
-     *
      * @final
-     * @param string $tabid the tab id
+     *
+     * @param string $tabid the tab key/name
      * @param arrray $params Parameters
+     * @param bool $infill since 2.2.21F2 Whether to automatically
+     *  interpolate tab-related elements. Default false.
      * @see CMSModule::SetTabHeaders()
      * @return string
      */
-    public function StartTab($tabid, $params = array())
+    public function StartTab($tabid, $params = array(), $infill = false)
     {
-        return cms_admin_tabs::start_tab($tabid,$params);
+        return cms_admin_tabs::start_tab($tabid,$params,$infill);
     }
 
     /**
      * Output a string to indicate the end of the output for a specific tab.
-     *
      * @final
+     *
+     * @param bool $infill since 2.2.21F2 Whether to automatically
+     *  interpolate tab-related elements. Default false.
      * @return string
      */
-    public function EndTab()
+    public function EndTab($infill = false)
     {
-        return cms_admin_tabs::end_tab();
+        return cms_admin_tabs::end_tab($infill);
     }
 
     /**
@@ -2924,7 +2937,7 @@ abstract class CMSModule
             $perm->save();
         }
         catch( Exception $e ) {
-			// ignored.
+            // ignored.
         }
     }
 
