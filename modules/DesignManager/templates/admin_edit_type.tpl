@@ -52,13 +52,13 @@
   </p>
 </div>
 
-{if $type->get_content_callback() != ''}
+{if $type->get_content_callback()}
 {tab_header name='content' label=$mod->Lang('prompt_proto_template')}
 {/if}
 
 {tab_header name='description' label=$mod->Lang('prompt_description')}
 
-{if $type->get_content_callback() != ''}
+{if $type->get_content_callback()}
 {tab_start name='content'}
 <div class="pageoverflow">
   <p class="pagetext">

@@ -162,8 +162,7 @@ $smarty->assign('template_list',CmsLayoutTemplate::template_query(array('as_list
 // get a list of designs
 if( $error ) $smarty->assign('error',$error);
 
-$res = $this->ProcessTemplate('defaultadmin.tpl');
-echo $res;
+echo $this->ProcessTemplate('defaultadmin.tpl');
 
 #
 # EOF

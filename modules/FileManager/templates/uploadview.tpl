@@ -100,7 +100,6 @@ $(function() {
 //      $('#progressarea').fadeOut();
 //      _files = [];
 //      _jqXHR = [];
-      var here = 1; 
     },
 
     fail: function(e, data) {

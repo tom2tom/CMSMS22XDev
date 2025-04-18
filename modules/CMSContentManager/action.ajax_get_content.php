@@ -125,8 +125,7 @@ try {
     $opts = bulkcontentoperations::get_operation_list();
     if( $opts ) $smarty->assign('bulk_options',$opts);
 
-    $out = $this->ProcessTemplate('ajax_get_content.tpl'); // check: ok without $opts?
-    echo $out;
+    echo $this->ProcessTemplate('ajax_get_content.tpl'); // check: ok without $opts?
 }
 catch( \Exception $e ) {
     echo '<div class="red">'.$e->GetMessage().'</div>';

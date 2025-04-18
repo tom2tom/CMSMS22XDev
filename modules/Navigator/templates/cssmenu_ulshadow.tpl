@@ -49,7 +49,7 @@
     {else}
       {* regular item *}
       <li class="{$liclass}">
-        <a class="{$aclass}" href="{$node->url}"{if $node->target ne ""} target="{$node->target}"{/if}><span>{$node->menutext}</span></a>
+        <a class="{$aclass}" href="{$node->url}"{if $node->target} target="{$node->target}"{/if}><span>{$node->menutext}</span></a>
         {if !empty($node->children)}
           {cssmenu_ulshadow data=$node->children depth=$depth+1}
         {/if}

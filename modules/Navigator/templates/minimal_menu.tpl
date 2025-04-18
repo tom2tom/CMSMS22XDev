@@ -36,8 +36,8 @@ hr.separator - To style the ruler for the separator *}
         {$liclass='activeparent'}
         {$aclass='activeparent'}
       {/if}
-      <li{if $liclass != ''} class="{$liclass}"{/if}>
-        <a{if $aclass !=''} class="{$aclass}"{/if} href="{$node->url}"{if $node->target ne ""} target="{$node->target}"{/if}>{$node->menutext}</a>
+      <li{if $liclass} class="{$liclass}"{/if}>
+        <a{if $aclass} class="{$aclass}"{/if} href="{$node->url}"{if $node->target} target="{$node->target}"{/if}>{$node->menutext}</a>
         {if !empty($node->children)}
           {include file=$smarty.template nodes=$node->children depth=$depth+1}
         {/if}

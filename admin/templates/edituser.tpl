@@ -27,7 +27,7 @@ $(function() {
 });
 </script>
 <div class="pagecontainer">
-    <h3>{lang('edituser')}{if $user != ''}&nbsp;{$user}{/if}</h3>
+    <h3>{lang('edituser')}{if $user}&nbsp;{$user}{/if}</h3>
 
     {form_start url='edituser.php'}
         <input type="hidden" value="{$user_id}" name="user_id">

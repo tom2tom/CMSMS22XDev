@@ -11,11 +11,11 @@
 {/if}
     {$entry->content}
 {if $entry->extra}
-        {$extra_label} {$entry->extra}
+    {$extra_label} {$entry->extra}
 {/if}
-{if $return_url != ""}
+{if $return_url}
     <br>
-        <span class="back">&#8592; {$return_url}{if $category_name != ''} - {$category_link}{/if}</span>
+    <span class="back">&#8592; {$return_url}{if $category_name} - {$category_link}{/if}</span>
 {/if}
 
 {if isset($entry->fields)}

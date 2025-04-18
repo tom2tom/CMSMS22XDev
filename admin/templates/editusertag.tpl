@@ -90,7 +90,7 @@ $(function() {
 				<p class="pageinput">
 					<input id="submitme" type="submit" name="submit" value="{lang('submit')}">
 					<input type="submit" name="cancel" value="{lang('cancel')}">
-					{if $record.userplugin_id != ''}
+					{if $record.userplugin_id}
 						<input id="applybtn" type="submit" name="apply" value="{lang('apply')}" title="{lang('title_applyusertag')}">
 						<button id="runbtn" type="submit" name="run" title="{lang('runuserplugin')}">{lang('run')}</button>
 					{/if}
@@ -107,14 +107,14 @@ $(function() {
 		</div>
 
 		<div style="width: 49%; float: right;">
-			{if $record.create_date != ''}
+			{if $record.create_date}
 				<div class="pageoverflow">
 					<p class="pagetext">{lang('created_at')}:</p>
 					<p class="pageinput">{$record.create_date|cms_date_format}</p>
 				</div>
 			{/if}
 
-			{if $record.modified_date != ''}
+			{if $record.modified_date}
 				<div class="pageoverflow">
 					<p class="pagetext">{lang('last_modified_at')}:</p>
 					<p class="pageinput">{$record.modified_date|cms_date_format}</p>

@@ -167,13 +167,13 @@
           {/if}
         {/if}
       {elseif $column == 'view'}
-        {if $row.view != ''}
+        {if $row.view}
           <a class="page_view" target="_blank" href="{$row.view}" accesskey="v">
         {admin_icon icon='view.gif' title=$mod->Lang('prompt_page_view')}
           </a>
         {/if}
       {elseif $column == 'copy'}
-        {if $row.copy != ''}
+        {if $row.copy}
           <a href="{cms_action_url action='admin_copycontent' page=$row.id}" accesskey="o">
         {admin_icon icon='copy.gif' class='page_copy' title=$mod->Lang('prompt_page_copy')}
           </a>
@@ -197,7 +197,7 @@
            </a>
         {/if}
       {elseif $column == 'multiselect'}
-        {if $row.multiselect != ''}
+        {if $row.multiselect}
           <label for="multicontent-{$row.id}" class="invisible" for="multicontent-{$row.id}">{$mod->Lang('prompt_multiselect_toggle')}</label>
           <input type="checkbox" id="multicontent-{$row.id}" class="multicontent" name="{$actionid}multicontent[]" value="{$row.id}" title="{$mod->Lang('prompt_multiselect_toggle')}">
         {/if}

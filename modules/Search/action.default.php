@@ -65,7 +65,7 @@ if( !$tpl_ob->IsCached() ) {
         if( preg_match( '/^passthru_/', $key ) > 0 ) $hidden .= $this->CreateInputHidden($id,$key,$value);
     }
 
-    if( $hidden != '' ) $tpl_ob->assign('hidden',$hidden);
+    if( $hidden ) $tpl_ob->assign('hidden',$hidden);
     $tpl_ob->assign('endform', $this->CreateFormEnd());
 }
 $tpl_ob->display();
