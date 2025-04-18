@@ -26,6 +26,13 @@ final class filemanager_utils
 
     protected function __construct() {}
 
+    /**
+     * Report whether $name contains invalid char(s)
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
     public static function is_valid_filename($name)
     {
         if( $name == '' ) return FALSE;
@@ -34,29 +41,25 @@ final class filemanager_utils
         if( strpos($name,'..') !== FALSE ) return FALSE;
         if( $name[0] == '.' || $name[0] == ' ' ) return FALSE;
         if( endswith( $name, '.' ) ) return FALSE;
-
-        $a = strrpos($name,'.'); //is_executable() checks file-extension
-        if( $a > 0 ) { //also ignore a hidden file
-            if( !isset(self::$helper) ) {
-                self::$helper = new FileTypeHelper();
-            }
-            if( self::$helper->is_executable($name) ) {
-                if( !self::check_advanced_mode() ) {
-                    return FALSE;
-                }
-            }
-            elseif( substr_compare($name,'.js',$a,3,TRUE) == 0 ) {
-                if( !self::check_advanced_mode() ) {
-                    return FALSE;
-                }
-            } 
-        }
+        // minimal executable filename-extension check formerly here is now in
+        // self::is_restricted() and nothing about a restricted file's name
+        // per se renders the filename invalid
         if( preg_match('/[\n\r\t\[\]\&\?\<\>\!\@\#\$\%\*\(\)\{\}\|\"\'\:\;\+]/',$name) ) {
             return FALSE;
         }
         return TRUE;
     }
 
+    /**
+     * Perform a (useless) site-configuration test and then a user-permission
+     * ('Use FileManager Advanced') test (the result of which is elsewhere
+     * used to decide whether all site folders may be used in FileManager, or
+     * else only the configured uploads-folders-tree).
+     * NOTE $config property 'developer_mode', if set, effectively pre-empts
+     * 'Use FileManager Advanced' permission, and does so for all admin users.
+     *
+     * @return int 2 or 1 or 0, >0 indicating 'can do'
+     */
     public static function can_do_advanced()
     {
         if( self::$_can_do_advanced < 0 ) {
@@ -72,6 +75,15 @@ final class filemanager_utils
         return self::$_can_do_advanced;
     }
 
+    /**
+     * Report whether the return from filemanager_utils::can_do_advanced()
+     * and FileManager-module 'advancedmode' preference are both truthy.
+     * The latter enables all admin users to use all site folders in FileManager.
+     * NOTE 'Use FileManager Advanced' permission has the same effect for
+     * particular user(s) as 'advancedmode' preference has for all users
+     *
+     * @return bool indicating both tests were passed
+     */
     public static function check_advanced_mode()
     {
         if( self::can_do_advanced() == 0 ) return FALSE;
@@ -149,7 +161,13 @@ final class filemanager_utils
         cms_userprefs::set('filemanager_cwd',$newpath);
     }
 
-    //this is NOT for constructing URLs
+    /**
+     * This is NOT for constructing URLs
+     * See also cms_join_path()
+     *
+     * @param varargs $args
+     * @return string, maybe empty
+     */
     public static function join_path(...$args)
     {
         if( !$args ) return '';
@@ -452,11 +470,18 @@ final class filemanager_utils
                 $val *= 1024;
             }
         }
-
         return (int) $val;
     }
 
-    // recursively get an array of directories in and descendent from $startdir.
+    /**
+     * Recursively get directories in and descendent from $startdir
+     *
+     * @param string $startdir
+     * @param bool $showhiddenfiles
+     * @param string $prefix e.g. DIRECTORY_SEPARATOR
+     *
+     * @return array maybe empty
+     */
     private static function get_dirs($startdir,$showhiddenfiles,$prefix)
     {
         if( !is_dir($startdir) ) return [];
@@ -567,7 +592,7 @@ final class filemanager_utils
         imagesavealpha($i_dest,TRUE); //TODO for png, webp and avif only
 
         imagecopyresampled($i_dest,$i_src,0,0,$src_x,$src_y,$thumb_width,$thumb_height,$src_width,$src_height);
-        // c.f. FileTypeHelper image-file extensions 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff'.'tif','webp','avif','heif','svg'
+        // c.f. FileTypeHelper image-file extensions 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','webp','avif','heif','svg'
         switch( $mime ) {
         case 'image/gif':
             $res = imagegif($i_dest,$dest);
