@@ -2481,7 +2481,7 @@ abstract class CMSModule
 
     /**
      * A function to return a resource identifier for a module-specific template
-     * If the specified template ends in .tpl then a file template is assumed,
+     * If the specified name ends with '.tpl' then a file template is assumed,
      * otherwise a database template.
      *
      * Note: Since 2.2.1 This function will throw a logic exception if a
@@ -2585,8 +2585,8 @@ abstract class CMSModule
      *
      * @final
      * @deprecated since 2.0
-     * @param string $tpl_name The template name, if empty all templates associated with the module are deleted.
-     * @param string $modulename The module name, if empty the current module name is used.
+     * @param string $tpl_name The template name, or if empty all templates associated with the module are deleted.
+     * @param string $modulename The module name, or if empty the current module name is used.
      * @return bool
      */
     final public function DeleteTemplate($tpl_name = '', $modulename = '')

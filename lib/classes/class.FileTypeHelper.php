@@ -165,7 +165,7 @@ class FileTypeHelper
 
     /**
      * Test if the file specified is an image.
-     * This method will use the mime type if possible, otherwise
+     * Uses the file's mime type if possible, otherwise
      * filename-extension is used to determine if the file is an image.
      *
      * @param string $filename

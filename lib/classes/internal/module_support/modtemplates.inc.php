@@ -70,8 +70,8 @@ function cms_module_GetTemplate($modinstance, $tpl_name, $modulename = '')
 /**
  * Returns contents of the template that resides in modules/ModuleName/templates/{template_name}.tpl
  * Code adapted from the Guestbook module
- * @access private
  * @deprecated since 2.0
+ * @access private
  */
 function cms_module_GetTemplateFromFile($modinstance, $template_name)
 {
@@ -149,7 +149,7 @@ function cms_module_ProcessTemplate($modinstance, $tpl_name, $designation = '', 
 
 /**
  * Given a template in a variable, this method processes it through smarty
- * note, there is no caching involved.
+ * Note, there is no caching involved.
  * @deprecated since 2.0
  * @access private
  */
@@ -162,7 +162,7 @@ function cms_module_ProcessTemplateFromData($modinstance, $data)
 }
 
 /**
- * note, caching depends on the module's cacheability. The $cache parameter is ignored
+ * Note, caching depends on the module's cacheability. The $cache parameter is ignored
  * @deprecated since 2.0
  * @access private
  */
