@@ -50,13 +50,12 @@
 <br>
 {$form_start}
 <div class="pageoverflow">
-  <p class="pagetext"></p>
   <p class="pageinput">
-    {if count($dependencies) > 1}
-      <input type="submit" name="{$actionid}submit" value="{$ModuleManager->Lang('install_procede')}">
-    {else}
-      <input type="submit" name="{$actionid}submit" value="{$ModuleManager->Lang('install_submit')}">
-    {/if}
+  {if count($dependencies) > 1}
+    <input type="submit" name="{$actionid}submit" value="{$ModuleManager->Lang('install_procede')}">
+  {else}
+    <input type="submit" name="{$actionid}submit" value="{$ModuleManager->Lang('install_submit')}">
+  {/if}
     <input type="submit" name="{$actionid}cancel" value="{$ModuleManager->Lang('cancel')}">
   </p>
 </div>
