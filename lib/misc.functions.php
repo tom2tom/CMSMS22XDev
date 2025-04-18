@@ -657,6 +657,7 @@ function get_matching_files($dir,$extensions = '',$excludedot = true,$excludedir
  *
  * @param  string  $path     Start path, may have trailing '\' or '/' char.
  * @param  array   $excludes Regular expression(s) indicating items to exclude.
+ *         Each such expression will be used as "~expr~i".
  * @param  int     $maxdepth How deep to browse (-1=unlimited)
  * @param  string  $mode     "FULL"|"DIRS"|"FILES"
  * @param  int     $d        Recursion depth, for internal use only
@@ -789,7 +790,8 @@ function startswith( $str, $sub )
  */
 function endswith( $str, $sub )
 {
-  return ( substr( $str, strlen( $str ) - strlen( $sub ) ) == $sub );
+    $l = strlen( $sub );
+    return ( $l > 0 ) ? ( substr_compare( $str, $sub, -$l, $l ) == 0 ) : FALSE;
 }
 
 
