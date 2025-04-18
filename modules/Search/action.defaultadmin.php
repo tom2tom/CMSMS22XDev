@@ -18,7 +18,7 @@ else if (isset($params['clearwordcount'])) {
 else if (isset($params['exportcsv']) ) {
     $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_search_words ORDER BY count DESC';
     $data = $db->GetArray($query);
-    if( is_array($data) ) {
+    if( $data ) {
         header('Content-Description: File Transfer');
         header('Content-Type: application/force-download');
         header('Content-Disposition: attachment; filename=search.csv');
@@ -29,7 +29,7 @@ else if (isset($params['exportcsv']) ) {
             $output .= "\"{$data[$i]['word']}\",{$data[$i]['count']}\n";
         }
         echo $output;
-        exit();
+        exit;
     }
 }
 else if (isset($params['resettodefault'])) {

@@ -107,7 +107,7 @@ try {
 catch( Exception $e ) {
     // nothing here
 }
-if( count($templates) ) {
+if( $templates ) {
     $smarty->assign('templates',$templates);
     $tpl_nav = array();
     $tpl_nav['pagelimit'] = $tpl_query->limit;

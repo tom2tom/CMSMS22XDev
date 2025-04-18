@@ -19,28 +19,28 @@
 //TODO current js backend (jrac) is elderly, poorly-maintained if at all, and GPL2 only
 //consider replacement e.g. from https://github.com/Traackr/resizeAndCrop
 
-if (!function_exists("cmsms")) exit;
-if (!$this->CheckPermission("Modify Files") && !$this->AdvancedAccessAllowed()) exit;
+if( !function_exists("cmsms") ) exit;
+if( !$this->CheckPermission("Modify Files") && !$this->AdvancedAccessAllowed() ) exit;
 
-if (isset($params["cancel"])) $this->Redirect($id,"defaultadmin",$returnid,$params);
+if( isset($params["cancel"]) ) $this->Redirect($id,"defaultadmin",$returnid,$params);
 
 $selall = $params['selall'];
 if( !is_array($selall) ) $selall = unserialize($selall);
 unset($params['selall']);
 
-if (count($selall)==0) {
-  $params["fmerror"]="nofilesselected";
+if( !$selall ) {
+  $params["fmerror"] = "nofilesselected";
   $this->Redirect($id,"defaultadmin",$returnid,$params);
 }
-if (count($selall)>1) {
-  $params["fmerror"]="morethanonefiledirselected";
+if( count($selall)>1 ) {
+  $params["fmerror"] = "morethanonefiledirselected";
   $this->Redirect($id,"defaultadmin",$returnid,$params);
 }
 
 $filename=$this->decodefilename($selall[0]);
 $src = filemanager_utils::join_path(CMS_ROOT_PATH,filemanager_utils::get_cwd(),$filename);
 if( !file_exists($src) ) {
-  $params["fmerror"]="filenotfound";
+  $params["fmerror"] = "filenotfound";
   $this->Redirect($id,"defaultadmin",$returnid,$params);
 }
 $imageinfo = getimagesize($src);
@@ -84,7 +84,6 @@ if(empty($params['reset'])
 
   $this->Redirect($id,"defaultadmin",$returnid);
 }
-
 
 //
 // build the form

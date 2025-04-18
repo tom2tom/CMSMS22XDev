@@ -16,14 +16,17 @@ else {
 $cache_id = '|ns'.md5(serialize($params));
 $tpl_ob = $smarty->CreateTemplate($this->GetTemplateResource($template),$cache_id,null,$smarty);
 if( !$tpl_ob->IsCached() ) {
-    $items = news_ops::get_categories($id,$params,$returnid);
-
-    // Display template
-    $tpl_ob->assign('count', count($items));
-    $tpl_ob->assign('cats', $items);
+  $items = news_ops::get_categories($id,$params,$returnid);
+  if( $items ) {
+    $tpl_ob->assign('count',count($items));
+    $tpl_ob->assign('cats',$items);
+  }
+  else {
+    $tpl_ob->assign('count',0);
+    $tpl_ob->assign('cats',[]);
+  }
 }
 
-// Display template
 $tpl_ob->display();
 
 ?>

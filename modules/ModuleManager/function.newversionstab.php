@@ -34,8 +34,8 @@ global $CMS_VERSION;
 $caninstall = true;
 
 if( FALSE == can_admin_upload() ) {
-    echo '<div class="pageerrorcontainer"><div class="pageoverflow"><p class="pageerror">'.$this->Lang('error_permissions').'</p></div></div>';
-    $caninstall = false;
+	echo '<div class="pageerrorcontainer"><div class="pageoverflow"><p class="pageerror">'.$this->Lang('error_permissions').'</p></div></div>';
+	$caninstall = false;
 }
 
 $moduledir = $config['root_path'].DIRECTORY_SEPARATOR.'modules';
@@ -122,13 +122,13 @@ if( !empty($newversions) ) {
 	}
 }
 
-if( !count($results) ) {
-    $smarty->assign('nvmessage',$this->Lang('all_modules_up_to_date'));
+if( !$results ) {
+	$smarty->assign('nvmessage',$this->Lang('all_modules_up_to_date'));
 }
 else {
-    $smarty->assign('updatestxt',$this->Lang('available_updates'));
-    $smarty->assign('items',$results);
-    $smarty->assign('itemcount', count($results));
+	$smarty->assign('updatestxt',$this->Lang('available_updates'));
+	$smarty->assign('items',$results);
+	$smarty->assign('itemcount', count($results));
 }
 
 $smarty->assign('haveversion',$this->Lang('yourversion'));
