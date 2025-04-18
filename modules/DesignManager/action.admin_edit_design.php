@@ -66,8 +66,8 @@ try {
     $templates = CmsLayoutTemplate::get_editable_templates(get_userid());
     if( $templates ) {
         usort($templates,function($a,$b) {
-                return strcasecmp($a->get_name(),$b->get_name());
-            });
+            return strcasecmp($a->get_name(),$b->get_name());
+        });
         $smarty->assign('all_templates',$templates);
     }
 

@@ -39,7 +39,7 @@ final class modulerep_client
     {
         $mod = cms_utils::get_module('ModuleManager');
         $url = $mod->GetPreference('module_repository');
-        if( !$url )	return array(false,$mod->Lang('error_norepositoryurl'));
+        if( !$url ) return array(false,$mod->Lang('error_norepositoryurl'));
         $url .= '/version';
 
         $req = new modmgr_cached_request();
@@ -77,7 +77,7 @@ final class modulerep_client
         if( count($out) == 0 ) new CmsInvalidDataException($mod->Lang('error_missingparam'));
 
         $url = $mod->GetPreference('module_repository');
-        if( !$url )	return array(false,$mod->Lang('error_norepositoryurl'));
+        if( !$url ) return array(false,$mod->Lang('error_norepositoryurl'));
         $url .= '/multimoduleinfo';
         $data = array('data'=>json_encode($out));
 
@@ -99,7 +99,7 @@ final class modulerep_client
     {
         $mod = cms_utils::get_module('ModuleManager');
         $url = $mod->GetPreference('module_repository');
-        if( !$url )	return array(false,$mod->Lang('error_norepositoryurl'));
+        if( !$url ) return array(false,$mod->Lang('error_norepositoryurl'));
         $url .= '/moduledetailsgetall';
 
         global $CMS_VERSION;
@@ -300,7 +300,7 @@ final class modulerep_client
         if( $status != 200 ) throw new CmsCommunicationException($mod->Lang('error_request_problem'));
         if( !$result ) {
             throw new ModuleNoDataException();
-	}
+        }
 
         $data = json_decode($result,true);
         if( !$data || !is_array($data) ) throw new CmsInvalidDataException($mod->Lang('error_nomatchingmodules'));

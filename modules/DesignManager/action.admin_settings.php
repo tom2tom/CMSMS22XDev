@@ -36,7 +36,6 @@ $smarty->assign('lock_timeout',$this->GetPreference('lock_timeout'));
 $smarty->assign('lock_refresh',$this->GetPreference('lock_refresh'));
 echo $this->ProcessTemplate('admin_settings.tpl');
 
-
 #
 # EOF
 #

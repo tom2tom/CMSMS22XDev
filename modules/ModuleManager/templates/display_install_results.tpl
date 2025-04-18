@@ -14,7 +14,6 @@
     {/if}
   </div>
 {/foreach}
-
 <div class="pageoverflow">
   <p class="pagetext"></p>
   <p class="pageinput">{$return_link}</p>

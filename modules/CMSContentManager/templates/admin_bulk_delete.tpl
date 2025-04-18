@@ -19,7 +19,6 @@
 		<input type="checkbox" id="confirm2" value="1" name="{$actionid}confirm2">
 		&nbsp; <label for="confirm2">{$mod->Lang('prompt_confirm2')}</label></p>
 </div>
-
 <div class="pageoverflow">
 	<p class="pagetext"></p>
 	<p class="pageinput">

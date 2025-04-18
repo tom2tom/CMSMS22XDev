@@ -106,7 +106,6 @@ unset($tpl);
 
 debug_buffer('End Navigator breadcrumbs action');
 
-
 #
 # EOF
 #

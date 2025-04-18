@@ -43,22 +43,22 @@ if( isset($params['submit']) ) {
     }
     else {
       if( $parentid == $catid ) {
-	echo $this->ShowErrors($this->Lang('error_categoryparent'));
+        echo $this->ShowErrors($this->Lang('error_categoryparent'));
       }
       else if( $parentid != $row['parent_id'] ) {
-	// parent changed
+        // parent changed
 
-	// gotta figure out a new item order.
-	$query = 'SELECT max(item_order) FROM '.CMS_DB_PREFIX.'module_news_categories
+        // gotta figure out a new item order.
+        $query = 'SELECT max(item_order) FROM '.CMS_DB_PREFIX.'module_news_categories
                   WHERE parent_id = ?';
-	$maxn = (int)$db->GetOne($query,array($parentid));
-	$maxn++;
+        $maxn = (int)$db->GetOne($query,array($parentid));
+        $maxn++;
 
-	$query = 'UPDATE '.CMS_DB_PREFIX.'module_news_categories SET item_order = item_order - 1
+        $query = 'UPDATE '.CMS_DB_PREFIX.'module_news_categories SET item_order = item_order - 1
                   WHERE parent_id = ? AND item_order > ?';
-	$db->Execute($query,array($row['parent_id'],$row['item_order']));
+        $db->Execute($query,array($row['parent_id'],$row['item_order']));
 
-	$row['item_order'] = $maxn;
+        $row['item_order'] = $maxn;
       }
 
       $query = 'UPDATE '.CMS_DB_PREFIX.'module_news_categories
@@ -80,7 +80,7 @@ if( isset($params['submit']) ) {
   }
 }
 
-#Display template
+//Display template
 $tmp = news_ops::get_category_list();
 $tmp2 = array_flip($tmp);
 $categories = array(-1=>$this->Lang('none'));

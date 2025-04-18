@@ -50,7 +50,6 @@ $(function() {
 <h3>{$mod->Lang('reorder_categories')}</h3>
 <div class="information">{$mod->Lang('info_reorder_categories')}</div>
 {category_tree}
-
 {form_start id="reorder_form"}
 <input type="hidden" name="{$actionid}submit_type" id="submit_type" value="">
 <input type="hidden" name="{$actionid}data" id="submit_data" value="">

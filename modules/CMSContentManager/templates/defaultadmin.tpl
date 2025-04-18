@@ -261,7 +261,7 @@ $(function() {
 				</select>
 			</div>
 		{/if}
-    {form_end}
+	{form_end}
 	</div>
 	<div class="clearb"></div>
 
