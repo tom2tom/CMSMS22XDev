@@ -47,10 +47,11 @@ foreach( $orders as $key ) {
   $tmp[$key] = [(int)$this->GetPreference('order_TAB_'.$key),ucfirst(strtolower($nm)),$flag]; //TODO UTF8 reformat name
 }
 uasort($tmp,function($a,$b) {
+  // TODO UTF-8 comparison
   if( $a[0] != $b[0] ) {
     return $a[0] - $b[0];
   }
-  return strcmp($a[1],$b[1]); // TODO UTF8 comparison
+  return strcmp($a[1],$b[1]);
 });
 $smarty->assign('tab_orders',$tmp);
 

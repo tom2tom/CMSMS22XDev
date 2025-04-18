@@ -86,7 +86,7 @@ else {
    }
 }
 
-#Display template
+//Display template
 $smarty->assign('title',$this->Lang('editfielddef'));
 $smarty->assign('startform', $this->CreateFormStart($id, 'admin_editfielddef', $returnid));
 $smarty->assign('endform', $this->CreateFormEnd());

@@ -531,8 +531,8 @@ if ($custom_flds) {
 $contentops = cmsms()->GetContentOperations();
 $smarty->assign('preview_page_selector', $contentops->CreateHierarchyDropdown(0, $this->GetPreference('detail_returnid', -1), $id.'previewpage', TRUE));
 
-// get the list of detail templates.
 try {
+    // get the list of detail templates.
     $type = CmsLayoutTemplateType::load($me . '::detail');
     $templates = $type->get_template_list();
     $list = array();

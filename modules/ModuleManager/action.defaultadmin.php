@@ -63,7 +63,7 @@ echo '<p>'.$this->Lang('compatibility_disclaimer')."</p></div>\n";
 $connection_ok = modmgr_utils::is_connection_ok();
 if( !$connection_ok ) echo $this->ShowErrors($this->Lang('error_request_problem'));
 
-// this is a bit ugly.
+// this is a bit ugly
 modmgr_utils::get_images();
 
 $newversions = [];

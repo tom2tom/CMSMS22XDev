@@ -349,9 +349,9 @@ class Smarty_CMS extends CMSSmartyBase
     /**
      * fetch a rendered Smarty template
      * for calling the global Smarty fetch method instead of a template-object's
-     * fetch method directly, which is the case for things like
-     * Module::ProcessTemplate and Module::ProcessTemplateFromDatabase etc
-     * NOTE: Overwrites ancestor method
+     * fetch method directly, which is the case for deprecated methods like
+     * CMSModule::ProcessTemplate and CMSModule::ProcessTemplateFromDatabase etc
+     * NOTE: subclasses ancestor method having different API
      *
      * @param mixed  $template   resource handle of the template file, or template object, or null Default null
      * @param mixed  $cache_id   cache id to be used with this template Default null

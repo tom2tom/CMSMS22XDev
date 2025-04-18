@@ -61,7 +61,7 @@ if (isset($params['submit'])) {
     if( $error ) echo $this->ShowErrors($error);
 }
 
-#Display template
+//Display template
 $smarty->assign('title',$this->Lang('addfielddef'));
 $smarty->assign('startform', $this->CreateFormStart($id, 'admin_addfielddef', $returnid));
 $smarty->assign('endform', $this->CreateFormEnd());

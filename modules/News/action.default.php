@@ -374,7 +374,6 @@ WHERE status = 'published' AND
     $tpl_ob->assign('cats', $catarray);
 } //if IsCached
 
-// Display template
 $tpl_ob->display();
 
 ?>
