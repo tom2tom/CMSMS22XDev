@@ -215,21 +215,24 @@ $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_news_fielddefs WHERE public = 1 
 $dbr = $db->Execute($query);
 $customfields = array();
 $customfieldsbyname = array();
-while( $dbr && ($row = $dbr->FetchRow()) ) {
+if( $dbr ) {
+  while( $row = $dbr->FetchRow() ) {
   if( $row['type'] == 'linkedfile' ) continue;
-  $obj = new StdClass();
-  $obj->name = $row['name'];
-  $obj->type = $row['type'];
-  $obj->id = $row['id'];
-  $obj->max_length = $row['max_length'];
-  $key = str_replace(' ','_',strtolower($row['name']));
-  $customfieldsbyname[$key] = $obj;
+    $obj = new stdClass();
+    $obj->name = $row['name'];
+    $obj->type = $row['type'];
+    $obj->id = $row['id'];
+    $obj->max_length = $row['max_length'];
+    $key = str_replace(' ','_',strtolower($row['name']));
+    $customfieldsbyname[$key] = $obj;
+  }
+  $dbr->Close(); 
 }
-if( count($customfieldsbyname) ) $tpl_ob->assign('customfields',$customfieldsbyname);
+if( $customfieldsbyname ) $tpl->assign('customfields',$customfieldsbyname);
 
 $tpl_ob->display();
 
-if( $do_send_email == true ) {
+if( $do_send_email ) {
 
     $tpl_ob2 = $smarty->CreateTemplate($this->GetDatabaseResource('email_template'));
     $tmp_vars = $tpl_ob->get_template_vars();
@@ -243,14 +246,14 @@ if( $do_send_email == true ) {
     $cmsmailer = new cms_mailer();
     if( $cmsmailer ) {
         $addy = trim($this->GetPreference('formsubmit_emailaddress'));
-        if( $addy != '' ) {
+        if( $addy ) {
             $tpl_ob2->assign('startdate',$startdate);
             $tpl_ob2->assign('enddate',$enddate);
             $tpl_ob2->assign('ipaddress',\cms_utils::get_real_ip());
             $tpl_ob2->assign('status',$status);
-            if( $title != '' ) $tpl_ob2->assign('title',$title);
-            if( $summary != '' ) $tpl_ob2->assign('summary',$summary);
-            if( $content != '' ) $tpl_ob2->assign('content',$content);
+            if( $title ) $tpl_ob2->assign('title',$title);
+            if( $summary ) $tpl_ob2->assign('summary',$summary);
+            if( $content ) $tpl_ob2->assign('content',$content);
 
             $cmsmailer->AddAddress( $addy );
             $cmsmailer->SetSubject( $this->GetPreference('email_subject',$this->Lang('subject_newnews')));

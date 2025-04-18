@@ -93,7 +93,7 @@ if( isset($params['submitfilter']) ) {
     unset($_SESSION['news_pagenumber']);
     $pagenumber = 1;
 }
-else if( isset($params['resetfilter']) ) {
+elseif( isset($params['resetfilter']) ) {
     $this->SetPreference('article_category','');
     $this->SetPreference('article_pagelimit',50);
     $this->SetPreference('article_sortby','news_date DESC');
@@ -137,8 +137,6 @@ $smarty->assign('formend',$this->CreateFormEnd());
 //Load the current articles
 $entryarray = array();
 
-$dbresult = '';
-
 // SQL_CALC_FOUND_ROWS is deprecated. Instead exectute the query with LIMIT, and then again with COUNT(*) for the FOUND_ROWS()
 $query1 = "SELECT SQL_CALC_FOUND_ROWS n.*, nc.long_name FROM ".CMS_DB_PREFIX."module_news n LEFT OUTER JOIN ".CMS_DB_PREFIX."module_news_categories nc ON n.news_category_id = nc.news_category_id ";
 $parms = array();
@@ -168,7 +166,9 @@ $rowclass = 'row1';
 
 $admintheme = cms_utils::get_theme_object();
 
-while ($dbresult && $row = $dbresult->FetchRow()) {
+if ($dbresult) {
+  $rowclass = 'row1';
+  while ($row = $dbresult->FetchRow()) {
     $onerow = new stdClass();
 
     $onerow->id = $row['news_id'];
@@ -211,6 +211,8 @@ while ($dbresult && $row = $dbresult->FetchRow()) {
 
     $entryarray[] = $onerow;
     ($rowclass=="row1"?$rowclass="row2":$rowclass="row1");
+  }
+  $dbresult->Close();
 }
 
 $smarty->assign('items', $entryarray);
@@ -247,5 +249,5 @@ $themedir = $config['admin_url'].'/themes/'.$admintheme->themeName.'/images/icon
 
 $smarty->assign('iconurl',$themedir);
 
-#Display template
+//Display template
 echo $this->ProcessTemplate('articlelist.tpl');

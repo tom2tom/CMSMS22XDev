@@ -3,14 +3,14 @@ if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Modify Site Preferences') ) return;
 
 $entryarray = array();
-$max = $db->GetOne("SELECT max(item_order) as max_item_order FROM ".CMS_DB_PREFIX."module_news_fielddefs");
+$max = $db->GetOne("SELECT MAX(item_order) as max_item_order FROM ".CMS_DB_PREFIX."module_news_fielddefs");
 
+$admintheme = cms_utils::get_theme_object();
 $query = "SELECT * FROM ".CMS_DB_PREFIX."module_news_fielddefs ORDER BY item_order";
 $dbresult = $db->Execute($query);
-$admintheme = cms_utils::get_theme_object();
-$rowclass = 'row1';
-
-while ($dbresult && $row = $dbresult->FetchRow()) {
+if ($dbresult) {
+  $rowclass = 'row1';
+  while ($row = $dbresult->FetchRow()) {
     $onerow = new stdClass();
 
     $onerow->id = $row['id'];
@@ -38,6 +38,8 @@ while ($dbresult && $row = $dbresult->FetchRow()) {
 
     $entryarray[] = $onerow;
     ($rowclass=="row1"?$rowclass="row2":$rowclass="row1");
+  }
+  $dbresult->Close();
 }
 
 $smarty->assign('items', $entryarray);

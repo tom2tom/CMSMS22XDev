@@ -1,8 +1,8 @@
 <?php
 if( !isset($gCms) ) exit;
 
-  // CreateFormStart sets up a proper form tag that will cause the submit to
-  // return control to this module for processing.
+// CreateFormStart sets up a proper form tag that will cause the submit to
+// return control to this module for processing.
 $smarty->assign('startform', $this->CreateFormStart ($id, 'updateoptions', $returnid));
 $smarty->assign('endform', $this->CreateFormEnd ());
 
@@ -19,9 +19,11 @@ $smarty->assign('email_template',$this->GetTemplate('email_template'));
 $categorylist = array();
 $query = "SELECT * FROM ".CMS_DB_PREFIX."module_news_categories ORDER BY hierarchy";
 $dbresult = $db->Execute($query);
-
-while ($dbresult && $row = $dbresult->FetchRow()) {
-    $categorylist[$row['long_name']] = $row['news_category_id'];
+if ($dbresult) {
+    while ($row = $dbresult->FetchRow()) {
+        $categorylist[$row['long_name']] = $row['news_category_id'];
+    }
+    $dbresult->Close();
 }
 
 $smarty->assign('title_default_category', $this->Lang('default_category'));
@@ -58,6 +60,7 @@ $smarty->assign('fesubmit_status',$this->GetPreference('fesubmit_status'));
 $smarty->assign('input_fesubmit_status',
 		$this->CreateInputDropdown($id,'fesubmit_status',$statusdropdown,-1,$this->GetPreference('fesubmit_status','draft')));
 
+$smarty->assign('title_fesubmit_redirect',$this->Lang('fesubmit_redirect'));
 $contentops = $gCms->GetContentOperations();
 $smarty->assign('title_fesubmit_redirect',$this->Lang('fesubmit_redirect'));
 $smarty->assign('input_fesubmit_redirect',
