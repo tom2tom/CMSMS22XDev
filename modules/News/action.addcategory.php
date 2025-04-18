@@ -5,9 +5,9 @@ use CMSMS\HookManager;
 if (!isset($gCms)) exit;
 if (!$this->CheckPermission('Modify Site Preferences')) return;
 
+if (isset($params['cancel'])) $this->RedirectToAdminTab('categories','','admin_settings');
 $parent = -1;
 if( isset($params['parent'])) $parent = (int)$params['parent'];
-if (isset($params['cancel'])) $this->RedirectToAdminTab('categories','','admin_settings');
 
 $name = '';
 if (isset($params['name'])) {
