@@ -23,15 +23,14 @@ $(function() {
 <fieldset>
 <legend>{$ModuleManager->Lang('search_input')}</legend>
 <div class="pageoverflow">
+	<input type="hidden" name="{$actionid}advanced" value="0">
 	<p class="pagetext"><label for="searchterm">{$ModuleManager->Lang('searchterm')}:</label></p>
 	<p class="pageinput">
 		<input id="searchterm" type="text" name="{$actionid}term" size="50" value="{$term}" title="{$ModuleManager->Lang('title_searchterm')}" placeholder="{$ModuleManager->Lang('entersearchterm')}">&nbsp;
-		<input type="hidden" name="{$actionid}advanced" value="0">
 		<input type="checkbox" id="advanced" name="{$actionid}advanced" value="1"{if $advanced} checked{/if} title="{$ModuleManager->Lang('title_advancedsearch')}">&nbsp;<label for="advanced">{$ModuleManager->Lang('prompt_advancedsearch')}</label>
 		<span id="advhelp" style="display: none;"><br>{$ModuleManager->Lang('advancedsearch_help')}</span>
 	</p>
 </div>
-
 <div class="pageoverflow">
 	<p class="pagetext"></p>
 	<p class="pageinput">

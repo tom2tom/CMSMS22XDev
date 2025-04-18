@@ -36,6 +36,7 @@
       </p>
     </div>
     <div class="pageoverflow">
+      <input type="hidden" name="{$actionid}allow_summary_wysiwyg" value="0">
       <p class="pagetext"><label for="fld4">{$title_allow_summary_wysiwyg}: {cms_help key='help_opt_allow_summary_wysiwyg' title=$title_allow_summary_wysiwyg}</label></p>
       <p class="pageinput">
         <input type="checkbox" id="fld4" name="{$actionid}allow_summary_wysiwyg" value="1" {if $allow_summary_wysiwyg} checked{/if}>
@@ -114,6 +115,7 @@
       </p>
     </div>
     <div class="pageoverflow">
+      <input type="hidden" name="{$actionid}expired_viewable" value="0">
       <p class="pagetext"><label for="fld13">{$title_expired_viewable}</label> {cms_help key='info_expired_viewable' title=$title_expired_viewable}</p>
       <p class="pagetext">
         <input type="checkbox" id="fld13" name="{$actionid}expired_viewable" value="1"{if $expired_viewable} checked{/if}>
