@@ -34,7 +34,7 @@ function smarty_function_tab_header($params,$template)
 		}
 	}
 
-	$out = cms_admin_tabs::set_tab_header($name,$label,$active);
+	$out = cms_admin_tabs::set_tab_header($name,$label,$active,TRUE);
 	if( isset($params['assign']) ) {
 		$smarty->assign(trim($params['assign']),$out);
 		return '';

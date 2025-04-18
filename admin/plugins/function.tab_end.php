@@ -19,7 +19,7 @@ function smarty_function_tab_end($params,$template)
 {
 	$smarty = $template->smarty;
 
-	$out = cms_admin_tabs::end_tab_content();
+	$out = cms_admin_tabs::end_tab_content(true);
 	if( isset($params['assign']) )
 	{
 		$smarty->assign(trim($params['assign']),$out);

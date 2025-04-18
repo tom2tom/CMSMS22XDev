@@ -36,7 +36,7 @@ function smarty_function_tab_start($params,$template)
 		}
 	}
 
-	$out = cms_admin_tabs::start_tab($name,$parms);
+	$out = cms_admin_tabs::start_tab($name,$parms,true);
 	if( isset($params['assign']) )
 	{
 		$smarty->assign(trim($params['assign']),$out);
