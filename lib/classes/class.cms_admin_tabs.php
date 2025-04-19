@@ -92,7 +92,7 @@ final class cms_admin_tabs
    * Create a tab header
    *
    * @param string $tabid The tab key
-   * @param string $title The title to display in the tab
+   * @param string $title The label to display in the tab
    * @param bool   $active Whether the tab is active. Default false.
    *  If false, and $tabid matches the recorded active tab identifier,
    *  then the tab will be treated as active.
