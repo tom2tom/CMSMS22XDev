@@ -21,7 +21,7 @@ if( !isset($gCms) ) exit;
 if( !$this->VisibleToAdminUser() ) exit;
 
 if( $this->can_search() ) {
-  include(__DIR__.'/function.admin_search_tab.php');
+  include __DIR__.DIRECTORY_SEPARATOR.'function.admin_search_tab.php';
 }
 
 #
