@@ -9,9 +9,9 @@ if (!function_exists('smarty_mb_str_replace')) {
     /**
      * Multibyte string replace
      *
-     * @param string|string[] $search  the string to be searched
-     * @param string|string[] $replace the replacement string
-     * @param string          $subject the source string
+     * @param string|string[] $search  the string(s) to be searched for
+     * @param string|string[] $replace the replacement string(s)
+     * @param string|string[]|null $subject the source string(s)
      * @param int             &$count  number of matches found
      *
      * @return string replaced string
@@ -45,7 +45,7 @@ if (!function_exists('smarty_mb_str_replace')) {
                     next($replace);
                 }
             }
-        } else {
+        } elseif (!($subject === '' || $subject === null)) {
             $mb_reg_charset = mb_regex_encoding();
             // Check if mbstring regex is using UTF-8
             $reg_is_unicode = !strcasecmp($mb_reg_charset, "UTF-8");
@@ -64,7 +64,7 @@ if (!function_exists('smarty_mb_str_replace')) {
                 $replace = mb_convert_encoding($replace, $current_charset, Smarty::$_CHARSET);
             }
 
-            $parts = mb_split(preg_quote($search), $subject ?? "") ?: array();
+            $parts = mb_split(preg_quote($search), $subject) ?: array();
             // If original regex encoding was not unicode...
             if(!$reg_is_unicode) {
                 // ...restore original regex encoding to avoid breaking the system.
@@ -83,6 +83,8 @@ if (!function_exists('smarty_mb_str_replace')) {
             if($convert_result) {
                 $subject = mb_convert_encoding($subject, Smarty::$_CHARSET, $current_charset);
             }
+        } else {
+            $subject = (string)$subject;
         }
         return $subject;
     }
