@@ -26,7 +26,7 @@ $selall = $params['selall'];
 if( !is_array($selall) ) $selall = unserialize($selall);
 if( !is_array($selall) ) $selall = unserialize($selall); //nested serialize or mistake?
 
-if (count($selall)==0) {
+if ( !$selall ) {
   $params["fmerror"]="nofilesselected";
   $this->Redirect($id,"defaultadmin",$returnid,$params);
 }

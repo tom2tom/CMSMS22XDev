@@ -16,28 +16,25 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-if (!function_exists("cmsms")) exit;
-if (!$this->CheckPermission("Modify Files") && !$this->AdvancedAccessAllowed()) exit;
+if( !function_exists("cmsms") ) exit;
+if( !$this->CheckPermission("Modify Files") && !$this->AdvancedAccessAllowed() ) exit;
 
-if (isset($params["cancel"])) $this->Redirect($id,"defaultadmin",$returnid,$params);
+if( isset($params["cancel"]) ) $this->Redirect($id,"defaultadmin",$returnid,$params);
 
 $selall = $params['selall'];
 if( !is_array($selall) ) {
-  $selall = unserialize($selall);
+  $selall = unserialize($selall); //munged item-name(s)
 }
-unset($params['selall']);
-
-if (count($selall)==0) {
+if( !$selall ) {
   $params["fmerror"]="nofilesselected";
   $this->Redirect($id,"defaultadmin",$returnid,$params);
 }
-if (count($selall)>1) {
+if( count($selall)>1 ) {
   $params["fmerror"]="morethanonefiledirselected";
   $this->Redirect($id,"defaultadmin",$returnid,$params);
 }
 
-$config=cmsms()->GetConfig();
-$basedir = $config['root_path'];
+$basedir = CMS_ROOT_PATH;
 $filename=$this->decodefilename($selall[0]);
 $src = filemanager_utils::join_path($basedir,filemanager_utils::get_cwd(),$filename);
 if( !file_exists($src) ) {
@@ -54,7 +51,7 @@ if( !is_writable($src) ) {
   $params["fmerror"]="notwritable";
   $this->Redirect($id,"defaultadmin",$returnid,$params);
 }
-// TODO c.f. typehelper image types 'jpg','jpeg','bmp','wbmp','gif','png','tiff'.'tif','webp','avif','heif'.'svg'
+// TODO c.f. typehelper image types 'jpg','jpeg','bmp','wbmp','gif','png','tiff','tif','webp','avif','heif','svg'
 switch( $imageinfo['mime'] ) { //OR  switch(mime_content_type($src));
  case 'image/gif':
  case 'image/jpeg':
@@ -136,7 +133,7 @@ if( isset($params['save']) ) {
     $x0 = (int)(($src_w - $new_w) / 2);
     $y0 = (int)(($src_h - $new_h) / 2);
 
-    // TODO c.f. typehelper image types 'jpg','jpeg','bmp','wbmp','gif','png','tiff'.'tif','webp','avif','heif','svg'
+    // TODO c.f. typehelper image types 'jpg','jpeg','bmp','wbmp','gif','png','tiff','tif','webp','avif','heif','svg'
     //die("rotated={$src_w}x{$src_h} orig={$width}x{$height} new={$new_w},{$new_h} offset = $x0,$y0");
     $newimg = imagecreatetruecolor($new_w,$new_h);
     imagealphablending($newimg,FALSE);
@@ -197,7 +194,7 @@ $smarty->assign('filename',$filename);
 $smarty->assign('width',$width);
 $smarty->assign('height',$height);
 $smarty->assign('image',$url);
-if( is_array($selall) ) $params['selall'] = serialize($selall);
+$params['selall'] = serialize($selall); // for next pass
 $smarty->assign('startform',$this->CreateFormStart($id,'rotate',$returnid,'post','',false,'',$params));
 $smarty->assign('endform',$this->CreateFormEnd());
 echo $this->ProcessTemplate('filerotate.tpl');
