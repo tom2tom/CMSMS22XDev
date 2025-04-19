@@ -31,6 +31,7 @@ $(function() {
 		<span id="advhelp" style="display: none;"><br>{$ModuleManager->Lang('advancedsearch_help')}</span>
 	</p>
 </div>
+
 <div class="pageoverflow">
 	<p class="pagetext"></p>
 	<p class="pageinput">
