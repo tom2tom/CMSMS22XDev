@@ -253,7 +253,7 @@ EOS;
             }
         }
 
-        $tpl = $smarty->CreateTemplate('cms_template:'.$template, null, $modname, $smarty); //TODO suitable cache parameters $cache_id, $compile_id
+        $tpl = $smarty->CreateTemplate('cms_template:'.$template, null, null, $smarty); //TODO suitable cache parameters $cache_id, $compile_id
         $tpl->assign('name', $name);
         $tpl->assign('content', $content2);
         $tpl->display();
