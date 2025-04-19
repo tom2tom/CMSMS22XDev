@@ -1511,7 +1511,7 @@ abstract class CMSModule
     }
 
     /**
-     * Returns html5 representing a tooltip-enabled href link. This is basically a nice little wrapper
+     * Returns html5 representing a tooltip-enabled href link.  This is basically a nice little wrapper
      * to make sure that id's are placed in names and also that it's valid html.
      *
      * @final
