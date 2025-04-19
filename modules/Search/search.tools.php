@@ -126,6 +126,10 @@ function search_AddWords($obj, $module = 'Search', $id = -1, $attr = '', $conten
             $stmt->MoveNext();
         }
         $db->CommitTrans();
+
+        if( $dbresult ) {
+            $dbresult->Close();
+        }
     }
 }
 
