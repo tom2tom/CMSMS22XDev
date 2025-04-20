@@ -60,7 +60,7 @@ $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;defaultadmin.tpl", null
 
 //setup statistics tab content
 require __DIR__.DIRECTORY_SEPARATOR.'function.admin_statistics_tab.php';
-//setup options tab content
+//setup settings tab content
 require __DIR__.DIRECTORY_SEPARATOR.'function.admin_options_tab.php';
 
 if( empty($seetab) ) {

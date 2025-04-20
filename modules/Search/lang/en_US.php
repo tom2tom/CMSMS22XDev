@@ -69,9 +69,6 @@ $lang['input_resetstopwords'] = 'Load';
 $lang['noresultsfound'] = 'No results found!';
 $lang['nostatistics'] = 'No statistics found!';
 
-// O
-$lang['options'] = 'Options';
-
 // P
 $lang['param_action'] = 'Specify the mode of operation for the module.  Acceptable values are \'default\', and \'keywords\'.  The keywords action can be used to generate a comma seperated list of words suitable for use in a keywords meta tag.';
 $lang['param_count'] = 'Used with the keywords action, this parameter will limit the output to the specified number of words';
@@ -107,6 +104,7 @@ $lang['searchsubmit'] = 'Submit';
 $lang['searchtemplate'] = 'Search Template';
 $lang['searchtemplateupdated'] = 'Search Template Updated';
 $lang['search_method'] = 'Pretty URLs Compatibility via Method POST, default value is always GET, to make this work just put {Search search_method="post"} ';
+$lang['settings'] = 'Settings';
 $lang['statistics'] = 'Statistics';
 $lang['stopwords'] = 'Stop Words';
 $lang['submit'] = 'Submit';

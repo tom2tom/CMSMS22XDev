@@ -1,7 +1,7 @@
 <?php
 
 $tpl->assign('oformstart', $this->CreateFormStart($id, 'defaultadmin', $returnid, 'post', '', false, '',
-			array('__activetab'=>'options')));
+			array('__activetab'=>'settings')));
 $tpl->assign('reindex', $this->CreateInputSubmit($id, 'reindex', $this->Lang('reindexallcontent')));
 $tpl->assign('prompt_stopwords', $this->Lang('stopwords'));
 $tpl->assign('input_stopwords',
