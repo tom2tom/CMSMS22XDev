@@ -1,4 +1,5 @@
 {* admin statistics tab *}
+
 {if !empty($topwords)}
 {$formstart}
 <div class="pageoverflow">
