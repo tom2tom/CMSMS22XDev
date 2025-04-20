@@ -23,12 +23,15 @@
 </div>
 <div class="pageoverflow">
  <p class="pagetext"><label for="cms_hierdropdown1_0">{$prompt_resultpage}:</label></p>
- <p class="pageinput">{page_selector id="selpage" name="{$actionid}resultpage" value=$mod->GetPreference('resultpage')}</p>
+ <p class="pageinput">{page_selector id=selpage name="{$actionid}resultpage" value=$mod->GetPreference('resultpage',-1)}</p>
 </div>
 <br>
 <div class="pageoverflow">
- <p class="pageinput">
-  {$submit}
+ <p class="pageinput startside last">
+  <input type="submit" name="{$actionid}submit" data-ui-icon="ui-icon-check" value="{lang('submit')}">
+  <input type="submit" name="{$actionid}cancel" data-ui-icon="ui-icon-cancel" value="{lang('cancel')}">
+ </p>
+ <p class="pageinput endside last">
   <input type="submit" name="{$actionid}reindex" data-ui-icon="ui-icon-gear" value="{$mod->Lang('reindexallcontent')}" onclick="return confirm('{$mod->Lang("confirm_reindex")|escape:"javascript"}');">
  </p>
 </div>
