@@ -74,13 +74,13 @@ $lang['param_action'] = 'Specify the mode of operation for the module.  Acceptab
 $lang['param_count'] = 'Used with the keywords action, this parameter will limit the output to the specified number of words';
 $lang['param_detailpage'] = 'Used only for matching results from modules, this parameter allows specifying a different detail page for the results.  This is useful if, for example, you always display your detail views in a page with a different template.  <em>(<strong>Note:</strong> modules have the ability to override this parameter.)</em>';
 $lang['param_formtemplate'] = 'Used only for the default action, this parameter allows specyfing the name of a non default template.';
-$lang['param_inline'] = 'If true, the output from the search form will replace the original content of the \'search\' tag in the originating content block.  Use this parameter if your template has multiple content blocks, and you do not want the output of the search to replace the default content block';
+$lang['param_inline'] = 'If true, the output from the search form will replace the original content of the {Search} tag in the originating content block.  Use this parameter if the template has multiple content blocks, and you do not want the output of the search to replace the default content block';
 $lang['param_modules'] = 'Limit search results to values indexed from the specified (comma separated) list of modules';
 $lang['param_pageid'] = 'Applicable only with the keywords action, this parameter can be used to specify a different pageid to return results for';
 $lang['param_passthru'] = 'Pass named parameters down to specified modules.  The format of each of these parameters is: "passtru_MODULENAME_PARAMNAME=\'value\'" e.g. passthru_News_detailpage=\'newsdetails\'"';
 $lang['param_resultpage'] = 'Page to display search results in.  This can either be a page alias or an id.  Used to allow search results to be displayed in a different template from the search form';
 $lang['param_resulttemplate'] = 'This parameter allows specifying the name of a non default template to use for displaying search results.';
-$lang['param_searchtext'] = 'Text to place into the search box';
+$lang['param_searchtext'] = 'Placeholder for display in the search box';
 $lang['param_submit'] = 'Text to place into the submit button';
 $lang['param_useor'] = 'Change the default relationship from an OR relationship to an AND relationship';
 //$lang['perm_Manage_Search'] = 'Manage Search'; TODO migrate from admin-lang
@@ -88,7 +88,7 @@ $lang['prompt_alpharesults'] = 'Sort results alphabetically instead of by weight
 $lang['prompt_resetstopwords'] = 'Load default Stop Words from language';
 $lang['prompt_resultpage'] = 'Page for individual module results <em>(Note modules might override this)</em>';
 $lang['prompt_savephrases'] = 'Track phrases instead of individual words';
-$lang['prompt_searchtext'] = 'Default Placeholder for Search Element';
+$lang['prompt_searchtext'] = 'Default placeholder for the search box';
 
 // R
 $lang['reindexallcontent'] = 'Re-index All Content';
@@ -103,7 +103,7 @@ $lang['searchresultsfor'] = 'Search Results For';
 $lang['searchsubmit'] = 'Submit';
 $lang['searchtemplate'] = 'Search Template';
 $lang['searchtemplateupdated'] = 'Search Template Updated';
-$lang['search_method'] = 'Pretty URLs Compatibility via Method POST, default value is always GET, to make this work just put {Search search_method="post"} ';
+$lang['search_method'] = 'Specify "post" to enable pretty URLs compatibility using POST request method';
 $lang['settings'] = 'Settings';
 $lang['statistics'] = 'Statistics';
 $lang['stopwords'] = 'Stop Words';
