@@ -179,25 +179,25 @@ $lang['formtemplate'] = 'Form Templates';
 // H
 $lang['help'] = <<<EOF
 <h3>Important Notes</h3>
-<p>Version 2.9 and greater of News has removed the formatpostdate member from the templates, and has also removed the dateformat parameter.  You should be using the cms_date_format modifier (as indicated in the default templates) to format dates, and should be using entry->postdate instead of entry->formatpostdate in your templates.</p>
+<p>Version 2.9 and greater of News has removed the formatpostdate member from templates, and has also removed the dateformat parameter.  You should be using the cms_date_format modifier (as indicated in the default templates) to format dates, and should be using entry->postdate instead of entry->formatpostdate in your templates.</p>
 <h3>What does this do?</h3>
-<p>News is a module for displaying news events on your page, similar to a blog style, except with more features!.  When the module is installed, a News admin page is added to administration menu that will allow you to select or add a news category.  Once a news category is created or selected, a list of news items for that category will be displayed.  From here, you can add, edit or delete news items for that category.</p>
+<p>News is a module for displaying news events on your page, similar to a blog style, except with more features!  When the module is installed, a News admin page is added to administration menu that will allow you to select or add a news category.  Once a news category is created or selected, a list of news items for that category will be displayed.  From here, you can add, edit or delete news items for that category.</p>
 <h4>Numerous display methods</h4>
 <p>The parameters supported by the news module, and support for numerous templates of each time mean that your options for displaying news articles are limitless.</p>
 <h4>Custom Fields</h4>
 <p>The News module allows defining numerous custom fields (including files and images) that will allow you to attach PDF files or numerous images to your articles.</p>
-        <h4>Categories</h4>
-	<p>News supplies a hierarchical category mechanism for organizing your articles.  A news article can only be in one place in the hierarchy.</p>
-	<h4>Expiry and Status</h4>
-	<p>Each news article can have an optional expiry date, after which it will not be shown on your web page.  As well, articles can be marked as <em>draft</em> to remove them permanently from your web page.</p>
-	<h3>Security</h3>
-	<p>The user must belong to a group with the 'Modify News' permission in order to add or edit News entries.</p>
-        <p>As well, In order to delete news entries, the user must belong to a group with the 'Delete News Articles' permission.</p>
-	<p>In order to edit the layout templates, the user must belong to a group with the 'Modify Templates' permission.</p>
-	<p>In order to edit the global news preferences, the user must belong to a group with the 'Modify Site Preferences' permission.</p>
-	<p>Additionally, to approve news for frontend display the user must belong to a group with the 'Approve News' permission.</p>
-	<h3>How do I use it?</h3>
-	<p>The easiest way to use it is with the {news} wrapper tag (wraps the module in a tag, to simplify the syntax).  This will insert the module into your template or page anywhere you wish, and display news items.  The code would look something like: <code>{news number='5'}</code></p>
+<h4>Categories</h4>
+<p>News supplies a hierarchical category mechanism for organizing your articles.  A news article can only be in one place in the hierarchy.</p>
+<h4>Expiry and Status</h4>
+<p>Each news article can have an optional expiry date, after which it will not be shown on your web page.  As well, articles can be marked as <em>draft</em> to remove them permanently from your web page.</p>
+<h3>Security</h3>
+<p>The user must belong to a group with the 'Modify News' permission in order to add or edit News entries.</p>
+<p>As well, In order to delete news entries, the user must belong to a group with the 'Delete News Articles' permission.</p>
+<p>In order to edit the layout templates, the user must belong to a group with the 'Modify Templates' permission.</p>
+<p>In order to edit the global news preferences, the user must belong to a group with the 'Modify Site Preferences' permission.</p>
+<p>Additionally, to approve news for frontend display the user must belong to a group with the 'Approve News' permission.</p>
+<h3>How do I use it?</h3>
+<p>The easiest way to use it is with the {news} wrapper tag (wraps the module in a tag, to simplify the syntax).  This will insert the module into your template or page anywhere you wish, and display news items.  The code would look something like: <code>{news number='5'}</code></p>
 <h3>Templates</h3>
 <p>Since version 2.3 News supports multiple database templates, and no longer supports additional file templates.  Users who used the old file template system should follow these steps (for each file template):</p>
 <ul>
@@ -268,9 +268,9 @@ $lang['hide_summary_field'] = 'Hide the summary field when adding or editing art
 // I
 $lang['info_allow_fesubmit'] = 'This option controls whether frontend submission of articles will function at all for this site. Be careful about enabling this.';
 $lang['info_categories'] = 'For organization purposes news articles can be organized into hierarchical categories';
-$lang['info_detail_returnid'] = 'This preference is used to determine a page (and therefore a template) to use to view detail pages.  Custom news Detail URLS will not work if this parameter is not set to a valid page.  Additionally, if this preference is set, and no detailpage parameter is provided on the news tag, then this value will be used for detail links';
+$lang['info_detail_returnid'] = 'This preference is used to determine a page (and therefore a template) to use to view detail pages.  Custom news Detail URLs will not work if this parameter is not set to a valid page.  Additionally, if this preference is set, and no detailpage parameter is provided on the news tag, then this value will be used for detail links';
 $lang['info_expired_searchable'] = 'If enabled, expired articles may continue to be indexed by the search module, and appear in search results';
-$lang['info_expired_viewable'] = 'If enabled, expired articles can be viewed in detail mode (this is reproducing older functionality).  the showall parameter can be used on the URL (when not using pretty urls) to also indicate that expired articles can be viewed';
+$lang['info_expired_viewable'] = 'If enabled, expired articles can be viewed in detail mode (this is reproducing older functionality).  The showall parameter can be used on the URL (when not using pretty URLs) to also indicate that expired articles can be viewed';
 $lang['info_fesubmit_notification'] = 'You may optionally send an email to a single email address when a new article is submitted via the frontend.';
 $lang['info_maxlength'] = 'The maximum length only applies to text input fields.';
 $lang['info_public'] = 'Only Public fields are available for frontend editing, and/or for display in summary or detail views.';
@@ -289,7 +289,7 @@ $lang['maxlength'] = 'Maximum Length';
 $lang['msg_cancelled'] = 'Operation Cancelled';
 $lang['msg_categoriesreordered'] = 'Category order updated';
 $lang['msg_contenttype_removed'] = <<<EOT
-The news content type has been removed.  Please place {news} tags with appropriate parameters into your page template or into your page content to replace this functionality.
+The news content type has been removed.  Please place {News} tags with appropriate parameters into your page template or into your page content to replace this functionality.
 EOT;
 $lang['msg_success'] = 'Operation Successful';
 $lang['more'] = 'More';
