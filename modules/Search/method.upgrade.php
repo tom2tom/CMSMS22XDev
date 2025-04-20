@@ -66,10 +66,8 @@ if( version_compare($oldversion,'1.50') < 1 ) {
 }
 
 if( version_compare($oldversion,'1.51') < 0 ) {
-  // InnoDB engine for tables where transactions are used
-  $pref = CMS_DB_PREFIX;
-  $sql_i = "ALTER TABLE {$pref}module_search_%s ENGINE=InnoDB";
-  $tables = array('items','index');
+  $tables = array(CMS_DB_PREFIX.'module_search_items',CMS_DB_PREFIX.'module_search_index');
+  $sql_i = "ALTER TABLE %s ENGINE=InnoDB";
   foreach( $tables as $table ) {
     $db->Execute(sprintf($sql_i,$table));
   }
