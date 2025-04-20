@@ -77,15 +77,14 @@ function search_StemPhrase($module,$phrase)
 
 function search_AddWords($obj, $module = 'Search', $id = -1, $attr = '', $content = '', $expires = NULL) // mixed timestamp or null
 {
-    $db = $obj->GetDb();
     $obj->DeleteWords($module, $id, $attr);
 
     $non_indexable = strpos($content, NON_INDEXABLE_CONTENT);
     if( $non_indexable !== FALSE ) return;
 
-    \CMSMS\HookManager::do_hook( 'Search::SearchItemAdded', [ $module, $id, $attr, &$content, $expires ]);
+    CMSMS\HookManager::do_hook( 'Search::SearchItemAdded', [ $module, $id, $attr, &$content, $expires ]);
 
-    if ($content != "") {
+    if ($content) {
         //Clean up the content
 //      if( function_exists('utf8_decode') ) $content = utf8_decode($content);
         $content = html_entity_decode($content);
@@ -96,6 +95,7 @@ function search_AddWords($obj, $module = 'Search', $id = -1, $attr = '', $conten
         foreach( $tmp as $key => $val ) {
             $words[] = array('word'=>$key,'count'=>$val);
         }
+
         $q = "SELECT id FROM ".CMS_DB_PREFIX.'module_search_items WHERE module_name=?';
         $parms = array($module);
 
@@ -107,7 +107,9 @@ function search_AddWords($obj, $module = 'Search', $id = -1, $attr = '', $conten
             $q .= " AND extra_attr=?";
             $parms[] = $attr;
         }
-        $dbresult = $db->Execute($q, $parms);
+
+        $db = CmsApp::get_instance()->GetDb();
+        $dbresult = $db->Execute($q, $parms); //recordset
 
         $db->BeginTrans();
         if ($dbresult && $dbresult->RecordCount() > 0 && $row = $dbresult->FetchRow()) {
@@ -134,8 +136,6 @@ function search_AddWords($obj, $module = 'Search', $id = -1, $attr = '', $conten
 
 function search_DeleteWords($obj, $module = 'Search', $id = -1, $attr = '')
 {
-    $db = $obj->GetDb();
-    $db->BeginTrans();
     $parms = array( $module );
     $q = "DELETE FROM ".CMS_DB_PREFIX.'module_search_items WHERE module_name=?';
     if( $id != -1 ) {
@@ -146,10 +146,12 @@ function search_DeleteWords($obj, $module = 'Search', $id = -1, $attr = '')
         $q .= " AND extra_attr=?";
         $parms[] = $attr;
     }
+    $db = CmsApp::get_instance()->GetDb();
+    $db->BeginTrans();
     $db->Execute($q, $parms);
     $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'module_search_index WHERE item_id NOT IN (SELECT id FROM '.CMS_DB_PREFIX.'module_search_items)');
     $db->CommitTrans();
-    \CMSMS\HookManager::do_hook('Search::SearchItemDeleted', [ $module, $id, $attr ] );
+    CMSMS\HookManager::do_hook('Search::SearchItemDeleted', [ $module, $id, $attr ] );
 }
 
 function search_Reindex($module)
@@ -204,7 +206,6 @@ function search_DoEvent($module, $originator, $eventname, &$params )
         $content = $params['content'];
         if (!is_object($content)) return;
 
-        $db = $module->GetDb();
         $module->DeleteWords($module->GetName(), $content->Id(), 'content');
         if( $content->Active() && $content->IsSearchable() ) {
 
