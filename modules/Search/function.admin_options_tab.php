@@ -43,4 +43,3 @@ $tpl->assign('input_resultpage',
 								$this->GetPreference('resultpage', -1),
 								$id.'resultpage', true));
 */
-$tpl->assign('submit', $this->CreateInputSubmit($id, 'submit', $this->Lang('submit')));
