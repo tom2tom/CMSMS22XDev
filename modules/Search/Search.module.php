@@ -98,42 +98,40 @@ class Search extends CMSModule
 
     protected function GetSearchHtmlTemplate()
     {
-        return '
+        return <<<'EOT'
 {$startform}
-<label for="{$search_actionid}searchinput">{$searchprompt}:&nbsp;</label><input type="text" class="search-input" id="{$search_actionid}searchinput" name="{$search_actionid}searchinput" size="20" maxlength="50" placeholder="{$searchtext}">
+{if !empty($hidden)}{$hidden}{/if}
+ <label for="{$search_actionid}searchinput">{$searchprompt}:</label>&nbsp;
+ <input type="text" class="search-input" id="{$search_actionid}searchinput" name="{$search_actionid}searchinput" size="20" maxlength="50" placeholder="{$searchtext}">
 {*
-<br>
-<input type="checkbox" name="{$search_actionid}use_or" value="1">
+ <br>
+ <input type="checkbox" name="{$search_actionid}use_or" value="1">
 *}
-<input type="submit" class="search-button" name="submit" data-ui-icon="ui-icon-search" value="{$submittext}">
-{if isset($hidden)}{$hidden}{/if}
-{$endform}';
+ <input type="submit" class="search-button" name="submit" data-ui-icon="ui-icon-search" value="{$submittext}">
+{$endform}
+EOT;
     }
 
     protected function GetResultsHtmlTemplate()
     {
-        $text = <<<EOT
-<h3>{\$searchresultsfor} &quot;{\$phrase}&quot;</h3>
-{if \$itemcount > 0}
+        return <<<'EOT'
+<h3>{$searchresultsfor} &quot;{$phrase}&quot;</h3>
+{if $itemcount > 0}
 <ul>
-  {foreach from=\$results item=entry}
-  <li>{\$entry->title} - <a href="{\$entry->url}">{\$entry->urltxt}</a> ({\$entry->weight}%)</li>
-  {*
-     You can also instantiate custom behaviour on a module by module basis by looking at
-     the \$entry->module and \$entry->modulerecord fields in \$entry
-      ie: {if \$entry->module == 'News'}{News action='detail' article_id=\$entry->modulerecord detailpage='News'}
-
-     For content pages the module is 'content' and modulerecord the page id.
-  *}
-  {/foreach}
+{foreach $results as $entry}
+  <li>{$entry->title} - <a href="{$entry->url}">{$entry->urltxt}</a> ({$entry->weight}%)</li>
+{* You can also implement custom behaviour on a module-by-module basis by
+   processing the ->module and ->modulerecord properties of $entry e.g.
+   {if $entry->module == 'News'}{News action='detail' article_id=$entry->modulerecord detailpage='News'}{/if}
+   For content pages the module is 'content' and modulerecord the page id.
+*}
+{/foreach}
 </ul>
-
-<p>{\$timetaken}: {\$timetook}</p>
+<p>{$timetaken}: {$timetook}</p>
 {else}
-  <p><strong>{\$noresultsfound}</strong></p>
+<p><strong>{$noresultsfound}</strong></p>
 {/if}
 EOT;
-        return $text;
     }
 
     protected function DefaultStopWords()
@@ -170,21 +168,21 @@ EOT;
 
     public function DeleteAllWords($module = 'Search', $id = -1, $attr = '')
     {
-        $db = $this->GetDb();
+        $db = CmsApp::get_instance()->GetDb();
         $db->Execute('TRUNCATE '.CMS_DB_PREFIX.'module_search_index');
         $db->Execute('TRUNCATE '.CMS_DB_PREFIX.'module_search_items');
-
-        \CMSMS\HookManager::do_hook('Search::SearchAllItemsDeleted' );
+        $db->Execute('UPDATE '.CMS_DB_PREFIX.'module_search_items_seq SET id=0');
+        CMSMS\HookManager::do_hook('Search::SearchAllItemsDeleted' );
     }
 
     public function RegisterEvents()
     {
-        $this->AddEventHandler( 'Core', 'ContentEditPost', false );
-        $this->AddEventHandler( 'Core', 'ContentDeletePost', false );
-        $this->AddEventHandler( 'Core', 'AddTemplatePost', false );
-        $this->AddEventHandler( 'Core', 'EditTemplatePost', false );
-        $this->AddEventHandler( 'Core', 'DeleteTemplatePost', false );
-        $this->AddEventHandler( 'Core', 'ModuleUninstalled', false );
+        $this->AddEventHandler('Core', 'ContentEditPost', false);
+        $this->AddEventHandler('Core', 'ContentDeletePost', false);
+        $this->AddEventHandler('Core', 'AddTemplatePost', false);
+        $this->AddEventHandler('Core', 'EditTemplatePost', false);
+        $this->AddEventHandler('Core', 'DeleteTemplatePost', false);
+        $this->AddEventHandler('Core', 'ModuleUninstalled', false);
     }
 
     public function Reindex()
