@@ -2,8 +2,8 @@
 <div class="information">
 	{$mod->Lang('info_pagedflt')}
 </div>
+<br>
 <div class="pageoverflow">
-	<p class="pagetext"></p>
 	<p class="pageinput">
 		<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
 	</p>
@@ -97,8 +97,8 @@
 		<input id="extra3" type="text" name="{$actionid}extra3" value="{$page_prefs.extra3|cms_escape}" size="80" maxlength="255">
 	</p>
 </div>
+<br>
 <div class="pageoverflow">
-	<p class="pagetext"></p>
 	<p class="pageinput">
 		<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
 	</p>

@@ -193,18 +193,18 @@ EOS;
       $config = $_gCms->GetConfig();
       $smarty = $_gCms->GetSmarty();
       $page_id = ($_gCms->is_frontend_request()) ? $smarty->getTemplateVars('content_id') : '';
-      $tpl_ob = $smarty->CreateTemplate('module_file_tpl:MicroTiny;tinymce_configjs.tpl',null,null,$smarty); // child of the global smarty
-      $tpl_ob->assign('MT',$mod);
-      $tpl_ob->assign('MicroTiny',$mod);
-//    $tpl_ob->clear_assign('mt_profile'); // ?
-      $tpl_ob->assign('mt_profile',$profile);
-      $tpl_ob->assign('mt_actionid','m1_');
-      $tpl_ob->assign('isfrontend',$frontend);
-      $tpl_ob->assign('languageid',$languageid);
-      $tpl_ob->assign('langdir',$langdir);
-      $tpl_ob->assign('rooturl',CMS_ROOT_URL);
-      $tpl_ob->assign('custombase',$custombase);
-      $tpl_ob->assign('uploadsurl',$config['uploads_url']);
+      $tpl = $smarty->CreateTemplate('module_file_tpl:MicroTiny;tinymce_configjs.tpl',null,'MicroTiny',$smarty); // child of the global Smarty
+      $tpl->assign('MT',$mod);
+      $tpl->assign('MicroTiny',$mod);
+//    $tpl->clear_assign('mt_profile'); // ?
+      $tpl->assign('mt_profile',$profile);
+      $tpl->assign('mt_actionid','m1_');
+      $tpl->assign('isfrontend',$frontend);
+      $tpl->assign('languageid',$languageid);
+      $tpl->assign('langdir',$langdir);
+      $tpl->assign('rooturl',CMS_ROOT_URL);
+      $tpl->assign('custombase',$custombase);
+      $tpl->assign('uploadsurl',$config['uploads_url']);
       $fp = cms_utils::get_filepicker_module();
       if( $fp ) {
           $url = $fp->get_browser_url();
@@ -219,17 +219,17 @@ EOS;
           $st2 = '';
           $st3 = '';
       }
-      $tpl_ob->assign('filepicker_url',$url);
-      $tpl_ob->assign('filebrowse_title', $st1);
-      $tpl_ob->assign('imagebrowse_title', $st2);
-      $tpl_ob->assign('mediabrowse_title', $st3);
+      $tpl->assign('filepicker_url',$url);
+      $tpl->assign('filebrowse_title', $st1);
+      $tpl->assign('imagebrowse_title', $st2);
+      $tpl->assign('mediabrowse_title', $st3);
 
       $url = $mod->create_url('m1_','linker',$page_id);
-      $tpl_ob->assign('linker_url',$ajax_url($url));
+      $tpl->assign('linker_url',$ajax_url($url));
       $url = $mod->create_url('m1_','ajax_getpages',$page_id);
-      $tpl_ob->assign('getpages_url',$ajax_url($url));
-      if( $selector ) $tpl_ob->assign('mt_selector',$selector);
-      else $tpl_ob->clear_assign('mt_selector'); // ?
+      $tpl->assign('getpages_url',$ajax_url($url));
+      if( $selector ) $tpl->assign('mt_selector',$selector);
+      else $tpl->clear_assign('mt_selector'); // ?
       // edited-content styling
       $done = false;
       if( $css_name && $profile['allowcssoverride'] ) {
@@ -242,7 +242,7 @@ EOS;
 //$val = smarty_function_cms_stylesheet(['name'=>$val,'nolinks'=>1],$smarty);
               $val = $smarty->fetch("string:{cms_stylesheet name='$val' nolinks=1}");
               if( $val ) {
-                  $tpl_ob->assign('mt_contentcss',$val);
+                  $tpl->assign('mt_contentcss',$val);
                   $done = true;
               }
           }
@@ -251,7 +251,7 @@ EOS;
               $bp = __DIR__.DIRECTORY_SEPARATOR.'js';
               $fp = cms_join_path($bp,'CMSMSstyles','content',$css_name);
               if( is_dir($fp) && is_readable($fp.DIRECTORY_SEPARATOR.'content.min.css') ) {
-                  $tpl_ob->assign('mt_contentcss',$custombase.'/CMSMSstyles/content/'.$css_name.'/content.min.css');
+                  $tpl->assign('mt_contentcss',$custombase.'/CMSMSstyles/content/'.$css_name.'/content.min.css');
                   $done = true;
               }
               if( !$done ) {
@@ -260,14 +260,14 @@ EOS;
                   else $val = $css_name;
                   $fp = cms_join_path($bp,'tinymce','skins','content',$val);
                   if( is_dir($fp) && is_readable($fp.DIRECTORY_SEPARATOR.'content.min.css') ) {
-                      $tpl_ob->assign('mt_contentcss',$val);
+                      $tpl->assign('mt_contentcss',$val);
                       $done = true;
                   }
               }
               if( !$done ) {
                   // possibly style-folder absolute or relative url(s)
                   if( 1 ) {//TODO validate e.g. comma-separated, trim'd acceptable-format
-                      $tpl_ob->assign('mt_contentcss',$css_name);
+                      $tpl->assign('mt_contentcss',$css_name);
                       $done = true;
                   }
               }
@@ -286,7 +286,7 @@ EOS;
 //$val = smarty_function_cms_stylesheet(['id'=>$num,'nolinks'=>1],$smarty);
                       $val = $smarty->fetch("string:{cms_stylesheet id=$num nolinks=1}"); //requires updated cms_stylesheet tag
                       if( $val ) {
-                          $tpl_ob->assign('mt_contentcss',$val);
+                          $tpl->assign('mt_contentcss',$val);
                       }
 /* for former version of tag
                       $obj = $query->GetObject();
@@ -294,7 +294,7 @@ EOS;
                           $name = $obj->get_name();
                           $val = $smarty->fetch("string:{cms_stylesheet name='$name' nolinks=1}");
                           if( $val ) {
-                              $tpl_ob->assign('mt_contentcss',$val);
+                              $tpl->assign('mt_contentcss',$val);
                           }
                       }
 */
@@ -307,14 +307,14 @@ EOS;
           $bp = __DIR__.DIRECTORY_SEPARATOR.'js';
           $fp = cms_join_path($bp,'CMSMSstyles','content',$val);
           if( is_dir($fp) && is_readable($fp.DIRECTORY_SEPARATOR.'content.min.css') ) {
-              $tpl_ob->assign('mt_contentcss',$custombase.'/CMSMSstyles/content/'.$val.'/content.min.css');
+              $tpl->assign('mt_contentcss',$custombase.'/CMSMSstyles/content/'.$val.'/content.min.css');
               $done = true;
           }
       }
       if( !$done ) {
           $fp = cms_join_path($bp,'tinymce','skins','content',$val);
           if( is_dir($fp) && is_readable($fp.DIRECTORY_SEPARATOR.'content.min.css') ) {
-              $tpl_ob->assign('mt_contentcss',$val);
+              $tpl->assign('mt_contentcss',$val);
           }
       }
       // editor-elements styling
@@ -323,16 +323,16 @@ EOS;
       $bp = __DIR__.DIRECTORY_SEPARATOR.'js';
       $fp = cms_join_path($bp,'CMSMSstyles','ui',$val);
       if( is_dir($fp) && is_readable($fp.DIRECTORY_SEPARATOR.'skin.min.css') ) {
-          $tpl_ob->assign('mt_skinurl',$custombase.'/CMSMSstyles/ui/'.$val); //NOTE folder url i.e. no appended '/skin.min.css' or other file in that folder
+          $tpl->assign('mt_skinurl',$custombase.'/CMSMSstyles/ui/'.$val); //NOTE folder url i.e. no appended '/skin.min.css' or other file in that folder
           $done = true;
       }
       if( !$done ) {
           $fp = cms_join_path($bp,'tinymce','skins','ui',$val);
           if( is_dir($fp) && is_readable($fp.DIRECTORY_SEPARATOR.'skin.min.css') ) {
-              $tpl_ob->assign('mt_skin',$val);
+              $tpl->assign('mt_skin',$val);
           }
       }
-      return $tpl_ob->fetch();
+      return $tpl->fetch();
   }
 
   /**

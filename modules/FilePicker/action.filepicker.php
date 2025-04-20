@@ -249,23 +249,25 @@ foreach( $css_files as $file ) {
     }
 }
 
-$smarty->assign('cssurl',(($sel_file) ? $this->GetModuleURLPath().$sel_file : ''));
-$smarty->assign('cwd_for_display',$cwd_for_display);
-$smarty->assign('cwd',$cwd);
-$smarty->assign('files',$files);
-$smarty->assign('sig',$sig);
-$smarty->assign('inst',$inst);
-$smarty->assign('mod',$this);
-$smarty->assign('prefix',$prefix);
-$smarty->assign('profile',$profile2);
-$smarty->assign('type',FileType::TYPE_ANY); //$type);
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;filepicker.tpl",null,$modname,$smarty);
+$tpl->assign('cssurl',(($sel_file) ? $this->GetModuleURLPath().$sel_file : ''));
+$tpl->assign('cwd_for_display',$cwd_for_display);
+$tpl->assign('cwd',$cwd);
+$tpl->assign('files',$files);
+$tpl->assign('sig',$sig);
+$tpl->assign('inst',$inst);
+//$tpl->assign('mod',$this);
+$tpl->assign('prefix',$prefix);
+$tpl->assign('profile',$profile2);
+$tpl->assign('type',FileType::TYPE_ANY); //$type);
 $lang = [];
 $lang['confirm_delete'] = $this->Lang('confirm_delete');
 $lang['ok'] = $this->Lang('ok');
 $lang['error_problem_upload'] = $this->Lang('error_problem_upload');
 $lang['error_failed_ajax'] = $this->Lang('error_failed_ajax');
-$smarty->assign('lang_js',json_encode($lang));
-echo $this->ProcessTemplate('filepicker.tpl');
+$tpl->assign('lang_js',json_encode($lang));
+$tpl->display();
 
 #
 # EOF

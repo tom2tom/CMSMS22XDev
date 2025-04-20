@@ -248,10 +248,10 @@
 		</div>
 		<br>
 		<div class="pageoverflow">
-			<p class="pageinput">
+			<div class="dialogoptions">
 				<input type="submit" name="submit" value="{lang('submit')}" class="pagebutton">
 				<input type="submit" name="cancel" value="{lang('cancel')}" class="pagebutton">
-			</p>
+			</div>
 		</div>
 	</form>
 
@@ -313,8 +313,8 @@ $(function() {
 					<input type="text" id="testaddress" name="mailtest_testaddress" size="50" maxlength="255">
 				</p>
 			</div>
+			<br>
 			<div class="pageoverflow">
-				<p class="pagetext"></p>
 				<p class="pageinput">
 					<input id="testsend" type="submit" name="sendtest" data-ui-icon="ui-icon-mail-closed" value="{lang('sendtest')}">
 					<input id="testcancel" type="submit" name="cancel" value="{lang('cancel')}">

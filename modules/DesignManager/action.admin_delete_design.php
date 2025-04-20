@@ -85,10 +85,13 @@ try {
         $this->RedirectToAdminTab();
     }
 
-    $smarty->assign('tpl_permission',$can_delete_templates);
-    $smarty->assign('css_permission',$can_delete_stylesheets);
-    $smarty->assign('design',$design);
-    echo $this->ProcessTemplate('admin_delete_design.tpl');
+    $modname = $this->GetName();
+    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_delete_design.tpl", null, $modname, $smarty);
+
+    $tpl->assign('tpl_permission',$can_delete_templates);
+    $tpl->assign('css_permission',$can_delete_stylesheets);
+    $tpl->assign('design',$design);
+    $tpl->display();
 }
 catch( CmsException $e ) {
     $this->SetError($e->GetMessage());

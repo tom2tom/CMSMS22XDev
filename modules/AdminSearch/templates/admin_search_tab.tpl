@@ -45,8 +45,8 @@
     <input id="searchtext" type="text" name="{$actionid}search_text" value="{$saved_search.search_text|default:''|cms_escape}" size="80" maxlength="80">
   </p>
 </div>
+<br>
 <div class="pageoverflow">
-  <p class="pagetext"></p>
   <p class="pageinput">
     <input id="searchbtn" type="submit" name="{$actionid}submit" data-ui-icon="ui-icon-search" value="{$mod->Lang('search')}">
   </p>

@@ -74,8 +74,8 @@ final class Navigator extends CMSModule
     public function GetFriendlyName() { return $this->Lang('friendlyname'); }
     public function IsPluginModule() { return true; }
     public function HasAdmin() { return false; }
-    public function GetVersion() { return '1.0.10'; }
-    public function MinimumCMSVersion() { return '2.1.99'; }
+    public function GetVersion() { return '1.0.11'; }
+    public function MinimumCMSVersion() { return '2.2'; }
     public function GetAdminDescription() { return $this->Lang('description'); }
     public function GetAdminSection() { return 'layout'; }
     public function LazyLoadFrontend() { return TRUE; }
@@ -83,7 +83,7 @@ final class Navigator extends CMSModule
     public function GetHelp($lang='en_US') { return $this->Lang('help'); }
     public function GetAuthor() { return 'Robert Campbell'; }
     public function GetAuthorEmail() { return ''; }
-    public function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
+    public function GetChangeLog() { return file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'changelog.htm'); }
 
     public function InitializeFrontend()
     {

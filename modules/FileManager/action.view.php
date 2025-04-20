@@ -16,20 +16,19 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-if (!function_exists("cmsms")) exit;
+if (!function_exists('cmsms')) exit;
 if( get_userid(FALSE) < 1 || $this->cms->is_frontend_request() ) throw new \CmsError403Exception('Permission denied');
 
 if( !isset($params['file']) ) {
-    $params["fmerror"]="nofilesselected";
-    $this->Redirect($id,"defaultadmin",$returnid,$params);
+    $params['fmerror'] = 'nofilesselected';
+    $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 
-$config=cmsms()->GetConfig();
-$filename=$this->decodefilename($params['file']);
+$filename = $this->decodefilename($params['file']);
 $src = filemanager_utils::join_path(CMS_ROOT_PATH,filemanager_utils::get_cwd(),$filename);
 if( !file_exists($src) ) {
-    $params["fmerror"]="filenotfound";
-    $this->Redirect($id,"defaultadmin",$returnid,$params);
+    $params['fmerror'] = 'filenotfound';
+    $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 
 // get its mime type

@@ -123,8 +123,7 @@ $(function () {
 </div>
 
 <div>
-	{$formstart}
-	{*$hiddenpath*}
+	{$vformstart}
 	<div>
 	<fieldset>
 		{filebtn id='btn_newdir' iname="{$actionid}fileactionnewdir" icon='ui-icon-circle-plus' text=$mod->Lang('newdir') title=$mod->Lang('title_newdir')}

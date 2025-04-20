@@ -98,6 +98,8 @@ if( isset($efilter['tpl']) && $efilter['tpl'] != '' ) {
     $efilter[] = $efilter['tpl'];
     unset($efilter['tpl']);
 }
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,$modname,$smarty);
 /*
 $templates = [];
 try {
@@ -107,14 +109,17 @@ try {
 catch( Exception $e ) {
     // nothing here
 }
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,$modname,$smarty);
+
 if( $templates ) {
-    $smarty->assign('templates',$templates);
+    $tpl->assign('templates',$templates);
     $tpl_nav = array();
     $tpl_nav['pagelimit'] = $tpl_query->limit;
     $tpl_nav['numpages'] = $tpl_query->numpages;
     $tpl_nav['numrows'] = $tpl_query->totalrows;
     $tpl_nav['curpage'] = (int)($tpl_query->offset / $tpl_query->limit) + 1;
-    $smarty->assign('tpl_nav',$tpl_nav);
+    $tpl->assign('tpl_nav',$tpl_nav);
 }
 */
 // build a list of the types, and categories, and later, designs.
@@ -133,7 +138,7 @@ if( $types && count($types) ) {
     }
     asort($tmp);
     $opts[$this->Lang('tpl_types')] = $tmp; // data to populate the new-template type-selector
-    $smarty->assign('list_types',$tmp); // for TBA
+    $tpl->assign('list_types',$tmp); // for TBA
     asort($originators);
     $opts[$this->Lang('tpl_originators')] = $originators;
     // data to populate the template-types tab
@@ -147,16 +152,16 @@ if( $types && count($types) ) {
         if( $bo == $b::CORE ) return 1;
         return strcasecmp($a->get_langified_display_value(),$b->get_langified_display_value());
     });
-    $smarty->assign('list_all_types',$types);
+    $tpl->assign('list_all_types',$types);
 }
 else {
-    $smarty->assign('list_types',[]);
-    $smarty->assign('list_all_types',[]);
+    $tpl->assign('list_types',[]);
+    $tpl->assign('list_all_types',[]);
 }
 
 $cats = CmsLayoutTemplateCategory::get_all();
 if( $cats && count($cats) ) {
-    $smarty->assign('list_categories',$cats);
+    $tpl->assign('list_categories',$cats);
     $tmp = array();
     for( $i = 0; $i < count($cats); $i++ ) {
         $tmp['c:'.$cats[$i]->get_id()] = $cats[$i]->get_name();
@@ -166,14 +171,14 @@ if( $cats && count($cats) ) {
 
 $designs = CmsLayoutCollection::get_all();
 if( $designs && count($designs) ) {
-    $smarty->assign('list_designs',$designs);
+    $tpl->assign('list_designs',$designs);
     $tmp = array();
     for( $i = 0; $i < count($designs); $i++ ) {
         $tmp['d:'.$designs[$i]->get_id()] = $designs[$i]->get_name();
         $tmp2[$designs[$i]->get_id()] = $designs[$i]->get_name();
     }
     asort($tmp2);
-    $smarty->assign('design_names',$tmp2);
+    $tpl->assign('design_names',$tmp2);
     asort($tmp);
     $opts[$this->Lang('prompt_design')] = $tmp;
 }
@@ -187,7 +192,7 @@ if( $this->CheckPermission('Manage Designs') ) {
         $users[$allusers[$i]->id] = $allusers[$i]->username;
     }
     asort($users);
-    $smarty->assign('list_users',$users);
+    $tpl->assign('list_users',$users);
     asort($tmp);
     $opts[$this->Lang('prompt_user')] = $tmp;
 }
@@ -206,30 +211,27 @@ if( $this->CheckPermission('Manage Stylesheets') ) {
     }
 }
 
-// give everything to smarty that we can.
-$smarty->assign('filter_tpl_options',$opts);
-$smarty->assign('tpl_filter',$filter_tpl_rec); // used for filter form
-$smarty->assign('css_filter',$filter_css_rec); // used for filter form
-$smarty->assign('jsoncssfilter',json_encode($filter_css_rec)); // used for ajaxy stuff
-$smarty->assign('jsonfilter',json_encode($efilter)); // used for ajaxy stuff.
-
-$smarty->assign('has_add_right',
-                $this->CheckPermission('Modify Templates') ||
-                $this->CheckPermission('Add Templates'));
-$smarty->assign('coretypename',CmsLayoutTemplateType::CORE);
-$smarty->assign('manage_stylesheets',$this->CheckPermission('Manage Stylesheets'));
-$smarty->assign('manage_templates',$this->CheckPermission('Modify Templates'));
-$smarty->assign('manage_designs',$this->CheckPermission('Manage Designs'));
-$smarty->assign('import_url',$this->create_url($id,'admin_import_template'));
-$smarty->assign('admin_url',$config['admin_url']);
-$smarty->assign('lock_timeout', $this->GetPreference('lock_timeout'));
+$tpl->assign('filter_tpl_options',$opts);
+$tpl->assign('tpl_filter',$filter_tpl_rec); // used for filter form
+$tpl->assign('css_filter',$filter_css_rec); // used for filter form
+$tpl->assign('jsoncssfilter',json_encode($filter_css_rec)); // used for ajaxy stuff
+$tpl->assign('jsonfilter',json_encode($efilter)); // used for ajaxy stuff.
+$tpl->assign('has_add_right',
+             $this->CheckPermission('Modify Templates') ||
+             $this->CheckPermission('Add Templates'));
+$tpl->assign('coretypename',CmsLayoutTemplateType::CORE);
+$tpl->assign('manage_stylesheets',$this->CheckPermission('Manage Stylesheets'));
+$tpl->assign('manage_templates',$this->CheckPermission('Modify Templates'));
+$tpl->assign('manage_designs',$this->CheckPermission('Manage Designs'));
+$tpl->assign('import_url',$this->create_url($id,'admin_import_template'));
+$tpl->assign('admin_url',$config['admin_url']);
+$tpl->assign('lock_timeout', $this->GetPreference('lock_timeout'));
 $url = $this->create_url($id,'ajax_get_templates');
-$smarty->assign('ajax_templates_url',str_replace('amp;','',$url));
+$tpl->assign('ajax_templates_url',str_replace('amp;','',$url));
 $url = $this->create_url($id,'ajax_get_stylesheets');
-$smarty->assign('ajax_stylesheets_url',str_replace('amp;','',$url));
+$tpl->assign('ajax_stylesheets_url',str_replace('amp;','',$url));
 
-echo $this->ProcessTemplate('defaultadmin.tpl');
-
+$tpl->display();
 #
 # EOF
 #

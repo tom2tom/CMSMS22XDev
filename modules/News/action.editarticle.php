@@ -28,6 +28,7 @@ $startdate    = $now;
 $status       = isset($params['status']) ? $params['status'] : $status;
 $summary      = isset($params['summary']) ? $params['summary'] : '';
 $title        = isset($params['title']) ? trim(strip_tags($params['title'])) : '';
+$tpl          = $smarty->CreateTemplate("module_file_tpl:$me;editarticle.tpl", null, $me, $smarty);
 $usedcategory = isset($params['category']) ? $params['category'] : '';
 $useexp       = !empty($params['useexp']);
 
@@ -137,7 +138,7 @@ if (isset($params['submit']) || isset($params['apply'])) {
                     } else {
                         $error = '';
                         $value = news_admin_ops::handle_upload($articleid, $elem, $error);
-                        $smarty->assign('checking', 'blah');
+                        $tpl->assign('checking', 'blah');
                         if ($value !== FALSE) {
                             $params['customfield'][$onetype['id']] = $value;
                         }
@@ -443,93 +444,94 @@ if ($rst) {
 if ($author_id > 0) {
     $userops = $gCms->GetUserOperations();
     $theuser = $userops->LoadUserById($author_id);
-    $smarty->assign('inputauthor', $theuser->username);
+    $tpl->assign('inputauthor', $theuser->username);
 } else if ($author_id == 0) {
-    $smarty->assign('inputauthor', $this->Lang('anonymous'));
+    $tpl->assign('inputauthor', $this->Lang('anonymous'));
 } else {
     $feu = $this->GetModuleInstance('FrontEndUsers');
     if ($feu) {
         $uinfo = $feu->GetUserInfo($author_id * -1);
         if ($uinfo[0])
-            $smarty->assign('inputauthor', $uinfo[1]['username']);
+            $tpl->assign('inputauthor', $uinfo[1]['username']);
     }
 }
 
-$smarty->assign('formid', $id);
-$smarty->assign('startform', $this->CreateFormStart($id, 'editarticle', $returnid, 'POST', 'multipart/form-data'));
-$smarty->assign('endform', $this->CreateFormEnd());
-$smarty->assign('hide_summary_field', $this->GetPreference('hide_summary_field', '0'));
-$smarty->assign('authortext', $this->Lang('author'));
-$smarty->assign('articleid', $articleid);
-$smarty->assign('titletext', $this->Lang('title'));
-$smarty->assign('searchable', $searchable);
-$smarty->assign('extratext', $this->Lang('extra'));
-$smarty->assign('extra', $extra);
-$smarty->assign('urltext', $this->Lang('url'));
-$smarty->assign('news_url', $news_url);
-$smarty->assign('title', $title);
-$smarty->assign('inputcontent', CmsFormUtils::create_textarea([
+$tpl->assign('formid', $id);
+//TODO $params per $hidden, below
+$tpl->assign('startform', $this->CreateFormStart($id, 'editarticle', $returnid, 'POST', 'multipart/form-data'));
+$tpl->assign('hidden', $this->CreateInputHidden($id, 'articleid', $articleid) . $this->CreateInputHidden($id, 'author_id', $author_id)); //TODO startform $params
+$tpl->assign('endform', $this->CreateFormEnd());
+$tpl->assign('hide_summary_field', $this->GetPreference('hide_summary_field', '0'));
+$tpl->assign('authortext', $this->Lang('author'));
+$tpl->assign('articleid', $articleid);
+$tpl->assign('titletext', $this->Lang('title'));
+$tpl->assign('searchable', $searchable);
+$tpl->assign('extratext', $this->Lang('extra'));
+$tpl->assign('extra', $extra);
+$tpl->assign('urltext', $this->Lang('url'));
+$tpl->assign('news_url', $news_url);
+$tpl->assign('title', $title);
+$tpl->assign('inputcontent', CmsFormUtils::create_textarea([
     'enablewysiwyg' => 1,
     'name' => $id . 'content',
     'text' => $content,
     'rows' => 10,
     'cols' => 80
 ]));
-$smarty->assign('inputsummary', CmsFormutils::create_textarea([
+$tpl->assign('inputsummary', CmsFormutils::create_textarea([
     'enablewysiwyg' => $this->GetPreference('allow_summary_wysiwyg', 1),
     'name' => $id . 'summary',
     'text' => $summary,
     'rows' => 3,
     'cols' => 80
 ]));
-$smarty->assign('useexp', $useexp);
-$smarty->assign('actionid', $id);
-$smarty->assign('inputexp', $this->CreateInputCheckbox($id, 'useexp', '1', $useexp, 'class="pagecheckbox"'));
-$smarty->assign('postdate', $postdate);
-$smarty->assign('postdateprefix', $id . 'postdate_');
-$smarty->assign('startdate', $startdate);
-$smarty->assign('startdateprefix', $id . 'startdate_');
-$smarty->assign('enddate', $enddate);
-$smarty->assign('enddateprefix', $id . 'enddate_');
-$smarty->assign('status', $status);
-$smarty->assign('categorylist', array_flip($categorylist));
-$smarty->assign('category', $usedcategory);
-$smarty->assign('hidden', $this->CreateInputHidden($id, 'articleid', $articleid) . $this->CreateInputHidden($id, 'author_id', $author_id));
-$smarty->assign('submit', $this->CreateInputSubmit($id, 'submit', lang('submit')));
-$smarty->assign('apply', $this->CreateInputSubmit($id, 'apply', lang('apply')));
-$smarty->assign('cancel', $this->CreateInputSubmit($id, 'cancel', lang('cancel')));
-$smarty->assign('delete_field_val', $this->Lang('delete'));
-$smarty->assign('titletext', $this->Lang('title'));
-$smarty->assign('extratext', $this->Lang('extra'));
-$smarty->assign('categorytext', $this->Lang('category'));
-$smarty->assign('summarytext', $this->Lang('summary'));
-$smarty->assign('contenttext', $this->Lang('content'));
-$smarty->assign('postdatetext', $this->Lang('postdate'));
-$smarty->assign('useexpirationtext', $this->Lang('useexpiration'));
-$smarty->assign('startdatetext', $this->Lang('startdate'));
-$smarty->assign('enddatetext', $this->Lang('enddate'));
-$smarty->assign('select_option', $this->Lang('select_option'));
-// tab stuff.
-$smarty->assign('start_tab_headers', $this->StartTabHeaders());
-$smarty->assign('tabheader_article', $this->SetTabHeader('article', $this->Lang('article')));
-$smarty->assign('tabheader_preview', $this->SetTabHeader('preview', $this->Lang('preview')));
-$smarty->assign('end_tab_headers', $this->EndTabHeaders());
-$smarty->assign('start_tab_content', $this->StartTabContent());
-$smarty->assign('start_tab_article', $this->StartTab('article', $params));
-$smarty->assign('end_tab_article', $this->EndTab());
-$smarty->assign('end_tab_content', $this->EndTabContent());
-$smarty->assign('warning_preview', $this->Lang('warning_preview'));
+$tpl->assign('useexp', $useexp);
+$tpl->assign('actionid', $id);
+$tpl->assign('inputexp', $this->CreateInputCheckbox($id, 'useexp', '1', $useexp, 'class="pagecheckbox"'));
+$tpl->assign('postdate', $postdate);
+$tpl->assign('postdateprefix', $id . 'postdate_');
+$tpl->assign('startdate', $startdate);
+$tpl->assign('startdateprefix', $id . 'startdate_');
+$tpl->assign('enddate', $enddate);
+$tpl->assign('enddateprefix', $id . 'enddate_');
+$tpl->assign('status', $status);
+$tpl->assign('categorylist', array_flip($categorylist));
+$tpl->assign('category', $usedcategory);
+$tpl->assign('submit', $this->CreateInputSubmit($id, 'submit', lang('submit')));
+$tpl->assign('apply', $this->CreateInputSubmit($id, 'apply', lang('apply')));
+$tpl->assign('cancel', $this->CreateInputSubmit($id, 'cancel', lang('cancel')));
+$tpl->assign('delete_field_val', $this->Lang('delete'));
+$tpl->assign('titletext', $this->Lang('title'));
+$tpl->assign('extratext', $this->Lang('extra'));
+$tpl->assign('categorytext', $this->Lang('category'));
+$tpl->assign('summarytext', $this->Lang('summary'));
+$tpl->assign('contenttext', $this->Lang('content'));
+$tpl->assign('postdatetext', $this->Lang('postdate'));
+$tpl->assign('useexpirationtext', $this->Lang('useexpiration'));
+$tpl->assign('startdatetext', $this->Lang('startdate'));
+$tpl->assign('enddatetext', $this->Lang('enddate'));
+$tpl->assign('select_option', $this->Lang('select_option'));
+$tpl->assign('warning_preview', $this->Lang('warning_preview'));
+// tab stuff
+$tpl->assign('start_tab_headers', $this->StartTabHeaders());
+$tpl->assign('tabheader_article', $this->SetTabHeader('article', $this->Lang('article')));
+$tpl->assign('tabheader_preview', $this->SetTabHeader('preview', $this->Lang('preview')));
+$tpl->assign('end_tab_headers', $this->EndTabHeaders());
+$tpl->assign('start_tab_content', $this->StartTabContent());
+$tpl->assign('start_tab_article', $this->StartTab('article', $params));
+$tpl->assign('end_tab_article', $this->EndTab());
+$tpl->assign('end_tab_content', $this->EndTabContent());
 
 if ($this->CheckPermission('Approve News')) {
-    $smarty->assign('statustext', lang('status'));
-    $smarty->assign('statuses', array_flip($statusdropdown));
+    $tpl->assign('statustext', lang('status'));
+    $tpl->assign('statuses', array_flip($statusdropdown));
 }
 
 if ($custom_flds) {
-    $smarty->assign('custom_fields', $custom_flds);
+    $tpl->assign('custom_fields', $custom_flds);
 }
 $contentops = cmsms()->GetContentOperations();
-$smarty->assign('preview_page_selector', $contentops->CreateHierarchyDropdown(0, $this->GetPreference('detail_returnid', -1), $id.'previewpage', TRUE));
+$tpl->assign('preview_page_selector', $contentops->CreateHierarchyDropdown(0, $this->GetPreference('detail_returnid', -1), $id.'previewpage', TRUE));
 
 try {
     // get the list of detail templates.
@@ -542,16 +544,15 @@ try {
         }
     }
     if ($list) {
-        $smarty->assign('prompt_detail_template', $this->Lang('detail_template'));
-        $smarty->assign('prompt_detail_page', $this->Lang('detail_page'));
-        $smarty->assign('detail_templates', $list);
-        $smarty->assign('cur_detail_template', $this->GetPreference('current_detail_template'));
-        $smarty->assign('start_tab_preview', $this->StartTab('preview', $params));
-        $smarty->assign('end_tab_preview', $this->EndTab());
+        $tpl->assign('prompt_detail_template', $this->Lang('detail_template'));
+        $tpl->assign('prompt_detail_page', $this->Lang('detail_page'));
+        $tpl->assign('detail_templates', $list);
+        $tpl->assign('cur_detail_template', $this->GetPreference('current_detail_template'));
+        $tpl->assign('start_tab_preview', $this->StartTab('preview', $params));
+        $tpl->assign('end_tab_preview', $this->EndTab());
     }
 } catch( Exception $e ) {
     audit('', $me.':editarticle', 'No detail template available for preview');
 }
 
-// and display the template.
-echo $this->ProcessTemplate('editarticle.tpl');
+$tpl->display();

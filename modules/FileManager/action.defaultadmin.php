@@ -56,9 +56,12 @@ for ($i = 0, $n = count($tmp_path_parts); $i < $n; $i++) {
     }
     $path_parts[] = $obj;
 }
-$smarty->assign('path',$path);
-$smarty->assign('path_parts',$path_parts);
-echo $this->ProcessTemplate('fmpath.tpl');
 
-include __DIR__.DIRECTORY_SEPARATOR.'uploadview.php';
-include __DIR__.DIRECTORY_SEPARATOR.'action.admin_fileview.php'; // this is also a standalone action
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;fmpath.tpl",null,$modname,$smarty);
+$tpl->assign('path',$path);
+$tpl->assign('path_parts',$path_parts);
+$tpl->display();
+
+require __DIR__.DIRECTORY_SEPARATOR.'uploadview.php';
+require __DIR__.DIRECTORY_SEPARATOR.'action.admin_fileview.php'; // this is also a standalone action

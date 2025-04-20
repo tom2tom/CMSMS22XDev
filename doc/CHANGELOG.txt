@@ -1,3 +1,10 @@
+Version 2.2.22F2 - Whitehorse
+-------------------------------
+ - Update all uses of deprecated templates-API in modules and actions
+ - Block FileManager operations on executable files unless sufficiently authorised
+ - Change more <p/>'s to <label/>'s
+ - Add missing button-icons
+
 Version 2.2.21F2 - Fredericton
 -------------------------------
  - FR #12350 Do not change module's active status during upgrade

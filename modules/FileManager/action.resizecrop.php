@@ -19,38 +19,43 @@
 //TODO current js backend (jrac) is elderly, poorly-maintained if at all, and GPL2 only
 //consider replacement e.g. from https://github.com/Traackr/resizeAndCrop
 
-if( !function_exists("cmsms") ) exit;
-if( !$this->CheckPermission("Modify Files") && !$this->AdvancedAccessAllowed() ) exit;
+if( !function_exists('cmsms') ) exit;
+if( !($this->CheckPermission('Modify Files') || $this->AdvancedAccessAllowed()) ) exit;
 
-if( isset($params["cancel"]) ) $this->Redirect($id,"defaultadmin",$returnid,$params);
-
-$selall = $params['selall'];
-if( !is_array($selall) ) $selall = unserialize($selall);
-unset($params['selall']);
-
-if( !$selall ) {
-  $params["fmerror"] = "nofilesselected";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
-}
-if( count($selall)>1 ) {
-  $params["fmerror"] = "morethanonefiledirselected";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+if( isset($params['cancel']) ) {
+//unset($params['selall']);
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 
-$filename=$this->decodefilename($selall[0]);
+$selall = (!empty($params['selall'])) ? $params['selall'] : '';
+if( $selall && !is_array($selall) ) {
+  $tmp = @unserialize($selall, ['allowed_classes'=>[]]); // mask possible E_WARNING
+  $selall = ($tmp !== false) ? $tmp : [$selall];
+  $params['selall'] = $selall;
+}
+if (!$selall) {
+  $params['fmerror'] = 'nofilesselected';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
+}
+if (count($selall) > 1) {
+  $params['fmerror'] = 'morethanonefiledirselected';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
+}
+
+$filename = $this->decodefilename($selall[0]);
 $src = filemanager_utils::join_path(CMS_ROOT_PATH,filemanager_utils::get_cwd(),$filename);
 if( !file_exists($src) ) {
-  $params["fmerror"] = "filenotfound";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+  $params['fmerror']='filenotfound';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 $imageinfo = getimagesize($src);
 if( !$imageinfo || !isset($imageinfo['mime']) || !startswith($imageinfo['mime'],'image') ) {
     $this->SetError($this->Lang('filenotimage'));
-    $this->Redirect($id,"defaultadmin",$returnid);
+    $this->Redirect($id,'defaultadmin',$returnid);
 }
 if( !is_writable($src) ) {
     $this->SetError($this->Lang('filenotimage'));
-    $this->Redirect($id,"defaultadmin",$returnid);
+    $this->Redirect($id,'defaultadmin',$returnid);
 }
 
 //
@@ -82,20 +87,24 @@ if(empty($params['reset'])
   $res = imageEditor::save($instance, $src, $mimeType);
   if( $this->GetPreference('create_thumbnails') ) filemanager_utils::create_thumbnail($src, NULL, TRUE);
 
-  $this->Redirect($id,"defaultadmin",$returnid);
+  $this->Redirect($id,'defaultadmin',$returnid);
 }
 
 //
 // build the form
 //
-if( is_array($selall) ) $params['selall'] = serialize($selall);
-$smarty->assign('formstart',$this->CreateFormStart($id,'resizecrop',$returnid,'post','',false,'',$params));
-$smarty->assign('formend',$this->CreateFormEnd());
-$smarty->assign('filename',$filename);
-$url = filemanager_utils::get_cwd_url()."/$filename";
-$smarty->assign('image',$url);
-$smarty->assign('image_width',$imageinfo[0]);
+$params['selall'] = $selall[0]; // flat value for next pass
 
-echo $this->ProcessTemplate('pie.tpl');
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;pie.tpl",null,$modname,$smarty);
+
+$tpl->assign('formstart',$this->CreateFormStart($id,'resizecrop',$returnid,'post','',false,'',$params));
+$tpl->assign('formend',$this->CreateFormEnd());
+$tpl->assign('filename',$filename);
+$url = filemanager_utils::get_cwd_url()."/$filename";
+$tpl->assign('image',$url);
+$tpl->assign('image_width',$imageinfo[0]);
+
+$tpl->display();
 
 ?>

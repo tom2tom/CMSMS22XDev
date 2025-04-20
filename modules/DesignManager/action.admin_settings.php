@@ -32,9 +32,12 @@ if( isset($params['submit']) ) {
 
   echo $this->ShowMessage($this->Lang('msg_options_saved'));
 }
-$smarty->assign('lock_timeout',$this->GetPreference('lock_timeout'));
-$smarty->assign('lock_refresh',$this->GetPreference('lock_refresh'));
-echo $this->ProcessTemplate('admin_settings.tpl');
+
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_settings.tpl",null,$modname,$smarty);
+$tpl->assign('lock_timeout',$this->GetPreference('lock_timeout'));
+$tpl->assign('lock_refresh',$this->GetPreference('lock_refresh'));
+$tpl->display();
 
 #
 # EOF

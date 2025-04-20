@@ -63,7 +63,7 @@ $lang['name'] = 'Name';
 
 // P
 //$lang['perm_Use_Admin_Search'] = 'Use Admin Search'; TODO migrate from admin-lang
-$lang['placeholder_search_text'] = 'Enter Search Text';
+$lang['placeholder_search_text'] = 'Enter text';
 $lang['prompt_code'] = 'Code';
 $lang['prompt_description'] = 'Description';
 $lang['postinstall'] = 'Admin Search module installed';

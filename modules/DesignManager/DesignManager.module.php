@@ -23,7 +23,7 @@ if( !isset($gCms) ) exit;
 final class DesignManager extends CMSModule
 {
     public function GetFriendlyName() { return $this->Lang('friendlyname'); }
-    public function GetVersion() { return '1.1.11'; }
+    public function GetVersion() { return '1.1.12'; }
     public function MinimumCMSVersion()  { return '2.1'; }
     public function LazyLoadAdmin() { return TRUE; }
     public function LazyLoadFrontend() { return TRUE; }
@@ -34,7 +34,7 @@ final class DesignManager extends CMSModule
     public function GetAdminSection() { return 'layout'; }
     public function AllowAutoInstall() { return TRUE; }
     public function GetHelp() { return CmsLangOperations::lang_from_realm('help','help_designmanager_help'); }
-    public function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
+    public function GetChangeLog() { return file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'changelog.htm'); }
     public function GetAdminDescription() { return $this->Lang('moddescription'); }
     public function InstallPostMessage() { return $this->Lang('postinstall'); }
     public function UninstallPostMessage() { return $this->Lang('postuninstall'); }

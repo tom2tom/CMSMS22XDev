@@ -104,17 +104,20 @@ foreach( $pagelist as $pid ) {
   $displaydata[] = $rec;
 }
 
-$smarty->assign('multicontent',$params['multicontent']);
-$smarty->assign('displaydata',$displaydata);
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_bulk_changeowner.tpl",null,$modname,$smarty);
+
+$tpl->assign('multicontent',$params['multicontent']);
+$tpl->assign('displaydata',$displaydata);
 $userlist = UserOperations::get_instance()->LoadUsers();
 $tmp = array();
 foreach( $userlist as $user ) {
   $tmp[$user->id] = $user->username;
 }
-$smarty->assign('userlist',$tmp);
-$smarty->assign('userid',get_userid());
+$tpl->assign('userlist',$tmp);
+$tpl->assign('userid',get_userid());
 
-echo $this->ProcessTemplate('admin_bulk_changeowner.tpl');
+$tpl->display();
 
 #
 # EOF

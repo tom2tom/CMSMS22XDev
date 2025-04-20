@@ -11,12 +11,6 @@
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -164,16 +158,8 @@ if( isset($params['submit']) ) {
     }
 }
 
-if( $search_data ) $smarty->assign('search_data',$search_data);
-$smarty->assign('term',$term);
-$smarty->assign('advanced',$advanced);
-$smarty->assign('formstart',$this->CreateFormStart($id,'defaultadmin','','post','',false,'',array('__activetab'=>'search')));
-$smarty->assign('formend',$this->CreateFormEnd());
-$smarty->assign('actionid',$id);
-$smarty->assign('mod',$this);
-
-echo $this->ProcessTemplate('admin_search_tab.tpl');
-#
-# EOF
-#
-?>
+if( $search_data ) $tpl->assign('search_data',$search_data);
+$tpl->assign('term',$term);
+$tpl->assign('advanced',$advanced);
+$tpl->assign('formstart',$this->CreateFormStart($id,'defaultadmin','','post','',false,'',array('__activetab'=>'search')));
+$tpl->assign('formend',$this->CreateFormEnd());

@@ -16,40 +16,44 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-if( !function_exists("cmsms") ) exit;
-if( !$this->CheckPermission("Modify Files") && !$this->AdvancedAccessAllowed() ) exit;
+if( !function_exists('cmsms') ) exit;
+if( !($this->CheckPermission('Modify Files') || $this->AdvancedAccessAllowed()) ) exit;
 
-if( isset($params["cancel"]) ) $this->Redirect($id,"defaultadmin",$returnid,$params);
+if( isset($params['cancel']) ) {
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
+}
 
-$selall = $params['selall'];
-if( !is_array($selall) ) {
-  $selall = unserialize($selall); //munged item-name(s)
+$selall = (!empty($params['selall'])) ? $params['selall'] : '';
+if( $selall && !is_array($selall) ) {
+  $tmp = @unserialize($selall, ['allowed_classes'=>[]]); // mask possible E_WARNING
+  $selall = ($tmp !== false) ? $tmp : [$selall];
+  $params['selall'] = $selall; //array of munged itemname(s), should be 1
 }
 if( !$selall ) {
-  $params["fmerror"]="nofilesselected";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+  $params['fmerror'] = 'nofilesselected';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
-if( count($selall)>1 ) {
-  $params["fmerror"]="morethanonefiledirselected";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+if( count($selall) > 1 ) {
+  $params['fmerror'] = 'morethanonefiledirselected';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 
-$basedir = CMS_ROOT_PATH;
-$filename=$this->decodefilename($selall[0]);
+$basedir = CMS_ROOT_PATH; //OR uploads-top per $advancedmode ?
+$filename = $this->decodefilename($selall[0]);
 $src = filemanager_utils::join_path($basedir,filemanager_utils::get_cwd(),$filename);
 if( !file_exists($src) ) {
-  $params["fmerror"]="filenotfound";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+  $params['fmerror'] = 'filenotfound';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 //TODO file_manager_utils::mime_content_type
 $imageinfo = getimagesize($src);
 if( !$imageinfo || !isset($imageinfo['mime']) || !startswith($imageinfo['mime'],'image') ) {
-  $params["fmerror"]="filenotimage";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+  $params['fmerror'] = 'filenotimage';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 if( !is_writable($src) ) {
-  $params["fmerror"]="notwritable";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+  $params['fmerror'] = 'notwritable';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 // TODO c.f. typehelper image types 'jpg','jpeg','bmp','wbmp','gif','png','tiff','tif','webp','avif','heif','svg'
 switch( $imageinfo['mime'] ) { //OR  switch(mime_content_type($src));
@@ -177,27 +181,30 @@ if( isset($params['save']) ) {
 
   if( $createthumb ) $thumb = filemanager_utils::create_thumbnail($src);
 
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 
 //
 // build the form
 //
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;filerotate.tpl",null,$modname,$smarty);
+
 $opts = array('none'=>$this->Lang('none'),
             'crop'=>$this->Lang('crop'),
             'resize'=>$this->Lang('resize'));
-$smarty->assign('opts',$opts);
+$tpl->assign('opts',$opts);
 $url = filemanager_utils::get_cwd_url()."/$filename";
-$smarty->assign('postrotate',$postrotate);
-$smarty->assign('createthumb',$createthumb);
-$smarty->assign('filename',$filename);
-$smarty->assign('width',$width);
-$smarty->assign('height',$height);
-$smarty->assign('image',$url);
-$params['selall'] = serialize($selall); // for next pass
-$smarty->assign('startform',$this->CreateFormStart($id,'rotate',$returnid,'post','',false,'',$params));
-$smarty->assign('endform',$this->CreateFormEnd());
-echo $this->ProcessTemplate('filerotate.tpl');
+$tpl->assign('postrotate',$postrotate);
+$tpl->assign('createthumb',$createthumb);
+$tpl->assign('filename',$filename);
+$tpl->assign('width',$width);
+$tpl->assign('height',$height);
+$tpl->assign('image',$url);
+$params['selall'] = $selall[0]; //flat value for next pass
+$tpl->assign('startform',$this->CreateFormStart($id,'rotate',$returnid,'post','',false,'',$params));
+$tpl->assign('endform',$this->CreateFormEnd());
+$tpl->display();
 
 #
 # EOF

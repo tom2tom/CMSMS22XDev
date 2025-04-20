@@ -29,14 +29,7 @@ if( $dbresult ) {
   $dbresult->Close();
 }
 
-$smarty->assign('items', $entryarray);
-$smarty->assign('itemcount', count($entryarray));
+$tpl->assign('citems', $entryarray);
+$tpl->assign('citemcount', count($entryarray));
 
-// Setup links
-$smarty->assign('categorytext', $this->Lang('category'));
-
-// Display template
-echo $this->ProcessTemplate('categorylist.tpl');
-
-// EOF
-?>
+$tpl->assign('categorytext', $this->Lang('name'));

@@ -116,12 +116,15 @@ try {
         break;
     }
 
-    $smarty->assign('bulk_op',$bulk_op);
-    $allparms = base64_encode(json_encode(array('css_select'=>$params['css_select'],'css_bulk_action'=>$params['css_bulk_action'])));
-    $smarty->assign('allparms',$allparms);
-    $smarty->assign('sheets',$stylesheets);
+    $modname = $this->GetName();
+    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_bulk_css.tpl", null, $modname, $smarty);
 
-    echo $this->ProcessTemplate('admin_bulk_css.tpl');
+    $tpl->assign('bulk_op',$bulk_op);
+    $allparms = base64_encode(json_encode(array('css_select'=>$params['css_select'],'css_bulk_action'=>$params['css_bulk_action'])));
+    $tpl->assign('allparms',$allparms);
+    $tpl->assign('sheets',$stylesheets);
+
+    $tpl->display();
 }
 catch( \Exception $e ) {
     // master exception

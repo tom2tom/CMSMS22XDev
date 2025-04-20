@@ -32,6 +32,6 @@ HookManager::do_hook('News::NewsCategoryDeleted', [ 'category_id'=>$catid, 'name
 audit($catid,$this->GetName().' category', "Deleted: {$row['news_category_name']}");
 
 news_admin_ops::UpdateHierarchyPositions();
-$params = array('tab_message'=> 'categorydeleted', 'active_tab' => 'categories');
+$params = array('tab_message'=> 'categorydeleted', '__activetab' => 'categories');
 $this->Setmessage($this->Lang('categorydeleted'));
 $this->RedirectToAdminTab('categories','','admin_settings');

@@ -19,14 +19,10 @@
 # Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
 #---------------------------------------------------------------------------
 
-$CMS_VERSION = '2.2.21F2';
-$CMS_VERSION_NAME = 'Fredericton';
+$CMS_VERSION = '2.2.22F2';
+$CMS_VERSION_NAME = 'Whitehorse';
 $CMS_SCHEMA_VERSION = '202';
 
 define('CMS_VERSION', $CMS_VERSION);
 define('CMS_VERSION_NAME', $CMS_VERSION_NAME);
 define('CMS_SCHEMA_VERSION', $CMS_SCHEMA_VERSION);
-
-#
-# EOF
-#

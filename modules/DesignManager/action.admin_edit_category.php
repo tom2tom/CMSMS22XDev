@@ -55,8 +55,10 @@ catch( CmsException $e ) {
   $this->ShowErrors($e->GetMessage());
 }
 
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_edit_category.tpl", null, $modname, $smarty);
 $smarty->assign('category',$category);
-echo $this->ProcessTemplate('admin_edit_category.tpl');
+$tpl->display();
 
 #
 # EOF

@@ -14,9 +14,10 @@ else {
 }
 
 $cache_id = '|ns'.md5(serialize($params));
-$tpl_ob = $smarty->CreateTemplate($this->GetTemplateResource($template), $cache_id, null, $smarty);
-if( !$tpl_ob->IsCached() ) {
-//$tpl_ob = $smarty->CreateTemplate($this->GetTemplateResource($template), null, null, $smarty);
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template), $cache_id, $modname, $smarty);
+if( !$tpl->IsCached() ) {
+//$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template), null, $modname, $smarty);
     $detailpage = 0;
     $tmp = (int)$this->GetPreference('detail_returnid', -1);
     if( isset($params['detailpage']) ) {
@@ -199,34 +200,34 @@ WHERE status = 'published' AND
 
     // Assign some pagination variables to Smarty
     if( $pagenumber == 1 ) {
-        $tpl_ob->assign('prevpage', $this->Lang('prevpage'));
-        $tpl_ob->assign('firstpage', $this->Lang('firstpage'));
+        $tpl->assign('prevpage', $this->Lang('prevpage'));
+        $tpl->assign('firstpage', $this->Lang('firstpage'));
     }
     else {
         $params['pagenumber'] = $pagenumber-1;
-        $tpl_ob->assign('prevpage', $this->CreateFrontendLink($id, $returnid, 'default', $this->Lang('prevpage'), $params));
-        $tpl_ob->assign('prevurl', $this->create_url($id, 'default', $returnid, $params, true)); //inline, !targetcontentonly
+        $tpl->assign('prevpage', $this->CreateFrontendLink($id, $returnid, 'default', $this->Lang('prevpage'), $params));
+        $tpl->assign('prevurl', $this->create_url($id, 'default', $returnid, $params, true)); //inline, !targetcontentonly
         $params['pagenumber'] = 1;
-        $tpl_ob->assign('firstpage', $this->CreateFrontendLink($id, $returnid, 'default', $this->Lang('firstpage'), $params));
-        $tpl_ob->assign('firsturl', $this->create_url($id, 'default', $returnid, $params, true)); //inline, !targetcontentonly
+        $tpl->assign('firstpage', $this->CreateFrontendLink($id, $returnid, 'default', $this->Lang('firstpage'), $params));
+        $tpl->assign('firsturl', $this->create_url($id, 'default', $returnid, $params, true)); //inline, !targetcontentonly
     }
 
     if( $pagenumber >= $pagecount ) {
-        $tpl_ob->assign('nextpage', $this->Lang('nextpage'));
-        $tpl_ob->assign('lastpage', $this->Lang('lastpage'));
+        $tpl->assign('nextpage', $this->Lang('nextpage'));
+        $tpl->assign('lastpage', $this->Lang('lastpage'));
     }
     else {
         $params['pagenumber'] = $pagenumber+1;
-        $tpl_ob->assign('nextpage', $this->CreateFrontendLink($id, $returnid, 'default', $this->Lang('nextpage'), $params));
-        $tpl_ob->assign('nexturl', $this->create_url($id, 'default', $returnid, $params, true)); //inline, !targetcontentonly
+        $tpl->assign('nextpage', $this->CreateFrontendLink($id, $returnid, 'default', $this->Lang('nextpage'), $params));
+        $tpl->assign('nexturl', $this->create_url($id, 'default', $returnid, $params, true)); //inline, !targetcontentonly
         $params['pagenumber'] = $pagecount;
-        $tpl_ob->assign('lastpage', $this->CreateFrontendLink($id, $returnid, 'default', $this->Lang('lastpage'), $params));
-        $tpl_ob->assign('lasturl', $this->create_url($id, 'default', $returnid, $params, true)); // inline, !targetcontentonly
+        $tpl->assign('lastpage', $this->CreateFrontendLink($id, $returnid, 'default', $this->Lang('lastpage'), $params));
+        $tpl->assign('lasturl', $this->create_url($id, 'default', $returnid, $params, true)); // inline, !targetcontentonly
     }
-    $tpl_ob->assign('pagenumber', $pagenumber);
-    $tpl_ob->assign('pagecount', $pagecount);
-    $tpl_ob->assign('oftext', $this->Lang('prompt_of'));
-    $tpl_ob->assign('pagetext', $this->Lang('prompt_page'));
+    $tpl->assign('pagenumber', $pagenumber);
+    $tpl->assign('pagecount', $pagecount);
+    $tpl->assign('oftext', $this->Lang('prompt_of'));
+    $tpl->assign('pagetext', $this->Lang('prompt_page'));
 
     //we will substitute $detailpage into URLs cuz 'returnid' is used to select the page to be displayed
     $displayid = $detailpage ?: $returnid;
@@ -341,14 +342,14 @@ WHERE status = 'published' AND
         $dbresult->Close();
     } // if $dbresult
 
-    $tpl_ob->assign('itemcount', count($entryarray));
-    $tpl_ob->assign('items', $entryarray);
-    $tpl_ob->assign('category_label', $this->Lang('category_label'));
-    $tpl_ob->assign('author_label', $this->Lang('author_label'));
+    $tpl->assign('itemcount', count($entryarray));
+    $tpl->assign('items', $entryarray);
+    $tpl->assign('category_label', $this->Lang('category_label'));
+    $tpl->assign('author_label', $this->Lang('author_label'));
 
     foreach( $params as $key => $value ) {
         if( $key == 'mact' || $key == 'action' ) continue;
-        $tpl_ob->assign('param_'.$key, $value);
+        $tpl->assign('param_'.$key, $value);
     }
 
     unset($params['pagenumber']);
@@ -369,11 +370,11 @@ WHERE status = 'published' AND
         }
         //$catName = $db->GetOne('SELECT news_category_name FROM '.CMS_DB_PREFIX . 'module_news_categories where news_category_id=?', array($params['category_id']));
     }
-    $tpl_ob->assign('category_name', $catName);
-    $tpl_ob->assign('count', count($catarray));
-    $tpl_ob->assign('cats', $catarray);
+    $tpl->assign('category_name', $catName);
+    $tpl->assign('count', count($catarray));
+    $tpl->assign('cats', $catarray);
 } //if IsCached
 
-$tpl_ob->display();
+$tpl->display();
 
 ?>

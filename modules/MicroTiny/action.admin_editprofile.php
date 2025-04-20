@@ -54,8 +54,10 @@ try {
     $this->RedirectToAdminTab();
   }
 
-  $smarty->assign('profile',$name);
-  $smarty->assign('data',$profile);
+  $modname = $this->GetName();
+  $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_editprofile.tpl",null,$modname,$smarty);
+  $tpl->assign('profile',$name);
+  $tpl->assign('data',$profile);
 
   $bp = __DIR__.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'js';
   $vals = [];
@@ -72,7 +74,7 @@ try {
   }
   $themes['oxide'] = $this->lang('light');
   $themes['oxide-dark'] = $this->lang('dark');
-  $smarty->assign('themes',$themes);
+  $tpl->assign('themes',$themes);
 
   $vals = [];
   $places = glob(cms_join_path($bp,'CMSMSstyles','content','*'),GLOB_NOESCAPE|GLOB_ONLYDIR);
@@ -89,13 +91,13 @@ try {
   $stylers['default'] = $this->lang('light');
   $stylers['dark'] = $this->lang('dark');
   $stylers['sheet'] = $this->Lang('profile_usesheet');
-  $smarty->assign('stylers',$stylers);
+  $tpl->assign('stylers',$stylers);
 
   $stylesheets = CmsLayoutStylesheet::get_all(TRUE);
   $stylesheets = array('-1'=>$this->Lang('none')) + $stylesheets;
-  $smarty->assign('stylesheets',$stylesheets);
+  $tpl->assign('stylesheets',$stylesheets);
 
-  echo $this->ProcessTemplate('admin_editprofile.tpl');
+  $tpl->display();
 }
 catch( Exception $e ) {
   $this->SetError($e->GetMessage());

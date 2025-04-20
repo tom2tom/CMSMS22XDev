@@ -11,12 +11,6 @@
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -34,13 +28,13 @@ if( isset($params['modulehelp']) ) {
     // this is done before permissions checks
     $params['mod'] = $params['modulehelp'];
     unset($params['modulehelp']);
-    include(__DIR__.'/action.local_help.php');
+    require __DIR__.DIRECTORY_SEPARATOR.'action.local_help.php';
     return;
 }
 
 if( !$this->VisibleToAdminUser() ) exit;
 $tmp = ModuleOperations::get_instance()->GetQueueResults();
-if( is_array($tmp) && count($tmp) ) {
+if( $tmp && is_array($tmp) ) {
     $tmp2 = array();
     foreach( $tmp as $key => $data ) {
         $msg = $data[1];
@@ -53,15 +47,7 @@ if( is_array($tmp) && count($tmp) ) {
     echo $this->ShowMessage($tmp2);
 }
 
-echo '<div class="pagewarning">'."\n";
-echo '<h3>'.$this->Lang('notice')."</h3>\n";
-$link = '<a target="_blank" href="http://dev.cmsmadesimple.org">forge</a>';
-echo '<p>'.$this->Lang('general_notice',$link,$link)."</p>\n";
-echo '<h3>'.$this->Lang('use_at_your_own_risk')."</h3>\n";
-echo '<p>'.$this->Lang('compatibility_disclaimer')."</p></div>\n";
-
 $connection_ok = modmgr_utils::is_connection_ok();
-if( !$connection_ok ) echo $this->ShowErrors($this->Lang('error_request_problem'));
 
 // this is a bit ugly
 modmgr_utils::get_images();
@@ -75,43 +61,40 @@ if( $connection_ok ) {
         echo $this->ShowErrors($e->GetMessage());
     }
 }
+else {
+    echo $this->ShowErrors($this->Lang('error_request_problem'));
+}
 
-echo $this->StartTabHeaders();
-if( $this->CheckPermission('Modify Modules') ) {
-    echo $this->SetTabHeader('installed',$this->Lang('installed'));
+$pmod = $this->CheckPermission('Modify Modules');
+$pset = $this->CheckPermission('Modify Site Preferences');
+
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,$modname,$smarty);
+
+$tpl->assign('connected', $connection_ok);
+$tpl->assign('pmod', $pmod);
+$tpl->assign('pset', $pset);
+
+$num = ( is_array($newversions) ) ? count($newversions) : 0;
+$label = $num.' '.$this->Lang('tab_newversions');
+$tpl->assign('newcount', $label);
+
+if( $pmod ) {
+    require __DIR__.DIRECTORY_SEPARATOR.'function.admin_installed.php';
     if( $connection_ok ) {
-        $num = ( is_array($newversions) ) ? count($newversions) : 0;
-        echo $this->SetTabHeader('newversions',$num.' '.$this->Lang('tab_newversions') );
-        echo $this->SetTabHeader('search',$this->Lang('search'));
-        echo $this->SetTabHeader('modules',$this->Lang('availmodules'));
+        require __DIR__.DIRECTORY_SEPARATOR.'function.newversionstab.php';
+        require __DIR__.DIRECTORY_SEPARATOR.'function.search.php';
+        require __DIR__.DIRECTORY_SEPARATOR.'function.admin_modules_tab.php';
     }
 }
-if( $this->CheckPermission('Modify Site Preferences') ) echo $this->SetTabHeader('prefs',$this->Lang('prompt_settings'));
-echo $this->EndTabHeaders();
-
-echo $this->StartTabContent();
-if( $this->CheckPermission('Modify Modules') ) {
-    echo $this->StartTab('installed',$params);
-    include(__DIR__.'/function.admin_installed.php');
-    echo $this->EndTab();
-
-    if( $connection_ok ) {
-        echo $this->StartTab('newversions',$params);
-        include(__DIR__.'/function.newversionstab.php');
-        echo $this->EndTab();
-
-        echo $this->StartTab('search',$params);
-        include(__DIR__.'/function.search.php');
-        echo $this->EndTab();
-
-        echo $this->StartTab('modules',$params);
-        include(__DIR__.'/function.admin_modules_tab.php');
-        echo $this->EndTab();
-    }
+if( $pset ) {
+    require __DIR__.DIRECTORY_SEPARATOR.'function.admin_prefs_tab.php';
 }
-if( $this->CheckPermission('Modify Site Preferences') ) {
-    echo $this->StartTab('prefs',$params);
-    include(__DIR__.'/function.admin_prefs_tab.php');
-    echo $this->EndTab();
+
+if( empty($seetab) ) {
+    $seetab = (!empty($params['__activetab'])) ? $params['__activetab'] : '';
 }
-echo $this->EndTabContent();
+$tpl->assign('tab', $seetab);
+$tpl->assign('endform', $this->CreateFormEnd());
+
+$tpl->display();

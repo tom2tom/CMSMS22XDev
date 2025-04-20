@@ -140,29 +140,32 @@ if( isset($params['multisubmit']) && isset($params['multiaction']) &&
 
 if( isset($curpage) ) $_SESSION[$this->GetName().'_curpage'] = $curpage; // for use by ajax_get_content
 
-$url = $this->create_url($id,'ajax_get_content',$returnid);
-$smarty->assign('ajax_get_content',str_replace('amp;','',$url));
-$smarty->assign('ajax',$ajax);
-$smarty->assign('can_add_content',$this->CheckPermission('Add Pages') || $this->CheckPermission('Manage All Content'));
-$smarty->assign('can_manage_content',$this->CheckPermission('Manage All Content'));
-$smarty->assign('admin_url',$config['admin_url']);
-$smarty->assign('filter',$filter);
-$locks = $builder->get_locks();
-$have_locks = (is_array($locks) && count($locks))?1:0;
-$smarty->assign('have_locks',$have_locks);
-$pagelimits = array(10=>10,25=>25,100=>100,250=>250,500=>500);
-$smarty->assign('pagelimits',$pagelimits);
-$smarty->assign('pagelimit',$pagelimit);
-$smarty->assign('locking',CmsContentManagerUtils::locking_enabled());
-// get a list of admin users
-$smarty->assign('user_list',UserOperations::get_instance()->GetList());
-$smarty->assign('design_list',\CmsLayoutCollection::get_list());
-// get a list of templates
-$smarty->assign('template_list',CmsLayoutTemplate::template_query(array('as_list'=>1)));
-// get a list of designs
-if( $error ) $smarty->assign('error',$error);
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,$modname,$smarty);
 
-echo $this->ProcessTemplate('defaultadmin.tpl');
+$url = $this->create_url($id,'ajax_get_content',$returnid);
+$tpl->assign('ajax_get_content',str_replace('amp;','',$url));
+$tpl->assign('ajax',$ajax);
+$tpl->assign('can_add_content',$this->CheckPermission('Add Pages') || $this->CheckPermission('Manage All Content'));
+$tpl->assign('can_manage_content',$this->CheckPermission('Manage All Content'));
+$tpl->assign('admin_url',$config['admin_url']);
+$tpl->assign('filter',$filter);
+$locks = $builder->get_locks();
+$have_locks = ($locks && is_array($locks))?1:0;
+$tpl->assign('have_locks',$have_locks);
+$pagelimits = array(10=>10,25=>25,100=>100,250=>250,500=>500);
+$tpl->assign('pagelimits',$pagelimits);
+$tpl->assign('pagelimit',$pagelimit);
+$tpl->assign('locking',CmsContentManagerUtils::locking_enabled());
+// get a list of admin users
+$tpl->assign('user_list',UserOperations::get_instance()->GetList());
+$tpl->assign('design_list',\CmsLayoutCollection::get_list());
+// get a list of templates
+$tpl->assign('template_list',CmsLayoutTemplate::template_query(array('as_list'=>1)));
+// get a list of designs
+if( $error ) $tpl->assign('error',$error);
+
+$tpl->display();
 
 #
 # EOF

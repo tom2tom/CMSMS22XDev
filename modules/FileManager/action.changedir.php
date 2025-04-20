@@ -16,15 +16,15 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-if (!function_exists("cmsms")) exit;
-if (!$this->CheckPermission("Modify Files") && !$this->AdvancedAccessAllowed()) exit;
+if (!function_exists('cmsms')) exit;
+if (!$this->CheckPermission('Modify Files') && !$this->AdvancedAccessAllowed()) exit;
 
 if( $_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['showtemplate']) && $_GET['showtemplate'] == 'false' ) {
   echo filemanager_utils::get_cwd();
   exit;
 }
 
-if( !isset($params["newdir"]) && !isset($params['setdir']) ) $this->RedirectToAdminTab();
+if( !isset($params['newdir']) && !isset($params['setdir']) ) $this->RedirectToAdminTab();
 
 $path = '';
 if( isset($params['newdir']) ) {

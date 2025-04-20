@@ -18,24 +18,12 @@
 if( !cmsms() ) exit;
 if(!$this->VisibleToAdminUser() ) return;
 
-echo $this->StartTabHeaders();
-echo $this->SetTabHeader("example",$this->Lang("example"));
-echo $this->SetTabHeader("settings",$this->Lang("settings"));
-echo $this->EndTabHeaders();
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;defaultadmin.tpl", null, $modname, $smarty);
 
-echo $this->StartTabContent();
+//require __DIR__.DIRECTORY_SEPARATOR.'function.admin_example.php'; nothing in there
+require __DIR__.DIRECTORY_SEPARATOR.'function.admin_settings.php';
 
-echo $this->StartTab("example");
-include(__DIR__.'/function.admin_example.php');
-echo $this->EndTab();
+$tpl->assign('tab', ''); // no tab-selection
 
-echo $this->StartTab("settings");
-include(__DIR__.'/function.admin_settings.php');
-echo $this->EndTab();
-
-echo $this->EndTabContent();
-
-#
-# EOF
-#
-?>
+$tpl->display();

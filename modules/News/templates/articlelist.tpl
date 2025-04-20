@@ -1,63 +1,69 @@
 <script>
 $(function() {
-  $('#selall').cmsms_checkall();
+{if !empty($aitems)}
   $('#bulkactions').hide();
   $('#bulk_category').hide();
-  $('#toggle_filter').on('click', function() {
-    $('#filter').dialog({
-      width: 'auto',
-      modal: true
-    });
-  });
+  $('#selall').cmsms_checkall();
   $('a.delete_article').on('click', function(ev) {
-    var self = $(this);
     ev.preventDefault();
+    var url = $(this).attr('href');
     cms_confirm("{$mod->Lang('areyousure')|escape:'javascript'}").done(function() {
-      window.location.href = self.attr('href');
+      window.location.href = url;
       return true;
     });
+    return false;
   });
   $('#articlelist').on('cms_checkall_toggle','[type="checkbox"]',function() {
     var l = $('#articlelist :checked').length;
-
-    if( l == 0 ) {
+    if (l === 0) {
       $('#bulkactions').hide(50);
     } else {
       $('#bulkactions').show(50);
     }
   });
-
-  $('#bulk_action').on('change',function() {
+  $('#selbulk').on('change',function() {
     var v = $(this).val();
-
-    if( v == 'setcategory' ) {
+    if (v === 'setcategory') {
       $('#bulk_category').show(50);
     } else {
       $('#bulk_category').hide(50);
     }
   });
-
-  $('#bulkactions').on('click','#submit_bulkaction',function(ev) {
-    var form = $(this).closest('form');
+  $('#bulkactions').on('click','#btnbulk',function(ev) {
     ev.preventDefault();
+    var form = $(this).closest('form');
     cms_confirm("{$mod->Lang('areyousure_multiple')|escape:'javascript'}").done(function() {
       form.trigger('submit');
     });
+    return false;
+  });
+{/if}
+  $('#toggle_filter').on('click', function(ev) {
+    ev.preventDefault();
+    $('#filter').dialog({
+      width: 'auto',
+      modal: true
+    });
+    $('#closefilter').on('click', function(ev) {
+      ev.preventDefault();
+      $('#filter').dialog('close');
+    });
+    return false;
   });
 });
 </script>
-
-{if isset($formstart)}
-<div id="filter" title="{$filtertext}" style="display: none;">
-	{$formstart}
+<div id="filter" title="{$filtertext}" style="display:none;">
+	{$startaform}
 	<div class="pageoverflow">
 	<p class="pagetext"><label for="filter_category">{$prompt_category}:</label> {cms_help key='help_articles_filtercategory' title=$prompt_category}</p>
 	<p class="pageinput">
+		<input type="hidden" name="{$actionid}allcategories" value="0">
 		<select id="filter_category" name="{$actionid}category">
 		{html_options options=$categorylist selected=$curcategory}
 		</select>
-		<label for="filter_allcategories">{$prompt_showchildcategories}:</label> {cms_help key='help_articles_filterchildcats' title=$prompt_showchildcategories}
-		<input id="filter_allcategories" type="checkbox" name="{$actionid}allcategories" value="yes"{if $allcategories=="yes"} checked{/if}>
+		<input id="filter_allcategories" type="checkbox" name="{$actionid}allcategories" style="vertical-align:middle" value="yes"{if $allcategories=="yes"} checked{/if}>
+		<label for="filter_allcategories">{$prompt_showchildcategories}</label>
+		{cms_help key='help_articles_filterchildcats' title=$prompt_showchildcategories}
 	</p>
 	</div>
 	<div class="pageoverflow">
@@ -77,38 +83,37 @@ $(function() {
 	</p>
 	</div>
 	<div class="pageoverflow">
-	<p class="pageinput">
-		<input type="submit" name="{$actionid}submitfilter" value="{$mod->Lang('submit')}">
-		<input type="submit" name="{$actionid}resetfilter" data-ui-icon="ui-icon-arrowrefresh-1-n" value="{$mod->Lang('reset')}">
-	</p>
+		<div class="dialogoptions">
+			<input type="submit" name="{$actionid}submitfilter" data-ui-icon="ui-icon-check" value="{$mod->Lang('submit')}">
+			<input type="submit" name="{$actionid}resetfilter" data-ui-icon="ui-icon-arrowrefresh-1-n" value="{$mod->Lang('reset')}">
+			<input type="submit" id="closefilter" data-ui-icon="ui-icon-cancel" value="{$mod->Lang('cancel')}">
+		</div>
 	</div>
-	{$formend}
+	{$endform}
 </div>
-{/if}
-
 <div class="row c_full">
 	<div class="pageoptions grid_6" style="margin-top: 8px;">
-	{if $can_add}
+{if $can_add}
 	<a href="{cms_action_url action=addarticle}">{admin_icon icon='newobject.gif' alt=$mod->Lang('addarticle')} {$mod->Lang('addarticle')}</a>&nbsp;
-	{/if}
-	<a id="toggle_filter" {if $curcategory != ''} style="font-weight: bold; color: green;"{/if}>{admin_icon icon='view.gif' alt=$mod->Lang('viewfilter')} {if $curcategory != ''}*{/if}
+{/if}
+	<a id="toggle_filter"{if $curcategory} style="font-weight:bold;color:green;"{/if}>{admin_icon icon='view.gif' alt=$mod->Lang('viewfilter')}{if $curcategory} *{/if}
 	{$mod->Lang('viewfilter')}</a>
 	</div>
-	{if $itemcount > 0 && $pagecount > 1}
-	<div class="pageoptions grid_6" style="text-align: right;">
-		{form_start}
-		{$mod->Lang('prompt_page')}&nbsp;
-		<select name="{$actionid}pagenumber">
+{if $aitemcount > 0 && $pagecount > 1}
+	<div class="pageoptions grid_6" style="text-align:right;">
+		{$startaform}
+		<label for="pnum">{$mod->Lang('prompt_page')}</label>&nbsp;
+		<select id="pnum" name="{$actionid}pagenumber">
 		{cms_pageoptions numpages=$pagecount curpage=$pagenumber}
 		</select>&nbsp;
 		<input type="submit" name="{$actionid}paginate" data-ui-icon="ui-icon-triangle-2-e-w" value="{$mod->Lang('prompt_go')}">
-		{form_end}
+		{$endform}
 	</div>
-	{/if}
+{/if}
 </div>{* .row *}
 
-{if !empty($items)}
-{$form2start}
+{if !empty($aitems)}
+{$startaform}
 <table class="pagetable" id="articlelist">
 	<thead>
 		<tr>
@@ -125,7 +130,7 @@ $(function() {
 		</tr>
 	</thead>
 	<tbody>
-	{foreach $items as $entry}
+	{foreach $aitems as $entry}
 		<tr class="{$entry->rowclass}">
 			<td>{$entry->id}</td>
 			<td>
@@ -163,32 +168,32 @@ $(function() {
 	</tbody>
 </table>
 {else}
-	<p class="warning">{if $curcategory == ''}{$mod->Lang('noarticles')}{else}{$mod->Lang('noarticlesinfilter')}{/if}</p>
+	<p class="warning">{if $curcategory}{$mod->Lang('noarticles')}{else}{$mod->Lang('noarticlesinfilter')}{/if}</p>
 {/if}
 
 <div style="width: 99%;">
 {if isset($addlink)}
-	<div class="pageoptions" style="float: left;">
+	<div class="pageoptions startside last">
 		<p class="pageoptions">{$addlink}</p>
 	</div>
 {/if}
-{if $itemcount > 0}
-	<div class="pageoptions" style="float: right; text-align: right;" id="bulkactions">
-		<label for="bulk_action">{$mod->Lang('with_selected')}:</label>
-		<select id="bulk_action" name="{$actionid}bulk_action">
-		{if isset($submit_massdelete)}
+{if $aitemcount > 0}
+	<div id="bulkactions" class="pageoptions endside last">
+		<label for="selbulk">{$mod->Lang('with_selected')}:</label>
+		<select id="selbulk" name="{$actionid}bulk_action">
+{if isset($submit_massdelete)}
 			<option value="delete">{$mod->Lang('bulk_delete')}</option>
-		{/if}
+{/if}
 			<option value="setdraft">{$mod->Lang('bulk_setdraft')}</option>
 			<option value="setpublished">{$mod->Lang('bulk_setpublished')}</option>
 			<option value="setcategory">{$mod->Lang('bulk_setcategory')}</option>
 		</select>
-		<div id="bulk_category" style="display: inline-block;">
+		<div id="bulk_category" style="display:inline-block;">
 			{$mod->Lang('category')}: {$categoryinput}
 		</div>
-		<input type="submit" id="submit_bulkaction" name="{$actionid}submit_bulkaction" value="{$mod->Lang('submit')}">
+		<input type="submit" id="btnbulk" name="{$actionid}submit_bulkaction" value="{$mod->Lang('submit')}">
 	</div>
 {/if}
-	<div class="clearb"></div>
+{*	<div class="clearb"></div>*}
 </div>
-{$form2end}
+{$endform}

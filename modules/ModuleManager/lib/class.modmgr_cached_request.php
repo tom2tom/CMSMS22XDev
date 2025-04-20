@@ -60,7 +60,7 @@ final class modmgr_cached_request
     $atime = time() - ($age * 60);
 //    $status = '';
 //    $result = '';
-    if( (isset($config['developer_mode']) && $mod->GetPreference('disable_caching',0)) ||
+    if( (!empty($config['developer_mode']) && $mod->GetPreference('disable_caching',0)) ||
         !file_exists($fn) || filemtime($fn) <= $atime ) {
         // execute the request
         $req = new cms_http_request();

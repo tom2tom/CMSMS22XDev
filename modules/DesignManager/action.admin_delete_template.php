@@ -47,10 +47,13 @@ try {
     }
   }
 
+  $modname = $this->GetName();
+  $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_delete_template.tpl",null,$modname,$smarty);
+
   // find the number of 'pages' that use this template.
   $query = 'SELECT COUNT(*) FROM '.CMS_DB_PREFIX.'content WHERE template_id = ?';
   $n = $db->GetOne($query,array($tpl_ob->get_id()));
-  $smarty->assign('page_usage',$n);
+  $tpl->assign('page_usage',$n);
 
   $out = array();
   $out[0] = $this->Lang('prompt_none');
@@ -60,7 +63,7 @@ try {
       $out[$one->get_id()] = $one->get_name();
     }
   }
-  $smarty->assign('category_list',$out);
+  $tpl->assign('category_list',$out);
 
   $types = CmsLayoutTemplateType::get_all();
   if( is_array($types) && count($types) ) {
@@ -68,7 +71,7 @@ try {
     foreach( $types as $one ) {
       $out[$one->get_id()] = $one->get_langified_display_value();
     }
-    $smarty->assign('type_list',$out);
+    $tpl->assign('type_list',$out);
   }
 
   $designs = CmsLayoutCollection::get_all();
@@ -77,7 +80,7 @@ try {
     foreach( $designs as $one ) {
       $out[$one->get_id()] = $one->get_name();
     }
-    $smarty->assign('design_list',$out);
+    $tpl->assign('design_list',$out);
   }
 
   $userops = cmsms()->GetUserOperations();
@@ -87,11 +90,11 @@ try {
     $tmp[$one->id] = $one->username;
   }
   if( is_array($tmp) && count($tmp) ) {
-    $smarty->assign('user_list',$tmp);
+    $tpl->assign('user_list',$tmp);
   }
 
-  $smarty->assign('tpl',$tpl_ob);
-  echo $this->ProcessTemplate('admin_delete_template.tpl');
+  $tpl->assign('tpl',$tpl_ob);
+  $tpl->display();
 }
 catch( CmsException $e ) {
   $this->SetError($e->GetMessage());

@@ -50,8 +50,10 @@ try {
     $this->SetMessage($this->Lang('msg_type_saved'));
     $this->RedirectToAdminTab();
   }
-  $smarty->assign('type',$type);
-  echo $this->ProcessTemplate('admin_edit_type.tpl');
+  $modname = $this->GetName();
+  $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_edit_type.tpl",null,$modname,$smarty);
+  $tpl->assign('type',$type);
+  $tpl->display();
 }
 catch( CmsException $e ) {
   $this->SetError($e->GetMessage());

@@ -126,13 +126,16 @@ try {
     //
     // prepare to display
     //
+    $modname = $this->GetName();
+    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_edit_css.tpl", null, $modname, $smarty);
+
     $designs = CmsLayoutCollection::get_all();
     if( $designs && is_array($designs) ) {
         $out = array();
         foreach( $designs as $one ) {
             $out[$one->get_id()] = $one->get_name();
         }
-        $smarty->assign('design_list', $out);
+        $tpl->assign('design_list', $out);
     }
 
     if( $ssid > 0 ) {
@@ -142,15 +145,15 @@ try {
         CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('new_stylesheet'));
     }
 
-    $smarty->assign('has_designs_right', $this->CheckPermission('Manage Designs'));
-    $smarty->assign('extraparms', $extraparms);
-    $smarty->assign('css', $css_ob);
-    $smarty->assign('css_id', $ssid);
-    $smarty->assign('userid', $userid);
-    $smarty->assign('lock_timeout', $this->GetPreference('lock_timeout'));
-    $smarty->assign('lock_refresh', $this->GetPreference('lock_refresh'));
+    $tpl->assign('has_designs_right', $this->CheckPermission('Manage Designs'));
+    $tpl->assign('extraparms', $extraparms);
+    $tpl->assign('css', $css_ob);
+    $tpl->assign('css_id', $ssid);
+    $tpl->assign('userid', $userid);
+    $tpl->assign('lock_timeout', $this->GetPreference('lock_timeout'));
+    $tpl->assign('lock_refresh', $this->GetPreference('lock_refresh'));
 
-    echo $this->ProcessTemplate('admin_edit_css.tpl');
+    $tpl->display();
 } catch( CmsException $e ) {
     $this->SetError($e->GetMessage());
     $this->RedirectToAdminTab();

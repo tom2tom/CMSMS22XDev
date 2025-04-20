@@ -13,12 +13,6 @@
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -40,18 +34,18 @@ class ModuleManager extends CMSModule
 
   public function GetName() { return get_class($this); }
   public function GetFriendlyName() { return $this->Lang('friendlyname'); }
-  public function GetVersion() { return '2.1.9'; }
+  public function GetVersion() { return '2.1.10'; }
   public function GetHelp() { return $this->Lang('help'); }
   public function GetAuthor() { return 'Robert Campbell'; }
   public function GetAuthorEmail() { return ''; }
-  public function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
+  public function GetChangeLog() { return file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'changelog.htm'); }
   public function IsPluginModule() { return FALSE; }
   public function HasAdmin() { return TRUE; }
   public function IsAdminOnly() { return TRUE; }
   public function GetAdminSection() { return 'siteadmin'; }
   public function GetAdminDescription() { return $this->Lang('admindescription'); }
   public function LazyLoadAdmin() { return TRUE; }
-  public function MinimumCMSVersion() { return '2.2.3'; }
+  public function MinimumCMSVersion() { return '2.2.4'; }
   public function InstallPostMessage() { return $this->Lang('postinstall'); }
   public function UninstallPostMessage() { return $this->Lang('postuninstall'); }
   public function UninstallPreMessage() { return $this->Lang('really_uninstall'); }
@@ -60,12 +54,12 @@ class ModuleManager extends CMSModule
   protected function _DisplayErrorPage($id, &$params, $returnid, $message='')
   {
     $smarty = cmsms()->GetSmarty();
-    $smarty->assign('title_error', $this->Lang('error'));
-    $smarty->assign('message', $message);
-    $smarty->assign('link_back',$this->CreateLink($id,'defaultadmin',$returnid, $this->Lang('back_to_module_manager')));
-
-    // Display the populated template
-    echo $this->ProcessTemplate('error.tpl');
+    $modname = $this->GetName();
+    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;error.tpl",null,null); //no parent
+    $tpl->assign('title_error', $this->Lang('error'));
+    $tpl->assign('message', $message);
+    $tpl->assign('link_back',$this->CreateLink($id,'defaultadmin',$returnid, $this->Lang('back_to_module_manager')));
+    $tpl->display();
   }
 
   public function Install()

@@ -85,8 +85,8 @@ $(function() {
 {form_start url='editusertag.php' id='edit_userplugin' userplugin_id=$record.userplugin_id}
 	<fieldset>
 		<div style="width: 49%; float: left;">
+			<br>
 			<div class="pageoverflow">
-				<p class="pagetext"></p>
 				<p class="pageinput">
 					<input id="submitme" type="submit" name="submit" value="{lang('submit')}">
 					<input type="submit" name="cancel" value="{lang('cancel')}">

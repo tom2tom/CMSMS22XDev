@@ -28,6 +28,7 @@ $userid = get_userid(false);
 $category_id = $this->GetPreference('default_category', '');
 $do_send_email = false;
 $do_redirect = false;
+$modname = $this->GetName();
 
 if (isset($params['formtemplate'])) {
   $template = trim($params['formtemplate']);
@@ -35,7 +36,7 @@ if (isset($params['formtemplate'])) {
 else {
   $tpl = CmsLayoutTemplate::load_dflt_by_type('News::form');
   if( !is_object($tpl) ) {
-    audit('',$this->GetName().':feusubmit','No default form template found');
+    audit('',$modname.':feusubmit','No default form template found');
     return;
   }
   $template = $tpl->get_name();
@@ -72,9 +73,7 @@ if (isset($params['category'])) {
   if( $tmp ) $category_id = $tmp;
 }
 
-$tpl_ob = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
-$tpl_ob->assign('mod',$this);
-$tpl_ob->assign('actionid',$id);
+$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,$modname,$smarty);
 if( isset( $params['submit'] ) ) {
     try {
         if( isset($params['title'] ) ) $title = strip_tags(cms_html_entity_decode(trim($params['title'])));
@@ -158,7 +157,7 @@ if( isset( $params['submit'] ) ) {
             //Update search index
             $module = cms_utils::get_search_module();
             if (is_object($module)) {
-                $module->AddWords($this->GetName(), $articleid, 'article', $content . ' ' . $summary . ' ' . $title . ' ' . $title, $enddate );
+                $module->AddWords($modname, $articleid, 'article', $content . ' ' . $summary . ' ' . $title . ' ' . $title, $enddate );
             }
 
             // Send an email
@@ -178,14 +177,14 @@ if( isset( $params['submit'] ) ) {
                                     'useexp' => 1));
 
             // put mention into the admin log
-            audit($articleid,$this->GetName().' article',"Added: $title (from frontend)");
+            audit($articleid,$modname.' article',"Added: $title (from frontend)");
 
             // and we're done
-            $tpl_ob->assign('message',$this->Lang('articleadded'));
+            $tpl->assign('message',$this->Lang('articleadded'));
         }
     }
     catch( Exception $e ) {
-        $tpl_ob->assign('error',$error);
+        $tpl->assign('error',$error);
     }
 }
 
@@ -199,17 +198,17 @@ while ($dbresult && $row = $dbresult->FetchRow()) {
 }
 
 // Display template
-$tpl_ob->assign('category_id',$category_id);
-$tpl_ob->assign('title',$title);
-$tpl_ob->assign('categorylist',$categorylist);
-$tpl_ob->assign('extra',$extra);
-$tpl_ob->assign('content',$content);
-$tpl_ob->assign('summary',$summary);
-$tpl_ob->assign('hide_summary_field',$this->GetPreference('hide_summary_field','0'));
-$tpl_ob->assign('allow_summary_wysiwyg',$this->GetPreference('allow_summary_wysiwyg',1));
-$tpl_ob->assign('startdate', $startdate);
-$tpl_ob->assign('enddate', $enddate);
-$tpl_ob->assign('status',$this->CreateInputHidden($id,'status',$status));
+$tpl->assign('category_id',$category_id);
+$tpl->assign('title',$title);
+$tpl->assign('categorylist',$categorylist);
+$tpl->assign('extra',$extra);
+$tpl->assign('content',$content);
+$tpl->assign('summary',$summary);
+$tpl->assign('hide_summary_field',$this->GetPreference('hide_summary_field','0'));
+$tpl->assign('allow_summary_wysiwyg',$this->GetPreference('allow_summary_wysiwyg',1));
+$tpl->assign('startdate', $startdate);
+$tpl->assign('enddate', $enddate);
+$tpl->assign('status',$this->CreateInputHidden($id,'status',$status));
 
 $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_news_fielddefs WHERE public = 1 ORDER BY item_order';
 $dbr = $db->Execute($query);
@@ -226,20 +225,20 @@ if( $dbr ) {
     $key = str_replace(' ','_',strtolower($row['name']));
     $customfieldsbyname[$key] = $obj;
   }
-  $dbr->Close(); 
+  $dbr->Close();
 }
 if( $customfieldsbyname ) $tpl->assign('customfields',$customfieldsbyname);
 
-$tpl_ob->display();
+$tpl->display();
 
 if( $do_send_email ) {
 
-    $tpl_ob2 = $smarty->CreateTemplate($this->GetDatabaseResource('email_template'));
-    $tmp_vars = $tpl_ob->get_template_vars();
+    $tpl2 = $smarty->CreateTemplate("module_db_tpl:$modname;email_template",null,$modname,$smarty);
+    $tmp_vars = $tpl->get_template_vars();
     foreach( $tmp_vars as $key => $val ) {
-        $tpl_ob2->assign($key,$val);
+        $tpl2->assign($key,$val);
     }
-    $tmp_vars2 = $tpl_ob2->get_template_vars();
+    $tmp_vars2 = $tpl2->get_template_vars();
 
     // this needs to be done after the form is generated
     // because we use some of the same smarty variables
@@ -247,19 +246,19 @@ if( $do_send_email ) {
     if( $cmsmailer ) {
         $addy = trim($this->GetPreference('formsubmit_emailaddress'));
         if( $addy ) {
-            $tpl_ob2->assign('startdate',$startdate);
-            $tpl_ob2->assign('enddate',$enddate);
-            $tpl_ob2->assign('ipaddress',\cms_utils::get_real_ip());
-            $tpl_ob2->assign('status',$status);
-            if( $title ) $tpl_ob2->assign('title',$title);
-            if( $summary ) $tpl_ob2->assign('summary',$summary);
-            if( $content ) $tpl_ob2->assign('content',$content);
+            $tpl2->assign('startdate',$startdate);
+            $tpl2->assign('enddate',$enddate);
+            $tpl2->assign('ipaddress',\cms_utils::get_real_ip());
+            $tpl2->assign('status',$status);
+            if( $title != '' ) $tpl2->assign('title',$title);
+            if( $summary != '' ) $tpl2->assign('summary',$summary);
+            if( $content != '' ) $tpl2->assign('content',$content);
 
             $cmsmailer->AddAddress( $addy );
             $cmsmailer->SetSubject( $this->GetPreference('email_subject',$this->Lang('subject_newnews')));
             $cmsmailer->IsHTML( false );
 
-            $body = $tpl_ob2->fetch();
+            $body = $tpl2->fetch();
             $cmsmailer->SetBody( $body );
             $cmsmailer->Send();
         }

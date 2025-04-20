@@ -4,11 +4,11 @@
   <p class="pagetext">{$mod->Lang('info_createthumb')}:</p>
   <p class="pagetext">{$thumb}</p>
 </div>
+<br>
 <div class="pageoverflow">
-  <p class="pagetext"></p>
   <p class="pageinput">
-    <input type="submit" name="{$actionid}submit" data-ui-icon="ui-icon-plus" value="{$mod->Lang('create')}">
-    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
+    <input type="submit" name="{$actionid}submit" data-ui-icon="ui-icon-star" value="{$mod->Lang('create')}">
+    <input type="submit" name="{$actionid}cancel" data-ui-icon="ui-icon-cancel" value="{$mod->Lang('cancel')}">
   </p>
 </div>
 {$endform}

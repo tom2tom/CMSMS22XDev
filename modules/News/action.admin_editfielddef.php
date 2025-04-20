@@ -87,28 +87,31 @@ else {
 }
 
 //Display template
-$smarty->assign('title',$this->Lang('editfielddef'));
-$smarty->assign('startform', $this->CreateFormStart($id, 'admin_editfielddef', $returnid));
-$smarty->assign('endform', $this->CreateFormEnd());
-$smarty->assign('nametext', $this->Lang('name'));
-$smarty->assign('typetext', $this->Lang('type'));
-$smarty->assign('maxlengthtext', $this->Lang('maxlength'));
-$smarty->assign('showinputtype', false);
-$smarty->assign('inputtype', $this->CreateInputHidden($id, 'type', $type));
-$smarty->assign('info_maxlength', $this->Lang('info_maxlength'));
-$smarty->assign('userviewtext',$this->Lang('public'));
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;editfielddef.tpl", null, $modname, $smarty);
+$tpl->assign('title', $this->Lang('editfielddef'));
+$tpl->assign('startform', $this->CreateFormStart($id, 'admin_editfielddef', $returnid));
+$tpl->assign('endform', $this->CreateFormEnd());
+$tpl->assign('nametext', $this->Lang('name'));
+$tpl->assign('typetext', $this->Lang('type'));
+$tpl->assign('maxlengthtext', $this->Lang('maxlength'));
+$tpl->assign('showinputtype', false);
+$tpl->assign('inputtype', $this->CreateInputHidden($id, 'type', $type));
+$tpl->assign('info_maxlength', $this->Lang('info_maxlength'));
+$tpl->assign('userviewtext', $this->Lang('public'));
 
-$smarty->assign('name',$name);
-$smarty->assign('fieldtypes',$this->GetFieldTypes());
-$smarty->assign('type',$type);
-$smarty->assign('max_length',$max_length);
-$smarty->assign('public',$public);
-$smarty->assign('options',$options);
+$tpl->assign('name', $name);
+$tpl->assign('fieldtypes', $this->GetFieldTypes());
+$tpl->assign('type', $type);
+$tpl->assign('max_length', $max_length);
+$tpl->assign('public', $public);
+$tpl->assign('options', $options);
 
-$smarty->assign('mod',$this);
-$smarty->assign('hidden',
-		$this->CreateInputHidden($id, 'fdid', $fdid).
-		$this->CreateInputHidden($id, 'origname', htmlspecialchars($origname)));
-echo $this->ProcessTemplate('editfielddef.tpl');
+//$tpl->assign('mod',$this);
+$tpl->assign('hidden',
+	$this->CreateInputHidden($id, 'fdid', $fdid).
+	$this->CreateInputHidden($id, 'origname', htmlspecialchars($origname))); //TODO startform $params
+
+$tpl->display();
 
 // EOF

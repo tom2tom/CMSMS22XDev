@@ -75,7 +75,6 @@ function search_StemPhrase($module,$phrase)
     return $stemmed_words;
 }
 
-
 function search_AddWords($obj, $module = 'Search', $id = -1, $attr = '', $content = '', $expires = NULL) // mixed timestamp or null
 {
     $db = $obj->GetDb();
@@ -88,7 +87,7 @@ function search_AddWords($obj, $module = 'Search', $id = -1, $attr = '', $conten
 
     if ($content != "") {
         //Clean up the content
-    // if( function_exists('utf8_decode') ) $content = utf8_decode($content);
+//      if( function_exists('utf8_decode') ) $content = utf8_decode($content);
         $content = html_entity_decode($content);
         $stemmed_words = $obj->StemPhrase($content);
         $tmp = array_count_values($stemmed_words);
@@ -153,7 +152,6 @@ function search_DeleteWords($obj, $module = 'Search', $id = -1, $attr = '')
     \CMSMS\HookManager::do_hook('Search::SearchItemDeleted', [ $module, $id, $attr ] );
 }
 
-
 function search_Reindex($module)
 {
     @set_time_limit(999);
@@ -186,16 +184,16 @@ function search_Reindex($module)
         }
     }
 
-    $modules = ModuleOperations::get_instance()->GetInstalledModules();
+    $modops = ModuleOperations::get_instance();
+    $modules = $modops->GetInstalledModules();
     foreach( $modules as $name ) {
         if( !$name || $name == 'Search' ) continue;
-        $object = ModuleOperations::get_instance()->get_module_instance($name);
-        if( !is_object($object) ) continue;
-
-        if (method_exists($object, 'SearchReindex')) $object->SearchReindex($module);
+        $obj = $modops->get_module_instance($name);
+        if( is_object($obj) && method_exists($obj,'SearchReindex')) {
+            $obj->SearchReindex($module);
+        }
     }
 }
-
 
 function search_DoEvent($module, $originator, $eventname, &$params )
 {

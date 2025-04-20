@@ -204,7 +204,7 @@ $(function() {
 <div id="Edit_Content_Result"></div>
 <div id="Edit_Content">
 {form_start content_id=$content_id}
-  <input type="hidden" id="active_tab" name="{$actionid}active_tab">
+  <input type="hidden" id="active_tab" name="{$actionid}__activetab">
   <div class="pageinput">
     <input type="submit" id="submitbtn" name="{$actionid}submit" value="{$mod->Lang('submit')}" class="pagebutton" title="{$mod->Lang('title_editpage_submit')}">
     <input type="submit" id="cancelbtn" name="{$actionid}cancel" formnovalidate value="{$mod->Lang('cancel')}" class="pagebutton" title="{$mod->Lang('title_editpage_cancel')}">
@@ -217,7 +217,7 @@ $(function() {
    </div>
   {* tab headers *}
   {foreach $tab_names as $key => $tabname}
-    {tab_header name=$key label=$tabname active=$active_tab}
+    {tab_header name=$key label=$tabname active=$tab}
   {/foreach}
   {if $content_obj->HasPreview()}
     {tab_header name='_preview_' label=$mod->Lang('prompt_preview')}

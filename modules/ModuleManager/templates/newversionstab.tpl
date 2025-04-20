@@ -1,9 +1,6 @@
-{if !empty($updatestxt)}
-<div class="information"><p>{$updatestxt}</p></div>
-{else}
-<div class="information"><p>{$ModuleManager->Lang('info_searchtab')}</p></div>
-{/if}
-<div style="clear:both;">&nbsp;</div>
+<div class="information">
+	<p>{if !empty($updatestxt)}{$updatestxt}{else}{$nvmessage}{/if}</p>
+</div>
 {if !empty($message)}
 <p class="pageerror">{$message}</p>
 {/if}
@@ -20,7 +17,7 @@
 {/strip}
 {/function}
 
-{if !empty($items)}
+{if !empty($items2)}
 <table class="pagetable scrollable">
 	<thead>
 		<tr>
@@ -28,7 +25,7 @@
 			<th>{$nametext}</th>
 			<th><span title="{$ModuleManager->Lang('title_newmoduleversion')}">{$vertext}</span></th>
 			<th><span title="{$ModuleManager->Lang('title_yourmoduledate')}">{$ModuleManager->Lang('releasedate')}</span></th>
-			{*<th><span title="{$ModuleManager->Lang('title_moduledownloads2')}">{$ModuleManager->Lang('downloads')}</span></th>*}
+{*			<th><span title="{$ModuleManager->Lang('title_moduledownloads2')}">{$ModuleManager->Lang('downloads')}</span></th>*}
 			<th><span title="{$ModuleManager->Lang('title_modulesize2')}">{$sizetext}</span></th>
 			<th><span title="{$ModuleManager->Lang('title_yourmoduleversion')}">{$haveversion}</span></th>
 			<th><span title="{$ModuleManager->Lang('title_modulestatus')}">{$statustext}</span></th>
@@ -38,7 +35,7 @@
 		</tr>
 	</thead>
 	<tbody>
-{foreach $items as $entry}
+{foreach $items2 as $entry}
 	{cycle values="row1,row2" assign='rowclass'}
 	<tr class="{$rowclass}"{if $entry->age=='new'} style="font-weight: bold;"{/if}>
 		<td>{get_module_status_icon status=$entry->age}</td>
@@ -48,7 +45,7 @@
 		</td>
 		<td>{$entry->version|default:''}</td>
 		<td>{$entry->date|localedate_format:'%x'}</td>
-		{*<td>{$entry->downloads}</td>*}
+{*		<td>{$entry->downloads}</td>*}
 		<td>{$entry->size|default:''}</td>
 		<td>{if isset($entry->haveversion)}{$entry->haveversion}{/if}</td>
 		<td>{$entry->status|default:''}</td>
@@ -59,6 +56,4 @@
 {/foreach}
 	</tbody>
 </table>
-{else}
-<p>{$nvmessage}</p>
 {/if}

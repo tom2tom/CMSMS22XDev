@@ -21,7 +21,6 @@ use CMSMS\FileTypeHelper;
 
 final class filemanager_utils
 {
-    private static $_can_do_advanced = -1;
     private static $helper;
 
     protected function __construct() {}
@@ -62,17 +61,24 @@ final class filemanager_utils
      */
     public static function can_do_advanced()
     {
-        if( self::$_can_do_advanced < 0 ) {
-            $config = cms_config::get_instance();
-            if( empty($config['developer_mode']) ) {
-                $mod = cms_utils::get_module('FileManager');
-                self::$_can_do_advanced = (startswith($config['uploads_path'],CMS_ROOT_PATH) && $mod->AdvancedAccessAllowed()) ? 1 : 0;
+        static $_can_do_advanced = null;
+        if( $_can_do_advanced === null ) {
+            $config = cmsms()->GetConfig();
+            if( !empty($config['developer_mode']) ) {
+                $_can_do_advanced = 2;
             }
             else {
-                self::$_can_do_advanced = 1;
+                $mod = cms_utils::get_module('FileManager');
+                //user-setting test plus site-setting test (which should always pass)
+                if( $mod->AdvancedAccessAllowed() && startswith($config['uploads_path'],CMS_ROOT_PATH) ) {
+                    $_can_do_advanced = 1;
+                }
+                else {
+                    $_can_do_advanced = 0;
+                }
             }
         }
-        return self::$_can_do_advanced;
+        return $_can_do_advanced;
     }
 
     /**
@@ -86,11 +92,24 @@ final class filemanager_utils
      */
     public static function check_advanced_mode()
     {
-        if( self::can_do_advanced() == 0 ) return FALSE;
-        $mod = cms_utils::get_module('FileManager');
-        return ($mod->GetPreference('advancedmode',FALSE) != FALSE);
+        // site-configuration test and current-user 'Use FileManager Advanced' permission test
+        $val = self::can_do_advanced();
+        switch ($val) {
+            case 2:
+                return TRUE; //$config['developer_mode']
+            case 1:
+                // all users' property test prob effective duplication of permission
+                $mod = cms_utils::get_module('FileManager');
+                return $mod->GetPreference('advancedmode',FALSE) != FALSE;
+            default:
+                return FALSE;
+        }
     }
 
+    /**
+     *
+     * @return string, maybe empty
+     */
     public static function get_default_cwd()
     {
         if( self::check_advanced_mode() ) {
@@ -108,7 +127,12 @@ final class filemanager_utils
         return $dir;
     }
 
-    // returns false if invalid. $path is root-path-relative, may be empty
+    /**
+     *
+     * @param string $path Site root-path relative filepath, maybe empty
+     *
+     * @return bool indicating $path validity
+     */
     public static function test_valid_path($path)
     {
         if( !($path == '/' || $path == '\\' || $path == '') ) {
@@ -134,6 +158,10 @@ final class filemanager_utils
         return FALSE;
     }
 
+    /**
+     *
+     * @return string
+     */
     public static function get_cwd()
     {
         // check the path
@@ -146,6 +174,11 @@ final class filemanager_utils
         return $path;
     }
 
+    /**
+     * Record current user's cwd preference
+     *
+     * @param string $path filesystem path absolute or site-root-relative
+     */
     public static function set_cwd($path)
     {
         if( startswith($path,CMS_ROOT_PATH) ) $path = cms_relative_path($path,CMS_ROOT_PATH);
@@ -177,6 +210,10 @@ final class filemanager_utils
         return preg_replace('~[\\\\/]+~',DIRECTORY_SEPARATOR,$tmp); // scrub adjacent separators
     }
 
+    /**
+     *
+     * @return string
+     */
     public static function get_full_cwd()
     {
         $path = self::get_cwd();
@@ -184,6 +221,10 @@ final class filemanager_utils
         return self::join_path(CMS_ROOT_PATH,$path);
     }
 
+    /**
+     *
+     * @return string
+     */
     public static function get_cwd_url()
     {
         $path = self::get_cwd();
@@ -191,6 +232,11 @@ final class filemanager_utils
         return CMS_ROOT_URL.'/'.strtr($path,'\\','/');
     }
 
+    /**
+     *
+     * @param string $path
+     * @return bool
+     */
     public static function is_hidden_file($path)
     {
         static $macos; // whether running on some flavour of MacOS
@@ -230,6 +276,11 @@ final class filemanager_utils
         }
     }
 
+    /**
+     *
+     * @param string $path
+     * @return bool
+     */
     public static function is_image_file($path)
     {
         if( !isset(self::$helper) ) {
@@ -238,6 +289,11 @@ final class filemanager_utils
         return self::$helper->is_image($path);
     }
 
+    /**
+     *
+     * @param string $path
+     * @return bool
+     */
     public static function is_archive_file($path)
     {
         if( !isset(self::$helper) ) {
@@ -246,7 +302,36 @@ final class filemanager_utils
         return self::$helper->is_archive($path);
     }
 
-    //$path (if any) is CMS_ROOT_PATH-relative
+    /**
+     *
+     * @since 1.6.14
+     * @param string $path
+     * @return bool
+     */
+    public static function is_restricted_file($path)
+    {
+        $bn = basename($path);
+        $a = strrpos($bn,'.'); //is_executable() checks file-extension
+        if( $a > 0 ) { //also exclude hidden file
+            if( !isset(self::$helper) ) {
+                self::$helper = new FileTypeHelper();
+            }
+            if( self::$helper->is_executable($path)) {
+                return TRUE;
+            }
+            if( substr_compare($bn,'.js',$a,3,TRUE) == 0 ) {
+                return TRUE;
+            }
+        }
+        return FALSE;
+    }
+
+    /**
+     *
+     * @param string $path CMS_ROOT_PATH-relative, maybe empty. Default ''
+     *
+     * @return array
+     */
     public static function get_file_list($path = '')//: array
     {
         if( !$path ) $path = self::get_cwd();
@@ -294,6 +379,7 @@ final class filemanager_utils
                 $info['dir'] = FALSE;
                 $tmp = trim(strtr($path,'\\','/'),' /');
                 $info['url'] = implode('/',[CMS_ROOT_URL,$tmp,$file]);
+                $info['exec'] = self::is_restricted_file($fullname);
                 $a = strrpos($file,'.');
                 $info['ext'] = ($a > 0) ? substr($file,$a + 1) : '';
                 $info['fileinfo'] = GetFileInfo($fullname,$info['ext']);
@@ -367,6 +453,10 @@ final class filemanager_utils
         return $result;
     }
 
+    /**
+     *
+     * @return string maybe empty
+     */
     public static function mime_content_type($filename)
     {
         if( function_exists('mime_content_type') ) {
@@ -452,6 +542,11 @@ final class filemanager_utils
         return '';
     }
 
+    /**
+     *
+     * @param mixed $val
+     * @return int
+     */
     public static function str_to_bytes($val)
     {
         if( $val && is_string($val) ) {
@@ -502,6 +597,10 @@ final class filemanager_utils
         return $res;
     }
 
+    /**
+     *
+     * @return array
+     */
     public static function get_dirlist()
     {
         $mod = cms_utils::get_module('FileManager');
@@ -519,7 +618,7 @@ final class filemanager_utils
             ksort($output);
             $tmp = [];
             if( $advancedmode ) {
-                $tmp['/'] = '/'.basename($startdir).' ('.$mod->Lang('site_root').')';
+                $tmp['/'] = '/'.basename($startdir).' ('.$mod->Lang('site_root').')'; //DIRECTORY_SEPARATOR?
             }
             else {
                 $tmp['/'] = '/'.basename($startdir).' ('.$mod->Lang('top').')';
@@ -529,6 +628,14 @@ final class filemanager_utils
         return $output;
     }
 
+    /**
+     *
+     * @param string $src Filepath
+     * @param string $dest Default ''
+     * @param bool $force Default false
+     *
+     * @return bool
+     */
     public static function create_thumbnail($src,$dest = '',$force = FALSE)
     {
         if( !file_exists($src) ) return FALSE;
@@ -673,6 +780,11 @@ final class filemanager_utils
         }
     }
 
+    /**
+     *
+     * @param int $size
+     * @return array
+     */
     public static function format_filesize($size)
     {
         $mod = cms_utils::get_module('FileManager');
@@ -697,6 +809,12 @@ final class filemanager_utils
         return ['size' => $size, 'unit' => $unit];
     }
 
+    /**
+     *
+     * @param int $mode
+     * @param string $style Default 'xxx'
+     * @return string
+     */
     public static function format_permissions($mode, $style='xxx')
     {
         switch ($style) {

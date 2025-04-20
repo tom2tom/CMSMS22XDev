@@ -20,23 +20,26 @@
 if( !isset($gCms) ) exit;
 if( !$this->VisibleToAdminUser() ) exit;
 
-$smarty->assign('formstart',$this->CreateFormStart($id,'admin_search',$returnid));
-$smarty->assign('formend',$this->CreateFormEnd());
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_search_tab.tpl",null,$modname,$smarty);
+
+$tpl->assign('formstart',$this->CreateFormStart($id,'admin_search',$returnid));
+$tpl->assign('formend',$this->CreateFormEnd());
 $url = $this->create_url($id,'admin_search');
 $url = str_replace('&amp;','&',$url).'&showtemplate=false';
-$smarty->assign('ajax_url',$url);
-$smarty->assign('js_url',$this->GetModuleURLPath().'/lib/admin_search_tab.js');
+$tpl->assign('ajax_url',$url);
+$tpl->assign('js_url',$this->GetModuleURLPath().'/lib/admin_search_tab.js');
 
 $userid = get_userid();
-$tmp = get_preference($userid,$this->GetName().'saved_search');
+$tmp = get_preference($userid,$modname.'saved_search');
 if( $tmp ) {
-  $smarty->assign('saved_search',unserialize($tmp));
+  $tpl->assign('saved_search',unserialize($tmp));
 }
 
 $slaves = AdminSearch_tools::get_slave_classes();
-$smarty->assign('slaves',$slaves);
+$tpl->assign('slaves',$slaves);
 
-echo $this->ProcessTemplate('admin_search_tab.tpl');
+$tpl->display();
 #
 # EOF
 #

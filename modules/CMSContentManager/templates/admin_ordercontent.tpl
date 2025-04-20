@@ -61,8 +61,8 @@
 <div class="information">
 	{$mod->Lang('info_ordercontent')}
 </div>
+<br>
 <div class="pageoverflow">
-	<p class="pagetext"></p>
 	<p class="pageinput">
 		<input id="btn_submit" type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
 		<input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">

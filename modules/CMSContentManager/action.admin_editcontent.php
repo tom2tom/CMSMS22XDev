@@ -43,7 +43,7 @@ if( isset($params['cancel']) ) {
 $content_id = 0; //i.e. new-page
 $content_obj = null;
 $error = '';
-$active_tab = '';
+$seetab = '';
 
 //
 // init
@@ -200,7 +200,7 @@ try {
         $content_obj->FillParams($_POST,($content_id > 0));
     }
 
-    $active_tab = isset($params['active_tab']) ? trim($params['active_tab']) : '';
+    $seetab = isset($params['__activetab']) ? trim($params['__activetab']) : '';
     if( isset($params['submit']) || isset($params['apply']) || isset($params['preview']) ) {
         $error = $content_obj->ValidateData();
         if( $error ) {
@@ -378,41 +378,39 @@ catch( Exception $e ) {
 if( $error ) echo $this->ShowErrors($error);
 
 // give stuff to smarty.
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_editcontent.tpl", null, $modname, $smarty);
+
 if( $content_obj->HasPreview() ) {
 //  $config = cmsms()->GetConfig(); already set
-    $smarty->assign('has_preview',1);
-    $smarty->assign('preview_url',"{$config['root_url']}/index.php?{$config['query_var']}=".__CMS_PREVIEW_PAGE__);
+    $tpl->assign('has_preview',1);
+    $tpl->assign('preview_url',"{$config['root_url']}/index.php?{$config['query_var']}=".__CMS_PREVIEW_PAGE__);
 }
 
 if( $this->GetPreference('template_list_mode','designpage') != 'all') {
     $tmp = $this->create_url($id,'admin_ajax_gettemplates',$returnid);
     $url = str_replace('&amp;','&',$tmp).'&showtemplate=false';
-    $smarty->assign('designchanged_ajax_url',$url);
+    $tpl->assign('designchanged_ajax_url',$url);
 }
 
 $parms = array();
 if( $content_id > 0 ) $parms['content_id'] = $content_id;
 $url = str_replace('&amp;','&',$this->create_url($id,'admin_editcontent',$returnid,$parms)).'&showtemplate=false';
-$smarty->assign('apply_ajax_url',$url);
+$tpl->assign('apply_ajax_url',$url);
 $url = str_replace('&amp;','&',$this->create_url($id,'admin_editcontent',$returnid,array('preview'=>1)));
-$smarty->assign('preview_ajax_url',$url);
-$smarty->assign('lock_timeout',$this->GetPreference('locktimeout'));
-$smarty->assign('lock_refresh',$this->GetPreference('lockrefresh'));
-$smarty->assign('options_tab_name',$content_obj::TAB_OPTIONS);
-$smarty->assign('active_tab',$active_tab);
-$smarty->assign('content_id',$content_id);
-$smarty->assign('content_obj',$content_obj);
-$smarty->assign('tab_names',$tab_names);
-$smarty->assign('tab_contents_array',$tab_contents_array);
-$smarty->assign('tab_message_array',$tab_message_array);
-$smarty->assign('userid',$user_id);
+$tpl->assign('preview_ajax_url',$url);
+$tpl->assign('lock_timeout',$this->GetPreference('locktimeout'));
+$tpl->assign('lock_refresh',$this->GetPreference('lockrefresh'));
+$tpl->assign('options_tab_name',$content_obj::TAB_OPTIONS);
+$tpl->assign('content_id',$content_id);
+$tpl->assign('content_obj',$content_obj);
+$tpl->assign('tab',$seetab);
+$tpl->assign('tab_names',$tab_names);
+$tpl->assign('tab_contents_array',$tab_contents_array);
+$tpl->assign('tab_message_array',$tab_message_array);
+$tpl->assign('userid',$user_id);
 /*$factory = new ContentAssistantFactory($content_obj);
 $assistant = $factory->getEditContentAssistant();
-if( is_object($assistant) ) $smarty->assign('extra_content',$assistant->getExtraCode());*/
+if( is_object($assistant) ) $tpl->assign('extra_content',$assistant->getExtraCode());*/
 
-echo $this->ProcessTemplate('admin_editcontent.tpl');
-
-#
-# EOF
-#
-?>
+$tpl->display();

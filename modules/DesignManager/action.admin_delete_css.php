@@ -45,8 +45,10 @@ try {
     }
   }
 
-  $smarty->assign('css',$css_ob);
-  echo $this->ProcessTemplate('admin_delete_css.tpl');
+  $modname = $this->GetName();
+  $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_delete_css.tpl", null, $modname, $smarty);
+  $tpl->assign('css',$css_ob);
+  $tpl->display();
 }
 catch( CmsException $e ) {
   $this->SetError($e->GetMessage());

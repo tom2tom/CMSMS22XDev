@@ -143,15 +143,23 @@ $(function() {
       minWidth: '600',
       minHeight: 225,
       resizable: false,
-      buttons: {
-        "{$mod->Lang('submit')|escape:'javascript'}": function() {
-          $(this).dialog('close');
-          $('#myoptions_form').trigger('submit');
-        },
-        "{$mod->Lang('cancel')|escape:'javascript'}": function() {
-          $(this).dialog('close');
-        },
-      }
+      buttons: [
+       {
+        text: "{$mod->Lang('submit')|escape:'javascript'}",
+        icon: 'ui-icon-check',
+        click: function() {
+         $(this).dialog('close');
+         $('#myoptions_form').trigger('submit');
+        }
+       },
+       {
+        text: "{$mod->Lang('cancel')|escape:'javascript'}",
+        icon: 'ui-icon-cancel',
+        click: function() {
+         $(this).dialog('close');
+        }
+       }
+      ]
     });
   });
 

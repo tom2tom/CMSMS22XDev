@@ -89,9 +89,9 @@ $lang['param_useor'] = 'Change the default relationship from an OR relationship 
 //$lang['perm_Manage_Search'] = 'Manage Search'; TODO migrate from admin-lang
 $lang['prompt_alpharesults'] = 'Sort results alphabetically instead of by weight';
 $lang['prompt_resetstopwords'] = 'Load default Stop Words from language';
-$lang['prompt_resultpage'] = 'Page for individual module results <em>(Note modules may optionally override this)</em>';
-$lang['prompt_savephrases'] = 'Track Search Phrases, not Individual Words';
-$lang['prompt_searchtext'] = 'Default Search Text';
+$lang['prompt_resultpage'] = 'Page for individual module results <em>(Note modules might override this)</em>';
+$lang['prompt_savephrases'] = 'Track phrases instead of individual words';
+$lang['prompt_searchtext'] = 'Default Placeholder for Search Element';
 
 // R
 $lang['reindexallcontent'] = 'Re-index All Content';

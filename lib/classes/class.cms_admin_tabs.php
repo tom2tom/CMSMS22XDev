@@ -112,9 +112,8 @@ final class cms_admin_tabs
       if( (self::$_tab_idx == 0 && self::$_current_tab == '') || self::$_current_tab == $tabid ) {
         $active = true;
       }
-      self::$_tab_idx++;
     }
-    if( $active ) {
+    if( $active && !self::$_current_tab ) {
       self::$_current_tab = $tabid;
       $a = ' class="active"';
     } else {
@@ -122,7 +121,7 @@ final class cms_admin_tabs
     }
     $tabid = strtolower(str_replace(' ','_',$tabid));
 
-    return $out . '<div id="'.$tabid.'"'.$a.'>'.$title."</div>\n";
+    return $out . '<div id="'.$tabid.'"'.$a.' tabindex="'.self::$_tab_idx++.'">'.$title."</div>\n";
   }
 
   /**

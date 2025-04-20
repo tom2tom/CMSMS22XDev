@@ -1,16 +1,21 @@
+{if !empty($fitems)}
 <script>
 $(function() {
   $('a.del_fielddef').on('click', function(ev) {
-    var self = $(this);
     ev.preventDefault();
-    cms_confirm('{$mod->Lang('areyousure')}').done(function() {
-       window.location.href = self.attr('href');
+    var url = $(this).attr('href');
+    cms_confirm("{$mod->Lang('areyousure')|escape:'javascript'}").done(function() {
+       window.location.href = url;
     });
+    return false;
   });
 });
 </script>
-
-{if !empty($items)}
+{/if}
+<div class="pageoptions">
+	<a href="{$addurl}" title="{$mod->Lang('addfielddef')}">{admin_icon icon='newobject.gif'} {$mod->Lang('addfielddef')}</a>
+</div>
+{if !empty($fitems)}
 <table class="pagetable">
 	<thead>
 		<tr>
@@ -23,7 +28,7 @@ $(function() {
 		</tr>
 	</thead>
 	<tbody>
-{foreach $items as $entry}
+{foreach $fitems as $entry}
 	{cycle values="row1,row2" assign='rowclass'}
 		<tr class="{$rowclass}">
 			<td>{$entry->name}</td>
@@ -37,7 +42,3 @@ $(function() {
 	</tbody>
 </table>
 {/if}
-
-<div class="pageoptions">
-  <a href="{$addurl}" title="{$mod->Lang('addfielddef')}">{admin_icon icon='newobject.gif'} {$mod->Lang('addfielddef')}</a>
-</div>

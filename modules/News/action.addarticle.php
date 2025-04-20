@@ -343,54 +343,55 @@ if ($dbr) {
  * Pass everything to smarty
  ---------------------*/
 
-$smarty->assign('formid', $id);
-$smarty->assign('hide_summary_field', $this->GetPreference('hide_summary_field', '0'));
-$smarty->assign('authortext', '');
-$smarty->assign('inputauthor', '');
-$smarty->assign('startform', $this->CreateFormStart($id, 'addarticle', $returnid, 'post', 'multipart/form-data'));
-$smarty->assign('endform', $this->CreateFormEnd());
-$smarty->assign('titletext', $this->Lang('title'));
-$smarty->assign('title', $title);
-$smarty->assign('allow_summary_wysiwyg', $this->GetPreference('allow_summary_wysiwyg'));
-$smarty->assign('extratext', $this->Lang('extra'));
-$smarty->assign('extra', $extra);
-$smarty->assign('urltext', $this->Lang('url'));
-$smarty->assign('news_url', $news_url);
-$smarty->assign('postdate', $postdate);
-$smarty->assign('postdateprefix', $id . 'postdate_');
-$smarty->assign('useexp', $useexp);
-$smarty->assign('actionid', $id);
-$smarty->assign('inputexp', $this->CreateInputCheckbox($id, 'useexp', '1', $useexp, 'class="pagecheckbox"'));
-$smarty->assign('startdate', $startdate);
-$smarty->assign('startdateprefix', $id . 'startdate_');
-$smarty->assign('enddate', $enddate);
-$smarty->assign('enddateprefix', $id . 'enddate_');
-$smarty->assign('status', $status);
-$smarty->assign('categorylist', array_flip($categorylist));
-$smarty->assign('category', $usedcategory);
-$smarty->assign('submit', $this->CreateInputSubmit($id, 'submit', lang('submit')));
-$smarty->assign('cancel', $this->CreateInputSubmit($id, 'cancel', lang('cancel')));
-$smarty->assign('delete_field_val', $this->Lang('delete'));
-$smarty->assign('titletext', $this->Lang('title'));
-$smarty->assign('categorytext', $this->Lang('category'));
-$smarty->assign('summarytext', $this->Lang('summary'));
-$smarty->assign('contenttext', $this->Lang('content'));
-$smarty->assign('postdatetext', $this->Lang('postdate'));
-$smarty->assign('useexpirationtext', $this->Lang('useexpiration'));
-$smarty->assign('startdatetext', $this->Lang('startdate'));
-$smarty->assign('enddatetext', $this->Lang('enddate'));
-$smarty->assign('searchable', $searchable);
-$smarty->assign('select_option', $this->Lang('select_option'));
-// tab stuff.
-$smarty->assign('start_tab_headers', $this->StartTabHeaders());
-$smarty->assign('tabheader_article', $this->SetTabHeader('article', $this->Lang('article')));
-$smarty->assign('tabheader_preview', $this->SetTabHeader('preview', $this->Lang('preview')));
-$smarty->assign('end_tab_headers', $this->EndTabHeaders());
-$smarty->assign('start_tab_content', $this->StartTabContent());
-$smarty->assign('start_tab_article', $this->StartTab('article', $params));
-$smarty->assign('end_tab_article', $this->EndTab());
-$smarty->assign('end_tab_content', $this->EndTabContent());
-$smarty->assign('warning_preview', $this->Lang('warning_preview'));
+$tpl = $smarty->CreateTemplate("module_file_tpl:$me;editarticle.tpl", null, $me, $smarty);
+$tpl->assign('formid', $id);
+$tpl->assign('hide_summary_field', $this->GetPreference('hide_summary_field', '0'));
+$tpl->assign('authortext', '');
+$tpl->assign('inputauthor', '');
+$tpl->assign('startform', $this->CreateFormStart($id, 'addarticle', $returnid, 'post', 'multipart/form-data'));
+$tpl->assign('endform', $this->CreateFormEnd());
+$tpl->assign('titletext', $this->Lang('title'));
+$tpl->assign('title', $title);
+$tpl->assign('allow_summary_wysiwyg', $this->GetPreference('allow_summary_wysiwyg'));
+$tpl->assign('extratext', $this->Lang('extra'));
+$tpl->assign('extra', $extra);
+$tpl->assign('urltext', $this->Lang('url'));
+$tpl->assign('news_url', $news_url);
+$tpl->assign('postdate', $postdate);
+$tpl->assign('postdateprefix', $id . 'postdate_');
+$tpl->assign('useexp', $useexp);
+$tpl->assign('actionid', $id);
+$tpl->assign('inputexp', $this->CreateInputCheckbox($id, 'useexp', '1', $useexp, 'class="pagecheckbox"'));
+$tpl->assign('startdate', $startdate);
+$tpl->assign('startdateprefix', $id . 'startdate_');
+$tpl->assign('enddate', $enddate);
+$tpl->assign('enddateprefix', $id . 'enddate_');
+$tpl->assign('status', $status);
+$tpl->assign('categorylist', array_flip($categorylist));
+$tpl->assign('category', $usedcategory);
+$tpl->assign('submit', $this->CreateInputSubmit($id, 'submit', lang('submit')));
+$tpl->assign('cancel', $this->CreateInputSubmit($id, 'cancel', lang('cancel')));
+$tpl->assign('delete_field_val', $this->Lang('delete'));
+$tpl->assign('titletext', $this->Lang('title'));
+$tpl->assign('categorytext', $this->Lang('category'));
+$tpl->assign('summarytext', $this->Lang('summary'));
+$tpl->assign('contenttext', $this->Lang('content'));
+$tpl->assign('postdatetext', $this->Lang('postdate'));
+$tpl->assign('useexpirationtext', $this->Lang('useexpiration'));
+$tpl->assign('startdatetext', $this->Lang('startdate'));
+$tpl->assign('enddatetext', $this->Lang('enddate'));
+$tpl->assign('searchable', $searchable);
+$tpl->assign('select_option', $this->Lang('select_option'));
+// tab stuff (could be replaced by template tags)
+$tpl->assign('start_tab_headers', $this->StartTabHeaders());
+$tpl->assign('tabheader_article', $this->SetTabHeader('article', $this->Lang('article')));
+$tpl->assign('tabheader_preview', $this->SetTabHeader('preview', $this->Lang('preview')));
+$tpl->assign('end_tab_headers', $this->EndTabHeaders());
+$tpl->assign('start_tab_content', $this->StartTabContent());
+$tpl->assign('start_tab_article', $this->StartTab('article', $params));
+$tpl->assign('end_tab_article', $this->EndTab());
+$tpl->assign('end_tab_content', $this->EndTabContent());
+$tpl->assign('warning_preview', $this->Lang('warning_preview'));
 
 $parms = array(
     'enablewysiwyg' => 1,
@@ -399,7 +400,7 @@ $parms = array(
     'rows' => 10,
     'cols' => 80
 );
-$smarty->assign('inputcontent', CmsFormUtils::create_textarea($parms));
+$tpl->assign('inputcontent', CmsFormUtils::create_textarea($parms));
 
 $parms = array(
     'enablewysiwyg' => $this->GetPreference('allow_summary_wysiwyg', 1),
@@ -408,18 +409,18 @@ $parms = array(
     'rows' => 3,
     'cols' => 80
 );
-$smarty->assign('inputsummary', CmsFormutils::create_textarea($parms));
+$tpl->assign('inputsummary', CmsFormutils::create_textarea($parms));
 
 if ($custom_flds)
-    $smarty->assign('custom_fields', $custom_flds);
+    $tpl->assign('custom_fields', $custom_flds);
 
 if ($this->CheckPermission('Approve News')) {
-    $smarty->assign('statustext', lang('status'));
-    $smarty->assign('statuses', array_flip($statusdropdown));
+    $tpl->assign('statustext', lang('status'));
+    $tpl->assign('statuses', array_flip($statusdropdown));
 }
 
 $contentops = cmsms()->GetContentOperations();
-$smarty->assign('preview_page_selector', $contentops->CreateHierarchyDropdown(0, $this->GetPreference('detail_returnid', -1), $id.'previewpage', TRUE));
+$tpl->assign('preview_page_selector', $contentops->CreateHierarchyDropdown(0, $this->GetPreference('detail_returnid', -1), $id.'previewpage', TRUE));
 
 // get the list of detail templates.
 try {
@@ -432,15 +433,15 @@ try {
         }
     }
     if ($list) {
-        $smarty->assign('prompt_detail_template', $this->Lang('detail_template'));
-        $smarty->assign('prompt_detail_page', $this->Lang('detail_page'));
-        $smarty->assign('detail_templates', $list);
-        $smarty->assign('cur_detail_template', $this->GetPreference('current_detail_template'));
-        $smarty->assign('start_tab_preview', $this->StartTab('preview', $params));
-        $smarty->assign('end_tab_preview', $this->EndTab());
+        $tpl->assign('prompt_detail_template', $this->Lang('detail_template'));
+        $tpl->assign('prompt_detail_page', $this->Lang('detail_page'));
+        $tpl->assign('detail_templates', $list);
+        $tpl->assign('cur_detail_template', $this->GetPreference('current_detail_template'));
+        $tpl->assign('start_tab_preview', $this->StartTab('preview', $params));
+        $tpl->assign('end_tab_preview', $this->EndTab());
     }
 } catch( Exception $e ) {
     audit('', $me, 'No detail template available for preview');
 }
-echo $this->ProcessTemplate('editarticle.tpl');
+$tpl->display();
 ?>

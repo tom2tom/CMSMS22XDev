@@ -23,7 +23,7 @@ class MicroTiny extends CMSModule
 
   public function GetName() { return 'MicroTiny'; }
   public function GetFriendlyName() { return $this->Lang("friendlyname"); }
-  public function GetVersion() { return '2.2.6'; }
+  public function GetVersion() { return '2.2.7'; }
   public function HasAdmin() { return TRUE; }
   public function IsPluginModule() { return FALSE; }
   public function LazyLoadFrontend() { return TRUE; }
@@ -33,7 +33,7 @@ class MicroTiny extends CMSModule
   public function GetHelp() { return $this->Lang('help'); }
   public function GetAuthor() { return 'Morten Poulsen'; }
   public function GetAuthorEmail() { return 'morten@poulsen.org'; }
-  public function GetChangeLog() { return $this->ProcessTemplate('changelog.tpl'); }
+  public function GetChangeLog() { return file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'changelog.htm'); }
   public function VisibleToAdminUser() { return $this->CheckPermission('Modify Site Preferences'); }
   public function GetAdminDescription() { return $this->Lang('admindescription'); }
   //TODO arguably migrate change-settings action to SiteAdmin section c.f. other modules' settings

@@ -28,6 +28,8 @@ if( !defined('CMS_VERSION') ) exit;
 if( !$this->VisibleToAdminUser() ) return;
 
 $profiles = $this->_dao->loadAll();
-$smarty->assign('dflt_profile_id',$this->_dao->getDefaultProfileId());
-$smarty->assign('profiles',$profiles);
-echo $this->ProcessTemplate('defaultadmin.tpl');
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,$modname,$smarty);
+$tpl->assign('dflt_profile_id',$this->_dao->getDefaultProfileId());
+$tpl->assign('profiles',$profiles);
+$tpl->display();

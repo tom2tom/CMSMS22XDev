@@ -1,6 +1,5 @@
 {form_start action='admin_listsettings_tab'}
 <div class="pageoverflow">
-	<p class="pagetext"></p>
 	<p class="pageinput">
 		<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" accesskey="s">
 	</p>

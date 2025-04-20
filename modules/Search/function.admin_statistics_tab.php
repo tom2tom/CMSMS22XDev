@@ -1,21 +1,25 @@
 <?php
 
-$smarty->assign('formstart',$this->CreateFormStart($id,'defaultadmin'));
-$smarty->assign('formend',$this->CreateFormEnd());
-$smarty->assign('wordtext',$this->Lang('word'));
-$smarty->assign('counttext',$this->Lang('count'));
-$smarty->assign('exportcsv',
+$tpl->assign('sformstart',$this->CreateFormStart($id,'defaultadmin',$returnid,'post','',false,'',
+			array('__activetab'=>'statistics')));
+$tpl->assign('wordtext',$this->Lang('word'));
+$tpl->assign('counttext',$this->Lang('count'));
+$tpl->assign('exportcsv',
 		$this->CreateInputSubmit($id,'exportcsv',$this->Lang('export_to_csv'),
 			'data-ui-icon="ui-icon-arrowreturnthick-1-s"'));
-$smarty->assign('clearwordcount',
+$tpl->assign('clearwordcount',
 		$this->CreateInputSubmit($id,'clearwordcount',$this->Lang('clear'),
 			'data-ui-icon="ui-icon-minusthick"','',$this->Lang('confirm_clearstats')));
 
-$query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_search_words ORDER BY count DESC';
 $results = array();
+$query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_search_words ORDER BY `count` DESC';
 $dbr = $db->SelectLimit($query,50,0);
-while( $dbr && $row = $dbr->FetchRow() ) {
-    $results[] = $row;
+if( $dbr ) {
+	while( $row = $dbr->FetchRow() ) {
+		$results[] = $row;
+	}
+	$dbr->Close();
 }
-if( count($results) ) $smarty->assign('topwords',$results);
-echo $this->ProcessTemplate('admin_statistics_tab.tpl');
+if( $results ) {
+	$tpl->assign('topwords',$results);
+}

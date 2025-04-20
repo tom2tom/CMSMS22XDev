@@ -2,6 +2,10 @@
 if (!isset($gCms)) exit;
 if( !$this->CheckPermission( 'Modify Site Preferences' ) ) return;
 
+if( isset($params['cancel']) ) {
+    $this->RedirectToAdminTab('options','','admin_settings');
+}
+
 $this->SetPreference('default_category', $params['default_category']);
 $this->SetPreference('formsubmit_emailaddress', $params['formsubmit_emailaddress']);
 $this->SetPreference('email_subject',trim($params['email_subject']));
@@ -19,7 +23,7 @@ $this->SetPreference('allow_fesubmit',(int)$params['allow_fesubmit']);
 $this->SetPreference('alert_drafts',(int)$params['alert_drafts']);
 
 $this->CreateStaticRoutes();
-$params = array('tab_message'=> 'optionsupdated', 'active_tab' => 'options');
+$params = array('tab_message'=> 'optionsupdated', '__activetab' => 'options'); //TODO unused
 $this->SetMessage($this->Lang('optionsupdated'));
 $this->RedirectToAdminTab('options','','admin_settings');
 ?>

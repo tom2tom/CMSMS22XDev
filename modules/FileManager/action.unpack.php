@@ -17,14 +17,17 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 if (!function_exists('cmsms')) exit;
-if (!$this->CheckPermission('Modify Files') && !$this->AdvancedAccessAllowed()) exit;
+if (!($this->CheckPermission('Modify Files') || $this->AdvancedAccessAllowed())) exit;
 
 if (isset($params['cancel'])) {
   $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
-$selall = $params['selall'];
-if (!is_array($selall) ) {
-  $selall = unserialize($selall);
+
+$selall = (!empty($params['selall'])) ? $params['selall'] : '';
+if( $selall && !is_array($selall) ) {
+  $tmp = @unserialize($selall, ['allowed_classes'=>[]]); // mask possible E_WARNING
+  $selall = ($tmp !== false) ? $tmp : [$selall];
+  $params['selall'] = $selall;
 }
 if (!$selall) {
   $params['fmerror'] = 'nofilesselected';

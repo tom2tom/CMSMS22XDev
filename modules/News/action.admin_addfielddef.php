@@ -53,7 +53,7 @@ if (isset($params['submit'])) {
         audit($fdid, $this->GetName().' field definition', "Added: $name");
 
         // done.
-        $params = array('tab_message'=> 'fielddefadded', 'active_tab' => 'customfields');
+        $params = array('tab_message'=> 'fielddefadded', '__activetab' => 'customfields');
         $this->SetMessage($this->Lang('fielddefadded'));
         $this->RedirectToAdminTab('customfields','','admin_settings');
     }
@@ -62,24 +62,26 @@ if (isset($params['submit'])) {
 }
 
 //Display template
-$smarty->assign('title',$this->Lang('addfielddef'));
-$smarty->assign('startform', $this->CreateFormStart($id, 'admin_addfielddef', $returnid));
-$smarty->assign('endform', $this->CreateFormEnd());
-$smarty->assign('nametext', $this->Lang('name'));
-$smarty->assign('typetext', $this->Lang('type'));
-$smarty->assign('maxlengthtext', $this->Lang('maxlength'));
-$smarty->assign('showinputtype', true);
-$smarty->assign('info_maxlength', $this->Lang('info_maxlength'));
-$smarty->assign('userviewtext',$this->Lang('public'));
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;editfielddef.tpl", null, $modname, $smarty);
+$tpl->assign('title', $this->Lang('addfielddef'));
+$tpl->assign('startform', $this->CreateFormStart($id, 'admin_addfielddef', $returnid));
+$tpl->assign('endform', $this->CreateFormEnd());
+$tpl->assign('nametext', $this->Lang('name'));
+$tpl->assign('typetext', $this->Lang('type'));
+$tpl->assign('maxlengthtext', $this->Lang('maxlength'));
+$tpl->assign('showinputtype', true);
+$tpl->assign('info_maxlength', $this->Lang('info_maxlength'));
+$tpl->assign('userviewtext', $this->Lang('public'));
 
-$smarty->assign('name',$name);
-$smarty->assign('fieldtypes',$this->GetFieldTypes());
-$smarty->assign('type',$type);
-$smarty->assign('max_length',$max_length);
-$smarty->assign('public',$public);
-$smarty->assign('options',$options);
+$tpl->assign('name', $name);
+$tpl->assign('fieldtypes', $this->GetFieldTypes());
+$tpl->assign('type', $type);
+$tpl->assign('max_length', $max_length);
+$tpl->assign('public', $public);
+$tpl->assign('options', $options);
 
-$smarty->assign('mod',$this);
-echo $this->ProcessTemplate('editfielddef.tpl');
+//$tpl->assign('mod',$this);
+$tpl->display();
 
 // EOF

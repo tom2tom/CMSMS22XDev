@@ -23,8 +23,3 @@ if( !$this->VisibleToAdminUser() ) exit;
 if( $this->can_search() ) {
   include __DIR__.DIRECTORY_SEPARATOR.'function.admin_search_tab.php';
 }
-
-#
-# EOF
-#
-?>

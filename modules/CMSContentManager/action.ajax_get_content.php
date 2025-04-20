@@ -34,10 +34,13 @@ if( !isset($gCms) ) exit;
 $handlers = ob_list_handlers();
 for ($cnt = 0; $cnt < count($handlers); $cnt++) { ob_end_clean(); }
 
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;ajax_get_content.tpl",null,$modname,$smarty);
+
 try {
-    $smarty->assign('can_add_content',$this->CheckPermission('Add Pages') || $this->CheckPermission('Manage All Content'));
-    $smarty->assign('can_reorder_content',$this->CheckPermission('Manage All Content'));
-    $smarty->assign('template_list',CmsLayoutTemplate::template_query(array('as_list'=>1))); // this is just to aide loading.
+    $tpl->assign('can_add_content',$this->CheckPermission('Add Pages') || $this->CheckPermission('Manage All Content'));
+    $tpl->assign('can_reorder_content',$this->CheckPermission('Manage All Content'));
+    $tpl->assign('template_list',CmsLayoutTemplate::template_query(array('as_list'=>1))); // this is just to aide loading.
 
     // load all the content that this user can display...
     // organize it into a tree
@@ -49,7 +52,7 @@ try {
         $filter = unserialize($filter);
         $builder->set_filter($filter);
     }
-    $smarty->assign('have_filter',is_object($filter));
+    $tpl->assign('have_filter',is_object($filter));
 
 
     //
@@ -59,7 +62,7 @@ try {
     //
     // build the display
     //
-    $smarty->assign('prettyurls_ok',$builder->pretty_urls_configured());
+    $tpl->assign('prettyurls_ok',$builder->pretty_urls_configured());
 
     if( isset($params['setoptions']) ) cms_userprefs::set($this->GetName().'_pagelimit',(int)$params['pagelimit']);
     $pagelimit = cms_userprefs::get($this->GetName().'_pagelimit',100);
@@ -79,31 +82,31 @@ try {
         $pagelist[$i+1] = $i+1;
     }
 
-    $smarty->assign('indent',!$filter && cms_userprefs::get('indent',1));
+    $tpl->assign('indent',!$filter && cms_userprefs::get('indent',1));
     $locks = $builder->get_locks();
     $have_locks = ($locks && is_array($locks))?1:0;
-    $smarty->assign('locking',CmsContentManagerUtils::locking_enabled());
-    $smarty->assign('have_locks',$have_locks);
-    $smarty->assign('pagelimit',$pagelimit);
-    $smarty->assign('pagelist',$pagelist);
-    $smarty->assign('curpage',$builder->get_page());
-    $smarty->assign('npages',$npages);
-    $smarty->assign('multiselect',$builder->supports_multiselect());
-    $smarty->assign('columns',$builder->get_display_columns());
+    $tpl->assign('locking',CmsContentManagerUtils::locking_enabled());
+    $tpl->assign('have_locks',$have_locks);
+    $tpl->assign('pagelimit',$pagelimit);
+    $tpl->assign('pagelist',$pagelist);
+    $tpl->assign('curpage',$builder->get_page());
+    $tpl->assign('npages',$npages);
+    $tpl->assign('multiselect',$builder->supports_multiselect());
+    $tpl->assign('columns',$builder->get_display_columns());
     $url = $this->create_url($id,'ajax_get_content',$returnid);
-    $smarty->assign('ajax_get_content_url',str_replace('amp;','',$url));
+    $tpl->assign('ajax_get_content_url',str_replace('amp;','',$url));
 
     if( CmsContentManagerUtils::get_pagenav_display() == 'title' ) {
-        $smarty->assign('colhdr_page',$this->Lang('colhdr_name'));
-        $smarty->assign('coltitle_page',$this->Lang('coltitle_name'));
+        $tpl->assign('colhdr_page',$this->Lang('colhdr_name'));
+        $tpl->assign('coltitle_page',$this->Lang('coltitle_name'));
     }
     else {
-        $smarty->assign('colhdr_page',$this->Lang('colhdr_menutext'));
-        $smarty->assign('coltitle_page',$this->Lang('coltitle_menutext'));
+        $tpl->assign('colhdr_page',$this->Lang('colhdr_menutext'));
+        $tpl->assign('coltitle_page',$this->Lang('coltitle_menutext'));
     }
-    if( $editinfo ) $smarty->assign('content_list',$editinfo);
+    if( $editinfo ) $tpl->assign('content_list',$editinfo);
     if( $filter && !$editinfo ) {
-        $smarty->assign('error',$this->Lang('err_nomatchingcontent'));
+        $tpl->assign('error',$this->Lang('err_nomatchingcontent'));
     }
 
     if( $this->CheckPermission('Remove Pages') && $this->CheckPermission('Modify Any Page') ) {
@@ -123,9 +126,9 @@ try {
         bulkcontentoperations::register_function($this->Lang('bulk_changeowner'),'changeowner');
     }
     $opts = bulkcontentoperations::get_operation_list();
-    if( $opts ) $smarty->assign('bulk_options',$opts);
+    if( $opts ) $tpl->assign('bulk_options',$opts);
 
-    echo $this->ProcessTemplate('ajax_get_content.tpl'); // check: ok without $opts?
+    $tpl->display();
 }
 catch( \Exception $e ) {
     echo '<div class="red">'.$e->GetMessage().'</div>';

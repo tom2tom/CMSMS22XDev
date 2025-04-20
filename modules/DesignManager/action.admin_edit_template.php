@@ -46,43 +46,43 @@ $userid = get_userid();
 
 try {
     if (isset($params['import_type'])) {
-        $tpl_obj = CmsLayoutTemplate::create_by_type($params['import_type']);
-        $tpl_obj->set_owner($userid);
+        $tpl_ob = CmsLayoutTemplate::create_by_type($params['import_type']);
+        $tpl_ob->set_owner($userid);
         $design = CmsLayoutCollection::load_default();
         if( $design ) {
-            $tpl_obj->add_design($design);
+            $tpl_ob->add_design($design);
         }
         $extraparms['import_type'] = $params['import_type'];
         $type_is_readonly = true;
     } elseif (isset($params['tpl'])) {
-        $tpl_obj = CmsLayoutTemplate::load($params['tpl']);
-        $tpl_obj->get_designs();
+        $tpl_ob = CmsLayoutTemplate::load($params['tpl']);
+        $tpl_ob->get_designs();
         $extraparms['tpl'] = $params['tpl'];
     } else {
         $this->SetError($this->Lang('error_missingparam'));
         $this->RedirectToAdminTab();
     }
-    $type_obj = CmsLayoutTemplateType::load($tpl_obj->get_type_id());
+    $type_ob = CmsLayoutTemplateType::load($tpl_ob->get_type_id());
 
     try {
         if (isset($params['submit']) || $apply ) {
             // do the magic.
-            if (isset($params['description'])) $tpl_obj->set_description($params['description']);
-            if (isset($params['type'])) $tpl_obj->set_type($params['type']);
-            if (isset($params['default'])) $tpl_obj->set_type_dflt($params['default']);
-            if (isset($params['owner_id'])) $tpl_obj->set_owner($params['owner_id']);
+            if (isset($params['description'])) $tpl_ob->set_description($params['description']);
+            if (isset($params['type'])) $tpl_ob->set_type($params['type']);
+            if (isset($params['default'])) $tpl_ob->set_type_dflt($params['default']);
+            if (isset($params['owner_id'])) $tpl_ob->set_owner($params['owner_id']);
             if (isset($params['addt_editors']) && is_array($params['addt_editors']) && count($params['addt_editors'])) {
-                $tpl_obj->set_additional_editors($params['addt_editors']);
+                $tpl_ob->set_additional_editors($params['addt_editors']);
             }
-            if (isset($params['category_id'])) $tpl_obj->set_category($params['category_id']);
-            $tpl_obj->set_listable(isset($params['listable'])?$params['listable']:1);
-            if( isset($params['contents']) ) $tpl_obj->set_content($params['contents']);
-            $tpl_obj->set_name(strip_tags($params['name']));
+            if (isset($params['category_id'])) $tpl_ob->set_category($params['category_id']);
+            $tpl_ob->set_listable(isset($params['listable'])?$params['listable']:1);
+            if( isset($params['contents']) ) $tpl_ob->set_content($params['contents']);
+            $tpl_ob->set_name(strip_tags($params['name']));
 
             if ($this->CheckPermission('Manage Designs')) {
                 $design_list = array();
                 if (isset($params['design_list'])) $design_list = $params['design_list'];
-                $tpl_obj->set_designs($design_list);
+                $tpl_ob->set_designs($design_list);
             }
 
             // lastly, check for errors in the template before we save.
@@ -91,7 +91,7 @@ try {
                 cms_utils::set_app_data('tmp_template', $params['contents']);
                 $parser = new CMSMS\internal\page_template_parser('cms_template:appdata;tmp_template',$smarty);
                 $parser->compileTemplateSource();
-                if ($type_obj->get_content_block_flag()) {
+                if ($type_ob->get_content_block_flag()) {
                     $contentBlocks = CMS_Content_Block::get_content_blocks();
                     if (!is_array($contentBlocks) || count($contentBlocks) == 0) {
                         throw new CmsEditContentException('No content blocks defined in template');
@@ -101,7 +101,7 @@ try {
             }
 
             // if we got here, we're golden.
-            $tpl_obj->save();
+            $tpl_ob->save();
 
             if (!$apply) {
                 $this->SetMessage($message);
@@ -109,7 +109,7 @@ try {
             }
 
         } elseif (isset($params['export'])) {
-            $outfile = $tpl_obj->get_content_filename();
+            $outfile = $tpl_ob->get_content_filename();
             $dn = dirname($outfile);
             if( !is_dir($dn) || !is_writable($dn) ) {
                 throw new RuntimeException($this->Lang('error_assets_writeperm'));
@@ -117,23 +117,23 @@ try {
             if( is_file($outfile) && !is_writable($outfile) ) {
                 throw new RuntimeException($this->Lang('error_assets_writeperm'));
             }
-            file_put_contents($outfile,$tpl_obj->get_content());
+            file_put_contents($outfile,$tpl_ob->get_content());
         } elseif (isset($params['import'])) {
-            $infile = $tpl_obj->get_content_filename();
+            $infile = $tpl_ob->get_content_filename();
             if (!is_file($infile) || !is_readable($infile) || !is_writable($infile)) {
                 throw new RuntimeException($this->Lang('error_assets_readwriteperm'));
             }
             $data = file_get_contents($infile);
             unlink($infile);
-            $tpl_obj->set_content($data);
-            $tpl_obj->save();
+            $tpl_ob->set_content($data);
+            $tpl_ob->save();
         }
     } catch (Exception $e) {
         $message = $e->GetMessage();
         $response = 'error';
     }
 
-    $tid = $tpl_obj->get_id();
+    $tid = $tpl_ob->get_id();
     if ($tid > 0 && !$apply && dm_utils::locking_enabled()) {
         try {
             $lock_id = CmsLockOperations::is_locked('template', $tid);
@@ -164,14 +164,17 @@ try {
     // BUILD THE DISPLAY
     //
     if( $tid > 0 ) {
-        CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('edit_template').': '.$tpl_obj->get_name()." ($tid)");
+        CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('edit_template').': '.$tpl_ob->get_name()." ($tid)");
     } else {
         CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('new_template'));
     }
 
-    $smarty->assign('type_obj', $type_obj);
-    $smarty->assign('extraparms', $extraparms);
-    $smarty->assign('template', $tpl_obj);
+    $modname = $this->GetName();
+    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_edit_template.tpl", null, $modname, $smarty);
+
+    $tpl->assign('type_obj', $type_ob);
+    $tpl->assign('extraparms', $extraparms);
+    $tpl->assign('template', $tpl_ob);
 
     $out = array();
     $out[0] = $this->Lang('prompt_none');
@@ -181,7 +184,7 @@ try {
             $out[$one->get_id()] = $one->get_name();
         }
     }
-    $smarty->assign('category_list', $out);
+    $tpl->assign('category_list', $out);
 
     $types = CmsLayoutTemplateType::get_all();
     if (is_array($types) && count($types)) {
@@ -191,8 +194,8 @@ try {
             $out2[] = $one->get_id();
             $out[$one->get_id()] = $one->get_langified_display_value();
         }
-        $smarty->assign('type_list', $out);
-        $smarty->assign('type_is_readonly', $type_is_readonly);
+        $tpl->assign('type_list', $out);
+        $tpl->assign('type_is_readonly', $type_is_readonly);
     }
 
     $designs = CmsLayoutCollection::get_all();
@@ -201,16 +204,16 @@ try {
         foreach ($designs as $one) {
             $out[$one->get_id()] = $one->get_name();
         }
-        $smarty->assign('design_list', $out);
+        $tpl->assign('design_list', $out);
     }
 
-    $smarty->assign('tpl_id', $tid);
-    $smarty->assign('lock_timeout', $this->GetPreference('lock_timeout'));
-    $smarty->assign('lock_refresh', $this->GetPreference('lock_refresh'));
-    $smarty->assign('has_manage_right', $this->CheckPermission('Modify Templates'));
-    $smarty->assign('has_themes_right', $this->CheckPermission('Manage Designs'));
+    $tpl->assign('tpl_id', $tid);
+    $tpl->assign('lock_timeout', $this->GetPreference('lock_timeout'));
+    $tpl->assign('lock_refresh', $this->GetPreference('lock_refresh'));
+    $tpl->assign('has_manage_right', $this->CheckPermission('Modify Templates'));
+    $tpl->assign('has_themes_right', $this->CheckPermission('Manage Designs'));
 
-    if ($this->CheckPermission('Modify Templates') || $tpl_obj->get_owner_id() == $userid) {
+    if ($this->CheckPermission('Modify Templates') || $tpl_ob->get_owner_id() == $userid) {
 
         $userops = cmsms()->GetUserOperations();
         $allusers = $userops->LoadUsers();
@@ -221,7 +224,7 @@ try {
             //    continue;
             $tmp[$one->id] = $one->username;
         }
-        if (is_array($tmp) && count($tmp)) $smarty->assign('user_list', $tmp);
+        if (is_array($tmp) && count($tmp)) $tpl->assign('user_list', $tmp);
 
         $groupops = cmsms()->GetGroupOperations();
         $allgroups = $groupops->LoadGroups();
@@ -231,10 +234,10 @@ try {
             $tmp[$one->id * -1] = $this->Lang('prompt_group') . ': ' . $one->name;
             // appends to the tmp array.
         }
-        if (is_array($tmp) && count($tmp)) $smarty->assign('addt_editor_list', $tmp);
+        if (is_array($tmp) && count($tmp)) $tpl->assign('addt_editor_list', $tmp);
     }
-    $smarty->assign('userid',$userid);
-    echo $this->ProcessTemplate('admin_edit_template.tpl');
+    $tpl->assign('userid', $userid);
+    $tpl->display();
 } catch (CmsException $e) {
     $this->SetError($e->GetMessage());
     $this->RedirectToAdminTab();

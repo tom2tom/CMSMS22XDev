@@ -2,26 +2,17 @@
 if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Modify Site Preferences') ) return;
 
-echo $this->StartTabHeaders();
-echo $this->SetTabHeader('categories',$this->Lang('categories'));
-echo $this->SetTabHeader('customfields',$this->Lang('customfields'));
-echo $this->SetTabHeader('options',$this->Lang('options'));
-echo $this->EndTabHeaders();
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_settings.tpl", null, $modname, $smarty);
 
-echo $this->StartTabContent();
+require __DIR__.DIRECTORY_SEPARATOR.'function.admin_categoriestab.php';
+require __DIR__.DIRECTORY_SEPARATOR.'function.admin_customfieldstab.php';
+require __DIR__.DIRECTORY_SEPARATOR.'function.admin_optionstab.php';
 
-echo $this->StartTab('categories', $params);
-include(__DIR__.'/function.admin_categoriestab.php');
-echo $this->EndTab();
+if( empty($seetab) ) {
+    $seetab = (!empty($params['__activetab'])) ? $params['__activetab'] : '';
+}
+$tpl->assign('tab', $seetab);
+$tpl->assign('endform', $this->CreateFormEnd());
 
-echo $this->StartTab('customfields', $params);
-include(__DIR__.'/function.admin_customfieldstab.php');
-echo $this->EndTab();
-
-echo $this->StartTab('options', $params);
-include(__DIR__.'/function.admin_optionstab.php');
-echo $this->EndTab();
-
-echo $this->EndTabContent();
-
-?>
+$tpl->display();

@@ -1,0 +1,3 @@
+Replaced deprecated template processing in admin console
+Inhibit FileManager processing of executable files
+UI refinements

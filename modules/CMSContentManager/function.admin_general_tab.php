@@ -11,12 +11,6 @@
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -28,11 +22,9 @@
 #
 #-------------------------------------------------------------------------
 #END_LICENSE
-if( !isset($gCms) ) exit;
-if( !$this->CheckPermission('Modify Site Preferences') ) return;
 
-$smarty->assign('locktimeout',$this->GetPreference('locktimeout'));
-$smarty->assign('lockrefresh',$this->GetPreference('lockrefresh'));
+$tpl->assign('locktimeout',$this->GetPreference('locktimeout'));
+$tpl->assign('lockrefresh',$this->GetPreference('lockrefresh'));
 
 $tmp = [];
 $orders = $this->ListPreferencesByPrefix('order_TAB_');
@@ -41,19 +33,16 @@ foreach( $orders as $key ) {
   if( $nm ) {
     $flag = false; // not a default tab
   } else {
-    $nm = $key; //TODO translated names names have lang keys like '??_*_tab__'
+    $nm = $key; //TODO translated names have lang keys like '??_*_tab__'
     $flag = true;
   }
   $tmp[$key] = [(int)$this->GetPreference('order_TAB_'.$key),ucfirst(strtolower($nm)),$flag]; //TODO UTF8 reformat name
 }
 uasort($tmp,function($a,$b) {
-  // TODO UTF-8 comparison
-  if( $a[0] != $b[0] ) {
-    return $a[0] - $b[0];
-  }
-  return strcmp($a,$b);
+  $res = Collator::compare($a,$b);
+  return ($res !== false) ? $res : 0;
 });
-$smarty->assign('tab_orders',$tmp);
+$tpl->assign('tab_orders',$tmp);
 
 $opts = array(
   'all'=>$this->Lang('opt_alltemplates'),
@@ -61,11 +50,5 @@ $opts = array(
   'allpage'=>$this->Lang('opt_allpage'),
   'designpage'=>$this->Lang('opt_designpage')
 );
-$smarty->assign('template_list_opts',$opts);
-$smarty->assign('template_list_mode',$this->GetPreference('template_list_mode','designpage'));
-echo $this->ProcessTemplate('admin_general_tab.tpl');
-
-#
-# EOF
-#
-?>
+$tpl->assign('template_list_opts',$opts);
+$tpl->assign('template_list_mode',$this->GetPreference('template_list_mode','designpage'));

@@ -15,6 +15,6 @@ if (isset($params['articleid']))
 
 news_admin_ops::delete_article($articleid);
 
-$params = array('tab_message'=> 'articledeleted', 'active_tab' => 'articles');
+$params = array('tab_message'=> 'articledeleted', '__activetab' => 'articles');
 $this->Redirect($id, 'defaultadmin', $returnid, $params);
 ?>

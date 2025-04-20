@@ -33,10 +33,13 @@ class ContentEditContentAssistant extends EditContentAssistant
 {
   public function getExtraCode()
   {
-    // get javascript for editcontent for the Content object, and it's derived objects.
-    $mod = cms_utils::get_module('CMSContentManager');
-    $out = $mod->ProcessTemplate('content_editcontent_extra.tpl');
-    return $out;
+    // get javascript for editcontent for the Content object, and its derived objects.
+//  $mod = cms_utils::get_module('CMSContentManager');
+//  $modname = $mod->GetName();
+    $modname = 'CMSContentManager';
+    $smarty = cmsms()->GetSmarty();
+    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;content_editcontent_extra.tpl",null,$modname); //no parent
+    return $tpl->fetch();
   }
 }
 

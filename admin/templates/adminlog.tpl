@@ -39,10 +39,10 @@ $(function() {
             <div class="clearb"></div>
           </div>
           <div class="pageoverflow">
-            <p class="pageinput">
-             <input type="submit" name="filterapply" data-ui-icon="ui-icon-disk" value="{lang('apply')}">
-             <input type="submit" name="filterreset" data-ui-icon="ui-icon-arrowrefresh-1-n" value="{lang('reset')}">
-            </p>
+            <div class="dialogoptions">
+              <input type="submit" name="filterapply" data-ui-icon="ui-icon-disk" value="{lang('apply')}">
+              <input type="submit" name="filterreset" data-ui-icon="ui-icon-arrowrefresh-1-n" value="{lang('reset')}">
+            </div>
           </div>
         </form>
     </div>

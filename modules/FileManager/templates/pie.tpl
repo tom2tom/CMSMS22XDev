@@ -55,7 +55,7 @@ input.invalid { background-color: salmon; }
 
 {$formstart}
 <div>
-  <div id="test1" style="width: 74%; float: left;">
+  <div id="test1" style="width:74%;float:left;">
     <img id="img" src="{$image}" alt="">
   </div>
   <div style="width:24%;float:left">
@@ -73,8 +73,8 @@ input.invalid { background-color: salmon; }
       <tr><td><label for="lp">{$mod->Lang('pie_lock_proportion')}:</label></td><td><input type="checkbox" id="lp" checked></td></tr>
     </table>
     <div style="pageoverflow">
-      <button id="submit" name="{$actionid}save">{$mod->Lang('save')}</p>
-      <button name="{$actionid}cancel">{$mod->Lang('cancel')}</p>
+      <input type="submit" name="{$actionid}save" data-ui-icon="ui-icon-image" value="{$mod->Lang('save')}">
+      <input type="submit" name="{$actionid}cancel" data-ui-icon="ui-icon-cancel" value="{$mod->Lang('cancel')}">
     </div>
   </div>
   <div style="clear: both;"></div>

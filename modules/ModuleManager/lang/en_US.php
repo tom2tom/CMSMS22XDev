@@ -34,7 +34,7 @@ $lang['confirm_reseturl'] = 'Are you sure you want to reset the repository URL?'
 $lang['confirm_settings'] = 'Are you sure you want to save these settings?';
 $lang['confirm_remove'] = 'Are you sure you want to remove this modules files from the file system';
 $lang['confirm_upgrade'] = 'Are you sure you want to upgrade this module?';
-$lang['compatibility_disclaimer'] = 'The modules displayed here are contributed by both the CMSMS Developers and independent third parties.  We make no guarantees that the modules available here are functional, tested, or compatible with your system.  You are encouraged to read the information found in the help and about links for each module before attempting the installation.';
+$lang['compatibility_disclaimer'] = 'Modules are contributed to the Forge by CMSMS Developers and independent developers.  We make no guarantees that the modules displayed here are functional, tested, or compatible with this site.  You are encouraged to read the information found in the help and about links for each module before attempting its installation.';
 
 // D
 $lang['db_newer'] = 'Database Version Newer';

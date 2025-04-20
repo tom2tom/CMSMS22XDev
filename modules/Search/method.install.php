@@ -8,60 +8,64 @@ if( cmsms()->test_state(CmsApp::STATE_INSTALL) ) {
 }
 
 $dict = NewDataDictionary($db);
-$flds = "
-	id I KEY,
-	module_name C(100),
-	content_id I,
-	extra_attr C(100),
-	expires DT
-";
-$taboptarray = array('mysql' => 'ENGINE=InnoDB', 'mysqli' => 'ENGINE=InnoDB'); // transactions will be used on this table
+$flds = '
+id I KEY,
+module_name C(100),
+content_id I,
+extra_attr C(100),
+expires DT
+';
+$taboptarray = array('mysqli' => 'ENGINE=InnoDB', 'mysql' => 'ENGINE=InnoDB'); // transactions will be used
 $sqlarray = $dict->CreateTableSQL(CMS_DB_PREFIX.'module_search_items', $flds, $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 
-$db->CreateSequence(CMS_DB_PREFIX."module_search_items_seq");
+$db->CreateSequence(CMS_DB_PREFIX.'module_search_items_seq');
 
-$sqlarray = $dict->CreateIndexSQL('module_name', CMS_DB_PREFIX."module_search_items", 'module_name');
+$sqlarray = $dict->CreateIndexSQL('module_name', CMS_DB_PREFIX.'module_search_items', 'module_name');
 $dict->ExecuteSQLArray($sqlarray);
 
-$sqlarray = $dict->CreateIndexSQL('content_id', CMS_DB_PREFIX."module_search_items", 'content_id');
+$sqlarray = $dict->CreateIndexSQL('content_id', CMS_DB_PREFIX.'module_search_items', 'content_id');
 $dict->ExecuteSQLArray($sqlarray);
 
-$sqlarray = $dict->CreateIndexSQL('extra_attr', CMS_DB_PREFIX."module_search_items", 'extra_attr');
+$sqlarray = $dict->CreateIndexSQL('extra_attr', CMS_DB_PREFIX.'module_search_items', 'extra_attr');
 $dict->ExecuteSQLArray($sqlarray);
 
-$flds = "
-	item_id I,
-	word C(255),
-	count I
-";
+$flds = '
+item_id I,
+word C(255),
+count I
+';
 $sqlarray = $dict->CreateTableSQL(CMS_DB_PREFIX.'module_search_index', $flds, $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 
-$sqlarray = $dict->CreateIndexSQL(CMS_DB_PREFIX.'index_search_count', CMS_DB_PREFIX."module_search_index", 'count');
+$sqlarray = $dict->CreateIndexSQL(CMS_DB_PREFIX.'index_search_count', CMS_DB_PREFIX.'module_search_index', 'count');
 $dict->ExecuteSQLArray($sqlarray);
 
-$flds = "
-	word C(255) KEY,
-	count I
-";
-$taboptarray = array('mysql' => 'ENGINE=MyISAM', 'mysqli' => 'ENGINE=MyISAM');
+$flds = '
+word C(255) KEY,
+count I
+';
+$taboptarray = array('mysqli' => 'ENGINE=MyISAM', 'mysql' => 'ENGINE=MyISAM');
 $sqlarray = $dict->CreateTableSQL(CMS_DB_PREFIX.'module_search_words', $flds, $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 
 // Indexes
 $sqlarray = $dict->CreateIndexSQL(CMS_DB_PREFIX.'index_search_items',
-				   CMS_DB_PREFIX.'module_search_items',
-				   'module_name,content_id');
+			CMS_DB_PREFIX.'module_search_items',
+			'module_name,content_id');
 $dict->ExecuteSQLArray($sqlarray);
 $sqlarray = $dict->CreateIndexSQL(CMS_DB_PREFIX.'index_search_index',
-				   CMS_DB_PREFIX.'module_search_index',
-				   'word');
+			CMS_DB_PREFIX.'module_search_index',
+			'word');
 $dict->ExecuteSQLArray($sqlarray);
 
+// Preferences
+$this->SetPreference('alpharesults', 0);
+$this->SetPreference('resultpage', 0);
+$this->SetPreference('savephrases', 0);
+$this->SetPreference('searchtext', 'Enter wanted text ...'); //TODO something translated
 $this->SetPreference('stopwords', $this->DefaultStopWords());
-$this->SetPreference('usestemming', 'false');
-$this->SetPreference('searchtext','Enter Search...');
+$this->SetPreference('usestemming', 0);
 
 try {
     $searchform_type = new CmsLayoutTemplateType();
@@ -96,7 +100,7 @@ try {
         }
     }
     catch( Exception $e ) {
-        audit('',$this->GetName(),'Installation error: '.$e->GetMessage());
+        audit('', $this->GetName(), 'Installation error: '.$e->GetMessage());
     }
 
     $searchresults_type = new CmsLayoutTemplateType();
@@ -120,12 +124,10 @@ catch( CmsException $e ) {
     audit('',$this->GetName(),'Installation error: '.$e->GetMessage());
 }
 
-//---------------------
-// Permissions
-//---------------------
-
+// Permission
 $this->CreatePermission('Manage Search',lang('perm_Manage_Search'));//TODO migrate to module-lang
 
+// Events
 $this->CreateEvent('SearchInitiated');
 $this->CreateEvent('SearchCompleted');
 $this->CreateEvent('SearchItemAdded');
@@ -133,7 +135,8 @@ $this->CreateEvent('SearchItemDeleted');
 $this->CreateEvent('SearchAllItemsDeleted');
 
 $this->RegisterEvents();
-$this->RegisterModulePlugin(true);
+
+$this->RegisterModulePlugin(TRUE);
 $this->RegisterSmartyPlugin('search','function','function_plugin');
 
 $this->Reindex();

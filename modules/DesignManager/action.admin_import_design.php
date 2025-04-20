@@ -60,7 +60,9 @@ try {
       echo $this->ShowErrors($e->GetMessage());
     }
 
-    echo $this->ProcessTemplate('admin_import_design.tpl');
+    $modname = $this->GetName();
+    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_import_design.tpl",null,$modname,$smarty);
+    $tpl->display();
     break;
 
   case 2:
@@ -97,20 +99,21 @@ try {
       }
 
       // suggest a new name for the 'theme'.
-      $smarty = cmsms()->GetSmarty();
-      $smarty->assign('tmpfile',$tmpfile);
-      $smarty->assign('cms_version',CMS_VERSION);
+      $modname = $this->GetName();
+      $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_import_design2.tpl",null,$modname,$smarty);
+      $tpl->assign('tmpfile',$tmpfile);
+      $tpl->assign('cms_version',CMS_VERSION);
       $design_info = $reader->get_design_info();
-      $smarty->assign('design_info',$design_info);
-      $smarty->assign('templates',$reader->get_template_list());
-      $smarty->assign('stylesheets',$reader->get_stylesheet_list());
+      $tpl->assign('design_info',$design_info);
+      $tpl->assign('templates',$reader->get_template_list());
+      $tpl->assign('stylesheets',$reader->get_stylesheet_list());
       $newname = CmsLayoutCollection::suggest_name($design_info['name']);
-      $smarty->assign('new_name',$newname);
+      $tpl->assign('new_name',$newname);
+      $tpl->display();
     }
     catch( CmsException $e ) {
       echo $this->ShowErrors($e->GetMessage());
     }
-    echo $this->ProcessTemplate('admin_import_design2.tpl');
     break;
 
   case 3:

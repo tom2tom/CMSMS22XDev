@@ -46,7 +46,8 @@ else {
 }
 
 $cache_id = '|nav'.md5(serialize($params));
-$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),$cache_id,null,$smarty);
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),$cache_id,$modname,$smarty);
 if( !$tpl->isCached() ) {
     //
     // initialization

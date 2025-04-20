@@ -618,6 +618,26 @@ div.pagecontainer .h-inside {
 .hidden {
 	display: none !important;
 }
+.startside {
+	float: left;
+}
+.startside.last::after {
+	clear: left;
+}
+.endside {
+	float: right;
+}
+.endside.last::after {
+	clear: right;
+}
+.startalign {
+	text-align: start;
+	text-align: left;
+}
+.endalign {
+	text-align: end;
+	text-align: right;
+}
 /* Format code chunks */
 pre, code, samp, kbd {
 	font-family: 'Lucida Console', 'Lucida Sans Typewriter', 'Courier New', monospace;
@@ -1616,6 +1636,16 @@ a.pageoptions {
 	color: #585858;
 	display: inline;
 	cursor: pointer;
+}
+.dialogoptions {
+	float: right;
+	width: auto;
+	margin: 0;
+	padding: 2px 0;
+	text-align: left;
+}
+.dialogoptions::after {
+	clear: right;
 }
 img.systemicon {
 	border: none;

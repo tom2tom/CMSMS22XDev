@@ -16,29 +16,38 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-if (!function_exists("cmsms")) exit;
-if (!$this->CheckPermission("Modify Files") && !$this->AdvancedAccessAllowed()) exit;
-if (isset($params["cancel"])) $this->Redirect($id,"defaultadmin",$returnid,$params);
+use CMSMS\FileTypeHelper;
 
-$selall = $params['selall'];
-if( !is_array($selall) ) $selall = unserialize($selall);
-if (count($selall)==0) {
-    $params["fmerror"]="nofilesselected";
-    $this->Redirect($id,"defaultadmin",$returnid,$params);
+if( !function_exists('cmsms') ) exit;
+if( !($this->CheckPermission('Modify Files') || $this->AdvancedAccessAllowed()) ) exit;
+
+if( isset($params['cancel']) ) {
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
+}
+
+$selall = (!empty($params['selall'])) ? $params['selall'] : '';
+if( $selall && !is_array($selall) ) {
+  $tmp = @unserialize($selall, ['allowed_classes'=>[]]); // mask possible E_WARNING
+  $selall = ($tmp !== false) ? $tmp : [$selall];
+  $params['selall'] = $selall;
+}
+if( !$selall ) {
+    $params['fmerror'] = 'nofilesselected';
+    $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 
 foreach( $selall as &$one ) {
     $one = $this->decodefilename($one);
 }
+unset($one);
 
-$config=cmsms()->GetConfig();
-$cwd = filemanager_utils::get_cwd();
 $dirlist = filemanager_utils::get_dirlist();
-if( !count($dirlist) ) {
-    $params["fmerror"]="nodestinationdirs";
-    $this->Redirect($id,"defaultadmin",$returnid,$params);
+if( !$dirlist ) {
+    $params['fmerror'] = 'nodestinationdirs';
+    $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 
+$cwd = filemanager_utils::get_cwd();
 $errors = array();
 $destloc = '';
 if( isset($params['submit']) ) {
@@ -46,15 +55,16 @@ if( isset($params['submit']) ) {
     if( $destdir == $cwd ) $errors[] = $this->Lang('movedestdirsame');
 
     $advancedmode = filemanager_utils::check_advanced_mode();
-    $basedir = $config['uploads_path'];
-    if( $advancedmode ) $basedir = $config['root_path'];
+    $basedir = ( $advancedmode ) ? CMS_ROOT_PATH : $config['uploads_path'];
 
-    if( count($errors) == 0 ) {
+    if( !$errors ) {
         $destloc = filemanager_utils::join_path($basedir,$destdir);
-        if( !is_dir($destloc) || ! is_writable($destloc) ) $errors[] = $this->Lang('invalidmovedir');
+        if( !is_dir($destloc) || ! is_writable($destloc) ) {
+            $errors[] = $this->Lang('invalidmovedir');
+        }
     }
 
-    if( count($errors) == 0 ) {
+    if( !$errors ) {
         foreach( $selall as $file ) {
             $src = filemanager_utils::join_path(CMS_ROOT_PATH,$cwd,$file);
             $dest = filemanager_utils::join_path($basedir,$destdir,$file);
@@ -112,22 +122,26 @@ if( isset($params['submit']) ) {
                 }
             }
         } // foreach
-    } // no errors
+    } // no error
 
-    if( count($errors) == 0 ) {
-        $paramsnofiles["fmmessage"]="movesuccess"; //strips the file data
-        $this->Redirect($id,"defaultadmin",$returnid,$paramsnofiles);
+    if( !$errors ) {
+        $paramsnofiles['fmmessage'] = 'movesuccess'; //strips the file data
+        $this->Redirect($id,'defaultadmin',$returnid,$paramsnofiles);
     }
 } // submit
 
-if( count($errors) ) echo $this->ShowErrors($errors);
-if( is_array($params['selall']) ) $params['selall'] = serialize($params['selall']);
-$smarty->assign('startform', $this->CreateFormStart($id, 'fileaction', $returnid,"post","",false,"",$params));
-$smarty->assign('endform', $this->CreateFormEnd());
-$smarty->assign('cwd','/'.$cwd);
-$smarty->assign('dirlist',$dirlist);
-$smarty->assign('selall',$selall);
-$smarty->assign('mod',$this);
-echo $this->ProcessTemplate('move.tpl');
+if( $errors ) echo $this->ShowErrors($errors);
+$params['selall'] = (count($selall) > 1) ? serialize($params['selall']) : reset($params['selall']);
+
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;move.tpl",null,$modname,$smarty);
+
+$tpl->assign('startform', $this->CreateFormStart($id,'fileaction',$returnid,'post','',false,'',$params));
+$tpl->assign('endform', $this->CreateFormEnd());
+$tpl->assign('cwd','/'.$cwd); //DIRECTORY_SEPARATOR?
+$tpl->assign('dirlist',$dirlist);
+$tpl->assign('selall',$selall); //un-munged
+
+$tpl->display();
 
 ?>

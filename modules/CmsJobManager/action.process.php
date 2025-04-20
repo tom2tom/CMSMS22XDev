@@ -120,7 +120,7 @@ try {
                 $this->delete_job($job);
             }
             $this->set_current_job(null);
-            if( $config['developer_mode'] ) audit('',$this->GetName(),'Processed job '.$job->name);
+            if( !empty($config['developer_mode']) ) audit('',$this->GetName(),'Processed job '.$job->name);
         }
         catch( \Exception $e ) {
             $job = $this->get_current_job();

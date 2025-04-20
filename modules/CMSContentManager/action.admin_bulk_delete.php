@@ -161,10 +161,12 @@ if( count($displaydata) == 0 ) {
   $this->SetError($this->Lang('error_delete_novalidpages'));
   $this->RedirectToAdminTab();
 }
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_bulk_delete.tpl",null,$modname,$smarty);
 
-$smarty->assign('multicontent',base64_encode(serialize($pagelist)));
-$smarty->assign('displaydata',$displaydata);
-echo $this->ProcessTemplate('admin_bulk_delete.tpl');
+$tpl->assign('multicontent',base64_encode(serialize($pagelist)));
+$tpl->assign('displaydata',$displaydata);
+$tpl->display();
 #
 # EOF
 #

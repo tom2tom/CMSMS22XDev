@@ -33,7 +33,7 @@ class UserGuide extends CMSModule
     public function GetAuthorEmail() { return ''; } // ditto
     public function GetChangeLog() { return file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'doc'.DIRECTORY_SEPARATOR.'changelog.htm'); }
     public function GetName() { return 'UserGuide'; }
-    public function GetVersion() { return '2.0'; }
+    public function GetVersion() { return '2.0.1'; }
     public function HasAdmin() { return true; }
     public function IsPluginModule() { return true; }
     public function LazyLoadAdmin() { return true; }

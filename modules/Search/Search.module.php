@@ -34,8 +34,7 @@ class Search extends CMSModule
     private function load_tools()
     {
         if( !$this->_tools_loaded ) {
-            $fn = __DIR__.'/search.tools.php';
-            include_once($fn);
+            require_once __DIR__.DIRECTORY_SEPARATOR.'search.tools.php';
             $this->_tools_loaded = true;
         }
     }
@@ -47,14 +46,14 @@ class Search extends CMSModule
     public function IsPluginModule() { return true; }
     public function HasAdmin() { return true; }
     public function HandlesEvents () { return true; }
-    public function GetVersion() { return '1.54'; }
-    public function MinimumCMSVersion() { return '1.12'; }
+    public function GetVersion() { return '1.55'; }
+    public function MinimumCMSVersion() { return '2.0'; }
     public function GetAdminDescription() { return $this->Lang('description'); }
     public function VisibleToAdminUser() { return $this->CheckPermission('Manage Search'); }
     public function GetHelp() { return $this->Lang('help'); }
     public function GetAuthor() { return 'Ted Kulp'; }
     public function GetAuthorEmail() { return 'ted@cmsmadesimple.org'; }
-    public function GetChangeLog() { return @file_get_contents(__DIR__.'/changelog.inc'); }
+    public function GetChangeLog() { return @file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'changelog.htm'); }
     public function GetEventDescription( $eventname ) { return $this->lang('eventdesc-' . $eventname); }
     public function GetEventHelp( $eventname ) { return $this->lang('eventhelp-' . $eventname); }
 

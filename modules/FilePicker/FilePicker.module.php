@@ -75,7 +75,7 @@ final class FilePicker extends CMSModule implements FilePickerInterface
     public function GetDependencies() { return array('FileManager' => '0.4'); }
     public function GetFriendlyName() { return $this->Lang('friendlyname'); }
     public function GetHelp() { return $this->Lang('help'); }
-    public function GetVersion() { return '1.0.7'; }
+    public function GetVersion() { return '1.0.8'; }
     public function HasAdmin() { return TRUE; }
 //  public function IsAdminOnly() { return FALSE; } default
 //  public function IsPluginModule() { return FALSE; } default
@@ -190,15 +190,16 @@ final class FilePicker extends CMSModule implements FilePickerInterface
 
         // store the profile as a 'useonce' and add its signature to the params on the url
         $sig = TemporaryProfileStorage::set( $profile );
-        $smarty = cmsms()->GetSmarty(); // $this->_GetTemplateObject();
-        $tpl_ob = $smarty->CreateTemplate($this->GetTemplateResource('contentblock.tpl'), null, null, $smarty);
-        $tpl_ob->assign('mod', $this);
-        $tpl_ob->assign('sig', $sig);
-        $tpl_ob->assign('blockName', $name);
-        $tpl_ob->assign('value', $value);
-        $tpl_ob->assign('instance', $_instance);
-        $tpl_ob->assign('profile', $profile);
-        $tpl_ob->assign('required', $required);
+        $smarty = cmsms()->GetSmarty(); // OR $this->_GetTemplateObject() ?
+        $modname = $this->GetName();
+        $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;contentblock.tpl", null, $modname, $smarty);
+        $tpl->assign('mod', $this);
+        $tpl->assign('sig', $sig);
+        $tpl->assign('blockName', $name);
+        $tpl->assign('value', $value);
+        $tpl->assign('instance', $_instance);
+        $tpl->assign('profile', $profile);
+        $tpl->assign('required', $required);
         switch( $profile->type ) {
         case FileType::TYPE_IMAGE:
             $key = 'select_an_image';
@@ -226,8 +227,8 @@ final class FilePicker extends CMSModule implements FilePickerInterface
             $key = 'select_a_file';
             break;
         }
-        $tpl_ob->assign('title', $this->Lang($key));
-        return $tpl_ob->fetch();
+        $tpl->assign('title', $this->Lang($key));
+        return $tpl->fetch();
     }
 
     // INTERNAL UTILITY FUNCTION
@@ -278,7 +279,7 @@ final class FilePicker extends CMSModule implements FilePickerInterface
         default:
             if( $this->_typehelper->is_executable($fullpath) ) {
                 $config = cms_config::get_instance();
-                if( !$config['developer_mode'] ) {
+                if( empty($config['developer_mode']) ) {
                     return FALSE;
                 }
             }

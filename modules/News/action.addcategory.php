@@ -8,7 +8,7 @@ if (!$this->CheckPermission('Modify Site Preferences')) return;
 if (isset($params['cancel'])) $this->RedirectToAdminTab('categories','','admin_settings');
 $parent = -1;
 if( isset($params['parent'])) $parent = (int)$params['parent'];
-
+$me = $this->GetName();
 $name = '';
 if (isset($params['name'])) {
     //if( $parent == 0 ) $parent = -1;
@@ -34,7 +34,7 @@ if (isset($params['name'])) {
 
             HookManager::do_hook('News::NewsCategoryAdded', [ 'category_id'=>$catid, 'name'=>$name ]);
             // put mention into the admin log
-            audit($catid, $this->GetName().' category', "Added: $name");
+            audit($catid, $me.' category', "Added: $name");
 
             $this->SetMessage($this->Lang('categoryadded'));
             $this->RedirectToAdminTab('categories','','admin_settings');
@@ -48,17 +48,19 @@ if (isset($params['name'])) {
 // Display template
 $tmp = news_ops::get_category_list();
 $tmp2 = array_flip($tmp);
-$categories = array(-1=>$this->Lang('none'));
+$categories = array(-1 => $this->Lang('none'));
 foreach( $tmp2 as $k => $v ) {
     $categories[$k] = $v;
 }
-$smarty->assign('parent',$parent);
-$smarty->assign('name',$name);
-$smarty->assign('categories',$categories);
-$smarty->assign('startform', $this->CreateFormStart($id, 'addcategory', $returnid));
-$smarty->assign('endform', $this->CreateFormEnd());
-$smarty->assign('inputname', $this->CreateInputText($id, 'name', $name, 20, 255));
-$smarty->assign('submit', $this->CreateInputSubmit($id, 'submit', lang('submit')));
-$smarty->assign('cancel', $this->CreateInputSubmit($id, 'cancel', lang('cancel')));
-$smarty->assign('mod',$this);
-echo $this->ProcessTemplate('editcategory.tpl');
+$tpl = $smarty->CreateTemplate("module_file_tpl:$me;editcategory.tpl", null, $me, $smarty);
+
+$tpl->assign('parent', $parent);
+$tpl->assign('name', $name);
+$tpl->assign('categories', $categories);
+$tpl->assign('startform', $this->CreateFormStart($id, 'addcategory', $returnid));
+$tpl->assign('endform', $this->CreateFormEnd());
+$tpl->assign('inputname', $this->CreateInputText($id, 'name', $name, 20, 255));
+$tpl->assign('submit', $this->CreateInputSubmit($id, 'submit', lang('submit')));
+$tpl->assign('cancel', $this->CreateInputSubmit($id, 'cancel', lang('cancel')));
+
+$tpl->display();

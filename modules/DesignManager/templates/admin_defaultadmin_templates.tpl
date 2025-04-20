@@ -54,7 +54,7 @@ $(function() {
 
   $(document).on('click', '#tpl_bulk_submit', function() {
     var n = $('input:checkbox:checked.tpl_select').length;
-    if (n == 0) {
+    if (n === 0) {
       cms_alert("{$mod->Lang('error_nothingselected')|escape:'javascript'}");
       return false;
     }
@@ -63,35 +63,55 @@ $(function() {
   $('#template_area').on('click', '#edittplfilter', function() {
     $('#filterdialog').dialog({
       width: 'auto',
-      buttons: {
-        "{$mod->Lang('submit')|escape:'javascript'}": function() {
-          $(this).dialog('close');
-          $('#filterdialog_form').trigger('submit');
-        },
-        "{$mod->Lang('reset')|escape:'javascript'}": function() {
-          $(this).dialog('close');
-          $('#submit_filter_tpl').val('-1');
-          $('#filterdialog_form').trigger('submit');
-        },
-        "{$mod->Lang('cancel')|escape:'javascript'}": function() {
-          $(this).dialog('close');
+      buttons: [
+       {
+        text: "{$mod->Lang('submit')|escape:'javascript'}",
+        icon: 'ui-icon-check',
+        click: function() {
+         $(this).dialog('close');
+         $('#filterdialog_form').trigger('submit');
         }
-      }
+       },
+       {
+        text: "{$mod->Lang('reset')|escape:'javascript'}",
+        icon: 'ui-icon-arrowrefresh-1-n',
+        click: function() {
+         $(this).dialog('close');
+         $('#submit_filter_tpl').val('-1');
+         $('#filterdialog_form').trigger('submit');
+        }
+       },
+       {
+        text: "{$mod->Lang('cancel')|escape:'javascript'}",
+        icon: 'ui-icon-cancel',
+        click: function() {
+         $(this).dialog('close');
+        }
+       }
+      ]
     });
   });
 {if $has_add_right && !empty($list_types)}
   $(document).on('click', '#addtemplate', function() {
     $('#addtemplatedialog').dialog({
       width: 'auto',
-      buttons: {
-        "{$mod->Lang('submit')|escape:'javascript'}": function() {
-          $(this).dialog('close');
-          $('#addtemplate_form').trigger('submit');
-        },
-        "{$mod->Lang('cancel')|escape:'javascript'}": function() {
-          $(this).dialog('close');
+      buttons: [
+       {
+        text: "{$mod->Lang('submit')|escape:'javascript'}",
+        icon: 'ui-icon-check',
+        click: function() {
+         $(this).dialog('close');
+         $('#addtemplate_form').trigger('submit');
         }
-      }
+       },
+       {
+        text: "{$mod->Lang('cancel')|escape:'javascript'}",
+        icon: 'ui-icon-cancel',
+        click: function() {
+         $(this).dialog('close');
+        }
+       }
+      ]
     });
   });
 {/if}

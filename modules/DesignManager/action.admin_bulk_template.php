@@ -125,12 +125,14 @@ try {
         throw new \LogicException($this->Lang('error_missingparam'));
     }
 
-    $smarty->assign('bulk_op',$bulk_op);
-    $allparms = base64_encode(json_encode(array('tpl_select'=>$params['tpl_select'], 'bulk_action'=>$params['bulk_action'])));
-    $smarty->assign('allparms',$allparms);
-    $smarty->assign('templates',$templates);
+    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_bulk_template.tpl", null, $modname, $smarty);
 
-    echo $this->ProcessTemplate('admin_bulk_template.tpl');
+    $tpl->assign('bulk_op',$bulk_op);
+    $allparms = base64_encode(json_encode(array('tpl_select'=>$params['tpl_select'], 'bulk_action'=>$params['bulk_action'])));
+    $tpl->assign('allparms',$allparms);
+    $tpl->assign('templates',$templates);
+
+    $tpl->display();
 }
 catch( \Exception $e ) {
     // master exception

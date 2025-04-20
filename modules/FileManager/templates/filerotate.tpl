@@ -72,11 +72,11 @@ $(function() {
     <select id="createthumb" name="{$actionid}createthumb">{cms_yesno selected=$createthumb}</select>
   </p>
 </div>
+<br>
 <div class="pageoverflow">
-  <p class="pagetext"></p>
   <p class="pageinput">
-    <input type="submit" name="{$actionid}save" value="{$mod->Lang('save')}">
-    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
+    <input type="submit" name="{$actionid}save" data-ui-icon="ui-icon-arrowrefresh-1-s" value="{$mod->Lang('save')}">
+    <input type="submit" name="{$actionid}cancel" data-ui-icon="ui-icon-cancel" value="{$mod->Lang('cancel')}">
   </p>
 </div>
 {$endform}

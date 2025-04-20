@@ -40,9 +40,9 @@ if( $id == '_preview_' && isset($_SESSION['news_preview']) && isset($params['pre
     }
 }
 
-$tpl_ob = $smarty->CreateTemplate($this->GetTemplateResource($template),$cache_id,$compile_id,$smarty);
-if( $preview || !$tpl_ob->IsCached() ) {
-//$tpl_ob = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
+$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),$cache_id,$compile_id,$smarty);
+if( $preview || !$tpl->IsCached() ) {
+//$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
 //if( $preview ) {
     if( isset($params['articleid']) && $params['articleid'] == -1 ) {
         $article = news_ops::get_latest_article();
@@ -65,22 +65,22 @@ if( $preview || !$tpl_ob->IsCached() ) {
     }
 
     $return_url = $this->CreateReturnLink($id, $returnid, $this->lang('news_return'));
-    $tpl_ob->assign('return_url', $return_url);
-    $tpl_ob->assign('entry', $article);
+    $tpl->assign('return_url', $return_url);
+    $tpl->assign('entry', $article);
 
     $catName = '';
     if (isset($params['category_id'])) {
         $catName = $db->GetOne('SELECT news_category_name FROM '.CMS_DB_PREFIX . 'module_news_categories where news_category_id=?',array((int)$params['category_id']));
     }
-    $tpl_ob->assign('category_name',$catName);
+    $tpl->assign('category_name',$catName);
     unset($params['articleid']);
-    $tpl_ob->assign('category_link',$this->CreateLink($id, 'default', $returnid, $catName, $params));
+    $tpl->assign('category_link',$this->CreateLink($id, 'default', $returnid, $catName, $params));
 
-    $tpl_ob->assign('category_label', $this->Lang('category_label'));
-    $tpl_ob->assign('author_label', $this->Lang('author_label'));
-    $tpl_ob->assign('extra_label', $this->Lang('extra_label'));
+    $tpl->assign('category_label', $this->Lang('category_label'));
+    $tpl->assign('author_label', $this->Lang('author_label'));
+    $tpl->assign('extra_label', $this->Lang('extra_label'));
 }
 
-$tpl_ob->display();
+$tpl->display();
 
 ?>

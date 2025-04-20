@@ -63,12 +63,15 @@ try {
         echo $this->ShowErrors($e->GetMessage());
     }
 
+    $modname = $this->GetName();
+    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_edit_design.tpl",null,$modname,$smarty);
+
     $templates = CmsLayoutTemplate::get_editable_templates(get_userid());
     if( $templates ) {
         usort($templates,function($a,$b) {
-            return strcasecmp($a->get_name(),$b->get_name());
-        });
-        $smarty->assign('all_templates',$templates);
+                return strcasecmp($a->get_name(),$b->get_name());
+            });
+        $tpl->assign('all_templates',$templates);
     }
 
     $stylesheets = CmsLayoutStylesheet::get_all();
@@ -82,8 +85,8 @@ try {
             $out[$stylesheets[$i]->get_id()] = $stylesheets[$i]->get_name();
             $out2[$stylesheets[$i]->get_id()] = $stylesheets[$i];
         }
-        $smarty->assign('list_stylesheets',$out);
-        $smarty->assign('all_stylesheets',$out2);
+        $tpl->assign('list_stylesheets',$out);
+        $tpl->assign('all_stylesheets',$out2);
     }
 
     if( $design->get_id() > 0 ) {
@@ -92,10 +95,11 @@ try {
         CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('new_design'));
     }
 
-    $smarty->assign('manage_stylesheets',$this->CheckPermission('Manage Stylesheets'));
-    $smarty->assign('manage_templates',$this->CheckPermission('Modify Templates'));
-    $smarty->assign('design',$design);
-    echo $this->ProcessTemplate('admin_edit_design.tpl');
+    $tpl->assign('manage_stylesheets',$this->CheckPermission('Manage Stylesheets'));
+    $tpl->assign('manage_templates',$this->CheckPermission('Modify Templates'));
+    $tpl->assign('design',$design);
+
+    $tpl->display();
 }
 catch( CmsException $e ) {
     $this->SetError($e->GetMessage());

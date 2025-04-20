@@ -1,7 +1,8 @@
 {$startform}
   <div class="pageoverflow">
     <p class="pageinput">
-      <input type="submit" name="{$actionid}optionssubmitbutton" value="{$mod->Lang('submit')}">
+      <input type="submit" name="{$actionid}submit" value="{lang('submit')}">
+      <input type="submit" name="{$actionid}cancel" value="{lang('cancel')}">
     </p>
   </div>
 
@@ -49,7 +50,6 @@
       </p>
     </div>
   </fieldset>
-  <br>
 
   <fieldset>
     <legend>{$title_fesubmit_settings}</legend>
@@ -99,7 +99,6 @@
     </fieldset>
 
   </fieldset>
-  <br>
 
   <fieldset>
     <legend>{$title_detail_settings}</legend>
@@ -122,4 +121,11 @@
       </p>
     </div>
   </fieldset>
+
+  <div class="pageoverflow">
+    <p class="pageinput">
+      <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
+      <input type="submit" name="{$actionid}cancel" value="{lang('cancel')}">
+    </p>
+  </div>
 {$endform}

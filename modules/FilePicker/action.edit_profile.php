@@ -49,8 +49,10 @@ try {
         }
     }
 
-    $smarty->assign('profile',$profile);
-    echo $this->ProcessTemplate('edit_profile.tpl');
+    $modname=$this->GetName();
+    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;edit_profile.tpl",null,$modname,$smarty);
+    $tpl->assign('profile',$profile);
+    $tpl->display();
 }
 catch( \CmsInvalidDataException $e ) {
     $this->SetError( $this->Lang( $e->GetMessage() ) );

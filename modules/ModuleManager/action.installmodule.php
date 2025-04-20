@@ -11,12 +11,6 @@
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -62,7 +56,7 @@ try {
                 if( !isset($rec['size']) ) throw new CmsInvalidDataException( $this->Lang('error_missingparams') );
                 $filename = modmgr_utils::get_module_xml($rec['filename'],$rec['size']);
             }
-
+            unset($rec);
             // expand all of the xml files.
             $ops = cmsms()->GetModuleOperations();
             foreach( $modlist as $key => &$rec ) {
@@ -303,21 +297,24 @@ try {
         $this->RedirectToAdminTab();
     }
 
-    $smarty->assign('return_url',$this->create_url($id,'defaultadmin',$returnid, array('__activetab'=>'modules')));
+    $modname = $this->GetName();
+    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;installinfo.tpl", null, $modname, $smarty);
+
+    $tpl->assign('return_url',$this->create_url($id,'defaultadmin',$returnid, array('__activetab'=>'modules')));
     $parms = array('name'=>$module_name,'version'=>$module_version,'filename'=>$module_filename,'size'=>$module_size);
-    $smarty->assign('form_start',$this->CreateFormStart($id, 'installmodule', $returnid, 'post', '', FALSE, '', $parms).
+    $tpl->assign('form_start',$this->CreateFormStart($id, 'installmodule', $returnid, 'post', '', FALSE, '', $parms).
                     $this->CreateInputHidden($id,'modlist',base64_encode(json_encode($alldeps))));
-    $smarty->assign('formend',$this->CreateFormEnd());
-    $smarty->assign('module_name',$module_name);
-    $smarty->assign('module_version',$module_version);
+    $tpl->assign('formend',$this->CreateFormEnd());
+    $tpl->assign('module_name',$module_name);
+    $tpl->assign('module_version',$module_version);
     $tmp = array_keys($alldeps);
     $n = count($tmp) - 1;
     $key = $tmp[$n];
     $action = $alldeps[$key]['action'];
-    $smarty->assign('is_upgrade',($action == 'u')?1:0);
+    $tpl->assign('is_upgrade',($action == 'u')?1:0);
 
-    $smarty->assign('dependencies',$alldeps);
-    echo $this->ProcessTemplate('installinfo.tpl');
+    $tpl->assign('dependencies',$alldeps);
+    $tpl->display();
 }
 catch( Exception $e ) {
     $msg = $e->GetMessage();

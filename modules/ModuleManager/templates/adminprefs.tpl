@@ -45,7 +45,7 @@ $(function() {
     </p>
   </div>
 
-{if isset($developer_mode)}
+{if !empty($developer_mode)}
   <div class="pageoverflow">
     <p class="pagetext"><label for="allowuninstall">{$ModuleManager->Lang('allowuninstall')}:</label>&nbsp;{cms_help key2='help_allowuninstall' title=$ModuleManager->Lang('allowuninstall')}</p>
     <p class="pageinput">
@@ -62,9 +62,8 @@ $(function() {
     </p>
   </div>
 {/if}
-
+  <br>
   <div class="pageoverflow">
-    <p class="pagetext"></p>
     <p class="pageinput">
       <input type="submit" id="settings_submit" name="{$actionid}submit" value="{$ModuleManager->Lang('submit')}">
     </p>

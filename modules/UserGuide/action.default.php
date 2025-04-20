@@ -137,7 +137,7 @@ EOS;
         }
     }
 
-    $tpl = $smarty->CreateTemplate('cms_template:'.$template, null, null, $smarty); //TODO suitable cache/compile parameters
+    $tpl = $smarty->CreateTemplate('cms_template:'.$template, null, $modname, $smarty); //TODO suitable cache parameter $cache_id
     $tpl->assign('iconurl', $this->GetModuleURLPath().'/images/view.png');
     $tpl->assign('guides', $data);
     $tpl->display();
@@ -253,7 +253,7 @@ EOS;
             }
         }
 
-        $tpl = $smarty->CreateTemplate('cms_template:'.$template, null, null, $smarty); //TODO suitable cache parameters $cache_id, $compile_id
+        $tpl = $smarty->CreateTemplate('cms_template:'.$template, null, $modname, $smarty); //TODO suitable cache parameters $cache_id, $compile_id
         $tpl->assign('name', $name);
         $tpl->assign('content', $content2);
         $tpl->display();

@@ -28,7 +28,7 @@
 {/strip}
 {/function}
 
-{if !empty($items)}
+{if !empty($items1)}
 <table class="pagetable scrollable">
 	<thead>
 		<tr>
@@ -44,7 +44,7 @@
 		</tr>
 	</thead>
 	<tbody>
-	{foreach $items as $entry}
+	{foreach $items1 as $entry}
 		{cycle values="row1,row2" assign='rowclass'}
 			<tr class="{$rowclass}"{if $entry->age=='new'} style="font-weight: bold;"{/if}>
 			<td>{get_module_status_icon status=$entry->age}</td>

@@ -8,10 +8,11 @@ if (!$this->CheckPermission('Modify Site Preferences')) return;
 $this->SetCurrentTab('categories');
 if (isset($params['cancel'])) $this->RedirectToAdminTab('','','admin_settings');
 
-$catid = '';
-$row = [];
+$me = $this->GetName();
 $name = '';
 $parentid = -1;
+$row = [];
+$catid = '';
 if( isset($params['catid']) ) {
   $catid = (int)$params['catid'];
   $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_news_categories WHERE news_category_id = ?';
@@ -36,7 +37,7 @@ if( isset($params['submit']) ) {
   else {
     // its an update.
     $query = 'SELECT news_category_id FROM '.CMS_DB_PREFIX.'module_news_categories
-              WHERE parent_id = ? AND news_category_name = ? AND news_category_id != ?';
+WHERE parent_id = ? AND news_category_name = ? AND news_category_id != ?';
     $tmp = $db->GetOne($query,array($parentid,$name,$catid));
     if( $tmp ) {
       echo $this->ShowErrors($this->Lang('error_duplicatename'));
@@ -50,20 +51,20 @@ if( isset($params['submit']) ) {
 
         // gotta figure out a new item order.
         $query = 'SELECT max(item_order) FROM '.CMS_DB_PREFIX.'module_news_categories
-                  WHERE parent_id = ?';
+WHERE parent_id = ?';
         $maxn = (int)$db->GetOne($query,array($parentid));
         $maxn++;
 
         $query = 'UPDATE '.CMS_DB_PREFIX.'module_news_categories SET item_order = item_order - 1
-                  WHERE parent_id = ? AND item_order > ?';
+WHERE parent_id = ? AND item_order > ?';
         $db->Execute($query,array($row['parent_id'],$row['item_order']));
 
         $row['item_order'] = $maxn;
       }
 
       $query = 'UPDATE '.CMS_DB_PREFIX.'module_news_categories
-                SET news_category_name = ?, item_order = ?, parent_id = ?, modified_date = NOW()
-                WHERE news_category_id = ?';
+SET news_category_name = ?, item_order = ?, parent_id = ?, modified_date = NOW()
+WHERE news_category_id = ?';
       $parms = array($name,$row['item_order'],$parentid);
       $parms[] = $catid;
       $db->Execute($query, $parms);
@@ -72,7 +73,7 @@ if( isset($params['submit']) ) {
 
       HookManager::do_hook('News::NewsCategoryEdited', [ 'category_id'=>$catid, 'name'=>$name, 'origname'=>$origname ] );
       // put mention into the admin log
-      audit($catid, $this->GetName().' category', "Edited: $name");
+      audit($catid, $me.' category', "Edited: $name");
 
       $this->SetMessage($this->Lang('categoryupdated'));
       $this->RedirectToAdminTab('categories','','admin_settings');
@@ -89,18 +90,19 @@ foreach( $tmp2 as $k => $v ) {
   $categories[$k] = $v;
 }
 $parms = array('catid'=>$catid);
-$smarty->assign('catid',$catid);
-$smarty->assign('parent',$parentid);
-$smarty->assign('name',$name);
-$smarty->assign('categories',$categories);
-$smarty->assign('startform', $this->CreateFormStart($id, 'editcategory',
-						    $returnid, 'post', '', false, '', $parms));
-$smarty->assign('endform', $this->CreateFormEnd());
-$smarty->assign('nametext', $this->Lang('name'));
-$smarty->assign('inputname', $this->CreateInputText($id, 'name', $name, 20, 255));
-$smarty->assign('submit', $this->CreateInputSubmit($id, 'submit', lang('submit')));
-$smarty->assign('cancel', $this->CreateInputSubmit($id, 'cancel', lang('cancel')));
 
-$smarty->assign('mod',$this);
-echo $this->ProcessTemplate('editcategory.tpl');
+$tpl = $smarty->CreateTemplate("module_file_tpl:$me;editcategory.tpl", null, $me, $smarty);
+$tpl->assign('catid',$catid);
+$tpl->assign('parent',$parentid);
+$tpl->assign('name',$name);
+$tpl->assign('categories',$categories);
+$tpl->assign('startform', $this->CreateFormStart($id, 'editcategory',
+             $returnid, 'post', '', false, '', $parms));
+$tpl->assign('endform', $this->CreateFormEnd());
+$tpl->assign('nametext', $this->Lang('name'));
+$tpl->assign('inputname', $this->CreateInputText($id, 'name', $name, 20, 255));
+$tpl->assign('submit', $this->CreateInputSubmit($id, 'submit', lang('submit')));
+$tpl->assign('cancel', $this->CreateInputSubmit($id, 'cancel', lang('cancel')));
+
+$tpl->display();
 ?>

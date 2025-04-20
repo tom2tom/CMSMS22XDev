@@ -110,13 +110,15 @@ foreach( $pagelist as $pid ) {
     $rec['alias'] = $content->Alias();
     $displaydata[] = $rec;
 }
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_bulk_setdesign.tpl", null, $modname, $smarty);
 
-$smarty->assign('showmore',\cms_userprefs::get('cgcm_bulk_showmore'));
-$smarty->assign('multicontent',$params['multicontent']);
-$smarty->assign('displaydata',$displaydata);
-$smarty->assign('alldesigns',CmsLayoutCollection::get_list());
+$tpl->assign('showmore',\cms_userprefs::get('cgcm_bulk_showmore'));
+$tpl->assign('multicontent',$params['multicontent']);
+$tpl->assign('displaydata',$displaydata);
+$tpl->assign('alldesigns',CmsLayoutCollection::get_list());
 $dflt_design = CmsLayoutCollection::load_default();
-$smarty->assign('dflt_design_id',$dflt_design->get_id());
+$tpl->assign('dflt_design_id',$dflt_design->get_id());
 
 $dflt_tpl_id = -1;
 try {
@@ -126,19 +128,19 @@ try {
 catch( \Exception $e ) {
     // ignore
 }
-$smarty->assign('dflt_tpl_id',$dflt_tpl_id);
+$tpl->assign('dflt_tpl_id',$dflt_tpl_id);
 if( $showmore ) {
     $_tpl = CmsLayoutTemplate::template_query(array('as_list'=>1));
-    $smarty->assign('alltemplates',$_tpl);
+    $tpl->assign('alltemplates',$_tpl);
 }
 else {
     // gotta get the core page template type
     $_type = CmsLayoutTemplateType::load(CmsLayoutTemplateType::CORE.'::page');
     $_tpl = CmsLayoutTemplate::template_query(array('t:'.$_type->get_id(),'as_list'=>1));
-    $smarty->assign('alltemplates',$_tpl);
+    $tpl->assign('alltemplates',$_tpl);
 }
 
-echo $this->ProcessTemplate('admin_bulk_setdesign.tpl');
+$tpl->display();
 
 #
 # EOF

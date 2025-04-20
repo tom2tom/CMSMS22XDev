@@ -22,7 +22,7 @@ if( !isset($gCms) ) exit;
 final class AdminSearch extends CMSModule
 {
   public function GetFriendlyName() { return $this->Lang('friendlyname'); }
-  public function GetVersion() { return '1.0.7'; }
+  public function GetVersion() { return '1.0.8'; }
   public function MinimumCMSVersion() { return '2.2.15'; }
   public function LazyLoadAdmin() { return TRUE; }
   public function LazyLoadFrontend() { return TRUE; }
@@ -32,7 +32,7 @@ final class AdminSearch extends CMSModule
   public function HasAdmin() { return true; }
   public function GetAdminSection() { return 'extensions'; }
   public function GetHelp() { return $this->Lang('help'); }
-  public function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
+  public function GetChangeLog() { return file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'changelog.htm'); }
   public function GetAdminDescription() { return $this->Lang('moddescription'); }
 
   public function VisibleToAdminUser()

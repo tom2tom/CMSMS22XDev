@@ -16,15 +16,15 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-if (!function_exists("cmsms")) exit;
-if (!$this->CheckPermission("Modify Site Preferences") && !$this->AdvancedAccessAllowed()) exit;
+if (!function_exists('cmsms')) exit;
+if (!$this->CheckPermission('Modify Site Preferences')) return;
 
 $this->SetPreference('advancedmode',(int)$params['advancedmode']);
 $this->SetPreference('showhiddenfiles',(int)$params['showhiddenfiles']);
 $this->SetPreference('showthumbnails',(int)$params['showthumbnails']);
 $this->SetPreference('create_thumbnails',(int)$params['create_thumbnails']);
-$this->SetPreference("iconsize",$params["iconsize"]);
-$this->SetPreference("permissionstyle",$params["permissionstyle"]);
+$this->SetPreference('iconsize',$params['iconsize']); //string 32px etc
+$this->SetPreference('permissionstyle',$params['permissionstyle']); //string 'xxx' etc
 
 $this->SetMessage($this->Lang('settingssaved'));
 $this->Redirect($id,'admin_settings',$returnid);

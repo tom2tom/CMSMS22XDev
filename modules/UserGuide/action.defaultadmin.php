@@ -14,7 +14,8 @@ $pmod = $this->CheckPermission(UserGuide::MANAGE_PERM);
 $pset = $pmod || $this->CheckPermission(UserGuide::SETTINGS_PERM);
 $tab = (!empty($params['active_tab'])) ? $params['active_tab'] : '';
 
-$tpl = $smarty->CreateTemplate($this->GetTemplateResource('defaultadmin.tpl'), null, null, $smarty);
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;defaultadmin.tpl", null, $modname, $smarty);
 $tpl->assign('pmod', $pmod)
  ->assign('pset', $pset)
  ->assign('tab', $tab);

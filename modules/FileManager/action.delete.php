@@ -18,20 +18,25 @@
 
 use CMSMS\HookManager;
 
-if (!function_exists("cmsms")) exit;
-if (!$this->CheckPermission("Modify Files") && !$this->AdvancedAccessAllowed()) exit;
-if (isset($params["cancel"])) $this->Redirect($id,"defaultadmin",$returnid,$params);
+if( !function_exists('cmsms') ) exit;
+if( !($this->CheckPermission('Modify Files') || $this->AdvancedAccessAllowed()) ) exit;
 
-$selall = $params['selall'];
-if( !is_array($selall) ) $selall = unserialize($selall);
-if( !is_array($selall) ) $selall = unserialize($selall); //nested serialize or mistake?
-
-if ( !$selall ) {
-  $params["fmerror"]="nofilesselected";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+if( isset($params['cancel']) ) {
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 
-// decode the sellallstuff.
+$selall = (!empty($params['selall'])) ? $params['selall'] : '';
+if( $selall && !is_array($selall) ) {
+  $tmp = @unserialize($selall, ['allowed_classes'=>[]]); // mask possible E_WARNING
+  $selall = ($tmp !== false) ? $tmp : [$selall]; //might have been a (flat) single item
+  $params['selall'] = $selall;
+}
+if ( !$selall ) {
+  $params['fmerror'] = 'nofilesselected';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
+}
+
+// decode the sellall stuff
 foreach( $selall as &$one ) {
   $one = $this->decodefilename($one);
 }
@@ -40,13 +45,12 @@ unset($one);
 // process form
 $errors = array();
 if( isset($params['submit']) ) {
-  $advancedmode = filemanager_utils::check_advanced_mode();
-  $basedir = $config['root_path'];
-  $config = cmsms()->GetConfig();
-
+//$advancedmode = filemanager_utils::check_advanced_mode();
+  $basedir = CMS_ROOT_PATH; //TODO func($advancedmode?)
+  $cwd = filemanager_utils::get_cwd();
   foreach( $selall as $file ) {
     // build complete path
-    $fn = filemanager_utils::join_path($basedir,filemanager_utils::get_cwd(),$file);
+    $fn = filemanager_utils::join_path($basedir,$cwd,$file);
     if( !file_exists($fn) ) continue; // no error here.
 
     if( !is_writable($fn) ) {
@@ -82,27 +86,28 @@ if( isset($params['submit']) ) {
 
     $parms = array('file'=>$fn);
     if( $thumb ) $parms['thumb'] = $thumb;
-    audit('',"FileManager", "Removed $type: ".$fn);
-    HookManager::do_hook('FileManager::OnFileDeleted', $parms);
+    audit('','FileManager', "Removed $type: $fn");
+    HookManager::do_hook('FileManager::OnFileDeleted', $parms); //aka send event
   } // foreach
 
-  if( count($errors) == 0 ) {
-    $paramsnofiles["fmmessage"]="deletesuccess"; //strips the file data
-    $this->Redirect($id,"defaultadmin",$returnid,$paramsnofiles);
+  if( !$errors ) {
+    $paramsnofiles['fmmessage'] = 'deletesuccess'; //strips the file data
+    $this->Redirect($id,'defaultadmin',$returnid,$paramsnofiles);
   }
-} // if submit
+} // submit
 
-// give everything to smarty.
-if( count($errors) ) {
+// give everything to Smarty.
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;delete.tpl",null,$modname,$smarty);
+
+if( $errors ) {
   echo $this->ShowErrors($errors);
-  $smarty->assign('errors',$errors);
+  $tpl->assign('errors',$errors);
 }
-if( is_array($params['selall']) ) $params['selall'] = serialize($params['selall']);
-$smarty->assign('selall',$selall);
-$smarty->assign('mod',$this);
-$smarty->assign('startform', $this->CreateFormStart($id, 'fileaction', $returnid,"post","",false,"",$params));
-$smarty->assign('endform', $this->CreateFormEnd());
 
-echo $this->ProcessTemplate('delete.tpl');
+$tpl->assign('selall', $selall); //un-munged data for UI display
+$params['selall'] = (count($selall) > 1) ? serialize($params['selall']) : reset($params['selall']);
+$tpl->assign('startform', $this->CreateFormStart($id,'fileaction',$returnid,'post','',false,'',$params));
+$tpl->assign('endform', $this->CreateFormEnd());
 
-?>
+$tpl->display();

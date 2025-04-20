@@ -805,20 +805,20 @@ function endswith( $str, $sub )
  */
 function munge_string_to_url($alias, $tolower = false, $withslash = false)
 {
-  $alias = (string)$alias;
-  if( $tolower ) $alias = mb_strtolower($alias);
+    $alias = (string)$alias;
+    if( $tolower ) $alias = mb_strtolower($alias);
 
-  // remove invalid chars
-  $expr = '/[^\p{L}_\-\.\ \d]/u';
-  if( $withslash ) $expr = '/[^\p{L}_\.\-\ \d\/]/u';
-  $tmp = trim( preg_replace($expr,'',$alias) );
+    // remove invalid chars
+    $expr = '/[^\p{L}_\-\.\ \d]/u';
+    if( $withslash ) $expr = '/[^\p{L}_\.\-\ \d\/]/u';
+    $tmp = trim( preg_replace($expr,'',$alias) );
 
-  // remove extra dashes and spaces.
-  $tmp = str_replace(' ','-',$tmp);
-  $tmp = str_replace('---','-',$tmp);
-  $tmp = str_replace('--','-',$tmp);
+    // remove extra dashes and spaces.
+    $tmp = str_replace(' ','-',$tmp);
+    $tmp = str_replace('---','-',$tmp);
+    $tmp = str_replace('--','-',$tmp);
 
-  return trim($tmp);
+    return trim($tmp);
 }
 
 
@@ -833,36 +833,36 @@ function munge_string_to_url($alias, $tolower = false, $withslash = false)
  */
 function cleanValue($val)
 {
-  if( $val == "" ) return $val;
-  //Replace odd spaces with safe ones
-  $val = str_replace(" ", " ", $val);
-  $val = str_replace(chr(0xCA), "", $val);
-  //Encode any HTML to entities (including \n --> <br>)
-  $_cleanHtml = function($string,$remove = false) {
-    if( $remove ) {
-      $string = strip_tags($string);
-    }
-    else {
-      $patterns = array("/&(?!amp;)/", "/%/", "/</", "/>/", '/"/', "/'/", "/\(/", "/\)/", "/\+/", "/-/");
-      $replacements = array("&amp;", "&#37;", "&lt;", "&gt;", "&quot;", "&#39;", "&#40;", "&#41;", "&#43;", "&#45;");
-      $string = preg_replace($patterns, $replacements, $string);
-    }
-    return $string;
-  };
-  $val = $_cleanHtml($val);
-  //Double-check special chars and remove carriage returns
-  //For increased SQL security
-  $val = preg_replace("/\\\$/", "$", $val);
-  $val = preg_replace("/\r/", "", $val);
-  $val = str_replace("!", "!", $val);
-  $val = str_replace("'", "'", $val);
-  //Allow unicode (?)
-  $val = preg_replace("/&amp;#([0-9]+);/s", "&#\\1;", $val);
-  //Add slashes for SQL
-  //$val = $this->sql($val);
-  //Swap user-inputted backslashes (?)
-  $val = preg_replace("/\\\(?!&amp;#|\?#)/", "\\", $val);
-  return $val;
+    if( $val == "" ) return $val;
+    //Replace odd spaces with safe ones
+    $val = str_replace(" ", " ", $val);
+    $val = str_replace(chr(0xCA), "", $val);
+    //Encode any HTML to entities (including \n --> <br>)
+    $_cleanHtml = function($string,$remove = false) {
+        if( $remove ) {
+            $string = strip_tags($string);
+        }
+        else {
+            $patterns = array("/&(?!amp;)/", "/%/", "/</", "/>/", '/"/', "/'/", "/\(/", "/\)/", "/\+/", "/-/");
+            $replacements = array("&amp;", "&#37;", "&lt;", "&gt;", "&quot;", "&#39;", "&#40;", "&#41;", "&#43;", "&#45;");
+            $string = preg_replace($patterns, $replacements, $string);
+        }
+        return $string;
+    };
+    $val = $_cleanHtml($val);
+    //Double-check special chars and remove carriage returns
+    //For increased SQL security
+    $val = preg_replace("/\\\$/", "$", $val);
+    $val = preg_replace("/\r/", "", $val);
+    $val = str_replace("!", "!", $val);
+    $val = str_replace("'", "'", $val);
+    //Allow unicode (?)
+    $val = preg_replace("/&amp;#([0-9]+);/s", "&#\\1;", $val);
+    //Add slashes for SQL
+    //$val = $this->sql($val);
+    //Swap user-inputted backslashes (?)
+    $val = preg_replace("/\\\(?!&amp;#|\?#)/", "\\", $val);
+    return $val;
 }
 
 
@@ -875,51 +875,51 @@ function cleanValue($val)
  */
 function can_admin_upload()
 {
-  /*
-  first, check to see if safe mode is enabled
-  if it is, then check to see the owner of the index.php, moduleinterface.php
-  and the uploads and modules directory.  if they all match, then we
-  can upload files.
-  if safe mode is off, then we just have to check the permissions.
-  */
-  $config = CmsApp::get_instance()->GetConfig();
-  $file_index = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.'index.php';
-  $file_moduleinterface = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.
+    /*
+    first, check to see if safe mode is enabled
+    if it is, then check to see the owner of the index.php, moduleinterface.php
+    and the uploads and modules directory.  if they all match, then we
+    can upload files.
+    if safe mode is off, then we just have to check the permissions.
+    */
+    $config = CmsApp::get_instance()->GetConfig();
+    $file_index = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.'index.php';
+    $file_moduleinterface = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.
     $config['admin_dir'].DIRECTORY_SEPARATOR.'moduleinterface.php';
-  $dir_uploads = $config['uploads_path']; //for {content_image} tags c.f. 'image_uploads_path' for content
-  $dir_modules = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.'modules';
+    $dir_uploads = $config['uploads_path']; //for {content_image} tags c.f. 'image_uploads_path' for content
+    $dir_modules = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.'modules';
 
-  $stat_index = @stat($file_index);
-  $stat_moduleinterface = @stat($file_moduleinterface);
-  $stat_uploads = @stat($dir_uploads);
-  $stat_modules = @stat($dir_modules);
+    $stat_index = @stat($file_index);
+    $stat_moduleinterface = @stat($file_moduleinterface);
+    $stat_uploads = @stat($dir_uploads);
+    $stat_modules = @stat($dir_modules);
 
-  $my_uid = @getmyuid();
+    $my_uid = @getmyuid();
 
-  if( $my_uid === FALSE || $stat_index == FALSE ||
+    if( $my_uid === FALSE || $stat_index == FALSE ||
       $stat_moduleinterface == FALSE || $stat_uploads == FALSE ||
       $stat_modules == FALSE ) {
-    // couldn't get some necessary information.
-    return FALSE;
-  }
-
-  $safe_mode = ini_get_boolean('safe_mode');
-  if( $safe_mode ) {
-    // we're in safe mode.
-    if( ($stat_moduleinterface[4] != $stat_modules[4]) ||
-        ($stat_moduleinterface[4] != $stat_uploads[4]) ||
-        ($my_uid != $stat_moduleinterface[4]) ) {
-      // owners don't match
-      return FALSE;
+        // couldn't get some necessary information.
+        return FALSE;
     }
-  }
 
-  // now check to see if we can write to the directories
-  if( !is_writable( $dir_modules ) ) return FALSE;
-  if( !is_writable( $dir_uploads ) ) return FALSE;
+    $safe_mode = ini_get_boolean('safe_mode');
+    if( $safe_mode ) {
+        // we're in safe mode.
+        if( ($stat_moduleinterface[4] != $stat_modules[4]) ||
+            ($stat_moduleinterface[4] != $stat_uploads[4]) ||
+            ($my_uid != $stat_moduleinterface[4]) ) {
+            // owners don't match
+            return FALSE;
+        }
+    }
 
-  // It all worked.
-  return TRUE;
+    // now check to see if we can write to the directories
+    if( !is_writable( $dir_modules ) ) return FALSE;
+    if( !is_writable( $dir_uploads ) ) return FALSE;
+
+    // It all worked.
+    return TRUE;
 }
 
 
@@ -931,12 +931,12 @@ function can_admin_upload()
  */
 function ini_get_boolean($str)
 {
-  $val1 = ini_get($str);
-  $val2 = strtolower($val1);
+    $val1 = ini_get($str);
+    $val2 = strtolower($val1);
 
-  $ret = 0;
-  if( $val2 == 1 || $val2 == '1' || $val2 == 'yes' || $val2 == 'true' || $val2 == 'on' ) $ret = 1;
-  return $ret;
+    $ret = 0;
+    if( $val2 == 1 || $val2 == '1' || $val2 == 'yes' || $val2 == 'true' || $val2 == 'on' ) $ret = 1;
+    return $ret;
 }
 
 
@@ -947,16 +947,16 @@ function ini_get_boolean($str)
  */
 function stack_trace()
 {
-  $stack = debug_backtrace();
-  foreach( $stack as $elem ) {
-    if( $elem['function'] == 'stack_trace' ) continue;
-    if( isset($elem['file'])  ) {
-      echo $elem['file'].':'.$elem['line'].' - '.$elem['function'].'<br>';
+    $stack = debug_backtrace();
+    foreach( $stack as $elem ) {
+        if( $elem['function'] == 'stack_trace' ) continue;
+        if( isset($elem['file'])  ) {
+            echo $elem['file'].':'.$elem['line'].' - '.$elem['function'].'<br>';
+        }
+        else {
+            echo ' - '.$elem['function'].'<br>';
+        }
     }
-    else {
-      echo ' - '.$elem['function'].'<br>';
-    }
-  }
 }
 
 
@@ -970,17 +970,17 @@ function stack_trace()
  */
 function cms_move_uploaded_file( $tmpfile, $destination )
 {
-  $config = CmsApp::get_instance()->GetConfig();
-  // reject browser-executable files
-  $helper = new \CMSMS\FileTypeHelper($config);
-  if( $helper->is_executable($destination) ) {
-    //TODO report|log error or throw new Exception(lang(''))
-    return FALSE;
-  }
+    $config = CmsApp::get_instance()->GetConfig();
+    // reject browser-executable files
+    $helper = new \CMSMS\FileTypeHelper($config);
+    if( $helper->is_executable($destination) ) {
+        //TODO report|log error or throw new Exception(lang(''))
+        return FALSE;
+    }
 
-  if( !@move_uploaded_file( $tmpfile, $destination ) ) return FALSE;
-  @chmod($destination,octdec($config['default_upload_permission']));
-  return TRUE;
+    if( !@move_uploaded_file( $tmpfile, $destination ) ) return FALSE;
+    @chmod($destination,octdec($config['default_upload_permission']));
+    return TRUE;
 }
 
 
@@ -1000,60 +1000,60 @@ function cms_move_uploaded_file( $tmpfile, $destination )
  */
 function cms_ipmatches($ip,$checklist)
 {
-  $_testip = function($range,$ip) {
-    $result = true;
+    $_testip = function($range,$ip) {
+        $result = true;
 
-    // IP Pattern Matcher
-    // J.Adams <jna@retina.net>
-    //
-    // Matches:
-    //
-    // xxx.xxx.xxx.xxx        (exact)
-    // xxx.xxx.xxx.[yyy-zzz]  (range)
-    // xxx.xxx.xxx.xxx/nn    (nn = # bits, cisco style -- i.e. /24 = class C)
-    //
-    // Does not match:
-    // xxx.xxx.xxx.xx[yyy-zzz]  (range, partial octets nnnnnot supported)
+        // IP Pattern Matcher
+        // J.Adams <jna@retina.net>
+        //
+        // Matches:
+        //
+        // xxx.xxx.xxx.xxx        (exact)
+        // xxx.xxx.xxx.[yyy-zzz]  (range)
+        // xxx.xxx.xxx.xxx/nn    (nn = # bits, cisco style -- i.e. /24 = class C)
+        //
+        // Does not match:
+        // xxx.xxx.xxx.xx[yyy-zzz]  (range, partial octets nnnnnot supported)
 
-    $regs = array();
-    if( preg_match("/([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)\/([0-9]+)/",$range,$regs) ) {
-      // perform a mask match
-      $ipl = ip2long($ip);
-      $rangel = ip2long($regs[1] . "." . $regs[2] . "." . $regs[3] . "." . $regs[4]);
+        $regs = array();
+        if( preg_match("/([0-9]+)\.([0-9]+)\.([0-9]+)\.([0-9]+)\/([0-9]+)/",$range,$regs) ) {
+            // perform a mask match
+            $ipl = ip2long($ip);
+            $rangel = ip2long($regs[1] . "." . $regs[2] . "." . $regs[3] . "." . $regs[4]);
 
-      $maskl = 0;
+            $maskl = 0;
 
-      for ($i = 0; $i< 31; $i++) {
-        if( $i < $regs[5]-1) $maskl = $maskl + pow(2,(30-$i) );
-      }
+            for ($i = 0; $i< 31; $i++) {
+                if( $i < $regs[5]-1) $maskl = $maskl + pow(2,(30-$i) );
+            }
 
-      return ($maskl & $rangel) == ($maskl & $ipl);
-    }
-    else {
-      // range based
-      $maskocts = explode('.',$range);
-      $ipocts = explode('.',$ip);
-
-      if( count($maskocts) != count($ipocts) && count($maskocts) != 4 ) return false;
-
-      // perform a range match
-      for ($i=0; $i<4; $i++) {
-        if( preg_match("/\[([0-9]+)\-([0-9]+)\]/",$maskocts[$i],$regs) ) {
-          if( ($ipocts[$i] > $regs[2]) || ($ipocts[$i] < $regs[1]) ) $result = false;
+            return ($maskl & $rangel) == ($maskl & $ipl);
         }
         else {
-          if( isset($maskocts[$i]) && isset($ipocts[$i]) && ($maskocts[$i] <> $ipocts[$i]) ) $result = false;
-        }
-      }
-    }
-    return $result;
-  }; // _testip
+            // range based
+            $maskocts = explode('.',$range);
+            $ipocts = explode('.',$ip);
 
-  if( !is_array($checklist) ) $checklist = explode(',',$checklist);
-  foreach( $checklist as $one ) {
-    if( $_testip(trim($one),$ip) ) return TRUE;
-  }
-  return FALSE;
+            if( count($maskocts) != count($ipocts) && count($maskocts) != 4 ) return false;
+
+            // perform a range match
+            for ($i=0; $i<4; $i++) {
+                if( preg_match("/\[([0-9]+)\-([0-9]+)\]/",$maskocts[$i],$regs) ) {
+                    if( ($ipocts[$i] > $regs[2]) || ($ipocts[$i] < $regs[1]) ) $result = false;
+                }
+                else {
+                    if( isset($maskocts[$i]) && isset($ipocts[$i]) && ($maskocts[$i] <> $ipocts[$i]) ) $result = false;
+                }
+            }
+        }
+        return $result;
+    }; // _testip
+
+    if( !is_array($checklist) ) $checklist = explode(',',$checklist);
+    foreach( $checklist as $one ) {
+        if( $_testip(trim($one),$ip) ) return TRUE;
+    }
+    return FALSE;
 }
 
 
@@ -1072,10 +1072,10 @@ function cmsversion_compare($v1, $v2)
     $comp = [$v1, $v2];
     foreach( $comp as $i=>$vi ) {
         if( preg_match('/([a-z]+)/i',$vi) ) {
-           $c = preg_replace('/([^a-z])([ce-oqs-z])/i','$1.0$2',$vi);
-           if( $c != $vi ) {
-               $comp[$i] = $c;
-           }
+            $c = preg_replace('/([^a-z])([ce-oqs-z])/i','$1.0$2',$vi);
+            if( $c != $vi ) {
+                $comp[$i] = $c;
+            }
         }
     }
     return version_compare($comp[0],$comp[1]);
@@ -1123,18 +1123,19 @@ function get_secure_param()
 
 /**
  * A simple function to convert a value to a corresponding bool.
- * Reports TRUE booleans, 'y', 'yes', 'true', 'on' (all case insensitive),
- * and numerics > -1 and < 1 as TRUE, all other values as FALSE.
+ * Reports TRUE for strings 'y', 'yes', 'true', 'on' (all case insensitive),
+ * TRUE for numerics > 0 or < 0, FALSE for all other values.
  *
- * @param mixed $str Value to test. Normally a scalar.
+ * @param mixed $val Value to test. Normally a scalar.
  */
-function cms_to_bool($str)
+function cms_to_bool($val)
 {
-  if( is_numeric($str) ) return ((int)$str != 0);
-  if( !$str ) return FALSE;
+    if( is_numeric($val) ) return ((int)$val != 0);
+    if( is_bool($val) ) return $val;
+    if( !$val ) return FALSE;
 
-  $str = strtolower((string)$str); // (string)true == '1'
-  return ($str == '1' || $str == 'y' || $str == 'yes' || $str == 'true' || $str === 'on');
+    $val = strtolower((string)$val); // (string)true == '1'
+    return ($val == 'y' || $val == 'yes' || $val == 'true' || $val === 'on' || $val == '1');
 }
 
 
@@ -1172,118 +1173,118 @@ function cms_to_bool($str)
  */
 function cms_get_jquery($exclude = '',$ssl = FALSE,$cdn = FALSE,$append = '',$custom_root='',$include_css = TRUE)
 {
-  $config = cms_config::get_instance();
-  $scripts = array();
-  $base_url = $config->smart_root_url(); //TODO deprecated since 2.2
-  if( $ssl ) $base_url = $config['ssl_url']; //TODO deprecated since 2.2
-  $basePath = ($custom_root != '') ? trim($custom_root,'/') : $base_url;
+    $config = cms_config::get_instance();
+    $scripts = array();
+    $base_url = $config->smart_root_url(); //TODO deprecated since 2.2
+    if( $ssl ) $base_url = $config['ssl_url']; //TODO deprecated since 2.2
+    $basePath = ($custom_root != '') ? trim($custom_root,'/') : $base_url;
 
-  // Scripts to include NOTE keep {cms_jquery} tag help reconciled with the following
-  $scripts['jquery'] = array('cdn'=>'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js',
+    // Scripts to include NOTE keep {cms_jquery} tag help reconciled with the following
+    $scripts['jquery'] = array('cdn'=>'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js',
                              'sri'=>'sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=',
                              'local'=>$basePath.'/lib/jquery/js/jquery-2.2.4.min.js',
                              'aliases'=>array('jquery.min.js','jquery',));
-  $scripts['jquery-ui'] = array('cdn'=>'https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.3/jquery-ui.min.js',
+    $scripts['jquery-ui'] = array('cdn'=>'https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.3/jquery-ui.min.js',
                                 'sri'=>'sha256-sw0iNNXmOJbQhYFuC9OF2kOlD5KQKe1y5lfBn4C9Sjg=',
                                 'local'=>$basePath.'/lib/jquery/js/jquery-ui-1.13.3.custom.min.js',
                                 'aliases'=>array('jquery-ui.min.js','ui'),
                                 'css_cdn'=>'https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.3/jquery-ui.min.css',
-//                              'css_sri'=>'',
+    //                              'css_sri'=>'',
                                 'css'=>$basePath.'/lib/jquery/css/smoothness/jquery-ui-1.13.3.custom.min.css');
-  $scripts['nestedSortable'] = array('local'=>$basePath.'/lib/jquery/js/jquery.mjs.nestedSortable.min.js');
-  //TODO Use native JSON.stringify (browsers since 2009)
-  //CMSMS since 2.0 (OneEleven theme) has used JSON.stringify() directly
-  $scripts['json'] = array('local'=>$basePath.'/lib/jquery/js/json2.min.js');
-  $scripts['migrate'] = array('local'=>$basePath.'/lib/jquery/js/jquery-migrate-1.4.1.min.js');
+    $scripts['nestedSortable'] = array('local'=>$basePath.'/lib/jquery/js/jquery.mjs.nestedSortable.min.js');
+    //TODO Use native JSON.stringify (browsers since 2009)
+    //CMSMS since 2.0 (OneEleven theme) has used JSON.stringify() directly
+    $scripts['json'] = array('local'=>$basePath.'/lib/jquery/js/json2.min.js');
+    $scripts['migrate'] = array('local'=>$basePath.'/lib/jquery/js/jquery-migrate-1.4.1.min.js');
 
-  if( CmsApp::get_instance()->test_state(CmsApp::STATE_ADMIN_PAGE) ) {
-      global $CMS_LOGIN_PAGE;
-      if( isset($_SESSION[CMS_USER_KEY]) && !isset($CMS_LOGIN_PAGE) ) {
-          $url = $config['admin_url'];
-          $scripts['cms_js_setup'] = array('local'=>$url.'/cms_js_setup.php?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY]);
-      }
-      $scripts['cms_admin'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cms_admin.js');
-      $scripts['cms_dirtyform'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_dirtyform.js');
-      $scripts['cms_lock'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_lock.js');
-      $scripts['cms_autorefresh'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_autorefresh.js');
-      $scripts['cms_hiersel'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_hierselector.js');
-      $scripts['cms_filepicker'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_filepicker.js');
-      $scripts['ui_touch_punch'] = array('local'=>$basePath.'/lib/jquery/js/jquery.ui.touch-punch.min.js');
-  }
+    if( CmsApp::get_instance()->test_state(CmsApp::STATE_ADMIN_PAGE) ) {
+        global $CMS_LOGIN_PAGE;
+        if( isset($_SESSION[CMS_USER_KEY]) && !isset($CMS_LOGIN_PAGE) ) {
+            $url = $config['admin_url'];
+            $scripts['cms_js_setup'] = array('local'=>$url.'/cms_js_setup.php?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY]);
+        }
+        $scripts['cms_admin'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cms_admin.js');
+        $scripts['cms_dirtyform'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_dirtyform.js');
+        $scripts['cms_lock'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_lock.js');
+        $scripts['cms_autorefresh'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_autorefresh.js');
+        $scripts['cms_hiersel'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_hierselector.js');
+        $scripts['cms_filepicker'] = array('local'=>$basePath.'/lib/jquery/js/jquery.cmsms_filepicker.js');
+        $scripts['ui_touch_punch'] = array('local'=>$basePath.'/lib/jquery/js/jquery.ui.touch-punch.min.js');
+    }
 
-  // Check if we need to exclude some script(s)
-  if( !empty($exclude) ) {
-      $exclude_list = explode(",", trim(str_replace(' ','',$exclude)));
-      foreach($exclude_list as $one) {
-          $one = trim(strtolower($one));
+    // Check if we need to exclude some script(s)
+    if( !empty($exclude) ) {
+        $exclude_list = explode(",", trim(str_replace(' ','',$exclude)));
+        foreach($exclude_list as $one) {
+            $one = trim(strtolower($one));
 
-          // find a match
-          $found = '';
-          foreach( $scripts as $key => $rec ) {
-              if( strtolower($one) == strtolower($key) ) {
-                  $found = $key;
-                  break;
-              }
-              if( isset($rec['aliases']) && is_array($rec['aliases']) ) {
-                  foreach( $rec['aliases'] as $alias ) {
-                      if( strtolower($one) == strtolower($alias) ) {
-                          $found = $key;
-                          break;
-                      }
-                  }
-                  if( $found ) break;
-              }
-          }
+            // find a match
+            $found = '';
+            foreach( $scripts as $key => $rec ) {
+                if( strtolower($one) == strtolower($key) ) {
+                    $found = $key;
+                    break;
+                }
+                if( isset($rec['aliases']) && is_array($rec['aliases']) ) {
+                    foreach( $rec['aliases'] as $alias ) {
+                        if( strtolower($one) == strtolower($alias) ) {
+                            $found = $key;
+                            break;
+                        }
+                    }
+                    if( $found ) break;
+                }
+            }
 
-          if( $found ) unset($scripts[$found]);
-      }
-  }
+            if( $found ) unset($scripts[$found]);
+        }
+    }
 
-  // optionally add stuff to the end e.g. a jQuery plugin or stylesheet
-  if( !empty($append) ) {
-      $append_list = explode(",", trim(str_replace(' ','',$append)));
-      foreach($append_list as $key => $item) {
-          $scripts['user_'.$key] = array('local'=>$item);
-      }
-  }
+    // optionally add stuff to the end e.g. a jQuery plugin or stylesheet
+    if( !empty($append) ) {
+        $append_list = explode(",", trim(str_replace(' ','',$append)));
+        foreach($append_list as $key => $item) {
+            $scripts['user_'.$key] = array('local'=>$item);
+        }
+    }
 
-  // Output
-  $output = '';
-  $fmt_js = '<script src="%s"></script>';
-  $fmt_sjs = '<script src="%s" integrity="%s" crossorigin="anonymous"></script>'; // CDN-sourced, not customised
-  $fmt_css = '<link href="%s" rel="stylesheet">';
-  $fmt_scss = '<link href="%s" integrity="%s" crossorigin="anonymous" rel="stylesheet">'; // CDN-sourced, not customised
-  foreach( $scripts as $script ) {
-      //TODO check logic here
-      if( !empty($script['css']) && $include_css ) {
-          $url = $script['css'];
-          if( $cdn && !empty($script['css_cdn']) ) {
-              $url = $script['css_cdn'];
-              if( isset($script['css_sri']) ) {
-                  $hash = $script['css_sri'];
-                  $output .= sprintf($fmt_scss,$url,$hash)."\n";
-              }
-              else {
-                  $output .= sprintf($fmt_css,$url)."\n";
-              }
-          }
-      }
-      if( $cdn && !empty($script['cdn']) ) {
-          $url = $script['cdn'];
-          if( isset($script['sri']) ) {
-              $hash = $script['sri'];
-              $output .= sprintf($fmt_sjs,$url,$hash)."\n";
-          }
-          else {
-             $output .= sprintf($fmt_js,$url)."\n";
-          }
-      }
-      else {
-          $url = $script['local'];
-          $output .= sprintf($fmt_js,$url)."\n";
-      }
-  }
-  return $output;
+    // Output
+    $output = '';
+    $fmt_js = '<script src="%s"></script>';
+    $fmt_sjs = '<script src="%s" integrity="%s" crossorigin="anonymous"></script>'; // CDN-sourced, not customised
+    $fmt_css = '<link href="%s" rel="stylesheet">';
+    $fmt_scss = '<link href="%s" integrity="%s" crossorigin="anonymous" rel="stylesheet">'; // CDN-sourced, not customised
+    foreach( $scripts as $script ) {
+        //TODO check logic here
+        if( !empty($script['css']) && $include_css ) {
+            $url = $script['css'];
+            if( $cdn && !empty($script['css_cdn']) ) {
+                $url = $script['css_cdn'];
+                if( isset($script['css_sri']) ) {
+                    $hash = $script['css_sri'];
+                    $output .= sprintf($fmt_scss,$url,$hash)."\n";
+                }
+                else {
+                    $output .= sprintf($fmt_css,$url)."\n";
+                }
+            }
+        }
+        if( $cdn && !empty($script['cdn']) ) {
+            $url = $script['cdn'];
+            if( isset($script['sri']) ) {
+                $hash = $script['sri'];
+                $output .= sprintf($fmt_sjs,$url,$hash)."\n";
+            }
+            else {
+                $output .= sprintf($fmt_js,$url)."\n";
+            }
+        }
+        else {
+            $url = $script['local'];
+            $output .= sprintf($fmt_js,$url)."\n";
+        }
+    }
+    return $output;
 }
 
 

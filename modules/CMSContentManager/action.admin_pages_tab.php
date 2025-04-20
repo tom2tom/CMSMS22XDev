@@ -59,9 +59,12 @@ if( isset($params['multisubmit']) && isset($params['multiaction']) &&
 			'multiaction'=>$params['multiaction']));
 }
 
-$smarty->assign('prettyurls_ok',cm_prettyurls_ok());
-$smarty->assign('can_add_content',$this->CheckPermission('Add Pages') || $this->CheckPermission('Manage All Content'));
-$smarty->assign('can_reorder_content',$this->CheckPermission('Manage All Content'));
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_pages_tab.tpl",null,$modname,$smarty);
+
+$tpl->assign('prettyurls_ok',cm_prettyurls_ok());
+$tpl->assign('can_add_content',$this->CheckPermission('Add Pages') || $this->CheckPermission('Manage All Content'));
+$tpl->assign('can_reorder_content',$this->CheckPermission('Manage All Content'));
 
 // load all the content that this user can display...
 // organize it into a tree
@@ -130,26 +133,26 @@ $builder->set_page($curpage);
 $editinfo = $builder->get_content_list();
 $npages = $builder->get_numpages();
 $pagelimits = array(10=>10,25=>25,100=>100,250=>250,500=>500);
-$smarty->assign('pagelimits',$pagelimits);
+$tpl->assign('pagelimits',$pagelimits);
 $pagelist = array();
 for( $i = 0; $i < $npages; $i++ ) {
   $pagelist[$i+1] = $i+1;
 }
-$smarty->assign('pagelimit',$pagelimit);
-$smarty->assign('pagelist',$pagelist);
-$smarty->assign('curpage',$curpage);
-$smarty->assign('npages',$npages);
+$tpl->assign('pagelimit',$pagelimit);
+$tpl->assign('pagelist',$pagelist);
+$tpl->assign('curpage',$curpage);
+$tpl->assign('npages',$npages);
 $columns  = $builder->get_display_columns();
-$smarty->assign('columns',$columns);
+$tpl->assign('columns',$columns);
 if( $this->GetPreference('list_namecolumn','menutext') == 'title' ) {
-  $smarty->assign('colhdr_page',$this->Lang('colhdr_name'));
+  $tpl->assign('colhdr_page',$this->Lang('colhdr_name'));
 }
 else {
-  $smarty->assign('colhdr_page',$this->Lang('colhdr_menutext'));
+  $tpl->assign('colhdr_page',$this->Lang('colhdr_menutext'));
 }
-$smarty->assign('content_list',$editinfo);
-$smarty->assign('ajax',$ajax);
-if( $error ) $smarty->assign('error',$error);
+$tpl->assign('content_list',$editinfo);
+$tpl->assign('ajax',$ajax);
+if( $error ) $tpl->assign('error',$error);
 
 $opts = array();
 if( $this->CheckPermission('Remove Pages') ||
@@ -169,9 +172,9 @@ if( $this->CheckPermission('Manage All Content')) {
   bulkcontentoperations::register_function($this->Lang('bulk_changeowner'),'changeowner');
 }
 $opts = bulkcontentoperations::get_operation_list();
-$smarty->assign('bulk_options',$opts);
+$tpl->assign('bulk_options',$opts);
 
-echo $this->ProcessTemplate('admin_pages_tab.tpl');
+$tpl->display();
 #
 # EOF
 #

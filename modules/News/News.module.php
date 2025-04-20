@@ -25,12 +25,12 @@ class News extends CMSModule
     public function GetAdminSection() { return 'content'; }
     public function GetAuthor() { return 'Ted Kulp'; }
     public function GetAuthorEmail() { return 'wishy@cmsmadesimple.org'; }
-    public function GetChangeLog() { return file_get_contents(__DIR__.'/changelog.inc'); }
+    public function GetChangeLog() { return file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'changelog.htm'); }
     public function GetEventDescription($eventname) { return $this->Lang('eventdesc-' . $eventname); }
     public function GetEventHelp($eventname) { return $this->Lang('eventhelp-' . $eventname); }
     public function GetFriendlyName() { return $this->Lang('news'); }
     public function GetName() { return 'News'; }
-    public function GetVersion() { return '2.51.14'; }
+    public function GetVersion() { return '2.51.15'; }
     public function HasAdmin() { return TRUE; }
     public function InstallPostMessage() { return $this->Lang('postinstall');  }
     public function IsPluginModule() { return TRUE; }
@@ -282,13 +282,15 @@ EOS;
 
         $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_news WHERE searchable = 1 AND status = ? ORDER BY news_date';
         $result = $db->Execute($query,array('published'));
-        if ($result) {
+        if( $result ) {
+            $src = $this->GetName();
+            $exp = $this->GetPreference('expired_searchable',0);
             while (!$result->EOF) {
                 if ($result->fields['status'] == 'published') {
-                    $module->AddWords($this->GetName(),
+                    $module->AddWords($src,
                                       $result->fields['news_id'], 'article',
                                       $result->fields['news_data'] . ' ' . $result->fields['summary'] . ' ' . $result->fields['news_title'] . ' ' . $result->fields['news_title'],
-                                      ($result->fields['end_time'] != NULL && $this->GetPreference('expired_searchable',0) == 0) ? $db->UnixTimeStamp($result->fields['end_time']) : NULL); //null for no datetime field value
+                                      ($result->fields['end_time'] != NULL && $exp == 0) ? $db->UnixTimeStamp($result->fields['end_time']) : NULL); //null for no datetime field value
                 }
                 $result->MoveNext();
             }

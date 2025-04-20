@@ -37,12 +37,14 @@ try {
         }
     }
 
-    $smarty->assign('module_name',$modinstance->GetName());
-    $smarty->assign('module_version',$modinstance->GetVersion());
+    $modname = $this->GetName();
+    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;local_uninstall.tpl",null,$modname,$smarty);
+    $tpl->assign('module_name',$modinstance->GetName());
+    $tpl->assign('module_version',$modinstance->GetVersion());
     $msg = $modinstance->UninstallPreMessage();
     if( !$msg ) $msg = $this->Lang('msg_module_uninstall');
-    $smarty->assign('msg',$msg);
-    echo $this->ProcessTemplate('local_uninstall.tpl');
+    $tpl->assign('msg',$msg);
+    $tpl->display();
 }
 catch( \Exception $e ) {
     echo $this->ShowErrors($e->GetMessage());

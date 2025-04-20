@@ -149,7 +149,7 @@ $(function() {
 });
 </script>
 {/literal}
-{$formstart}
+{$uformstart}
   <input type="hidden" name="disable_buffer" value="1">
   <fieldset>
     {if isset($is_ie)}
@@ -161,8 +161,8 @@ $(function() {
       <div style="width:60%;float:left;">
         {*<input type="hidden" name="MAX_FILE_SIZE" value="{$maxfilesize}">*}{* recommendation for browser *}
         <input id="fileupload" type="file" name="{$actionid}files[]" size="50" title="{$mod->Lang('title_filefield')}" multiple>
+        <br>
         <div id="pageoverflow">
-          <p class="pagetext"></p>
           <p class="pageinput">
             <input id="cancel" type="submit" value="{$mod->Lang('cancel')}" style="display: none;">
           </p>

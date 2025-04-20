@@ -15,26 +15,16 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-if( !cmsms() ) exit;
-if (!$this->VisibleToAdminUser()) return;
-
 // some default profiles
-
 try {
   $list = microtiny_profile::list_all();
-  if( !is_array($list) || count($list) == 0 ) throw new CmsInvalidDataException('No profiles found');
+  if( !$list || !is_array($list) ) throw new CmsInvalidDataException('No profile found');
   $profiles = array();
   foreach( $list as $one ) {
     $profiles[] = microtiny_profile::load($one);
   }
-  $smarty->assign('profiles',$profiles);
-  echo $this->ProcessTemplate('settings.tpl');
+  $tpl->assign('profiles',$profiles);
 }
 catch( Exception $e ) {
   echo $this->ShowErrors($e->GetMessage());
 }
-
-#
-# EOF
-#
-?>

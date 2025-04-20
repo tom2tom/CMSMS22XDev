@@ -125,8 +125,10 @@ if( !empty($params['orderlist']) ) {
     $this->RedirectToAdminTab('pages');
 }
 
-$smarty->assign('tree',$tree);
-echo $this->ProcessTemplate('admin_ordercontent.tpl');
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_ordercontent.tpl", null, $modname, $smarty);
+$tpl->assign('tree',$tree);
+$tpl->display();
 
 #
 # EOF

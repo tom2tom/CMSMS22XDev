@@ -25,27 +25,33 @@ $(function() {
   $('#importbtn').on('click', function() {
     $('#importdlg').dialog({
       modal: true,
-      buttons: {
-        {$ModuleManager->Lang('submit')}: function() {
-          var file = $('#xml_upload').val();
-          if( file.length == 0 ) {
-            cms_alert("{$ModuleManager->Lang('error_nofileuploaded')|escape:'javascript'}");
+      buttons: [
+       {
+        text: "{$ModuleManager->Lang('submit')}",
+        icon: 'ui-icon-check',
+        click: function() {
+         var file = $('#xml_upload').val();
+         if (file.length === 0) {
+          cms_alert("{$ModuleManager->Lang('error_nofileuploaded')|escape:'javascript'}");
+         } else {
+          var ext  = file.split('.').pop().toLowerCase();
+          if ($.inArray(ext, ['xml','cmsmod']) === -1) {
+           cms_alert("{$ModuleManager->Lang('error_invaliduploadtype')|escape:'javascript'}");
+          } else {
+           $(this).dialog('close');
+           $('#local_import').trigger('submit');
           }
-          else {
-            var ext  = file.split('.').pop().toLowerCase();
-            if($.inArray(ext, ['xml','cmsmod']) == -1) {
-              cms_alert("{$ModuleManager->Lang('error_invaliduploadtype')|escape:'javascript'}");
-            }
-            else {
-              $(this).dialog('close');
-              $('#local_import').trigger('submit');
-            }
-          }
-        },
-        {$ModuleManager->Lang('cancel')}: function() {
-          $(this).dialog('close');
+         }
         }
-      }
+       },
+       {
+        text: "{$ModuleManager->Lang('cancel')}",
+        icon: 'ui-icon-cancel',
+        click: function() {
+         $(this).dialog('close');
+        }
+       }
+      ]
     });
   });
 });

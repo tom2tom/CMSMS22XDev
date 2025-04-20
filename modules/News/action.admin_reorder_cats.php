@@ -34,7 +34,7 @@ else if( isset($params['submit']) ) {
   $flat = news_reordercats_create_flatlist($data);
   if( is_array($flat) && count($flat) ) {
     $query = 'UPDATE '.CMS_DB_PREFIX.'module_news_categories SET parent_id = ?, item_order = ?
-              WHERE news_category_id = ?';
+WHERE news_category_id = ?';
     foreach( $flat as $rec ) {
       $dbr = $db->Execute($query,array($rec['parent_id'],$rec['order'],$rec['id']));
     }
@@ -47,8 +47,10 @@ else if( isset($params['submit']) ) {
 $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_news_categories ORDER BY hierarchy';
 $allcats = $db->GetArray($query);
 
-$smarty->assign('allcats',$allcats);
-echo $this->ProcessTemplate('admin_reorder_cats.tpl');
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_reorder_cats.tpl",null,$modname,$smarty);
+$tpl->assign('allcats',$allcats);
+$tpl->display();
 
 #
 # EOF

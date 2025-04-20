@@ -40,7 +40,7 @@ $db->Execute($query, array($fdid));
 
 $db->Execute('UPDATE '.CMS_DB_PREFIX.'module_news_fielddefs SET item_order = (item_order - 1) WHERE item_order > ?', array($row['item_order']));
 
-$params = array('tab_message'=> 'fielddefdeleted', 'active_tab' => 'customfields');
+$params = array('tab_message'=> 'fielddefdeleted', '__activetab' => 'customfields');
 // put mention into the admin log
 audit($fdid,$this->GetName().' field definition',"Deleted: {$row['name']}");
 $this->Setmessage($this->Lang('fielddefdeleted'));

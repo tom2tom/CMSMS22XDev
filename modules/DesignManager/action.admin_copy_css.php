@@ -54,6 +54,9 @@ try {
     }
   }
 
+  $modname = $this->GetName();
+  $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_copy_css.tpl",null,$modname,$smarty);
+
   // build a display
   $designs = CmsLayoutCollection::get_all();
   if( $designs ) {
@@ -61,11 +64,11 @@ try {
     for( $i = 0; $i < count($designs); $i++ ) {
       $tmp2[$designs[$i]->get_id()] = $designs[$i]->get_name();
     }
-    $smarty->assign('design_names',$tmp2);
+    $tpl->assign('design_names',$tmp2);
   }
 
-  $smarty->assign('css',$orig_css);
-  echo $this->ProcessTemplate('admin_copy_css.tpl');
+  $tpl->assign('css',$orig_css);
+  $tpl->display();
 }
 catch( CmsException $e ) {
   $this->SetError($e->GetMessage());

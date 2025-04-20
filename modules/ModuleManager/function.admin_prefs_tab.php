@@ -11,12 +11,6 @@
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -32,17 +26,10 @@ if (!isset($gCms)) exit;
 if( !$this->CheckPermission('Modify Site Preferences') ) exit;
 
 if( !empty($config['developer_mode']) ) {
-  $smarty->assign('developer_mode',1);
-  $smarty->assign('module_repository',$this->GetPreference('module_repository'));
-  $smarty->assign('disable_caching',$this->GetPreference('disable_caching',0));
+  $tpl->assign('developer_mode',1);
+  $tpl->assign('module_repository',$this->GetPreference('module_repository'));
+  $tpl->assign('disable_caching',$this->GetPreference('disable_caching',0));
 }
-$smarty->assign('dl_chunksize',$this->GetPreference('dl_chunksize',256));
-$smarty->assign('latestdepends',$this->GetPreference('latestdepends',1));
-$smarty->assign('allowuninstall',$this->GetPreference('allowuninstall',0));
-
-echo $this->ProcessTemplate('adminprefs.tpl');
-
-#
-# EOF
-#
-?>
+$tpl->assign('dl_chunksize',$this->GetPreference('dl_chunksize',256));
+$tpl->assign('latestdepends',$this->GetPreference('latestdepends',1));
+$tpl->assign('allowuninstall',$this->GetPreference('allowuninstall',0));

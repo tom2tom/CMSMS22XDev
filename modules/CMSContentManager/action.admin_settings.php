@@ -11,12 +11,6 @@
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -31,29 +25,17 @@
 if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Modify Site Preferences') ) return;
 
-echo $this->StartTabHeaders();
-echo $this->SetTabHeader('general',$this->Lang('prompt_general'));
-echo $this->SetTabHeader('listsettings',$this->Lang('prompt_listsettings'));
-echo $this->SetTabHeader('pagedefaults',$this->Lang('prompt_pagedefaults'));
-echo $this->EndTabHeaders();
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_settings.tpl", null, $modname, $smarty);
 
-echo $this->StartTabContent();
+require __DIR__.DIRECTORY_SEPARATOR.'function.admin_general_tab.php';
+require __DIR__.DIRECTORY_SEPARATOR.'function.admin_listsettings_tab.php';
+require __DIR__.DIRECTORY_SEPARATOR.'function.admin_pagedefaults_tab.php';
 
-echo $this->StartTab('general',$params);
-include(__DIR__.'/function.admin_general_tab.php');
-echo $this->EndTab();
+if( empty($seetab) ) {
+    $seetab = (!empty($params['__activetab'])) ? $params['__activetab'] : '';
+}
+$tpl->assign('tab', $seetab);
+$tpl->assign('endform', $this->CreateFormEnd());
 
-echo $this->StartTab('listsettings',$params);
-include(__DIR__.'/function.admin_listsettings_tab.php');
-echo $this->EndTab();
-
-echo $this->StartTab('pagedefaults',$params);
-include(__DIR__.'/function.admin_pagedefaults_tab.php');
-echo $this->EndTab();
-
-echo $this->EndTabContent();
-
-#
-# EOF
-#
-?>
+$tpl->display();

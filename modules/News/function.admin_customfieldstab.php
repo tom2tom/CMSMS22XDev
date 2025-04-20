@@ -42,17 +42,9 @@ if ($dbresult) {
   $dbresult->Close();
 }
 
-$smarty->assign('items', $entryarray);
-$smarty->assign('itemcount', count($entryarray));
-
-$smarty->assign('addurl', $this->create_url($id,'admin_addfielddef'));
-$smarty->assign('addlink', $this->CreateLink($id, 'admin_addfielddef', $returnid, $admintheme->DisplayImage('icons/system/newfolder.gif', $this->Lang('addfielddef'),'','','systemicon'), array(), '', false, false, '') .' '. $this->CreateLink($id, 'admin_addfielddef', $returnid, $this->Lang('addfielddef'), array(), '', false, false, 'class="pageoptions"'));
-
-$smarty->assign('fielddeftext', $this->Lang('fielddef'));
-$smarty->assign('typetext', $this->Lang('type'));
-
-#Display template
-echo $this->ProcessTemplate('customfieldstab.tpl');
-
-// EOF
-?>
+$tpl->assign('fitems', $entryarray);
+$tpl->assign('fitemcount', count($entryarray));
+$tpl->assign('addurl', $this->create_url($id,'admin_addfielddef'));
+$tpl->assign('addlink', $this->CreateLink($id, 'admin_addfielddef', $returnid, $admintheme->DisplayImage('icons/system/newfolder.gif', $this->Lang('addfielddef'),'','','systemicon'), array(), '', false, false, '') .' '. $this->CreateLink($id, 'admin_addfielddef', $returnid, $this->Lang('addfielddef'), array(), '', false, false, 'class="pageoptions"'));
+$tpl->assign('fielddeftext', $this->Lang('name'));
+$tpl->assign('typetext', $this->Lang('type'));

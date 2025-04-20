@@ -20,7 +20,6 @@ namespace FileManager;
 
 use cms_config;
 use cms_utils;
-use CMSMS\FileTypeHelper;
 use CMSMS\HookManager;
 use filemanager_utils;
 use jquery_upload_handler;
@@ -30,8 +29,6 @@ require_once __DIR__.DIRECTORY_SEPARATOR.'class.jquery_upload_handler.php';
 
 class UploadHandler extends jquery_upload_handler
 {
-  private $helper;
-
   function __construct($options=array())
   {
     if( !is_array($options) ) $options = array();
@@ -51,10 +48,10 @@ class UploadHandler extends jquery_upload_handler
   {
     $config = cms_config::get_instance();
     if( !empty($config['developer_mode']) ) return TRUE;
-    if( !isset($this->helper) ) {
-      $this->helper = new FileTypeHelper($config);
-    }
-    return !$this->helper->is_executable($file);
+    if( !filemanager_utils::is_restricted_file($file) ) return TRUE;
+    //TODO feedback to user
+    //$mod = ; $msg = ; audit('',$mod->GetName(), $msg);
+    return FALSE;
   }
 
   protected function after_uploaded_file($fileobject)
@@ -85,3 +82,4 @@ class UploadHandler extends jquery_upload_handler
     }
   }
 }
+

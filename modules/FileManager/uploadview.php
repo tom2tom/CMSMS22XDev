@@ -18,25 +18,28 @@
 
 if (!function_exists('cmsms')) exit;
 
-if (!$this->CheckPermission('Modify Files') && !$this->AdvancedAccessAllowed()) exit;
+if (!$this->CheckPermission('Modify Files')) exit;
 
-$smarty->assign('formstart',$this->CreateFormStart($id, 'upload', $returnid,'post','multipart/form-data'));
-$smarty->assign('formend',$this->CreateFormEnd());
-$smarty->assign('submit',$this->CreateInputSubmit($id,'submit',$this->Lang('submit'),'',''));
-$smarty->assign('maxfilesize',$config['max_upload_size']);
+$modname = $this->GetName();
+$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;uploadview.tpl",null,$modname,$smarty);
+
+$tpl->assign('uformstart',$this->CreateFormStart($id,'upload',$returnid,'post','multipart/form-data'));
+$tpl->assign('formend',$this->CreateFormEnd());
+$tpl->assign('submit',$this->CreateInputSubmit($id,'submit',$this->Lang('submit')));
+$tpl->assign('maxfilesize',$config['max_upload_size']);
 
 $post_max_size = filemanager_utils::str_to_bytes(ini_get('post_max_size'));
 $upload_max_filesize = filemanager_utils::str_to_bytes(ini_get('upload_max_filesize'));
-$smarty->assign('max_chunksize',min($upload_max_filesize,$post_max_size-1024));
+$tpl->assign('max_chunksize',min($upload_max_filesize,$post_max_size-1024));
 if (isset($_SERVER['HTTP_USER_AGENT'])) {
   if (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false || strpos($_SERVER['HTTP_USER_AGENT'], 'Trident') !== false ) {
-    $smarty->assign('is_ie',1);
-    $smarty->assign('ie_upload_message',$this->Lang('ie_upload_message'));
+    $tpl->assign('is_ie',1);
+    $tpl->assign('ie_upload_message',$this->Lang('ie_upload_message'));
   }
 }
-$url = $this->create_url('m1_','upload',$returnid);
-$smarty->assign('action_url', str_replace('&amp;', '&', $url));
-$url = $this->create_url($id, 'admin_fileview', '', ['noform' => 1]);
-$smarty->assign('refresh_url', str_replace('&amp;', '&', $url)); //? &showtemplate=false ?
+$url = $this->create_url('m1_','upload',$returnid); //need to ensure admin $id?
+$tpl->assign('action_url',str_replace('&amp;','&',$url));
+$url = $this->create_url($id,'admin_fileview','',['noform' => 1]);
+$tpl->assign('refresh_url',str_replace('&amp;','&',$url)); //? &showtemplate=false ?
 
-echo $this->ProcessTemplate('uploadview.tpl');
+$tpl->display();

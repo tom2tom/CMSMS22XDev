@@ -70,7 +70,7 @@ else {
     }
     $template = $tpl->get_name();
 }
-$tpl_ob = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null);
+$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,'Search',$smarty);
 
 if (isset($params['searchinput']) && $params['searchinput'] != '') {
     // Fix to prevent XSS like behaviour. See: http://www.securityfocus.com/archive/1/455417/30/0/threaded
@@ -81,7 +81,7 @@ if (isset($params['searchinput']) && $params['searchinput'] != '') {
 
     $searchstarttime = microtime(true);
 
-    $tpl_ob->assign('phrase', $params['searchinput']);
+    $tpl->assign('phrase', $params['searchinput']);
     $words = array_values($this->StemPhrase($params['searchinput']));
     $nb_words = count($words);
     $max_weight = 1;
@@ -238,22 +238,22 @@ if (isset($params['searchinput']) && $params['searchinput'] != '') {
 
     \CMSMS\HookManager::do_hook( 'Search::SearchCompleted', [ &$params['searchinput'], &$col->_ary ] );
 
-    $tpl_ob->assign('searchwords',$words);
-    $tpl_ob->assign('results', $col->_ary);
-    $tpl_ob->assign('itemcount', count($col->_ary));
+    $tpl->assign('searchwords', $words);
+    $tpl->assign('results', $col->_ary);
+    $tpl->assign('itemcount', count($col->_ary));
 
     $searchendtime = microtime(true);
-    $tpl_ob->assign('timetook', ($searchendtime - $searchstarttime));
+    $tpl->assign('timetook', ($searchendtime - $searchstarttime));
 }
 else {
-    $tpl_ob->assign('phrase', '');
-    $tpl_ob->assign('results', 0);
-    $tpl_ob->assign('itemcount', 0);
-    $tpl_ob->assign('timetook', 0);
+    $tpl->assign('phrase', '');
+    $tpl->assign('results', 0);
+    $tpl->assign('itemcount', 0);
+    $tpl->assign('timetook', 0);
 }
 
-$tpl_ob->assign('use_or_text',$this->Lang('use_or'));
-$tpl_ob->assign('searchresultsfor', $this->Lang('searchresultsfor'));
-$tpl_ob->assign('noresultsfound', $this->Lang('noresultsfound'));
-$tpl_ob->assign('timetaken', $this->Lang('timetaken'));
-$tpl_ob->display();
+$tpl->assign('use_or_text', $this->Lang('use_or'));
+$tpl->assign('searchresultsfor', $this->Lang('searchresultsfor'));
+$tpl->assign('noresultsfound', $this->Lang('noresultsfound'));
+$tpl->assign('timetaken', $this->Lang('timetaken'));
+$tpl->display();

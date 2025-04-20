@@ -162,7 +162,7 @@ $lang['itemstomove'] = 'Move these Items';
 $lang['kb'] = 'kb';
 
 // L
-$lang['largeicons'] = 'Large icons';
+$lang['largeicons'] = 'Large';
 
 // M
 $lang['mb'] = 'Mb';
@@ -272,7 +272,7 @@ $lang['singledirdeletesuccess'] = 'The directory  was successfully deleted';
 $lang['singlefiledeletefail'] = 'An error occurred when trying to delete the file';
 $lang['singlefiledeletesuccess'] = 'The file was successfully deleted';
 $lang['site_root'] = 'Root';
-$lang['smallicons'] = 'Small icons';
+$lang['smallicons'] = 'Small';
 $lang['space'] = 'space';
 $lang['subdir'] = 'subdirectory';
 $lang['subdirs'] = 'subdirectories';

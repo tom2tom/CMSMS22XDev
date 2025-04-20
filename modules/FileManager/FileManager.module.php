@@ -18,14 +18,14 @@
 #
 include_once __DIR__.DIRECTORY_SEPARATOR.'fileinfo.php';
 
-final class FileManager extends CMSModule {
-
+final class FileManager extends CMSModule
+{
     public function GetName() { return 'FileManager'; }
     public function LazyLoadFrontend() { return true; }
-    public function GetChangeLog() { return $this->ProcessTemplate('changelog.tpl'); }
+    public function GetChangeLog() { return file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'changelog.htm'); }
     public function GetHeaderHTML() { return $this->_output_header_javascript(); }
     public function GetFriendlyName() { return $this->Lang('friendlyname'); }
-    public function GetVersion() { return '1.6.14'; }
+    public function GetVersion() { return '1.6.15'; }
     public function GetHelp() { return $this->Lang('help'); }
     public function GetAuthor() { return 'Morten Poulsen (Silmarillion)'; }
     public function GetAuthorEmail() { return 'morten@poulsen.org'; }
@@ -105,15 +105,15 @@ final class FileManager extends CMSModule {
 
     //@deprecated since CMSMS 2.0
     //this method used only in FileManager actions which are unused in CMSMS2+
-    public function GetMode($path,$file) {
+/*  public function GetMode($path,$file) {
         $realpath = $this->Slash(CMS_ROOT_PATH,$path);
         $statinfo = stat($this->Slash($realpath,$file));
         return filemanager_utils::format_permissions($statinfo["mode"]);
     }
-
+*/
     //@deprecated since CMSMS 2.0
     //this method used only in FileManager actions which are unused in CMSMS2+
-    public function GetModeWin($path,$file) {
+/*  public function GetModeWin($path,$file) {
         $realpath=$this->Slash($realpath,$file);
         if (is_writable($realpath)) {
             return "777";
@@ -121,69 +121,71 @@ final class FileManager extends CMSModule {
             return "444";
         }
     }
-
+*/
     //@deprecated since CMSMS 2.0
     //this method used only in FileManager actions which are unused in CMSMS2+
-    public function GetModeTable($id,$permissions) {
-        $this->smarty->assign('ownertext', $this->Lang("owner"));
-        $this->smarty->assign('groupstext', $this->Lang("group"));
-        $this->smarty->assign('otherstext', $this->Lang("others"));
+/*  public function GetModeTable($id,$permissions) {
+        $smarty = cmsms()->GetSmarty();
+        $modname = $this->GetName();
+        $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;modetable.tpl",null,$modname); // no parent
+        $tpl->assign('ownertext', $this->Lang('owner'));
+        $tpl->assign('groupstext', $this->Lang('group'));
+        $tpl->assign('otherstext', $this->Lang('others'));
 
-        $ownerr="0"; if ($permissions & 0400) $ownerr="1";
-        $this->smarty->assign('ownerr', $this->CreateInputCheckbox($id,"ownerr","1",$ownerr));
+        $ownerr = ($permissions & 0400)?'1':'0';
+        $tpl->assign('ownerr', $this->CreateInputCheckbox($id,'ownerr','1',$ownerr));
 
-        $ownerw="0"; if ($permissions & 0200) $ownerw="1";
-        $this->smarty->assign('ownerw', $this->CreateInputCheckbox($id,"ownerw","1",$ownerw));
+        $ownerw = ($permissions & 0200)?'1':'0';
+        $tpl->assign('ownerw', $this->CreateInputCheckbox($id,'ownerw','1',$ownerw));
 
-        $ownerx="0"; if ($permissions & 0100) $ownerx="1";
-        $this->smarty->assign('ownerx', $this->CreateInputCheckbox($id,"ownerx","1",$ownerx));
+        $ownerx = ($permissions & 0100)?'1':'0';
+        $tpl->assign('ownerx', $this->CreateInputCheckbox($id,'ownerx','1',$ownerx));
 
-        $groupr="0"; if ($permissions & 0040) $groupr="1";
-        $this->smarty->assign('groupr', $this->CreateInputCheckbox($id,"groupr","1",$groupr));
+        $groupr = ($permissions & 0040)?'1':'0';
+        $tpl->assign('groupr', $this->CreateInputCheckbox($id,'groupr','1',$groupr));
 
-        $groupw="0"; if ($permissions & 0020) $groupw="1";
-        $this->smarty->assign('groupw', $this->CreateInputCheckbox($id,"groupw","1",$groupw));
+        $groupw = ($permissions & 0020)?'1':'0';
+        $tpl->assign('groupw', $this->CreateInputCheckbox($id,'groupw','1',$groupw));
 
-        $groupx="0"; if ($permissions & 0010) $groupx="1";
-        $this->smarty->assign('groupx', $this->CreateInputCheckbox($id,"groupx","1",$groupx));
+        $groupx = ($permissions & 0010)?'1':'0';
+        $tpl->assign('groupx', $this->CreateInputCheckbox($id,'groupx','1',$groupx));
 
-        $othersr="0"; if ($permissions & 0004) $othersr="1";
-        $this->smarty->assign('othersr', $this->CreateInputCheckbox($id,"othersr","1",$othersr));
+        $othersr = ($permissions & 0004)?'1':'0';
+        $tpl->assign('othersr', $this->CreateInputCheckbox($id,'othersr','1',$othersr));
 
-        $othersw="0"; if ($permissions & 0002) $othersw="1";
-        $this->smarty->assign('othersw', $this->CreateInputCheckbox($id,"othersw","1",$othersw));
+        $othersw = ($permissions & 0002)?'1':'0';
+        $tpl->assign('othersw', $this->CreateInputCheckbox($id,'othersw','1',$othersw));
 
-        $othersx="0"; if ($permissions & 0001) $othersx="1";
-        $this->smarty->assign('othersx', $this->CreateInputCheckbox($id,"othersx","1",$othersx));
+        $othersx = ($permissions & 0001)?'1':'0';
+        $tpl->assign('othersx', $this->CreateInputCheckbox($id,'othersx','1',$othersx));
 
-        return $this->ProcessTemplate('modetable.tpl');
+        return $tpl->fetch();
     }
-
+*/
     //@deprecated since CMSMS 2.0
     //this method used only in actions which are unused in CMSMS2+
-    public function GetModeFromTable($params) {
+/*  public function GetModeFromTable($params) {
         $owner = 0;
-        if (isset($params["ownerr"])) $owner += 4;
-        if (isset($params["ownerw"])) $owner += 2;
-        if (isset($params["ownerx"])) $owner++;
+        if (isset($params['ownerr'])) $owner += 4;
+        if (isset($params['ownerw'])) $owner += 2;
+        if (isset($params['ownerx'])) $owner++;
         $group = 0;
-        if (isset($params["groupr"])) $group += 4;
-        if (isset($params["groupw"])) $group += 2;
-        if (isset($params["groupx"])) $group++;
+        if (isset($params['groupr'])) $group += 4;
+        if (isset($params['groupw'])) $group += 2;
+        if (isset($params['groupx'])) $group++;
         $others = 0;
-        if (isset($params["othersr"])) $others += 4;
-        if (isset($params["othersw"])) $others += 2;
-        if (isset($params["othersx"])) $others++;
+        if (isset($params['othersr'])) $others += 4;
+        if (isset($params['othersw'])) $others += 2;
+        if (isset($params['othersx'])) $others++;
         return $owner.$group.$others;
     }
-
+*/
     public function GetThumbnailLink($file,$path) {
         $path = trim($path, ' \\/');
         $path = strtr($path,'\\/',DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR);
         $imagepath = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.$path.DIRECTORY_SEPARATOR.'thumb_'.$file['name'];
         if (file_exists($imagepath)) {
-            $config = cms_config::get_instance();
-            $url = $config->smart_root_url().'/'.strtr($path,'\\','/'); //TODO deprecated since 2.2
+            $url = CMS_ROOT_URL.'/'.strtr($path,'\\','/');
             $imageurl = $url.'/thumb_'.$file['name'];
             $image = '<img src="'.$imageurl.'" alt="'.$file['name'].'" title="'.$file['name'].'">';
             $url = $this->create_url('m1_','view','',['file' => $this->encodefilename($file['name'])]);

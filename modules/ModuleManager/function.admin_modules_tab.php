@@ -11,12 +11,6 @@
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -176,31 +170,24 @@ if( $data ) {
     $rowarray[] = $onerow;
   } // foreach
 
-  $smarty->assign('items', $rowarray);
-  $smarty->assign('itemcount', count($rowarray));
+  $tpl->assign('items1', $rowarray);
+  $tpl->assign('itemcount1', count($rowarray));
 }
 else {
-  $smarty->assign('itemcount', 0); // reset previously-used var
-  $smarty->assign('message', $this->Lang('error_connectnomodules'));
+  $tpl->assign('itemcount1', 0); // reset previously-used var
+  $tpl->assign('message', $this->Lang('error_connectnomodules'));
 }
 
 // Setup search form
-$searchstart = $this->CreateFormStart( $id, 'searchmod', $returnid );
+$searchstart = $this->CreateFormStart($id, 'searchmod', $returnid);
 $searchend = $this->CreateFormEnd();
 $searchfield = $this->CreateInputText($id, 'search_input', "Doesn't Work", 30, 100); //TODO
-$searchsubmit = $this->CreateInputSubmit( $id, 'submit', $this->Lang('search'), 'data-ui-icon="ui-icon-search"');
-$smarty->assign('search',$searchstart.$searchfield.$searchsubmit.$searchend);
+$searchsubmit = $this->CreateInputSubmit($id, 'submit', $this->Lang('search'), 'data-ui-icon="ui-icon-search"');
+$tpl->assign('search',$searchstart.$searchfield.$searchsubmit.$searchend);
 
-// and display our page
-$smarty->assign('letter_urls',$letters);
-$smarty->assign('curletter',$curletter);
-$smarty->assign('nametext',$this->Lang('nametext'));
-$smarty->assign('vertext',$this->Lang('vertext'));
-$smarty->assign('sizetext',$this->Lang('sizetext'));
-$smarty->assign('statustext',$this->Lang('statustext'));
-echo $this->processTemplate('adminpanel.tpl');
-
-#
-# EOF
-#
-?>
+$tpl->assign('letter_urls',$letters);
+$tpl->assign('curletter',$curletter);
+$tpl->assign('nametext',$this->Lang('nametext'));
+$tpl->assign('vertext',$this->Lang('vertext'));
+$tpl->assign('sizetext',$this->Lang('sizetext'));
+$tpl->assign('statustext',$this->Lang('statustext'));

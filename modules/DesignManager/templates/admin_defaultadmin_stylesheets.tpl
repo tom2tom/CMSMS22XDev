@@ -28,20 +28,32 @@ $(function() {
   $('#stylesheet_area').on('click','#editcssfilter',function() {
     $('#filtercssdlg').dialog({
       width: 'auto',
-      buttons: {
-        "{$mod->Lang('submit')}": function() {
-          $(this).dialog('close');
-          $('#filtercssdlg_form').trigger('submit');
-        },
-        "{$mod->Lang('reset')}": function() {
-          $(this).dialog('close');
-            $('#submit_filter_css').val('-1');
-          $('#filtercssdlg_form').trigger('submit');
-        },
-        "{$mod->Lang('cancel')}": function() {
-          $(this).dialog('close');
+      buttons: [
+       {
+        text: "{$mod->Lang('submit')}",
+        icon: 'ui-icon-check',
+        click: function() {
+         $(this).dialog('close');
+         $('#filtercssdlg_form').trigger('submit');
         }
-      }
+       },
+       {
+        text: "{$mod->Lang('reset')}",
+        icon: 'ui-icon-arrowrefresh-1-n',
+        click: function() {
+         $(this).dialog('close');
+         $('#submit_filter_css').val('-1');
+         $('#filtercssdlg_form').trigger('submit');
+        }
+       },
+       {
+        text: "{$mod->Lang('cancel')}",
+        icon: 'ui-icon-cancel',
+        click: function() {
+         $(this).dialog('close');
+        }
+       }
+      ]
     });
   });
 });

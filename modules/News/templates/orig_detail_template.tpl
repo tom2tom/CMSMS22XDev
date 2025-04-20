@@ -44,7 +44,9 @@
 {/if}
 
 {if $return_url}
-<div id="NewsPostDetailReturnLink">{$return_url}{if $category_name} - {$category_link}{/if}</div>
+	<div id="NewsPostDetailReturnLink">
+		{$return_url}{if $category_name} - {$category_link}{/if}
+	</div>
 {/if}
 
 {if isset($entry->fields)}
