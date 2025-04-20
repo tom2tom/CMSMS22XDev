@@ -39,7 +39,7 @@
   <li>file_location (string) = A url containing the location where files attached the article are stored... the field value should be appended to this url.</li>
 </ul>
 
-<p>Members can be displayed by the following syntax: {$entry->membername} or assigned to another smarty variable using {assign var='foo' value=$entry->membername}.</p>
+<p>Members can be displayed by the following syntax: {$entry->membername} or assigned to another Smarty variable using {$foo=$entry->membername}.</p>
 <p>The following members are available in the entry array:<br></p>
 
 

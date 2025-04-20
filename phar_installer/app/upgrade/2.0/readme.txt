@@ -23,9 +23,9 @@ A:  Smarty variable scope issues
 --
 Description: CMSMS has updated the Smarty template engine.  Smarty variables created in one template are no longer automatically available throughout the generation of the page.  You must explicitly copy those variables into another scope using the {assign} smarty plugin, it's shortcut or the new {share_data} plugin.
 
-Symptoms:  After upgrading the site you may see one or more notices, warnings, or fatal errors about 'undefined index variablename'.  and other related messages.
+Symptoms:  After upgrading the site you may see one or more notices, warnings or fatal errors about 'undefined index variablename' and other related messages.
 
-Solution:  You need to find the location where the 'undefined' variable was created and copy it to a global scope.   Using the AdminSearch mechanism is a good way to find instances where these variables are used and/or created.   Once you find the template that the variable was created in,  you can alter the template to copy the variable into the global scope for use by other templates.  One way to do this is via the {assign} smarty plugin (or it's short form).  i.e:  {assign var=foo value=$foo scope=global}.  Another way is to use the {share_data} plugin that was created for CMSMS 2.0.  i.e: {share_data vars='title,description,foo'}
+Solution:  You need to find the location where the 'undefined' variable was created and copy it to the global scope.  Using the AdminSearch mechanism is a good way to find instances where these variables are used and/or created.   Once you find the template that the variable was created in,  you can alter the template to copy the variable into the global scope for use by other templates.  One way to do this is via the {assign} smarty plugin e.g. {assign var=foo value=$foo scope='global'} or short-form {$foo=$foo scope='global'}.  Another way is to use the {share_data} plugin that was created for CMSMS 2.0.  i.e: {share_data vars='title,description,foo'}
 
 
 B:  Smarty security issues
