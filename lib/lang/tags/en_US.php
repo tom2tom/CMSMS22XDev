@@ -1135,7 +1135,7 @@ $lang['help_function_thumbnail_url'] = <<<'EOT'
  <li>assign - <em>(optional)</em> - Optionally assign the output to the named smarty variable.</li>
 </ul>
 <h3>Example:</h3>
-<pre><code>&lt;img src="{thumbnail_url file='images/something.jpg'}" alt="something.jpg"/&gt;</code></pre>
+<pre><code>&lt;img src="{thumbnail_url file='images/something.jpg'}" alt="something.jpg"&gt;</code></pre>
 <h3>Tip:</h3>
 <p>It is a trivial process to create a generic template or smarty function that will use the <code>{file_url}</code> and <code>{thumbnail_url}</code> plugins to generate a thumbnail and link to a larger image.</p>
 EOT;
@@ -1236,7 +1236,7 @@ $lang['help_function_form_start'] = <<<'EOT'
 &lt;option value="25"&gt;25&lt;/option&gt;
 &lt;option value="50"&gt;50&lt;/option&gt;
 &lt;select&gt;
-&lt;input type="submit" name="{$actionid}submit" value="Submit"/&gt;
+&lt;input type="submit" name="{$actionid}submit" value="Submit"&gt;
 {form_end}</code></pre>
 <h3>Example 2:</h3>
 <p>The following is a sample form for use in the frontend of a website.  Entered into page content, this hypothetical form will gather a page limit, and submit it to the News module.</p>
@@ -1246,7 +1246,7 @@ $lang['help_function_form_start'] = <<<'EOT'
 &lt;option value="25"&gt;25&lt;/option&gt;
 &lt;option value="50"&gt;50&lt;/option&gt;
 &lt;select&gt;
-&lt;input type="submit" name="submit" value="Submit"/&gt;
+&lt;input type="submit" name="submit" value="Submit"&gt;
 {form_end}
 {$pagelimit=25}
 {if isset($smarty.get.pagelimit)}{$pagelimit=$smarty.get.pagelimit}{/if}
