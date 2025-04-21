@@ -188,7 +188,7 @@ $(function() {
 <div class="pageoverflow">
     <p class="pagetext">{$mod->Lang('prompt_media_type')}:</p>
     <p class="pageinput media-type">
-    {$all_types=explode(',','all,aural,speech,braille,embossed,handheld,print,projection,screen,tty,tv'}
+    {$all_types=explode(',','all,aural,speech,braille,embossed,handheld,print,projection,screen,tty,tv')}
     {foreach $all_types as $type}{strip}
         <input id="media_type_{$type}" type="checkbox" name="{$actionid}media_type[]" value="{$type}"{if $css->has_media_type($type)} checked{/if}>
         &nbsp;
