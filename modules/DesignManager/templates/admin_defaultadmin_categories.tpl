@@ -36,7 +36,7 @@ $(function () {
 </script>
 
 {if count($list_categories) > 1}
-  <div class="pagewarning" style="display: block;">{$mod->Lang('warning_category_dragdrop')}</div>
+  <div class="pagewarning" style="display:block">{$mod->Lang('warning_category_dragdrop')}</div>
 {/if}
 
 {/if}

@@ -118,7 +118,7 @@ $(function() {
 });
 </script>
 
-<div id="filterdialog" style="display: none;" title="{$mod->Lang('tpl_filter')|escape:'javascript'}">
+<div id="filterdialog" style="display:none" title="{$mod->Lang('tpl_filter')|escape:'javascript'}">
   {form_start action='defaultadmin' id='filterdialog_form' __activetab='templates'}
     <input type="hidden" id="submit_filter_tpl" name="{$actionid}submit_filter_tpl" value="1">
     <div class="c_full">
@@ -155,7 +155,7 @@ $(function() {
   {form_end}
 </div>{* #filterdialog *}
 {if $has_add_right && !empty($list_types)}
-  <div id="addtemplatedialog" style="display: none;" title="{$mod->Lang('create_template')}">
+  <div id="addtemplatedialog" style="display:none" title="{$mod->Lang('create_template')}">
     {form_start id="addtemplate_form"}
       <div class="pageoverflow">
         <input type="hidden" name="{$actionid}submit_create" value="1">

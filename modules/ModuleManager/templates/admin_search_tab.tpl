@@ -26,7 +26,7 @@ $(function() {
 	<p class="pageinput">
 		<input id="searchterm" type="text" name="{$actionid}term" size="50" value="{$term}" title="{$ModuleManager->Lang('title_searchterm')}" placeholder="{$ModuleManager->Lang('entersearchterm')}">&nbsp;
 		<input type="checkbox" id="advanced" name="{$actionid}advanced" value="1"{if $advanced} checked{/if} title="{$ModuleManager->Lang('title_advancedsearch')}">&nbsp;<label for="advanced">{$ModuleManager->Lang('prompt_advancedsearch')}</label>
-		<span id="advhelp" style="display:none;"><br>{$ModuleManager->Lang('advancedsearch_help')}</span>
+		<span id="advhelp" style="display:none"><br>{$ModuleManager->Lang('advancedsearch_help')}</span>
 	</p>
 </div>
 <br>
@@ -57,7 +57,7 @@ $(function() {
 	<tbody>
 	{foreach $search_data as $entry}
 		{cycle values="row1,row2" assign='rowclass'}
-			<tr class="{$rowclass}"{if $entry->age=='new'} style="font-weight: bold;"{/if}>
+			<tr class="{$rowclass}"{if $entry->age=='new'} style="font-weight:bold"{/if}>
 			<td>{get_module_status_icon status=$entry->age}</td>
 			<td><span title="{$entry->description|adjust:'strip_tags'|cms_escape}">{$entry->name}</span></td>
 			<td>{$entry->version}</td>

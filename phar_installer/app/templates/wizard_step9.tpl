@@ -7,7 +7,7 @@
 {/block}
 
 {block name='contents'}
-<div id="inner" style="overflow: auto; min-height: 10em; max-height: 35em;"></div>
+<div id="inner" style="overflow:auto;min-height:10em;max-height:35em"></div>
 <div id="bottom_nav">{* bottom nav is needed here *}</div>
 {/block}
 {block name='content-footer'}
@@ -21,7 +21,7 @@
   <a class="action-button social twitter" href="https://twitter.com/cmsms" target="_blank">X</a>
   <a class="action-button social orange" href="https://www.cmsmadesimple.org/support/options" target="_blank">{tr('step9_get_support')}</a>
 </div>
-<a href="https://www.cmsmadesimple.org/community/newsletter" target="_blank" style="padding:.5em 0">{tr('step9_news')}</a>
+<a href="https://www.cmsmadesimple.org/community/newsletter" target="_blank" style="padding:0.5em 0">{tr('step9_news')}</a>
 <h3 class="orange">{tr('step9_love_cmsms')}?</h3>
-<a href="https://www.cmsmadesimple.org/donations" target="_blank" style="padding:.5em 0">{tr('step9_support_us')}</a>
+<a href="https://www.cmsmadesimple.org/donations" target="_blank" style="padding:0.5em 0">{tr('step9_support_us')}</a>
 {/block}

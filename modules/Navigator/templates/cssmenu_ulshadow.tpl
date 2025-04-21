@@ -57,7 +57,7 @@
     {/if}
   {/foreach}
   {if $depth > 0}
-    <li class="separator once" style="list-style-type: none;">&nbsp;</li>
+    <li class="separator once" style="list-style-type:none">&nbsp;</li>
   {/if}
 </ul>
 {/function}

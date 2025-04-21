@@ -29,7 +29,7 @@
 		<div class="pageoverflow">
 			<p class="pagetext"><label for="frontendlang">{lang('frontendlang')}:</label> {cms_help key2='siteprefs_frontendlang' title=lang('frontendlang')}</p>
 			<p class="pageinput">
-				<select id="frontendlang" name="frontendlang" style="vertical-align:middle;">
+				<select id="frontendlang" name="frontendlang" style="vertical-align:middle">
 					{html_options options=$languages selected=$frontendlang}
 				</select>
 			</p>
@@ -106,7 +106,7 @@
 			<input type="hidden" name="editsiteprefs" value="true">
 		</div>
 		{if !$pretty_urls}
-			<div class="warning" style="display: block;">{lang('warn_nosefurl')}&nbsp;&nbsp;{cms_help key2='settings_nosefurl' title=lang('warn_nosefurl')}</div>
+			<div class="warning" style="display:block">{lang('warn_nosefurl')}&nbsp;&nbsp;{cms_help key2='settings_nosefurl' title=lang('warn_nosefurl')}</div>
 		{/if}
 		<div class="pageoverflow">
 			<p class="pageinput">
@@ -204,7 +204,7 @@
 			<input type="hidden" name="active_tab" value="sitedown">
 			<input type="hidden" name="editsiteprefs" value="true">
 		</div>
-		<div class="information" style="display: block;">{lang('info_settings_sitedown')}</div>
+		<div class="information" style="display:block">{lang('info_settings_sitedown')}</div>
 		<div class="pageoverflow">
 			<p class="pageinput">
 				<input type="submit" name="submit" value="{lang('submit')}" class="pagebutton">
@@ -299,7 +299,7 @@ $(function() {
 });
 </script>
 
-	<div id="testpopup" title="{lang('title_mailtest')}" style="display: none;">
+	<div id="testpopup" title="{lang('title_mailtest')}" style="display:none">
 		<form id="siteprefform_mail" method="post" action="{$formurl}">
 			<div>
 				<input type="hidden" name="{$SECURE_PARAM_NAME}" value="{$CMS_USER_KEY}">

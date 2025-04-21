@@ -220,7 +220,7 @@ $(function() {
 });
 </script>
 
-	<div id="useroptions" style="display: none;" title="{$mod->Lang('title_userpageoptions')}">
+	<div id="useroptions" style="display:none" title="{$mod->Lang('title_userpageoptions')}">
 	{form_start action='defaultadmin' id='myoptions_form'}
 		<div class="c_full cf">
 			<input type="hidden" name="{$actionid}setoptions" value="1">

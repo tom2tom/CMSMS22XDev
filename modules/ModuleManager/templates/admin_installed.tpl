@@ -57,7 +57,7 @@ $(function() {
 });
 </script>
 
-<div id="importdlg" title="{$ModuleManager->Lang('importxml')}" style="display: none;">
+<div id="importdlg" title="{$ModuleManager->Lang('importxml')}" style="display:none">
   {form_start id='local_import' action='local_import'}
   <div class="pageoverflow">
     <p class="pagetext"><label for="xml_upload">{$ModuleManager->Lang('uploadfile')}:</label>
@@ -102,11 +102,11 @@ $(function() {
           {if !$item.installed || $item.e_status == 'need_upgrade'}
             <span title="{$item.description}" class="important">{$item.name}</span>
           {elseif $item.notavailable}
-            <span title="{$item.description}" style="color: red;">{$item.name}</span>
+            <span title="{$item.description}" style="color:red">{$item.name}</span>
           {elseif $item.deprecated}
-            <span title="{$item.description}" style="color: orange;">{$item.name}</span>
+            <span title="{$item.description}" style="color:orange">{$item.name}</span>
           {else}
-            <span title="{$item.description}" {if $item.system_module} style="color: green;"{/if}>{$item.name}</span>
+            <span title="{$item.description}"{if $item.system_module} style="color:green"{/if}>{$item.name}</span>
           {/if}
       </td>
       <td>{if $item.e_status == 'newer_available'}
@@ -118,17 +118,17 @@ $(function() {
       <td>{* status column *}
           {$ops=[]}
           {if $item.notavailable}
-            {capture assign='op'}<strong title="{$ModuleManager->Lang('title_notavailable')}" style="color: red;">{$ModuleManager->Lang('notavailable')}</strong>{/capture}{$ops[]=$op}
+            {capture assign='op'}<strong title="{$ModuleManager->Lang('title_notavailable')}" style="color:red">{$ModuleManager->Lang('notavailable')}</strong>{/capture}{$ops[]=$op}
           {elseif !$item.installed}
             {if $item.can_install}
               {capture assign='op'}<strong title="{$ModuleManager->Lang('title_notinstalled')}">{$ModuleManager->Lang('notinstalled')}</strong>{/capture}{$ops[]=$op}
             {else if $item.missing_deps}
-              {capture assign='op'}<a class="modop mod_missingdeps important" style="color: red;" title="{$ModuleManager->Lang('title_missingdeps')}" href="{cms_action_url action='local_missingdeps' mod=$item.name}">{$ModuleManager->Lang('missingdeps')}</a>{/capture}{$ops[]=$op}
+              {capture assign='op'}<a class="modop mod_missingdeps important" style="color:red" title="{$ModuleManager->Lang('title_missingdeps')}" href="{cms_action_url action='local_missingdeps' mod=$item.name}">{$ModuleManager->Lang('missingdeps')}</a>{/capture}{$ops[]=$op}
             {/if}
           {else}
             {capture assign='op'}{$tmp='status_'|cat:$item.status}<span title="{$ModuleManager->Lang($tmp)}">{$ModuleManager->Lang($item.status)}</span>{/capture}{$ops[]=$op}
             {if $item.missing_deps}
-              {capture assign='op'}<a class="modop mod_missingdeps important" style="color: red;" title="{$ModuleManager->Lang('title_missingdeps')}" href="{cms_action_url action='local_missingdeps' mod=$item.name}">{$ModuleManager->Lang('missingdeps')}</a>{/capture}{$ops[]=$op}
+              {capture assign='op'}<a class="modop mod_missingdeps important" style="color:red" title="{$ModuleManager->Lang('title_missingdeps')}" href="{cms_action_url action='local_missingdeps' mod=$item.name}">{$ModuleManager->Lang('missingdeps')}</a>{/capture}{$ops[]=$op}
             {/if}
             {if !$item.can_uninstall}
               {capture assign='op'}<span title="{$ModuleManager->Lang('title_cantuninstall')}">{$ModuleManager->Lang('cantuninstall')}</span>{/capture}{$ops[]=$op}
@@ -136,7 +136,7 @@ $(function() {
           {/if}
 
           {if isset($item.e_status)}
-            {capture assign='op'}{$tmp='status_'|cat:$item.e_status}<span {if $item.e_status == 'db_newer'}class="important"{/if} title="{$ModuleManager->Lang($tmp)}" style="color: orange;">{$ModuleManager->Lang($item.e_status)}</span>{/capture}{$ops[]=$op}
+            {capture assign='op'}{$tmp='status_'|cat:$item.e_status}<span {if $item.e_status == 'db_newer'}class="important"{/if} title="{$ModuleManager->Lang($tmp)}" style="color:orange">{$ModuleManager->Lang($item.e_status)}</span>{/capture}{$ops[]=$op}
           {/if}
           {if !$item.ver_compatible}
             {capture assign='op'}<span class="important" title="{$ModuleManager->Lang('title_notcompatible')}">{$ModuleManager->Lang('notcompatible')}</span>{/capture}{$ops[]=$op}

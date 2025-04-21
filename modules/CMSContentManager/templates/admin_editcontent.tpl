@@ -239,7 +239,7 @@ $(function() {
     {tab_start name='_preview_'}
       <div class="pagewarning">{$mod->Lang('info_preview_notice')}</div>
       <iframe name="_previewframe_" class="preview" id="previewframe"></iframe>
-      <div id="previewerror" class="red" style="display:none;color:#000;">
+      <div id="previewerror" class="red" style="display:none;color:#000">
         <fieldset>
           <legend>TODO</legend>
           <ul id="preview_errors"></ul>

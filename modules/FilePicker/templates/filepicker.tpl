@@ -52,7 +52,7 @@
 			<div class="filepicker-container">
 				<div id="filepicker-progress" class="filepicker-breadcrumb">
 					<p class="filepicker-breadcrumb-text" title="{$mod->Lang('youareintext')}:"><i class="cmsms-fp-folder-open filepicker-icon"></i> {$cwd_for_display}</p>
-					<p id="filepicker-progress-text" style="display: none;"></p>
+					<p id="filepicker-progress-text" style="display:none"></p>
 				</div>
 				<div id="filelist">
 					<ul class="filepicker-list" id="filepicker-items">

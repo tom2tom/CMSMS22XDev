@@ -1,10 +1,10 @@
 {strip}{if $css->locked()}
   {$lock=$css->get_lock()}
-  {if $css->lock_expired()}<strong style="color: red;">{$mod->Lang('msg_steal_lock')}</strong><br>{/if}
+  {if $css->lock_expired()}<strong style="color:red">{$mod->Lang('msg_steal_lock')}</strong><br>{/if}
   <strong>{$mod->Lang('prompt_lockedby')}:</strong> {cms_admin_user uid=$lock.uid}<br>
   <strong>{$mod->Lang('prompt_lockedsince')}:</strong> {$lock.created|localedate_format:'%x H:i'}<br>
   {if $lock.expires < $smarty.now}
-    <strong>{$mod->Lang('prompt_lockexpired')}:</strong> <span style="color: red;">{$lock.expires|relative_time}</span>
+    <strong>{$mod->Lang('prompt_lockexpired')}:</strong> <span style="color:red">{$lock.expires|relative_time}</span>
   {else}
     <strong>{$mod->Lang('prompt_lockexpires')}:</strong> {$lock.expires|relative_time}
   {/if}
