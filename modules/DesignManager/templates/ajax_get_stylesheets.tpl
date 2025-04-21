@@ -11,7 +11,7 @@ $('#css_selall').cmsms_checkall();
          <a id="cssclearlocks" accesskey="l" title="{$mod->Lang('title_clearlocks')}" href="{cms_action_url action='admin_clearlocks' type='stylesheet'}">{admin_icon icon='run.gif' alt=''}&nbsp;{$mod->Lang('prompt_clearlocks')}</a>&nbsp;&nbsp;
       {/if}
       {if $css_filter && $css_filter.design}
-      <span style="color: green;" title="{$mod->Lang('title_filterapplied')}">{$mod->Lang('filterapplied')}</span>
+      <span style="color:green" title="{$mod->Lang('title_filterapplied')}">{$mod->Lang('filterapplied')}</span>
       {/if}
 {/if}
   </div>
@@ -44,7 +44,7 @@ $('#css_selall').cmsms_checkall();
     <th class="pageicon"></th>{* edit *}
     <th class="pageicon"></th>{* copy *}
     <th class="pageicon"></th>{* delete *}
-    <th class="pageicon"><label for="css_selall" style="display: none;">{$mod->Lang('title_css_selectall')}</label><input type="checkbox" value="1" id="css_selall" title="{$mod->Lang('title_css_selectall')}"></th>{* multiple *}
+    <th class="pageicon"><label for="css_selall" style="display:none">{$mod->Lang('title_css_selectall')}</label><input type="checkbox" value="1" id="css_selall" title="{$mod->Lang('title_css_selectall')}"></th>{* multiple *}
       </tr>
     </thead>
     <tbody>
@@ -103,7 +103,7 @@ $('#css_selall').cmsms_checkall();
       <td><a href="{$copy_css}" title="{$mod->Lang('copy_stylesheet')}">{admin_icon icon='copy.gif' title=$mod->Lang('copy_stylesheet')}</a></td>
       <td><a href="{$delete_css}" title="{$mod->Lang('delete_stylesheet')}">{admin_icon icon='delete.gif' title=$mod->Lang('delete_stylesheet')}</a></td>
       <td>
-        <label for="css_select{$css@index}" style="display: none;">{$mod->Lang('prompt_select')}:</label>
+        <label for="css_select{$css@index}" style="display:none">{$mod->Lang('prompt_select')}:</label>
         <input id="{$css@index}" type="checkbox" class="css_select" name="{$actionid}css_select[]" value="{$css->get_id()}">
       </td>
         {else}

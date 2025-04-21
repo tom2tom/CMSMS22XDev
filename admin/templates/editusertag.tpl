@@ -79,7 +79,7 @@ $(function() {
 		<h3>{lang('editusertag')}</h3>
 	{/if}
 
-	<div id="edit_userplugin_runout" title="{lang('output')}" style="display: none;"></div>
+	<div id="edit_userplugin_runout" title="{lang('output')}" style="display:none"></div>
 	<div id="edit_userplugin_result"></div>
 
 {form_start url='editusertag.php' id='edit_userplugin' userplugin_id=$record.userplugin_id}

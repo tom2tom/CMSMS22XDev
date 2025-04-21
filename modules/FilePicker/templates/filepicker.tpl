@@ -136,7 +136,7 @@
 			</div>
 		</div>
 {/strip}
-		<div id="mkdir_dlg" title="{$mod->Lang('title_mkdir')}" style="display: none;" data-oklbl="{$mod->Lang('ok')}">
+		<div id="mkdir_dlg" title="{$mod->Lang('title_mkdir')}" style="display:none" data-oklbl="{$mod->Lang('ok')}">
 			<div class="dlg-options">
 				<label for="fld_mkdir">{$mod->Lang('name')}:</label> <input type="text" id="fld_mkdir" size="40">
 			</div>

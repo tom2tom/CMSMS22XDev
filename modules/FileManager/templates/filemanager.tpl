@@ -118,8 +118,8 @@ $(function () {
 </button>
 {/function}
 
-<div id="popup" style="display: none;">
-	<div id="popup_contents" style="min-width: 500px; max-height: 600px;"></div>
+<div id="popup" style="display:none">
+	<div id="popup_contents" style="min-width:30em;max-height:36em"></div>
 </div>
 
 <div>
@@ -178,7 +178,7 @@ $(function () {
 				<td class="clickable" style="padding-right:8px;white-space:pre;vertical-align:middle">{$thedate}</td>
 				<td>
 				{if !isset($file->noCheckbox)}
-					<label for="x_{$idx}" style="display:none;">{$mod->Lang('toggle')}</label>
+					<label for="x_{$idx}" style="display:none">{$mod->Lang('toggle')}</label>
 					<input type="checkbox" title="{$mod->Lang('toggle')}" id="x_{$idx}" name="{$actionid}selall[]" value="{$file->urlname}" class="fileselect {' '|adjust:'implode':$file->type}"{if isset($file->checked)} checked{/if}>
 				{/if}
 				</td>

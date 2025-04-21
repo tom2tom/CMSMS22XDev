@@ -41,7 +41,7 @@
 </div>
 {form_end}
 
-<div style="display: none;">
+<div style="display:none">
   <div id="help_rm_tpl" title="{$mod->Lang('prompt_help')}">{$mod->Lang('help_rm_tpl')}</div>
   <div id="help_rm_css" title="{$mod->Lang('prompt_help')}">{$mod->Lang('help_rm_css')}</div>
 </div>

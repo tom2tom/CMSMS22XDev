@@ -164,7 +164,7 @@ $(function() {
         <br>
         <div id="pageoverflow">
           <p class="pageinput">
-            <input id="cancel" type="submit" value="{$mod->Lang('cancel')}" style="display: none;">
+            <input id="cancel" type="submit" value="{$mod->Lang('cancel')}" style="display:none">
           </p>
         </div>
       </div>

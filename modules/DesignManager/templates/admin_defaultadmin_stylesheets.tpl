@@ -59,7 +59,7 @@ $(function() {
 });
 </script>
 
-<div id="filtercssdlg" style="display: none;" title="{$mod->Lang('css_filter')}">
+<div id="filtercssdlg" style="display:none" title="{$mod->Lang('css_filter')}">
   {form_start id='filtercssdlg_form'}{*strip*}
     <input type="hidden" id="submit_filter_css" name="{$actionid}submit_filter_css" value="1">
     <div class="c_full">

@@ -15,7 +15,7 @@ $('#tpl_selall').cmsms_checkall();
       <a id="clearlocks" accesskey="l" title="{$mod->Lang('title_clearlocks')}" href="{cms_action_url action='admin_clearlocks' type='template'}">{admin_icon icon='run.gif' alt=''}&nbsp;{$mod->Lang('prompt_clearlocks')}</a>&nbsp;&nbsp;
     {/if}
     {if !empty($tpl_filter[0])}
-      <span style="color: green;" title="{$mod->Lang('title_filterapplied')}">{$mod->Lang('filterapplied')}</span>
+      <span style="color:green" title="{$mod->Lang('title_filterapplied')}">{$mod->Lang('filterapplied')}</span>
     {/if}
 {/if}
   </div>

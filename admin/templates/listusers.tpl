@@ -85,7 +85,7 @@ $(function() {
         <thead>
             <tr>
                 <th>{lang('username')}</th>
-                <th style="text-align: center;">{lang('active')}</th>
+                <th style="text-align:center">{lang('active')}</th>
                 {if $is_admin}<th class="pageicon"></th>{/if}
                 <th class="pageicon"></th>
                 <th class="pageicon"></th>
@@ -107,7 +107,7 @@ $(function() {
                     {/if}
                 </td>
 
-                <td style="text-align: center;">
+                <td style="text-align:center">
                     {if $can_edit && $user->id != $my_userid}
                         <a href="listusers.php{$urlext}&amp;toggleactive={$user->id}" title="{lang('info_user_active2')}" class="toggleactive">
                             {if $user->active}{admin_icon icon='true.gif'}{else}{admin_icon icon='false.gif'}{/if}
@@ -158,7 +158,7 @@ $(function() {
                 <option value="disable">{lang('disable')}</option>
                 <option value="enable">{lang('enable')}</option>
             </select>&nbsp;
-            <div id="userlist" style="display: none;">
+            <div id="userlist" style="display:none">
                 <label for="userlist_sub">{lang('copyfromuser')}:</label>&nbsp;
                 <select name="userlist" id="userlist_sub">
                     {html_options options=$userlist}

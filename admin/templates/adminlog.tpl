@@ -21,7 +21,7 @@ $(function() {
 
 <div class="pagecontainer">
   <div class="pageoverflow">
-    <div id="adminlog_filters" style="display: none;" title="{lang('filter')}">
+    <div id="adminlog_filters" style="display:none" title="{lang('filter')}">
         <form id="adminlog_filter" method="post" action="adminlog.php?{$SECURE_PARAM_NAME}={$CMS_USER_KEY}">
           <div class="c_full">
             <label for="actionin">{$langfilteraction}</label>
@@ -48,9 +48,9 @@ $(function() {
     </div>
 
     <div class="c_full">
-      <div class="grid_8" style="padding-top: 8px;">
+      <div class="grid_8" style="padding-top:8px">
         <a id="toggle_filters">{admin_icon icon='view.gif' alt=""} {lang('filter')}</a>
-        {if $filter_applied} <span style="color: green;"><em>({lang('applied')})</em></span>{/if}
+        {if $filter_applied} <span style="color:green"><em>({lang('applied')})</em></span>{/if}
         {if isset($downloadlink)}
           <a href="adminlog.php{$urlext}&amp;download=1">{$downloadlink}</a>&nbsp;
           <a href="adminlog.php{$urlext}&amp;download=1">{$langdownload}</a>
@@ -100,7 +100,7 @@ $(function() {
       </tbody>
     </table>
   {else}
-    <h3 style="text-align: center; color: red;">{$langlogempty}</h3>
+    <h3 style="text-align:center;color:red">{$langlogempty}</h3>
   {/if}
 
   </div>

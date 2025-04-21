@@ -27,6 +27,6 @@ $(function() {
 </div>
 {form_end}
 
-<div style="display: none;">{strip}
+<div style="display:none">{strip}
   <div id="help_import_xml_file" title="{$mod->Lang('prompt_help')}">{$mod->Lang('help_import_xml_file')}</div>
 {/strip}</div>

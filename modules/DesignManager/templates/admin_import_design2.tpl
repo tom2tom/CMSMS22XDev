@@ -47,7 +47,7 @@ $(function() {
       <p class="pagetext">{$mod->Lang('prompt_created')}:</p>
       <p class="pageinput">
         {$tmp=$design_info.generated|localedate_format:'%x %X'}{if $tmp == ''}{$tmp=$mod->Lang('unknown')}{/if}
-        <span style="color: red;">{$tmp}</span>&nbsp;{cms_help key2='help_import_created' title=''}
+        <span style="color:red">{$tmp}</span>&nbsp;{cms_help key2='help_import_created' title=''}
       </p>
     </div>
   </div>
@@ -57,7 +57,7 @@ $(function() {
       <p class="pagetext">{$mod->Lang('prompt_cmsversion')}:</p>
       <p class="pageinput">
         {if version_compare($design_info.cmsversion,$cms_version) < 0}
-          <span style="color: red;">{$design_info.cmsversion}</span>&nbsp;{cms_help key2='help_import_cmsversion' title=$mod->Lang('prompt_cmsversion')}
+          <span style="color:red">{$design_info.cmsversion}</span>&nbsp;{cms_help key2='help_import_cmsversion' title=$mod->Lang('prompt_cmsversion')}
         {else}
           {$design_info.cmsversion}
         {/if}

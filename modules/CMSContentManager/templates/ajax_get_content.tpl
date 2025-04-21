@@ -1,5 +1,5 @@
 <div class="row c_full cf">
-  <div class="pageoptions grid_8" style="margin-top: 8px;">
+  <div class="pageoptions grid_8" style="margin-top:8px">
       {if $can_add_content}
         <a href="{cms_action_url action=admin_editcontent}" accesskey="n" title="{$mod->Lang('addcontent')}" class="pageoptions">{admin_icon icon='newobject.gif' alt=$mod->Lang('addcontent')}&nbsp;{$mod->Lang('addcontent')}</a>
       {/if}
@@ -15,7 +15,7 @@
     {/if}
       {/if}
       <a id="myoptions" accesskey="o" title="{$mod->Lang('prompt_settings')}">{admin_icon icon='edit.gif' alt=$mod->Lang('prompt_settings')}&nbsp;{$mod->lang('prompt_settings')}</a>
-      {if !empty($have_filter)}<span style="color: red;"><em>({$mod->Lang('filter_applied')})</em></span>{/if}
+      {if !empty($have_filter)}<span style="color:red"><em>({$mod->Lang('filter_applied')})</em></span>{/if}
   </div>
 
   <div class="pageoptions options-form grid_4" style="float: right;">
@@ -43,7 +43,7 @@
   <div id="contentlist">{* everything from here down is part of the ajax stuff *}
   {* error container *}
   {if isset($error)}
-  <div id="error_cont" class="red" style="color: red; width: 80%; margin-left: 2%; margin-right: 10%; text-align: center; vertical-align: middle;">{$error}</div>
+  <div id="error_cont" class="red" style="color:red;width:80%;margin-left:2%;margin-right:10%;text-align:center;vertical-align:middle">{$error}</div>
   {/if}
 
   {if isset($content_list)}
@@ -88,7 +88,7 @@
           <strong>{$mod->Lang('locked_by')}:</strong> {$row.lockuser}<br>
           <strong>{$mod->Lang('locked_since')}:</strong> {$row.lock.created|localedate_format:'%x H:i'}<br>
           {if $row.lock.expires < $smarty.now}
-            <span style="color: red;"><strong>{$mod->Lang('lock_expired')}:</strong> {$row.lock.expires|relative_time}</span>
+            <span style="color:red"><strong>{$mod->Lang('lock_expired')}:</strong> {$row.lock.expires|relative_time}</span>
           {else}
             <strong>{$mod->Lang('lock_expires')}:</strong> {$row.lock.expires|relative_time}
                   {/if}<br>
@@ -249,7 +249,7 @@
 {if !empty($content_list)}
   <div class="row c_full cf">
     {if $can_add_content}
-      <div class="pageoptions grid_6" style="margin-top: 8px;">
+      <div class="pageoptions grid_6" style="margin-top:8px">
         <a  href="{cms_action_url action=admin_editcontent}" accesskey="n" title="{$mod->Lang('addcontent')}" class="pageoptions">{admin_icon icon='newobject.gif' alt=$mod->Lang('addcontent')}&nbsp;{$mod->Lang('addcontent')}</a>
       </div>
     {/if}

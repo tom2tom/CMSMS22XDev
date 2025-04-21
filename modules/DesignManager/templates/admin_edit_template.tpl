@@ -95,7 +95,7 @@ $(function() {
 
 {$helptext=$type_obj->get_template_helptext($type_obj->get_name())}
 {if $helptext}
-<div id="helptext_dlg" title="{$mod->Lang('prompt_template_help')}" style="display: none;">
+<div id="helptext_dlg" title="{$mod->Lang('prompt_template_help')}" style="display:none">
     {$helptext}
 </div>
 {/if}

@@ -52,7 +52,7 @@ $(function() {
   });
 });
 </script>
-<div id="filter" title="{$filtertext}" style="display:none;">
+<div id="filter" title="{$filtertext}" style="display:none">
 	{$startaform}
 	<div class="pageoverflow">
 	<p class="pagetext"><label for="filter_category">{$prompt_category}:</label> {cms_help key='help_articles_filtercategory' title=$prompt_category}</p>
@@ -92,15 +92,15 @@ $(function() {
 	{$endform}
 </div>
 <div class="row c_full">
-	<div class="pageoptions grid_6" style="margin-top: 8px;">
+	<div class="pageoptions grid_6" style="margin-top:8px">
 {if $can_add}
 	<a href="{cms_action_url action=addarticle}">{admin_icon icon='newobject.gif' alt=$mod->Lang('addarticle')} {$mod->Lang('addarticle')}</a>&nbsp;
 {/if}
-	<a id="toggle_filter"{if $curcategory} style="font-weight:bold;color:green;"{/if}>{admin_icon icon='view.gif' alt=$mod->Lang('viewfilter')}{if $curcategory} *{/if}
+	<a id="toggle_filter"{if $curcategory} style="font-weight:bold;color:green"{/if}>{admin_icon icon='view.gif' alt=$mod->Lang('viewfilter')}{if $curcategory} *{/if}
 	{$mod->Lang('viewfilter')}</a>
 	</div>
 {if $aitemcount > 0 && $pagecount > 1}
-	<div class="pageoptions grid_6" style="text-align:right;">
+	<div class="pageoptions grid_6" style="text-align:right">
 		{$startaform}
 		<label for="pnum">{$mod->Lang('prompt_page')}</label>&nbsp;
 		<select id="pnum" name="{$actionid}pagenumber">

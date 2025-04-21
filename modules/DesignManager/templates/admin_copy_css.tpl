@@ -12,7 +12,7 @@
     </div>
     <div class="pageoverflow">
       <p class="pagetext"><label for="css_name">{$mod->Lang('prompt_designs')}:</label></p>
-      <p class="pageinput" style="max-height: 5em; overflow: auto;">
+      <p class="pageinput" style="max-height:5em;overflow:auto">
       {foreach $css->get_designs() as $design_id}
         {$design_names[$design_id]}<br>
       {/foreach}
@@ -20,7 +20,7 @@
     </div>
     <div class="pageoverflow">
       <p class="pagetext"><label for="css_name">{$mod->Lang('prompt_description')}:</label></p>
-      <p class="pageinput" style="max-height: 5em; overflow: auto;">{$css->get_description()|summarize}</p>
+      <p class="pageinput" style="max-height:5em;overflow:auto">{$css->get_description()|summarize}</p>
     </div>
   </div>{* column *}
 
