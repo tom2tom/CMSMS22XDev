@@ -1,6 +1,6 @@
 <?php
 
-#A
+//A
 $lang['additional_editors'] = 'Additional Editors';
 $lang['apply'] = 'Apply';
 $lang['asc'] = 'Ascending';
@@ -10,7 +10,7 @@ $lang['attached_templates'] = 'Attached Templates';
 $lang['available_stylesheets'] = 'Available Stylesheets';
 $lang['available_templates'] = 'Available Templates';
 
-#B
+//B
 $lang['bulk_action_delete'] = 'Bulk deletion of templates';
 $lang['bulk_action_delete_css'] = 'Bulk Deletion of stylesheets';
 $lang['bulk_action_export_css'] = 'Export multiple stylesheets to Files';
@@ -18,7 +18,7 @@ $lang['bulk_action_import_css'] = 'Import multiple stylesheets from Files';
 $lang['bulk_action_export'] = 'Export multiple templates to files';
 $lang['bulk_action_import'] = 'Import multiple templates from files';
 
-#C
+//C
 $lang['cancel'] = 'Cancel';
 $lang['category_saved'] = 'Category Saved';
 //$lang['close'] = 'Close';
@@ -56,7 +56,7 @@ $lang['create_template'] = 'Create a new Template';
 $lang['css_filter'] = 'Filter Stylesheets';
 $lang['category_reordered'] = 'Category order changed';
 
-#D
+//D
 $lang['delete_attached_stylesheets'] = 'Delete attached and orphaned stylesheets';
 $lang['delete_attached_templates'] = 'Delete attached and orphaned templates';
 $lang['delete_design'] = 'Delete Design';
@@ -66,7 +66,7 @@ $lang['desc'] = 'Descending';
 $lang['desc_designmanager_settings'] = 'Adjust settings related to managing designs (templates and stylesheets)';
 $lang['drop_items'] = 'Drop selected items here';
 
-#E
+//E
 $lang['edit_category'] = 'Edit Category';
 $lang['edit_design'] = 'Edit Design';
 $lang['edit_stylesheet'] = 'Edit Stylesheet';
@@ -97,15 +97,15 @@ $lang['error_nophysicalfile'] = 'An error occurred parsing the stylesheets, and/
 $lang['export'] = 'Export';
 $lang['export_design'] = 'Export Design to XML';
 
-#F
+//F
 $lang['filter'] = 'Filter';
 $lang['filterapplied'] = 'Filter Applied';
 $lang['friendlyname'] = 'Design Manager';
 
-#G
+//G
 $lang['go'] = 'Go';
 
-#H
+//H
 /* +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 $lang['help'] = <<<EOT
 <h3>What does this do?</h3>
@@ -272,7 +272,7 @@ $lang['help_type_name'] = 'The name of this template type';
 $lang['help_type_originator'] = 'The originator <em>(usually the module name)</em> that created this template type';
 $lang['help_type_reqcontentblocks'] = 'This field indicates whether templates of this content type are required to have content blocks within them.';
 
-#I
+//I
 $lang['import'] = 'Import';
 $lang['import_design'] = 'Import Design';
 $lang['import_design_step1'] = 'Import Design Step 1';
@@ -300,18 +300,12 @@ $lang['info_nodescription'] = 'There is no description entered for this item';
 $lang['info_template_content_file'] = 'The contents of this template are stored in a file.  You can edit this template by editing <strong>%s</strong> with your favorite editor.';
 $lang['info_template_delete'] = 'This template may be used by a working system.  Deleting it may break an otherwise working website.  Use caution!';
 
-#J
-
-
-#K
-
-
-#L
+//L
 $lang['lock_timeout'] = 'Lock Time out (minutes)';
 $lang['lock_refresh'] = 'Lock Refresh Interval (seconds)';
 $lang['lock_warning'] = 'Another user is editing this item. You will not be able to save any of your work until lock time out expires.';
 
-#M
+//M
 $lang['media_type_all'] = 'All';
 $lang['media_type_aural'] = 'Aural';
 $lang['media_type_speech'] = 'Speech';
@@ -348,7 +342,7 @@ $lang['msg_design_deleted'] = 'Design Deleted';
 $lang['msg_design_saved'] = 'Design Saved';
 $lang['msg_type_saved'] = 'Template Type Saved';
 
-#N
+//N
 $lang['name'] = 'Name';
 $lang['newname'] = 'New Name';
 $lang['next'] = 'Next';
@@ -358,10 +352,7 @@ $lang['new_stylesheet'] = 'New Stylesheet';
 $lang['new_template'] = 'New Template';
 $lang['no'] = 'No';
 
-#O
-
-
-#P
+//P
 $lang['postinstall'] = 'Design Manager Module Installed';
 $lang['postuninstall'] = 'Design Manager Module Uninstalled';
 $lang['prompt_add'] = 'Add';
@@ -443,7 +434,7 @@ $lang['prompt_template_help'] = 'Template Help';
 $lang['prompt_templates'] = 'Templates';
 $lang['prompt_template_setallpages'] = 'Set All Pages';
 $lang['prompt_templatetype'] = 'Template Type';
-$lang['prompt_templatetypes'] = 'Template Types / Prototypes';
+$lang['prompt_templatetypes'] = 'Template [Proto]Types';
 $lang['prompt_title_na'] = 'This template type does not have a default';
 $lang['prompt_design'] = 'Design';
 $lang['prompt_designs'] = 'Designs';
@@ -454,20 +445,17 @@ $lang['prompt_user'] = 'User';
 $lang['prompt_view'] = 'View';
 $lang['prompt_with_selected'] = 'With Selected';
 
-#Q
-
-
-#R
+//R
 $lang['reset'] = 'Reset';
 $lang['reset_factory'] = 'Reset to Factory Defaults';
 $lang['remove'] = 'Remove';
 
-#S
+//S
 $lang['set_all_pages'] = 'Set All Pages To This Template';
 $lang['submit'] = 'Submit';
 $lang['submitandedit'] = 'Submit And Edit';
 
-#T
+//T
 $lang['title_cat_id'] = 'This column displays the unique integer id for the category.';
 $lang['title_cat_name'] = 'This column displays the unique name for the category.';
 $lang['title_clearlocks'] = 'Clear any locked items (subject to permissions)';
@@ -505,12 +493,10 @@ $lang['tpl_type'] = 'Template Type';
 $lang['tpl_types'] = 'Template Types';
 $lang['type'] = 'Type';
 
-#U
+//U
 $lang['unknown'] = 'Unknown';
 
-#V
-
-#W
+//W
 $lang['warn_bulk_delete_sheets'] = '<strong>Warning:</strong> Deleting multiple stylesheets at once is probably a bad idea.  No checks are performed to see if these stylesheets are actually used in the system.  This operation might mangle a working website!';
 $lang['warn_bulk_delete_templates'] = '<strong>Warning:</strong> Deleting multiple templates at once is usually a bad idea.  No checks are performed to see if these templates are actually used in the system.  This operation may break a working website!';
 $lang['warn_setall_nocontentblocks'] = '<strong>Warning:</strong> No content blocks were detected in the destination template.  This will prevent editing content in all current content pages.';
@@ -528,12 +514,7 @@ $lang['warning_no_stylesheets'] = 'We could find no stylesheet that matches the 
 $lang['warning_set_all_pages'] = '<strong>Warning:</strong> This is a potentially destructive operation!  You are asking that all content pages be set use this template.  Please confirm this action.';
 $lang['whats_this'] = 'What\'s this?';
 
-#X
-
-
-#Y
+//Y
 $lang['yes'] = 'Yes';
-
-#Z
 
 ?>
