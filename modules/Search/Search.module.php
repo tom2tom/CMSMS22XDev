@@ -17,19 +17,13 @@
 #
 #$Id$
 
-include_once(__DIR__ . '/PorterStemmer.class.php');
+require_once __DIR__.DIRECTORY_SEPARATOR.'PorterStemmer.class.php'; //TODO autoload on demand
 
-define( "NON_INDEXABLE_CONTENT", "<!-- pageAttribute: NotSearchable -->" );
+define( 'NON_INDEXABLE_CONTENT', '<!-- pageAttribute: NotSearchable -->' );
 
 class Search extends CMSModule
 {
-    private $_tools_loaded;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->_tools_loaded = false;
-    }
+    private $_tools_loaded = false;
 
     private function load_tools()
     {
@@ -169,10 +163,14 @@ EOT;
     public function DeleteAllWords($module = 'Search', $id = -1, $attr = '')
     {
         $db = CmsApp::get_instance()->GetDb();
-        $db->Execute('TRUNCATE '.CMS_DB_PREFIX.'module_search_index');
-        $db->Execute('TRUNCATE '.CMS_DB_PREFIX.'module_search_items');
-        $db->Execute('UPDATE '.CMS_DB_PREFIX.'module_search_items_seq SET id=0');
-        CMSMS\HookManager::do_hook('Search::SearchAllItemsDeleted' );
+        //minimise race-risk here
+        $q1 = 'TRUNCATE '.CMS_DB_PREFIX.'module_search_index';
+        $q2 = 'TRUNCATE '.CMS_DB_PREFIX.'module_search_items';
+        $q3 = 'UPDATE '.CMS_DB_PREFIX.'module_search_items_seq SET id=0';
+        $db->Execute($q1);
+        $db->Execute($q2);
+        $db->Execute($q3);
+        CMSMS\HookManager::do_hook('Search::SearchAllItemsDeleted');
     }
 
     public function RegisterEvents()
