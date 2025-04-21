@@ -1511,8 +1511,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns html5 representing a tooltip-enabled href link.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's valid html.
+     * Returns html5 representing a tooltip-enabled href link. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @final
      * @param string $id The id given to the module on execution
@@ -1530,8 +1530,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns html5 representing an fieldset and legend.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's valid html.
+     * Returns html5 representing a fieldset and legend. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @final
      * @param string $id The id given to the module on execution (not really used yet, but might be later)
@@ -1549,8 +1549,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the end of the fieldset in a  form.  This is basically just a wrapper around </form>, but
-     * could be extended later on down the road.  It's here mainly for consistency.
+     * Returns the end of the fieldset in a  form.  This is just a wrapper around </fieldset>,
+     * but could be extended later on down the road.  It's here mainly for consistency.
      *
      * @final
      * @deprecated
@@ -1602,8 +1602,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the end of the a module form.  This is basically just a wrapper around </form>, but
-     * could be extended later on down the road.  It's here mainly for consistency.
+     * Returns the end of the a module form.  This is just a wrapper around </form>,
+     * but could be extended later on down the road.  It's here mainly for consistency.
      *
      * @return string
      */
@@ -1613,8 +1613,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns html5 representing an input textbox.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's valid html.
+     * Returns html5 representing an input textbox. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the textbox
@@ -1632,8 +1632,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns html5 representing an label for input field.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's valid html.
+     * Returns html5 representing a label for an input field. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input field this label is associated to
@@ -1649,8 +1649,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns html5 representing an input textbox with label.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's valid html.
+     * Returns html5 representing an input textbox with label. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the textbox
@@ -1670,8 +1670,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the html5 equivalent of an input of type color.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's html5 compliant.
+     * Returns html5 representing an input of type color. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input field
@@ -1686,8 +1686,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the html5 equivalent of an input of type date.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's html5 compliant.
+     * Returns the html5 equivalent of an input of type date. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input field
@@ -1703,8 +1703,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the html5 equivalent of an input of type datetime.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's html5 compliant.
+     * Returns the html5 equivalent of an input of type datetime. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input field
@@ -1720,8 +1720,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the html5 equivalent of an input of type datetime-local.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's html5 compliant.
+     * Returns the html5 equivalent of an input of type datetime-local. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input field
@@ -1737,8 +1737,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the html5 equivalent of an input of type month.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's html5 compliant.
+     * Returns the html5 equivalent of an input of type month. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input field
@@ -1754,8 +1754,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the html5 equivalent of an input of type week.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's html5 compliant.
+     * Returns the html5 equivalent of an input of type week. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input field
@@ -1771,8 +1771,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the html5 equivalent of an input of type time.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's html5 compliant.
+     * Returns the html5 equivalent of an input of type time. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input field
@@ -1788,8 +1788,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the html5 equivalent of an input of type number.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's html5 compliant.
+     * Returns the html5 equivalent of an input of type number. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input field
@@ -1804,8 +1804,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the html5 equivalent of an input of type range.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's html5 compliant.
+     * Returns the html5 equivalent of an input of type range. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input field
@@ -1821,8 +1821,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the html5 equivalent of an input textbox of type email.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's html5 compliant.
+     * Returns the html5 equivalent of an input of type email. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the textbox
@@ -1840,8 +1840,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the html5 equivalent of an input textbox of type tel.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's html5 compliant.
+     * Returns the html5 equivalent of an input of type tel. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the textbox
@@ -1859,8 +1859,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the html5 equivalent of an input of type search.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's html5 compliant.
+     * Returns the html5 equivalent of an input of type search. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the textbox
@@ -1878,8 +1878,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the html5 equivalent of an input of type url.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's valid html.
+     * Returns the html5 equivalent of an input of type url. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the textbox
@@ -1898,8 +1898,8 @@ abstract class CMSModule
 
 
     /**
-     * Returns html5 representing a file-selector field. This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's valid html.
+     * Returns html5 representing an input of type file. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the textbox
@@ -1916,8 +1916,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns html5 representing an input password-box. This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's valid html.
+     * Returns html5 representing an input of type password. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the textbox
@@ -1935,8 +1935,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns html5 representing a hidden field. This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's valid html.
+     * Returns html5 representing a hidden input. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the hidden field
@@ -1952,8 +1952,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns html5 representing a checkbox. This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's valid html.
+     * Returns html5 representing an input of type checkbox. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the checkbox
@@ -1970,8 +1970,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns html5 representing a submit button. This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's valid html.
+     * Returns html5 representing an input of type submit. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the button
@@ -1989,8 +1989,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns html5 representing a reset button. This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's valid html.
+     * Returns html5 representing an input of type reset. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the button
@@ -2006,8 +2006,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns html5 representing a file upload input. This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's valid html.
+     * Returns html5 representing an input of type file. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the input
@@ -2024,8 +2024,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns html5 representing a dropdown list. This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it is valid html.
+     * Returns html5 representing a dropdown list. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the dropdown list
@@ -2043,8 +2043,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns the html5 equivalent input field with datalist options.  This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's html5 compliant.
+     * Returns html5 representing an input element with datalist options. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the textbox
@@ -2064,8 +2064,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns html5 representing a multi-select list. This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it is valid html.
+     * Returns html5 representing a multi-select list. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the select list
@@ -2084,8 +2084,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns html5 representing a set of radio buttons. This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it is valid html.
+     * Returns html5 representing a set of radio buttons. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the radio group
@@ -2102,7 +2102,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns html5 representing a textarea. Also takes WYSIWYG preference into consideration if it's called from the admin side.
+     * Returns html5 representing a textarea. Takes WYSIWYG preference 
+     * into consideration if called from the admin side.
      *
      * @param bool   $enablewysiwyg Should we try to create a WYSIWYG for this textarea?
      * @param string $id The id given to the module on execution
@@ -2147,8 +2148,8 @@ abstract class CMSModule
 
 
     /**
-     * Returns html5 representing a textarea. Also takes syntax hilighter preference
-     * into consideration if it's called from the admin side.
+     * Returns html5 representing a content-styled textarea. Takes syntax hilighter
+     * preference into consideration if called from the admin side.
      *
      * @deprecated
      * @param string $id The id given to the module on execution
@@ -2171,8 +2172,9 @@ abstract class CMSModule
     }
 
     /**
-     * Returns html5 representing an href link. This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's valid html.
+     * Returns html5 representing a link for frontend use. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
+     * Effectively it's CreateLink() with a slightly different order of arguments.
      *
      * @param string $id The id given to the module on execution
      * @param string $returnid The id to eventually return to when the module is finished it's task
@@ -2197,8 +2199,8 @@ abstract class CMSModule
     }
 
     /**
-     * Returns html5 representing an href link. This is basically a nice little wrapper
-     * to make sure that id's are placed in names and also that it's valid html.
+     * Returns html5 representing a link. This is a wrapper
+     * to make sure that id's are placed in names and also html validity.
      *
      * @param string $id The id given to the module on execution
      * @param string $action The action that this form should do when the link is clicked
@@ -2223,7 +2225,7 @@ abstract class CMSModule
     }
 
     /**
-     * Returns a URL to a module action
+     * Returns an URL to initiate a module action.
      * This method is called by the CreateLink methods when creating a link to a module action.
      *
      * @since 1.10
@@ -2244,9 +2246,10 @@ abstract class CMSModule
     }
 
     /**
-     * Return a pretty url string for a module action
-     * This method is called by the create_url and the CreateLink methods if the pretty url argument is not specified in order
-     * to attempt automating a pretty url for an action.
+     * Returns a pretty URL string to initiate a module action.
+     * This method is called by the create_url and the CreateLink methods
+     * if the pretty url argument is not specified in order to attempt
+     * automating a pretty URL for an action.
      *
      * @since 1.10
      * @abstract
@@ -2263,8 +2266,9 @@ abstract class CMSModule
     }
 
     /**
-     * Returns html5 representing an href link for content links. This is basically a nice
-     * little wrapper to make sure that we go back to where we want and that it's valid html
+     * Returns html5 representing a link to a content page. This is a wrapper
+     * to make sure that we go back to where we want and that it's valid html
+     * @see also CreateReturnLink()
      *
      * @param int $pageid the page id of the page we want to direct to
      * @param string $contents The optional text or XHTML contents of the generated link
@@ -2279,8 +2283,9 @@ abstract class CMSModule
 
 
     /**
-     * Returns html5 representing an href link for Content links. This is basically a nice little wrapper
-     * to make sure that we go back to where we want to and that it's valid html.
+     * Returns html5 representing a link to a content page. This is a wrapper
+     * to make sure that we go back to where we want and that it's valid html.
+     * @see also CreateContentLink()
      *
      * @param string $id The id given to the module on execution
      * @param mixed $returnid int | '' | null The id to return to when the module is finished its task
