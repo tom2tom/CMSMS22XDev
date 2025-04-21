@@ -343,7 +343,7 @@
         <input id="fld11" type="checkbox" name="{$actionid}useexp"{if $useexp} checked{/if} class="pagecheckbox">
       </p>
     </div>
-    <div id="expiryinfo" {if $useexp != 1}style="display: none;"{/if}>
+    <div id="expiryinfo"{if $useexp != 1} style="display:none"{/if}>
       <div class="pageoverflow">
         <p class="pagetext">
           {$startdatetext}: {cms_help key='help_article_startdate' title=$startdatetext}
@@ -414,7 +414,7 @@
     <label for="cms_hierdropdown1_0">{$prompt_detail_page}:</label>&nbsp;{$preview_page_selector}
   </fieldset>
   <br>
-  <iframe id="previewframe" style="height: 800px; width: 100%; border: 1px solid black; overflow: auto;"></iframe>
+  <iframe id="previewframe" class="preview" style="height:50em;width:100%;overflow:auto"></iframe>
   {$end_tab_preview}
   {$end_tab_content}
 {/strip}
