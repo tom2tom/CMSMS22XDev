@@ -51,7 +51,7 @@ elseif (isset($params['submit'])) {
     if ($newval != $curval) {
         $this->SetPreference('usestemming', $newval);
         $this->Reindex();
-        echo $this->ShowMessage('reindexcomplete');
+        echo $this->ShowMessage($this->Lang('reindexcomplete'));
     }
 }
 
@@ -67,6 +67,6 @@ if( empty($seetab) ) {
     $seetab = (!empty($params['__activetab'])) ? $params['__activetab'] : '';
 }
 $tpl->assign('tab', $seetab);
-$tpl->assign('endform', $this->CreateFormEnd());
+$tpl->assign('formend', $this->CreateFormEnd());
 
 $tpl->display();
