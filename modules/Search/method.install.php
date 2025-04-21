@@ -125,7 +125,7 @@ catch( CmsException $e ) {
 }
 
 // Permission
-$this->CreatePermission('Manage Search',lang('perm_Manage_Search'));//TODO migrate to module-lang
+$this->CreatePermission('Manage Search',$this->Lang('perm_Manage_Search'));
 
 // Events
 $this->CreateEvent('SearchInitiated');
