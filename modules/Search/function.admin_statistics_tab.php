@@ -2,7 +2,12 @@
 
 $tpl->assign('sformstart',$this->CreateFormStart($id,'defaultadmin',$returnid,'post','',false,'',
 			array('__activetab'=>'statistics')));
-$tpl->assign('wordtext',$this->Lang('word'));
+if( $this->GetPreference('savephrases', 0) ) {
+	$title = $this->Lang('phrase');
+} else {
+	$title = $this->Lang('word');
+}
+$tpl->assign('wordtext',$title);
 $tpl->assign('counttext',$this->Lang('count'));
 $tpl->assign('exportcsv',
 		$this->CreateInputSubmit($id,'exportcsv',$this->Lang('export_to_csv'),
