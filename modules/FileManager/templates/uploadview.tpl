@@ -12,9 +12,9 @@
     background: #14b6fd;
   }
   #dropzone.in {
-    width: 600px;
-    height: 200px;
-    line-height: 200px;
+    width: 36em;
+    height: 12em;
+    line-height: 12em;
     background: #147fdb;
     border: 2px dashed #fff;
     color: #fff;
