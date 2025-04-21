@@ -168,6 +168,7 @@ try {
     } else {
         CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('new_template'));
     }
+    $extraparms['__activetab'] = 'templates';
 
     $modname = $this->GetName();
     $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_edit_template.tpl", null, $modname, $smarty);

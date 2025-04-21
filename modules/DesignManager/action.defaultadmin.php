@@ -211,6 +211,8 @@ if( $this->CheckPermission('Manage Stylesheets') ) {
     }
 }
 
+$seetab = (!empty($params['__activetab'])) ? $params['__activetab'] : '';
+$tpl->assign('tab',$seetab);
 $tpl->assign('filter_tpl_options',$opts);
 $tpl->assign('tpl_filter',$filter_tpl_rec); // used for filter form
 $tpl->assign('css_filter',$filter_css_rec); // used for filter form

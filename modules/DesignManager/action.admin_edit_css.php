@@ -144,6 +144,7 @@ try {
     else {
         CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('new_stylesheet'));
     }
+    $extraparms['__activetab'] = 'stylesheeets';
 
     $tpl->assign('has_designs_right', $this->CheckPermission('Manage Designs'));
     $tpl->assign('extraparms', $extraparms);
