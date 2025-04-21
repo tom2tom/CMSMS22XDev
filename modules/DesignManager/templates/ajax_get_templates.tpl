@@ -1,5 +1,7 @@
 <script>
-$('#tpl_selall').cmsms_checkall();
+$(function() {
+ $('#tpl_selall').cmsms_checkall();
+});
 </script>
 
 {form_start action=defaultadmin}{strip}
@@ -166,7 +168,7 @@ $('#tpl_selall').cmsms_checkall();
           <option value="export">{$mod->lang('export')}</option>
           <option value="import">{$mod->lang('import')}</option>
         </select>
-        <input id="tpl_bulk_submit" class="tpl_bulk_action" type="submit" name="{$actionid}submit_bulk" value="{$mod->Lang('submit')}">
+        <input id="tpl_bulk_submit" class="tpl_bulk_action" type="submit" name="{$actionid}submit_bulk_tpl" value="{$mod->Lang('submit')}">
       </p>
     </div>
     <div class="clearb"></div>

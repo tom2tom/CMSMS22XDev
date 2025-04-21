@@ -1,5 +1,7 @@
 <script>
-$('#css_selall').cmsms_checkall();
+$(function() {
+ $('#css_selall').cmsms_checkall();
+});
 </script>
 
 <div class="row">
@@ -8,7 +10,7 @@ $('#css_selall').cmsms_checkall();
 {if !empty($stylesheets) || ($css_filter && $css_filter.design)}
       <a id="editcssfilter" accesskey="f" title="{$mod->Lang('prompt_editfilter')}">{admin_icon icon='view.gif' alt=$mod->Lang('prompt_editfilter')} {$mod->Lang('filter')}</a>&nbsp;&nbsp;
       {if $have_css_locks}
-         <a id="cssclearlocks" accesskey="l" title="{$mod->Lang('title_clearlocks')}" href="{cms_action_url action='admin_clearlocks' type='stylesheet'}">{admin_icon icon='run.gif' alt=''}&nbsp;{$mod->Lang('prompt_clearlocks')}</a>&nbsp;&nbsp;
+      <a id="cssclearlocks" accesskey="l" title="{$mod->Lang('title_clearlocks')}" href="{cms_action_url action='admin_clearlocks' type='stylesheet'}">{admin_icon icon='run.gif' alt=''}&nbsp;{$mod->Lang('prompt_clearlocks')}</a>&nbsp;&nbsp;
       {/if}
       {if $css_filter && $css_filter.design}
       <span style="color:green" title="{$mod->Lang('title_filterapplied')}">{$mod->Lang('filterapplied')}</span>
@@ -31,20 +33,20 @@ $('#css_selall').cmsms_checkall();
 
 {if !empty($stylesheets)}
   {strip}
-  {form_start action=admin_bulk_css}
+  {form_start action='admin_bulk_css'}
   <table class="pagetable">
     <thead>
       <tr>
-    <th title="{$mod->Lang('title_css_id')}">{$mod->Lang('prompt_id')}</th>
-    <th class="pageicon"></th>
-    <th title="{$mod->Lang('title_css_name')}">{$mod->Lang('prompt_name')}</th>
-    <th title="{$mod->Lang('title_css_designs')}">{$mod->Lang('prompt_design')}</th>
-    <th title="{$mod->Lang('title_css_filename')}">{$mod->Lang('prompt_filename')}</th>
-    <th title="{$mod->Lang('title_css_modified')}">{$mod->Lang('prompt_modified')}</th>
-    <th class="pageicon"></th>{* edit *}
-    <th class="pageicon"></th>{* copy *}
-    <th class="pageicon"></th>{* delete *}
-    <th class="pageicon"><label for="css_selall" style="display:none">{$mod->Lang('title_css_selectall')}</label><input type="checkbox" value="1" id="css_selall" title="{$mod->Lang('title_css_selectall')}"></th>{* multiple *}
+        <th title="{$mod->Lang('title_css_id')}">{$mod->Lang('prompt_id')}</th>
+        <th class="pageicon"></th>
+        <th title="{$mod->Lang('title_css_name')}">{$mod->Lang('prompt_name')}</th>
+        <th title="{$mod->Lang('title_css_designs')}">{$mod->Lang('prompt_design')}</th>
+        <th title="{$mod->Lang('title_css_filename')}">{$mod->Lang('prompt_filename')}</th>
+        <th title="{$mod->Lang('title_css_modified')}">{$mod->Lang('prompt_modified')}</th>
+        <th class="pageicon"></th>{* edit *}
+        <th class="pageicon"></th>{* copy *}
+        <th class="pageicon"></th>{* delete *}
+        <th class="pageicon"><label for="css_selall" style="display:none">{$mod->Lang('title_css_selectall')}</label><input type="checkbox" value="1" id="css_selall" title="{$mod->Lang('title_css_selectall')}"></th>{* multiple *}
       </tr>
     </thead>
     <tbody>
@@ -54,7 +56,6 @@ $('#css_selall').cmsms_checkall();
         {cms_action_url action='admin_edit_css' css=$css->get_id() assign='edit_css'}
         {cms_action_url action='admin_copy_css' css=$css->get_id() assign='copy_css'}
         {cms_action_url action='admin_delete_css' css=$css->get_id() assign='delete_css'}
-
     <tr class="{$rowclass}">
     {if !$css->locked()}
           <td><a href="{$edit_css}" data-css-id="{$css->get_id()}" class="edit_css tooltip" title="{$mod->Lang('edit_stylesheet')}" data-cms-description='{$css_tooltip}'>{$css->get_id()}</a></td>
@@ -99,7 +100,7 @@ $('#css_selall').cmsms_checkall();
     <td>{$css->get_modified()|localedate_format:'%x %X'}</td>
 
     {if !$css->locked()}
-          <td><a href="{$edit_css}" data-css-id="{$css->get_id()}" class="edit_css" title="{$mod->Lang('edit_stylesheet')}">{admin_icon icon='edit.gif' title=$mod->Lang('edit_stylesheet')}</a></td>
+      <td><a href="{$edit_css}" data-css-id="{$css->get_id()}" class="edit_css" title="{$mod->Lang('edit_stylesheet')}">{admin_icon icon='edit.gif' title=$mod->Lang('edit_stylesheet')}</a></td>
       <td><a href="{$copy_css}" title="{$mod->Lang('copy_stylesheet')}">{admin_icon icon='copy.gif' title=$mod->Lang('copy_stylesheet')}</a></td>
       <td><a href="{$delete_css}" title="{$mod->Lang('delete_stylesheet')}">{admin_icon icon='delete.gif' title=$mod->Lang('delete_stylesheet')}</a></td>
       <td>
@@ -142,5 +143,5 @@ $('#css_selall').cmsms_checkall();
   </div>
   {form_end}
 {else}
-  <p class="information">{$mod->Lang('warning_no_stylesheets')}</p>
+<p class="information">{$mod->Lang('warning_no_stylesheets')}</p>
 {/if}
