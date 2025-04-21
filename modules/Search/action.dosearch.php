@@ -25,7 +25,7 @@ class SearchItemCollection
         }
 
         if (!$exists) {
-            $newitem = new StdClass();
+            $newitem = new stdClass();
             $newitem->url = $url;
             $newitem->urltxt = search_CleanupText($txt);
             $newitem->title = $title;
@@ -57,7 +57,7 @@ class SearchItemCollection
     }
 } // end of class
 
-/////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 
 if( isset($params['resulttemplate']) ) {
     $template = trim($params['resulttemplate']);
@@ -128,7 +128,9 @@ if (isset($params['searchinput']) && $params['searchinput'] != '') {
     }
 
 //  $val = 100 * 100 * 100 * 100 * 25;
-    $query = "SELECT DISTINCT i.module_name, i.content_id, i.extra_attr, COUNT(*) AS nb, SUM(idx.count) AS total_weight FROM ".CMS_DB_PREFIX."module_search_items i INNER JOIN ".CMS_DB_PREFIX."module_search_index idx ON idx.item_id = i.id WHERE (".$searchphrase.") AND (COALESCE(i.expires,NOW()) >= NOW())";
+    $query = 'SELECT DISTINCT i.module_name, i.content_id, i.extra_attr, COUNT(*) AS nb, SUM(idx.`count`) AS total_weight FROM '.
+    CMS_DB_PREFIX.'module_search_items i INNER JOIN '.
+    CMS_DB_PREFIX.'module_search_index idx ON idx.item_id = i.id WHERE (".$searchphrase.") AND (COALESCE(i.expires,NOW()) >= NOW())';
     if( isset( $params['modules'] ) ) {
         $modules = explode(",",$params['modules']);
         for( $i = 0; $i < count($modules); $i++ ) {
@@ -136,12 +138,12 @@ if (isset($params['searchinput']) && $params['searchinput'] != '') {
         }
         $query .= ' AND i.module_name IN ('.implode(',',$modules).')';
     }
-    $query .= " GROUP BY i.module_name, i.content_id, i.extra_attr";
+    $query .= ' GROUP BY i.module_name, i.content_id, i.extra_attr';
     if( !isset($params['use_or']) || $params['use_or'] == 0 ) {
         //This makes it an AND query
-        $query .= " HAVING COUNT(*) >= $nb_words";
+        $query .= ' HAVING COUNT(*) >= $nb_words';
     }
-    $query .= " ORDER BY nb DESC, total_weight DESC";
+    $query .= ' ORDER BY nb DESC, total_weight DESC';
 
     $col = new SearchItemCollection();
     $result = $db->Execute($query);
