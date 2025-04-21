@@ -52,7 +52,7 @@ else if( isset($params['submit_create']) ) {
     }
     $this->Redirect($id,'admin_edit_template',$returnid,array('import_type'=>$tmp));
 }
-else if( isset($params['submit_bulk']) ) {
+else if( isset($params['submit_bulk_tpl']) ) {
     $tmp = array('allparms'=>base64_encode(json_encode($params)));
     $this->Redirect($id,'admin_bulk_template',$returnid,$tmp);
 }
