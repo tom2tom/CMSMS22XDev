@@ -19,9 +19,10 @@ elseif (isset($params['exportcsv']) ) {
     $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_search_words ORDER BY `count` DESC';
     $data = $db->GetArray($query);
     if( $data ) {
+        $fwhen = date('Y-m-d_H-i-s', time());
         header('Content-Description: File Transfer');
         header('Content-Type: application/force-download');
-        header('Content-Disposition: attachment; filename=search.csv');
+        header('Content-Disposition: attachment; filename=CMSMS_Search_Export_'.$fwhen.'.csv');
         while(@ob_end_clean());
 
         $output = '';
@@ -48,6 +49,7 @@ elseif (isset($params['submit'])) {
 
     $curval = (int)$this->GetPreference('usestemming', 0);
     $newval = (!empty($params['usestemming'])) ? 1 : 0;
+    echo $this->ShowMessage($this->Lang('settingssaved'));
     if ($newval != $curval) {
         $this->SetPreference('usestemming', $newval);
         $this->Reindex();
