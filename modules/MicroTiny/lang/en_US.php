@@ -232,7 +232,6 @@ $lang['prompt_target'] = 'Target';
 $lang['prompt_texttodisplay'] = 'Text to display';
 
 // S
-$lang['savesettings'] = 'Save settings';
 $lang['settings'] = 'Settings';
 $lang['settingssaved'] = 'Settings saved';
 $lang['size'] = 'Size';

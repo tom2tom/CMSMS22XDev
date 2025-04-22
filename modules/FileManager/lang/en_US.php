@@ -257,7 +257,6 @@ $lang['rwxstyle'] = 'rwx style';
 
 // S
 $lang['save'] = 'Save';
-$lang['savesettings'] = 'Save settings';
 $lang['selecttargetdir'] = 'Select target directory for move/copy';
 $lang['setpermissions'] = 'Set permissions';
 $lang['settings'] = 'Settings';
