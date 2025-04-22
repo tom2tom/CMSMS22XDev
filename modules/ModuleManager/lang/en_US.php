@@ -154,7 +154,7 @@ $lang['msg_module_uninstall'] = '<strong>Warning:</strong> Uninstalling a module
 $lang['msg_module_uninstalled'] = 'Module %s successfully uninstalled. Templates and data associated with this module has been deleted';
 $lang['msg_module_upgraded'] = 'Module %s successfully upgraded';
 $lang['msg_nodependencies'] = 'This file has not listed any dependencies';
-$lang['msg_prefssaved'] = 'Preferences Updated';
+$lang['msg_prefssaved'] = 'Preferences updated'; // see also 'preferencessaved'
 $lang['msg_urlreset'] = 'The ModuleRepository URL has been reset to the default value';
 
 // N
@@ -175,7 +175,7 @@ $lang['operation_results'] = 'Operation Results';
 $lang['postinstall'] = 'Module Manager has been successfully installed.';
 $lang['postuninstall'] = 'Module Manager has been uninstalled.  Users will no longer have the ability to install modules from the remote repository.  However, local installation is still possible.';
 $lang['preferences'] = 'Preferences';
-$lang['preferencessaved'] = 'Preferences saved';
+$lang['preferencessaved'] = 'Preferences saved'; //see also 'msg_prefssaved'
 $lang['prompt_advancedsearch'] = 'Advanced Search';
 $lang['prompt_disable_caching'] = 'Disable caching of requests from the server';
 $lang['prompt_dl_chunksize'] = 'Download Chunk Size (Kb)';
@@ -218,7 +218,7 @@ $lang['title_depends_upon'] = 'This module depends on on other modules for its f
 $lang['title_deprecated'] = 'This module is deprecated (the development is stopped and there will be no new releases).';
 $lang['title_has_dependants'] = 'This module is required because it used by other installed modules, and therefore cannot be uninstalled';
 $lang['title_install'] = 'Install this module for use in your website';
-$lang['title_installation_complete'] = 'Installation Process Complete!';
+$lang['title_installation_complete'] = 'Installation process complete!';
 $lang['title_letter'] = 'Show modules whose name starts with %s';
 $lang['title_missingdeps'] = 'This module cannot be installed or upgraded due to missing dependencies';
 $lang['title_missingdeps2'] = 'Missing Dependencies';

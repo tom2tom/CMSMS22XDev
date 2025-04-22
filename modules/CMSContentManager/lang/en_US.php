@@ -101,7 +101,7 @@ $lang['err_nomatchingcontent'] = 'Sorry... there does not appear to be any conte
 $lang['expandall'] = 'Expand All';
 
 //F
-$lang['filter_applied'] = 'Filter Applied';
+$lang['filter_applied'] = 'Filter applied';
 $lang['find'] = 'Find';
 $lang['friendlyname'] = 'Content Manager';
 
@@ -154,8 +154,8 @@ $lang['lock_expires'] = 'Expires';
 //M
 $lang['moddescription'] = 'A module for managing content within CMSMS';
 $lang['msg_bulk_successful'] = 'Bulk content operation successful';
-$lang['msg_editpage_success'] = 'Content Updated';
-$lang['msg_cancelled'] = 'Operation Canceled';
+$lang['msg_editpage_success'] = 'Content updated';
+$lang['msg_cancelled'] = 'Operation canceled';
 $lang['msg_lockscleared'] = 'Locks cleared';
 $lang['msg_lostlock'] = 'The lock on this content page has expired and been lost.  You can no longer save changes to this content page.  Please return to the content list and re-edit this page.';
 $lang['msg_prefs_saved'] = 'Preferences saved';

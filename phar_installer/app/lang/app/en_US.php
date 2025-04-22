@@ -94,7 +94,7 @@ https://www.linkedin.com/groups?gid=1139537)
 Go do great things ...
 
 EOT;
-$lang['email_accountinfo_subject'] = 'CMS Made Simple Installation Successful';
+$lang['email_accountinfo_subject'] = 'CMS Made Simple installation successful';
 $lang['emailaccountinfo'] = 'Email the account information';
 $lang['emailaddr'] = 'Email Address';
 $lang['emailsender'] = 'CMSMS Website Installer';

@@ -93,19 +93,20 @@ $lang['prompt_searchtext'] = 'Default placeholder for the search box';
 
 // R
 $lang['reindexallcontent'] = 'Re-index All Content';
-$lang['reindexcomplete'] = 'Re-index Complete!';
+$lang['reindexcomplete'] = 'Re-index complete!';
 $lang['restoretodefaultsmsg'] = 'This operation will restore the template contents to their system defaults.  Are you sure you want to proceed?';
 $lang['resulttemplate'] = 'Result Template';
-$lang['resulttemplateupdated'] = 'Result Template Updated';
+$lang['resulttemplateupdated'] = 'Result template updated';
 
 // S
 $lang['search'] = 'Search';
 $lang['searchresultsfor'] = 'Search Results For';
 $lang['searchsubmit'] = 'Submit';
 $lang['searchtemplate'] = 'Search Template';
-$lang['searchtemplateupdated'] = 'Search Template Updated';
+$lang['searchtemplateupdated'] = 'Search template updated';
 $lang['search_method'] = 'Specify "post" to enable pretty URLs compatibility using POST request method';
 $lang['settings'] = 'Settings';
+$lang['settingssaved'] = 'Settings saved';
 $lang['statistics'] = 'Statistics';
 $lang['stopwords'] = 'Stop Words';
 $lang['submit'] = 'Submit';

@@ -167,9 +167,9 @@ $lang['extra_label'] = 'Extra:';
 $lang['fesubmit_redirect'] = 'Page to redirect to after a news article has been submitted via the frontend';
 $lang['fesubmit_status'] = 'The status of news articles submitted via the frontend';
 $lang['fielddef'] = 'Field Definition';
-$lang['fielddefadded'] = 'Field Definition Successfully Added';
-$lang['fielddefdeleted'] = 'Field Definition Deleted';
-$lang['fielddefupdated'] = 'Field Definition Updated';
+$lang['fielddefadded'] = 'Field definition successfully added';
+$lang['fielddefdeleted'] = 'Field definition deleted';
+$lang['fielddefupdated'] = 'Field definition updated';
 $lang['file'] = 'File';
 $lang['filter'] = 'Filter';
 $lang['firstpage'] = '&lt;&lt;';
@@ -291,7 +291,7 @@ $lang['msg_categoriesreordered'] = 'Category order updated';
 $lang['msg_contenttype_removed'] = <<<EOT
 The news content type has been removed.  Please place {News} tags with appropriate parameters into your page template or into your page content to replace this functionality.
 EOT;
-$lang['msg_success'] = 'Operation Successful';
+$lang['msg_success'] = 'Operation successful';
 $lang['more'] = 'More';
 $lang['moretext'] = 'More Text';
 
