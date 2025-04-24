@@ -40,6 +40,12 @@ final class AdminSearch extends CMSModule
     return $this->can_search();
   }
 
+  public function GetHeaderHTML()
+  {
+    $baseurl = $this->GetModuleURLPath();
+    return "<link rel=\"stylesheet\" href=\"$baseurl/lib/admin_search.css\">\n";
+  }
+
   protected function can_search()
   {
       return $this->CheckPermission('Use Admin Search');

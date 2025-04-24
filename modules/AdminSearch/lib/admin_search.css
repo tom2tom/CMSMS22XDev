@@ -1,0 +1,18 @@
+#status_area,
+#searchresults_cont,
+#workarea {
+ display: none
+}
+#searchresults {
+ max-height: 25em;
+ overflow: auto;
+ cursor: pointer
+}
+.search_oneresult {
+ color: red
+}
+.section,
+.section_count {
+ text-decoration: underline;
+ cursor: pointer
+}
