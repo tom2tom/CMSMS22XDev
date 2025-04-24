@@ -22,33 +22,33 @@ if( !$this->VisibleToAdminUser() ) exit;
 
 function status_error($msg)
 {
-  echo '<script>parent.status_error(\''.$msg.'\')</script>';
+  echo "<script>parent.status_error('$msg');</script>";
 }
 
 function status_msg($msg)
 {
-  echo '<script>parent.status_msg(\''.$msg.'\')</script>';
+  echo "<script>parent.status_msg('$msg');</script>";
 }
 
 function begin_section($id,$txt,$desc = '')
 {
   $desc = addslashes((string)$desc);
-  echo "<script>parent.begin_section('{$id}','{$txt}','{$desc}')</script>";
+  echo "<script>parent.begin_section('$id','$txt','$desc');</script>";
 }
 
 function add_result($listid,$content)
 {
-  $tmp = "parent.add_result('{$listid}',{$content});";
-  echo '<script>'.$tmp.'</script>';
+  echo "<script>parent.add_result('$listid',$content);</script>";
 }
 
 function end_section()
 {
-  echo '<script>parent.end_section()</script>';
+  echo '<script>parent.end_section();</script>';
 }
 
-if( !isset($params['search_text']) || $params['search_text'] == '' ) {
-  status_error($this->Lang('error_nosearchtext')); return;
+if( isset($params['submit']) && empty($params['search_text']) ) {
+  status_error($this->Lang('error_nosearchtext'));
+  return;
 }
 
 // save the search
@@ -60,9 +60,10 @@ set_preference($userid,$this->GetName().'saved_search',serialize($searchparams))
 unset($searchparams['slaves']);
 
 // find search slave classes
-status_msg($this->Lang('starting'));
+//TODO if not debugging and actually searching status_msg($this->Lang('starting'));
+debug_buffer('start admin search');
 $slaves = AdminSearch_tools::get_slave_classes();
-if( is_array($slaves) && count($slaves) ) {
+if( $slaves && is_array($slaves) ) {
     foreach( $slaves as $one_slave ) {
         if( !in_array($one_slave['class'],$params['slaves']) ) continue;
         $module = cms_utils::get_module($one_slave['module']);
@@ -76,7 +77,7 @@ if( is_array($slaves) && count($slaves) ) {
 
         $obj->set_params($searchparams);
         $results = $obj->get_matches();
-        if( is_array($results) && count($results) ) {
+        if( $results && is_array($results) ) {
             begin_section($one_slave['class'],$obj->get_name(),$obj->get_section_description());
             foreach( $results as $one ) {
                 if( CMS_DEBUG ) { debug_to_log($one); }
@@ -102,7 +103,8 @@ if( is_array($slaves) && count($slaves) ) {
         end_section();
     }
 }
-status_msg($this->Lang('finished'));
+//TODO if not debugging and actually searching status_msg($this->Lang('finished'));
+debug_buffer('finished admin search');
 exit;
 
 #
