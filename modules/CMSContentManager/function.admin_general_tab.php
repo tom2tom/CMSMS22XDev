@@ -38,9 +38,26 @@ foreach( $orders as $key ) {
   }
   $tmp[$key] = [(int)$this->GetPreference('order_TAB_'.$key),ucfirst(strtolower($nm)),$flag]; //TODO UTF8 reformat name
 }
-uasort($tmp,function($a,$b) {
-  $res = Collator::compare($a,$b);
-  return ($res !== false) ? $res : 0;
+if( class_exists('Collator') ) { // Intl extension needed for Collator
+//$lang = NlsOperations::get_default_language(); // e.g. 'pl_PL' TODO if .UTF-8 ? ini 'output_encoding' ? if files N/A on host system?
+  $coll = new Collator('root'); // TODO $lang
+} else {
+  $coll = null;
+  // fallback ? e.g. setlocale() then strcoll()
+}
+uasort($tmp,function($a,$b) use($coll) {
+  if( $coll ) {
+    $res = collator_compare($coll,$a[0],$b[0]); //labels comparison
+    if( $res ) { return $res; } // not 0 or actual false
+    if( $res === 0 ) {
+      return $a[1] - $b[1]; //orders comparison
+    }
+    //false so try fallback comparison
+  }
+  if( $a[0] != $b[0] ) { //loose text comparison of labels OR strcmp ?
+    return $a[0] - $b[0]; //loose text comparison of labels
+  }
+  return $a[1] - $b[1];
 });
 $tpl->assign('tab_orders',$tmp);
 
