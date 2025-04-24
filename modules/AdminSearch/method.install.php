@@ -18,7 +18,7 @@
 #
 #-------------------------------------------------------------------------
 
-$this->CreatePermission('Use Admin Search',lang('perm_Use_Admin_Search'));//TODO migrate to module-lang
+$this->CreatePermission('Use Admin Search',$this->Lang('perm_Use_Admin_Search'));
 
 $groupops = GroupOperations::get_instance();
 $groups = $groupops->LoadGroups();

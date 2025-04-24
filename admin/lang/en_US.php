@@ -1328,7 +1328,6 @@ $lang['perm_Modify_Templates'] = 'Modify Templates';
 $lang['perm_Modify_User-defined_Tags'] = 'Modify User-defined Tags';
 $lang['perm_Remove_Pages'] = 'Remove Pages';
 $lang['perm_Reorder_Content'] = 'Reorder Content';
-$lang['perm_Use_Admin_Search'] = 'Use Admin Search'; //TODO migrate to AdminSearch
 $lang['perm_View_Tag_Help'] = 'View Tag Help';
 $lang['phpversion'] = "Current PHP Version";
 $lang['php_information'] = "PHP Information";

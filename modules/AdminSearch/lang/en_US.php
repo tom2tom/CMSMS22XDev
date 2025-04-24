@@ -62,8 +62,8 @@ $lang['moddescription'] = 'A utility to search the database tables for rows cont
 $lang['name'] = 'Name';
 
 // P
-//$lang['perm_Use_Admin_Search'] = 'Use Admin Search'; TODO migrate from admin-lang
-$lang['placeholder_search_text'] = 'Enter text';
+$lang['perm_Use_Admin_Search'] = 'Use Admin Search'; //migrated from admin-lang
+$lang['placeholder_search_text'] = 'Enter search text'; //also used in Search module
 $lang['prompt_code'] = 'Code';
 $lang['prompt_description'] = 'Description';
 $lang['postinstall'] = 'Admin Search module installed';
