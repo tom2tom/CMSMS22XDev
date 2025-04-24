@@ -86,7 +86,7 @@ $lang['param_useor'] = 'Change the default relationship from an OR relationship 
 $lang['perm_Manage_Search'] = 'Manage Search';
 $lang['phrase'] = 'Phrase';
 $lang['prompt_alpharesults'] = 'Sort results alphabetically instead of by weight';
-$lang['prompt_resetstopwords'] = 'Load default Stop Words from language';
+$lang['prompt_resetstopwords'] = 'Load default stop words from language';
 $lang['prompt_resultpage'] = 'Page for individual module results <em>(Note modules might override this)</em>';
 $lang['prompt_savephrases'] = 'Track phrases instead of individual words';
 $lang['prompt_searchtext'] = 'Default placeholder for the search box';
@@ -119,7 +119,7 @@ $lang['type_searchform'] = 'Search Form';
 $lang['type_searchresults'] = 'Search Results';
 
 // U
-$lang['usestemming'] = 'Use Word Stemming (English Only)';
+$lang['usestemming'] = 'Use word stemming (English only)';
 $lang['use_or'] = 'Find results that match ANY word';
 
 // W
