@@ -319,7 +319,6 @@ $lang['notitlegiven'] = 'No Title Given';
 $lang['numbertodisplay'] = 'Number to Display (empty shows all records)';
 
 // O
-$lang['options'] = 'Options';
 $lang['optionsupdated'] = 'The options were successfully updated.';
 
 // P
@@ -366,6 +365,7 @@ $lang['select'] = 'Select';
 $lang['select_option'] = 'Select Option';
 $lang['selectall'] = 'Select All';
 $lang['selectcategory'] = 'Select Category';
+$lang['settings'] = 'Settings';
 $lang['showchildcategories'] = 'Show Child Categories';
 $lang['sortascending'] = 'Sort Ascending';
 $lang['startdate'] = 'Start Date';
@@ -393,18 +393,18 @@ $lang['title_browsecat_sysdefault'] = 'Default Browse category Template';
 $lang['title_browsecat_template'] = 'Browse Category Template Editor';
 $lang['title_desc'] = 'Title Descending';
 $lang['title_detail_returnid'] = 'Default page to use for detail views';
-$lang['title_detail_settings'] = 'Detail View Settings';
+$lang['title_detail_settings'] = 'Detail View';
 $lang['title_detail_sysdefault'] = 'Default Detail Template';
 $lang['title_detail_template'] = 'Detail Template Editor';
 $lang['title_draft_entries'] = 'Unapproved News articles';
 $lang['title_fesubmit_form'] = 'Submit news article';
-$lang['title_fesubmit_settings'] = 'Frontend Submission Settings';
+$lang['title_fesubmit_settings'] = 'Frontend Submission';
 $lang['title_filter'] = 'Filters';
 $lang['title_form_sysdefault'] = 'Default Form Template';
 $lang['title_form_template'] = 'Form Template Editor';
 $lang['title_news_settings'] = 'Settings - News Module';
-$lang['title_notification_settings'] = 'Notification Settings';
-$lang['title_submission_settings'] = 'News Submission Settings';
+$lang['title_notification_settings'] = 'Notification';
+$lang['title_submission_settings'] = 'Article Submission';
 $lang['title_summary_sysdefault'] = 'Default Summary Template';
 $lang['title_summary_template'] = 'Summary Template Editor';
 $lang['toggle_bulk'] = 'Select this article for bulk processing';
