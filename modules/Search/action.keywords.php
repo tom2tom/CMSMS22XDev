@@ -1,27 +1,29 @@
 <?php
 if( !isset($gCms) ) exit;
 
-$wordcount = 500;
-if( isset($params['count']) ) $wordcount = (int)$params['count'];
+$wordcount = ( isset($params['count']) ) ? (int)$params['count'] : 500;
+$pageid = ( isset($params['pageid']) ) ? (int)$params['pageid'] : $returnid;
 
-$pageid = $returnid;
-if( isset($params['pageid']) ) $pageid = (int)$params['pageid'];
+$pref = CMS_DB_PREFIX;
+$query = <<<EOS
+SELECT b.word FROM {$pref}module_search_items a
+CROSS JOIN {$pref}module_search_index b
+WHERE a.content_id = $pageid
+AND a.id = b.item_id
+AND a.module_name = 'search'
+AND a.extra_attr = 'content'
+ORDER BY b.`count` DESC
+EOS;
 
-$query = 'SELECT b.word FROM '.
-CMS_DB_PREFIX.'module_search_items a INNER JOIN '.
-CMS_DB_PREFIX.'module_search_index b ON
-a.id = b.item_id
-WHERE a.content_id = \''.$pageid.'\'
-AND a.module_name = \'search\'
-AND a.extra_attr = \'content\'
-ORDER BY b.`count` DESC';
-
-$wordlist = array();
-$dbr = $db->SelectLimit( $query, $wordcount, 0 );
+$dbr = $db->SelectLimit($query, $wordcount, 0);
 if( $dbr ) {
-    while( ($row = $dbr->FetchRow() ) ) {
+    $wordlist = array();
+    while( ($row = $dbr->FetchRow()) ) {
         $wordlist[] = $row['word'];
     }
-    $dbr ->Close();
+    $dbr->Close();
+    echo implode(',', $wordlist);
 }
-echo implode(',',$wordlist);
+else {
+    echo '';
+}
