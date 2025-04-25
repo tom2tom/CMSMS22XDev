@@ -17,8 +17,6 @@
 #
 #$Id$
 
-require_once __DIR__.DIRECTORY_SEPARATOR.'PorterStemmer.class.php'; //TODO autoload on demand
-
 define( 'NON_INDEXABLE_CONTENT', '<!-- pageAttribute: NotSearchable -->' );
 
 class Search extends CMSModule
@@ -27,10 +25,8 @@ class Search extends CMSModule
 
     private function load_tools()
     {
-        if( !$this->_tools_loaded ) {
-            require_once __DIR__.DIRECTORY_SEPARATOR.'search.tools.php';
-            $this->_tools_loaded = true;
-        }
+        require_once __DIR__.DIRECTORY_SEPARATOR.'search.tools.php';
+        $this->_tools_loaded = true;
     }
 
     public function LazyLoadFrontend() { return true; }
@@ -89,23 +85,22 @@ class Search extends CMSModule
         $this->SetParameterType('formtemplate',CLEAN_STRING);
         $this->SetParameterType('resulttemplate',CLEAN_STRING);
     }
-
+    //@return string
     protected function GetSearchHtmlTemplate()
     {
         return <<<'EOT'
 {$startform}
-{if !empty($hidden)}{$hidden}{/if}
+{if !empty($hidden)} {$hidden}{/if}
  <label for="{$search_actionid}searchinput">{$searchprompt}:</label>&nbsp;
  <input type="text" class="search-input" id="{$search_actionid}searchinput" name="{$search_actionid}searchinput" size="20" maxlength="50" placeholder="{$searchtext}">
-{*
- <br>
+{* <br>
  <input type="checkbox" name="{$search_actionid}use_or" value="1">
 *}
- <input type="submit" class="search-button" name="submit" data-ui-icon="ui-icon-search" value="{$submittext}">
+ <input type="submit" class="search-button" name="{$search_actionid}submit" data-ui-icon="ui-icon-search" value="{$submittext}">
 {$endform}
 EOT;
     }
-
+    //@return string
     protected function GetResultsHtmlTemplate()
     {
         return <<<'EOT'
@@ -127,37 +122,38 @@ EOT;
 {/if}
 EOT;
     }
-
+    //@return string
     protected function DefaultStopWords()
     {
         return $this->Lang('default_stopwords');
     }
-
+    //@return array
     public function RemoveStopWordsFromArray($words)
     {
         if( !is_array($words) ) return [];
-        $stop_words = $this->GetPreference('stopwords', $this->DefaultStopWords());
+        $stop_words = $this->GetPreference('stopwords');
+        if( !$stop_words ) $stop_words = $this->DefaultStopWords();
         if( !$stop_words ) return $words;
         $stop_words = preg_split("/[\s,]+/", $stop_words);
         return array_diff($words, $stop_words);
     }
-
+    //@return array, maybe empty
     public function StemPhrase($phrase)
     {
-        $this->load_tools();
+        if( !$this->_tools_loaded ) $this->load_tools();
         return search_StemPhrase($this,$phrase);
     }
 
     public function AddWords($module = 'Search', $id = -1, $attr = '', $content = '', $expires = NULL) // mixed timestamp or null
     {
-        $this->load_tools();
-        return search_AddWords($this,$module,$id,$attr,$content,$expires);
+        if( !$this->_tools_loaded ) $this->load_tools();
+        search_AddWords($this,$module,$id,$attr,$content,$expires);
     }
 
     public function DeleteWords($module = 'Search', $id = -1, $attr = '')
     {
-        $this->load_tools();
-        return search_DeleteWords($this,$module,$id,$attr);
+        if( !$this->_tools_loaded ) $this->load_tools();
+        search_DeleteWords($this,$module,$id,$attr);
     }
 
     public function DeleteAllWords($module = 'Search', $id = -1, $attr = '')
@@ -185,14 +181,14 @@ EOT;
 
     public function Reindex()
     {
-        $this->load_tools();
-        return search_Reindex($this);
+        if( !$this->_tools_loaded ) $this->load_tools();
+        search_Reindex($this);
     }
 
     public function DoEvent($originator,$eventname,&$params)
     {
-        $this->load_tools();
-        return search_DoEvent($this, $originator, $eventname, $params);
+        if( !$this->_tools_loaded ) $this->load_tools();
+        search_DoEvent($this, $originator, $eventname, $params);
     }
 
     public function HasCapability($capability,$params = array())
@@ -214,8 +210,9 @@ EOT;
 
     public static function reset_page_type_defaults(CmsLayoutTemplateType $type)
     {
-        if( $type->get_originator() != 'Search' ) throw new CmsLogicException('Cannot reset contents for this template type');
-
+        if( $type->get_originator() != 'Search' ) {
+            throw new CmsLogicException('Cannot reset contents for this template type');
+        }
         $mod = cms_utils::get_module('Search');
         if( !is_object($mod) ) return '';
         switch( $type->get_name() ) {
