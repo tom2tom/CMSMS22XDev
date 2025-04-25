@@ -1,15 +1,15 @@
 <?php
 if( !isset($gCms) ) exit;
 
-$wordcount = ( isset($params['count']) ) ? (int)$params['count'] : 500;
-$pageid = ( isset($params['pageid']) ) ? (int)$params['pageid'] : $returnid;
+$wordcount = ( !empty($params['count']) ) ? (int)$params['count'] : 500;
+$pageid = ( !empty($params['pageid']) ) ? (int)$params['pageid'] : $returnid;
 
 $pref = CMS_DB_PREFIX;
 $query = <<<EOS
-SELECT b.word FROM {$pref}module_search_items a
-CROSS JOIN {$pref}module_search_index b
-WHERE a.content_id = $pageid
-AND a.id = b.item_id
+SELECT b.word FROM {$pref}module_search_index b
+CROSS JOIN {$pref}module_search_items a
+WHERE b.item_id = a.id
+AND a.content_id = $pageid
 AND a.module_name = 'search'
 AND a.extra_attr = 'content'
 ORDER BY b.`count` DESC
