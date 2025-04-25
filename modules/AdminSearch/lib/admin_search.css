@@ -5,14 +5,17 @@
 }
 #searchresults {
  max-height: 25em;
- overflow: auto;
+ overflow: auto
+}
+#searchresults > li {
+ cursor: pointer
+}
+#searchresults > li * {
+ cursor: initial
+}
+#searchresults > li a {
  cursor: pointer
 }
 .search_oneresult {
  color: red
-}
-.section,
-.section_count {
- text-decoration: underline;
- cursor: pointer
 }
