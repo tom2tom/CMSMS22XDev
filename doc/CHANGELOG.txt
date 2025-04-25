@@ -1,7 +1,7 @@
 Version 2.2.22F2 - Whitehorse
 -------------------------------
  - Update all uses of deprecated templates-API in modules and actions
- - Block FileManager operations on executable files unless sufficiently authorised
+ - Block FileManager operations on executable files unless sufficiently authorized
  - Change more <p/>'s to <label/>'s
  - Add missing button-icons
 
@@ -14,7 +14,7 @@ Version 2.2.21F2 - Fredericton
  - FR #12770 Close admin notifications by user action (as a site preference)
  - Deploy folders for Smarty config files
  - Page-content, templates and stylesheets may be loaded without checking cache
- - Improved sanitisation of user-related parameters and email preference values
+ - Improved sanitization of user-related parameters and email preference values
  - Sanitize entered site- and page-metadata values
  - Extra opportunity to change installed translations during installer sessions
  - Supports PHP to 8.4 (and probably 8.5) without deprecation
@@ -26,7 +26,7 @@ Version 2.2.21F2 - Fredericton
 
 Version 2.2.20F2 - Yellowknife
 -------------------------------
- - FR #12700 Configurable tabs-order during content edititing
+ - FR #12700 Configurable tabs-order during content editing
  - BR #12701 Correct page-types selector setup
  - BR #12727 Search module error
  - Correct lockmanager init during DM new-item creation
@@ -109,7 +109,7 @@ MenuManager 1.50.4
  - BR #12620 - Version 2 breaks MenuManager with childrenof.
 
 News 2.51.13
- - Sanitise news-item strings (title, summary, content) before display
+ - Sanitize news-item strings (title, summary, content) before display
 
 UserGuide
  - Bundled in installer, but not automatically installed
