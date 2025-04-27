@@ -1,59 +1,52 @@
 <?php
 if (!isset($gCms)) exit;
 
-class SearchItemCollection
+final class SearchItemCollection
 {
-    public $_ary;
-    public $maxweight;
+    public $_ary = array();
+    private $maxweight = 1;
 
-    function __construct()
-    {
-        $this->_ary = array();
-        $this->maxweight = 1;
-    }
-
-    function AddItem($title, $url, $txt, $weight = 1, $module = '', $modulerecord = 0)
+    public function AddItem($title, $url, $txt, $weight = 1, $module = '', $modulerecord = 0)
     {
         if( $txt == '' ) $txt = $url;
         $exists = false;
 
-        foreach ($this->_ary as $oneitem) {
-            if ($url == $oneitem->url) {
+        foreach( $this->_ary as $oneitem ) {
+            if( $url == $oneitem->url ) {
                 $exists = true;
                 break;
             }
         }
 
-        if (!$exists) {
+        if( !$exists ) {
             $newitem = new stdClass();
             $newitem->url = $url;
             $newitem->urltxt = search_CleanupText($txt);
             $newitem->title = $title;
-            $newitem->intweight = intval($weight);
-            if (intval($weight) > $this->maxweight) $this->maxweight = intval($weight);
-            if (!empty($module) ) {
+            $newitem->intweight = (int)$weight;
+            if( (int)$weight > $this->maxweight ) $this->maxweight = (int)$weight;
+            if( !empty($module) ) {
                 $newitem->module = $module;
-                if( intval($modulerecord) > 0 )	$newitem->modulerecord = $modulerecord;
+                if( (int)$modulerecord > 0 ) $newitem->modulerecord = $modulerecord;
             }
             $this->_ary[] = $newitem;
         }
     }
 
-    function CalculateWeights()
+    public function CalculateWeights()
     {
-        foreach ($this->_ary as $oneitem) {
-            $oneitem->weight = intval(($oneitem->intweight / $this->maxweight) * 100);
+        $val = 100 / $this->maxweight;
+        foreach( $this->_ary as $oneitem ) {
+            $oneitem->weight = (int)($oneitem->intweight / $val);
         }
     }
 
-    function Sort()
+    public function Sort()
     {
-        $fn = function($a,$b) {
-            if ($a->urltxt == $b->urltxt) return 0;
+        usort($this->_ary, function($a, $b) {
+            if( $a->urltxt == $b->urltxt ) return 0;
             return ($a->urltxt < $b->urltxt ? -1 : 1);
-        };
-
-        usort($this->_ary, $fn);
+        });
     }
 } // end of class
 
@@ -65,17 +58,17 @@ if( isset($params['resulttemplate']) ) {
 else {
     $tpl = CmsLayoutTemplate::load_dflt_by_type('Search::searchresults');
     if( !is_object($tpl) ) {
-        audit('',$this->GetName().':dosearch','No default summary template found');
+        audit('', $this->GetName().':dosearch', 'No default summary template found');
         return;
     }
     $template = $tpl->get_name();
 }
-$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,'Search',$smarty);
+$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template), null, 'Search', $smarty);
 
 if( !empty($params['searchinput']) ) {
     // Fix to prevent XSS like behaviour. See: http://www.securityfocus.com/archive/1/455417/30/0/threaded
     //TODO robust sanitisation of user input c.f. news_ops::execSpecialize()
-    $params['searchinput'] = cms_html_entity_decode($params['searchinput'],ENT_COMPAT,'UTF-8');
+    $params['searchinput'] = cms_html_entity_decode($params['searchinput'], ENT_COMPAT, 'UTF-8');
     $params['searchinput'] = strip_tags($params['searchinput']);
     CMSMS\HookManager::do_hook('Search::SearchInitiated', [trim($params['searchinput'])] );
 
@@ -90,40 +83,40 @@ if( !empty($params['searchinput']) ) {
     if( $nb_words > 0 ) {
         //$searchphrase = implode(' OR ', array_fill(0, $nb_words, 'word = ?'));
         $ary = array();
-        foreach( $words as $word ) {
+        foreach( $words as $word ) { //TODO word IN() query
             $word = trim($word);
             // $ary[] = "word = " . $db->qstr(htmlentities($word, ENT_COMPAT, 'UTF-8'));
             $ary[] = "word = " . $db->qstr($word);
         }
-        $searchphrase = implode(' OR ', $ary); //TODO IN query
+        $searchphrase = implode(' OR ', $ary);
     }
 
     // Update the search words table
     if( $this->GetPreference('savephrases', 0) == 0 ) {
         foreach( $words as $word ) {
             $q = 'SELECT `count` FROM '.CMS_DB_PREFIX.'module_search_words WHERE word = ?';
-            $tmp = $db->GetOne($q,array($word));
+            $tmp = $db->GetOne($q, array($word));
             if( $tmp ) {
                 $q = 'UPDATE '.CMS_DB_PREFIX.'module_search_words SET `count`=`count`+1 WHERE word = ?';
-                $db->Execute($q,array($word));
+                $db->Execute($q, array($word));
             }
             else {
                 $q = 'INSERT INTO '.CMS_DB_PREFIX.'module_search_words (word,`count`) VALUES (?,1)';
-                $db->Execute($q,array($word));
+                $db->Execute($q, array($word));
             }
         }
     }
     else {
         $term = trim($params['searchinput']);
         $q = 'SELECT `count` FROM '.CMS_DB_PREFIX.'module_search_words WHERE word = ?';
-        $tmp = $db->GetOne($q,array($term));
+        $tmp = $db->GetOne($q, array($term));
         if( $tmp ) {
             $q = 'UPDATE '.CMS_DB_PREFIX.'module_search_words SET `count`=`count`+1 WHERE word = ?';
-            $db->Execute($q,array($term));
+            $db->Execute($q, array($term));
         }
         else {
             $q = 'INSERT INTO '.CMS_DB_PREFIX.'module_search_words (word,`count`) VALUES (?,1)';
-            $db->Execute($q,array($term));
+            $db->Execute($q, array($term));
         }
     }
 
@@ -133,11 +126,11 @@ if( !empty($params['searchinput']) ) {
     CMS_DB_PREFIX.'module_search_items i INNER JOIN '.
     CMS_DB_PREFIX.'module_search_index idx ON idx.item_id = i.id WHERE ('.$searchphrase.") AND (COALESCE(i.expires,$longnow)>=$longnow)";
     if( isset( $params['modules'] ) ) {
-        $modules = explode(",",$params['modules']);
-        for( $i = 0; $i < count($modules); $i++ ) {
+        $modules = explode(',', $params['modules']);
+        for( $i = 0, $n = count($modules); $i < $n; $i++ ) {
             $modules[$i] = $db->qstr($modules[$i]);
         }
-        $query .= ' AND i.module_name IN ('.implode(',',$modules).')';
+        $query .= ' AND i.module_name IN ('.implode(',', $modules).')';
     }
     $query .= ' GROUP BY i.module_name, i.content_id, i.extra_attr';
     if( empty($params['use_or']) ) {
@@ -148,33 +141,36 @@ if( !empty($params['searchinput']) ) {
 
     $col = new SearchItemCollection();
     $result = $db->Execute($query);
-    if ($result) {
+    if( $result ) {
         $hm = $gCms->GetHierarchyManager();
-        while (!$result->EOF) {
+        $modname = $this->GetName();
+        while( !$result->EOF ) {
             //Handle internal (templates, content, etc) first...
-            if ($result->fields['module_name'] == $this->GetName()) {
-                if ($result->fields['extra_attr'] == 'content') {
+            if( $result->fields['module_name'] == $modname ) {
+                if( $result->fields['extra_attr'] == 'content' ) {
                     //Content is easy... just grab it out of hierarchy manager and toss the url in
                     $node = $hm->sureGetNodeById($result->fields['content_id']);
-                    if (isset($node)) {
+                    if( $node ) {
                         $content = $node->GetContent();
-                        if ($content && $content->Active()) $col->AddItem($content->Name(), $content->GetURL(), $content->Name(), $result->fields['total_weight'], $result->fields['extra_attr'], $result->fields['content_id']);
+                        if( $content && $content->Active() ) {
+                            $nm = $content->Name();
+                            $col->AddItem($nm, $content->GetURL(), $nm, $result->fields['total_weight'], $result->fields['extra_attr'], $result->fields['content_id']);
+                        }
                     }
                 }
             }
             else {
-                $thepageid = $this->GetPreference('resultpage',-1);
+                $thepageid = $this->GetPreference('resultpage', -1);
                 if( $thepageid == -1 ) $thepageid = $returnid;
                 if( isset($params['detailpage']) ) {
                     $tmppageid = '';
-                    $manager = $gCms->GetHierarchyManager();
-                    $node = $manager->sureGetNodeByAlias($params['detailpage']);
-                    if (isset($node)) {
+                    $node = $hm->sureGetNodeByAlias($params['detailpage']);
+                    if( $node ) {
                         $tmppageid = $node->getID();
                     }
                     else {
-                        $node = $manager->sureGetNodeById($params['detailpage']);
-                        if (isset($node)) $tmppageid= $params['detailpage'];
+                        $node = $hm->sureGetNodeById($params['detailpage']);
+                        if( $node ) $tmppageid = $params['detailpage'];
                     }
                     if( $tmppageid ) $thepageid = $tmppageid;
                 }
@@ -183,28 +179,28 @@ if( !empty($params['searchinput']) ) {
                 //Start looking at modules...
                 $modulename = $result->fields['module_name'];
                 $moduleobj = $this->GetModuleInstance($modulename);
-                if ($moduleobj) {
-                    if (method_exists($moduleobj, 'SearchResultWithParams' )) {
+                if( $moduleobj ) {
+                    if( method_exists($moduleobj, 'SearchResultWithParams') ) {
                         // search through the params, for all the passthru ones
                         // and get only the ones matching this module name
                         $parms = array();
                         foreach( $params as $key => $value ) {
                             $str = 'passthru_'.$modulename.'_';
-                            if( preg_match( "/$str/", $key ) > 0 ) {
-                                $name = substr($key,strlen($str));
-                                if( $name != '' ) $parms[$name] = $value;
+                            if( preg_match("/$str/", $key) ) {
+                                $name = substr($key, strlen($str));
+                                if( $name ) $parms[$name] = $value;
                             }
                         }
                         $searchresult = $moduleobj->SearchResultWithParams($thepageid, $result->fields['content_id'],
                                                                             $result->fields['extra_attr'], $parms);
-                        if ($searchresult && count($searchresult) == 3) {
+                        if( $searchresult && count($searchresult) == 3 ) {
                             $col->AddItem($searchresult[0], $searchresult[2], $searchresult[1],
                                           $result->fields['total_weight'], $modulename, $result->fields['content_id']);
                         }
                     }
-                    else if (method_exists($moduleobj, 'SearchResult')) {
+                    else if( method_exists($moduleobj, 'SearchResult') ) {
                         $searchresult = $moduleobj->SearchResult($thepageid, $result->fields['content_id'], $result->fields['extra_attr']);
-                        if ($searchresult && count($searchresult) == 3) {
+                        if( $searchresult && count($searchresult) == 3 ) {
                             $col->AddItem($searchresult[0], $searchresult[2], $searchresult[1],
                                           $result->fields['total_weight'], $modulename, $result->fields['content_id']);
                         }
@@ -215,31 +211,31 @@ if( !empty($params['searchinput']) ) {
             $result->MoveNext();
         }
         $result->Close();
-    }
 
-    $col->CalculateWeights();
-    if ($this->GetPreference('alpharesults', 0)) { $col->Sort(); }
+        $col->CalculateWeights();
+        if( $this->GetPreference('alpharesults', 0) ) { $col->Sort(); }
 
-    // now we're gonna do some post processing on the results
-    // and replace the search terms with <span class="searchhilite">term</span>
+        // now we're gonna do some post processing on the results
+        // and replace the search terms with <span class="searchhilite">term</span>
 
-    $results = $col->_ary;
-    $newresults = array();
-    foreach( $results as $result ) {
-        $title = cms_htmlentities($result->title);
-        $txt = cms_htmlentities($result->urltxt);
-        foreach( $words as $word ) {
-            $word = preg_quote($word);
-            $title = preg_replace('/\b('.$word.')\b/i', '<span class="searchhilite">$1</span>', $title);
-            $txt = preg_replace('/\b('.$word.')\b/i', '<span class="searchhilite">$1</span>', $txt);
+        $results = $col->_ary;
+        $newresults = array();
+        foreach( $results as $result ) {
+            $title = cms_htmlentities($result->title);
+            $txt = cms_htmlentities($result->urltxt);
+            foreach( $words as $word ) {
+                $word = preg_quote($word);
+                $title = preg_replace('/\b('.$word.')\b/i', '<span class="searchhilite">$1</span>', $title);
+                $txt = preg_replace('/\b('.$word.')\b/i', '<span class="searchhilite">$1</span>', $txt);
+            }
+            $result->title = $title;
+            $result->urltxt = $txt;
+            $newresults[] = $result;
         }
-        $result->title = $title;
-        $result->urltxt = $txt;
-        $newresults[] = $result;
+        $col->_ary = $newresults;
     }
-    $col->_ary = $newresults;
 
-    \CMSMS\HookManager::do_hook( 'Search::SearchCompleted', [ &$params['searchinput'], &$col->_ary ] );
+    CMSMS\HookManager::do_hook( 'Search::SearchCompleted', [ &$params['searchinput'], &$col->_ary ] );
 
     $tpl->assign('searchwords', $words);
     $tpl->assign('results', $col->_ary);
@@ -249,9 +245,9 @@ if( !empty($params['searchinput']) ) {
     $tpl->assign('timetook', ($searchendtime - $searchstarttime));
 }
 else {
-    $tpl->assign('phrase', '');
-    $tpl->assign('results', 0);
     $tpl->assign('itemcount', 0);
+    $tpl->assign('phrase', '');
+    $tpl->assign('results', []);
     $tpl->assign('timetook', 0);
 }
 
