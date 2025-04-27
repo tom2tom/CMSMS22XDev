@@ -75,7 +75,7 @@ function search_StemPhrase($module, $phrase)
         if( strlen($word) < 3 ) continue;
 
         if( $stemmer ) {
-            $ret[] = $stemmer->stem($word, true);
+            $ret[] = $stemmer->stem($word);
         }
         else {
             $ret[] = $word;
@@ -154,8 +154,8 @@ function search_AddWords($obj, $module = 'Search', $id = -1, $attr = '', $conten
 }
 
 /**
- * @param $obj UNUSED
- * @param string $module Default 'Search'
+ * @param Search|null $obj UNUSED
+ * @param string $module Name Default 'Search'
  * @param int $id Content id Default -1
  * @param string $attr Extra attr Default ''
  */
@@ -216,6 +216,9 @@ function search_Reindex($module)
     }
 
     $modops = ModuleOperations::get_instance();
+    /* TODO deprecate engagement with modules which do not declare SEARCH_MODULE capability
+    $modules = $modops->get_modules_with_capability(CmsCoreCapabilities::SEARCH_MODULE); foreach( $modules as $obj ) {}
+    */
     $modules = $modops->GetInstalledModules();
     foreach( $modules as $name ) {
         if( !$name || $name == 'Search' ) continue;
@@ -242,7 +245,7 @@ function search_DoEvent($module, $originator, $eventname, &$params )
         $content = $params['content'];
         if( !is_object($content) ) return;
 
-        $module->DeleteWords($module->GetName(), $content->Id(), 'content');
+        search_DeleteWords(null, $module->GetName(), $content->Id(), 'content');
         if( $content->Active() && $content->IsSearchable() ) {
 
             $text = str_repeat(' '.$content->Name(), 2) . ' ' .
@@ -257,7 +260,7 @@ function search_DoEvent($module, $originator, $eventname, &$params )
             if( strpos($text, NON_INDEXABLE_CONTENT) === FALSE ) {
                 $text = trim(strip_tags($text));
                 if( $text ) {
-                    $module->AddWords($module->GetName(), $content->Id(), 'content', $text);
+                    search_AddWords($module, $module->GetName(), $content->Id(), 'content', $text);
                 }
             }
         }
@@ -267,14 +270,14 @@ function search_DoEvent($module, $originator, $eventname, &$params )
         if( !empty($params['content']) ) {
             $content = $params['content'];
             if( is_object($content) ) {
-                $module->DeleteWords($module->GetName(), $content->Id(), 'content');
+                search_DeleteWords(null, $module->GetName(), $content->Id(), 'content');
             }
         }
         break;
 
     case 'ModuleUninstalled':
         $module_name = $params['name'];
-        $module->DeleteWords($module_name);
+        search_DeleteWords(null, $module_name);
         break;
     }
 }
