@@ -20,7 +20,7 @@
  * @param string $phrase
  * @return array
  */
-function search_StemPhrase($module,$phrase)
+function search_StemPhrase($module, $phrase)
 {
     // strip out Smarty tags
     $phrase = preg_replace(['/{.*?}/', '/[\{\}]/'], [' ', ''], $phrase);
@@ -46,13 +46,11 @@ function search_StemPhrase($module,$phrase)
     if( !$words || !is_array($words) ) {
         return [];
     }
+
     // ignore 1-digit numbers and non-numbers < 3 bytes
-    if( !function_exists('_search_stemphrase_filter') ) {
-        function _search_stemphrase_filter($a) {
-            return ($l = strlen($a)) > 2 || ($l > 1 && is_numeric($a));
-        }
-    }
-    $words = array_filter($words, '_search_stemphrase_filter');
+    $words = array_filter($words, function($a) {
+        return ($l = strlen($a)) > 2 || ($l > 1 && is_numeric($a));
+    });
     if( !$words ) {
         return [];
     }
@@ -65,15 +63,15 @@ function search_StemPhrase($module,$phrase)
 
     $ret = array();
     $stemmer = null; // no object
-    // stem words ?
-    if( $module->GetPreference('usestemming', 0) ) { //was != 'false'
-        require_once __DIR__.DIRECTORY_SEPARATOR.'PorterStemmer.class.php'; //TODO autoload on demand
+    // will we stem words ?
+    if( $module->GetPreference('usestemming', 0) ) {
+        require_once __DIR__.DIRECTORY_SEPARATOR.'PorterStemmer.class.php';
         $stemmer = new PorterStemmer();
     }
 
-    foreach ($words as $word) {
+    foreach( $words as $word ) {
         // get rid of whitespace and/or wrapping quotes
-        $word = trim($word, " \t\r\n\"'");
+        $word = trim($word, " \t\n\r\0\x0B\"'");
         if( strlen($word) < 3 ) continue;
 
         if( $stemmer ) {
@@ -109,13 +107,12 @@ function search_AddWords($obj, $module = 'Search', $id = -1, $attr = '', $conten
 
         $stemmed_words = $obj->StemPhrase($content); //not actually stemmed unless module preference set
         $tmp = array_count_values($stemmed_words);
-
-        if( !$tmp || !is_array($tmp) ) {
+        if( !$tmp ) {
             return;
         }
         $words = array();
         foreach( $tmp as $key => $val ) {
-            $words[] = array('word'=>$key,'count'=>$val);
+            $words[] = array('word'=>$key, 'count'=>$val);
         }
 
         $q = 'SELECT id FROM '.CMS_DB_PREFIX.'module_search_items WHERE module_name=?';
@@ -139,10 +136,10 @@ function search_AddWords($obj, $module = 'Search', $id = -1, $attr = '', $conten
         }
         else {
             $itemid = (int) $db->GenID(CMS_DB_PREFIX.'module_search_items_seq');
-            $db->Execute('INSERT INTO '.CMS_DB_PREFIX.'module_search_items (id, module_name, content_id, extra_attr, expires) VALUES (?,?,?,?,?)', array($itemid, $module, $id, $attr, ($expires != NULL ? trim($db->DBTimeStamp($expires), "'") : NULL) ));
+            $db->Execute('INSERT INTO '.CMS_DB_PREFIX.'module_search_items (id,module_name,content_id,extra_attr,expires) VALUES (?,?,?,?,?)', array($itemid, $module, $id, $attr, ($expires != NULL ? trim($db->DBTimeStamp($expires), "'") : NULL) ));
         }
 
-        $stmt = $db->Prepare('INSERT INTO '.CMS_DB_PREFIX."module_search_index (item_id, word, count) VALUES ($itemid,?,?)");
+        $stmt = $db->Prepare('INSERT INTO '.CMS_DB_PREFIX."module_search_index (item_id,word,`count`) VALUES ($itemid,?,?)");
         $stmt->Bind($words);
         while( !$stmt->EOF() ) {
             $stmt->Execute();
@@ -193,7 +190,7 @@ function search_Reindex($module)
     // have to load all the content, and properties, (in chunks)
     $full_list = array_keys( cmsms()->GetHierarchyManager()->getFlatList());
     $npages = count($full_list);
-    $nperloop = min(200,$npages);
+    $nperloop = min(200, $npages);
     $contentops = ContentOperations::get_instance();
     $offset = 0;
 
@@ -207,13 +204,13 @@ function search_Reindex($module)
         $idlist = array_unique($idlist);
 
         // load the content for this tree.
-        $contentops->LoadChildren(-1,TRUE,FALSE,$idlist);
+        $contentops->LoadChildren(-1, TRUE, FALSE, $idlist);
 
         // index each content page.
         foreach( $idlist as $one ) {
             $content_obj = $contentops->LoadContentFromId($one);
             $parms = array('content'=>$content_obj);
-            search_DoEvent($module,'Core','ContentEditPost',$parms);
+            search_DoEvent($module, 'Core', 'ContentEditPost', $parms);
             cms_content_cache::unload($one);
         }
     }
@@ -223,7 +220,7 @@ function search_Reindex($module)
     foreach( $modules as $name ) {
         if( !$name || $name == 'Search' ) continue;
         $obj = $modops->get_module_instance($name);
-        if( is_object($obj) && method_exists($obj,'SearchReindex')) {
+        if( is_object($obj) && method_exists($obj, 'SearchReindex')) {
             $obj->SearchReindex($module);
         }
     }
@@ -248,14 +245,12 @@ function search_DoEvent($module, $originator, $eventname, &$params )
         $module->DeleteWords($module->GetName(), $content->Id(), 'content');
         if( $content->Active() && $content->IsSearchable() ) {
 
-            $text = str_repeat(' '.$content->Name(), 2) . ' ';
-            $text .= str_repeat(' '.$content->MenuText(), 2) . ' ';
+            $text = str_repeat(' '.$content->Name(), 2) . ' ' .
+                    str_repeat(' '.$content->MenuText(), 2);
 
             $props = $content->Properties();
             if( $props && is_array($props) ) {
-                foreach( $props as $k => $v ) {
-                    $text .= $v.' ';
-                }
+                $text .= ' ' . implode(' ', $props);
             }
 
             // check for content indicating page is not indexable
@@ -271,7 +266,9 @@ function search_DoEvent($module, $originator, $eventname, &$params )
     case 'ContentDeletePost':
         if( !empty($params['content']) ) {
             $content = $params['content'];
-            $module->DeleteWords($module->GetName(), $content->Id(), 'content');
+            if( is_object($content) ) {
+                $module->DeleteWords($module->GetName(), $content->Id(), 'content');
+            }
         }
         break;
 
