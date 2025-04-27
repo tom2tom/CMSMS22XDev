@@ -433,6 +433,7 @@ EOS;
     {
         switch( $capability ) {
         case CmsCoreCapabilities::PLUGIN_MODULE:
+        case CmsCoreCapabilities::SEARCH_MODULE:
         case CmsCoreCapabilities::ADMINSEARCH:
         case CmsCoreCapabilities::TASKS:
             return TRUE;
