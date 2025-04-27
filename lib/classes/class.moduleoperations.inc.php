@@ -286,7 +286,7 @@ final class ModuleOperations
      * @param bool $brief If set to true, less checking is done and no errors are returned Default false
      * @return array A hash of details about the installed module
      */
-    function ExpandXMLPackage( $xmluri, $overwrite = false, $brief = false )
+    function ExpandXMLPackage( $xmluri, $overwrite = FALSE, $brief = FALSE )
     {
         // first make sure that we can actually write to the module directory
         $dir = dirname(__DIR__,2).DIRECTORY_SEPARATOR."modules";
@@ -297,7 +297,7 @@ final class ModuleOperations
         $ret = $reader->open($xmluri);
         if( $ret == 0 ) throw new CmsInvalidDataException('CMSEX_XML001');
 
-        $havedtdversion = false;
+        $havedtdversion = FALSE;
         $moduledetails = array();
         if( is_file($xmluri) ) $moduledetails['size'] = filesize($xmluri);
         $requires = array();
@@ -394,7 +394,7 @@ final class ModuleOperations
                         if( !isset( $moduledetails['name'] ) || !isset( $moduledetails['version'] ) ||
                             !isset( $moduledetails['filename'] ) || !isset( $moduledetails['isdir'] ) ) {
                             throw new CmsInvalidDataException('CMSEX_XML003');
-                            return false;
+                            return FALSE;
                         }
 
                         // ready to go
@@ -432,7 +432,7 @@ final class ModuleOperations
         } // while
 
         $reader->close();
-        if( $havedtdversion == false ) throw new CmsInvalidDataException('CMSEX_XML002');
+        if( $havedtdversion == FALSE ) throw new CmsInvalidDataException('CMSEX_XML002');
 
         // we've created the module's directory
         unset( $moduledetails['filedata'] );
@@ -724,7 +724,7 @@ VALUES (?,?,?,NOW(),NOW())';
 
         $result = array();
         if( $handle = @opendir($dir) ) {
-            while( ($file = readdir($handle)) !== false ) {
+            while( ($file = readdir($handle)) !== FALSE ) {
                 $fn = "$dir/$file/$file.module.php";
                 if( @is_file($fn) ) $result[] = $file;
             }
@@ -748,7 +748,7 @@ VALUES (?,?,?,NOW(),NOW())';
 
 
     /**
-     * Loads all modules that are available to be loaded.
+     * Load all modules that are available to be loaded.
      * This method uses the information in the database to load the modules
      * that are necessary to load
      * It also will go through any queued installs/upgrades and force those
@@ -760,7 +760,7 @@ VALUES (?,?,?,NOW(),NOW())';
      * @param noadmin boolean whether to ignore modules marked as
      *  admin_only in the database. Default false i.e. load all
      */
-    public function LoadModules($noadmin = false)
+    public function LoadModules($noadmin = FALSE)
     {
         global $CMS_ADMIN_PAGE;
         global $CMS_STYLESHEET;
@@ -999,10 +999,10 @@ VALUES (?,?,?,NOW(),NOW())';
 
 
     /**
-     * Returns a hash of all loaded modules.  This will include all
+     * Return all loaded modules.  This will include all
      * modules loaded into memory at the current time
      *
-     * @return array The hash of all loaded modules
+     * @return array of all loaded modules
      */
     public function GetLoadedModules()
     {
@@ -1011,7 +1011,7 @@ VALUES (?,?,?,NOW(),NOW())';
 
 
     /**
-     * Return an array of the names of all modules that we currently know about
+     * Return the names of all modules that we currently know about
      *
      * @return array
      */
@@ -1031,7 +1031,7 @@ VALUES (?,?,?,NOW(),NOW())';
     }
 
     /**
-     * Returns an array of the names of all installed modules.
+     * Return the names of all installed modules.
      *
      * @param bool $include_all Include even inactive modules
      * @return array
@@ -1052,14 +1052,14 @@ VALUES (?,?,?,NOW(),NOW())';
 
 
     /**
-     * Returns an array of installed modules that have a certain capabilies
+     * Return installed modules that have the specified capability.
      * This method will force the loading of all modules regardless of the module settings.
      *
      * @param string $capability The capability name
-     * @param mixed $args Capability arguments
-     * @return array List of all the module objects with that capability
+     * @param mixed $args Optional capability argument(s) Default ''
+     * @return array of all module objects with that capability
      */
-    public static function get_modules_with_capability($capability, $args= '')
+    public static function get_modules_with_capability($capability, $args = '')
     {
         if( !is_array($args) ) {
             if( !empty($args) ) {
@@ -1081,25 +1081,26 @@ VALUES (?,?,?,NOW(),NOW())';
     }
 
     /**
-     * A function to return a list of dependencies from a module.
-     * this method works by reading the dependencies from the database.
+     * Return the modules upon which the named module depends.
+     * This method works by reading the dependencies from the database.
      *
      * @since 1.11.8
      * @author Robert Campbell
      * @param string $module_name The module name
-     * @return array Hash of module names and dependencies
+     * @return array of module names and properties, or empty
      */
     public function get_module_dependencies($module_name)
     {
-        if( !$module_name ) return;
+        if( !$module_name ) return [];
 
         $deps = $this->_get_all_module_dependencies();
         if( isset($deps[$module_name]) ) return $deps[$module_name];
+        return [];
     }
 
     /**
-     * A function to return a module object
-     * if the module is not already loaded, it will be loaded.  Version checks are done
+     * Return a module object
+     * If the module is not already loaded, it will be loaded.  Version checks are done
      * with the module to allow only loading versions of modules that are greater than the
      * specified value.
      *
@@ -1152,8 +1153,8 @@ VALUES (?,?,?,NOW(),NOW())';
     /**
      * Return the current syntax highlighter module object
      *
-     * This method retrieves the specified syntax highlighter module, or uses the current current user preference for the syntax hightlighter module
-     * for a name.
+     * This method retrieves the specified syntax highlighter module, or
+     * the current user's preference for syntax highlighter module.
      *
      * @param string $module_name allows bypassing the automatic detection process and specifying a wysiwyg module.
      * @return CMSModule
