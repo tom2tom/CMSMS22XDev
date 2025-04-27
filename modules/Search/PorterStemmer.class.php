@@ -1,407 +1,571 @@
 <?php
 /**
- * Copyright (c) 2005 Richard Heyes (http://www.phpguru.org/)
+ * Copyright 2013 Katharopoulos Angelos <katharas@gmail.com>
  *
- * All rights reserved.
+ * This class implements the Porter stemming algorithm. It is almost a
+ * one to one conversion from Porter's ANSI C implementation and can
+ * thus be regarded as canonical as the C implementation found at
+ * http://www.tartarus.org/~martin/PorterStemmer
  *
- * This script is free software.
+ * The rewrite instead of using Richard Heyes's implementation has
+ * been to improve performance. I tried to keep as close to the C
+ * implementation, minimize string creations (change in place) and
+ * avoid regexes.
+ *
+ * Sourced from http://php-nlp-tools.com
  */
-
-/**
- * PHP5 implementation of the Porter Stemmer algorithm. Certain elements
- * were borrowed from the (broken) implementation by Jon Abernathy.
- *
- * Usage:
- *
- *  $stem = PorterStemmer::Stem($word);
- *
- * How easy is that?
- */
-
 final class PorterStemmer
 {
-    /**
-     * Regex for matching a consonant
-     * @var string
-     */
-    private $regex_consonant = '(?:[bcdfghjklmnpqrstvwxz]|(?<=[aeiou])y|^y)';
+    // isset is faster than switch in php even for one character switches
+    private $vowels = ['a' => 1, 'e' => 1, 'i' => 1, 'o' => 1, 'u' => 1];
 
     /**
-     * Regex for matching a vowel
-     * @var string
-     */
-    private $regex_vowel = '(?:[aeiou]|(?<![aeiou])y)';
-
-    /**
-     * Stems a word. Simple huh?
+     * Quoting from the original C implementation.
      *
-     * @param  string $word Word to stem
-     * @return string       Stemmed word
+     * The main part of the stemming algorithm starts here. b is a buffer
+     * holding the word to be stemmed. The letters are in b[k0], b[k0+1] ...
+     * ending at b[k]. In fact k0 = 0 in this demo program. k is readjusted
+     * downwards as the stemming progresses. Zero termination is not in fact
+     * used in the algorithm.
+     *
+     * Note that only lower case sequences are stemmed. Forcing to lower case
+     * should be done before stem(...) is called.
+     *
+     * $b is a string holding one lower case word. $k0 is always 0 in
+     * our case so it is removed. $k is readjusted to point to the end
+     * of the string and b is changed so at the end b[0:k] will hold
+     * the stem.
      */
-    public function Stem($word)
+    private $b;
+    private $k;
+    private $j;
+
+    /**
+     * The word must be a lower case one byte per character string (in
+     * English).
+     */
+    public function stem($word)
     {
-        if (strlen($word) <= 2) {
+        $this->j = 0;
+        $this->b = $word;
+        $this->k = strlen($word) - 1;
+        if ($this->k <= 1) {
             return $word;
         }
 
-        $word = $this->step1ab($word);
-        $word = $this->step1c($word);
-        $word = $this->step2($word);
-        $word = $this->step3($word);
-        $word = $this->step4($word);
-        $word = $this->step5($word);
+        $this->step1ab();
+        $this->step1c();
+        $this->step2();
+        $this->step3();
+        $this->step4();
+        $this->step5();
 
-        return $word;
+        return substr($this->b, 0, $this->k + 1);
     }
 
-
-    /**
-     * Step 1
-     */
-    private function step1ab($word)
+    // cons(i) is TRUE <=> b[i] is a consonant.
+    private function cons($i)
     {
-        // Part a
-        if (substr($word, -1) == 's') {
-
-               $this->replace($word, 'sses', 'ss')
-            || $this->replace($word, 'ies', 'i')
-            || $this->replace($word, 'ss', 'ss')
-            || $this->replace($word, 's', '');
-        }
-
-        // Part b
-        if (substr($word, -2, 1) != 'e' || !$this->replace($word, 'eed', 'ee', 0)) { // First rule
-            $v = $this->regex_vowel;
-
-            // ing or ed
-            if (   (preg_match("#$v+#", substr($word, 0, -3)) && $this->replace($word, 'ing', ''))
-                || (preg_match("#$v+#", substr($word, 0, -2)) && $this->replace($word, 'ed', ''))) {
-
-                // Either of above tests successful
-                if (   !$this->replace($word, 'at', 'ate')
-                    && !$this->replace($word, 'bl', 'ble')
-                    && !$this->replace($word, 'iz', 'ize')) {
-
-                    // Double consonant ending
-                    if (   $this->doubleConsonant($word)
-                        && substr($word, -2) != 'll'
-                        && substr($word, -2) != 'ss'
-                        && substr($word, -2) != 'zz') {
-
-                        $word = substr($word, 0, -1);
-
-                    } else if ($this->m($word) == 1 && $this->cvc($word)) {
-                        $word .= 'e';
-                    }
-                }
-            }
-        }
-
-        return $word;
-    }
-
-
-    /**
-     * Step 1c
-     *
-     * @param string $word Word to stem
-     */
-    private function step1c($word)
-    {
-        $v = $this->regex_vowel;
-
-        if (substr($word, -1) == 'y' && preg_match("#$v+#", substr($word, 0, -1))) {
-            $this->replace($word, 'y', 'i');
-        }
-
-        return $word;
-    }
-
-
-    /**
-     * Step 2
-     *
-     * @param string $word Word to stem
-     */
-    private function step2($word)
-    {
-        switch (substr($word, -2, 1)) {
-            case 'a':
-                   $this->replace($word, 'ational', 'ate', 0)
-                || $this->replace($word, 'tional', 'tion', 0);
-                break;
-
-            case 'c':
-                   $this->replace($word, 'enci', 'ence', 0)
-                || $this->replace($word, 'anci', 'ance', 0);
-                break;
-
-            case 'e':
-                $this->replace($word, 'izer', 'ize', 0);
-                break;
-
-            case 'g':
-                $this->replace($word, 'logi', 'log', 0);
-                break;
-
-            case 'l':
-                   $this->replace($word, 'entli', 'ent', 0)
-                || $this->replace($word, 'ousli', 'ous', 0)
-                || $this->replace($word, 'alli', 'al', 0)
-                || $this->replace($word, 'bli', 'ble', 0)
-                || $this->replace($word, 'eli', 'e', 0);
-                break;
-
-            case 'o':
-                   $this->replace($word, 'ization', 'ize', 0)
-                || $this->replace($word, 'ation', 'ate', 0)
-                || $this->replace($word, 'ator', 'ate', 0);
-                break;
-
-            case 's':
-                   $this->replace($word, 'iveness', 'ive', 0)
-                || $this->replace($word, 'fulness', 'ful', 0)
-                || $this->replace($word, 'ousness', 'ous', 0)
-                || $this->replace($word, 'alism', 'al', 0);
-                break;
-
-            case 't':
-                   $this->replace($word, 'biliti', 'ble', 0)
-                || $this->replace($word, 'aliti', 'al', 0)
-                || $this->replace($word, 'iviti', 'ive', 0);
-                break;
-        }
-
-        return $word;
-    }
-
-
-    /**
-     * Step 3
-     *
-     * @param string $word String to stem
-     */
-    private function step3($word)
-    {
-        switch (substr($word, -2, 1)) {
-            case 'a':
-                $this->replace($word, 'ical', 'ic', 0);
-                break;
-
-            case 's':
-                $this->replace($word, 'ness', '', 0);
-                break;
-
-            case 't':
-                   $this->replace($word, 'icate', 'ic', 0)
-                || $this->replace($word, 'iciti', 'ic', 0);
-                break;
-
-            case 'u':
-                $this->replace($word, 'ful', '', 0);
-                break;
-
-            case 'v':
-                $this->replace($word, 'ative', '', 0);
-                break;
-
-            case 'z':
-                $this->replace($word, 'alize', 'al', 0);
-                break;
-        }
-
-        return $word;
-    }
-
-
-    /**
-     * Step 4
-     *
-     * @param string $word Word to stem
-     */
-    private function step4($word)
-    {
-        switch (substr($word, -2, 1)) {
-            case 'a':
-                $this->replace($word, 'al', '', 1);
-                break;
-
-            case 'c':
-                   $this->replace($word, 'ance', '', 1)
-                || $this->replace($word, 'ence', '', 1);
-                break;
-
-            case 'e':
-                $this->replace($word, 'er', '', 1);
-                break;
-
-            case 'i':
-                $this->replace($word, 'ic', '', 1);
-                break;
-
-            case 'l':
-                   $this->replace($word, 'able', '', 1)
-                || $this->replace($word, 'ible', '', 1);
-                break;
-
-            case 'n':
-                   $this->replace($word, 'ant', '', 1)
-                || $this->replace($word, 'ement', '', 1)
-                || $this->replace($word, 'ment', '', 1)
-                || $this->replace($word, 'ent', '', 1);
-                break;
-
-            case 'o':
-                if (substr($word, -4) == 'tion' || substr($word, -4) == 'sion') {
-                   $this->replace($word, 'ion', '', 1);
-                } else {
-                    $this->replace($word, 'ou', '', 1);
-                }
-                break;
-
-            case 's':
-                $this->replace($word, 'ism', '', 1);
-                break;
-
-            case 't':
-                   $this->replace($word, 'ate', '', 1)
-                || $this->replace($word, 'iti', '', 1);
-                break;
-
-            case 'u':
-                $this->replace($word, 'ous', '', 1);
-                break;
-
-            case 'v':
-                $this->replace($word, 'ive', '', 1);
-                break;
-
-            case 'z':
-                $this->replace($word, 'ize', '', 1);
-                break;
-        }
-
-        return $word;
-    }
-
-
-    /**
-     * Step 5
-     *
-     * @param string $word Word to stem
-     */
-    private function step5($word)
-    {
-        $sx = substr($word, -1);
-        // Part a
-        if ($sx == 'e') {
-            if ($this->m(substr($word, 0, -1)) > 1) {
-                $this->replace($word, 'e', '');
-
-            } else if ($this->m(substr($word, 0, -1)) == 1) {
-
-                if (!$this->cvc(substr($word, 0, -1))) {
-                    $this->replace($word, 'e', '');
-                }
-            }
-        }
-        // Part b
-        else if ($sx == 'l' && $this->m($word) > 1 && $this->doubleConsonant($word)) {
-            $word = substr($word, 0, -1);
-        }
-
-        return $word;
-    }
-
-
-    /**
-     * Replaces the first string with the second, at the end of the string. If third
-     * arg is given, then the preceding string must match that m count at least.
-     *
-     * @param  string $str   String to check
-     * @param  string $check Ending to check for
-     * @param  string $repl  Replacement string
-     * @param  int|null $m   Optional minimum number of m() to meet
-     * @return bool          Whether the $check string was at the end
-     *                       of the $str string. True does not necessarily mean
-     *                       that it was replaced.
-     */
-    private function replace(&$str, $check, $repl, $m = null)
-    {
-        $len = 0 - strlen($check);
-
-        if (substr($str, $len) == $check) {
-            $substr = substr($str, 0, $len);
-            if (is_null($m) || $this->m($substr) > $m) {
-                $str = $substr . $repl;
-            }
-
+        if ($i > $this->k) {
             return true;
+        }
+        $c = $this->b[$i];
+        if (isset($this->vowels[$c])) {
+            return false;
+        } elseif ($c === 'y') {
+            return ($i === 0) ? true : !$this->cons($i - 1);
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * m() measures the number of consonant sequences between 0 and j. if c is
+     * a consonant sequence and v a vowel sequence, and <..> indicates arbitrary
+     * presence,
+     *
+     *   <c><v>       gives 0
+     *   <c>vc<v>     gives 1
+     *   <c>vcvc<v>   gives 2
+     *   <c>vcvcvc<v> gives 3
+     *   ....
+     */
+    private function m()
+    {
+        $n = 0;
+        $i = 0;
+        while (true) {
+            if ($i > $this->j) {
+                return $n;
+            }
+            if (!$this->cons($i)) {
+                break;
+            }
+            ++$i;
+        }
+        ++$i;
+        while (true) {
+            while (true) {
+                if ($i > $this->j) {
+                    return $n;
+                }
+                if ($this->cons($i)) {
+                    break;
+                }
+                ++$i;
+            }
+            ++$i;
+            ++$n;
+            while (true) {
+                if ($i > $this->j) {
+                    return $n;
+                }
+                if (!$this->cons($i)) {
+                    break;
+                }
+                ++$i;
+            }
+            ++$i;
+        }
+    }
+
+    // vowelinstem() is TRUE <=> 0,...j contains a vowel
+    private function vowelinstem()
+    {
+        for ($i = 0; $i <= $this->j; ++$i) {
+            if (!$this->cons($i)) {
+                return true;
+            }
         }
 
         return false;
     }
 
-
-    /**
-     * What, you mean it's not obvious from the name?
-     *
-     * m() measures the number of consonant sequences in $str. if c is
-     * a consonant sequence and v a vowel sequence, and <..> indicates arbitrary
-     * presence,
-     *
-     * <c><v>       gives 0
-     * <c>vc<v>     gives 1
-     * <c>vcvc<v>   gives 2
-     * <c>vcvcvc<v> gives 3
-     *
-     * @param  string $str The string to return the m count for
-     * @return int         The m count
-     */
-    private function m($str)
+    // doublec(j) is TRUE <=> j,(j-1) contain a double consonant.
+    private function doublec($j)
     {
-        $c = $this->regex_consonant;
-        $v = $this->regex_vowel;
-
-        $str = preg_replace("#^$c+#", '', $str);
-        $str = preg_replace("#$v+$#", '', $str);
-
-        preg_match_all("#($v+$c+)#", $str, $matches);
-
-        return count($matches[1]);
+        if ($j < 1) {
+            return false;
+        }
+        if ($this->b[$j] != $this->b[$j - 1]) {
+            return false;
+        }
+        return $this->cons($j);
     }
 
-
     /**
-     * Returns true/false as to whether the given string contains two
-     * of the same consonant next to each other at the end of the string.
+     * cvc(i) is TRUE <=> i-2,i-1,i has the form consonant - vowel - consonant
+     * and also if the second c is not w,x or y. this is used when trying to
+     * restore an e at the end of a short word. e.g.
      *
-     * @param  string $str String to check
-     * @return bool
+     *   cav(e), lov(e), hop(e), crim(e), but
+     *   snow, box, tray.
      */
-    private function doubleConsonant($str)
+    private function cvc($i)
     {
-        $c = $this->regex_consonant;
+        if ($i < 2 || !$this->cons($i) || $this->cons($i - 1) || !$this->cons($i - 2)) {
+            return false;
+        }
+        $ch = $this->b[$i];
+        if ($ch === 'w' || $ch === 'x' || $ch === 'y') {
+            return false;
+        }
 
-        return preg_match("#$c{2}$#", $str, $matches) && $matches[0][0] == $matches[0][1];
+        return true;
     }
 
+    /**
+     * ends(s) is TRUE <=> 0...k ends with the string s.
+     *
+     * $length is passed as a parameter because it provides a speedup.
+     */
+    private function ends($s, $length)
+    {
+        if ($s[$length - 1] != $this->b[$this->k]) {
+            return false;
+        }
+        if ($length >= $this->k + 1) {
+            return false;
+        }
+        if (substr_compare($this->b, $s, $this->k - $length + 1, $length) != 0) {
+            return false;
+        }
+
+        $this->j = $this->k - $length;
+
+        return true;
+    }
 
     /**
-     * Checks for ending CVC sequence where second C is not w, x or y
+     * setto(s) sets (j+1),...k to the characters in the string s,
+     * readjusting k.
      *
-     * @param  string $str String to check
-     * @return bool
+     * Again $length is passed for speedup
      */
-    private function cvc($str)
+    private function setto($s, $length)
     {
-        $c = $this->regex_consonant;
-        $v = $this->regex_vowel;
+        $this->b = substr_replace($this->b, $s, $this->j + 1);
+        $this->k = $this->j + $length;
+    }
 
-        return preg_match("#($c$v$c)$#", $str, $matches)
-               && strlen($matches[1]) == 3 // always true, here
-               && $matches[1][2] != 'w'
-               && $matches[1][2] != 'x'
-               && $matches[1][2] != 'y';
+    private function r($s, $length)
+    {
+        if ($this->m() > 0) {
+            $this->setto($s, $length);
+        }
+    }
+
+    /**
+     * step1ab() gets rid of plurals and -ed or -ing. e.g.
+     *
+     *    caresses -> caress
+     *    ponies   -> poni
+     *    ties     -> ti
+     *    caress   -> caress
+     *    cats     -> cat
+     *
+     *    feed     -> feed
+     *    agreed   -> agree
+     *    disabled -> disable
+     *
+     *    matting  -> mat
+     *    mating   -> mate
+     *    meeting  -> meet
+     *    milling  -> mill
+     *    messing  -> mess
+     *
+     *    meetings -> meet
+     */
+    private function step1ab()
+    {
+        if ($this->b[$this->k] === 's') {
+            if ($this->ends('sses', 4)) {
+                $this->k -= 2;
+            } elseif ($this->ends('ies', 3)) {
+                $this->setto('i', 1);
+            } elseif ($this->b[$this->k - 1] !== 's') {
+                --$this->k;
+            }
+        }
+        if ($this->ends('eed', 3)) {
+            if ($this->m() > 0) {
+                --$this->k;
+            }
+        } elseif (($this->ends('ed', 2) || $this->ends('ing', 3)) && $this->vowelinstem()) {
+            $this->k = $this->j;
+            if ($this->ends('at', 2)) {
+                $this->setto('ate', 3);
+            } elseif ($this->ends('bl', 2)) {
+                $this->setto('ble', 3);
+            } elseif ($this->ends('iz', 2)) {
+                $this->setto('ize', 3);
+            } elseif ($this->doublec($this->k)) {
+                --$this->k;
+                $ch = $this->b[$this->k];
+                if ($ch === 'l' || $ch === 's' || $ch === 'z') {
+                    ++$this->k;
+                }
+            } elseif ($this->m() === 1 && $this->cvc($this->k)) {
+                $this->setto('e', 1);
+            }
+        }
+    }
+
+    /**
+     * step1c() turns terminal y to i when there is another
+     * vowel in the stem.
+     */
+    private function step1c()
+    {
+        if ($this->ends('y', 1) && $this->vowelinstem()) {
+            $this->b[$this->k] = 'i';
+        }
+    }
+
+    /**
+     * step2() maps double suffices to single ones. so -ization
+     * ( = -ize plus -ation) maps to -ize etc. note that the string
+     * before the suffix must give m() > 0.
+     */
+    private function step2()
+    {
+        switch ($this->b[$this->k - 1]) {
+            case 'a':
+                if ($this->ends('ational', 7)) {
+                    $this->r('ate', 3);
+                    break;
+                }
+                if ($this->ends('tional', 6)) {
+                    $this->r('tion', 4);
+                    break;
+                }
+                break;
+            case 'c':
+                if ($this->ends('enci', 4)) {
+                    $this->r('ence', 4);
+                    break;
+                }
+                if ($this->ends('anci', 4)) {
+                    $this->r('ance', 4);
+                    break;
+                }
+                break;
+            case 'e':
+                if ($this->ends('izer', 4)) {
+                    $this->r('ize', 3);
+                    break;
+                }
+                break;
+            case 'l':
+                if ($this->ends('bli', 3)) {
+                    $this->r('ble', 3);
+                    break;
+                }
+                // -DEPARTURE-
+                // To match the published algorithm, replace the above line with
+                // if ($this->ends("abli",4)) { $this->r("able",4); break; }
+                if ($this->ends('alli', 4)) {
+                    $this->r('al', 2);
+                    break;
+                }
+                if ($this->ends('entli', 5)) {
+                    $this->r('ent', 3);
+                    break;
+                }
+                if ($this->ends('eli', 3)) {
+                    $this->r('e', 1);
+                    break;
+                }
+                if ($this->ends('ousli', 5)) {
+                    $this->r('ous', 3);
+                    break;
+                }
+                break;
+            case 'o':
+                if ($this->ends('ization', 7)) {
+                    $this->r('ize', 3);
+                    break;
+                }
+                if ($this->ends('ation', 5)) {
+                    $this->r('ate', 3);
+                    break;
+                }
+                if ($this->ends('ator', 4)) {
+                    $this->r('ate', 3);
+                    break;
+                }
+                break;
+            case 's':
+                if ($this->ends('alism', 5)) {
+                    $this->r('al', 2);
+                    break;
+                }
+                if ($this->ends('iveness', 7)) {
+                    $this->r('ive', 3);
+                    break;
+                }
+                if ($this->ends('fulness', 7)) {
+                    $this->r('ful', 3);
+                    break;
+                }
+                if ($this->ends('ousness', 7)) {
+                    $this->r('ous', 3);
+                    break;
+                }
+                break;
+            case 't':
+                if ($this->ends('aliti', 5)) {
+                    $this->r('al', 2);
+                    break;
+                }
+                if ($this->ends('iviti', 5)) {
+                    $this->r('ive', 3);
+                    break;
+                }
+                if ($this->ends('biliti', 6)) {
+                    $this->r('ble', 3);
+                    break;
+                }
+                break;
+            case 'g':
+                if ($this->ends('logi', 4)) {
+                    $this->r('log', 3);
+                    break;
+                }
+                // -DEPARTURE-
+                // To match the published algorithm delete the above line
+        }
+    }
+
+    /**
+     * step3() deals with -ic-, -full, -ness etc. similar strategy
+     * to step2.
+     */
+    private function step3()
+    {
+        switch ($this->b[$this->k]) {
+            case 'e':
+                if ($this->ends('icate', 5)) {
+                    $this->r('ic', 2);
+                    break;
+                }
+                if ($this->ends('ative', 5)) {
+                    $this->r('', 0);
+                    break;
+                }
+                if ($this->ends('alize', 5)) {
+                    $this->r('al', 2);
+                    break;
+                }
+                break;
+            case 'i':
+                if ($this->ends('iciti', 5)) {
+                    $this->r('ic', 2);
+                    break;
+                }
+                break;
+            case 'l':
+                if ($this->ends('ical', 4)) {
+                    $this->r('ic', 2);
+                    break;
+                }
+                if ($this->ends('ful', 3)) {
+                    $this->r('', 0);
+                    break;
+                }
+                break;
+            case 's':
+                if ($this->ends('ness', 4)) {
+                    $this->r('', 0);
+                    break;
+                }
+                break;
+        }
+    }
+
+    /**
+     * step4() takes off -ant, -ence etc., in context <c>vcvc<v>.
+     */
+    private function step4()
+    {
+        switch ($this->b[$this->k - 1]) {
+            case 'a':
+                if ($this->ends('al', 2)) {
+                    break;
+                }
+
+                return;
+            case 'c':
+                if ($this->ends('ance', 4)) {
+                    break;
+                }
+                if ($this->ends('ence', 4)) {
+                    break;
+                }
+
+                return;
+            case 'e':
+                if ($this->ends('er', 2)) {
+                    break;
+                }
+
+                return;
+            case 'i':
+                if ($this->ends('ic', 2)) {
+                    break;
+                }
+
+                return;
+            case 'l':
+                if ($this->ends('able', 4)) {
+                    break;
+                }
+                if ($this->ends('ible', 4)) {
+                    break;
+                }
+
+                return;
+            case 'n':
+                if ($this->ends('ant', 3)) {
+                    break;
+                }
+                if ($this->ends('ement', 5)) {
+                    break;
+                }
+                if ($this->ends('ment', 4)) {
+                    break;
+                }
+                if ($this->ends('ent', 3)) {
+                    break;
+                }
+
+                return;
+            case 'o':
+                if ($this->ends('ion', 3) && ($this->b[$this->j] === 's' || $this->b[$this->j] === 't')) {
+                    break;
+                }
+                if ($this->ends('ou', 2)) {
+                    break;
+                }
+
+                return;
+                // takes care of -ous
+            case 's':
+                if ($this->ends('ism', 3)) {
+                    break;
+                }
+
+                return;
+            case 't':
+                if ($this->ends('ate', 3)) {
+                    break;
+                }
+                if ($this->ends('iti', 3)) {
+                    break;
+                }
+
+                return;
+            case 'u':
+                if ($this->ends('ous', 3)) {
+                    break;
+                }
+
+                return;
+            case 'v':
+                if ($this->ends('ive', 3)) {
+                    break;
+                }
+
+                return;
+            case 'z':
+                if ($this->ends('ize', 3)) {
+                    break;
+                }
+
+                return;
+            default:
+                return;
+        }
+        if ($this->m() > 1) {
+            $this->k = $this->j;
+        }
+    }
+
+    /**
+     * step5() removes a final -e if m() > 1, and
+     * changes -ll to -l if m() > 1.
+     */
+    private function step5()
+    {
+        $this->j = $this->k;
+        if ($this->b[$this->k] === 'e') {
+            $a = $this->m();
+            if ($a > 1 || $a == 1 && !$this->cvc($this->k - 1)) {
+                --$this->k;
+            }
+        }
+        if ($this->b[$this->k] === 'l' && $this->doublec($this->k) && $this->m() > 1) {
+            --$this->k;
+        }
     }
 }
