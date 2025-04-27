@@ -2,6 +2,7 @@ Version 2.2.22F2 - Whitehorse
 -------------------------------
  - Update all uses of deprecated templates-API in modules and actions
  - Block FileManager operations on executable files unless sufficiently authorized
+ - Deprecate Search collaboration with other search-capable modules which do not declare SEARCH_MODULE capability
  - Change more <p/>'s to <label/>'s
  - Add missing button-icons
 
