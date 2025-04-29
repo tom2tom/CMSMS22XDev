@@ -1,6 +1,8 @@
 <?php
 /**
  * Copyright 2013 Katharopoulos Angelos <katharas@gmail.com>
+ * Sourced from http://php-nlp-tools.com
+ * Public license
  *
  * This class implements the Porter stemming algorithm. It is almost a
  * one to one conversion from Porter's ANSI C implementation and can
@@ -11,13 +13,11 @@
  * been to improve performance. I tried to keep as close to the C
  * implementation, minimize string creations (change in place) and
  * avoid regexes.
- *
- * Sourced from http://php-nlp-tools.com
  */
 final class PorterStemmer
 {
-    // isset is faster than switch in php even for one character switches
-    private $vowels = ['a' => 1, 'e' => 1, 'i' => 1, 'o' => 1, 'u' => 1];
+    // isset is faster than switch in php even for one-character switches
+    const VOWELS = ['a' => '', 'e' => '', 'i' => '', 'o' => '', 'u' => '']; //PHP 5.6+
 
     /**
      * Quoting from the original C implementation.
@@ -70,10 +70,10 @@ final class PorterStemmer
             return true;
         }
         $c = $this->b[$i];
-        if (isset($this->vowels[$c])) {
+        if (isset(self::VOWELS[$c])) {
             return false;
         } elseif ($c === 'y') {
-            return ($i === 0) ? true : !$this->cons($i - 1);
+            return ($i === 0) ? true : !$this->cons($i - 1); //recurse
         } else {
             return true;
         }
