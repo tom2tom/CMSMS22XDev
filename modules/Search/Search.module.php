@@ -44,8 +44,8 @@ class Search extends CMSModule
     public function GetAuthor() { return 'Ted Kulp'; }
     public function GetAuthorEmail() { return 'ted@cmsmadesimple.org'; }
     public function GetChangeLog() { return @file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'changelog.htm'); }
-    public function GetEventDescription( $eventname ) { return $this->lang('eventdesc-' . $eventname); }
-    public function GetEventHelp( $eventname ) { return $this->lang('eventhelp-' . $eventname); }
+    public function GetEventDescription( $eventname ) { return $this->Lang('eventdesc-' . $eventname); }
+    public function GetEventHelp( $eventname ) { return $this->Lang('eventhelp-' . $eventname); }
 
     public function InitializeAdmin()
     {

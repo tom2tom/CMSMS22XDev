@@ -63,9 +63,9 @@ final class News_AdminSearch_slave extends AdminSearch_slave
       $resultSets = array();
 
       if ($this->show_snippets()) {
-        $fieldNames['news_title'] = $mod->lang('title');
-        $fieldNames['news_data'] = $mod->lang('content');
-        $fieldNames['summary'] = $mod->lang('summary');
+        $fieldNames['news_title'] = $mod->Lang('title');
+        $fieldNames['news_data'] = $mod->Lang('content');
+        $fieldNames['summary'] = $mod->Lang('summary');
       }
 
       foreach( $dbr as $row ) {

@@ -77,7 +77,7 @@ $modname = $this->GetName();
 $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;renamefile.tpl", null, $modname, $smarty);
 
 $tpl->assign('startform', $this->CreateFormStart($id, 'fileaction', $returnid, 'post', '', false, '', $params));
-$tpl->assign('newnametext', $this->lang('newname'));
+$tpl->assign('newnametext', $this->Lang('newname'));
 $tpl->assign('newname', $newname);
 $tpl->assign('newnameinput', $this->CreateInputText($id, 'newname', $newname, 40));
 $tpl->assign('endform', $this->CreateFormEnd());

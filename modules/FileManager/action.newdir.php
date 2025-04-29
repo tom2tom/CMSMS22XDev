@@ -54,7 +54,7 @@ $modname = $this->GetName();
 $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;newdir.tpl",null,$modname,$smarty);
 
 $tpl->assign('startform', $this->CreateFormStart($id, 'fileaction', $returnid, 'post', '', false, '', $params));
-$tpl->assign('newdirtext', $this->lang('newdir'));
+$tpl->assign('newdirtext', $this->Lang('newdir'));
 $tpl->assign('newdirname',$newdirname);
 $tpl->assign('endform', $this->CreateFormEnd());
 

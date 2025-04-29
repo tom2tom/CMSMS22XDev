@@ -108,7 +108,7 @@ $this->CreateParameter('idlist', '', $this->Lang('helpidlist')qqq_);
 $this->CreateParameter('input_category', '', $this->Lang('helpinput_category')qqq_);
 $this->CreateParameter('lang', '', $this->Lang('helplang')qqq_);
 $this->CreateParameter('moretext', '', $this->Lang('helpmoretext')qqq_);
-$this->CreateParameter('news_customfield_'.$onefield['id', '', $this->lang('help')qqq_);
+$this->CreateParameter('news_customfield_'.$onefield['id', '', $this->Lang('help')qqq_);
 $this->CreateParameter('number', '', $this->Lang('helpnumber')qqq_);
 $this->CreateParameter('origid', '', $this->Lang('helporigid')qqq_);
 $this->CreateParameter('pagelimit', '', $this->Lang('helppagelimit')qqq_);

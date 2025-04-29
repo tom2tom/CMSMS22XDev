@@ -64,7 +64,7 @@ if( $preview || !$tpl->IsCached() ) {
         cms_utils::set_app_data('News::origid',$returnid);
     }
 
-    $return_url = $this->CreateReturnLink($id, $returnid, $this->lang('news_return'));
+    $return_url = $this->CreateReturnLink($id, $returnid, $this->Lang('news_return'));
     $tpl->assign('return_url', $return_url);
     $tpl->assign('entry', $article);
 

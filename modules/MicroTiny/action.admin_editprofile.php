@@ -43,7 +43,7 @@ try {
 
     // if name changed and object is a system object, puke
     if( !empty($profile['system']) && $profile['name'] != $name ) {
-      throw new CmsInvalidDataException($this->lang('error_cantchangesysprofilename'));
+      throw new CmsInvalidDataException($this->Lang('error_cantchangesysprofilename'));
     }
 
     if( $profile['styler'] == 'sheet' && $profile['dfltstylesheet'] == -1 ) {
@@ -72,8 +72,8 @@ try {
   foreach( $vals as $name ) {
     $themes[$name] = $name;
   }
-  $themes['oxide'] = $this->lang('light');
-  $themes['oxide-dark'] = $this->lang('dark');
+  $themes['oxide'] = $this->Lang('light');
+  $themes['oxide-dark'] = $this->Lang('dark');
   $tpl->assign('themes',$themes);
 
   $vals = [];
@@ -88,8 +88,8 @@ try {
   foreach( $vals as $name ) {
     $stylers[$name] = $name;
   }
-  $stylers['default'] = $this->lang('light');
-  $stylers['dark'] = $this->lang('dark');
+  $stylers['default'] = $this->Lang('light');
+  $stylers['dark'] = $this->Lang('dark');
   $stylers['sheet'] = $this->Lang('profile_usesheet');
   $tpl->assign('stylers',$stylers);
 

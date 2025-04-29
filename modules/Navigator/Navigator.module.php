@@ -108,16 +108,16 @@ final class Navigator extends CMSModule
 
     public function InitializeAdmin()
     {
-        $this->CreateParameter('items', 'contact,home', $this->lang('help_items'));
-        $this->CreateParameter('nlevels', '1', $this->lang('help_nlevels'));
-        $this->CreateParameter('number_of_levels', '1', $this->lang('help_number_of_levels'));
-        $this->CreateParameter('show_all', '0', $this->lang('help_show_all'));
-        $this->CreateParameter('show_root_siblings', '1', $this->lang('help_show_root_siblings'));
-        $this->CreateParameter('start_element', '1.2', $this->lang('help_start_element'));
-        $this->CreateParameter('start_page', '', $this->lang('help_start_page'));
-        $this->CreateParameter('start_text', '', $this->lang('help_start_text'));
-        $this->CreateParameter('start_level', '', $this->lang('help_start_level'));
-        $this->CreateParameter('template', '', $this->lang('help_template'));
+        $this->CreateParameter('items', 'contact,home', $this->Lang('help_items'));
+        $this->CreateParameter('nlevels', '1', $this->Lang('help_nlevels'));
+        $this->CreateParameter('number_of_levels', '1', $this->Lang('help_number_of_levels'));
+        $this->CreateParameter('show_all', '0', $this->Lang('help_show_all'));
+        $this->CreateParameter('show_root_siblings', '1', $this->Lang('help_show_root_siblings'));
+        $this->CreateParameter('start_element', '1.2', $this->Lang('help_start_element'));
+        $this->CreateParameter('start_page', '', $this->Lang('help_start_page'));
+        $this->CreateParameter('start_text', '', $this->Lang('help_start_text'));
+        $this->CreateParameter('start_level', '', $this->Lang('help_start_level'));
+        $this->CreateParameter('template', '', $this->Lang('help_template'));
         $this->CreateParameter('childrenof','',$this->Lang('help_childrenof'));
         $this->CreateParameter('action','',$this->Lang('help_action'));
         $this->CreateParameter('loadprops','',$this->Lang('help_loadprops'));

@@ -51,20 +51,20 @@ final class AdminSearch_css_slave extends AdminSearch_slave
         $content = $css->get_name();
         $resultSet->count += $count = $this->get_number_of_occurrences($content);
         if ($this->show_snippets() && $count > 0) {
-            $resultSet->locations[$mod->lang('name')] = $this->generate_snippets($content);
+            $resultSet->locations[$mod->Lang('name')] = $this->generate_snippets($content);
         }
 
         $content = $css->get_content();
         $resultSet->count += $count = $this->get_number_of_occurrences($content);
         if ($this->show_snippets() && $count > 0) {
-            $resultSet->locations[$mod->lang('prompt_stylesheet')] = $this->generate_snippets($content);
+            $resultSet->locations[$mod->Lang('prompt_stylesheet')] = $this->generate_snippets($content);
         }
 
         if( $this->search_descriptions()) {
             $content = $css->get_description();
             $resultSet->count += $count = $this->get_number_of_occurrences($content);
             if ($this->show_snippets() && $count > 0) {
-                $resultSet->locations[$mod->lang('prompt_description')] = $this->generate_snippets($content);
+                $resultSet->locations[$mod->Lang('prompt_description')] = $this->generate_snippets($content);
             }
         }
 

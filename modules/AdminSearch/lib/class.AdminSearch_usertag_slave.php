@@ -48,20 +48,20 @@ final class AdminSearch_usertag_slave extends AdminSearch_slave
         $content = $title;
         $resultSet->count += $count = $this->get_number_of_occurrences($content);
         if ($this->show_snippets() && $count > 0) {
-            $resultSet->locations[$mod->lang('name')] = $this->generate_snippets($content);
+            $resultSet->locations[$mod->Lang('name')] = $this->generate_snippets($content);
         }
 
         $content = $udtprops['code'];
         $resultSet->count += $count = $this->get_number_of_occurrences($content);
         if ($this->show_snippets() && $count > 0) {
-            $resultSet->locations[$mod->lang('prompt_code')] = $this->generate_snippets($content);
+            $resultSet->locations[$mod->Lang('prompt_code')] = $this->generate_snippets($content);
         }
 
         if( $this->search_descriptions()) {
             $content = $udtprops['description'];
             $resultSet->count += $count = $this->get_number_of_occurrences($content);
             if ($this->show_snippets() && $count > 0) {
-                $resultSet->locations[$mod->lang('prompt_description')] = $this->generate_snippets($content);
+                $resultSet->locations[$mod->Lang('prompt_description')] = $this->generate_snippets($content);
             }
         }
         return $resultSet;
