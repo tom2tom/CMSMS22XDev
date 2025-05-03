@@ -64,46 +64,46 @@ try {
   case 'test':      // alias for check
   case 'is_locked': // alias for check
   case 'check':
-      if( !$type ) throw new CmsInvalidDataException(lang('missingparams'));
-      if( $oid != 0 ) { // TODO if $oid == -1?
-          $out['lock_id'] = CmsLockOperations::is_locked($type,$oid) ? 1 : 0;
-      }
-      else {
-          $tmp = CmsLockOperations::get_locks($type);
-          if( $tmp && is_array($tmp) ) $out['lock_id'] = -1;
-      }
-      break;
+    if( !$type ) throw new CmsInvalidDataException(lang('missingparams'));
+    if( $oid != 0 ) { // TODO if $oid == -1?
+      $out['lock_id'] = CmsLockOperations::is_locked($type,$oid) ? 1 : 0;
+    }
+    else {
+      $tmp = CmsLockOperations::get_locks($type); // typed locks for all users
+      if( $tmp && is_array($tmp) ) $out['lock_id'] = -1;
+    }
+    break;
 
   case 'lock':
-      if( $lifetime < 1 ) break; // do not lock, basically a noop
-      if( !$type || $oid == 0 || $uid < 1 ) throw new CmsInvalidDataException(lang('missingparams')); // TODO if $oid == -1?
-      if( $uid != $ruid ) throw new CmsLockOwnerException(lang('CMSEX_L006'));
+    if( $lifetime < 1 ) break; // do not lock, basically a noop
+    if( !$type || $oid == 0 || $uid < 1 ) throw new CmsInvalidDataException(lang('missingparams')); // TODO if $oid == -1?
+    if( $uid != $ruid ) throw new CmsLockOwnerException(lang('CMSEX_L006'));
 
-      // see if we can get this lock... if we can, it's just a touch
-      try {
-          $lock = CmsLock::load($type,$oid,$uid);
-      }
-      catch( CmsNoLockException $e ) {
-          // lock doesn't exist, gotta create one.
-          $lock = new CmsLock($type,$oid,$lifetime);
-      }
-      $lock->save();
-      $out['lock_id'] = $lock['id'];
-      $out['lock_expires'] = $lock['expires'];
-      // and we're done.
-      break;
+    // see if we can get this lock... if we can, it's just a touch
+    try {
+      $lock = CmsLock::load($type,$oid,$uid);
+    }
+    catch( CmsNoLockException $e ) {
+      // lock doesn't exist, gotta create one.
+      $lock = new CmsLock($type,$oid,$lifetime);
+    }
+    $lock->save();
+    $out['lock_id'] = $lock['id'];
+    $out['lock_expires'] = $lock['expires'];
+    // and we're done.
+    break;
 
   case 'touch':
-      if( !$type || $oid == 0 || $uid < 1 || $lock_id < 1 ) throw new CmsInvalidDataException(lang('missingparams')); // TODO if $oid == -1?
-      if( $uid != $ruid ) throw new CmsLockOwnerException(lang('CMSEX_L006'));
-      $out['lock_expires'] = CmsLockOperations::touch($lock_id,$type,$oid);
-      break;
+    if( !$type || $oid == 0 || $uid < 1 || $lock_id < 1 ) throw new CmsInvalidDataException(lang('missingparams')); // TODO if $oid == -1?
+    if( $uid != $ruid ) throw new CmsLockOwnerException(lang('CMSEX_L006'));
+    $out['lock_expires'] = CmsLockOperations::touch($lock_id,$type,$oid);
+    break;
 
   case 'unlock':
-      if( !$type || $oid == 0 || $uid < 1 || $lock_id < 1 ) throw new CmsInvalidDataException(lang('missingparams')); // TODO if oid == -1?
-      if( $uid != $ruid ) throw new CmsLockOwnerException(lang('CMSEX_L006'));
-      CmsLockOperations::delete($lock_id,$type,$oid);
-      break;
+    if( !$type || $oid == 0 || $uid < 1 || $lock_id < 1 ) throw new CmsInvalidDataException(lang('missingparams')); // TODO if oid == -1?
+    if( $uid != $ruid ) throw new CmsLockOwnerException(lang('CMSEX_L006'));
+    CmsLockOperations::delete($lock_id,$type,$oid);
+    break;
   }
 }
 catch( CmsNoLockException $e ) {
