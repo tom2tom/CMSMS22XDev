@@ -26,41 +26,40 @@ final class dm_utils
 	public static function locking_enabled()
 	{
 		$mod = cms_utils::get_module('DesignManager');
-		$timeout = $mod->GetPreference('lock_timeout');
-		if( $timeout > 0 ) return TRUE;
-		return FALSE;
+		$timeout = (int)$mod->GetPreference('lock_timeout');
+		return ($timeout > 0);
 	}
 
 	public static function get_template_locks()
 	{
-		static $_locks = [];
-		static $_locks_loaded = FALSE;
-		if( !$locks_loaded ) {
-			$_locks_loaded = TRUE;
+		static $_tlocks = [];
+		static $_tlocks_loaded = FALSE;
+		if( !$_tlocks_loaded ) {
+			$_tlocks_loaded = TRUE;
 			$tmp = CmsLockOperations::get_locks('template');
-			if( is_array($tmp) && count($tmp) ) {
+			if( $tmp && is_array($tmp) ) {
 				foreach( $tmp as $lock_obj ) {
-					$_locks[$lock_obj['oid']] = $lock_obj;
+					$_tlocks[$lock_obj['oid']] = $lock_obj;
 				}
 			}
 		}
-		return $_locks;
+		return $_tlocks;
 	}
 
 	public static function get_css_locks()
 	{
-		static $_locks = [];
-		static $_locks_loaded = FALSE;
-		if( !$locks_loaded ) {
-			$_locks_loaded = TRUE;
+		static $_slocks = [];
+		static $_slocks_loaded = FALSE;
+		if( !$_slocks_loaded ) {
+			$_slocks_loaded = TRUE;
 			$tmp = CmsLockOperations::get_locks('stylesheet');
-			if( is_array($tmp) && count($tmp) ) {
+			if( $tmp && is_array($tmp) ) {
 				foreach( $tmp as $lock_obj ) {
-					$_locks[$lock_obj['oid']] = $lock_obj;
+					$_slocks[$lock_obj['oid']] = $lock_obj;
 				}
 			}
 		}
-		return $_locks;
+		return $_slocks;
 	}
 
 } // end of class
