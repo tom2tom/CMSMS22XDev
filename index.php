@@ -108,21 +108,11 @@ while( $trycount < 2 ) {
         if( !$contentobj->IsPermitted() ) throw new CmsError403Exception('Permission denied');
 
         $_app->set_content_object($contentobj);
-        $smarty->assignGlobal('content_obj',$contentobj); //deprecated Smarty5+
+        $smarty->assignGlobal('content_obj', $contentobj); //deprecated Smarty5+
         $smarty->assignGlobal('content_id', $contentobj->Id());
         $smarty->assignGlobal('page_id', $page);
         $smarty->assignGlobal('page_alias', $contentobj->Alias());
-
-        CmsNlsOperations::set_language(); // <- NLS detection for frontend
-        $tmp = CmsNlsOperations::get_current_language();
-        if( $tmp ) {
-            $lang = CmsNlsOperations::get_lang_attribute($tmp);
-        }
-        else {
-            $lang = '';
-        }
-        $smarty->assignGlobal('lang',$lang);
-        $smarty->assignGlobal('encoding',CmsNlsOperations::get_encoding());
+        $smarty->assignGlobal('encoding', CmsNlsOperations::get_encoding());
 
         $html = '';
         $showtemplate = true;

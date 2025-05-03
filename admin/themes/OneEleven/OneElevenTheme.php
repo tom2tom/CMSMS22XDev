@@ -238,18 +238,6 @@ class OneElevenTheme extends CmsAdminThemeBase {
 		global $error,$warningLogin,$acceptLogin,$changepwhash;
 		$path = __DIR__ . DIRECTORY_SEPARATOR . 'login.php';
 		include_once $path;
-//		$tmp = get_site_preference('frontendlang');
-		$tmp = CmsNlsOperations::get_frontend_language();
-		if (!$tmp) { $tmp = 'en'; } // default global english
-		$lang = CmsNlsOperations::get_lang_attribute($tmp);
-		$smarty->assign('lang', $lang);
-		if (strncasecmp($lang, 'en', 2) == 0) {
-			$ldir = 'ltr';
-		} else {
-			$tmp = CmsNlsOperations::get_language_info($lang);
-			$ldir = (is_object($tmp) && $tmp->direction() == 'rtl') ? 'rtl' : 'ltr';
-		}
-		$smarty->assign('lang_dir', $ldir);
 		$smarty->display('login.tpl');
 		$smarty->template_dir = $otd;
 	}
@@ -324,7 +312,7 @@ class OneElevenTheme extends CmsAdminThemeBase {
 				unset($one['user_id']);
 				$one['icon'] = $icon;
 //				if (sometest) { $one['spacer'] = 1; }
-//				$one['title'] = ?; open this display this ... 
+//				$one['title'] = ?; open this display this ...
 //TODO smart root url relevance ?
 				if (startswith($one['url'], $config['admin_url'])) {
 					$one['admin'] = 1;
@@ -363,7 +351,7 @@ class OneElevenTheme extends CmsAdminThemeBase {
 				'icon' => $this->DisplayImage('icons/system/document-list.png', $tmp, '', '', 'systemicon')
 			];
 		}
-		$smarty->assign('marks',$marks);
+		$smarty->assign('marks', $marks);
 		$smarty->assign('headertext', $this->get_headtext());
 		$smarty->assign('footertext', $this->get_footertext());
 
@@ -374,27 +362,8 @@ class OneElevenTheme extends CmsAdminThemeBase {
 		$smarty->assign('secureparam', CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY]);
 		$userops = UserOperations::get_instance();
 		$smarty->assign('user', $userops->LoadUserByID($userid));
-		// prefer user selected language
-		$tmp = cms_userprefs::get_for_user($userid, 'default_cms_language');
-		if (!$tmp) {
-			$tmp = CmsNlsOperations::get_current_language();
-		}
-		if ($tmp) {
-			$lang = CmsNlsOperations::get_lang_attribute($tmp);
-		}
-		else {
-			$lang = '';
-		}
-		$smarty->assign('lang', $lang);
-		// get language direction
-		$lang = CmsNlsOperations::get_current_language();
-		$info = CmsNlsOperations::get_language_info($lang);
-		$smarty->assign('lang_dir', $info->direction());
-
-		if (is_array($this->_errors) && count($this->_errors))
-			$smarty->assign('errors', $this->_errors);
-		if (is_array($this->_messages) && count($this->_messages))
-			$smarty->assign('messages', $this->_messages);
+		if ($this->errors && is_array($this->_errors)) { $smarty->assign('errors', $this->_errors); }
+		if ($this->_messages && is_array($this->_messages)) { $smarty->assign('messages', $this->_messages); }
 
 		// is the website set down for maintenance?
 		if (get_site_preference('enablesitedownmessage') == '1') { $smarty->assign('is_sitedown', 'true'); }
