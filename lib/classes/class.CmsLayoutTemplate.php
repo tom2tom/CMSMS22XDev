@@ -1075,8 +1075,8 @@ listable,created,modified) VALUES (?,?,?,?,?,?,?,?,?,?)';
 		}
 
 		$db = CmsApp::get_instance()->GetDb();
-		$query = 'SELECT * FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE type_id = ? AND type_dflt = ?';
-		$tmp = $db->GetRow($query,array($t2->get_id(),1));
+		$query = 'SELECT * FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE type_id = ? AND type_dflt = 1';
+		$tmp = $db->GetRow($query,array($t2->get_id()));
 		if( !$tmp || !is_array($tmp) ) throw new CmsDataNotFoundException('Could not find default CmsLayoutTemplate row for type '.$t2->get_name());
 
 		return self::_load_from_data($tmp);
