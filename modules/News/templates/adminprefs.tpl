@@ -107,13 +107,6 @@
       <p class="pageinput">{$input_detail_returnid}</p>
     </div>
     <div class="pageoverflow">
-      <input type="hidden" name="{$actionid}expired_searchable" value="0">
-      <p class="pagetext"><label for="fld12">{$title_expired_searchable}:</label> {cms_help key='info_expired_searchable' title=$title_expired_searchable}</p>
-      <p class="pageinput">
-        <input type="checkbox" id="fld12" name="{$actionid}expired_searchable" value="1"{if $expired_searchable} checked{/if}>
-      </p>
-    </div>
-    <div class="pageoverflow">
       <input type="hidden" name="{$actionid}expired_viewable" value="0">
       <p class="pagetext"><label for="fld13">{$title_expired_viewable}</label> {cms_help key='info_expired_viewable' title=$title_expired_viewable}</p>
       <p class="pagetext">
@@ -122,6 +115,14 @@
     </div>
   </fieldset>
 
+  <div class="pageoverflow">
+    <input type="hidden" name="{$actionid}expired_searchable" value="0">
+    <p class="pagetext"><label for="fld12">{$title_expired_searchable}:</label> {cms_help key='info_expired_searchable' title=$title_expired_searchable}</p>
+    <p class="pageinput">
+      <input type="checkbox" id="fld12" name="{$actionid}expired_searchable" value="1"{if $expired_searchable} checked{/if}>
+    </p>
+  </div>
+  <br>
   <div class="pageoverflow">
     <p class="pageinput">
       <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
