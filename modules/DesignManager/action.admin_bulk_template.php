@@ -20,36 +20,42 @@
 #-------------------------------------------------------------------------
 if( !isset($gCms) ) exit;
 if( !$this->VisibleToAdminUser() ) return;
-$tmp = json_decode(base64_decode($params['allparms']));
-if( isset($params['allparms']) ) $params = array_merge($params,json_decode(base64_decode($params['allparms']),TRUE));
+
 $this->SetCurrentTab('templates');
+if( isset($params['cancel']) ) {
+    $this->SetMessage($this->Lang('msg_cancelled'));
+    $this->RedirectToAdminTab();
+}
+
+if( isset($params['allparms']) ) {
+    $params = array_merge($params,json_decode(base64_decode($params['allparms']),TRUE));
+    unset($params['allparms']);
+}
+
+if( !isset($params['tpl_bulk_action']) || empty($params['tpl_select']) ||
+    !is_array($params['tpl_select']) ) {
+    $this->SetError($this->Lang('error_missingparam'));
+    $this->RedirectToAdminTab();
+}
 
 try {
-    if( !isset($params['bulk_action']) || !isset($params['tpl_select']) ||
-        !is_array($params['tpl_select']) || count($params['tpl_select']) == 0 ) {
-        throw new \LogicException($this->Lang('error_missingparam'));
-    }
-    if( isset($params['cancel']) ) {
-        $this->SetMessage($this->Lang('msg_cancelled'));
-        $this->RedirectToAdminTab();
-    }
-
     if( !$this->CheckPermission('Modify Templates') ) {
         // check if we have ownership/delete permission for these templates
         $my_templates = CmsLayoutTemplate::template_query(array(0=>'u:'.get_userid(),'as_list'=>1));
         if( !is_array($my_templates) || count($my_templates) == 0 ) {
-            throw new \RuntimeException($this->Lang('error_retrieving_mytemplatelist'));
+            throw new RuntimeException($this->Lang('error_retrieving_mytemplatelist'));
         }
         $tpl_ids = array_keys($my_templates);
 
         foreach( $params['tpl_select'] as $one ) {
-            if( !in_array($one,$tpl_ids) ) throw new \RuntimeException($this->Lang('error_permission_bulkoperation'));
+            if( !in_array($one,$tpl_ids) ) {
+                throw new RuntimeException($this->Lang('error_permission_bulkoperation'));
+            }
         }
     }
 
-    $bulk_op = '';
     $templates = CmsLayoutTemplate::load_bulk($params['tpl_select']);
-    switch( $params['bulk_action'] ) {
+    switch( $params['tpl_bulk_action'] ) {
     case 'delete':
         $bulk_op = 'bulk_action_delete';
         if( isset($params['submit']) ) {
@@ -75,7 +81,7 @@ try {
         $outfile = $first_tpl->get_content_filename();
         $dn = dirname($outfile);
         if( !is_dir($dn) || !is_writable($dn) ) {
-            throw new \RuntimeException($this->Lang('error_assets_writeperm'));
+            throw new RuntimeException($this->Lang('error_assets_writeperm'));
         }
         if( isset($params['submit']) ) {
             $n = 0;
@@ -88,7 +94,7 @@ try {
                     }
                 }
             }
-            if( $n == 0 ) throw new \RuntimeException($this->Lang('error_bulkexport_noneprocessed'));
+            if( $n == 0 ) throw new RuntimeException($this->Lang('error_bulkexport_noneprocessed'));
 
             $this->SetMessage($this->Lang('msg_bulkop_complete'));
             $this->RedirectToAdminTab();
@@ -113,7 +119,7 @@ try {
                 }
             }
             if( $n == 0 ) {
-                throw new \RuntimeException($this->Lang('error_bulkimport_noneprocessed'));
+                throw new RuntimeException($this->Lang('error_bulkimport_noneprocessed'));
             }
 
             $this->SetMessage($this->Lang('msg_bulkop_complete'));
@@ -122,13 +128,14 @@ try {
         break;
 
     default:
-        throw new \LogicException($this->Lang('error_missingparam'));
+        throw new LogicException($this->Lang('error_missingparam'));
     }
 
+    $modname = $this->GetName();
     $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_bulk_template.tpl", null, $modname, $smarty);
 
     $tpl->assign('bulk_op',$bulk_op);
-    $allparms = base64_encode(json_encode(array('tpl_select'=>$params['tpl_select'], 'bulk_action'=>$params['bulk_action'])));
+    $allparms = base64_encode(json_encode(array('tpl_select'=>$params['tpl_select'], 'tpl_bulk_action'=>$params['tpl_bulk_action'])));
     $tpl->assign('allparms',$allparms);
     $tpl->assign('templates',$templates);
 
