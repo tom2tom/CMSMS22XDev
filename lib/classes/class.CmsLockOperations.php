@@ -51,7 +51,8 @@ final class CmsLockOperations
   private function __construct($type,$id) {}
 
   /**
-   * Touch any lock of the specified type, and id that matches the currently logged in UID
+   * Touch any lock of the specified type and id and that matches the
+   * current user's UID
    *
    * @param int $lock_id The lock identifier
    * @param string $type The type of object being locked
@@ -72,7 +73,8 @@ final class CmsLockOperations
   }
 
   /**
-   * Delete any lock of the specified type, and id that matches the currently logged in UID
+   * Delete any lock of the specified type and id and that matches the 
+   * current user's UID
    *
    * @param int $lock_id The lock identifier
    * @param string $type The type of object being locked
@@ -84,7 +86,8 @@ final class CmsLockOperations
   }
 
   /**
-   * Delete any lock of the specified type, and id that matches the currently logged in UID
+   * Delete any lock of the specified type and id and that matches the
+   * current user's UID
    *
    * @param int $lock_id The lock identifier
    * @param string $type The type of object being locked
@@ -105,7 +108,7 @@ final class CmsLockOperations
   }
 
   /**
-   * test for any lock of the specified type, and id
+   * Test for any lock of the specified type and id
    *
    * @param string $type The type of object being locked
    * @param int $oid The object identifier
@@ -125,12 +128,14 @@ final class CmsLockOperations
   }
 
   /**
-   * Delete any locks that have expired.
+   * Delete expired locks
    *
-   * @param int $expires Delete locks older than this timestamp (if not specified current time will be used).
-   * @param string $type The type of locks to delete.  If not specified any locks can be deleted.
+   * @param int $expires Delete locks older than this timestamp
+   *  If 0, the current time will be used. Default 0
+   * @param string $type The type of lock to delete.
+   *  If empty all types of locks can be deleted. Default ''
    */
-  private static function delete_expired($expires = 0, $type = '')
+  private static function delete_expired($expires = 0,$type = '')
   {
     if( $expires == 0 ) $expires == time();
     $db = CmsApp::get_instance()->GetDb();
@@ -144,19 +149,26 @@ final class CmsLockOperations
   }
 
   /**
-   * Get all locks of a specific type
+   * Get all locks of the specified type, or all such locks held by
+   * users other than the specified UID
    *
-   * @param string $type The lock type
+   * @param string $type The type of locked object
+   * @param int $notfor since 2.2.22F2 Optional UID whose locks are to be ignored 
    */
-  public static function get_locks($type)
+  public static function get_locks($type,$notfor = 0)
   {
     $db = CmsApp::get_instance()->GetDb();
     $query = 'SELECT * FROM '.CMS_DB_PREFIX.CmsLock::LOCK_TABLE.' WHERE type = ?';
-    $tmp = $db->GetArray($query,array($type));
-    if( !is_array($tmp) || count($tmp) == 0 ) return [];
+    $parms = array($type);
+    if( $notfor > 0 ) {
+      $query .= ' AND uid != ?';
+      $parms[] = (int)$notfor;
+    }
+    $dbr = $db->GetArray($query,$parms);
+    if( !$dbr ) return [];
 
     $locks = array();
-    foreach( $tmp as $row ) {
+    foreach( $dbr as $row ) {
       $obj = CmsLock::from_row($row);
       $locks[] = $obj;
     }
@@ -164,9 +176,10 @@ final class CmsLockOperations
   }
 
   /**
-   * Delete all the locks for the current user
+   * Delete locks held by the current user
    *
-   * @param string $type An optional type name.
+   * @param string $type The type of lock to delete.
+   *  If empty all types of locks can be deleted. Default ''
    */
   public static function delete_for_user($type = '')
   {
