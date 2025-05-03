@@ -6,7 +6,7 @@
 		<meta name="robots" content="noindex, nofollow">
 		<style>
 			body {
-				min-width: 900px;
+				min-width: 50em;
 				font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 				color: #232323;
 				line-height: 1.3;
@@ -23,7 +23,7 @@
 			h1 {
 				margin: 0;
 				color: #ddd;
-				font-size: 112px;
+				font-size: 7em;
 				font-family: Impact, Haettenschweiler, "Franklin Gothic Bold", Charcoal, "Helvetica Inserat", "Bitstream Vera Sans Bold", "Arial Black", sans-serif;
 			}
 			h2 {
@@ -36,7 +36,7 @@
 			}
 			pre {
 				border: 1px solid #d5d5d5;
-				border-left: 7px solid #d5d5d5;
+				border-{$stside}: 7px solid #d5d5d5;
 				font-size: 13px;
 				color: #333;
 				font-family: 'Lucida Console', 'Lucida Sans Typewriter', 'Courier New', monospace;
@@ -51,12 +51,12 @@
 				font-weight: bold;
 			}
 			.info {
-				float: left;
+				float: {$stside};
 				font-size: 16px;
 				line-height: 25px;
 				color: #999;
 				margin-top: -10px;
-				margin-left: 180px;
+				margin-{$stside}: 10em;
 			}
 			.logo {
 				padding: 20px 0;
