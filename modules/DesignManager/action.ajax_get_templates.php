@@ -53,9 +53,9 @@ try {
         $tpl->assign('list_all_types',[]);
     }
 
-    $locks = \CmsLockOperations::get_locks('template');
-    $tpl->assign('have_locks',$locks ? count($locks) : 0);
-    $tpl->assign('lock_timeout', $this->GetPreference('lock_timeout'));
+    $locks = CmsLockOperations::get_locks('template',$userid);
+    $tpl->assign('have_tpl_locks',($locks && is_array($locks))); //lock(s) held by other user(s)
+    $tpl->assign('lock_timeout',$this->GetPreference('lock_timeout'));
     $tpl->assign('coretypename',CmsLayoutTemplateType::CORE);
     $tpl->assign('manage_templates',$this->CheckPermission('Modify Templates'));
     $tpl->assign('manage_designs',$this->CheckPermission('Manage Designs'));

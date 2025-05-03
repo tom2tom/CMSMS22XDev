@@ -8,6 +8,7 @@ try {
     $tmp = get_parameter_value($_REQUEST,'filter');
     if( !$tmp ) throw new \Exception($this->Lang('error_missingparam'));
 
+    $userid = get_userid();
     $modname = $this->GetName();
     $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;ajax_get_stylesheets.tpl",null,$modname,$smarty);
 
@@ -35,9 +36,11 @@ try {
     $css_nav['curpage'] = (int)($css_query->offset / $css_query->limit) + 1;
     $tpl->assign('css_nav',$css_nav);
     $tpl->assign('manage_designs',$this->CheckPermission('Manage Designs'));
-    $locks = \CmsLockOperations::get_locks('stylesheet');
-    $tpl->assign('have_css_locks',($locks) ? count($locks) : 0 );
-    $tpl->assign('lock_timeout', $this->GetPreference('lock_timeout'));
+    $locks = CmsLockOperations::get_locks('stylesheet',$userid);
+    $tpl->assign('have_css_locks',($locks && is_array($locks))); //lock(s) held by other user(s)
+    $tpl->assign('lock_timeout',$this->GetPreference('lock_timeout'));
+//  $tpl->assign('has_add_right',$this->CheckPermission('X') || $this->CheckPermission('Y'));
+    $tpl->assign('userid',$userid);
 
     $tpl->display();
 }
