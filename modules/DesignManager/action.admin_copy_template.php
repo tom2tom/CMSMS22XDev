@@ -43,7 +43,7 @@ if( isset($params['cancel']) ) {
 try {
     $orig_tpl = CmsLayoutTemplate::load($params['tpl']);
 
-    if( isset($params['submit']) || isset($params['submitandedit']) ) {
+    if( isset($params['submit']) || isset($params['apply']) ) {
 
         try {
             $new_tpl = clone($orig_tpl);
@@ -53,20 +53,20 @@ try {
 
             // only if have manage themes right.
             if( $this->CheckPermission('Modify Designs') ) {
-				$new_tpl->set_designs($orig_tpl->get_designs());
+                $new_tpl->set_designs($orig_tpl->get_designs());
             }
             else {
-				$new_tpl->set_designs(array());
+                $new_tpl->set_designs(array());
             }
             $new_tpl->save();
 
-            if( isset($params['submitandedit']) ) {
-				$this->SetMessage($this->Lang('msg_template_copied_edit'));
-				$this->Redirect($id,'admin_edit_template',$returnid,array('tpl'=>$new_tpl->get_id()));
+            if( isset($params['apply']) ) {
+                $this->SetMessage($this->Lang('msg_template_copied_edit'));
+                $this->Redirect($id,'admin_edit_template',$returnid,array('tpl'=>$new_tpl->get_id()));
             }
             else {
-				$this->SetMessage($this->Lang('msg_template_copied'));
-				$this->RedirectToAdminTab();
+                $this->SetMessage($this->Lang('msg_template_copied'));
+                $this->RedirectToAdminTab();
             }
         }
         catch( CmsException $e ) {

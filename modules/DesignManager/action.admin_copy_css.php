@@ -33,14 +33,14 @@ if( isset($params['cancel']) ) {
 
 try {
   $orig_css = CmsLayoutStylesheet::load($params['css']);
-  if( isset($params['submit']) || isset($params['submitandedit']) ) {
+  if( isset($params['submit']) || isset($params['apply']) ) {
     try {
       $new_css = clone($orig_css);
       $new_css->set_name(trim($params['new_name']));
       $new_css->set_designs(array());
       $new_css->save();
 
-      if( isset($params['submitandedit']) ) {
+      if( isset($params['apply']) ) {
         $this->SetMessage($this->Lang('msg_stylesheet_copied_edit'));
         $this->Redirect($id,'admin_edit_css',$returnid,array('css'=>$new_css->get_id()));
       }
