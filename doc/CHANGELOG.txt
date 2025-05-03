@@ -3,8 +3,11 @@ Version 2.2.22F2 - Whitehorse
  - Update all uses of deprecated templates-API in modules and actions
  - Block FileManager operations on executable files unless sufficiently authorized
  - Deprecate Search collaboration with other search-capable modules which do not declare SEARCH_MODULE capability
- - Change more <p/>'s to <label/>'s
+ - Change more &lt;p/&gt;'s to &lt;label/&gt;'s
  - Add missing button-icons
+ - Replace hard-coded left/right usage in admin and module templates to enhance operation in RTL locales
+ - Global template-variables $lang_dir, $stside, $ndside always available
+ - Added to 111 admin theme css classes applying start and end directions
 
 Version 2.2.21F2 - Fredericton
 -------------------------------
@@ -173,7 +176,7 @@ Version 2.2.16 - Truro
 -------------------------------
 Core - General
   - BR #12370 - Admin Log-Download : now downloading the log honors all filters but doesn't process paging.
-  - BR #12437 - Installer won't allow "<" symbol in database password.
+  - BR #12437 - Installer won't allow "&lt;" symbol in database password.
   - BR #12457 - Event Manager empty list when mysql mode only_full_group_by.
   - BR #12484 - Cannot exit after Run UDT.
   - BR #12495 - MySQL 8.0.2+ breaks groups without table prefix.
@@ -210,7 +213,7 @@ Search v1.53
   - BR #12391 - Core search issue page/entry titles that start with numbers.
 
 Phar Installer v1.3.15
-  - Fixed BR #12437 - Installer won't allow "<" symbol in database password.
+  - Fixed BR #12437 - Installer won't allow "&lt;" symbol in database password.
   - Added Russian lang file to installer.
   - use locale_ftime() instead of deprecated strftime().
   - escape name of groups table, to prevent reserved-word conflict when table-prefix is empty.
@@ -303,7 +306,7 @@ FileManager v1.6.11
 
 News v2.51.9
   - Minor code fix.
-  - Alert on unapproved articles disabled by default. Enable at Settings >> Options tab.
+  - Alert on unapproved articles disabled by default. Enable at Settings :: Options tab.
   - BR #12207 - Can't display image in news when using upload field.
   - BR #12228 - Stored Cross-Site Scripting. Minor, because it can only be performed by a person that has access rights to the Admin panel.
 
@@ -812,7 +815,7 @@ Core - General
   - #11235 - munge_string_to_url leaves trailing dashes at the end of munged URL.
   - #11287 - Password reset form's password fields have different lengths.
   - Fix issue with module actions if 'content_en' block name was given on the default content block.
-  - Better security when saving content pages.  Most primary fields are cast to their appropriate data type (int, bool, etc).  MenuText, and TitleAttribute can no longer contain html tags like <strong>foo</strong>.
+  - Better security when saving content pages.  Most primary fields are cast to their appropriate data type (int, bool, etc).  MenuText, and TitleAttribute can no longer contain html tags like &lt;strong&gt;foo&lt;/strong&gt;.
   - Fixes issue with entities in redirecting links
   - The href/page argument to {cms_selflink} is now decoded before resolving to a page id.
 
@@ -1104,7 +1107,7 @@ Core - General
 - Add a new method to the ModuleOperations class to allow a module to be within a namespace.
 - Enhances the Group class.
 - Enhancements and fixes to the cms_url class.
-- Modified the $mod->smarty reference to be smarter... it is now deprecated.
+- Modified the $mod-&gt;smarty reference to be smarter... it is now deprecated.
 - Fixes issue with https requests (#10697)
 - Modifies The CmsLayoutTemplate class and CmsLayoutTemplateQuery to allow filtering on listable or non listable
   or setting a template as listable (default) or non listable
@@ -1125,7 +1128,7 @@ Core - General
 
 MicroTiny v2.0.2
 - Now add page hierarchy to autocomplete text when using the linker.
-- Now use $smarty->CreateTemplate for clarity when compling the config template
+- Now use $smarty-&gt;CreateTemplate for clarity when compling the config template
 - Now explicitly assign urls so that they do not get caced by smarty.
 - Slightly tweak the default HTML content in the example tab.
 - Updated tinymce to version 4.2.7, included the 'paste' plugin, and turned on 'paste_as_text'.
@@ -1156,7 +1159,7 @@ ModuleManager 2.0.1
 
 Version 2.0.1.1 - Adelaide
 ----------------------------------
-Fix to the $this->smarty magic method in the module class to resolve to the action template or the global Smarty.
+Fix to the $this-&gt;smarty magic method in the module class to resolve to the action template or the global Smarty.
 
 
 Version 2.0.1 - Adelaide
@@ -1166,7 +1169,7 @@ Core - General
 - Fixed return type of ContentOperations::GetPageIdFromAlias().
 - Help for the {cms_html_options} plugin.
 - Change the default page template to use {Navigator}.
-- Explicitly force $smarty->fetch() to create a new template, and therefore a new scope. Keep track of scopes in a stack.
+- Explicitly force $smarty-&gt;fetch() to create a new template, and therefore a new scope. Keep track of scopes in a stack.
 - Change prototype to CMSModule::DoActionBase to pass in the current template object.
 - SITENAME is now assigned as a Smarty global.
   (fixes some variable scope issues)
@@ -1181,7 +1184,7 @@ Core - General
 - Adds a globally available cms_busy() JavaScript function for the Admin.
 - Fix problem with html entitites in email addresses in user settings.
 - Fix problem with {content cssname=string} and quotes.
-- Changed cmsms plugins to use $smarty->getTemplateVars() instead of $smarty->get_template_vars() because of scope issues.
+- Changed cmsms plugins to use $smarty-&gt;getTemplateVars() instead of $smarty-&gt;get_template_vars() because of scope issues.
 - Minor fix to {form_start} when not used in a module.
 - Improved error handling for cms_stylesheet.  Now will generate a message in the Admin log, and an html comment on error.
 - Module actions can now 'return' their results
@@ -1201,17 +1204,17 @@ DesignManager v1.0.1
 - Fixes for design exporting templates with protocol-less URLs in them.
 
 MenuManager v1.50.1
-- Changes to createSmartyTemplate calls (now use $smarty->get_template_parent()).
+- Changes to createSmartyTemplate calls (now use $smarty-&gt;get_template_parent()).
 
 Navigator v1.0.1
-- Changes to createSmartyTemplate calls (now use $smarty->get_template_parent()).
-- Minor change to the help ($node->children_exist)
+- Changes to createSmartyTemplate calls (now use $smarty-&gt;get_template_parent()).
+- Minor change to the help ($node-&gt;children_exist)
 
 Search v1.50.1
-- Changes to createSmartyTemplate calls (now use $smarty->get_template_parent()).
+- Changes to createSmartyTemplate calls (now use $smarty-&gt;get_template_parent()).
 
 News v2.50.1
-- Changes to createSmartyTemplate calls (now use $smarty->get_template_parent()).
+- Changes to createSmartyTemplate calls (now use $smarty-&gt;get_template_parent()).
 - Fix problem with custom fields not being assigned in fesubmit.
 - Fix minor problem with html entities in the detail template parameter.
 
