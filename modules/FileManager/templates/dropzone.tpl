@@ -51,8 +51,8 @@ $(function() {
            $(thediv).trigger('dropzone_stop');
          }
     });
-});
-{/literal}</script>
+});{/literal}
+</script>
 <div class="drop">
 	<div class="drop-inner cf">
 	{if !empty($dirlist)}
@@ -67,7 +67,7 @@ $(function() {
 					<select class="cms_dropdown" id="fm_newdir" name="{$actionid}newdir">
 						{html_options options=$dirlist selected="/`$cwd`"}
 					</select>
-					<input type="submit" name="{$actionid}submit" value="{$FileManager->lang('submit')}">
+					<input type="submit" name="{$actionid}submit" value="{$FileManager->Lang('submit')}">
 				</fieldset>
 				</form>
 		</div>
