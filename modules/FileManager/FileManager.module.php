@@ -224,6 +224,7 @@ final class FileManager extends CMSModule
         foreach( $cssfiles as $one ) {
             $out .= sprintf($fmt,$urlpath,$one)."\n";
         }
+        $out .= "<link rel=\"stylesheet\" href=\"$urlpath/lib/filemanager.css\">\n";
         return $out;
     }
 

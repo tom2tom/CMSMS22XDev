@@ -1,45 +1,4 @@
-{*TODO <style/> invalid here - migrate to <head/> or external .css*}{literal}
-<style>
-  .upload-wrapper { margin: 10px 0 }
-  .hcentered { text-align: center }
-  .vcentered {
-    display: table-cell;
-    vertical-align: middle;
-  }
-  #dropzone {
-    margin: 15px 0;
-    border-radius: 4px;
-    background: #14b6fd;
-  }
-  #dropzone.in {
-    width: 36em;
-    height: 12em;
-    line-height: 12em;
-    background: #147fdb;
-    border: 2px dashed #fff;
-    color: #fff;
-    font-size: larger;
-    cursor: move;
-  }
-  #dropzone.fade {
-    -webkit-transition: all 0.3s ease-out;
-    -moz-transition: all 0.3s ease-out;
-    -ms-transition: all 0.3s ease-out;
-    -o-transition: all 0.3s ease-out;
-    transition: all 0.3s ease-out;
-    opacity: 1;
-  }
-  #progressarea {
-    margin: 15px;
-    height: 2em;
-    line-height: 2em;
-    text-align: center;
-    border: 1px solid #aaa;
-    border-radius: 4px;
-    display: none;
-  }
-</style>
-<script>
+<script>{literal}
 $(function() {
   var _jqXHR = []; // jqXHR array
   var _files = []; // filenames
@@ -146,9 +105,8 @@ $(function() {
       _files = [];
     }
   });
-});
+});{/literal}
 </script>
-{/literal}
 {$uformstart}
   <input type="hidden" name="disable_buffer" value="1">
   <fieldset>
@@ -158,8 +116,8 @@ $(function() {
       </div>
     {/if}
     <div class="upload-wrapper">
-      <div style="width:60%;float:left;">
-        {*<input type="hidden" name="MAX_FILE_SIZE" value="{$maxfilesize}">*}{* recommendation for browser *}
+      <div class="startside last">
+{*      <input type="hidden" name="MAX_FILE_SIZE" value="{$maxfilesize}">*}{* recommendation for browser *}
         <input id="fileupload" type="file" name="{$actionid}files[]" size="50" title="{$mod->Lang('title_filefield')}" multiple>
         <br>
         <div id="pageoverflow">
@@ -168,12 +126,15 @@ $(function() {
           </p>
         </div>
       </div>
-      <div id="leftcol" style="height:4em;width:40%;float:left;display:table;">
-        {if !isset($is_ie)}
-          <div id="dropzone" class="vcentered hcentered fade" title="{$mod->Lang('title_dropzone')}"><p id="dropzonetext">{$mod->Lang('prompt_dropfiles')}</p></div>
-        {/if}
+{if !isset($is_ie)}
+      <div id="dropcol" class="endside last">
+        <div id="dropzone" class="vcentered hcentered fade" title="{$mod->Lang('title_dropzone')}">
+          <p id="dropzonetext">
+            {$mod->Lang('prompt_dropfiles')}
+          </p>
+        </div>
       </div>
-      <div class="clearb"></div>
+{/if}
       <div id="progressarea"></div>
     </div>
   </fieldset>
