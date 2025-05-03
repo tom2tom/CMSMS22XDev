@@ -7,7 +7,7 @@
  */
 
 /**
- * This singleton class provides a convenient caching capbility.
+ * This singleton class provides a convenient caching capability.
  *
  * By default this uses the cms_filecache_driver to cache data in the TMP_CACHE_LOCATION
  * for one hour.
@@ -20,7 +20,7 @@ class cms_cache_handler
   /**
    * @ignore
    */
-  static private $_instance;
+  private static $_instance;
 
   /**
    * @ignore

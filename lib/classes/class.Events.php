@@ -28,7 +28,7 @@ final class Events
 	/**
 	 * @ignore
 	 */
-	static private $_handlercache;
+	private static $_handlercache;
 
 	/**
 	 * @ignore
