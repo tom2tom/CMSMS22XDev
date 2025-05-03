@@ -12,9 +12,9 @@ $lang['available_templates'] = 'Available Templates';
 
 //B
 $lang['bulk_action_delete'] = 'Bulk deletion of templates';
-$lang['bulk_action_delete_css'] = 'Bulk Deletion of stylesheets';
-$lang['bulk_action_export_css'] = 'Export multiple stylesheets to Files';
-$lang['bulk_action_import_css'] = 'Import multiple stylesheets from Files';
+$lang['bulk_action_delete_css'] = 'Bulk deletion of stylesheets';
+$lang['bulk_action_export_css'] = 'Export multiple stylesheets to files';
+$lang['bulk_action_import_css'] = 'Import multiple stylesheets from files';
 $lang['bulk_action_export'] = 'Export multiple templates to files';
 $lang['bulk_action_import'] = 'Import multiple templates from files';
 
@@ -396,6 +396,7 @@ $lang['prompt_lockedsince'] = 'Since';
 $lang['prompt_lockexpired'] = 'Expired';
 $lang['prompt_lockexpires'] = 'Expires';
 $lang['prompt_locksettings'] = 'Locking';
+$lang['prompt_media'] = 'Media';//new list-column title
 $lang['prompt_media_type'] = 'Media Type';
 $lang['prompt_media_query'] = 'Media Query';
 $lang['prompt_modified'] = 'Modified Date';
@@ -453,22 +454,22 @@ $lang['remove'] = 'Remove';
 //S
 $lang['set_all_pages'] = 'Set All Pages To This Template';
 $lang['submit'] = 'Submit';
-$lang['submitandedit'] = 'Submit And Edit';
 
 //T
 $lang['title_cat_id'] = 'This column displays the unique integer id for the category.';
 $lang['title_cat_name'] = 'This column displays the unique name for the category.';
 $lang['title_clearlocks'] = 'Clear any locked items (subject to permissions)';
+$lang['title_css_bulkaction'] = 'Select the action to perform on the selected stylesheets.'; // new
 $lang['title_css_designs'] = 'This column lists the design that a stylesheet is attached to. If any.';
-$lang['title_css_id'] = 'This column displays the unique integer id for the stylesheet.';
 $lang['title_css_filename'] = 'When stylesheets are stored in a file this column displays the filename within the assets/css directory';
-$lang['title_css_modified'] = 'Displays the date the stylesheet was last modified.';
+$lang['title_css_id'] = 'This column displays the unique integer id for the stylesheet.';
+//$lang['title_css_modified'] = 'Displays the date the stylesheet was last modified.';
+$lang['title_css_media'] = 'This column displays the media to which the stylesheet will be applied'; // new
 $lang['title_css_name'] = 'This column displays the unique name for the stylesheet.';
 $lang['title_css_selectall'] = 'Select <em>(or deselect)</em> all visible stylesheets.';
 $lang['title_delete'] = 'Delete the selected items';
 $lang['title_designmanager_settings'] = 'Settings - Design Manager';
 $lang['title_designs_default'] = 'The default design is automatically selected when creating new content pages.';
-$lang['title_tpl_filename'] = 'When templates are stored in a file this column displays the filename within the assets/templates directory';
 $lang['title_filter'] = 'Select an item in this list to reduce the number of visible templates';
 $lang['title_filter_design'] = 'Optionally filter the displayed stylesheet by the associated design/theme';
 $lang['title_filterapplied'] = 'A filter has been selected which limits the number of templates listed';
@@ -482,6 +483,7 @@ $lang['title_tpl_bulk'] = 'Select this template for bulk actions';
 $lang['title_tpl_bulkaction'] = 'Select the action to perform on the selected templates.';
 $lang['title_tpl_design'] = 'This column displays the name of the design (if any) that a template is associated with.  A template can be associated with multiple designs';
 $lang['title_tpl_dflt'] = 'This column displays whether the template is the default template for its type';
+$lang['title_tpl_filename'] = 'When templates are stored in a file this column displays the filename within the assets/templates directory';
 $lang['title_tpl_id'] = 'This column displays the unique numeric template ID';
 $lang['title_tpl_import_type'] = 'For organizational purposes, and to provide some default content, select the type for the new template.';
 $lang['title_tpl_modified'] = 'This column displays the name date the template was last modified';
