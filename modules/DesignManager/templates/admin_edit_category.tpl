@@ -4,7 +4,7 @@
 <h3>{$mod->Lang('new_category')}</h3>
 {/if}
 
-{form_start}
+{form_start __activetab='categories'}
 <input type="hidden" name="{$actionid}cat" value="{$catid}">
 <div class="pageoverflow">
   <p class="pageinput">

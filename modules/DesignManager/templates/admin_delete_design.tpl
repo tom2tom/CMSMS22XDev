@@ -1,7 +1,8 @@
-{form_start design=$design->get_id()}
-<h3>{$mod->Lang('delete_design')}: {$design->get_name()} ({$design->get_id()})</h3>
-
+{$did=$design->get_id()}
+<h3>{$mod->Lang('delete_design')}: {$design->get_name()} ({$did})</h3>
 <div class="pagewarning">{$mod->Lang('warning_deletedesign')}</div>
+
+{form_start design=$did __activetab='designs'}
 
 {if $design->has_templates() && $tpl_permission}
 <div class="pagewarning">{$mod->Lang('warning_deletetemplate_attachments')}</div>

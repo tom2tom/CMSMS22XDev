@@ -9,7 +9,7 @@ $(function() {
 
 <h3>{$mod->Lang('import_design_step1')}</h3>
 
-{form_start}
+{form_start __activetab='designs'}
 <div class="pageinfo">{$mod->Lang('info_import_xml_step1')}</div>
 
 <div class="pageoverflow">
