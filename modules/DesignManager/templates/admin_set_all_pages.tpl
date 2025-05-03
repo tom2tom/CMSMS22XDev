@@ -3,59 +3,47 @@
 
 {form_start extraparms=$extraparms}
 <fieldset>
-  <div style="width: 49%; float: left;">
+  <div class="startside">
     <div class="pageoverflow">
       <p class="pagetext"><label for="tpl_name">{$mod->Lang('prompt_name')}:</label></p>
-      <p class="pageinput">
-        <input id="tpl_name" type="text" size="50" maxlength="50" value="{$template->get_name()}" value="{$template->get_name()}" readonly>
-      </p>
+      <p class="pageinput" id="tpl_name">{$template->get_name()}</p>
     </div>
 
     <div class="pageoverflow">
-      <p class="pagetext">{$mod->Lang('prompt_type')}:</p>
-      <p class="pageinput">
-        {$template_type->get_langified_display_value()}
-      </p>
+      <p class="pagetext"><label for="tpl_type">{$mod->Lang('prompt_type')}:</label></p>
+      <p class="pageinput" id="tpl_type">{$template_type->get_langified_display_value()}</p>
     </div>
 
-    {if !empty($user_list)}
+{if !empty($user_list)}
     <div class="pageoverflow">
-      <p class="pagetext"><label for="tpl_name">{$mod->Lang('prompt_owner')}:</label></p>
-      <p class="pageinput">
-        {$user_list[$template->get_owner_id()]}
-      </p>
+      <p class="pagetext"><label for="tpl_own">{$mod->Lang('prompt_owner')}:</label></p>
+      <p class="pageinput" id="tpl_own">{$user_list[$template->get_owner_id()]}</p>
     </div>
-    {/if}
+{/if}
 
-    {if !empty($category_list)}
+{if !empty($category_list)}
     <div class="pageoverflow">
-      <p class="pagetext">{$mod->Lang('prompt_category')}:</p>
-      <p class="pageinput">
-        {$category_list[$template->get_category_id()|default:0]}
-      </p>
+      <p class="pagetext"><label for="tpl_cat">{$mod->Lang('prompt_category')}:</label></p>
+      <p class="pageinput" id="tpl_cat">{$category_list[$template->get_category_id()|default:0]}</p>
     </div>
-    {/if}
+{/if}
   </div>
 
-  <div style="width: 49%; float: left;">
-  {if $template->get_id()}
+{if $template->get_id()}
+  <p class="startside" style="width:5%;min-width:1em"></p>
+  <div class="startside last">
     <div class="pageoverflow">
-      <p class="pagetext">{$mod->Lang('prompt_created')}:</p>
-      <p class="pageinput">
-        <input type="text" value="{$template->get_created()|localedate_format:'%x %X'}" readonly>
-      </p>
+      <p class="pagetext"><label for="tpl_creat">{$mod->Lang('prompt_created')}:</label></p>
+      <p class="pageinput" id="tpl_creat">{$template->get_created()|localedate_format:'%x %X'}</p>
     </div>
     <div class="pageoverflow">
-      <p class="pagetext"><label for="template_modified">{$mod->Lang('prompt_modified')}:</label></p>
-      <p class="pageinput">
-        <input type="text" value="{$template->get_modified()|localedate_format:'%x %X'}" readonly>
-      </p>
+      <p class="pagetext"><label for="tpl_mod">{$mod->Lang('prompt_modified')}:</label></p>
+      <p class="pageinput" id="tpl_mod">{$template->get_modified()|localedate_format:'%x %X'}</p>
     </div>
-  {/if}
   </div>
-
-  <div style="width: 49%; float: right;">
-  </div>
+{else}
+  <div class="clearb"></div>
+{/if}
 </fieldset>
 
 {if isset($noblocks)}

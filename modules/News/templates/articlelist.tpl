@@ -84,7 +84,7 @@ $(function() {
 	</div>
 	<div class="pageoverflow">
 		<div class="dialogoptions">
-			<input type="submit" name="{$actionid}submitfilter" data-ui-icon="ui-icon-check" value="{$mod->Lang('submit')}">
+			<input type="submit" name="{$actionid}submitfilter" data-ui-icon="ui-icon-disk" value="{$mod->Lang('apply')}">
 			<input type="submit" name="{$actionid}resetfilter" data-ui-icon="ui-icon-arrowrefresh-1-n" value="{$mod->Lang('reset')}">
 			<input type="submit" id="closefilter" data-ui-icon="ui-icon-cancel" value="{$mod->Lang('cancel')}">
 		</div>
@@ -100,7 +100,7 @@ $(function() {
 	{$mod->Lang('viewfilter')}</a>
 	</div>
 {if $aitemcount > 0 && $pagecount > 1}
-	<div class="pageoptions grid_6" style="text-align:right">
+	<div class="pageoptions grid_6 endalign">
 		{$startaform}
 		<label for="pnum">{$mod->Lang('prompt_page')}</label>&nbsp;
 		<select id="pnum" name="{$actionid}pagenumber">
@@ -171,7 +171,7 @@ $(function() {
 	<p class="warning">{if $curcategory}{$mod->Lang('noarticles')}{else}{$mod->Lang('noarticlesinfilter')}{/if}</p>
 {/if}
 
-<div style="width: 99%;">
+<div style="width:99%">
 {if isset($addlink)}
 	<div class="pageoptions startside last">
 		<p class="pageoptions">{$addlink}</p>
@@ -188,7 +188,7 @@ $(function() {
 			<option value="setpublished">{$mod->Lang('bulk_setpublished')}</option>
 			<option value="setcategory">{$mod->Lang('bulk_setcategory')}</option>
 		</select>
-		<div id="bulk_category" style="display:inline-block;">
+		<div id="bulk_category" style="display:inline-block">
 			{$mod->Lang('category')}: {$categoryinput}
 		</div>
 		<input type="submit" id="btnbulk" name="{$actionid}submit_bulkaction" value="{$mod->Lang('submit')}">

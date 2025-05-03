@@ -1,9 +1,4 @@
-{if !isset($noform)}{*TODO <style/> invalid here - migrate to <head/> or external .css*}
-<style>
-a.filelink:visited {
-  color: #000;
-}
-</style>
+{if !isset($noform)}
 <script>
 function enable_button(idlist) {
     $(idlist).prop('disabled',false).removeClass('ui-state-disabled ui-button-disabled');
@@ -41,14 +36,13 @@ function enable_action_buttons() {
         enable_button('#btn_delete,#btn_move');
     }
 }
-
 $(function () {
     enable_action_buttons();
 
     $('#refresh').off('click').on('click', function(e) {
         // ajaxy reload for the files area.
-//        var url = '{$refresh_url}'+'&showtemplate=false'; needed?
-//        $('#filesarea').load(url);
+//      var url = '{$refresh_url}'+'&showtemplate=false'; needed?
+//      $('#filesarea').load(url);
         $('#filesarea').load('{$refresh_url}');
         return false;
     });
@@ -150,7 +144,7 @@ $(function () {
 				<th class="pageicon">{$fileinfotext}</th>
 				<th class="pageicon" title="{$mod->Lang('title_col_fileowner')}">{$fileownertext}</th>
 				<th class="pageicon" title="{$mod->Lang('title_col_fileperms')}">{$filepermstext}</th>
-				<th class="pageicon" title="{$mod->Lang('title_col_filesize')}" style="text-align:right;">{$filesizetext}</th>
+				<th class="pageicon endalign" title="{$mod->Lang('title_col_filesize')}">{$filesizetext}</th>
 				<th></th>
 				<th class="pageicon" title="{$mod->Lang('title_col_filedate')}">{$filedatetext}</th>
 				<th class="pageicon">
@@ -170,12 +164,12 @@ $(function () {
 				<td style="vertical-align:middle">{if isset($file->thumbnail) && $file->thumbnail!=''}{$file->thumbnail}{else}{$file->iconlink}{/if}</td>
 				<td class="clickable" style="vertical-align:middle">{$file->txtlink}</td>
 				<td class="clickable" style="vertical-align:middle">{$file->mime}</td>{*TODO migrate these styles to external css for rtl etc *}
-				<td class="clickable" style="padding-right:8px;white-space:pre;vertical-align:middle">{$file->fileinfo}</td>
-				<td class="clickable" style="padding-right:8px;white-space:pre;vertical-align:middle">{if isset($file->fileowner)}{$file->fileowner}{else}&nbsp;{/if}</td>
-				<td class="clickable" style="padding-right:8px;vertical-align:middle">{$file->filepermissions}</td>
-				<td class="clickable" style="padding-right:4px;white-space:pre;text-align:right;vertical-align:middle">{$file->filesize}</td>
-				<td class="clickable" style="padding-left:0;vertical-align:middle">{if isset($file->filesizeunit)}{$file->filesizeunit}{else}&nbsp;{/if}</td>
-				<td class="clickable" style="padding-right:8px;white-space:pre;vertical-align:middle">{$thedate}</td>
+				<td class="clickable" style="padding-{$ndside}:8px;white-space:pre;vertical-align:middle">{$file->fileinfo}</td>
+				<td class="clickable" style="padding-{$ndside}:8px;white-space:pre;vertical-align:middle">{if isset($file->fileowner)}{$file->fileowner}{else}&nbsp;{/if}</td>
+				<td class="clickable" style="padding-{$ndside}:8px;vertical-align:middle">{$file->filepermissions}</td>
+				<td class="clickable endalign" style="padding-{$ndside}:4px;white-space:pre;vertical-align:middle">{$file->filesize}</td>
+				<td class="clickable" style="padding-{$stside}:0;vertical-align:middle">{if isset($file->filesizeunit)}{$file->filesizeunit}{else}&nbsp;{/if}</td>
+				<td class="clickable" style="padding-{$ndside}:8px;white-space:pre;vertical-align:middle">{$thedate}</td>
 				<td>
 				{if !isset($file->noCheckbox)}
 					<label for="x_{$idx}" style="display:none">{$mod->Lang('toggle')}</label>

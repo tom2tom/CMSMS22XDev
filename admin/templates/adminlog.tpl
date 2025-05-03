@@ -22,29 +22,29 @@ $(function() {
 <div class="pagecontainer">
   <div class="pageoverflow">
     <div id="adminlog_filters" style="display:none" title="{lang('filter')}">
-        <form id="adminlog_filter" method="post" action="adminlog.php?{$SECURE_PARAM_NAME}={$CMS_USER_KEY}">
-          <div class="c_full">
-            <label for="actionin">{$langfilteraction}</label>
-            <input type="text" id="actionin" name="filteraction" value="{$filter->action}" class="grid_10">
-            <div class="clearb"></div>
+      <form id="adminlog_filter" method="post" action="adminlog.php?{$SECURE_PARAM_NAME}={$CMS_USER_KEY}">
+        <div class="c_full">
+          <label for="actionin">{$langfilteraction}</label>
+          <input type="text" id="actionin" name="filteraction" value="{$filter->action}" class="grid_10">
+          <div class="clearb"></div>
+        </div>
+        <div class="c_full">
+          <label for="filterin">{lang('item_name_contains')}</label>
+          <input type="text" id="filterin" name="filteritem" value="{$filter->item_name}" class="grid_10">
+          <div class="clearb"></div>
+        </div>
+        <div class="c_full">
+          <label for="userin">{$langfilteruser}:</label>
+          <input type="text" id="userin" name="filteruser" value="{$filter->user}" class="grid_10">
+          <div class="clearb"></div>
+        </div>
+        <div class="pageoverflow">
+          <div class="dialogoptions">
+            <input type="submit" name="filterapply" data-ui-icon="ui-icon-disk" value="{lang('apply')}">
+            <input type="submit" name="filterreset" data-ui-icon="ui-icon-arrowrefresh-1-n" value="{lang('reset')}">
           </div>
-          <div class="c_full">
-            <label for="filterin">{lang('item_name_contains')}</label>
-            <input type="text" id="filterin" name="filteritem" value="{$filter->item_name}" class="grid_10">
-            <div class="clearb"></div>
-          </div>
-          <div class="c_full">
-            <label for="userin">{$langfilteruser}:</label>
-            <input type="text" id="userin" name="filteruser" value="{$filter->user}" class="grid_10">
-            <div class="clearb"></div>
-          </div>
-          <div class="pageoverflow">
-            <div class="dialogoptions">
-              <input type="submit" name="filterapply" data-ui-icon="ui-icon-disk" value="{lang('apply')}">
-              <input type="submit" name="filterreset" data-ui-icon="ui-icon-arrowrefresh-1-n" value="{lang('reset')}">
-            </div>
-          </div>
-        </form>
+        </div>
+      </form>
     </div>
 
     <div class="c_full">
@@ -62,7 +62,7 @@ $(function() {
         {/if}
       </div>
       {if !empty($pagelist)}
-      <div class="grid_4" style="text-align: right;">
+      <div class="grid_4 endalign">
         <form method="post" action="adminlog.php?{$SECURE_PARAM_NAME}={$CMS_USER_KEY}">
           {lang('page')}:&nbsp;
           <select id="pagesel" name="page">{html_options options=$pagelist selected=$page}</select>

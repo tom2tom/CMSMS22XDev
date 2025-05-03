@@ -55,13 +55,13 @@ input.invalid { background-color: salmon; }
 
 {$formstart}
 <div>
-  <div id="test1" style="width:74%;float:left;">
+  <div id="test1" class="startside" style="width:75%">
     <img id="img" src="{$image}" alt="">
   </div>
-  <div style="width:24%;float:left">
+  <div class="startside last" style="position:relative;z-index:500;margin:1em">
     <div style="pageoverflow">
-      <p class="pagetext">{$mod->Lang('image')}:&nbsp;{$filename}</p>
-      <p class="pagetext">{$mod->Lang('pie_image_natural_size')}: <span id="natsize"></span></p>
+      <p class="pagetext"><label for="fname">{$mod->Lang('image')}:</label>&nbsp;<span id="fname">{$filename}</span></p>
+      <p class="pagetext"><label for="natsize">{$mod->Lang('pie_image_natural_size')}:</label> <span id="natsize"></span></p>
     </div>
     <table id="coords" class="coords">
       <tr><td><label for="cx">{$mod->Lang('pie_crop_x')}:</label></td><td><input type="text" id="cx" size="6" name="{$actionid}cx"></td></tr>
@@ -77,6 +77,5 @@ input.invalid { background-color: salmon; }
       <input type="submit" name="{$actionid}cancel" data-ui-icon="ui-icon-cancel" value="{$mod->Lang('cancel')}">
     </div>
   </div>
-  <div style="clear: both;"></div>
 </div>
 {$formend}

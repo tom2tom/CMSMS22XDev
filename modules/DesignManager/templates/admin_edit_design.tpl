@@ -29,7 +29,7 @@ $(function() {
 });
 </script>
 
-{form_start id="admin_edit_design"}{$did=$design->get_id()}
+{form_start id='admin_edit_design' __activetab='designs'}{$did=$design->get_id()}
 <input type="hidden" name="{$actionid}design" value="{$did}">
 <input type="hidden" name="{$actionid}ajax" id="ajax">
 
@@ -43,7 +43,7 @@ $(function() {
 
 {if $did > 0}
 <fieldset>
-  <div style="width: 49%; float: left;">
+  <div class="startside">
 {/if}
     <div class="pageoverflow">
       <p class="pagetext"><label for="design_name">{$mod->Lang('prompt_name')}</label>:&nbsp;{cms_help key2='help_design_name' title=$mod->Lang('prompt_name')}</p>
@@ -53,18 +53,19 @@ $(function() {
     </div>
 {if $did > 0}
   </div>
-  <div style="width: 49%; float: right;">
+  <p class="startside" style="width:5%;min-width:1em"></p>
+  <div class="startside last">
     <div class="pageoverflow">
       <p class="pagetext"><label for="created">{$mod->Lang('prompt_created')}:</label>&nbsp;{cms_help key2='help_design_created' title=$mod->Lang('prompt_created')}</p>
       <p class="pageinput" id="created">
-      {$design->get_created()|localedate_format:'%x %X'}
+        {$design->get_created()|localedate_format:'%x %X'}
       </p>
     </div>
 
     <div class="pageoverflow">
       <p class="pagetext"><label for="modified">{$mod->Lang('prompt_modified')}:</label>&nbsp;{cms_help key2='help_design_modified' title=$mod->Lang('prompt_modified')}</p>
       <p class="pageinput" id="modified">
-      {$design->get_modified()|localedate_format:'%x %X'}
+        {$design->get_modified()|localedate_format:'%x %X'}
       </p>
     </div>
   </div>

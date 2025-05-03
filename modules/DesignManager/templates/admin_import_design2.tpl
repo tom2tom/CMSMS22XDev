@@ -33,7 +33,7 @@ $(function() {
 <div class="pageinfo">{$mod->Lang('info_import_xml_step2')}</div>
 
 <fieldset>
-  <div style="width: 49%; float: left;">
+  <div class="startside">
     <div class="pageoverflow">
       <p class="pagetext"><label for="import_newname">{$mod->Lang('prompt_name')}:</label> {cms_help key2='help_import_newname' title=$mod->Lang('prompt_name')}</p>
       <p class="pageinput">
@@ -44,23 +44,23 @@ $(function() {
     </div>
 
     <div class="pageoverflow">
-      <p class="pagetext">{$mod->Lang('prompt_created')}:</p>
+      <p class="pagetext"><label for="import_create">{$mod->Lang('prompt_created')}:</label>&nbsp;{cms_help key2='help_import_created' title=''}</p>
       <p class="pageinput">
         {$tmp=$design_info.generated|localedate_format:'%x %X'}{if $tmp == ''}{$tmp=$mod->Lang('unknown')}{/if}
-        <span style="color:red">{$tmp}</span>&nbsp;{cms_help key2='help_import_created' title=''}
+        <span id="import_create" style="color:red">{$tmp}</span>
       </p>
     </div>
   </div>
-
-  <div style="width: 49%; float: right;">
+  <p class="startside" style="width:5%;min-width:1em"></p>
+  <div class="startside last">
     <div class="pageoverflow">
-      <p class="pagetext">{$mod->Lang('prompt_cmsversion')}:</p>
+      <p class="pagetext"><label for="cmsver">{$mod->Lang('prompt_cmsversion')}:</label>&nbsp;{cms_help key2='help_import_cmsversion' title=$mod->Lang('prompt_cmsversion')}</p>
       <p class="pageinput">
-        {if version_compare($design_info.cmsversion,$cms_version) < 0}
-          <span style="color:red">{$design_info.cmsversion}</span>&nbsp;{cms_help key2='help_import_cmsversion' title=$mod->Lang('prompt_cmsversion')}
-        {else}
-          {$design_info.cmsversion}
-        {/if}
+{if version_compare($design_info.cmsversion,$cms_version) < 0}
+        <span id="cmsver" style="color:red">{$design_info.cmsversion}</span>
+{else}
+        <span id="cmsver">{$design_info.cmsversion}</span>
+{/if}
       </p>
     </div>
   </div>
@@ -100,7 +100,7 @@ $(function() {
     <td><h3>{$one.newname}</h3></td>
     <td>{$type_obj->get_langified_display_value()}</td>
     <td>{$one.desc|default:$mod->Lang('info_nodescription')|summarize:80}
-      <div id="tpl_{$one@index}" class="template_content" title="{$one.name}" style="display: none;"><textarea rows="10" cols="80">{$one.data}</textarea></div>
+      <div id="tpl_{$one@index}" class="template_content" title="{$one.name}" style="display:none"><textarea rows="10" cols="80">{$one.data}</textarea></div>
     </td>
     <td>
       {admin_icon class="template_view pointer" icon='view.gif' alt=lang('view')}
@@ -133,7 +133,7 @@ $(function() {
         </td>
         <td>{$one.mediatype}</td>
         <td>{$one.desc|default:$mod->Lang('info_nodescription')}
-           <div class="stylesheet_content" title="{$one.name}" style="display: none;">
+           <div class="stylesheet_content" title="{$one.name}" style="display:none">
              <textarea rows="10" cols="80">{$one.data}</textarea>
            </div>
         </td>
@@ -163,7 +163,7 @@ $(function() {
 </div>
 {form_end}
 
-<div style="display: none;">{strip}
+<div style="display:none">{strip}
   <div id="help_import_xml_file" title="{$mod->Lang('prompt_help')}">{$mod->Lang('help_import_xml_file')}</div>
   <div id="help_import_newname" title="{$mod->Lang('prompt_help')}">{$mod->Lang('help_import_newname')}</div>
   <div id="help_import_cmsversion" title="{$mod->Lang('prompt_help')}">{$mod->Lang('help_import_cmsversion')}</div>

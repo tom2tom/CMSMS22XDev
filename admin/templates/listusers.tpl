@@ -146,10 +146,10 @@ $(function() {
     </table>
 
     <div class="pageoptions">
-        <div style="width: 40%; float: left;">
+        <div class="startside last">
             <a href="adduser.php{$urlext}" title="{lang('info_adduser')}">{admin_icon icon='newobject.gif'}&nbsp;{lang('adduser')}</a>
         </div>
-        <div style="width: 40%; float: right; text-align: right;">
+        <div class="endside last endalign">
             <label for="withselected">{lang('selecteditems')}:</label>&nbsp;
             <select name="bulkaction" id="withselected">
                 <option value="delete">{lang('delete')}</option>

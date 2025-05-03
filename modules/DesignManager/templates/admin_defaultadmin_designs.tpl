@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="pageoptions options-menu half">
+  <div class="pageoptions startalign last">
     <a accesskey="a" href="{cms_action_url action='admin_edit_design'}" title="{$mod->Lang('create_design')}">{admin_icon icon='newobject.gif'} {$mod->Lang('create_design')}</a>&nbsp;&nbsp;
     <a accesskey="i" href="{cms_action_url action='admin_import_design'}" title="{$mod->Lang('title_import_design')}">{admin_icon icon='import.gif'} {$mod->Lang('import_design')}</a>
   </div>

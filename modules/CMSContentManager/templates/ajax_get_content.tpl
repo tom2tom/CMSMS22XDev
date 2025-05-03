@@ -14,11 +14,11 @@
       <a id="clearlocks" href="{cms_action_url action=admin_clearlocks}" accesskey="l" title="{$mod->Lang('title_clearlocks')}">{admin_icon icon='run.gif' alt=''}&nbsp;{$mod->Lang('prompt_clearlocks')}</a>
     {/if}
       {/if}
-      <a id="myoptions" accesskey="o" title="{$mod->Lang('prompt_settings')}">{admin_icon icon='edit.gif' alt=$mod->Lang('prompt_settings')}&nbsp;{$mod->lang('prompt_settings')}</a>
+      <a id="myoptions" accesskey="o" title="{$mod->Lang('prompt_settings')}">{admin_icon icon='edit.gif' alt=$mod->Lang('prompt_settings')}&nbsp;{$mod->Lang('prompt_settings')}</a>
       {if !empty($have_filter)}<span style="color:red"><em>({$mod->Lang('filter_applied')})</em></span>{/if}
   </div>
 
-  <div class="pageoptions options-form grid_4" style="float: right;">
+  <div class="pageoptions endside options-form grid_4">
     {if !empty($content_list)}
     <span><label for="ajax_find">{$mod->Lang('find')}:</label>&nbsp;<input type="text" id="ajax_find" name="ajax_find" title="{$mod->Lang('title_listcontent_find')}" value="" size="25"></span>
     {/if}
@@ -43,7 +43,7 @@
   <div id="contentlist">{* everything from here down is part of the ajax stuff *}
   {* error container *}
   {if isset($error)}
-  <div id="error_cont" class="red" style="color:red;width:80%;margin-left:2%;margin-right:10%;text-align:center;vertical-align:middle">{$error}</div>
+  <div id="error_cont" class="red" style="color:red;width:80%;margin-{$stside}:2%;margin-{$ndside}:10%;text-align:center;vertical-align:middle">{$error}</div>
   {/if}
 
   {if isset($content_list)}
@@ -183,18 +183,16 @@
           <a href="{cms_action_url action=admin_editcontent content_id=$row.id}" accesskey="e" class="page_edit" title="{$mod->Lang('addcontent')}" data-cms-content="{$row.id}">
         {admin_icon icon='edit.gif' class='page_edit' title=$mod->Lang('prompt_page_edit')}
           </a>
-        {else}
-          {if isset($row.lock) && $row.can_steal}
-        <a href="{cms_action_url action=admin_editcontent content_id=$row.id}" accesskey="e" class="page_edit" title="{$mod->Lang('addcontent')}" data-cms-content="{$row.id}" class="steal_lock">
-          {admin_icon icon='permissions.gif' class='page_edit steal_lock' title=$mod->Lang('prompt_steal_lock_edit')}
-        </a>
-          {/if}
+        {elseif isset($row.lock) && $row.can_steal}
+          <a href="{cms_action_url action=admin_editcontent content_id=$row.id}" accesskey="e" class="page_edit" title="{$mod->Lang('addcontent')}" data-cms-content="{$row.id}" class="steal_lock">
+        {admin_icon icon='permissions.gif' class='page_edit steal_lock' title=$mod->Lang('prompt_steal_lock_edit')}
+          </a>
         {/if}
       {elseif $column == 'delete'}
         {if $row.delete && $row.can_delete}
           <a href="{cms_action_url action='defaultadmin' delete=$row.id}" class="page_delete" accesskey="r">
         {admin_icon icon='delete.gif' class='page_delete' title=$mod->Lang('prompt_page_delete')}
-           </a>
+          </a>
         {/if}
       {elseif $column == 'multiselect'}
         {if $row.multiselect}
@@ -254,7 +252,7 @@
       </div>
     {/if}
     {if $multiselect && isset($bulk_options)}
-      <div class="pageoptions grid_6" style="text-align: right;">
+      <div class="pageoptions grid_6 endalign">
         <label for="multiaction">{$mod->Lang('prompt_withselected')}:</label>&nbsp;&nbsp;
         <select name="{$actionid}multiaction" id="multiaction">
           {html_options options=$bulk_options}

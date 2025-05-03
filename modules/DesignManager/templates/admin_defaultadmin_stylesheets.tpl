@@ -8,13 +8,13 @@ $(function() {
       filter: '{$jsoncssfilter}'
     },
     done_handler: function() {
-      $('#css_bulk_action,#css_bulk_submit').prop('disabled',true);
+      $('#css_bulk_sel,#css_bulk_submit').prop('disabled',true);
 {*    $('#css_bulk_submit').button({ 'disabled' : true });TODO extra .button needed?*}
       $('#css_selall,.css_select').on('click',function() {
         // if one or more .css_select is checked, enable the bulk actions
         var l = $('.css_select:checked').length,
           st = l === 0;
-        $('#css_bulk_action').prop('disabled',st);
+        $('#css_bulk_sel').prop('disabled',st);
         $('#css_bulk_submit').prop('disabled',st);
 {*      $('#css_bulk_submit').button({ 'disabled' : st});TODO extra .button needed?*}
       });
@@ -30,8 +30,8 @@ $(function() {
       width: 'auto',
       buttons: [
        {
-        text: "{$mod->Lang('submit')}",
-        icon: 'ui-icon-check',
+        text: "{$mod->Lang('apply')}",
+        icon: 'ui-icon-disk',
         click: function() {
          $(this).dialog('close');
          $('#filtercssdlg_form').trigger('submit');
@@ -60,17 +60,17 @@ $(function() {
 </script>
 
 <div id="filtercssdlg" style="display:none" title="{$mod->Lang('css_filter')}">
-  {form_start id='filtercssdlg_form'}{*strip*}
+  {form_start id='filtercssdlg_form' __activetab='stylesheets'}{*strip*}
     <input type="hidden" id="submit_filter_css" name="{$actionid}submit_filter_css" value="1">
     <div class="c_full">
-      <label for="filter_css_design" class="grid_3 text-right">{$mod->Lang('prompt_design')}:</label>
+      <label for="filter_css_design" class="grid_3 endalign">{$mod->Lang('prompt_design')}:</label>
       <select id="filter_css_design" name="{$actionid}filter_css_design" title="{$mod->Lang('title_filter_design')}" class="grid_9">
         <option value="">{$mod->Lang('any')}</option>
         {html_options options=$design_names selected=$css_filter.design}
       </select>
     </div>
     <div class="c_full">
-      <label for="filter_css_sortby" class="grid_3 text-right">{$mod->Lang('prompt_sortby')}:</label>
+      <label for="filter_css_sortby" class="grid_3 endalign">{$mod->Lang('prompt_sortby')}:</label>
       <select id="filter_css_sortby" name="{$actionid}filter_css_sortby" title="{$mod->Lang('title_sortby')}" class="grid_9">
           <option value="name"{if $css_filter.sortby == 'name'} selected="selected"{/if}>{$mod->Lang('name')}</option>
           <option value="created"{if $css_filter.sortby == 'created'} selected="selected"{/if}>{$mod->Lang('created')}</option>
