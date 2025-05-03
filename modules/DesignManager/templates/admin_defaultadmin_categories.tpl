@@ -41,7 +41,7 @@ $(function () {
 
 {/if}
 
-<div class="information">{$mod->lang('info_about_categories')}</div>
+<div class="information">{$mod->Lang('info_about_categories')}</div>
 <div class="pageoptions">
 	{cms_action_url action='admin_edit_category' assign='url'}
 	<a id="addcategory" href="{$url}" title="{$mod->Lang('create_category')}">{admin_icon icon='newobject.gif'} {$mod->Lang('create_category')}</a>
