@@ -28,13 +28,17 @@
 #
 #-------------------------------------------------------------------------
 #END_LICENSE
+
+use CMSContentManager\ContentListFilter;
+
 if( !isset($gCms) ) exit;
 // no permissions checks here.
 
 echo '<noscript><h3 style="color: red; text-align: center;">'.$this->Lang('info_javascript_required').'</h3></noscript>'."\n";
 $error = '';
 
-$builder = new ContentListBuilder($this);
+require_once __DIR__.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'class.ContentListBuilder.php';
+$builder = new CMSContentManager\ContentListBuilder($this);
 $pagelimit = cms_userprefs::get($this->GetName().'_pagelimit',500);
 $filter = cms_userprefs::get($this->GetName().'_userfilter');
 if( $filter ) $filter = unserialize($filter);
@@ -62,22 +66,22 @@ if( isset($params['setoptions']) ) {
     switch( $filter_type ) {
     case ContentListFilter::EXPR_DESIGN:
         $filter = new ContentListFilter();
-        $filter->type = ContentListFilter::EXPR_DESIGN;
+        $filter->type = $filter_type;
         $filter->expr = $params['filter_design'];
         break;
     case ContentListFilter::EXPR_TEMPLATE:
         $filter = new ContentListFilter();
-        $filter->type = ContentListFilter::EXPR_TEMPLATE;
+        $filter->type = $filter_type;
         $filter->expr = $params['filter_template'];
         break;
     case ContentListFilter::EXPR_OWNER:
         $filter = new ContentListFilter();
-        $filter->type = ContentListFilter::EXPR_OWNER;
+        $filter->type = $filter_type;
         $filter->expr = $params['filter_owner'];
         break;
     case ContentListFilter::EXPR_EDITOR:
         $filter = new ContentListFilter();
-        $filter->type = ContentListFilter::EXPR_EDITOR;
+        $filter->type = $filter_type;
         $filter->expr = $params['filter_editor'];
         break;
     default:
@@ -150,19 +154,19 @@ $tpl->assign('can_add_content',$this->CheckPermission('Add Pages') || $this->Che
 $tpl->assign('can_manage_content',$this->CheckPermission('Manage All Content'));
 $tpl->assign('admin_url',$config['admin_url']);
 $tpl->assign('filter',$filter);
-$locks = $builder->get_locks();
-$have_locks = ($locks && is_array($locks))?1:0;
+$userid = get_userid();
+$have_locks = ($builder->get_locks($userid)) ? 1 : 0; // ignore any held by current user (this value used in js only)
 $tpl->assign('have_locks',$have_locks);
 $pagelimits = array(10=>10,25=>25,100=>100,250=>250,500=>500);
 $tpl->assign('pagelimits',$pagelimits);
 $tpl->assign('pagelimit',$pagelimit);
 $tpl->assign('locking',CmsContentManagerUtils::locking_enabled());
-// get a list of admin users
+// list of admin users
 $tpl->assign('user_list',UserOperations::get_instance()->GetList());
-$tpl->assign('design_list',\CmsLayoutCollection::get_list());
-// get a list of templates
+// list of designs
+$tpl->assign('design_list',CmsLayoutCollection::get_list());
+// list of templates
 $tpl->assign('template_list',CmsLayoutTemplate::template_query(array('as_list'=>1)));
-// get a list of designs
 if( $error ) $tpl->assign('error',$error);
 
 $tpl->display();

@@ -29,13 +29,17 @@
 #-------------------------------------------------------------------------
 #END_LICENSE
 
-/**
- * @package CMS
- */
+namespace CMSContentManager;
+
+use CMSContentManager; //module class in global space
+use CMSMS\internal\global_cache;
 
 /**
- * A simple class for defining a content filter
- *
+ * A simple class defining a content filter.
+ * @final
+ * @internal
+ * @ignore
+ * @package CMS
  */
 final class ContentListFilter
 {
@@ -89,7 +93,14 @@ final class ContentListFilter
 } // end of class
 
 
-final class ContentListQuery extends CmsDbQueryBase
+/**
+ * A class for querying the database about content items.
+ * @final
+ * @internal
+ * @ignore
+ * @package CMS
+ */
+final class ContentListQuery extends \CmsDbQueryBase
 {
     protected $_filter;
 
@@ -138,32 +149,32 @@ final class ContentListQuery extends CmsDbQueryBase
             break;
         }
 
-        if( count($where) ) $sql .= ' WHERE '.implode(' AND ',$where);
+        if( $where ) $sql .= ' WHERE '.implode(' AND ',$where);
         $sql .= ' ORDER BY C.id_hierarchy';
 
         $db = \cms_utils::get_db();
         $this->_rs = $db->SelectLimit($sql,$this->_limit,$this->_offset,$parms);
-        if( $db->ErrorMsg() != '' ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
+        if( $db->ErrorMsg() ) throw new \CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
         $this->_totalmatchingrows = $db->GetOne('SELECT FOUND_ROWS()');
     }
 
     public function GetObject()
     {
         $this->execute();
-        if( !$this->_rs ) throw new CmsLogicException('Cannot get pages from content query object');
+        if( !$this->_rs ) throw new \CmsLogicException('Cannot get pages from content query object');
 
         return (int)$this->_rs->fields['content_id'];
     }
 }
 
 /**
- * A simple class for building, and managing content lists.
+ * A class for building and managing content lists.
  *
  * This is an internal class.  Not intended for use by external third parties.
- *
- * @package CMS
+ * @final
  * @internal
  * @ignore
+ * @package CMS
  * @author Robert Campbell
  */
 final class ContentListBuilder
@@ -185,13 +196,11 @@ final class ContentListBuilder
    *
    * Caches the opened pages, and userid
    */
-  public function __construct(CMSModule $mod)
+  public function __construct(CMSContentManager $mod)
   {
-    if( get_class($mod) != 'CMSContentManager' ) throw new CmsInvalidDataException('Expected ContentEditor object, got: '.get_class($mod));
-
     $this->_module = $mod;
     $this->_userid = get_userid();
-    $tmp = cms_userprefs::get('opened_pages');
+    $tmp = \cms_userprefs::get('opened_pages');
     if( $tmp ) $this->_opened_array = explode(',',$tmp);
   }
 
@@ -212,7 +221,7 @@ final class ContentListBuilder
     $tmp[] = $parent_page_id;
     asort($tmp);
     $this->_opened_array = array_unique($tmp);
-    cms_userprefs::set('opened_pages',implode(',',$this->_opened_array));
+    \cms_userprefs::set('opened_pages',implode(',',$this->_opened_array));
   }
 
   /**
@@ -220,7 +229,7 @@ final class ContentListBuilder
    */
   public function expand_all()
   {
-      $hm = CmsApp::get_instance()->GetHierarchyManager();
+      $hm = \CmsApp::get_instance()->GetHierarchyManager();
       // find all the pages (recursively) that have children.
 
       // anonymous, recursive function.
@@ -239,7 +248,7 @@ final class ContentListBuilder
       };
 
       $this->_opened_array = $func($hm);
-      cms_userprefs::set('opened_pages',implode(',',$this->_opened_array));
+      \cms_userprefs::set('opened_pages',implode(',',$this->_opened_array));
   }
 
   /**
@@ -248,7 +257,7 @@ final class ContentListBuilder
   public function collapse_all()
   {
     $this->_opened_array = array();
-    cms_userprefs::remove('opened_pages');
+    \cms_userprefs::remove('opened_pages');
   }
 
   /**
@@ -266,10 +275,10 @@ final class ContentListBuilder
     asort($tmp);
     $this->_opened_array = array_unique($tmp);
     if( count($this->_opened_array) ) {
-      cms_userprefs::set('opened_pages',implode(',',$this->_opened_array));
+      \cms_userprefs::set('opened_pages',implode(',',$this->_opened_array));
     }
     else {
-      cms_userprefs::remove('opened_pages');
+      \cms_userprefs::remove('opened_pages');
     }
     return TRUE;
   }
@@ -284,7 +293,7 @@ final class ContentListBuilder
     if( $page_id < 1 ) return FALSE;
     if( !$this->_module->CheckPermission('Manage All Content') ) return FALSE;
 
-    $contentops = ContentOperations::get_instance();
+    $contentops = \ContentOperations::get_instance();
     $node = $contentops->quickfind_node_by_id($page_id);
     if( !$node ) return FALSE;
     $content = $node->GetContent(FALSE,FALSE,FALSE);
@@ -403,7 +412,7 @@ final class ContentListBuilder
 
     if( !$this->_module->CheckPermission('Manage All Content') ) return FALSE;
 
-    $contentops = ContentOperations::get_instance();
+    $contentops = \ContentOperations::get_instance();
     $content1 = $contentops->LoadContentFromId($page_id);
 
     if( !$content1 ) return FALSE;
@@ -419,7 +428,7 @@ final class ContentListBuilder
             $content2->SetDefaultContent(FALSE);
             $content2->Save();
         }
-        \CMSMS\internal\global_cache::clear('default_content');
+        global_cache::clear('default_content');
         audit($page_id,'Default page',"Changed to $page_id2: ".$contentops->GetPageDescriptor($page_id2));
         return TRUE;
     }
@@ -435,7 +444,7 @@ final class ContentListBuilder
     if( $page_id < 1 ) return FALSE;
     $direction = (int)$direction;
     if( $direction == 0 ) return FALSE;
-    $contentops = ContentOperations::get_instance();
+    $contentops = \ContentOperations::get_instance();
 
     $test = FALSE;
     if( $this->_module->CheckPermission('Manage All Content') ) {
@@ -476,7 +485,7 @@ final class ContentListBuilder
 
       if( !$test ) return $this->_module->Lang('error_delete_permission');
 
-      $contentops = ContentOperations::get_instance();
+      $contentops = \ContentOperations::get_instance();
       $node = $contentops->quickfind_node_by_id($page_id);
       if( !$node ) return $this->_module->Lang('error_invalidpageid');
       if( $node->has_children() ) return $this->_module->Lang('error_delete_haschildren');
@@ -555,7 +564,7 @@ final class ContentListBuilder
   /**
    * Recursive function to generate a list of all content pages.
    */
-  private function _get_all_pages(cms_tree $node)
+  private function _get_all_pages(\cms_tree $node)
   {
       $out = array();
       if( $node->get_tag('id') ) $out[] = $node->get_tag('id');
@@ -583,8 +592,8 @@ final class ContentListBuilder
       //     if got to root, add items children
       // 3.  reduce list by items we are able to view (author pages)
 
-      $contentops = ContentOperations::get_instance();
-      $hm = CmsApp::get_instance()->GetHierarchyManager();
+      $contentops = \ContentOperations::get_instance();
+      $hm = \CmsApp::get_instance()->GetHierarchyManager();
       $display = [];
 
       // filter the display list by what we're authorized to view.
@@ -612,7 +621,7 @@ final class ContentListBuilder
 
           // add in top level items.
           $children = $hm->get_children();
-          if( count($children) ) {
+          if( $children ) {
               foreach( $children as $child ) {
                   $display[] = $child->get_tag('id');
               }
@@ -698,7 +707,7 @@ final class ContentListBuilder
       $offset = min(count($this->_pagelist),$this->_offset);
       $display = array_slice($display,$offset,$this->_pagelimit);
 
-      ContentOperations::get_instance()->LoadChildren(-1,FALSE,TRUE,$display);
+      $contentops->LoadChildren(-1,FALSE,TRUE,$display);
       return $display;
   }
 
@@ -709,8 +718,7 @@ final class ContentListBuilder
   {
     if( $content_id < 1 ) return FALSE;
     if( $userid <= 0 ) $userid = $this->_userid;
-    $contentops = ContentOperations::get_instance();
-    return $contentops->CheckPeerAuthorship($userid,$content_id);
+    return \ContentOperations::get_instance()->CheckPeerAuthorship($userid,$content_id);
   }
 
   /**
@@ -719,59 +727,77 @@ final class ContentListBuilder
   private function _check_authorship($content_id,$userid = 0)
   {
     if( $userid <= 0 ) $userid = $this->_userid;
-    return ContentOperations::get_instance()->CheckPageAuthorship($userid,$content_id);
+    return \ContentOperations::get_instance()->CheckPageAuthorship($userid,$content_id);
   }
 
   /**
-   * Get a hash of current page locks.
+   * Get current page-locks for all users.
    */
   public function get_locks()
   {
-      //if( $this->_module->GetPreference('locktimeout') < 1 ) return [];
-      if( is_array($this->_locks) ) return $this->_locks;
-      $this->_locks = array();
-      $tmp = CmsLockOperations::get_locks('content');
-      if( is_array($tmp) && count($tmp) ) {
-          foreach( $tmp as $lock_obj ) {
-              $this->_locks[$lock_obj['oid']] = $lock_obj;
-          }
+//  if( $this->_module->GetPreference('locktimeout') < 1 ) return [];
+    if( isset($this->_locks) ) return $this->_locks;
+    $this->_locks = array();
+    $tmp = \CmsLockOperations::get_locks('content');
+    if( $tmp && is_array($tmp) ) {
+      foreach( $tmp as $lock_obj ) {
+        $this->_locks[$lock_obj['oid']] = $lock_obj;
       }
-      return $this->_locks;
+    }
+    return $this->_locks;
   }
 
   /**
-   * Test if we have any locks.
+   * Test for lock(s), optionally excluding any held by a specified user.
    */
-  public function have_locks()
+  public function have_locks($userid = 0)
   {
-    if( count($this->get_locks()) ) return TRUE;
+    if( $userid == 0 ) {
+      return count($this->get_locks()) > 0;
+    }
+    else {
+      $tmp = $this->get_locks();
+      foreach( $tmp as $lock ) {
+        if( $lock['uid'] != $userid ) { return true; }
+      }
+      return false;
+    }
+  }
+
+  /**
+   * Check if the current page is locked for the current user.
+   * Unlocked if no lock or no self-held lock.
+   */
+  private function _is_locked($page_id,$userid)
+  {
+//  if( $this->_module->GetPreference('locktimeout') < 1 ) return FALSE;
+    $locks = $this->get_locks();
+    if( $locks ) {
+      if( isset($locks[$page_id]) ) {
+        $lock_obj = $locks[$page_id];
+        if( $lock_obj['uid'] != $userid ) {
+          return TRUE;
+        }
+        unset($locks[$page_id]);
+      }
+    }
     return FALSE;
-  }
-
-  /**
-   * Checks if the current page is locked.
-   */
-  private function _is_locked($page_id)
-  {
-      //if( $this->_module->GetPreference('locktimeout') < 1 ) return FALSE;
-      $locks = $this->get_locks();
-      if( !is_array($locks) || count($locks) == 0 ) return FALSE;
-      if( in_array($page_id,array_keys($locks)) ) return TRUE;
-      return FALSE;
   }
 
   private function _is_default_locked()
   {
-    $dflt_content_id = ContentOperations::get_instance()->GetDefaultContent();
     $locks = $this->get_locks();
-    if( is_array($locks) && count($locks) && in_array($dflt_content_id,array_keys($locks)) ) return TRUE;
+    if( $locks ) {
+      $dflt_content_id = \ContentOperations::get_instance()->GetDefaultContent();
+      if( in_array($dflt_content_id,array_keys($locks)) ) return TRUE; //TODO for userid
+    }
     return FALSE;
   }
 
   private function _is_lock_expired($page_id)
   {
     $locks = $this->get_locks();
-    if( !is_array($locks) || count($locks) == 0 ) return FALSE;
+    if( !$locks ) return FALSE;
     if( isset($locks[$page_id]) ) {
       $lock = $locks[$page_id];
       if( $lock->expired() ) return TRUE;
@@ -786,8 +812,8 @@ final class ContentListBuilder
   {
       static $_users = null; // aka unset
       if( !$_users ) {
-          $tmp = UserOperations::get_instance()->LoadUsers();
-          if( is_array($tmp) && count($tmp) ) {
+          $tmp = \UserOperations::get_instance()->LoadUsers();
+          if( $tmp && is_array($tmp) ) {
               $_users = array();
               for($i = 0, $iMax = count($tmp); $i < $iMax; $i++ ) {
                   $oneuser = $tmp[$i];
@@ -804,7 +830,7 @@ final class ContentListBuilder
   private function _get_display_data($page_list)
   {
       $users = $this->_get_users();
-      $contentops = ContentOperations::get_instance();
+      $contentops = \ContentOperations::get_instance();
       $mod = $this->_module;
       $columns = $this->get_display_columns();
       $userid = $this->_userid;
@@ -819,7 +845,7 @@ final class ContentListBuilder
           $tpl_list[] = $content->TemplateId();
       }
       $tpl_list = array_values(array_unique(array_values($tpl_list)));
-      $tpls = CmsLayoutTemplate::load_bulk($tpl_list);
+      $tpls = \CmsLayoutTemplate::load_bulk($tpl_list);
 
       $out = array();
       foreach( $page_list as $page_id ) {
@@ -836,7 +862,7 @@ final class ContentListBuilder
           $rec['title'] = strip_tags($content->Name());
           $rec['template_id'] = $content->TemplateId();
           $rec['can_edit_tpl'] = $mod->CheckPermission('Modify Templates');
-          $rec['id'] = $content->Id();
+          $rec['id'] = $page_id;
           $rec['lastmodified'] = $content->GetModifiedDate();
           $rec['created'] = $content->GetCreationDate();
           $rec['secure'] = $content->Secure();
@@ -844,7 +870,7 @@ final class ContentListBuilder
           $rec['showinmenu'] = $content->ShowInMenu();
           $rec['wantschildren'] = $content->WantsChildren();
           $rec['viewable'] = $content->IsViewable();
-          if( $this->_is_locked($page_id) ) {
+          if( $this->_is_locked($page_id,$userid) ) {
               $lock = $this->_locks[$page_id];
               $rec['lockuser'] = $users[$lock['uid']]->username;
               $rec['lock'] = $this->_locks[$page_id];
@@ -854,9 +880,9 @@ final class ContentListBuilder
               $rec['lastmodifiedby'] = strip_tags($users[$content->LastModifiedBy()]->username);
           }
           $rec['can_edit'] = ($mod->CheckPermission('Modify Any Page') || $mod->CheckPermission('Manage All Content') ||
-                              $this->_check_authorship($rec['id'])) && !$this->_is_locked($page_id);
+                              $this->_check_authorship($rec['id'])) && !$this->_is_locked($page_id,$userid);
           $rec['can_steal'] = ($mod->CheckPermission('Modify Any Page') || $mod->CheckPermission('Manage All Content') ||
-                               $this->_check_authorship($rec['id'])) && $this->_is_locked($page_id) && $this->_is_lock_expired($page_id);
+                               $this->_check_authorship($rec['id'])) && $this->_is_locked($page_id,$userid) && $this->_is_lock_expired($page_id);
           $rec['can_delete'] = $rec['can_edit'] && $mod->CheckPermission('Remove Pages');
 
           foreach( $columns as $column => $displayable ) {
@@ -879,7 +905,7 @@ final class ContentListBuilder
               case 'page':
                   if( $content->MenuText() != CMS_CONTENT_HIDDEN_NAME ) {
                       $rec[$column] = strip_tags($content->MenuText());
-                      if( CmsContentManagerUtils::get_pagenav_display() == 'title' ) $rec[$column] = strip_tags($content->Name());
+                      if( \CmsContentManagerUtils::get_pagenav_display() == 'title' ) $rec[$column] = strip_tags($content->Name());
                   }
                   break;
 
@@ -895,7 +921,7 @@ final class ContentListBuilder
               case 'template':
                   if( $content->IsViewable() ) {
                       try {
-                          $template = CmsLayoutTemplate::load($content->TemplateId());
+                          $template = \CmsLayoutTemplate::load($content->TemplateId());
                           $rec[$column] = $template->get_name();
                       }
                       catch( Exception $e ) {
@@ -915,7 +941,7 @@ final class ContentListBuilder
 
               case 'active':
                   $rec[$column] = '';
-                  if( $mod->CheckPermission('Manage All Content') && !$content->IsSystemPage() && !$this->_is_locked($page_id) ) {
+                  if( $mod->CheckPermission('Manage All Content') && !$content->IsSystemPage() && !$this->_is_locked($page_id,$userid) ) {
                       if( $content->Active() ) {
                           $rec[$column] = 'active';
                           if( $content->DefaultContent() ) $rec[$column] = 'default';
@@ -928,7 +954,7 @@ final class ContentListBuilder
               case 'default':
                   $rec['can_default'] = FALSE;
                   $rec[$column] = '';
-                  if( $this->_module->CheckPermission('Manage All Content') && !$this->_is_locked($page_id) && !$this->_is_default_locked() ) {
+                  if( $this->_module->CheckPermission('Manage All Content') && !$this->_is_locked($page_id,$userid) && !$this->_is_default_locked() ) {
                       $rec[$column] = ($content->DefaultContent())?'yes':'no';
                       $rec['can_default'] = $content->IsDefaultPossible();
                   }
@@ -936,7 +962,7 @@ final class ContentListBuilder
 
               case 'move':
                   $rec[$column] = '';
-                  if( !$this->have_locks() && $this->_check_peer_authorship($content->Id()) && ($nsiblings = $node->count_siblings()) > 1 ) {
+                  if( !$this->have_locks() && $this->_check_peer_authorship($page_id) && ($nsiblings = $node->count_siblings()) > 1 ) {
                       if( $content->ItemOrder() == 1 ) {
                           $rec[$column] = 'down';
                       }
@@ -956,7 +982,7 @@ final class ContentListBuilder
 
               case 'copy':
                   $rec[$column] = '';
-                  if( $content->IsCopyable() && !$this->_is_locked($content->Id()) ) {
+                  if( $content->IsCopyable() && !$this->_is_locked($page_id,$userid) ) {
                       if( $rec['can_edit'] && ($mod->CheckPermission('Add Pages') || $mod->CheckPermission('Manage All Content')) ) {
                           $rec[$column] = 'yes';
                       }
@@ -975,21 +1001,21 @@ final class ContentListBuilder
 
               case 'delete':
                   $rec[$column] = '';
-                  if( $rec['can_delete'] && !$content->DefaultContent() && !$node->has_children() && !$this->_is_locked($content->Id()) ) {
+                  if( $rec['can_delete'] && !($content->DefaultContent() || $node->has_children() || $this->_is_locked($page_id,$userid)) ) {
                       $rec[$column] = 'yes';
                   }
                   break;
 
               case 'multiselect':
                   $rec[$column] = '';
-                  if( !$content->IsSystemPage() && !$this->_is_locked($content->Id()) ) {
+                  if( !($content->IsSystemPage() || $this->_is_locked($page_id,$userid)) ) {
                       if( $mod->CheckPermission('Manage All Content') || $mod->CheckPermission('Modify Any Page') ) {
                           $rec[$column] = 'yes';
                       }
-                      else if( $mod->CheckPermission('Remove Pages') && $this->_check_authorship($content->Id()) ) {
+                      else if( $mod->CheckPermission('Remove Pages') && $this->_check_authorship($page_id) ) {
                           $rec[$column] = 'yes';
                       }
-                      else if( $this->_check_authorship($content->Id()) ) {
+                      else if( $this->_check_authorship($page_id) ) {
                           $rec[$column] = 'yes';
                       }
                   }

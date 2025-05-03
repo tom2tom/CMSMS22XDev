@@ -44,7 +44,8 @@ try {
 
     // load all the content that this user can display...
     // organize it into a tree
-    $builder = new ContentListBuilder($this);
+    require_once __DIR__.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'class.ContentListBuilder.php';
+    $builder = new CMSContentManager\ContentListBuilder($this);
     $curpage = (isset($_SESSION[$this->GetName().'_curpage']) && !isset($params['seek'])) ? (int) $_SESSION[$this->GetName().'_curpage'] : 1;
     if( isset($params['curpage']) ) $curpage = (int)$params['curpage'];
     $filter = cms_userprefs::get($this->GetName().'_userfilter');
@@ -82,9 +83,10 @@ try {
         $pagelist[$i+1] = $i+1;
     }
 
+    $userid = get_userid(false);
+    $have_locks = $builder->have_locks($userid); // ignore any held by current user
+
     $tpl->assign('indent',!$filter && cms_userprefs::get('indent',1));
-    $locks = $builder->get_locks();
-    $have_locks = ($locks && is_array($locks))?1:0;
     $tpl->assign('locking',CmsContentManagerUtils::locking_enabled());
     $tpl->assign('have_locks',$have_locks);
     $tpl->assign('pagelimit',$pagelimit);

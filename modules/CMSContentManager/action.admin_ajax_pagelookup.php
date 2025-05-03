@@ -55,7 +55,8 @@ if( isset($_REQUEST['term']) ) {
 
   $list = $db->GetArray($query,$parms);
   if( $list ) {
-    $builder = new ContentListBuilder($this);
+    require_once __DIR__.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'class.ContentListBuilder.php';
+    $builder = new CMSContentManager\ContentListBuilder($this);
     $builder->expand_all(); // it'd be cool to open all parents to each item.
     $contentops = ContentOperations::get_instance();
     foreach( $list as $row ) {
