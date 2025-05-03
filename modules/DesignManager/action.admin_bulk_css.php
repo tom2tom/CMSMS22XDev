@@ -21,24 +21,24 @@
 if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Manage Stylesheets') ) return;
 
-if( isset($params['allparms']) ) {
-    $params = array_merge($params,json_decode(base64_decode($params['allparms']),TRUE));
-}
-
 $this->SetCurrentTab('stylesheets');
-
-if( !isset($params['css_bulk_action']) || !isset($params['css_select']) ||
-    !is_array($params['css_select']) || count($params['css_select']) == 0 ) {
-    $this->SetError($this->Lang('error_missingparam'));
-    $this->RedirectToAdminTab();
-}
 if( isset($params['cancel']) ) {
     $this->SetMessage($this->Lang('msg_cancelled'));
     $this->RedirectToAdminTab();
 }
 
+if( isset($params['allparms']) ) {
+    $params = array_merge($params,json_decode(base64_decode($params['allparms']),TRUE));
+    unset($params['allparms']);
+}
+
+if( !isset($params['css_bulk_action']) || empty($params['css_select']) ||
+    !is_array($params['css_select']) ) {
+    $this->SetError($this->Lang('error_missingparam'));
+    $this->RedirectToAdminTab();
+}
+
 try {
-    $bulk_op = '';
     $stylesheets = CmsLayoutStylesheet::load_bulk($params['css_select']);
     switch( $params['css_bulk_action'] ) {
     case 'delete':
