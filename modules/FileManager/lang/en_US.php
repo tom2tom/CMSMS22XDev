@@ -248,6 +248,7 @@ $lang['rotate_neg135'] = 'Negative 135 degrees';
 $lang['rotate_neg90'] = 'Negative 90 degrees';
 $lang['rotate_neg45'] = 'Negative 45 degrees';
 $lang['rotate_neg30'] = 'Negative 30 degrees';
+$lang['rotate_pos0'] = 'Original angle';
 $lang['rotate_pos30'] = 'Positive 30 degrees';
 $lang['rotate_pos45'] = 'Positive 45 degrees';
 $lang['rotate_pos90'] = 'Positive 90 degrees';
