@@ -123,7 +123,7 @@ abstract class CMSModule
         if( CmsApp::get_instance()->is_frontend_request() ) {
             $this->InitializeFrontend();
         }
-        else if( isset($CMS_ADMIN_PAGE) && !isset($CMS_STYLESHEET) && !isset($CMS_INSTALL_PAGE) ) {
+        elseif( isset($CMS_ADMIN_PAGE) && !isset($CMS_STYLESHEET) && !isset($CMS_INSTALL_PAGE) ) {
             $this->InitializeAdmin();
         }
     }
@@ -179,7 +179,7 @@ abstract class CMSModule
     private function _loadTemplateMethods()
     {
         if (!$this->modtemplates) {
-            require_once(cms_join_path(__DIR__,'internal','module_support','modtemplates.inc.php'));
+            require_once(cms_join_path(__DIR__, 'internal', 'module_support', 'modtemplates.inc.php'));
             $this->modtemplates = true;
         }
     }
@@ -205,7 +205,7 @@ abstract class CMSModule
     private function _loadRedirectMethods()
     {
         if (!$this->modredirect) {
-            require_once(cms_join_path(__DIR__,'internal', 'module_support', 'modredirect.inc.php'));
+            require_once(cms_join_path(__DIR__, 'internal', 'module_support', 'modredirect.inc.php'));
             $this->modredirect = true;
         }
     }
@@ -218,7 +218,7 @@ abstract class CMSModule
     private function _loadMiscMethods()
     {
         if (!$this->modmisc) {
-            require_once(cms_join_path(__DIR__,'internal', 'module_support', 'modmisc.inc.php'));
+            require_once(cms_join_path(__DIR__, 'internal', 'module_support', 'modmisc.inc.php'));
             $this->modmisc = true;
         }
     }
@@ -315,11 +315,11 @@ abstract class CMSModule
             // no lazy loading.
             $gCms = CmsApp::get_instance();
             $smarty = $gCms->GetSmarty();
-            $smarty->registerPlugin('function', $this->GetName(), array($this->GetName(),'function_plugin'), $cachable);
+            $smarty->registerPlugin('function', $this->GetName(), array($this->GetName(), 'function_plugin'), $cachable);
             return TRUE;
         }
         else {
-            return cms_module_smarty_plugin_manager::addStatic($this->GetName(),$this->GetName(), 'function', 'function_plugin',$cachable);
+            return cms_module_smarty_plugin_manager::addStatic($this->GetName(), $this->GetName(), 'function', 'function_plugin', $cachable);
             return TRUE;
         }
     }
@@ -419,7 +419,8 @@ abstract class CMSModule
         $config = \cms_config::get_instance();
         if( $use_ssl ) {
             return $config['ssl_url'].'/modules/'.$this->GetName(); //TODO root deprecated since 2.2
-        } else {
+        }
+        else {
             return $config->smart_root_url().'/modules/'.$this->GetName(); //TODO root deprecated since 2.2
         }
     }
@@ -577,7 +578,7 @@ abstract class CMSModule
                             }
                         }
                     }
-                } // else
+                }
 
                 if( $paramtype != '' ) {
                     switch( $paramtype ) {
@@ -1243,7 +1244,7 @@ abstract class CMSModule
      */
     public function LazyLoadFrontend()
     {
-        return FALSE;
+        return false;
     }
 
     /**
@@ -1261,7 +1262,7 @@ abstract class CMSModule
      */
     public function LazyLoadAdmin()
     {
-        return FALSE;
+        return false;
     }
 
     /**
@@ -1288,11 +1289,11 @@ abstract class CMSModule
      *
      * @since 1.8
      * @abstract
-     * @return array of CmsRegularTask objects, or one object.  NULL if not handled.
+     * @return array of CmsRegularTask objects, or one object, or empty if not handled.
      */
     public function get_tasks()
     {
-        return FALSE;
+        return [];
     }
 
     /**
@@ -1417,16 +1418,17 @@ abstract class CMSModule
     final public function DoActionBase($name, $id, $params, $returnid='', $smarty = NULL)
     {
         $name = preg_replace('/[^A-Za-z0-9_+-]/', '', $name);
+        $modname = $this->GetName();
         if( $returnid != '' ) {
-            /*
+/*
             if( !$this->restrict_unknown_params ) {
                 // put mention into the admin log
-                audit('',$this->GetName(),'Module is not properly cleaning input params');
+                audit('',$modname,'Module is not properly cleaning input params');
             }
-            */
+*/
 
             // merge in params from module hints.
-            $hints = cms_utils::get_app_data('__CMS_MODULE_HINT__'.$this->GetName());
+            $hints = cms_utils::get_app_data('__CMS_MODULE_HINT__'.$modname);
             if( is_array($hints) ) {
                 foreach( $hints as $key => $value ) {
                     if( isset($params[$key]) ) continue;
@@ -1438,7 +1440,7 @@ abstract class CMSModule
             // used to try to avert XSS flaws, this will
             // clean as many parameters as possible according
             // to a map specified with the SetParameterType metods.
-            $params = $this->_cleanParamHash($this->GetName(),$params,$this->param_map, true);
+            $params = $this->_cleanParamHash($modname,$params,$this->param_map, true);
         }
 
         // handle the stupid input type='image' problem.
@@ -1457,7 +1459,7 @@ abstract class CMSModule
 
         if( $returnid != '' ) {
             $tmp = $params;
-            $tmp['module'] = $this->GetName();
+            $tmp['module'] = $modname;
             \CMSMS\HookManager::do_hook('module_action', $tmp);
         }
 
@@ -2102,7 +2104,7 @@ abstract class CMSModule
     }
 
     /**
-     * Returns html5 representing a textarea. Takes WYSIWYG preference 
+     * Returns html5 representing a textarea. Takes WYSIWYG preference
      * into consideration if called from the admin side.
      *
      * @param bool   $enablewysiwyg Should we try to create a WYSIWYG for this textarea?
