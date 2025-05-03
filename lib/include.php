@@ -236,5 +236,29 @@ if( !isset($DONT_LOAD_SMARTY) ) {
     else {
         $smarty = $_app->GetSmarty();
     }
-    $smarty->assignGlobal('sitename', cms_siteprefs::get('sitename', 'CMSMS Site')); //deprecated Smarty5+
+
+    static $lang = null;
+    if( $lang === null ) {
+        // once per request
+        $smarty->assign('sitename', cms_siteprefs::get('sitename', 'CMSMS Site')); //Global deprecated Smarty5+
+
+        $lang = '';
+        $ldir = 'ltr';
+        $sside = 'left';
+        $eside = 'right';
+        CmsNlsOperations::set_language(); // <- NLS detection for frontend
+        $tmp = CmsNlsOperations::get_current_language();
+        if( $tmp ) {
+            $lang = CmsNlsOperations::get_lang_attribute($tmp);
+            $info = CmsNlsOperations::get_language_info($tmp);
+            if( $info ) {
+                $ldir = ($info->direction()) ?: 'ltr';
+                list($sside,$eside) = ($ldir == 'ltr') ? ['left','right'] : ['right','left'];
+            }
+        }
+        $smarty->assign('lang', $lang);
+        $smarty->assign('lang_dir', $ldir);
+        $smarty->assign('stside', $sside);
+        $smarty->assign('ndside', $eside);
+    }
 }
