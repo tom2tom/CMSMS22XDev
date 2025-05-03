@@ -100,7 +100,7 @@ $(function() {
     if (typeof v !== 'undefined' && v != null && !v) return false;
     if (typeof v === 'undefined' || v != null) return true;
 
-    // do a double check to see if this page is locked or not.
+    // double-check whether or not this page is locked.
     var content_id = $(this).attr('data-cms-content');
     var url = '{$admin_url}/ajax_lock.php?showtemplate=false';
     var opts = {
@@ -108,7 +108,6 @@ $(function() {
       type: 'content',
       oid: content_id
     };
-//    var ok = false;
     opts[cms_data.secure_param_name] = cms_data.user_key;
     $.ajax({
       url: url,
@@ -194,22 +193,21 @@ $(function() {
   $(document).on('click', 'a#ordercontent', function(e) {
     var have_locks = {$have_locks};
     if (!have_locks) {
-      // double check to see if anything is locked
+      // double-check whether anything is locked
       var content_id = $(this).attr('data-cms-content');
       var url = '{$admin_url}/ajax_lock.php?showtemplate=false';
       var opts = {
         opt: 'check',
         type: 'content'
       };
-//      var ok = false;
       opts[cms_data.secure_param_name] = cms_data.user_key;
       $.ajax({
         url: url,
         async: false,
         data: opts
       }).done(function(data) {
-        if (data.status != 'success') return;
-        if (data.locked) have_locks = true;
+        if (data.status != 'success') { return; }
+        if (data.locked) { have_locks = 1; }
       });
     }
     if (have_locks) {
