@@ -15,9 +15,11 @@
 			<fieldset>
 				<legend>{lang('sysmain_cache_status')}&nbsp;</legend>
 				<div class="pageoverflow">
-					<p class="pagetext">{lang('clearcache')}:</p>
+					<p class="pagetext">
+						<label for="btnclear">{lang('clearcache')}:</label>
+					</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" name="clearcache" data-ui-icon="ui-icon-minusthick" value="{lang('clear')}">
+						<input class="pagebutton" type="submit" id="btnclear" name="clearcache" data-ui-icon="ui-icon-minusthick" value="{lang('clear')}">
 					</p>
 				</div>
 			</fieldset>
@@ -29,18 +31,22 @@
 				{$pagecount} {lang('sysmain_pagesfound')}
 
 				<div class="pageoverflow">
-					<p class="pagetext">{lang('sysmain_updatehierarchy')}:</p>
+					<p class="pagetext">
+						<label for="btnhier">{lang('sysmain_updatehierarchy')}:</label>
+					</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" name="updatehierarchy" data-ui-icon="ui-icon-gear" value="{lang('sysmain_update')}">
+						<input class="pagebutton" type="submit" id="btnhier" name="updatehierarchy" data-ui-icon="ui-icon-gear" value="{lang('sysmain_update')}">
 					</p>
 				</div>
 			</form>
 
 			<form action="{$formurl}" method="post">
 				<div class="pageoverflow">
-					<p class="pagetext">{lang('sysmain_updateurls')}:</p>
+					<p class="pagetext">
+						<label for="btnurls">{lang('sysmain_updateurls')}:</label>
+					</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" name="updateurls" data-ui-icon="ui-icon-gear" value="{lang('sysmain_update')}">
+						<input class="pagebutton" type="submit" id="btnurls" name="updateurls" data-ui-icon="ui-icon-gear" value="{lang('sysmain_update')}">
 					</p>
 				</div>
 			</form>
@@ -95,15 +101,19 @@
 				{/if}
 
 				<div class="pageoverflow">
-					<p class="pagetext">{lang('sysmain_optimizetables')}:</p>
+					<p class="pagetext">
+						<label for="btntables">{lang('sysmain_optimizetables')}:</label>
+					</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" name="optimizeall" data-ui-icon="ui-icon-star" value="{lang('sysmain_optimize')}">
+						<input class="pagebutton" type="submit" id="btntables" name="optimizeall" data-ui-icon="ui-icon-star" value="{lang('sysmain_optimize')}">
 					</p>
 				</div>
 				<div class="pageoverflow">
-					<p class="pagetext">{lang('sysmain_repairtables')}:</p>
+					<p class="pagetext">
+						<label for="btnrepair">{lang('sysmain_repairtables')}:</label>
+					</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" name="repairall" data-ui-icon="ui-icon-wrench" value="{lang('sysmain_repair')}">
+						<input class="pagebutton" type="submit" id="btnrepair" name="repairall" data-ui-icon="ui-icon-wrench" value="{lang('sysmain_repair')}">
 					</p>
 				</div>
 			</fieldset>
