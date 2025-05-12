@@ -238,12 +238,11 @@ final class CmsLock implements ArrayAccess
         if( !$this->_dirty ) return;
 
         $db = CmsApp::get_instance()->GetDb();
-        $dbr = FALSE;
         $this->_data['expires'] = time()+$this->_data['lifetime']*60;
         if( !isset($this->_data['id']) ) {
             // insert
             $query = 'INSERT INTO '.CMS_DB_PREFIX.self::LOCK_TABLE.' (type,oid,uid,created,modified,lifetime,expires)
-                VALUES (?,?,?,?,?,?,?)';
+VALUES (?,?,?,?,?,?,?)';
             $dbr = $db->Execute($query,array($this->_data['type'], $this->_data['oid'], $this->_data['uid'],
                                              time(), time(), $this->_data['lifetime'], $this->_data['expires']));
             $this->_data['id'] = $db->Insert_ID();
@@ -251,11 +250,11 @@ final class CmsLock implements ArrayAccess
         else {
             // update
             $query = 'UPDATE '.CMS_DB_PREFIX.self::LOCK_TABLE.' SET lifetime = ?, expires = ?, modified = ?
-                WHERE type = ? AND oid = ? AND uid = ? AND id = ?';
+WHERE type = ? AND oid = ? AND uid = ? AND id = ?';
             $dbr = $db->Execute($query,array($this->_data['lifetime'],$this->_data['expires'],time(),
                                              $this->_data['type'],$this->_data['oid'],$this->_data['uid'],$this->_data['id']));
         }
-        if( !$dbr ) throw new CmsSqlErrorException('CMSEX_SQL001',null,$db->ErrorMsg());
+        if( !$dbr ) throw new CmsSqlErrorException('CMSEX_SQL001',null,$db->ErrorMsg()); //TODO check Affected_Rows() and ErrorNo() after UPDATE
         $this->_dirty = FALSE;
     }
 
