@@ -47,6 +47,7 @@ $data['lang_largeupload'] = lang('upload_largeupload');
 $data['max_upload_size'] = $config['max_upload_size'];
 $data['admin_url'] = $config['admin_url'];
 $data['root_url'] = $config['root_url'];
+$data['themes_url'] = $config['themes_url'];
 $data['uploads_url'] = $config['uploads_url'];
 $data['secure_param_name'] = CMS_SECURE_PARAM_NAME;
 $data['user_key'] = $_SESSION[CMS_USER_KEY];
