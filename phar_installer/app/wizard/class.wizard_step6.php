@@ -46,6 +46,7 @@ class wizard_step6 extends wizard_step
         $config = $app->get_config();
 
         if( isset($_POST['sitename']) ) $this->_siteinfo['sitename'] = trim(utils::clean_string($_POST['sitename']));
+        if( isset($_POST['themepath']) ) $this->_siteinfo['themepath'] = trim(utils::clean_string($_POST['themepath']), ' \\/');
         if( !$config['nofiles'] ) {
             if( isset($_POST['languages']) && is_array($_POST['languages']) ) {
                 $tmp = array();
@@ -102,6 +103,7 @@ class wizard_step6 extends wizard_step
         else {
             $languages = [];
         }
+        $themesplace = (isset($config['themes_path'])) ? trim($config['themes_path'], ' \\/') : '';
 
         $smarty = smarty();
         $smarty->assign('action',$action)
@@ -109,6 +111,7 @@ class wizard_step6 extends wizard_step
           ->assign('siteinfo',$this->_siteinfo)
           ->assign('yesno',array('0'=>lang('no'),'1'=>lang('yes')))
           ->assign('language_list',$languages)
+          ->assign('themepath',$themesplace)
           ->display('wizard_step6.tpl');
         $this->finish();
     }

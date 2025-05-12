@@ -109,6 +109,8 @@ class wizard_step8 extends wizard_step
             $siteinfo = $wiz->get_data('siteinfo');
             if( !$siteinfo ) throw new Exception(lang('error_internal',804));
 
+            if( !empty($siteinfo['themepath']) ) $choices['theme_entered'] = $siteinfo['themepath'];
+
             $this->write_config($choices,$destdir);
             $this->connect_to_cmsms($destdir);
 
@@ -155,9 +157,11 @@ class wizard_step8 extends wizard_step
             require_once $dir.'/base.php';
 
             $this->message(lang('install_defaultcontent'));
-            $fn = $dir.'/initial.php';
-            if( $choices['samplecontent'] ) $fn = $dir.'/extra.php';
+            $fn = ( $choices['samplecontent'] ) ? $dir.'/extra.php' : $dir.'/initial.php';
             require_once $fn;
+            if( $choices['samplecontent'] ) {
+            //TODO move theme-related files (rename folder?) from $destdir/ uploads/themenames to $dsetdir /assets/themes/themename
+            }
 
             $this->verbose(lang('install_setsitename'));
             cms_siteprefs::set('sitename',$siteinfo['sitename']);
@@ -237,6 +241,8 @@ class wizard_step8 extends wizard_step
             throw new RuntimeException('Could not find include.php file in destination');
         }
 
+        $siteinfo = $wiz->get_data('siteinfo');
+        if( isset($siteinfo['themepath']) ) { $choices['theme_entered'] = $siteinfo['themepath']; }
         try {
             $this->write_config($choices,$destdir);
             $this->connect_to_cmsms($destdir);
@@ -284,8 +290,11 @@ class wizard_step8 extends wizard_step
         if( !$choices ) throw new Exception(lang('error_internal',829));
         $this->connect_to_cmsms($destdir);
         // global flags $CMS_INSTALL_PAGE etc are still set, from prior method-call
+        $siteinfo = $wiz->get_data('siteinfo');
         $config = cms_config::get_instance();
-        if( $config['timezone'] != $choices['timezone'] ) {
+        if( $config['themes_path'] != $siteinfo['themepath'] ||
+            $config['timezone'] != $choices['timezone'] ) {
+            $choices['theme_entered'] = $siteinfo['themepath'];
             $this->write_config($choices,$destdir);
             // cleanup any message-creation scripts
             for( $i = 0,$n = count(ob_list_handlers()); $i < $n; $i++ ) {
@@ -344,6 +353,18 @@ class wizard_step8 extends wizard_step
         require_once $fp.'classes'.DIRECTORY_SEPARATOR.'class.cms_config.php';
         require_once $fp.'autoloader.php';
         $config = cms_config::get_instance();
+        $patn = '~'.$config['assets_dir'].'[\/]themes~'; //default 'themes_path' property
+        if( empty($choices['theme_entered']) ) {
+            if( !preg_match($patn, $config['themes_path']) ) { //TODO not in config file
+                $newconfig['themes_path'] = 'uploads'; // back-compatibility
+            }
+        }
+        elseif( isset($choices['theme_entered']) && !preg_match($patn, $choices['theme_entered']) ) {
+            $newconfig['themes_path'] = $choices['theme_entered'];
+        }
+//        else {
+//            //TODO clear $config['themes_path'] unset stupid?
+//        }
         $config->merge($newconfig);
         if( !defined('CONFIG_FILE_LOCATION') ) {
             define('CONFIG_FILE_LOCATION', $destdir.DIRECTORY_SEPARATOR.'config.php');

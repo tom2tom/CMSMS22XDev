@@ -58,7 +58,7 @@ Read about how to use CMSMS in the official documentation (http://docs.cmsmadesi
 
 If you need help, try looking first at the main support page (https://www.cmsmadesimple.org/support/options).
 
-Further insights might be found in the community forum (http://forum.cmsmadesimple.org), on the Slack channel (https://www.cmsmadesimple.org/support/documentation/chat), and/or some social media sites
+Further insights might be found in the community forum (http://forum.cmsmadesimple.org), on the CMSMS Slack channel (https://cms-made-simple.slack.com) (after joining via https://www.cmsmadesimple.org/support/documentation/chat), and/or some social media sites
 (https://www.facebook.com/cmsmadesimple
 https://www.linkedin.com/groups?gid=1139537
 https://twitter.com/cmsms)
@@ -86,7 +86,7 @@ Read about how to use CMSMS in the official documentation (http://docs.cmsmadesi
 
 If you need help, try looking first at the main support page (https://www.cmsmadesimple.org/support/options).
 
-Further insights might be found in the community forum (http://forum.cmsmadesimple.org), on the Slack channel (https://www.cmsmadesimple.org/support/documentation/chat), and/or some social media sites
+Further insights might be found in the community forum (http://forum.cmsmadesimple.org), on the CMSMS Slack channel (https://cms-made-simple.slack.com) (after joining via https://www.cmsmadesimple.org/support/documentation/chat), and/or some social media sites
 (https://www.facebook.com/cmsmadesimple
 https://twitter.com/cmsms
 https://www.linkedin.com/groups?gid=1139537)
@@ -210,6 +210,7 @@ $lang['info_open_basedir_session_save_path'] = 'open_basedir is enabled in the h
 $lang['info_pwd_writable'] = 'This application needs write permission to the current working directory';
 $lang['info_queryvar'] = 'The query variable is used internally by CMSMS to identify the page requested. In most circumstances you should not need to adjust this.';
 $lang['info_sitename'] = 'The website name is used in default templates as part of the title. Please enter a human readable name for the website';
+$lang['info_themepath'] = 'Optionally enter the filesystem path, relative to the site\'s topmost folder, in which and below which data for frontend themes will be recorded. Omit leading and trailing path separator. If not specified, a default (\'assets/themes\') will be used. Historically, CMSMS has used \'uploads\'.';
 $lang['info_timezone'] = 'The time zone information is needed for time calculations and time/date displays. Please select the server timezone';
 $lang['ini_set'] = 'Testing whether the installer can change PHP\'s INI settings';
 $lang['install'] = 'Install';
@@ -295,7 +296,8 @@ $lang['pass_multibyte_support'] = 'Multibyte support appears to be enabled';
 $lang['pass_php_version'] = 'The PHP version currently configured does not meet minimum requirements. At a minimum, PHP %s is required, though we recommend %s or higher';
 $lang['pass_pwd_writable'] = 'The webserver process can write into the destination directory. This is necessary for extracting files';
 $lang['password'] = 'Password';
-$lang['ph_sitename'] = 'Enter a Site Name';
+$lang['ph_path'] = 'Enter a path';
+$lang['ph_sitename'] = 'Enter a site name';
 $lang['php_version'] = 'PHP Version';
 $lang['post_max_size'] = 'Checking maximum amount of data that can be posted in one request';
 $lang['prompt_addlanguages'] = 'Additional Languages';
@@ -312,6 +314,7 @@ $lang['prompt_dir'] = 'Installation Directory';
 $lang['prompt_installcontent'] = 'Install Sample Content';
 $lang['prompt_queryvar'] = 'Query Variable';
 $lang['prompt_sitename'] = 'Web Site Name';
+$lang['prompt_themepath'] = 'Frontend Themes Data Store';
 $lang['prompt_timezone'] = 'Server Timezone';
 $lang['pwd_writable'] = 'Directory Writeable';
 
