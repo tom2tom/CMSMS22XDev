@@ -139,25 +139,22 @@ h2 {
 
 <h3>FAQ:</h3>
   <dl>
-   <dt>Q: Where is the support for <em style="color: red;">&quot;some functionality&quot;</em> in the editor, and how do I activate it?</dt>
-      <dd>A: You don't.  The version of TinyMCE distributed with MicroTiny is a trimmed down, custom package.  We have added our own custom plugins, but don't support the addition of custom plugins or the ability to customize the configuration in any way other than the edit profile form.  If you require additional functionality in a WYSIWYG editor you may have some success in a third party module.</dd>
-    <br>
+    <dt>Q: Where is the support for <em style="color: red;">&quot;some functionality&quot;</em> in the editor, and how do I activate it?</dt>
+    <dd>A: You don't.  The version of TinyMCE distributed with MicroTiny is a trimmed down, custom package.  We have added our own custom plugins, but don't support the addition of custom plugins or the ability to customize the configuration in any way other than the edit profile form.  If you require additional functionality in a WYSIWYG editor you may have some success in a third party module.</dd>
     <dt>Q: I cannot get the MicroTiny editor to work in the Admin interface, what can I do</dt>
-      <dd>A: There are a few steps you can follow to diagnose this issue:
-        <ol>
-          <li>Check the CMSMS Admin log, your PHP error log, and the JavaScript console for indications of a problem.</li>
-          <li>Ensure that the example WYSIWYG area works in the MicroTiny Admin panel under &quot;Extensions >> MicroTiny WYSIWYG Editor&quot;.  If this does not work, recheck your PHP error log and JavaScript console.</li>
-          <li>Ensure that MicroTiny is selected as the &quot;WYSIWYG to use&quot; in your user preferences.</li>
-          <li>Check other content pages. If MicroTiny works on one or more of those then that indicates that a flag to disable WYSIWYG editors on all content blocks may be set on some content pages.</li>
-          <li>Check the page template(s). The wysiwyg=false parameter may be specified on one or more content blocks in the page template(s) which will disable the WYSIWYG editor.</li>
-        </ol>
-      </dd>
-    <br>
+    <dd>A: There are a few steps you can follow to diagnose this issue:
+      <ol>
+        <li>Check the CMSMS Admin log, your PHP error log, and the JavaScript console for indications of a problem.</li>
+        <li>Ensure that the example WYSIWYG area works in the MicroTiny Admin panel under &quot;Extensions >> MicroTiny WYSIWYG Editor&quot;.  If this does not work, recheck your PHP error log and JavaScript console.</li>
+        <li>Ensure that MicroTiny is selected as the &quot;WYSIWYG to use&quot; in your user preferences.</li>
+        <li>Check other content pages. If MicroTiny works on one or more of those then that indicates that a flag to disable WYSIWYG editors on all content blocks may be set on some content pages.</li>
+        <li>Check the page template(s). The wysiwyg=false parameter may be specified on one or more content blocks in the page template(s) which will disable the WYSIWYG editor.</li>
+      </ol>
+    </dd>
     <dt>Q: How do I insert a &lt;br&gt; instead of create new paragraphs?</dt>
-      <dd>A: Press [shift]+Enter instead of just the Enter key.</dd>
-    <br>
+    <dd>A: Press [shift]+Enter instead of just the Enter key.</dd>
     <dt>Q: Why is <em style="color: red;">&quot;some functionality&quot;</em> available in the menubar, and not the toolbar?</dt>
-      <dd>A: For this most part this is done intentionally to allow web developers the ability to further restrict the functionality of certain editor profiles.  The menubar can be toggled off in different profiles thus denying the user the functionality only available in the menubar.</dd>
+    <dd>A: For this most part this is done intentionally to allow web developers the ability to further restrict the functionality of certain editor profiles.  The menubar can be toggled off in different profiles thus denying the user the functionality only available in the menubar.</dd>
   </dl>
 <h3>Caching:</h3>
   <p>In an effort to improve performance, MicroTiny will attempt to cache the generated JavaScript files unless something has changed. This functionality can be disabled by setting the special config entry <code>mt_disable_cache</code> to true. i.e: adding <code>\$config[&quot;mt_disable_cache&quot;] = true;</code> to the config.php file.</p>
