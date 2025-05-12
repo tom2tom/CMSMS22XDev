@@ -34,10 +34,12 @@ function smarty_function_cms_stylesheet($params, $smarty)
 	$cache_dir = $config['css_path'];
 	$stylesheet = '';
 	$combine_stylesheets = true;
+	$minimize = false; //since 2.2.22F2
 	$fnsuffix = '';
-	$trimbackground = FALSE;
+	$trimbackground = false;
 	$root_url = $config['css_url'];
 	$auto_https = 1;
+	//TODO support $params['templatetype'] related to a theme
 
 	#---------------------------------------------
 	# Trivial Exclusion
@@ -52,9 +54,9 @@ function smarty_function_cms_stylesheet($params, $smarty)
 	try {
 		if( !empty($params['name']) ) {
 			$name = trim($params['name']);
-		} else if (!empty($params['id']) ) {
+		} elseif (!empty($params['id']) ) {
 			$id = (int)$params['id'];
-		} else if (!empty($params['designid']) ) {
+		} elseif (!empty($params['designid']) ) {
 			$design_id = (int)$params['designid'];
 		} else {
 			$content_obj = $gCms->get_content_object();
@@ -62,7 +64,7 @@ function smarty_function_cms_stylesheet($params, $smarty)
 			$design_id = (int) $content_obj->GetPropertyValue('design_id');
 			$use_https = (int) $content_obj->Secure();
 		}
-		if( !$name && $id < 1 && $design_id < 1 ) throw new \RuntimeException('Invalid parameters, or there is no design attached to the content page');
+		if( !$name && $id < 1 && $design_id < 1 ) throw new RuntimeException('Invalid parameters, or there is no design attached to the content page');
 
 		// @todo: change this stuff to just use // instead of protocol specific URL.
 		if( isset($params['auto_https']) && $params['auto_https'] == 0 ) $auto_https = 0;
@@ -77,6 +79,12 @@ function smarty_function_cms_stylesheet($params, $smarty)
 			$fnsuffix = '_e_';
 		}
 
+		if( isset($params['min']) ) {
+			$minimize = cms_to_bool($params['min']);
+		} else {
+			$minimize = !constant('CMS_DEBUG');
+		}
+
 		#---------------------------------------------
 		# Build query
 		#---------------------------------------------
@@ -84,15 +92,15 @@ function smarty_function_cms_stylesheet($params, $smarty)
 		$query = null; // no object
 		if( $name ) {
 			// stylesheet by name
-			$query = new \CmsLayoutStylesheetQuery( [ 'fullname'=>$name ] );
+			$query = new CmsLayoutStylesheetQuery( [ 'fullname'=>$name ] );
 		} elseif( $id > 0 ) {
 			// stylesheet by id
-			$query = new \CmsLayoutStylesheetQuery( [ 'id'=>$id ] );
+			$query = new CmsLayoutStylesheetQuery( [ 'id'=>$id ] );
 		} elseif( $design_id > 0 ) {
 			// stylesheet by design id
-			$query = new \CmsLayoutStylesheetQuery( [ 'design'=>$design_id ] );
+			$query = new CmsLayoutStylesheetQuery( [ 'design'=>$design_id ] );
 		}
-		if( !$query ) throw new \RuntimeException('Problem: Could not build a stylesheet query with the provided data');
+		if( !$query ) throw new RuntimeException('Problem: Could not build a stylesheet query with the provided data');
 
 		#---------------------------------------------
 		# Execute
@@ -100,7 +108,7 @@ function smarty_function_cms_stylesheet($params, $smarty)
 
 		$nrows = $query->TotalMatches();
 		if( $nrows == 0 ) {
-			throw new \RuntimeException('No stylesheet matched the criterion specified');
+			throw new RuntimeException('No stylesheet matched the criterion specified');
 		}
 		$res = $query->GetMatches();
 
@@ -142,8 +150,7 @@ function smarty_function_cms_stylesheet($params, $smarty)
 					foreach( $res as $one ) {
 						if( in_array($params['media'],$one->get_media_types()) ) $list[] = $one->get_name();
 					}
-
-					cms_stylesheet_writeCache($fn, $list, $trimbackground, $smarty);
+					cms_stylesheet_writeCache($fn, $list, $trimbackground, $minimize, $smarty);
 				}
 
 				cms_stylesheet_toString($filename, $params['media'], '', $root_url, $stylesheet, $params);
@@ -165,8 +172,7 @@ function smarty_function_cms_stylesheet($params, $smarty)
 						foreach( $onemedia as $one ) {
 							$list[] = $one->get_name();
 						}
-
-						cms_stylesheet_writeCache($fn, $list, $trimbackground, $smarty);
+						cms_stylesheet_writeCache($fn, $list, $trimbackground, $minimize, $smarty);
 					}
 
 					cms_stylesheet_toString($filename, $media_query, $media_type, $root_url, $stylesheet, $params);
@@ -188,7 +194,7 @@ function smarty_function_cms_stylesheet($params, $smarty)
 				$filename = 'stylesheet_'.md5('single'.$one->get_id().$use_https.$one->get_modified().$fnsuffix).'.css';
 				$fn = cms_join_path($cache_dir,$filename);
 
-				if (!file_exists($fn) ) cms_stylesheet_writeCache($fn, $one->get_name(), $trimbackground, $smarty);
+				if (!file_exists($fn) ) cms_stylesheet_writeCache($fn, $one->get_name(), $trimbackground, $minimize, $smarty);
 
 				cms_stylesheet_toString($filename, $media_query, $media_type, $root_url, $stylesheet, $params);
 			}
@@ -206,7 +212,7 @@ function smarty_function_cms_stylesheet($params, $smarty)
 				$stylesheet = substr($stylesheet,0,-1);
 			}
 		}
-	} catch( \Exception $e ) {
+	} catch( Exception $e ) {
 		audit('','Plugin:cms_stylesheet',$e->GetMessage());
 		$stylesheet = '<!-- cms_stylesheet error: '.$e->GetMessage().' -->';
 	}
@@ -229,7 +235,7 @@ function smarty_function_cms_stylesheet($params, $smarty)
 	Misc functions
 **********************************************************/
 
-function cms_stylesheet_writeCache($filename, $list, $trimbackground, $smarty)
+function cms_stylesheet_writeCache($filename, $list, $trimbackground, $minimize, $smarty)
 {
 	$_contents = '';
 	if( is_string($list) && !is_array($list) ) $list = array($list);
@@ -262,17 +268,36 @@ function cms_stylesheet_writeCache($filename, $list, $trimbackground, $smarty)
 	$smarty->left_delimiter = $ol;
 	$smarty->right_delimiter = $or;
 
-	// Fix background
-	if($trimbackground) {
-		$_contents = preg_replace('/(\w*?background-image.*?\:\w*?).*?(;.*?)/', '', $_contents);
-		$_contents = preg_replace('/\w*?(background(-image)?[\s\w]*\:[\#\s\w]*)url\(.*\)/','$1;',$_contents);
-		$_contents = preg_replace('/\w*?(background(-image)?[\s\w]*\:[\s]*\;)/','',$_contents);
-		$_contents = preg_replace('/(\w*?background-color.*?\:\w*?).*?(;.*?)/', '\\1transparent\\2', $_contents);
-		$_contents = preg_replace('/(\w*?background-image.*?\:\w*?).*?(;.*?)/', '', $_contents);
-		$_contents = preg_replace('/(\w*?background.*?\:\w*?).*?(;.*?)/', '', $_contents);
+	if( $trimbackground ) {
+		// Replace/remove background properties
+		// Note $_contents might have been strip'd by Smarty, hence a
+		// single line with less whitespace
+		$_contents = preg_replace(
+		['/background *:.*?(#[0-9A-Fa-f]{3,8}|rgba?|hsla?).*?([;}]|$)(.*)/',
+		 '/background\-color *:([^;}]*?)([;}]|$)(.*)/',
+		 '/background\-\w+ *:.*?([;}]|$)(.*)/',
+		 '/;\s*;/'],
+		['background-color:transparent$2$3',
+		 'background-color:transparent$2$3',
+		 '$1$2',
+		 ';'],
+		$_contents);
 	}
 
-	\CMSMS\HookManager::do_hook('Core::StylesheetPostRender', [ 'content' => &$_contents ] );
+	CMSMS\HookManager::do_hook('Core::StylesheetPostRender', [ 'content' => &$_contents ] );
+
+	if( $minimize ) {
+		// Compress (quite a bit)
+		$str = preg_replace(
+			['~^\s+~', '~\s+$~', '~\s+~', '~/\*[^!](\*(?!\/)|[^*])*\*/\s*~'],
+			[''      , ''      , ' '    , ''],
+			$_contents);
+		$str = strtr($str, ['\r' => '', '\n' => '']);
+		$_contents = str_replace(
+			['  ', ': ', ', ', '{ ', '; ', '( ', '} ', ' :', ' {', '; }', ';}', ' }', ' )', '*/'],
+			[' ' , ':' , ',' , '{' , ';' , '(' , '}' , ':' , '{' , '}'  , '}' , '}' , ')' , "*/\n"],
+			$str);
+	}
 
 	// Write file
 	$fh = fopen($filename,'w');
@@ -309,6 +334,8 @@ function smarty_cms_about_function_cms_stylesheet()
 	<ul>
 		<li>Rework from {stylesheet}</li>
 		<li>(Stikki and Robert Campbell) Code cleanup, Added grouping by media type / media query, Fixed cache issues</li>
+		<li>Correct background-strip regexes</li>
+		<li>Support optional 'min' parameter</li>
 	</ul>
 <?php
 } // end of about
