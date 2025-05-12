@@ -38,7 +38,7 @@
      */
     SX.viewportWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 
-    $(document).ready(function () {
+    $(function () {
 
         // add class to body if mobile device detected (just for convenience)
         if (SX.isMobile) {
@@ -53,7 +53,7 @@
         if (window.navigator.msPointerEnabled) {
 
             var tchr = document.createElement('script');
-                tchr.src = './uploads/simplex/js/touchr.js';
+            tchr.src = window.location.href.replace('functions','touchr');
             if ( typeof tchr.async !== 'undefined' ) {
                 tchr.async = true;
             }
