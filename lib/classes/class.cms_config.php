@@ -205,6 +205,8 @@ final class cms_config implements ArrayAccess
     $this->_types['assets_path']               = self::TYPE_STRING;
     $this->_types['permissive_smarty']         = self::TYPE_BOOL;
     $this->_types['startup_mact_processing']   = self::TYPE_BOOL;
+    $this->_types['themes_path']               = self::TYPE_STRING; // since 2.2.22F2
+    $this->_types['themes_url']                = self::TYPE_STRING; // since 2.2.22F2
     $this->_types['host_whitelist']            = self::TYPE_MIXED; // since 2.2.17
 
     $config = array();
@@ -397,6 +399,15 @@ final class cms_config implements ArrayAccess
       case 'internal_pretty_urls':
         // deprecated, backwards compat only
         return $this['url_rewriting'] === 'internal';
+
+      case 'themes_url':
+          $from = [$this->offsetGet('root_path'), DIRECTORY_SEPARATOR];
+          $toroot = $this->offsetGet('root_url');
+          $to = [$toroot, '/'];
+          $out = str_replace($from, $to, $this->offsetGet('themes_path'));
+          if (startswith($out, $toroot)) return $out;
+          return $toroot . '/'. ltrim($out, '/ ');
+
     }
 
     // from the config file, if any.
@@ -484,6 +495,10 @@ final class cms_config implements ArrayAccess
 
       case 'uploads_url':
         $this->_cache[$key] = $this->offsetGet('root_url').'/uploads';
+        return $this->_cache[$key];
+
+      case 'themes_path':
+        $this->_cache[$key] = cms_join_path($this->offsetGet('root_path'),$this->offsetGet('assets_dir'),'themes');
         return $this->_cache[$key];
 
       case 'ssl_uploads_url': // deprecated since 2.2
