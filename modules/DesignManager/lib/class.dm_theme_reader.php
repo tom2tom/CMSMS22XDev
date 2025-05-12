@@ -305,13 +305,15 @@ class dm_theme_reader extends dm_reader_base
 
   protected function get_destination_dir()
   {
-    $name = $this->get_new_name();
     $config = cmsms()->GetConfig();
+    $name = $this->get_new_name();
     $dirname = munge_string_to_url($name);
-    $dir = cms_join_path($config['uploads_path'],'themes',$dirname);
+    $dir = cms_join_path($config['themes_path'],$dirname);
     @mkdir($dir,0777,TRUE);
     if( !is_dir($dir) || !is_writable($dir) ) {
       throw new CmsException('Could not create directory, or could not write in directory '.$dir);
+    } else {
+      touch($dir.DIRECTORY_SEPARATOR.'index.html');
     }
 
     return $dirname;
@@ -399,10 +401,10 @@ class dm_theme_reader extends dm_reader_base
     foreach( $this->_ref_map as $key => &$rec ) {
       if( !isset($rec['data']) || $rec['data'] == '' ) continue;
 
-      $destfile = cms_join_path($config['uploads_path'],'themes',$destdir,$rec['name']);
+      $destfile = cms_join_path($config['themes_path'],$destdir,$rec['name']);
       file_put_contents($destfile,base64_decode($rec['data']));
-      $rec['tpl_url'] = "{uploads_url}/themes/$destdir/{$rec['name']}";
-      $rec['css_url'] = "[[uploads_url]]/themes/$destdir/{$rec['name']}";
+      $rec['tpl_url'] = "{themes_url}/$destdir/{$rec['name']}";
+      $rec['css_url'] = "[[themes_url]]/$destdir/{$rec['name']}";
     }
 
     // part3 .. process stylesheets
