@@ -153,7 +153,7 @@ $lang['help'] = <<<'EOD'
 <ul>
   <li>first, search the <a href="https://forum.cmsmadesimple.org" target="_blank">CMS Made Simple Forum</a>, for issues with the module similar to those you are finding</li>
   <li>then, if necessary, open a <strong>new forum topic</strong> to request help, with a thorough description of your issue, and steps to reproduce it</li>
-  <li>or post that same information to the <a href="https://www.cmsmadesimple.org/support/documentation/chat" target="_blank">CMSMS Slack channel</a>.</li>
+  <li>or post that same information to the <a href=https://cms-made-simple.slack.com" target="_blank">CMSMS Slack channel</a> (after <a href="https://www.cmsmadesimple.org/support/documentation/chat" target="_blank">joining that channel</a>).</li>
 </ul>
 <p>If you find a bug you can <a href="http://dev.cmsmadesimple.org/bug/list/6" target="_blank">submit a Bug Report</a>.</p>
 <p>For any good ideas you can <a href="http://dev.cmsmadesimple.org/feature_request/list/6" target="_blank">submit a Feature Request</a>.</p>
