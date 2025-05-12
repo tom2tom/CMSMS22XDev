@@ -5,6 +5,9 @@ Version 2.2.22F2 - Whitehorse
  - Deprecate Search collaboration with other search-capable modules which do not declare SEARCH_MODULE capability
  - Change more &lt;p/&gt;'s to &lt;label/&gt;'s
  - Add missing button-icons
+ - Distinguish between current-user-held locks and other-user-held locks in displayed lists of pages, templates, stylesheets
+ - Add config properties 'themes_path' and 'themes_url' and plugin {themes_url} to support flexible frontend theming
+ - Deprecate storage of themes' data in the site uploads tree, instead use assets/themes or somewhere else configured
  - Replace hard-coded left/right usage in admin and module templates to enhance operation in RTL locales
  - Global template-variables $lang_dir, $stside, $ndside always available
  - Added to 111 admin theme css classes applying start and end directions
