@@ -108,13 +108,12 @@ while( $trycount < 2 ) {
         if( !$contentobj->IsPermitted() ) throw new CmsError403Exception('Permission denied');
 
         $_app->set_content_object($contentobj);
-        $smarty->assignGlobal('content_obj', $contentobj); //deprecated Smarty5+
+        $smarty->assignGlobal('content_obj', $contentobj); //Global deprecated Smarty5+
         $smarty->assignGlobal('content_id', $contentobj->Id());
         $smarty->assignGlobal('page_id', $page);
         $smarty->assignGlobal('page_alias', $contentobj->Alias());
         $smarty->assignGlobal('encoding', CmsNlsOperations::get_encoding());
 
-        $html = '';
         $showtemplate = true;
 
         if ((isset($_REQUEST['showtemplate']) && $_REQUEST['showtemplate'] == 'false') ||
@@ -138,6 +137,7 @@ while( $trycount < 2 ) {
             $trycount = 99;
         }
         else {
+            $smarty->assign('themes_url', $config['themes_url']);
             debug_buffer('process template top');
             $tpl_id = $contentobj->TemplateId();
             $top = '';
