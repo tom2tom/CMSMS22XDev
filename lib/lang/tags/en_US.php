@@ -336,8 +336,9 @@ $lang['help_function_cms_stylesheet'] = <<<'EOT'
  <li><em>(optional)</em> id - Instead of getting all stylesheets for the given page, it will get only the one with that numeric idenfifier , whether or not it's attached to the current template.</li>
  <li><em>(optional)</em> name - Instead of getting all stylesheets for the given page, it will only get one specifically named one, whether or not it's attached to the current template.</li>
  <li><em>(optional)</em> nocombine - (boolean, default false) If enabled, and there are multiple stylesheets associated with the template, the stylesheets will be output as separate tags rather than combined into a single tag.</li>
+ <li><em>(optional)</em> min - (boolean, default false with CMS_DEBUG, true otherwise) If enabled, the stylesheet(s)' content will be minimised.</li>
  <li><em>(optional)</em> nolinks - (boolean, default false) If enabled, the stylesheets will be output as a URL without &lt;link&gt; tag.</li>
- <li><em>(optional)</em> https - (boolean, default false) indicates wether the ssl_url config entry should be used to prefix stylesheet urls.  If not specified, the system will attempt to determine the proper root url based on the secure flag of the page being displayed.</li>
+ <li><em>(optional)</em> https - (boolean, default false) indicates whether the ssl_url config entry should be used to prefix stylesheet urls.  If not specified, the system will attempt to determine the proper root url based on the secure flag of the page being displayed.</li>
  <li><em>(optional)</em> designid - If designid is defined, this will return stylesheets associated with that design instead of the current one.</li>
  <li><em>(optional)</em> media - <strong>[deprecated]</strong> - When used in conjunction with the name parameter this parameter will allow you to override the media type for that stylesheet.  When used in conjunction with the templateid parameter, the media parameter will only output stylesheet tags for those stylesheets that are marked as compatible with the specified media type.</li>
 </ul>
@@ -634,11 +635,11 @@ EOT;
 
 $lang['help_function_root_url'] = <<<'EOT'
 <h3>What does this do?</h3>
-<p>Prints the root url location for the site.</p>
+<p>Prints the url representing the root location of the site.</p>
 <h3>How do I use it?</h3>
 <p>Just insert the tag into your template/page like: <code>{root_url}</code></p>
 <h3>What parameters does it take?</h3>
-<p><em>(optional)autossl=1</em> - Enabled by default, this option will detect if the request made to the server was over SSL, and if it was return the appropriately configured SSL url.  To disable this feature specify autossl=0.</p>
+<p><em>(optional)autossl=1</em> - Enabled by default, this option will detect if the request made to the server used SSL, and if so, return the appropriately configured SSL url.  To disable this feature specify autossl=0.</p>
 <p><em>(optional)</em> assign (string) - Assign the results to a smarty variable with that name.</p>
 EOT;
 
@@ -832,9 +833,18 @@ $lang['help_function_page_warning'] = <<<'EOT'
 <pre><code>{page_warning msg='Something smells fishy'}</code></pre>
 EOT;
 
+$lang['help_function_themes_url'] = <<<'EOT'
+<h3>What does this do?</h3>
+<p>Prints the url representing the topmost location at the site for frontend-themes data.</p>
+<h3>How do I use it?</h3>
+<p>Just insert the tag into your template/page like: <code>{themes_url}</code></p>
+<h3>What parameters does it take?</h3>
+<p><em>(optional)</em> assign (string) - Assign the results to a smarty variable with that name.</p>
+EOT;
+
 $lang['help_function_uploads_url'] = <<<'EOT'
 <h3>What does this do?</h3>
-<p>Prints the uploads url location for the site.</p>
+<p>Prints the url representing the topmost location at the site for uploaded data.</p>
 <h3>How do I use it?</h3>
 <p>Just insert the tag into your template/page like: <code>{uploads_url}</code></p>
 <h3>What parameters does it take?</h3>
