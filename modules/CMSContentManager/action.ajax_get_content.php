@@ -40,7 +40,7 @@ $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;ajax_get_content.tpl",n
 try {
     $tpl->assign('can_add_content',$this->CheckPermission('Add Pages') || $this->CheckPermission('Manage All Content'));
     $tpl->assign('can_reorder_content',$this->CheckPermission('Manage All Content'));
-    $tpl->assign('template_list',CmsLayoutTemplate::template_query(array('as_list'=>1))); // this is just to aide loading.
+    $tpl->assign('template_list',CmsLayoutTemplate::template_query(array('as_list'=>1))); // this is just to aid loading.
 
     // load all the content that this user can display...
     // organize it into a tree
@@ -54,7 +54,6 @@ try {
         $builder->set_filter($filter);
     }
     $tpl->assign('have_filter',is_object($filter));
-
 
     //
     // handle all of the possible ajaxy/sub actions.
@@ -83,20 +82,54 @@ try {
         $pagelist[$i+1] = $i+1;
     }
 
-    $userid = get_userid(false);
-    $have_locks = $builder->have_locks($userid); // ignore any held by current user
+    $dolock = CmsContentManagerUtils::locking_enabled();
+    if( $dolock ) {
+        $userid = get_userid(false);
+        $locks = CmsLockOperations::get_locks('content',0,$userid); //lock(s) held by other users
+        $have_locks = $locks && is_array($locks);
+        $locks = CmsLockOperations::get_locks('content',$userid); //lock(s) held by current user
+        if( $locks && is_array($locks) ) {
+            // grab page-hierarchy numbers for Smarty tip
+            $pids = [];
+            foreach( $locks as $obj ) {
+                $pids[] = (int)$obj['oid'];
+            }
+            $sql = 'SELECT hierarchy FROM '.CMS_DB_PREFIX.'content WHERE content_id IN ('.implode(',',$pids).') ORDER BY hierarchy';
+            $dbr = $db->GetCol($sql);
+            if( $dbr ) {
+                foreach( $dbr as &$one ) {
+                    $one = preg_replace('/(^|\.)0*/','$1',$one); //strip padding
+                }
+                unset($one);
+                $itemstip = $this->Lang('page').'='. implode(',',$dbr);
+            }
+            else {
+                $itemstip = '';
+            }
+            $self_locks = true;
+        }
+        else {
+            $self_locks = false;
+        }
+    }
+    else {
+        $have_locks = false;
+        $self_locks = false;
+    }
+    $url = $this->create_url($id,'ajax_get_content',$returnid);
 
     $tpl->assign('indent',!$filter && cms_userprefs::get('indent',1));
-    $tpl->assign('locking',CmsContentManagerUtils::locking_enabled());
+    $tpl->assign('locking',$dolock);
     $tpl->assign('have_locks',$have_locks);
+    $tpl->assign('have_selflocks',$self_locks);
+    if( $self_locks && $itemstip ) { $tpl->assign('which_selflocks',$itemstip); }
     $tpl->assign('pagelimit',$pagelimit);
     $tpl->assign('pagelist',$pagelist);
     $tpl->assign('curpage',$builder->get_page());
     $tpl->assign('npages',$npages);
     $tpl->assign('multiselect',$builder->supports_multiselect());
     $tpl->assign('columns',$builder->get_display_columns());
-    $url = $this->create_url($id,'ajax_get_content',$returnid);
-    $tpl->assign('ajax_get_content_url',str_replace('amp;','',$url));
+    $tpl->assign('ajax_get_content_url',str_replace('&amp;','&',$url));
 
     if( CmsContentManagerUtils::get_pagenav_display() == 'title' ) {
         $tpl->assign('colhdr_page',$this->Lang('colhdr_name'));

@@ -1,41 +1,42 @@
 <div class="row c_full cf">
   <div class="pageoptions grid_8" style="margin-top:8px">
-      {if $can_add_content}
-        <a href="{cms_action_url action=admin_editcontent}" accesskey="n" title="{$mod->Lang('addcontent')}" class="pageoptions">{admin_icon icon='newobject.gif' alt=$mod->Lang('addcontent')}&nbsp;{$mod->Lang('addcontent')}</a>
-      {/if}
-
-      {if !$have_filter && isset($content_list)}
-        <a class="expandall" href="{cms_action_url action='defaultadmin' expandall=1}" accesskey="e" title="{$mod->Lang('prompt_expandall')}">{admin_icon icon='expandall.gif' alt=$mod->Lang('expandall')}&nbsp;{$mod->Lang('expandall')}</a>
+  {if $can_add_content}
+    <a href="{cms_action_url action=admin_editcontent}" accesskey="n" title="{$mod->Lang('addcontent')}" class="pageoptions">{admin_icon icon='newobject.gif' alt=$mod->Lang('addcontent')}&nbsp;{$mod->Lang('addcontent')}</a>
+  {/if}
+  {if !$have_filter && isset($content_list)}
+    <a class="expandall" href="{cms_action_url action='defaultadmin' expandall=1}" accesskey="e" title="{$mod->Lang('prompt_expandall')}">{admin_icon icon='expandall.gif' alt=$mod->Lang('expandall')}&nbsp;{$mod->Lang('expandall')}</a>
     <a class="collapseall" href="{cms_action_url action='defaultadmin' collapseall=1}" accesskey="c" title="{$mod->Lang('prompt_collapseall')}">{admin_icon icon='contractall.gif' alt=$mod->Lang('contractall')}&nbsp;{$mod->Lang('contractall')}</a>
-    {if $can_reorder_content}
-      <a id="ordercontent" href="{cms_action_url action=admin_ordercontent}" accesskey="r" title="{$mod->Lang('prompt_ordercontent')}">{admin_icon icon='reorder.gif' alt=$mod->Lang('reorderpages')}&nbsp;{$mod->Lang('reorderpages')}</a>
-    {/if}
-    {if $have_locks}
-      <a id="clearlocks" href="{cms_action_url action=admin_clearlocks}" accesskey="l" title="{$mod->Lang('title_clearlocks')}">{admin_icon icon='run.gif' alt=''}&nbsp;{$mod->Lang('prompt_clearlocks')}</a>
-    {/if}
-      {/if}
-      <a id="myoptions" accesskey="o" title="{$mod->Lang('prompt_settings')}">{admin_icon icon='edit.gif' alt=$mod->Lang('prompt_settings')}&nbsp;{$mod->Lang('prompt_settings')}</a>
-      {if !empty($have_filter)}<span style="color:red"><em>({$mod->Lang('filter_applied')})</em></span>{/if}
+   {if !$have_locks && $can_reorder_content}
+    <a{if empty($have_selflocks)} id="ordercontent"{/if} href="{cms_action_url action=admin_ordercontent}" accesskey="r" title="{$mod->Lang('prompt_ordercontent')}">{admin_icon icon='reorder.gif' alt=$mod->Lang('reorderpages')}&nbsp;{$mod->Lang('reorderpages')}</a>
+   {/if}
+   {if $have_locks}
+    <a id="clearlocks" href="{cms_action_url action=admin_clearlocks}" accesskey="l" title="{$mod->Lang('title_clearlocks')}">{admin_icon icon='run.gif' alt=''}&nbsp;{$mod->Lang('prompt_clearlocks')}</a>
+   {elseif !empty($have_selflocks)}
+    <a href="{cms_action_url action=admin_clearlocks self=1}" accesskey="l" title="{$mod->Lang('title_clearlocks2')}{if !empty($which_selflocks)} ({$which_selflocks}){/if}">{admin_icon icon='run.gif' alt=''}&nbsp;{$mod->Lang('prompt_clearlocks2')}</a>
+   {/if}
+  {/if}
+    <a id="myoptions" accesskey="o" title="{$mod->Lang('prompt_settings')}">{admin_icon icon='edit.gif' alt=$mod->Lang('prompt_settings')}&nbsp;{$mod->Lang('prompt_settings')}</a>
+    {if !empty($have_filter)}<span style="color:red"><em>({$mod->Lang('filter_applied')})</em></span>{/if}
   </div>
 
   <div class="pageoptions endside options-form grid_4">
-    {if !empty($content_list)}
+  {if !empty($content_list)}
     <span><label for="ajax_find">{$mod->Lang('find')}:</label>&nbsp;<input type="text" id="ajax_find" name="ajax_find" title="{$mod->Lang('title_listcontent_find')}" value="" size="25"></span>
-    {/if}
+  {/if}
 
-    {if !empty($content_list) && $npages > 1}
-      {form_start action='defaultadmin'}
-        <span>{$mod->Lang('page')}:&nbsp;
-        <select name="{$actionid}curpage" id="{$actionid}curpage">
-          {html_options options=$pagelist selected=$curpage}
-        </select>
-        <button name="{$actionid}submitpage" class="invisible ui-button ui-widget ui-corner-all ui-state-default ui-button-text-icon-primary">
-          <span class="ui-button-icon-primary ui-icon ui-icon-check"></span>
-          <span class="ui-button-text">{$mod->Lang('go')}</span>
-        </button>
-        </span>
-      {form_end}
-    {/if}
+  {if !empty($content_list) && $npages > 1}
+    {form_start action='defaultadmin'}
+      <span>{$mod->Lang('page')}:&nbsp;
+      <select name="{$actionid}curpage" id="{$actionid}curpage">
+        {html_options options=$pagelist selected=$curpage}
+      </select>
+      <button name="{$actionid}submitpage" class="invisible ui-button ui-widget ui-corner-all ui-state-default ui-button-text-icon-primary">
+        <span class="ui-button-icon-primary ui-icon ui-icon-check"></span>
+        <span class="ui-button-text">{$mod->Lang('go')}</span>
+      </button>
+      </span>
+    {form_end}
+  {/if}
   </div>
 </div>
 
@@ -211,19 +212,17 @@
       <tr>
         {foreach $columns as $column => $flag}
     {if $flag}
-      <th{*$column TODO Rolf*}{if $flag=='icon'} class="pageicon"{/if}><!-- {$column} -->
-      {if $column == 'expand' or $column == 'hier' or $column == 'icon1' or $column == 'view' or $column == 'copy' or $column == 'edit' or $column == 'delete'}
-            <span title="{$mod->Lang("coltitle_{$column}")}">&nbsp;</span>{* no column header *}
+      <th{if $flag=='icon'} class="pageicon"{/if}><!-- {$column} -->
+      {if $column == 'expand' || $column == 'hier' || $column == 'icon1' || $column == 'view' || $column == 'copy' || $column == 'edit' || $column == 'delete'}
+        <span title="{$mod->Lang("coltitle_{$column}")}">&nbsp;</span>{* no column header *}
       {elseif $column == 'multiselect'}
         <input type="checkbox" id="selectall" value="1" title="{$mod->Lang('select_all')}">
       {elseif $column == 'page'}
         <span title="{$coltitle_page}">{$colhdr_page}</span>
+      {elseif $have_locks && ($column == 'default' || $column == 'move')}
+        <span title="{$mod->Lang('error_action_contentlocked')}">! {$mod->Lang("colhdr_{$column}")}</span>
       {else}
-        {if $have_locks && ($column == 'default' || $column == 'move')}
-          <span title="{$mod->Lang('error_action_contentlocked')}">({$mod->Lang("colhdr_{$column}")})</span>
-        {else}
-          <span title="{$mod->Lang("coltitle_{$column}")}">{$mod->Lang("colhdr_{$column}")}</span>
-        {/if}
+        <span title="{$mod->Lang("coltitle_{$column}")}">{$mod->Lang("colhdr_{$column}")}</span>
       {/if}
       </th>
     {/if}

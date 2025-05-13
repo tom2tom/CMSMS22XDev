@@ -59,7 +59,7 @@ $lang['colhdr_url'] = 'URL';
 $lang['coltitle_url'] = 'The unique URL (relative to the root URL) that can be used to browse to the page';
 $lang['colhdr_view'] = 'View';
 $lang['coltitle_view'] = 'The icon in this column allows viewing the page in a new browser tab.';
-$lang['confirm_clearlocks'] = 'Clearing lock\'s could interrupt a working edit session.  Are you sure you want to continue?';
+$lang['confirm_clearlocks'] = 'Clearing lock(s) could interrupt a working edit session.  Are you sure you want to continue?';
 $lang['confirm_delete_page'] = 'Are you sure you want to delete this content item?';
 $lang['confirm_expandall'] = 'Are you sure you want to expand all content?  On large sites this may cause problems.  Please use caution';
 $lang['confirm_reorder'] = 'Are you sure you want to save the content in this order';
@@ -75,7 +75,7 @@ $lang['desc_contentmanager_settings'] = 'Adjust settings related to listing, or 
 
 //E
 $lang['editcontent_confirm_cancel'] = 'Are you sure you want to cancel this operation?  Any changes will be lost!';
-$lang['error_action_contentlocked'] = 'This operation cannot be performed while there is locked content';
+$lang['error_action_contentlocked'] = 'This operation cannot be performed while there is locked content'; //too broad
 $lang['error_bulk_permission'] = 'You do not have permission to perform this bulk action';
 $lang['error_contentlocked'] = 'It appears that this content is already locked. Try to refresh this page to see up-to-date information';
 $lang['error_contenttype_disallowed'] = 'Default Content Type is also set to Disallowed';
@@ -129,7 +129,7 @@ $lang['help_pagedflt_searchable'] = 'Specify whether new pages should be searcha
 $lang['help_pagedflt_secure'] = 'Specify whether new pages should be <em>(by default)</em> secure <em>(uses the HTTPS protocol)</em>.  For secure pages to work the site must have a valid certificate installed on the web server, and the site must be configured properly';
 $lang['help_pagedflt_showinmenu'] = 'Specify whether new pages should be visible in normal navigations by default';
 $lang['help_pagedflt_template_id'] = 'Specify the default template to use for the new content page.  The template controls page logic, and what content blocks are visible to the editor';
-$lang['help_tab_id'] = 'Enter something unique and distinctive, and which might be used to assist tabs-sorting. As an example, internal/default tabs have id\'s like \'aa_main\' or \'zz_2logic\'.';
+$lang['help_tab_id'] = 'Enter something unique and distinctive, and which might be used to assist tabs-sorting. As an example, internal/default tabs have respective ids like \'aa_main\' or \'zz_2logic\'.';
 $lang['help_title_content_type'] = 'Content Type Selector';
 
 //I
@@ -182,11 +182,12 @@ $lang['prompt_bulk_delete_content'] = 'Bulk Delete Content Pages';
 $lang['prompt_bulk_delete_content2'] = 'These pages are due to be deleted';
 $lang['prompt_bulk_setdesign'] = 'Bulk Change Template and Design';
 $lang['prompt_cachable'] = 'Cachable';
-$lang['prompt_clearlocks'] = 'Remove content locks';
+$lang['prompt_clearlocks'] = 'Remove Content Locks';
+$lang['prompt_clearlocks2'] = 'Clear Your Locks';
 $lang['prompt_collapseall'] = 'Collapse all pages';
 $lang['prompt_confirm_operation'] = 'Confirm Operation';
 $lang['prompt_confirm1'] = 'Yes, I am sure I want to do this';
-$lang['prompt_confirm2'] = 'Yes, I am really sure I want to do this';
+$lang['prompt_confirm2'] = 'Yes, I am <strong>really sure</strong> I want to do this';
 $lang['prompt_content_id'] = 'Content ID';
 $lang['prompt_created'] = 'Created';
 $lang['prompt_design'] = 'Design';
@@ -270,13 +271,14 @@ $lang['submit'] = 'Submit';
 
 //T
 $lang['title_clearlocks'] = 'Clear all content locks';
+$lang['title_clearlocks2'] = 'Clear locks held by you';
 $lang['title_contentmanager_settings'] = 'Settings - Content Manager';
 $lang['title_editpage_apply'] = 'Save the changes to this content page, and continue editing';
 $lang['title_editpage_cancel'] = 'Abandon all unsaved changes to this page, and return to the content list';
 $lang['title_editpage_submit'] = 'Save the changes to this content page, and return to the content list';
 $lang['title_editpage_view'] = 'View the current content page (saved changes only)';
 $lang['title_listcontent_find'] = 'Enter a portion of a page title or menu text and select a matching page';
-$lang['title_locked'] = 'This page is currently being edited by another user';
+$lang['title_locked'] = 'This page is being edited by another user';
 $lang['title_userpageoptions'] = 'Page List Options';
 $lang['toggle'] = 'Toggle Selected';
 
