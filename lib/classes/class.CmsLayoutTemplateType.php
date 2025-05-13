@@ -61,12 +61,28 @@ class CmsLayoutTemplateType
     /**
      * @ignore
      */
-    private $_dirty;
+    private $_dirty = FALSE;
 
     /**
      * @ignore
+     * @internal should be private but _load_from_data expects public
      */
-    private $_data = array();
+    public $_data = [
+     'id' => 0,
+     'description' => '',
+     'dflt_contents' => '',
+     'content_callback' => null, //no callable aka unset
+     'help_callback' => null,
+     'lang_callback' => null,
+     'has_dflt' => 0,
+     'created' => 0,
+     'modified' => 0,
+     'name' => '',
+     'one_only' => 0,
+     'originator' => '',
+     'owner' => 0,
+     'requires_contentblocks' => 0
+    ];
 
     /**
      * @ignore
@@ -83,6 +99,9 @@ class CmsLayoutTemplateType
      */
     private $_assistant;
 
+    // no cloning for this object
+    private function __clone() {}
+
     /**
      * Get the template type id
      *
@@ -90,8 +109,7 @@ class CmsLayoutTemplateType
      */
     public function get_id()
     {
-        if( isset($this->_data['id']) ) return $this->_data['id'];
-        return 0;
+        return (int)$this->_data['id'];
     }
 
     /**
@@ -102,9 +120,8 @@ class CmsLayoutTemplateType
      */
     public function get_originator($viewable = FALSE)
     {
-        $out = '';
-        if( isset($this->_data['originator']) ) $out = $this->_data['originator'];
-        if( $out == self::CORE && $viewable ) $out = 'Core';
+        $out = (string)$this->_data['originator'];
+        if( $viewable && $out == self::CORE ) $out = 'Core';
         return $out;
     }
 
@@ -116,7 +133,7 @@ class CmsLayoutTemplateType
      */
     public function set_originator($str)
     {
-        $str = trim($str);
+        $str = trim((string)$str);
         if( !$str ) throw new CmsInvalidDataException('Originator cannot be empty');
         $this->_data['originator'] = $str;
         $this->_dirty = TRUE;
@@ -125,12 +142,11 @@ class CmsLayoutTemplateType
     /**
      * Return the template type name
      *
-     * @return string the template type, meybe empty
+     * @return string maybe empty
      */
     public function get_name()
     {
-        if( isset($this->_data['name']) ) return $this->_data['name'];
-        return '';
+        return (string)$this->_data['name'];
     }
 
     /**
@@ -141,33 +157,31 @@ class CmsLayoutTemplateType
      */
     public function set_name($str)
     {
-        $str = trim($str);
+        $str = trim((string)$str);
         if( !$str ) throw new CmsInvalidDataException('Name cannot be empty');
         $this->_data['name'] = $str;
         $this->_dirty = TRUE;
     }
 
     /**
-     * Get the flag indicating if this template type can have a 'default'
+     * Get the flag indicating whether this template type can have a 'default'
      *
      * @return bool
      */
     public function get_dflt_flag()
     {
-        if( isset($this->_data['has_dflt']) ) return $this->_data['has_dflt'];
-        return FALSE;
+        return (bool)$this->_data['has_dflt'];
     }
 
     /**
-     * Set the flag indicating if this template type can have a 'default'
+     * Set the flag indicating whether this template type can have a 'default'
      *
-     * @throws CmsInvalidDataException
-     * @param bool $flag
+     * @param mixed $flag Something recognised by cms_to_bool(). Default true
      */
     public function set_dflt_flag($flag = TRUE)
     {
-        if( !is_bool($flag) ) throw new CmsInvalidDataException('value is invalid for set_dflt_flag');
-        $this->_data['has_dflt'] = $flag;
+        $flag = cms_to_bool($flag);
+        $this->_data['has_dflt'] = ($flag) ? 1 : 0;
         $this->_dirty = TRUE;
     }
 
@@ -178,8 +192,7 @@ class CmsLayoutTemplateType
      */
     public function get_dflt_contents()
     {
-        if( isset($this->_data['dflt_contents']) ) return $this->_data['dflt_contents'];
-        return '';
+        return (string)$this->_data['dflt_contents'];
     }
 
     /**
@@ -200,8 +213,7 @@ class CmsLayoutTemplateType
      */
     public function get_description()
     {
-        if( isset($this->_data['description']) ) return $this->_data['description'];
-        return '';
+        return (string)$this->_data['description'];
     }
 
 
@@ -223,8 +235,7 @@ class CmsLayoutTemplateType
      */
     public function get_owner()
     {
-        if( isset($this->_data['owner']) ) return $this->_data['owner'];
-        return 0;
+        return (int)$this->_data['owner'];
     }
 
     /**
@@ -241,25 +252,23 @@ class CmsLayoutTemplateType
     }
 
     /**
-     * Get the date that this object was created.
+     * Get the timestamp representing when this object was first recorded.
      *
-     * @return intUnix timestamp representing the creation date, or 0 if this object has not been saved.
+     * @return int Unix timestamp, or 0 if this object has not been saved.
      */
     public function get_create_date()
     {
-        if( isset($this->_data['created']) ) return $this->_data['created'];
-        return 0;
+        return (int)$this->_data['created'];
     }
 
     /**
-     * Get the date that this object was last modified
+     * Get timestamp representing when this object was last modified
      *
-     * @return intUnix timestamp representing the modification date.  or null if this object has not been saved.
+     * @return int Unix timestamp, or 0 if this object has not been saved.
      */
     public function get_modified_date()
     {
-        if( isset($this->_data['modified']) ) return $this->_data['modified'];
-        return 0;
+        return (int)$this->_data['modified'];
     }
 
     /**
@@ -313,13 +322,12 @@ class CmsLayoutTemplateType
     /**
      * Set the flag indicating that a maximum of one template of this type is permitted.
      *
-     * @throws CmsInvalidDataException
-     * @param bool $flag
+     * @param mixed $flag Something recognised by cms_to_bool() Default true.
      */
     public function set_oneonly_flag($flag = TRUE)
     {
-        if( !is_bool($flag) ) throw new CmsInvalidDataException('value is invalid for set_oneonly_flag');
-        $this->_data['one_only'] = $flag;
+        $flag = cms_to_bool($flag);
+        $this->_data['one_only'] = ($flag) ? 1 : 0;
         $this->_dirty = TRUE;
     }
 
@@ -330,8 +338,7 @@ class CmsLayoutTemplateType
      */
     public function get_oneonly_flag()
     {
-        if( isset($this->_data['one_only']) ) return $this->_data['one_only'];
-        return FALSE;
+        return (bool)$this->_data['one_only'];
     }
 
     /**
@@ -367,23 +374,22 @@ class CmsLayoutTemplateType
      */
     public function get_content_block_flag()
     {
-        if( isset($this->_data['requires_contentblocks']) ) return $this->_data['requires_contentblocks'];
-        return FALSE;
+        return (bool)$this->_data['requires_contentblocks'];
     }
 
     /**
      * Set the content block flag to indicate that this template type requires content blocks
      *
-     * @param bool $flag
+     * @param mixed $flag Something recognised by cms_to_bool(). Default true.
      */
-    public function set_content_block_flag($flag)
+    public function set_content_block_flag($flag = TRUE)
     {
-        $flag = (bool)$flag;
-        $this->_data['requires_contentblocks'] = $flag;
+        $flag = cms_to_bool($flag);
+        $this->_data['requires_contentblocks'] = ($flag) ? 1 : 0;
     }
 
     /**
-     * Validate the integrity of a template type object.
+     * Validate the integrity of this type object.
      *
      * This method will check the contents of the object for validity, and ensure that
      * the originator/name combination are unique.
@@ -391,7 +397,7 @@ class CmsLayoutTemplateType
      * This method throws an exception if an error is found in the integrity of the object.
      *
      * @throws CmsInvalidDataException
-     * @param bool $is_insert Wether this is a new insert, or an update.
+     * @param bool $is_insert Whether this is a new insert, or an update. Default true.
      */
     protected function validate($is_insert = TRUE)
     {
@@ -402,7 +408,7 @@ class CmsLayoutTemplateType
         }
 
         if( !$is_insert ) {
-            if( !isset($this->_data['id']) || (int)$this->_data['id'] < 1 ) throw new CmsInvalidDataException('id is not set');
+            if( (int)$this->_data['id'] < 1 ) throw new CmsInvalidDataException('id is not set');
 
             // check for item with the same name
             $db = CmsApp::get_instance()->GetDb();
@@ -413,15 +419,14 @@ class CmsLayoutTemplateType
         else {
             // check for item with the same name
             $db = CmsApp::get_instance()->GetDb();
-            $query = 'SELECT id FROM '.CMS_DB_PREFIX.self::TABLENAME.'
-                WHERE originator = ? AND name = ?';
+            $query = 'SELECT id FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE originator = ? AND name = ?';
             $dbr = $db->GetOne($query,array($this->get_originator(),$this->get_name()));
             if( $dbr ) throw new CmsInvalidDataException('Template Type with the same name already exists.');
         }
     }
 
     /**
-     * A function to insert the current type object into the database.
+     * Insert this type object into the database.
      *
      * This method will ensure that the current object is valid, generate an id, and
      * insert the record into the database.  An exception will be thrown if errors occur.
@@ -434,10 +439,10 @@ class CmsLayoutTemplateType
         $this->validate();
         $db = CmsApp::get_instance()->GetDb();
         $now = time();
-        $query = 'INSERT INTO '.CMS_DB_PREFIX.self::TABLENAME.'
-                (originator,name,has_dflt,one_only,dflt_contents,description,
-                 lang_cb,help_content_cb,dflt_content_cb,requires_contentblocks,owner,created,modified)
-                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)';
+        $query = 'INSERT INTO '.CMS_DB_PREFIX.self::TABLENAME.
+' (originator,name,has_dflt,one_only,dflt_contents,description,
+lang_cb,help_content_cb,dflt_content_cb,requires_contentblocks,owner,created,modified)
+VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)';
         $dbr = $db->Execute($query,array($this->get_originator(), $this->get_name(), $this->get_dflt_flag(), $this->get_oneonly_flag(),
                                          $this->get_dflt_contents(), $this->get_description(),
                                          serialize($this->get_lang_callback()),
@@ -454,7 +459,7 @@ class CmsLayoutTemplateType
 
 
     /**
-     * A function to update the contents of the database to match the current record.
+     * Update the contents of the database to match this type object.
      *
      * This method will ensure that the current object is valid, generate an id, and
      * update the record in the database.  An exception will be thrown if errors occur.
@@ -468,28 +473,27 @@ class CmsLayoutTemplateType
         $db = CmsApp::get_instance()->GetDb();
         $now = time();
 
-        $query = 'UPDATE '.CMS_DB_PREFIX.self::TABLENAME.'
-                SET originator = ?, name = ?, has_dflt = ?, one_only = ?, dflt_contents = ?, description = ?,
-                    lang_cb = ?, help_content_cb = ?, dflt_content_cb = ?, requires_contentblocks = ?, owner = ?, modified = ?
-                WHERE id = ?';
-        $dbr = $db->Execute($query,array($this->get_originator(),$this->get_name(),$this->get_dflt_flag(),$this->get_oneonly_flag(),
-                                         $this->get_dflt_contents(),$this->get_description(),
-                                         serialize($this->get_lang_callback()),serialize($this->get_help_callback()),
-                                         serialize($this->get_content_callback()),$this->get_content_block_flag() ? 1 : 0,
-                                         $this->get_owner(), $now, $this->get_id()));
-        if( !$dbr ) throw new CmsSQLErrorException($db->ErrorMsg());
-
+        $query = 'UPDATE '.CMS_DB_PREFIX.self::TABLENAME.
+' SET originator = ?, name = ?, has_dflt = ?, one_only = ?, dflt_contents = ?, description = ?,
+lang_cb = ?, help_content_cb = ?, dflt_content_cb = ?, requires_contentblocks = ?, owner = ?, modified = ?
+WHERE id = ?';
+        $db->Execute($query,array($this->get_originator(),$this->get_name(),$this->get_dflt_flag(),$this->get_oneonly_flag(),
+                                  $this->get_dflt_contents(),$this->get_description(),
+                                  serialize($this->get_lang_callback()),serialize($this->get_help_callback()),
+                                  serialize($this->get_content_callback()),$this->get_content_block_flag() ? 1 : 0,
+                                  $this->get_owner(), $now, $this->get_id()));
+        if( $db->Affected_Rows() != 1 || db->ErrorNo() != 0 ) throw new CmsSQLErrorException($db->ErrorMsg());
         CmsTemplateCache::clear_cache();
         $this->_dirty = FALSE;
         audit($this->get_id(),'Template type', "Updated: {$this->get_name()}");
     }
 
     /**
-     * Save the current record to the database.
+     * Save the current type object to the database.
      */
     public function save()
     {
-        if( !$this->get_id() ) {
+        if( $this->get_id() == 0 ) {
             HookManager::do_hook('Core::AddTemplateTypePre', [ get_class($this) => &$this ]);
             $this->_insert();
             HookManager::do_hook('Core::AddTemplateTypePost', [ get_class($this) => &$this ]);
@@ -501,7 +505,7 @@ class CmsLayoutTemplateType
     }
 
     /**
-     * Get a list of templates for the current template type.
+     * Get a list of templates having this template type.
      *
      * @see CmsLayoutTemplate::list_by_type
      * @return Array of CmsLayoutTemplate objects.  or null.
@@ -533,7 +537,7 @@ class CmsLayoutTemplateType
         CmsTemplateCache::clear_cache();
         audit($this->get_id(),'Template type', "Deleted: {$this->get_name()}");
         HookManager::do_hook('Core::DeleteTemplateTypePost', [ get_class($this) => &$this ]);
-        unset($this->_data['id']);
+        $this->_data['id'] = 0;
     }
 
     /**
@@ -547,8 +551,8 @@ class CmsLayoutTemplateType
     public function create_new_template($name = '')
     {
         $ob = new CmsLayoutTemplate();
-        $ob->set_type( $this );
-        $ob->set_content( $this->get_dflt_contents() );
+        $ob->set_type($this);
+        $ob->set_content($this->get_dflt_contents());
         if( $name ) $ob->set_name($ob);
         return $ob;
     }
@@ -639,19 +643,42 @@ class CmsLayoutTemplateType
      */
     private static function _load_from_data($row)
     {
-        foreach( ['originator','name','dflt_contents','description'] as $fld ) {
-            if( !isset($row[$fld]) ) $row[$fld] = '';
-        }
         if( !empty($row['lang_cb']) ) $row['lang_callback'] = unserialize($row['lang_cb']);
         if( !empty($row['help_content_cb']) ) $row['help_callback'] = unserialize($row['help_content_cb']);
         if( !empty($row['dflt_content_cb']) ) $row['content_callback'] = unserialize($row['dflt_content_cb']);
         unset($row['lang_cb'],$row['help_content_cb'],$row['dflt_content_cb']);
 
+        foreach( [
+         'id' => 0,
+         'description' => '',
+         'dflt_contents' => '',
+         'content_callback' => null, //no callable aka unset
+         'help_callback' => null,
+         'lang_callback' => null,
+         'has_dflt' => 0,
+         'created' => 0,
+         'modified' => 0,
+         'name' => '',
+         'one_only' => 0,
+         'originator' => '',
+         'owner' => 0,
+         'requires_contentblocks' => 0
+        ] as $fld => $val ) {
+            if( !isset($row[$fld]) ) {
+                $row[$fld] = $val;
+            }
+            elseif( $val === '' ) {
+                $row[$fld] = (string)$row[$fld];
+            }
+            elseif( $val === 0 ) {
+                $row[$fld] = (int)$row[$fld];
+            }
+        }
+
         $ob = new self();
         $ob->_data = $row;
-        $ob->_dirty = FALSE;
 
-        self::$_cache[$ob->get_id()] = $ob;
+        self::$_cache[$ob->get_id()] = $ob; // aka (int)$row['id']
         self::$_name_cache[$ob->get_originator().'::'.$ob->get_name()] = $ob->get_id();
         return $ob;
     }
