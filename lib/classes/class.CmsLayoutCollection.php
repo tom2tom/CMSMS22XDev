@@ -47,22 +47,32 @@ class CmsLayoutCollection
     /**
      * @ignore
      */
-    private $_dirty;
+    private $_dirty = FALSE;
 
     /**
      * @ignore
+     * @internal should be private but _load_from_data needs public
      */
-    private $_data = array();
+    public $_data = [
+     'id' => 0,
+     'name' => '',
+     'dflt' => 0,
+     'description' => '',
+     'created' => 0,
+     'modified' => 0
+    ];
 
     /**
      * @ignore
+     * @internal should be private but _load_from_data needs public
      */
-    private $_css_assoc = array();
+    public $_css_assoc = [];
 
     /**
      * @ignore
+     * @internal should be private but _load_from_data needs public
      */
-    private $_tpl_assoc = array();
+    public $_tpl_assoc = [];
 
     /**
      * @ignore
@@ -74,15 +84,17 @@ class CmsLayoutCollection
      */
     private static $_dflt_id;
 
+    // no cloning for this object
+    private function __clone() {}
+
     /**
      * Get the theme id
      * Only themes that have been saved to the database have an id.
-     * @return int
+     * @return int maybe 0
      */
     public function get_id()
     {
-        if( isset($this->_data['id']) ) return $this->_data['id'];
-        return 0;
+        return (int)$this->_data['id'];
     }
 
     /**
@@ -91,8 +103,7 @@ class CmsLayoutCollection
      */
     public function get_name()
     {
-        if( isset($this->_data['name']) ) return $this->_data['name'];
-        return '';
+        return (string)$this->_data['name'];
     }
 
     /**
@@ -117,8 +128,7 @@ class CmsLayoutCollection
      */
     public function get_default()
     {
-        if( isset($this->_data['dflt']) ) return $this->_data['dflt'];
-        return FALSE;
+        return (bool)$this->_data['dflt'];
     }
 
 
@@ -127,12 +137,12 @@ class CmsLayoutCollection
      * Sets the dirty flag.
      * Note, only one theme can be the default.
      *
-     * @param bool $flag
+     * @param mixed $flag bool|int\string supported by cms_to_bool() Default true
      */
-    public function set_default($flag)
+    public function set_default($flag = TRUE)
     {
-        $flag = (bool)$flag;
-        $this->_data['dflt'] = $flag;
+        $flag = cms_to_bool($flag);
+        $this->_data['dflt'] = ($flag) ? 1 : 0;
         $this->_dirty = TRUE;
     }
 
@@ -143,8 +153,7 @@ class CmsLayoutCollection
      */
     public function get_description()
     {
-        if( isset($this->_data['description']) ) return $this->_data['description'];
-        return '';
+        return (string)$this->_data['description'];
     }
 
     /**
@@ -154,32 +163,29 @@ class CmsLayoutCollection
      */
     public function set_description($str)
     {
-        $str = trim($str);
-        $this->_data['description'] = $str;
+        $this->_data['description'] = trim($str);
         $this->_dirty = TRUE;
     }
 
     /**
-     * Get the creation date of this theme
-     * The creation date is specified automatically on the first save
+     * Get the timestamp representing when this theme was first recorded.
+     * The creation timestamp is specified automatically on the first save
      *
-     * @return int
+     * @return int maybe 0
      */
     public function get_created()
     {
-        if( isset($this->_data['created']) ) return $this->_data['created'];
-        return 0;
+        return (int)$this->_data['created'];
     }
 
     /**
-     * Get the date of the last modification of this theme
+     * Get the timestamp representing the latest modification datetime of this theme
      *
-     * @return int
+     * @return int maybe 0
      */
     public function get_modified()
     {
-        if( isset($this->_data['modified']) ) return $this->_data['modified'];
-        return 0;
+        return (int)$this->_data['modified'];
     }
 
     /**
@@ -189,8 +195,7 @@ class CmsLayoutCollection
      */
     public function has_stylesheets()
     {
-        if( is_array($this->_css_assoc) && count($this->_css_assoc) ) return TRUE;
-        return FALSE;
+        return ( is_array($this->_css_assoc) && $this->_css_assoc );
     }
 
     /**
@@ -222,7 +227,7 @@ class CmsLayoutCollection
     }
 
     /**
-     * Adds a stylesheet to the theme
+     * Add a stylesheet to this theme
      *
      * @throws CmsLogicException
      * @param mixed $css Either an integer stylesheet id, or a CmsLayoutStylesheet object
@@ -245,7 +250,7 @@ class CmsLayoutCollection
     }
 
     /**
-     * Delete a stylesheet from the list of stylesheets associated with this theme
+     * Remove a stylesheet from this theme
      *
      * @throws CmsLogicException
      * @param mixed $css Either an integer stylesheet id, or a CmsLayoutStylesheet object
@@ -293,7 +298,7 @@ class CmsLayoutCollection
      */
     public function get_templates()
     {
-        if( !$this->get_id() ) return [];
+        if( $this->get_id() == 0 ) return [];
         if( !$this->has_templates() ) return [];
 
         return $this->_tpl_assoc;
@@ -388,16 +393,16 @@ class CmsLayoutCollection
         }
 
         $db = CmsApp::get_instance()->GetDb();
-        $tmp = 0;
-        if( $this->get_id() ) {
+        $did = $this->get_id();
+        if( $did > 0 ) {
             $query = 'SELECT id FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE name = ? AND id != ?';
-            $tmp = $db->GetOne($query,array($this->get_name(),$this->get_id()));
+            $tmp = $db->GetOne($query,array($this->get_name(),$did));
         }
         else {
             $query = 'SELECT id FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE name = ?';
             $tmp = $db->GetOne($query,array($this->get_name()));
         }
-        if( $tmp ) throw new CmsInvalidDataException('Collection/Design with the same name already exists.');
+        if( $tmp > 0 ) throw new CmsInvalidDataException('Collection/Design with the same name already exists.');
     }
 
     /**
@@ -408,36 +413,40 @@ class CmsLayoutCollection
         if( !$this->_dirty ) return;
         $this->validate();
 
+        $pd = ($this->get_default()) ? 1 : 0;
+        $now = time();
         $db = CmsApp::get_instance()->GetDb();
         $query = 'INSERT INtO '.CMS_DB_PREFIX.self::TABLENAME.' (name,description,dflt,created,modified) VALUES (?,?,?,?,?)';
-        $dbr = $db->Execute($query,array($this->get_name(), $this->get_description(), ($this->get_default())?1:0, time(),time()));
+        $dbr = $db->Execute($query,array($this->get_name(),$this->get_description(),$pd,$now,$now));
         if( !$dbr ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
 
         $this->_data['id'] = $db->Insert_ID();
+        $did = (int)$this->_data['id'];
 
         if( $this->get_default() ) {
             $query = 'UPDATE '.CMS_DB_PREFIX.self::TABLENAME.' SET dflt = 0 WHERE id != ?';
-            $dbr = $db->Execute($query,array($this->get_id()));
-            if( !$dbr ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
+            $db->Execute($query,array($did)); //unreliable return value after UPDATE
+            if( $db->errorNo() != 0 ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
+
         }
 
         if( count($this->_css_assoc) ) {
             $query = 'INSERT INTO '.CMS_DB_PREFIX.self::CSSTABLE.' (design_id,css_id,item_order) VALUES (?,?,?)';
             for( $i = 0, $n = count($this->_css_assoc); $i < $n; $i++ ) {
                 $css_id = $this->_css_assoc[$i];
-                $dbr = $db->Execute($query,array($this->get_id(),$css_id,$i+1));
+                $dbr = $db->Execute($query,array($did,$css_id,$i+1));
             }
         }
         if( count($this->_tpl_assoc) ) {
             $query = 'INSERT INTO '.CMS_DB_PREFIX.self::TPLTABLE.' (design_id,tpl_id) VALUES(?,?)';
             for( $i = 0, $n = count($this->_tpl_assoc); $i < $n; $i++ ) {
                 $tpl_id = $this->_tpl_assoc[$i];
-                $dbr = $db->Execute($query,array($this->get_id(),$tpl_id));
+                $dbr = $db->Execute($query,array($did,$tpl_id));
             }
         }
 
         $this->_dirty = FALSE;
-        audit($this->get_id(),'Design',"Created: {$this->get_name()}");
+        audit($did,'Design',"Created: {$this->get_name()}");
     }
 
     /**
@@ -448,41 +457,43 @@ class CmsLayoutCollection
         if( !$this->_dirty ) return;
         $this->validate();
 
+        $did = $this->get_id();
+        $pd = ($this->get_default()) ? 1 : 0;
         $db = CmsApp::get_instance()->GetDb();
         $query = 'UPDATE '.CMS_DB_PREFIX.self::TABLENAME.' SET name = ?, description = ?, dflt = ?, modified = ? WHERE id = ?';
-        $dbr = $db->Execute($query,array($this->get_name(), $this->get_description(), ($this->get_default())?1:0, time(), $this->get_id()));
-        if( !$dbr ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
+        $db->Execute($query,array($this->get_name(), $this->get_description(), $pd, time(), $did)); //unreliable return value after UPDATE
+        if( $db->errorNo() != 0 ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
 
         if( $this->get_default() ) {
             $query = 'UPDATE '.CMS_DB_PREFIX.self::TABLENAME.' SET dflt = 0 WHERE id != ?';
-            $dbr = $db->Execute($query,array($this->get_id()));
-            if( !$dbr ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
+            $db->Execute($query,array($did)); //unreliable return value after UPDATE
+            if( $db->ErrorNo() != 0 ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
         }
 
         $query = 'DELETE FROM '.CMS_DB_PREFIX.self::CSSTABLE.' WHERE design_id = ?';
-        $db->Execute($query,array($this->get_id()));
+        $db->Execute($query,array($did));
 
         if( count($this->_css_assoc) ) {
             $query = 'INSERT INTO '.CMS_DB_PREFIX.self::CSSTABLE.' (design_id,css_id,item_order) VALUES (?,?,?)';
             for( $i = 0, $n = count($this->_css_assoc); $i < $n; $i++ ) {
                 $css_id = $this->_css_assoc[$i];
-                $dbr = $db->Execute($query,array($this->get_id(),$css_id,$i+1));
+                $dbr = $db->Execute($query,array($did,$css_id,$i+1));
             }
         }
 
         $query = 'DELETE FROM '.CMS_DB_PREFIX.self::TPLTABLE.' WHERE design_id = ?';
-        $db->Execute($query,array($this->get_id()));
+        $db->Execute($query,array($did));
 
         if( count($this->_tpl_assoc) ) {
             $query = 'INSERT INTO '.CMS_DB_PREFIX.self::TPLTABLE.' (design_id,tpl_id) VALUES (?,?)';
             for( $i = 0, $n = count($this->_tpl_assoc); $i < $n; $i++ ) {
                 $tpl_id = $this->_tpl_assoc[$i];
-                $dbr = $db->Execute($query,array($this->get_id(),$tpl_id));
+                $dbr = $db->Execute($query,array($did,$tpl_id));
             }
         }
 
         $this->_dirty = FALSE;
-        audit($this->get_id(),'Design',"Updated: {$this->get_name()}");
+        audit($did,'Design',"Updated: {$this->get_name()}");
     }
 
     /**
@@ -492,7 +503,7 @@ class CmsLayoutCollection
      */
     public function save()
     {
-        if( $this->get_id() ) {
+        if( $this->get_id() > 0 ) {
             HookManager::do_hook('Core::EditDesignPre', [ get_class($this) => &$this ]);
             $this->_update();
             HookManager::do_hook('Core::EditDesignPost', [ get_class($this) => &$this ]);
@@ -512,7 +523,8 @@ class CmsLayoutCollection
      */
     public function delete($force = FALSE)
     {
-        if( !$this->get_id() ) return;
+        $did = $this->get_id();
+        if( $did < 1 ) return;
 
         if( !$force && $this->has_templates() ) throw new CmsLogicException('Cannot Delete a Design that has Templates Attached');
 
@@ -520,24 +532,24 @@ class CmsLayoutCollection
         $db = CmsApp::get_instance()->GetDb();
         if( count($this->_css_assoc) ) {
             $query = 'DELETE FROM '.CMS_DB_PREFIX.self::CSSTABLE.' WHERE design_id = ?';
-            $dbr = $db->Execute($query,array($this->get_id()));
+            $dbr = $db->Execute($query,array($did));
             $this->_css_assoc = array();
             $this->_dirty = TRUE;
         }
 
         if( count($this->_tpl_assoc) ) {
             $query = 'DELETE FROM '.CMS_DB_PREFIX.self::TPLTABLE.' WHERE design_id = ?';
-            $dbr = $db->Execute($query,array($this->get_id()));
+            $dbr = $db->Execute($query,array($did));
             $this->_tpl_assoc = array();
             $this->_dirty = TRUE;
         }
 
         $query = 'DELETE FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE id = ?';
-        $dbr = $db->Execute($query,array($this->get_id()));
+        $dbr = $db->Execute($query,array($did));
 
-        audit($this->get_id(),'Design',"Deleted: {$this->get_name()}");
+        audit($did,'Design',"Deleted: {$this->get_name()}");
         HookManager::do_hook('Core::DeleteDesignPost',[ get_class($this) => &$this ]);
-        unset($this->_data['id']);
+        $this->_data['id'] = 0;
         $this->_dirty = TRUE;
     }
 
@@ -546,19 +558,29 @@ class CmsLayoutCollection
      */
     protected static function _load_from_data($row)
     {
-        $ob = new CmsLayoutCollection();
-        foreach( ['name','description'] as $fld ) {
-            if( !isset($row[$fld]) ) $row[$fld] = '';
+        foreach( [
+            'id' => 0,
+            'name' => '',
+            'dflt' => 0,
+            'description' => '',
+            'created' => 0,
+            'modified' => 0
+            ] as $fld => $val ) {
+            if( !isset($row[$fld]) ) {
+                $row[$fld] = $val;
+            }
+            elseif( $val === '' ) {
+                $row[$fld] = (string)$row[$fld];
+            }
+            else {
+                $row[$fld] = (int)$row[$fld];
+            }
         }
-        $css = [];
-        $tpls = [];
-        if( !empty($row['css']) ) {
-            $css = $row['css'];
-        }
-        if( !empty($row['templates']) ) {
-            $tpls = $row['templates'];
-        }
+        $css = ( !empty($row['css']) ) ? $row['css'] : [];
+        $tpls = ( !empty($row['templates']) ) ? $row['templates'] : [];
         unset($row['css'],$row['templates']);
+
+        $ob = new CmsLayoutCollection();
         $ob->_data = $row;
         if( is_array($css) && count($css) ) $ob->_css_assoc = $css;
         if( is_array($tpls) && count($tpls) ) $ob->_tpl_assoc = $tpls;
