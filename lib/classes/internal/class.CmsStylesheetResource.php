@@ -36,14 +36,14 @@ class CmsStylesheetResource extends CMS_Fixed_Resource_Custom
 
         // if called via function.cms_stylesheet, then this stylesheet should be loaded.
         $obj = CmsLayoutStylesheet::load($name);
+        if( !$obj ) return;
 
         // by now everything should be in memory in the CmsLayoutStylesheet internal cache's
         // put it all together in the order specified.
-        $text = '/* cmsms stylesheet: '.$obj->get_name().' modified: '.\locale_ftime('%x %X',$obj->get_modified()).' */'."\n";
+        $mtime = $obj->get_modified();
+        $text = '/* CMSMS stylesheet: '.$name.' modified: '.\locale_ftime('%x %X', $mtime)." */\n";
         $text .= $obj->get_content();
         if( !endswith($text,"\n") ) $text .= "\n";
-
-        $mtime = $obj->get_modified();
         $source = $text;
     }
 
