@@ -182,12 +182,12 @@ class ContentOperations
 	}
 
 	/**
-	 * Given a content id, load and return the loaded content object.
+	 * Given a content id, load and return the corresponding content object.
 	 *
-	 * @param int $id The id of the content object to load
+	 * @param int $id The numeric id of the content object to load
 	 * @param bool $loadprops Also load the properties of that content object. Defaults to false.
 	 * @param bool $force  @since 2.2.21F2 Whether to always re-generate the content object, ignoring any cache. Defaults to false.
-	 * @return mixed The loaded content object. If nothing is found, returns NULL.
+	 * @return mixed ContentBase | null The loaded content object, if any.
 	 */
 	public function LoadContentFromId($id,$loadprops=false,$force=false)
 	{
@@ -212,11 +212,11 @@ class ContentOperations
 	}
 
 	/**
-	 * Given a content alias, load and return the loaded content object.
+	 * Given a content alias, load and return the corresponding content object.
 	 *
-	 * @param int $alias The alias of the content object to load
-	 * @param bool $only_active If true, only return the object if it's active flag is true. Defaults to false.
-	 * @return ContentBase The loaded content object. If nothing is found, returns NULL.
+	 * @param string $alias The alias of the content object to load
+	 * @param bool $only_active If true, only return the object if its active-flag is true. Defaults to false.
+	 * @return mixed ContentBase | null The loaded content object, if any.
 	 */
 	public function LoadContentFromAlias($alias, $only_active = false)
 	{
@@ -230,9 +230,9 @@ class ContentOperations
 	}
 
 	/**
-	 * Returns the id of the content marked as default.
+	 * Return the cached id of the content marked as default.
 	 *
-	 * @return int The id of the default content page
+	 * @return int The id of the default content page, 0 if no such page
 	 */
 	public function GetDefaultContent()
 	{
