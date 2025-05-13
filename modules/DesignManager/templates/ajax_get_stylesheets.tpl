@@ -11,6 +11,8 @@ $(function() {
     <a id="editcssfilter" accesskey="f" title="{$mod->Lang('prompt_editfilter')}">{admin_icon icon='view.gif' alt=$mod->Lang('prompt_editfilter')} {$mod->Lang('filter')}</a>&nbsp;&nbsp;
  {if $have_css_locks}
     <a id="cssclearlocks" accesskey="l" title="{$mod->Lang('title_clearlocks')}" href="{cms_action_url action='admin_clearlocks' type='stylesheet'}">{admin_icon icon='run.gif' alt=''}&nbsp;{$mod->Lang('prompt_clearlocks')}</a>&nbsp;&nbsp;
+ {elseif !empty($have_css_selflocks)}
+    <a accesskey="l" title="{$mod->Lang('title_clearlocks2')}{if !empty($which_selflocks)} ({$which_selflocks}){/if}" href="{cms_action_url action='admin_clearlocks' type='stylesheet' self=1}">{admin_icon icon='run.gif' alt=''}&nbsp;{$mod->Lang('prompt_clearlocks2')}</a>&nbsp;&nbsp;
  {/if}
  {if $css_filter && $css_filter.design}
     <span style="color:green" title="{$mod->Lang('title_filterapplied')}">{$mod->Lang('filterapplied')}</span>
@@ -44,7 +46,7 @@ $(function() {
         <th title="{$mod->Lang('title_css_designs')}">{$mod->Lang('prompt_design')}</th>
         <th title="{$mod->Lang('title_css_filename')}">{$mod->Lang('prompt_filename')}</th>
         <th class="pageicon"></th>{* edit *}
-        <th class="pageicon"></th>{* copy TODO if addition permitted *}
+        <th class="pageicon"></th>{* copy TODO if item addition permitted *}
         <th class="pageicon"></th>{* delete *}
         <th class="pageicon"><label for="css_selall" style="display:none">{$mod->Lang('title_css_selectall')}</label><input type="checkbox" value="1" id="css_selall" title="{$mod->Lang('title_css_selectall')}"></th>{* multiple *}
       </tr>
@@ -67,8 +69,7 @@ $(function() {
         <td><span class="tooltip" data-cms-description='{$css_tooltip}'>{$css->get_name()}</span></td>
     {/if}
         <td>{$css->get_media()}</td>
-        <td>
-      {$t1=$css->get_designs()}
+        <td>{$t1=$css->get_designs()}
       {if $t1 && count($t1) == 1}
         {$t1=$t1[0]}
         {$hn=$design_names.$t1}
@@ -90,13 +91,12 @@ $(function() {
         <a class="tooltip text-red" data-cms-description="{$tooltip_designs|adjust:'htmlentities'}" title="{$mod->Lang('help_stylesheet_multiple_designs')}">{$mod->Lang('prompt_multiple')} ({count($t1)})
       {/if}
         </td>
-
         <td>
      {if $css->has_content_file()}
        {basename($css->get_content_filename())}
      {/if}
         </td>
-  {if !$css->locked($userid)}
+  {if !$lock_timeout || !$css->locked($userid)}
         <td><a href="{$edit_css}" data-css-id="{$css->get_id()}" class="edit_css" title="{$mod->Lang('edit_stylesheet')}">{admin_icon icon='edit.gif' title=$mod->Lang('edit_stylesheet')}</a></td>
         <td><a href="{$copy_css}" title="{$mod->Lang('copy_stylesheet')}">{admin_icon icon='copy.gif' title=$mod->Lang('copy_stylesheet')}</a></td>{*TODO if addition permitted*}
         <td><a href="{$delete_css}" title="{$mod->Lang('delete_stylesheet')}">{admin_icon icon='delete.gif' title=$mod->Lang('delete_stylesheet')}</a></td>
@@ -106,10 +106,9 @@ $(function() {
         </td>
   {else}
         <td>
- {$lock=$css->get_lock()}
- {if $lock.expires < $smarty.now}
+   {$lock=$css->get_lock()}{if $lock.expires < $smarty.now}
           <a href="{$edit_css}" data-css-id="{$css->get_id()}" accesskey="e" class="steal_css_lock">{admin_icon icon='permissions.gif' class='edit_css steal_css_lock' title=$mod->Lang('prompt_steal_lock')}</a>
- {/if}
+   {/if}
         </td>
         <td></td>
         <td></td>

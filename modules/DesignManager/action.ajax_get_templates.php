@@ -53,8 +53,26 @@ try {
         $tpl->assign('list_all_types',[]);
     }
 
-    $locks = CmsLockOperations::get_locks('template',$userid);
-    $tpl->assign('have_tpl_locks',($locks && is_array($locks))); //lock(s) held by other user(s)
+    $locks = CmsLockOperations::get_locks('template',0,$userid); //lock(s) held by other users
+    $have_locks = $locks && is_array($locks);
+    $locks = CmsLockOperations::get_locks('template',$userid); //lock(s) held by current user
+    if( $locks && is_array($locks) ) {
+        // grab id's for Smarty tip
+        $tmp = [];
+        foreach( $locks as $obj ) {
+            $tmp[] = $obj['oid'];
+        }
+        sort($tmp,SORT_NUMERIC);
+        $itemids = $this->Lang('prompt_id').'='.implode(',',$tmp); // for tooltip
+        $self_locks = true;
+    }
+    else {
+        $self_locks = false;
+    }
+
+    $tpl->assign('have_tpl_locks',$have_locks);
+    $tpl->assign('have_tpl_selflocks',$self_locks);
+    if( $self_locks ) { $tpl->assign('which_selflocks',$itemids); }
     $tpl->assign('lock_timeout',$this->GetPreference('lock_timeout'));
     $tpl->assign('coretypename',CmsLayoutTemplateType::CORE);
     $tpl->assign('manage_templates',$this->CheckPermission('Modify Templates'));

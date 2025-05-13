@@ -242,18 +242,11 @@ $(function() {
 {if $has_manage_right}
   {tab_start name='advanced'}
     <div class="pageoverflow">{$tval=$template->get_listable()}
-{if $type_is_readonly}
-      <input type="hidden" name="{$actionid}listable" value="{$tval}">
-{/if}
       <p class="pagetext"><label for="tpl_listable">{$mod->Lang('prompt_listable')}:</label>&nbsp;{cms_help key2=help_template_listable title=$mod->Lang('prompt_listable')}</p>
       <p class="pageinput">
-{if $type_is_readonly}
-        <span id="tpl_listable">{if $tval}{$mod->Lang('yes')}{else}{$mod->Lang('no')}{/if}</span>
-{else}
         <select id="tpl_listable" name="{$actionid}listable">
           {cms_yesno selected=$tval}
         </select>
-{/if}
       </p>
     </div>
     {if !empty($type_list)}
@@ -274,18 +267,11 @@ $(function() {
       </div>
       {if $type_obj->get_dflt_flag()}
       <div class="pageoverflow">{$tval=$template->get_type_dflt()}
-{if $type_is_readonly}
-        <input type="hidden" name="{$actionid}default" value="{$tval}">
-{/if}
         <p class="pagetext"><label for="tpl_dflt">{$mod->Lang('prompt_default')}:</label>&nbsp;{cms_help key2=help_template_dflt title=$mod->Lang('prompt_default')}</p>
         <p class="pageinput"{if $tval} id="tpl_dflt"{/if}>
-{if $type_is_readonly}
-          {if $tval}{$mod->Lang('yes')}{else}{$mod->Lang('no')}{/if}
-{else}
           <select id="tpl_dflt" name="{$actionid}default">
             {cms_yesno selected=$tval}
           </select>
-{/if}
         </p>
       </div>
       {/if}

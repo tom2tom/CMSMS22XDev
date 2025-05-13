@@ -15,6 +15,8 @@ $(function() {
     <a id="edittplfilter" accesskey="f" title="{$mod->Lang('prompt_editfilter')}">{admin_icon icon='view.gif' alt=$mod->Lang('prompt_editfilter')}&nbsp;{$mod->Lang('filter')}</a>&nbsp;&nbsp;
   {if $have_tpl_locks}
     <a id="clearlocks" accesskey="l" title="{$mod->Lang('title_clearlocks')}" href="{cms_action_url action='admin_clearlocks' type='template'}">{admin_icon icon='run.gif' alt=''}&nbsp;{$mod->Lang('prompt_clearlocks')}</a>&nbsp;&nbsp;
+ {elseif !empty($have_tpl_selflocks)}
+    <a accesskey="l" title="{$mod->Lang('title_clearlocks2')}{if !empty($which_selflocks)} ({$which_selflocks}){/if}" href="{cms_action_url action='admin_clearlocks' type='template' self=1}">{admin_icon icon='run.gif' alt=''}&nbsp;{$mod->Lang('prompt_clearlocks2')}</a>&nbsp;&nbsp;
   {/if}
   {if !empty($tpl_filter[0])}
     <span style="color:green" title="{$mod->Lang('title_filterapplied')}">{$mod->Lang('filterapplied')}</span>
@@ -80,28 +82,26 @@ $(function() {
         {if !empty($list_types)}<span class="tooltip" data-cms-description='{$tpltype_tooltip}'>{$list_types.$type_id}</span>{/if}
       </td>
       {* design column *}
-      <td>
-        {$t1=$template->get_designs()}
-        {if count($t1) == 1}
+      <td>{$t1=$template->get_designs()}
+      {if count($t1) == 1}
           {$t1=$t1[0]}
-          {$hn=$design_names.$t1}
-          {if $manage_designs}
+       {if $manage_designs}
         {cms_action_url action=admin_edit_design design=$t1 assign='edit_design_url'}
-        <a href="{$edit_design_url}" title="{$mod->Lang('edit_design')}">{$hn}</a>
-          {else}
-        {$hn}
-          {/if}
-        {elseif count($t1) == 0}
-          <span title="{$mod->Lang('help_template_no_designs')}">{$mod->Lang('prompt_none')}</span>
-           {else}
-          <span title="{$mod->Lang('help_template_multiple_designs')}">{$mod->Lang('prompt_multiple')} ({count($t1)})</span>
-        {/if}
+        <a href="{$edit_design_url}" title="{$mod->Lang('edit_design')}">{$design_names.$t1}</a>
+       {else}
+        {$design_names.$t1}
+       {/if}
+      {elseif count($t1) == 0}
+        <span title="{$mod->Lang('help_template_no_designs')}">{$mod->Lang('prompt_none')}</span>
+      {else}
+        <span title="{$mod->Lang('help_template_multiple_designs')}">{$mod->Lang('prompt_multiple')} ({count($t1)})</span>
+      {/if}
       </td>
       {* filename column *}
       <td>
-         {if $template->has_content_file()}
-           {basename($template->get_content_filename())}
-         {/if}
+      {if $template->has_content_file()}
+        {basename($template->get_content_filename())}
+      {/if}
       </td>
       {* default column *}
       <td>
@@ -117,17 +117,16 @@ $(function() {
         {/if}{/if}
       </td>
       {* edit/copy icons, or steal icons *}
-    {if !$lock_timeout || !$template->locked()}
+    {if !$lock_timeout || !$template->locked($userid)}
       <td><a href="{$edit_tpl}" data-tpl-id="{$template->get_id()}" class="edit_tpl" title="{$mod->Lang('edit_template')}">{admin_icon icon='edit.gif' title=$mod->Lang('prompt_edit')}</a></td>
-      {if $has_add_right}
+     {if $has_add_right}
       <td><a href="{$copy_tpl}" title="{$mod->Lang('copy_template')}">{admin_icon icon='copy.gif' title=$mod->Lang('prompt_copy_template')}</a></td>
-      {/if}
+     {/if}
     {else}
       <td>
-       {$lock=$template->get_lock()}
-       {if $lock.expires < $smarty.now}
+     {$lock=$template->get_lock()}{if $lock.expires < $smarty.now}
         <a href="{$edit_tpl}" data-tpl-id="{$template->get_id()}" accesskey="e" class="steal_tpl_lock">{admin_icon icon='permissions.gif' class='edit_tpl steal_tpl_lock' title=$mod->Lang('prompt_steal_lock')}</a>
-       {/if}
+     {/if}
       </td>
       {if $has_add_right}<td></td>{/if}
     {/if}
