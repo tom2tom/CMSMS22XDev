@@ -48,23 +48,34 @@ class CmsLayoutStylesheet
 
 	/**
 	 * @ignore
+	 * @internal should be private but _load_from_data expects public
 	 */
-	private $_data = array();
+	public $_data = [
+	'id' => 0,
+	'name' => '',
+	'content' => '',
+	'description' => '',
+	'media_type' => [], //TODO can it be a single-type string ?
+	'media_query' => '',
+	'created' => 0,
+	'modified' => 0,
+	];
+
+	/**
+	 * @ignore
+	 * @internal should be private but _load_from_data expects public
+	 */
+	public $_design_assoc;
 
 	/**
 	 * @ignore
 	 */
-	private $_design_assoc;
+	private static $_name_cache = [];
 
 	/**
 	 * @ignore
 	 */
-	private static $_name_cache = array();
-
-	/**
-	 * @ignore
-	 */
-	private static $_css_cache = array();
+	private static $_css_cache = [];
 
 	/**
 	 * @ignore
@@ -81,7 +92,10 @@ class CmsLayoutStylesheet
 	 */
 	public function __clone()
 	{
-		if( isset($this->_data['id']) ) unset($this->_data['id']);
+		$this->_data['id'] = 0;
+		if( $this->_data['name'] ) $this->_data['name'] .= ' Copy';
+		$this->_data['created'] = 0;
+		$this->_data['modified'] = 0;
 		$this->_dirty = TRUE;
 	}
 
@@ -92,8 +106,7 @@ class CmsLayoutStylesheet
 	 */
 	public function get_id()
 	{
-		if( isset($this->_data['id']) ) return (int)$this->_data['id'];
-		return 0;
+		return (int)$this->_data['id'];
 	}
 
 	/**
@@ -103,8 +116,7 @@ class CmsLayoutStylesheet
 	 */
 	public function get_name()
 	{
-		if( isset($this->_data['name']) ) return $this->_data['name'];
-		return '';
+		return (string)$this->_data['name'];
 	}
 
 	/**
@@ -129,8 +141,7 @@ class CmsLayoutStylesheet
 	 */
 	public function get_content()
 	{
-		if( isset($this->_data['content']) ) return $this->_data['content'];
-		return '';
+		return (string)$this->_data['content'];
 	}
 
 	/**
@@ -141,7 +152,7 @@ class CmsLayoutStylesheet
 	 */
 	public function set_content($str)
 	{
-		$str = trim($str);
+		$str = trim((string)$str);
 		if( !$str ) throw new CmsInvalidDataException('Template content cannot be empty');
 		$this->_data['content'] = $str;
 		$this->_dirty = TRUE;
@@ -154,8 +165,7 @@ class CmsLayoutStylesheet
 	 */
 	public function get_description()
 	{
-		if( isset($this->_data['description']) ) return $this->_data['description'];
-		return '';
+		return (string)$this->_data['description'];
 	}
 
 	/**
@@ -165,8 +175,7 @@ class CmsLayoutStylesheet
 	 */
 	public function set_description($str)
 	{
-		$str = trim($str);
-		$this->_data['description'] = $str;
+		$this->_data['description'] = trim((string)$str);
 		$this->_dirty = TRUE;
 	}
 
@@ -180,8 +189,7 @@ class CmsLayoutStylesheet
 	 */
 	public function get_media_types()
 	{
-		if( isset($this->_data['media_type']) ) return $this->_data['media_type'];
-		return [];
+		return (array)$this->_data['media_type'];
 	}
 
 	/**
@@ -194,11 +202,8 @@ class CmsLayoutStylesheet
 	 */
 	public function has_media_type($str)
 	{
-		$str = trim($str);
-		if( $str && isset($this->_data['media_type']) ) {
-			if( in_array($str,$this->_data['media_type']) ) return TRUE;
-		}
-		return FALSE;
+		$str = trim((string)$str);
+		return $str && in_array($str,$this->_data['media_type']);
 	}
 
 	/**
@@ -248,8 +253,7 @@ class CmsLayoutStylesheet
 	 */
 	public function get_media_query()
 	{
-		if( isset($this->_data['media_query']) ) return $this->_data['media_query'];
-		return '';
+		return (string)$this->_data['media_query'];
 	}
 
 	/**
@@ -260,8 +264,7 @@ class CmsLayoutStylesheet
 	 */
 	public function set_media_query($str)
 	{
-		$str = trim($str);
-		$this->_data['media_query'] = $str;
+		$this->_data['media_query'] = trim((string)$str);
 		$this->_dirty = TRUE;
 	}
 
@@ -273,7 +276,7 @@ class CmsLayoutStylesheet
 	 */
 	public function get_media()
 	{
-		$type = (isset($this->_data['media_query'])) ? $this->_data['media_query'] : '';
+		$type = (string)$this->_data['media_query'];
 		if( $type ) { //e.g. @media screen and (min-device-width: 500px) { ...
 			$p = strpos($type, '{');
 			if( $p !== FALSE ) {
@@ -285,7 +288,7 @@ class CmsLayoutStylesheet
 			}
 		}
 		if( !$type ) {
-			$mt = (isset($this->_data['media_type'])) ? $this->_data['media_type'] : [];
+			$mt = $this->_data['media_type'];
 			if( $mt ) {
 				if( is_array($mt) ) {
 					array_walk($mt, function(&$val) { $val = ($val) ? ucfirst($val) : null; });
@@ -305,23 +308,21 @@ class CmsLayoutStylesheet
 	/**
 	 * Get the timestamp representing when this stylesheet was first saved to the database
 	 *
-	 * @return int
+	 * @return int maybe 0
 	 */
 	public function get_created()
 	{
-		if( isset($this->_data['created']) ) return $this->_data['created'];
-		return 0;
+		return (int)$this->_data['created'];
 	}
 
 	/**
 	 * Get the timestamp representing when this stylesheet was last saved to the database
 	 *
-	 * @return int
+	 * @return int maybe 0
 	 */
 	public function get_modified()
 	{
-		if( isset($this->_data['modified']) ) return $this->_data['modified'];
-		return 0;
+		return (int)$this->_data['modified'];
 	}
 
 
@@ -357,7 +358,7 @@ class CmsLayoutStylesheet
 		if( !is_array($x) ) return;
 
 		foreach( $x as $y ) {
-			if( !is_numeric($y) || (int)y < 1 ) throw new CmsInvalidDataException('Invalid data in design list.  Expect array of integers');
+			if( !is_numeric($y) || (int)$y < 1 ) throw new CmsInvalidDataException('Invalid data in design list.  Expect array of integers');
 		}
 
 		$this->_design_assoc = $x;
@@ -434,6 +435,41 @@ class CmsLayoutStylesheet
 	}
 
 	/**
+	 * Get the content of this stylesheet after processing it via Smarty
+	 * @since 2.2.22F2
+	 *
+	 * @return string
+	 */
+	public function process()
+	{
+		$sid = $this->get_id();
+		if( $sid > 0 ) {
+			$smarty = Smarty_CMS::get_instance();
+			return $smarty->fetch('cms_stylesheet:id='.$sid);
+		}
+		return '';
+	}
+
+	/**
+	 * Get the content of a named stylesheet after processing it via Smarty
+	 * @since 2.2.22F2
+	 *
+	 * @param string $name
+	 * @return string
+	 */
+	public static function process_by_name($name)
+	{
+		if( $name ) {
+			return \Smarty_CMS::get_instance()->fetch('cms_stylesheet:name='.$name);
+		}
+		$sid = $this->get_id();
+		if( $sid > 0 ) {
+			return \Smarty_CMS::get_instance()->fetch('cms_stylesheet:id='.$sid);
+		}
+		return '';
+	}
+
+	/**
 	 * Validate this stylesheet for suitability for saving to the database
 	 * Stylesheet objects must have a valid name (only certain characters accepted, and must have at least some css content)
 	 *
@@ -478,11 +514,11 @@ class CmsLayoutStylesheet
 			' SET name = ?, content = ?, description = ?, media_type = ?, media_query = ?, modified = ?
 WHERE id = ?';
 		$tmp = '';
-		if( isset($this->_data['media_type']) ) $tmp = implode(',',$this->_data['media_type']);
+		if( $this->_data['media_type'] ) $tmp = implode(',',$this->_data['media_type']);
 		$db = CmsApp::get_instance()->GetDb();
-		$dbr = $db->Execute($query,array($this->get_name(),$this->get_content(),$this->get_description(),
-										 $tmp,$this->get_media_query(),time(), $sid));
-		if( !$dbr ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
+		$db->Execute($query,array($this->get_name(),$this->get_content(),$this->get_description(),
+								 $tmp,$this->get_media_query(),time(),$sid)); //return value unreliable after UPDATE
+		if( $db->ErrorNo() != 0 ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
 
 		// get the designs that have this stylesheet from the database again.
 		$query = 'SELECT design_id FROM '.CMS_DB_PREFIX.CmsLayoutCollection::CSSTABLE.' WhERE css_id = ?';
@@ -508,10 +544,10 @@ WHERE id = ?';
 			foreach( $del_dl as $design_id ) {
 				$design_id = (int)$design_id;
 				$item_order = (int)$db->GetOne($query1,array($sid,$design_id));
-				$dbr = $db->Execute($query2,array($design_id,$item_order));
-				if( !$dbr ) dir($db->sql.' '.$db->ErrorMsg());
+				$dbr = $db->Execute($query2,array($design_id,$item_order)); //TODO unreliable return value after UPDATE call Affected_Rows() and/or ErrorNo()
+				if( !$dbr ) { throw new CmsSQLErrorException($db->sql.' '.$db->ErrorMsg()); }
 				$dbr = $db->Execute($query3,array($design_id,$sid));
-				if( !$dbr ) dir($db->sql.' '.$db->ErrorMsg());
+				if( !$dbr ) die($db->sql.' '.$db->ErrorMsg());
 			}
 		}
 
@@ -523,7 +559,7 @@ WHERE id = ?';
 				$one = (int)$one;
 				$num = (int)$db->GetOne($query1,array($one))+1;
 				$dbr = $db->Execute($query2,array($one,$num));
-				if( !$dbr ) die($db->sql.' -- '.$db->ErrorMsg()); //TODO throw
+				if( !$dbr ) { throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg()); }
 			}
 		}
 
@@ -541,14 +577,15 @@ WHERE id = ?';
 		$this->validate();
 
 		// insert the record
+		$now = time();
 		$tmp = '';
-		if( isset($this->_data['media_type']) ) $tmp = implode(',',$this->_data['media_type']);
+		if( $this->_data['media_type'] ) $tmp = implode(',',$this->_data['media_type']);
 		$query = 'INSERT INTO '.CMS_DB_PREFIX.self::TABLENAME.
 			' (name,content,description,media_type,media_query,created,modified)
 VALUES (?,?,?,?,?,?,?)';
 		$db = CmsApp::get_instance()->GetDb();
 		$dbr = $db->Execute($query, array($this->get_name(),$this->get_content(),$this->get_description(),
-										  $tmp,$this->get_media_query(), time(),time()));
+										  $tmp,$this->get_media_query(),$now,$now));
 		if( !$dbr ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
 		$this->_data['id'] = $db->Insert_ID();
 		$sid = (int)$this->_data['id'];
@@ -618,7 +655,7 @@ VALUES (?,?,?,?,?,?,?)';
 		audit($sid,'Stylesheet',"Deleted: {$this->get_name()}");
 		// Events::SendEvent('Core','DeleteStylesheetPost',array(get_class($this)=>&$this));
 		HookManager::do_hook('Core::DeleteStylesheetPost',array(get_class($this)=>&$this));
-		unset($this->_data['id']);
+		$this->_data['id'] = 0;
 		$this->_dirty = TRUE;
 	}
 
@@ -689,11 +726,27 @@ VALUES (?,?,?,?,?,?,?)';
 	 */
 	private static function _load_from_data($row,$design_list = [])
 	{
-		$ob = new CmsLayoutStylesheet();
-		foreach( ['name','content','description','media_type','media_query'] as $fld ) {
-			if( !isset($row[$fld]) ) $row[$fld] = '';
+		foreach( [
+		'id' => 0,
+		'name' => '',
+		'content' => '',
+		'description' => '',
+		'media_type' => '', //comma-separated names
+		'media_query' => '',
+		'created' => 0,
+		'modified' => 0] as $fld => $val) {
+			if( !isset($row[$fld]) ) {
+				$row[$fld] = $val;
+			}
+			elseif( $val === '' ) {
+				$row[$fld] = (string)$row[$fld];
+			}
+			else {
+				$row[$fld] = (int)$row[$fld];
+			}
 		}
 		$row['media_type'] = explode(',',$row['media_type']);
+		$ob = new self();
 		$ob->_data = $row;
 		$fn = $ob->get_content_filename();
 		if( is_file($fn) && is_readable($fn) ) {
