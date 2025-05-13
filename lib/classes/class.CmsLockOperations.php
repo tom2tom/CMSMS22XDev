@@ -73,7 +73,7 @@ final class CmsLockOperations
   }
 
   /**
-   * Delete any lock of the specified type and id and that matches the 
+   * Delete any lock of the specified type and id and that matches the
    * current user's UID
    *
    * @param int $lock_id The lock identifier
@@ -149,20 +149,26 @@ final class CmsLockOperations
   }
 
   /**
-   * Get all locks of the specified type, or all such locks held by
-   * users other than the specified UID
+   * Get all locks of the specified type, or all such locks held by the
+   * specified UID or by users other than the specified UID
    *
    * @param string $type The type of locked object
-   * @param int $notfor since 2.2.22F2 Optional UID whose locks are to be ignored 
+   * @param int $heldby since 2.2.22F2 Optional UID whose locks are to be identified
+   * @param int $notby since 2.2.22F2 Optional UID whose locks are to be ignored
+   * @return array CmsLock object(s) or empty
    */
-  public static function get_locks($type,$notfor = 0)
+  public static function get_locks($type,$heldby = 0,$notby = 0)
   {
     $db = CmsApp::get_instance()->GetDb();
     $query = 'SELECT * FROM '.CMS_DB_PREFIX.CmsLock::LOCK_TABLE.' WHERE type = ?';
     $parms = array($type);
-    if( $notfor > 0 ) {
+    if( $heldby > 0 ) {
+      $query .= ' AND uid = ?';
+      $parms[] = (int)$heldby;
+    }
+    elseif( $notby > 0 ) {
       $query .= ' AND uid != ?';
-      $parms[] = (int)$notfor;
+      $parms[] = (int)$notby;
     }
     $dbr = $db->GetArray($query,$parms);
     if( !$dbr ) return [];
