@@ -37,22 +37,31 @@ class CmsLayoutTemplateCategory
     /**
      * @ignore
      */
-    private $_dirty;
+    private $_dirty = FALSE;
 
     /**
      * @ignore
+     * @internal should be private but _load_from_data needs public
      */
-    private $_data = array();
+    public $_data = [
+     'id' => 0,
+     'name' => '',
+     'description' => '',
+     'item_order' => 0,
+     'modified' => 0
+    ];
+
+    // no cloning for this object
+    private function __clone() {}
 
     /**
      * Get the category id
      *
-     * @return int
+     * @return int category id or 0 if this object has no id.
      */
     public function get_id()
     {
-        if( isset($this->_data['id']) ) return $this->_data['id'];
-        return 0;
+        return (int)$this->_data['id'];
     }
 
     /**
@@ -62,8 +71,7 @@ class CmsLayoutTemplateCategory
      */
     public function get_name()
     {
-        if( isset($this->_data['name']) ) return $this->_data['name'];
-        return '';
+        return (string)$this->_data['name'];
     }
 
     /**
@@ -76,7 +84,7 @@ class CmsLayoutTemplateCategory
      */
     public function set_name($str)
     {
-        $str = trim($str);
+        $str = trim((string)$str);
         if( !$str ) throw new CmsInvalidDataException('Name cannot be empty');
         if( !CmsAdminUtils::is_valid_itemname($str) ) {
             throw new CmsInvalidDataException('Invalid characters in name');
@@ -92,31 +100,28 @@ class CmsLayoutTemplateCategory
      */
     public function get_description()
     {
-        if( isset($this->_data['description']) ) return $this->_data['description'];
-        return '';
+        return (string)$this->_data['description'];
     }
 
     /**
      * Set the category description
      *
-     * @param string $str The description
+     * @param string $str The description, maybe empty
      */
     public function set_description($str)
     {
-        // description is allowed to be empty.
-        $str = trim($str);
-        $this->_data['description'] = $str;
+        $this->_data['description'] = trim((string)$str);
         $this->_dirty = TRUE;
     }
 
     /**
      * Get the category order
      *
-     * @return int
+     * @return int possibly 0
      */
     public function get_item_order()
     {
-        if( isset($this->_data['item_order']) ) return $this->_data['item_order'];
+        if( isset($this->_data['item_order']) ) return (int)$this->_data['item_order'];
         return 0;
     }
 
@@ -124,7 +129,7 @@ class CmsLayoutTemplateCategory
      * Set the item order.
      *
      * The item order must be unique and incremental
-     * no validation is done on the item order in this method.
+     * Only '> 0' validation is done in this method.
      *
      * @param int $idx
      */
@@ -138,14 +143,13 @@ class CmsLayoutTemplateCategory
     }
 
     /**
-     * Get the date that this category was last saved to the database
+     * Get the timestamp representing when this category was last saved to the database
      *
-     * @return int The unix timestamp from the database
+     * @return int possibly 0
      */
     public function get_modified()
     {
-        if( isset($this->_data['modified']) ) return $this->_data['modified'];
-        return 0;
+        return (int)$this->_data['modified'];
     }
 
     /**
@@ -208,11 +212,11 @@ class CmsLayoutTemplateCategory
 
         $db = cmsms()->GetDb();
         $query = 'UPDATE '.CMS_DB_PREFIX.self::TABLENAME.' SET name = ?, description = ?, item_order = ?, modified = ? WHERE id = ?';
-        $dbr = $db->Execute($query,array($this->get_name(),
-                                         $this->get_description(),
-                                         $this->get_item_order(),
-                                         time(),(int)$this->get_id()));
-        if( !$dbr ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
+        $db->Execute($query,array($this->get_name(),
+                                  $this->get_description(),
+                                  $this->get_item_order(),
+                                  time(),(int)$this->get_id()));
+        if( $db->Affected_Rows() != 1 || $db->ErrorNo() != 0 ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
         $this->_dirty = FALSE;
         audit($this->get_id(),'Template category',"Updated: {$this->get_name()}");
     }
@@ -224,7 +228,7 @@ class CmsLayoutTemplateCategory
      */
     public function save()
     {
-        if( !$this->get_id() ) return $this->_insert();
+        if( $this->get_id() == 0 ) return $this->_insert();
         return $this->_update();
     }
 
@@ -246,11 +250,11 @@ class CmsLayoutTemplateCategory
         if( !$dbr ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
 
         $query = 'UPDATE '.CMS_DB_PREFIX.self::TABLENAME.' SET item_order = item_order - 1 WHERE item_order > ?';
-        $dbr = $db->GetOne($query,array($this->_data['item_order']));
+        $db->Execute($query,array($this->_data['item_order']));
 
         audit($this->get_id(),'Template category',"Deleted: {$this->get_name()}");
-        unset($this->_data['item_order']);
-        unset($this->_data['id']);
+        $this->_data['item_order'] = 0;
+        $this->_data['id'] = 0;
         $this->_dirty = TRUE;
     }
 
@@ -259,10 +263,24 @@ class CmsLayoutTemplateCategory
      */
     private static function _load_from_data($row)
     {
-        $ob = new self();
-        foreach( ['name','description','item_order'] as $fld ) {
-            if( !isset($row[$fld]) ) $row[$fld] = '';
+        foreach( [
+         'id' => 0,
+         'name' => '',
+         'description' => '',
+         'item_order' => 0,
+         'modified' => 0
+        ] as $fld => $val ) {
+            if( !isset($row[$fld]) ) {
+                $row[$fld] = $val;
+            }
+            elseif( $val === '' ) {
+                $row[$fld] = (string)$row[$fld];
+            }
+            else {
+                $row[$fld] = (int)$row[$fld];
+            }
         }
+        $ob = new self();
         $ob->_data = $row;
         return $ob;
     }
