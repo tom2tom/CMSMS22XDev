@@ -62,7 +62,10 @@ abstract class wizard_step extends parent_step
       }
       return $str;
   }
-
+/* TODO Warnings: bogus ?
+ Cannot modify header information - headers already sent by (output started at path to/installer/lib/classes/base/class.session.php:78)
+ in path to /installer/app/lib/class.wizard_step.php on line 70
+*/
   protected function display()
   {
       header('Content-Type:text/html; charset=UTF-8');
