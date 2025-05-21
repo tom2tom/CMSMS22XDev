@@ -220,8 +220,10 @@ if( is_array($options) && count($options) ) {
 
 $svn_url = $repos_root;
 if( !$repos_branch ) {
-    // attempt to get repository branch from cwd.
-    $repos_branch = get_svn_branch();
+    echo "WARNING: Repository branch not available, upstream sources N/A\n";
+    $repos_branch = '';
+    // dodgy attempt to get repository branch from cwd.
+    //$repos_branch = get_svn_branch();
 }
 $svn_url = "$repos_root/$repos_branch";
 
@@ -285,6 +287,7 @@ function export_source_files()
 }
 
 //this function seems useless ATM, and perhaps always so (formerly, no $svn_url)
+//and sometimes hangs e.g. repo down
 function get_svn_branch()
 {
     global $svn_url;
