@@ -88,9 +88,8 @@ class CmsLayoutStylesheet
 
 	/**
 	 * Get the unique id of this stylesheet
-	 * will return null if this stylesheet has not yet been saved to the database.
 	 *
-	 * @return int
+	 * @return int 0 if this stylesheet has not yet been saved to the database.
 	 */
 	public function get_id()
 	{
@@ -470,9 +469,9 @@ class CmsLayoutStylesheet
 				$design_id = (int)$design_id;
 				$item_order = (int)$db->GetOne($query1,array($this->get_id(),$design_id));
 				$dbr = $db->Execute($query2,array($design_id,$item_order));
-				if( !$dbr ) dir($db->sql.' '.$db->ErrorMsg());
+				if( !$dbr ) { throw new CmsSQLErrorException($db->sql.' '.$db->ErrorMsg()); }
 				$dbr = $db->Execute($query3,array($design_id,$this->get_id()));
-				if( !$dbr ) dir($db->sql.' '.$db->ErrorMsg());
+				if( !$dbr ) { throw new CmsSQLErrorException($db->sql.' '.$db->ErrorMsg()); }
 			}
 		}
 
