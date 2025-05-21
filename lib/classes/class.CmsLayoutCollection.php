@@ -76,7 +76,7 @@ class CmsLayoutCollection
 
     /**
      * Get the theme id
-     * Only themes that have been saved to the database have an id.
+     * Only themes that have been saved to the database have an id > 0.
      * @return int
      */
     public function get_id()
