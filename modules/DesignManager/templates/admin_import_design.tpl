@@ -15,7 +15,7 @@ $(function() {
 <div class="pageoverflow">
   <p class="pagetext"><label for="import_xml_file">{$mod->Lang('prompt_import_xml_file')}:</label> {cms_help key2='help_import_xml_file' title=$mod->Lang('prompt_import_xml_file')}</p>
   <p class="pageinput">
-    <input type="file" id="import_xml_file" name="{$actionid}import_xml_file" size="50">
+    <input type="file" id="import_xml_file" name="{$actionid}import_xml_file" size="50" accept="text/xml">
   </p>
 </div>
 <br>
