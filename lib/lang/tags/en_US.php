@@ -833,22 +833,39 @@ $lang['help_function_page_warning'] = <<<'EOT'
 <pre><code>{page_warning msg='Something smells fishy'}</code></pre>
 EOT;
 
-$lang['help_function_themes_url'] = <<<'EOT'
+$lang['help_function_assets_root'] = <<<'EOT'
 <h3>What does this do?</h3>
-<p>Prints the url representing the topmost location at the site for frontend-themes data.</p>
+<p>Prints the URL or filepath representing the topmost location at the site for storing resources which supplement core functionality.</p>
 <h3>How do I use it?</h3>
-<p>Just insert the tag into your template/page like: <code>{themes_url}</code></p>
+<p>Just insert the tag into your template/page like: <code>{assets_root}</code></p>
 <h3>What parameters does it take?</h3>
-<p><em>(optional)</em> assign (string) - Assign the results to a smarty variable with that name.</p>
+<ul>
+ <li>path - <em>(optional) mixed</em> - a value understood by cms_to_bool() Whether to display the filepath intead of URL.</li>
+ <li>rel - <em>(optional) mixed</em> - a value understood by cms_to_bool() Whether to display the site-root-relative value instead of absolute.</li>
+ <li>assign - <em>(optional) string</em> - Assign the output to a Smarty variable with that name.</li>
+</ul>
+EOT;
+
+$lang['help_function_themes_root'] = <<<'EOT'
+<h3>What does this do?</h3>
+<p>Prints the URL or filepath representing the topmost location at the site for storing frontend-themes data.</p>
+<h3>How do I use it?</h3>
+<p>Just insert the tag into your template/page like: <code>{themes_root}</code></p>
+<h3>What parameters does it take?</h3>
+<ul>
+ <li>path - <em>(optional) mixed</em> - a value understood by cms_to_bool() Whether to display the filepath intead of URL.</li>
+ <li>rel - <em>(optional) mixed</em> - a value understood by cms_to_bool() Whether to display the site-root-relative value instead of absolute.</li>
+ <li>assign - <em>(optional) string</em> - Assign the output to a Smarty variable with that name.</li>
+</ul>
 EOT;
 
 $lang['help_function_uploads_url'] = <<<'EOT'
 <h3>What does this do?</h3>
-<p>Prints the url representing the topmost location at the site for uploaded data.</p>
+<p>Prints the URL representing the topmost location at the site for storing uploaded data.</p>
 <h3>How do I use it?</h3>
 <p>Just insert the tag into your template/page like: <code>{uploads_url}</code></p>
 <h3>What parameters does it take?</h3>
-<p><em>(optional)</em> assign (string) - Assign the results to a smarty variable with that name.</p>
+<p><em>(optional)</em> assign (string) - Assign the results to a Smarty variable with that name.</p>
 EOT;
 
 $lang['help_function_embed'] = <<<'EOT'
@@ -1078,12 +1095,12 @@ $lang['help_function_cms_jquery'] = <<<'EOT'
 <h3>How do I use it?</h3>
 <p>Insert this tag into your page or template: <code>{cms_jquery}</code></p>
 <h3>Sample</h3>
-<pre><code>{cms_jquery cdn='true' exclude='jquery-ui' append='uploads/NCleanBlue/js/ie6fix.js' include_css=0}</code></pre>
+<pre><code>{cms_jquery cdn='true' exclude='jquery-ui' append="{themes_root rel=1}/NCleanBlue/js/ie6fix.js" include_css=0}</code></pre>
 <h4><em>Outputs</em></h4>
 <pre><code>&lt;script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"&gt;&lt;/script&gt;
 &lt;script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"&gt;&lt;/script&gt;
 &lt;script src="http://localhost/1.10.x/lib/jquery/js/jquery.json-2.4.js"&gt;&lt;/script&gt;
-&lt;script src="uploads/NCleanBlue/js/ie6fix.js"&gt;&lt;/script&gt;
+&lt;script src="{themes_root}/NCleanBlue/js/ie6fix.js"&gt;&lt;/script&gt;
 </code></pre>
 <h3>Known Scripts</h3>
 <ul>
