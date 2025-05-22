@@ -31,12 +31,13 @@ $lang['desc_wizard_step6'] = 'For new install, enter some basic site details';
 $lang['desc_wizard_step7'] = 'Extract files';
 $lang['desc_wizard_step8'] = 'Create or update the database schema, write or rewrite the config file, set initial events, permissions, user accounts, templates, stylesheets and content';
 $lang['desc_wizard_step9'] = 'Install and/or upgrade modules as necessary, clean up';
-$lang['destination_directory'] = 'Destination Directory';
 $lang['dest_writable'] = 'Write permission in destination directory';
+$lang['destination_directory'] = 'Destination Directory';
 $lang['disable_functions'] = 'Checking disabled functions';
 $lang['done'] = 'Done';
 
 # E
+$lang['edeprecated_enabled'] = 'E_DEPRECATED is enabled in PHP\'s error_reporting. Although this will not prevent CMSMS from operating, it might result in warnings being displayed in the output screen, particularly arising from older non-core modules';
 $lang['email_accountinfo_message'] = <<<EOT
 Installation of your CMS Made Simple website is complete.
 
@@ -119,11 +120,11 @@ $lang['error_invalidconfig'] = 'Error in the config file, or config file missing
 $lang['error_invaliddbpassword'] = 'Database password contains invalid characters that cannot be safely saved.';
 $lang['error_invalidkey'] = 'Invalid member variable or key %s for class %s';
 $lang['error_invalidparam'] = 'Invalid parameter or value for parameter: %s';
-$lang['error_invalidtimezone'] = 'The timezone specified is invalid';
 $lang['error_invalidqueryvar'] = 'The query variable entered contains invalid characters. Please use only alphanumerics and underscore.';
+$lang['error_invalidtimezone'] = 'The timezone specified is invalid';
 $lang['error_missingconfigvar'] = 'The key &quot;%s&quot; is either missing or invalid in the config.ini file';
-$lang['error_noarchive'] = 'Problem finding archive file. Please restart';
 $lang['error_nlsnotfound'] = 'Problem finding NLS files in sources archive';
+$lang['error_noarchive'] = 'Problem finding archive file. Please restart';
 $lang['error_nodatabases'] = 'No compatible database extensions could be found';
 $lang['error_nodbhost'] = 'Please enter a valid hostname (or IP address) for the database connection';
 $lang['error_nodbname'] = 'Please enter the name of a valid database on the host specified above';
@@ -133,14 +134,14 @@ $lang['error_nodbtype'] = 'Please select a database type';
 $lang['error_nodbuser'] = 'Please enter a valid username for authenticating to the database';
 $lang['error_nodestdir'] = 'Destination directory not set';
 $lang['error_nositename'] = 'Sitename is a required parameter. Please enter a suitable name for the website.';
+$lang['error_nothemedir'] = 'Destination directory for themes data not set';
 $lang['error_notimezone'] = 'Please enter a valid timezone for this server';
 $lang['error_overwrite'] = 'Permissions problem: cannot overwrite %s';
 $lang['error_sendingmail'] = 'Error sending mail';
 $lang['error_tzlist'] = 'A problem occurred retrieving the timezone identifiers list';
-$lang['errorlevel_estrict'] = 'Checking for E_STRICT';
 $lang['errorlevel_edeprecated'] = 'Checking for E_DEPRECATED';
-$lang['edeprecated_enabled'] = 'E_DEPRECATED is enabled in PHP\'s error_reporting. Though this will not prevent CMSMS from operating, it may result in warnings being displayed in the output screen, particularly from older, third party modules';
-$lang['estrict_enabled'] = 'E_STRICT is enabled in the PHPs error_reporting. Though this will not prevent CMSMS from operating, it may result in warnings being displayed in the HTML output, particularly from older, third party modules';
+$lang['errorlevel_estrict'] = 'Checking for E_STRICT';
+$lang['estrict_enabled'] = 'E_STRICT is enabled in PHP\'s error_reporting. Although this will not prevent CMSMS from operating, it might result in warnings being displayed in the HTML output, particularly arising from older non-core modules';
 
 # F
 $lang['fail_assets_dir'] = 'An assets directory already exists. This application may write to this directory to rationalize the location of files. Please ensure that you have a backup';
