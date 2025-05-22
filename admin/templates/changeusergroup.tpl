@@ -10,7 +10,7 @@
 <p class="pagemessage">{$message}</p>
 {/if}
 
-<div class="pageoverflow">
+<div class="pageoptions endalign">
 <form method="post" action="{$filter_action}">
   <div class="hidden">
     <input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}">
@@ -90,8 +90,9 @@
   {/foreach}
   </tbody>
 </table>
-
+{if count($users) > 8}
 <div class="pageoptions">
   {$submit} {$cancel}
 </div>
+{/if}
 </form>

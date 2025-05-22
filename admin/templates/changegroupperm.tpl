@@ -4,7 +4,7 @@
 
 <div class="information">{lang('info_changegroupperms')} {cms_help key2='help_group_permissions' title=lang('info_changegroupperms')}</div>
 
-<div class="pageoverflow">
+<div class="pageoptions endalign">
 	<form method="post" action="{$filter_action}">
 		<div class="hidden">
 			<input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}">
