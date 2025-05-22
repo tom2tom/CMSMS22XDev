@@ -41,7 +41,7 @@ if( !isset($params['tpl_bulk_action']) || empty($params['tpl_select']) ||
 try {
     if( !$this->CheckPermission('Modify Templates') ) {
         // check if we have ownership/delete permission for these templates
-        $my_templates = CmsLayoutTemplate::template_query(array(0=>'u:'.get_userid(),'as_list'=>1));
+        $my_templates = CmsLayoutTemplate::template_query([0 => 'u:'.get_userid(),'as_list' => 1]);
         if( !is_array($my_templates) || count($my_templates) == 0 ) {
             throw new RuntimeException($this->Lang('error_retrieving_mytemplatelist'));
         }
@@ -135,7 +135,7 @@ try {
     $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_bulk_template.tpl", null, $modname, $smarty);
 
     $tpl->assign('bulk_op',$bulk_op);
-    $allparms = base64_encode(json_encode(array('tpl_select'=>$params['tpl_select'], 'tpl_bulk_action'=>$params['tpl_bulk_action'])));
+    $allparms = base64_encode(json_encode(['tpl_select'=>$params['tpl_select'], 'tpl_bulk_action'=>$params['tpl_bulk_action']]));
     $tpl->assign('allparms',$allparms);
     $tpl->assign('templates',$templates);
 

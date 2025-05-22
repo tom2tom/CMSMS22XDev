@@ -16,20 +16,19 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 # Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
 #-------------------------------------------------------------------------
+
 if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Manage Designs') ) return;
 
 $this->SetCurrentTab('designs');
 
-if( !isset($params['design']) || $params['design'] == '' ) {
-  $this->SetError($this->Lang('error_missingparam'));
+if( empty($params['design']) ) {
+  $this->SetError($this->Lang('error_missingparam')); //TODO silence, prob due to polling and page-refreshing
   $this->RedirectToAdminTab();
 }
 
-
-$ref_map = array();
+$ref_map = [];
 function _ref_map_get_sig($fn,$type = 'URL')
 {
   global $ref_map;
@@ -63,9 +62,9 @@ function _get_css_urls($css_content)
   return $content;
 }
 
-function _get_sub_templates( $template )
+function _get_sub_templates($template)
 {
-  $t_matches_a = array();
+  $t_matches_a = [];
 
   $replace_fn = function($matches) {
     $out = preg_replace_callback("/template\s*=[\\\"']{0,1}([a-zA-Z0-9._\ \:\-\/]+)[\\\"']{0,1}/i",
@@ -90,8 +89,8 @@ function _get_sub_templates( $template )
   $replace_fn3 = function($matches) {
     $out = preg_replace_callback("/file\s*=[\\\"']{0,1}([a-zA-Z0-9._\ \:\-\/]+)[\\\"']{0,1}/i",
       function($matches) {
-        $bad = array('string:','startswith','module_db_tpl','module_file_tpl',
-             'tpl_top','tpl_body','tpl_head','file:http');
+        $bad = ['string:','startswith','module_db_tpl','module_file_tpl',
+             'tpl_top','tpl_body','tpl_head','file:http'];
         foreach( $bad as $badone ) {
           if( endswith($matches[1],$badone) ) return $matches[0];
         }
@@ -105,7 +104,7 @@ function _get_sub_templates( $template )
   $regex='/\{menu.*\}/';
   $template = preg_replace_callback( $regex, $replace_fn, $template );
 
-  $regex='/\{.*MenuManager.*\}/';
+  $regex='/\{.*MenuManager.*\}/'; //WHAT ?? gone from core
   $template = preg_replace_callback( $regex, $replace_fn, $template );
 
   $regex='/\{global_content.*\}/'; //deprecated since CMSMS 2.2.0
@@ -121,13 +120,12 @@ function _get_sub_templates( $template )
 function _get_tpl_urls($tpl_content)
 {
   $content = $tpl_content;
-  foreach (array("href", "src", "url") as $type) {
+  foreach( ['href', 'src', 'url'] as $type ) {
     $innerT = '[a-z0-9:?=&@/._-]+?';
     $content = preg_replace_callback("|$type\=([\"'`])(".$innerT.")\\1|i",
       function($matches) {
-        $config = cmsms()->GetConfig();
         $url = $matches[2];
-        if( !startswith($url,'http') || startswith($url,$config['root_url']) || startswith($url,'{root_url}') ) {
+        if( !startswith($url,'http') || startswith($url,CMS_ROOT_URL) || startswith($url,'{root_url}') ) {
           $sig = _ref_map_get_sig($url);
           return $sig;
         }
@@ -145,8 +143,8 @@ try {
   $xml = $exporter->get_xml();
 
   // clear any output buffers.
-  $handlers = ob_list_handlers();
-  for ($cnt = 0; $cnt < count($handlers); $cnt++) { ob_end_clean(); }
+  $num = count(ob_list_handlers());
+  for ($cnt = 0; $cnt < $num; $cnt++) { ob_end_clean(); }
 
   // headers
   header('Content-Description: File Transfer');

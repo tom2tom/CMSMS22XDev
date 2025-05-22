@@ -16,8 +16,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 # Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
 #-------------------------------------------------------------------------
+
 if( !isset($gCms) ) exit ;
 if( !$this->CheckPermission('Manage Stylesheets') ) return;
 
@@ -29,7 +29,7 @@ if( isset($params['cancel']) ) {
 }
 
 $apply = isset($params['apply']);
-$extraparms = array();
+$extraparms = [];
 $message = $this->Lang('msg_stylesheet_saved');
 $response = 'success';
 $userid = get_userid();
@@ -48,12 +48,12 @@ try {
             if( isset($params['name']) ) $css_ob->set_name($params['name']);
             if( isset($params['description']) ) $css_ob->set_description($params['description']);
             if( isset($params['content']) ) $css_ob->set_content($params['content']);
-            $mtyp = array();
+            $mtyp = [];
             if( isset($params['media_type']) ) $mtyp = $params['media_type'];
             $css_ob->set_media_types($mtyp);
             if( isset($params['media_query']) ) $css_ob->set_media_query($params['media_query']);
             if( $this->CheckPermission('Manage Designs') ) {
-                $design_list = array();
+                $design_list = [];
                 if( isset($params['design_list']) ) $design_list = $params['design_list'];
                 $css_ob->set_designs($design_list);
             }
@@ -130,12 +130,12 @@ try {
     $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_edit_css.tpl", null, $modname, $smarty);
 
     $designs = CmsLayoutCollection::get_all();
-    if( $designs && is_array($designs) ) {
-        $out = array();
+    if( $designs ) {
+        $tmp = [];
         foreach( $designs as $one ) {
-            $out[$one->get_id()] = $one->get_name();
+            $tmp[$one->get_id()] = $one->get_name();
         }
-        $tpl->assign('design_list', $out);
+        $tpl->assign('design_list', $tmp);
     }
 
     if( $ssid > 0 ) {
@@ -159,7 +159,3 @@ try {
     $this->SetError($e->GetMessage());
     $this->RedirectToAdminTab();
 }
-
-#
-# EOF
-#

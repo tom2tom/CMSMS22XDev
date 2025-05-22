@@ -56,7 +56,7 @@ if( $selfheld ) {
 elseif( UserOperations::get_instance($uid,1) ) {
     // clear all locks of the specified type
     $sql = 'DELETE FROM '.CMS_DB_PREFIX.CmsLock::LOCK_TABLE.' WHERE type = ?';
-    $db->Execute($sql,array($type));
+    $db->Execute($sql,[$type]);
     audit('',$this->GetName(),"Cleared all $type locks");
     $this->SetMessage($this->Lang('msg_lockscleared'));
 }

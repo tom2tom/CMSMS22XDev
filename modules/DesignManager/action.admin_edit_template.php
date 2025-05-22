@@ -16,8 +16,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 # Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
 #-------------------------------------------------------------------------
+
 if (!isset($gCms)) exit;
 if (!$this->CheckPermission('Modify Templates')) {
     // no manage templates permission
@@ -38,7 +38,7 @@ if (isset($params['cancel'])) {
 }
 
 $apply = isset($params['apply']);
-$extraparms = array();
+$extraparms = [];
 $message = $this->Lang('msg_template_saved');
 $response = 'success';
 $type_is_readonly = false;
@@ -80,7 +80,7 @@ try {
             $tpl_ob->set_name(strip_tags($params['name']));
 
             if ($this->CheckPermission('Manage Designs')) {
-                $design_list = array();
+                $design_list = [];
                 if (isset($params['design_list'])) $design_list = $params['design_list'];
                 $tpl_ob->set_designs($design_list);
             }
@@ -163,7 +163,7 @@ try {
     //
     // BUILD THE DISPLAY
     //
-    if( $tid > 0 ) {
+    if ($tid > 0) {
         CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('edit_template').': '.$tpl_ob->get_name()." ($tid)");
     } else {
         CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('new_template'));
@@ -177,7 +177,7 @@ try {
     $tpl->assign('extraparms', $extraparms);
     $tpl->assign('template', $tpl_ob);
 
-    $out = array();
+    $out = [];
     $out[0] = $this->Lang('prompt_none');
     $cats = CmsLayoutTemplateCategory::get_all();
     if ($cats && is_array($cats)) {
@@ -188,9 +188,9 @@ try {
     $tpl->assign('category_list', $out);
 
     $types = CmsLayoutTemplateType::get_all();
-    if (is_array($types) && count($types)) {
-        $out = array();
-        $out2 = array();
+    if ($types && is_array($types)) {
+        $out = [];
+        $out2 = [];
         foreach ($types as $one) {
             $out2[] = $one->get_id();
             $out[$one->get_id()] = $one->get_langified_display_value();
@@ -200,8 +200,8 @@ try {
     }
 
     $designs = CmsLayoutCollection::get_all();
-    if (is_array($designs) && count($designs)) {
-        $out = array();
+    if ($designs) {
+        $out = [];
         foreach ($designs as $one) {
             $out[$one->get_id()] = $one->get_name();
         }
@@ -218,24 +218,24 @@ try {
 
         $userops = cmsms()->GetUserOperations();
         $allusers = $userops->LoadUsers();
-        $tmp = array();
+        $tmp = [];
         foreach ($allusers as $one) {
             //FIXME Why skip admin here? If template owner is admin this would unset admin as owner
             //if ($one->id == 1)
             //    continue;
             $tmp[$one->id] = $one->username;
         }
-        if (is_array($tmp) && count($tmp)) $tpl->assign('user_list', $tmp);
+        if ($tmp) $tpl->assign('user_list', $tmp);
 
         $groupops = cmsms()->GetGroupOperations();
         $allgroups = $groupops->LoadGroups();
+        $tmp = [];
         foreach ($allgroups as $one) {
             if ($one->id == 1) continue;
             if ($one->active == 0) continue;
             $tmp[$one->id * -1] = $this->Lang('prompt_group') . ': ' . $one->name;
-            // appends to the tmp array.
         }
-        if (is_array($tmp) && count($tmp)) $tpl->assign('addt_editor_list', $tmp);
+        if ($tmp) $tpl->assign('addt_editor_list', $tmp);
     }
     $tpl->assign('userid', $userid);
     $tpl->display();
@@ -243,7 +243,3 @@ try {
     $this->SetError($e->GetMessage());
     $this->RedirectToAdminTab();
 }
-
-#
-# EOF
-#

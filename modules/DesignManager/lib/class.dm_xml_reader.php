@@ -15,8 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
+# Or read it online: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
 
 class dm_xml_reader extends XMLReader
@@ -39,7 +38,7 @@ class dm_xml_reader extends XMLReader
   {
     if( !$this->_setup ) {
       $this->_old_internal_errors = libxml_use_internal_errors(FALSE);
-      $this->_old_err_handler = set_error_handler(array($this,'__errhandler'));
+      $this->_old_err_handler = set_error_handler([$this,'__errhandler']);
       $this->_setup = TRUE;
     }
   }
@@ -57,8 +56,3 @@ class dm_xml_reader extends XMLReader
     return parent::read();
   }
 } // end of class
-
-#
-# EOF
-#
-?>

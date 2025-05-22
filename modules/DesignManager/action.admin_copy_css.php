@@ -16,8 +16,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 # Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
 #-------------------------------------------------------------------------
+
 if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Manage Stylesheets') ) return;
 
@@ -37,12 +37,12 @@ try {
     try {
       $new_css = clone($orig_css);
       $new_css->set_name(trim($params['new_name']));
-      $new_css->set_designs(array());
+      $new_css->set_designs([]);
       $new_css->save();
 
       if( isset($params['apply']) ) {
         $this->SetMessage($this->Lang('msg_stylesheet_copied_edit'));
-        $this->Redirect($id,'admin_edit_css',$returnid,array('css'=>$new_css->get_id()));
+        $this->Redirect($id,'admin_edit_css',$returnid,['css'=>$new_css->get_id()]);
       }
       else {
         $this->SetMessage($this->Lang('msg_stylesheet_copied'));
@@ -58,16 +58,17 @@ try {
   $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_copy_css.tpl",null,$modname,$smarty);
 
   // build a display
+  $designchoices = [];
   $designs = CmsLayoutCollection::get_all();
   if( $designs ) {
-    $tmp = array();
-    for( $i = 0; $i < count($designs); $i++ ) {
-      $tmp2[$designs[$i]->get_id()] = $designs[$i]->get_name();
+    for( $i = 0,$n = count($designs); $i < $n; $i++ ) {
+      $designchoices[$designs[$i]->get_id()] = $designs[$i]->get_name();
     }
-    $tpl->assign('design_names',$tmp2);
+    asort($designchoices);
   }
 
-  $tpl->assign('css',$orig_css);
+  $tpl->assign('css',$orig_css); //after sorting?
+  $tpl->assign('design_names',$designchoices);
   $tpl->display();
 }
 catch( CmsException $e ) {

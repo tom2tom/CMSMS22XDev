@@ -49,20 +49,20 @@ try {
             $new_tpl = clone($orig_tpl);
             $new_tpl->set_owner(get_userid());
             $new_tpl->set_name(trim($params['new_name']));
-            $new_tpl->set_additional_editors(array());
+            $new_tpl->set_additional_editors([]);
 
             // only if have manage themes right.
             if( $this->CheckPermission('Modify Designs') ) {
                 $new_tpl->set_designs($orig_tpl->get_designs());
             }
             else {
-                $new_tpl->set_designs(array());
+                $new_tpl->set_designs([]);
             }
             $new_tpl->save();
 
             if( isset($params['apply']) ) {
                 $this->SetMessage($this->Lang('msg_template_copied_edit'));
-                $this->Redirect($id,'admin_edit_template',$returnid,array('tpl'=>$new_tpl->get_id()));
+                $this->Redirect($id,'admin_edit_template',$returnid,['tpl'=>$new_tpl->get_id()]);
             }
             else {
                 $this->SetMessage($this->Lang('msg_template_copied'));
@@ -78,41 +78,40 @@ try {
     $modname = $this->GetName();
     $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_copy_template.tpl",null,$modname,$smarty);
 
-    $out = array();
-    $out[0] = $this->Lang('prompt_none');
+    $tmp = [$this->Lang('prompt_none')];
     $cats = CmsLayoutTemplateCategory::get_all();
     if( is_array($cats) && count($cats) ) {
         foreach( $cats as $one ) {
-            $out[$one->get_id()] = $one->get_name();
+            $tmp[$one->get_id()] = $one->get_name();
         }
     }
-    $tpl->assign('category_list',$out);
+    $tpl->assign('category_list',$tmp);
 
     $types = CmsLayoutTemplateType::get_all();
     if( is_array($types) && count($types) ) {
-        $out = array();
+        $tmp = [];
         foreach( $types as $one ) {
-            $out[$one->get_id()] = $one->get_langified_display_value();
+            $tmp[$one->get_id()] = $one->get_langified_display_value();
         }
-        $tpl->assign('type_list',$out);
+        $tpl->assign('type_list',$tmp);
     }
 
     $designs = CmsLayoutCollection::get_all();
-    if( is_array($designs) && count($designs) ) {
-        $out = array();
+    if( $designs ) {
+        $tmp = [];
         foreach( $designs as $one ) {
-            $out[$one->get_id()] = $one->get_name();
+            $tmp[$one->get_id()] = $one->get_name();
         }
-        $tpl->assign('design_list',$out);
+        $tpl->assign('design_list',$tmp);
     }
 
     $userops = cmsms()->GetUserOperations();
     $allusers = $userops->LoadUsers();
-    $tmp = array();
+    $tmp = [];
     foreach( $allusers as $one ) {
         $tmp[$one->id] = $one->username;
     }
-    if( is_array($tmp) && count($tmp) ) {
+    if( $tmp ) {
         $tpl->assign('user_list',$tmp);
     }
 

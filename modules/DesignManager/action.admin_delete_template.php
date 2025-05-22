@@ -52,10 +52,10 @@ try {
 
   // find the number of 'pages' that use this template.
   $query = 'SELECT COUNT(*) FROM '.CMS_DB_PREFIX.'content WHERE template_id = ?';
-  $n = $db->GetOne($query,array($tpl_ob->get_id()));
+  $n = $db->GetOne($query,[$tpl_ob->get_id()]);
   $tpl->assign('page_usage',$n);
 
-  $out = array();
+  $out = [];
   $out[0] = $this->Lang('prompt_none');
   $cats = CmsLayoutTemplateCategory::get_all();
   if( is_array($cats) && count($cats) ) {
@@ -67,7 +67,7 @@ try {
 
   $types = CmsLayoutTemplateType::get_all();
   if( is_array($types) && count($types) ) {
-    $out = array();
+    $out = [];
     foreach( $types as $one ) {
       $out[$one->get_id()] = $one->get_langified_display_value();
     }
@@ -75,8 +75,8 @@ try {
   }
 
   $designs = CmsLayoutCollection::get_all();
-  if( is_array($designs) && count($designs) ) {
-    $out = array();
+  if( $designs ) {
+    $out = [];
     foreach( $designs as $one ) {
       $out[$one->get_id()] = $one->get_name();
     }
@@ -85,11 +85,11 @@ try {
 
   $userops = cmsms()->GetUserOperations();
   $allusers = $userops->LoadUsers();
-  $tmp = array();
+  $tmp = [];
   foreach( $allusers as $one ) {
     $tmp[$one->id] = $one->username;
   }
-  if( is_array($tmp) && count($tmp) ) {
+  if( $tmp ) {
     $tpl->assign('user_list',$tmp);
   }
 
@@ -100,7 +100,6 @@ catch( CmsException $e ) {
   $this->SetError($e->GetMessage());
   $this->RedirectToAdminTab();
 }
-
 
 #
 # EOF

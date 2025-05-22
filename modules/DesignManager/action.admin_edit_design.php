@@ -16,8 +16,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 # Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
 #-------------------------------------------------------------------------
+
 if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Manage Designs') ) return;
 
@@ -41,11 +41,11 @@ try {
         if( isset($params['submit']) || isset($params['apply']) || (isset($params['ajax']) && $params['ajax'] == '1') ) {
             $design->set_name($params['name']);
             $design->set_description($params['description']);
-            $tpl_assoc = array();
+            $tpl_assoc = [];
             if( isset($params['assoc_tpl']) ) $tpl_assoc = $params['assoc_tpl'];
             $design->set_templates($tpl_assoc);
 
-            $css_assoc = array();
+            $css_assoc = [];
             if( isset($params['assoc_css']) ) $css_assoc = $params['assoc_css'];
             $design->set_stylesheets($css_assoc);
             $design->save();
@@ -79,9 +79,9 @@ try {
         usort($stylesheets,function($a,$b) {
                 return strcasecmp($a->get_name(),$b->get_name());
             });
-        $out = array();
-        $out2 = array();
-        for( $i = 0; $i < count($stylesheets); $i++ ) {
+        $out = [];
+        $out2 = [];
+        for( $i = 0,$n = count($stylesheets); $i < $n; $i++ ) {
             $out[$stylesheets[$i]->get_id()] = $stylesheets[$i]->get_name();
             $out2[$stylesheets[$i]->get_id()] = $stylesheets[$i];
         }
@@ -91,7 +91,8 @@ try {
 
     if( $design->get_id() > 0 ) {
         CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('edit_design').': '.$design->get_name()." ({$design->get_id()})");
-    } else {
+    }
+    else {
         CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('new_design'));
     }
 
