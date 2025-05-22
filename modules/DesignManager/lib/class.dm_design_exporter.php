@@ -383,7 +383,7 @@ EOT;
 
     /**
      * Append associated files to $this->_files
-     * @since 1.1.12
+     * @since 1.2
      */
     private function parse_related_files()
     {

@@ -1,6 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: DesignManager - A CMSMS addon module to provide template management.
+# Module: DesignManager - A CMSMS addon module to provide template and
+# stylesheet management.
 # (c) 2012 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -22,7 +23,7 @@ if( !isset($gCms) ) exit;
 final class DesignManager extends CMSModule
 {
     public function GetFriendlyName() { return $this->Lang('friendlyname'); }
-    public function GetVersion() { return '1.1.12'; }
+    public function GetVersion() { return '1.2'; }
     public function MinimumCMSVersion()  { return '2.2'; }
     public function LazyLoadAdmin() { return TRUE; }
     public function LazyLoadFrontend() { return TRUE; }
@@ -79,8 +80,10 @@ final class DesignManager extends CMSModule
     /**
      * Report whether the specified item is a directory and if so,
      * whether it does NOT contain (directly or indirectly) any file
-     * i.e. can be presumed to have no active usage. Folders are ignored.
-     * @since 1.1.12
+     * (other than one or more index.html) i.e. can be presumed to have
+     * no active usage.
+     * Folders are ignored.
+     * @since 1.2
      *
      * @param string $dirpath Absolute filepath
      * @return bool indicating it's unused
@@ -112,11 +115,11 @@ final class DesignManager extends CMSModule
     }
 
     /**
-     * Handle module response for ajax actions.
+     * Handle module response for AJAX actions.
      * The JSON representation of $data is echo'd, before exiting.
      *
-     * @param  string $status The status of returned response, in example error, success, warning, info
-     * @param  string $message The message of returned response
+     * @param  string $status The status of returned response, e.g. error, success, warning, info
+     * @param  string $message The response
      * @param  mixed $data string or array of response data
      * @return bool false upon invalid $_SERVER property, or else void/not at all
      */
