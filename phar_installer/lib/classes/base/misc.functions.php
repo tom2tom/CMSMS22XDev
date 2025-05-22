@@ -35,9 +35,36 @@ function joinpath(...$segs)
 {
   if( is_array($segs[0]) ) {
     $segs = $segs[0];
- }
- $path = implode(DIRECTORY_SEPARATOR, $segs);
- return str_replace(DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $path);
+  }
+  $path = implode(DIRECTORY_SEPARATOR, $segs);
+  return str_replace(DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR, $path);
+}
+
+function rrmdir($dir)
+{
+  if( is_dir($dir) ) {
+    $items = scandir($dir);
+    if( $items ) {
+      foreach( $items as $name ) {
+        if( !($name == '.' || $name == '..') ) {
+          $fp = "$dir/$name";
+          if( is_dir($fp) ) {
+            rrmdir($fp);
+          }
+          else {
+            //TODO deal with links to dirs?
+            unlink($fp);
+          }
+        }
+      }
+    }
+    if( $items !== false ) {
+      rmdir($dir);
+    }
+    else {
+      //TODO handle error
+    }
+  }
 }
 
 }
