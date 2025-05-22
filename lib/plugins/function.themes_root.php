@@ -1,5 +1,5 @@
 <?php
-#Plugin handler: themes_url
+#Plugin handler: themes_root
 #(c) 2025 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
@@ -15,10 +15,30 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-function smarty_function_themes_url($params, $smarty)
+function smarty_function_themes_root($params, $smarty)
 {
 	$config = CmsApp::get_instance()->GetConfig();
-	$out = $config['themes_url'];
+	if( isset($params['rel']) ) {
+		$relative = cms_to_bool($params['rel']);
+	} else {
+		$relative = false;
+	}
+
+	if( isset($params['path']) ) {
+		$aspath = cms_to_bool($params['path']);
+	} else {
+		$aspath = false;
+	}
+	if( $aspath ) {
+		$l = strlen(CMS_ROOT_PATH) + 1; //also omit separator
+		$out = ($relative) ? substr($config['themes_path'],$l) : $config['themes_path'];
+	} elseif( $relative ) {
+		$l = strlen(CMS_ROOT_URL) + 1; //also omit separator
+		$out = substr($config['themes_url'],$l);
+	} else {
+		$out = $config['themes_url'];
+	}
+
 	if( isset($params['assign']) ) {
 		$smarty->assign(trim($params['assign']),$out);
 		return '';
@@ -26,7 +46,7 @@ function smarty_function_themes_url($params, $smarty)
 	return $out;
 }
 
-function smarty_cms_about_function_themes_url()
+function smarty_cms_about_function_themes_root()
 {
 ?>
 	<p>Author: CMSMS devteam</p>
