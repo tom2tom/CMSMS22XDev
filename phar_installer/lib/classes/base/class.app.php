@@ -16,8 +16,8 @@ abstract class app
     const CONFIG_ROOT_URL = 'root_url';
 
     private static $_instance;
-    private $_config;
-    private $_appdir;
+    private $_config = []; // parsed content of config.ini or falsy or unset
+    private $_appdir = ''; // string (maybe empty) or unset
 
     public function __construct($filename)
     {
