@@ -26,5 +26,6 @@ require __DIR__.DIRECTORY_SEPARATOR.'function.admin_settings.php';
 
 $seetab = (!empty($params['__activetab'])) ? $params['__activetab'] : '';
 $tpl->assign('tab', $seetab);
+$tpl->assign('imgbase_url', $this->GetModuleURLPath().'/images');
 
 $tpl->display();
