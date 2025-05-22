@@ -9,7 +9,7 @@ use function __appbase\lang;
 
 abstract class filehandler
 {
-  private $_destdir;
+  protected $_destdir;
   private $_output_fn;
   private $_languages;
 
@@ -83,7 +83,12 @@ abstract class filehandler
 
     $dn = dirname($filespec);
     $tmp = $this->get_destdir()."/$dn";
-    return @mkdir($tmp,0777,TRUE);
+    $ret = @mkdir($tmp,0777,TRUE);
+    if( $ret || is_dir($tmp) ) {
+        touch($tmp.'/index.html'); //prob. redundant due to later repetition
+        $ret = TRUE; //in case it existed already
+    }
+    return $ret;
   }
 
   protected function is_imagefile($filespec)
