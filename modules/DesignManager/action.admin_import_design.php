@@ -15,9 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
+# Or read it online: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
+
 if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Manage Designs') ) return;
 
@@ -28,36 +28,39 @@ if( isset($params['cancel']) ) {
   $this->RedirectToAdminTab();
 }
 
-$step = 1;
-if( isset($params['step']) ) $step = (int)$params['step'];
+$step = ( isset($params['step']) ) ? (int)$params['step'] : 1;
 
 try {
   switch( $step ) {
-  case 1:
+  case 1: // select and upload a source-file via input-file element
     try {
-      if( isset($params['next1']) ) {
+      if( isset($params['next1']) ) { //submit-button name
         // check for uploaded file
         $key = $id.'import_xml_file';
-        if( !isset($_FILES[$key]) || $_FILES[$key]['name'] == '' ) throw new CmsException($this->Lang('error_nofileuploaded'));
+        if( !isset($_FILES[$key]) || $_FILES[$key]['name'] == '' ) {
+          throw new CmsException($this->Lang('error_nofileuploaded'));
+        }
         if( $_FILES[$key]['error'] != 0 || $_FILES[$key]['tmp_name'] == '' || $_FILES[$key]['type'] == '') {
           throw new CmsException($this->Lang('error_uploading','xml'));
         }
-        if( $_FILES[$key]['type'] != 'text/xml' ) throw new CmsException($this->Lang('error_upload_filetype',$_FILES[$key]['type']));
+        if( $_FILES[$key]['type'] != 'text/xml' ) {
+           throw new CmsException($this->Lang('error_upload_filetype',$_FILES[$key]['type']));
+        }
 
         $reader = dm_reader_factory::get_reader($_FILES[$key]['tmp_name']);
-        $reader->validate();
+        $reader->validate(); // throws upon error
 
         // copy uploaded file to temporary location
-        $tmpfile = tempnam(TMP_CACHE_LOCATION,'dm_');
+        $tmpfile = tempnam(TMP_CACHE_LOCATION,'dm_'); //TODO PUBLIC_CACHE_LOCATION
         if( $tmpfile === FALSE ) throw new CmsException($this->Lang('error_create_tempfile'));
         @copy($_FILES[$key]['tmp_name'],$tmpfile);
 
-        // redirect to this action, with step2.
-        $this->Redirect($id,'admin_import_design',$returnid,array('step'=>2,'tmpfile'=>$tmpfile));
+        // redirect back to here for step2.
+        $this->Redirect($id,'admin_import_design',$returnid,['step'=>2,'tmpfile'=>$tmpfile]);
       }
     }
     catch( CmsException $e ) {
-      echo $this->ShowErrors($e->GetMessage());
+      echo $this->ShowErrors($e->GetMessage()); //TODO ensure this works
     }
 
     $modname = $this->GetName();
@@ -65,49 +68,56 @@ try {
     $tpl->display();
     break;
 
-  case 2:
-    // preview what's going to be imported
+  case 2: // preview what's going to be imported
     try {
       if( !isset($params['tmpfile']) ) {
-        // bad error, redirect to admin tab.
+        // bad error, redirect to admin tab i.e. designs list
         $this->SetError($this->Lang('error_missingparam'));
         $this->RedirectToAdminTab();
       }
       $tmpfile = trim($params['tmpfile']);
       if( !file_exists($tmpfile) ) {
-        // bad error, redirect to admin tab.
+        // bad error, redirect to admin tab
         $this->SetError($this->Lang('error_filenotfound',$tmpfile));
         $this->RedirectToAdminTab();
       }
 
-      $reader = dm_reader_factory::get_reader($tmpfile);
-
-      if( isset($params['next2']) ) {
-        $error = 0;
-        if( !isset($params['check1']) ) {
-          $error = 1;
+      if( isset($params['next2']) ) { // submit-button name
+        if( empty($params['check1']) ) {
           echo $this->ShowErrors($this->Lang('error_notconfirmed'));
+          //fall into re-display
         }
-        else if( !isset($params['newname']) || $params['newname'] == '' ) {
-          $error = 1;
+        elseif( empty($params['newname']) ) {
           echo $this->ShowErrors($this->Lang('error_missingparam'));
         }
         else {
-          // redirect to this action, with step3.
-          $this->Redirect($id,'admin_import_design',$returnid,array('step'=>3,'tmpfile'=>$tmpfile,'newname'=>$params['newname'], 'newdescription'=>$params['newdescription']));
+          // redirect back to here for step3.
+          $this->Redirect($id,'admin_import_design',$returnid,[
+          'step'=>3,
+          'tmpfile'=>$tmpfile,
+          'newname'=>$params['newname'],
+          'newdescription'=>$params['newdescription']
+          ]);
         }
       }
 
-      // suggest a new name for the 'theme'.
+      $reader = dm_reader_factory::get_reader($tmpfile);
+
+      $design_info = $reader->get_design_info();
+      if( empty($params['newname']) ) {
+        // suggest a new name for the design/theme
+        $newname = CmsLayoutCollection::suggest_name($design_info['name']);
+      }
+      else {
+        $newname = $params['newname']; // doing a re-run
+      }
       $modname = $this->GetName();
       $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_import_design2.tpl",null,$modname,$smarty);
       $tpl->assign('tmpfile',$tmpfile);
       $tpl->assign('cms_version',CMS_VERSION);
-      $design_info = $reader->get_design_info();
       $tpl->assign('design_info',$design_info);
       $tpl->assign('templates',$reader->get_template_list());
       $tpl->assign('stylesheets',$reader->get_stylesheet_list());
-      $newname = CmsLayoutCollection::suggest_name($design_info['name']);
       $tpl->assign('new_name',$newname);
       $tpl->display();
     }
@@ -116,29 +126,28 @@ try {
     }
     break;
 
-  case 3:
-    // do the importing.
+  case 3: // do the import
     if( !isset($params['tmpfile']) || !isset($params['newname']) ||
       $params['newname'] == '') {
       // bad error, redirect to admin tab.
       throw new CmsException($this->Lang('error_missingparam'));
     }
     $tmpfile = trim($params['tmpfile']);
-    $newname = trim($params['newname']);
-    $newdescription = trim($params['newdescription']);
-
     if( !file_exists($tmpfile) ) {
       // bad error, redirect to admin tab.
       throw new CmsException($this->Lang('error_filenotfound',$tmpfile));
     }
 
-    $destdir = $config['uploads_path'].'/designmanager_import';
+    $newname = trim($params['newname']);
+    $newdescription = trim($params['newdescription']);
+
     $reader = dm_reader_factory::get_reader($tmpfile);
     $reader->set_suggested_name($newname);
     $reader->set_suggested_description($newdescription);
     $reader->import();
     $this->SetMessage($this->Lang('msg_design_imported'));
     $this->RedirectToAdminTab();
+
     break;
 
   default:
