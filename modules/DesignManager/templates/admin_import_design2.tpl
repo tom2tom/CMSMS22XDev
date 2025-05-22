@@ -35,14 +35,13 @@ $(function() {
 <fieldset>
   <div class="startside">
     <div class="pageoverflow">
-      <p class="pagetext"><label for="import_newname">{$mod->Lang('prompt_name')}:</label> {cms_help key2='help_import_newname' title=$mod->Lang('prompt_name')}</p>
+      <p class="pagetext">
+        {$mod->Lang('prompt_orig_name')}:
+      </p>
       <p class="pageinput">
-        <input id="import_newname" type="text" name="{$actionid}newname" value="{$new_name}" size="50" maxlength="50">
-        <br>
-        {$mod->Lang('prompt_orig_name')}: {$design_info.name}
+        {$design_info.name}
       </p>
     </div>
-
     <div class="pageoverflow">
       <p class="pagetext"><label for="import_create">{$mod->Lang('prompt_created')}:</label>&nbsp;{cms_help key2='help_import_created' title=''}</p>
       <p class="pageinput">
@@ -65,6 +64,12 @@ $(function() {
     </div>
   </div>
 </fieldset>
+<div class="pageoverflow">
+  <p class="pagetext"><label for="import_newname">{$mod->Lang('newname')}:</label> {cms_help key2='help_import_newname' title=$mod->Lang('newname')}</p>
+  <p class="pageinput">
+	<input id="import_newname" type="text" name="{$actionid}newname" value="{$new_name}" size="50" maxlength="50" placeholder="{$mod->Lang('name')}">
+  </p>
+</div>
 
 {tab_header name='description' label=$mod->Lang('prompt_description')}
 {* tab_header name='copyright' label=$mod->Lang('prompt_copyrightlicense') *}
@@ -82,7 +87,7 @@ $(function() {
 <table class="pagetable">
   <thead>
     <tr>
-      <th>{$mod->Lang('name')}</th>
+      <th>{$mod->Lang('prompt_orig_name')}</th>
       <th>{$mod->Lang('newname')}</th>
       <th>{$mod->Lang('type')}</th>
       <th>{$mod->Lang('prompt_description')}</th>
@@ -117,7 +122,7 @@ $(function() {
   <table class="pagetable">
     <thead>
       <tr>
-        <th>{$mod->Lang('name')}</th>
+        <th>{$mod->Lang('prompt_orig_name')}</th>
         <th>{$mod->Lang('newname')}</th>
         <th>{$mod->Lang('prompt_media_type')}</th>
         <th>{$mod->Lang('prompt_description')}</th>
