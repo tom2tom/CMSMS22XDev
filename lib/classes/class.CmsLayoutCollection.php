@@ -497,7 +497,7 @@ class CmsLayoutCollection
     }
 
     /**
-     * Save this theme
+     * Save this design
      * This method will send the AddDesignPre and AddDesignPost events before and after saving a new theme
      * and the EditDesignPre and EditDesignPost events before and after saving an existing theme.
      */
@@ -515,8 +515,8 @@ class CmsLayoutCollection
     }
 
     /**
-     * Delete the current theme
-     * This class will not allow deleting themes that still have templates associated with them.
+     * Delete this design
+     * This class will not allow deleting designs that have templates associated with them.
      *
      * @throws CmsLogicException
      * @param bool $force Force deleting the theme even if there are templates attached
