@@ -15,18 +15,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
+# Or read it online: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
 
 class dm_theme_reader extends dm_reader_base
 {
   private $_xml;
   private $_scanned;
-  private $_design_info = array();
-  private $_tpl_info = array();
-  private $_css_info = array();
-  private $_ref_map = array();
+  private $_design_info = [];
+  private $_tpl_info = [];
+  private $_css_info = [];
+  private $_ref_map = [];
 
   public function __construct($fn)
   {
@@ -37,7 +36,7 @@ class dm_theme_reader extends dm_reader_base
 
   private function _scan()
   {
-    $in = array();
+    $in = [];
 
     $__get_in = function() use ($in) {
       if( ($n = count($in)) ) return $in[$n-1];
@@ -74,7 +73,7 @@ class dm_theme_reader extends dm_reader_base
             }
             $this->_xml->read();
             $cur_key = $this->_xml->value;
-            if( !isset($this->_tpl_info[$cur_key]) ) $this->_tpl_info[$cur_key] = array();
+            if( !isset($this->_tpl_info[$cur_key]) ) $this->_tpl_info[$cur_key] = [];
             if( isset($this->_tpl_info[$cur_key]) ) {
               // duplicate template name in XML file
             }
@@ -106,7 +105,7 @@ class dm_theme_reader extends dm_reader_base
             }
             $this->_xml->read();
             $cur_key = $this->_xml->value;
-            if( !isset($this->_tpl_info[$cur_key]) ) $this->_tpl_info[$cur_key] = array();
+            if( !isset($this->_tpl_info[$cur_key]) ) $this->_tpl_info[$cur_key] = [];
             if( isset($this->_tpl_info[$cur_key]) ) {
               // error, duplicate template name in XML file
             }
@@ -139,7 +138,7 @@ class dm_theme_reader extends dm_reader_base
             }
             $this->_xml->read();
             $cur_key = $this->_xml->value;
-            if( !isset($this->_css_info[$cur_key]) ) $this->_css_info[$cur_key] = array();
+            if( !isset($this->_css_info[$cur_key]) ) $this->_css_info[$cur_key] = [];
             if( isset($this->_css_info[$cur_key]) ) {
               // error, duplicate stylesheet name in XML file
             }
@@ -180,7 +179,7 @@ class dm_theme_reader extends dm_reader_base
             }
             $this->_xml->read();
             $cur_key = $this->_xml->value;
-            if( !isset($this->_ref_map[$cur_key]) ) $this->_ref_map[$cur_key] = array();
+            if( !isset($this->_ref_map[$cur_key]) ) $this->_ref_map[$cur_key] = [];
             if( isset($this->_ref_map[$cur_key]) ) {
               // error, duplicate reference name in XML file
             }
@@ -267,14 +266,14 @@ class dm_theme_reader extends dm_reader_base
   public function get_template_list()
   {
     $this->_scan();
-    $out = array();
+    $out = [];
     foreach( $this->_tpl_info as $key => $one ) {
-      $rec = array();
+      $rec = [];
       $rec['name'] = $one['name'];
       $rec['desc'] = '';
       $rec['data'] = base64_decode($one['data']);
       if( isset($one['type']) && $one['type'] == 'MM' ) {
-        $rec['type_originator'] = 'MenuManager';
+        $rec['type_originator'] = 'MenuManager'; //deprecated rubbish
         $rec['type_name'] = 'navigation';
       }
       else {
@@ -290,9 +289,9 @@ class dm_theme_reader extends dm_reader_base
   {
     $this->_scan();
 
-    $out = array();
-    foreach( $this->_css_info as $key => $one ) {
-      $rec = array();
+    $out = [];
+    foreach( $this->_css_info as $one ) {
+      $rec = [];
       $rec['name'] = $one['name'];
       $rec['desc'] = '';
       $rec['data'] = base64_decode($one['data']);
@@ -308,8 +307,10 @@ class dm_theme_reader extends dm_reader_base
     $config = cmsms()->GetConfig();
     $name = $this->get_new_name();
     $dirname = munge_string_to_url($name);
-    $dir = cms_join_path($config['themes_path'],$dirname);
-    @mkdir($dir,0777,TRUE);
+    $dir = cms_join_path($config['themes_path'],$dirname); // OR $config['assets_path'],'designs',$dirname
+    if( !is_dir($dir) ) {
+      @mkdir($dir,0777,TRUE);
+    }
     if( !is_dir($dir) || !is_writable($dir) ) {
       throw new CmsException('Could not create directory, or could not write in directory '.$dir);
     } else {
@@ -323,10 +324,10 @@ class dm_theme_reader extends dm_reader_base
   {
     $this->_scan();
 
-    $templates = CmsLayoutTemplate::template_query(array('as_list'=>1));
+    $templates = CmsLayoutTemplate::template_query(['as_list'=>1]);
     $tpl_names = array_values($templates);
 
-    foreach( $this->_tpl_info as $key => &$rec ) {
+    foreach( $this->_tpl_info as &$rec ) {
       // make sure that this  template doesn't already exist.
       $name = $rec['name'];
       if( in_array($name,$tpl_names) ) {
@@ -343,6 +344,7 @@ class dm_theme_reader extends dm_reader_base
         }
       }
     }
+    unset($rec);
   }
 
   protected function validate_stylesheet_names()
@@ -352,7 +354,7 @@ class dm_theme_reader extends dm_reader_base
     $stylesheets = CmsLayoutStylesheet::get_all(TRUE);
     $css_names = array_values($stylesheets);
 
-    foreach( $this->_css_info as $key => &$rec ) {
+    foreach( $this->_css_info as &$rec ) {
       if( in_array($rec['name'],$css_names) ) {
         // gotta come up with a new name
         $orig_name = $rec['name'];
@@ -368,6 +370,7 @@ class dm_theme_reader extends dm_reader_base
         }
       }
     }
+    unset($rec);
   }
 
   public function import()
@@ -398,14 +401,24 @@ class dm_theme_reader extends dm_reader_base
     $design->set_description($description);
 
     // part2 .. expand files.
-    foreach( $this->_ref_map as $key => &$rec ) {
-      if( !isset($rec['data']) || $rec['data'] == '' ) continue;
-
+    foreach( $this->_ref_map as &$rec ) {
+      if( !isset($rec['data']) || $rec['data'] == '' ) continue; //TODO allow empty files
       $destfile = cms_join_path($config['themes_path'],$destdir,$rec['name']);
+//    if( basename($rec['name']) != $rec['name'] ) { check for parent dir }
+      $parent = dirname($destfile);
+      if( !is_dir($parent) ) {
+            if( !is_file($parent) ) {
+                @mkdir($parent,0777,TRUE);
+            }
+            else {
+                throw new CmsException('Could not create directory, or could not write in directory '.$parent);
+            }
+      }
       file_put_contents($destfile,base64_decode($rec['data']));
-      $rec['tpl_url'] = "{themes_url}/$destdir/{$rec['name']}";
-      $rec['css_url'] = "[[themes_url]]/$destdir/{$rec['name']}";
+      $rec['tpl_url'] = "{themes_root}/$destdir/{$rec['name']}";
+      $rec['css_url'] = "[[themes_root]]/$destdir/{$rec['name']}";
     }
+    unset($rec);
 
     // part3 .. process stylesheets
     $css_info = $this->get_stylesheet_list();
@@ -434,6 +447,7 @@ class dm_theme_reader extends dm_reader_base
       $stylesheet->save();
       $design->add_stylesheet($stylesheet);
     }
+    unset($css_rec);
 
     // part4 .. process templates
     $fn1 = function($matches) use ($ob,&$tpl_info) {
@@ -467,13 +481,13 @@ class dm_theme_reader extends dm_reader_base
     $tpl_info = $this->get_template_list();
     $have_mm_template = FALSE;
     foreach( $tpl_info as $name => &$tpl_rec ) {
-      if( $tpl_rec['type_originator'] == 'MenuManager' ) $have_mm_template = TRUE;
+      if( $tpl_rec['type_originator'] == 'MenuManager' ) $have_mm_template = TRUE; //TODO Navigator
 
       $template = new CmsLayoutTemplate();
       $template->set_owner(get_userid(FALSE));
       $template->set_name($tpl_rec['name']);
 
-      $types = array("href", "src", "url");
+      $types = ['href', 'src', 'url'];
       $content = $tpl_rec['data'];
       foreach( $types as $type ) {
         $tmp_type = $type;
@@ -506,8 +520,3 @@ class dm_theme_reader extends dm_reader_base
     }
   }
 } // end of class
-
-#
-# EOF
-#
-?>
