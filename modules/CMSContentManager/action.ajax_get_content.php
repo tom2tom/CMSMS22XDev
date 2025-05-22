@@ -11,12 +11,6 @@
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -24,15 +18,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
+# Or read it online: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
-#END_LICENSE
+
 if( !isset($gCms) ) exit;
 // no permissions checks here.
 
-$handlers = ob_list_handlers();
-for ($cnt = 0; $cnt < count($handlers); $cnt++) { ob_end_clean(); }
+$num = count(ob_list_handlers());
+for ($cnt = 0; $cnt < $num; $cnt++) { ob_end_clean(); }
 
 $modname = $this->GetName();
 $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;ajax_get_content.tpl",null,$modname,$smarty);
