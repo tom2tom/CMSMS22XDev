@@ -61,12 +61,12 @@ abstract class CmsAdminThemeBase
 	/**
 	 * @ignore
 	 */
-	private $_errors;
+	protected $_errors;
 
 	/**
 	 * @ignore
 	 */
-	private $_messages;
+	protected $_messages;
 
 	/**
 	 * @ignore
