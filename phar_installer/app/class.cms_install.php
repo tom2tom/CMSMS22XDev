@@ -164,8 +164,17 @@ class cms_install extends app
 
     protected function set_config_defaults()
     {
-        $tmp = [ 'timezone' => null, 'tmpdir' => null, 'dest' => null, 'debug' => false, 'nofiles' => false, 'nobase' => false, 'lang' => null, 'verbose' => false ];
-        $config = array_merge(parent::get_config(), $tmp);
+        $config = array_merge([
+         'timezone' => null,
+         'tmpdir' => null,
+         'dest' => null,
+         'debug' => false,
+         'nofiles' => false,
+         'nobase' => false,
+         'lang' => null,
+         'themes_dir' => null,
+         'verbose' => false
+        ], parent::get_config());
         $this->_orig_tz = $config['timezone'] = @date_default_timezone_get();
         if( !$this->_orig_tz ) $this->_orig_tz = $config['timezone'] = 'UTC';
         $config['dest'] = realpath(getcwd());
