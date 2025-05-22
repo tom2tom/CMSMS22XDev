@@ -29,21 +29,21 @@ $lang['confirm_bulk_template_2'] = 'Yes, I am <strong>really</strong> sure I wan
 $lang['confirm_bulk_tmplop'] = 'Are you sure you want to perform this action on multiple templates?';
 $lang['confirm_clearlocks'] = 'Clearing locks could disrupt existing editing sessions.  Are you sure you want to continue?';
 $lang['confirm_delete_1'] = 'Are you sure you want to delete this design?';
-$lang['confirm_delete_2a'] = 'Yes, I am sure I want to delete this item';
-$lang['confirm_delete_2b'] = 'Yes, I am <strong>really</strong> sure I want to delete this item';
+$lang['confirm_delete_2a'] = 'Yes, I am sure I want to delete this item.';
+$lang['confirm_delete_2b'] = 'Yes, I am <strong>really</strong> sure I want to delete this item.';
 $lang['confirm_delete_category'] = 'Are you sure you want to delete this category?';
-$lang['confirm_delete_css_1'] = 'Yes, I am sure I want to delete this stylesheet';
-$lang['confirm_delete_css_2'] = 'Yes, I am <strong>really</strong> sure I want to delete this stylesheet';
+$lang['confirm_delete_css_1'] = 'Yes, I am sure I want to delete this stylesheet.';
+$lang['confirm_delete_css_2'] = 'Yes, I am <strong>really</strong> sure I want to delete this stylesheet.';
 $lang['confirm_delete_template_1'] = 'Yes, I am sure I want to delete this template';
-$lang['confirm_delete_template_2'] = 'Yes, I am <strong>really</strong> sure I want to delete this template';
+$lang['confirm_delete_template_2'] = 'Yes, I am <strong>really</strong> sure I want to delete this template.';
 $lang['confirm_import'] = 'Confirm Import Design';
-$lang['confirm_import_1'] = 'Yes, I am sure I want to import this design';
+$lang['confirm_import_1'] = 'Yes, I am sure I want to import this design.';
 $lang['confirm_reset_type'] = "Reset the default content of this type to the version distributed with the system (or module)?\n\nResetting this will only affect newly created templates of this type.  No existing templates will be adjusted.";
 $lang['confirm_save_design'] = 'This design has been changed.  Continuing will save the design, and allow you to edit the item.\nDo you want to continue?';
 $lang['confirm_setall_1'] = 'Please confirm that you wish to set all content pages to use this template';
-$lang['confirm_setall_2'] = 'Yes, I am sure';
-$lang['confirm_setall_3'] = 'Yes, I am <strong>really</strong> sure';
-$lang['confirm_steal_lock'] = 'Are you sure you want to steal this lock?  This will destroy any of the other users unsaved work.';
+$lang['confirm_setall_2'] = 'Yes, I am sure.';
+$lang['confirm_setall_3'] = 'Yes, I am <strong>really</strong> sure.';
+$lang['confirm_steal_lock'] = 'Are you sure you want to steal this lock?  Doing so will destroy any of the other user\'s unsaved work.';
 $lang['confirm_template_setall'] = 'Setting all pages to use this template may cause problems with a working site.  Use extreme caution!';
 $lang['copy_stylesheet'] = 'Copy Stylesheet';
 $lang['copy_template'] = 'Copy Template';
@@ -72,8 +72,8 @@ $lang['edit_design'] = 'Edit Design';
 $lang['edit_stylesheet'] = 'Edit Stylesheet';
 $lang['edit_template'] = 'Edit Template';
 $lang['edit_type'] = 'Edit Template Type';
-$lang['error_assets_writeperm'] = 'Sorry, the templates directory under your assets path or some of the files within it, either do not exist or are not writable.';
-$lang['error_assets_readwriteperm'] = 'Sorry, the template file for import either does not exist, or has permissions problems.';
+$lang['error_assets_writeperm'] = 'Sorry, the templates directory under your assets path, or some of the files within it, either do not exist or are not writable.';
+$lang['error_assets_readwriteperm'] = 'Sorry, the template file to be imported either does not exist, or has permissions problems.';
 $lang['error_bulkexport_noneprocessed'] = 'Sorry, all of these templates were already exported.';
 $lang['error_bulkimport_noneprocessed'] = 'Sorry, none of those templates had files to import.';
 $lang['error_contentlocked'] = 'Sorry, This content is already locked by another user.  Please refresh the page.';
@@ -99,7 +99,7 @@ $lang['export_design'] = 'Export Design to XML';
 
 //F
 $lang['filter'] = 'Filter';
-$lang['filterapplied'] = 'Filter Applied';
+$lang['filterapplied'] = 'Filter applied';
 $lang['friendlyname'] = 'Design Manager';
 
 //G
@@ -116,7 +116,7 @@ $lang['help'] = <<<EOT
   <p>The design contains a list of stylesheets, and manages the order of those stylesheets.  It also contains a list of templates <em>(of various types)</em> that are associated.   Designs can be exported to XML for sharing, and can be imported from XML.</p>
 
 <h3>Templates Explained:</h3>
-<p>A template is a collection of HTML and/or smarty code.  Templates are usually re-used multiple times on a website, and can include or inherit from other templates.  CMSMS provides numerous templates for various purposes.  These purposes include defining the structure of a web page, a navigation menu, or displaying news article summaries or details.<p>
+<p>A template is a collection of HTML and/or Smarty code.  Templates are usually re-used multiple times on a website, and can include or inherit from other templates.  CMSMS provides numerous templates for various purposes.  These purposes include defining the structure of a web page, a navigation menu, or displaying news article summaries or details.<p>
 <p>Each template must have a name that must be unique across the entire installation.  Additionally, each template is capable of having a description that allows providing human readable information and notes about the characteristics of the template.  You can optionally assign each template to a category to aide in quickly finding the template when edits are required.</p>
 <p>Templates can optionally be associated with one or more designs.  This helps when needing to quickly find a template to edit.  As well, when exporting a design all the templates that are associated with the design will be exported.</p>
 <p>Depending upon the template type <em>(see below)</em> A template can be set as the &quot;default&quot; for that type.  This functionality allows a module to find a template to use of an appropriate type if no template name is specified in the module tag, or via any other means.  For example, in a default installation the &quot;News Summary Sample&quot; template is the default template for the News default <em>(summary)</em> action.  Therefore calling <em>{News}</em> without specifying a template will use this template.</p>
@@ -135,7 +135,7 @@ $lang['help'] = <<<EOT
 <h3>Stylesheets Explained:</h3>
 <p>Stylesheets are text data that are stored in the database, and allow you to enter CSS data that is associated with zero or more designs.   Each stylesheet must have a unique name, has an optional description, and an optional media query.</p>
 <p>You can associate each stylesheet with one or more designs, and specify the order of the stylesheets within the design.  When a content page is rendered, all of the stylesheets associated with the design will be combined, and output to a file to allow cashing by the browser.</p>
-<p>Stylesheets can include smarty tags to allow doing logic within the stylesheet, or creating variables for reuse.  However instead of the normal { and } delimiters for smarty, the [[  and ]] delimiters are used.  For example:</p>
+<p>Stylesheets can include Smarty tags to allow doing logic within the stylesheet, or creating variables for re-use.  However instead of the normal { and } delimiters for Smarty, the [[ and ]] delimiters are used.  For example:</p>
 <pre><code><span style="color: blue;">[[&#36;red='#f00']]</span>
 div.error {
    color: <span style="color: blue;">[[&#36;red]]</span>;
@@ -222,14 +222,14 @@ $lang['help_css_mediaquery'] = <<<EOT
 <p>CMSMS Allows associating a media query with a stylesheet.  When <code>{cms_stylesheet}</code> renders its output the media query will be automatically placed in the stylesheet tag.</p>
 EOT;
 $lang['help_design_name'] = 'This field contains the unique, logician name for the collection of templates and stylesheets';
-$lang['help_design_created'] = 'This is the date the design was originally created';
+$lang['help_design_created'] = 'This is the date and time when the design was originally created';
 $lang['help_design_description'] = 'Specify a description for this design (text only).  This may be useful for your future reference, or when sharing this design with others';
-$lang['help_design_modified'] = 'The date the design was last modified';
+$lang['help_design_modified'] = 'The date and time when the design was last modified';
 $lang['help_has_dflt'] = 'If &quot;Yes&quot;, this template type has some default content that is used as a sample when creating a new template of this type.  Of course you are able to change the contents of the template';
 $lang['help_import_cmsversion'] = 'This design file was generated from an earlier version of CMSMS.  This may cause difficulties, please use caution!';
-$lang['help_import_created'] = 'This is the date that the XML file was created.  For themes created from the older CMSMS Theme manager there is no embedded creation date so &quot;unknown&quot; will be displayed';
-$lang['help_import_newname'] = 'If you already have a design with the name specified, the system will suggest a new design name.  You must ensure that the design name you create is unique';
-$lang['help_import_xml_file'] = 'Select an XML File to import.  The XML file have been generated by the CMSMS Design Manager, or by the older CMSMS Theme Manager';
+$lang['help_import_created'] = 'This is the date and time when the XML file was created.  For themes created from the older CMSMS Theme Manager there is no embedded creation date so &quot;unknown&quot; will be displayed';
+$lang['help_import_newname'] = 'If the site already has a design with the name specified, the system will suggest a new design name.  You must ensure that the design name you choose is unique.';
+$lang['help_import_xml_file'] = 'Select an XML file to import.  That file might have been generated by the Design Manager module, or by the old Theme Manager module';
 $lang['help_lockrefresh'] = 'Specify the maximum number of seconds before a lock should be refreshed.  Setting a value of 0 will disable refreshing of locks.  <strong>Note:</strong> Locks are not refreshed unless there are some changes in the form.  The minimum value for this field (other than 0) is 30.';
 $lang['help_locktimeout'] = 'Specify the minimum number of minutes after which a non-refreshed lock will expire.  Specifying a value of 0 will disable locking all together.  Minimum is 5 and maximum is 480';
 $lang['help_move_down'] = 'Move the selected item down';
@@ -244,7 +244,7 @@ $lang['help_stylesheet_created'] = 'This is the date and time when this styleshe
 $lang['help_stylesheet_file'] = 'Stylesheets for frontend use may be recorded either in the site database or in respective standalone files at the site.  Stylesheets may be transferred between those two forms, by export (to file) or import (to database).';
 $lang['help_stylesheet_modified'] = 'This is the date and time when this stylesheet was last modified';
 $lang['help_stylesheet_multiple_designs'] = 'This stylesheet is attached to multiple designs';
-$lang['help_stylesheet_name'] = 'Specify a name for this stylesheet.  Only alphanumeric characters, and the underscore are permitted';
+$lang['help_stylesheet_name'] = 'Specify a name for this stylesheet.  Only alphanumeric characters and underscores are permitted in the name.';
 $lang['help_stylesheet_no_designs'] = 'This stylesheet is not attached to any designs';
 $lang['help_template_addteditors'] = 'Here you can specify additional users that have permission to edit this template';
 $lang['help_template_bulk'] = 'This option allows performing actions on multiple templates at once.  Use with caution';
@@ -287,21 +287,21 @@ Attaching a template to a design is only used for organizational and export purp
 <br>
 <b>How to use:</b><br>
 Select one or more templates, drag them from Available Templates and drop them in the Attached Templates box, then hit Apply or Submit.<br>
-Delete an attached template by clicking the trash icon.';
+Detach an attached template by clicking the corresponding trash icon.';
 $lang['info_edittemplate_stylesheets_tab'] = 'Here you can select the stylesheets that should be attached to the design.<br>
 Stylesheets are used to control the appearance of the web pages, and for organizational and export purposes. The order is used for determining the order in which stylesheets are output for a page using this design.<br>
 <br>
 <b>How to use:</b><br>
 Select one or more stylesheets, drag them from Available Stylesheets and drop them in the Attached Stylesheets box, then hit Apply or Submit.<br>
-Delete an attached stylesheet by clicking the trash icon.';
-$lang['info_import_xml_step1'] = 'Step 1: Choose a Design XML File to import';
-$lang['info_import_xml_step2'] = 'Step 2: Read information about this design before importing it to your CMSMS installation.';
+Detach an attached stylesheet by clicking the corresponding trash icon.';
+$lang['info_import_xml_step1'] = 'Choose a design XML file to import';
+$lang['info_import_xml_step2'] = 'Read about this design before importing it to your CMSMS installation.';
 $lang['info_nodescription'] = 'There is no description entered for this item';
 $lang['info_template_content_file'] = 'The content of this template is stored in a file. The template can be \'imported\' for content-editing here, or edited in place<br><strong>%s</strong><br>by any suitably-authorised person (perhaps via FileManager).';
 $lang['info_template_delete'] = 'This template may be used by a working system.  Deleting it may break an otherwise working website.  Use caution!';
 
 //L
-$lang['lock_timeout'] = 'Lock Time out (minutes)';
+$lang['lock_timeout'] = 'Lock Time Out (minutes)';
 $lang['lock_refresh'] = 'Lock Refresh Interval (seconds)';
 $lang['lock_warning'] = 'Another user is editing this item. You will not be able to save any of your work until lock time out expires.';
 
@@ -343,8 +343,8 @@ $lang['msg_design_saved'] = 'Design saved';
 $lang['msg_type_saved'] = 'Template type saved';
 
 //N
-$lang['name'] = 'Name';
-$lang['newname'] = 'New Name';
+$lang['name'] = 'Name'; // see also 'prompt_name'
+$lang['newname'] = 'New Name'; // TODO something for input-text placeholder
 $lang['next'] = 'Next';
 $lang['new_category'] = 'New Category';
 $lang['new_design'] = 'New Design';
@@ -353,8 +353,8 @@ $lang['new_template'] = 'New Template';
 $lang['no'] = 'No';
 
 //P
-$lang['postinstall'] = 'Design Manager Module Installed';
-$lang['postuninstall'] = 'Design Manager Module Uninstalled';
+$lang['postinstall'] = 'Design Manager module installed';
+$lang['postuninstall'] = 'Design Manager module uninstalled';
 $lang['prompt_add'] = 'Add';
 $lang['prompt_advanced'] = 'Advanced';
 $lang['prompt_any'] = 'Any';
@@ -367,7 +367,7 @@ $lang['prompt_clearlocks2'] = 'Clear Your Locks';
 $lang['prompt_copy'] = 'Copy';
 $lang['prompt_copyrightlicense'] = 'Copyright and License';
 $lang['prompt_copy_template'] = 'Copy this Template';
-$lang['prompt_created'] = 'Create Date';
+$lang['prompt_created'] = 'Creation DateTime';
 $lang['prompt_cssfile'] = 'CSS File';
 $lang['prompt_default'] = 'Default';
 $lang['prompt_delete'] = 'Delete';
@@ -403,7 +403,7 @@ $lang['prompt_media_query'] = 'Media Query';
 $lang['prompt_modified'] = 'Modified Date';
 $lang['prompt_multiple'] = 'Multiple';
 $lang['prompt_na'] = 'N/A';
-$lang['prompt_name'] = 'Name';
+$lang['prompt_name'] = 'Name'; // see also 'name'
 $lang['prompt_nextpage'] = 'Next page';
 $lang['prompt_none'] = 'None';
 $lang['prompt_notdflt'] = 'This is not a default template';
@@ -457,17 +457,17 @@ $lang['set_all_pages'] = 'Set All Pages To This Template';
 $lang['submit'] = 'Submit';
 
 //T
-$lang['title_cat_id'] = 'This column displays the unique integer id for the category.';
-$lang['title_cat_name'] = 'This column displays the unique name for the category.';
+$lang['title_cat_id'] = 'This column displays the unique integer id of each category';
+$lang['title_cat_name'] = 'This column displays the unique name of each category';
 $lang['title_clearlocks'] = 'Clear any locked items (subject to permissions)';
 $lang['title_clearlocks2'] = 'Clear locks held by you';
 $lang['title_css_bulkaction'] = 'Select the action to perform on the selected stylesheets.'; // new
 $lang['title_css_designs'] = 'This column lists the design that a stylesheet is attached to. If any.';
 $lang['title_css_filename'] = 'When stylesheets are stored in a file this column displays the filename within the assets/css directory';
-$lang['title_css_id'] = 'This column displays the unique integer id for the stylesheet.';
+$lang['title_css_id'] = 'This column displays the unique integer id of each stylesheet';
 //$lang['title_css_modified'] = 'Displays the date the stylesheet was last modified.';
-$lang['title_css_media'] = 'This column displays the media to which the stylesheet will be applied'; // new
-$lang['title_css_name'] = 'This column displays the unique name for the stylesheet.';
+$lang['title_css_media'] = 'This column displays the media to which each stylesheet will be applied'; // new
+$lang['title_css_name'] = 'This column displays the unique name of each stylesheet';
 $lang['title_css_selectall'] = 'Select <em>(or deselect)</em> all visible stylesheets.';
 $lang['title_delete'] = 'Delete the selected items';
 $lang['title_designmanager_settings'] = 'Settings - Design Manager';
@@ -483,13 +483,13 @@ $lang['title_sortorder'] = 'Modify the way the matching templates are ordered';
 $lang['title_template_setallpages'] = 'Set all pages to use this template';
 $lang['title_tpl_bulk'] = 'Select this template for bulk actions';
 $lang['title_tpl_bulkaction'] = 'Select the action to perform on the selected templates.';
-$lang['title_tpl_design'] = 'This column displays the name of the design (if any) that a template is associated with.  A template can be associated with multiple designs';
+$lang['title_tpl_design'] = 'This column displays the name of the design (if any) that each template is associated with.  A template can be associated with multiple designs.';
 $lang['title_tpl_dflt'] = 'This column displays whether the template is the default template for its type';
 $lang['title_tpl_filename'] = 'When templates are stored in a file this column displays the filename within the assets/templates directory';
-$lang['title_tpl_id'] = 'This column displays the unique numeric template ID';
+$lang['title_tpl_id'] = 'This column displays the unique integer id of each template';
 $lang['title_tpl_import_type'] = 'For organizational purposes, and to provide some default content, select the type for the new template.';
-$lang['title_tpl_modified'] = 'This column displays the name date the template was last modified';
-$lang['title_tpl_name'] = 'This column displays the unique template name';
+$lang['title_tpl_modified'] = 'This column displays the date/time when each template was last modified';
+$lang['title_tpl_name'] = 'This column displays the unique name of each template';
 $lang['title_tpl_type'] = 'This column displays the type of each template';
 $lang['tpl_filter'] = 'Filter Templates';
 $lang['tpl_originators'] = 'Originators';
@@ -504,16 +504,16 @@ $lang['unknown'] = 'Unknown';
 $lang['warn_bulk_delete_sheets'] = '<strong>Warning:</strong> Deleting multiple stylesheets at once is probably a bad idea.  No checks are performed to see if these stylesheets are actually used in the system.  This operation might mangle a working website!';
 $lang['warn_bulk_delete_templates'] = '<strong>Warning:</strong> Deleting multiple templates at once is usually a bad idea.  No checks are performed to see if these templates are actually used in the system.  This operation may break a working website!';
 $lang['warn_setall_nocontentblocks'] = '<strong>Warning:</strong> No content blocks were detected in the destination template.  This will prevent editing content in all current content pages.';
-$lang['warn_template_used'] = '<strong>Warning:</strong> This template is in use by one or more pages, and/or designs.  It may also be included by other templates.  Deleting this template may break a working website. <strong>Use Extreme Caution!</strong>';
+$lang['warn_template_used'] = '<strong>Warning:</strong> This template is in use by one or more pages and/or designs.  It may also be included by other templates.  Deleting this template may break a working website. <strong>Use Extreme Caution!</strong>';
 $lang['warning_category_dragdrop'] = 'To change the display order of categories you can drag the rows into their correct order';
-$lang['warning_deletetemplate_attachments'] = 'This design has templates attached to it.  These templates may be in use on some page or by a module. Deleting these templates, even if they are attached to no other design, may break an otherwise working site.   Please exercise extreme caution!';
-$lang['warning_deletedesign'] = '<strong>Warning:  Use extreme caution.</strong>  Deleting a design may break a functioning website.';
+$lang['warning_deletetemplate_attachments'] = 'This design has templates attached to it.  Those templates may be in use on some page or by a module. Deleting those templates, even if they are attached to no other design, may break an otherwise working site.   Please exercise extreme caution!';
+$lang['warning_deletedesign'] = '<strong>Warning: Use extreme caution.</strong>  Deleting a design may break a functioning website.';
 $lang['warning_deletestylesheet_attachments'] = 'This design has stylesheets attached to it.  Some of the templates in use by the system but not necessarily attached to this design may rely on these stylesheets.  Deleting these stylesheets, even if they are attached to no other design may break an otherwise working site. Please exercise extreme caution!';
 $lang['warning_editdesign_nostylesheets'] = 'There are no stylesheets available in the system.';
-//$lang['warning_edittemplate_nostylesheets'] = 'No stylesheets attached';
-$lang['warning_edittemplate_notemplates'] = 'Sorry, we could not find any templates that you have permission to edit';
+//$lang['warning_edittemplate_nostylesheets'] = 'No stylesheet is attached';
+$lang['warning_edittemplate_notemplates'] = 'We could not find any template that you have permission to edit';
 $lang['warning_no_design'] = 'No design is recorded';
-$lang['warning_no_templates_available'] = 'We could find no template that matches the filter criteria (if any) and that you have permission to edit';
+$lang['warning_no_templates_available'] = 'We could not find any template that matches the filter criteria (if any) and that you have permission to edit';
 $lang['warning_no_stylesheets'] = 'We could find no stylesheet that matches the filter criteria (if any) and that you have permission to edit';
 $lang['warning_set_all_pages'] = '<strong>Warning:</strong> This is a potentially destructive operation!  You are asking that all content pages be set use this template.  Please confirm this action.';
 $lang['whats_this'] = 'What\'s this?';
