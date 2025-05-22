@@ -3,9 +3,7 @@
 	src: url('../fonts/cmsms-filepicker.eot');
 	src: url('../fonts/cmsms-filepicker.woff2') format('woff2'),
 		url('../fonts/cmsms-filepicker.woff') format('woff'),
-		url('../fonts/cmsms-filepicker.ttf') format('truetype'),
-		url('../fonts/cmsms-filepicker.svg') format('svg'),
-		url('../fonts/cmsms-filepicker.eot') format('embedded-opentype');
+		url('../fonts/cmsms-filepicker.ttf') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -13,58 +11,61 @@
 [class^="cmsms-fp-"], [class*=" cmsms-fp-"] {
 	font-family: 'cmsms-filepicker' !important;
 	speak: none;
+	margin-left: .1em;
+	margin-right: .1em;
 	font-style: normal;
 	font-weight: normal;
 	font-variant: normal;
+	text-align: center;
 	text-transform: none;
 	line-height: 1;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
 
-.cmsms-fp-music:before {
+.cmsms-fp-music::before {
 	content: "\e600";
 }
-.cmsms-fp-th:before {
+.cmsms-fp-th::before {
 	content: "\e601";
 }
-.cmsms-fp-th-list:before {
+.cmsms-fp-th-list::before {
 	content: "\e602";
 }
-.cmsms-fp-file:before {
+.cmsms-fp-file::before {
 	content: "\e603";
 }
-.cmsms-fp-folder-open:before {
-	content: "\e605";
-}
-.cmsms-fp-folder-close:before {
-	content: "\e606";
-}
-.cmsms-fp-facetime-video:before {
-	content: "\e607";
-}
-.cmsms-fp-picture:before {
-	content: "\e608";
-}
-.cmsms-fp-reorder:before {
-	content: "\e609";
-}
-.cmsms-fp-film:before {
-	content: "\e60a";
-}
-.cmsms-fp-zip:before {
+.cmsms-fp-zip::before {
 	content: "\e604";
 }
-.cmsms-fp-file-content:before {
+.cmsms-fp-folder-open::before {
+	content: "\e605";
+}
+.cmsms-fp-folder-close::before {
+	content: "\e606";
+}
+.cmsms-fp-facetime-video::before {
+	content: "\e607";
+}
+.cmsms-fp-picture::before {
+	content: "\e608";
+}
+.cmsms-fp-reorder::before {
+	content: "\e609";
+}
+.cmsms-fp-film::before {
+	content: "\e60a";
+}
+.cmsms-fp-file-content::before {
 	content: "\e60b";
 }
-.cmsms-fp-plus:before {
+.cmsms-fp-plus::before {
 	content: "\e60c";
 }
-.cmsms-fp-close:before {
+.cmsms-fp-close::before {
 	content: "\e60d";
 }
-.cmsms-fp-upload:before {
+.cmsms-fp-upload::before {
 	content: "\e60e";
 }
 

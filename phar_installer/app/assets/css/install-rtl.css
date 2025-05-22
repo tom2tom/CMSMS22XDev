@@ -320,34 +320,31 @@ h1, h2, h3, h4, h5, h6 {
 	src: url('../fonts/cmsms-ui.eot');
 	src: url('../fonts/cmsms-ui.woff2') format('woff2'),
 		url('../fonts/cmsms-ui.woff') format('woff'),
-		url('../fonts/cmsms-ui.ttf') format('truetype'),
-		url('../fonts/cmsms-ui.svg') format('svg'),
-		url('../fonts/cmsms-ui.eot') format('embedded-opentype');
+		url('../fonts/cmsms-ui.ttf') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 }
+/*		url('../fonts/cmsms-ui.svg') format('svg'),
+		url('../fonts/cmsms-ui.eot') format('embedded-opentype');
+*/
 
 [class^="icon-"], [class*=" icon-"] {
 	font-family: 'cmsms-ui';
 	speak: none;
+	margin-left: .1em;
+	margin-right: .1em;
 	font-style: normal;
 	font-weight: normal;
 	font-variant: normal;
+	text-align: center;
 	text-transform: none;
 	line-height: 1;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	text-align: center;
 }
 
-.icon-stack::before {
-	content: "\e607";
-}
 .icon-folder-open::before {
 	content: "\e600";
-}
-.icon-calendar::before {
-	content: "\e608";
 }
 .icon-warning::before {
 	content: "\e601";
@@ -367,7 +364,13 @@ h1, h2, h3, h4, h5, h6 {
 .icon-loop::before {
 	content: "\e606";
 }
-.icon-googleplus::before {
+.icon-stack::before {
+	content: "\e607";
+}
+.icon-calendar::before {
+	content: "\e608";
+}
+.icon-googleplus::before { /* redundant */
 	content: "\e609";
 }
 .icon-facebook::before {
