@@ -1,30 +1,34 @@
 <?php
 
-$handlers = ob_list_handlers();
-for ($cnt = 0; $cnt < count($handlers); $cnt++) { ob_end_clean(); }
+$num = count(ob_list_handlers());
+for ($cnt = 0; $cnt < $num; $cnt++) { ob_end_clean(); }
 
 try {
-    if( !$this->CheckPermission('Manage Stylesheets') ) throw new \Exception($this->Lang('error_permission'));
+    if( !$this->CheckPermission('Manage Stylesheets') ) throw new Exception($this->Lang('error_permission'));
     $tmp = get_parameter_value($_REQUEST,'filter');
-    if( !$tmp ) throw new \Exception($this->Lang('error_missingparam'));
+    if( !$tmp ) throw new Exception($this->Lang('error_missingparam'));
 
     $userid = get_userid();
     $modname = $this->GetName();
     $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;ajax_get_stylesheets.tpl",null,$modname,$smarty);
 
     $filter = json_decode($tmp,TRUE);
-    $tpl->assign('css_filter',$filter);
 
+    $designchoices = [];
     $designs = CmsLayoutCollection::get_all();
     if( $designs ) {
         $tpl->assign('list_designs',$designs);
-        $tmp = array();
-        for( $i = 0; $i < count($designs); $i++ ) {
-            $tmp['d:'.$designs[$i]->get_id()] = $designs[$i]->get_name();
-            $tmp2[$designs[$i]->get_id()] = $designs[$i]->get_name();
+        for( $i = 0,$n = count($designs); $i < $n; $i++ ) {
+            $did = $designs[$i]->get_id();
+            $dn = $designs[$i]->get_name();
+            $filter['d:'.$did] = $dn;
+            $designchoices[$did] = $dn;
         }
-        $tpl->assign('design_names',$tmp2);
+        asort($designchoices);
     }
+    asort($filter);
+    $tpl->assign('css_filter',$filter);
+    $tpl->assign('design_names',$designchoices);
 
     $locks = CmsLockOperations::get_locks('stylesheet',0,$userid); //lock(s) held by other users
     $have_locks = $locks && is_array($locks);
@@ -46,7 +50,7 @@ try {
     $css_query = new CmsLayoutStylesheetQuery($filter);
     $csslist = $css_query->GetMatches();
     $tpl->assign('stylesheets',$csslist);
-    $css_nav = array();
+    $css_nav = [];
     $css_nav['pagelimit'] = $css_query->limit;
     $css_nav['numpages'] = $css_query->numpages;
     $css_nav['numrows'] = $css_query->totalrows;

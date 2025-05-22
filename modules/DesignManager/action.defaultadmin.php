@@ -16,13 +16,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 # Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
 #-------------------------------------------------------------------------
+
 if( !isset($gCms) ) exit;
 if( !$this->VisibleToAdminUser() ) return;
 
-$filter_tpl_rec = array('tpl'=>'','limit'=>100,'offset'=>0,'sortby'=>'name','sortorder'=>'asc');
-$filter_css_rec = array('limit'=>100,'offset'=>0,'sortby'=>'name','sortorder'=>'asc','design'=>'');
+$filter_tpl_rec = ['tpl'=>'','limit'=>100,'offset'=>0,'sortby'=>'name','sortorder'=>'asc'];
+$filter_css_rec = ['limit'=>100,'offset'=>0,'sortby'=>'name','sortorder'=>'asc','design'=>''];
 if( isset($params['submit_filter_tpl']) ) {
     if( $params['submit_filter_tpl'] == 1 ) {
         $filter_tpl_rec['tpl'] = $params['filter_tpl'];
@@ -34,7 +34,7 @@ if( isset($params['submit_filter_tpl']) ) {
     unset($_SESSION[$this->GetName().'tpl_page']);
     cms_userprefs::set($this->GetName().'template_filter',serialize($filter_tpl_rec));
 }
-else if( isset($params['submit_filter_css']) ) {
+elseif( isset($params['submit_filter_css']) ) {
     if( $params['submit_filter_css'] == 1 ) {
         $filter_css_rec['design'] = trim($params['filter_css_design']);
         $filter_css_rec['sortby'] = trim($params['filter_css_sortby']);
@@ -45,22 +45,22 @@ else if( isset($params['submit_filter_css']) ) {
     unset($_SESSION[$this->GetName().'tpl_page']);
     cms_userprefs::set($this->GetName().'css_filter',serialize($filter_css_rec));
 }
-else if( isset($params['submit_create']) ) {
+elseif( isset($params['submit_create']) ) {
     $tmp = $params['import_type'];
     if( startswith($tmp, 't:') ) {
         $tmp = substr($tmp, 2); // only the type-id is useful
     }
-    $this->Redirect($id,'admin_edit_template',$returnid,array('import_type'=>$tmp));
+    $this->Redirect($id,'admin_edit_template',$returnid,['import_type'=>$tmp]);
 }
-else if( isset($params['submit_bulk_tpl']) ) {
-    $tmp = array('allparms'=>base64_encode(json_encode($params)));
+elseif( isset($params['submit_bulk_tpl']) ) {
+    $tmp = ['allparms'=>base64_encode(json_encode($params))];
     $this->Redirect($id,'admin_bulk_template',$returnid,$tmp);
 }
-else if( isset($params['submit_bulk_css']) ) {
-    $tmp = array('allparms'=>base64_encode(json_encode($params)));
+elseif( isset($params['submit_bulk_css']) ) {
+    $tmp = ['allparms'=>base64_encode(json_encode($params))];
     $this->Redirect($id,'admin_bulk_css',$returnid,$tmp);
 }
-else if( isset($params['design_setdflt']) && $this->CheckPermission('Manage Designs') ) {
+elseif( isset($params['design_setdflt']) && $this->CheckPermission('Manage Designs') ) {
     $design_id = (int)$params['design_setdflt'];
     try {
         $cur_dflt = CmsLayoutCollection::load_default();
@@ -82,13 +82,19 @@ else if( isset($params['design_setdflt']) && $this->CheckPermission('Manage Desi
 }
 
 $tmp = cms_userprefs::get($this->GetName().'template_filter');
-if( $tmp ) $filter_tpl_rec = unserialize($tmp);
+if( $tmp ) {
+    $filter_tpl_rec = unserialize($tmp);
+}
+else {
+    $filter_tpl_rec = [];
+}
 if( isset($params['tpl_page']) ) {
     $this->SetCurrentTab('templates');
     $page = max(1,(int)$params['tpl_page']);
     $_SESSION[$this->GetName().'tpl_page'] = $page;
     $filter_tpl_rec['offset'] = ($page - 1) * $filter_tpl_rec['limit'];
-} else if( isset($_SESSION[$this->GetName().'tpl_page']) ) {
+}
+elseif( isset($_SESSION[$this->GetName().'tpl_page']) ) {
     $page = max(1,(int)$_SESSION[$this->GetName().'tpl_page']);
     $filter_tpl_rec['offset'] = ($page - 1) * $filter_tpl_rec['limit'];
 }
@@ -114,7 +120,7 @@ $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,
 
 if( $templates ) {
     $tpl->assign('templates',$templates);
-    $tpl_nav = array();
+    $tpl_nav = [];
     $tpl_nav['pagelimit'] = $tpl_query->limit;
     $tpl_nav['numpages'] = $tpl_query->numpages;
     $tpl_nav['numrows'] = $tpl_query->totalrows;
@@ -122,23 +128,26 @@ if( $templates ) {
     $tpl->assign('tpl_nav',$tpl_nav);
 }
 */
-// build a list of the types, and categories, and later, designs.
-$opts = array();
-$opts[''] = $this->Lang('prompt_none');
+// build a list of types and categories, and later, designs.
+$opts = ['' => $this->Lang('prompt_none')];
+$originators = [];
 $types = CmsLayoutTemplateType::get_all();
-$originators = array();
-if( $types && count($types) ) {
-    $tmp = array();
-    for( $i = 0; $i < count($types); $i++ ) {
-        $tmp['t:'.$types[$i]->get_id()] = $types[$i]->get_langified_display_value();
-        $org = $types[$i]->get_originator();
+if( $types ) {
+    $filtert = [];
+    $typechoices = [];
+    for( $i = 0,$n = count($types); $i < $n; $i++ ) {
+        $tid = $types[$i]->get_id();
+        $filtert['t:'.$tid] = $types[$i]->get_langified_display_value();
+        $typechoices[$tid] = $types[$i]->get_name();
+        $org = $types[$i]->get_originator(); //no arg gets id?
         if( !isset($originators[$org]) ) {
             $originators['o:'.$org] = $types[$i]->get_originator(TRUE);
         }
     }
-    asort($tmp);
-    $opts[$this->Lang('tpl_types')] = $tmp; // data to populate the new-template type-selector
-    $tpl->assign('list_types',$tmp); // for TBA
+    asort($filtert);
+    $opts[$this->Lang('tpl_types')] = $filtert; // data to populate the new-template type-selector
+    asort($typechoices);
+    $tpl->assign('list_types',$typechoices);
     asort($originators);
     $opts[$this->Lang('tpl_originators')] = $originators;
     // data to populate the template-types tab
@@ -160,41 +169,45 @@ else {
 }
 
 $cats = CmsLayoutTemplateCategory::get_all();
-if( $cats && count($cats) ) {
+if( $cats && is_array($cats) ) {
     $tpl->assign('list_categories',$cats);
-    $tmp = array();
-    for( $i = 0; $i < count($cats); $i++ ) {
-        $tmp['c:'.$cats[$i]->get_id()] = $cats[$i]->get_name();
+    $filterc = [];
+    for( $i = 0,$n = count($cats); $i < $n; $i++ ) {
+        $filterc['c:'.$cats[$i]->get_id()] = $cats[$i]->get_name();
     }
-    $opts[$this->Lang('prompt_categories')] = $tmp;
+    asort($filterc);
+    $opts[$this->Lang('prompt_categories')] = $filterc;
 }
 
 $designs = CmsLayoutCollection::get_all();
-if( $designs && count($designs) ) {
+if( $designs ) {
     $tpl->assign('list_designs',$designs);
-    $tmp = array();
-    for( $i = 0; $i < count($designs); $i++ ) {
-        $tmp['d:'.$designs[$i]->get_id()] = $designs[$i]->get_name();
-        $tmp2[$designs[$i]->get_id()] = $designs[$i]->get_name();
+    $filterd = [];
+    $designchoices = [];
+    for( $i = 0,$n = count($designs); $i < $n; $i++ ) {
+        $did = $designs[$i]->get_id();
+        $dn = $designs[$i]->get_name();
+        $filterd['d:'.$did] = $dn;
+        $designchoices[$did] = $dn;
     }
-    asort($tmp2);
-    $tpl->assign('design_names',$tmp2);
-    asort($tmp);
-    $opts[$this->Lang('prompt_design')] = $tmp;
+    asort($designchoices);
+    $tpl->assign('design_names',$designchoices);
+    asort($filterd);
+    $opts[$this->Lang('prompt_design')] = $filterd;
 }
 if( $this->CheckPermission('Manage Designs') ) {
     $userops = cmsms()->GetUserOperations();
     $allusers = $userops->LoadUsers();
-    $users = array(-1=>$this->Lang('prompt_unknown'));
-    $tmp = array();
-    for( $i = 0; $i < count($allusers); $i++ ) {
-        $tmp['u:'.$allusers[$i]->id] = $allusers[$i]->username;
+    $users = [-1=>$this->Lang('prompt_unknown')];
+    $filteru = [];
+    for( $i = 0,$n = count($allusers); $i < $n; $i++ ) {
+        $filteru['u:'.$allusers[$i]->id] = $allusers[$i]->username;
         $users[$allusers[$i]->id] = $allusers[$i]->username;
     }
     asort($users);
     $tpl->assign('list_users',$users);
-    asort($tmp);
-    $opts[$this->Lang('prompt_user')] = $tmp;
+    asort($filteru);
+    $opts[$this->Lang('prompt_user')] = $filteru;
 }
 
 if( $this->CheckPermission('Manage Stylesheets') ) {
@@ -205,7 +218,8 @@ if( $this->CheckPermission('Manage Stylesheets') ) {
         $page = max(1,(int)$params['css_page']);
         $_SESSION[$this->GetName().'css_page'] = $page;
         $filter_css_rec['offset'] = ($page - 1) * $filter_css_rec['limit'];
-    } else if( isset($_SESSION[$this->GetName().'css_page']) ) {
+    }
+    elseif( isset($_SESSION[$this->GetName().'css_page']) ) {
         $page = max(1,(int)$_SESSION[$this->GetName().'css_page']);
         $filter_css_rec['offset'] = ($page - 1) * $filter_css_rec['limit'];
     }
