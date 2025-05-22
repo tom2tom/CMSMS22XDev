@@ -64,7 +64,7 @@ $(function() {
       {if !empty($pagelist)}
       <div class="grid_4 endalign">
         <form method="post" action="adminlog.php?{$SECURE_PARAM_NAME}={$CMS_USER_KEY}">
-          {lang('page')}:&nbsp;
+          <label for="pagesel">{lang('page')}:</label>&nbsp;
           <select id="pagesel" name="page">{html_options options=$pagelist selected=$page}</select>
         </form>
       </div>

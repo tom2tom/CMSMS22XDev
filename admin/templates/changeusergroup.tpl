@@ -15,7 +15,7 @@
   <div class="hidden">
     <input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}">
   </div>
-  <b>{$selectgroup}:</b>&nbsp;
+  <label for="groupsel">{$selectgroup}:</label>&nbsp;
   <select name="groupsel" id="groupsel">
   {foreach $allgroups as $thisgroup}
     {if $thisgroup->id == $disp_group}
