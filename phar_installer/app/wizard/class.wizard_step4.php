@@ -23,16 +23,24 @@ class wizard_step4 extends wizard_step
 
         $tz = date_default_timezone_get();
         if( !$tz ) @date_default_timezone_set('UTC');
-        $this->_config = array('dbtype'=>'','dbhost'=>'localhost','dbname'=>'','dbuser'=>'',
-                               'dbpass'=>'','dbprefix'=>'cms_','dbport'=>'',
-                               'samplecontent'=>TRUE,
-                               'query_var'=>'','timezone'=>$tz);
-
+        $this->_config = [
+         'dbtype'=>'',
+         'dbhost'=>'localhost',
+         'dbname'=>'',
+         'dbuser'=>'',
+         'dbpass'=>'',
+         'dbprefix'=>'cms_',
+         'dbport'=>'',
+         'samplecontent'=>TRUE,
+         'query_var'=>'',
+         'timezone'=>$tz
+        ];
         // get saved data
         $wiz = $this->get_wizard();
         $tmp = $wiz->get_data('config');
-        if( $tmp ) $this->_config = array_merge($this->_config,$tmp);
-
+        if( $tmp ) {
+            $this->_config = array_merge($this->_config,$tmp);
+        }
         $databases = array('mysqli'=>'MySQL (4.1+)');
         $this->_dbms_options = array();
         foreach ($databases as $db => $lbl) {
@@ -63,21 +71,21 @@ class wizard_step4 extends wizard_step
     {
         $action = $this->get_wizard()->get_data('action');
         if( $action != 'freshen' ) {
-            if( !isset($config['dbtype']) || !$config['dbtype'] ) throw new Exception(lang('error_nodbtype'));
-            if( !isset($config['dbhost']) || !$config['dbhost'] ) throw new Exception(lang('error_nodbhost'));
-            if( !isset($config['dbname']) || !$config['dbname'] ) throw new Exception(lang('error_nodbname'));
-            if( !isset($config['dbuser']) || !$config['dbuser'] ) throw new Exception(lang('error_nodbuser'));
-            if( !isset($config['dbpass']) || !$config['dbpass'] ) throw new Exception(lang('error_nodbpass'));
-            if( $action == 'install' && ( !isset($config['dbprefix']) || !$config['dbprefix'] ) ) {
+            if( empty($config['dbtype']) ) throw new Exception(lang('error_nodbtype'));
+            if( empty($config['dbhost']) ) throw new Exception(lang('error_nodbhost'));
+            if( empty($config['dbname']) ) throw new Exception(lang('error_nodbname'));
+            if( empty($config['dbuser']) ) throw new Exception(lang('error_nodbuser'));
+            if( empty($config['dbpass']) ) throw new Exception(lang('error_nodbpass'));
+            if( empty($config['dbprefix']) && $action == 'install' ) {
                 throw new Exception(lang('error_nodbprefix'));
             }
         }
-        if( !isset($config['timezone']) || !$config['timezone'] ) {
+        if( empty($config['timezone']) ) {
             throw new Exception(lang('error_notimezone'));
         }
 
         $re = '/^[a-zA-Z0-9_\.]*$/';
-        if( isset($config['query_var']) && $config['query_var'] && !preg_match($re,$config['query_var']) ) {
+        if( !(empty($config['query_var']) || preg_match($re,$config['query_var'])) ) {
             throw new Exception(lang('error_invalidqueryvar'));
         }
 
