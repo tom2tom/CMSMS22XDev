@@ -109,8 +109,9 @@ class wizard_step8 extends wizard_step
             $siteinfo = $wiz->get_data('siteinfo');
             if( !$siteinfo ) throw new Exception(lang('error_internal',804));
 
-            if( !empty($siteinfo['themepath']) ) $choices['theme_entered'] = $siteinfo['themepath'];
-
+            if( isset($siteinfo['theme_relpath']) ) {
+                $choices['theme_entered'] = $siteinfo['theme_relpath'];
+            }
             $this->write_config($choices,$destdir);
             $this->connect_to_cmsms($destdir);
 
@@ -156,12 +157,14 @@ class wizard_step8 extends wizard_step
 
             require_once $dir.'/base.php';
 
-            $this->message(lang('install_defaultcontent'));
-            $fn = ( $choices['samplecontent'] ) ? $dir.'/extra.php' : $dir.'/initial.php';
-            require_once $fn;
             if( $choices['samplecontent'] ) {
-            //TODO move theme-related files (rename folder?) from $destdir/ uploads/themenames to $dsetdir /assets/themes/themename
+                $this->message(lang('install_defaultcontent'));
+                $fn = $dir.'/extra.php';
             }
+            else {
+                $fn = $dir.'/initial.php';
+            }
+            require_once $fn;
 
             $this->verbose(lang('install_setsitename'));
             cms_siteprefs::set('sitename',$siteinfo['sitename']);
@@ -242,11 +245,14 @@ class wizard_step8 extends wizard_step
         }
 
         $siteinfo = $wiz->get_data('siteinfo');
-        if( isset($siteinfo['themepath']) ) { $choices['theme_entered'] = $siteinfo['themepath']; }
+        if( isset($siteinfo['theme_relpath']) ) {
+            $choices['theme_entered'] = $siteinfo['theme_relpath'];
+        }
+
         try {
             $this->write_config($choices,$destdir);
             $this->connect_to_cmsms($destdir);
-            // setup database connection
+            // setup database connection for use here and downstream
             $db = $this->db_connect($choices);
 
             $this->conform_langs($wiz,$db);
@@ -259,6 +265,7 @@ class wizard_step8 extends wizard_step
             // only perform upgrades for the versions known by the installer
             // and that are greater than what is installed.
             $current_version = $version_info['version'];
+//          $config = cms_config::get_instance(); // often used downstream
             foreach( $versions as $ver ) {
                 if( utils::cms_version_compare($ver,$current_version) > 0 ) {
                     $fn = "$_upsdir_/$ver/upgrade.php";
@@ -292,10 +299,11 @@ class wizard_step8 extends wizard_step
         // global flags $CMS_INSTALL_PAGE etc are still set, from prior method-call
         $siteinfo = $wiz->get_data('siteinfo');
         $config = cms_config::get_instance();
-        if( $config['themes_path'] != $siteinfo['themepath'] ||
+        if(//change not supported ATM $config['themes_dir'] != $siteinfo['theme_relpath'] ||
             $config['timezone'] != $choices['timezone'] ) {
-            $choices['theme_entered'] = $siteinfo['themepath'];
+//          $choices['theme_entered'] = $siteinfo['theme_relpath'];
             $this->write_config($choices,$destdir);
+//          unset($choices['theme_entered']);
             // cleanup any message-creation scripts
             for( $i = 0,$n = count(ob_list_handlers()); $i < $n; $i++ ) {
                 ob_end_clean();
@@ -353,17 +361,17 @@ class wizard_step8 extends wizard_step
         require_once $fp.'classes'.DIRECTORY_SEPARATOR.'class.cms_config.php';
         require_once $fp.'autoloader.php';
         $config = cms_config::get_instance();
-        $patn = '~'.$config['assets_dir'].'[\/]themes~'; //default 'themes_path' property
+        $patn = '~'.$config['assets_dir'].'[\/]themes~'; //default 'themes_dir' property
         if( empty($choices['theme_entered']) ) {
-            if( !preg_match($patn, $config['themes_path']) ) { //TODO not in config file
-                $newconfig['themes_path'] = 'uploads'; // back-compatibility
+            if( !preg_match($patn, $config['themes_dir']) ) { //TODO check different item in config file, not generated
+                $newconfig['themes_dir'] = 'uploads'; // back-compatibility
             }
         }
         elseif( isset($choices['theme_entered']) && !preg_match($patn, $choices['theme_entered']) ) {
-            $newconfig['themes_path'] = $choices['theme_entered'];
+            $newconfig['themes_dir'] = $choices['theme_entered'];
         }
 //        else {
-//            //TODO clear $config['themes_path'] unset stupid?
+//            //TODO clear $config['themes_dir'] unset stupid?
 //        }
         $config->merge($newconfig);
         if( !defined('CONFIG_FILE_LOCATION') ) {

@@ -10,6 +10,7 @@ use RecursiveIteratorIterator;
 use function __appbase\get_app;
 use function __appbase\joinpath;
 use function __appbase\lang;
+use function __appbase\rrmdir;
 use function __appbase\smarty;
 use function file_put_contents;
 
@@ -75,32 +76,54 @@ class wizard_step7 extends wizard_step
 
     private function do_files($langlist = [])
     {
-        $languages = array('en_US');
+        $languages = ['en_US'];
         $siteinfo = $this->get_wizard()->get_data('siteinfo');
-        if( is_array($siteinfo) && is_array($siteinfo['extlanguages']) && count($siteinfo['extlanguages']) ) {
+        if( is_array($siteinfo) && !empty($siteinfo['extlanguages']) && is_array($siteinfo['extlanguages']) ) {
             $languages = array_merge($languages,$siteinfo['extlanguages']);
         }
-        if( is_array($langlist) && count($langlist) ) {
+        if( $langlist && is_array($langlist) ) {
             $languages = array_merge($languages,$langlist);
         }
         $languages = array_unique($languages);
 
         $destdir = get_app()->get_destdir();
         if( !$destdir ) throw new Exception(lang('error_internal',720));
-        $archive = get_app()->get_archive();
 
+        if( !empty($siteinfo['theme_relpath']) ) { //possibly entered value - BEORE 'themes_dir' check
+            $themesdir = $destdir.'/'.$siteinfo['theme_relpath'];
+        }
+        elseif( !empty($siteinfo['themes_dir']) ) {
+            $themesdir = $destdir.'/'.$siteinfo['themes_dir'];
+        }
+        else {
+            $themesdir = $destdir.'/assets/themes';
+        }
+
+        $archive = get_app()->get_archive();
         $this->message(lang('install_extractfiles'));
         $phardata = new PharData($archive);
         $archive = basename($archive);
         $l = strlen($archive);
+
         $filehandler = new install_filehandler();
         $filehandler->set_languages($languages);
         $filehandler->set_destdir($destdir);
+        $filehandler->set_themesdir($themesdir);
         $filehandler->set_output_fn('\cms_autoinstaller\wizard_step7::verbose');
         foreach( new RecursiveIteratorIterator($phardata) as $file => $fi ) {
             if( ($p = strpos($file,$archive)) === FALSE ) continue;
             $fn = substr($file,$p+$l);
             $filehandler->handle_file($fn,$file,$fi);
+        }
+
+        //remove residual demo-theme folders in superseded place(s)
+        foreach( ['uploads','assets'.DIRECTORY_SEPARATOR.'themes'] as $sp ) {
+            if( ($bp = $destdir.DIRECTORY_SEPARATOR.$sp) != $themesdir ) {
+                foreach( ['ngrey','NCleanBlue','simplex'] as $dirn ) {
+                    $fp = $bp.DIRECTORY_SEPARATOR.$dirn;
+                    rrmdir($fp);
+                }
+            }
         }
     }
 

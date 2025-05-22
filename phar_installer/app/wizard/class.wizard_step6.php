@@ -40,13 +40,38 @@ class wizard_step6 extends wizard_step
         }
     }
 
+    private function themesdir($wiz, $config)
+    {
+        $tmp = $wiz->get_data('version_info');
+        if( $tmp && !empty($tmp['config']['themes_dir']) ) {
+            return $tmp['config']['themes_dir']; // prefer value from config.php
+        }
+        elseif( !empty($config['themes_dir']) ) {
+            $tmp = trim($config['themes_dir'], ' \\/');
+            return strtr($tmp, '\\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR);
+        }
+        else {
+            return '';
+        }
+    }
+
     protected function process()
     {
         $app = get_app();
         $config = $app->get_config();
+        $wiz = $this->get_wizard();
 
         if( isset($_POST['sitename']) ) $this->_siteinfo['sitename'] = trim(utils::clean_string($_POST['sitename']));
-        if( isset($_POST['themepath']) ) $this->_siteinfo['themepath'] = trim(utils::clean_string($_POST['themepath']), ' \\/');
+
+        if( isset($_POST['theme_relpath']) ) {
+            $tmp = trim(utils::clean_string($_POST['theme_relpath']), ' \\/');
+            $this->_siteinfo['theme_relpath'] = strtr($tmp, '\\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR);
+        }
+        else {
+            //record the existing property-value
+            $this->_siteinfo['theme_relpath'] = $this->themesdir($wiz, $config);
+        }
+
         if( !$config['nofiles'] ) {
             if( isset($_POST['languages']) && is_array($_POST['languages']) ) {
                 $tmp = array();
@@ -62,7 +87,6 @@ class wizard_step6 extends wizard_step
             }
         }
 
-        $wiz = $this->get_wizard();
         $wiz->set_data('siteinfo',$this->_siteinfo);
         try {
             $this->validate($this->_siteinfo);
@@ -103,13 +127,14 @@ class wizard_step6 extends wizard_step
         else {
             $languages = [];
         }
-        $themesplace = (isset($config['themes_path'])) ? trim($config['themes_path'], ' \\/') : '';
+
+        $themesplace = $this->themesdir($wiz,$config);
 
         $smarty = smarty();
         $smarty->assign('action',$action)
           ->assign('verbose',$wiz->get_data('verbose',0))
           ->assign('siteinfo',$this->_siteinfo)
-          ->assign('yesno',array('0'=>lang('no'),'1'=>lang('yes')))
+          ->assign('yesno',['0'=>lang('no'),'1'=>lang('yes')])
           ->assign('language_list',$languages)
           ->assign('themepath',$themesplace)
           ->display('wizard_step6.tpl');
