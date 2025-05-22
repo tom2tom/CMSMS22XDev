@@ -46,9 +46,9 @@ try {
         if( isset($params['delete_stylesheets']) && $can_delete_stylesheets ) {
             $css_id_list = $design->get_stylesheets();
             if( is_array($css_id_list) && count($css_id_list) ) {
-                // get the designs that are attached to these stylesheets
+                // get the designs to which these stylesheets are attached
                 $css_list = CmsLayoutStylesheet::load_bulk($css_id_list);
-                if( is_array($css_list) && count($css_list) ) {
+                if( $css_list && is_array($css_list) ) {
                     foreach( $css_list as &$css ) {
                         $x = $css->get_designs();
                         if( is_array($x) && count($x) == 1 && $x[0] == $design->get_id() ) {
@@ -65,7 +65,7 @@ try {
             $tpl_id_list = $design->get_templates();
             if( is_array($tpl_id_list) && count($tpl_id_list) ) {
                 $templates = CmsLayoutTemplate::load_bulk($tpl_id_list);
-                if( is_array($templates) && count($templates) ) {
+                if( $templates && is_array($templates) ) {
                     foreach( $templates as &$tpl ) {
                         $x = $tpl->get_designs();
                         if( is_array($x) && count($x) == 1 && $x[0] == $design->get_id() ) {
@@ -75,6 +75,14 @@ try {
                     }
                     unset($tpl);
                 }
+            }
+        }
+
+        $nm = $design->get_name();
+        if( $nm !== '' ) {
+            $fp = cms_join_path($config['themes_path'],$nm); //OR $config['assets_path'],'designs',$nm
+            if( $this->is_dir_unused($fp) ) {
+                recursive_delete($fp);
             }
         }
 
