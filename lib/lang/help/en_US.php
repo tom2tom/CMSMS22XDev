@@ -349,7 +349,7 @@ $lang['help_cmscontentmanager_help'] = <<<EOT
     </li>
 
     <li>Thumbnail
-      <p>This property allows associating a previously created thumbnail image with this content item.  Editors can select a thumbnail file from the uploads/images directory.  This thumbnail may be displayed on the generated HTMLO page, or used when building the navigation.</p>
+      <p>This property allows associating a previously created thumbnail image with this content item.  Editors can select a thumbnail file from the uploads/images directory.  This thumbnail may be displayed on the generated HTML page, or used when building the navigation.</p>
       <p>Users with restricted permissions may not have the ability to adjust or specify this property.</p>
     </li>
 
@@ -700,7 +700,7 @@ $lang['siteprefs_sitename'] = 'This is a human readable name for your website, i
 $lang['siteprefs_frontendlang'] = 'The default language that your website displays on the frontend.  This can be changed on a per-page basis using different smarty tags. i.e: <code>{cms_set_language}</code>';
 $lang['siteprefs_frontendwysiwyg'] = 'When WYSIWYG editors are provided on frontend forms, what WYSIWYG module should be used?  Or none.';
 $lang['siteprefs_nogcbwysiwyg'] = 'This option will disable the WYSIWYG editor on all global content blocks independent of user settings, or of the individual global content blocks';
-$lang['siteprefs_noticetimeout'] = 'Specify the maximum interval during which each message will be displayed. 0 or empty will result in no timeout, in which case manual closing will become the only way to dismiss such notices.';  
+$lang['siteprefs_noticetimeout'] = 'Specify the maximum interval during which each message will be displayed. 0 or empty will result in no timeout, in which case manual closing will become the only way to dismiss such notices.';
 $lang['siteprefs_globalmetadata'] = 'This text area provides the ability to enter meta information that is relevant to all content pages.  This is an ideal location for meta tags such as Generator, and Author, etc.';
 $lang['siteprefs_logintheme'] = 'Select the Admin theme (from installed Admin themes) that will be used to generate the administrator login form, and as the default login theme for new Admin user accounts.  Admin users will be able to select their preferred Admin theme from within the user preferences panel.';
 $lang['siteprefs_backendwysiwyg'] = 'Select the WYSIWYG editor for newly created Admin user accounts.  Admin users will be able to select their preferred WYSIWYG editor from within the user preference panel.';
