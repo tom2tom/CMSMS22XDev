@@ -263,7 +263,7 @@ $lang['toggle_inactive'] = 'Set this module as inactive and unused. No module da
 
 // U
 $lang['uninstall'] = 'Uninstall';
-$lang['uninstalled'] = 'Module Uninstalled';
+$lang['uninstalled'] = 'Module uninstalled';
 $lang['unknown'] = 'Unknown';
 $lang['upgrade'] = 'Upgrade';
 $lang['upgraded'] = 'Module upgraded to version %s';
