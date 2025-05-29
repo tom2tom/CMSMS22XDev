@@ -50,28 +50,41 @@ if( !file_exists($src) ) {
 }
 $imageinfo = getimagesize($src);
 if( !$imageinfo || !isset($imageinfo['mime']) || !startswith($imageinfo['mime'],'image') ) {
-    $this->SetError($this->Lang('filenotimage'));
-    $this->Redirect($id,'defaultadmin',$returnid);
+  $this->SetError($this->Lang('filenotimage'));
+  $this->Redirect($id,'defaultadmin',$returnid);
 }
 if( !is_writable($src) ) {
-    $this->SetError($this->Lang('filenotimage'));
-    $this->Redirect($id,'defaultadmin',$returnid);
+  $this->SetError($this->Lang('filenotimage'));
+  $this->Redirect($id,'defaultadmin',$returnid);
 }
 
 //
 // handle submit action(s).
 //
 
+//Get GDImage
+$instance = imageEditor::open($src);
+if( !is_object($instance) ) {
+  if( $instance ) {
+    $msg = $instance; //error message TODO use error key, to support translation
+  }
+  elseif( $instance === FALSE ) {
+     $msg = $this->Lang('error_open');
+  }
+  else {
+    $msg = $this->Lang('fileimagetype');
+  }
+  $this->SetError($msg);
+  $this->Redirect($id,'defaultadmin',$returnid);
+}
+
 if(empty($params['reset'])
    && !empty($params['cx']) && !empty($params['cy'])
    && !empty($params['cw']) && !empty($params['ch'])
    && !empty($params['iw']) && !empty($params['ih'])) {
 
-  //Get the mimeType
-  $mimeType = imageEditor::getMime($src);
-
-  //Open new Instance
-  $instance = imageEditor::open($src);
+  //Get the mimetype
+  $mimeType = imageEditor::getMime($src); // c.f. $imageinfo['mime']
 
   //Resize it if necessary
   if( !empty($params['iw']) && !empty($params['ih']) ) {
