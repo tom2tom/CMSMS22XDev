@@ -15,36 +15,41 @@
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
+
 include_once __DIR__.DIRECTORY_SEPARATOR.'fileinfo.php';
 
 final class FileManager extends CMSModule
 {
-    public function GetName() { return 'FileManager'; }
-    public function LazyLoadFrontend() { return true; }
-    public function GetChangeLog() { return file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'changelog.htm'); }
-    public function GetHeaderHTML() { return $this->_output_header_javascript(); }
-    public function GetFriendlyName() { return $this->Lang('friendlyname'); }
-    public function GetVersion() { return '1.6.15'; }
-    public function GetHelp() { return $this->Lang('help'); }
+    public function GetAdminDescription() { return $this->Lang('moddescription'); }
+    public function GetAdminSection() { return 'content'; }
     public function GetAuthor() { return 'Morten Poulsen (Silmarillion)'; }
     public function GetAuthorEmail() { return 'morten@poulsen.org'; }
-    public function IsPluginModule() { return true; }
-    public function HasAdmin() { return true; }
-    public function IsAdminOnly() { return false; }
-    public function GetAdminSection() { return 'content'; }
-    public function GetAdminDescription() { return $this->Lang('moddescription'); }
-    public function MinimumCMSVersion() { return '2.2.2'; }
-    public function InstallPostMessage() { return $this->Lang('postinstall'); }
-    public function UninstallPostMessage() { return $this->Lang('uninstalled'); }
-    public function UninstallPreMessage() { return $this->Lang('really_uninstall'); }
+    public function GetChangeLog() { return file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'changelog.htm'); }
     public function GetEventDescription($name) { return $this->Lang('eventdesc_'.$name); }
     public function GetEventHelp($name) { return $this->Lang('eventhelp_'.$name); }
-    public function VisibleToAdminUser() { return $this->AccessAllowed(); }
-    public function AccessAllowed() { return $this->CheckPermission("Modify Files"); }
-    public function AdvancedAccessAllowed() { return $this->CheckPermission('Use FileManager Advanced',0); }
+    public function GetFriendlyName() { return $this->Lang('friendlyname'); }
+    public function GetHeaderHTML() { return $this->_output_header_javascript(); }
+    public function GetHelp() { return $this->Lang('help'); }
+    public function GetName() { return 'FileManager'; }
+    public function GetVersion() { return '1.6.15'; }
+    public function HasAdmin() { return true; }
+    public function InstallPostMessage() { return $this->Lang('postinstall'); }
+    public function IsAdminOnly() { return false; }
+    public function IsPluginModule() { return true; }
+    public function LazyLoadFrontend() { return true; }
+    public function MinimumCMSVersion() { return '2.2.2'; }
+    public function UninstallPostMessage() { return $this->Lang('uninstalled'); }
+    public function UninstallPreMessage() { return $this->Lang('really_uninstall'); }
 
-    public function HasCapability($capability,$params=array()) {
+    public function AccessAllowed() { return $this->CheckPermission('Modify Files'); }
+    public function AdvancedAccessAllowed() { return $this->CheckPermission('Use FileManager Advanced'); }
+
+    public function VisibleToAdminUser() {
+        return $this->CheckPermission('Modify Files') ||
+               $this->CheckPermission('Use FileManager Advanced');
+    }
+
+    public function HasCapability($capability,$params = array()) {
         switch( $capability ) {
             case 'plugin': //aka CmsCoreCapabilities::PLUGIN_MODULE
             case 'upload':
@@ -54,47 +59,44 @@ final class FileManager extends CMSModule
         }
     }
 
-    public function GetFileIcon($extension,$isdir=false) {
+    public function GetFileIcon($extension,$isdir = false) {
         if (empty($extension)) $extension = '---'; // hardcode extension to something.
         if ($extension[0] == ".") $extension = substr($extension,1);
-        $iconsize=$this->GetPreference("iconsize","32px");
-        $iconsizeHeight=str_replace("px","",$iconsize);
+        $iconsize = $this->GetPreference("iconsize","32px");
+        $iconsizeHeight = str_replace("px","",$iconsize);
 
-        $result="";
+        $result = "";
         if ($isdir) {
-            $result="<img height=\"".$iconsizeHeight."\" style=\"vertical-align:middle;border:0;\" src=\"".CMS_ROOT_URL."/modules/FileManager/icons/themes/default/extensions/".$iconsize."/dir.png\" ".
+            $result = "<img height=\"".$iconsizeHeight."\" style=\"vertical-align:middle;border:0;\" src=\"".CMS_ROOT_URL."/modules/FileManager/icons/themes/default/extensions/".$iconsize."/dir.png\" ".
                 "alt=\"directory\">";
             return $result;
         }
 
         if (file_exists(CMS_ROOT_PATH."/modules/FileManager/icons/themes/default/extensions/".$iconsize."/".strtolower($extension).".png")) {
-            $result="<img height='".$iconsizeHeight."' style='vertical-align:middle;border:0;' src='".CMS_ROOT_URL."/modules/FileManager/icons/themes/default/extensions/".$iconsize."/".strtolower($extension).".png' ".
+            $result = "<img height='".$iconsizeHeight."' style='vertical-align:middle;border:0;' src='".CMS_ROOT_URL."/modules/FileManager/icons/themes/default/extensions/".$iconsize."/".strtolower($extension).".png' ".
                 "alt='".$extension."-file'>";
         } else {
-            $result="<img height='".$iconsizeHeight."' style='vertical-align:middle;border:0;' src='".CMS_ROOT_URL."/modules/FileManager/icons/themes/default/extensions/".$iconsize."/0.png' ".
+            $result = "<img height='".$iconsizeHeight."' style='vertical-align:middle;border:0;' src='".CMS_ROOT_URL."/modules/FileManager/icons/themes/default/extensions/".$iconsize."/0.png' ".
                 "alt='".$extension."-file'>";
         }
         return $result;
     }
 
-    protected function Slash($str,$str2="",$str3="") {
-        if ($str=="") return $str2;
-        if ($str2=="") return $str;
-        if ($str[strlen($str)-1]!="/") {
-            if ($str2[0]!="/") {
+    protected function Slash($str,$str2 = "",$str3 = "") {
+        //Three strings not supported yet...
+        if ($str == "") return $str2;
+        if ($str2 == "") return $str;
+        if ($str[strlen($str)-1] != "/") {
+            if ($str2[0] != "/") {
                 return $str."/".$str2;
             } else {
                 return $str.$str2;
             }
+        } elseif ($str2[0] != "/") {
+            return $str.$str2;
         } else {
-            if ($str2[0]!="/") {
-                return $str.$str2;
-            } else {
-                return $str.substr($str2,1); //trim away one of the slashes
-            }
+            return $str.substr($str2,1); //trim away one of the slashes
         }
-        //Three strings not supported yet...
-        return "Error in Slash-function. Please report";
     }
 
     public function GetPermissions($path,$file) {
@@ -114,7 +116,7 @@ final class FileManager extends CMSModule
     //@deprecated since CMSMS 2.0
     //this method used only in FileManager actions which are unused in CMSMS2+
 /*  public function GetModeWin($path,$file) {
-        $realpath=$this->Slash($realpath,$file);
+        $realpath = $this->Slash($realpath,$file);
         if (is_writable($realpath)) {
             return "777";
         } else {
