@@ -132,7 +132,7 @@ abstract class jquery_upload_handler
                 $write_image = 'imagewebp';
                 break;
             case 'avif':
-                if (PHP_VERSION_ID >= 80000 && function_exists('imageavif')) {
+                if (PHP_VERSION_ID >= 80100 && function_exists('imageavif')) {
             //TODO more here
                     @imagecolortransparent($new_img, @imagecolorallocate($new_img, 0, 0, 0));
                     @imagesavealpha($new_img, true);
