@@ -65,6 +65,7 @@ $lang['emptydirectory'] = 'This directory is empty'; //new
 $lang['enableadvanced'] = 'Enable advanced mode';
 $lang['error_dirnotempty'] = 'Directory %s is not empty';
 $lang['error_notwritable'] = 'No write permission to %s';
+$lang['error_open'] = 'Could not open the file'; // new
 $lang['error_thumbnotwritable'] = '%s has a thumbnail that does not have write permission';
 
 $lang['eventdesc_OnFileDeleted'] = 'Sent after a file is deleted';
