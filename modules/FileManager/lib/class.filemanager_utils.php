@@ -495,14 +495,18 @@ final class filemanager_utils
                 'jpe' => 'image/jpeg',
                 'jpg' => 'image/jpeg',
                 'gif' => 'image/gif',
+                'webp' => 'image/webp',
+                'avif' => 'image/avif',
                 'bmp' => 'image/bmp',
+                'wbmp' => 'image/vnd.wap.wbmp',
                 'ico' => 'image/vnd.microsoft.icon',
                 'tiff' => 'image/tiff',
                 'tif' => 'image/tiff',
                 'svg' => 'image/svg+xml',
                 'svgz' => 'image/svg+xml',
-                'webp' => 'image/webp',
-                'avif' => 'image/avif',
+                'apng' => 'image/apng',
+//              'heic' => 'image/heic', //iOS
+//              'heif' => 'image/heif',
 
                 // archives
                 'zip' => 'application/zip',
@@ -705,6 +709,7 @@ final class filemanager_utils
             $res = imagegif($i_dest,$dest);
             break;
         case 'image/png':
+        case 'image/apng': //ok here ?
             $res = imagepng($i_dest,$dest,9);
             break;
         case 'image/jpeg':
@@ -714,15 +719,22 @@ final class filemanager_utils
         case 'image/x-ms-bmp':
             if (PHP_VERSION_ID >= 70200) {
                 $res = imagebmp($i_dest,$dest);
-            } else $res = FALSE;
+            } else {
+                $res = FALSE;
+            }
+            break;
+        case 'image/vnd.wap.wbmp':
+            $res = imagewbmp($i_dest,$dest); // black foreground
             break;
         case 'image/webp':
             $res = imagewebp($i_dest,$dest,80);
             break;
         case 'image/avif':
-            if (PHP_VERSION_ID >= 80000 && function_exists('imageavif')) {
+            if (PHP_VERSION_ID >= 80100 && function_exists('imageavif')) {
                 $res = imageavif($i_dest,$dest,80,6);
-            } else $res = FALSE;
+            } else {
+                $res = FALSE;
+            }
             break;
         default:
             $res = FALSE;

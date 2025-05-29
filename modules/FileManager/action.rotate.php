@@ -61,18 +61,22 @@ switch( $imageinfo['mime'] ) { //OR  switch(mime_content_type($src));
  case 'image/jpeg':
  case 'image/png':
  case 'image/webp':
-   break;
+ case 'image/vnd.wap.wbmp':
+  break;
  case 'image/bmp':
  case 'image/x-ms-bmp':
-   if (PHP_VERSION_ID >= 70200) break;
-   // no break here
- case 'image/avif':
-   if (PHP_VERSION_ID >= 80000 && function_exists('imageavif')) break;
-   // no break here
- default:
+  if (PHP_VERSION_ID < 70200) {
    $params['fmerror'] = 'fileimagetype';
-   $this->Redirect($id,"defaultadmin",$returnid,$params);
-   break;
+   $this->Redirect($id,'defaultadmin',$returnid,$params);
+  }
+  break;
+ case 'image/avif':
+  if (PHP_VERSION_ID >= 80100 && function_exists('imageavif')) break;
+  // no break here
+ default:
+  $params['fmerror'] = 'fileimagetype';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
+  break;
 }
 $width = $imageinfo[0];
 $height = $imageinfo[1];
@@ -90,12 +94,12 @@ if( isset($params['save']) ) {
   $angle = (int)$params['angle'];
   $angle = max(-180,min(180,$angle))*-1;
   $source = imagecreatefromstring(file_get_contents($src));
-  imagealphablending($source, false);
-  imagesavealpha($source, true); //TODO for png, webp and avif only
+  imagealphablending($source,false);
+  imagesavealpha($source,true); //TODO for png, webp and avif only
   $bgcolor = imageColorAllocateAlpha($source, 255, 255, 255, 127);
   $rotated = imagerotate($source,$angle,$bgcolor);
-  imagealphablending($rotated, false);
-  imagesavealpha($rotated, true); //TODO for png, webp and avif only
+  imagealphablending($rotated,false);
+  imagesavealpha($rotated,true); //TODO for png, webp and avif only
 
   if( $postrotate == 'crop' ) {
     // calculates crop dimensions based on center of image
@@ -110,10 +114,10 @@ if( isset($params['save']) ) {
     //die("width = $width, height = $height, new_w = $new_w, new_h = $new_h, x0 = $x0, y0 = $y0");
 
     $newimg = imagecreatetruecolor($width,$height);
-    imagealphablending($newimg,FALSE);
+    imagealphablending($newimg,false);
     imagecolortransparent($newimg,$bgcolor);
     imagefill($newimg,0,0,$bgcolor);
-    imagesavealpha($newimg,TRUE); //TODO for png, webp and avif only
+    imagesavealpha($newimg,true); //TODO for png, webp and avif only
     imagecopy($newimg,$rotated,0,0,$x0,$y0,$width,$height);
 
     imagedestroy($rotated);
@@ -140,17 +144,17 @@ if( isset($params['save']) ) {
     // TODO c.f. typehelper image types 'jpg','jpeg','bmp','wbmp','gif','png','tiff','tif','webp','avif','heif','svg'
     //die("rotated={$src_w}x{$src_h} orig={$width}x{$height} new={$new_w},{$new_h} offset = $x0,$y0");
     $newimg = imagecreatetruecolor($new_w,$new_h);
-    imagealphablending($newimg,FALSE);
+    imagealphablending($newimg,false);
     imagecolortransparent($newimg,$bgcolor);
     imagefill($newimg,0,0,$bgcolor);
-    imagesavealpha($newimg,TRUE);  //TODO for png, webp and avif only
+    imagesavealpha($newimg,true);  //TODO for png, webp and avif only
     imagecopyresampled($newimg,$rotated,$x0,$y0,0,0,$new_w,$new_h,$src_w,$src_h);
 
     imagedestroy($rotated);
     $rotated = $newimg;
   }
 
-  // save the thing.
+  // save the thing TODO c.f. imageEditor::save()
   switch( $imageinfo['mime'] ) {
   case 'image/gif':
     $res = imagegif($rotated,$src);
@@ -164,12 +168,15 @@ if( isset($params['save']) ) {
       $res = imagebmp($rotated,$dest);
     }
     break;
+  case 'image/vnd.wap.wbmp':
+    $res = imagewbmp($image, $path);
+    break;
   case 'image/webp':
-    $res = imagewebp($rotated,$dest,80);
+    $res = imagewebp($rotated,$src,80);
     break;
   case 'image/avif':
-    if (PHP_VERSION_ID >= 80000 && function_exists('imageavif')) {
-        $res = imageavif($rotated,$dest,80,6);
+    if (PHP_VERSION_ID >= 80100 && function_exists('imageavif')) {
+        $res = imageavif($rotated,$src,80,6);
         break;
     }
   //no break here
