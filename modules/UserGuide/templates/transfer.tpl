@@ -42,7 +42,7 @@ $(function() {
   <input type="file" id="infile" name="{$actionid}imported" accept="{$seltypes}">
   <div class="pageinput">
     <p id="filesel">&nbsp;</p>
-    <input type="submit" id="filesubmit" name="{$actionid}submit" data-ui-icon="ui-icon-arrowreturnthick-1-n" value="{$mod->Lang('import')}">
+    <input type="submit" id="filesubmit" name="{$actionid}submit" data-ui-icon="ui-icon-arrowthickstop-1-n" value="{$mod->Lang('import')}">
   </div>
 </form>
 {elseif empty($guides)}
