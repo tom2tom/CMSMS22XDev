@@ -18,13 +18,13 @@ $lang['addbookmark'] = "Add Bookmark";
 $lang['addcontent'] = "Add New Content";
 //$lang['addcss'] = "Add a Stylesheet";
 //$lang['addcssassociation'] = "Add Stylesheet Association";
-$lang['added_content'] = "Added Content";
-//$lang['added_css'] = "Added Stylesheet";
-//$lang['added_css_association'] = "Added Stylesheet Association";
+$lang['added_content'] = "Added content";
+//$lang['added_css'] = "Added stylesheet";
+//$lang['added_css_association'] = "Added stylesheet association";
 //$lang['added_gcb'] = "Added Global Content Block";
-$lang['added_group'] = "Added Group";
+$lang['added_group'] = "Added group";
 $lang['added_udt'] = "Added User Defined Tag";
-$lang['added_user'] = "Added User";
+$lang['added_user'] = "Added user";
 $lang['addgroup'] = "Add New Group";
 //$lang['addhtmlblob'] = "Add Global Content Block";
 $lang['additionaleditors'] = "Additional Editors";
@@ -104,7 +104,7 @@ $lang['bulk_success'] = "Bulk operation was successfully performed";
 
 ## C
 $lang['cachable'] = "Cachable";
-$lang['cachecleared'] = "Cache Cleared";
+$lang['cachecleared'] = "Cache cleared";
 $lang['cachenotwritable'] = "Cache folder is not writeable. Clearing cache will not work. Please make the tmp/cache folder have full read/write/execute permissions (chmod 777).  You may also have to disable safe mode.";
 $lang['cancel'] = "Cancel";
 $lang['canceldescription'] = "Discard Changes";
@@ -171,7 +171,7 @@ $lang['confirm_set_template_2'] = "Yes, I am sure.";
 $lang['confirm_set_template_3'] = "Yes, I am <strong>really</strong> sure.";
 $lang['confirm_switchuser'] = 'Are you sure you want to switch the effective UID to this user?  You will need to logout from the admin console and re-login to resume normal operations under your user account.';
 $lang['confirm_toggleuseractive'] = "Are you sure you want to toggle the active state of this user?";
-$lang['confirm_uploadmodule'] = "Are you sure you would like to upload the selected XML file. Incorrectly uploading a module file may break a functioning website";
+$lang['confirm_uploadmodule'] = "Are you sure you would like to upload the selected XML file? Incorrectly uploading a module file may break a functioning website.";
 $lang['connection_error'] = "Outgoing HTTP connections do not appear to work! There is a firewall or some ACL for external connections? This will result in module manager, and potentially other functionality failing.";
 $lang['connection_failed'] = "Connection failed!";
 $lang['content'] = "Content";
@@ -211,7 +211,7 @@ $lang['copy_to'] = "Copy To";
 $lang['core'] = "Core";
 $lang['create'] = "Create";
 $lang['created_at'] = "Created at";
-$lang['created_directory'] = "Created Directory";
+$lang['created_directory'] = "Created directory";
 $lang['createnewfolder'] = "Create New Folder";
 $lang['create_dir_and_file'] = "Checking if the HTTPD process can create a file inside of a directory it created";
 $lang['cron_3h'] = "3 Hours";
@@ -257,16 +257,16 @@ $lang['delete'] = "Delete";
 $lang['deleteconfirm'] = "Are you sure you want to delete - %s - ?";
 $lang['deletecontent'] = "Delete Content";
 //$lang['deletecss'] = "Delete CSS";
-$lang['deleted_content'] = "Deleted Content";
-//$lang['deleted_css'] = "Deleted Stylesheet";
-//$lang['deleted_css_association'] = "Deleted Stylesheet Association";
-$lang['deleted_directory'] = "Deleted Directory";
-$lang['deleted_file'] = "Deleted File";
+$lang['deleted_content'] = "Deleted content";
+//$lang['deleted_css'] = "Deleted stylesheet";
+//$lang['deleted_css_association'] = "Deleted stylesheet association";
+$lang['deleted_directory'] = "Deleted directory";
+$lang['deleted_file'] = "Deleted file";
 //$lang['deleted_gcb'] = "Deleted Global Content Block";
-$lang['deleted_group'] = "Deleted Group";
+$lang['deleted_group'] = "Deleted group";
 $lang['deleted_module'] = "Permanently removed %s";
 $lang['deleted_udt'] = "Deleted User Defined Tag";
-$lang['deleted_user'] = "Deleted User";
+$lang['deleted_user'] = "Deleted user";
 $lang['deletepages'] = "Delete these pages?";
 $lang['deleteuser'] = "Delete User Account";
 //$lang['depsformodule'] = "Dependencies for %s Module";
@@ -286,7 +286,7 @@ $lang['disallowed_contenttypes'] = "Content Types that are NOT allowed";
 $lang['documentation'] = "Documentation";
 $lang['down'] = "Down";
 $lang['download'] = "Download";
-$lang['download_cksum_file'] = "Create a new checksum file";
+$lang['download_cksum_file'] = "Create checksum file"; // legend
 
 ## E
 $lang['ecommerce'] = "E-Commerce";
@@ -298,14 +298,14 @@ $lang['editconfiguration'] = "Edit Configuration";
 $lang['editcontent_settings'] = "Content Editing Settings";
 //$lang['editcss'] = "Edit Stylesheet";
 //$lang['editcsssuccess'] = "Stylesheet updated";
-//$lang['edited_content'] = "Edited Content";
+//$lang['edited_content'] = "Edited content";
 //$lang['edited_gcb'] = "Edited Global Content Block";
-$lang['edited_group'] = "Edited Group";
+$lang['edited_group'] = "Edited group";
 //$lang['edited_template'] = "Edited Template";
 $lang['edited_udt'] = "Edited User Defined Tag";
 $lang['edited_user'] = "Edited user";
 $lang['edited_user_preferences'] = "Edited user preferences";
-$lang['editeventhandler'] = "Edit Event Handler";
+$lang['editeventhandler'] = "Edit Event Handlers";
 $lang['editeventhandlerdescription'] = 'A utility to manage the handlers for a specific event.';
 $lang['editgroup'] = "Edit Group";
 //$lang['edithtmlblob'] = "Edit Global Content Block";
@@ -383,7 +383,7 @@ $lang['error_mailtest_noaddress'] = "No address specified for testing";
 $lang['error_mailtest_notemail'] = "Value specified is not a valid email address";
 $lang['error_module_mincmsversion'] = "This module requires a newer version of CMS Made Simple";
 $lang['error_multiusersettings'] = "Cannot set multiple user settings options at the same time";
-$lang['error_nofileuploaded'] = "No File has been uploaded";
+$lang['error_nofileuploaded'] = "No file has been uploaded";
 $lang['error_nograntall_found'] = "Could not find a suitable &quot;GRANT ALL&quot; permission, this does not necessarily lead to problems... But if you have problems installing/removing modules or adding and deleting items/pages this could be the cause!";
 $lang['error_nomodules'] = "No modules installed! Check Extensions > Module Manager";
 $lang['error_notconfirmed'] = "Operation not confirmed";
@@ -404,9 +404,9 @@ $lang['error_udt_name_whitespace'] = "Error: User Defined Tags cannot have space
 $lang['error_uploadproblem'] = "An error occurred in the upload";
 $lang['error_usernamerequired'] = "A <b>username</b> is required for SMTP authentication";
 $lang['event'] = "Event";
-$lang['eventhandler'] = "Event Handlers";
+$lang['eventhandler'] = "Event Handlers"; // column-heading
 $lang['eventhandlerdescription'] = "Associate User Defined Tags with Events";
-$lang['eventhandlers'] = "Event Manager";
+$lang['eventhandlers'] = "Event Manager"; // page-heading
 $lang['event_description'] = "Event Description";
 $lang['event_desc_adddesignpost'] = "Sent after a design/theme is saved";
 $lang['event_desc_adddesignpre'] = "Sent just before a design/theme is saved to the database";
@@ -480,12 +480,12 @@ $lang['event_desc_templateprefetch'] = "Sent before a template is fetched from S
 $lang['event_help_adddesignpost'] = "Sent just after a new design/theme is saved to the database";
 $lang['event_help_adddesignpre'] = "<h4>Parameters</h4>
 <ul>
-  <li>'CmsLayoutCollection' - Reference to the affected design/collection object.</li>
+<li>'CmsLayoutCollection' - Reference to the affected design/collection object.</li>
 </ul>
 ";
 $lang['event_help_adddesignpost'] = "<h4>Parameters</h4>
 <ul>
-  <li>'CmsLayoutCollection' - Reference to the affected design/collection object.</li>
+<li>'CmsLayoutCollection' - Reference to the affected design/collection object.</li>
 </ul>
 ";
 $lang['event_help_addgrouppost'] = "<h4>Parameters</h4>
@@ -520,21 +520,17 @@ $lang['event_help_addtemplatepre'] = "<h4>Parameters</h4>
 ";
 $lang['event_help_addtemplatetypepost'] = "<h4>Parameters</h4>
 <ul>
-  <li>'CmsLayoutTemplateType' - Reference to the affected template type object.</li>
+<li>'CmsLayoutTemplateType' - Reference to the affected template type object.</li>
 </ul>";
 $lang['event_help_addtemplatetypepre'] = "<h4>Parameters</h4>
 <ul>
-  <li>'CmsLayoutTemplateType' - Reference to the affected template type object.</li>
+<li>'CmsLayoutTemplateType' - Reference to the affected template type object.</li>
 </ul>";
 $lang['event_help_adduserdefinedtagpost'] = "<h4>Parameters</h4>
-<ul>
-<li>None</li>
-</ul>
+None
 ";
 $lang['event_help_adduserdefinedtagpre'] = "<h4>Parameters</h4>
-<ul>
-<li>None</li>
-</ul>
+None
 ";
 $lang['event_help_adduserpost'] = "<h4>Parameters</h4>
 <ul>
@@ -546,13 +542,13 @@ $lang['event_help_adduserpre'] = "<h4>Parameters</h4>
 <li>'user' - Reference to the affected user object.</li>
 </ul>
 ";
-$lang['event_help_changegroupassignpost'] = "<h4>Parameters></h4>
+$lang['event_help_changegroupassignpost'] = "<h4>Parameters</h4>
 <ul>
 <li>'group' - Reference to the affected group object.</li>
 <li>'users' - Array of references to user objects now belonging to the affected group.</li>
 </ul>
 ";
-$lang['event_help_changegroupassignpre'] = "<h4>Parameters></h4>
+$lang['event_help_changegroupassignpre'] = "<h4>Parameters</h4>
 <ul>
 <li>'group' - Reference to the group object.</li>
 <li>'users' - Array of references to user objects belonging to the group.</li>
@@ -605,12 +601,12 @@ $lang['event_help_contentstylesheet'] = "<h4>Parameters</h4>
 ";
 $lang['event_help_deletedesignpost'] = '<h4>Parameters</h4>
 <ul>
-  <li>\'CmsLayoutCollection\' - A reference to the affected collection (aka design/theme) object.</li>
+<li>\'CmsLayoutCollection\' - A reference to the affected collection (aka design/theme) object.</li>
 </ul>
 ';
 $lang['event_help_deletedesignpre'] = '<h4>Parameters</h4>
 <ul>
-  <li>\'CmsLayoutCollection\' - A reference to the affected collection (aka design/theme) object.</li>
+<li>\'CmsLayoutCollection\' - A reference to the affected collection (aka design/theme) object.</li>
 </ul>
 ';
 $lang['event_help_deletegrouppost'] = "<h4>Parameters</h4>
@@ -645,21 +641,17 @@ $lang['event_help_deletetemplatepre'] = "<h4>Parameters</h4>
 ";
 $lang['event_help_deletetemplatetypepost'] = "<h4>Parameters</h4>
 <ul>
-  <li>'CmsLayoutTemplateType' - Reference to the affected template type object.</li>
+<li>'CmsLayoutTemplateType' - Reference to the affected template type object.</li>
 </ul>";
 $lang['event_help_deletetemplatetypepre'] = "<h4>Parameters</h4>
 <ul>
-  <li>'CmsLayoutTemplateType' - Reference to the affected template type object.</li>
+<li>'CmsLayoutTemplateType' - Reference to the affected template type object.</li>
 </ul>";
 $lang['event_help_deleteuserdefinedtagpost'] = "<h4>Parameters</h4>
-<ul>
-<li>None</li>
-</ul>
+None
 ";
 $lang['event_help_deleteuserdefinedtagpre'] = "<h4>Parameters</h4>
-<ul>
-<li>None</li>
-</ul>
+None
 ";
 $lang['event_help_deleteuserpost'] = "<h4>Parameters</h4>
 <ul>
@@ -673,12 +665,12 @@ $lang['event_help_deleteuserpre'] = "<h4>Parameters</h4>
 ";
 $lang['event_help_editdesignpost'] = '<h4>Parameters</h4>
 <ul>
-  <li>\'CmsLayoutCollection\' - A reference to the affected collection (aka design/theme) object.</li>
+<li>\'CmsLayoutCollection\' - A reference to the affected collection (aka design/theme) object.</li>
 </ul>
 ';
 $lang['event_help_editdesignpre'] = '<h4>Parameters</h4>
 <ul>
-  <li>\'CmsLayoutCollection\' - A reference to the affected collection (aka design/theme) object.</li>
+<li>\'CmsLayoutCollection\' - A reference to the affected collection (aka design/theme) object.</li>
 </ul>
 ';
 $lang['event_help_editgrouppost'] = "<h4>Parameters</h4>
@@ -713,21 +705,17 @@ $lang['event_help_edittemplatepre'] = "<h4>Parameters</h4>
 ";
 $lang['event_help_edittemplatetypepost'] = "<h4>Parameters</h4>
 <ul>
-  <li>'CmsLayoutTemplateType' - Reference to the affected template type object.</li>
+<li>'CmsLayoutTemplateType' - Reference to the affected template type object.</li>
 </ul>";
 $lang['event_help_edittemplatetypepre'] = "<h4>Parameters</h4>
 <ul>
-  <li>'CmsLayoutTemplateType' - Reference to the affected template type object.</li>
+<li>'CmsLayoutTemplateType' - Reference to the affected template type object.</li>
 </ul>";
 $lang['event_help_edituserdefinedtagpost'] = "<h4>Parameters</h4>
-<ul>
-<li>None</li>
-</ul>
+None
 ";
 $lang['event_help_edituserdefinedtagpre'] = "<h4>Parameters</h4>
-<ul>
-<li>None</li>
-</ul>
+None
 ";
 $lang['event_help_edituserpost'] = "<h4>Parameters</h4>
 <ul>
@@ -741,7 +729,7 @@ $lang['event_help_edituserpre'] = "<h4>Parameters</h4>
 ";
 $lang['event_help_loginfailed'] = "<h4>Parameters</h4>
 <ul>
-  <li>'user' - (string) The username of the failed login attempt.</li>
+<li>'user' - (string) The username of the failed login attempt.</li>
 </ul>";
 $lang['event_help_loginpost'] = "<h4>Parameters</h4>
 <ul>
@@ -766,19 +754,13 @@ $lang['event_help_lostpasswordreset'] = "<h4>Parameters</h4>
 </ul>
 ";
 $lang['event_help_moduleinstalled'] = "<h4>Parameters</h4>
-<ul>
-<li>None</li>
-</ul>
+None
 ";
 $lang['event_help_moduleuninstalled'] = "<h4>Parameters</h4>
-<ul>
-<li>None</li>
-</ul>
+None
 ";
 $lang['event_help_moduleupgraded'] = "<h4>Parameters</h4>
-<ul>
-<li>None</li>
-</ul>
+None
 ";
 $lang['event_help_smartypostcompile'] = "<h4>Parameters</h4>
 <ul>
@@ -791,9 +773,7 @@ $lang['event_help_smartyprecompile'] = "<h4>Parameters</h4>
 </ul>
 ";
 $lang['event_help_stylesheetpostcompile'] = "<h4>Parameters</h4>
-<ul>
-<li>None</li>
-</ul>
+None
 ";
 $lang['event_help_stylesheetpostrender'] = "<h4>Parameters</h4>
 <ul>
@@ -801,9 +781,7 @@ $lang['event_help_stylesheetpostrender'] = "<h4>Parameters</h4>
 </ul>
 ";
 $lang['event_help_stylesheetprecompile'] = "<h4>Parameters</h4>
-<ul>
-<li>None</li>
-</ul>
+None
 ";
 $lang['event_help_templatepostcompile'] = "<h4>Parameters</h4>
 <ul>
@@ -818,9 +796,8 @@ $lang['event_help_templateprecompile'] = "<h4>Parameters</h4>
 </ul>
 ";
 $lang['event_help_templateprefetch'] = "<h4>Parameters</h4>
-<ul>
-<li>None</li>
-</ul>";
+None
+";
 $lang['event_name'] = "Event Name";
 $lang['execute'] = "Execute";
 $lang['expand'] = "Expand Section";
@@ -851,9 +828,9 @@ $lang['filenotuploaded'] = "File could not be uploaded. This could be a Permissi
 $lang['files'] = "Files";
 $lang['filesdescription'] = 'File and media management';
 $lang['filesize'] = "File Size";
-$lang['files_checksum_failed'] = "Files could not be checksummed";
-$lang['files_failed'] = "Files failed md5sum check";
-$lang['files_not_found'] = "Files Not found";
+$lang['files_checksum_failed'] = "files could not be checksummed";
+$lang['files_failed'] = "files failed checksum match";
+$lang['files_not_found'] = "Files Not found"; //used for title and also part of report e.g. 6 Files Not found should be lower case
 $lang['file_get_contents'] = "Test file_get_contents";
 $lang['file_uploads'] = "File uploads";
 $lang['file_url'] = "Link to file (instead of URL)";
@@ -988,8 +965,8 @@ $lang['informationmissing'] = "Information missing";
 $lang['info_adduser'] = "Add a administrative new user account";
 $lang['info_adduser_username'] = "The username field may include only alphanumeric characters, period(.)s, underscores and/or spaces, and must be unique";
 $lang['info_autoalias'] = "If this field is empty, an alias will be created automatically.";
-$lang['info_changegroupperms'] = "This page allows specifying which Admin user groups have which permission.  Keep in mind that an individual Admin user can belong to multiple Admin groups.<br><strong>Note:</strong> the &quot;Admin&quot; group is a special group and is automatically granted all permissions.";
-$lang['info_changeusergroup'] = "This page allows specifying the member groups for each Admin user.  Group membership determines the permissions the user has, and therefore his capabilities in the Admin Console.<br><strong>Note:</strong> the &quot;Admin&quot; group is a special group and is automatically granted all permissions.";
+$lang['info_changegroupperms'] = "This page allows specifying the permission(s) granted to Admin user groups.  Keep in mind that each Admin user can belong to multiple Admin groups.<br><strong>Note:</strong> the &quot;Admin&quot; group is a special group and is automatically granted all permissions.";
+$lang['info_changeusergroup'] = "This page allows specifying the user group(s) to which each Admin user belongs.  Group membership determines the permissions the user has, and therefore her/his capabilities in the Admin Console.<br><strong>Note:</strong> the &quot;Admin&quot; group is a special group and is automatically granted all permissions.";
 $lang['info_clearusersettings'] = "This will remove all user settings from the database, setting every preference back to defaults";
 $lang['info_copyusersettings'] = "Ensure that this users settings and preferences are identical to that of another existing user";
 $lang['info_default_contenttype'] = "Applicable when adding new content objects, this control specifies the type that is selected by default.  Please ensure that the selected item is not one of the &quot;disallowed types&quot;.";
@@ -1002,7 +979,7 @@ $lang['info_editcontent_template'] = "You must associate a template with each co
 $lang['info_edituser_password'] = "Change this field to change the user's password";
 $lang['info_edituser_passwordagain'] = "Change this field to change the user's password";
 $lang['info_estrict_failed'] = "Some libraries that CMSMS uses do not work well with E_STRICT.  Please disable this before continuing";
-$lang['info_generate_cksum_file'] = "This function will allow you to generate a checksum file and save it on your local computer for later validation.  This should be done just prior to rolling out the website, and/or after any upgrades, or major modifications.";
+$lang['info_generate_cksum_file'] = "This function generates checksums and saves them in a file on your local computer for later use in validation. All website files except those in the uploads and tmp trees are processed.  Checksums should be saved just prior to rolling out the website and/or after any upgrade or major modification.";
 $lang['info_group_inactive'] = "This group is inactive.  Members of this group will not realize the permissions associated with the group";
 $lang['info_mailtest'] = "This form will send a pre formatted email to the address you specify.<br>If you do not receive the mail you may need to re-check your settings.<br><strong>Note:</strong> you may also want to check your spam folder.";
 $lang['info_mail_notset'] = "Mail settings have not yet been saved. Please ensure the information in Site Admin >> Settings - Global Settings >> Mail Settings tab is correct for your server.";
@@ -1028,14 +1005,14 @@ $lang['info_this_templateuser'] = "This account is set as the template user.  Ne
 $lang['info_user_active'] = "Toggle this checkbox off to preserve the user information, but prevent the user from logging in to the Admin Console";
 $lang['info_user_active2'] = "Toggle this flag to preserve the user information, but prevent the user from logging in to the Admin Console";
 $lang['info_user_switch'] = "Test as this user";
-$lang['info_validation'] = "This function will compare the checksums found in the uploaded file with the files on the current installation.  It can assist in finding problems with uploads, or exactly what files were modified if your system has been hacked.";
+$lang['info_validation'] = "This function will compare the checksums in the uploaded file with the files in the current installation, and report differences. Files that don't match might be a problem.";
 $lang['info_wait'] = "Wait a few minutes before proceeding.";
 $lang['insecure'] = "Insecure (HTTP)";
 //$lang['install'] = "Install";
 $lang['installfileexists'] = '<em><strong>Warning:</strong></em> The installation assistant file: %s still exists in the root directory.  As this could potentially be a security vulnerability, please delete it.';
 $lang['installed'] = "Installed";
 //$lang['installed_mod'] = "Installed version %s";
-$lang['installed_modules'] = "Installed Modules";
+$lang['installed_modules'] = "Installed modules";
 $lang['invalid'] = "Invalid";
 $lang['invalidalias'] = "The alias entered contains invalid characters. White space, / . and other punctuation characters are not permitted.";
 $lang['invalidalias2'] = "The alias entered contains invalid characters. Numeric values, White space, / . or other punctuation characters are not permitted.";
@@ -1171,6 +1148,7 @@ $lang['module_name'] = "Module Name";
 $lang['module_param_lang'] = "<strong>Deprecated</strong> - Override the current language that is used for selecting translated strings.";
 $lang['move'] = "Move";
 $lang['movecontent'] = "Move Pages";
+$lang['msg_completed'] = 'Operation completed'; // new
 //$lang['msg_defaultcontent'] = "Add code here that should appear as the default content of all new pages";
 //$lang['msg_defaultmetadata'] = "Add code here that should appear in the metadata section of all new pages";
 $lang['msg_grantall_found'] = "Found a &quot;GRANT ALL&quot; statement that appears to be suitable";
@@ -1206,7 +1184,7 @@ $lang['no_file_url'] = "None (Use URL Above)";
 $lang['no_files_scanned'] = "No files were scanned during the verification process (maybe the file is invalid)";
 //$lang['no_orders_changed'] = "You chose to reorder pages, but you did not change the order of any of them. Pages were not reordered.";
 $lang['no_permission'] = "You are not permitted to perform that function.";//unused across core files
-$lang['no_shortcuts'] = "No shortcuts defined yet. You can add them by clicking the button below.";
+$lang['no_shortcuts'] = "No shortcut defined yet. You can add them by clicking the button below.";
 $lang['noaccessto'] = "No Access to %s";
 //$lang['nocss'] = "No Stylesheet";
 $lang['nodefault'] = "No Default Selected";
@@ -1231,7 +1209,7 @@ $lang['notinstalled'] = "Not installed";
 $lang['notspecified'] = "Not specified / Empty";
 $lang['noudtcode'] = "No code specified for the User Defined Tag";
 $lang['nouse'] = 'not directly usable';
-//$lang['noxmlfileuploaded'] = "No file was uploaded. To install a module via XML you must choose and upload an module .xml file from your computer.";
+//$lang['noxmlfileuploaded'] = "No file was uploaded. To install a module via XML you must choose and upload a module .xml file from your computer.";
 
 ## O
 $lang['of'] = "of";
@@ -1276,7 +1254,7 @@ $lang['passwordagain'] = "Password (again)";
 $lang['passwordchange'] = "Please, provide the new password";
 $lang['passwordchangedlogin'] = "Password changed.  Please log in using the new credentials.";
 $lang['performance_information'] = "Performance and Tuning Information (recommended settings, but not required)";
-$lang['perform_validation'] = "Perform Validation";
+$lang['perform_validation'] = "Perform validation"; // legend
 $lang['period_ago'] = "ago";
 $lang['period_day'] = "day";
 $lang['period_days'] = "days";
@@ -1575,7 +1553,7 @@ $lang['updateperm'] = "Update Permissions";
 //$lang['upgrade'] = "Upgrade";
 //$lang['upgradeconfirm'] = "Are you sure you want to upgrade this?";
 //$lang['upgraded_mod'] = "%s Upgraded from Version %s to %s";
-$lang['uploaded_file'] = "Uploaded File";
+$lang['uploaded_file'] = "Uploaded file";
 $lang['upload_filetobig'] = 'This file is too large to upload';
 //$lang['uploadfile'] = "Upload File";
 //$lang['uploadxmlfile'] = "Install module via XML file";
@@ -1593,7 +1571,7 @@ $lang['usernameincorrect'] = "User name or password incorrect";
 $lang['usernotfound'] = "User Not Found";
 $lang['userprefs'] = "User Preferences";
 $lang['users'] = "Backend Users";
-$lang['usersassignedtogroup'] = "Users Assigned to Group %s";
+$lang['usersassignedtogroup'] = "Users assigned to group %s";
 $lang['usersdescription'] = "Here you can manage Admin users.";
 $lang['userdisabled'] = 'User account disabled';
 $lang['usersettings'] = "User Settings";
@@ -1626,7 +1604,7 @@ $lang['warning_safe_mode'] = "<strong><em>WARNING:</em></strong> PHP Safe mode i
 $lang['warning_upgrade'] = "<em><strong>Warning:</strong></em> CMSMS is in need of an upgrade!";
 $lang['warning_upgrade_info1'] = "The website is now running schema version %s and needs to be upgraded to version %s";
 $lang['warning_upgrade_info2'] = "Please click the following link: %s.";
-$lang['warn_addgroup'] = "Creating a new group does not assign any permissions. You will need to assign permissions to the new group in a separate step.";
+$lang['warn_addgroup'] = "Creating a new group does not assign any permission. You will need to assign permission(s) to the new group in a 'Change Permissions' action.";
 $lang['warn_admin_ipandcookies'] = "Warning: Admin activities use cookies and tracks your IP address";
 //$lang['warn_bulk_settemplate'] = '<strong>Warning:</strong> This is potentially a destructive operation, and may break an existing website.  <span style="color: red;">Use caution!</span>';
 $lang['warn_nosefurl'] = "SEO-friendly ('pretty') URLs have not been configured. Settings related to those are not displayed here.";
@@ -1672,10 +1650,10 @@ $lang['invalid_url2'] = "The page URL specified is invalid.  It should contain o
 
 
 ## Serving third-party modules
-$lang['added_template'] = "Added Template";
+$lang['added_template'] = "Added template";
 $lang['addtemplate'] = "Add New Template";
 
-$lang['deleted_template'] = "Deleted Template";
+$lang['deleted_template'] = "Deleted template";
 $lang['deletetemplate'] = "Delete Template";
 $lang['deletetemplates'] = "Delete Templates";
 
