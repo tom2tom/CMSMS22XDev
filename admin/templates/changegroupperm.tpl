@@ -1,3 +1,5 @@
+<div class="pagecontainer">
+{$header}
 {if isset($message)}
 	<p class="pageheader">{$message}</p>
 {/if}
@@ -76,3 +78,4 @@
 		</p>
 	</div>
 {$form_end}
+</div>

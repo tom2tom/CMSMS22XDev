@@ -1,11 +1,13 @@
-<div class="information">{lang('info_changeusergroup')} {cms_help key2='help_group_permissions' title=lang('info_changeusergroup')}</div>
-
+<div class="pagecontainer">
+{$header}
+<div class="information">
+  {lang('info_changeusergroup')} {cms_help key2='help_group_permissions' title=lang('info_changeusergroup')}
+</div>
 {*
 <div id="admin_group_warning" style="display:none">
 {$admin_group_warning}
 </div>
 *}
-
 {if isset($message)}
 <p class="pagemessage">{$message}</p>
 {/if}
@@ -29,17 +31,17 @@
 </form>
 </div><br>
 
-{$form_start}{$hidden|default:''}
+{$form_start}
+{$hidden|default:''}
 <div class="hidden">
   <input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}">
 </div>
 <div class="pageoptions">
   {$submit} {$cancel}
 </div>
-{$group_count=count($group_list)}
 <table class="pagetable" id="permtable">
   <thead>
-  <tr>
+  <tr>{$group_count=count($group_list)}
     <th>{if isset($title_group)}{$title_group}{/if}</th>
     {foreach $group_list as $thisgroup}
       {if $thisgroup->id != -1}
@@ -67,24 +69,23 @@
   {foreach $users as $user}
     {cycle values='row1,row2' assign='currow'}
     <tr class="{$currow}">
-       <td>{$user->name}</td>
-      {foreach $group_list as $thisgroup}
-          {if $user->id == $user_id}
-            {if $thisgroup->id != -1}
-              <td class="g{$thisgroup->id}">--</td>
-            {/if}
-          {else}
-            {if $thisgroup->id != -1}
-              {if ($thisgroup->id == 1 && $user->id == 1)}
-                  <td class="g{$thisgroup->id}">&nbsp;</td>
-              {else}
-                {$gid=$thisgroup->id}
-                <td class="g{$thisgroup->id}">
-                  <input type="checkbox" name="ug_{$user->id}_{$gid}" value="1"{if isset($user->group[$gid])} checked{/if}>
-                </td>
-              {/if}
-            {/if}
+      <td>{$user->name}</td>
+      {foreach $group_list as $thisgroup}{$gid=$thisgroup->id}
+        {if $user->id == $user_id}
+          {if $gid != -1}
+      <td class="g{$gid}">--</td>
           {/if}
+        {elseif $gid != -1}
+          {if ($gid == 1 && $user->id == 1)}
+      <td class="g{$gid}">&nbsp;</td>
+          {else}
+      <td class="g{$gid}">
+        <input type="checkbox" name="ug_{$user->id}_{$gid}" value="1"{if isset($user->group[$gid])} checked{/if}>
+      </td>
+          {/if}
+        {else}
+      <td></td>
+        {/if}
       {/foreach}
     </tr>
   {/foreach}
@@ -96,3 +97,4 @@
 </div>
 {/if}
 </form>
+</div>

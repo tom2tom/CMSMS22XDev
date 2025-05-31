@@ -28,8 +28,7 @@ check_login();
 $userid = get_userid();
 $access = check_permission($userid, "Modify Site Preferences");
 if (!$access) {
-  die('Permission Denied');
-  return;
+  die('Permission Denied'); //TODO throw if can be caught
 }
 
 include_once("header.php");
@@ -329,8 +328,7 @@ if (is_readable($ch_filename)) {
 
 $smarty->assign('backurl', $themeObject->BackUrl());
 
-echo $smarty->fetch('systemmaintenance.tpl');
-
+$smarty->display('systemmaintenance.tpl');
 
 include_once("footer.php");
 

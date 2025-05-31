@@ -69,7 +69,7 @@ if( $USE_THEME ) {
 
     // get module output
     @ob_start();
-    echo  $modinst->DoActionBase($action, $id, $params, '', $smarty);
+    echo $modinst->DoActionBase($action, $id, $params, '', $smarty);
     $content = @ob_get_contents();
     @ob_end_clean();
 

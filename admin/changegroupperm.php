@@ -31,10 +31,10 @@ if (isset($_POST["cancel"])) {
 $userid = get_userid(false);
 $access = check_permission($userid, 'Manage Groups');
 if (!$access) {
-    die('Permission Denied');
+    die('Permission Denied'); //TODO throw if can be caught
 }
 
-$submitted= - 1;
+$submitted = -1;
 if (isset($_POST["submitted"])) $submitted = $_POST["submitted"];
 else if (isset($_GET["submitted"])) $submitted = $_GET["submitted"];
 
@@ -44,7 +44,8 @@ $adminuser = ($userops->UserInGroup($userid,1) || $userid == 1);
 $group_name = '';
 $message = '';
 
-include_once("header.php");
+require_once "header.php";
+
 $db = $gCms->GetDb();
 $smarty = $gCms->GetSmarty();
 
@@ -65,7 +66,7 @@ $load_perms = function() use ($db) {
     \CMSMS\HookManager::add_hook('getperminfo',function($perm_name){
             $key = 'permdesc_'.str_replace(' ','_',$perm_name);
             if( \CmsLangOperations::lang_key_exists('admin',$key) ) return \CmsLangOperations::lang_from_realm('admin',$key);
-	    // return null
+        // return null
         },\CMSMS\HookManager::PRIORITY_HIGH);
 
     $perm_struct = array();
@@ -196,12 +197,13 @@ if ($submitted == 1) {
     $gCms->clear_cached_files();
 }
 
-
 $perm_struct = $load_perms();
 $perm_struct = $group_perms($perm_struct);
 $smarty->assign('perms',$perm_struct);
 $smarty->assign('cms_secure_param_name',CMS_SECURE_PARAM_NAME);
 $smarty->assign('cms_user_key',$_SESSION[CMS_USER_KEY]);
+$smarty->assign('header',$themeObject->ShowHeader('groupperms',array($group_name)));
+if( !empty($message) ) $smarty->assign('message',$themeObject->ShowMessage($message));
 $smarty->assign('form_start','<form id="groupname" method="post" action="changegroupperm.php">');
 $smarty->assign('filter_action','changegroupperm.php');
 $smarty->assign('form_end','</form>');
@@ -215,12 +217,6 @@ $smarty->assign('hidden2','<input type="hidden" name="sel_groups" value="'.$sig.
 $smarty->assign('hidden','<input type="hidden" name="submitted" value="1">');
 $smarty->assign('submit','<input type="submit" name="changeperm" value="'.lang('submit').'" class="pagebutton">');
 $smarty->assign('cancel','<input type="submit" name="cancel" value="'.lang('cancel').'" class="pagebutton">');
+$smarty->display('changegroupperm.tpl');
 
-
-# begin output
-if( !empty($message) ) echo $themeObject->ShowMessage($message);
-echo '<div class="pagecontainer">'.$themeObject->ShowHeader('groupperms',array($group_name));
-echo $smarty->fetch('changegroupperm.tpl');
-echo '</div>';
-
-include_once("footer.php");
+require_once "footer.php";

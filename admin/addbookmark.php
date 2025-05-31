@@ -171,43 +171,17 @@ if (isset($_POST['addbookmark'])) {
 	}
 }
 
-$urlhelp = cms_admin_utils::get_help_tag(['key2' => 'help_bookmark_url', 'title' => lang('url')]);
+require_once 'header.php';
 
-include_once 'header.php';
+$smarty = Smarty_CMS::get_instance();
+$smarty->assign('error',$error);
+$smarty->assign('header',$themeObject->ShowHeader('addbookmark'));
+$smarty->assign('hiddenname',CMS_SECURE_PARAM_NAME);
+$smarty->assign('hiddenval',$_SESSION[CMS_USER_KEY]);
+$smarty->assign('title',$title);
+$smarty->assign('url',$url);
+$smarty->display('addbookmark.tpl');
 
-if ($error) {
-	echo '<div class="pageerrorcontainer"><p class="pageerror">'.$error.'</p></div>';
-}
-?>
-
-<div class="pagecontainer">
-	<div class="pageoverflow">
-		<?php echo $themeObject->ShowHeader('addbookmark'); ?>
-		<form method="post" action="addbookmark.php">
-			<div>
-				<input type="hidden" name="<?php echo CMS_SECURE_PARAM_NAME; ?>" value="<?php echo $_SESSION[CMS_USER_KEY]; ?>">
-				<input type="hidden" name="addbookmark" value="true">
-			</div>
-			<div class="pageoverflow">
-				<p class="pagetext"><?php echo lang('title'); ?>:</p>
-				<p class="pageinput"><input type="text" name="title" maxlength="255" value="<?php echo $title; ?>"></p>
-			</div>
-			<div class="pageoverflow">
-				<p class="pagetext"><?php echo lang('url').':&nbsp;'.$urlhelp; ?></p>
-				<p class="pageinput"><input type="text" name="url" size="70" maxlength="255" value="<?php echo $url; ?>" class="standard"></p>
-			</div>
-			<br>
-			<div class="pageoverflow">
-				<p class="pageinput">
-					<input type="submit" value="<?php echo lang('submit'); ?>" class="pagebutton">
-					<input type="submit" name="cancel" value="<?php echo lang('cancel'); ?>" class="pagebutton">
-				</p>
-			</div>
-		</form>
-	</div>
-</div>
-
-<?php
-include_once 'footer.php';
+require_once 'footer.php';
 
 ?>

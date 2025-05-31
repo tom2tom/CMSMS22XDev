@@ -27,8 +27,7 @@ check_login();
 $userid = get_userid();
 $access = check_permission($userid, "Modify Site Preferences");
 if (!$access) {
-	die('Permission Denied');
-return;
+	die('Permission Denied'); //TODO throw if can be caught
 }
 
 include_once("header.php");
@@ -67,8 +66,6 @@ $smarty->registerPlugin('function','si_lang','systeminfo_lang');
 $smarty->caching = false;
 $smarty->force_compile = true;
 $db = $gCms->GetDb();
-
-
 
 //smartyfier
 $smarty->assign('themename', $themeObject->themeName);
@@ -321,7 +318,7 @@ $smarty->assign('server_info', $tmp);
 
 $tmp = array(0=>array(), 1=>array());
 
-$dir = $config['root_path'] . DIRECTORY_SEPARATOR . 'tmp';
+$dir = CMS_ROOT_PATH . DIRECTORY_SEPARATOR . 'tmp';
 $tmp[0]['tmp'] = testDirWrite(0, $dir, $dir);
 
 $dir = TMP_CACHE_LOCATION;
@@ -333,7 +330,7 @@ $tmp[0]['tmp_config'] = testDirWrite(0, $dir, $dir);
 $dir = TMP_TEMPLATES_C_LOCATION;
 $tmp[0]['templates_c'] = testDirWrite(0, $dir, $dir);
 
-$dir = $config['root_path'] . DIRECTORY_SEPARATOR . 'modules';
+$dir = CMS_ROOT_PATH . DIRECTORY_SEPARATOR . 'modules';
 $tmp[0]['modules'] = testDirWrite(0, $dir, $dir);
 
 $dir = $config['uploads_path'];
@@ -353,9 +350,9 @@ $smarty->assign('permission_info', $tmp);
 if(isset($_GET['cleanreport']) && $_GET['cleanreport'] == 1) {
   $orig_lang = CmsNlsOperations::get_current_language();
   CmsNlsOperations::set_language('en_US');
-  echo $smarty->fetch('systeminfo.txt.tpl');
+  $smarty->display('systeminfo.txt.tpl');
   CmsNlsOperations::set_language($orig_lang);
 }
-else echo $smarty->fetch('systeminfo.tpl');
+else $smarty->display('systeminfo.tpl');
 
 include_once("footer.php");

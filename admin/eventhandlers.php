@@ -21,44 +21,32 @@ $CMS_ADMIN_PAGE=1;
 $CMS_LOAD_ALL_PLUGINS=1;
 
 require_once("../lib/include.php");
-$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
 check_login();
 $userid = get_userid();
 $access = check_permission($userid, "Modify Events");
 
 if (!$access) {
-	die('Permission Denied');
-	return;
+	die('Permission Denied'); //TODO throw if can be caught
 }
 
+include_once 'header.php';
 
-// here we'll handle setting $action based on _POST['action']
-$action = '';
-$module = '';
-$event = '';
-$modulefilter = '';
-if( isset( $_GET['action'] ) && $_GET['action'] != '' ) $action = $_GET['action'];
-if( isset( $_GET['module'] ) && $_GET['module'] != '' ) $module = $_GET['module'];
-if( isset( $_GET['event'] ) && $_GET['event'] != '' ) $event = $_GET['event'];
-if( isset( $_GET['modulefilter'] ) && $_GET['modulefilter'] != '' ) $modulefilter = $_GET['modulefilter'];
+$action = (!empty($_REQUEST['action'])) ? $_REQUEST['action'] : '';
+$event = (!empty($_REQUEST['event'])) ? $_REQUEST['event'] : '';
+$module = (!empty($_REQUEST['module'])) ? $_REQUEST['module'] : '';
+$modulefilter = (!empty($_REQUEST['modulefilter'])) ? $_REQUEST['modulefilter'] : '';
 
-// display the page
-include_once("header.php");
-
-$editImg = $themeObject->DisplayImage('icons/system/edit.gif', lang('edit'),'','','systemicon');
-$infoImg = $themeObject->DisplayImage('icons/system/info.gif', lang('help'),'','','systemicon');
-
-echo '<div class="pagecontainer">';
-echo '<div class="pageoverflow">';
-echo $themeObject->ShowHeader('eventhandlers');
+$smarty = cmsms()->GetSmarty();
+$smarty->caching = false;
+//$smarty->force_compile = true;
+$smarty->assign('hiddenname',CMS_SECURE_PARAM_NAME);
+$smarty->assign('hiddenval',$_SESSION[CMS_USER_KEY]);
+$smarty->assign('header',$themeObject->ShowHeader('eventhandlers'));
 
 switch( $action ) {
 	case 'showeventhelp':
-	{
-		$desctext = '';
-		$text = '';
-		if ($module == 'Core') {
+		if( $module == 'Core' ) {
 			$desctext = Events::GetEventDescription($event);
 			$text = Events::GetEventHelp($event);
 		}
@@ -68,134 +56,46 @@ switch( $action ) {
 				$desctext = $moduleobj->GetEventDescription($event);
 				$text = $moduleobj->GetEventHelp($event);
 			}
+			else {
+				$desctext = '';
+				$text = 'No helptext available...';
+			}
 		}
+		if( $text && strpos($text,'Parameters') !== false ) {
+			$text = str_replace('Parameters',lang('parameters'),$text);
+		}
+		$handlers = Events::ListEventHandlers($module,$event); //array, maybe empty
 
-		echo "<h3>$event</h3>";
-		if( $desctext != "" ) echo "<p><b>" . lang('description') . "</b>: " . $desctext . "</p>";
-		if( $text == "" ) {
-			echo "No helptext available...";
-		}
-		else {
-			echo $text;
-		}
-
-		echo "<h4>".lang('eventhandler')."</h4>";
-		$hlist = Events::ListEventHandlers( $module, $event );
-		if (!$hlist) {
-			echo '<p>'.lang('none').'</p>';
-		}
-		else {
-			echo '<ul>';
-			foreach ($hlist as $te) {
-					echo '<li>'.$te['handler_order'].'. ';
-					if (!empty($te['tag_name'])) {
-						echo lang('user_tag').': '.$te['tag_name'];
-					}
-					else if (!empty($te['module_name'])) {
-						echo lang('module').': '.$te['module_name'];
-					}
-					echo '</li>';
-				}
-			echo '</ul>';
-		}
+		$smarty->assign('desctext',$desctext)
+		->assign('event',$event)
+		->assign('hlist',$handlers)
+		->assign('text',$text)
+		->display('eventhelp.tpl');
 		break;
-	}
 
 	default:
-	{
+		$modlist = [];
 		$events = Events::ListEvents();
-
-		echo '<br><form action="eventhandlers.php" method="get">';
-		echo '<div><input type="hidden" name="'.CMS_SECURE_PARAM_NAME.'" value="'.$_SESSION[CMS_USER_KEY].'"></div>';
-
-		echo lang('filterbymodule').': <select name="modulefilter">' . "\n";
-		echo '<option value="">'.lang('showall').'</option>';
-		$modlist = array();
 		if( $events ) {
-			foreach( $events as $oneevent )	{
-				if (!in_array($oneevent['originator'], $modlist)) $modlist[] = $oneevent['originator'];
-			}
-		}
-		if (count($modlist) > 0) {
-			foreach($modlist as $onemod) {
-				echo '<option value="'.$onemod.'"';
-				if ($onemod == $modulefilter) echo ' selected="selected"';
-				echo '>'.$onemod.'</option>';
-			}
-		}
-		echo "</select> <input type=\"submit\" value=\"".lang('submit')."\"></form>\n\n";
-
-		echo "<table class=\"pagetable\">\n";
-		echo "<thead>\n";
-		echo "  <tr>\n";
-		echo "    <th title=\"".lang('title_event_originator')."\">".lang('originator')."</th>\n";
-		echo "    <th title=\"".lang('title_event_name')."\">".lang('event')."</th>\n";
-		echo "    <th title=\"".lang('title_event_handlers')."\">".lang('eventhandler')."</th>\n";
-		echo "    <th title=\"".lang('title_event_description')."\" width='50%'>".lang('description')."</th>\n";
-		echo "    <th class=\"pageicon\">&nbsp;</th>\n";
-		echo "    <th class=\"pageicon\">&nbsp;</th>\n";
-		echo "  </tr>\n";
-		echo "</thead>\n";
-		echo "<tbody>\n";
-
-		if( is_array($events) )
-		{
-			$curclass = 'row1';
-			foreach( $events as $oneevent )
-			{
-				if ($modulefilter == '' || $modulefilter == $oneevent['originator'])
-				{
-					echo "<tr class=\"".$curclass."\">\n";
-
-					$desctext = '';
-					if ($oneevent['originator'] == 'Core') {
-						$desctext = Events::GetEventDescription($oneevent['event_name']);
-						echo "    <td>".lang('core')."</td>\n";
-					}
-					else if ( ($objinstance = cms_utils::get_module($oneevent['originator'])) ) {
-					  $desctext = $objinstance->GetEventDescription($oneevent['event_name']);
-					  echo "    <td>".$objinstance->GetFriendlyName()."</td>\n";
-					}
-					echo "    <td>";
-if ($access)
-{
-					echo "<a href=\"editevent.php".$urlext."&amp;action=edit&amp;module=".$oneevent['originator']."&amp;event=".$oneevent['event_name']."\" title=\"".lang('edit')."\">";
-}
-					echo $oneevent['event_name'];
-if ($access)
-{
-					echo "</a>";
-}
-					echo "</td>\n";
-					echo "    <td>";
-					if ($oneevent['usage_count'] > 0)
-						{
-						echo "<a href=\"eventhandlers.php".$urlext."&amp;action=showeventhelp&amp;module=".$oneevent['originator']."&amp;event=".$oneevent['event_name']."\" title=\"".lang('help')."\">".
-							$oneevent['usage_count']."</a>";
-						}
-					echo "</td>\n";
-					echo "    <td>".$desctext."</td>\n";
-					echo "    <td class=\"icons_wide\"><a href=\"eventhandlers.php".$urlext."&amp;action=showeventhelp&amp;module=".$oneevent['originator']."&amp;event=".$oneevent['event_name']."\">".$infoImg."</a></td>\n";
-if ($access)
-{
-					echo "    <td class=\"icons_wide\"><a href=\"editevent.php".$urlext."&amp;action=edit&amp;module=".$oneevent['originator']."&amp;event=".$oneevent['event_name']."\">".$editImg."</a></td>\n";
-}
-					echo "  </tr>\n";
-					($curclass=="row1"?$curclass="row2":$curclass="row1");
+			foreach( $events as $oneevent ) {
+				if( !in_array($oneevent['originator'],$modlist) ) {
+					$modlist[] = $oneevent['originator'];
 				}
 			}
 		}
+		$editicon = $themeObject->DisplayImage('icons/system/edit.gif',lang('edit'),'','','systemicon');
+		$infoicon = $themeObject->DisplayImage('icons/system/info.gif',lang('help'),'','','systemicon');
 
-		echo "</tbody>\n";
-		echo "</table>\n";
-	} // default action
+		$smarty->assign('access',$access)
+		->assign('editImg',$editicon)
+		->assign('events',$events)
+		->assign('infoImg',$infoicon)
+		->assign('modlist',$modlist)
+		->assign('modulefilter',$modulefilter)
+		->assign('urlext','?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY])
+		->display('listevents.tpl');
+}
 
-} // switch
-
-
-echo "</div>\n";
-echo "</div>\n";
-
-include_once("footer.php");
+include_once 'footer.php';
 
 ?>

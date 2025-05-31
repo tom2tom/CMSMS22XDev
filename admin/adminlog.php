@@ -22,18 +22,18 @@ require_once("../lib/include.php");
 $urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 check_login();
 
-$gCms = \CmsApp::get_instance();
+$gCms = CmsApp::get_instance();
 $db = $gCms->GetDb();
-$themeObject = \cms_utils::get_theme_object();
+$themeObject = cms_utils::get_theme_object();
 
 // get the total number of records.
-$totalrows = $db->GetOne("SELECT count(timestamp) FROM ".CMS_DB_PREFIX."adminlog");
+$totalrows = $db->GetOne("SELECT COUNT(timestamp) FROM ".CMS_DB_PREFIX."adminlog");
 
 $smarty->assign("urlext",$urlext);
 
 $userid = get_userid();
 if (!check_permission($userid, 'Modify Site Preferences')) {
-    die('permission denied');
+    die('Permission Denied'); //TODO throw if can be caught
 }
 $access = check_permission($userid, 'Clear Admin Log');
 
@@ -207,6 +207,6 @@ $smarty->assign('filter',$filter);
 $smarty->assign('filter_applied',$filter_applied);
 $smarty->assign('SECURE_PARAM_NAME',CMS_SECURE_PARAM_NAME);
 $smarty->assign('CMS_USER_KEY',$_SESSION[CMS_USER_KEY]);
-echo $smarty->fetch('adminlog.tpl');
+$smarty->display('adminlog.tpl');
 
 include_once("footer.php");

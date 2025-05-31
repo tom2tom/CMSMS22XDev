@@ -31,7 +31,7 @@ if (isset($_POST["cancel"])) {
 $userid = get_userid(false);
 $access = check_permission($userid, 'Manage Groups');
 if (!$access) {
-    die('Permission Denied');
+    die('Permission Denied'); //TODO throw if can be caught
 }
 
 $group_id= - 1;
@@ -49,7 +49,7 @@ $userops = $gCms->GetUserOperations();
 $adminuser = ($userops->UserInGroup($userid,1) || $userid == 1);
 $message = '';
 
-include_once("header.php");
+require_once 'header.php';
 
 $db = $gCms->GetDb();
 
@@ -141,22 +141,17 @@ $smarty->assign('disp_group',$disp_group);
 $smarty->assign('user_id',$userid);
 $smarty->assign('cms_secure_param_name',CMS_SECURE_PARAM_NAME);
 $smarty->assign('cms_user_key',$_SESSION[CMS_USER_KEY]);
+$smarty->assign('header',$themeObject->ShowHeader('groupassignments',array($group_name)));
 $smarty->assign('form_start','<form id="groupname" method="post" action="changegroupassign.php">');
+$smarty->assign('hidden','<input type="hidden" name="submitted" value="1">');
 $smarty->assign('filter_action','changegroupassign.php');
 $smarty->assign('form_end','</form>');
 $smarty->assign('apply',lang('apply'));
 $smarty->assign('selectgroup',lang('selectgroup'));
 $smarty->assign('title_user',lang('user'));
-$smarty->assign('hidden','<input type="hidden" name="submitted" value="1">');
 $smarty->assign('submit','<input type="submit" name="changegrp" value="'.lang('submit').'" class="pagebutton">');
 $smarty->assign('cancel','<input type="submit" name="cancel" value="'.lang('cancel').'" class="pagebutton">');
-
-
-# begin output
 if( !empty($message) ) echo $themeObject->ShowMessage($message);
-echo '<div class="pagecontainer">';
-echo $themeObject->ShowHeader('groupassignments',array($group_name));
-echo $smarty->fetch('changeusergroup.tpl');
-echo '</div>';
+$smarty->display('changeusergroup.tpl');
 
-include_once("footer.php");
+require_once 'footer.php';
