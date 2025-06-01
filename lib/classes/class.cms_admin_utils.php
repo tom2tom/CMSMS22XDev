@@ -77,8 +77,8 @@ final class cms_admin_utils
 			}
 		}
 		if( basename($icon) == $icon ) $icon = "icons/system/{$icon}";
-		$config = \cms_config::get_instance();
-		$dirs[] = array(cms_join_path($config['root_path'],$config['admin_dir'],"themes/{$theme->themeName}/images/{$icon}"),
+		$config = cms_config::get_instance();
+		$dirs[] = array(cms_join_path($config['admin_path'],"themes/{$theme->themeName}/images/{$icon}"),
 						$config['admin_url']."/themes/{$theme->themeName}/images/{$icon}");
 
 		$fnd = '';
