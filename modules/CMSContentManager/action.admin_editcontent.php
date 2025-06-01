@@ -382,9 +382,8 @@ $modname = $this->GetName();
 $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_editcontent.tpl", null, $modname, $smarty);
 
 if( $content_obj->HasPreview() ) {
-//  $config = cmsms()->GetConfig(); already set
     $tpl->assign('has_preview',1);
-    $tpl->assign('preview_url',"{$config['root_url']}/index.php?{$config['query_var']}=".__CMS_PREVIEW_PAGE__);
+    $tpl->assign('preview_url',CMS_ROOT_URL."/index.php?{$config['query_var']}=".__CMS_PREVIEW_PAGE__);
 }
 
 if( $this->GetPreference('template_list_mode','designpage') != 'all') {
