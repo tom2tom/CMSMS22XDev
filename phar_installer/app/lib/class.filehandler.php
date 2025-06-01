@@ -9,9 +9,15 @@ use function __appbase\lang;
 
 abstract class filehandler
 {
+  protected $_baks; //whether path-separators should be \ instead of /
   protected $_destdir;
   private $_output_fn;
   private $_languages;
+
+  public function __construct()
+  {
+    $this->_baks = (DIRECTORY_SEPARATOR == '\\');
+  }
 
   protected function get_config()
   {
@@ -72,8 +78,9 @@ abstract class filehandler
     $filespec = trim($filespec);
     if( !$filespec ) throw new Exception(lang('error_invalidparam','filespec'));
 
-    $tmp = $this->get_destdir().'/'.dirname($filespec);
-    return is_dir($tmp);
+    $tmp = '/'.dirname($filespec);
+    $dn = ($this->_baks) ? strtr($tmp,'/','\\') : strtr($tmp,'\\','/');
+    return is_dir($this->get_destdir().$dn);
   }
 
   protected function create_directory($filespec)
@@ -81,21 +88,17 @@ abstract class filehandler
     $filespec = trim($filespec);
     if( !$filespec ) throw new Exception(lang('error_invalidparam','filespec'));
 
-    $dn = dirname($filespec);
-    $tmp = $this->get_destdir()."/$dn";
-    $ret = @mkdir($tmp,0777,TRUE);
-    if( $ret || is_dir($tmp) ) {
-        touch($tmp.'/index.html'); //prob. redundant due to later repetition
-        $ret = TRUE; //in case it existed already
-    }
-    return $ret;
+    $tmp = '/'.dirname($filespec);
+    $dn = ($this->_baks) ? strtr($tmp,'/','\\') : strtr($tmp,'\\','/');
+    $tmp = $this->get_destdir().$dn;
+    return @mkdir($tmp,0777,TRUE);
   }
 
   protected function is_imagefile($filespec)
   {
       // this method uses (ugly) extensions because we cannot rely on finfo_open being available.
       $image_exts = ['jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff'.'tif','webp','svg','ico'];
-      $ext = strtolower(substr(strrchr($filespec, '.'), 1));
+      $ext = strtolower(substr(strrchr($filespec,'.'),1));
       return in_array($ext,$image_exts);
   }
 

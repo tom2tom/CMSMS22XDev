@@ -46,7 +46,7 @@ abstract class app
 
     public function get_tmpdir()
     {
-        // not modifyiable, ye
+        // not modifiable, yet
         return utils::get_sys_tmpdir();
     }
 
@@ -94,14 +94,15 @@ abstract class app
 
     public static function autoload($classname)
     {
-        $dirsuffix = dirname(str_replace('\\','/',$classname));
-        $classname = basename(str_replace('\\','/',$classname));
+        $dirsuffix = dirname(strtr($classname,'\\',DIRECTORY_SEPARATOR));
+        $classname = basename(strtr($classname,'\\',DIRECTORY_SEPARATOR));
         $dirsuffix = str_replace('__appbase','.',$dirsuffix);
         //if( $dirsuffix == "__appbase" ) $dirsuffix = '.';
 
-        $dirs = array(__DIR__,dirname(__DIR__),dirname(__DIR__).'/tests',dirname(__DIR__).'/base',dirname(__DIR__,2) );
+        $dirs = array(__DIR__,dirname(__DIR__),dirname(__DIR__).DIRECTORY_SEPARATOR.'tests',dirname(__DIR__).DIRECTORY_SEPARATOR.'base',dirname(__DIR__,2) );
+        $sep = DIRECTORY_SEPARATOR;
         foreach( $dirs as $dir ) {
-            $fn = "$dir/$dirsuffix/class.$classname.php";
+            $fn = "$dir{$sep}$dirsuffix{$sep}class.$classname.php";
             if( file_exists($fn) ) {
                 include_once($fn);
                 return;

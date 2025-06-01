@@ -18,11 +18,11 @@ class install_filehandler extends filehandler
       @mkdir($topdir,0777,true);
     }
     if( !is_dir($topdir) || !is_writable($topdir) ) throw new Exception(lang('error_dirnotvalid',$topdir));
-    touch($topdir.'/index.html');
+    touch($topdir.DIRECTORY_SEPARATOR.'index.html');
     $this->_themesdir = $topdir;
   }
 
-  public function handle_file($filespec,$srcspec,PharFileInfo $fi)
+  public function handle_file($filespec,$srcspec,PharFileInfo $fi) //PharFileInfo $fi unused
   {
     if( $this->is_excluded($filespec) ) return;
     $res = $this->is_langfile($filespec);
@@ -44,18 +44,19 @@ class install_filehandler extends filehandler
     elseif( $this->is_themefile($filespec) ) {
       if( empty($this->_themesdir) ) throw new Exception(lang('error_nothemedir'));
       $tp = $this->_themesdir;
-      $fp = $this->_destdir.'/assets/themes'; //default top-folder among installer files
+      $dn = ($this->_baks) ? '\assets\themes' : '/assets/themes';
+      $fp = $this->_destdir.$dn; //default top-folder among installer files
       $sp = substr($filespec,14); //ignore '/assets/themes' prefix
       if( $tp != $fp ) {
-        $X = $fp.$sp;
-        if( is_file($X) ) {
-          unlink($X);
+        $old = $fp.$sp;
+        if( is_file($old) ) {
+          unlink($old);
         }
       }
       // if same file in some former place, also delete that
-      $X = $this->_destdir.'/uploads'.$sp;
-      if( is_file($X) ) {
-        unlink($X);
+      $old = $this->_destdir.DIRECTORY_SEPARATOR.'uploads'.$sp;
+      if( is_file($old) ) {
+        unlink($old);
       }
     }
 
@@ -80,7 +81,7 @@ class install_filehandler extends filehandler
   {
     $filespec = ltrim($filespec);
     if( !$filespec ) throw new Exception(lang('error_invalidparam','filespec'));
-    return strncmp($filespec,'/assets/themes/',15) == 0;
+    return strncmp($filespec,'/assets/themes/',15) == 0; // spec from Phar always has / separators
   }
 }
 
