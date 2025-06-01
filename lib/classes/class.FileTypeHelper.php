@@ -39,7 +39,7 @@ class FileTypeHelper
     /**
      * @ignore
      */
-    private $_image_extensions = ['jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','webp','avif','heif','svg'];
+    private $_image_extensions = ['jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','webp','avif','heif','svg','apng']; // heif and heic are for iOS
     /**
      * @ignore
      * TODO formerly supported 'gz' alone, reinstate? if so, 'bz2' and its aliases? 'xz'?
@@ -52,7 +52,7 @@ class FileTypeHelper
     /**
      * @ignore
      */
-    private $_video_extensions = ['swf','mov','mpg','mp4','mpeg','wmv','rm','avi','webm']; //c.f. 'mov', 'mpeg', 'mp4', 'avi', 'mpg','wma', 'flv', 'webm', 'wmv', 'qt', 'ogg'
+    private $_video_extensions = ['swf','mov','mpg','mp4','mpeg','wmv','rm','avi','webm']; //c.f. 'mov','mpeg','mp4','avi','mpg',wma','flv','webm','wmv','qt','ogg'
     /**
      * @ignore
      */
