@@ -241,7 +241,7 @@ $(function() {
       <iframe name="_previewframe_" class="preview" id="previewframe"></iframe>
       <div id="previewerror" class="red" style="display:none;color:#000">
         <fieldset>
-          <legend>TODO</legend>
+          <legend>Errors</legend>{*TODO langify*}
           <ul id="preview_errors"></ul>
         </fieldset>
       </div>
