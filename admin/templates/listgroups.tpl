@@ -54,6 +54,6 @@
   </div>
 {/if}
 {else}
-  <p class="pageinfo">{lang('nogroup')}</p> TODO
+  <p class="information">{lang('none')}</p>
 {/if}
 </div>{* pagecontainer *}
