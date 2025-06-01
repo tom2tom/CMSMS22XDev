@@ -188,17 +188,15 @@ Events::CreateEvent('Core','StylesheetPreCompile');
 Events::CreateEvent('Core','StylesheetPostCompile');
 Events::CreateEvent('Core','StylesheetPostRender');
 
-$create_private_dir = function($relative_dir) {
-    $app = \__appbase\get_app();
-    $destdir = $app->get_destdir();
-    $relative_dir = trim($relative_dir);
+$create_private_dir = function($top_dir,...$relative_dir) {
     if( !$relative_dir ) return;
-
-    $dir = $destdir.'/'.$relative_dir;
+    $sep = DIRECTORY_SEPARATOR;
+    $dn = implode($sep,$relative_dir);
+    $dir = "$top_dir{$sep}$dn";
     if( !is_dir($dir) ) {
         @mkdir($dir,0777,true);
     }
-    @touch($dir.'/index.html');
+    @touch("$dir{$sep}index.html");
 };
 
 /*
@@ -218,14 +216,17 @@ $move_directory_files = function($srcdir,$destdir) {
     @touch($dir.'/index.html');
 };
 */
-$create_private_dir('admin/configs'); // since 2.2.20
+$app = \__appbase\get_app();
+$destdir = $app->get_destdir();
+$create_private_dir($destdir,'admin','configs'); // since 2.2.20
 // create the assets directory structure
 verbose_msg(ilang('install_createassets'));
-$create_private_dir('assets/admin_custom');
-$create_private_dir('assets/configs');
-$create_private_dir('assets/css');
-$create_private_dir('assets/images');
-$create_private_dir('assets/module_custom');
-$create_private_dir('assets/plugins');
-$create_private_dir('assets/templates');
-$create_private_dir('assets/themes'); // since 2.2.19
+$create_private_dir($destdir,'assets');
+$create_private_dir($destdir,'assets','admin_custom');
+$create_private_dir($destdir,'assets','configs');
+$create_private_dir($destdir,'assets','css');
+$create_private_dir($destdir,'assets','images');
+$create_private_dir($destdir,'assets','module_custom');
+$create_private_dir($destdir,'assets','plugins');
+$create_private_dir($destdir,'assets','templates');
+$create_private_dir($destdir,'assets','themes'); // since 2.2.19
