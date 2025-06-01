@@ -1,5 +1,4 @@
 <?php
-//use function __appbase\rrmdir;
 
 $config = CmsApp::get_instance()->GetConfig(); // OR cms_config::get_instance();
 $bt = $config['themes_path'];
