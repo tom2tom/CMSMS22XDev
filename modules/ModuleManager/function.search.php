@@ -71,8 +71,7 @@ if( isset($params['submit']) ) {
         $data = array();
         if( count($res) ) $res = modmgr_utils::build_module_data($res, $instmodules);
 
-        $config = cmsms()->GetConfig();
-        $moduledir = $config['root_path'].DIRECTORY_SEPARATOR.'modules';
+        $moduledir = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.'modules';
         $writable = is_writable($moduledir);
 
         for( $i = 0; $i < count($res); $i++ ) {

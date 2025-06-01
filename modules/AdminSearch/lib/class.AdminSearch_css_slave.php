@@ -42,9 +42,8 @@ final class AdminSearch_css_slave extends AdminSearch_slave
         $one = $css->get_id();
         $title = $css->get_name();
         if( $css->has_content_file() ) {
-            $config = \cms_config::get_instance();
             $file = $css->get_content_filename();
-            $title = $css->get_name().' ('.cms_relative_path($file,$config['root_path']).')';
+            $title = $css->get_name().' ('.cms_relative_path($file,CMS_ROOT_PATH).')';
         }
         $resultSet = $this->get_resultset($title,AdminSearch_tools::summarize($this->get_description()),$this->get_mod()->create_url( 'm1_','admin_edit_css','', [ 'css'=>$one ] ));
 

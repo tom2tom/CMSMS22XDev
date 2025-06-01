@@ -232,7 +232,7 @@ if( $profile2->show_thumbs && $thumbs ) {
 // done the loop, now sort
 usort($files,$sortfiles);
 
-$assistant2 = new PathAssistant($config,$config['root_path']);
+$assistant2 = new PathAssistant($config,CMS_ROOT_PATH);
 $cwd_for_display = $assistant2->to_relative( $startdir );
 $css_files = ['filepicker.css','filepicker.min.css'];
 $mtime = -1;
@@ -268,7 +268,3 @@ $lang['error_problem_upload'] = $this->Lang('error_problem_upload');
 $lang['error_failed_ajax'] = $this->Lang('error_failed_ajax');
 $tpl->assign('lang_js',json_encode($lang));
 $tpl->display();
-
-#
-# EOF
-#

@@ -147,8 +147,7 @@ final class ModuleOperations
         $module = trim((string)$module);
         if( !$module ) return '';
         $map = self::get_module_classmap();
-        $config = \cms_config::get_instance();
-        return cms_join_path($config['root_path'],'modules',$module,"$module.module.php");
+        return cms_join_path(CMS_ROOT_PATH,'modules',$module,"$module.module.php");
     }
 
     /**
@@ -764,9 +763,9 @@ VALUES (?,?,?,NOW(),NOW())';
     {
         global $CMS_ADMIN_PAGE;
         global $CMS_STYLESHEET;
-        $config = \cms_config::get_instance();
         $allinfo = $this->_get_module_info();
         if( !is_array($allinfo) ) return; // no modules installed, probably an empty database... edge case.
+        $config = \cms_config::get_instance();
 
         if( isset($_SESSION['moduleoperations']) ) {
             // this will load (and thereby install/upgrade all modules that the ModuleManager queued up)

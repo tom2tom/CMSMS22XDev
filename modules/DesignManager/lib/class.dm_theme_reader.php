@@ -430,9 +430,8 @@ class dm_theme_reader extends dm_reader_base
       $regex='/url\s*\(\"*(.*)\"*\)/i';
       $css_rec['data'] = preg_replace_callback($regex,
                            function($matches) use ($ob,$ref_map,$destdir) {
-                             $config = cmsms()->GetConfig();
                              $url = $matches[1];
-                             if( !startswith($url,'http') || startswith($url,$config['root_url']) ||
+                             if( !startswith($url,'http') || startswith($url,CMS_ROOT_URL) ||
                                  startswith($url,'[[root_url]]') ) {
                                $bn = basename($url);
                                if( isset($ref_map[$bn]) ) {
@@ -465,9 +464,8 @@ class dm_theme_reader extends dm_reader_base
     };
 
     $fn2 = function($matches) use ($ob,&$type,$ref_map,$destdir) {
-      $config = cmsms()->GetConfig();
       $url = $matches[2];
-      if( !startswith($url,'http') || startswith($url,$config['root_url']) || startswith($url,'{root_url}') ) {
+      if( !startswith($url,'http') || startswith($url,CMS_ROOT_URL) || startswith($url,'{root_url}') ) {
         $bn = basename($url);
         if( isset($ref_map[$bn]) ) {
           $out = $ref_map[$bn]['tpl_url'];

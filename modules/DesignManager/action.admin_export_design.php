@@ -48,9 +48,8 @@ function _get_css_urls($css_content)
   $regex='/url\s*\(\"*(.*)\"*\)/i';
   $content = preg_replace_callback($regex,
     function($matches) {
-      $config = cmsms()->GetConfig();
       $url = $matches[1];
-      if( !startswith($url,'http') || startswith($url,$config['root_url']) || startswith($url,'[[root_url]]') ) {
+      if( !startswith($url,'http') || startswith($url,CMS_ROOT_URL) || startswith($url,'[[root_url]]') ) {
         $sig = _ref_map_get_sig($url);
         $sig = "url(".$sig.")";
         return $sig;
