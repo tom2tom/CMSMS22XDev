@@ -3,6 +3,7 @@ Version 2.2.22F2 - Whitehorse
  - Update all uses of deprecated templates-API in modules and actions
  - Block FileManager operations on executable files unless sufficiently authorized
  - Deprecate Search collaboration with other search-capable modules which do not declare SEARCH_MODULE capability
+ - More admin pages' content displayed via respective Smarty templates
  - Change more &lt;p/&gt;'s to &lt;label/&gt;'s
  - Add missing button-icons
  - Distinguish between current-user-held locks and other-user-held locks in displayed lists of pages, templates, stylesheets
