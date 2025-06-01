@@ -104,7 +104,7 @@ abstract class jquery_upload_handler
         $new_width = $img_width * $scale;
         $new_height = $img_height * $scale;
         $new_img = @imagecreatetruecolor($new_width, $new_height);
-        // TODO c.f. typehelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff'.'tif','webp','svg'
+        // TODO c.f. typehelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff'.'tif','webp','heif','svg','apng'
         switch (strtolower(substr(strrchr($file_name, '.'), 1))) {
             case 'jpg':
             case 'jpeg':
@@ -136,11 +136,11 @@ abstract class jquery_upload_handler
             case 'webp':
             //TODO more here
                 @imagesavealpha($new_img, true);
-                $src_img = @imagecreatefromwebp($file_path);;
+                $src_img = @imagecreatefromwebp($file_path);
                 $write_image = 'imagewebp';
                 break;
             case 'avif':
-                if (PHP_VERSION_ID >= 80000 && function_exists('imageavif')) {
+                if (PHP_VERSION_ID >= 80100 && function_exists('imageavif')) {
             //TODO more here
                     @imagesavealpha($new_img, true);
                     $src_img = @imagecreatefromavif($file_path);
