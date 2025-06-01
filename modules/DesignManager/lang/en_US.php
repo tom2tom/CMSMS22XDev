@@ -121,7 +121,7 @@ $lang['help'] = <<<EOT
 <p>Templates can optionally be associated with one or more designs.  This helps when needing to quickly find a template to edit.  As well, when exporting a design all the templates that are associated with the design will be exported.</p>
 <p>Depending upon the template type <em>(see below)</em> A template can be set as the &quot;default&quot; for that type.  This functionality allows a module to find a template to use of an appropriate type if no template name is specified in the module tag, or via any other means.  For example, in a default installation the &quot;News Summary Sample&quot; template is the default template for the News default <em>(summary)</em> action.  Therefore calling <em>{News}</em> without specifying a template will use this template.</p>
 <p>Optionally, you can select one or more admin user accounts, or admin user groups that have the ability to edit the template.  This gives the ability for restricted users to have limited access to some templates.  This may be useful for editing seasonal messages, or for modifying API keys or RSS feed URLS.</p>
-<p>When templates are edited the user(s) selected syntax highlighter module will be used, assuming that a syntax highlighter module has been installed, and that the user has selected one from within his user preferences.</p>
+<p>When templates are edited, a syntax highlighter module will be used, if one or more syntax highlighter modules have been installed, and the user has selected one of them in her/his user preferences.</p>
 <p>To call a template you can either specify the template name in a module call or explicitly call/include the template from another one with the <code>{include 'cms_template:&lt;template_name&gt;'}</code> syntax.  See the smarty {include} tag.  Additionally, for backwards compatibility purposes the <code>{global_content name='&lt;template_name&gt;'}</code> syntax still works.</p>
 
 <h4>Template Types Explained:</h4>
@@ -390,7 +390,7 @@ $lang['prompt_id'] = 'Id';
 $lang['prompt_import'] = 'Create a new template of this type'; //confusing key: an icon title-attribute, nothing to do with importing
 $lang['prompt_import_xml_file'] = 'Upload a Design XML File';
 $lang['prompt_lastpage'] = 'Last page';
-$lang['prompt_limit'] = 'Limit';
+$lang['prompt_limit'] = 'Page Limit'; //aka Page Length
 $lang['prompt_listable'] = 'Listable';
 $lang['prompt_lockedby'] = 'Locked By';
 $lang['prompt_lockedsince'] = 'Since';

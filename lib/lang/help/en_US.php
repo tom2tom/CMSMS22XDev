@@ -286,7 +286,7 @@ $lang['help_cmscontentmanager_help'] = <<<EOT
     <li>Content
       <p>Each page template is required to include at least the default content property <em>(a.k.a block)</em>.  However they can define many more, and different types of content blocks.  The default block usually appears in the edit content form as a wWYSIWYG enabled text area allowing the editor to specify some default content for the page.</p>
       <p>Site developers have significant control over the tab that this is displayed in, the label, maxlength, required, and other attributes to control the behaviour of this property in the edit form, and when it is displayed.</p>
-      <p>If the WYSIWYG editor is enabled for this content block and content item <em>(see below)</em>, and one or more WYSIWYG editor modules are enabled, and the user has selected a WYSIWYG editor in his preferences then a WYSIWYG editor will be displayed.  Different WYSIWYG editors have different abilities, but most provide the ability to format text in different ways.  Additionally, most WYSIWYG editors allow inserting images and creating links to other content items in your website.</p>
+      <p>If the WYSIWYG editor is enabled for this content block and content item <em>(see below)</em>, and one or more WYSIWYG editor modules are enabled, and the user has selected a WYSIWYG editor in her/his preferences then a WYSIWYG editor will be displayed.  Different WYSIWYG editors have different abilities, but most provide the ability to format text in different ways.  Additionally, most WYSIWYG editors allow inserting images and creating links to other content items in your website.</p>
     </li>
 
     <li>Menu Text
@@ -306,19 +306,19 @@ $lang['help_cmscontentmanager_help'] = <<<EOT
 
     <li>Access Key
       <p>This property defines an optional access key character <em>usually only one or two characters</em> that can be used in navigation menus to quickly access this content item in the navigation.  This is a useful feature when building accessible navigations.</p>
-      <p>The site developer has complete ability to include, or exclude the use of this property in his navigation templates.  And it may not be required for your website.</p>
+      <p>The site developer has complete ability to include or exclude the use of this property in her/his navigation templates.  And it may not be required for this website.</p>
       <p>Users with restricted permissions may not have the ability to adjust or specify this property.</p>
     </li>
 
     <li>Tab Index
       <p>This property is used to specify an integer index to aide in navigation to this content item in menus.  It is useful when creating accessible websites.</p>
-      <p>The site developer has complete ability to include, or exclude the use of this property in his navigation templates.  And it may not be required for your website.</p>
+      <p>The site developer has complete ability to include or exclude the use of this property in her/his navigation templates.  And it may not be required for this website.</p>
       <p>Users with restricted permissions may not have the ability to adjust or specify this property.</p>
     </li>
 
     <li>Target
       <p>This property is used to specify the &quot;target&quot; attribute in links to content items.  It allows creating navigations that can open content pages in different browser windows or tabs.</p>
-      <p>The site developer has complete ability to include, or exclude the use of this property in his navigation templates.  And it may not be required for your website.</p>
+      <p>The site developer has complete ability to include or exclude the use of this property in her/his navigation templates.  And it may not be required for this website.</p>
       <p>Users with restricted permissions may not have the ability to adjust or specify this property.</p>
     </li>
 
@@ -496,7 +496,7 @@ $lang['help_designmanager_help'] = <<<EOT
          <p>This text string uniquely identifies the template.  The system will generate an error when saving the template if the name is already used on another template.</p>
       </li>
       <li>Template Content:
-        <p>This text area displays the actual smarty template.  If a syntax highlighter module is installed, and enabled, and the user has enabled it in his settings, then it will be enabled in this area to provide advanced editing capabilities.</p>
+        <p>This text area displays the actual Smarty template.  If a syntax highlighter module is installed and enabled, and the user has enabled it in her/his settings, then it will be enabled in this area to provide advanced editing capabilities.</p>
       </li>
       <li>Description:
         <p>This text area provides the ability to describe the purpose of the templates, and notes that may be useful to editors in the future.</p>
@@ -559,7 +559,7 @@ $lang['help_designmanager_help'] = <<<EOT
         <p>This text string uniquely identifies the stylesheet.  The system will generate an error when saving the stylesheet if the name is already used by another stylesheet.</p>
       </li>
       <li>Stylesheet Content:
-        <p>This text area displays the actual CSS code.  If a syntax highlighter module is installed, supports hi-lighting CSS code, is enabled, and the user has enabled it in his settings, then it will be enabled in this area to provide advanced editing capabilities.</p>
+        <p>This text area displays the actual CSS code.  If a syntax highlighter module is installed and enabled and supports highlighting CSS code, and the user has enabled the module in her/his settings, then it will be enabled in this area to provide advanced editing capabilities.</p>
       </li>
       <li>Media Types <em style="color: red;">(deprecated)</em>:
         <p>This tab provides numerous checkbox allowing you to select media types to associate with the stylesheet.  It is preferred to use media queries instead, and this functionality may be removed at a later date.</p>

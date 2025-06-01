@@ -110,7 +110,7 @@ $lang['go'] = 'Go';
 
 //H
 $lang['help_content_type'] = 'The content type controls the overall function of an item.  Some content types are used for building HTML pages, while others are for building links or other navigation functions.';
-$lang['help_general_lockrefresh'] = 'Specify the number of seconds (at most) at which a lock should be refreshed.  Setting a value of 0 will disable refreshing of locks.<br><strong>Note:</strong> Locks are not refreshed unless there are some changes in the form.<br>The minimum value for this field (other than 0) is 30.';
+$lang['help_general_lockrefresh'] = 'Specify the number of seconds (at most) after which a lock should be refreshed.  Setting a value of 0 will disable refreshing of locks.<br><strong>Note:</strong> locks are not refreshed unless there are some changes in the form.<br>The minimum value for this field (other than 0) is 30.';
 $lang['help_general_locktimeout'] = 'Specify the number of minutes after which a non-refreshed lock will expire.  Specifying a value of 0 will disable locking all together.  The minimum value for this field is 5 and the maximum value is 480.';
 $lang['help_general_templatelistmode'] = 'This option controls how templates will be listed in the add/edit content form.';
 $lang['help_listsettings_namecolumn'] = 'Specify what text should be displayed in the &quot;Name&quot; column of the content list view.  Choose either the page title, or menu text';
@@ -134,7 +134,7 @@ $lang['help_title_content_type'] = 'Content Type Selector';
 
 //I
 $lang['info_javascript_required'] = '<strong>Warning:</strong> In order to operate correctly, this module requires a browser with JavaScript support enabled.';
-$lang['info_ordercontent'] = 'Drag and drop elements to adjust their order in the content tree.  <strong>Note: </strong> Some content items, such as separators do not accept children';
+$lang['info_ordercontent'] = 'Drag and drop elements to adjust their order in the content tree.  <strong>Note:</strong> some content items, such as separators, do not accept children.';
 $lang['info_ordertabs'] = 'When editing a page, displayed tabs will be ordered in accord with increasing value of order-preference values, as displayed here. Any positive integer may be applied in each case. They do not need to be sequential.';
 $lang['info_pagedflt'] = 'This panel allows setting default values for various content properties when creating a new page of type &quot;Content&quot; <em>or its derived types.  These settings will have no effect on existing pages, and user settings may override some settings.</em>';
 $lang['info_preview_notice'] = '<strong>Warning:</strong> This preview panel behaves much like a browser window allowing you to navigate away from the initially previewed page. However, if you do that, you may experience unexpected behavior. If you navigate away from the initial display and return, you may not see the un-committed content until you make a change to the content in the main tab, and then reload this tab. When adding content, if you navigate away from this page, you will be unable to return, and must refresh this panel.';
