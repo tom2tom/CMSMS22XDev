@@ -62,36 +62,38 @@ $(function() {
 <div id="filtercssdlg" style="display:none" title="{$mod->Lang('css_filter')}">
   {form_start id='filtercssdlg_form' __activetab='stylesheets'}{*strip*}
     <input type="hidden" id="submit_filter_css" name="{$actionid}submit_filter_css" value="1">
-    <div class="c_full">
-      <label for="filter_css_design" class="grid_3 endalign">{$mod->Lang('prompt_design')}:</label>
-      <select id="filter_css_design" name="{$actionid}filter_css_design" title="{$mod->Lang('title_filter_design')}" class="grid_9">
+    <div style="display:table">
+    <div style="display:table-row">
+      <label for="filter_css_design" class="endalign" style="display:table-cell;padding-{$ndside}:.5em">{$mod->Lang('prompt_design')}:</label>
+      <select id="filter_css_design" style="display:table-cell" name="{$actionid}filter_css_design" title="{$mod->Lang('title_filter_design')}">
         <option value="">{$mod->Lang('any')}</option>
         {html_options options=$design_names selected=$css_filter.design}
       </select>
     </div>
-    <div class="c_full">
-      <label for="filter_css_sortby" class="grid_3 endalign">{$mod->Lang('prompt_sortby')}:</label>
-      <select id="filter_css_sortby" name="{$actionid}filter_css_sortby" title="{$mod->Lang('title_sortby')}" class="grid_9">
+    <div style="display:table-row">
+      <label for="filter_css_sortby" class="endalign" style="display:table-cell;padding-{$ndside}:.5em">{$mod->Lang('prompt_sortby')}:</label>
+      <select id="filter_css_sortby" style="display:table-cell" name="{$actionid}filter_css_sortby" title="{$mod->Lang('title_sortby')}">
           <option value="name"{if $css_filter.sortby == 'name'} selected="selected"{/if}>{$mod->Lang('name')}</option>
           <option value="created"{if $css_filter.sortby == 'created'} selected="selected"{/if}>{$mod->Lang('created')}</option>
           <option value="modified"{if $css_filter.sortby == 'modified'} selected="selected"{/if}>{$mod->Lang('modified')}</option>
       </select>
     </div>
-    <div class="c_full">
-      <label for="filter_css_sortorder" class="grid_3">{$mod->Lang('prompt_sortorder')}:</label>
-      <select id="filter_css_sortorder" name="{$actionid}filter_css_sortorder" title="{$mod->Lang('title_sortorder')}" class="grid_9">
+    <div style="display:table-row">
+      <label for="filter_css_sortorder" class="endalign" style="display:table-cell;padding-{$ndside}:.5em">{$mod->Lang('prompt_sortorder')}:</label>
+      <select id="filter_css_sortorder" style="display:table-cell" name="{$actionid}filter_css_sortorder" title="{$mod->Lang('title_sortorder')}">
         <option value="asc"{if $css_filter.sortorder == 'asc'} selected="selected"{/if}>{$mod->Lang('asc')}</option>
         <option value="desc"{if $css_filter.sortorder == 'desc'} selected="selected"{/if}>{$mod->Lang('desc')}</option>
       </select>
     </div>
-    <div class="c_full">
-      <label for="filter_limit_css" class="grid_3">{$mod->Lang('prompt_limit')}:</label>
-      <select id="filter_limit_css" name="{$actionid}filter_limit_css" class="grid_9">
+    <div style="display:table-row">
+      <label for="filter_limit_css" class="endalign" style="display:table-cell;padding-{$ndside}:.5em">{$mod->Lang('prompt_limit')}:</label>
+      <select id="filter_limit_css" style="display:table-cell" name="{$actionid}filter_limit_css">
         <option value="10"{if (isset($css_filter.limit) && ($css_filter.limit == 10)) } selected="selected"{/if}>10</option>
         <option value="25"{if (isset($css_filter.limit) && ($css_filter.limit == 25)) } selected="selected"{/if}>25</option>
         <option value="50"{if (isset($css_filter.limit) && ($css_filter.limit == 50)) } selected="selected"{/if}>50</option>
         <option value="100"{if (isset($css_filter.limit) && ($css_filter.limit == 100)) } selected="selected"{/if}>100</option>
       </select>
+    </div>
     </div>
   {form_end}
 </div>
