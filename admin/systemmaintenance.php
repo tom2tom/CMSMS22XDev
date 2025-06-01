@@ -16,11 +16,8 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #$Id$
-$CMS_ADMIN_PAGE = 1;
 
-//
-// note, much of this code is mysql specific
-//
+$CMS_ADMIN_PAGE = 1;
 
 require_once("../lib/include.php");
 check_login();
@@ -28,21 +25,18 @@ check_login();
 $userid = get_userid();
 $access = check_permission($userid, "Modify Site Preferences");
 if (!$access) {
-  die('Permission Denied'); //TODO throw if can be caught
+  exit(lang('no_permission')); //TODO throw if can be caught
 }
 
 include_once("header.php");
 
-define('CMS_BASE', dirname(__DIR__));
-require_once cms_join_path(CMS_BASE, 'lib', 'test.functions.php');
-
+require_once cms_join_path(dirname(__DIR__), 'lib', 'test.functions.php');
 
 $gCms = cmsms();
-$smarty = $gCms->GetSmarty();
+$smarty = $gCms->GetSmarty(); //also in header.php
 $smarty->caching = false;
 $smarty->force_compile = true;
 $db = $gCms->GetDb();
-
 
 $smarty->assign('theme', $themeObject);
 
@@ -303,19 +297,18 @@ $smarty->assign("withoutaliascount", count($withoutalias));
  * Changelog
  *
  */
-$ch_filename = cms_join_path(CMS_BASE, 'doc', 'CHANGELOG.txt');
-$changelog = @file($ch_filename);
+$ch_filename = cms_join_path(dirname(__DIR__), 'doc', 'CHANGELOG.txt');
 
 if (is_readable($ch_filename)) {
+    $changelog = @file($ch_filename);
 
-    for ($i = 0; $i < count($changelog); $i++) {
+    for ($i = 0, $n = count($changelog); $i < $n; $i++) {
       if (substr($changelog[$i], 0, 7) == "Version") {
         if ($i == 0) {
           $changelog[$i] = "<div class=\"version\"><h3>" . $changelog[$i] . "</h3>";
         } else {
           $changelog[$i] = "</div><div class=\"version\"><h3>" . $changelog[$i] . "</h3>";
         }
-
       }
     }
 

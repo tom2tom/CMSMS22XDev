@@ -26,7 +26,7 @@ check_login();
 $userid = get_userid();
 
 if (!check_permission($userid, 'Manage Users')) {
-    die('Permission Denied'); //TODO throw if can be caught
+    exit(lang('no_permission')); //TODO throw if can be caught
 }
 
 /*--------------------
@@ -62,8 +62,7 @@ if( isset($_GET['switchuser']) ) {
         }
         else {
             CMSMS\LoginOperations::get_instance()->set_effective_user($to_user);
-            $urlext       = '?' . CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY];
-            redirect('index.php'.$urlext);
+            redirect('index.php'.$urlext.'&section=usersgroups');
         }
     }
 }

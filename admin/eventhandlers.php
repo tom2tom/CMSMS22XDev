@@ -17,17 +17,17 @@
 #
 #$Id$
 
-$CMS_ADMIN_PAGE=1;
-$CMS_LOAD_ALL_PLUGINS=1;
+$CMS_ADMIN_PAGE = 1;
+$CMS_LOAD_ALL_PLUGINS = 1; //?
 
 require_once("../lib/include.php");
 
 check_login();
+
 $userid = get_userid();
 $access = check_permission($userid, "Modify Events");
-
 if (!$access) {
-	die('Permission Denied'); //TODO throw if can be caught
+	exit(lang('no_permission')); //TODO throw if can be caught
 }
 
 include_once 'header.php';
@@ -37,7 +37,7 @@ $event = (!empty($_REQUEST['event'])) ? $_REQUEST['event'] : '';
 $module = (!empty($_REQUEST['module'])) ? $_REQUEST['module'] : '';
 $modulefilter = (!empty($_REQUEST['modulefilter'])) ? $_REQUEST['modulefilter'] : '';
 
-$smarty = cmsms()->GetSmarty();
+$smarty = cmsms()->GetSmarty(); //also in header.php
 $smarty->caching = false;
 //$smarty->force_compile = true;
 $smarty->assign('hiddenname',CMS_SECURE_PARAM_NAME);

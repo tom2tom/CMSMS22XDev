@@ -24,14 +24,14 @@ $urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
 check_login();
 
-if (isset($_POST["cancel"])) {
-    redirect("changegroupassign.php".$urlext);
-}
+//if (isset($_POST["cancel"])) {
+//    redirect("changegroupassign.php".$urlext); //? back here again OR listgroups.php ?
+//}
 
 $userid = get_userid(false);
 $access = check_permission($userid, 'Manage Groups');
 if (!$access) {
-    die('Permission Denied'); //TODO throw if can be caught
+    exit(lang('no_permission')); //TODO throw if can be caught
 }
 
 $group_id= - 1;

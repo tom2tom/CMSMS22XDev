@@ -16,14 +16,15 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #$Id$
-$CMS_ADMIN_PAGE=1;
+
+$CMS_ADMIN_PAGE = 1;
 
 require_once("../lib/include.php");
 
 check_login();
 $cur_userid = get_userid();
 if (!check_permission($cur_userid, 'Manage Users')) {
-    die('Permission Denied'); //TODO throw if can be caught
+    exit(lang('no_permission')); //TODO throw if can be caught
 }
 
 $dodelete = true;

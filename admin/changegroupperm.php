@@ -24,14 +24,14 @@ $urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
 check_login();
 
-if (isset($_POST["cancel"])) {
-    redirect("changegroupperm.php".$urlext);
-}
+//if (isset($_POST["cancel"])) {
+//    redirect("changegroupperm.php".$urlext); //back here again OR listgroups.php ?
+//}
 
 $userid = get_userid(false);
 $access = check_permission($userid, 'Manage Groups');
 if (!$access) {
-    die('Permission Denied'); //TODO throw if can be caught
+    exit(lang('no_permission')); //TODO throw if can be caught
 }
 
 $submitted = -1;
@@ -183,7 +183,8 @@ if ($submitted == 1) {
                 $new_id = $db->GenID(CMS_DB_PREFIX."group_perms_seq");
                 $result = $db->Execute($iquery, array($new_id,$keyparts[2],$keyparts[1]));
                 if( !$result ) {
-                    echo "FATAL: ".$db->ErrorMsg().'<br>'.$db->sql; exit();
+                    echo "FATAL: ".$db->ErrorMsg().'<br>'.$db->sql;
+                    exit;
                 }
             }
         }

@@ -18,7 +18,7 @@
 #$Id$
 
 $CMS_ADMIN_PAGE = 1;
-$CMS_ADMIN_TITLE = 'system_verification';
+//$CMS_ADMIN_TITLE = 'system_verification';
 $orig_memory = (function_exists('memory_get_usage')) ? memory_get_usage() : 0;
 
 require_once '../lib/include.php'; //CMSMS functions N/A yet
@@ -27,7 +27,7 @@ check_login();
 $userid = get_userid();
 $access = check_permission($userid,'Modify Site Preferences');
 if( !$access ) {
-  die('Permission Denied'); //TODO throw if there's a catcher
+  exit(lang('no_permission')); //TODO throw if can be caught
 }
 
 require_once 'header.php';

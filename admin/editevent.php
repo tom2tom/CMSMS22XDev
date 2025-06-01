@@ -23,7 +23,7 @@ require_once("../lib/include.php");
 
 check_login();
 
-$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+$urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 if( isset($_POST['close']) ) {
 	redirect('eventhandlers.php'.$urlext);
 }
@@ -31,7 +31,7 @@ if( isset($_POST['close']) ) {
 $userid = get_userid();
 $access = check_permission($userid, "Modify Events");
 if( !$access ) {
-	die('Permission Denied'); //TODO throw if can be caught
+	exit(lang('no_permission')); //TODO throw if can be caught
 }
 
 $gCms = cmsms();

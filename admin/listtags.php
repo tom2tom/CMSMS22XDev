@@ -26,7 +26,7 @@ check_login();
 $userid = get_userid();
 $access = check_permission($userid, "View Tag Help");
 if( !$access ) {
-    die('Permission Denied'); //TODO throw if can be caught
+    exit(lang('no_permission')); //TODO throw if can be caught
 }
 
 $plugin = (isset($_GET["plugin"])) ? basename(cleanValue($_GET["plugin"])) : '';
@@ -51,7 +51,7 @@ $find_file = function($filename) use($dirs) {
 
 require_once "header.php";
 
-$smarty = cmsms()->GetSmarty();
+$smarty = cmsms()->GetSmarty(); //also in header.php
 $smarty->assign('header',$themeObject->ShowHeader('tags'));
 
 if( $action == "showpluginhelp" ) {

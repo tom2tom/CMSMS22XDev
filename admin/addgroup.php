@@ -32,7 +32,7 @@ if (isset($_POST['cancel'])) {
 $userid = get_userid();
 $access = check_permission($userid, 'Manage Groups');
 if (!$access) {
-    die('Permission Denied'); //TODO throw if can be caught
+    exit(lang('no_permission')); //TODO throw if can be caught
 }
 
 $error = '';
@@ -69,7 +69,7 @@ if (isset($_POST['addgroup'])) {
 
 require_once 'header.php';
 
-$smarty = Smarty_CMS::get_instance();
+$smarty = Smarty_CMS::get_instance(); //also set in header.php
 $smarty->assign('header',$themeObject->ShowHeader('addgroup'));
 $smarty->assign('hiddenname',CMS_SECURE_PARAM_NAME);
 $smarty->assign('hiddenval',$_SESSION[CMS_USER_KEY]);

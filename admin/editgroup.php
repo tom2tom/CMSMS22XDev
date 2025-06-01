@@ -32,7 +32,7 @@ if (isset($_POST['cancel'])) {
 $userid = get_userid();
 $access = check_permission($userid, 'Manage Groups');
 if (!$access) {
-    die('Permission Denied'); //TODO throw if can be caught
+    exit(lang('no_permission')); //TODO throw if can be caught
 }
 
 $error = '';

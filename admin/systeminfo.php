@@ -23,18 +23,15 @@ require_once("../lib/include.php");
 $urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 check_login();
 
-
 $userid = get_userid();
 $access = check_permission($userid, "Modify Site Preferences");
 if (!$access) {
-	die('Permission Denied'); //TODO throw if can be caught
+	exit(lang('no_permission')); //TODO throw if can be caught
 }
 
 include_once("header.php");
 
-define('CMS_BASE', dirname(__DIR__));
-require_once cms_join_path(CMS_BASE, 'lib', 'test.functions.php');
-
+require_once cms_join_path(dirname(__DIR__), 'lib', 'test.functions.php');
 
 function installerHelpLanguage( $lang, $default_null = null )
 {
@@ -61,7 +58,7 @@ function systeminfo_lang($params, $smarty)
 }
 
 $gCms = cmsms();
-$smarty = $gCms->GetSmarty();
+$smarty = $gCms->GetSmarty(); //also in header.php
 $smarty->registerPlugin('function','si_lang','systeminfo_lang');
 $smarty->caching = false;
 $smarty->force_compile = true;

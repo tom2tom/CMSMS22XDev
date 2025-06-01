@@ -16,11 +16,15 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #$Id$
-$CMS_ADMIN_PAGE=1;
+$CMS_ADMIN_PAGE = 1;
 $orig_memory = (function_exists('memory_get_usage')?memory_get_usage():0);
 require_once("../lib/include.php");
-$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 check_login();
+
+$userid = get_userid();
+if (!check_permission($userid, 'Modify Site Preferences')) {
+    exit(lang('no_permission')); //TODO throw if can be caught
+}
 
 $gCms = CmsApp::get_instance();
 $db = $gCms->GetDb();
@@ -29,12 +33,9 @@ $themeObject = cms_utils::get_theme_object();
 // get the total number of records.
 $totalrows = $db->GetOne("SELECT COUNT(timestamp) FROM ".CMS_DB_PREFIX."adminlog");
 
+$urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 $smarty->assign("urlext",$urlext);
 
-$userid = get_userid();
-if (!check_permission($userid, 'Modify Site Preferences')) {
-    die('Permission Denied'); //TODO throw if can be caught
-}
 $access = check_permission($userid, 'Clear Admin Log');
 
 if (isset($_GET['clear']) && $access) {

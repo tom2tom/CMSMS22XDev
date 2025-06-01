@@ -26,7 +26,7 @@ check_login();
 $userid = get_userid();
 $access = check_permission($userid, 'Manage Groups'); // 'Add Groups' ok?
 if (!$access) {
-	die('Permission Denied'); //TODO throw if can be caught
+	exit(lang('no_permission')); //TODO throw if can be caught
 }
 
 require_once 'header.php';
@@ -49,7 +49,7 @@ if ($grouplist) {
 	}
 }
 
-$smarty = Smarty_CMS::get_instance();
+$smarty = Smarty_CMS::get_instance(); // also defined in header.php
 $smarty->assign('padd',check_permission($userid,'Add Groups'));
 $smarty->assign('header',$themeObject->ShowHeader('currentgroups'));
 $smarty->assign('iconadd',$themeObject->DisplayImage('icons/system/newobject.gif',lang('addgroup'),'','','systemicon'));

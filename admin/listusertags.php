@@ -17,7 +17,7 @@
 #
 #$Id$
 
-$CMS_ADMIN_PAGE=1;
+$CMS_ADMIN_PAGE = 1;
 
 require_once("../lib/include.php");
 
@@ -25,7 +25,7 @@ check_login();
 $userid = get_userid();
 $access = check_permission($userid, 'Modify User-defined Tags');
 if (!$access) {
-    die('Permission Denied'); //TODO throw if can be caught
+    exit(lang('no_permission')); //TODO throw if can be caught
 }
 
 include_once("header.php");
@@ -58,9 +58,10 @@ if( $list && is_array($list) ) {
         $tags[$id] = $rec;
     }
 }
-$smarty = Smarty_CMS::get_instance();
+$smarty = Smarty_CMS::get_instance(); // also in header.php
 $smarty->assign('tags',$tags);
 $smarty->assign('addurl','editusertag.php'.$urlext);
 $smarty->assign('urlext',$urlext);
 $smarty->display('listusertags.tpl');
+
 include_once("footer.php");

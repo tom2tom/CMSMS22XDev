@@ -21,14 +21,19 @@
  * Init variables / objects
  */
 
-$CMS_ADMIN_PAGE=1;
-$CMS_TOP_MENU='admin';
-$CMS_ADMIN_TITLE='preferences';
+$CMS_ADMIN_PAGE = 1;
+//$CMS_TOP_MENU = 'admin';
+//$CMS_ADMIN_TITLE = 'preferences';
 
 require_once("../lib/include.php");
 check_login();
-$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
-$thisurl=basename(__FILE__).$urlext;
+
+$urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+if (isset($_POST['cancel'])) {
+  redirect('index.php'.$urlext.'&section=siteadmin');
+}
+
+$thisurl = basename(__FILE__).$urlext;
 $userid = get_userid(); // <- Checks also login
 
 /**
@@ -76,7 +81,7 @@ function siteprefs_display_permissions($permsarr)
 
 $access = check_permission($userid, 'Modify Site Preferences');
 if (!$access) {
-  die('Permission Denied'); //TODO throw if can be caught
+  exit(lang('no_permission')); //TODO throw if can be caught
 }
 
 $gCms = cmsms();
@@ -138,11 +143,6 @@ $mailprefs = array(
   'secure'=>'',
   'timeout'=>60,
   'charset'=>'utf-8');
-
-if (isset($_POST['cancel'])) {
-  redirect("index.php".$urlext);
-  return; //useless here
-}
 
 /**
  * Get preferences

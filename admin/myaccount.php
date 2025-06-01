@@ -26,16 +26,20 @@ use CMSMS\HookManager;
 $orig_memory = (function_exists('memory_get_usage')?memory_get_usage():0);
 
 $CMS_ADMIN_PAGE = 1;
-$CMS_TOP_MENU = 'admin';
-$CMS_ADMIN_TITLE = 'myaccount';
+//$CMS_TOP_MENU = 'admin';
+//$CMS_ADMIN_TITLE = 'myaccount';
 
 require_once ("../lib/include.php"); // might change the password recorded in $_POST[]
 check_login();
-$userid = get_userid(); // Also checks login - again!
-if( !check_permission($userid,'Manage My Settings') && !check_permission($userid,'Manage My Account') ) return;
 
 $urlext = '?' . CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY];
-if (isset($_POST["cancel"])) redirect("index.php" . $urlext);
+if( isset($_POST["cancel"]) ) {
+  redirect('index.php' . $urlext . '&section=usersgroups');
+}
+$userid = get_userid(); // Also checks login - again!
+if( !(check_permission($userid,'Manage My Settings') || check_permission($userid,'Manage My Account')) ) {
+  exit(lang('no_permission')); //TODO throw if can be caught
+}
 
 $thisurl = basename(__FILE__) . $urlext;
 $userobj = UserOperations::get_instance()->LoadUserByID($userid); // <- Safe to do, cause if $userid failed, it redirected to login.

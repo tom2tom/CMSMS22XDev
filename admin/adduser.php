@@ -23,14 +23,14 @@ $CMS_ADMIN_PAGE = 1;
 require_once ('../lib/include.php');
 
 check_login();
-$userid = get_userid();
-
-if (!check_permission($userid, 'Manage Users')) {
-    die('Permission Denied'); //TODO throw if can be caught
-}
 $urlext = '?' . CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY];
 if (isset($_POST['cancel'])) {
     redirect('listusers.php' . $urlext);
+}
+
+$userid = get_userid();
+if (!check_permission($userid, 'Manage Users')) {
+    exit(lang('no_permission')); //TODO throw if can be caught
 }
 
 /*--------------------
@@ -177,7 +177,7 @@ if (isset($_POST["submit"])) {
 
             // put mention into the admin log
             audit($newuser->id, 'Admin user', "Added: $newuser->username");
-            redirect("listusers.php" . $urlext);
+            redirect('listusers.php' . $urlext);
         } else {
             $error .= "<li>" . lang('errorinsertinguser') . "</li>";
         }
