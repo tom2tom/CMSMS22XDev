@@ -303,6 +303,7 @@ class UserGuideIO
 
             unlink($this->archname);
             if (strcasecmp($old, 'off') != 0) {
+                //TODO this triggers 'headers already sent' warning
                 ini_set('zlib.output_compression', $old);
             }
             return true;
