@@ -536,7 +536,7 @@ final class cms_config implements ArrayAccess
         return 'assets';
 
       case 'assets_path':
-        $this->_cache[$key] = cms_join_path($this->OffsetGet('root_path'),$this->OffsetGet('assets_dir'));
+        $this->_cache[$key] = cms_join_path($this->offsetGet('root_path'),$this->offsetGet('assets_dir'));
         return $this->_cache[$key];
 
       case 'max_upload_size':
