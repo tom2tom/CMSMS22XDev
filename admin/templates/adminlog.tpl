@@ -34,7 +34,7 @@ $(function() {
           <div class="clearb"></div>
         </div>
         <div class="c_full">
-          <label for="userin">{$langfilteruser}:</label>
+          <label for="userin">{$langfilteruser}</label>
           <input type="text" id="userin" name="filteruser" value="{$filter->user}" class="grid_10">
           <div class="clearb"></div>
         </div>
