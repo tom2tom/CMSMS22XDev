@@ -13,7 +13,7 @@ class PathAssistant
     public function __construct(cms_config $config, $topdir)
     {
         if( !$topdir || !is_dir($topdir) ) throw new LogicException('Invalid topdir passed to '.__METHOD__);
-        if( !$this->is_relative_to( $topdir, $config['root_path'] ) ) throw new LogicException('Invalid topdir passed to '.__METHOD__);
+        if( !$this->is_relative_to( $topdir, CMS_ROOT_PATH ) ) throw new LogicException('Invalid topdir passed to '.__METHOD__);
 
         $topdir = rtrim($topdir,' \\/');
         $this->_topdir = trim($topdir);
@@ -33,12 +33,12 @@ class PathAssistant
         }
         else if( $this->is_relative_to( $this->_topdir, $config['assets_path']) ) {
             $rel_url = $this->to_relative_sub( $this->_topdir, $config['assets_path'], TRUE );
-            $tmp = rtrim($config['root_url'], ' /'); // prob. irrelevant, but just in case
+            $tmp = rtrim(CMS_ROOT_URL, ' /'); // prob. irrelevant, but just in case
             $this->_topurl = $tmp.'/'.strtr($config['assets_dir'], '\\', '/');
         }
-        else if( $this->is_relative_to( $this->_topdir, $config['root_path']) ) {
-            $rel_url = $this->to_relative_sub( $this->_topdir, $config['root_path'], TRUE );
-            $this->_topurl = $config['root_url'];
+        else if( $this->is_relative_to( $this->_topdir, CMS_ROOT_PATH) ) {
+            $rel_url = $this->to_relative_sub( $this->_topdir, CMS_ROOT_PATH, TRUE );
+            $this->_topurl = CMS_ROOT_URL;
         }
         else {
             $rel_url = '';

@@ -26,7 +26,7 @@ function smarty_function_anchor($params, $smarty)
         $config = cmsms()->GetConfig();
         $tmp = $config['query_var'].'=';
         $path = str_replace($tmp,'',$_SERVER['QUERY_STRING']);
-        $url = $config['root_url'].'/'.trim($path,' /');
+        $url = CMS_ROOT_URL.'/'.trim($path,' /');
     }
     else {
         $content = cms_utils::get_current_content();

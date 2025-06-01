@@ -63,16 +63,12 @@ class CmsModuleInfo implements ArrayAccess
 
     private function _get_module_meta_file( $module_name )
     {
-        $config = \cms_config::get_instance();
-        $fn = $config['root_path']."/modules/$module_name/moduleinfo.ini";
-        return $fn;
+        return cms_join_path(CMS_ROOT_PATH,'modules',$module_name,'moduleinfo.ini');
     }
 
     private function _get_module_file( $module_name )
     {
-        $config = \cms_config::get_instance();
-        $fn = $config['root_path']."/modules/$module_name/$module_name.module.php";
-        return $fn;
+        return cms_join_path(CMS_ROOT_PATH,'modules',$module_name,$module_name.'module.php');
     }
 
     public function __construct($module_name,$can_load = TRUE)
@@ -128,8 +124,6 @@ class CmsModuleInfo implements ArrayAccess
 
     private function _read_from_module_meta($module_name)
     {
-        $config = \cms_config::get_instance();
-        $dir = $config['root_path']."/modules/$module_name";
         $fn = $this->_get_module_meta_file( $module_name );
         if( !is_file($fn) ) return [];
         $inidata = @parse_ini_file($fn,TRUE);
@@ -149,14 +143,15 @@ class CmsModuleInfo implements ArrayAccess
 
         if( isset($inidata['depends']) ) $arr['depends'] = $inidata['depends'];
 
-        $fn = cms_join_path($dir,'changelog.inc');
+        $dir = cms_join_path(CMS_ROOT_PATH,'modules',$module_name);
+        $fn = $dir.DIRECTORY_SEPARATOR.'changelog.inc';
         if( file_exists($fn) ) $arr['changelog'] = file_get_contents($fn);
-        $fn = cms_join_path($dir,'doc/changelog.inc');
+        $fn = cms_join_path($dir,'doc','changelog.inc');
         if( file_exists($fn) ) $arr['changelog'] = file_get_contents($fn);
 
-        $fn = cms_join_path($dir,'help.inc');
+        $fn = $dir.DIRECTORY_SEPARATOR.'help.inc';
         if( file_exists($fn) ) $arr['help'] = file_get_contents($fn);
-        $fn = cms_join_path($dir,'doc/help.inc');
+        $fn = cms_join_path($dir,'doc','help.inc');
         if( file_exists($fn) ) $arr['help'] = file_get_contents($fn);
 
         $arr['has_meta'] = TRUE;

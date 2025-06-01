@@ -13,7 +13,7 @@ if( !is_dir($dir) ) {
     touch($dir.DIRECTORY_SEPARATOR.'index.html');
 }
 
-$dir = cms_join_path($config['root_path'],'tmp');
+$dir = cms_join_path(CMS_ROOT_PATH,'tmp');
 $fp = $dir.DIRECTORY_SEPARATOR.'index.html';
 if ( !is_file($fp) ) touch($fp);
 

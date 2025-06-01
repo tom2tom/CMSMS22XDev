@@ -217,7 +217,7 @@ EOS;
         '~([^>])\n\n~',
         '~([^>])\n~'
         ], [
-        "<img src=\"{$config['root_url']}/\$1\"",
+        '<img src="'.CMS_ROOT_URL.'/$1"',
         "\n",
         "\n",
         "\n",

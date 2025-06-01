@@ -34,7 +34,7 @@ if( !empty($newversions) ) {
         echo '<div class="pageerrorcontainer"><div class="pageoverflow"><p class="pageerror">'.$this->Lang('error_permissions').'</p></div></div>';
         $caninstall = false;
     }
-    $moduledir = $config['root_path'].DIRECTORY_SEPARATOR.'modules';
+    $moduledir = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.'modules';
     $writable = is_writable( $moduledir );
 
     foreach( $newversions as $row ) {

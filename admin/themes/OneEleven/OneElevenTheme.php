@@ -320,7 +320,7 @@ class OneElevenTheme extends CmsAdminThemeBase
 				$marks[] = $one;
 			}
 			$path = substr($_SERVER['SCRIPT_FILENAME'],strlen(CMS_ROOT_PATH));
-			$source = $config['root_url'] . strtr($path, '\\', '/'); // TODO c.f. $this->_url.$this->_query which has no scheme or host
+			$source = CMS_ROOT_URL . strtr($path, '\\', '/'); // TODO c.f. $this->_url.$this->_query which has no scheme or host
 			if( !empty($_SERVER['QUERY_STRING']) ) { $source .= '?'.$_SERVER['QUERY_STRING']; }
 			$source = str_replace($urlext,'[SECURITYTAG]',$source);
 			$url = 'addbookmark.php?'.$urlext;

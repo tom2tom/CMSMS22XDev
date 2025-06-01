@@ -93,8 +93,7 @@ class UserGuideIO
     {
 //      global $CMS_VERSION;
         $dwhen = date('Y-m-d_H-i-s', time());
-        $config = cms_config::get_instance();
-        $this->archname = $config['root_path'].DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'UserGuide_Unpack_' . $dwhen;
+        $this->archname = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'UserGuide_Unpack_' . $dwhen;
         if (!is_dir($this->archname)) {
             mkdir($this->archname, 0775, true);
             if (!is_dir($this->archname)) {
@@ -132,8 +131,7 @@ class UserGuideIO
         global $CMS_VERSION;
         $now = time();
         $filedate = date('Y-m-d_H-i-s', $now);
-        $config = cms_config::get_instance();
-        $this->archname = $config['root_path'].DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'UserGuide_Export_' . $filedate . '.tar';
+        $this->archname = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'UserGuide_Export_' . $filedate . '.tar';
         $this->archive = new PharData($this->archname);
         $this->archive->addFromString('dtdversion', 1.5);
         $this->archive->addFromString('module', $this->mod->GetName());
