@@ -3,8 +3,6 @@
 namespace __appbase;
 
 use Exception;
-//use function __appbase\endswith;
-//use function __appbase\startswith;
 
 class utils
 {
@@ -28,14 +26,16 @@ class utils
                     $to .= $components['path'];
                 }
                 //Path is relative, append current directory first.
-                else if (isset($_SERVER['PHP_SELF']) && !is_null($_SERVER['PHP_SELF'])) { //Apache
+                elseif (isset($_SERVER['PHP_SELF']) && !is_null($_SERVER['PHP_SELF'])) { //Apache
                     $to .= (strlen(dirname($_SERVER['PHP_SELF'])) > 1 ?  dirname($_SERVER['PHP_SELF']).'/' : '/') . $components['path'];
                 }
-                else if (isset($_SERVER['REQUEST_URI']) && !is_null($_SERVER['REQUEST_URI'])) { //Lighttpd
-                    if (endswith($_SERVER['REQUEST_URI'], '/'))
+                elseif (isset($_SERVER['REQUEST_URI']) && !is_null($_SERVER['REQUEST_URI'])) { //Lighttpd
+                    if (endswith($_SERVER['REQUEST_URI'], '/')) {
                         $to .= (strlen($_SERVER['REQUEST_URI']) > 1 ? $_SERVER['REQUEST_URI'] : '/') . $components['path'];
-                    else
+                    }
+                    else {
                         $to .= (strlen(dirname($_SERVER['REQUEST_URI'])) > 1 ? dirname($_SERVER['REQUEST_URI']).'/' : '/') . $components['path'];
+                    }
                 }
             }
             else {
@@ -143,7 +143,7 @@ class utils
      * @param  bool    $ignore_specialfiles  Optionally ignore special system files in the check.  Special files include files beginning with ., and php.ini files.
      * @return bool
      */
-    public static function is_directory_writable( $path, $ignore_specialfiles = TRUE )
+    public static function is_directory_writable($path, $ignore_specialfiles = TRUE)
     {
         if ( substr ( $path , strlen ( $path ) - 1 ) != '/' ) $path .= '/' ;
 
@@ -184,7 +184,6 @@ class utils
         return TRUE;
     }
 
-
     public static function get_writable_error()
     {
         return self::$_writable_error;
@@ -192,15 +191,29 @@ class utils
 
     public static function rrmdir($dir)
     {
-        if (is_dir($dir)) {
-            $objects = scandir($dir);
-            foreach ($objects as $object) {
-                if ($object != "." && $object != "..") {
-                    if (filetype($dir."/".$object) == "dir") self::rrmdir($dir."/".$object); else unlink($dir."/".$object);
+        if( is_dir($dir) ) {
+            $items = scandir($dir);
+            if( $items ) {
+                $sep = DIRECTORY_SEPARATOR;
+                foreach( $items as $name ) {
+                    if( !($name == '.' || $name == '..') ) {
+                        $fp = "$dir{$sep}$name";
+                        if( is_dir($fp) ) {
+                            self::rrmdir($fp);
+                        }
+                        else {
+                            //TODO deal with links to dirs?
+                            unlink($fp);
+                        }
+                    }
                 }
             }
-            reset($objects);
-            rmdir($dir);
+            if( $items !== FALSE ) {
+                rmdir($dir);
+            }
+            else {
+              //TODO handle error
+            }
         }
     }
 
