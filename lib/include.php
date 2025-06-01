@@ -117,16 +117,18 @@ if( $config['debug'] ) {
 
 if( cms_to_bool(ini_get('register_globals')) ) {
     echo 'FATAL ERROR: For security reasons register_globals must not be enabled for any CMSMS install.  Please adjust your PHP configuration settings to disable this feature.';
-    die();
+    die;
 }
 
 if( isset($CMS_ADMIN_PAGE) ) {
     setup_session();
 
     function cms_admin_sendheaders($content_type = 'text/html',$charset = '') {
-        // Language shizzle
-        if( !$charset ) $charset = get_encoding();
-        header("Content-Type: $content_type; charset=$charset");
+        if( !headers_sent() ) {
+            // Language shizzle
+            if( !$charset ) $charset = get_encoding();
+            header("Content-Type: $content_type; charset=$charset");
+        }
     }
 }
 
