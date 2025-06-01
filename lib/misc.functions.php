@@ -27,7 +27,7 @@
 /**
  * Redirects to relative URL on the current site.
  *
- * If headers have not been sent this method will use header based redirection.
+ * If headers have not been sent this method will use header-based redirection.
  * Otherwise javascript redirection will be used.
  *
  * @author http://www.edoceo.com/
@@ -37,6 +37,8 @@
  */
 function redirect($to)
 {
+    global $CMS_INSTALL_PAGE;
+
     $app = cmsms();
     if( $app->is_cli() ) {
         // cannot redirect cli based scripts
@@ -44,13 +46,12 @@ function redirect($to)
     }
     $_SERVER['PHP_SELF'] = null; // aka unset
 
-    $schema = 'http';
-    if( $app->is_https_request() ) $schema = 'https';
-
+    $secure = $app->is_https_request();
+    $schema = ($secure) ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'];
     $components = parse_url($to);
     if( $components ) {
-        $to =  (isset($components['scheme']) && startswith($components['scheme'], 'http') ? $components['scheme'] : $schema) . '://';
+        $to = (isset($components['scheme']) && startswith($components['scheme'], 'http') ? $components['scheme'] : $schema) . '://';
         $to .= isset($components['host']) ? $components['host'] : $host;
         $to .= isset($components['port']) ? ':' . $components['port'] : '';
         if( isset($components['path']) ) {
@@ -82,40 +83,60 @@ function redirect($to)
 
     session_write_close();
 
-    // this could be used in install/upgrade routines where config is not set yet
-    // so cannot use constants.
     $debug = false;
-    if( class_exists('CmsApp') ) {
-        $config = CmsApp::get_instance()->GetConfig();
+    if( !isset($CMS_INSTALL_PAGE) ) {
+        $config = $app->GetConfig();
         $debug = $config['debug'];
     }
+    if( $debug ) {
+        echo <<<EOS
+Debug is on, automatic redirection is disabled...  Please click this link to continue.<br><br>
+<a accesskey="r" href="$to">$to</a>
 
-    if( headers_sent() && !$debug ) {
-        // use javascript instead
-        echo '<script>
-          <!--location.replace("'.$to.'"); // -->
-          </script>
-          <noscript>
-          <meta http-equiv="Refresh" content="0;URL='.$to.'">
-          </noscript>';
-        exit;
-    }
-    else {
-        if( $debug ) {
-            echo "Debug is on.  Redirecting disabled...  Please click this link to continue.<br>";
-            echo "<a accesskey=\"r\" href=\"".$to."\">".$to."</a><br>";
-            echo '<div id="DebugFooter">';
-            foreach (CmsApp::get_instance()->get_errors() as $error) {
-                echo $error;
+EOS;
+        $reports = $app->get_errors();
+        if( $reports ) {
+            echo <<<EOS
+<br><br>
+<div id="DebugFooter">
+
+EOS;
+            foreach( $reports as $out ) {
+                echo $out;
             }
-            echo '</div> <!-- end DebugFooter -->';
-            exit;
+            echo '</div><!-- end DebugFooter -->';
+        }
+    }
+    elseif( headers_sent() ) {
+/*
+        // use javascript etc instead of another header
+        echo "<script\n";
+        // location.replace() and location.assign() fail if $to is not secure/https
+        if( $secure ) {
+            echo " window.location.replace('$to')";
         }
         else {
-            header("Location: $to");
-            exit;
+            echo " window.location.href='$to'";
         }
+        echo <<<EOS
+
+</script>
+<noscript>
+ <meta http-equiv="Refresh" content="0;URL=$to">
+</noscript>
+EOS;
+        //TODO should we exit after this?
+*/
+        $num = count(ob_list_handlers());
+        for( $i = 0; $i < $num; ++$i ) {
+            ob_end_clean();
+        }
+        header("Location: $to");
     }
+    else {
+        header("Location: $to");
+    }
+    exit;
 }
 
 
@@ -151,7 +172,7 @@ function redirect_to_alias($alias)
  * @param string $b Later microtime value
  * @return int The difference.
  */
-function microtime_diff($a, $b)
+function microtime_diff($a,$b)
 {
     list($a_dec, $a_sec) = explode(" ", $a);
     list($b_dec, $b_sec) = explode(" ", $b);
@@ -193,13 +214,11 @@ function cms_join_path()
 function cms_relative_path($in,$relative_to = '')
 {
     $in = realpath(trim((string)$in));
+    if( !$in ) return '';
     if( !$relative_to ) {
-        $config = \cms_config::get_instance();
-        $relative_to = $config['root_path'];
+        $relative_to = CMS_ROOT_PATH;
     }
     $to = realpath(trim($relative_to));
-
-    if( !$in ) return '';
     if( !$to ) return '';
     if( !startswith($in,$to) ) return '';
 
@@ -216,7 +235,7 @@ function cms_relative_path($in,$relative_to = '')
  * @param bool $convert_single_quotes A flag indicating wether single quotes should be converted to entities.
  * @return string the converted string.
  */
-function cms_htmlentities($val, $param=ENT_QUOTES, $charset="UTF-8", $convert_single_quotes = false)
+function cms_htmlentities($val,$param = ENT_QUOTES,$charset = 'UTF-8',$convert_single_quotes = false)
 {
     if( $val == "" ) return "";
 
@@ -249,8 +268,9 @@ function cms_htmlentities($val, $param=ENT_QUOTES, $charset="UTF-8", $convert_si
  */
 function debug_bt_to_log()
 {
-    if( CmsApp::get_instance()->config['debug_to_log'] || (function_exists('get_userid') && get_userid(FALSE)) ) {
-        $bt=debug_backtrace();
+    $config = cms_config::get_instance();
+    if( $config['debug_to_log'] || (function_exists('get_userid') && get_userid(FALSE)) ) {
+        $bt = debug_backtrace();
         $file = $bt[0]['file'];
         $line = $bt[0]['line'];
 
@@ -288,7 +308,7 @@ function debug_bt_to_log()
  */
 function debug_bt()
 {
-    $bt=debug_backtrace();
+    $bt = debug_backtrace();
     $file = $bt[0]['file'];
     $line = $bt[0]['line'];
 
@@ -320,7 +340,7 @@ function debug_bt()
 * @param bool $showtitle (optional) flag indicating whether the title field should be displayed in the output.
 * @return string
 */
-function debug_display($var, $title="", $echo_to_screen = true, $use_html = true,$showtitle = TRUE)
+function debug_display($var,$title = '',$echo_to_screen = true,$use_html = true,$showtitle = true)
 {
     global $starttime, $orig_memory;
     if( !$starttime ) $starttime = microtime();
@@ -383,29 +403,28 @@ function debug_display($var, $title="", $echo_to_screen = true, $use_html = true
 
 
 /**
- * Display $var nicely only if $config["debug"] is set.
+ * Display $var nicely only if $config['debug'] (aka CMS_DEBUG) is set.
  *
  * @param mixed $var
  * @param string $title
  */
-function debug_output($var, $title="")
+function debug_output($var,$title = '')
 {
-    $config = \cms_config::get_instance();
-    if( $config["debug"] == true) debug_display($var, $title, true);
+    $config = cms_config::get_instance();
+    if( $config['debug'] ) debug_display($var, $title, true);
 }
 
 
 /**
- * Debug function to output debug information about a variable in a formatted matter
- * to a debug file.
+ * Output formatted debug information about $var to a debug log file.
  *
  * @param mixed $var    data to display
  * @param string $title optional title.
  * @param string $filename optional output filename
  */
-function debug_to_log($var, $title='',$filename = '')
+function debug_to_log($var,$title = '',$filename = '')
 {
-    $config = \cms_config::get_instance();
+    $config = cms_config::get_instance();
     if( $config['debug_to_log'] || (function_exists('get_userid') && get_userid(FALSE)) ) {
         if( $filename == '' ) {
             $filename = TMP_CACHE_LOCATION . '/debug.log';
@@ -421,12 +440,13 @@ function debug_to_log($var, $title='',$filename = '')
 
 
 /**
- * Display $var nicely to the CmsApp::get_instance()->errors array if $config['debug'] is set.
+ * Display $var nicely to the CmsApp::get_instance()->errors array if
+ * $config['debug'] (aka CMS_DEBUG) is set.
  *
  * @param mixed $var
  * @param string $title
  */
-function debug_buffer($var, $title="")
+function debug_buffer($var,$title = '')
 {
     if( defined('CMS_DEBUG') && CMS_DEBUG ) { //might be not-yet-defined
        CmsApp::get_instance()->add_error(debug_display($var, $title, false, true));
@@ -445,7 +465,7 @@ function debug_buffer($var, $title="")
 * @deprecated
 * @return mixed
 */
-function _get_value_with_default($value, $default_value = '', $session_key = '')
+function _get_value_with_default($value,$default_value = '',$session_key = '')
 {
     if( $session_key != '' ) {
         if( isset($_SESSION['default_values'][$session_key]) ) $default_value = $_SESSION['default_values'][$session_key];
@@ -491,7 +511,7 @@ function _get_value_with_default($value, $default_value = '', $session_key = '')
  * @param string $session_key
  * @return mixed
  */
-function get_parameter_value($parameters, $value, $default_value = '', $session_key = '')
+function get_parameter_value($parameters,$value,$default_value = '',$session_key = '')
 {
     if( $session_key != '' ) {
         if( isset($_SESSION['parameter_values'][$session_key]) ) $default_value = $_SESSION['parameter_values'][$session_key];
@@ -567,7 +587,7 @@ function cms_mapi_remove_permission($permission_name)
  * @param string  The permission human readable text.
  * @deprecated
  */
-function cms_mapi_create_permission($cms, $permission_name, $permission_text)
+function cms_mapi_create_permission($cms,$permission_name,$permission_text)
 {
     try {
         $perm = new CmsPermission();
@@ -590,25 +610,23 @@ function cms_mapi_create_permission($cms, $permission_name, $permission_text)
  * @param  string  $path Start directory.
  * @return bool
  */
-function is_directory_writable( $path )
+function is_directory_writable($path)
 {
-    if( substr ( $path , strlen ( $path ) - 1 ) != '/' ) $path .= '/' ;
-
     if( !is_dir($path) ) return FALSE;
-    $result = TRUE;
-    if( $handle = opendir( $path ) ) {
-        while( false !== ( $file = readdir( $handle ) ) ) {
+
+    if( $handle = opendir($path) ) {
+        if( !endswith($path,DIRECTORY_SEPARATOR) ) $path .= DIRECTORY_SEPARATOR;
+        while( false !== ($file = readdir($handle)) ) {
             if( $file == '.' || $file == '..' ) continue;
 
             $p = $path.$file;
-            if( !@is_writable( $p ) ) return FALSE;
+            if( !@is_writable($p) ) return FALSE;
 
-            if( @is_dir( $p ) ) {
-                $result = is_directory_writable( $p );
-                if( !$result ) return FALSE;
+            if( @is_dir($p) ) {
+                if( !is_directory_writable($p) ) return FALSE;
             }
         }
-        closedir( $handle );
+        closedir($handle);
         return TRUE;
     }
     return FALSE;
@@ -625,7 +643,7 @@ function is_directory_writable( $path )
  *                     case insensitive, comma delimited
  * Rolf: only used in this file
  */
-function get_matching_files($dir,$extensions = '',$excludedot = true,$excludedir = true, $fileprefix='',$excludefiles=1)
+function get_matching_files($dir,$extensions = '',$excludedot = true,$excludedir = true,$fileprefix = '',$excludefiles = 1)
 {
     if( !is_dir($dir) ) return [];
     $dh = opendir($dir);
@@ -663,7 +681,7 @@ function get_matching_files($dir,$extensions = '',$excludedot = true,$excludedir
  * @param  int     $d        Recursion depth, for internal use only
  * @return string[] each including DIRECTORY_SEPARATOR and folder-paths end with a DIRECTORY_SEPARATOR
 **/
-function get_recursive_file_list ( $path , $excludes, $maxdepth = -1 , $mode = "FULL" , $d = 0 )
+function get_recursive_file_list($path,$excludes,$maxdepth = -1,$mode = 'FULL',$d = 0)
 {
     $fn = function( $file, $excludes ) {
         // strip the path from the file
@@ -685,7 +703,7 @@ function get_recursive_file_list ( $path , $excludes, $maxdepth = -1 , $mode = "
 
             $file = $path . $file ;
             if( ! @is_dir ( $file ) ) { if( $mode != "DIRS" ) { $dirlist[] = $file ; } }
-            elseif( $d >=0 && ($d < $maxdepth || $maxdepth < 0) ) {
+            elseif( $d >= 0 && ($d < $maxdepth || $maxdepth < 0) ) {
                 $result = get_recursive_file_list ( $file, $excludes, $maxdepth , $mode , $d + 1 ); //recurse
                 $dirlist = array_merge ( $dirlist , $result ) ;
             }
@@ -700,16 +718,16 @@ function get_recursive_file_list ( $path , $excludes, $maxdepth = -1 , $mode = "
 /**
  * A function to recursively delete all files and folders in a directory; synonymous with rm -r.
  *
- * @param string $dirname The directory name
+ * @param string $dirname The directory filepath
  * @return bool
  */
-function recursive_delete( $dirname )
+function recursive_delete($dirname)
 {
-    // all subdirectories and contents:
+    // all subdirectories and contents
     if( !is_dir($dirname) ) return true;
-    $dir_handle=opendir($dirname);
-    while( $file=readdir($dir_handle) ) {
-        if( $file!="." && $file!=".." ) {
+    $dir_handle = opendir($dirname);
+    while( $file = readdir($dir_handle) ) {
+        if( $file != "." && $file != ".." ) {
             if( !is_dir($dirname."/".$file) ) {
                 if( !@unlink ($dirname."/".$file) ) {
                     closedir( $dir_handle );
@@ -735,7 +753,7 @@ function recursive_delete( $dirname )
  * @param int $mode The octal mode
  * Rolf: only used in admin/listmodules.php
  */
-function chmod_r( $path, $mode )
+function chmod_r($path,$mode)
 {
     if( !is_dir( $path ) ) return chmod( $path, $mode );
 
@@ -773,9 +791,10 @@ function chmod_r( $path, $mode )
  * @param string $sub The search string
  * @return bool
  */
-function startswith( $str, $sub )
+function startswith($str,$sub)
 {
-    return ( strncmp( $str, $sub, strlen( $sub ) ) == 0 );
+    $l = strlen($sub);
+    return ( $l > 0 ) ? (strncmp($str, $sub, $l) == 0) : FALSE;
 }
 
 
@@ -788,10 +807,10 @@ function startswith( $str, $sub )
  * @param string $sub The search string
  * @return bool
  */
-function endswith( $str, $sub )
+function endswith($str,$sub)
 {
-    $l = strlen( $sub );
-    return ( $l > 0 ) ? ( substr_compare( $str, $sub, -$l, $l ) == 0 ) : FALSE;
+    $l = strlen($sub);
+    return ( $l > 0 ) ? (substr_compare($str, $sub, -$l, $l) == 0) : FALSE;
 }
 
 
@@ -803,7 +822,7 @@ function endswith( $str, $sub )
  * @param bool $withslash Indicates wether slashes should be allowed in the input.
  * @return string
  */
-function munge_string_to_url($alias, $tolower = false, $withslash = false)
+function munge_string_to_url($alias,$tolower = false,$withslash = false)
 {
     $alias = (string)$alias;
     if( $tolower ) $alias = mb_strtolower($alias);
@@ -882,10 +901,9 @@ function can_admin_upload()
     can upload files.
     if safe mode is off, then we just have to check the permissions.
     */
-    $config = CmsApp::get_instance()->GetConfig();
     $file_index = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.'index.php';
-    $file_moduleinterface = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.
-    $config['admin_dir'].DIRECTORY_SEPARATOR.'moduleinterface.php';
+    $config = cms_config::get_instance();
+    $file_moduleinterface = $config['admin_path'].DIRECTORY_SEPARATOR.'moduleinterface.php';
     $dir_uploads = $config['uploads_path']; //for {content_image} tags c.f. 'image_uploads_path' for content
     $dir_modules = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.'modules';
 
@@ -968,9 +986,9 @@ function stack_trace()
  * @param string $destination The destination file specification
  * @return bool.
  */
-function cms_move_uploaded_file( $tmpfile, $destination )
+function cms_move_uploaded_file($tmpfile,$destination)
 {
-    $config = CmsApp::get_instance()->GetConfig();
+    $config = cms_config::get_instance();
     // reject browser-executable files
     $helper = new \CMSMS\FileTypeHelper($config);
     if( $helper->is_executable($destination) ) {
@@ -1037,7 +1055,7 @@ function cms_ipmatches($ip,$checklist)
             if( count($maskocts) != count($ipocts) && count($maskocts) != 4 ) return false;
 
             // perform a range match
-            for ($i=0; $i<4; $i++) {
+            for( $i = 0; $i < 4; $i++ ) {
                 if( preg_match("/\[([0-9]+)\-([0-9]+)\]/",$maskocts[$i],$regs) ) {
                     if( ($ipocts[$i] > $regs[2]) || ($ipocts[$i] < $regs[1]) ) $result = false;
                 }
@@ -1066,7 +1084,7 @@ function cms_ipmatches($ip,$checklist)
  * @param string $v2
  * @return int -1, 0 or 1 according to whether $v1 is regarded <, = or > $v2
 */
-function cmsversion_compare($v1, $v2)
+function cmsversion_compare($v1,$v2)
 {
     if( strcasecmp($v1, $v2) == 0 ) { return 0; }
     $comp = [$v1, $v2];
@@ -1089,7 +1107,7 @@ function cmsversion_compare($v1, $v2)
  * @param string  $email
  * @param bool $checkDNS
 */
-function is_email( $email, $checkDNS=FALSE )
+function is_email($email,$checkDNS = false)
 {
     //PHP's FILTER_VALIDATE_EMAIL mechanism is incomplete (per RFC5321) - see notes at https://www.php.net/manual/en/function.filter-var.php
     if( !filter_var($email,FILTER_VALIDATE_EMAIL) ) return FALSE;
@@ -1171,14 +1189,14 @@ function cms_to_bool($val)
  * @param string  $custom_root A custom root URL for all scripts (when using local mode).  If this is spefied the $ssl param will be ignored.
  * @param bool $include_css Optionally output stylesheet tags for the included javascript libraries.
  */
-function cms_get_jquery($exclude = '',$ssl = FALSE,$cdn = FALSE,$append = '',$custom_root='',$include_css = TRUE)
+function cms_get_jquery($exclude = '',$ssl = false,$cdn = false,$append = '',$custom_root = '',$include_css = true)
 {
     $config = cms_config::get_instance();
-    $scripts = array();
     $base_url = $config->smart_root_url(); //TODO deprecated since 2.2
     if( $ssl ) $base_url = $config['ssl_url']; //TODO deprecated since 2.2
     $basePath = ($custom_root != '') ? trim($custom_root,'/') : $base_url;
 
+    $scripts = array();
     // Scripts to include NOTE keep {cms_jquery} tag help reconciled with the following
     $scripts['jquery'] = array('cdn'=>'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js',
                              'sri'=>'sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=',
@@ -1292,7 +1310,7 @@ function cms_get_jquery($exclude = '',$ssl = FALSE,$cdn = FALSE,$append = '',$cu
  * @ignore
  * @since 2.0.2
  */
-function setup_session($cachable = FALSE)
+function setup_session($cachable = false)
 {
     global $CMS_INSTALL_PAGE, $CMS_ADMIN_PAGE;
     static $_setup_already = FALSE;
@@ -1348,5 +1366,5 @@ function setup_session($cachable = FALSE)
  */
 function is_base64($s)
 {
-    return (bool) preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $s);
+    return (bool)preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $s);
 }
