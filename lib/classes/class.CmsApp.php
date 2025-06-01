@@ -145,7 +145,7 @@ final class CmsApp
 	{
 		if( self::test_state(self::STATE_INSTALL) ) {
 			$db = $this->GetDb();
-			$query = 'SELECT version FROM '.CmsApp::get_instance()->GetDbPrefix().'version';
+			$query = 'SELECT version FROM '.CMS_DB_PREFIX.'version';
 			return $db->GetOne($query);
 		}
 		return \CMSMS\internal\global_cache::get('schema_version');
@@ -316,6 +316,7 @@ final class CmsApp
 
 	/**
 	 * Get the database prefix.
+	 * @deprecated since 2.0 instead use CMS_DB_PREFIX
 	 *
 	 * @return string
 	 */
@@ -710,10 +711,9 @@ function cmsms()
 
 /**
  * Returns the currently configured database prefix.
- *
  * @since 0.4
+ * @deprecated since 2.0 instead use CMS_DB_PREFIX
  * @return string
- * @see CmsApp::GetDbPrefix();
  */
 function cms_db_prefix()
 {
