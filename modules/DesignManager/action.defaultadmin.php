@@ -83,11 +83,10 @@ elseif( isset($params['design_setdflt']) && $this->CheckPermission('Manage Desig
 
 $tmp = cms_userprefs::get($this->GetName().'template_filter');
 if( $tmp ) {
-    $filter_tpl_rec = unserialize($tmp);
+    $tmp = unserialize($tmp);
+    if( $tmp ) { $filter_tpl_rec = $tmp; }
 }
-else {
-    $filter_tpl_rec = [];
-}
+
 if( isset($params['tpl_page']) ) {
     $this->SetCurrentTab('templates');
     $page = max(1,(int)$params['tpl_page']);
@@ -212,7 +211,10 @@ if( $this->CheckPermission('Manage Designs') ) {
 
 if( $this->CheckPermission('Manage Stylesheets') ) {
     $tmp = cms_userprefs::get($this->GetName().'css_filter');
-    if( $tmp ) $filter_css_rec = unserialize($tmp);
+    if( $tmp ) {
+        $tmp = unserialize($tmp);
+        if( $tmp ) { $filter_css_rec = $tmp; }
+    }
     if( isset($params['css_page']) ) {
         $this->SetCurrentTab('stylesheets');
         $page = max(1,(int)$params['css_page']);
