@@ -76,8 +76,7 @@ function siteprefs_display_permissions($permsarr)
 
 $access = check_permission($userid, 'Modify Site Preferences');
 if (!$access) {
-  die('Permission Denied'); // <- Pretty cruel huh? maybe redirection and message, or something. -Stikki-
-  return; //useless here
+  die('Permission Denied'); //TODO throw if can be caught
 }
 
 $gCms = cmsms();
@@ -360,7 +359,7 @@ if (isset($_POST['editsiteprefs'])) {
       }
       if (isset($_POST['notices_timeout'])) {
         $notices_timeout = (int)$_POST['notices_timeout'];
-        if ($notices_timeout < 0) { $notices_timeout = 0; }  
+        if ($notices_timeout < 0) { $notices_timeout = 0; }
         elseif ($notices_timeout > 30) { $notices_timeout = 30; }
       }
       else {

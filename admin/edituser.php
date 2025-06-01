@@ -25,8 +25,9 @@ require_once ('../lib/include.php');
 check_login();
 $userid = get_userid();
 
-if (!check_permission($userid, 'Manage Users')) die('Permission Denied');
-
+if (!check_permission($userid, 'Manage Users')) {
+    die('Permission Denied'); //TODO throw if can be caught
+}
 $urlext = '?' . CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY];
 if (isset($_POST['cancel'])) {
     redirect('listusers.php' . $urlext);

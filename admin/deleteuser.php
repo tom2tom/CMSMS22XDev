@@ -19,13 +19,11 @@
 $CMS_ADMIN_PAGE=1;
 
 require_once("../lib/include.php");
-$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
 check_login();
 $cur_userid = get_userid();
-if( !check_permission($cur_userid, 'Manage Users') ) {
-die('Permission Denied');
-return;
+if (!check_permission($cur_userid, 'Manage Users')) {
+    die('Permission Denied'); //TODO throw if can be caught
 }
 
 $dodelete = true;
@@ -33,9 +31,6 @@ $dodelete = true;
 $user_id = -1;
 if (isset($_GET["user_id"])) {
     $user_id = $_GET["user_id"];
-    $user_name = "";
-    $userid = get_userid();
-
     if ($user_id != $cur_userid) {
         $gCms = cmsms();
         $userops = $gCms->GetUserOperations();
@@ -48,12 +43,12 @@ if (isset($_GET["user_id"])) {
         }
 
         if ($dodelete) {
-            \CMSMS\HookManager::do_hook('Core::DeleteUserPre', [ 'user'=>&$oneuser] );
+            CMSMS\HookManager::do_hook('Core::DeleteUserPre', [ 'user'=>&$oneuser] );
 
             cms_userprefs::remove_for_user($user_id);
             $oneuser->Delete();
 
-            \CMSMS\HookManager::do_hook('Core::DeleteUserPost', [ 'user'=>&$oneuser] );
+            CMSMS\HookManager::do_hook('Core::DeleteUserPost', [ 'user'=>&$oneuser] );
 
             // put mention into the admin log
             audit($user_id, 'Admin user', "Deleted: $user_name");
@@ -61,9 +56,10 @@ if (isset($_GET["user_id"])) {
     }
 }
 
-if ($dodelete == true) {
-    redirect("listusers.php".$urlext);
+$urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+if ($dodelete) {
+    redirect("listusers.php$urlext");
 }
 else {
-    redirect("listusers.php".$urlext."&message=".lang('erroruserinuse'));
+    redirect("listusers.php{$urlext}&message=".lang('erroruserinuse'));
 }

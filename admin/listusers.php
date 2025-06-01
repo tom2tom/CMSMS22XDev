@@ -26,8 +26,7 @@ check_login();
 $userid = get_userid();
 
 if (!check_permission($userid, 'Manage Users')) {
-    die('Permission Denied');
-    return;
+    die('Permission Denied'); //TODO throw if can be caught
 }
 
 /*--------------------
