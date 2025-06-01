@@ -966,8 +966,7 @@ abstract class CmsAdminThemeBase
 				$marks[] = new Bookmark(); //unpopulated == spacer
 			}
 			$path = substr($_SERVER['SCRIPT_FILENAME'],strlen(CMS_ROOT_PATH));
-			$config = cms_config::get_instance();
-			$source = $config['root_url'] . strtr($path,'\\','/'); // TODO c.f. $this->_url.$this->_query which has no scheme or host
+			$source = CMS_ROOT_URL . strtr($path,'\\','/'); // TODO c.f. $this->_url.$this->_query which has no scheme or host
 			if( !empty($_SERVER['QUERY_STRING']) ) { $source .= '?'.$_SERVER['QUERY_STRING']; }
 			$urlext = CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 			$source = str_replace($urlext,'[SECURITYTAG]',$source);
@@ -1053,10 +1052,10 @@ abstract class CmsAdminThemeBase
 	public function HasDisplayableChildren($section)
 	{
 		$displayableChildren=false;
-		foreach($this->_menuItems[$section]['children'] as $thisChild) {
+		foreach( $this->_menuItems[$section]['children'] as $thisChild ) {
 			$thisItem = $this->_menuItems[$thisChild];
-			if ($thisItem['show_in_menu']) {
-				$displayableChildren = true;
+			if( $thisItem['show_in_menu'] ) {
+				$displayableChildren = TRUE;
 				break;
 			}
 		}
@@ -1065,41 +1064,44 @@ abstract class CmsAdminThemeBase
 
 
 	/**
-	 * DisplayImage will display the themed version of an image (if it exists),
-	 * @param string $imageName name of image
-	 * @param string $alt alt text
-	 * @param int $width width
-	 * @param int $height height
-	 * @param string $class class
+	 * Generate html for the themed version of an image (if it exists)
+	 *
+	 * @param string $imageName images-relative path of wanted image, including '/' separators
+	 * @param string $alt optional alt (and title) text
+	 * @param int $width optional width
+	 * @param int $height optional height
+	 * @param string $class optional class name(s)
+	 * @return string representing an img element including admindir-relative src attribute
 	 */
-	public function DisplayImage($imageName, $alt='', $width='', $height='', $class='')
+	public function DisplayImage($imageName, $alt='', $width=0, $height=0, $class='')
 	{
-		// @todo: fix me...
-		if( !is_array($this->_imageLink) ) $this->_imageLink = array();
-		if (! isset($this->_imageLink[$imageName])) {
+		if( !is_array($this->_imageLink) ) { $this->_imageLink = array(); }
+		if( !isset($this->_imageLink[$imageName]) ) {
 			$imagePath = '';
-			if (strpos($imageName,'/') !== false) {
-				$imagePath = substr($imageName,0,strrpos($imageName,'/')+1);
-				$imageName = substr($imageName,strrpos($imageName,'/')+1);
+			if( ($p = strrpos($imageName,'/')) !== FALSE ) {
+				$tmp = substr($imageName,0,$p); //probably contains separator(s)
+				$imagePath = strtr($tmp,'\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR);
+				$imageName = substr($imageName,$p + 1);
 			}
-
-			$config = \cms_config::get_instance();
-			$str = dirname(CMS_ROOT_PATH.'/'.$config['admin_dir']."/themes/{$this->themeName}/images/{$imagePath}{$imageName}");
-			if (file_exists("{$str}/{$imageName}")) {
-				$str = "themes/{$this->themeName}/images/{$imagePath}{$imageName}";
-				$this->_imageLink[$imageName] = $str;
+			$rel = ($imagePath) ? cms_join_path('themes',$this->themeName,'images',$imagePath,$imageName) :
+				cms_join_path('themes',$this->themeName,'images',$imageName);
+			$config = cms_config::get_instance();
+			$parent = $config['admin_path'].DIRECTORY_SEPARATOR.dirname($rel);
+			if( file_exists($parent.DIRECTORY_SEPARATOR.$imageName) ) {
+				$this->_imageLink[$imageName] = strtr($rel,'\\','/');
 			}
 			else {
-				// todo: uses default theme.
-				$this->_imageLink[$imageName] = 'themes/OneEleven/images/' . $imagePath . $imageName;
+				$name = self::GetDefaultTheme();
+				$tmp = strtr($imagePath,'\\','/');
+				$this->_imageLink[$imageName] = "themes/$name/images/$tmp/$imageName";
 			}
 		}
 
 		$retStr = '<img src="'.$this->_imageLink[$imageName].'"';
-		if ($class != '') $retStr .= ' class="'.$class.'"';
-		if ($width != '') $retStr .= ' width="'.$width.'"';
-		if ($height != '') $retStr .= ' height="'.$height.'"';
-		if ($alt != '') $retStr .= ' alt="'.$alt.'" title="'.$alt.'"';
+		if( $class ) $retStr .= ' class="'.$class.'"';
+		if( $width > 0 ) $retStr .= ' width="'.$width.'"';
+		if( $height > 0 ) $retStr .= ' height="'.$height.'"';
+		if( $alt ) $retStr .= ' alt="'.$alt.'" title="'.$alt.'"';
 		$retStr .= '>';
 		return $retStr;
 	}
@@ -1162,10 +1164,10 @@ abstract class CmsAdminThemeBase
 	 */
 	public static function GetAvailableThemes()
 	{
-		$config = \cms_config::get_instance();
+		$config = cms_config::get_instance();
 
 		$res = array();
-		$files = glob(cms_join_path($config['admin_path'],'themes').'/*');
+		$files = glob(cms_join_path($config['admin_path'],'themes','*'));
 		if( is_array($files) && count($files) ) {
 			foreach( $files as $file ) {
 				if( !is_dir($file) ) continue;
@@ -1189,27 +1191,31 @@ abstract class CmsAdminThemeBase
 	{
 		if( is_object(self::$_instance) ) return self::$_instance;
 
-		if( !$name ) $name = cms_userprefs::get_for_user(get_userid(FALSE),'admintheme',self::GetDefaultTheme());
-		if( class_exists($name) ) {
+		if( !$name ) $name = cms_userprefs::get_for_user(get_userid(FALSE),'admintheme');
+		if( $name && class_exists($name) ) {
 			self::$_instance = new $name();
 		}
 		else {
-			$gCms = CmsApp::get_instance();
-			$config = $gCms->GetConfig();
-			$themeObjName = $name."Theme";
-			$fn = $config['admin_path']."/themes/$name/{$themeObjName}.php";
-			if( file_exists($fn) ) {
-				include_once($fn);
-				self::$_instance = new $themeObjName($gCms,get_userid(FALSE),$name);
+			$config = cms_config::get_instance();
+			if( $name ) {
+				$fn = cms_join_path($config['admin_path'],'themes',$name,"{$name}Theme.php");
+				if( file_exists($fn) ) {
+					include_once $fn;
+					$themeObjName = $name.'Theme';
+					self::$_instance = new $themeObjName();
+				}
+				else {
+					$name = ''; //trigger a retry
+				}
 			}
-			else {
+			if( !$name ) {
 				// theme not found... use default
 				$name = self::GetDefaultTheme();
-				$themeObjName = $name."Theme";
-				$fn = $config['admin_path']."/themes/$name/{$themeObjName}.php";
+				$fn = cms_join_path($config['admin_path'],'themes',$name,"{$name}Theme.php");
 				if( file_exists($fn) ) {
-					include_once($fn);
-					self::$_instance = new $themeObjName($gCms,get_userid(FALSE),$name);
+					include_once $fn;
+					$themeObjName = $name.'Theme';
+					self::$_instance = new $themeObjName();
 				}
 				else {
 					// still not found
