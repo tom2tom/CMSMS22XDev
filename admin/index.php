@@ -19,11 +19,11 @@
 
 $orig_memory = (function_exists('memory_get_usage')?memory_get_usage():0);
 
-$CMS_ADMIN_PAGE=1;
-$CMS_TOP_MENU='main';
-//$CMS_ADMIN_TITLE='adminhome'; repeated below
-$CMS_ADMIN_TITLE='mainmenu';
-$CMS_EXCLUDE_FROM_RECENT=1;
+$CMS_ADMIN_PAGE = 1;
+//$CMS_TOP_MENU = 'main';
+//$CMS_ADMIN_TITLE = 'adminhome';
+//$CMS_ADMIN_TITLE = 'mainmenu';
+//$CMS_EXCLUDE_FROM_RECENT = 1;
 
 require_once("../lib/include.php");
 
@@ -35,7 +35,7 @@ check_login();
 
 include_once("header.php");
 $section = (isset($_GET['section'])) ? trim($_GET['section']) : '';
-// todo: we should just be getting the html, and giving it to the theme. mmaybe
+// todo: we should just be getting the html, and giving it to the theme. maybe
 $themeObject->do_toppage($section);
 $out = \CMSMS\HookManager::do_hook_accumulate('admin_add_headtext');
 if( $out && count($out) ) {
