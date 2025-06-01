@@ -40,8 +40,8 @@
 
 {function display_tree depth=0}
 	{foreach $list as $node}
-		{$obj=$node->getContent(false,true,false)}
-		<li id="page_{$obj->Id()}" {if !$obj->WantsChildren()}class="no-nest"{/if}>
+		{$obj=$node->getContent(false,true,false)}{$pid=$obj->Id()}
+		<li id="page_{$pid}"{if !$obj->WantsChildren()} class="no-nest"{/if}>
 			<div class="label"{if !$obj->Active()} style="color:red"{/if}>
 				<span>&nbsp;</span>{$obj->Hierarchy()}:&nbsp;{$obj->Name()|cms_escape}{if !$obj->Active()}&nbsp;({$mod->Lang('prompt_inactive')}){/if} <em>({$obj->MenuText()|cms_escape})</em>
 			</div>
