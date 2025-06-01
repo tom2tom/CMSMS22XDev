@@ -86,7 +86,7 @@ class UploadHandler extends jquery_upload_handler
         case 'image/gif':
             $res = imagegif($i_dest,$complete_thumb);
             break;
-        case 'image/png':
+        case 'image/png': NOT image/apng
             $res = imagepng($i_dest,$complete_thumb,9);
             break;
         case 'image/jpeg':
@@ -94,13 +94,18 @@ class UploadHandler extends jquery_upload_handler
             break;
         case 'image/bmp':
         case 'image/x-ms-bmp':
-            $res = imagebmp($i_dest,$dest);
+            if (PHP_VERSION_ID >= 70200) {
+                $res = imagebmp($i_dest,$dest);
+            }
+            break;
+        case 'image/vnd.wap.wbmp':
+            $res = imagewbmp($i_dest,$dest);
             break;
         case 'image/webp':
             $res = imagewebp($i_dest,$dest,80);
             break;
         case 'image/avif':
-            if (PHP_VERSION_ID >= 80000) {
+            if (PHP_VERSION_ID >= 80100) {
                 $res = imageavif($i_dest,$dest,80,6);
             }
             break;
