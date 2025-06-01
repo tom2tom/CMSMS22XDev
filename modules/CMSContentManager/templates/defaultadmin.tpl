@@ -139,13 +139,13 @@ $(function() {
   $('#filter_type').trigger('change');
   $(document).on('click', '#myoptions', function() {
     $('#useroptions').dialog({
-      minWidth: '600',
+      width: 'auto',
       minHeight: 225,
-      resizable: false,
+      resizable: true,
       buttons: [
        {
-        text: "{$mod->Lang('submit')|escape:'javascript'}",
-        icon: 'ui-icon-check',
+        text: "{$mod->Lang('apply')|escape:'javascript'}",
+        icon: 'ui-icon-disk',
         click: function() {
          $(this).dialog('close');
          $('#myoptions_form').trigger('submit');
@@ -218,60 +218,55 @@ $(function() {
 });
 </script>
 
-	<div id="useroptions" style="display:none" title="{$mod->Lang('title_userpageoptions')}">
+<div id="useroptions" style="display:none" title="{$mod->Lang('title_userpageoptions')}">
 	{form_start action='defaultadmin' id='myoptions_form'}
-		<div class="c_full cf">
+		<div style="display:table">
+		<div style="display:table-row">
 			<input type="hidden" name="{$actionid}setoptions" value="1">
-			<label class="grid_4" for="page_limits">{$mod->Lang('prompt_pagelimit')}:</label>
-			<select name="{$actionid}pagelimit" class="grid_7" id="page_limits">
+			<label for="page_limits" class="endalign" style="display:table-cell;padding-{$ndside}:.5em">{$mod->Lang('prompt_pagelimit')}:</label>
+			<select id="page_limits" style="display:table-cell" name="{$actionid}pagelimit">
 				{html_options options=$pagelimits selected=$pagelimit}
 			</select>
 		</div>
 		{if $can_manage_content}
-			{$type=''}{$expr=''}
-			{$opts=[]}
-			{$opts['']=$mod->Lang('none')}
-			{$opts['DESIGN_ID']=$mod->Lang('prompt_design')}
-			{$opts['TEMPLATE_ID']=$mod->Lang('prompt_template')}
-			{$opts['OWNER_UID']=$mod->Lang('prompt_owner')}
-			{$opts['EDITOR_UID']=$mod->Lang('prompt_editor')}
-			{if $filter}{$type=$filter->type}{$expr=$filter->expr}{/if}
-			<div class="c_full cf">
-				<label class="grid_4" for="filter_type">{$mod->Lang('prompt_filter_type')}:</label>
-				<select name="{$actionid}filter_type" class="grid_7" id="filter_type">
-					{html_options options=$opts selected=$type}
+			{if $filter}{$type=$filter->type}{else}{$type=''}{/if}
+			<div style="display:table-row">
+				<label for="filter_type" class="endalign" style="display:table-cell;padding-{$ndside}:.5em">{$mod->Lang('prompt_filter_type')}:</label>
+				<select id="filter_type" style="display:table-cell" name="{$actionid}filter_type">
+					{html_options options=$options_list selected=$type}
 				</select>
 			</div>
-			<div class="c_full cf filter_fld" id="filter_design">
-				<label class="grid_4" for="designsel">{$mod->Lang('prompt_design')}:</label>
-				<select name="{$actionid}filter_design" class="grid_7" id="designsel">
+			{if $filter}{$expr=$filter->expr}{else}{$expr=''}{/if}
+			<div style="display:table-row" class="filter_fld" id="filter_design">
+				<label for="designsel" class="endalign" style="display:table-cell;padding-{$ndside}:.5em">{$mod->Lang('prompt_design')}:</label>
+				<select id="designsel" style="display:table-cell" name="{$actionid}filter_design">
 					{html_options options=$design_list selected=$expr}
 				</select>
 			</div>
-			<div class="c_full cf filter_fld" id="filter_template">
-				<label class="grid_4" for="tplsel">{$mod->Lang('prompt_template')}:</label>
-				<select name="{$actionid}filter_template" class="grid_7" id="tplsel">
+			<div style="display:table-row" class="filter_fld" id="filter_template">
+				<label for="tplsel" class="endalign" style="display:table-cell;padding-{$ndside}:.5em">{$mod->Lang('prompt_template')}:</label>
+				<select id="tplsel" style="display:table-cell" name="{$actionid}filter_template">
 					{html_options options=$template_list selected=$expr}
 				</select>
 			</div>
-			<div class="c_full cf filter_fld" id="filter_owner">
-				<label class="grid_4" for="ownersel">{$mod->Lang('prompt_owner')}:</label>
-				<select name="{$actionid}filter_owner" class="grid_7" id="ownersel">
+			<div style="display:table-row" class="filter_fld" id="filter_owner">
+				<label for="ownersel" class="endalign" style="display:table-cell;padding-{$ndside}:.5em">{$mod->Lang('prompt_owner')}:</label>
+				<select id="ownersel" style="display:table-cell" name="{$actionid}filter_owner">
 					{html_options options=$user_list selected=$expr}
 				</select>
 			</div>
-			<div class="c_full cf filter_fld" id="filter_editor">
-				<label class="grid_4" for="editorssel">{$mod->Lang('prompt_editor')}:</label>
-				<select name="{$actionid}filter_editor" class="grid_7" id="editorssel">
+			<div style="display:table-row" class="filter_fld" id="filter_editor">
+				<label for="editorssel" class="endalign" style="display:table-cell;padding-{$ndside}:.5em">{$mod->Lang('prompt_editor')}:</label>
+				<select id="editorssel" style="display:table-cell" name="{$actionid}filter_editor">
 					{html_options options=$user_list selected=$expr}
 				</select>
 			</div>
 		{/if}
+		</div>
 	{form_end}
-	</div>
-	<div class="clearb"></div>
+</div>
+<div class="clearb"></div>
 
 {/if}{* ajax *}
-
 
 <div id="content_area"></div>
