@@ -2,15 +2,13 @@
 
 namespace cms_autoinstaller;
 
-//use cms_autoinstaller\utils;
-//use cms_autoinstaller\wizard_step;
+use __appbase\utils as utils2;
 use Exception;
 use PharData;
 use RecursiveIteratorIterator;
 use function __appbase\get_app;
 use function __appbase\joinpath;
 use function __appbase\lang;
-use function __appbase\rrmdir;
 use function __appbase\smarty;
 use function file_put_contents;
 
@@ -19,12 +17,6 @@ class wizard_step7 extends wizard_step
     protected function process()
     {
         // nothing here
-    }
-
-    private function _createIndexHTML($filename)
-    {
-        $str = '<!-- DUMMY HTML FILE -->';
-        file_put_contents($filename,$str);
     }
 
     private function clear_langs($langs)
@@ -38,7 +30,7 @@ class wizard_step7 extends wizard_step
             $bases = ( count($langs) == 1 ) ? reset($langs) : '{'.implode(',',$langs).'}';
             $flags = ( count($langs) == 1 ) ? GLOB_NOSORT|GLOB_NOESCAPE : GLOB_NOSORT|GLOB_NOESCAPE|GLOB_BRACE;
             $frompaths = array(
-                joinpath($top_dir,'admin','lang','ext',$bases.'.php'), // i.e. admin dir may not be renamed
+                joinpath($top_dir,'admin','lang','ext',$bases.'.php'), // 'admin' must not be configured otherwise
                 joinpath($top_dir,'lib','lang','*','ext',$bases.'.php'),
                 joinpath($top_dir,'lib','nls',$bases.'.nls.php'),
                 joinpath($top_dir,'modules','*','lang','ext',$bases.'.php'),
@@ -57,27 +49,49 @@ class wizard_step7 extends wizard_step
     private function do_index_html()
     {
         $this->message(lang('install_dummyindexhtml'));
-
-        $destdir = get_app()->get_destdir();
-        if( !$destdir ) throw new Exception(lang('error_internal',711));
-        $archive = get_app()->get_archive();
+        $app = get_app();
+        $top_dir = $app->get_destdir();
+        if( !$top_dir ) throw new Exception(lang('error_internal',711));
+        $sskips = ['/'=>1,'/admin'=>1]; //in-phar paths always have / separators
+        $sep = DIRECTORY_SEPARATOR;
+        $baks = ($sep == '\\');
+        $archive = $app->get_archive();
         $phardata = new PharData($archive);
         $archive = basename($archive);
-        foreach( new RecursiveIteratorIterator($phardata) as $file => $it ) {
-            if( ($p = strpos($file,$archive)) === FALSE ) continue;
-            $fn = substr($file,$p+strlen($archive));
-            $dn = $destdir.dirname($fn);
-            if( $dn == $destdir || $dn == $destdir.'/' ) continue;
-            if( $dn == "$destdir/admin" ) continue;
-            $idxfile = $dn.'/index.html';
-            if( is_dir($dn) && !is_file($idxfile) )  $this->_createIndexHTML($idxfile);
+        $l = strlen($archive);
+
+        foreach( new RecursiveIteratorIterator($phardata) as $file => $info ) { //$info is PharFileInfo object, unused here
+            if( ($p = strpos($file,$archive)) === FALSE ) {
+                continue;
+            }
+            $dfn = dirname(substr($file,$p+$l));
+            if( isset($sskips[$dfn]) ) {
+                continue;
+            }
+            if( $baks ) $dfn = strtr($dfn,'/','\\');
+            $dn = $top_dir.$dfn; //in-site parent of $file
+            if( is_dir($dn) ) {
+                touch("$dn{$sep}index.html"); //might be repeated
+            }
         }
-    }
+
+        foreach( ['tmp','assets'] as $dfn ) { //'assets' must not be configured otherwise
+            //TODO recurse all folders
+            $all = glob("$top_dir{$sep}$dfn{$sep}*",GLOB_ONLYDIR);
+            foreach( $all as $dn ) {
+                $fp = "$dn{$sep}index.html";
+                if(! is_file($fp) ) {
+                    touch($fp);
+                }
+            }
+        }
+   }
 
     private function do_files($langlist = [])
     {
         $languages = ['en_US'];
-        $siteinfo = $this->get_wizard()->get_data('siteinfo');
+        $wiz = $this->get_wizard();
+        $siteinfo = $wiz->get_data('siteinfo');
         if( is_array($siteinfo) && !empty($siteinfo['extlanguages']) && is_array($siteinfo['extlanguages']) ) {
             $languages = array_merge($languages,$siteinfo['extlanguages']);
         }
@@ -86,20 +100,25 @@ class wizard_step7 extends wizard_step
         }
         $languages = array_unique($languages);
 
-        $destdir = get_app()->get_destdir();
-        if( !$destdir ) throw new Exception(lang('error_internal',720));
+        $app = get_app();
+        $top_dir = $app->get_destdir();
+        if( !$top_dir ) throw new Exception(lang('error_internal',720));
+        $sep = DIRECTORY_SEPARATOR;
+        $baks = ($sep == '\\');
 
-        if( !empty($siteinfo['theme_relpath']) ) { //possibly entered value - BEORE 'themes_dir' check
-            $themesdir = $destdir.'/'.$siteinfo['theme_relpath'];
+        if( !empty($siteinfo['theme_relpath']) ) { //possibly entered value - check BEORE 'themes_dir'
+            $dn = $sep.$siteinfo['theme_relpath'];
         }
-        elseif( !empty($siteinfo['themes_dir']) ) {
-            $themesdir = $destdir.'/'.$siteinfo['themes_dir'];
+        elseif( !empty($siteinfo['themes_dir']) ) { //possible recorded value
+            $dn = $sep.$siteinfo['themes_dir'];
         }
         else {
-            $themesdir = $destdir.'/assets/themes';
+            $dn = '/assets/themes';
         }
+        if( $baks ) $dn = strtr($dn,'/','\\');
+        $themesdir = $top_dir.$dn;
 
-        $archive = get_app()->get_archive();
+        $archive = $app->get_archive();
         $this->message(lang('install_extractfiles'));
         $phardata = new PharData($archive);
         $archive = basename($archive);
@@ -107,7 +126,7 @@ class wizard_step7 extends wizard_step
 
         $filehandler = new install_filehandler();
         $filehandler->set_languages($languages);
-        $filehandler->set_destdir($destdir);
+        $filehandler->set_destdir($top_dir);
         $filehandler->set_themesdir($themesdir);
         $filehandler->set_output_fn('\cms_autoinstaller\wizard_step7::verbose');
         foreach( new RecursiveIteratorIterator($phardata) as $file => $fi ) {
@@ -117,11 +136,15 @@ class wizard_step7 extends wizard_step
         }
 
         //remove residual demo-theme folders in superseded place(s)
-        foreach( ['uploads','assets'.DIRECTORY_SEPARATOR.'themes'] as $sp ) {
-            if( ($bp = $destdir.DIRECTORY_SEPARATOR.$sp) != $themesdir ) {
-                foreach( ['ngrey','NCleanBlue','simplex'] as $dirn ) {
-                    $fp = $bp.DIRECTORY_SEPARATOR.$dirn;
-                    rrmdir($fp);
+        $choices = $wiz->get_data('config');
+        $demos = (!empty($choices['demothemes'])) ? $choices['demothemes'] : [];
+        if( $demos ) {
+            foreach( ['uploads','assets'.DIRECTORY_SEPARATOR.'themes'] as $sp ) {
+                if( ($bp = $top_dir.DIRECTORY_SEPARATOR.$sp) != $themesdir ) {
+                    foreach( $demos as $dirn ) {
+                        $fp = $bp.DIRECTORY_SEPARATOR.$dirn;
+                        utils2::rrmdir($fp);
+                    }
                 }
             }
         }
@@ -131,10 +154,10 @@ class wizard_step7 extends wizard_step
     {
         // get the list of all available versions that this upgrader knows about
         $app = get_app();
-        $upgrade_dir =  $app->get_appdir().'/upgrade';
+        $upgrade_dir = $app->get_appdir().'/upgrade';
         if( !is_dir($upgrade_dir) ) throw new Exception(lang('error_internal',730));
-        $destdir = $app->get_destdir();
-        if( !$destdir ) throw new Exception(lang('error_internal',731));
+        $top_dir = $app->get_destdir();
+        if( !$top_dir ) throw new Exception(lang('error_internal',731));
 
         $version_info = $this->get_wizard()->get_data('version_info'); // populated only for refreshes & upgrades
         $versions = utils::get_upgrade_versions();
@@ -159,7 +182,7 @@ class wizard_step7 extends wizard_step
                 $nmissing = 0;
                 if( is_array($deleted) && count($deleted) ) {
                     foreach( $deleted as $rec ) {
-                        $fn = "{$destdir}{$rec['filename']}";
+                        $fn = "{$top_dir}{$rec['filename']}";
                         if( !file_exists($fn) ) {
                             $this->verbose("file $fn does not exist... but we planned to delete it anyway");
                             $nmissing++;
