@@ -81,7 +81,7 @@ try {
         $nm = $design->get_name();
         if( $nm !== '' ) {
             $fp = cms_join_path($config['themes_path'],$nm); //OR $config['assets_path'],'designs',$nm
-            if( $this->is_dir_unused($fp) ) {
+            if( is_dir($fp) ) { //OR $this->is_dir_unused()
                 recursive_delete($fp);
             }
         }
