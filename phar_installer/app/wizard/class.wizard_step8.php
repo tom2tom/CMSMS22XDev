@@ -2,8 +2,7 @@
 
 namespace cms_autoinstaller;
 
-use __appbase\utils as Utils2;
-use cms_autoinstaller\wizard_step;
+use __appbase\utils as utils2;
 use cms_config;
 use cms_siteprefs;
 use CmsApp;
@@ -166,6 +165,7 @@ class wizard_step8 extends wizard_step
             }
             require_once $fn;
 
+//          $this->conform_themes($wiz,$db,$destdir);
             $this->verbose(lang('install_setsitename'));
             cms_siteprefs::set('sitename',$siteinfo['sitename']);
 
@@ -256,6 +256,7 @@ class wizard_step8 extends wizard_step
             $db = $this->db_connect($choices);
 
             $this->conform_langs($wiz,$db);
+//          $this->conform_themes($wiz,$db,$destdir);
 
             require_once __DIR__.'/msg_functions.php';
 
@@ -311,6 +312,7 @@ class wizard_step8 extends wizard_step
         }
         $db = $this->db_connect($choices);
         $this->conform_langs($wiz,$db);
+//      $this->conform_themes($wiz,$db,$destdir);
     }
 
     private function conform_langs($wiz,$db)
@@ -324,7 +326,35 @@ class wizard_step8 extends wizard_step
         $sql = 'UPDATE '.CMS_DB_PREFIX."userprefs SET value='' WHERE preference='default_cms_language' AND value NOT IN({$filler}?)";
         $db->execute($sql,$havelangs);
     }
-
+/* for this to work properly, we need rigorous distinction between designs and non-design-themes
+    private function conform_themes($wiz,$db,$destdir)
+    {
+        $choices = $wiz->get_data('config');
+        if( !$choices ) throw new Exception(lang('error_internal',834));
+        $demos = (!empty($choices['demothemes'])) ? $choices['demothemes'] : [];
+        if( $demos ) {
+            $siteinfo = $wiz->get_data('siteinfo');
+            if( !$siteinfo ) throw new Exception(lang('error_internal',836));
+            $relpath = ($siteinfo['theme_relpath']) ?: 'assets/themes';
+            $bp = $destdir . DIRECTORY_SEPARATOR . strtr($relpath, '\\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR);
+            $sql = 'SELECT `name` FROM '.CMS_DB_PREFIX.'layout_designs';
+            $designs = $db->GetCol($sql);
+            if( $designs ) {
+                $unwanted = array_udiff($demos,$designs,'strcasecmp'); //TODO preserve data for themes not recorded as a design
+                foreach( $unwanted as $one ) {
+                    $dir = $bp . DIRECTORY_SEPARATOR . $one;
+//                  utils2::rrmdir($dir);
+                }
+            }
+            else {
+                foreach( $demos as $one ) {
+                    $dir = $bp . DIRECTORY_SEPARATOR . $one;
+//                  utils2::rrmdir($dir); //TODO ibid
+                }
+            }
+        }
+    }
+*/
     private function write_config($choices,$destdir)
     {
         // [re]create config file
@@ -411,7 +441,7 @@ class wizard_step8 extends wizard_step
                 case 'freshen':
                     $this->do_freshen();
                     $url = $wiz->next_url();
-                    Utils2::redirect($url);
+                    utils2::redirect($url);
                     break;
                 case 'install':
                     $this->do_install();
