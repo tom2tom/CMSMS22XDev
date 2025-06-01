@@ -161,12 +161,21 @@ $pagelimits = array(10=>10,25=>25,100=>100,250=>250,500=>500);
 $tpl->assign('pagelimits',$pagelimits);
 $tpl->assign('pagelimit',$pagelimit);
 $tpl->assign('locking',CmsContentManagerUtils::locking_enabled());
-// list of admin users
+// selectable admin users
 $tpl->assign('user_list',UserOperations::get_instance()->GetList());
-// list of designs
+// selectable designs
 $tpl->assign('design_list',CmsLayoutCollection::get_list());
-// list of templates
+// selectable templates
 $tpl->assign('template_list',CmsLayoutTemplate::template_query(array('as_list'=>1)));
+// selectable template filter-options
+$tpl->assign('options_list',
+['' => $this->Lang('none'),
+ 'DESIGN_ID' => $this->Lang('prompt_design'),
+ 'TEMPLATE_ID' => $this->Lang('prompt_template'),
+ 'OWNER_UID' => $this->Lang('prompt_owner'),
+ 'EDITOR_UID' => $this->Lang('prompt_editor')
+]);
+
 if( $error ) $tpl->assign('error',$error);
 
 $tpl->display();
