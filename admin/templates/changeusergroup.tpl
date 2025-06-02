@@ -13,11 +13,11 @@
 {/if}
 
 <div class="pageoptions endalign">
-<form method="post" action="{$filter_action}">
+<form action="changegroupassign.php" method="post">
   <div class="hidden">
-    <input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}">
+    <input type="hidden" name="{$hiddenname}" value="{$hiddenval}">
   </div>
-  <label for="groupsel">{$selectgroup}:</label>&nbsp;
+  <label for="groupsel">{lang('selectgroup')}:</label>&nbsp;
   <select name="groupsel" id="groupsel">
   {foreach $allgroups as $thisgroup}
     {if $thisgroup->id == $disp_group}
@@ -27,14 +27,14 @@
     {/if}
   {/foreach}
   </select>&nbsp;
-  <input type="submit" name="filter" data-ui-icon="ui-icon-disk" value="{$apply}">
+  <input type="submit" name="filter" data-ui-icon="ui-icon-disk" value="{lang('apply')}">
 </form>
-</div><br>
+</div>
 
-{$form_start}
-{$hidden|default:''}
+<form id="groupname" action="changegroupassign.php" method="post">
 <div class="hidden">
-  <input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}">
+  <input type="hidden" name="{$hiddenname}" value="{$hiddenval}">
+  <input type="hidden" name="submitted" value="1">
 </div>
 <div class="pageoptions">
   {$submit} {$cancel}
@@ -43,13 +43,11 @@
   <thead>
   <tr>{$group_count=count($group_list)}
     <th>{if isset($title_group)}{$title_group}{/if}</th>
-    {foreach $group_list as $thisgroup}
-      {if $thisgroup->id != -1}
+    {foreach $group_list as $thisgroup}{$gid=$thisgroup->id}
+      {if $gid != -1}
         {$title=''}
         {$text=$thisgroup->name}
-        {$tag='span'}
         {if !$thisgroup->active}
-          {$tag='em'}
           {$title=lang('info_group_inactive')}
           {$text=$thisgroup->name}
           {if $group_count >= 5}
@@ -58,8 +56,8 @@
             {$text=$thisgroup->name|cat:"&nbsp;({lang('inactive')})"}
           {/if}
         {/if}
-        <th class="g{$thisgroup->id}">
-          <{$tag} title="{$title}">{$text}</{$tag}>
+        <th class="g{$gid}">
+          <span{if !$thisgroup->active} style="font-style:italic" {/if}title="{$title}">{$text}</span>
         </th>
       {/if}
     {/foreach}
