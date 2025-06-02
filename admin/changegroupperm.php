@@ -17,16 +17,16 @@
 #
 #$Id$
 
-$CMS_ADMIN_PAGE=1;
+$CMS_ADMIN_PAGE = 1;
 
-require_once("../lib/include.php");
+require_once '../lib/include.php';
 $urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
 check_login();
 
-//if (isset($_POST["cancel"])) {
-//    redirect("changegroupperm.php".$urlext); //back here again OR listgroups.php ?
-//}
+if (isset($_POST['cancel'])) {
+    redirect('index.php'.$urlext.'&section=usersgroups');
+}
 
 $userid = get_userid(false);
 $access = check_permission($userid, 'Manage Groups');
@@ -34,9 +34,7 @@ if (!$access) {
     exit(lang('no_permission')); //TODO throw if can be caught
 }
 
-$submitted = -1;
-if (isset($_POST["submitted"])) $submitted = $_POST["submitted"];
-else if (isset($_GET["submitted"])) $submitted = $_GET["submitted"];
+$submitted = (isset($_REQUEST["submitted"])) ? (int)$_REQUEST["submitted"] : -1;
 
 $gCms = cmsms();
 $userops = $gCms->GetUserOperations();
@@ -44,10 +42,10 @@ $adminuser = ($userops->UserInGroup($userid,1) || $userid == 1);
 $group_name = '';
 $message = '';
 
-require_once "header.php";
+require_once 'header.php';
 
 $db = $gCms->GetDb();
-$smarty = $gCms->GetSmarty();
+$smarty = $gCms->GetSmarty(); //also in header.php
 
 $load_perms = function() use ($db) {
     $query = "SELECT p.permission_id, p.permission_source, p.permission_text, up.group_id FROM ".
@@ -199,25 +197,18 @@ if ($submitted == 1) {
 }
 
 $perm_struct = $load_perms();
-$perm_struct = $group_perms($perm_struct);
-$smarty->assign('perms',$perm_struct);
-$smarty->assign('cms_secure_param_name',CMS_SECURE_PARAM_NAME);
-$smarty->assign('cms_user_key',$_SESSION[CMS_USER_KEY]);
+
+$smarty->assign('perms',$group_perms($perm_struct));
+$smarty->assign('hiddenname',CMS_SECURE_PARAM_NAME);
+$smarty->assign('hiddenval',$_SESSION[CMS_USER_KEY]);
 $smarty->assign('header',$themeObject->ShowHeader('groupperms',array($group_name)));
 if( !empty($message) ) $smarty->assign('message',$themeObject->ShowMessage($message));
-$smarty->assign('form_start','<form id="groupname" method="post" action="changegroupperm.php">');
-$smarty->assign('filter_action','changegroupperm.php');
-$smarty->assign('form_end','</form>');
 $smarty->assign('disp_group',$disp_group);
-$smarty->assign('apply',lang('apply'));
-$smarty->assign('title_permission',lang('permission'));
-$smarty->assign('selectgroup',lang('selectgroup'));
 $tmp = base64_encode(json_encode($sel_group_ids));
 $sig = md5(__FILE__.$tmp);
 $smarty->assign('hidden2','<input type="hidden" name="sel_groups" value="'.$sig.'::'.$tmp.'">');
-$smarty->assign('hidden','<input type="hidden" name="submitted" value="1">');
 $smarty->assign('submit','<input type="submit" name="changeperm" value="'.lang('submit').'" class="pagebutton">');
 $smarty->assign('cancel','<input type="submit" name="cancel" value="'.lang('cancel').'" class="pagebutton">');
 $smarty->display('changegroupperm.tpl');
 
-require_once "footer.php";
+require_once 'footer.php';
