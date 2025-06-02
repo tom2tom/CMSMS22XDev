@@ -6,6 +6,6 @@
 </div>
 {form_start}
  <div class="pageinput" style="margin-top:0.5em">
-  <input type="submit" name="{$actionid}close" data-ui-icon="ui-icon-close" value="{lang('close')}">
+  <input type="submit" name="{$actionid}close" data-ui-icon="ui-icon-closethick" value="{lang('close')}">
  </div>
 </form>

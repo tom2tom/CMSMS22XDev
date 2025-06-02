@@ -66,7 +66,7 @@ $(function() {
       buttons: [
        {
         text: "{$mod->Lang('apply')|escape:'javascript'}",
-        icon: 'ui-icon-disk',
+        icon: 'ui-icon-caret-1-n',
         click: function() {
          $(this).dialog('close');
          $('#filterdialog_form').trigger('submit');

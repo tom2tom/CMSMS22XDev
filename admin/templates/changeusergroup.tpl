@@ -27,7 +27,7 @@
     {/if}
   {/foreach}
   </select>&nbsp;
-  <input type="submit" name="filter" data-ui-icon="ui-icon-disk" value="{lang('apply')}">
+  <input type="submit" name="filter" data-ui-icon="ui-icon-caret-1-n" value="{lang('apply')}">
 </form>
 </div>
 

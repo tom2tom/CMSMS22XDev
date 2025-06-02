@@ -115,7 +115,7 @@ $(function() {
       <input type="submit" id="submitbtn" name="{$actionid}submit" value="{$mod->Lang('submit')}"{$disable|strip}>
       <input type="submit" id="cancelbtn" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
 {if $tpl_id > 0}
-      <input type="submit" id="applybtn" name="{$actionid}apply" data-ui-icon="ui-icon-disk" value="{$mod->Lang('apply')}"{$disable|strip}>
+      <input type="submit" id="applybtn" name="{$actionid}apply" data-ui-icon="ui-icon-caret-1-n" value="{$mod->Lang('apply')}"{$disable|strip}>
 {/if}
     </p>
   </div>
@@ -292,9 +292,9 @@ $(function() {
       <p class="pagetext"><label style="pointer-events:none" for="{$inid}">{$mod->Lang('prompt_filetemplate')}:</label>&nbsp;{cms_help key2=help_template_file title=$mod->Lang('prompt_filetemplate')}</p>
       <p class="pageinput">
  {if $isfile}
-      <input type="submit" id="importbtn" name="{$actionid}import" data-ui-icon="ui-icon-circle-arrow-n" value="{$mod->Lang('import')}">
+      <input type="submit" id="importbtn" name="{$actionid}import" data-ui-icon="ui-icon-arrowreturnthick-1-n" value="{$mod->Lang('import')}">
  {else}
-      <input type="submit" id="exportbtn" name="{$actionid}export" data-ui-icon="ui-icon-circle-arrow-s" value="{$mod->Lang('export')}">
+      <input type="submit" id="exportbtn" name="{$actionid}export" data-ui-icon="ui-icon-arrowreturnthick-1-s" value="{$mod->Lang('export')}">
  {/if}
       </p>
     </div>

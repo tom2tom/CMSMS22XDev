@@ -40,7 +40,7 @@ $(function() {
         </div>
         <div class="pageoverflow">
           <div class="dialogoptions">
-            <input type="submit" name="filterapply" data-ui-icon="ui-icon-disk" value="{lang('apply')}">
+            <input type="submit" name="filterapply" data-ui-icon="ui-icon-caret-1-n" value="{lang('apply')}">
             <input type="submit" name="filterreset" data-ui-icon="ui-icon-arrowrefresh-1-n" value="{lang('reset')}">
           </div>
         </div>

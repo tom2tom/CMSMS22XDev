@@ -54,7 +54,7 @@
   <p class="pageinput">
     <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
     <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
-    <input type="submit" name="{$actionid}apply" data-ui-icon="ui-icon-disk" value="{$mod->Lang('apply')}">
+    <input type="submit" name="{$actionid}apply" data-ui-icon="ui-icon-caret-1-n" value="{$mod->Lang('apply')}">
   </p>
 </div>
 {form_end}

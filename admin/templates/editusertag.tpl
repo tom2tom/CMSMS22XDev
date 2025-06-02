@@ -90,7 +90,7 @@ $(function() {
 				<p class="pageinput">
 					<input type="submit" id="submitme" name="submit" value="{lang('submit')}">
 {if $record.userplugin_id}
-					<input type="submit" id="applybtn" name="apply" value="{lang('apply')}" data-ui-icon="ui-icon-disk" title="{lang('title_applyusertag')}">
+					<input type="submit" id="applybtn" name="apply" value="{lang('apply')}" data-ui-icon="ui-icon-caret-1-n" title="{lang('title_applyusertag')}">
 {/if}
 					<input type="submit" name="cancel" value="{lang('cancel')}">
 {if $record.userplugin_id}

@@ -26,7 +26,7 @@
   <p class="information">{lang('info_generate_cksum_file')}</p>
   <br>
   <div class="pageoverflow">
-    <p class="pageinput"><input type="submit" data-ui-icon="ui-icon-gear" name="submit" value="{lang('export')}"></p>
+    <p class="pageinput"><input type="submit" data-ui-icon="ui-icon-arrowreturnthick-1-s" name="submit" value="{lang('export')}"></p>
   </div>
 </fieldset>
 </form>

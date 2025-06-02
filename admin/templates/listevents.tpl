@@ -11,7 +11,7 @@
           <option value="{$onemod}"{if $onemod == $modulefilter} selected{/if}>{$onemod}</option>
       {/foreach}
         </select>
-        <input type="submit" data-ui-icon="ui-icon-disk" value="{lang('apply')}">
+        <input type="submit" data-ui-icon="ui-icon-caret-1-n" value="{lang('apply')}">
       </div>
     </form>
   {if $events}

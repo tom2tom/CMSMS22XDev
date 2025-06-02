@@ -74,6 +74,6 @@
 {/if}
  <form action="editevent.php" method="post">
    <input type="hidden" name="{$hiddenname}" value="{$hiddenval}">
-   <input type="submit" name="close" data-ui-icon="ui-icon-close" value="{lang('close')}">
+   <input type="submit" name="close" data-ui-icon="ui-icon-closethick" value="{lang('close')}">
  </form>
 </div>

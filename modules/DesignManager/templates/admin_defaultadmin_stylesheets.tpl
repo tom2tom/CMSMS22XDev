@@ -31,7 +31,7 @@ $(function() {
       buttons: [
        {
         text: "{$mod->Lang('apply')}",
-        icon: 'ui-icon-disk',
+        icon: 'ui-icon-caret-1-n',
         click: function() {
          $(this).dialog('close');
          $('#filtercssdlg_form').trigger('submit');

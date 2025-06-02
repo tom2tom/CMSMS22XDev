@@ -44,9 +44,9 @@
 {if $bulk_op == 'bulk_action_delete'}
     <input type="submit" name="{$actionid}submit" data-ui-icon="ui-icon-minusthick" value="{$mod->Lang('remove')}">
 {elseif $bulk_op == 'bulk_action_export'}
-    <input type="submit" name="{$actionid}submit" data-ui-icon="ui-icon-circle-arrow-n" value="{$mod->Lang('export')}">
+    <input type="submit" name="{$actionid}submit" data-ui-icon="ui-icon-arrowreturnthick-1-s" value="{$mod->Lang('export')}">
 {else}
-    <input type="submit" name="{$actionid}submit" data-ui-icon="ui-icon-circle-arrow-s" value="{$mod->Lang('import')}">
+    <input type="submit" name="{$actionid}submit" data-ui-icon="ui-icon-arrowreturnthick-1-n" value="{$mod->Lang('import')}">
 {/if}
     <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
   </p>

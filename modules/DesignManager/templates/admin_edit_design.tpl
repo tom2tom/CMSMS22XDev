@@ -37,7 +37,7 @@ $(function() {
   <p class="pageinput">
     <input id="submitme" type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
     <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
-    <input id="applyme" type="submit" name="{$actionid}apply" data-ui-icon="ui-icon-disk" value="{$mod->Lang('apply')}">
+    <input id="applyme" type="submit" name="{$actionid}apply" data-ui-icon="ui-icon-caret-1-n" value="{$mod->Lang('apply')}">
   </p>
 </div>
 

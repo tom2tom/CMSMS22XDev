@@ -84,7 +84,7 @@ $(function() {
 	</div>
 	<div class="pageoverflow">
 		<div class="dialogoptions">
-			<input type="submit" name="{$actionid}submitfilter" data-ui-icon="ui-icon-disk" value="{$mod->Lang('apply')}">
+			<input type="submit" name="{$actionid}submitfilter" data-ui-icon="ui-icon-caret-1-n" value="{$mod->Lang('apply')}">
 			<input type="submit" name="{$actionid}resetfilter" data-ui-icon="ui-icon-arrowrefresh-1-n" value="{$mod->Lang('reset')}">
 			<input type="submit" id="closefilter" data-ui-icon="ui-icon-cancel" value="{$mod->Lang('cancel')}">
 		</div>
