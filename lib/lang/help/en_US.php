@@ -469,6 +469,9 @@ $lang['help_designmanager_help'] = <<<EOT
      <li>Design:
        <p>This column displays the design(s) that this template is associated with (if any).  If the template is associated with multiple designs a tooltip will display a list of the first few designs that this template is associated with.</p>
      </li>
+    <li>Filename:
+      <p>This column displays the name of the file (if any) in which the template content is recorded, instead of in the database.</p>
+    </li>
      <li>Default:
        <p>This column displays an icon indicating if the template is the default for its type.</p>
      </li>
@@ -533,15 +536,19 @@ $lang['help_designmanager_help'] = <<<EOT
     <li>Name:
      <p>This displays the unique textual name for the stylesheet as a link.  Clicking on this link will display the edit stylesheet form.  Hovering over the link will display a tooltip with further information about the stylesheet.</p>
     </li>
+    <li>Media:
+      <p>This column displays the media to which the stylesheet applies.</p>
+    </li>
     <li>Design:
       <p>This column displays the design(s) that this stylesheet is associated with (if any).  If the stylesheet is associated with multiple designs a tooltip will display a list of the first few designs.</p>
     </li>
-    <li>Modified Date:
-      <p>This column displays the date that the stylesheet was last modified.</p>
+    <li>Filename:
+      <p>This column displays the name of the file (if any) in which the stylesheet content is recorded, instead of in the database.</p>
     </li>
     <li>Actions:
       <ul>
         <li>Edit - Clicking on this icon will display the edit stylesheet form.</li>
+        <li>Copy - Clicking on this icon will display a form to allow copying the stylesheet to a new name.  For convenience a default new name will be provided.</li>
         <li>Delete - Clicking on this icon will display a form to allow deleting the stylesheet.  Extra confirmation is required for this action.</li>
       </ul>
     </li>
