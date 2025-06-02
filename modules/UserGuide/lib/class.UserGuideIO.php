@@ -78,8 +78,8 @@ class UserGuideIO
         $this->addStylesheets();
         $this->addFiles();
         $res = $this->output_tball();
-        if ($res) exit;
-        return false; //TODO return an actual success indicator
+        if ($res) exit; //TODO a completion notice to the user would be good
+        return false;
     }
 
     /**
@@ -302,10 +302,11 @@ class UserGuideIO
             readfile($this->archname);
 
             unlink($this->archname);
-            if (strcasecmp($old, 'off') != 0) {
-                //TODO this triggers 'headers already sent' warning
-                ini_set('zlib.output_compression', $old);
-            }
+            /*
+            Cannot here revert the zlib.output_compression setting. PHP treats
+            that as invalidly sending another another header. And no need to
+            revert when followed by exit
+            */
             return true;
         } else {
             unlink($this->archname);
