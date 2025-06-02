@@ -39,32 +39,12 @@ function installerHelpLanguage( $lang, $default_null = null )
 	return substr($lang, 0, 2);
 }
 
-function systeminfo_lang($params, $smarty)
-{
-	if( count($params) )
-	{
-		$tmp = array();
-		foreach( $params as $k=>$v)
-		{
-			$tmp[] = $v;
-		}
-
-		$str = $tmp[0];
-		$tmp2 = array();
-		for( $i = 1; $i < count($tmp); $i++ )
-			$tmp2[] = $params[$i];
-		return lang($str,$tmp2);
-	}
-}
-
 $gCms = cmsms();
 $smarty = $gCms->GetSmarty(); //also in header.php
-$smarty->registerPlugin('function','si_lang','systeminfo_lang');
 $smarty->caching = false;
 $smarty->force_compile = true;
 $db = $gCms->GetDb();
 
-//smartyfier
 $smarty->assign('themename', $themeObject->themeName);
 $smarty->assign('showheader', $themeObject->ShowHeader('systeminfo'));
 $smarty->assign('backurl', $themeObject->BackUrl());

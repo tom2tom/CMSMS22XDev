@@ -4,7 +4,7 @@
 		<span class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" style="height:16px">
 			<a href="{$systeminfo_cleanreport}">
 				<span class="ui-button-icon-primary ui-icon ui-icon-circle-zoomin"></span>
-				<span class="ui-button-text">{si_lang a=copy_paste_forum}</span>
+				<span class="ui-button-text">{lang('copy_paste_forum')}</span>
 			</a>
 		</span>
 	</p>
@@ -13,28 +13,28 @@
 
 <div class="pageoverflow">
 	<div class="information">
-		<p>{si_lang a=help_systeminformation}</p>
+		<p>{lang('help_systeminformation')}</p>
 	</div>
 <hr>
-<table class="pagetable" summary="{si_lang a=cms_install_information}">
+<table class="pagetable" summary="{lang('cms_install_information')}">
 	<thead>
 		<tr>
-			<th colspan="3">{si_lang a=cms_install_information}</th>
+			<th colspan="3">{lang('cms_install_information')}</th>
 		</tr>
 	</thead>
 	<tbody>
 		<tr class="{cycle values='row1,row2'}">
-			<td style="width:45%">{si_lang a=cms_version}</td>
+			<td style="width:45%">{lang('cms_version')}</td>
 			<td style="width:5%"></td>
 			<td style="width:50%">{$cms_version}</td>
 		</tr>
 	</tbody>
 </table>
 <br><br>
-<table class="pagetable" summary="{si_lang a=installed_modules}">
+<table class="pagetable" summary="{lang('installed_modules')}">
 	<thead>
 		<tr>
-			<th colspan="3">{si_lang a=installed_modules}</th>
+			<th colspan="3">{lang('installed_modules')}</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -49,10 +49,10 @@
 </table>
 <br><br>
 
-<table class="pagetable" summary="{si_lang a=config_information}">
+<table class="pagetable" summary="{lang('config_information')}">
 	<thead>
 		<tr>
-			<th colspan="3">{si_lang a=config_information}</th>
+			<th colspan="3">{lang('config_information')}</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -100,17 +100,17 @@
 </table>
 <br><br>
 
-<table class="pagetable" summary="{si_lang a=php_information}">
+<table class="pagetable" summary="{lang('php_information')}">
 	<thead>
 		<tr>
-			<th colspan="3">{si_lang a=php_information}</th>
+			<th colspan="3">{lang('php_information')}</th>
 		</tr>
 	</thead>
 	<tbody>
 	{foreach $php_information as $view => $tmp}
 		{foreach $tmp as $key => $test}
 		<tr class="{cycle values='row1,row2'}">
-			<td style="width:45%">{si_lang a=$key} ({$key})</td>
+			<td style="width:45%">{lang($key)} ({$key})</td>
 			<td style="width:5%">{if isset($test->res)}<img class="systemicon" src="themes/{$themename}/images/icons/extra/{$test->res}.gif" title="{$test->res_text|default:''}" alt="{$test->res_text|default:''}">{/if}</td>
 			<td style="width:50%">
 	{if isset($test->value) && $test->display_value != 0}{$test->value}{else}&nbsp;{/if}
@@ -129,17 +129,17 @@
 	</tbody>
 </table>
 <br><br>
-<table class="pagetable" summary="{si_lang a=server_information}">
+<table class="pagetable" summary="{lang('server_information')}">
 	<thead>
 		<tr>
-			<th colspan="3">{si_lang a=server_information}</th>
+			<th colspan="3">{lang('server_information')}</th>
 		</tr>
 	</thead>
 	<tbody>
 	{foreach $server_info as $view => $tmp}
 		{foreach $tmp as $key => $test}
 		<tr class="{cycle values='row1,row2'}">
-			<td style="width:45%">{si_lang a=$key} ({$key})</td>
+			<td style="width:45%">{lang($key)} ({$key})</td>
 			<td style="width:5%">{if isset($test->res)}<img class="systemicon" src="themes/{$themename}/images/icons/extra/{$test->res|default:"space"}.gif" title="{$test->res_text|default:''}" alt="{$test->res_text|default:''}">{/if}</td>
 			<td style="width:50%">
 			{if isset($test->value)}{$test->value|lower}{else}&nbsp;{/if}
@@ -152,10 +152,10 @@
 	</tbody>
 </table>
 <br><br>
-<table class="pagetable" summary="{si_lang a=permission_information}">
+<table class="pagetable" summary="{lang('permission_information')}">
 	<thead>
 		<tr>
-			<th colspan="3">{si_lang a=permission_information}</th>
+			<th colspan="3">{lang('permission_information')}</th>
 		</tr>
 	</thead>
 	<tbody>

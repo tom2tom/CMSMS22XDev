@@ -1,6 +1,6 @@
 <div class="pagecontainer">
 <div class="pageoverflow">
-<h3>{si_lang a=systeminfo_copy_paste}</h3>
+<h3>{lang('systeminfo_copy_paste')}</h3>
 <br>
 </div>
 <hr>
