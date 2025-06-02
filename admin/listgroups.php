@@ -49,7 +49,7 @@ if ($grouplist) {
 	}
 }
 
-$smarty = Smarty_CMS::get_instance(); // also defined in header.php
+$smarty = Smarty_CMS::get_instance(); // also assigned in header.php
 $smarty->assign('padd',check_permission($userid,'Add Groups'));
 $smarty->assign('header',$themeObject->ShowHeader('currentgroups'));
 $smarty->assign('iconadd',$themeObject->DisplayImage('icons/system/newobject.gif',lang('addgroup'),'','','systemicon'));

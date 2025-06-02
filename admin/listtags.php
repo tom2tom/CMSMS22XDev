@@ -18,7 +18,7 @@
 #$Id$
 
 $CMS_ADMIN_PAGE = 1;
-$CMS_LOAD_ALL_PLUGINS = 1;
+//$CMS_LOAD_ALL_PLUGINS = 1; ?
 
 require_once "../lib/include.php";
 
@@ -51,7 +51,7 @@ $find_file = function($filename) use($dirs) {
 
 require_once "header.php";
 
-$smarty = cmsms()->GetSmarty(); //also in header.php
+$smarty = Smarty_CMS::get_instance(); //also in header.php
 $smarty->assign('header',$themeObject->ShowHeader('tags'));
 
 if( $action == "showpluginhelp" ) {

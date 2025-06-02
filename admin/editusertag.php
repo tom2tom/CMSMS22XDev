@@ -174,7 +174,7 @@ if( isset($_POST['submit']) || isset($_POST['apply']) ) {
 //
 // give everything to smarty.
 //
-$smarty = \Smarty_CMS::get_instance();
+$smarty = Smarty_CMS::get_instance();
 $smarty->assign('record',$record);
 $smarty->display('editusertag.tpl');
 include_once("footer.php");

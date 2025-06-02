@@ -187,8 +187,7 @@ function generate_checksum_file(&$report)
 };
 
 // Get ready
-$gCms = CmsApp::get_instance();
-$smarty = $gCms->GetSmarty();
+$smarty = Smarty_CMS::get_instance();
 $smarty->caching = false;
 $smarty->force_compile = true;
 $urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];

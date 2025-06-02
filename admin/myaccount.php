@@ -195,7 +195,7 @@ if (isset($_POST['submit_prefs']) && check_permission($userid,'Manage My Setting
  * Build page
  */
 
-include_once ("header.php");
+include_once "header.php";
 
 if ($error) {
   $themeObject->ShowErrors($error);
@@ -204,11 +204,11 @@ if ($message) {
   $themeObject->ShowMessage($message);
 }
 
-$smarty = cmsms()->GetSmarty();
-$contentops = cmsms()->GetContentOperations();
-$smarty->assign('SECURE_PARAM_NAME', CMS_SECURE_PARAM_NAME); // Assigned at include.php?
-$smarty->assign('CMS_USER_KEY', $_SESSION[CMS_USER_KEY]); // Assigned at include.php?
+$smarty = Smarty_CMS::get_instance();
+$smarty->assign('SECURE_PARAM_NAME', CMS_SECURE_PARAM_NAME); // assigned in include.php?
+$smarty->assign('CMS_USER_KEY', $_SESSION[CMS_USER_KEY]); // assigned in include.php?
 
+$contentops = cmsms()->GetContentOperations();
 // Html editor
 $tmp = module_meta::get_instance()->module_list_by_capability(CmsCoreCapabilities::WYSIWYG_MODULE);
 $tmp2 = array(-1 => lang('none'));
