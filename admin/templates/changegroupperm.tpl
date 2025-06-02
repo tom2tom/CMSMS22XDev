@@ -7,42 +7,37 @@
 <div class="information">{lang('info_changegroupperms')} {cms_help key2='help_group_permissions' title=lang('info_changegroupperms')}</div>
 
 <div class="pageoptions endalign">
-	<form method="post" action="{$filter_action}">
+	<form action="changegroupperm.php" method="post">
 		<div class="hidden">
-			<input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}">
+			<input type="hidden" name="{$hiddenname}" value="{$hiddenval}">
 		</div>
-		<label for="groupsel">{$selectgroup}:</label>&nbsp;
+		<label for="groupsel">{lang('selectgroup')}:</label>&nbsp;
 		<select name="groupsel" id="groupsel">
-			{foreach $allgroups as $thisgroup}
-				{if $thisgroup->id == $disp_group}
-					<option value="{$thisgroup->id}" selected="selected">{$thisgroup->name}</option>
-				{else}
-					<option value="{$thisgroup->id}">{$thisgroup->name}</option>
-				{/if}
-			{/foreach}
-		</select>
-		&nbsp;<input type="submit" name="filter" data-ui-icon="ui-icon-disk" value="{$apply}">
+		{foreach $allgroups as $thisgroup}
+			<option value="{$thisgroup->id}"{if $thisgroup->id == $disp_group} selected{/if}>{$thisgroup->name}</option>
+{/foreach}
+		</select>&nbsp;
+		<input type="submit" name="filter" data-ui-icon="ui-icon-disk" value="{lang('apply')}">
 	</form>
 </div>
 
-<br>
-
-{$form_start}
+<form id="groupname" action="changegroupperm.php" method="post">
 	<div class="hidden">
-		<input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}">
+		<input type="hidden" name="{$hiddenname}" value="{$hiddenval}">
+		<input type="hidden" name="submitted" value="1">
+		{$hidden2}
 	</div>
 
 	<div class="pageoverflow">
 		<p class="pageoptions">
-			{$hidden}{$hidden2}
 			{$submit} {$cancel}
 		</p>
 	</div>
-
+{$np=0}
 	<table class="pagetable scrollable" id="permtable">
 		<thead>
 			<tr>{$ncols=1}
-				<th>{$title_permission}</th>
+				<th>{lang('permission')}</th>
 				{foreach $group_list as $thisgroup}{$gid=$thisgroup->id}
 					{if $gid != -1}{$ncols=$ncols+1}<th class="g{$gid}">{$thisgroup->name}</th>{/if}
 				{/foreach}
@@ -53,7 +48,7 @@
 				<tr>
 					<td colspan="{$ncols}"><h3>{$section|upper}</h3></td>
 				</tr>
-				{foreach $list as $perm}
+				{foreach $list as $perm}{$np=$np+1}
 					{cycle values='row1,row2' assign='currow'}
 					<tr class="{$currow}">
 						<td>
@@ -64,18 +59,18 @@
 						{if $gid != -1}
 							<td class="g{$gid}"><input type="checkbox" name="pg_{$perm->id}_{$gid}" value="1"{if isset($perm->group[$gid]) || $gid == 1} checked{/if}{if $gid == 1} disabled{/if}></td>
 						{/if}
-						{/foreach}
+{/foreach}
 					</tr>
-				{/foreach}
+{/foreach}
 			{/foreach}
 		</tbody>
 	</table>
-
+{if $np > 10}
 	<div class="pageoverflow">
 		<p class="pageoptions">
-			{$hidden}
 			{$submit} {$cancel}
 		</p>
 	</div>
-{$form_end}
+{/if}
+</form>
 </div>
