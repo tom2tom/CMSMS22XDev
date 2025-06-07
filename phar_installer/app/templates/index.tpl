@@ -74,7 +74,7 @@
                     {/if}
                     <article>
                         {block name='contents'}WIZARD CONTENTS GO HERE{/block}
-            {block name='content-footer'}{/block}
+                        {block name='content-footer'}{/block}
                     </article>
 
                 </div>
