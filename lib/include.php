@@ -258,9 +258,9 @@ if( !isset($DONT_LOAD_SMARTY) ) {
                 list($sside,$eside) = ($ldir == 'ltr') ? ['left','right'] : ['right','left'];
             }
         }
-        $smarty->assign('lang', $lang);
-        $smarty->assign('lang_dir', $ldir);
-        $smarty->assign('stside', $sside);
-        $smarty->assign('ndside', $eside);
+        $smarty->assign('lang', $lang)
+         ->assign('lang_dir', $ldir)
+         ->assign('stside', $sside)
+         ->assign('ndside', $eside);
     }
 }
