@@ -215,7 +215,7 @@ final class CMS_Content_Block
         }
         $ptext .= implode(',',$tmp);
         $ptext .= ')';
-        return '<?php CMS_Content_Block::smarty_internal_fetch_contentblock('.$ptext.',$_smarty_tpl); ?>';
+        return '<?php CMS_Content_Block::smarty_internal_fetch_contentblock('.$ptext.', $_smarty_tpl); ?>';
     }
 
     // Frontend {content} plugin handler
