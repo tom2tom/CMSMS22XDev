@@ -61,7 +61,7 @@ $lang['moddescription'] = 'File management capabilities setup';
 
 // N
 $lang['name'] = 'Name';
-$lang['no_profiles'] = 'No profile defined yet. You can add them by clicking the button above.';
+$lang['no_profiles'] = 'No profile defined yet. You can add them by clicking the link above.';
 
 // O
 $lang['ok'] = 'Ok';
