@@ -52,8 +52,7 @@ class Smarty_CMS extends CMSSmartyBase
 
         if( CMS_DEBUG ) $this->error_reporting = E_ALL;
 
-        // set our own template class with some funky stuff in it
-        // note, can get rid of the CMS_Smarty_Template class and the deprecated Smarty_Parser classes.
+        // sub-class Smarty Template, to do some init for all templates
         $this->template_class = 'CMS_Smarty_Template';
 
         // common resources.
