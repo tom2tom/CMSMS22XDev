@@ -14,17 +14,11 @@
  * @package    Smarty
  * @subpackage Template
  *
- * @property Smarty_Template_Compiled             $compiled
- * @property Smarty_Template_Cached               $cached
- * @property Smarty_Internal_TemplateCompilerBase $compiler
- * @property mixed|\Smarty_Template_Cached        registered_plugins
- *
- * The following methods will be dynamically loaded by the extension handler when they are called.
- * They are located in a corresponding Smarty_Internal_Method_xxxx class
- *
- * @method bool mustCompile()
+ * Some methods will be dynamically loaded by the extension handler
+ * when they are called. They are located in a corresponding
+ * Smarty_Internal_Method_xxxx class
  */
-#[\AllowDynamicProperties]
+//DEBUG # [\AllowDynamicProperties]
 class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
 {
     /**
@@ -128,6 +122,24 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
     public $endRenderCallbacks = array();
 
     /**
+     *
+     * @var Smarty_Internal_TemplateCompilerBase
+     */
+    public $compiler;
+
+    /**
+     *
+     * @var Smarty_Template_Compiled
+     */
+    public $compiled;
+
+    /**
+     *
+     * @var Smarty_Template_Cached
+     */
+    public $cached;
+
+    /**
      * Create template data object
      * Some of the global Smarty settings copied to template scope
      * It load the required template resources and caching plugins
@@ -135,13 +147,13 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
      * @param string                                                    $template_resource template resource string
      * @param Smarty                                                    $smarty            Smarty instance
      * @param Smarty_Internal_Template|Smarty|Smarty_Internal_Data|null $_parent           back pointer to parent
-     *                                                                                        object with variables
-     *                                                                                        Default null
+     *                                                                                     object with variables
+     *                                                                                     Default null
      * @param string|null                                               $_cache_id         cache id Default null
      * @param string|null                                               $_compile_id       compile id Default null
      * @param int|null                                                  $_caching          caching mode per Smarty::CACHING_* Default null
      * @param int|null                                                  $_cache_lifetime   cache life-time in
-     *                                                                                        seconds Default null
+     *                                                                                     seconds Default null
      * @param bool                                                      $_isConfig         Default false
      *
      * @throws \SmartyException
