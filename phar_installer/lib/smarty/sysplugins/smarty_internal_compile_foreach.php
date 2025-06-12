@@ -78,12 +78,12 @@ class Smarty_Internal_Compile_Foreach extends Smarty_Internal_Compile_Private_Fo
     /**
      * Compiles code for the {foreach} tag
      *
-     * @param array                                 $args     array with attributes from parser
-     * @param \Smarty_Internal_TemplateCompilerBase $compiler compiler object
+     * @param array                                $args     array with attributes from parser
+     * @param Smarty_Internal_TemplateCompilerBase $compiler compiler object
      *
      * @return string compiled code
-     * @throws \SmartyCompilerException
-     * @throws \SmartyException
+     * @throws SmartyCompilerException
+     * @throws SmartyException
      */
     public function compile($args, Smarty_Internal_TemplateCompilerBase $compiler)
     {

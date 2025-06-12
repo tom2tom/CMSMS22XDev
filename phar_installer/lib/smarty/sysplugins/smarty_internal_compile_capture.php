@@ -35,9 +35,9 @@ class Smarty_Internal_Compile_Capture extends Smarty_Internal_CompileBase
     /**
      * Compiles code for the {$smarty.capture.xxx}
      *
-     * @param array                                 $args      array with attributes from parser
-     * @param \Smarty_Internal_TemplateCompilerBase $compiler  compiler object
-     * @param array                                 $parameter array with compilation parameter
+     * @param array                                $args      array with attributes from parser UNUSED
+     * @param Smarty_Internal_TemplateCompilerBase $compiler  compiler object UNUSED
+     * @param array|null                           $parameter array with compilation parameter
      *
      * @return string compiled code
      */
@@ -53,9 +53,9 @@ class Smarty_Internal_Compile_Capture extends Smarty_Internal_CompileBase
     /**
      * Compiles code for the {capture} tag
      *
-     * @param array                                 $args     array with attributes from parser
-     * @param \Smarty_Internal_TemplateCompilerBase $compiler compiler object
-     * @param null                                  $parameter
+     * @param array                                $args     array with attributes from parser
+     * @param Smarty_Internal_TemplateCompilerBase $compiler compiler object
+     * @param array|null                           $parameter
      *
      * @return string compiled code
      */
@@ -85,9 +85,9 @@ class Smarty_Internal_Compile_CaptureClose extends Smarty_Internal_CompileBase
     /**
      * Compiles code for the {/capture} tag
      *
-     * @param array                                 $args     array with attributes from parser
-     * @param \Smarty_Internal_TemplateCompilerBase $compiler compiler object
-     * @param null                                  $parameter
+     * @param array                                $args     array with attributes from parser
+     * @param Smarty_Internal_TemplateCompilerBase $compiler compiler object
+     * @param array|null                           $parameter
      *
      * @return string compiled code
      */

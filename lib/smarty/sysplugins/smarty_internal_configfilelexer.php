@@ -1,22 +1,12 @@
 <?php
 /**
- * Smarty Internal Plugin Configfilelexer
- *
- * This is the lexer to break the config file source into tokens
- *
- * @package    Smarty
- * @subpackage Config
- * @author     Uwe Tews
- */
-
-/**
  * Smarty_Internal_Configfilelexer
  *
- * This is the config file lexer.
+ * This is the lexer which breaks a config file source into tokens
  * It is generated from the smarty_internal_configfilelexer.plex file
  *
  * @package    Smarty
- * @subpackage Compiler
+ * @subpackage Config
  * @author     Uwe Tews
  */
 class Smarty_Internal_Configfilelexer

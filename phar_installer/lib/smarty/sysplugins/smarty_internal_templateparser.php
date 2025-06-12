@@ -2,11 +2,11 @@
 
 class TP_yyStackEntry
 {
-    public $stateno;       /* The state-number */
-    public $major;         /* The major token value.  This is the code
-                     ** number for the token at this stack level */
-    public $minor; /* The user-supplied minor token value.  This
-                     ** is the value of the token  */
+    public $stateno;  /* The state-number */
+    public $major;    /* The major token value.  This is the code
+                         number for the token at this stack level */
+    public $minor;    /* The user-supplied minor token value.  This
+                         is the value of the token  */
 };
 
 
@@ -17,7 +17,7 @@ class TP_yyStackEntry
 *
 * This is the template parser.
 * It is generated from the smarty_internal_templateparser.y file
-* 
+*
 * @author Uwe Tews <uwe.tews@googlemail.com>
 */
 class Smarty_Internal_Templateparser
@@ -94,6 +94,7 @@ class Smarty_Internal_Templateparser
      * @var bool
      */
     public $strip = false;
+
     /**
      * compiler object
      *
@@ -1117,30 +1118,30 @@ public static $yy_action = array(
     public $yystack = array();  /* The parser's stack */
 
     public $yyTokenName = array(
-  '$',             'VERT',          'COLON',         'TEXT',        
-  'STRIPON',       'STRIPOFF',      'LITERALSTART',  'LITERALEND',  
+  '$',             'VERT',          'COLON',         'TEXT',
+  'STRIPON',       'STRIPOFF',      'LITERALSTART',  'LITERALEND',
   'LITERAL',       'SIMPELOUTPUT',  'SIMPLETAG',     'SMARTYBLOCKCHILDPARENT',
-  'LDEL',          'RDEL',          'DOLLARID',      'EQUAL',       
-  'ID',            'PTR',           'LDELMAKENOCACHE',  'LDELIF',      
-  'LDELFOR',       'SEMICOLON',     'INCDEC',        'TO',          
-  'STEP',          'LDELFOREACH',   'SPACE',         'AS',          
-  'APTR',          'LDELSETFILTER',  'CLOSETAG',      'LDELSLASH',   
-  'ATTR',          'INTEGER',       'COMMA',         'OPENP',       
-  'CLOSEP',        'MATH',          'UNIMATH',       'ISIN',        
-  'QMARK',         'NOT',           'TYPECAST',      'HEX',         
-  'DOT',           'INSTANCEOF',    'SINGLEQUOTESTRING',  'DOUBLECOLON', 
-  'NAMESPACE',     'AT',            'HATCH',         'OPENB',       
-  'CLOSEB',        'DOLLAR',        'LOGOP',         'SLOGOP',      
-  'TLOGOP',        'SINGLECOND',    'ARRAYOPEN',     'QUOTE',       
-  'BACKTICK',      'error',         'start',         'template',    
-  'literal_e2',    'literal_e1',    'smartytag',     'tagbody',     
-  'tag',           'outattr',       'eqoutattr',     'varindexed',  
-  'output',        'attributes',    'variable',      'value',       
-  'expr',          'modifierlist',  'statement',     'statements',  
-  'foraction',     'varvar',        'modparameters',  'attribute',   
-  'ternary',       'tlop',          'lop',           'scond',       
+  'LDEL',          'RDEL',          'DOLLARID',      'EQUAL',
+  'ID',            'PTR',           'LDELMAKENOCACHE',  'LDELIF',
+  'LDELFOR',       'SEMICOLON',     'INCDEC',        'TO',
+  'STEP',          'LDELFOREACH',   'SPACE',         'AS',
+  'APTR',          'LDELSETFILTER',  'CLOSETAG',      'LDELSLASH',
+  'ATTR',          'INTEGER',       'COMMA',         'OPENP',
+  'CLOSEP',        'MATH',          'UNIMATH',       'ISIN',
+  'QMARK',         'NOT',           'TYPECAST',      'HEX',
+  'DOT',           'INSTANCEOF',    'SINGLEQUOTESTRING',  'DOUBLECOLON',
+  'NAMESPACE',     'AT',            'HATCH',         'OPENB',
+  'CLOSEB',        'DOLLAR',        'LOGOP',         'SLOGOP',
+  'TLOGOP',        'SINGLECOND',    'ARRAYOPEN',     'QUOTE',
+  'BACKTICK',      'error',         'start',         'template',
+  'literal_e2',    'literal_e1',    'smartytag',     'tagbody',
+  'tag',           'outattr',       'eqoutattr',     'varindexed',
+  'output',        'attributes',    'variable',      'value',
+  'expr',          'modifierlist',  'statement',     'statements',
+  'foraction',     'varvar',        'modparameters',  'attribute',
+  'ternary',       'tlop',          'lop',           'scond',
   'array',         'function',      'ns1',           'doublequoted_with_quotes',
-  'static_class_access',  'arraydef',      'object',        'arrayindex',  
+  'static_class_access',  'arraydef',      'object',        'arrayindex',
   'indexdef',      'varvarele',     'objectchain',   'objectelement',
   'method',        'params',        'modifier',      'modparameter',
   'arrayelements',  'arrayelement',  'doublequoted',  'doublequotedcontent',
@@ -2192,7 +2193,7 @@ public static $yy_action = array(
     }
 // line 428 "../smarty/lexer/smarty_internal_templateparser.y"
     public function yy_r30(){
-    $tag = trim(substr($this->yystack[$this->yyidx + -1]->minor,$this->compiler->getLdelLength())); 
+    $tag = trim(substr($this->yystack[$this->yyidx + -1]->minor,$this->compiler->getLdelLength()));
     $this->_retvalue = $this->compiler->compileTag(($tag === 'else if')? 'elseif' : $tag,array(),array('if condition'=>$this->yystack[$this->yyidx + 0]->minor));
     }
 // line 433 "../smarty/lexer/smarty_internal_templateparser.y"
@@ -2426,7 +2427,7 @@ public static $yy_action = array(
             $this->_retvalue = $this->smarty->registered_classes[$this->yystack[$this->yyidx + -2]->minor].'::'.$this->yystack[$this->yyidx + 0]->minor[0].$this->yystack[$this->yyidx + 0]->minor[1];
         } else {
             $this->_retvalue = $this->yystack[$this->yyidx + -2]->minor.'::'.$this->yystack[$this->yyidx + 0]->minor[0].$this->yystack[$this->yyidx + 0]->minor[1];
-        } 
+        }
     } else {
         $this->compiler->trigger_template_error ('static class \''.$this->yystack[$this->yyidx + -2]->minor.'\' is undefined or not allowed by security setting');
     }
@@ -2445,7 +2446,7 @@ public static $yy_action = array(
         $smarty_var = $this->compiler->compileTag('private_special_variable',array(),$this->yystack[$this->yyidx + 0]->minor['smarty_internal_index']);
         $this->_retvalue = $smarty_var;
     } else {
-        // used for array reset,next,prev,end,current 
+        // used for array reset,next,prev,end,current
         $this->last_variable = $this->yystack[$this->yyidx + 0]->minor['var'];
         $this->last_index = $this->yystack[$this->yyidx + 0]->minor['smarty_internal_index'];
         $this->_retvalue = $this->compiler->compileVariable($this->yystack[$this->yyidx + 0]->minor['var']).$this->yystack[$this->yyidx + 0]->minor['smarty_internal_index'];
@@ -2721,7 +2722,7 @@ public static $yy_action = array(
     $this->_retvalue = $this->yystack[$this->yyidx + -2]->minor.'=>'.$this->yystack[$this->yyidx + 0]->minor;
     }
 // line 1208 "../smarty/lexer/smarty_internal_templateparser.y"
-    public function yy_r173(){ 
+    public function yy_r173(){
     $this->_retvalue = '\''.$this->yystack[$this->yyidx + -2]->minor.'\'=>'.$this->yystack[$this->yyidx + 0]->minor;
     }
 // line 1224 "../smarty/lexer/smarty_internal_templateparser.y"

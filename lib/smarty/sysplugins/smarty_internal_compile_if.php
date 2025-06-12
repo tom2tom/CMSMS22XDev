@@ -19,9 +19,9 @@ class Smarty_Internal_Compile_If extends Smarty_Internal_CompileBase
     /**
      * Compiles code for the {if} tag
      *
-     * @param array                                 $args      array with attributes from parser
-     * @param \Smarty_Internal_TemplateCompilerBase $compiler  compiler object
-     * @param array                                 $parameter array with compilation parameter
+     * @param array                                $args      array with attributes from parser
+     * @param Smarty_Internal_TemplateCompilerBase $compiler  compiler object
+     * @param array                                $parameter array with compilation parameter
      *
      * @return string compiled code
      * @throws \SmartyCompilerException
@@ -81,8 +81,8 @@ class Smarty_Internal_Compile_Else extends Smarty_Internal_CompileBase
     /**
      * Compiles code for the {else} tag
      *
-     * @param array                                 $args     array with attributes from parser
-     * @param \Smarty_Internal_TemplateCompilerBase $compiler compiler object
+     * @param array                                $args     array with attributes from parser
+     * @param Smarty_Internal_TemplateCompilerBase $compiler compiler object
      *
      * @return string compiled code
      */
@@ -105,12 +105,12 @@ class Smarty_Internal_Compile_Elseif extends Smarty_Internal_CompileBase
     /**
      * Compiles code for the {elseif} tag
      *
-     * @param array                                 $args      array with attributes from parser
-     * @param \Smarty_Internal_TemplateCompilerBase $compiler  compiler object
-     * @param array                                 $parameter array with compilation parameter
+     * @param array                                $args      array with attributes from parser
+     * @param Smarty_Internal_TemplateCompilerBase $compiler  compiler object
+     * @param array                                $parameter array with compilation parameter
      *
      * @return string compiled code
-     * @throws \SmartyCompilerException
+     * @throws SmartyCompilerException
      */
     public function compile($args, Smarty_Internal_TemplateCompilerBase $compiler, $parameter)
     {
@@ -186,8 +186,8 @@ class Smarty_Internal_Compile_Ifclose extends Smarty_Internal_CompileBase
     /**
      * Compiles code for the {/if} tag
      *
-     * @param array                                 $args     array with attributes from parser
-     * @param \Smarty_Internal_TemplateCompilerBase $compiler compiler object
+     * @param array                                $args     array with attributes from parser
+     * @param Smarty_Internal_TemplateCompilerBase $compiler compiler object
      *
      * @return string compiled code
      */

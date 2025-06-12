@@ -43,12 +43,12 @@ class Smarty_Internal_Compile_Extends extends Smarty_Internal_Compile_Shared_Inh
     /**
      * Compiles code for the {extends} tag extends: resource
      *
-     * @param array                                 $args     array with attributes from parser
-     * @param \Smarty_Internal_TemplateCompilerBase $compiler compiler object
+     * @param array                                $args     array with attributes from parser
+     * @param Smarty_Internal_TemplateCompilerBase $compiler compiler object
      *
      * @return string compiled code
-     * @throws \SmartyCompilerException
-     * @throws \SmartyException
+     * @throws SmartyCompilerException
+     * @throws SmartyException
      */
     public function compile($args, Smarty_Internal_TemplateCompilerBase $compiler)
     {

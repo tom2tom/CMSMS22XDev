@@ -11,18 +11,20 @@
 class Smarty_Variable
 {
     /**
-     * template variable
+     * the variable value
      *
      * @var mixed
      */
     public $value = null;
 
     /**
-     * if true any output of this variable will be not cached
+     * whether the value of this variable will NOT be cached
      *
-     * @var boolean
+     * @var bool Default false
      */
     public $nocache = false;
+
+    //various 'dynamic' properties might also be used
 
     /**
      * create Smarty variable object
