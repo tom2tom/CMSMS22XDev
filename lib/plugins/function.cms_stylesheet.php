@@ -111,6 +111,7 @@ function smarty_function_cms_stylesheet($params, $smarty)
 			throw new RuntimeException('No stylesheet matched the criterion specified');
 		}
 		$res = $query->GetMatches();
+		$algo = (PHP_VERSION_ID >= 80100 && in_array('xxh64', hash_algos())) ? 'xxh64' : 'fnv164';
 
 		// we have some output, and the stylesheet objects have already been loaded.
 
@@ -123,14 +124,14 @@ function smarty_function_cms_stylesheet($params, $smarty)
 				$mq = $one->get_media_query();
 				$mt = implode(',',$one->get_media_types());
 				if( !empty($mq) ) {
-					$key = md5($mq);
+					$key = hash($algo,$mq);
 					$all_media[$key][] = $one;
 					$all_timestamps[$key][] = $one->get_modified();
 				} elseif( !$mt ) {
 					$all_media['all'][] = $one;
 					$all_timestamps['all'][] = $one->get_modified();
 				} else {
-					$key = md5($mt);
+					$key = hash($algo,$mt);
 					$all_media[$key][] = $one;
 					$all_timestamps[$key][] = $one->get_modified();
 				}
@@ -142,7 +143,7 @@ function smarty_function_cms_stylesheet($params, $smarty)
 				// media parameter is deprecated.
 
 				// combine all matches into one stylesheet
-				$filename = 'stylesheet_combined_'.md5($design_id.$use_https.serialize($params).serialize($all_timestamps).$fnsuffix).'.css';
+				$filename = 'stylesheet_combined_'.hash($algo,$design_id.$use_https.serialize($params).serialize($all_timestamps).$fnsuffix).'.css';
 				$fn = cms_join_path($cache_dir,$filename);
 
 				if( !file_exists($fn) ) {
@@ -159,7 +160,7 @@ function smarty_function_cms_stylesheet($params, $smarty)
 
 				foreach( $all_media as $hash=>$onemedia ) {
 					// combine all matches into one stylesheet.
-					$filename = 'stylesheet_combined_'.md5($design_id.$use_https.serialize($params).serialize($all_timestamps[$hash]).$fnsuffix).'.css';
+					$filename = 'stylesheet_combined_'.hash($algo,$design_id.$use_https.serialize($params).serialize($all_timestamps[$hash]).$fnsuffix).'.css';
 					$fn = cms_join_path($cache_dir,$filename);
 
 					// Get media_type and media_query
@@ -191,7 +192,7 @@ function smarty_function_cms_stylesheet($params, $smarty)
 					$media_type  = implode(',',$one->get_media_types());
 				}
 
-				$filename = 'stylesheet_'.md5('single'.$one->get_id().$use_https.$one->get_modified().$fnsuffix).'.css';
+				$filename = 'stylesheet_'.hash($algo,'single'.$one->get_id().$use_https.$one->get_modified().$fnsuffix).'.css';
 				$fn = cms_join_path($cache_dir,$filename);
 
 				if (!file_exists($fn) ) cms_stylesheet_writeCache($fn, $one->get_name(), $trimbackground, $minimize, $smarty);
