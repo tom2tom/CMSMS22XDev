@@ -19,7 +19,7 @@ class Smarty_Template_Compiled extends Smarty_Template_Resource_Base
     public $nocache_hash = null;
 
     /**
-     * get a Compiled Object of this source
+     * get a Compiled object for this source
      *
      * @param Smarty_Internal_Template $_template template object
      *
@@ -27,7 +27,7 @@ class Smarty_Template_Compiled extends Smarty_Template_Resource_Base
      */
     public static function load($_template)
     {
-        $compiled = new Smarty_Template_Compiled();
+        $compiled = new self();
         if ($_template->source->handler->hasCompiledHandler) {
             $_template->source->handler->populateCompiledFilepath($compiled, $_template);
         } else {
