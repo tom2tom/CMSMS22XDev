@@ -52,7 +52,7 @@ class Smarty_Internal_Compile_Private_Modifier extends Smarty_Internal_CompileBa
                             if (is_callable($compiler->smarty->registered_plugins[ Smarty::PLUGIN_MODIFIER ][ $modifier ][ 0 ])) {
                                 $output =
                                     sprintf(
-                                        'call_user_func_array($_smarty_tpl->registered_plugins[ \'%s\' ][ %s ][ 0 ], array( %s ))',
+                                        'call_user_func_array($_smarty_tpl->smarty->registered_plugins[ \'%s\' ][ %s ][ 0 ], array( %s ))',
                                         Smarty::PLUGIN_MODIFIER,
                                         var_export($modifier, true),
                                         $params
