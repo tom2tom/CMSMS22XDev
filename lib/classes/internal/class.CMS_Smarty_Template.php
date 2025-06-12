@@ -2,9 +2,10 @@
 
 class CMS_Smarty_Template extends Smarty_Internal_Template
 {
-    //parent-class uses these properties, declared here to avoid deprecation notice
-    public $compiled;
-    public $compiler;
+    //parent-classes use but formerly didn't define these class properties
+    //if not using Smarty 4.4.2, must declare here to avoid deprecation notice
+//    public $compiled;
+//    public $compiler;
 
     public function fetch($template = null, $cache_id = null, $compile_id = null, $parent = null)
     {
