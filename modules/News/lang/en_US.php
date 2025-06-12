@@ -319,6 +319,7 @@ $lang['notitlegiven'] = 'No Title Given';
 $lang['numbertodisplay'] = 'Number to Display (empty shows all records)';
 
 // O
+$lang['options'] = 'Options';
 $lang['optionsupdated'] = 'The options were successfully updated.';
 
 // P
