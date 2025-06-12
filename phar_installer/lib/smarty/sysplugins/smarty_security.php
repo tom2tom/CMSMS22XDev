@@ -17,14 +17,13 @@
  */
 
 /**
- * This class does contain the security settings
+ * This class contains security settings
  */
 #[\AllowDynamicProperties]
 class Smarty_Security
 {
-
     /**
-     * This is the list of template directories that are considered secure.
+     * List of template directories that are considered secure.
      * $template_dir is in this list implicitly.
      *
      * @var array
@@ -32,7 +31,7 @@ class Smarty_Security
     public $secure_dir = array();
 
     /**
-     * This is an array of directories where trusted php scripts reside.
+     * List of directories where trusted PHP scripts reside.
      * {@link $security} is disabled during their inclusion/execution.
      *
      * @var array
@@ -47,15 +46,15 @@ class Smarty_Security
     public $trusted_uri = array();
 
     /**
-     * List of trusted constants names
+     * List of trusted constants' names
      *
      * @var array
      */
     public $trusted_constants = array();
 
     /**
-     * This is an array of trusted static classes.
-     * If empty access to all static classes is allowed.
+     * List of trusted static classes.
+     * If empty, access to all static classes is allowed.
      * If set to 'none' none is allowed.
      *
      * @var array
@@ -63,8 +62,8 @@ class Smarty_Security
     public $static_classes = array();
 
     /**
-     * This is an nested array of trusted classes and static methods.
-     * If empty access to all static classes and methods is allowed.
+     * Nested array of trusted classes and static methods.
+     * If empty, access to all static classes and methods is allowed.
      * Format:
      * array (
      *         'class_1' => array('method_1', 'method_2'), // allowed methods listed
@@ -77,8 +76,8 @@ class Smarty_Security
     public $trusted_static_methods = array();
 
     /**
-     * This is an array of trusted static properties.
-     * If empty access to all static classes and properties is allowed.
+     * List of trusted static properties.
+     * If empty, access to all static classes and properties is allowed.
      * Format:
      * array (
      *         'class_1' => array('prop_1', 'prop_2'), // allowed properties listed
@@ -91,8 +90,8 @@ class Smarty_Security
     public $trusted_static_properties = array();
 
     /**
-     * This is an array of trusted PHP functions.
-     * If empty all functions are allowed.
+     * List of trusted PHP functions.
+     * If empty, all functions are allowed.
      * To disable all PHP functions set $php_functions = null.
      *
      * @var array
@@ -100,8 +99,8 @@ class Smarty_Security
     public $php_functions = array('isset', 'empty', 'count', 'sizeof', 'in_array', 'is_array', 'time',);
 
     /**
-     * This is an array of trusted PHP modifiers.
-     * If empty all modifiers are allowed.
+     * List of trusted PHP modifiers.
+     * If empty, all modifiers are allowed.
      * To disable all modifier set $php_modifiers = null.
      *
      * @var array
@@ -109,47 +108,47 @@ class Smarty_Security
     public $php_modifiers = array('escape', 'count', 'sizeof', 'nl2br',);
 
     /**
-     * This is an array of allowed tags.
-     * If empty no restriction by allowed_tags.
+     * Whitelist of allowed tags.
+     * If empty, no restriction by allowed_tags.
      *
      * @var array
      */
     public $allowed_tags = array();
 
     /**
-     * This is an array of disabled tags.
-     * If empty no restriction by disabled_tags.
+     * Blacklist of disabled tags.
+     * If empty, no restriction by disabled_tags.
      *
      * @var array
      */
     public $disabled_tags = array();
 
     /**
-     * This is an array of allowed modifier plugins.
-     * If empty no restriction by allowed_modifiers.
+     * Whitelist of allowed modifier plugins.
+     * If empty, no restriction by allowed_modifiers.
      *
      * @var array
      */
     public $allowed_modifiers = array();
 
     /**
-     * This is an array of disabled modifier plugins.
-     * If empty no restriction by disabled_modifiers.
+     * Blacklist of disabled modifier plugins.
+     * If empty, no restriction by disabled_modifiers.
      *
      * @var array
      */
     public $disabled_modifiers = array();
 
     /**
-     * This is an array of disabled special $smarty variables.
+     * Blacklist of disabled special $smarty variables.
      *
      * @var array
      */
     public $disabled_special_smarty_vars = array();
 
     /**
-     * This is an array of trusted streams.
-     * If empty all streams are allowed.
+     * Whitelist of trusted streams.
+     * If empty, all streams are allowed.
      * To disable all streams set $streams = null.
      *
      * @var array
@@ -157,14 +156,14 @@ class Smarty_Security
     public $streams = array('file');
 
     /**
-     * + flag if constants can be accessed from template
+     * + flag whether constants can be accessed from template
      *
      * @var boolean
      */
     public $allow_constants = true;
 
     /**
-     * + flag if super globals can be accessed from template
+     * + flag whether super globals can be accessed from template
      *
      * @var boolean
      */
@@ -241,8 +240,12 @@ class Smarty_Security
     protected $_include_dir = array();
 
     /**
-     * @param Smarty $smarty
+     * Global Smarty instance
+     *
+     * @var object
      */
+    protected $smarty;
+
     public function __construct($smarty)
     {
         $this->smarty = $smarty;
@@ -254,7 +257,7 @@ class Smarty_Security
      * @param string $function_name
      * @param object $compiler compiler object
      *
-     * @return boolean                 true if function is trusted
+     * @return bool indicating whether function is trusted
      */
     public function isTrustedPhpFunction($function_name, $compiler)
     {
@@ -273,7 +276,7 @@ class Smarty_Security
      * @param string $class_name
      * @param object $compiler compiler object
      *
-     * @return boolean                 true if class is trusted
+     * @return bool indicating whether class is trusted
      */
     public function isTrustedStaticClass($class_name, $compiler)
     {
@@ -293,7 +296,7 @@ class Smarty_Security
      * @param string $params
      * @param object $compiler compiler object
      *
-     * @return boolean                 true if class method is trusted
+     * @return bool indicating whether class method is trusted
      */
     public function isTrustedStaticClassAccess($class_name, $params, $compiler)
     {
@@ -329,8 +332,7 @@ class Smarty_Security
      *
      * @param string $modifier_name
      * @param object $compiler compiler object
-     * @deprecated
-     * @return boolean                 true if modifier is trusted
+     * @return bool indicating whether modifier is trusted
      */
     public function isTrustedPhpModifier($modifier_name, $compiler)
     {
@@ -349,7 +351,7 @@ class Smarty_Security
      * @param string $tag_name
      * @param object $compiler compiler object
      *
-     * @return boolean                 true if tag is trusted
+     * @return bool indicating whether tag is trusted
      */
     public function isTrustedTag($tag_name, $compiler)
     {
@@ -387,7 +389,7 @@ class Smarty_Security
      * @param string $var_name
      * @param object $compiler compiler object
      *
-     * @return boolean                 true if tag is trusted
+     * @return bool indicating whether variable is trusted
      */
     public function isTrustedSpecialSmartyVar($var_name, $compiler)
     {
@@ -409,7 +411,7 @@ class Smarty_Security
      * @param string $modifier_name
      * @param object $compiler compiler object
      *
-     * @return boolean                 true if tag is trusted
+     * @return bool indicating whether plugin is trusted
      */
     public function isTrustedModifier($modifier_name, $compiler)
     {
@@ -443,12 +445,12 @@ class Smarty_Security
     }
 
     /**
-     * Check if constants are enabled or trusted
+     * Check if a constant is enabled or trusted
      *
      * @param string $const    constant name
      * @param object $compiler compiler object
      *
-     * @return bool
+     * @return bool indicating whether constant is trusted
      */
     public function isTrustedConstant($const, $compiler)
     {
@@ -474,7 +476,7 @@ class Smarty_Security
      *
      * @param string $stream_name
      *
-     * @return boolean         true if stream is trusted
+     * @return bool indicating whether stream is trusted
      * @throws SmartyException if stream is not trusted
      */
     public function isTrustedStream($stream_name)
@@ -491,7 +493,7 @@ class Smarty_Security
      * @param string    $filepath
      * @param bool|null $isConfig Default null
      *
-     * @return bool true if directory is trusted
+     * @return bool indicating whether directory is trusted
      * @throws \SmartyException if directory is not trusted
      */
     public function isTrustedResourceDir($filepath, $isConfig = null)
@@ -538,7 +540,7 @@ class Smarty_Security
      *
      * @param string $uri
      *
-     * @return boolean         true if URI is trusted
+     * @return bool indicating whether URI is trusted
      * @throws SmartyException if URI is not trusted
      * @uses   $trusted_uri for list of patterns to match against $uri
      */
