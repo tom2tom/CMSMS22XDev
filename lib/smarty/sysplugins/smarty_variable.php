@@ -6,6 +6,9 @@
  *
  * @package    Smarty
  * @subpackage Template
+ *
+ * Sometimes involves undeclared properties e.g. foreach compiler
+ * uses $do_else; $first; $last; $index; $iteration; $total;
  */
 #[\AllowDynamicProperties]
 class Smarty_Variable
@@ -43,6 +46,7 @@ class Smarty_Variable
      *
      * @return string
      */
+    #[\ReturnTypeWillChange]
     public function __toString()
     {
         return (string)$this->value;

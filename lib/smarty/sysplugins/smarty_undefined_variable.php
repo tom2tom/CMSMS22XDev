@@ -12,10 +12,11 @@ class Smarty_Undefined_Variable extends Smarty_Variable
     /**
      * Returns null for not existing properties
      *
-     * @param string $name
+     * @param string $name UNUSED
      *
      * @return null
      */
+    #[\ReturnTypeWillChange]
     public function __get($name)
     {
         return null;
@@ -24,8 +25,9 @@ class Smarty_Undefined_Variable extends Smarty_Variable
     /**
      * Always returns an empty string.
      *
-     * @return string
+     * @return string ''
      */
+    #[\ReturnTypeWillChange]
     public function __toString()
     {
         return '';

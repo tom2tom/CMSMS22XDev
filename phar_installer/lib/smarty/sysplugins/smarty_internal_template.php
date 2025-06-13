@@ -1,24 +1,16 @@
 <?php
 /**
  * Smarty Internal Plugin Template
- * This file contains the Smarty template engine
+ * Main template class with data structures and methods
  *
  * @package    Smarty
  * @subpackage Template
  * @author     Uwe Tews
- */
-
-/**
- * Main class with template data structures and methods
- *
- * @package    Smarty
- * @subpackage Template
  *
  * Some methods will be dynamically loaded by the extension handler
  * when they are called. They are located in a corresponding
  * Smarty_Internal_Method_xxxx class
  */
-//DEBUG # [\AllowDynamicProperties]
 class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
 {
     /**
@@ -676,6 +668,7 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
      *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function __call($name, $args)
     {
         // method of Smarty object?
@@ -694,6 +687,7 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
      * @return mixed|Smarty_Template_Cached
      * @throws SmartyException
      */
+    #[\ReturnTypeWillChange]
     public function __get($property_name)
     {
         switch ($property_name) {
@@ -723,6 +717,7 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
      *
      * @throws SmartyException
      */
+    #[\ReturnTypeWillChange]
     public function __set($property_name, $value)
     {
         switch ($property_name) {

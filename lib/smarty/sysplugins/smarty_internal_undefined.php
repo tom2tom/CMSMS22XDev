@@ -63,6 +63,7 @@ class Smarty_Internal_Undefined
      * @return mixed
      * @throws SmartyException
      */
+    #[\ReturnTypeWillChange]
     public function __call($name, $args)
     {
         if (isset($this->class)) {

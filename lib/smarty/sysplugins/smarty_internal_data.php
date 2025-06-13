@@ -265,6 +265,7 @@ abstract class Smarty_Internal_Data
      *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function __call($name, $args)
     {
         return $this->ext->_callExternalMethod($this, $name, $args);
