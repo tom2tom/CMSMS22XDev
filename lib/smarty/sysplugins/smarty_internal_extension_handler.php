@@ -62,9 +62,9 @@ class Smarty_Internal_Extension_Handler
     /**
      * Call external Method
      *
-     * @param Smarty_Internal_Data $data
-     * @param string               $name external method names
-     * @param array                $args argument array
+     * @param \Smarty_Internal_Data $data
+     * @param string                $name external method names
+     * @param array                 $args argument array
      *
      * @return mixed
      */
@@ -95,7 +95,9 @@ class Smarty_Internal_Extension_Handler
                         if (!isset($this->resolvedProperties[$match[0]][$objType])) {
                             $property = $this->resolvedProperties['property'][$basename] ??
                                 $this->resolvedProperties['property'][$basename] = smarty_strtolower_ascii(
-                                implode('_', preg_split(
+                                implode(
+                                    '_',
+                                    preg_split(
                                         '/([A-Z][^A-Z]*)/',
                                         $basename,
                                         -1,
@@ -179,7 +181,6 @@ class Smarty_Internal_Extension_Handler
      * @param mixed  $value         value
      *
      */
-    #[\ReturnTypeWillChange]
     public function __set($property_name, $value)
     {
         $this->$property_name = $value;
