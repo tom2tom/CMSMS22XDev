@@ -35,14 +35,14 @@ class Smarty_Security
     public $trusted_dir = array();
 
     /**
-     * PCRE(2?) Regular expressions that include trusted URIs
+     * PCRE(2?) regular expressions that include trusted URIs.
      *
      * @var array
      */
     public $trusted_uri = array();
 
     /**
-     * Names of trusted constants
+     * Names of trusted constants.
      *
      * @var array
      */
