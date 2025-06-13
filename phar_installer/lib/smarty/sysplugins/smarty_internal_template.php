@@ -717,7 +717,6 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
      *
      * @throws SmartyException
      */
-    #[\ReturnTypeWillChange]
     public function __set($property_name, $value)
     {
         switch ($property_name) {
