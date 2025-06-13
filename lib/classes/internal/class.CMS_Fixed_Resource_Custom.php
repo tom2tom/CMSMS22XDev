@@ -35,7 +35,7 @@ abstract class CMS_Fixed_Resource_Custom extends Smarty_Resource_Custom
     public function populate(Smarty_Template_Source $source, /*?Smarty_Internal_Template */$_template = null)  // uncomment for PHP 7.1+ .. 8.4+
     {
         $source->filepath = $source->type . ':' . $source->name;
-        $source->uid = sha1($source->filepath);
+        $source->uid = hash('fnv164', $source->filepath); //c.f. Smarty6 id_hash()
 
         $mtime = $this->fetchTimestamp($source->name);
         if ($mtime !== null) { //smarty defaults to null
