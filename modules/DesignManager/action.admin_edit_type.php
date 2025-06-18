@@ -51,7 +51,7 @@ try {
     $this->RedirectToAdminTab();
   }
   $modname = $this->GetName();
-  $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_edit_type.tpl",null,$modname,$smarty);
+  $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_edit_type.tpl",null,$modname,$smarty);
   $tpl->assign('type',$type);
   $tpl->display();
 }

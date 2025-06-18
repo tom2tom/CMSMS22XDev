@@ -195,7 +195,7 @@ if( isset($params['save']) ) {
 // build the form
 //
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;filerotate.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;filerotate.tpl",null,$modname,$smarty);
 
 $opts = array('none'=>$this->Lang('none'),
             'crop'=>$this->Lang('crop'),

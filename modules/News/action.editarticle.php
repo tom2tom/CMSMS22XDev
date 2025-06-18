@@ -28,7 +28,7 @@ $startdate    = $now;
 $status       = isset($params['status']) ? $params['status'] : $status;
 $summary      = isset($params['summary']) ? $params['summary'] : '';
 $title        = isset($params['title']) ? trim(strip_tags($params['title'])) : '';
-$tpl          = $smarty->CreateTemplate("module_file_tpl:$me;editarticle.tpl", null, $me, $smarty);
+$tpl          = $smarty->createTemplate("module_file_tpl:$me;editarticle.tpl", null, $me, $smarty);
 $usedcategory = isset($params['category']) ? $params['category'] : '';
 $useexp       = !empty($params['useexp']);
 

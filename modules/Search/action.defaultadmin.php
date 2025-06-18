@@ -58,7 +58,7 @@ elseif (isset($params['submit'])) {
 }
 
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;defaultadmin.tpl", null, $modname, $smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;defaultadmin.tpl", null, $modname, $smarty);
 
 //setup statistics tab content
 require __DIR__.DIRECTORY_SEPARATOR.'function.admin_statistics_tab.php';

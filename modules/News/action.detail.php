@@ -40,9 +40,9 @@ if( $id == '_preview_' && isset($_SESSION['news_preview']) && isset($params['pre
     }
 }
 
-$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),$cache_id,$compile_id,$smarty);
+$tpl = $smarty->createTemplate($this->GetTemplateResource($template),$cache_id,$compile_id,$smarty);
 if( $preview || !$tpl->IsCached() ) {
-//$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,null,$smarty);
+//$tpl = $smarty->createTemplate($this->GetTemplateResource($template),null,null,$smarty);
 //if( $preview ) {
     if( isset($params['articleid']) && $params['articleid'] == -1 ) {
         $article = news_ops::get_latest_article();

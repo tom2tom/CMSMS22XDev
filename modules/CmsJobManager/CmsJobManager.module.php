@@ -74,7 +74,7 @@ final class CmsJobManager extends \CMSModule
     {
         $smarty = $this->GetActionTemplateObject();
         $modname = $this->GetName();
-        return $smarty->CreateTemplate($this->GetTemplateResource($str),null,$modname,$smarty);
+        return $smarty->createTemplate($this->GetTemplateResource($str),null,$modname,$smarty);
     }
 
     /**

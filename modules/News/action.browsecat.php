@@ -15,7 +15,7 @@ else {
 
 $cache_id = '|ns'.md5(serialize($params));
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),$cache_id,$modname,$smarty);
+$tpl = $smarty->createTemplate($this->GetTemplateResource($template),$cache_id,$modname,$smarty);
 if( !$tpl->IsCached() ) {
     $items = news_ops::get_categories($id, $params, $returnid);
     if( $items ) {

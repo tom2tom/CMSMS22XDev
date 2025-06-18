@@ -34,7 +34,7 @@ if( isset($params['submit']) ) {
 }
 
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_settings.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_settings.tpl",null,$modname,$smarty);
 $tpl->assign('lock_timeout',$this->GetPreference('lock_timeout'));
 $tpl->assign('lock_refresh',$this->GetPreference('lock_refresh'));
 $tpl->display();

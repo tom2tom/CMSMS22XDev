@@ -73,7 +73,7 @@ if( !$help ) {
 }
 
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;remotecontent.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;remotecontent.tpl",null,$modname,$smarty);
 $tpl->assign('title',$this->Lang('helptxt'));
 $tpl->assign('moduletext',$this->Lang('nametext'));
 $tpl->assign('vertext',$this->Lang('vertext'));

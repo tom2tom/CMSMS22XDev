@@ -16,7 +16,7 @@ if( !is_object($modinstance) ) {
 }
 
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;local_about.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;local_about.tpl",null,$modname,$smarty);
 
 $tpl->assign('back_url',$this->create_url($id,'defaultadmin',$returnid));
 $tpl->assign('about_page',$modinstance->GetAbout());

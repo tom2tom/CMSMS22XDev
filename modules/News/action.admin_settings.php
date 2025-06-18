@@ -3,7 +3,7 @@ if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Modify Site Preferences') ) return;
 
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_settings.tpl", null, $modname, $smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_settings.tpl", null, $modname, $smarty);
 
 require __DIR__.DIRECTORY_SEPARATOR.'function.admin_categoriestab.php';
 require __DIR__.DIRECTORY_SEPARATOR.'function.admin_customfieldstab.php';

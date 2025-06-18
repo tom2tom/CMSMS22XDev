@@ -129,7 +129,7 @@ final class FileManager extends CMSModule
 /*  public function GetModeTable($id,$permissions) {
         $smarty = cmsms()->GetSmarty();
         $modname = $this->GetName();
-        $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;modetable.tpl",null,$modname); // no parent
+        $tpl = $smarty->createTemplate("module_file_tpl:$modname;modetable.tpl",null,$modname); // no parent
         $tpl->assign('ownertext', $this->Lang('owner'));
         $tpl->assign('groupstext', $this->Lang('group'));
         $tpl->assign('otherstext', $this->Lang('others'));

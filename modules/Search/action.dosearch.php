@@ -63,7 +63,7 @@ else {
     }
     $template = $tpl->get_name();
 }
-$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template), null, 'Search', $smarty);
+$tpl = $smarty->createTemplate($this->GetTemplateResource($template), null, 'Search', $smarty);
 
 if( !empty($params['searchinput']) ) {
     // Fix to prevent XSS like behaviour. See: http://www.securityfocus.com/archive/1/455417/30/0/threaded

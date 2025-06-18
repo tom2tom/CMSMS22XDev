@@ -25,7 +25,7 @@ if( isset($params['template']) ) {
     if( !endswith($template,'.tpl') ) $template .= '.tpl'; //TODO end-test was '.tp;' typo?
 }
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,$modname,$smarty);
+$tpl = $smarty->createTemplate($this->GetTemplateResource($template),null,$modname,$smarty);
 
 $tpl->assign('FileManager',$this);
 if (isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false)) {

@@ -343,7 +343,7 @@ if ($dbr) {
  * Pass everything to smarty
  ---------------------*/
 
-$tpl = $smarty->CreateTemplate("module_file_tpl:$me;editarticle.tpl", null, $me, $smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$me;editarticle.tpl", null, $me, $smarty);
 $tpl->assign('formid', $id);
 $tpl->assign('hide_summary_field', $this->GetPreference('hide_summary_field', '0'));
 $tpl->assign('authortext', '');

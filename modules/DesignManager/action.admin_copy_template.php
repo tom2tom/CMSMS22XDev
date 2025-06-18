@@ -76,7 +76,7 @@ try {
 
     // build a display.
     $modname = $this->GetName();
-    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_copy_template.tpl",null,$modname,$smarty);
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_copy_template.tpl",null,$modname,$smarty);
 
     $tmp = [$this->Lang('prompt_none')];
     $cats = CmsLayoutTemplateCategory::get_all();

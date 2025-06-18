@@ -104,7 +104,7 @@ if( isset($efilter['tpl']) && $efilter['tpl'] != '' ) {
     unset($efilter['tpl']);
 }
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,$modname,$smarty);
 /*
 $templates = [];
 try {
@@ -115,7 +115,7 @@ catch( Exception $e ) {
     // nothing here
 }
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,$modname,$smarty);
 
 if( $templates ) {
     $tpl->assign('templates',$templates);

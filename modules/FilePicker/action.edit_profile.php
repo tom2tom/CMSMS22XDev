@@ -50,7 +50,7 @@ try {
     }
 
     $modname=$this->GetName();
-    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;edit_profile.tpl",null,$modname,$smarty);
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;edit_profile.tpl",null,$modname,$smarty);
     $tpl->assign('profile',$profile);
     $tpl->display();
 }

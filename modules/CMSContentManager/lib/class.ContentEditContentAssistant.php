@@ -38,7 +38,7 @@ class ContentEditContentAssistant extends EditContentAssistant
 //  $modname = $mod->GetName();
     $modname = 'CMSContentManager';
     $smarty = cmsms()->GetSmarty();
-    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;content_editcontent_extra.tpl",null,$modname); //no parent
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;content_editcontent_extra.tpl",null,$modname); //no parent
     return $tpl->fetch();
   }
 }

@@ -145,7 +145,7 @@ if( isset($params['multisubmit']) && isset($params['multiaction']) &&
 if( isset($curpage) ) $_SESSION[$this->GetName().'_curpage'] = $curpage; // for use by ajax_get_content
 
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,$modname,$smarty);
 
 $url = $this->create_url($id,'ajax_get_content',$returnid);
 $tpl->assign('ajax_get_content',str_replace('amp;','',$url));

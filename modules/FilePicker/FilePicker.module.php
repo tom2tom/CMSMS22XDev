@@ -192,7 +192,7 @@ final class FilePicker extends CMSModule implements FilePickerInterface
         $sig = TemporaryProfileStorage::set( $profile );
         $smarty = cmsms()->GetSmarty(); // OR $this->_GetTemplateObject() ?
         $modname = $this->GetName();
-        $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;contentblock.tpl", null, $modname, $smarty);
+        $tpl = $smarty->createTemplate("module_file_tpl:$modname;contentblock.tpl", null, $modname, $smarty);
         $tpl->assign('mod', $this);
         $tpl->assign('sig', $sig);
         $tpl->assign('blockName', $name);

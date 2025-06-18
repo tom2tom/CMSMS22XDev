@@ -20,7 +20,7 @@ if( !function_exists('cmsms') ) exit;
 if( !($this->CheckPermission('Modify Files') || $this->AdvancedAccessAllowed()) ) exit;
 
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;filemanager.tpl", null, $modname, $smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;filemanager.tpl", null, $modname, $smarty);
 
 if( !empty($params['newsort']) ) {
   $sortby = $params['newsort'];

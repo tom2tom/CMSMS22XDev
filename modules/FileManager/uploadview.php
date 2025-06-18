@@ -21,7 +21,7 @@ if (!function_exists('cmsms')) exit;
 if (!$this->CheckPermission('Modify Files')) exit;
 
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;uploadview.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;uploadview.tpl",null,$modname,$smarty);
 
 $tpl->assign('uformstart',$this->CreateFormStart($id,'upload',$returnid,'post','multipart/form-data'));
 $tpl->assign('formend',$this->CreateFormEnd());

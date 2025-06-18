@@ -69,7 +69,7 @@ $pmod = $this->CheckPermission('Modify Modules');
 $pset = $this->CheckPermission('Modify Site Preferences');
 
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,$modname,$smarty);
 
 $tpl->assign('connected', $connection_ok);
 $tpl->assign('pmod', $pmod);

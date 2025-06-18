@@ -64,7 +64,7 @@ try {
     }
 
     $modname = $this->GetName();
-    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_edit_design.tpl",null,$modname,$smarty);
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_edit_design.tpl",null,$modname,$smarty);
 
     $templates = CmsLayoutTemplate::get_editable_templates(get_userid());
     if( $templates ) {

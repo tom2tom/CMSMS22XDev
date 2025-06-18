@@ -193,7 +193,7 @@ EOS;
       $config = $_gCms->GetConfig();
       $smarty = $_gCms->GetSmarty();
       $page_id = ($_gCms->is_frontend_request()) ? $smarty->getTemplateVars('content_id') : '';
-      $tpl = $smarty->CreateTemplate('module_file_tpl:MicroTiny;tinymce_configjs.tpl',null,'MicroTiny',$smarty); // child of the global Smarty
+      $tpl = $smarty->createTemplate('module_file_tpl:MicroTiny;tinymce_configjs.tpl',null,'MicroTiny',$smarty); // child of the global Smarty
       $tpl->assign('MT',$mod);
       $tpl->assign('MicroTiny',$mod);
 //    $tpl->clear_assign('mt_profile'); // ?

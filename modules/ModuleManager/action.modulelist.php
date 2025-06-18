@@ -50,7 +50,7 @@ if( FALSE == can_admin_upload() ) {
   $caninstall = false;
 }
 
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;showmodule.tpl", null, $modname, $smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;showmodule.tpl", null, $modname, $smarty);
 
 $data = modmgr_utils::build_module_data($repmodules,$instmodules,false);
 if( $data ) {

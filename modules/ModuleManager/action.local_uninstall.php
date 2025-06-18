@@ -38,7 +38,7 @@ try {
     }
 
     $modname = $this->GetName();
-    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;local_uninstall.tpl",null,$modname,$smarty);
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;local_uninstall.tpl",null,$modname,$smarty);
     $tpl->assign('module_name',$modinstance->GetName());
     $tpl->assign('module_version',$modinstance->GetVersion());
     $msg = $modinstance->UninstallPreMessage();

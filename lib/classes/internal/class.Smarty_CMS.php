@@ -388,7 +388,7 @@ class Smarty_CMS extends CMSSmartyBase
                 // get the parent off of the stack.
                 $parent = $this->get_template_parent();
             }
-            $_tpl = $this->CreateTemplate($template, $cache_id, $compile_id, $parent);
+            $_tpl = $this->createTemplate($template, $cache_id, $compile_id, $parent);
         }
 
         //put the new template onto the stack, and do our work, to handle recursive calls

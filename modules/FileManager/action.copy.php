@@ -136,7 +136,7 @@ if( isset($params['submit']) ) {
 if( $errors ) echo $this->ShowErrors($errors);
 
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;copy.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;copy.tpl",null,$modname,$smarty);
 
 $params['selall'] = (count($selall) > 1) ? serialize($params['selall']) : reset($params['selall']);
 $tpl->assign('startform',$this->CreateFormStart($id,'fileaction',$returnid,'post','',false,'',$params));

@@ -55,7 +55,7 @@ class ModuleManager extends CMSModule
   {
     $smarty = cmsms()->GetSmarty();
     $modname = $this->GetName();
-    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;error.tpl",null,null); //no parent
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;error.tpl",null,null); //no parent
     $tpl->assign('title_error', $this->Lang('error'));
     $tpl->assign('message', $message);
     $tpl->assign('link_back',$this->CreateLink($id,'defaultadmin',$returnid, $this->Lang('back_to_module_manager')));

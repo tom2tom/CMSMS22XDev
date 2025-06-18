@@ -74,7 +74,7 @@ $params['selall'] = $selall[0]; // flat value for next pass
 //$params['fileaction'] = 'rename';
 
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;renamefile.tpl", null, $modname, $smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;renamefile.tpl", null, $modname, $smarty);
 
 $tpl->assign('startform', $this->CreateFormStart($id, 'fileaction', $returnid, 'post', '', false, '', $params));
 $tpl->assign('newnametext', $this->Lang('newname'));

@@ -60,7 +60,7 @@ if( isset($params['multisubmit']) && isset($params['multiaction']) &&
 }
 
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_pages_tab.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_pages_tab.tpl",null,$modname,$smarty);
 
 $tpl->assign('prettyurls_ok',cm_prettyurls_ok());
 $tpl->assign('can_add_content',$this->CheckPermission('Add Pages') || $this->CheckPermission('Manage All Content'));

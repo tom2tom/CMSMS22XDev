@@ -10,7 +10,7 @@ try {
 
     $userid = get_userid();
     $modname = $this->GetName();
-    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;ajax_get_stylesheets.tpl",null,$modname,$smarty);
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;ajax_get_stylesheets.tpl",null,$modname,$smarty);
 
     $filter = json_decode($tmp,TRUE);
 

@@ -65,7 +65,7 @@ if( isset($params['submit']) ) {
 // build the form
 //
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;filethumbnail.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;filethumbnail.tpl",null,$modname,$smarty);
 
 $tpl->assign('filename',$filename);
 $tpl->assign('filespec',$src);

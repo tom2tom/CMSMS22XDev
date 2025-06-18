@@ -88,7 +88,7 @@ else {
 
 //Display template
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;editfielddef.tpl", null, $modname, $smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;editfielddef.tpl", null, $modname, $smarty);
 $tpl->assign('title', $this->Lang('editfielddef'));
 $tpl->assign('startform', $this->CreateFormStart($id, 'admin_editfielddef', $returnid));
 $tpl->assign('endform', $this->CreateFormEnd());

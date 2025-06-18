@@ -73,7 +73,7 @@ if (isset($params['category'])) {
   if( $tmp ) $category_id = $tmp;
 }
 
-$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),null,$modname,$smarty);
+$tpl = $smarty->createTemplate($this->GetTemplateResource($template),null,$modname,$smarty);
 if( isset( $params['submit'] ) ) {
     try {
         if( isset($params['title'] ) ) $title = strip_tags(cms_html_entity_decode(trim($params['title'])));
@@ -233,7 +233,7 @@ $tpl->display();
 
 if( $do_send_email ) {
 
-    $tpl2 = $smarty->CreateTemplate("module_db_tpl:$modname;email_template",null,$modname,$smarty);
+    $tpl2 = $smarty->createTemplate("module_db_tpl:$modname;email_template",null,$modname,$smarty);
     $tmp_vars = $tpl->get_template_vars();
     foreach( $tmp_vars as $key => $val ) {
         $tpl2->assign($key,$val);

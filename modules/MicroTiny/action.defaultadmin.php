@@ -19,7 +19,7 @@ if( !function_exists('cmsms') ) exit;
 if( !$this->VisibleToAdminUser() ) return;
 
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;defaultadmin.tpl", null, $modname, $smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;defaultadmin.tpl", null, $modname, $smarty);
 
 //require __DIR__.DIRECTORY_SEPARATOR.'function.admin_example.php'; nothing in there
 require __DIR__.DIRECTORY_SEPARATOR.'function.admin_settings.php';

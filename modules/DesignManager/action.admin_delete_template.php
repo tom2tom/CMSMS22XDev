@@ -48,7 +48,7 @@ try {
   }
 
   $modname = $this->GetName();
-  $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_delete_template.tpl",null,$modname,$smarty);
+  $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_delete_template.tpl",null,$modname,$smarty);
 
   // find the number of 'pages' that use this template.
   $query = 'SELECT COUNT(*) FROM '.CMS_DB_PREFIX.'content WHERE template_id = ?';

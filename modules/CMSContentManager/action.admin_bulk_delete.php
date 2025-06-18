@@ -162,7 +162,7 @@ if( count($displaydata) == 0 ) {
   $this->RedirectToAdminTab();
 }
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_bulk_delete.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_bulk_delete.tpl",null,$modname,$smarty);
 
 $tpl->assign('multicontent',base64_encode(serialize($pagelist)));
 $tpl->assign('displaydata',$displaydata);

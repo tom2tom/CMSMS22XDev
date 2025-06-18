@@ -127,7 +127,7 @@ try {
     // prepare to display
     //
     $modname = $this->GetName();
-    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_edit_css.tpl", null, $modname, $smarty);
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_edit_css.tpl", null, $modname, $smarty);
 
     $designs = CmsLayoutCollection::get_all();
     if( $designs ) {

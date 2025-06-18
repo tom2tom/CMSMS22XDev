@@ -109,7 +109,7 @@ if(empty($params['reset'])
 $params['selall'] = $selall[0]; // flat value for next pass
 
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;pie.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;pie.tpl",null,$modname,$smarty);
 
 $tpl->assign('formstart',$this->CreateFormStart($id,'resizecrop',$returnid,'post','',false,'',$params));
 $tpl->assign('formend',$this->CreateFormEnd());

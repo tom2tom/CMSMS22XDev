@@ -15,9 +15,9 @@ else {
 
 $cache_id = '|ns'.md5(serialize($params));
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template), $cache_id, $modname, $smarty);
+$tpl = $smarty->createTemplate($this->GetTemplateResource($template), $cache_id, $modname, $smarty);
 if( !$tpl->IsCached() ) {
-//$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template), null, $modname, $smarty);
+//$tpl = $smarty->createTemplate($this->GetTemplateResource($template), null, $modname, $smarty);
     $detailpage = 0;
     $tmp = (int)$this->GetPreference('detail_returnid', -1);
     if( isset($params['detailpage']) ) {

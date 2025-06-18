@@ -64,7 +64,7 @@ try {
     }
 
     $modname = $this->GetName();
-    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_import_design.tpl",null,$modname,$smarty);
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_import_design.tpl",null,$modname,$smarty);
     $tpl->display();
     break;
 
@@ -112,7 +112,7 @@ try {
         $newname = $params['newname']; // doing a re-run
       }
       $modname = $this->GetName();
-      $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_import_design2.tpl",null,$modname,$smarty);
+      $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_import_design2.tpl",null,$modname,$smarty);
       $tpl->assign('tmpfile',$tmpfile);
       $tpl->assign('cms_version',CMS_VERSION);
       $tpl->assign('design_info',$design_info);

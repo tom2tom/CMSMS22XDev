@@ -5,7 +5,7 @@ for( $cnt = 0; $cnt < $num; $cnt++ ) { ob_end_clean(); }
 
 $userid = get_userid();
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;ajax_get_templates.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;ajax_get_templates.tpl",null,$modname,$smarty);
 
 try {
     $tmp = get_parameter_value($_REQUEST,'filter');

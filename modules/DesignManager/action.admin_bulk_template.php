@@ -132,7 +132,7 @@ try {
     }
 
     $modname = $this->GetName();
-    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_bulk_template.tpl", null, $modname, $smarty);
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_bulk_template.tpl", null, $modname, $smarty);
 
     $tpl->assign('bulk_op',$bulk_op);
     $allparms = base64_encode(json_encode(['tpl_select'=>$params['tpl_select'], 'tpl_bulk_action'=>$params['tpl_bulk_action']]));

@@ -52,7 +52,7 @@ $categories = array(-1 => $this->Lang('none'));
 foreach( $tmp2 as $k => $v ) {
     $categories[$k] = $v;
 }
-$tpl = $smarty->CreateTemplate("module_file_tpl:$me;editcategory.tpl", null, $me, $smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$me;editcategory.tpl", null, $me, $smarty);
 
 $tpl->assign('parent', $parent);
 $tpl->assign('name', $name);

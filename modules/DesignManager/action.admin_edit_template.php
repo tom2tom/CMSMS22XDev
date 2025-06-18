@@ -171,7 +171,7 @@ try {
     $extraparms['__activetab'] = 'templates';
 
     $modname = $this->GetName();
-    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_edit_template.tpl", null, $modname, $smarty);
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_edit_template.tpl", null, $modname, $smarty);
 
     $tpl->assign('type_obj', $type_ob);
     $tpl->assign('extraparms', $extraparms);

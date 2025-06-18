@@ -59,7 +59,7 @@ else {
 $cache_id = '|nav'.md5(serialize($params).$returnid);
 $compile_id = '';
 
-$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),$cache_id,$compile_id,$smarty);
+$tpl = $smarty->createTemplate($this->GetTemplateResource($template),$cache_id,$compile_id,$smarty);
 if( !$tpl->isCached() ) {
     $hm = $gCms->GetHierarchyManager();
     foreach( $params as $key => $value ) {

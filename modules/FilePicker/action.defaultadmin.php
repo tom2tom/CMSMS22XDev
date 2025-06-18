@@ -29,7 +29,7 @@ if( !$this->VisibleToAdminUser() ) return;
 
 $profiles = $this->_dao->loadAll();
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,$modname,$smarty);
 $tpl->assign('dflt_profile_id',$this->_dao->getDefaultProfileId());
 $tpl->assign('profiles',$profiles);
 $tpl->display();

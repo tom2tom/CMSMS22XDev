@@ -21,7 +21,7 @@ if( !isset($gCms) ) exit;
 if( !$this->VisibleToAdminUser() ) exit;
 
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_search_tab.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_search_tab.tpl",null,$modname,$smarty);
 
 $tpl->assign('formstart',$this->CreateFormStart($id,'admin_search',$returnid));
 $tpl->assign('formend',$this->CreateFormEnd());

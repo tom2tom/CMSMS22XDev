@@ -28,7 +28,7 @@ $num = count(ob_list_handlers());
 for ($cnt = 0; $cnt < $num; $cnt++) { ob_end_clean(); }
 
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;ajax_get_content.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;ajax_get_content.tpl",null,$modname,$smarty);
 
 try {
     $tpl->assign('can_add_content',$this->CheckPermission('Add Pages') || $this->CheckPermission('Manage All Content'));

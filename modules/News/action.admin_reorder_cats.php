@@ -48,7 +48,7 @@ $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_news_categories ORDER BY hierarc
 $allcats = $db->GetArray($query);
 
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_reorder_cats.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_reorder_cats.tpl",null,$modname,$smarty);
 $tpl->assign('allcats',$allcats);
 $tpl->display();
 

@@ -59,7 +59,7 @@ if ($row['smarty']) {
         $this->SetError($this->Lang('err_smarty').' ('.$e->GetMessage().')');
         $this->RedirectToAdminTab('list');
     }
-    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;view.tpl", null, $modname, $smarty);
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;view.tpl", null, $modname, $smarty);
     $tpl->assign('content', $content2);
     $tpl->assign('name', $name);
     try {
@@ -69,7 +69,7 @@ if ($row['smarty']) {
         $this->RedirectToAdminTab('list');
     }
 } else {
-    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;view.tpl", null, $modname, $smarty);
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;view.tpl", null, $modname, $smarty);
     $tpl->assign('content', $content);
     $tpl->assign('name', $name);
     $tpl->display();

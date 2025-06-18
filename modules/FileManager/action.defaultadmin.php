@@ -58,7 +58,7 @@ for ($i = 0, $n = count($tmp_path_parts); $i < $n; $i++) {
 }
 
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;fmpath.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;fmpath.tpl",null,$modname,$smarty);
 $tpl->assign('path',$path);
 $tpl->assign('path_parts',$path_parts);
 $tpl->display();

@@ -91,7 +91,7 @@ foreach( $tmp2 as $k => $v ) {
 }
 $parms = array('catid'=>$catid);
 
-$tpl = $smarty->CreateTemplate("module_file_tpl:$me;editcategory.tpl", null, $me, $smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$me;editcategory.tpl", null, $me, $smarty);
 $tpl->assign('catid',$catid);
 $tpl->assign('parent',$parentid);
 $tpl->assign('name',$name);

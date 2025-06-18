@@ -298,7 +298,7 @@ try {
     }
 
     $modname = $this->GetName();
-    $tpl = $smarty->CreateTemplate("module_file_tpl:$modname;installinfo.tpl", null, $modname, $smarty);
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;installinfo.tpl", null, $modname, $smarty);
 
     $tpl->assign('return_url',$this->create_url($id,'defaultadmin',$returnid, array('__activetab'=>'modules')));
     $parms = array('name'=>$module_name,'version'=>$module_version,'filename'=>$module_filename,'size'=>$module_size);

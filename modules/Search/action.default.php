@@ -16,7 +16,7 @@ else {
 $cache_id = '|sr'.md5(serialize($params));
 $compile_id = $this->GetName();
 
-$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),$cache_id,$compile_id,$smarty);
+$tpl = $smarty->createTemplate($this->GetTemplateResource($template),$cache_id,$compile_id,$smarty);
 if( !$tpl->IsCached() ) {
     $inline = ( isset($params['inline']) ) ? cms_to_bool(trim($params['inline'])) : false;
     $origreturnid = $returnid;

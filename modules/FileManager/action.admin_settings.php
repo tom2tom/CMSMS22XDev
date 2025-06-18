@@ -27,7 +27,7 @@ $iconsize=$this->GetPreference('iconsize','16px');
 $permissionstyle=$this->GetPreference('permissionstyle','xxx');
 
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;settings.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;settings.tpl",null,$modname,$smarty);
 
 //$tpl->assign('path',$this->CreateInputHidden($id,'path',$path)); //why?
 $tpl->assign('advancedmode',$advancedmode);

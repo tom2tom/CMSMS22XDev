@@ -105,7 +105,7 @@ foreach( $pagelist as $pid ) {
 }
 
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;admin_bulk_changeowner.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_bulk_changeowner.tpl",null,$modname,$smarty);
 
 $tpl->assign('multicontent',$params['multicontent']);
 $tpl->assign('displaydata',$displaydata);

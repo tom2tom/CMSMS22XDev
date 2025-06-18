@@ -20,7 +20,7 @@ $theme = cms_utils::get_theme_object();
 $theme->SetTitle('module_help');
 
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;local_help.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;local_help.tpl",null,$modname,$smarty);
 
 $our_lang = CmsNlsOperations::get_current_language();
 $tpl->assign('our_lang',$our_lang);

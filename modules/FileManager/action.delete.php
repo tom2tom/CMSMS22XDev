@@ -98,7 +98,7 @@ if( isset($params['submit']) ) {
 
 // give everything to Smarty.
 $modname = $this->GetName();
-$tpl = $smarty->CreateTemplate("module_file_tpl:$modname;delete.tpl",null,$modname,$smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;delete.tpl",null,$modname,$smarty);
 
 if( $errors ) {
   echo $this->ShowErrors($errors);
