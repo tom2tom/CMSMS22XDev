@@ -323,19 +323,7 @@
       </p>
     </div>
     <div class="pageoverflow">
-      <p class="pagetext">
-        <label for="searchable">{$mod->Lang('searchable')}:</label> {cms_help key='help_article_searchable' title=$mod->Lang('searchable')}
-      </p>
-      <p class="pageinput">
-        <select name="{$actionid}searchable" id="searchable">
-          {cms_yesno selected=$searchable}
-        </select>
-        <br>
-        {$mod->Lang('info_searchable')}
-      </p>
-    </div>
-
-    <div class="pageoverflow">
+      <input type="hidden" name="{$actionid}useexp" value="0">
       <p class="pagetext">
         <label for="fld11">{$useexpirationtext}:</label> {cms_help key='help_article_useexpiry' title=$useexpirationtext}
       </p>
@@ -360,6 +348,16 @@
           {html_select_date prefix=$enddateprefix time=$enddate start_year="-10" end_year="+15"} {html_select_time prefix=$enddateprefix time=$enddate}
         </p>
       </div>
+    </div>
+
+    <div class="pageoverflow">
+      <input type="hidden" name="{$actionid}searchable" value="0">
+      <p class="pagetext">
+        <label for="searchable">{$mod->Lang('searchable')}:</label> {cms_help key='help_article_searchable' title=$mod->Lang('searchable')}
+      </p>
+      <p class="pageinput">
+        <input id="searchable" type="checkbox" name="{$actionid}searchable"{if $searchable} checked{/if} class="pagecheckbox">
+      </p>
     </div>
     {if !empty($custom_fields)}
     {foreach $custom_fields as $field}
