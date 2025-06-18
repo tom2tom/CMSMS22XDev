@@ -801,8 +801,8 @@ final class filemanager_utils
     {
         $mod = cms_utils::get_module('FileManager');
         if ($size < 2048) {
+            $unit = ($size > 0) ? $mod->Lang('bytes') : '';
             $size = trim((string)$size);
-            $unit = $mod->Lang('bytes');
         }
         elseif ($size <= 1048576) { //aka 1024*1024
             $lcc = localeconv();
