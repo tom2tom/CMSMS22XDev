@@ -27,10 +27,10 @@
 
 
 /**
- * Gets the userid of the currently logged in user.
+ * Gets the numeric id of the currently logged in user.
  *
- * If an effective uid has been set in the session, AND the primary user is a member of the admin group
- * then allow emulating that effective uid.
+ * If an effective uid has been set in the session, AND the primary user
+ * is a member of the admin group, then allow emulating that effective uid.
  *
  * @since 0.1
  * @param  boolean $redirect Redirect to the admin login page if the user is not logged in.
@@ -52,8 +52,8 @@ function get_userid($redirect = true)
 /**
  * Gets the username of the currently logged in user.
  *
- * If an effective username has been set in the session, AND the primary user is a member of the admin group
- * then return the effective username.
+ * If an effective username has been set in the session, AND the primary user
+ * is a member of the admin group, then return the effective username.
  *
  * @since 2.0
  * @param  boolean $check Redirect to the admin login page if the user is not logged in.
@@ -73,11 +73,12 @@ function get_username($check = true)
 
 
 /**
- * Checks to see if the user is logged in and the request has the proper key.  If not, redirects the browser
- * to the admin login.
+ * Checks to see if the user is logged in and the request has the proper key.
+ * If not, and $no_redirect is false, redirects the browser to the admin login.
  *
- * Note: Because this method validates that the secret key is in the URL and matches the one that is in the session
- * this method should only be called from admin actions.
+ * Note: Because this method confirms that the secret key is in the URL
+ * and it matches the one in the session, this method should only be
+ * called during admin requests.
  *
  * @since 0.1
  * @param string $no_redirect If true, then don't redirect if not logged in
@@ -145,9 +146,9 @@ function check_ownership($userid, $contentid = '')
 
 
 /**
- * Checks that the given userid has access to modify the given
- * pageid.  This would mean that they were set as additional
- * authors/editors by the owner.
+ * Checks if the given userid has authority to modify the given pageid.
+ * This would mean that the user is the owner, or was set as additional
+ * author/editor by the owner, or has some 'super' role.
  *
  * @internal
  * @since 0.2
@@ -280,7 +281,7 @@ function set_site_preference($prefname, $value)
 
 
 /**
- * A method to create a text area control
+ * A function to create a text area control
  *
  * @internal
  * @access private
@@ -326,7 +327,7 @@ function create_textarea($enablewysiwyg, $text, $name, $classname = '', $id = ''
 
 
 /**
- * Creates a string containing links to all the pages.
+ * Create a string containing links to all the pages.
  *
  * @deprecated
  * @internal
@@ -371,40 +372,41 @@ function pagination($page, $totalrows, $limit)
 
 
 /**
- * Create a dropdown form element containing a list of files that match certain conditions
- *
+ * Create a dropdown html element having choices that match certain conditions
  * @internal
- * @param string The name for the select element.
- * @param string The directory name to search for files.
- * @param string The name of the file that should be selected
- * @param string A comma separated list of extensions that should be displayed in the list
- * @param string An optional string with which to prefix each value in the output by
- * @param boolean Wether 'none' should be an allowed option
- * @param string Text containing additional parameters for the dropdown element
- * @param string A prefix to use when filtering files
- * @param boolean A flag indicating wether the files matching the extension and the prefix should be included or excluded from the result set
- * @param boolean A flag indicating wether the output should be sorted.
+ *
+ * @param string $name The name and id attribute for the <select/>.
+ * @param string $dir The directory path to scan for items.
+ * @param string|null $value The value of the item to be initially selected.
+ *  Such value must begin with "$optprefix/" if $optprefix is not empty.
+ * @param string $allowed_extensions Comma-separated, any-case, series
+ *  of filename extension(s) to be included (exclusions not supported)
+ * @param string $optprefix Prefix to fadd to each value in the output. Default ''
+ * @param bool $addnone Whether to prepend a -1=>'none' option. Default false
+ * @param string $extratext Additional details for the html element. Default ''
+ * @param stting $fileprefix Prefix to use for filtering items. Default ''
+ * @param bool $excludefiles Whether to exclude items beginning with $fileprefix
+ *  from the presented choices. False to include such matches. Ignored if
+ *  $fileprefix is empty. Default true.
+ * @param bool $sortresults Whether to (naturally) sort the choices. Default false
  * @return string maybe empty
  */
-function create_file_dropdown($name,$dir,$value,$allowed_extensions,$optprefix='',$allownone=false,$extratext='',
-			      $fileprefix='',$excludefiles=1,$sortresults = 0)
+function create_file_dropdown($name,$dir,$value,$allowed_extensions,$optprefix='',
+    $addnone=false,$extratext='',$fileprefix='',$excludefiles=true,$sortresults=false)
 {
   $files = get_matching_files($dir,$allowed_extensions,true,true,$fileprefix,$excludefiles);
   if( !$files ) return '';
   $out = "<select name=\"{$name}\" id=\"{$name}\" {$extratext}>\n";
-  if( $allownone ) {
-    $txt = '';
-    if( empty($value) ) $txt = 'selected="selected"';
-    $out .= "  <option value=\"-1\" $txt>--- ".lang('none')." ---</option>\n";
+  if( $addnone ) {
+    $txt = ( empty($value) ) ? ' selected' : '';
+    $out .= "  <option value=\"-1\"{$txt}>--- ".lang('none')." ---</option>\n";
   }
 
   if( $sortresults ) natcasesort($files);
   foreach( $files as $file ) {
-    $txt = '';
-    $opt = $file;
-    if( !empty($optprefix) ) $opt = $optprefix.'/'.$file;
-    if( $opt == $value ) $txt = 'selected="selected"';
-    $out .= "  <option value=\"{$opt}\" {$txt}>{$file}</option>\n";
+    $opt = ( $optprefix ) ? $optprefix.'/'.$file : $file;
+    $txt = ( $opt == $value ) ? ' selected' : ''; // OR $file == $value ?
+    $out .= "  <option value=\"{$opt}\"{$txt}>$file</option>\n";
   }
   $out .= "</select>";
   return $out;
@@ -558,17 +560,16 @@ function preprocess_mact($returnid)
         throw new \CmsError404Exception('Attempt to access module '.$module.' which could not be found (is it properly installed and configured?');
     }
 
-    $smarty = \Smarty_CMS::get_instance();
-    @ob_start();
     $parms = $modops->GetModuleParameters($id);
+    $smarty = \Smarty_CMS::get_instance();
     $oldcache = $smarty->caching;
-    $smarty->caching = false;
+    @ob_start();
+    $smarty->caching = Smarty::CACHING_OFF;
     $result = $module_obj->DoActionBase($action, $id, $parms, $returnid, $smarty);
     $smarty->caching = $oldcache;
 
     if( $result !== FALSE ) echo $result;
-    $result = @ob_get_contents();
-    @ob_end_clean();
+    $result = @ob_get_clean();
     \CMS_Content_Block::set_primary_content($result);
 }
 
