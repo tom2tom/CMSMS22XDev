@@ -110,7 +110,7 @@ debug_buffer('done loading basic files');
 $_app = CmsApp::get_instance(); // for use in this file only.
 $config = $_app->GetConfig();
 
-if( $config['debug'] ) {
+if( $config['debug'] ) { // OR CMS_DEBUG
     @ini_set('display_errors',1);
     @error_reporting(E_ALL);
 }
@@ -229,7 +229,7 @@ if( !isset($CMS_INSTALL_PAGE) ) {
 if( isset($CMS_ADMIN_PAGE) ) CmsNlsOperations::set_language();
 
 if( !isset($DONT_LOAD_SMARTY) ) {
-    if( CMS_DEBUG ) {
+    if( CMS_DEBUG ) { //OR $config['debug']
         debug_buffer('Initialize Smarty');
         $smarty = $_app->GetSmarty();
         $smarty->error_reporting = E_ALL;
