@@ -1331,6 +1331,7 @@ class Smarty extends Smarty_Internal_TemplateBase
      *
      * @param string $name  property name
      * @param mixed  $value parameter passed to setter
+     *
      */
     public function __set($name, $value)
     {

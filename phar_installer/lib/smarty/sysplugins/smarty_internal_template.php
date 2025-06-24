@@ -1,15 +1,28 @@
 <?php
 /**
  * Smarty Internal Plugin Template
- * Main template class with data structures and methods
+ * This file contains the Smarty template engine
  *
  * @package    Smarty
  * @subpackage Template
  * @author     Uwe Tews
+ */
+
+/**
+ * Main class with template data structures and methods
  *
- * Some methods will be dynamically loaded by the extension handler
- * when they are called. They are located in a corresponding
- * Smarty_Internal_Method_xxxx class
+ * @package    Smarty
+ * @subpackage Template
+ *
+ * @property Smarty_Template_Compiled             $compiled
+ * @property Smarty_Template_Cached               $cached
+ * @property Smarty_Internal_TemplateCompilerBase $compiler
+ * @property mixed|\Smarty_Template_Cached        registered_plugins
+ *
+ * The following methods will be dynamically loaded by the extension handler when they are called.
+ * They are located in a corresponding Smarty_Internal_Method_xxxx class
+ *
+ * @method bool mustCompile()
  */
 class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
 {
@@ -117,19 +130,19 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
      *
      * @var Smarty_Internal_TemplateCompilerBase
      */
-    public $compiler;
+    public $compiler = null;
 
     /**
      *
      * @var Smarty_Template_Compiled
      */
-    public $compiled;
+    public $compiled = null;
 
     /**
      *
      * @var Smarty_Template_Cached
      */
-    public $cached;
+    public $cached = null;
 
     /**
      * Create template data object
@@ -139,13 +152,13 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
      * @param string                                                    $template_resource template resource string
      * @param Smarty                                                    $smarty            Smarty instance
      * @param Smarty_Internal_Template|Smarty|Smarty_Internal_Data|null $_parent           back pointer to parent
-     *                                                                                     object with variables
-     *                                                                                     Default null
+     *                                                                                        object with variables
+     *                                                                                        Default null
      * @param string|null                                               $_cache_id         cache id Default null
      * @param string|null                                               $_compile_id       compile id Default null
      * @param int|null                                                  $_caching          caching mode per Smarty::CACHING_* Default null
      * @param int|null                                                  $_cache_lifetime   cache life-time in
-     *                                                                                     seconds Default null
+     *                                                                                        seconds Default null
      * @param bool                                                      $_isConfig         Default false
      *
      * @throws \SmartyException
@@ -226,7 +239,7 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
                 $this->smarty->ext->_cacheModify->cacheModifiedCheck(
                     $this->cached,
                     $this,
-                    isset($content) ? $content : ob_get_clean()
+                    isset($content) ? $content : ob_get_clean() // $content never defined
                 );
             } else {
                 if ((!$this->caching || $this->cached->has_nocache_code || $this->source->handler->recompiled)
@@ -547,7 +560,7 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
         if ($is_valid) {
             $resource->unifunc = $properties[ 'unifunc' ];
             $resource->has_nocache_code = $properties[ 'has_nocache_code' ];
-            //            $tpl->compiled->nocache_hash = $properties['nocache_hash'];
+//            $tpl->compiled->nocache_hash = $properties['nocache_hash'];
             $resource->file_dependency = $properties[ 'file_dependency' ];
         }
         return $is_valid && !function_exists($properties[ 'unifunc' ]);
@@ -561,6 +574,9 @@ class Smarty_Internal_Template extends Smarty_Internal_TemplateBase
      */
     public function compileTemplateSource()
     {
+        if (!isset($this->compiled)) {
+            $this->loadCompiled();
+        }
         return $this->compiled->compileTemplateSource($this);
     }
 

@@ -6,28 +6,23 @@
  *
  * @package    Smarty
  * @subpackage Template
- *
- * Sometimes involves undeclared properties e.g. foreach compiler
- * uses $do_else; $first; $last; $index; $iteration; $total;
  */
 #[\AllowDynamicProperties]
 class Smarty_Variable
 {
     /**
-     * the variable value
+     * template variable
      *
      * @var mixed
      */
     public $value = null;
 
     /**
-     * whether the value of this variable will NOT be cached
+     * if true any output of this variable will be not cached
      *
-     * @var bool Default false
+     * @var boolean
      */
     public $nocache = false;
-
-    //various 'dynamic' properties might also be used
 
     /**
      * create Smarty variable object
