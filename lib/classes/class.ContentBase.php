@@ -304,11 +304,24 @@ abstract class ContentBase
 
 	/**
 	 * The extra properties of this content item
-	 * Array, when set. Maybe empty
+	 * Array, when set. Maybe empty. Maybe includes fewer than all
+	 * possible such properties.
+	 * See also $_selectedprops
 	 *
 	 * @internal
 	 */
 	protected $_props;
+
+	/**
+	 * Flag whether $_props has been fully-populated, hence not useful
+	 * to further interrogate extra-properties of this object to
+	 * populate $_props.
+	 * Supports initial limited retrieval of extra-properties.
+	 * Bool. Default false
+	 *
+	 * @internal
+	 */
+	private $_selectedprops = false;
 
 	/**
 	 * Item property definitions
@@ -1069,7 +1082,8 @@ abstract class ContentBase
 
 	/**
 	 * Indicates whether this content type is viewable (i.e: can be rendered).
-	 * some content types (like redirection links) are not viewable.
+	 * Viewable pages are expected to have an associated template to generate their display.
+	 * Some content types (like redirection links and section headers) are not viewable.
 	 *
 	 * @abstract
 	 * @return bool Default is True
@@ -1186,7 +1200,8 @@ abstract class ContentBase
 	}
 
 	/**
-	 * Test whether this content item has the named extra property.
+	 * Test whether this content item has the named extra property,
+	 * whether or not null-valued.
 	 * Properties will be loaded from the database if necessary.
 	 *
 	 * @param string $name
@@ -1195,9 +1210,13 @@ abstract class ContentBase
 	public function HasProperty($name)
 	{
 		if( !$name ) return false;
-		if( !is_array($this->_props) ) $this->_load_properties();
-		if( !$this->_props ) return false;
-		return in_array($name,array_keys($this->_props));
+		if( !is_array($this->_props) || $this->_selectedprops ) { // none or only specific prop(s) loaded
+			$this->_load_properties();
+			if( $this->_selectedprops ) {
+				$this->_selectedprops = false; // no more retrievals
+			}
+		}
+		return $this->_props && array_key_exists($name, $this->_props);
 	}
 
 	/**
@@ -1206,7 +1225,7 @@ abstract class ContentBase
 	 *
 	 * @param string $name
 	 * @param mixed $default fallback value Default null since 2.2.19F2
-	 * @return mixed String value, or $default if the property does not exist.
+	 * @return mixed property-value, or $default if the property does not exist.
 	 */
 	public function GetPropertyValue($name,$default= null)
 	{
@@ -1218,13 +1237,13 @@ abstract class ContentBase
 	 * Populate this page's 'extra' properties (if any), if this page is
 	 * not being added or cloned i.e. is already recorded in the database
 	 * @ignore
-	 * @return bool true always
+	 * @return bool true unless page is unsaved
 	 */
 	private function _load_properties()
 	{
 		if( $this->mId <= 0 ) return false; // unsaved new or cloned page
 
-		$this->_props = [];
+		if( !is_array($this->_props) ) { $this->_props = []; }
 		$db = CmsApp::get_instance()->GetDb();
 		$query = 'SELECT * FROM '.CMS_DB_PREFIX.'content_props WHERE content_id = ?';
 		$dbr = $db->GetArray($query,array((int)$this->mId));
@@ -1287,7 +1306,12 @@ VALUES (?,?,?,?,$now,$now)";
 	 */
 	public function SetPropertyValue($name,$value)
 	{
-		if( !is_array($this->_props) ) $this->_load_properties();
+		if( !is_array($this->_props) || $this->_selectedprops ) { // none or only specific prop(s) loaded
+			$this->_load_properties();
+			if( $this->_selectedprops ) {
+				$this->_selectedprops = false; // no more retrievals
+			}
+		}
 		$this->_props[$name] = $value;
 	}
 
@@ -1297,11 +1321,14 @@ VALUES (?,?,?,?,$now,$now)";
 	 *
 	 * @param string $name The property name
 	 * @param string $value The property value.
+	 * @param bool $coreextend Whether this is partially-populating
+	 *   $_props as a limited extension of core properties. Default false
 	 */
-	public function SetPropertyValueNoLoad($name,$value)
+	public function SetPropertyValueNoLoad($name,$value,$coreextend=false)
 	{
 		if( !is_array($this->_props) ) $this->_props = [];
 		$this->_props[$name] = $value;
+		if( $coreextend ) $this->_selectedprops = true; //enable further retrieval on-demand
 	}
 
 	/**
@@ -1444,7 +1471,7 @@ VALUES (?,?,?,?,$now,$now)";
 		$result = true;
 		if( $loadProperties ) {
 			$this->_load_properties();
-			if( !is_array($this->_props) ) { //TODO always array, maybe empty
+			if( !$this->_props ) {
 				$result = false;
 				$this->SetInitialValues(); //TODO bad logic
 			}
@@ -1518,9 +1545,12 @@ VALUES (?,?,?,?,$now,$now)";
 	{
 		HookManager::do_hook('Core::ContentEditPre', [ 'content' => &$this ]);
 
-		if( !is_array($this->_props) ) {
+		if( !is_array($this->_props) || $this->_selectedprops ) { // some specific prop(s) were loaded with cores
 			debug_buffer('save is loading properties');
 			$this->_load_properties();
+			if( $this->_selectedprops ) {
+				$this->_selectedprops = false; // no more retrievals
+			}
 		}
 
 		if( $this->mId > 0 ) { // was >-1 : new-page mId = 0, cloned-page mId = -1
@@ -1686,7 +1716,7 @@ WHERE content_id = ?";
 		}
 
 		cms_route_manager::del_static('','__CONTENT__',$this->mId);
-		if( $this->mURL != '' ) {
+		if( $this->mURL ) {
 			$route = CmsRoute::new_builder($this->mURL,'__CONTENT__',$this->mId,null,true);
 //TODO		$result = $result &&
 			cms_route_manager::add_static($route);
@@ -1934,7 +1964,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 						$tmp_content = $node->GetContent();
 						if( $tmp_content ) {
 							$tmp = $tmp_content->URL();
-							if( $tmp != '' && $count == 0 ) {
+							if( $tmp && $count == 0 ) {
 								// try to build the url out of the parent url.
 								$parent_url = $tmp;
 								break;
@@ -1958,10 +1988,10 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			// page is navigable and its url is mandatory but empty
 			$errors[] = lang('content_mandatory_urls');
 		}
-		else if( $this->mURL != '' ) {
+		elseif( $this->mURL ) {
 			// page url is not empty, check for validity.
 			$this->mURL = strtolower(trim($this->mURL," /\t\r\n\0\x08")); // silently delete bad chars. and convert to lowercase.
-			if( $this->mURL != '' && !content_assistant::is_valid_url($this->mURL,$this->mId) ) {
+			if( $this->mURL && !content_assistant::is_valid_url($this->mURL,$this->mId) ) {
 				// and validate the URL.
 				$errors[] = lang('invalid_url2');
 			}
@@ -2055,7 +2085,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			$this->mDefaultContent = (int)$params['default'];
 			if ($this->mDefaultContent) $this->mActive = 1;
 		}
-		elseif( $this->DefaultContent() ) {
+		elseif ($this->DefaultContent()) {
 			$this->mActive = 1;
 		}
 
@@ -2093,7 +2123,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		if (isset($params['accesskey'])) $this->mAccessKey = strip_tags($params['accesskey']);
 
 		// tab index
-		if (isset($params['tabindex'])) $this->mTabIndex = (empty($params['tabindex'])) ? '' : (int) $params['tabindex'];
+		if (isset($params['tabindex'])) $this->mTabIndex = ($params['tabindex']) ? (int) $params['tabindex'] : '';
 
 		// cachable
 		if (isset($params['cachable'])) {
@@ -2120,12 +2150,12 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		}
 
 		// owner
-		if (isset($params["ownerid"])) $this->SetOwner((int) $params["ownerid"]);
+		if (isset($params['ownerid'])) $this->SetOwner((int) $params['ownerid']);
 
 		// additional editors
-		if (isset($params["additional_editors"])) {
+		if (isset($params['additional_editors'])) {
 			$addtarray = [];
-			if( is_array($params['additional_editors']) ) {
+			if (is_array($params['additional_editors'])) {
 				foreach ($params["additional_editors"] as $addt_user_id) {
 					$addtarray[] = (int) $addt_user_id;
 				}
@@ -2156,7 +2186,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			return $url;
 		}
 
-		if( $rewrite == true ) {
+		if( $rewrite ) {
 			$url_rewriting = $config['url_rewriting'];
 			$page_extension = $config['page_extension'];
 			if ($url_rewriting == 'mod_rewrite') {
@@ -2310,9 +2340,9 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		$props = $this->_GetEditableProperties();
 		$arr = [];
 		foreach( $props as $one ) {
-			if( !isset($one->tab) || $one->tab == '' ) $one->tab = self::TAB_MAIN;
+			if( empty($one->tab) ) $one->tab = self::TAB_MAIN;
 			$key = $one->tab;
-			$lbl = ( endswith($key,'_tab__') ) ? lang($key) : $key;
+			$lbl = (endswith($key,'_tab__')) ? lang($key) : $key;
 			$arr[$key] = $lbl;
 		}
 		return $arr;
@@ -2348,7 +2378,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		$props = $this->_GetEditableProperties();
 		$out = [];
 		foreach( $props as $one ) {
-			if( !isset($one->tab) || $one->tab == '' ) $one->tab = self::TAB_MAIN;
+			if( empty($one->tab) ) $one->tab = self::TAB_MAIN;
 			if( $key != $one->tab ) continue;
 			$out[] = $this->display_single_element($one->name,$adding);
 		}
@@ -2365,16 +2395,15 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	{
 		$node = ContentOperations::get_instance()->quickfind_node_by_id($this->mId);
 		if( !$node->has_children() ) return false;
-		if( $activeonly == false) return true;
+		if( !$activeonly ) return true;
 
 		$children = $node->get_children();
 		if( $children ) {
-			for( $i = 0, $n = count($children); $i < $n; $i++ ) {
+			for( $i = 0,$n = count($children); $i < $n; $i++ ) {
 				$content = $children[$i]->getContent();
 				if( $content->Active() ) return true;
 			}
 		}
-
 		return false;
 	}
 
@@ -2628,7 +2657,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 		case 'parent':
 			$contentops = ContentOperations::get_instance();
-			$tmp = $contentops->CreateHierarchyDropdown($this->mId, $this->mParentId, 'parent_id', false, true, false, true, true); //TODO why allow_all, hence inactive pages selection?
+			$tmp = $contentops->CreateHierarchyDropdown($this->mId,$this->mParentId,'parent_id',false,false,false,false,true); //CHANGES: was allow_all (hence inactive pages selection) was use_perms (when selecting not editing)
 			if( $tmp ) {
 				$help = cms_admin_utils::get_help_tag('core','help_content_parent',lang('help_title_content_parent'));
 				return array('<label for="parent_id">*'.lang('parent').':</label>&nbsp;'.$help,$tmp);
@@ -2712,16 +2741,19 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 		case 'image':
 			$dir = $config['image_uploads_path'];
-			if( ($tmp = cms_siteprefs::get('content_imagefield_path')) ) { $dir .= DIRECTORY_SEPARATOR . trim($tmp, ' \\/'); }
+			if( ($tmp = cms_siteprefs::get('content_imagefield_path')) ) { $dir .= DIRECTORY_SEPARATOR . trim($tmp,' \\/'); }
 			$data = $this->GetPropertyValue('image');
 			$filepicker = cms_utils::get_filepicker_module();
 			if( $filepicker ) {
-				$profile = $filepicker->get_default_profile( $dir, get_userid() );
-				$profile = $profile->overrideWith( ['top'=>$dir, 'type'=>'image'] );
-				$input = $filepicker->get_html( 'image', $data, $profile);
+				$profile = $filepicker->get_default_profile($dir,get_userid());
+				$profile = $profile->overrideWith(['top'=>$dir,'type'=>'image']);
+				$input = $filepicker->get_html('image',$data,$profile);
 			}
 			else {
-				$input = create_file_dropdown('image',$dir,$data,'jpg,jpeg,png,gif','',true,'','thumb_',0,1); //c.f. FileTypeHelper 'jpg','jpeg','bmp','wbmp','gif','png','tiff'.'tif','webp','avif','heif','svg'
+				$helper = new CMSMS\FileTypeHelper($config);
+				$exts = $helper->get_type_extensions('image',true);
+				$picks = implode(',',$exts);
+				$input = create_file_dropdown('image',$dir,$data,$picks,'',true,'','',false,true);
 			}
 			if( !$input ) return [];
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_image',lang('help_title_content_image'));
@@ -2729,7 +2761,8 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 /*
 			$dir = $config['image_uploads_path']; if appropriate, .= DIRECTORY_SEPARATOR. trim cms_siteprefs::get('content_imagefield_path'));
 			$data = $this->GetPropertyValue('image');
-			$dropdown = create_file_dropdown('image',$dir,$data,'jpg,jpeg,png,gif','',true,'','thumb_',1,1);
+			TODO extra types per FileManager or per FileTypeHelper ibid
+			$dropdown = create_file_dropdown('image',$dir,$data,'png,jpg,jpeg,gif,wbmp,webp','',true,'','thumb_',false,true);
 			if( !$dropdown ) return [];
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_image',lang('help_title_content_image'));
 			return array('<label for="image">'.lang('image').':</label>'.$help,$dropdown);
@@ -2737,16 +2770,21 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 		case 'thumbnail':
 			$dir = $config['image_uploads_path'];
-			if( ($tmp = cms_siteprefs::get('content_imagefield_path')) ) { $dir .= DIRECTORY_SEPARATOR . trim($tmp, ' \\/'); }
+			if( ($tmp = cms_siteprefs::get('content_imagefield_path')) ) { $dir .= DIRECTORY_SEPARATOR . trim($tmp,' \\/'); }
 			$data = $this->GetPropertyValue('thumbnail');
 			$filepicker = cms_utils::get_filepicker_module();
 			if( $filepicker ) {
-				$profile = $filepicker->get_default_profile( $dir, get_userid() );
-				$profile = $profile->overrideWith( ['top'=>$dir, 'type'=>'image', 'match_prefix'=>'thumb_' ] );
-				$input = $filepicker->get_html( 'thumbnail', $data, $profile);
+				$profile = $filepicker->get_default_profile( $dir,get_userid() );
+				$profile = $profile->overrideWith(['top'=>$dir,'type'=>'image','match_prefix'=>'thumb_']);
+				$input = $filepicker->get_html('thumbnail',$data,$profile);
 			}
 			else {
-				$input = create_file_dropdown('thumbnail',$dir,$data,'jpg,jpeg,png,gif','',true,'','thumb_',0,1);
+				// thumbnail filetypes per FileManager
+				$exts = 'jpg,jpeg,png,gif,wbmp';
+				if (PHP_VERSION_ID >= 70200) { $exts .= ',bmp'; }
+				if (PHP_VERSION_ID >= 80100) { $exts .= ',avif'; }
+				$exts .= ',webp';
+				$input = create_file_dropdown('thumbnail',$dir,$data,$exts,'',true,'','thumb_',false,true);
 			}
 			if( !$input ) return [];
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_thumbnail',lang('help_title_content_thumbnail'));
@@ -2760,12 +2798,12 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		case 'accesskey':
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_accesskey',lang('help_title_content_accesskey'));
 			return array('<label for="accesskey">'.lang('accesskey').':</label>'.$help,
-						 '<input type="text" name="accesskey" id="accesskey" maxlength="5" value="'.cms_htmlentities($this->mAccessKey).'">');
+						 '<input type="text" name="accesskey" id="accesskey" maxlength="5" size="5" value="'.cms_htmlentities($this->mAccessKey).'">');
 
 		case 'tabindex':
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_tabindex',lang('help_title_content_tabindex'));
 			return array('<label for="tabindex">'.lang('tabindex').':</label>'.$help,
-						 '<input type="text" name="tabindex" id="tabindex" maxlength="5" value="'.cms_htmlentities($this->mTabIndex).'">');
+						 '<input type="text" name="tabindex" id="tabindex" maxlength="3" size="5" value="'. (int)$this->mTabIndex.'">');
 
 		case 'extra1':
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_extra1',lang('help_title_content_extra1'));
@@ -2784,10 +2822,10 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 		case 'owner':
 			$showadmin = ContentOperations::get_instance()->CheckPageOwnership(get_userid(),$this->mId);
-			if (!$adding && (check_permission(get_userid(),'Manage All Content') || $showadmin) ) {
+			if (!$adding && ($showadmin || check_permission(get_userid(),'Manage All Content'))) {
 				$userops = UserOperations::get_instance();
 				$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_owner',lang('help_title_content_owner'));
-				return array('<label for="owner">'.lang('owner').':</label>'.$help, $userops->GenerateDropdown($this->Owner()));
+				return array('<label for="owner">'.lang('owner').':</label>'.$help,$userops->GenerateDropdown($this->Owner()));
 			}
 			break;
 

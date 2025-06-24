@@ -185,11 +185,12 @@ class ContentOperations
 	 * Given a content id, load and return the corresponding content object.
 	 *
 	 * @param int $id The numeric id of the content object to load
-	 * @param bool $loadprops Also load the properties of that content object. Defaults to false.
+	 * @param bool $loadprops Also load the extra properties of that content object. Default false.
+	 *   @since 2.2.22F2 If false, the 'target' property is always loaded, but might be ''.
 	 * @param bool $force  @since 2.2.21F2 Whether to always re-generate the content object, ignoring any cache. Defaults to false.
 	 * @return mixed ContentBase | null The loaded content object, if any.
 	 */
-	public function LoadContentFromId($id,$loadprops=false,$force=false)
+	public function LoadContentFromId($id,$loadprops = false,$force = false)
 	{
 		$id = (int) $id;
 		if( $id < 1 ) $id = $this->GetDefaultContent();
@@ -197,13 +198,25 @@ class ContentOperations
 		if( $cached && !$force ) return cms_content_cache::get_content($id);
 
 		$db = CmsApp::get_instance()->GetDb();
-		$query = "SELECT * FROM ".CMS_DB_PREFIX."content WHERE content_id = ?";
-		$row = $db->GetRow($query, array($id));
+		if( $loadprops ) {
+			$query = 'SELECT * FROM '.CMS_DB_PREFIX.'content WHERE content_id = ?';
+		}
+		else {
+			//always retrieve the page's target property if any (per FR#12548)
+			$query = 'SELECT C.*,P.content AS target FROM '.CMS_DB_PREFIX.
+			'content C LEFT JOIN '.CMS_DB_PREFIX.
+			"content_props P on C.content_id=P.content_id
+AND P.prop_name = 'target' WHERE C.content_id = ?";
+		}
+		$row = $db->GetRow($query,array($id));
 		if( $row ) {
 			$classtype = strtolower($row['type']);
 			$contentobj = $this->CreateNewContent($classtype);
 			if( $contentobj ) {
-				$contentobj->LoadFromData($row, $loadprops);
+				$contentobj->LoadFromData($row,$loadprops);
+				if( !$loadprops ) {
+					$contentobj->SetPropertyValueNoLoad('target',($row['target'] ?: ''),true);
+				}
 				if( !($cached || $force) ) cms_content_cache::add_content($id,$row['content_alias'],$contentobj);
 				return $contentobj;
 			}
@@ -218,7 +231,7 @@ class ContentOperations
 	 * @param bool $only_active If true, only return the object if its active-flag is true. Defaults to false.
 	 * @return mixed ContentBase | null The loaded content object, if any.
 	 */
-	public function LoadContentFromAlias($alias, $only_active = false)
+	public function LoadContentFromAlias($alias,$only_active = false)
 	{
 		if( cms_content_cache::content_exists($alias) ) return cms_content_cache::get_content($alias);
 
@@ -332,7 +345,7 @@ class ContentOperations
 	public function register_content_type(CmsContentTypePlaceHolder $obj)
 	{
 		$this->_get_content_types();
-		if( isset($this->_content_types[$obj->type]) ) return FALSE;
+		if( isset($this->_content_types[$obj->type]) ) return false;
 
 		if( !class_exists( $obj->class ) && is_file( $obj->filename ) ) require_once $obj->filename;
 		$this->_content_types[$obj->type] = $obj;
@@ -569,7 +582,7 @@ class ContentOperations
 	 * @param bool $inactive  Load inactive pages as well
 	 * @param bool $showinmenu Load pages marked as show in menu
 	 */
-	public function LoadAllContent($loadprops = FALSE,$inactive = FALSE,$showinmenu = FALSE)
+	public function loadallcontent($loadprops = false,$inactive = false,$showinmenu = false)
 	{
 		static $_loaded = 0;
 		if( $_loaded == 1 ) return;
@@ -663,7 +676,7 @@ class ContentOperations
 	 * @param array   $explicit_ids (optional) array of explicit content ids to load
 	 * @author Ted Kulp
 	 */
-	public function LoadChildren($id, $loadprops = false, $all = false, $explicit_ids = array() )
+	public function LoadChildren($id,$loadprops = false,$all = false,$explicit_ids = array() )
 	{
 		$db = CmsApp::get_instance()->GetDb();
 
@@ -781,7 +794,7 @@ class ContentOperations
 	 * @param bool $loadprops Whether to also load extended properties. Default true.
 	 * @return array The array of content objects
 	 */
-	public function GetAllContent($loadprops=true)
+	public function GetAllContent($loadprops = true)
 	{
 		debug_buffer('get all content...');
 		$gCms = CmsApp::get_instance();
@@ -813,10 +826,10 @@ class ContentOperations
 	 *
 	 * @param int $current Numeric id of the content object we are working with.
 	 *  Used with $allowcurrent to omit children of the current content object
-	 *  or itself. Default 0
+	 *  or itself. Can be -1.  Default 0
 	 * @param int $selected Numeric id of the currently selected content object (new in 2.2). Default 0
-	 *  (Before 2.2 this parameter was $parent)
-	 * @param string $name The html name of the dropdown. Default 'parent_id'
+	 *  Can be -1. (Before 2.2 this parameter was $parent)
+	 * @param string $name The html name attribute of the created dropdown. Default 'parent_id'
 	 * @param bool $allowcurrent If false, $current cannot be selected, nor
 	 *  can its children. Used to prevent circular deadlocks. Default false
 	 * @param bool $use_perms If true, shows only the items which the current
@@ -918,7 +931,7 @@ EOS;
 	 * @param int $id The content id to query
 	 * @return string The resulting content alias, or empty if not found.
 	 */
-	public function GetPageAliasFromID( $id )
+	public function GetPageAliasFromID($id)
 	{
 		$node = $this->quickfind_node_by_id($id);
 		if( $node ) return $node->getTag('alias');
@@ -971,10 +984,10 @@ EOS;
 	 * @param int $content_id The id of the current page, for used alias checks on existing pages
 	 * @return string The error, if any.  If there is no error, returns empty string.
 	 */
-	public function CheckAliasError($alias, $content_id = -1)
+	public function CheckAliasError($alias,$content_id = -1)
 	{
 		if( !$this->CheckAliasValid($alias) ) return lang('invalidalias2');
-		if ($this->CheckAliasUsed($alias,$content_id)) return lang('aliasalreadyused');
+		if( $this->CheckAliasUsed($alias,$content_id) ) return lang('aliasalreadyused');
 		return '';
 	}
 
