@@ -264,7 +264,6 @@ function cms_htmlentities($val,$param = ENT_QUOTES,$charset = 'UTF-8',$convert_s
  * A function to output a backtrace into the generated log file.
  *
  * @see debug_to_log, debug_bt
- * Rolf: Looks like not used
  */
 function debug_bt_to_log()
 {
@@ -634,35 +633,46 @@ function is_directory_writable($path)
 
 
 /**
- * Return an array containing a list of files in a directory
- * performs a non recursive search.
- *
+ * Return a list of all or matching items in the given directory (not recursive)
  * @internal
- * @param path - path to search
- * @param extensions - include only files matching these extensions
- *                     case insensitive, comma delimited
- * Rolf: only used in this file
+ *
+ * @param string $path Filepath of directory to scan
+ * @param string $extensions Filename extension(s) to match. Comma-separated, any case. Default ''
+ * @param bool $excludedot Whether to exclude items whose name starts with '.' Default true
+ * @param bool $excludedir Whether to exclude directories. Default true
+ * @param string $prefix Filename prefix to exclude or include (per $excludefiles) Default ''
+ * @param bool $excludefiles Whether to ignore items whose name begins with $prefix Default true
+ *   False to ignore items whose name does not begin with $prefix
+ * @return array maybe empty
+ * Rolf: Core use only in this file
  */
-function get_matching_files($dir,$extensions = '',$excludedot = true,$excludedir = true,$fileprefix = '',$excludefiles = 1)
+function get_matching_files($path,$extensions = '',$excludedot = true,$excludedir = true,$prefix = '',$excludefiles = true)
 {
-    if( !is_dir($dir) ) return [];
-    $dh = opendir($dir);
+    if( !is_dir($path) ) return [];
+    $dh = opendir($path);
     if( !$dh ) return [];
 
-    if( !empty($extensions) ) $extensions = explode(',',strtolower($extensions));
+    if( $extensions ) $extensions = explode(',',strtolower($extensions));
     $results = array();
     while( false !== ($file = readdir($dh)) ) {
         if( $file == '.' || $file == '..' ) continue;
-        if( startswith($file,'.') && $excludedot ) continue;
-        if( is_dir(cms_join_path($dir,$file)) && $excludedir ) continue;
-        if( !empty($fileprefix) ) {
-            if( $excludefiles == 1 && startswith($file,$fileprefix) ) continue;
-            if( $excludefiles == 0 && !startswith($file,$fileprefix) ) continue;
+        if( $excludedot && startswith($file,'.') ) continue;
+        if( $excludedir && is_dir(cms_join_path($dir,$file)) ) continue;
+        if( $prefix ) {
+            if( $excludefiles ) {
+                if( startswith($file,$prefix) ) continue;
+            }
+            elseif( !startswith($file,$prefix) ) {
+                continue;
+            }
         }
-
-        $ext = strtolower(substr($file,strrpos($file,'.')+1));
-        if( $extensions && is_array($extensions) && !in_array($ext,$extensions) ) continue;
-
+        if( $extensions ) {
+            $p = strrpos($file,'.');
+            if( $p > 0 ) {
+                $ext = strtolower(substr($file,$p + 1));
+                if( !in_array($ext,$extensions) ) continue;
+            }
+        }
         $results[] = $file;
     }
     closedir($dh);
@@ -751,7 +761,7 @@ function recursive_delete($dirname)
  * @see chmod
  * @param string $path The start location
  * @param int $mode The octal mode
- * Rolf: only used in admin/listmodules.php
+ * @return int|bool value returned by chmod() | false
  */
 function chmod_r($path,$mode)
 {
@@ -988,9 +998,8 @@ function stack_trace()
  */
 function cms_move_uploaded_file($tmpfile,$destination)
 {
-    $config = cms_config::get_instance();
     // reject browser-executable files
-    $helper = new \CMSMS\FileTypeHelper($config);
+    $helper = new CMSMS\FileTypeHelper();
     if( $helper->is_executable($destination) ) {
         //TODO report|log error or throw new Exception(lang(''))
         return FALSE;
@@ -1122,18 +1131,25 @@ function is_email($email,$checkDNS = false)
 
 
 /**
- * A convenience method to output the secure param tag that is used on all admin links.
+ * A convenience method to get the security parameter used in all admin links.
+ * UNUSED
  *
  * @internal
  * @access private
  * @return string
- * Rolf: only used in admin/imagefiles.php
  */
 function get_secure_param()
 {
     $urlext = '?';
-    $str = strtolower(ini_get('session.use_cookies'));
-    if( $str == '0' || $str == 'off' ) $urlext .= htmlspecialchars(SID).'&';
+/*
+BAD including a session identifier means exposing implementation  detail in URLs
+    $str = ini_get('session.use_cookies');
+    if( $str == '0' || strcasecmp($str,'off') == 0 ) {
+        if( defined('SID') ) {
+            $urlext .= htmlspecialchars(SID).'&';
+        }
+    }
+*/
     $urlext .= CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
     return $urlext;
 }
