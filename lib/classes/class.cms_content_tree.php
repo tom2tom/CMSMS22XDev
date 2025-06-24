@@ -314,7 +314,7 @@ class cms_content_tree extends cms_tree
 	 * Get the children for this node.
 	 *
 	 * This method will retrieve a list of the children of this node, loading
-	 * their content objects at the same time (as a preformance enhancement).
+	 * their content objects at the same time (as a performance enhancement).
 	 *
 	 * This method takes advantage of the content cache.
 	 *
