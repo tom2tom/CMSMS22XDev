@@ -281,7 +281,7 @@ $lang['disable'] = "Disable";
 $lang['disabled'] = "Disabled";
 $lang['disablesafemodewarning'] = "Disable Admin safe mode warning";
 $lang['disable_functions'] = "disable_functions in PHP";
-$lang['disable_wysiwyg'] = "Disable WYSIWYG editor on this page (regardless of template or user settings)";
+$lang['disable_wysiwyg'] = "Disable WYSIWYG Editing";
 $lang['disallowed_contenttypes'] = "Content Types that are NOT allowed";
 $lang['documentation'] = "Documentation";
 $lang['down'] = "Down";
@@ -571,7 +571,7 @@ $lang['event_help_contenteditpost'] = "<h4>Parameters</h4>
 ";
 $lang['event_help_contenteditpre'] = "<h4>Parameters</h4>
 <ul>
-<li>'global_content' - Reference to the affected content object.</li>
+<li>'content' - Reference to the affected content object.</li>
 </ul>
 ";
 $lang['event_help_contentpostcompile'] = "<h4>Parameters</h4>
@@ -852,8 +852,8 @@ $lang['frontendlang'] = "Default language for the frontend";
 $lang['frontendwysiwygtouse'] = "Frontend WYSIWYG";
 
 ## G
-$lang['gcb_wysiwyg'] = "Enable GCB WYSIWYG";
-$lang['gcb_wysiwyg_help'] = "Enable the WYSIWYG editor while editing Global Content Blocks";
+//$lang['gcb_wysiwyg'] = "Enable GCB WYSIWYG";
+//$lang['gcb_wysiwyg_help'] = "Enable the WYSIWYG editor while editing Global Content Blocks";
 $lang['gd_version'] = "GD version";
 $lang['general_operation_settings'] = "General Operation Settings";
 $lang['general_settings'] = "General Settings";
@@ -887,7 +887,7 @@ $lang['help_content_addteditor'] = "This field allows you to specify other Admin
 $lang['help_content_cachable'] = "This toggle indicates whether the content of this page should be cached on the server, and on the browser.  If a page is not cachable, then it must be regenerated on each and every request.  Setting a page to be cachable can be a significant performance boost for most websites.";
 $lang['help_content_content_en'] = "This is the default content block.  Here you enter the content that will be most prominently displayed on the content page";
 $lang['help_content_default'] = 'This toggle indicates whether this page is this website\'s default page. If you change the setting from checked/true to unchecked/false, you <strong>MUST manually set</strong> another page as the default, to replace this one.';
-$lang['help_content_disablewysiwyg'] = "This checkbox is used to indicate that regardless of settings in the page template, or user settings no WYSIWYG editor should be used at all in any text area on this page.  This is useful when the page uses a standard site page template, but contains either hard coded HTML, Smarty logic, or only displays the output of a third party module";
+$lang['help_content_disablewysiwyg'] = "This checkbox is used to indicate that regardless of settings in the page template and/or user settings, no WYSIWYG editor should be used in any text area on this page.  This can be useful when the page uses a standard site page template but contains either hard-coded HTML, Smarty logic, or only displays output from a non-core module";
 $lang['help_content_extra1'] = "This field is used for advanced navigations or template logic. Consult your site developer to see if you need to edit this value when managing content";
 $lang['help_content_extra2'] = "This field is used for advanced navigations or template logic. Consult your site developer to see if you need to edit this value when managing content";
 $lang['help_content_extra3'] = "This field is used for advanced navigations or template logic. Consult your site developer to see if you need to edit this value when managing content";
@@ -932,7 +932,7 @@ $lang['help_title_page_alias'] = 'Page Alias field';
 $lang['help_title_page_disablewysiwyg'] = 'WYSIWYG toggle';
 $lang['help_title_page_searchable'] = 'Searchable toggle';
 $lang['help_title_page_url'] = 'Page URL field';
-$lang['help_title_page_wantschildren'] = 'Page wants children';
+$lang['help_title_page_wantschildren'] = 'Child pages allowed';
 $lang['home'] = "Home";
 $lang['homepage'] = "Homepage";
 $lang['hostname'] = "Host name";
@@ -1355,7 +1355,7 @@ $lang['run_udt'] = "Run this User Defined Tag";
 ## S
 $lang['safe_mode'] = "PHP Safe Mode";
 $lang['saveconfig'] = "Save Config";
-$lang['searchable'] = "This page is searchable";
+$lang['searchable'] = "Searchable";
 $lang['search_module'] = "Search module";
 $lang['search_string_find'] = "Connection ok!";
 $lang['secure'] = "Secure (HTTPS)";
@@ -1597,7 +1597,7 @@ $lang['viewsite'] = "View Site";
 $lang['view_page'] = "View this page in a new window";
 
 ## W
-$lang['wantschildren'] = 'Wants Children';
+$lang['wantschildren'] = 'Child Pages Allowed';
 $lang['warning_mail_settings'] = 'Your mail settings have not been configured.  This could interfere with the ability of your website to send email messages. You should go to <a href="%s">Extensions >> CMSMailer</a> and configure the mail settings with the information provided by your host.';
 $lang['warning_safe_mode'] = "<strong><em>WARNING:</em></strong> PHP Safe mode is enabled. This will cause difficulty with files uploaded via the web browser interface, including images, theme and module XML packages.  You are advised to contact your site administrator to see about disabling safe mode.";
 $lang['warning_upgrade'] = "<em><strong>Warning:</strong></em> CMSMS is in need of an upgrade!";
@@ -1642,7 +1642,7 @@ $lang['help_content_titleattribute'] = "Specify a brief description for this con
 $lang['help_css_max_age'] = "This parameter should be set relatively high for static sites, and should be set to 0 for site development";
 $lang['help_page_alias'] = "The alias is used as an alternate to the page id to uniquely identify a page. It must be unique across all pages.  The alias is also used to assist in building the URL for the page";
 $lang['help_page_cachable'] = "Performance can be increased by setting as many pages as possible to cachable.  However this cannot be used for pages where content may change on a per request basis";
-$lang['help_page_disablewysiwyg'] = "This option will disable the WYSIWYG editor for all content areas on this page independent of settings in the {content} block or user settings";
+$lang['help_page_disablewysiwyg'] = "This option will disable WYSIWYG editing for all content areas on this page, regardless of template {content} block attributes and/or user settings";
 $lang['help_page_searchable'] = "This setting indicates whether the content of this page should be indexed by the Search module";
 $lang['help_page_url'] = "Specify an alternate URL (relative to the root of your website) that can be used to uniquely identify this page e.g. path/to/mypage.  The page URL is only useful when pretty URLs are enabled.";
 $lang['invalid_url2'] = "The page URL specified is invalid.  It should contain only alphanumeric characters, or - or /.  Extensions must contain only alphanumeric chars and be less than 5 characters in length.  It is also possible that the URL specified is already in use.";
