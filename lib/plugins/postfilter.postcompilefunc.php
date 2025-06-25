@@ -19,7 +19,7 @@ use CMSMS\HookManager;
 
 function smarty_postfilter_postcompilefunc($tpl_output, $smarty)
 {
-    $result = explode(':', $smarty->_current_file);
+    $result = (!empty($smarty->smarty->_current_file)) ? explode(':', $smarty->smarty->_current_file) : [];
 
     if (count($result) > 1) {
         switch ($result[0]) {

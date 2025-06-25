@@ -236,38 +236,38 @@ function smarty_function_cms_stylesheet($params, $smarty)
 	Misc functions
 **********************************************************/
 
-function cms_stylesheet_writeCache($filename, $list, $trimbackground, $minimize, $smarty)
+function cms_stylesheet_writeCache($filename, $list, $trimbackground, $minimize, $tpl)
 {
 	$_contents = '';
 	if( is_string($list) && !is_array($list) ) $list = array($list);
 
 	// Smarty processing
-	$ol = $smarty->left_delimiter;
-	$or = $smarty->right_delimiter;
-	$smarty->left_delimiter = '[[';
-	$smarty->right_delimiter = ']]';
+	$ol = $tpl->smarty->left_delimiter;
+	$or = $tpl->smarty->right_delimiter;
+	$tpl->smarty->left_delimiter = '[[';
+	$tpl->smarty->right_delimiter = ']]';
 
 	try {
 		foreach( $list as $name ) {
 			// force the stylesheet to compile because of smarty bug:  https://github.com/smarty-php/smarty/issues/72
-			$tmp = $smarty->force_compile;
-			$smarty->force_compile = 1;
-			$_contents .= $smarty->fetch('cms_stylesheet:'.$name);
-			$smarty->force_compile = $tmp;
+			$tmp = $tpl->smarty->force_compile;
+			$tpl->smarty->force_compile = 1;
+			$_contents .= $tpl->fetch('cms_stylesheet:'.$name);
+			$tpl->smarty->force_compile = $tmp;
 		}
 	}
 	catch (SmartyException $e) {
 		// why not just re-throw the exception as it may have a smarty error in it.
-		$smarty->left_delimiter = $ol;
-		$smarty->right_delimiter = $or;
+		$tpl->smarty->left_delimiter = $ol;
+		$tpl->smarty->right_delimiter = $or;
 		debug_to_log('Error Processing Stylesheet');
 		debug_to_log($e->GetMessage());
 		audit('','Plugin:cms_stylesheet', 'Smarty compilation failed, an error in the template?');
 		return '';
 	}
 
-	$smarty->left_delimiter = $ol;
-	$smarty->right_delimiter = $or;
+	$tpl->smarty->left_delimiter = $ol;
+	$tpl->smarty->right_delimiter = $or;
 
 	if( $trimbackground ) {
 		// Replace/remove background properties

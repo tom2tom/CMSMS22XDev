@@ -72,8 +72,12 @@ final class CmsJobManager extends \CMSModule
 
     protected function create_new_template($str)
     {
-        $smarty = $this->GetActionTemplateObject();
         $modname = $this->GetName();
+        $tpl = $this->GetActionTemplateObject();
+        if ($tpl) {
+            return $tpl->smarty->createTemplate($this->GetTemplateResource($str),null,$modname,$tpl);
+        }
+        $smarty = cmsms()->GetSmarty();
         return $smarty->createTemplate($this->GetTemplateResource($str),null,$modname,$smarty);
     }
 

@@ -14,7 +14,7 @@ class page_template_parser extends \Smarty_Internal_Template
         parent::__construct($template_resource, $smarty, $_parent, $_cache_id, $_compile_id, $_caching, $_cache_lifetime);
 
         $this->registerDefaultPluginHandler(array($this,'defaultPluginHandler'));
-        $this->merge_compiled_includes = TRUE;
+        $this->smarty->merge_compiled_includes = TRUE;
 
         try {
             $this->registerPlugin('compiler','content',array('CMS_Content_Block','smarty_compiler_contentblock'),false);
@@ -34,7 +34,7 @@ class page_template_parser extends \Smarty_Internal_Template
      */
     public static function _dflt_plugin($params,$smarty)
     {
-		return '';
+        return '';
     }
 
     /**
@@ -45,12 +45,11 @@ class page_template_parser extends \Smarty_Internal_Template
      */
     public function defaultPluginHandler($name, $type, $template, &$callback, &$script, &$cachable)
     {
-		if($type == 'compiler') {
-			$callback = array(__CLASS__,'_dflt_plugin');
-			$cachable = false;
-			return TRUE;
-		}
-
+        if($type == 'compiler') {
+            $callback = array(__CLASS__,'_dflt_plugin');
+            $cachable = false;
+            return TRUE;
+        }
         return FALSE;
     }
 

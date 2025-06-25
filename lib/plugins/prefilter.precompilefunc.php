@@ -19,7 +19,7 @@ use CMSMS\HookManager;
 
 function smarty_prefilter_precompilefunc($tpl_output, $smarty)
 {
-    $result = explode(':', $smarty->_current_file);
+    $result = (!empty($smarty->smarty->_current_file)) ? explode(':', $smarty->smarty->_current_file) : [];
 
     if (count($result) > 1) {
         if( startswith($result[0],'tmp_') ) $result[0] = 'template';

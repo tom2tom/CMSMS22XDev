@@ -45,7 +45,7 @@ function smarty_function_metadata($params, $smarty)
 
 	if (is_object($content_obj) && $content_obj->Metadata() != '') $result .= "\n" . $content_obj->Metadata();
 
-	if (strpos($result,$smarty->left_delimiter) !== false && strpos($result,$smarty->right_delimiter) !== false) {
+	if (strpos($result,$smarty->smarty->left_delimiter) !== false && strpos($result,$smarty->smarty->right_delimiter) !== false) {
 		$result = $smarty->fetch('string:'.$result);
 	}
 
