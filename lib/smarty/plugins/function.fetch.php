@@ -113,7 +113,7 @@ function smarty_function_fetch($params, $template)
                         if (!preg_match('!\D!', $param_value)) {
                             $proxy_port = (int)$param_value;
                         } else {
-                            trigger_error("[plugin] invalid value for attribute '{$param_key }'", E_USER_NOTICE);
+                            trigger_error("[plugin] invalid value for attribute '{$param_key}'", E_USER_NOTICE);
                             return;
                         }
                         break;
