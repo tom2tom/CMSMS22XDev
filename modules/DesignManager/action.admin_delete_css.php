@@ -23,9 +23,7 @@ if( !$this->CheckPermission('Manage Stylesheets') ) return;
 
 $this->SetCurrentTab('stylesheets');
 if( isset($params['cancel']) ) {
-  if( $params['cancel'] == $this->Lang('cancel') ) {
-    $this->SetMessage($this->Lang('msg_cancelled'));
-  }
+  $this->SetMessage($this->Lang('msg_cancelled'));
   $this->RedirectToAdminTab();
 }
 
@@ -46,7 +44,7 @@ try {
   }
 
   $modname = $this->GetName();
-  $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_delete_css.tpl", null, $modname, $smarty);
+  $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_delete_css.tpl",null,$modname,$smarty);
   $tpl->assign('css',$css_ob);
   $tpl->display();
 }
