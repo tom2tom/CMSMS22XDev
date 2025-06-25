@@ -61,7 +61,7 @@ try {
     $pagelimit = cms_userprefs::get($this->GetName().'_pagelimit',100);
 
     $builder->set_pagelimit($pagelimit);
-    if( isset($params['seek']) && $params['seek'] != '' ) {
+    if( isset($params['seek']) && $params['seek'] ) { // i.e. not '' (admin) or 0
         $builder->seek_to((int)$params['seek']);
     }
     else {
