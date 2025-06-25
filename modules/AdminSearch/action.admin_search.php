@@ -46,9 +46,15 @@ function end_section()
   echo '<script>parent.end_section();</script>';
 }
 
-if( isset($params['submit']) && empty($params['search_text']) ) {
-  status_error($this->Lang('error_nosearchtext'));
-  return;
+if( isset($params['submit']) ) {
+    if( empty($params['search_text']) ) {
+        status_error($this->Lang('error_nosearchtext'));
+        return;
+    }
+    elseif( empty($params['slaves']) ) {
+        status_error($this->Lang('error_select_slave'));
+        return;
+    }
 }
 
 // save the search
