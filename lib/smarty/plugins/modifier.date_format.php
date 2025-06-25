@@ -49,6 +49,7 @@ function smarty_modifier_date_format($string, $format = null, $default_date = ''
         return;
     }
     if ($formatter === 'strftime' || ($formatter === 'auto' && strpos($format, '%') !== false)) {
+        //TODO replace strftime()
         if (Smarty::$_IS_WINDOWS) {
             $_win_from = array(
                 '%D',
