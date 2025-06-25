@@ -41,9 +41,10 @@ abstract class CMS_Fixed_Resource_Custom extends Smarty_Resource_Custom
         if ($mtime !== null) { //smarty defaults to null
             $source->timestamp = $mtime; //might be 0
         } else {
+            $content = $timestamp = null;
             $this->fetch($source->name, $content, $timestamp);
-            $source->timestamp = (isset($timestamp)) ? (int)$timestamp : false;
-            if( isset($content) ) $source->content = $content;
+            $source->timestamp = ($timestamp !== null) ? (int)$timestamp : false;
+            if ($content !== null) $source->content = $content;
         }
         $source->exists = !!$source->timestamp;
     }
