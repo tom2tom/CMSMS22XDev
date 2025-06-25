@@ -36,7 +36,7 @@
  */
 
 if( !CmsApp::get_instance()->test_state(CmsApp::STATE_ADMIN_PAGE) )
-    throw new CmsLogicException('Attempt to use cms_admin_utils class from an invalid request');
+	throw new CmsLogicException('Attempt to use cms_admin_utils class from an invalid request');
 
 /**
  * A Simple static class providing various convenience utilities for admin requests.
@@ -65,7 +65,7 @@ final class cms_admin_utils
 		if( !is_object($theme) ) return '';
 
 		$smarty = \Smarty_CMS::get_instance();
-		$module = $smarty->get_template_vars('actionmodule');
+		$module = $smarty->getTemplateVars('actionmodule');
 
 		$dirs = array();
 		if( $module ) {
@@ -110,7 +110,7 @@ final class cms_admin_utils
 		if( count($args) >= 2 && is_string($args[0]) && is_string($args[1]) ) {
 			$params['key1'] = $args[0];
 			$params['key2'] = $args[1];
-            if( isset($args[2]) ) $params['title'] = $args[2];
+			if( isset($args[2]) ) $params['title'] = $args[2];
 		}
 		else if( count($args) == 1 && is_string($args[0]) ) {
 			$params['key2'] = $args[0];
@@ -125,7 +125,7 @@ final class cms_admin_utils
 		$key1 = '';
 		$key2 = '';
 		$title = '';
-        $titlekey = '';
+		$titlekey = '';
 		foreach( $params as $key => $value ) {
 			switch( $key ) {
 			case 'key1':
@@ -137,9 +137,9 @@ final class cms_admin_utils
 			case 'key':
 				$key2 = trim($value);
 				break;
-            case 'titlekey':
-                $titlekey = $value;
-                break;
+			case 'titlekey':
+				$titlekey = $value;
+				break;
 			case 'title':
 				$title = $value;
 			}
@@ -147,7 +147,7 @@ final class cms_admin_utils
 
 		if( !$key1 ) {
 			$smarty = \Smarty_CMS::get_instance();
-			$module = $smarty->get_template_vars('actionmodule');
+			$module = $smarty->getTemplateVars('actionmodule');
 			if( $module ) {
 				$key1 = $module;
 			}
@@ -156,7 +156,7 @@ final class cms_admin_utils
 			}
 		}
 
-		if( !$key1 ) 	return '';
+		if( !$key1 ) return '';
 
 		$key = $key1;
 		if( $key2 !== '' ) $key .= '__'.$key2;
