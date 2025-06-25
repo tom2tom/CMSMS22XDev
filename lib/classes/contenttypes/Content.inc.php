@@ -614,7 +614,11 @@ class Content extends ContentBase
 
 	/**
 	 * @ignore
-	 * @return mixed array or string
+	 *
+	 * @param type $blockInfo
+	 * @param type $value
+	 * @param bool $adding UNUSED
+	 * @return string
 	 */
 	private function _display_image_block($blockInfo,$value,$adding)
 	{
@@ -654,7 +658,10 @@ class Content extends ContentBase
 			return $input;
 		}
 		else {
-			$dropdown = create_file_dropdown($inputname,$dir,$value,'jpg,jpeg,png,gif','',true,'',$prefix,1,$sort);
+			$helper = new CMSMS\FileTypeHelper();
+			$exts = $helper->get_type_extensions('image',true);
+			$picks = implode(',',$exts);
+			$dropdown = create_file_dropdown($inputname,$dir,$value,$picks,'',true,'',$prefix,false,$sort);
 			if( !$dropdown ) $dropdown = lang('error_retrieving_file_list');
 			return $dropdown;
 		}
