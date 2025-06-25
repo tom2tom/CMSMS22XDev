@@ -126,7 +126,7 @@ if( !empty($params['orderlist']) ) {
 }
 
 $modname = $this->GetName();
-$tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_ordercontent.tpl", null, $modname, $smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_ordercontent.tpl",null,$modname,$smarty);
 $tpl->assign('tree',$tree);
 $tpl->display();
 

@@ -94,7 +94,7 @@ try {
     }
 
     $modname = $this->GetName();
-    $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_delete_design.tpl", null, $modname, $smarty);
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_delete_design.tpl",null,$modname,$smarty);
 
     $tpl->assign('tpl_permission',$can_delete_templates);
     $tpl->assign('css_permission',$can_delete_stylesheets);

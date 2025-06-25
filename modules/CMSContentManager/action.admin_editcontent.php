@@ -379,7 +379,7 @@ if( $error ) echo $this->ShowErrors($error);
 
 // give stuff to smarty.
 $modname = $this->GetName();
-$tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_editcontent.tpl", null, $modname, $smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_editcontent.tpl",null,$modname,$smarty);
 
 if( $content_obj->HasPreview() ) {
     $tpl->assign('has_preview',1);

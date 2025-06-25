@@ -117,7 +117,7 @@ try {
     }
 
     $modname = $this->GetName();
-    $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_bulk_css.tpl", null, $modname, $smarty);
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_bulk_css.tpl",null,$modname,$smarty);
 
     $tpl->assign('bulk_op',$bulk_op);
     $allparms = base64_encode(json_encode(['css_select'=>$params['css_select'],'css_bulk_action'=>$params['css_bulk_action']]));

@@ -111,7 +111,7 @@ foreach( $pagelist as $pid ) {
     $displaydata[] = $rec;
 }
 $modname = $this->GetName();
-$tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_bulk_setdesign.tpl", null, $modname, $smarty);
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_bulk_setdesign.tpl",null,$modname,$smarty);
 
 $tpl->assign('showmore',\cms_userprefs::get('cgcm_bulk_showmore'));
 $tpl->assign('multicontent',$params['multicontent']);
