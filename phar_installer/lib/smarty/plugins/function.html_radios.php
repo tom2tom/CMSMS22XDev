@@ -114,7 +114,7 @@ function smarty_function_html_radios($params, Smarty_Internal_Template $template
                 if (!empty($params[ 'strict' ])) {
                     if (!is_scalar($_val)) {
                         trigger_error(
-                            "html_options: {$_key} attribute must be a scalar, only boolean true or string '$_key' will actually add the attribute",
+                            "html_radios: $_key attribute must be a scalar, only boolean true or string '$_key' will actually add the attribute",
                             E_USER_NOTICE
                         );
                     }
@@ -187,7 +187,7 @@ function smarty_function_html_radios($params, Smarty_Internal_Template $template
  * @param $separator
  * @param $labels
  * @param $label_ids
- * @param $escape
+ * @param $escape Default true
  *
  * @return string
  */
@@ -200,7 +200,7 @@ function smarty_function_html_radios_output(
     $separator,
     $labels,
     $label_ids,
-    $escape
+    $escape = true
 ) {
     $_output = '';
     if (is_object($value)) {
@@ -208,7 +208,7 @@ function smarty_function_html_radios_output(
             $value = (string)$value->__toString();
         } else {
             trigger_error(
-                'html_options: value is an object of class \'' . get_class($value) .
+                'html_radios: value is an object of class \'' . get_class($value) .
                 '\' without __toString() method',
                 E_USER_NOTICE
             );
@@ -222,7 +222,7 @@ function smarty_function_html_radios_output(
             $output = (string)$output->__toString();
         } else {
             trigger_error(
-                'html_options: output is an object of class \'' . get_class($output) .
+                'html_radios: output is an object of class \'' . get_class($output) .
                 '\' without __toString() method',
                 E_USER_NOTICE
             );

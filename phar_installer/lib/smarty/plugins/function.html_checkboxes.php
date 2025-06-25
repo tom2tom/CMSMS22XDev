@@ -131,7 +131,7 @@ function smarty_function_html_checkboxes($params, Smarty_Internal_Template $temp
                 if (!empty($params[ 'strict' ])) {
                     if (!is_scalar($_val)) {
                         trigger_error(
-                            "html_options: {$_key} attribute must be a scalar, only boolean true or string '{$_key}' will actually add the attribute",
+                            "html_checkboxes: $_key attribute must be a scalar, only boolean true or string '{$_key}' will actually add the attribute",
                             E_USER_NOTICE
                         );
                     }
@@ -203,7 +203,7 @@ function smarty_function_html_checkboxes($params, Smarty_Internal_Template $temp
  * @param      $separator
  * @param      $labels
  * @param      $label_ids
- * @param bool $escape
+ * @param bool $escape Default true
  *
  * @return string
  */
@@ -224,7 +224,7 @@ function smarty_function_html_checkboxes_output(
             $value = (string)$value->__toString();
         } else {
             trigger_error(
-                'html_options: value is an object of class \'' . get_class($value) .
+                'html_checkboxes: value is an object of class \'' . get_class($value) .
                 '\' without __toString() method',
                 E_USER_NOTICE
             );
@@ -238,7 +238,7 @@ function smarty_function_html_checkboxes_output(
             $output = (string)$output->__toString();
         } else {
             trigger_error(
-                'html_options: output is an object of class \'' . get_class($output) .
+                'html_checkboxes: output is an object of class \'' . get_class($output) .
                 '\' without __toString() method',
                 E_USER_NOTICE
             );
