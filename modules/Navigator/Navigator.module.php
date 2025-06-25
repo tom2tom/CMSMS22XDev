@@ -34,27 +34,28 @@
 class NavigatorNode
 {
     // Declared properties prevent deprecation warnings
+    // Non-runtime-specific values are set
     public $accesskey;
     public $alias;
     public $children;
-    public $children_exist;
+    public $children_exist = false;
     public $created;
-    public $current;
+    public $current = false;
     public $default;
     public $depth;
     public $extra1;
     public $extra2;
     public $extra3;
-    public $has_children;
+    public $has_children = false;
     public $hierarchy;
     public $id;
     public $image;
     public $menutext;
     public $modified;
-    public $parent;
+    public $parent = false;
     public $raw_menutext;
     public $tabindex;
-    public $target;
+    public $target = '';
     public $titleattribute;
     public $type;
     public $url;
