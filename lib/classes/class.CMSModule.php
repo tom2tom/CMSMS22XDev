@@ -2457,17 +2457,18 @@ abstract class CMSModule
      */
 
     /**
-     * Get a reference to the smarty template object that was passed in to the the action.
+     * Get the Smarty template object that was passed to the current action.
      * This method is only valid within a module action.
      *
      * @final
      * @since 2.0.1
      * @author Robert Campbell
-     * @return Smarty_Internal_Template
+     * @return mixed Smarty_Internal_Template | null
      */
     final public function GetActionTemplateObject()
     {
-        if( $this->_action_tpl ) return $this->_action_tpl;
+        if( !empty($this->_action_tpl) ) return $this->_action_tpl;
+        return null;
     }
 
     /**
