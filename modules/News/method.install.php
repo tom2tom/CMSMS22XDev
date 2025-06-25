@@ -308,8 +308,8 @@ $this->SetPreference('email_subject',$this->Lang('subject_newnews'));
 $this->SetTemplate('email_template',$this->GetDfltEmailTemplate());
 
 // Other preferences
-$this->SetPreference('allowed_upload_types','bmp,jpg,jpeg,gif,png,svg,webp,ico'); // replicate FileTypeHelper
-$this->SetPreference('auto_create_thumbnails','gif,jpg,jpeg,png'); // UNUSED
+$this->SetPreference('allowed_upload_types','bmp,jpg,jpeg,gif,png,svg,avif,webp,ico'); // c.f. FileTypeHelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','ico','webp','avif','heif','svg'
+$this->SetPreference('auto_create_thumbnails','png,jpg,jpeg,gif,wbmp,webp'); // c.f. FileManager thumbnailable types some PHP's also bmp, avif UNUSED
 /* other possibles
 $this->SetPreference('alert_drafts',1);
 $this->SetPreference('allcategories',1);
