@@ -108,7 +108,7 @@ if (isset($params['submit']) || isset($params['apply'])) {
             trim($db->DBTimeStamp(time()), "'"),
             $extra,
             $news_url,
-            $searchable,
+            ($searchable)?1:0,
             $articleid
         );
         if ($useexp) {
@@ -338,10 +338,10 @@ if (isset($params['submit']) || isset($params['apply'])) {
         $postdate     = $db->UnixTimeStamp($row['news_date']);
         $startdate    = $db->UnixTimeStamp($row['start_time']);
         $author_id    = $row['author_id'];
-        $searchable   = $row['searchable'];
-        $useexp = 0;
+        $searchable   = (bool)$row['searchable'];
+        $useexp = false;
         if (isset($row['end_time'])) {
-            $useexp  = 1;
+            $useexp  = true;
             $enddate = $db->UnixTimeStamp($row['end_time']);
         }
     }
