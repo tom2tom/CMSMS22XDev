@@ -703,7 +703,7 @@ final class filemanager_utils
         imagesavealpha($i_dest,TRUE); //TODO for png, webp and avif only
 
         imagecopyresampled($i_dest,$i_src,0,0,$src_x,$src_y,$thumb_width,$thumb_height,$src_width,$src_height);
-        // c.f. FileTypeHelper image-file extensions 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','webp','avif','heif','svg'
+        // c.f. FileTypeHelper image-file extensions 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','ico','webp','avif','heif','svg'
         switch( $mime ) {
         case 'image/gif':
             $res = imagegif($i_dest,$dest);
