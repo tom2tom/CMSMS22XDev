@@ -29,21 +29,21 @@
  */
 class Link extends ContentBase
 {
-    public function IsCopyable() { return TRUE; }
-    public function IsViewable() { return FALSE; }
+	public function IsCopyable() { return TRUE; }
+	public function IsViewable() { return FALSE; }
 	public function HasSearchableContent() { return FALSE; }
-    public function FriendlyName() { return lang('contenttype_redirlink'); }
+	public function FriendlyName() { return lang('contenttype_redirlink'); }
 
-    public function SetProperties()
-    {
+	public function SetProperties()
+	{
 		parent::SetProperties();
 		$this->RemoveProperty('secure',FALSE);
 		$this->RemoveProperty('cachable',TRUE);
 		$this->AddProperty('url',3,parent::TAB_MAIN,TRUE,TRUE);
-    }
+	}
 
-    public function FillParams($params,$editing = false)
-    {
+	public function FillParams($params,$editing = false)
+	{
 		parent::FillParams($params,$editing);
 
 		if (isset($params)) {
@@ -54,10 +54,10 @@ class Link extends ContentBase
 
 			if (isset($params['file_url'])) $this->SetPropertyValue('url', $params['file_url']);
 		}
-    }
+	}
 
-    public function ValidateData()
-    {
+	public function ValidateData()
+	{
 		$errors = parent::ValidateData();
 
 		if ($this->GetPropertyValue('url') == '') {
@@ -65,19 +65,19 @@ class Link extends ContentBase
 		}
 
 		return $errors;
-    }
+	}
 
-    public function TabNames()
-    {
+	public function TabNames()
+	{
 		$res = array(lang('main'));
 		if( check_permission(get_userid(),'Manage All Content') ) {
 			$res[] = lang('options');
 		}
 		return $res;
-    }
+	}
 
-    public function display_single_element($one,$adding)
-    {
+	public function display_single_element($one,$adding)
+	{
 		switch($one) {
 		case 'url':
 			return array(lang('url').':','<input type="text" name="url" size="80" value="'.cms_htmlentities($this->GetPropertyValue('url')).'">');
@@ -86,11 +86,11 @@ class Link extends ContentBase
 		default:
 			return parent::display_single_element($one,$adding);
 		}
-    }
+	}
 
-    //this is a redundant CMSMS1 method TODO remove
-    public function EditAsArray($adding = false, $tab = 0, $showadmin = false)
-    {
+	//this is a redundant CMSMS1 method TODO remove
+	public function EditAsArray($adding = false, $tab = 0, $showadmin = false)
+	{
 		switch($tab) {
 		case '0':
 			return $this->display_attributes($adding);
@@ -99,13 +99,13 @@ class Link extends ContentBase
 		default:
 			return [];
 		}
-    }
+	}
 
-    public function GetURL($rewrite = true)
-    {
+	public function GetURL($rewrite = true)
+	{
 		return $this->GetPropertyValue('url');
 		//return cms_htmlentities($this->GetPropertyValue('url'));
-    }
+	}
 }
 
 ?>
