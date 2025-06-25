@@ -2,7 +2,8 @@
 
 class CMS_Smarty_Template extends Smarty_Internal_Template
 {
-    //parent-classes use but formerly didn't declare these class properties
+    //parent-class uses but formerly didn't declare these class properties
+    //cuz it preferred to __get() them with guaranteed pre-population
     //if not using Smarty 4.4.2, 5+ declare here to avoid deprecation notice
 //    public $compiled;
 //    public $compiler;
