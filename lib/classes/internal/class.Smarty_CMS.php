@@ -321,12 +321,12 @@ class Smarty_CMS extends CMSSmartyBase
     /**
      * Get a suitable parent template for a new template.
      *
-     * This method is used when creating new smarty template objects to find a suitable parent.
-     * An internal stack of parents is used to find the latest item on the stack.
-     * if there are no parents, then the root smarty object is used.
+     * Smarty uses a stack of ancestor templates. The parent of this
+     * one will be the closest template on that stack, or if there
+     * are no ancestors, then the root Smarty object is used.
      *
-     * i.e:
-     * <code>$smarty->CreateSmartyTemplate('somefile.tpl',$cache_id,$compile_id,$smarty->get_template_parent());</code>
+     * e.g.
+     * <code>$smarty->createTemplate('somefile.tpl',$cache_id,$compile_id,$smarty->get_template_parent());</code>
      *
      * @since 2.0.1
      * @deprecated
