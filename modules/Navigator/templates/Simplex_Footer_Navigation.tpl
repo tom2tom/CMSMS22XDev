@@ -38,7 +38,7 @@
             {else}
                 {* regular item *}
                 <li{do_footer_class classes=$list_class}>
-                    <a{do_footer_class classes=$href_class} href="{$node->url}"{if $node->target != ''} target="{$node->target}"{/if}>{$node->menutext}</a>
+                    <a{do_footer_class classes=$href_class} href="{$node->url}"{if $node->target} target="{$node->target}"{/if}>{$node->menutext}</a>
                     {if !empty($node->children)}
                         {Simplex_footer_menu data=$node->children depth=$depth+1}
                     {/if}
