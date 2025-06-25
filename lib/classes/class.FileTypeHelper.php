@@ -39,7 +39,7 @@ class FileTypeHelper
     /**
      * @ignore
      */
-    private $_image_extensions = ['jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','webp','avif','heif','svg','apng']; // heif and heic are for iOS
+    private $_image_extensions = ['jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','ico','webp','avif','heif','svg','apng']; // heif and heic are for iOS
     /**
      * @ignore
      * TODO formerly supported 'gz' alone, reinstate? if so, 'bz2' and its aliases? 'xz'?
@@ -328,4 +328,27 @@ class FileTypeHelper
         if( $this->is_executable( $filename ) ) return FileType::TYPE_EXECUTABLE;
         return '';
     }
+
+    /**
+     * Get recorded file-extensions for the given type
+     * @since 2.2.22F2
+     *
+     * @param string $type 'image' etc
+     * @param bool $sort Whether to sort the returned array. Default false.
+     * @return array maybe empty
+     */
+    public function get_type_extensions( $type, $sort = false )
+    {
+        $propname = "_{$type}_extensions";
+        if (!empty($this->$propname)) {
+            if ($sort) {
+                $res = $this->$propname;
+                sort($res, SORT_NATURAL|SORT_FLAG_CASE);
+                return $res;
+            }
+            return $this->$propname;
+        }
+        return [];
+    }
+
 } // end of class
