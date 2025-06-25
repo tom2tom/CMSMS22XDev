@@ -69,13 +69,10 @@ final class Nav_utils
     public static function fill_node(cms_content_tree $node,$deep,$nlevels,$show_all,$collapse = FALSE,$depth = 0)
     {
         if( !is_object($node) ) return null; // no object
-        $gCms = CmsApp::get_instance();
-        $hm = $gCms->GetHierarchyManager();
-        $content = $node->getContent(TRUE,TRUE);
+        $content = $node->getContent($deep,TRUE);
         if( is_object($content) ) {
             if( !$content->Active() ) return null;
-            if( !$content->ShowInMenu() && !$show_all ) return null;
-
+            if( !($show_all || $content->ShowInMenu()) ) return null;
             $obj = new NavigatorNode();
             $obj->id = $content->Id();
             $obj->url = $content->GetURL();
@@ -89,18 +86,18 @@ final class Nav_utils
             $obj->depth = $depth+1;
             $obj->menutext = cms_htmlentities($content->MenuText());
             $obj->raw_menutext = $content->MenuText();
-            $obj->target = '';
             $obj->alias = $content->Alias();
-            $obj->current = FALSE;
-            $obj->parent = FALSE;
-            $obj->has_children = FALSE;
-            $obj->children_exist = FALSE;
+            //other $obj properties:
+            // target, current, parent, has_children, children_exist
+            // are specified in NavigatorNode class
 
+            $gCms = CmsApp::get_instance();
             $cur_content_id = $gCms->get_content_id();
             if( $obj->id == $cur_content_id ) {
-                $obj->current = true;
+                $obj->current = TRUE;
             }
             else {
+                $hm = $gCms->GetHierarchyManager();
                 $tmp_node = $hm->find_by_tag('id',$cur_content_id);
                 while( $tmp_node ) {
                     if( $tmp_node->get_tag('id') == $obj->id ) {
@@ -112,8 +109,11 @@ final class Nav_utils
             }
 
             if( $content->DefaultContent() ) $obj->default = 1;
+            // CMSMS 2.2.22F2 loads the 'target' property along with
+            // core props, regardless of 'deep' parameter supplied to getContent()
+            // and anyway, HasProperty() would otherwise load all available props before checking any
+            if( $content->HasProperty('target') ) $obj->target = $content->GetPropertyValue('target');
             if( $deep ) {
-                if ($content->HasProperty('target')) $obj->target = $content->GetPropertyValue('target');
                 $config = $gCms->GetConfig();
                 $obj->extra1 = $content->GetPropertyValue('extra1');
                 $obj->extra2 = $content->GetPropertyValue('extra2');
@@ -126,7 +126,7 @@ final class Nav_utils
                     $obj->image = $url;
                 }
                 $tmp = $content->GetPropertyValue('thumbnail');
-                if( !empty($tmp) && $tmp != -1 ) {
+                if( $tmp && $tmp != -1 ) {
                     $url = get_site_preference('content_thumbnailfield_path').'/'.$tmp;
                     if( !startswith($url,'/') ) $url = '/'.$url;
                     $url = $config['image_uploads_url'].$url;
@@ -138,7 +138,7 @@ final class Nav_utils
             $children = [];
             if( $node->has_children() ) {
                 $children = $node->getChildren($deep,$show_all);
-                if( is_array($children) && count($children) ) {
+                if( $children && is_array($children) ) {
                     foreach( $children as $node ) {
                         $id = $node->get_tag('id');
                         if( cms_content_cache::content_exists($id) ) {
@@ -150,17 +150,17 @@ final class Nav_utils
             }
 
             // are we recursing?
-            if( is_array($children) && count($children) && ($nlevels < 0 || $depth+1 < $nlevels) &&
-                (($collapse && ($obj->parent || $obj->current)) || !$collapse) ) {
-
+            if( $children && is_array($children) &&
+                ($nlevels < 0 || $depth+1 < $nlevels) &&
+                (!$collapse || $obj->parent || $obj->current) ) { // always try to display expanded if ->current
                 $obj->has_children = TRUE;
                 $child_nodes = array();
-                for( $i = 0; $i < count($children); $i++ ) {
+                for( $i = 0, $n = count($children); $i < $n; $i++ ) {
                     if( self::is_excluded($children[$i]->get_tag('alias')) ) continue;
                     $tmp = self::fill_node($children[$i],$deep,$nlevels,$show_all,$collapse,$depth+1);
                     if( is_object($tmp) ) $child_nodes[] = $tmp;
                 }
-                if( count($child_nodes) ) $obj->children = $child_nodes;
+                if( $child_nodes ) $obj->children = $child_nodes;
             }
 
             return $obj;
