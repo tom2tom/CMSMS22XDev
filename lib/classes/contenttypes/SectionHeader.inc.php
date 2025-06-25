@@ -49,7 +49,7 @@ class SectionHeader extends ContentBase
 	public function HasSearchableContent() { return false; }
 	public function GetURL($rewrite = true) { return '#'; }
 	public function IsViewable() { return false; }
-	public function Navigable() { return false; }
+	public function Navigable() { return true; } //allow inclusion in page-pickers
 
 	public function TabNames()
 	{
