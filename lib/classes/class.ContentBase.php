@@ -2751,7 +2751,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			}
 			else {
 				$helper = new CMSMS\FileTypeHelper($config);
-				$exts = $helper->get_type_extensions('image',true);
+				$exts = $helper->get_file_type_extensions('image',true);
 				$picks = implode(',',$exts);
 				$input = create_file_dropdown('image',$dir,$data,$picks,'',true,'','',false,true);
 			}

@@ -659,7 +659,7 @@ class Content extends ContentBase
 		}
 		else {
 			$helper = new CMSMS\FileTypeHelper();
-			$exts = $helper->get_type_extensions('image',true);
+			$exts = $helper->get_file_type_extensions('image',true);
 			$picks = implode(',',$exts);
 			$dropdown = create_file_dropdown($inputname,$dir,$value,$picks,'',true,'',$prefix,false,$sort);
 			if( !$dropdown ) $dropdown = lang('error_retrieving_file_list');

@@ -337,7 +337,7 @@ class FileTypeHelper
      * @param bool $sort Whether to sort the returned array. Default false.
      * @return array maybe empty
      */
-    public function get_type_extensions( $type, $sort = false )
+    public function get_file_type_extensions( $type, $sort = false )
     {
         $propname = "_{$type}_extensions";
         if (!empty($this->$propname)) {
