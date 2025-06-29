@@ -9,6 +9,7 @@
  * @subpackage PluginsInternal
  * @author     Uwe Tews
  *
+ * Dynamic class-properties, deprecated for PHP 8.2+
  * Runtime extensions
  * @property   Smarty_Internal_Runtime_CacheModify       $_cacheModify
  * @property   Smarty_Internal_Runtime_CacheResourceFile $_cacheResourceFile

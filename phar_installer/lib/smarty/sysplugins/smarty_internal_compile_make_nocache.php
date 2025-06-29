@@ -15,8 +15,8 @@
  * {make_nocache $item} makes the current $item value known in the cached template.
  * {make_nocache} is ignored when caching is disabled or the variable
  * exists as a nocache variable.
- * If the variable value contains object(s) they must implement a
- * __set_state static method. STUPID, TODO
+ * If the variable value contains object(s) it/they must implement a magic
+ * __set_state() static method to support re-importing of var_export()'d value
  *
  * @package    Smarty
  * @subpackage Compiler
@@ -58,7 +58,7 @@ class Smarty_Internal_Compile_Make_Nocache extends Smarty_Internal_CompileBase
     {
         // check and get attributes
         $_attr = $this->getAttributes($compiler, $args);
-        if ($compiler->template->caching != Smarty::CACHING_OFF) { // 0
+        if ($compiler->template->caching) { // aka != Smarty::CACHING_OFF
             $output = "<?php \$_smarty_tpl->smarty->ext->_make_nocache->save(\$_smarty_tpl, {$_attr[ 'var' ]});\n?>\n";
             $compiler->template->compiled->has_nocache_code = true;
             $compiler->suppressNocacheProcessing = true;
