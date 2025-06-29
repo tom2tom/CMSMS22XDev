@@ -657,7 +657,7 @@ function get_matching_files($path,$extensions = '',$excludedot = true,$excludedi
     while( false !== ($file = readdir($dh)) ) {
         if( $file == '.' || $file == '..' ) continue;
         if( $excludedot && startswith($file,'.') ) continue;
-        if( $excludedir && is_dir(cms_join_path($dir,$file)) ) continue;
+        if( $excludedir && is_dir(cms_join_path($path,$file)) ) continue;
         if( $prefix ) {
             if( $excludefiles ) {
                 if( startswith($file,$prefix) ) continue;
