@@ -644,7 +644,6 @@ function is_directory_writable($path)
  * @param bool $excludefiles Whether to ignore items whose name begins with $prefix Default true
  *   False to ignore items whose name does not begin with $prefix
  * @return array maybe empty
- * Rolf: Core use only in this file
  */
 function get_matching_files($path,$extensions = '',$excludedot = true,$excludedir = true,$prefix = '',$excludefiles = true)
 {
@@ -690,7 +689,7 @@ function get_matching_files($path,$extensions = '',$excludedot = true,$excludedi
  * @param  string  $mode     "FULL"|"DIRS"|"FILES"
  * @param  int     $d        Recursion depth, for internal use only
  * @return string[] each including DIRECTORY_SEPARATOR and folder-paths end with a DIRECTORY_SEPARATOR
-**/
+ */
 function get_recursive_file_list($path,$excludes,$maxdepth = -1,$mode = 'FULL',$d = 0)
 {
     $fn = function( $file, $excludes ) {
@@ -1142,7 +1141,7 @@ function get_secure_param()
 {
     $urlext = '?';
 /*
-BAD including a session identifier means exposing implementation  detail in URLs
+BAD including a session identifier means exposing implementation detail in URLs
     $str = ini_get('session.use_cookies');
     if( $str == '0' || strcasecmp($str,'off') == 0 ) {
         if( defined('SID') ) {
