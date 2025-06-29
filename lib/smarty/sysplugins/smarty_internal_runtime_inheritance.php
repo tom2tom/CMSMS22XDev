@@ -81,8 +81,8 @@ class Smarty_Internal_Runtime_Inheritance
                 ob_start();
             }
             ++$this->inheritanceLevel;
-            //           $tpl->startRenderCallbacks[ 'inheritance' ] = array($this, 'subTemplateStart');
-            //           $tpl->endRenderCallbacks[ 'inheritance' ] = array($this, 'subTemplateEnd');
+//            $tpl->startRenderCallbacks[ 'inheritance' ] = array($this, 'subTemplateStart');
+//            $tpl->endRenderCallbacks[ 'inheritance' ] = array($this, 'subTemplateEnd');
         }
         // if state was waiting for parent change state to parent
         if ($this->state === 2) {

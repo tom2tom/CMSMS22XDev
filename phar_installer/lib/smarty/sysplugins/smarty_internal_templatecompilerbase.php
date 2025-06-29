@@ -1106,7 +1106,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
         } else {
             $templateName = $this->template->source->type . ':' . $this->template->source->filepath;
         }
-        //        $line += $this->trace_line_offset;
+//        $line += $this->trace_line_offset;
         $match = preg_split("/\n/", $lex->data);
         $error_text =
             'Syntax error in template "' . (empty($this->trace_filepath) ? $templateName : $this->trace_filepath) .
