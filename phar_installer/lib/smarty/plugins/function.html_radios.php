@@ -114,7 +114,7 @@ function smarty_function_html_radios($params, Smarty_Internal_Template $template
                 if (!empty($params[ 'strict' ])) {
                     if (!is_scalar($_val)) {
                         trigger_error(
-                            "html_radios: $_key attribute must be a scalar, only boolean true or string '$_key' will actually add the attribute",
+                            "html_radios: {$_key} attribute must be a scalar, only boolean true or string '$_key' will actually add the attribute",
                             E_USER_NOTICE
                         );
                     }

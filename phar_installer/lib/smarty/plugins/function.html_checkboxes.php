@@ -131,7 +131,7 @@ function smarty_function_html_checkboxes($params, Smarty_Internal_Template $temp
                 if (!empty($params[ 'strict' ])) {
                     if (!is_scalar($_val)) {
                         trigger_error(
-                            "html_checkboxes: $_key attribute must be a scalar, only boolean true or string '{$_key}' will actually add the attribute",
+                            "html_checkboxes: {$_key} attribute must be a scalar, only boolean true or string '{$_key}' will actually add the attribute",
                             E_USER_NOTICE
                         );
                     }
@@ -141,7 +141,6 @@ function smarty_function_html_checkboxes($params, Smarty_Internal_Template $temp
                     break;
                 }
             // omit break; to fall through!
-            // no break
             default:
                 if (!is_array($_val)) {
                     $extra .= ' ' . $_key . '="' . smarty_function_escape_special_chars($_val) . '"';
@@ -152,8 +151,9 @@ function smarty_function_html_checkboxes($params, Smarty_Internal_Template $temp
         }
     }
     if (!isset($options) && !isset($values)) {
+        /* raise error here? */
         return '';
-    } /* raise error here? */
+    }
     $_html_result = array();
     if (isset($options)) {
         foreach ($options as $_key => $_val) {

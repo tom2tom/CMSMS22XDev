@@ -120,7 +120,7 @@ function smarty_function_math($params, $template)
     }
     foreach ($params as $key => $val) {
         if ($key !== 'equation' && $key !== 'format' && $key !== 'assign') {
-            $equation = preg_replace("/\b{$key}\b/", " \$params['$key'] ", $equation);
+            $equation = preg_replace("/\b$key\b/", " \$params['$key'] ", $equation);
         }
     }
     $smarty_math_result = null;
