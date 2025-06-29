@@ -333,13 +333,18 @@ class FileTypeHelper
      * Get recorded file-extensions for the given type
      * @since 2.2.22F2
      *
-     * @param string $type 'image' etc
+     * @param string $type FileType-class constant or explicit 'image' etc
      * @param bool $sort Whether to sort the returned array. Default false.
      * @return array maybe empty
      */
     public function get_file_type_extensions( $type, $sort = false )
     {
-        $propname = "_{$type}_extensions";
+        if ($type != FileType::TYPE_EXECUTABLE) {
+            $propname = "_{$type}_extensions";
+        }
+        else {
+            $propname = '_exe_extensions'; //alias needed
+        }
         if (!empty($this->$propname)) {
             if ($sort) {
                 $res = $this->$propname;
