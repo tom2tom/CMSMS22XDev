@@ -129,7 +129,7 @@ class Smarty_Internal_CacheResource_File extends Smarty_CacheResource
                 && (!function_exists('ini_get') || strlen(ini_get('opcache.restrict_api'))) < 1
             ) {
                 opcache_invalidate($_template->cached->filepath, true);
-            } elseif (function_exists('apc_compile_file')) {
+            } elseif (function_exists('apc_compile_file')) { //TODO omit/replace unsupported APC extension usage
                 apc_compile_file($_template->cached->filepath);
             }
             $cached = $_template->cached;

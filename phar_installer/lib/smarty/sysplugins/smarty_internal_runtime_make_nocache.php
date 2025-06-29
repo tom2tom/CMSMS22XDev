@@ -46,7 +46,7 @@ class Smarty_Internal_Runtime_Make_Nocache
             $newVar = new Smarty_Variable();
             unset($properties[ 'nocache' ]);
             foreach ($properties as $k => $v) {
-                $newVar->$k = $v;
+                $newVar->$k = $v; // $k might be overloaded property, deprecated for PHP 8.2+
             }
             $tpl->tpl_vars[ $var ] = $newVar;
         }

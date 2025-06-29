@@ -46,7 +46,7 @@ class Smarty_Internal_Compile_Config_Load extends Smarty_Internal_CompileBase
      * @var array
      * @see Smarty_Internal_CompileBase
      */
-    public $option_flags = array('nocache', 'noscope');
+    public $option_flags = array('nocache', 'noscope'); //BUT nocache use triggers error!
 
     /**
      * Valid scope names
