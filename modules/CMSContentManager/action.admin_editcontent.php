@@ -44,6 +44,7 @@ $content_id = 0; //i.e. new-page
 $content_obj = null;
 $error = '';
 $seetab = '';
+$modname = $this->GetName();
 
 //
 // init
@@ -222,7 +223,7 @@ try {
             else {
                 $tmp = "$optype anonymous page";
             }
-            audit($content_obj->Id(),$this->GetName(),$tmp);
+            audit($content_obj->Id(),$modname,$tmp);
             if( isset($params['submit']) ) {
                 $this->SetMessage($this->Lang('msg_editpage_success'));
                 $this->RedirectToAdminTab();
@@ -348,12 +349,12 @@ try {
                 }
                 if( count($choices) > 1 ) {
                     $tmp2 = CmsFormUtils::create_dropdown($id.'content_type',$choices,$content_type,['id'=>'content_type']);
-                    $help = cms_admin_utils::get_help_tag(array('key'=>'help_content_type','title'=>$this->Lang('help_title_content_type')));
+                    $help = cms_admin_utils::get_help_tag($modname,'help_content_type',$this->Lang('help_title_content_type'));
                     $tmp = array('<label for="content_type">*'.$this->Lang('prompt_editpage_contenttype').':</label>&nbsp;'.$help,$tmp2);
                 }
             }
             if( $tmp2 == '' ) {
-                $help = cms_admin_utils::get_help_tag(array('key'=>'help_content_type','title'=>$this->Lang('help_title_content_type')));
+                $help = cms_admin_utils::get_help_tag($modname,'help_content_type',$this->Lang('help_title_content_type'));
                 foreach( $typeclasses as $classname => $publicname ) {
                     if( $content_type == strtolower($classname) ) break;//NOTE conform this if relation between classname and type ever changes
                 }
@@ -378,7 +379,6 @@ catch( Exception $e ) {
 if( $error ) echo $this->ShowErrors($error);
 
 // give stuff to smarty.
-$modname = $this->GetName();
 $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_editcontent.tpl",null,$modname,$smarty);
 
 if( $content_obj->HasPreview() ) {
