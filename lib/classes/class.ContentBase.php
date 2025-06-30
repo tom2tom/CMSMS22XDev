@@ -2740,6 +2740,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			break;
 
 		case 'image':
+		//TODO support selection also from any of: assetspath/images; themesroot/*; themesroot/*/images; themesroot/*/media
 			$dir = $config['image_uploads_path'];
 			if( ($tmp = cms_siteprefs::get('content_imagefield_path')) ) { $dir .= DIRECTORY_SEPARATOR . trim($tmp,' \\/'); }
 			$data = $this->GetPropertyValue('image');
@@ -2769,6 +2770,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 */
 
 		case 'thumbnail':
+		//TODO support selection-places as for 'image' ibid
 			$dir = $config['image_uploads_path'];
 			if( ($tmp = cms_siteprefs::get('content_imagefield_path')) ) { $dir .= DIRECTORY_SEPARATOR . trim($tmp,' \\/'); }
 			$data = $this->GetPropertyValue('thumbnail');
@@ -2779,7 +2781,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				$input = $filepicker->get_html('thumbnail',$data,$profile);
 			}
 			else {
-				// thumbnail filetypes per FileManager
+				// thumbnailable filetypes per FileManager TODO mebbe any existing 'small' image or svg?
 				$exts = 'jpg,jpeg,png,gif,wbmp';
 				if (PHP_VERSION_ID >= 70200) { $exts .= ',bmp'; }
 				if (PHP_VERSION_ID >= 80100) { $exts .= ',avif'; }
