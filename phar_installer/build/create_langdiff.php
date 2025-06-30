@@ -48,6 +48,7 @@ $placesmap = [
 'navigator_cms2'     =>'modules/Navigator/lang',
 'news_cms2'          =>'modules/News/lang',
 'search_cms2'        =>'modules/Search/lang',
+//'TODO'             =>'modules/UserGuide/lang',
 'cmspharinstall'     =>'phar_installer/app/lang/app',
 ];
 
