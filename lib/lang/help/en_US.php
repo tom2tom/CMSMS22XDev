@@ -412,8 +412,8 @@ $lang['help_designmanager_help'] = <<<EOT
   <p>Some template types (such as the &quot;Core::Page&quot; template type support the notion of a &quot;default template&quot;.  The default template of a type is typically used by modules so that a template of a certain type can be used in the event that a specific template is not named.  Additionally, the default template of type &quot;Core::Page&quot; is used as the default template when creating a new content item of type &quot;Content&quot;</p>
   <p>The Design Manager Admin interface allows filtering templates by originator, or their type to easily find templates to edit or manage.</p>
 
-  <h4>Generic Templates <em>(formerly Global Content Blocks)</em></h4>
-    <p>A standard template type is called &quot;Core::generic&quot;.  This is a generic template that could be used for anything.  It replaces &quot;Global Content Blocks&quot; <em>(GCB)</em> from prior versions of CMSMS.</p>
+  <h4>Generic Templates</h4>
+    <p>A standard template type is called &quot;Core::generic&quot;.  This is a generic template that could be used for anything.</p>
 
 <h3>What are &quot;Categories&quot; for ?</h3>
   <p>Categories are a method site developers can use to further organize templates.  Site developers can create, rename and delete categories and associate different templates with them.   When managing templates site developers can filter templates by their category.</p>
@@ -696,7 +696,7 @@ $lang['settings_searchmodule'] = 'Select the module that should be used to index
 $lang['settings_sitedownexcludeadmins'] = 'Do show the website to Admin users logged in to the CMSMS Admin Console';
 $lang['settings_sitedownexcludes'] = 'Do show the website to these IP addresses';
 $lang['settings_sitedownmessage'] = 'The message shown to your website visitors when the site is down for maintenance';
-$lang['settings_smartycaching'] = 'When enabled, the output from various plugins will be cached to increase performance. Additionally, most portions of compiled templates will be cached. This only applies to output on content pages marked as cachable, and only for non-Admin users.  Note, this functionality may interfere with the behaviour of some modules or plugins, or plugins that use non-inline forms.<br><br><strong>Note:</strong> When smarty caching is enabled, global content blocks <em>(GCBs)</em> are always cached by smarty, and user defined tags <em>(UDTs)</em> are never cached.  Additionally, content blocks are never cached.';
+$lang['settings_smartycaching'] = 'When enabled, the output from various plugins will be cached to increase performance. Additionally, most portions of compiled templates will be cached. This only applies to output on content pages marked as cachable, and only for non-Admin users.  Note, this functionality may interfere with the behaviour of some modules or plugins, or plugins that use non-inline forms.<br><br><strong>Note:</strong> When smarty caching is enabled, user defined tags <em>(UDTs)</em> are never cached.  Nor are content blocks.';
 $lang['settings_smartycompilecheck'] = 'If disabled, smarty will not check the modification dates of templates to see if they have been modified.  This can significantly improve performance.  However performing any template change (or even some content changes) may require a cache clearing';
 $lang['settings_thumbfield_path'] = 'This setting is used when editing content.  The directory specified here is used to provide a list of images from which to associate a thumbnail with the content page.<br><br>Relative to the image uploads path, specify a directory name that contains the paths containing files for the image field.  Usually this will be the same as the path above.';
 $lang['settings_umask'] = 'The &quot;umask&quot; is an octal value used to restrict the permissions applied to newly-created files and directories.  For more information see the appropriate <a href="https://en.wikipedia.org/wiki/Umask" class="external" target="_blank">Wikipedia article.</a>';
@@ -706,7 +706,7 @@ $lang['siteprefs_locktimeout'] = 'This field specifies the number of minutes of 
 $lang['siteprefs_sitename'] = 'This is a human readable name for your website, i.e: the business, club, or organization name';
 $lang['siteprefs_frontendlang'] = 'The default language that your website displays on the frontend.  This can be changed on a per-page basis using different smarty tags. i.e: <code>{cms_set_language}</code>';
 $lang['siteprefs_frontendwysiwyg'] = 'When WYSIWYG editors are provided on frontend forms, what WYSIWYG module should be used?  Or none.';
-$lang['siteprefs_nogcbwysiwyg'] = 'This option will disable the WYSIWYG editor on all global content blocks independent of user settings, or of the individual global content blocks';
+//$lang['siteprefs_nogcbwysiwyg'] = 'This option will disable the WYSIWYG editor on all global content blocks independent of user settings, or of the individual global content blocks';
 $lang['siteprefs_noticetimeout'] = 'Specify the maximum interval during which each message will be displayed. 0 or empty will result in no timeout, in which case manual closing will become the only way to dismiss such notices.';
 $lang['siteprefs_globalmetadata'] = 'This text area provides the ability to enter meta information that is relevant to all content pages.  This is an ideal location for meta tags such as Generator, and Author, etc.';
 $lang['siteprefs_logintheme'] = 'Select the Admin theme (from installed Admin themes) that will be used to generate the administrator login form, and as the default login theme for new Admin user accounts.  Admin users will be able to select their preferred Admin theme from within the user preferences panel.';
