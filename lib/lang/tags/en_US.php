@@ -569,7 +569,7 @@ $lang['help_function_title'] = <<<'EOT'
 <p><em>(optional)</em> assign (string) - Assign the results to a smarty variable with that name.</p>
 EOT;
 
-$lang['help_function_stylesheet'] = <<<'EOT'
+/*$lang['help_function_stylesheet'] = <<<'EOT'
 <h3>What does this do?</h3>
 <p><strong>Deprecated:</strong> This function is deprecated and will be removed in later versions of CMSMS.</p>
 <p>Gets stylesheet information from the system.  By default, it grabs all of the stylesheets attached to the current template.</p>
@@ -583,7 +583,7 @@ $lang['help_function_stylesheet'] = <<<'EOT'
  <li><em>(optional)</em> <tt>assign</tt> - Assign the results to the named smarty variable.</li>
 </ul>
 EOT;
-
+*/
 $lang['help_function_sitename'] = <<<'EOT'
 <h3>What does this do?</h3>
 <p>Shows the name of the site.  This is defined during install and can be modified in the Global Settings section of the admin panel.</p>
@@ -593,7 +593,7 @@ $lang['help_function_sitename'] = <<<'EOT'
 <p><em>(optional)</em> assign (string) - Assign the results to a smarty variable with that name.</p>
 EOT;
 
-$lang['help_function_search'] = <<<'EOT'
+/*$lang['help_function_search'] = <<<'EOT'
 <h3>What does this do?</h3>
 <p>This is actually just a wrapper tag for the Search module to make the tag syntax easier.
 Instead of having to use <code>{cms_module module='Search'}</code> you can now just use <code>{search}</code> to insert the module in a template.
@@ -601,7 +601,7 @@ Instead of having to use <code>{cms_module module='Search'}</code> you can now j
 <h3>How do I use it?</h3>
 <p>Just put <code>{search}</code> in a template where you want the search input box to appear. For help about the Search module, please refer to the Search module help.</p>
 EOT;
-
+*/
 $lang['help_function_cms_textarea'] = <<<'EOT'
 <h3>What does this do?</h3>
 <p>This smarty plugin is used when building admin forms to generate a textarea field.  It has various parameter which allow controlling whether a WYSIWYG plugin is used <em>(if available)</em> or a syntax highlighter, and for influencing the behavior of those modules, and the size and appearance of the textarea.</p>
@@ -674,7 +674,7 @@ $lang['help_function_recently_updated'] = <<<'EOT'
 <pre>{recently_updated number='15' showtitle='false' leadin='Last Change: ' css_class='my_changes' dateformat='D M j G:i:s T Y'}</pre>
 EOT;
 
-$lang['help_function_print'] = <<<'EOT'
+/*$lang['help_function_print'] = <<<'EOT'
 <h3>What does this do?</h3>
 <p>This is actually just a wrapper tag for the CMSPrinting module to make the tag syntax easier.
 Instead of having to use <code>{cms_module module='CMSPrinting'}</code> you can now just use <code>{print}</code> to insert the module on pages and templates.
@@ -682,8 +682,8 @@ Instead of having to use <code>{cms_module module='CMSPrinting'}</code> you can 
 <h3>How do I use it?</h3>
 <p>Just put <code>{print}</code> on a page or in a template. For help about the CMSPrinting module, what parameters it takes etc., please refer to the CMSPrinting module help.</p>
 EOT;
-
-$lang['help_function_news'] = <<<'EOT'
+*/
+/*$lang['help_function_news'] = <<<'EOT'
 <h3>What does this do?</h3>
 <p>This is actually just a wrapper tag for the News module to make the tag syntax easier.
 Instead of having to use <code>{cms_module module='News'}</code> you can now just use <code>{news}</code> to insert the module on pages and templates.
@@ -691,7 +691,7 @@ Instead of having to use <code>{cms_module module='News'}</code> you can now jus
 <h3>How do I use it?</h3>
 <p>Just put <code>{news}</code> on a page or in a template. For help about the News module, what parameters it takes etc., please refer to the News module help.</p>
 EOT;
-
+*/
 $lang['help_function_modified_date'] = <<<'EOT'
 <h3>What does this do?</h3>
 <p>Prints the date and time the page was last modified.  If no format is given, it will default to a format similar to 'Jan 01, 2004'.</p>
@@ -765,12 +765,12 @@ $lang['help_function_image'] = <<<'EOT'
 </ul>
 EOT;
 
-$lang['help_function_html_blob'] = <<<'EOT'
+/*$lang['help_function_html_blob'] = <<<'EOT'
 <h3>What does this do?</h3>
 <p>See the help for global_content for a description.</p>
 EOT;
-
-$lang['help_function_google_search'] = <<<'EOT'
+*/
+/*$lang['help_function_google_search'] = <<<'EOT'
 <h3>What does this do?</h3>
 <p>Search's your website using Google's search engine.</p>
 <h3>How do I use it?</h3>
@@ -787,8 +787,8 @@ Note: Google needs to have your website indexed for this to work. You can submit
  <li><em>(optional)</em> <tt>assign</tt> - Assign the results to the named smarty variable.</li>
 </ul>
 EOT;
-
-$lang['help_function_global_content'] = <<<'EOT'
+*/
+/*$lang['help_function_global_content'] = <<<'EOT'
 <h3>What does this do?</h3>
 <p>Inserts a global content block into your template or page.</p>
 <h3>How do I use it?</h3>
@@ -799,7 +799,7 @@ $lang['help_function_global_content'] = <<<'EOT'
  <li><em>(optional)</em> assign - The name of a smarty variable that the global content block should be assigned to.</li>
 </ul>
 EOT;
-
+*/
 $lang['help_function_get_template_vars'] = <<<'EOT'
 <h3>What does this do?</h3>
 <p>Dumps all the known smarty variables into your page</p>
@@ -868,7 +868,7 @@ $lang['help_function_uploads_url'] = <<<'EOT'
 <p><em>(optional)</em> assign (string) - Assign the results to a Smarty variable with that name.</p>
 EOT;
 
-$lang['help_function_embed'] = <<<'EOT'
+/*$lang['help_function_embed'] = <<<'EOT'
 <h3>What does this do?</h3>
 <p>Enable inclusion (embedding) of any other application into the CMS. The most usual use could be a forum.
 This implementation is using IFRAMES so older browsers can have problems. Sorry bu this is the only known way
@@ -891,7 +891,7 @@ that works without modifying the embedded application.</p>
 
 </ul>
 EOT;
-
+*/
 $lang['help_function_description'] = <<<'EOT'
 <h3>What does this do?</h3>
 <p>Prints the description (title attribute) of the page.</p>
@@ -952,12 +952,12 @@ $lang['help_function_content'] = <<<'EOT'
 </ul>
 EOT;
 
-$lang['help_function_contact_form'] = <<<'EOT'
+/*$lang['help_function_contact_form'] = <<<'EOT'
 <h2>NOTE: This plugin is deprecated</h2>
 <h3>This plugin has been removed as of CMS made simple version 1.5</h3>
 <p>You can use the module FormBuilder instead.</p>
 EOT;
-
+*/
 $lang['help_function_cms_versionname'] = <<<'EOT'
 <h3>What does this do?</h3>
 <p>This tag is used to insert the current version name of CMS into your template or page.  It doesn't display any extra besides the version name.</p>
@@ -1026,7 +1026,7 @@ EOT;
 
 $lang['help_function_cms_module_hint'] = <<<'EOT'
 <h3>What does this do?</h3>
-<p>This function plugin can be used to provide hints for module behavior if various parameters cannot be specified on the URL.  I.e: In a situation when a site is configured to use pretty urls for SEO purposes it is often impossible to provide additional module parameters like a detailtemplate or sort order on a URL.  This plugin can be used in page templates, GCBs or in a page specific way to give hints as to how modules should behave.</p>
+<p>This function plugin can be used to provide hints for module behavior if various parameters cannot be specified on the URL e.g. in a situation when a site is configured to use pretty urls for SEO purposes it is often impossible to provide additional module parameters like a detailtemplate or sort order on a URL.  This plugin can be used in page templates or in a page specific way to give hints as to how modules should behave.</p>
 <p><strong>Note:</strong> Any parameters that are specified on the URL will override matching module hints.   i.e:  When using News and a detailtemplate parameter is specified on a News detail url, any detailtemplate hints will have no effect.</p>
 <p><strong>Note:</strong> In order to ensure proper behavior, module hints must be created before the {content} tag is executed in the CMSMS page template.  Therefore they should (normally) be created very early in the page template process.  An ideal location for page specific hints is in the &quot;Smarty data or logic that is specific to this page:&quot; textarea on the editcontent form.</p>
 <h3>Parameters:</h3>
