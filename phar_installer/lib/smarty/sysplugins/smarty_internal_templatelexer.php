@@ -278,7 +278,7 @@ class Smarty_Internal_Templatelexer
             strpos(" \n\t\r", $this->value[ $this->compiler->getLdelLength() ]) !== false : false;
     }
 
-     
+
     private $_yy_state = 1;
     private $_yy_stack = array();
 
@@ -320,7 +320,7 @@ class Smarty_Internal_Templatelexer
     }
 
 
-     
+
     public function yylex1()
     {
         if (!isset($this->yy_global_pattern1)) {
@@ -332,7 +332,7 @@ class Smarty_Internal_Templatelexer
         if ($this->counter >=  $this->dataLength) {
             return false; // end of input
         }
-        
+
         do {
             if (preg_match($this->yy_global_pattern1,$this->data, $yymatches, 0, $this->counter)) {
                 if (!isset($yymatches[ 0 ][1])) {
@@ -366,7 +366,8 @@ class Smarty_Internal_Templatelexer
                     }
                     // skip this token
                     continue;
-                }            } else {
+                }
+            } else {
                 throw new Exception('Unexpected input at line' . $this->line .
                     ': ' . $this->data[$this->counter]);
             }
@@ -433,7 +434,7 @@ class Smarty_Internal_Templatelexer
        $this->token = Smarty_Internal_Templateparser::TP_TEXT;
          }
 
-     
+
     public function yylex2()
     {
         if (!isset($this->yy_global_pattern2)) {
@@ -445,7 +446,7 @@ class Smarty_Internal_Templatelexer
         if ($this->counter >=  $this->dataLength) {
             return false; // end of input
         }
-        
+
         do {
             if (preg_match($this->yy_global_pattern2,$this->data, $yymatches, 0, $this->counter)) {
                 if (!isset($yymatches[ 0 ][1])) {
@@ -479,7 +480,8 @@ class Smarty_Internal_Templatelexer
                     }
                     // skip this token
                     continue;
-                }            } else {
+                }
+            } else {
                 throw new Exception('Unexpected input at line' . $this->line .
                     ': ' . $this->data[$this->counter]);
             }
@@ -575,7 +577,7 @@ class Smarty_Internal_Templatelexer
         $this->taglineno = $this->line;
          }
 
-     
+
     public function yylex3()
     {
         if (!isset($this->yy_global_pattern3)) {
@@ -587,7 +589,7 @@ class Smarty_Internal_Templatelexer
         if ($this->counter >=  $this->dataLength) {
             return false; // end of input
         }
-        
+
         do {
             if (preg_match($this->yy_global_pattern3,$this->data, $yymatches, 0, $this->counter)) {
                 if (!isset($yymatches[ 0 ][1])) {
@@ -621,7 +623,8 @@ class Smarty_Internal_Templatelexer
                     }
                     // skip this token
                     continue;
-                }            } else {
+                }
+            } else {
                 throw new Exception('Unexpected input at line' . $this->line .
                     ': ' . $this->data[$this->counter]);
             }
@@ -871,7 +874,7 @@ class Smarty_Internal_Templatelexer
          }
 
 
-     
+
     public function yylex4()
     {
         if (!isset($this->yy_global_pattern4)) {
@@ -883,7 +886,7 @@ class Smarty_Internal_Templatelexer
         if ($this->counter >=  $this->dataLength) {
             return false; // end of input
         }
-        
+
         do {
             if (preg_match($this->yy_global_pattern4,$this->data, $yymatches, 0, $this->counter)) {
                 if (!isset($yymatches[ 0 ][1])) {
@@ -917,7 +920,8 @@ class Smarty_Internal_Templatelexer
                     }
                     // skip this token
                     continue;
-                }            } else {
+                }
+            } else {
                 throw new Exception('Unexpected input at line' . $this->line .
                     ': ' . $this->data[$this->counter]);
             }
@@ -962,7 +966,7 @@ class Smarty_Internal_Templatelexer
        $this->token = Smarty_Internal_Templateparser::TP_LITERAL;
          }
 
-     
+
     public function yylex5()
     {
         if (!isset($this->yy_global_pattern5)) {
@@ -974,7 +978,7 @@ class Smarty_Internal_Templatelexer
         if ($this->counter >=  $this->dataLength) {
             return false; // end of input
         }
-        
+
         do {
             if (preg_match($this->yy_global_pattern5,$this->data, $yymatches, 0, $this->counter)) {
                 if (!isset($yymatches[ 0 ][1])) {
@@ -1008,7 +1012,8 @@ class Smarty_Internal_Templatelexer
                     }
                     // skip this token
                     continue;
-                }            } else {
+                }
+            } else {
                 throw new Exception('Unexpected input at line' . $this->line .
                     ': ' . $this->data[$this->counter]);
             }
@@ -1091,5 +1096,3 @@ class Smarty_Internal_Templatelexer
          }
 
   }
-
-     
