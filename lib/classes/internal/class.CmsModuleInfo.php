@@ -68,7 +68,7 @@ class CmsModuleInfo implements ArrayAccess
 
     private function _get_module_file( $module_name )
     {
-        return cms_join_path(CMS_ROOT_PATH,'modules',$module_name,$module_name.'module.php');
+        return cms_join_path(CMS_ROOT_PATH,'modules',$module_name,$module_name.'.module.php');
     }
 
     public function __construct($module_name,$can_load = TRUE)
@@ -84,7 +84,7 @@ class CmsModuleInfo implements ArrayAccess
             $arr = $this->_read_from_module($module_name);
         }
         else {
-            // moduleinfo file is newer.
+            // moduleinfo file is newer, or no-module-load.
             $arr = $this->_read_from_module_meta($module_name);
         }
         if( !$arr ) {
@@ -112,7 +112,7 @@ class CmsModuleInfo implements ArrayAccess
         $files2 = glob($dir."/lang/??_??.php");
 
         $tmp = ['has_custom' => FALSE ];
-        if( count($files1) || count($files2) ) $this->_tmp['has_custom'] = TRUE;
+        if( count($files1) || count($files2) ) $tmp['has_custom'] = TRUE;
         return $tmp;
     }
 
