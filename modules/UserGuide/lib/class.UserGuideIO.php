@@ -95,7 +95,7 @@ class UserGuideIO
         $dwhen = date('Y-m-d_H-i-s', time());
         $this->archname = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'UserGuide_Unpack_' . $dwhen;
         if (!is_dir($this->archname)) {
-            mkdir($this->archname, 0775, true);
+            mkdir($this->archname, 0777, true);
             if (!is_dir($this->archname)) {
                 return false; // TODO more info
             }
@@ -525,7 +525,7 @@ VALUES (?,?,?,?,?,?,?)";
         }
         $dir .= DIRECTORY_SEPARATOR.strtr($filesFolder, '\\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR);
         if (!file_exists($dir)) {
-            if (!@mkdir($dir, 0775) && !is_dir($dir)) { //TODO relevant permissions
+            if (!@mkdir($dir, 0777) && !is_dir($dir)) {
                 return false;
             }
         }
@@ -535,7 +535,7 @@ VALUES (?,?,?,?,?,?,?)";
         foreach ($files as $bn => $fp) {
             $tp = str_replace($fbp, $dir, $fp);
             if (is_dir($fp)) {
-                if (!(is_dir($tp) || @mkdir($tp, 0775))) { //TODO relevant permissions
+                if (!(is_dir($tp) || @mkdir($tp, 0777))) {
                     audit('', 'UserGuide file import', 'Cannot use or create folder: '.$tp);
                     continue;
                 }

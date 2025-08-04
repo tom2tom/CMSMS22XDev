@@ -142,7 +142,7 @@ class UserGuideUtils
     public static function recursiveCopy($from, $to, $excludes = [], $replace = false)
     {
         if (!is_dir($to)) {
-            if (!mkdir($to, 0775, true)) {
+            if (!mkdir($to, 0777, true)) {
                 return ['Failed to create directory '.$to];
             }
             $replace = false; // no replacements in new place
@@ -166,7 +166,7 @@ class UserGuideUtils
             $tp = $to.substr($fp, $l);
             $dir = dirname($tp);
             if (!file_exists($dir)) {
-                if (!@mkdir($dir, 0775, true) && !is_dir($dir)) { //TODO relevant permissions
+                if (!@mkdir($dir, 0777, true) && !is_dir($dir)) {
                     $msg = 'Failed to create directory '.$dir.', file(s) which should be in there are missing';
                     if (!in_array($msg, $errors)) {
                         $errors[] = $msg;
@@ -175,7 +175,7 @@ class UserGuideUtils
                 }
             }
             if (is_dir($fp)) {
-                if (!(is_dir($tp) || @mkdir($tp, 0775, true))) { //TODO relevant permissions
+                if (!(is_dir($tp) || @mkdir($tp, 0777, true))) {
                     $msg = 'Failed to create directory '.$tp.', file(s) which should be in there are missing';
                     if (!in_array($msg, $errors)) {
                         $errors[] = $msg;

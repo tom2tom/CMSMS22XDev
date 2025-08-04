@@ -42,6 +42,6 @@ if( is_dir($fp) ) {
     }
 }
 elseif( !is_dir($tp) ) {
-    mkdir($tp,0771,TRUE);
+    mkdir($tp,0777,TRUE);
 }
 touch($tp.DIRECTORY_SEPARATOR.'index.html');

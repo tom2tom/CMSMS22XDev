@@ -43,7 +43,7 @@ if ($valn != $val) {
         if ($val === '') {
             if (!is_file($dirn)) {
                 if (!is_dir($dirn)) {
-                    mkdir($dirn, 0775, true);
+                    mkdir($dirn, 0777, true);
                 }
                 $this->SetPreference('filesFolder', $valn);
             } else {
@@ -54,7 +54,7 @@ if ($valn != $val) {
             if (!is_dir($diro)) {
                 if (!is_file($dirn)) {
                     if (!is_dir($dirn)) {
-                        mkdir($dirn, 0775, true);
+                        mkdir($dirn, 0777, true);
                     }
                     $this->SetPreference('filesFolder', $valn);
                 } else {

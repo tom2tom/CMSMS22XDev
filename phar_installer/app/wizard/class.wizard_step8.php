@@ -150,7 +150,7 @@ class wizard_step8 extends wizard_step
 
             // create work directories for Smarty in tmp
             $this->verbose(lang('install_createtmpdirs'));
-            @mkdir($destdir.'/tmp/cache',0777,TRUE);//TODO better 0775 or 0770 c.f. global_umask site-preference
+            @mkdir($destdir.'/tmp/cache',0777,TRUE);
             @mkdir($destdir.'/tmp/config',0777,TRUE);
             @mkdir($destdir.'/tmp/templates_c',0777,TRUE);
 

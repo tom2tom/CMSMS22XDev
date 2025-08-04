@@ -564,7 +564,7 @@ VALUES (?,?,?,?,?,?,?)";
             return false; // should never fail
         }
         $dir .= DIRECTORY_SEPARATOR.strtr($filesFolder, '\\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR);
-        if (!(is_dir($dir) || @mkdir($dir, 0775))) { //TODO relevant permissions
+        if (!(is_dir($dir) || @mkdir($dir, 0777))) {
             return false; // inconveniently-named file !
         }
 
@@ -579,7 +579,7 @@ VALUES (?,?,?,?,?,?,?)";
             $rel = strtr((string)$xmlFile->relpath, '\\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR);
             $itempath = $dir.DIRECTORY_SEPARATOR.$rel;
             if (!empty($xmlFile->isdir)) {
-                if (!(is_dir($itempath) || @mkdir($itempath, 0775))) { //TODO relevant permissions
+                if (!(is_dir($itempath) || @mkdir($itempath, 0777))) {
                     audit('', 'UserGuide file import', 'Cannot use or create folder: '.$itempath);
                     continue;
                 }

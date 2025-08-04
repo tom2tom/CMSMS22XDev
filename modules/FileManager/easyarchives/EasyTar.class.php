@@ -76,14 +76,14 @@ $test->extractTar('./toto.Tar', './new/');
 			{
 				$infos = $this->readTarHeader ($ptr);
 				$name = trim($infos['name']);
-				if ($infos['type']=='5' && @mkdir($dest.$name, 0775, true)) {
+				if ($infos['type']=='5' && @mkdir($dest.$name, 0777, true)) {
 					$result[]=$dest.$infos['name'];
 				}
 				elseif (($infos['type']=='0' || $infos['type']==chr(0)) && file_put_contents($dest.$name, $infos['data'])) {
 					$result[]=$dest.$name;
 				}
 				if ($infos)
-					chmod($dest.$name, 0775);
+					chmod($dest.$name, 0777);
 //					chmod(, $infos['mode']);
 //					chgrp(, $infos['uname']);
 //					chown(, $infos['gname']);

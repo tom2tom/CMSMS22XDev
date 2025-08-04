@@ -230,7 +230,7 @@ VALUES (?,'$rev',?,?,?,1,$smarty,'$when',null,?)";
         if ($filesFolder) $dir .= DIRECTORY_SEPARATOR.$filesFolder;
 
         if (!file_exists($dir)) {
-            if (!@mkdir($dir, 0775, true) && !is_dir($dir)) { //TODO relevant permissions
+            if (!@mkdir($dir, 0777, true) && !is_dir($dir)) {
                 return false;
             }
         }
@@ -243,7 +243,7 @@ VALUES (?,'$rev',?,?,?,1,$smarty,'$when',null,?)";
             $filespec = $dir.DIRECTORY_SEPARATOR.$xmlFile->filename;
             $isdir = (string)$xmlFile->isdir;
             if ($isdir) {
-                if (!@mkdir($filespec, 0775, true) && !is_dir($filespec)) { //TODO relevant permissions
+                if (!@mkdir($filespec, 0777, true) && !is_dir($filespec)) {
                     break;
                 }
             } else {

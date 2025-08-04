@@ -4,7 +4,7 @@ $config = CmsApp::get_instance()->GetConfig(); // OR cms_config::get_instance();
 $bt = $config['themes_path'];
 if( !$bt ) return;
 if( !is_dir($bt) ) {
-	@mkdir($bt,0777,true);//OR 0775 or 0770 should be done during Files step
+	@mkdir($bt,0777,true);// should be done during Files step
 	touch($bt.DIRECTORY_SEPARATOR.'index.html');
 }
 $bf = $config['uploads_path'];
@@ -33,6 +33,7 @@ if( is_dir($bf) ) {
 		}
 	}
 }
+
 // notionally, 'designs'-place corrections would be done in DM 1.1.2 upgrade
 // but in that case, themes_root/designs etc reversions would be needed during the following
 //TODO [[root_url]]/uploads/designs also in the following?
