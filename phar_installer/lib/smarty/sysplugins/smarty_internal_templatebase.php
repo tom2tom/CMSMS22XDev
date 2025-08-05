@@ -102,10 +102,10 @@ abstract class Smarty_Internal_TemplateBase extends Smarty_Internal_Data
     /**
      * fetches a rendered Smarty template
      *
-     * @param string $template   the resource handle of the template file or template object
-     * @param mixed  $cache_id   cache id to be used with this template
-     * @param mixed  $compile_id compile id to be used with this template
-     * @param object $parent     next higher level of Smarty variables
+     * @param mixed $template   string resource handle of the template file or template object Default null
+     * @param mixed $cache_id   string cache id to be used with this template Default null
+     * @param mixed $compile_id string compile id to be used with this template Default null
+     * @param mixed $parent     object next higher level of Smarty variables Default null
      *
      * @throws Exception
      * @throws SmartyException
@@ -120,10 +120,10 @@ abstract class Smarty_Internal_TemplateBase extends Smarty_Internal_Data
     /**
      * displays a Smarty template
      *
-     * @param string $template   the resource handle of the template file or template object
-     * @param mixed  $cache_id   cache id to be used with this template
-     * @param mixed  $compile_id compile id to be used with this template
-     * @param object $parent     next higher level of Smarty variables
+     * @param mixed $template   string resource handle of the template file or template object or null
+     * @param mixed $cache_id   string cache id to be used with this template or null
+     * @param mixed $compile_id string compile id to be used with this template or null
+     * @param mixed $parent     object next higher level of Smarty variables or null
      *
      * @throws \Exception
      * @throws \SmartyException

@@ -1,7 +1,9 @@
 <?php
 /**
  * Smarty Internal Plugin Compile Insert
- * Compiles the {insert} tag
+ * Compiles the {insert} tag which is similar to the {include} tag,
+ * but for a PHP-script instead of template, and is never cached.
+ * @deprecated since 3.1.31 - instead put PHP logic in PHP scripts or in plugin functions
  *
  * @package    Smarty
  * @subpackage Compiler

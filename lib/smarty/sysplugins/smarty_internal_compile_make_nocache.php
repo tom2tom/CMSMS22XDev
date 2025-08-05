@@ -2,21 +2,30 @@
 /**
  * Smarty Internal Plugin Compile Make_Nocache
  * Compiles the {make_nocache} tag
- * That tag makes a variable which normally exists only while rendering
+ *
+ * This tag makes a variable which normally exists only while rendering
  * a compiled template available in the cached template for use in
- * non-cached expressions.
+ * non-cached expressions. Which enables use of both cached and and nocache
+ * variables in a single tag.
+ * In effect it is like a specialised variant of an {assign} tag.
+ * {make_nocache varname} mimics {$varname=varvalue nocache}, but only
+ * if the tag is used in a [sub]template context which is cached by Smarty,
+ * and if that template does not already have a non-cached variable with
+ * the same name. Otherwise, the tag is ignored. Which means it can sensibly
+ * be used inside a loop.
+ * Or if that template does have a cached variable with the same name,
+ * that variable will be replaced.
+ * If the variable value contains object(s) which rely on PHP's magic
+ * __set_state() static method for regeneration after export, compilation
+ * will fail, as Smarty wouldn't process such method even if it exists.
+ *
  * Expample:
  *  {foreach $list as $item}
  *     <li>{$item.name} {make_nocache $item}{if $current==$item.id} ACTIVE{/if}</li>
  *  {/foreach}
- * The {foreach} loop is rendered while processing the compiled template,
- * but $current is a nocache variable. Normally the {if $current==$item.id}
- * would fail as $item is unknown in the cached template.
- * {make_nocache $item} makes the current $item value known in the cached template.
- * {make_nocache} is ignored when caching is disabled or the variable
- * exists as a nocache variable.
- * If the variable value contains object(s) it/they must implement a magic
- * __set_state() static method to support re-importing of var_export()'d value
+ *
+ * @deprecated since 4.4.2 Instead use {$varname=varvalue nocache}
+ *  as appropriate
  *
  * @package    Smarty
  * @subpackage Compiler
@@ -59,7 +68,7 @@ class Smarty_Internal_Compile_Make_Nocache extends Smarty_Internal_CompileBase
         // check and get attributes
         $_attr = $this->getAttributes($compiler, $args);
         if ($compiler->template->caching) { // aka != Smarty::CACHING_OFF
-            $output = "<?php \$_smarty_tpl->smarty->ext->_make_nocache->save(\$_smarty_tpl, {$_attr[ 'var' ]});\n?>\n";
+            $output = "<?php \$_smarty_tpl->smarty->ext->_make_nocache->save(\$_smarty_tpl, {$_attr[ 'var' ]});?>\n";
             $compiler->template->compiled->has_nocache_code = true;
             $compiler->suppressNocacheProcessing = true;
             return $output;

@@ -96,7 +96,7 @@ function smarty_function_fetch($params, $template)
                         break;
                     case 'header':
                         if (!empty($param_value)) {
-                            if (!preg_match('![\w\d-]+: .+!', $param_value)) {
+                            if (!preg_match('![\w-]+: .+!', $param_value)) {
                                 trigger_error("[plugin] invalid header format '{$param_value}'", E_USER_NOTICE);
                                 return;
                             } else {

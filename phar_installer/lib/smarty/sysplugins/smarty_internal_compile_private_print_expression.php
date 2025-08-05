@@ -145,7 +145,7 @@ class Smarty_Internal_Compile_Private_Print_Expression extends Smarty_Internal_C
      * @param string                                $name     name of variable filter
      * @param string                                $output   embedded output
      *
-     * @return string
+     * @return mixed string | false
      * @throws \SmartyException
      */
     private function compile_variable_filter(Smarty_Internal_TemplateCompilerBase $compiler, $name, $output)

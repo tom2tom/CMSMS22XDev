@@ -35,8 +35,9 @@ class Smarty_Internal_Runtime_WriteFile
             $i = 0;
             // loop if concurrency problem occurs
             // see https://bugs.php.net/bug.php?id=35326
+            $perms = 0777 & ~umask(); // but umask() unreliable
             while (!is_dir($_dirpath)) {
-                if (@mkdir($_dirpath, 0777, true)) {
+                if (@mkdir($_dirpath, $perms, true)) {
                     break;
                 }
                 clearstatcache();
@@ -84,7 +85,8 @@ class Smarty_Internal_Runtime_WriteFile
             throw new SmartyException("unable to write file {$_filepath}");
         }
         // set file permissions
-        @chmod($_filepath, 0666 & ~umask());
+        $perms = 0666 & ~umask(); // but umask() unreliable
+        @chmod($_filepath, $perms);
         error_reporting($_error_reporting);
         return true;
     }

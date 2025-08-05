@@ -29,7 +29,11 @@ class Smarty_Internal_Runtime_CacheModify
                 case 'cgi': // php-cgi < 5.3
                 case 'cgi-fcgi': // php-cgi >= 5.3
                 case 'fpm-fcgi': // php-fpm >= 5.3.3
-                    header('Status: 304 Not Modified');
+                    if (!headers_sent()) {
+                        header('Status: 304 Not Modified');
+                    } else {
+                       //TODO
+                    }
                     break;
                 case 'cli':
                     if (/* ^phpunit */
@@ -43,8 +47,10 @@ class Smarty_Internal_Runtime_CacheModify
                     !empty($_SERVER[ 'SMARTY_PHPUNIT_DISABLE_HEADERS' ]) /* phpunit$ */
                     ) {
                         $_SERVER[ 'SMARTY_PHPUNIT_HEADERS' ][] = '304 Not Modified';
-                    } else {
+                    } elseif (!headers_sent()) {
                         header($_SERVER[ 'SERVER_PROTOCOL' ] . ' 304 Not Modified');
+                    } else {
+                       //TODO
                     }
                     break;
             }
@@ -59,7 +65,11 @@ class Smarty_Internal_Runtime_CacheModify
                     }
                     break;
                 default:
-                    header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $cached->timestamp) . ' GMT');
+                    if (!headers_sent()) {
+                        header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $cached->timestamp) . ' GMT');
+                    } else {
+                       //TODO
+                    }
                     break;
             }
             echo $content;

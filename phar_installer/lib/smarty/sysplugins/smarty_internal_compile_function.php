@@ -60,7 +60,7 @@ class Smarty_Internal_Compile_Function extends Smarty_Internal_CompileBase
         $_name = trim($_attr[ 'name' ], '\'"');
 
         if (!preg_match('/^[a-zA-Z0-9_\x80-\xff]+$/', $_name)) {
-	        $compiler->trigger_template_error("Function name contains invalid characters: {$_name}", null, true);
+            $compiler->trigger_template_error("Function name contains invalid characters: {$_name}", null, true);
         }
 
         $compiler->parent_compiler->tpl_function[ $_name ] = array();
@@ -95,7 +95,7 @@ class Smarty_Internal_Compile_Functionclose extends Smarty_Internal_CompileBase
     /**
      * Compiles code for the {/function} tag
      *
-     * @param array                                        $args     array with attributes from parser
+     * @param array                                        $args     array with attributes from parser UNUSED
      * @param object|\Smarty_Internal_TemplateCompilerBase $compiler compiler object
      *
      * @return bool true
@@ -216,7 +216,7 @@ class Smarty_Internal_Compile_Functionclose extends Smarty_Internal_CompileBase
     }
 
     /**
-     * Remove nocache code
+     * Remove nocache markers
      *
      * @param $match
      *
@@ -224,12 +224,12 @@ class Smarty_Internal_Compile_Functionclose extends Smarty_Internal_CompileBase
      */
     public function removeNocache($match)
     {
-        $code =
-            preg_replace(
-                "/((<\?php )?echo '\/\*%%SmartyNocache:{$this->compiler->template->compiled->nocache_hash}%%\*\/)|(\/\*\/%%SmartyNocache:{$this->compiler->template->compiled->nocache_hash}%%\*\/';(\?>\n)?)/",
-                '',
-                $match[ 0 ]
-            );
+        $hash = $this->compiler->template->compiled->nocache_hash;
+        $code = preg_replace(
+            "/((<\?php )?echo ['\"]\/\*%%SmartyNocache:{$hash}%%\*\/\n?|\n?\/\*\/%%SmartyNocache:{$hash}%%\*\/['\"];(\?>\n)?)/",
+            '',
+            $match[ 0 ]
+        );
         $code = str_replace(array('\\\'', '\\\\\''), array('\'', '\\\''), $code);
         return $code;
     }

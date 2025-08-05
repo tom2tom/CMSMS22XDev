@@ -935,8 +935,8 @@ abstract class Smarty_Internal_TemplateCompilerBase
      * If the content is compiled code and it should be not cached the code is injected
      * into the rendered output.
      *
-     * @param string  $content content of template element
-     * @param boolean $is_code true if content is compiled code
+     * @param ?string $content content of template element
+     * @param bool    $is_code whether $content is compiled code
      *
      * @return string  content
      */
@@ -961,10 +961,10 @@ abstract class Smarty_Internal_TemplateCompilerBase
                     }
                 }
             } else {
-                $_output = $content;
+                $_output = (string)$content;
             }
         } else {
-            $_output = $content;
+            $_output = (string)$content;
         }
         $this->modifier_plugins = array();
         $this->suppressNocacheProcessing = false;

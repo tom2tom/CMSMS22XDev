@@ -10,6 +10,8 @@
 
 /**
  * Smarty Internal Plugin Compile Block Parent Class
+ * @see also: special variable $smarty.block.parent which is effectively
+ *  an alias of block_parent and parent
  *
  * @author Uwe Tews <uwe.tews@googlemail.com>
  */
