@@ -136,6 +136,16 @@ if (isset($CMS_INSTALL_CREATE_TABLES)) {
 	$return = $dbdict->ExecuteSQLArray($sqlarray);
 	$ado_ret = ($return == 2) ? $success : $failed;
 	verbose_msg(ilang('install_created_table', 'content', $ado_ret));
+	//fields: type,hierarchy,id_hierarchy,tabindex (and maybe single-char accesskey)
+	//could/should be stored as ascii instead of multi-byte
+	$sql = <<<EOS
+ALTER TABLE `{$pref}content`
+CHANGE `type` `type` varchar(25) CHARACTER SET ascii COLLATE ascii_bin,
+CHANGE `hierarchy` `hierarchy` varchar(255) CHARACTER SET ascii COLLATE ascii_bin,
+CHANGE `id_hierarchy` `id_hierarchy` varchar(255) CHARACTER SET ascii COLLATE ascii_bin,
+CHANGE `tabindex` `tabindex` varchar(10) CHARACTER SET ascii COLLATE ascii_bin
+EOS;
+	$db->Execute($sql);
 
 	$sqlarray = $dbdict->CreateIndexSQL(CMS_DB_PREFIX.'idx_content_by_alias_active', CMS_DB_PREFIX."content", 'content_alias, active');
 	$return = $dbdict->ExecuteSQLArray($sqlarray);
