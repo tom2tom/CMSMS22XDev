@@ -122,7 +122,7 @@ abstract class filehandler
         if( preg_match('~[\\/]lang[\\/]en_US.php$~',$filespec) ) {
           return 'en_US';
         }
-        if( preg_match('~[\\/]lib[\\/]lang[\\/]\w+[\\/]en_US.php$~',$filespec) ) {
+        if( preg_match('~[\\/]lib[\\/]lang[\\/]\w+[\\/]en_US\.php$~',$filespec) ) {
           return 'en_US';
         }
         if( preg_match('~[\\/]lang[\\/]ext[\\/]'.$bn.'$~',$filespec) ) {
