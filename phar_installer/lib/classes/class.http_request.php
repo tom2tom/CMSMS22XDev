@@ -811,7 +811,7 @@ class http_request
                 }
             }
 
-            $cookieString = join('&', $tempString);
+            $cookieString = implode('&', $tempString);
         }
 
         // Do we need to use cURL
