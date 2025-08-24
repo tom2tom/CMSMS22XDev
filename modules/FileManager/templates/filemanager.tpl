@@ -182,7 +182,7 @@ $(function () {
 		<tfoot>
 			<tr>
 				<td>&nbsp;</td>
-				<td colspan="7">{$countstext}</td>
+				<td colspan="9">{$countstext}</td>
 			</tr>
 		</tfoot>
 	</table>
