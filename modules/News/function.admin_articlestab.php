@@ -1,5 +1,10 @@
 <?php
+#CMSMS News module function
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#The license at the top of file News.module.php applies to this file.
+
 if( !isset($gCms) ) exit;
+if( !$this->CheckPermission('Modify News') ) return; // or a new 'View News' permission
 
 if (isset($params['bulk_action']) ) {
     if( !isset($params['sel']) || !is_array($params['sel']) || count($params['sel']) == 0 ) {
@@ -59,12 +64,9 @@ if (isset($params['bulk_action']) ) {
     }
 }
 
-$categorylist = array();
-$categorylist[$this->Lang('allcategories')] = '';
-$query = "SELECT * FROM ".CMS_DB_PREFIX."module_news_categories ORDER BY hierarchy";
-$dbresult = $db->Execute($query);
-while ($dbresult && $row = $dbresult->FetchRow()) {
-    $categorylist[$row['long_name']] = $row['long_name'];
+$categorylist = $db->GetAssoc('SELECT COALESCE(long_name,news_category_name),news_category_id FROM '.CMS_DB_PREFIX.'module_news_categories ORDER BY hierarchy');
+if( $categorylist ) {
+    $categorylist = [$this->Lang('allcategories') => ''] + $categorylist;
 }
 
 $pagenumber = 1;
@@ -93,7 +95,7 @@ if( isset($params['submitfilter']) ) {
 }
 elseif( isset($params['resetfilter']) ) {
     $this->SetPreference('article_category','');
-    $this->SetPreference('article_pagelimit',50);
+    $this->SetPreference('article_pagelimit',10);
     $this->SetPreference('article_sortby','news_date DESC');
     $this->SetPreference('allcategories','no');
     unset($_SESSION['news_pagenumber']);
@@ -101,7 +103,7 @@ elseif( isset($params['resetfilter']) ) {
 }
 
 $curcategory = $this->GetPreference('article_category');
-$pagelimit = (int) $this->GetPreference('article_pagelimit',50);
+$pagelimit = (int) $this->GetPreference('article_pagelimit',10);
 $allcategories = $this->GetPreference('allcategories','no');
 
 $sortby = $this->GetPreference('article_sortby','news_date DESC');
@@ -133,7 +135,7 @@ $tpl->assign('prompt_pagelimit',$this->Lang('prompt_pagelimit'));
 $entryarray = array();
 
 // SQL_CALC_FOUND_ROWS is deprecated. Instead exectute the query with LIMIT, and then again with COUNT(*) for the FOUND_ROWS()
-$query1 = "SELECT SQL_CALC_FOUND_ROWS n.*, nc.long_name FROM ".CMS_DB_PREFIX."module_news n LEFT OUTER JOIN ".CMS_DB_PREFIX."module_news_categories nc ON n.news_category_id = nc.news_category_id ";
+$query1 = "SELECT SQL_CALC_FOUND_ROWS n.*,nc.news_category_name,nc.long_name FROM ".CMS_DB_PREFIX."module_news n LEFT OUTER JOIN ".CMS_DB_PREFIX."module_news_categories nc ON n.news_category_id = nc.news_category_id ";
 $parms = array();
 if ($curcategory != '') {
     $query1 .= " WHERE nc.long_name LIKE ?";
@@ -179,31 +181,32 @@ if ($dbresult) {
     $onerow->status = $this->Lang($row['status']);
     if( $this->CheckPermission('Approve News') ) {
         if( $row['status'] == 'published' ) {
-            $onerow->approve_link = $this->CreateLink($id,'approvearticle',
+            $onerow->approve_link = $this->CreateLink($id, 'approvearticle',
                                                       $returnid,
-                                                      $admintheme->DisplayImage('icons/system/true.gif',$this->Lang('revert'),'','','systemicon'),array('approve'=>0,'articleid'=>$row['news_id']));
+                                                      $admintheme->DisplayImage('icons/system/true.gif', $this->Lang('revert'),'','','systemicon'), array('approve'=>0,'articleid'=>$row['news_id']));
         }
         else {
             $onerow->approve_link = $this->CreateLink($id,'approvearticle',
                                                       $returnid,
-                                                      $admintheme->DisplayImage('icons/system/false.gif',$this->Lang('approve'),'','','systemicon'),array('approve'=>1,'articleid'=>$row['news_id']));
+                                                      $admintheme->DisplayImage('icons/system/false.gif', $this->Lang('approve'),'','','systemicon'), array('approve'=>1,'articleid'=>$row['news_id']));
         }
     }
-    $onerow->category = $row['long_name'];
+    $onerow->category = ($row['long_name']) ?: $row['news_category_name'];
 
     $onerow->rowclass = $rowclass;
 
     if( $this->CheckPermission('Modify News') ) {
-        $onerow->edit_url = $this->create_url($id,'editarticle',$returnid,
+        $onerow->edit_url = $this->create_url($id, 'editarticle', $returnid,
                                               array('articleid'=>$row['news_id']));
-        $onerow->editlink = $this->CreateLink($id, 'editarticle', $returnid, $admintheme->DisplayImage('icons/system/edit.gif', $this->Lang('edit'),'','','systemicon'), array('articleid'=>$row['news_id']));
+        $onerow->editlink = $this->CreateLink($id, 'editarticle', $returnid,
+                                              $admintheme->DisplayImage('icons/system/edit.gif', $this->Lang('edit'),'','','systemicon'), array('articleid'=>$row['news_id']));
     }
     if( $this->CheckPermission('Delete News') ) {
-        $onerow->delete_url = $this->create_url($id,'deletearticle',$returnid, array('articleid'=>$row['news_id']));
+        $onerow->delete_url = $this->create_url($id, 'deletearticle', $returnid, array('articleid'=>$row['news_id']));
     }
 
     $entryarray[] = $onerow;
-    ($rowclass=="row1"?$rowclass="row2":$rowclass="row1");
+    ($rowclass == "row1" ? $rowclass = "row2" : $rowclass = "row1");
   }
   $dbresult->Close();
 }
@@ -219,7 +222,6 @@ if( $this->CheckPermission('Modify News') ) {
 }
 $tpl->assign('can_add',$this->CheckPermission('Modify News'));
 $tpl->assign('submit_reassign',$this->CreateInputSubmit($id,'submit_reassign',$this->Lang('submit')));
-$categorylist = news_ops::get_category_list();
 $tpl->assign('categoryinput',$this->CreateInputDropdown($id,'category',$categorylist));
 if( $this->CheckPermission('Delete News') ) {
     $tpl->assign('submit_massdelete',
