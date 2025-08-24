@@ -75,7 +75,7 @@
 			</p>
 		</div>
 		<div class="pageoverflow">
-			<p class="pagetext"><label for="notice_timeout">{lang('notices_timeout')}:</label>  {cms_help key2='siteprefs_noticetimeout' title=lang('notices_timeout_short')}</p>
+			<p class="pagetext"><label for="notice_timeout">{lang('notices_timeout')}:</label> {cms_help key2='siteprefs_noticetimeout' title=lang('notices_timeout_short')}</p>
 			<p class="pageinput">
 				<input id="notice_timeout" class="pagenb" type="text" name="notices_timeout" size="3" maxlength="2" value="{$notices_timeout}">
 			</p>
@@ -243,7 +243,7 @@
 			<p class="pagetext"><label for="sitedownexcludes">{lang('sitedownexcludes')}:</label> {cms_help key2='settings_sitedownexcludes' title=lang('sitedownexcludes')}</p>
 			<p class="pageinput">
 				<input id="sitedownexcludes" type="text" name="sitedownexcludes" size="50" maxlength="255" value="{$sitedownexcludes|cms_escape}">
-				<br><strong>{lang('your_ipaddress')}:</strong>&nbsp;<span style="color:red">{$site_ipaddr}</span><br>{$lang_info_sitedownexcludes}
+				<br><strong>{lang('your_ipaddress')}:</strong>&nbsp;<span style="color:red">{$site_ipaddr}</span><br>{lang('info_sitedownexcludes')}
 			</p>
 		</div>
 		<br>
