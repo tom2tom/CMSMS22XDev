@@ -10,7 +10,8 @@ Version 2.2.22F2 - Whitehorse
  - Add missing button-icons
  - Correct some tags help
  - Remove reference from object-variables in Event/Hook parameters
- - Add method cms_utils::cleanUrlPath()
+ - Add method cms_utils::validate_url() for use with chosen images etc
+ - Add method cms_utils::cleanUrlPath() for use with URL-slugs etc
  - Distinguish between current-user-held locks and other-user-held locks in displayed lists of pages, templates, stylesheets
  - Deprecate storage of system files in the site uploads tree. Instead use the assets tree, with uploads for user-uploaded files
  - Deprecate installed file images/uploads/logo1.gif formerly used by MicroTiny module and possibly by non-core operations
