@@ -29,6 +29,7 @@
  *
  * If headers have not been sent this method will use header-based redirection.
  * Otherwise javascript redirection will be used.
+ * @see also https://stackoverflow.com/questions/8028957/how-to-fix-headers-already-sent-error-in-php
  *
  * @author http://www.edoceo.com/
  * @since 0.1
@@ -106,37 +107,29 @@ EOS;
             }
             echo '</div><!-- end DebugFooter -->';
         }
+        exit;
     }
     elseif( headers_sent() ) {
-/*
-        // use javascript etc instead of another header
-        echo "<script\n";
+        // use javascript etc instead of a[nother] header
         // location.replace() and location.assign() fail if $to is not secure/https
-        if( $secure ) {
-            echo " window.location.replace('$to')";
-        }
-        else {
-            echo " window.location.href='$to'";
-        }
+        $detail = ($secure) ? "replace('$to')" : "href='$to'";
+        //ALTERNATE <meta http-equiv="Refresh" content="0;url=$to">
         echo <<<EOS
-
+<script>
+ window.location.$detail;
 </script>
 <noscript>
- <meta http-equiv="Refresh" content="0;URL=$to">
-</noscript>
+ <html><head>
+ <meta http-equiv="Location" content="$to">
+ </head></html>
+/noscript>
+
 EOS;
-        //TODO should we exit after this?
-*/
-        $num = count(ob_list_handlers());
-        for( $i = 0; $i < $num; ++$i ) {
-            ob_end_clean();
-        }
-        header("Location: $to");
+        exit;
     }
     else {
-        header("Location: $to");
+        exit(header("Location: $to"));
     }
-    exit;
 }
 
 
@@ -330,15 +323,15 @@ function debug_bt()
 
 
 /**
-* Debug function to display $var nicely in html.
-*
-* @param mixed $var The data to display
-* @param string $title (optional) title for the output.  If null memory information is output.
-* @param bool $echo_to_screen (optional) Flag indicating whether the output should be echoed to the screen or returned.
-* @param bool $use_html (optional) flag indicating whether html or text should be used in the output.
-* @param bool $showtitle (optional) flag indicating whether the title field should be displayed in the output.
-* @return string
-*/
+ * Debug function to display $var nicely in html.
+ *
+ * @param mixed $var The data to display
+ * @param string $title (optional) title for the output.  If null memory information is output.
+ * @param bool $echo_to_screen (optional) Flag indicating whether the output should be echoed to the screen or returned.
+ * @param bool $use_html (optional) flag indicating whether html or text should be used in the output.
+ * @param bool $showtitle (optional) flag indicating whether the title field should be displayed in the output.
+ * @return string
+ */
 function debug_display($var,$title = '',$echo_to_screen = true,$use_html = true,$showtitle = true)
 {
     global $starttime, $orig_memory;
@@ -454,16 +447,16 @@ function debug_buffer($var,$title = '')
 
 
 /**
-* Return $value if it's set and same basic type as $default_value,
-* Otherwise return $default_value. Note. Also will trim($value) if $value is not numeric.
-*
-* @ignore
-* @param string $value
-* @param mixed $default_value
-* @param mixed $session_key
-* @deprecated
-* @return mixed
-*/
+ * Return $value if it's set and same basic type as $default_value,
+ * Otherwise return $default_value. Note. Also will trim($value) if $value is not numeric.
+ *
+ * @ignore
+ * @param string $value
+ * @param mixed $default_value
+ * @param mixed $session_key
+ * @deprecated
+ * @return mixed
+ */
 function _get_value_with_default($value,$default_value = '',$session_key = '')
 {
     if( $session_key != '' ) {
@@ -824,29 +817,31 @@ function endswith($str,$sub)
 
 
 /**
- * Convert a human readable string into something that is suitable for use in URLS.
+ * Convert the supplied string into something more akin to the content of an URL.
+ * This function is essentially a hasher for internal use.
+ * NOTE: this function is not accurate/suitable for sanitization of an
+ * actual valid URL or url-path. Historically, it has been used for that
+ * purpose and thus for CmsRoute url-path, which is unfortunate.
+ * @see also cms_utils::cleanUrlPath()
  *
- * @param string $alias String to convert
- * @param bool $tolower Indicates whether output string should be converted to lower case
- * @param bool $withslash Indicates wether slashes should be allowed in the input.
- * @return string
+ * @param string $alias String to convert, not necessarily a page-alias
+ * @param bool $tolower Whether the output string should be converted to lower case. Default false
+ * @param bool $withslash Whether slashes are allowed in $alias. Default false
+ * @return string with only letter(s), digit(s), '_', '-', '.' and/or ' ' char(s)
  */
 function munge_string_to_url($alias,$tolower = false,$withslash = false)
 {
-    $alias = (string)$alias;
+    // NOTE back-compatibility must be maintained
+    $alias = trim((string)$alias);
     if( $tolower ) $alias = mb_strtolower($alias);
 
-    // remove invalid chars
-    $expr = '/[^\p{L}_\-\.\ \d]/u';
-    if( $withslash ) $expr = '/[^\p{L}_\.\-\ \d\/]/u';
-    $tmp = trim( preg_replace($expr,'',$alias) );
+    // remove unwanted chars
+    $expr = ($withslash) ? '/[^\pL_\-. \d\/]/u' : '/[^\pL_\-. \d]/u'; // could have \p{Nd} instead of \d
+    $tmp = preg_replace($expr, '', $alias);
 
-    // remove extra dashes and spaces.
-    $tmp = str_replace(' ','-',$tmp);
-    $tmp = str_replace('---','-',$tmp);
-    $tmp = str_replace('--','-',$tmp);
-
-    return trim($tmp);
+    // replace spaces and remove extra dashes
+    $tmp = str_replace([' ', '---', '--'], ['-', '-', '-'], $tmp);
+    return $tmp;
 }
 
 
@@ -904,16 +899,16 @@ function cleanValue($val)
 function can_admin_upload()
 {
     /*
-    first, check to see if safe mode is enabled
-    if it is, then check to see the owner of the index.php, moduleinterface.php
-    and the uploads and modules directory.  if they all match, then we
-    can upload files.
-    if safe mode is off, then we just have to check the permissions.
+    if safe mode is enabled, check the owner of both files index.php
+    and moduleinterface.php and both folders uploads and modules.
+    if those owners are all the same, then subject to permissions, files
+    can be uploaded.
+    if safe mode is off, just check the permissions.
     */
     $file_index = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.'index.php';
     $config = cms_config::get_instance();
     $file_moduleinterface = $config['admin_path'].DIRECTORY_SEPARATOR.'moduleinterface.php';
-    $dir_uploads = $config['uploads_path']; //for {content_image} tags c.f. 'image_uploads_path' for content
+    $dir_uploads = $config['uploads_path'];
     $dir_modules = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.'modules';
 
     $stat_index = @stat($file_index);
