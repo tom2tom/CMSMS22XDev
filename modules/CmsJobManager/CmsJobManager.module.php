@@ -70,17 +70,6 @@ final class CmsJobManager extends \CMSModule
         return $this->Lang('evtdesc_'.$name);
     }
 
-    protected function create_new_template($str)
-    {
-        $modname = $this->GetName();
-        $tpl = $this->GetActionTemplateObject();
-        if ($tpl) {
-            return $tpl->smarty->createTemplate($this->GetTemplateResource($str),null,$modname,$tpl);
-        }
-        $smarty = cmsms()->GetSmarty();
-        return $smarty->createTemplate($this->GetTemplateResource($str),null,$modname,$smarty);
-    }
-
     /**
      * @ignore
      * @internal
@@ -92,7 +81,7 @@ final class CmsJobManager extends \CMSModule
 
     protected function set_current_job($job = null) // no object
     {
-        if( !is_null($job) && !$job instanceof \CMSMS\Async\Job ) throw new \LogicException('Invalid data passed to '.__METHOD__);
+        if( !is_null($job) && !$job instanceof Job ) throw new \LogicException('Invalid data passed to '.__METHOD__);
         $this->_current_job = $job;
     }
 
@@ -304,9 +293,11 @@ final class CmsJobManager extends \CMSModule
         $this->SetPreference('last_async_trigger',$now+1);
 
         try {
-            $fp = @fsockopen($prefix_scheme.$url_ob->get_host(),$url_ob->get_port(),$errno,$errstr,1);
+            $fp = @fsockopen($prefix_scheme.$url_ob->get_host(),$url_ob->get_port(),$errno,$errstr,1.0); // fsockopen involves PHP header(s)
             if( !$fp ) {
-                throw new \RuntimeException('Could not connect to the async processing action');
+                $msg = 'Could not connect to the async processing action';
+                if( $errstr ) $msg .= ': '.$errstr;
+                throw new \RuntimeException($msg);
             }
             fwrite($fp,$out);
             $data = fgets($fp);
@@ -318,7 +309,6 @@ final class CmsJobManager extends \CMSModule
         }
         catch( \Exception $e ) {
             debug_to_log('exception '.$e->GetMessage());
-            // do nothing
         }
     }
 
