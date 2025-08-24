@@ -51,12 +51,12 @@ if (isset($_POST['addgroup'])) {
         $groupobj->description = $description;
         $groupobj->active = $active;
 
-        HookManager::do_hook('Core::AddGroupPre', ['group'=>&$groupobj]);
+        HookManager::do_hook('Core::AddGroupPre', ['group'=>$groupobj]);
 
         $result = $groupobj->save();
         if( !$result ) throw new RuntimeException(lang('errorinsertinggroup'));
 
-        HookManager::do_hook('Core::AddGroupPost', ['group'=>&$groupobj]);
+        HookManager::do_hook('Core::AddGroupPost', ['group'=>$groupobj]);
         // put mention into the admin log
         audit($groupobj->id, 'Admin users group', "Added: $groupobj->name");
         redirect('listgroups.php'.$urlext);

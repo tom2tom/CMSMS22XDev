@@ -65,11 +65,11 @@ if( isset($_POST['editgroup']) ) {
         $groupobj->name = $group;
         $groupobj->description = $description;
         $groupobj->active = $active;
-        HookManager::do_hook('Core::EditGroupPre', ['group'=>&$groupobj]);
+        HookManager::do_hook('Core::EditGroupPre', ['group'=>$groupobj]);
 
         $result = $groupobj->save();
         if( $result ) {
-            HookManager::do_hook('Core::EditGroupPost', ['group'=>&$groupobj]);
+            HookManager::do_hook('Core::EditGroupPost', ['group'=>$groupobj]);
 
             // put mention into the admin log
             audit($groupobj->id, 'Admin users group',"Edited: $groupobj->name");

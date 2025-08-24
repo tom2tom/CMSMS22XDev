@@ -60,11 +60,11 @@ if (isset($_GET["group_id"])) {
     }
 
     // now do the work.
-    HookManager::do_hook('Core::DeleteGroupPre', [ 'group'=>&$groupobj ]);
+    HookManager::do_hook('Core::DeleteGroupPre', [ 'group'=>$groupobj ]);
 
     if ($groupobj) $result = $groupobj->Delete();
 
-    HookManager::do_hook('Core::DeleteGroupPost', [ 'group'=>&$groupobj ]);
+    HookManager::do_hook('Core::DeleteGroupPost', [ 'group'=>$groupobj ]);
 
     if ($result == true) {
         // put mention into the admin log

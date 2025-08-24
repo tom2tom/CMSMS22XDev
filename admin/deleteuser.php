@@ -44,12 +44,12 @@ if (isset($_GET["user_id"])) {
         }
 
         if ($dodelete) {
-            CMSMS\HookManager::do_hook('Core::DeleteUserPre', [ 'user'=>&$oneuser] );
+            CMSMS\HookManager::do_hook('Core::DeleteUserPre', ['user'=>$oneuser]);
 
             cms_userprefs::remove_for_user($user_id);
             $oneuser->Delete();
 
-            CMSMS\HookManager::do_hook('Core::DeleteUserPost', [ 'user'=>&$oneuser] );
+            CMSMS\HookManager::do_hook('Core::DeleteUserPost', ['user'=>$oneuser]);
 
             // put mention into the admin log
             audit($user_id, 'Admin user', "Deleted: $user_name");

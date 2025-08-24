@@ -724,14 +724,14 @@ VALUES (?,?,?,?,?,?,?,?,?,?)';
 	public function save()
 	{
 		if( $this->get_id() > 0 ) {
-			HookManager::do_hook('Core::EditTemplatePre', [ get_class($this) => &$this ]);
+			HookManager::do_hook('Core::EditTemplatePre', [ get_class($this) => $this ]);
 			$this->_update();
-			HookManager::do_hook('Core::EditTemplatePost', [ get_class($this) => &$this ]);
+			HookManager::do_hook('Core::EditTemplatePost', [ get_class($this) => $this ]);
 			return;
 		}
-		HookManager::do_hook('Core::AddTemplatePre', [ get_class($this) => &$this ]);
+		HookManager::do_hook('Core::AddTemplatePre', [ get_class($this) => $this ]);
 		$this->_insert();
-		HookManager::do_hook('Core::AddTemplatePost', [ get_class($this) => &$this ]);
+		HookManager::do_hook('Core::AddTemplatePost', [ get_class($this) => $this ]);
 	}
 
 	/**
@@ -742,7 +742,7 @@ VALUES (?,?,?,?,?,?,?,?,?,?)';
 		$tid = $this->get_id();
 		if( $tid == 0 ) return;
 
-		HookManager::do_hook('Core::DeleteTemplatePre', [ get_class($this) => &$this ]);
+		HookManager::do_hook('Core::DeleteTemplatePre', [ get_class($this) => $this ]);
 		$db = CmsApp::get_instance()->GetDb();
 		$query = 'DELETE FROM '.CMS_DB_PREFIX.CmsLayoutCollection::TPLTABLE.' WHERE tpl_id = ?';
 		$dbr = $db->Execute($query,array($tid));
@@ -754,7 +754,7 @@ VALUES (?,?,?,?,?,?,?,?,?,?)';
 
 		CmsTemplateCache::clear_cache();
 		audit($tid,'Template',"Deleted: {$this->get_name()}");
-		HookManager::do_hook('Core::DeleteTemplatePost',[ get_class($this) => &$this ]);
+		HookManager::do_hook('Core::DeleteTemplatePost', [ get_class($this) => $this ]);
 		$this->_data['id'] = 0;
 		$this->_dirty = TRUE;
 	}
@@ -1035,10 +1035,12 @@ VALUES (?,?,?,?,?,?,?,?,?,?)';
 
 	/**
 	 * Test if the user specified can edit the specified template
-	 * This is a convenience method that loads the template, and then tests if the specified user has edit ability to it.
+	 * This is a convenience method that loads the template, and then
+	 * tests whether the specified user has edit permission for it.
 	 *
 	 * @param mixed $tpl An integer template id, or a string template name
-	 * @param mixed $userid An integer user id, or a string user name.  If no userid is specified the currently logged in userid is used
+	 * @param mixed $userid An integer user id, or a string user name.
+	 *   If no userid is specified the currently logged in userid is used
 	 * @return bool
 	 * @see CmsLayoutTemplate::load()
 	 */
@@ -1056,10 +1058,10 @@ VALUES (?,?,?,?,?,?,?,?,?,?)';
 		if( is_array($addt_users) && count($addt_users) ) {
 			if( in_array($userid,$addt_users) ) return TRUE;
 
-			$grouplist = UserOperations::get_instance()->GetMemberGroups();
+			$grouplist = UserOperations::get_instance()->GetMemberGroups($userid);
 			if( is_array($grouplist) && count($grouplist) ) {
 				foreach( $addt_users as $one ) {
-					if( $one < 0 && in_array($one*-1,$grouplist) ) return TRUE;
+					if( $one < 0 && in_array($one * -1,$grouplist) ) return TRUE; //OR -(int)$one
 				}
 			}
 		}

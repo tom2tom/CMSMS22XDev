@@ -48,7 +48,7 @@ $userops      = UserOperations::get_instance();
  ---------------------*/
 
 if( isset($_GET['switchuser']) ) {
-    // switch user functionality is only allowed to members of the admin group
+    // switch user functionality is allowed only to members of the admin group (? not necessarily user 1)
     if( !\UserOperations::get_instance()->UserInGroup($userid,1) ) {
         $error .= '<li>'.lang('permissiondenied').'</li>';
     } else {
@@ -77,13 +77,13 @@ else if (isset($_GET["toggleactive"])) {
 
             $result = false;
             $thisuser->active == 1 ? $thisuser->active = 0 : $thisuser->active = 1;
-            HookManager::do_hook('Core::EditUserPre', [ 'user' => &$thisuser ]);
+            HookManager::do_hook('Core::EditUserPre', [ 'user' => $thisuser ]);
             $result = $thisuser->save();
 
             if ($result) {
                 // put mention into the admin log
                 audit($userid, 'Admin user', "Edited: $thisuser->username");
-                HookManager::do_hook('Core::EditUserPost', [ 'user' => &$thisuser ]);
+                HookManager::do_hook('Core::EditUserPost', [ 'user' => $thisuser ]);
             } else {
                 $error .= "<li>" . lang('errorupdatinguser') . "</li>";
             }
@@ -107,9 +107,9 @@ else if (isset($_GET["toggleactive"])) {
                     continue; // can't delete user who owns pages.
 
                 // ready to delete.
-                HookManager::do_hook('Core::DeleteUserPre', [ 'user'=>&$oneuser ]);
+                HookManager::do_hook('Core::DeleteUserPre', [ 'user'=>$oneuser ]);
                 $oneuser->Delete();
-                HookManager::do_hook('Core::DeleteUserPost', [ 'user'=>&$oneuser ]);
+                HookManager::do_hook('Core::DeleteUserPost', [ 'user'=>$oneuser ]);
                 audit($uid, 'Admin user', "Deleted: $oneuser->username");
                 $ndeleted++;
             }
@@ -127,9 +127,9 @@ else if (isset($_GET["toggleactive"])) {
                 $oneuser = $userops->LoadUserById($uid);
                 if (!is_object($oneuser)) continue; // invalid user
 
-                HookManager::do_hook('Core::EditUserPre', [ 'user'=>&$oneuser ]);
+                HookManager::do_hook('Core::EditUserPre', [ 'user'=>$oneuser ]);
                 cms_userprefs::remove_for_user($uid);
-                HookManager::do_hook('Core::EditUserPost', [ 'user'=>&$oneuser ]);
+                HookManager::do_hook('Core::EditUserPost', [ 'user'=>$oneuser ]);
                 audit($uid, 'Admin user', "Cleared all settings of $oneuser->username");
                 $nusers++;
             }
@@ -154,12 +154,12 @@ else if (isset($_GET["toggleactive"])) {
                             $oneuser = $userops->LoadUserById($uid);
                             if (!is_object($oneuser)) continue; // invalid user
 
-                            HookManager::do_hook('Core::EditUserPre', [ 'user'=>&$oneuser ]);
+                            HookManager::do_hook('Core::EditUserPre', [ 'user'=>$oneuser ]);
                             cms_userprefs::remove_for_user($uid);
                             foreach ($prefs as $k => $v) {
                                 cms_userprefs::set_for_user($uid, $k, $v);
                             }
-                            HookManager::do_hook('Core::EditUserPost', [ 'user'=>&$oneuser ]);
+                            HookManager::do_hook('Core::EditUserPost', [ 'user'=>$oneuser ]);
                             audit($uid, 'Admin user', "Cleared all settings of $oneuser->username");
                             $nusers++;
                         }
@@ -183,10 +183,10 @@ else if (isset($_GET["toggleactive"])) {
                 if (!is_object($oneuser)) continue; // invalid user
 
                 if ($oneuser->active) {
-                    HookManager::do_hook('Core::EditUserPre', [ 'user'=>&$oneuser ]);
+                    HookManager::do_hook('Core::EditUserPre', [ 'user'=>$oneuser ]);
                     $oneuser->active = 0;
                     $oneuser->save();
-                    HookManager::do_hook('Core::EditUserPost', [ 'user'=>&$oneuser ]);
+                    HookManager::do_hook('Core::EditUserPost', [ 'user'=>$oneuser ]);
                     audit($uid, 'Admin user', "Disabled: $oneuser->username");
                     $nusers++;
                 }
@@ -208,10 +208,10 @@ else if (isset($_GET["toggleactive"])) {
                 if (!is_object($oneuser)) continue; // invalid user
 
                 if (!$oneuser->active) {
-                    HookManager::do_hook('Core::EditUserPre', [ 'user'=>&$oneuser ]);
+                    HookManager::do_hook('Core::EditUserPre', [ 'user'=>$oneuser ]);
                     $oneuser->active = 1;
                     $oneuser->save();
-                    HookManager::do_hook('Core::EditUserPost', [ 'user'=>&$oneuser ]);
+                    HookManager::do_hook('Core::EditUserPost', [ 'user'=>$oneuser ]);
                     audit($uid, 'Admin user', "Enabled: $oneuser->username");
                     $nusers++;
                 }
@@ -236,7 +236,7 @@ if (!empty($message)) echo '<div class="pagemcontainer"><p class="pagemessage">'
 $out      = array();
 $offset   = ((int)$page - 1) * $limit;
 $userlist = $userops->LoadUsers($limit, $offset);
-$is_admin = $userops->UserInGroup($userid,1);
+$is_admin = $userops->UserInGroup($userid,1); // OR bullet-proof ->IsSuperuser($userid) ?
 
 foreach ($userlist as $one) {
     $out[$one->id] = $one->username;
