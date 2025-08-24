@@ -1,3 +1,13 @@
+Version 2.2.23F2 - Regina
+-------------------------
+ - FR #12790 Content-page URL-path property may contain any URL-compatible chars, including upper-case letters. Special chars '@' etc are automatically urlencoded()'d.
+ - BR #12791 Missing login/out pre events
+ - Add to cms_http_request class support for HEAD requests, for use in url validation etc
+ - Add method cms_utils::find_content() for finding pages with a wanted value in the whole, or part, of any content field
+ - Add class and method Search_content::Find() as the backend processor for cms_utils::find_content()
+ - Consolidate content-related settings UI: migrate global-settings tab to ContentManager-settings tab
+ - Deprecate folder-creation using 0777 permissions (should be 0775 at most, for site security). Unconventional sites which rely on 'world-write' would be wise to prepare, by adding relevant user(s) to the PHP-user's (typically the server-user's) group.
+
 Version 2.2.22F2 - Whitehorse
 -------------------------------
  - FR #12548 To faciliate Navigator operation, load content target property as if it were not extended
