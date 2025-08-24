@@ -36,7 +36,7 @@ class Smarty_CMS extends CMSSmartyBase
      * Singleton object
      */
     private static $_instance;
-    
+
     /**
      * @var array
      * Stack of Template objects for simulating parent and child scopes
@@ -494,11 +494,14 @@ class Smarty_CMS extends CMSSmartyBase
         $this->assign('e_file', $e->getFile());
         $this->assign('e_message', $e->getMessage());
         $this->assign('e_trace', htmlentities($e->getTraceAsString()));
-        $this->assign('loggedin',get_userid(FALSE));
+        $this->assign('loggedin', get_userid(false));
 
         // put mention into the admin log
         audit('', 'Smarty', 'Error: '.$e->getMessage().'. Backtrace in debug.log.');
-        debug_bt_to_log();
+        // and into the debug log
+        $btarr = $e->getTrace();
+        $btarr[] = ['file'=>$e->getFile(), 'function'=>'unknown', 'line'=>$e->getLine()];
+        debug_bt_to_log($btarr, 3);
 
         $output = $this->fetch('cmsms-error-console.tpl');
 
