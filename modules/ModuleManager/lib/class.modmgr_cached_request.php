@@ -46,30 +46,27 @@ final class modmgr_cached_request
 
   public function execute($target = '',$data = array(), $age = '')
   {
-    $mod = cms_utils::get_module('ModuleManager');
-    $config = cmsms()->GetConfig();
-    if( !$age ) $age = get_site_preference('browser_cache_expiry',60);
-    if( $age ) $age = max(1,(int)$age);
-
     // build a signature
     $this->_signature = md5(serialize(array($target,$data)));
     $fn = $this->_getCacheFile();
     if( !$fn ) return;
 
-    // check for the cached file
+    if( !$age ) $age = get_site_preference('browser_cache_expiry',60);
+    if( $age ) $age = max(1,(int)$age);
     $atime = time() - ($age * 60);
-//    $status = '';
-//    $result = '';
+    $mod = cms_utils::get_module('ModuleManager');
+    $config = cmsms()->GetConfig();
+    // check for the cached file
     if( (!empty($config['developer_mode']) && $mod->GetPreference('disable_caching',0)) ||
         !file_exists($fn) || filemtime($fn) <= $atime ) {
         // execute the request
         $req = new cms_http_request();
         if( $this->_timeout ) $req->setTimeout($this->_timeout);
-        $req->execute($target,'','POST',$data);
+        $res = $req->execute($target,'','POST',$data);
         $this->_status = $req->getStatus();
-        $this->_result = $req->getResult();
+        $this->_result = $req->getResult(); // aka $res
 
-        @unlink($fn);
+        if( file_exists($fn) ) @unlink($fn);
         if( $this->_status == 200 ) {
             // create a cache file
             $fh = fopen($fn,'w');
