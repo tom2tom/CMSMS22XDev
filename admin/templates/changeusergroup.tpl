@@ -57,7 +57,7 @@
           {/if}
         {/if}
         <th class="g{$gid}">
-          <span{if !$thisgroup->active} style="font-style:italic" {/if}title="{$title}">{$text}</span>
+          <span {if !$thisgroup->active}style="font-style:italic" {/if}title="{$title}">{$text}</span>
         </th>
       {/if}
     {/foreach}

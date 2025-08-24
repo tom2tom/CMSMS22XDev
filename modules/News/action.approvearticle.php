@@ -45,13 +45,13 @@ if( is_object($search) ) {
       $query = 'SELECT value FROM '.CMS_DB_PREFIX.'module_news_fieldvals WHERE news_id = ?';
       $flds = $db->GetArray($query,array($articleid));
       if( is_array($flds) ) {
-	for( $i = 0; $i < count($flds); $i++ ) {
-	  $text .= ' '.$flds[$i]['value'];
-	}
+        for( $i = 0; $i < count($flds); $i++ ) {
+          $text .= ' '.$flds[$i]['value'];
+        }
       }
 
       $search->AddWords($this->GetName(), $articleid, 'article', $text,
-			($useexp == 1 && $this->GetPreference('expired_searchable',0) == 0) ? $t_end : NULL);
+            ($useexp == 1 && $this->GetPreference('expired_searchable',0) == 0) ? $t_end : NULL);
     }
   }
 }

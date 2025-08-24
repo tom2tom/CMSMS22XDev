@@ -485,7 +485,7 @@ VALUES (?,?,?,NOW(),NOW())';
             $gCms->clear_cached_files();
 
             audit('','Module','Installed '.$module_obj->GetName().' version '.$module_obj->GetVersion());
-            \CMSMS\HookManager::do_hook('Core::ModuleInstalled', [ 'name' => $module_obj->GetName(), 'version' => $module_obj->GetVersion() ] );
+            \CMSMS\HookManager::do_hook('Core::ModuleInstalled', [ 'name' => $module_obj->GetName(), 'version' => $module_obj->GetVersion() ]);
             return array(TRUE,$module_obj->InstallPostMessage());
         }
 
@@ -703,7 +703,7 @@ VALUES (?,?,?,NOW(),NOW())';
         if( (isset($info[$module_name]) && $info[$module_name]['status'] == 'installed') ||
             $force_load ) {
             if( is_object($obj) ) $this->_modules[$module_name] = $obj;
-            \CMSMS\HookManager::do_hook('Core::ModuleLoaded', [ 'name' => $module_name ] );
+            \CMSMS\HookManager::do_hook('Core::ModuleLoaded', [ 'name' => $module_name ]);
             return TRUE;
         }
 
@@ -843,7 +843,7 @@ VALUES (?,?,?,NOW(),NOW())';
             $this->_moduleinfo = array();
             $gCms->clear_cached_files();
             audit('','Module','Upgraded '.$module_obj->GetName().' to version '.$module_obj->GetVersion());
-            \CMSMS\HookManager::do_hook('Core::ModuleUpgraded', [ 'name' => $module_obj->GetName(), 'oldversion' => $dbversion, 'newversion' => $module_obj->GetVersion() ] );
+            \CMSMS\HookManager::do_hook('Core::ModuleUpgraded', [ 'name' => $module_obj->GetName(), 'oldversion' => $dbversion, 'newversion' => $module_obj->GetVersion() ]);
             return array(TRUE);
         }
 
@@ -901,9 +901,9 @@ VALUES (?,?,?,NOW(),NOW())';
             // clean up, if permitted
             if ($cleanup) {
                 // deprecated
-                $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'module_templates where module_name=?',array($module));
-                $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'event_handlers where module_name=?',array($module));
-                $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'events where originator=?',array($module));
+                $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'module_templates WHERE module_name=?',array($module));
+                $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'event_handlers WHERE module_name=?',array($module));
+                $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'events WHERE originator=?',array($module));
 
                 $types = \CmsLayoutTemplateType::load_all_by_originator($module);
                 if( is_array($types) && count($types) ) {
@@ -928,7 +928,7 @@ VALUES (?,?,?,NOW(),NOW())';
                 $jobmgr = \ModuleOperations::get_instance()->get_module_instance('CmsJobManager');
                 if( $jobmgr ) $jobmgr->delete_jobs_by_module( $module );
 
-                $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'module_smarty_plugins where module=?',array($module));
+                $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'module_smarty_plugins WHERE module=?',array($module));
                 $db->Execute('DELETE FROM '.CMS_DB_PREFIX."siteprefs WHERE sitepref_name LIKE '". str_replace("'",'',$db->qstr($module))."_mapi_pref%'");
                 $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'routes WHERE key1 = ?',array($module));
                 $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'module_smarty_plugins WHERE module = ?',array($module));
@@ -941,7 +941,7 @@ VALUES (?,?,?,NOW(),NOW())';
             $this->_moduleinfo = array();
 
             audit('','Module','Uninstalled '.$module);
-            \CMSMS\HookManager::do_hook('Core::ModuleUninstalled', [ 'name' => $module ] );
+            \CMSMS\HookManager::do_hook('Core::ModuleUninstalled', [ 'name' => $module ]);
             return array(TRUE);
         }
 

@@ -71,7 +71,7 @@ WHERE news_category_id = ?';
 
       news_admin_ops::UpdateHierarchyPositions();
 
-      HookManager::do_hook('News::NewsCategoryEdited', [ 'category_id'=>$catid, 'name'=>$name, 'origname'=>$origname ] );
+      HookManager::do_hook('News::NewsCategoryEdited', [ 'category_id'=>$catid, 'name'=>$name, 'origname'=>$origname ]);
       // put mention into the admin log
       audit($catid, $me.' category', "Edited: $name");
 
