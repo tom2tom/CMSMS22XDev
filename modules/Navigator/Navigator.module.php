@@ -34,7 +34,7 @@
 class NavigatorNode
 {
     // Declared properties prevent deprecation warnings
-    // Non-runtime-specific values are set
+    // Non-runtime-specific values and 'deep' property values are set
     public $accesskey;
     public $alias;
     public $children;
@@ -43,25 +43,26 @@ class NavigatorNode
     public $current = false;
     public $default;
     public $depth;
-    public $extra1;
-    public $extra2;
-    public $extra3;
+    public $extra1 = '';
+    public $extra2 = '';
+    public $extra3 = '';
     public $has_children = false;
     public $hierarchy;
     public $id;
-    public $image;
+    public $image = '';
     public $menutext;
     public $modified;
     public $parent = false;
     public $raw_menutext;
     public $tabindex;
     public $target = '';
+    public $thumbnail = '';
     public $titleattribute;
     public $type;
-    public $url;
+    public $url = '';
 
     /**
-     * This little function will remove all silly notices in smarty.
+     * Prevent nondeclared- or unpopulated-property notices.
      */
     #[\ReturnTypeWillChange]
     public function __get($key) { return null; }
@@ -71,7 +72,7 @@ final class Navigator extends CMSModule
 {
     const __DFLT_PAGE = '**DFLT_PAGE**';
 
-    public function GetName() { return get_class($this); }
+    public function GetName() { return 'Navigator'; }
     public function GetFriendlyName() { return $this->Lang('friendlyname'); }
     public function IsPluginModule() { return true; }
     public function HasAdmin() { return false; }
