@@ -30,23 +30,6 @@
 #END_LICENSE
 
 /**
- * Classes, functions and utilities for managing CMSMS routes.
- * @package CMS
- * @author  Robert Campbell
- * @license GPL
- */
-
-if( !function_exists('_internal_cmp_routes') ) {
-	/**
-	 * @internal
-	 * @ignore
-	 */
-	function _internal_cmp_routes($a,$b) {
-		return strcmp($a['term'],$b['term']);
-	}
-}
-
-/**
  * A class to manage all recognized routes in the system.
  *
  * @package CMS
@@ -59,12 +42,12 @@ final class cms_route_manager
 	/**
 	 * @ignore
 	 */
-	private function __construct() {}
+	private static $_routes_loaded = FALSE;
 
 	/**
 	 * @ignore
 	 */
-	private static $_routes_loaded = FALSE;
+	private static $_routes_sorted = FALSE;
 
 	/**
 	 * @ignore
@@ -79,8 +62,14 @@ final class cms_route_manager
 	/**
 	 * @ignore
 	 */
+	private function __construct() {}
+
+	/**
+	 * @ignore
+	 */
 	private static function _find_match($needle,$haystack,$exact)
 	{
+		if( is_numeric($needle) ) return FALSE; //page id is never a valid url-slug
 		// split the haystack into an array of 'absolute' or 'regex' matches
 		$absolute = array();
 		$regex = array();
@@ -93,12 +82,45 @@ final class cms_route_manager
 			}
 		}
 
-		// sort the list of absolutes
-		usort($absolute,'_internal_cmp_routes');
-
-		// do a binary search on the absolute routes
 		if( $absolute ) {
-			$res = self::route_binarySearch($needle,$absolute,'strcmp');
+			// do a binary case-sensitive search on the absolutes
+			if( class_exists('Collator') ) { // Intl extension needed for Collator
+				//$lang = NlsOperations::get_default_language(); // e.g. 'pl_PL' TODO if .UTF-8 ? ini 'output_encoding' ? if files N/A on host system?
+				$coll = new Collator('root'); // TODO relevant locale e.g. from $lang
+//				$coll->setStrength(Collator::PRIMARY); would make it case-insensitive
+				$matcher = function($a,$b) use($coll) {
+					if( $a == $b ) return 0; // quick exit
+					$res = collator_compare($coll,$a,$b);
+					if( $res !== FALSE ) {
+						return $res;
+					}
+					else {
+					//TODO handle collator_get_error_message($coll);
+					}
+					if( function_exists('mb_strtoupper') ) {
+						//TODO non-0 value e.g. strcmp(mb_strtoupper($a,$encoding),mb_strtoupper($b,$encoding));
+					}
+					return strcmp($a,$b); //TODO some other multi-byte-compatible fallback
+				};
+			}
+			elseif( function_exists('mb_strtoupper') ) { //TODO
+				$matcher = function($a,$b) {
+					if( $a == $b ) return 0; // quick exit
+					$encoding = 'UTF-8'; //TODO
+					return strcmp(mb_strtoupper($a,$encoding),mb_strtoupper($b,$encoding)); //TODO
+				};
+			}
+			else {
+				$matcher = 'strcmp'; //TODO some other multi-byte-compatible fallback
+			}
+
+			if( !self::$_routes_sorted ) {
+				usort($absolute, function($a,$b) use($matcher) {
+					return $matcher($a['term'],$b['term']);
+				});
+				self::$_routes_sorted = TRUE;
+			}
+			$res = self::route_binarySearch($needle,$absolute,$matcher);
 			if( $res !== FALSE ) return $absolute[$res];
 		}
 
@@ -116,11 +138,11 @@ final class cms_route_manager
 	 */
 	private static function route_binarySearch($needle,$haystack,$comparator)
 	{
-		if( count($haystack) == 0 ) return FALSE;
+		if( !$haystack ) return FALSE;
 
 		// credits: temporal dot pl at gmail dot com
 		// reference: http://php.net/manual/en/function.array-search.php
-		$high = count($haystack) -1;
+		$high = count($haystack) - 1;
 		$low = 0;
 		while( $high >= $low ) {
 			$probe = (int)floor(($high + $low) / 2);
@@ -293,6 +315,7 @@ final class cms_route_manager
 		if( self::route_exists($route) ) return FALSE;
 		if( !is_array(self::$_dynamic_routes) ) self::$_dynamic_routes = array();
 		self::$_dynamic_routes[$route->signature()] = $route;
+		self::$_routes_sorted = FALSE;
 		return TRUE;
 	}
 
@@ -387,10 +410,11 @@ final class cms_route_manager
 		if( is_array($data) && count($data) ) {
 			self::$_routes = array();
 			for( $i = 0, $n = count($data); $i < $n; $i++ ) {
-				$obj = unserialize($data[$i]['data']);
+				$obj = unserialize($data[$i]['data']); // no failure-test
 				self::$_routes[$obj->signature()] = $obj;
 			}
 			self::$_routes_loaded = TRUE;
+			self::$_routes_sorted = FALSE;
 		}
 	}
 
@@ -433,6 +457,7 @@ final class cms_route_manager
 		@unlink(self::_get_cache_filespec());
 		self::$_routes = null; //not array - empty array has meaning
 		self::$_routes_loaded = FALSE;
+		self::$_routes_sorted = FALSE;
 		// note: dynamic routes don't get cleared.
 	}
 } // end of class

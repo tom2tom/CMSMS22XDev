@@ -282,11 +282,11 @@ class cms_filecache_driver extends cms_cache_driver
      */
     private function _read_cache_file($fn)
     {
-        $this->_cleanup($fn);
         $data = null; // no matched cache item == no value
         if( is_file($fn) ) {
             clearstatcache();
-            $fp = @fopen($fn,'rb');
+            $this->_cleanup($fn);
+            $fp = (is_file($fn)) ? @fopen($fn,'rb') : null;
             if( $fp ) {
                 if( $this->_flock($fp,self::LOCK_READ) ) {
                     $len = @filesize($fn);
@@ -310,7 +310,6 @@ class cms_filecache_driver extends cms_cache_driver
     private function _cleanup($fn)
     {
         if( is_null($this->_lifetime) ) return;
-        clearstatcache();
         $filemtime = @filemtime($fn);
         if( $filemtime < time() - $this->_lifetime ) @unlink($fn);
     }
