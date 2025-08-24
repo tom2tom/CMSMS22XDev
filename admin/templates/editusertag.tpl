@@ -9,16 +9,16 @@ $(function() {
     cms_confirm("{lang('confirm_runusertag')|strip|escape:'quotes'}").done(function() {
       var code = $('#udtcode').val();
       if( code.length == 0 ) {
-        var d = '{lang("noudtcode")}';
-        txt = '<div class="pageerrorcontainer"><ul class="pageerror">' + d + '<\/ul><\/div>';
+        var d = '{lang("noudtcode")}',
+         txt = '<div class="pageerrorcontainer"><ul class="pageerror">' + d + '<\/ul><\/div>';
         $('#edit_userplugin_result').html(txt);
         return false;
       }
       var data = $('#edit_userplugin').find('input:not([type="submit"]), select, textarea').serializeArray();
-      data.push({ 'name': 'code', 'value': code });
-      data.push({ 'name': 'run', 'value': 1 });
-      data.push({ 'name': 'apply', 'value': 1 });
-      data.push({ 'name': 'ajax', 'value': 1 });
+      data.push(
+       { 'name': 'run', 'value': 1 },
+       { 'name': 'apply', 'value': 1 },
+       { 'name': 'ajax', 'value': 1 });
       $.post('{$smarty.server.REQUEST_URI}',data,function(resultdata,text) {
         var r,d,e;
         try {
@@ -47,20 +47,22 @@ $(function() {
 
   $(document).on('click', '#applybtn', function() {
     var data = $('#edit_userplugin').find('input:not([type="submit"]), select, textarea').serializeArray();
-    data.push({ 'name': 'ajax', 'value': 1 });
-    data.push({ 'name': 'apply', 'value': 1 });
+    data.push(
+      { 'name': 'ajax', 'value': 1 },
+      { 'name': 'apply', 'value': 1 });
 
     $.post('{$smarty.server.REQUEST_URI}',data,function(resultdata,text) {
       var x = JSON.parse(resultdata);
       var r = x.response;
       var d = x.details;
-      var txt = '';
+      var txt;
       if( r == 'Success' ) {
         txt = '<div class="pagemcontainer"><span class="close-warning"></span><p class="pagemessage">' + d + '<\/p><\/div>';
-        $('[name="cancel"]').fadeOut();
-        $('[name="cancel"]').val('{lang("close")}');
-        $('[name="cancel"]').button('option','label','{lang("close")}');
-        $('[name="cancel"]').fadeIn();
+        var b = $('[name="cancel"]');
+        b.fadeOut();
+        b.val('{lang("close")}');
+        b.button('option','label','{lang("close")}');
+        b.fadeIn();
       }
       else {
         txt = '<div class="pageerrorcontainer"><ul class="pageerror">' + d + '<\/ul><\/div>';
