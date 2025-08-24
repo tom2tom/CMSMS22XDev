@@ -25,16 +25,25 @@
  */
 class Smarty_CMS extends CMSSmartyBase
 {
-    public $assign; // TODO used by ancestor class(es)? plugin(s) ?
-    public $id; // for cacheing actionid prefix
-    public $params; // why ? assigned once, never read
-//  public $config_overwrite = false; // ditto refer to https://www.smarty.net/docs/en/variable.config.overwrite.tpl
-//  public $default_config_handler_func = null; //ditto refer to https://www.smarty.net/docs/en/variable.default.config.handler.func.tpl
+    /**
+     * @var string | null
+     * Optional cache_id prefix
+     */
     protected $_global_cache_id;
-    private static $_instance;
 
-    // this is deprecated
-    private $_tpl_stack = []; // this is for simulating parent and child scopes while directly using \Smarty_CMS::fetch()
+    /**
+     * @var Smarty_CMS
+     * Singleton object
+     */
+    private static $_instance;
+    
+    /**
+     * @var array
+     * Stack of Template objects for simulating parent and child scopes
+     * while directly using Smarty_CMS::fetch()
+     * @todo is this deprecated ?
+     */
+    private $_tpl_stack = [];
 
     /**
      * Constructor
@@ -479,8 +488,6 @@ class Smarty_CMS extends CMSSmartyBase
     public function errorConsole(Exception $e)
     {
         $this->force_compile = true;
-
-        // do not show smarty debug console popup to users not logged in
         //$this->debugging = get_userid(FALSE);
 
         $this->assign('e_line', $e->getLine());
@@ -490,7 +497,8 @@ class Smarty_CMS extends CMSSmartyBase
         $this->assign('loggedin',get_userid(FALSE));
 
         // put mention into the admin log
-        audit('', 'Smarty', 'Error: '.$e->getMessage());
+        audit('', 'Smarty', 'Error: '.$e->getMessage().'. Backtrace in debug.log.');
+        debug_bt_to_log();
 
         $output = $this->fetch('cmsms-error-console.tpl');
 
