@@ -20,8 +20,14 @@ final class session implements ArrayAccess
       @session_name('CMSIC'.$session_key);
       @session_cache_limiter('private');
       $res = false;
-      if( !@session_id() ) $res = @session_start();
-      if( !$res ) throw new RuntimeException('Problem starting the session (system configuration problem?)');
+      if( !@session_id() ) { // NOTE result '' differs from false
+        //2.2.22 added this check (dubious merit?)
+        if( session_status() == PHP_SESSION_ACTIVE ) { // ensure we start fresh session
+          session_destroy();
+        }
+        $res = @session_start();
+      }
+      if( !$res ) throw new RuntimeException('Problem starting installer session (system configuration problem?)');
       self::$_session_id = session_id();
       self::$_key = 'k'.md5(self::$_session_id);
     }
