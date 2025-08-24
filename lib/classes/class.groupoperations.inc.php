@@ -162,7 +162,7 @@ final class GroupOperations
 		$new_id = $db->GenId(CMS_DB_PREFIX.'group_perms_seq');
 		if( !$new_id ) return;
 
-		$now = $db->DbTimeStamp(time());
+		$now = $db->DBTimeStamp(time());
 		$query = 'INSERT INTO '.CMS_DB_PREFIX."group_perms (group_perm_id,group_id,permission_id,create_date,modified_date)
 VALUES (?,?,?,$now,$now)";
 		$dbr = $db->Execute($query,array($new_id,$groupid,$permid));

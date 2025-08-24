@@ -453,7 +453,7 @@ WHERE g.group_id=? ORDER BY username";
 		if( $uid < 1 || $gid < 1 ) return;
 
 		$db = CmsApp::get_instance()->GetDb();
-		$now = $db->DbTimeStamp(time());
+		$now = $db->DBTimeStamp(time());
 		$query = 'INSERT INTO '.CMS_DB_PREFIX."user_groups
 (group_id,user_id,create_date,modified_date)
 VALUES (?,?,$now,$now)";

@@ -368,7 +368,7 @@ if( is_array($tmp) && count($tmp) ) {
           $stylesheet = new CmsLayoutStylesheet();
           $stylesheet->set_name($new_name);
           $stylesheet->set_content($row['css_text']);
-          $stylesheet->set_description('CMSMS Upgraded on '.$db->DbTimeStamp(time()));
+          $stylesheet->set_description('CMSMS Upgraded on '.$db->DBTimeStamp(time()));
           $stylesheet->set_media_types($row['media_type']);
           $stylesheet->set_media_query($row['media_query']);
           $stylesheet->save();
@@ -400,7 +400,7 @@ if( is_array($tmp) && count($tmp) ) {
         $tpl_id = $row['template_id'];
         $design = new CmsLayoutCollection();
         $design->set_name($row['template_name']);
-        $design->set_description('CMSMS Upgraded on '.$db->DbTimeStamp(time()));
+        $design->set_description('CMSMS Upgraded on '.$db->DBTimeStamp(time()));
         $design->set_default($is_default);
         $design->save(); // the design will now have an id.
         verbose_msg('created design '.$design->get_name());

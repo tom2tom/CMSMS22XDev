@@ -148,7 +148,7 @@ $smarty->assign('allgroups',$allgroups);
 
 if ($submitted == 1) {
     // we have group permissions
-    $now = $db->DbTimeStamp(time());
+    $now = $db->DBTimeStamp(time());
     $iquery = "INSERT INTO ".CMS_DB_PREFIX.
         "group_perms (group_perm_id, group_id, permission_id, create_date, modified_date)
        VALUES (?,?,?,$now,$now)";

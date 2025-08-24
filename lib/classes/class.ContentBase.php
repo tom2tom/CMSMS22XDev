@@ -1283,7 +1283,7 @@ abstract class ContentBase
 		$query = 'SELECT prop_name FROM '.CMS_DB_PREFIX.'content_props WHERE content_id = ?';
 		$gotprops = $db->GetCol($query,array($this->mId));
 
-		$now = $db->DbTimeStamp(time());
+		$now = $db->DBTimeStamp(time());
 		$iquery = 'INSERT INTO '.CMS_DB_PREFIX."content_props
 (content_id,type,prop_name,content,create_date,modified_date)
 VALUES (?,?,?,?,$now,$now)";
