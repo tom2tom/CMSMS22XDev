@@ -1,12 +1,9 @@
 <?php
-if (!isset($gCms))
-    exit;
+if (!isset($gCms)) exit;
 
-if (!$this->CheckPermission('Modify News'))
-    return;
+if (!$this->CheckPermission('Modify News')) return;
 
-if (isset($params['cancel']))
-    $this->Redirect($id, 'defaultadmin', $returnid);
+if (isset($params['cancel'])) $this->Redirect($id, 'defaultadmin', $returnid);
 
 /*--------------------
  * Variables
@@ -23,10 +20,11 @@ $me           = $this->GetName();
 $content      = isset($params['content']) ? $params['content'] : '';
 $enddate      = strtotime(sprintf("+%d days", $ndays), $now);
 $extra        = isset($params['extra']) ? trim(strip_tags($params['extra'])) : '';
+$image_url    = isset($params['image_url']) ? $params['image_url'] : '';
 $news_url     = isset($params['news_url']) ? $params['news_url'] : '';
-$postdate     = $now;
+$postdate     = $now; // better as longnow ?
 $searchable   = isset($params['searchable']) ? (int)$params['searchable'] : 1;
-$startdate    = $now;
+$startdate    = $now; // better as longnow ?
 $status       = isset($params['status']) ? $params['status'] : $status;
 $summary      = isset($params['summary']) ? $params['summary'] : '';
 $title        = isset($params['title']) ? trim(strip_tags($params['title'])) : '';
@@ -50,7 +48,7 @@ if (isset($params['enddate_Month'])) {
  ---------------------*/
 
 if (isset($params['submit'])) {
-    $error = FALSE;
+    $error = FALSE; //TODO accumulate array of err messages
     if (!$title) {
         $error = $this->ShowErrors($this->Lang('notitlegiven'));
     } else if (!$content) {
@@ -61,37 +59,52 @@ if (isset($params['submit'])) {
         }
     }
 
-    if ($error === FALSE && $news_url) {
-        // check for starting or ending slashes
-        if (startswith($news_url, '/') || endswith($news_url, '/'))
-            $error = $this->ShowErrors($this->Lang('error_invalidurl'));
-
-        if ($error === FALSE) {
-            // check for invalid chars.
-            $translated = munge_string_to_url($news_url, false, true);
-            if (strtolower($translated) != strtolower($news_url))
-                $error = $this->ShowErrors($this->Lang('error_invalidurl'));
-        }
-
-        if ($error === FALSE) {
-            // make sure this url isn't taken.
-            cms_route_manager::load_routes();
-            $route = cms_route_manager::find_match($news_url);
-            if ($route) {
-                $error = $this->ShowErrors($this->Lang('error_invalidurl'));
-                // we're adding an article, not editing... any matching route is bad.
+    if (!$error && $image_url) {
+        list($valid, $msg) = cms_utils::validate_url($image_url,'image');
+        if (!$valid) {
+            if ($msg) {
+                $error = $this->ShowErrors($msg);
+            } else {
+                $error = $this->ShowErrors($this->Lang('error_unknown'));
             }
         }
     }
 
-    //
-    // database work
-    //
+    if (!$error && $news_url) {
+        if ($news_url[0] == '/') { //trailing '/' ok
+            $error = $this->ShowErrors($this->Lang('error_invalidurl'));
+        } else {
+            // check for other invalid chars.
+            $translated = cms_utils::cleanUrlPath($news_url);
+            if ($translated != $news_url) {
+                $error = $this->ShowErrors($this->Lang('error_invalidurl'));
+            }
+        }
+
+        if (!$error) {
+            // make sure this url isn't taken.
+            // we're adding an article, not editing... any matching route is bad.
+            cms_route_manager::load_routes();
+            $route = cms_route_manager::find_match($news_url);
+            if ($route) {
+                $error = $this->ShowErrors($this->Lang('error_urlused'));
+            }
+        }
+    }
+
+    //TODO thoroughly sanitize esp. $summary, $content in order to support
+    //Smarty tags in there c.f. pre-display news_ops::execSpecialize() and UDT validation
+    //some sandbox like https://github.com/pabloFdz/PHPDune
+
     if ($error) {
-        echo $error;
+        echo $error; //TODO onetime $this->ShowErrors($errors)
     } else {
+        //
+        // database work
+        //
         $articleid = $db->GenID(CMS_DB_PREFIX . "module_news_seq");
-        $query = 'INSERT INTO ' . CMS_DB_PREFIX . 'module_news (news_id, news_category_id, news_title, news_data, summary, status, news_date, start_time, end_time, create_date, modified_date,author_id,news_extra,news_url,searchable) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+        $longnow = trim($db->DBTimeStamp($now), "'");
+        $query = 'INSERT INTO ' . CMS_DB_PREFIX . 'module_news (news_id, news_category_id, news_title, news_data, summary, status, icon, news_date, start_time, end_time, create_date, modified_date,author_id,news_extra,news_url,searchable) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
         $args = array(
             $articleid,
             $usedcategory,
@@ -99,19 +112,20 @@ if (isset($params['submit'])) {
             $content,
             $summary,
             $status,
+            $image_url, //TODO news_ops::storeformat_url($image_url);
             trim($db->DBTimeStamp($postdate), "'"),
             NULL, // undefined DT value in db
             NULL, // ditto
-            trim($db->DBTimeStamp(time()), "'"),
-            trim($db->DBTimeStamp(time()), "'"),
+            $longnow,
+            $longnow,
             $userid,
             $extra,
             $news_url,
-            $searchable
+            ($searchable)?1:0
         );
         if ($useexp) {
-            $args[7] = trim($db->DBTimeStamp($startdate), "'");
-            $aegs[8] = trim($db->DBTimeStamp($enddate), "'");
+            $args[8] = trim($db->DBTimeStamp($startdate), "'");
+            $args[9] = trim($db->DBTimeStamp($enddate), "'");
         }
 
         $dbr = $db->Execute($query, $args);
@@ -123,6 +137,11 @@ if (isset($params['submit'])) {
         //
         //Handle submitting the 'custom' fields
         //
+
+        //TODO thoroughly sanitize in order to support Smarty tags
+        //in there c.f. pre-display news_ops::execSpecialize() and UDT validation
+        //some sandbox like https://github.com/pabloFdz/PHPDune
+
         // get the field types
         $query = "SELECT id,name,type FROM " . CMS_DB_PREFIX . "module_news_fielddefs WHERE type='file'";
         $types = $db->GetArray($query);
@@ -147,7 +166,7 @@ if (isset($params['submit'])) {
         }
 
         if (isset($params['customfield']) && !$error) {
-            $now = trim($db->DBTimeStamp(time()), "'");
+            $longnow = trim($db->DBTimeStamp($now), "'");
             foreach ($params['customfield'] as $fldid => $value) {
                 if ($value == '')
                     continue;
@@ -157,8 +176,8 @@ if (isset($params['submit'])) {
                     $articleid,
                     $fldid,
                     $value,
-                    $now,
-                    $now
+                    $longnow,
+                    $longnow
                 ));
                 if (!$dbr)
                     die('FATAL SQL ERROR: ' . $db->ErrorMsg() . '<br>QUERY: ' . $db->sql);
@@ -197,6 +216,7 @@ if (isset($params['submit'])) {
                       'content' => $content,
                       'summary' => $summary,
                       'status' => $status,
+                      'icon' => $image_url,
                       'start_time' => $startdate,
                       'end_time' => $enddate,
                       'postdate' => $postdate,
@@ -265,7 +285,7 @@ $statusdropdown[$this->Lang('published')] = 'published';
 
 $categorylist = array();
 $query = "SELECT news_category_id,long_name FROM " . CMS_DB_PREFIX . "module_news_categories ORDER BY hierarchy";
-$rst = $db->Execute($query);
+$rst = $db->Execute($query); // TODO ->GetArray() then process accordingly
 if ($rst) {
     while ($row = $rst->FetchRow()) {
         if ($row['long_name'] === null) $row['long_name'] = '';
@@ -277,10 +297,10 @@ if ($rst) {
 
 // Display custom fields
 $query = 'SELECT * FROM ' . CMS_DB_PREFIX . 'module_news_fielddefs ORDER BY item_order';
-$dbr = $db->Execute($query);
+$rst = $db->Execute($query); //TODO ->GetArray() then process accordingly
 $custom_flds = array();
-if ($dbr) {
-    while (($row = $dbr->FetchRow())) {
+if ($rst) {
+    while (($row = $rst->FetchRow())) {
         foreach (['name','type','extra'] as $fld) {
             if ($row[$fld] === null) $row[$fld] = '';
         }
@@ -311,8 +331,7 @@ if ($dbr) {
         $obj->size     = min(80, (int)$row['max_length']);
         $obj->max_len  = max(1, (int)$row['max_length']);
         $obj->options  = $options;
-        // FIXME - If we create inputs with hmtl markup in smarty template, whats the use of switch and form API here?
-        /*
+/* FIXME - If we create inputs with hmtl markup in smarty template, what's the use of switch and form API here?
         switch( $row['type'] ) {
             case 'textbox' :
                 $size = min(50, $row['max_length']);
@@ -332,15 +351,26 @@ if ($dbr) {
                 $obj->field = $this->CreateInputDropdown($id, $name, array_flip($options));
                 break;
         }
-        */
-
+*/
         $custom_flds[$row['name']] = $obj;
     }
-    $dbr->Close();
+    $rst->Close();
 }
 
+//TODO support selection also from any of: assetspath/images; themesroot/*; themesroot/* /images; themesroot/* /media
+$dir = $config['image_uploads_path']; // /news ?
+$data = $image_url; //TODO tailor e.g. relative url, offsite url, cleaned url
+
+$filepicker = cms_utils::get_filepicker_module();
+$userid = get_userid(false);
+$profile = $filepicker->get_default_profile($dir, $userid);
+$profile = $profile->overrideWith(['top'=>$dir, 'type'=>'image']);
+$input = $filepicker->get_html($id.'image_url', $data, $profile);
+preg_match('/id="(.+?)"/', $input, $matches);
+$inputid = $matches[1];
+
 /*--------------------
- * Pass everything to smarty
+ * Pass everything to Smarty
  ---------------------*/
 
 $tpl = $smarty->createTemplate("module_file_tpl:$me;editarticle.tpl", null, $me, $smarty);
@@ -355,6 +385,9 @@ $tpl->assign('title', $title);
 $tpl->assign('allow_summary_wysiwyg', $this->GetPreference('allow_summary_wysiwyg'));
 $tpl->assign('extratext', $this->Lang('extra'));
 $tpl->assign('extra', $extra);
+$tpl->assign('imagetext', $this->Lang('image'));
+$tpl->assign('imageinput',$input);
+$tpl->assign('imageinputid',$inputid);
 $tpl->assign('urltext', $this->Lang('url'));
 $tpl->assign('news_url', $news_url);
 $tpl->assign('postdate', $postdate);
@@ -382,6 +415,7 @@ $tpl->assign('startdatetext', $this->Lang('startdate'));
 $tpl->assign('enddatetext', $this->Lang('enddate'));
 $tpl->assign('searchable', $searchable);
 $tpl->assign('select_option', $this->Lang('select_option'));
+$tpl->assign('warning_preview', $this->Lang('warning_preview'));
 // tab stuff (could be replaced by template tags)
 $tpl->assign('start_tab_headers', $this->StartTabHeaders());
 $tpl->assign('tabheader_article', $this->SetTabHeader('article', $this->Lang('article')));
@@ -391,7 +425,6 @@ $tpl->assign('start_tab_content', $this->StartTabContent());
 $tpl->assign('start_tab_article', $this->StartTab('article', $params));
 $tpl->assign('end_tab_article', $this->EndTab());
 $tpl->assign('end_tab_content', $this->EndTabContent());
-$tpl->assign('warning_preview', $this->Lang('warning_preview'));
 
 $parms = array(
     'enablewysiwyg' => 1,
@@ -422,8 +455,8 @@ if ($this->CheckPermission('Approve News')) {
 $contentops = cmsms()->GetContentOperations();
 $tpl->assign('preview_page_selector', $contentops->CreateHierarchyDropdown(0, $this->GetPreference('detail_returnid', -1), $id.'previewpage', TRUE));
 
-// get the list of detail templates.
 try {
+    // get the list of detail templates.
     $type = CmsLayoutTemplateType::load($me . '::detail');
     $templates = $type->get_template_list();
     $list = array();
@@ -443,5 +476,6 @@ try {
 } catch( Exception $e ) {
     audit('', $me, 'No detail template available for preview');
 }
+
 $tpl->display();
 ?>
