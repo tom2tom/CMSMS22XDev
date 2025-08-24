@@ -310,6 +310,7 @@ function copy_source_files()
   rrmdir($indir.'/tmp/cache');
   rrmdir($indir.'/tmp/configs');
   rrmdir($indir.'/tmp/templates_c');
+  rrmdir($indir.'/uploads'); // since 2.2.22F2 themes data not in here
   $l = strlen($indir);
   @mkdir($tmpdir);
   echo "INFO: Copying source files from $indir to $tmpdir\n";
