@@ -15,7 +15,7 @@ cms_siteprefs::set('adminlog_lifetime',86400*31); // admin log entries only live
 cms_siteprefs::set('allow_browser_cache',1); // allow browser to cache cachable pages
 cms_siteprefs::set('auto_clear_cache_age',60); // cache files for only 60 days by default
 cms_siteprefs::set('browser_cache_expiry',60); // browser can cache pages for 60 minutes.
-$txt = str_pad((string)decoct(umask()),3,'0',STR_PAD_LEFT);
+$txt = str_pad(decoct(umask()),3,'0',STR_PAD_LEFT);
 cms_siteprefs::set('global_umask',$txt); //deprecated since 2.2.19 (setting umask is bad on multi-threaded servers)
 cms_siteprefs::set('metadata',"<meta name=\"Generator\" content=\"CMS Made Simple - Copyright (C) 2004-" . date('Y') . ". All rights reserved.\">\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\r\n");
 cms_siteprefs::set('sitedownmessage','<p>Site is currently down for maintenance</p>');
@@ -219,6 +219,16 @@ $move_directory_files = function($srcdir,$destdir) {
 */
 $app = \__appbase\get_app();
 $destdir = $app->get_destdir();
+
+// create directories excluded from sources archive cuz empty
+verbose_msg(ilang('install_createtmpdirs'));
+$create_private_dir($destdir,'tmp');
+$create_private_dir($destdir,'tmp','cache');
+$create_private_dir($destdir,'tmp','config');
+$create_private_dir($destdir,'tmp','templates_c');
+
+$create_private_dir($destdir,'uploads'); // since 2.2.22F2 not in archive if themes data not in here
+$create_private_dir($destdir,'uploads','images');
 $create_private_dir($destdir,'admin','configs'); // since 2.2.20
 // create the assets directory structure
 verbose_msg(ilang('install_createassets'));
