@@ -42,30 +42,60 @@
   <tr><td>url</td><td>URL of TBA</td></tr>
  </tbody>
 </table>
-<h5>Each member of the $items array is an object with properties:</h5>
+<h5>Each member of the $items array is a news_article object with properties:</h5>
 <table>
  <tbody>
   <tr><td>author</td><td>Login id</td></tr>
   <tr><td>author_id</td><td>Integer</td></tr>
   <tr><td>authorname</td><td>Public name</td></tr>
+  <tr><td>canonical</td><td>'Pretty' urlpath</td></tr>
   <tr><td>category</td><td>Name</td></tr>
+  <tr><td>category_id</td><td>Numeric id of category</td></tr>
+  <tr><td>category_name</td><td>Alias of category</td></tr>
   <tr><td>content</td><td>String</td></tr>
   <tr><td>create_date</td><td>Formatted like Y-m-d H:i:s or empty</td></tr>
-  <tr><td>detail_url</td><td>URL of TBA</td></tr>
+  <tr><td>detail_url</td><td>URL for displaying a detail view</td></tr>
   <tr><td>enddate</td><td>Formatted like Y-m-d H:i:s or empty</td></tr>
-  <tr><td>fields</td><td>array</td></tr>
-  <tr><td>fieldsbyname</td><td>Alias of fields</td></tr>
+  <tr><td>extra</td><td>Extra data</td></tr>
+  <tr><td>fields</td><td>Array news_field object(s) or empty</td></tr>
+  <tr><td>fieldsbyname</td><td>Deprecated alias of fields</td></tr>
   <tr><td>file_location</td><td>URL of uploaded file</td></tr>
   <tr><td>id</td><td>Integer article id </td></tr>
+  <tr><td>image</td><td>Alias of image_url</td></tr>
+  <tr><td>image_url</td><td>Absolute url</td></tr>
   <tr><td>link</td><td>URL of TBA</td></tr>
   <tr><td>modified_date</td><td>Formatted like Y-m-d H:i:s or empty</td></tr>
   <tr><td>morelink</td><td>Anchor elemement linking to display article detail</td></tr>
-  <tr><td>moreurl</td><td>URL of TBA</td></tr>
+  <tr><td>moreurl</td><td>Alias of detail_url</td></tr>
+  <tr><td>news_url</td><td></td>Urlpath/slug for direct access</tr>
   <tr><td>postdate</td><td>Formatted like Y-m-d H:i:s or empty</td></tr>
+  <tr><td>returnid</td><td></td>Id of page to be displayed after 'return' click</tr>
   <tr><td>startdate</td><td>Formatted like Y-m-d H:i:s or empty</td></tr>
+  <tr><td>status</td><td>Draft or published</td></tr>
   <tr><td>summary</td><td>String</td></tr>
   <tr><td>title</td><td>String</td></tr>
   <tr><td>titlelink</td><td>Anchor elemement linking to display article detail</td></tr>
+  <tr><td>url</td><td>Alias of news_url</td></tr>
+  <tr><td>useexp</td><td>Whether the article has an enddate</td></tr>
+ </tbody>
+</table>
+<h5>Each member of the $fields-property array is a news_article object with properties:</h5>
+<table>
+ <tbody>
+  <tr><td>alias</td><td>Munged variant of name</td></tr>
+  <tr><td>create_date</td><td>Formatted like Y-m-d H:i:s</td></tr>
+  <tr><td>displayvalue</td><td>Displayable value, sometimes a derivative of value</td></tr>
+  <tr><td>extra</td><td>Serialised properties</td></tr>
+  <tr><td>fielddef_id</td><td>Alias of id</td></tr>
+  <tr><td>id</td><td>Field numeric id</td></tr>
+  <tr><td>item_order</td><td>Display order</td></tr>
+  <tr><td>max_length</td><td></td></tr>
+  <tr><td>modified_date</td><td>Formatted like Y-m-d H:i:s or empty</td></tr>
+  <tr><td>name</td><td>Field identifier</td></tr>
+  <tr><td>options</td><td>Dropdown field options</td></tr>
+  <tr><td>public</td><td>Whether the field is for public display</td></tr>
+  <tr><td>type</td><td>checkbox,dropdown,file,linkedfile,textarea or textbox</td></tr>
+  <tr><td>value</td><td>Field value</td></tr>
  </tbody>
 </table>
 <h4>Variables available for use in each template used to display output of News detail action</h4>
@@ -73,9 +103,9 @@
  <tbody>
  <tr><td>$author_label</td><td>Translated string</td></tr>
  <tr><td>$category_label</td><td>Translated string</td></tr>
- <tr><td>$category_link</td><td></td></tr>
+ <tr><td>$category_link</td><td>URL for displaying article's category</td></tr>
  <tr><td>$category_name</td><td></td></tr>
- <tr><td>$entry</td><td></td></tr>
+ <tr><td>$entry</td><td>news_article object</td></tr>
  <tr><td>$extra_label</td><td>Translated string</td></tr>
  <tr><td>$return_url</td><td>URL for re-displaying page where detail-view was initiated</td></tr>
  </tbody>
