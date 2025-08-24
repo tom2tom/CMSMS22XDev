@@ -196,18 +196,22 @@ final class modmgr_utils
             $req = new modmgr_cached_request($url);
             $req->setTimeout(3);
             $req->execute($url);
-            if( ($status = $req->getStatus()) == 200 ) {
+            if( ($status = $req->getStatus()) == 200 ) { // or some 300's ok?
                 $tmp = $req->getResult();
-                if( empty($tmp) ) {
+                if( !$tmp ) {
                     $req->clearCache();
                     $ok = FALSE;
                     return FALSE;
                 }
 
-                $data = json_decode($req->getResult(),true);
-                if( version_compare($data,MINIMUM_REPOSITORY_VERSION) >= 0 ) {
+                $data = json_decode($tmp,true);
+                if( $data && version_compare($data,MINIMUM_REPOSITORY_VERSION) >= 0 ) {
                     $ok = TRUE;
                     return TRUE;
+                }
+                if( !$data ) {
+                    audit('',$mod->GetName(),'Invalid data from module repository');
+                    $req->clearCache();
                 }
             }
             else {
