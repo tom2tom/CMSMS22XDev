@@ -1172,7 +1172,7 @@ EOT;
 $lang['help_function_file_url'] = <<<'EOT'
 <h3>What does this do?</h3>
 <p>This tag generates a URL to a file within the uploads path of the CMSMS installation.</p>
-<p>This tag will return an empty string if the file specified does not exist or there are permissions propblems.</p>
+<p>This tag will return an empty string if the file specified does not exist or there are permissions problems.</p>
 <h3>Usage:</h3>
 <ul>
  <li>file - <strong>required</strong> - The filename and path relative to the uploads directory.</li>
