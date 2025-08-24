@@ -52,7 +52,7 @@ $lang['delete'] = 'Delete';
 $lang['delete_article'] = 'Delete Article';
 $lang['delete_selected'] = 'Delete Selected Articles';
 $lang['deprecated'] = 'unsupported';
-$lang['description'] = 'Add, edit and remove News entries';
+$lang['description'] = 'Add, edit and remove News articles';
 $lang['desc_adminsearch'] = 'Search all news articles (regardless of status or expiry)';
 $lang['desc_news_settings'] = 'Adjust News settings';
 $lang['detailtemplate'] = 'Detail Templates';
@@ -81,7 +81,7 @@ $lang['error_filesize'] = 'An uploaded file exceeded the maximum allowed size';
 $lang['error_insufficientparams'] = 'Insufficient (or empty) parameters';
 $lang['error_invaliddates'] = 'One or more of the dates entered were invalid';
 $lang['error_invalidfiletype'] = 'Cannot upload this type of file';
-$lang['error_invalidurl'] = 'Invalid URL <em>(maybe it is already used, or there are invalid characters)</em>';
+$lang['error_invalidurl'] = 'The specified URL includes invalid character(s)';
 $lang['error_mkdir'] = 'Could not create directory: %s';
 $lang['error_movefile'] = 'Could not create file: %s';
 $lang['error_noarticlesselected'] = 'No Articles Were Selected';
@@ -89,6 +89,7 @@ $lang['error_nooptions'] = 'No options specified for field definition';
 $lang['error_templatenamexists'] = 'A template by that name already exists';
 $lang['error_unknown'] = 'An unknown error occurred';
 $lang['error_upload'] = 'Problem occurred uploading a file';
+$lang['error_urlused'] = 'The specified URL is already in use. Change it to something else.';
 
 $lang['eventdesc-NewsArticleAdded'] = 'Sent when an article is added.';
 $lang['eventhelp-NewsArticleAdded'] = '<h4>Parameters</h4>
@@ -179,9 +180,9 @@ $lang['formtemplate'] = 'Form Templates';
 // H
 $lang['help'] = <<<EOF
 <h3>Important Notes</h3>
-<p>Version 2.9 and greater of News has removed the formatpostdate member from templates, and has also removed the dateformat parameter.  You should be using the cms_date_format modifier (as indicated in the default templates) to format dates, and should be using entry->postdate instead of entry->formatpostdate in your templates.</p>
+<p>Versions 2.9+ of this News module omit the formatpostdate member from templates, and also omit the dateformat parameter.  Instead use the cms_date_format modifier (as indicated in the default templates) to format dates, and use entry->postdate instead of entry->formatpostdate in your templates.</p>
 <h3>What does this do?</h3>
-<p>News is a module for displaying news events on your page, similar to a blog style, except with more features!  When the module is installed, a News admin page is added to administration menu that will allow you to select or add a news category.  Once a news category is created or selected, a list of news items for that category will be displayed.  From here, you can add, edit or delete news items for that category.</p>
+<p>News is a module for displaying custom information on your site. After the module is installed, a News item will be included in the administration menu, and activating that item will allow authorised users to add, edit or delete news articles and categories.</p>
 <h4>Numerous display methods</h4>
 <p>The parameters supported by the news module, and support for numerous templates of each time mean that your options for displaying news articles are limitless.</p>
 <h4>Custom Fields</h4>
@@ -231,16 +232,23 @@ $lang['helpsortby'] = 'Field to sort by.  Options are: "news_date", "summary", "
 $lang['helpstart'] = 'Start at the nth item -- leaving empty will start at the first item.';
 $lang['helpsummarytemplate'] = 'Use a separate database template for displaying the article summary.  This template must exist in the Design Manager, though it does not need to be the default.  If this parameter is not specified, then the current template marked as default will be used.';
 $lang['help_articleid'] = 'This parameter is only applicable to the detail view.  It allows specifying which news article to display in detail mode.  If the special value -1 is used, the system will display the newest, published, non expired article.';
-$lang['help_article_title'] = 'Enter the article title.  It should be a brief, and should not include any html tags.';
 $lang['help_article_category'] = 'For organization purposes, you may select a category';
 $lang['help_article_content'] = 'Enter the main article content here';
 $lang['help_article_enddate'] = 'If use expiry is enabled, this date specifies when the article will be hidden from view';
-$lang['help_article_extra'] = 'This is extra data to associate with the news article.  It may be used for a sorting order or for other designer intended behavior.  You should consult your site developer as to how this field is used (if at all)';
+$lang['help_article_extra'] = 'Enter any extra data to be associated with this article.<br>It might be used for a sorting order or for other designer intended behavior.<br>You should consult the site developer about how this field is used (if at all).';
+$lang['help_article_image'] = <<<'EOS'
+Enter the url of, or select, an image to be associated with this article, for display in whatever way that the article's display-template defines.<br>
+To be selected, an image must have already been uploaded to the site's image-uploads directory or a descendant of that.<br>
+The url value may be absolute or a site-root-url relative path starting with '/'.<br>
+The value may include placeholder [ROOT_URL], in which case the actual site-root url would be substituted.<br>
+The value might be rejected, as a result of: unsuitable scheme, inappropriate address, invalid character(s).
+EOS;
+$lang['help_article_postdate'] = 'The postdate <em>(usually the current date, for new articles)</em> is the date that will be used as the publication date for the article.  It is also used in sorting';
 $lang['help_article_searchable'] = 'This field indicates whether this article should be indexed by the search module';
-$lang['help_article_postdate'] = 'The postdate <em>(usually the current date, for new articles)</em> is the date that will be used as the publish date for the article.  It is also used in sorting';
-$lang['help_article_summary'] = 'Enter a brief paragraph to describe the article.  This summary may be used when displaying views of a number of articles';
 $lang['help_article_startdate'] = 'When use expiry is enabled, this date specifies the date from which the article will be visible on the website';
 $lang['help_article_status'] = 'If you want the article to be immediately viewable by others then select a status of published.  If you would like to continue working on this article for a while, then select draft.';
+$lang['help_article_summary'] = 'Enter a brief paragraph to describe the article.  This summary may be used when displaying views of a number of articles';
+$lang['help_article_title'] = 'Enter the article title.  It should be a brief, and should not include any html tags.';
 $lang['help_article_url'] = 'The optional article url <em>(some other platforms call this a slug)</em> is a unique url suffix to access this article.  Users can navigate to &lt;site_root&gt;/&lt;your_url&gt; to view this article.';
 $lang['help_article_useexpiry'] = 'This checkbox toggles the expiry date behavior.  Expiry date behavior dictates when an article becomes visible on the website, and when it subsequently becomes invisible.';
 $lang['help_articles_filtercategory'] = 'Optionally filter the list of displayed articles in this list by those that belong to the selected category';
@@ -266,6 +274,7 @@ $lang['help_pagelimit'] = 'Maximum number of items to display (per page).  If th
 $lang['hide_summary_field'] = 'Hide the summary field when adding or editing articles';
 
 // I
+$lang['image'] = 'Image';
 $lang['info_allow_fesubmit'] = 'This option controls whether frontend submission of articles will function at all for this site. Be careful about enabling this.';
 $lang['info_categories'] = 'For organization purposes news articles can be organized into hierarchical categories';
 $lang['info_detail_returnid'] = 'This preference is used to determine a page (and therefore a template) to use to view detail pages.  Custom news Detail URLs will not work if this parameter is not set to a valid page.  Additionally, if this preference is set, and no detailpage parameter is provided on the news tag, then this value will be used for detail links';
@@ -366,7 +375,7 @@ $lang['select'] = 'Select';
 $lang['select_option'] = 'Select Option';
 $lang['selectall'] = 'Select All';
 $lang['selectcategory'] = 'Select Category';
-$lang['settings'] = 'Settings';
+$lang['settings'] = 'Options'; //tab label was 'Settings' but that's in the menu label
 $lang['showchildcategories'] = 'Show Child Categories';
 $lang['sortascending'] = 'Sort Ascending';
 $lang['startdate'] = 'Start Date';
@@ -403,7 +412,7 @@ $lang['title_fesubmit_settings'] = 'Frontend Submission';
 $lang['title_filter'] = 'Filters';
 $lang['title_form_sysdefault'] = 'Default Form Template';
 $lang['title_form_template'] = 'Form Template Editor';
-$lang['title_news_settings'] = 'Settings - News Module';
+$lang['title_news_settings'] = 'Settings - News';
 $lang['title_notification_settings'] = 'Notification';
 $lang['title_submission_settings'] = 'Article Submission';
 $lang['title_summary_sysdefault'] = 'Default Summary Template';
@@ -421,7 +430,7 @@ $lang['unknown'] = 'Unknown';
 $lang['unlimited'] = 'Unlimited';
 $lang['up'] = 'Up';
 $lang['uploadscategory'] = 'Uploads Category';
-$lang['url'] = 'URL (slug)';
+$lang['url'] = 'URL (path|slug)';
 $lang['useexpiration'] = 'Use Expiration Date';
 
 // V

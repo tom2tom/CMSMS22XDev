@@ -199,6 +199,7 @@ $lang['prompt_editsettings']= 'Edit Settings';
 $lang['prompt_expandall'] = 'Expand all content pages';
 $lang['prompt_filter_type'] = 'Filter Type';
 $lang['prompt_general'] = 'General';
+$lang['prompt_global'] = 'All Pages'; //tab label
 $lang['prompt_inactive'] = 'Inactive';
 $lang['prompt_locktimeout'] = 'Locking Expiration Time-out (minutes)';
 $lang['prompt_lockrefresh'] = 'Locking Refresh Interval (seconds)';
@@ -272,7 +273,7 @@ $lang['submit'] = 'Submit';
 //T
 $lang['title_clearlocks'] = 'Clear all content locks';
 $lang['title_clearlocks2'] = 'Clear locks held by you';
-$lang['title_contentmanager_settings'] = 'Settings - Content Manager';
+$lang['title_contentmanager_settings'] = 'Settings - Content';
 $lang['title_editpage_apply'] = 'Save the changes to this content page, and continue editing';
 $lang['title_editpage_cancel'] = 'Abandon all unsaved changes to this page, and return to the content list';
 $lang['title_editpage_submit'] = 'Save the changes to this content page, and return to the content list';

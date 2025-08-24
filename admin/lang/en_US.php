@@ -178,7 +178,7 @@ $lang['content'] = "Content";
 $lang['contentadded'] = "The content was successfully added to the database.";
 $lang['contentdeleted'] = "The content was successfully removed from the database.";
 $lang['contentdescription'] = "This is where users can add and edit website content.";
-$lang['contentimage_path'] = "Path for {content_image} tag";
+$lang['contentimage_path'] = "Relative path for content images";
 $lang['contentmanagement'] = "Content Management";
 $lang['contenttype'] = "Content Type";
 $lang['contenttype_content'] = "Content";
@@ -193,9 +193,9 @@ $lang['content_autocreate_urls'] = "Automatically create page URL's";
 $lang['content_copied'] = "Content Item Copied to %s";
 $lang['content_editor_legend'] = "Content editor settings";
 $lang['content_id'] = "Content ID";
-$lang['content_imagefield_path'] = "Path for the &#123;page_image&#125; tag";
+$lang['content_imagefield_path'] = "Relative path for page images";
 $lang['content_mandatory_urls'] = "Page URL's are required";
-$lang['content_thumbnailfield_path'] = "Path for thumbnail field";
+$lang['content_thumbnailfield_path'] = "Relative path for page thumbnail-images";
 $lang['contract'] = "Collapse Section";
 $lang['contractall'] = "Collapse All Sections";
 $lang['copy'] = "Copy";
@@ -282,7 +282,7 @@ $lang['disabled'] = "Disabled";
 $lang['disablesafemodewarning'] = "Disable Admin safe mode warning";
 $lang['disable_functions'] = "disable_functions in PHP";
 $lang['disable_wysiwyg'] = "Disable WYSIWYG Editing";
-$lang['disallowed_contenttypes'] = "Content Types that are NOT allowed";
+$lang['disallowed_contenttypes'] = "Content types that are NOT allowed";
 $lang['documentation'] = "Documentation";
 $lang['down'] = "Down";
 $lang['download'] = "Download";
@@ -355,7 +355,7 @@ $lang['errormodulenotloaded'] = "Internal error, the module has not been instant
 $lang['errormoduleversionincompatible'] = "Module is incompatible with this version of CMSMS";
 $lang['errormodulewontload'] = "Problem instantiating an available module";
 $lang['errornofilesexported'] = "Error exporting files to XML";
-$lang['errorpagealreadyinuse'] = "Sorry.  A page of this type already exists, and only one of this type is allowed.";
+$lang['errorpagealreadyinuse'] = "A page of this type already exists, and only one of this type is allowed.";
 //$lang['errorretrievingcss'] = "Error retrieving stylesheet";
 //$lang['errorretrievingtemplate'] = "Error retrieving template";
 $lang['errorsendingemail'] = "There was an error sending the email.  Contact your administrator.";
@@ -461,8 +461,8 @@ $lang['event_desc_edituserdefinedtagpost'] = "Sent after a user defined tag is u
 $lang['event_desc_edituserdefinedtagpre'] = "Sent prior to a user defined tag update";
 $lang['event_desc_edituserpost'] = "Sent after edits to a user are saved";
 $lang['event_desc_edituserpre'] = "Sent before edits to a user are saved";
-$lang['event_desc_loginfailed'] = "Sent after a user failed to login into the Admin panel";
-$lang['event_desc_loginpost'] = "Sent after a user logs into the Admin panel";
+$lang['event_desc_loginfailed'] = "Sent after a user failed to log in to the Admin panel";
+$lang['event_desc_loginpost'] = "Sent after a user logs in to the Admin panel";
 $lang['event_desc_logoutpost'] = "Sent after a user logs out of the Admin panel";
 $lang['event_desc_lostpassword'] = 'Sent when the lost password form is submitted';
 $lang['event_desc_lostpasswordreset'] = 'Sent when the lost password form is submitted';
@@ -480,51 +480,51 @@ $lang['event_desc_templateprefetch'] = "Sent before a template is fetched from S
 $lang['event_help_adddesignpost'] = "Sent just after a new design/theme is saved to the database";
 $lang['event_help_adddesignpre'] = "<h4>Parameters</h4>
 <ul>
-<li>'CmsLayoutCollection' - Reference to the affected design/collection object.</li>
+<li>'CmsLayoutCollection' - The affected design/collection object.</li>
 </ul>
 ";
 $lang['event_help_adddesignpost'] = "<h4>Parameters</h4>
 <ul>
-<li>'CmsLayoutCollection' - Reference to the affected design/collection object.</li>
+<li>'CmsLayoutCollection' - The affected design/collection object.</li>
 </ul>
 ";
 $lang['event_help_addgrouppost'] = "<h4>Parameters</h4>
 <ul>
-<li>'group' - Reference to the affected group object.</li>
+<li>'group' - The affected group object.</li>
 </ul>
 ";
 $lang['event_help_addgrouppre'] = "<h4>Parameters</h4>
 <ul>
-<li>'group' - Reference to the affected group object.</li>
+<li>'group' - The affected group object.</li>
 </ul>
 ";
 $lang['event_help_addstylesheetpost'] = "<h4>Parameters</h4>
 <ul>
-<li>'stylesheet' - Reference to the affected stylesheet object.</li>
+<li>'CmsLayoutStylesheet' - The affected stylesheet object.</li>
 </ul>
 ";
 $lang['event_help_addstylesheetpre'] = "<h4>Parameters</h4>
 <ul>
-<li>'stylesheet' - Reference to the affected stylesheet object.</li>
+<li>'CmsLayoutStylesheet' - The affected stylesheet object.</li>
 </ul>
 ";
 $lang['event_help_addtemplatepost'] = "<h4>Parameters</h4>
 <ul>
-<li>'template' - Reference to the affected template object.</li>
+<li>'CmsLayoutTemplate' - The affected template object.</li>
 </ul>
 ";
 $lang['event_help_addtemplatepre'] = "<h4>Parameters</h4>
 <ul>
-<li>'template' - Reference to the affected template object.</li>
+<li>'CmsLayoutTemplate' - The affected template object.</li>
 </ul>
 ";
 $lang['event_help_addtemplatetypepost'] = "<h4>Parameters</h4>
 <ul>
-<li>'CmsLayoutTemplateType' - Reference to the affected template type object.</li>
+<li>'CmsLayoutTemplateType' - The affected template type object.</li>
 </ul>";
 $lang['event_help_addtemplatetypepre'] = "<h4>Parameters</h4>
 <ul>
-<li>'CmsLayoutTemplateType' - Reference to the affected template type object.</li>
+<li>'CmsLayoutTemplateType' - The affected template type object.</li>
 </ul>";
 $lang['event_help_adduserdefinedtagpost'] = "<h4>Parameters</h4>
 None
@@ -534,44 +534,44 @@ None
 ";
 $lang['event_help_adduserpost'] = "<h4>Parameters</h4>
 <ul>
-<li>'user' - Reference to the affected user object.</li>
+<li>'user' - The affected user object.</li>
 </ul>
 ";
 $lang['event_help_adduserpre'] = "<h4>Parameters</h4>
 <ul>
-<li>'user' - Reference to the affected user object.</li>
+<li>'user' - The affected user object.</li>
 </ul>
 ";
 $lang['event_help_changegroupassignpost'] = "<h4>Parameters</h4>
 <ul>
-<li>'group' - Reference to the affected group object.</li>
+<li>'group' - The affected group object.</li>
 <li>'users' - Array of references to user objects now belonging to the affected group.</li>
 </ul>
 ";
 $lang['event_help_changegroupassignpre'] = "<h4>Parameters</h4>
 <ul>
-<li>'group' - Reference to the group object.</li>
-<li>'users' - Array of references to user objects belonging to the group.</li>
+<li>'group' - The affected group object.</li>
+<li>'users' - Array of user objects belonging to the group.</li>
 </ul>
 ";
 $lang['event_help_contentdeletepost'] = "<h4>Parameters</h4>
 <ul>
-<li>'content' - Reference to the affected content object.</li>
+<li>'content' - The affected content object.</li>
 </ul>
 ";
 $lang['event_help_contentdeletepre'] = "<h4>Parameters</h4>
 <ul>
-<li>'content' - Reference to the affected content object.</li>
+<li>'content' - The affected content object.</li>
 </ul>
 ";
 $lang['event_help_contenteditpost'] = "<h4>Parameters</h4>
 <ul>
-<li>'content' - Reference to the affected content object.</li>
+<li>'content' - The affected content object.</li>
 </ul>
 ";
 $lang['event_help_contenteditpre'] = "<h4>Parameters</h4>
 <ul>
-<li>'content' - Reference to the affected content object.</li>
+<li>'content' - The affected content object.</li>
 </ul>
 ";
 $lang['event_help_contentpostcompile'] = "<h4>Parameters</h4>
@@ -591,7 +591,7 @@ $lang['event_help_contentprecompile'] = "<h4>Parameters</h4>
 ";
 $lang['event_help_contentprerender'] = "<h4>Parameters</h4>
 <ul>
-<li>'content' - Reference to the affected content object.</li>
+<li>'content' - The affected content object.</li>
 </ul>
 ";
 $lang['event_help_contentstylesheet'] = "<h4>Parameters</h4>
@@ -611,41 +611,41 @@ $lang['event_help_deletedesignpre'] = '<h4>Parameters</h4>
 ';
 $lang['event_help_deletegrouppost'] = "<h4>Parameters</h4>
 <ul>
-<li>'group' - Reference to the affected group object.</li>
+<li>'group' - The affected group object.</li>
 </ul>
 ";
 $lang['event_help_deletegrouppre'] = "<h4>Parameters</h4>
 <ul>
-<li>'group' - Reference to the affected group object.</li>
+<li>'group' - The affected group object.</li>
 </ul>
 ";
 $lang['event_help_deletestylesheetpost'] = "<h4>Parameters</h4>
 <ul>
-<li>'stylesheet' - Reference to the affected stylesheet object.</li>
+<li>'CmsLayoutStylesheet' - The affected stylesheet object.</li>
 </ul>
 ";
 $lang['event_help_deletestylesheetpre'] = "<h4>Parameters</h4>
 <ul>
-<li>'stylesheet' - Reference to the affected stylesheet object.</li>
+<li>'CmsLayoutStylesheet' - The affected stylesheet object.</li>
 </ul>
 ";
 $lang['event_help_deletetemplatepost'] = "<h4>Parameters</h4>
 <ul>
-<li>'template' - Reference to the affected template object.</li>
+<li>'CmsLayoutTemplate' - The affected template object.</li>
 </ul>
 ";
 $lang['event_help_deletetemplatepre'] = "<h4>Parameters</h4>
 <ul>
-<li>'template' - Reference to the affected template object.</li>
+<li>'CmsLayoutTemplate' - The affected template object.</li>
 </ul>
 ";
 $lang['event_help_deletetemplatetypepost'] = "<h4>Parameters</h4>
 <ul>
-<li>'CmsLayoutTemplateType' - Reference to the affected template type object.</li>
+<li>'CmsLayoutTemplateType' - The affected template type object.</li>
 </ul>";
 $lang['event_help_deletetemplatetypepre'] = "<h4>Parameters</h4>
 <ul>
-<li>'CmsLayoutTemplateType' - Reference to the affected template type object.</li>
+<li>'CmsLayoutTemplateType' - The affected template type object.</li>
 </ul>";
 $lang['event_help_deleteuserdefinedtagpost'] = "<h4>Parameters</h4>
 None
@@ -655,61 +655,61 @@ None
 ";
 $lang['event_help_deleteuserpost'] = "<h4>Parameters</h4>
 <ul>
-<li>'user' - Reference to the affected user object.</li>
+<li>'user' - The affected user object.</li>
 </ul>
 ";
 $lang['event_help_deleteuserpre'] = "<h4>Parameters</h4>
 <ul>
-<li>'user' - Reference to the affected user object.</li>
+<li>'user' - The affected user object.</li>
 </ul>
 ";
 $lang['event_help_editdesignpost'] = '<h4>Parameters</h4>
 <ul>
-<li>\'CmsLayoutCollection\' - A reference to the affected collection (aka design/theme) object.</li>
+<li>\'CmsLayoutCollection\' - The affected collection (aka design/theme) object.</li>
 </ul>
 ';
 $lang['event_help_editdesignpre'] = '<h4>Parameters</h4>
 <ul>
-<li>\'CmsLayoutCollection\' - A reference to the affected collection (aka design/theme) object.</li>
+<li>\'CmsLayoutCollection\' - The affected collection (aka design/theme) object.</li>
 </ul>
 ';
 $lang['event_help_editgrouppost'] = "<h4>Parameters</h4>
 <ul>
-<li>'group' - Reference to the affected group object.</li>
+<li>'group' - The affected group object.</li>
 </ul>
 ";
 $lang['event_help_editgrouppre'] = "<h4>Parameters</h4>
 <ul>
-<li>'group' - Reference to the affected group object.</li>
+<li>'group' - The affected group object.</li>
 </ul>
 ";
 $lang['event_help_editstylesheetpost'] = "<h4>Parameters</h4>
 <ul>
-<li>'stylesheet' - Reference to the affected stylesheet object.</li>
+<li>'stylesheet' - The affected stylesheet object.</li>
 </ul>
 ";
 $lang['event_help_editstylesheetpre'] = "<h4>Parameters</h4>
 <ul>
-<li>'stylesheet' - Reference to the affected stylesheet object.</li>
+<li>'stylesheet' - The affected stylesheet object.</li>
 </ul>
 ";
 $lang['event_help_edittemplatepost'] = "<h4>Parameters</h4>
 <ul>
-<li>'template' - Reference to the affected template object.</li>
+<li>'CmsLayoutTemplate' - The affected template object.</li>
 </ul>
 ";
 $lang['event_help_edittemplatepre'] = "<h4>Parameters</h4>
 <ul>
-<li>'template' - Reference to the affected template object.</li>
+<li>'CmsLayoutTemplate' - The affected template object.</li>
 </ul>
 ";
 $lang['event_help_edittemplatetypepost'] = "<h4>Parameters</h4>
 <ul>
-<li>'CmsLayoutTemplateType' - Reference to the affected template type object.</li>
+<li>'CmsLayoutTemplateType' - The affected template type object.</li>
 </ul>";
 $lang['event_help_edittemplatetypepre'] = "<h4>Parameters</h4>
 <ul>
-<li>'CmsLayoutTemplateType' - Reference to the affected template type object.</li>
+<li>'CmsLayoutTemplateType' - The affected template type object.</li>
 </ul>";
 $lang['event_help_edituserdefinedtagpost'] = "<h4>Parameters</h4>
 None
@@ -719,26 +719,38 @@ None
 ";
 $lang['event_help_edituserpost'] = "<h4>Parameters</h4>
 <ul>
-<li>'user' - Reference to the affected user object.</li>
+<li>'user' - The affected user object.</li>
 </ul>
 ";
 $lang['event_help_edituserpre'] = "<h4>Parameters</h4>
 <ul>
-<li>'user' - Reference to the affected user object.</li>
+<li>'user' - The affected user object.</li>
 </ul>
 ";
 $lang['event_help_loginfailed'] = "<h4>Parameters</h4>
 <ul>
-<li>'user' - (string) The username of the failed login attempt.</li>
+<li>'user' - (string) The username provided in the failed login attempt.</li>
 </ul>";
 $lang['event_help_loginpost'] = "<h4>Parameters</h4>
 <ul>
-<li>'user' - Reference to the affected user object.</li>
+<li>'user' - The affected user object.</li>
+</ul>
+";
+$lang['event_help_loginpre'] = "<h4>Parameters</h4>
+<ul>
+<li>'user' - The affected user object.</li>
 </ul>
 ";
 $lang['event_help_logoutpost'] = "<h4>Parameters</h4>
 <ul>
-<li>'user' - Reference to the affected user object.</li>
+<li>'uid' - The departing user's numeric id.</li>
+<li>'username' - The departing user's login/account.</li>
+</ul>
+";
+$lang['event_help_logoutpre'] = "<h4>Parameters</h4>
+<ul>
+<li>'uid' - The departing user's numeric id.</li>
+<li>'username' - The departing user's login/account.</li>
 </ul>
 ";
 $lang['event_help_lostpassword'] = "<h4>Parameters</h4>
@@ -796,7 +808,11 @@ $lang['event_help_templateprecompile'] = "<h4>Parameters</h4>
 </ul>
 ";
 $lang['event_help_templateprefetch'] = "<h4>Parameters</h4>
-None
+<ul>
+<li>'template' - Reference to template object or name of a template</li>
+<li>'cache_id' - Reference to Smarty compiler-parameter</li>
+<li>'compile_id' - Reference to (possibly-null) Smarty compiler-parameter</li>
+</ul>
 ";
 $lang['event_name'] = "Event Name";
 $lang['execute'] = "Execute";
@@ -828,9 +844,10 @@ $lang['filenotuploaded'] = "File could not be uploaded. This could be a Permissi
 $lang['files'] = "Files";
 $lang['filesdescription'] = 'File and media management';
 $lang['filesize'] = "File Size";
-$lang['files_checksum_failed'] = "files could not be checksummed";
-$lang['files_failed'] = "files failed checksum match";
-$lang['files_not_found'] = "Files Not found"; //used for title and also part of report e.g. 6 Files Not found should be lower case
+$lang['files_checksum_failed'] = "%d files could not be checksummed";
+$lang['files_failed'] = "%d files failed checksum match";
+$lang['files_not_found'] = "%d files not found";
+$lang['files_not_readable'] = "%d un-readable files found";
 $lang['file_get_contents'] = "Test file_get_contents";
 $lang['file_uploads'] = "File uploads";
 $lang['file_url'] = "Link to file (instead of URL)";
@@ -1004,7 +1021,7 @@ $lang['info_this_templateuser'] = "This account is set as the template user.  Ne
 $lang['info_user_active'] = "Toggle this checkbox off to preserve the user information, but prevent the user from logging in to the Admin Console";
 $lang['info_user_active2'] = "Toggle this flag to preserve the user information, but prevent the user from logging in to the Admin Console";
 $lang['info_user_switch'] = "Test as this user";
-$lang['info_validation'] = "This function will compare the checksums in the uploaded file with the files in the current installation, and report differences. Files that don't match might be a problem.";
+$lang['info_validation'] = "This function will compare the checksums in the uploaded file with the files in the current installation, and report differences. Files that don't match might be a problem. Extra installed files will be ignored.";
 $lang['info_wait'] = "Wait a few minutes before proceeding.";
 $lang['insecure'] = "Insecure (HTTP)";
 //$lang['install'] = "Install";
@@ -1013,8 +1030,8 @@ $lang['installed'] = "Installed";
 //$lang['installed_mod'] = "Installed version %s";
 $lang['installed_modules'] = "Installed modules";
 $lang['invalid'] = "Invalid";
-$lang['invalidalias'] = "The alias entered contains invalid characters. White space, / . and other punctuation characters are not permitted.";
-$lang['invalidalias2'] = "The alias entered contains invalid characters. Numeric values, White space, / . or other punctuation characters are not permitted.";
+//$lang['invalidalias'] = "The alias entered contains invalid characters. White space, '/', '.' and other punctuation characters are not permitted.";
+$lang['invalidalias2'] = "The alias entered contains invalid characters. Numeric values, white space, '/', '.' or other punctuation characters are not permitted.";
 $lang['invalidcode'] = "Invalid code entered.";
 $lang['invalidcode_brace_missing'] = "Uneven amount of braces";
 $lang['invalidemail'] = "The email address entered is invalid";
@@ -1444,22 +1461,22 @@ $lang['sysmaintab_database'] = "Database";
 $lang['sysmain_aliasesfixed'] = "aliases fixed";
 $lang['sysmain_cache_status'] = "Cache status";
 $lang['sysmain_confirmclearlog'] = "Are you sure you want to clear the Admin log?";
-$lang['sysmain_confirmfixaliases'] = "Are you sure you want to add aliases to pages missing it?";
+$lang['sysmain_confirmfixaliases'] = "Are you sure you want to add an alias to pages without one?";
 $lang['sysmain_confirmfixtypes'] = "Are you sure you want to convert all with invalid content into standard content pages?";
 //$lang['sysmain_confirmupdatehierarchy'] = "Are you sure you want to update page hierarchy positions?";
 //$lang['sysmain_confirmupdateurls'] = "Are you sure you want to refresh the route database";
 $lang['sysmain_content_status'] = "Content status";
 $lang['sysmain_database_status'] = "Database status";
-$lang['sysmain_fixaliases'] = "Add aliases where missed";
+$lang['sysmain_fixaliases'] = "Add Missing Aliases";
 $lang['sysmain_fixtypes'] = "Convert into standard content pages";
 $lang['sysmain_hierarchyupdated'] = "Page hierarchy positions updated";
 $lang['sysmain_nocontenterrors'] = "No content errors detected";
 $lang['sysmain_nostr_errors'] = "No structural errors were detected in the database";
 $lang['sysmain_optimize'] = "Optimize";
 $lang['sysmain_optimizetables'] = "Optimize tables";
-$lang['sysmain_pagesfound'] = "pages found";
-$lang['sysmain_pagesinvalidtypes'] = "pages with invalid content type";
-$lang['sysmain_pagesmissinalias'] = "pages missing aliases";
+$lang['sysmain_pagesfound'] = "%d pages found";
+$lang['sysmain_pagesinvalidtypes'] = "%d pages with invalid content type";
+$lang['sysmain_pagesmissinalias'] = "%d pages missing alias";
 $lang['sysmain_repair'] = "Repair";
 $lang['sysmain_repairtables'] = "Repair tables";
 $lang['sysmain_str_error'] = "Structural error detected in table";
@@ -1631,11 +1648,11 @@ $lang['zz_3options_tab__'] = "Options";
 $lang['zz_4perms_tab__'] = "Permissions";
 
 
-## Serving Content Manager module
+## Serving Content Manager module or Content-related classes
 $lang['dependencies'] = "Dependencies"; // also serving third-party modules
 
 $lang['help_content_tabindex'] = "Specify an integer value for the tab order used when surfing the navigation to browse to this page. This is useful when building accessible websites";
-$lang['help_content_target'] = "Specify a target attribute to use when including this item in the navigation.  A target of _blank will open this page in a new navigator window, or tab.";
+$lang['help_content_target'] = "Specify a target attribute to use when including this item in the navigation.  A target of '_blank' will open this page in a new navigator window, or tab.";
 $lang['help_content_thumbnail'] = "This field allows you to associate a thumbnail image with the content page.  The images must have already been generated on the website <em>(The FileManager module can generate thumbnails on upload)</em> to a directory specified by the website designer.  The image may optionally be displayed on the page, or used when building a navigation";
 $lang['help_content_title'] = "The title of the page is displayed in the title bar of the browser, is used in search engine optimization, and is usually displayed prominently on the website";
 $lang['help_content_titleattribute'] = "Specify a brief description for this content page.  This data can be used for search engine optimization, or in the navigation";
@@ -1644,9 +1661,10 @@ $lang['help_page_alias'] = "The alias is used as an alternate to the page id to 
 $lang['help_page_cachable'] = "Performance can be increased by setting as many pages as possible to cachable.  However this cannot be used for pages where content may change on a per request basis";
 $lang['help_page_disablewysiwyg'] = "This option will disable WYSIWYG editing for all content areas on this page, regardless of template {content} block attributes and/or user settings";
 $lang['help_page_searchable'] = "This setting indicates whether the content of this page should be indexed by the Search module";
-$lang['help_page_url'] = "Specify an alternate URL (relative to the root of your website) that can be used to uniquely identify this page e.g. path/to/mypage.  The page URL is only useful when pretty URLs are enabled.";
-$lang['invalid_url2'] = "The page URL specified is invalid.  It should contain only alphanumeric characters, or - or /.  Extensions must contain only alphanumeric chars and be less than 5 characters in length.  It is also possible that the URL specified is already in use.";
-
+$lang['help_page_url'] = "Specify a unique URL-path (relative to the root of the website) that can be used to access this page e.g. my/special/page. Without leading '/', with any URL-compatible content, any letter-case.<br>Such URL-path can be directly used only if one of the supported kinds of url-rewriting is configured.";
+$lang['invalid_url'] = "The specified page URL has no valid content.";
+//$lang['invalid_url2'] = "The page URL specified is invalid.  It should contain only alphanumeric characters, or - or /.  Extensions must contain only alphanumeric chars and be less than 5 characters in length.  It is also possible that the URL specified is already in use.";
+$lang['urlalreadyused'] = "The specified 'Page URL' is already in use. Change it to something else.";
 
 ## Serving third-party modules
 $lang['added_template'] = "Added template";

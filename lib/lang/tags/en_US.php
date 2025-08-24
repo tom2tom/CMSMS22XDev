@@ -308,7 +308,7 @@ EOT;
 $lang['help_function_content_module'] = <<<'EOT'
 <h3>What does this do?</h3>
 <p>This content block type allows interfacing with different modules to create different content block types.</p>
-<p>Some modules can define content block types for use in module templates e.g. The FrontEndUsers module may define a group list content block type.  It will then indicate how you can use the content_module tag to utilize that block type within your templates.</p>
+<p>Some modules can define content block types for use in module templates e.g. The MAMS or FrontEndUsers module may define a group list content block type.  It will then indicate how you can use the content_module tag to utilize that block type within your templates.</p>
 <p><strong>Note:</strong> This block type must be used only with compatible modules.  You should not use this in any way except for as guided by add-on modules.</p>
 <h3>What parameters does it take?</h3>
 <p>This tag accepts a few parameters, and passes all other parameters to the module for processing.</p>
@@ -402,9 +402,10 @@ $lang['help_function_page_image'] = <<<'EOT'
 <p>Insert the tag into the template like: <code>{page_image}</code>.</p>
 <h3>What parameters does it take?</h3>
 <ul>
- <li><em>(optional)</em> thumbnail (bool) - Optionally display the value of the thumbnail property instead of the image property.</li>
- <li><em>(optional)</em> full (bool)- Optionally output the full URL to the image relative to the image uploads path.</li>
-  <li><em>(optional)</em> tag (bool) - Optionally output a full image tag, if the property value is not empty.  If the tag argument is enabled, full is implied.</li>
+ <li><em>(optional)</em> thumbnail (mixed cms_to_bool() recognised, default false) - If true, display the value of the thumbnail property instead of the image property.</li>
+ <li><em>(optional)</em> tag (mixed cms_to_bool() recognised, default false) - If true, output a html image tag.</li>
+ <li><em>(optional)</em> full (mixed cms_to_bool() recognised, default false unless tag is false)- If true, output the full URL of the image.</li>
+ <li><em>(optional)</em> alt (string) - 'alt' attribute for the image tag</li>
  <li><em>(optional)</em> assign (string) - Assign the results to a smarty variable with that name.</li>
 </ul>
 <h3>More...</h3>
@@ -788,18 +789,19 @@ Note: Google needs to have your website indexed for this to work. You can submit
 </ul>
 EOT;
 */
-/*$lang['help_function_global_content'] = <<<'EOT'
+$lang['help_function_global_content'] = <<<'EOT'
 <h3>What does this do?</h3>
-<p>Inserts a global content block into your template or page.</p>
+<p>Inserts a Design Manager template into another template or a page.</p>
 <h3>How do I use it?</h3>
-<p>Just insert the tag into your template/page like: <code>{global_content name='myblock'}</code>, where name is the name given to the block when it was created.</p>
+<p>Insert the tag into your template/page like: <code>{global_content name='myblock'}</code>, where name is the name given to the block when it was created.</p>
+<p><strong>Deprecated</strong> since CMSMS 2.2.0. Instead use <code>{include 'cms_template:myblock'}</code></p>
 <h3>What parameters does it take?</h3>
 <ul>
  <li>name - The name of the global content block to display.</li>
  <li><em>(optional)</em> assign - The name of a smarty variable that the global content block should be assigned to.</li>
 </ul>
 EOT;
-*/
+
 $lang['help_function_get_template_vars'] = <<<'EOT'
 <h3>What does this do?</h3>
 <p>Dumps all the known smarty variables into your page</p>

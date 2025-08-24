@@ -8,7 +8,7 @@ $lang['evthelp_CmsJobManager::OnJobFailed'] = '<h4>Parameters:</h4>
 </ul>';
 $lang['frequency'] = 'Frequency';
 $lang['friendlyname'] = 'Background Job Manager';
-$lang['info_background_jobs'] = 'This panel lists information about all currently known background jobs. It is normal for jobs to appear and disappear on this list frequently. If a job has a high error count OR never started it may mean that you need to investigate the reasons for that error.';
+$lang['info_background_jobs'] = 'This page lists information about all currently known background jobs. It is normal for jobs to appear on and disappear from this list frequently. If a job has a high error count, or never started, it probably means that somebody needs to investigate the reasons for that.';
 $lang['info_no_jobs'] = 'There are currently no jobs in the queue';
 $lang['jobs'] = 'Jobs';
 $lang['moddescription'] = 'A module for managing asynchronous processing jobs.';
