@@ -45,14 +45,23 @@ class cms_mailer
   /**
    * Constructor
    *
-   * @param bool $exceptions Optionally enable PHPMailer exceptions.
+   * @param bool $exceptions Optionally enable PHPMailer and spl_autoload() exceptions.
+   *   Since PHP 8.0, spl_autoload() always throws, and trying to set a
+   *   false value for spl_autoload() would trigger a warning, so that's
+   *   blocked here.
    * @since 2.2.17 Default false
    */
   public function __construct($exceptions = false)
   {
     static $regdone = false;
+    if (!$exceptions && PHP_VERSION_ID >= 80000) {
+        $flag = true;
+        if (!$regdone) audit('', 'cms_mailer', 'spl_autoload always throws upon error');
+    } else {
+        $flag = $exceptions;
+    }
     $this->exceptions = $exceptions;
-    if ($regdone || @spl_autoload_register([__CLASS__, 'MailerAutoload'], $exceptions)) {
+    if ($regdone || @spl_autoload_register([__CLASS__, 'MailerAutoload'], $flag)) {
       $this->_mailer = new PHPMailer($exceptions);
       $this->reset();
       $regdone = true;
