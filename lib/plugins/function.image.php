@@ -24,7 +24,7 @@ function smarty_function_image($params, $smarty)
   $imgstart = '<img src=';
   $imgend = '>';
   if( !empty($params['src'] ) ) {
-      $text = $imgstart .= '"'.$gCms->config['image_uploads_url'].'/'.$params['src'].'"'; //TODO c.f. cms_siteprefs::get('content_imagefield_path')) ?
+      $text = $imgstart .= '"'.$gCms->config['image_uploads_url'].'/'.$params['src'].'"'; //TODO possible subdir, one of cms_siteprefs::get('content * _path')) ?
       $size = @getimagesize($gCms->config['image_uploads_path'].'/'.$params['src']);
 
       if( !empty($params['width'] ) ) {

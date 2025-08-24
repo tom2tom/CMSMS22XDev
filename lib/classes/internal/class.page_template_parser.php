@@ -17,13 +17,13 @@ class page_template_parser extends \Smarty_Internal_Template
         $this->smarty->merge_compiled_includes = TRUE;
 
         try {
-            $this->registerPlugin('compiler','content',array('CMS_Content_Block','smarty_compiler_contentblock'),false);
-            $this->registerPlugin('compiler','content_image',array('CMS_Content_Block','smarty_compiler_imageblock'),false);
-            $this->registerPlugin('compiler','content_module',array('CMS_Content_Block','smarty_compiler_moduleblock'),false);
+            $this->registerPlugin('compiler','content',array('CMS_Content_Block','smarty_compiler_contentblock'),false); // Smarty_Parser class also does this
+            $this->registerPlugin('compiler','content_image',array('CMS_Content_Block','smarty_compiler_imageblock'),false); // ibid
+            $this->registerPlugin('compiler','content_module',array('CMS_Content_Block','smarty_compiler_moduleblock'),false); // ibid
         }
         catch( \SmartyException $e ) {
-            // ignore these... throws an error in Smarty 3.1.16 if plugin is already registered
-            // because plugin registration is global.
+            // ignore these... throws an error if plugin is already registered
+            // because plugin registration is global (or because it was done elswhere).
         }
     }
 

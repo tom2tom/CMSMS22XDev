@@ -1,21 +1,20 @@
 <?php
-if (!isset($gCms)) exit;
+if( !isset($gCms) ) exit;
 
 if( !class_exists('news_admin_ops') ) {
-  // this is required if called from the installer
-  $fn = __DIR__.'/lib/class.news_admin_ops.php';
-  require_once($fn);
+    // this is required if called from the installer
+    $fn = __DIR__.'/lib/class.news_admin_ops.php';
+    require_once($fn);
 }
 
 if( cmsms()->test_state(CmsApp::STATE_INSTALL) ) {
-  $uid = 1; // hardcode to first user
+    $uid = 1; // hardcode to first user
 }
 else {
-  $uid = get_userid();
+    $uid = get_userid();
 }
 
 $dict = NewDataDictionary($db);
-// is icon used now?
 $flds = "
 news_id I KEY,
 news_category_id I,
@@ -72,6 +71,7 @@ EOS;
 $db->Execute($sql);
 $db->CreateSequence(CMS_DB_PREFIX."module_news_categories_seq");
 
+//don't bother with a blob for serialized array in extra
 $flds = "
 id I KEY AUTO,
 name C(255),
@@ -80,7 +80,7 @@ max_length I,
 create_date DT,
 modified_date DT,
 item_order I,
-public I,
+public I1,
 extra X
 ";
 
@@ -352,7 +352,7 @@ $perm_id = $db->GetOne("SELECT permission_id FROM ".CMS_DB_PREFIX."permissions W
 $group_id = $db->GetOne("SELECT group_id FROM `".CMS_DB_PREFIX."groups` WHERE group_name = 'Admin'");
 
 $count = $db->GetOne("SELECT COUNT(*) FROM " . CMS_DB_PREFIX . "group_perms WHERE group_id = ? AND permission_id = ?", array($group_id, $perm_id));
-if ((int)$count == 0) {
+if( (int)$count == 0 ) {
   $new_id = $db->GenID(CMS_DB_PREFIX."group_perms_seq");
   $query = "INSERT INTO " . CMS_DB_PREFIX . "group_perms (group_perm_id, group_id, permission_id, create_date, modified_date) VALUES (".$new_id.", ".$group_id.", ".$perm_id.", ".$longnow.", ".$longnow.")";
   $db->Execute($query);
@@ -361,7 +361,7 @@ if ((int)$count == 0) {
 $group_id = $db->GetOne("SELECT group_id FROM `".CMS_DB_PREFIX."groups` WHERE group_name = 'Editor'");
 
 $count = $db->GetOne("SELECT COUNT(*) FROM " . CMS_DB_PREFIX . "group_perms WHERE group_id = ? AND permission_id = ?", array($group_id, $perm_id));
-if ((int)$count == 0) {
+if( (int)$count == 0 ) {
   $new_id = $db->GenID(CMS_DB_PREFIX."group_perms_seq");
   $query = "INSERT INTO " . CMS_DB_PREFIX . "group_perms (group_perm_id, group_id, permission_id, create_date, modified_date) VALUES (".$new_id.", ".$group_id.", ".$perm_id.", ".$longnow.", ".$longnow.")";
   $db->Execute($query);

@@ -21,7 +21,7 @@
  * A class that fixes a problem with the Smarty_Resource_Custom class
  * TODO check whether overriding
  *  $this->generateSafeName($source->name)
- *  i.e. substr(preg_replace('/[^A-Za-z0-9._]/', '', (string) $name), 0, 127)
+ *  i.e. substr(preg_replace('/[^a-zA-Z0-9_.]/', '', (string) $name), 0, 127)
  * is still relevant
  *
  * @ignore

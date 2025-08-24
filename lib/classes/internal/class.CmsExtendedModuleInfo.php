@@ -42,7 +42,7 @@ class CmsExtendedModuleInfo extends CmsModuleInfo implements ArrayAccess
             $deps = $this['depends'];
             if( is_array($deps) && count($deps) ) {
                 foreach( $deps as $onedepname => $onedepversion ) {
-                    $depinfo = new CmsExtendedModuleInfo($onedepname);
+                    $depinfo = new CmsExtendedModuleInfo($onedepname); // aka self(), and no-module-load is weak?
                     if( !$depinfo['installed'] || version_compare($depinfo['version'],$onedepversion) < 0 ) $out[$onedepname] = $onedepversion;
                 }
             }

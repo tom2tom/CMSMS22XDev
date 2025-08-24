@@ -308,7 +308,7 @@ final class CMS_Content_Block
                 $oldvalue = $template->caching;
                 $template->caching = Smarty::CACHING_OFF;
                 if( isset($_SESSION['__cms_preview__']) && $contentobj->Id() == __CMS_PREVIEW_PAGE__ ) {
-                    // note: content precompile/postcompile events will not be triggererd in preview.
+                    // note: content precompile/postcompile events will not be triggered in preview.
                     //$val = $contentobj->Show($block);
                     //$result = $template->fetch('eval:'.$val);
                     $result = $template->fetch(str_replace(' ','_','content:' . $block),'|'.$block,$contentobj->Id().$block);
@@ -349,11 +349,11 @@ final class CMS_Content_Block
             return '';
         }
         $config = \cms_config::get_instance();
-        $dir = $config['uploads_path'];
+        $dir = $config['uploads_path']; //TODO also support $config['image_uploads_path']
         $basename = basename($dir);
 
         if( !empty($params['dir']) ) {
-            $adddir = strtr($params['dir'],'\\/',DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR); //TODO current relevance of this ?
+            $adddir = strtr($params['dir'],'\\/',DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR); // maybe the non-native separator was recorded
         }
         else {
             $adddir = \cms_siteprefs::get('contentimage_path');
@@ -382,7 +382,7 @@ final class CMS_Content_Block
                     $img = CMS_ROOT_URL . $img;
                 }
                 else {
-                    $tmp = $config['uploads_url'];
+                    $tmp = $config['uploads_url']; //TODO also support $config['image_uploads_url']
 //                    if( $adddir ) {
 //                        $tmp .= '/' . strtr($adddir,'\\','/');
 //                    }

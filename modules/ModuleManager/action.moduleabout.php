@@ -60,7 +60,7 @@ $req = new modmgr_cached_request();
 $req->execute($url,array('name'=>$xmlfile));
 $status = $req->getStatus();
 $result = $req->getResult();
-if( $status != 200 || $result == '' ) {
+if( $status != 200 || $result == '' ) { // some 300's ok?
   $this->SetError($this->Lang('error_request_problem'));
   $this->RedirectToAdminTab();
 //return;

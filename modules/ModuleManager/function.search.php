@@ -57,7 +57,7 @@ $instmodules = '';
 
 if( isset($params['submit']) ) {
     try {
-        $url = $this->GetPreference('module_repository');
+        $url = $this->GetPreference('module_repository'); // UNUSED
         $error = 0;
         $term = cleanvalue(trim($params['term']));
         if( strlen($term) < 3 ) throw new \Exception($this->Lang('error_searchterm'));

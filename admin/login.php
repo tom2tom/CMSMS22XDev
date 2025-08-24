@@ -199,7 +199,7 @@ else if( isset($_POST['loginsubmit']) ) {
         $oneuser = $userops->LoadUserByUsername($username, $password, TRUE, TRUE);
         if( !$oneuser ) throw new CmsLoginError(lang('usernameincorrect'));
 
-        // do hooks for authentication
+        // send a pre-login event
         HookManager::do_hook('Core::LoginPre', [ 'user'=>$oneuser ]);
 
         $login_ops->save_authentication($oneuser);
@@ -207,7 +207,7 @@ else if( isset($_POST['loginsubmit']) ) {
         // put mention into the admin log
         audit($oneuser->id, 'Admin user', 'Logged in');
 
-        // send the post login event
+        // send a post-login event
         HookManager::do_hook('Core::LoginPost', [ 'user'=>$oneuser ]);
 
         // redirect outa here somewhere

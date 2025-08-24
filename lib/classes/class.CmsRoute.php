@@ -246,7 +246,7 @@ class CmsRoute implements ArrayAccess
 			$b = trim($b,'/');
 
 			if ( strcasecmp($a,$b) == 0 ) { //too bad if any non-ASCII in there!
-				$this->_results = ['module' => $this->get_dest()] + $this->get_defaults();
+				$this->_results = ['module' => $this->get_dest()] + $this->get_defaults(); //'module' might be '__CONTENT__'
 				return true;
 			}
 			else {
