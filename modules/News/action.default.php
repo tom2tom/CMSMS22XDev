@@ -194,7 +194,7 @@ WHERE status = 'published' AND
         $pagecount = 1;
     }
 
-    //if the URLs generated below include parameter $targetcontentonly = true,
+    // if the URLs generated below include parameter $targetcontentonly = true,
     // generated content populates {News tag} content,
     // or if = false, that generated content populates {content} on relevant page
 
@@ -232,6 +232,10 @@ WHERE status = 'published' AND
     //we will substitute $detailpage into URLs cuz 'returnid' is used to select the page to be displayed
     $displayid = $detailpage ?: $returnid;
 
+    // since CMSMS 2.2 article properties (title, summary, content) have not been
+    // Smarty-processed before display, to protect against 'risky' content
+    // TODO instead properly sanitize those values during article-save
+
     if( $dbresult ) {
         // build a list of news id's so we can preload stuff from other tables.
         $result_ids = array();
@@ -257,9 +261,9 @@ WHERE status = 'published' AND
             }
             else {
                 if( !isset($feu) ) {
-                    $feu = $this->GetModuleInstance('FrontEndUsers');
+                    $feu = $this->GetModuleInstance('MAMS');
                     if( !$feu ) {
-                        $feu = $this->GetModuleInstance('MAMS');
+                        $feu = $this->GetModuleInstance('FrontEndUsers');
                     }
                 }
                 if( $feu ) {
@@ -268,9 +272,10 @@ WHERE status = 'published' AND
                 }
             }
             $onerow->id = $row['news_id'];
-            $onerow->title = $row['news_title'] ? news_ops::execSpecialize($row['news_title']) : (string)$row['news_title'];
-            $onerow->content = $row['news_data'] ? news_ops::execSpecialize($row['news_data']) : (string)$row['news_data'];
-            $str = $row['summary'] ? news_ops::execSpecialize($row['summary']) : (string)$row['summary'];
+            //if () $X = $smarty->fetch('string:'.$Y);
+            $onerow->title = $row['news_title'] ? news_ops::execSpecialize($row['news_title']) : (string)$row['news_title']; //TODO if contains Smarty tag(s)
+            $onerow->content = $row['news_data'] ? news_ops::execSpecialize($row['news_data']) : (string)$row['news_data']; //ditto
+            $str = $row['summary'] ? news_ops::execSpecialize($row['summary']) : (string)$row['summary']; // ditto
             if( $str ) {
                 if( preg_match('/^\s*<br ?\/?>\s*$/', $str) ) {
                     $onerow->summary = '';
@@ -288,8 +293,8 @@ WHERE status = 'published' AND
             $onerow->enddate = $row['end_time'];
             $onerow->create_date = $row['create_date'];
             $onerow->modified_date = $row['modified_date'];
+            $onerow->image_url = ($row['icon']) ? news_ops::useformat_url($row['icon']) : '';
             $onerow->category = $row['news_category_name'];
-
             //
             // Handle the custom fields
             //
@@ -368,7 +373,7 @@ WHERE status = 'published' AND
                 }
             }
         }
-        //$catName = $db->GetOne('SELECT news_category_name FROM '.CMS_DB_PREFIX . 'module_news_categories where news_category_id=?', array($params['category_id']));
+        //$catName = $db->GetOne('SELECT news_category_name FROM '.CMS_DB_PREFIX . 'module_news_categories WHERE news_category_id=?', array($params['category_id']));
     }
     $tpl->assign('category_name', $catName);
     $tpl->assign('count', count($catarray));
