@@ -3,7 +3,7 @@ global $admin_user;
 
 status_msg(ilang('install_requireddata'));
 
-$query = 'INSERT INTO '.CMS_DB_PREFIX.'version VALUES (202)';
+$query = 'INSERT INTO '.CMS_DB_PREFIX.'version VALUES (203)';
 $db->Execute($query);
 verbose_msg(ilang('install_setschemaver'));
 
@@ -113,7 +113,9 @@ UserTagOperations::get_instance()->SetUserTag('custom_copyright',$txt,'Code to o
 // Events
 //
 verbose_msg(ilang('install_initevents'));
+Events::CreateEvent('Core','LoginPre');
 Events::CreateEvent('Core','LoginPost');
+Events::CreateEvent('Core','LogoutPre');
 Events::CreateEvent('Core','LogoutPost');
 Events::CreateEvent('Core','LoginFailed');
 Events::CreateEvent('Core','LostPassword');
@@ -189,17 +191,17 @@ Events::CreateEvent('Core','StylesheetPreCompile');
 Events::CreateEvent('Core','StylesheetPostCompile');
 Events::CreateEvent('Core','StylesheetPostRender');
 
-$create_private_dir = function($top_dir,...$relative_dir) {
+$perms = 0777; //TODO suitable new-folder permissions e.g. 0777 & ~umask()
+$create_private_dir = function($top_dir,...$relative_dir) use($perms) {
     if( !$relative_dir ) return;
     $sep = DIRECTORY_SEPARATOR;
     $dn = implode($sep,$relative_dir);
     $dir = "$top_dir{$sep}$dn";
     if( !is_dir($dir) ) {
-        @mkdir($dir,0777,true);
+        @mkdir($dir,$perms,true);
     }
     @touch("$dir{$sep}index.html");
 };
-
 /*
 $move_directory_files = function($srcdir,$destdir) {
     $srcdir = trim($srcdir);
