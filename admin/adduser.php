@@ -63,7 +63,7 @@ foreach ($_POST as $key => $val) {
     switch ($key) {
         case 'user': //account
             //scrub malicious/XSS & invalid content
-            $user = preg_replace('/[^a-zA-Z0-9._ \x8c\x8e\x9c\x9e\x9f\xc0-\xd6\xd8-\xf6\xf8-\xff\p{L}\p{M}]/u', '', trim($val));
+            $user = preg_replace('/[^a-zA-Z0-9._\- \x8c\x8e\x9c\x9e\x9f\xc0-\xd6\xd8-\xf6\xf8-\xff\pL\p{Nd}\p{Po}]/u', '', trim($val));
             break;
         case 'firstname':
         case 'lastname':
@@ -137,12 +137,12 @@ if (isset($_POST["submit"])) {
         $newuser->adminaccess = $adminaccess;
         $newuser->SetPassword($password);
 
-        HookManager::do_hook('Core::AddUserPre', [ 'user'=>&$newuser ] );
+        HookManager::do_hook('Core::AddUserPre', [ 'user'=>$newuser ]);
 
         $result = $newuser->save();
 
         if ($result) {
-            HookManager::do_hook('Core::AddUserPost', [ 'user'=>&$newuser ] );
+            HookManager::do_hook('Core::AddUserPost', [ 'user'=>$newuser ]);
 
             // set some default preferences, based on the user creating this user
             $adminid = get_userid();

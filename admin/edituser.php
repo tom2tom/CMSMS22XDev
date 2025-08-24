@@ -48,7 +48,7 @@ $copyfromtemplate = 1;
 $message          = '';
 $user_id          = $userid;
 if (isset($_GET['user_id'])) {
-    $user_id = preg_replace('/[^a-zA-Z0-9._ \x8c\x8e\x9c\x9e\x9f\xc0-\xd6\xd8-\xf6\xf8-\xff\p{L}\p{M}]/u', '', trim($_GET['user_id']));
+    $user_id = preg_replace('/[^a-zA-Z0-9._\- \x8c\x8e\x9c\x9e\x9f\xc0-\xd6\xd8-\xf6\xf8-\xff\pL\p{Nd}\p{Po}]/u', '', trim($_GET['user_id']));
 }
 
 // POST[] data
@@ -71,7 +71,7 @@ foreach ($_POST as $key => $val) {
         case 'user': //account
         case 'user_id':
             //scrub malicious/XSS & invalid content
-            $$key = preg_replace('/[^a-zA-Z0-9._ \x8c\x8e\x9c\x9e\x9f\xc0-\xd6\xd8-\xf6\xf8-\xff\p{L}\p{M}]/u', '', trim($val));
+            $$key = preg_replace('/[^a-zA-Z0-9._\- \x8c\x8e\x9c\x9e\x9f\xc0-\xd6\xd8-\xf6\xf8-\xff\pL\p{Nd}\p{Po}]/u', '', trim($val));
             break;
         case 'firstname':
         case 'lastname':
@@ -95,7 +95,7 @@ $userops           = $gCms->GetUserOperations();
 $groupops          = $gCms->GetGroupOperations();
 $group_list        = $groupops->LoadGroups();
 $access_user       = ($userid == $user_id);
-$access_group      = $userops->UserInGroup($userid, 1) || (!$userops->UserInGroup($user_id, 1));
+$access_group      = $userops->UserInGroup($userid, 1) || (!$userops->UserInGroup($user_id, 1)); //TODO check logic
 $access            = $access_user && $access_group;
 $assign_group_perm = check_permission($userid, 'Manage Groups');
 $manage_users      = check_permission($userid, 'Manage Users');
@@ -159,7 +159,7 @@ if (isset($_POST["submit"])) {
             if ($password != '') {
                 $thisuser->SetPassword($password);
             }
-            HookManager::do_hook('Core::EditUserPre', [ 'user'=>&$thisuser ] );
+            HookManager::do_hook('Core::EditUserPre', [ 'user'=>$thisuser ]);
 
             $result = $thisuser->save();
             if ($assign_group_perm && isset($_POST['groups'])) {
@@ -200,7 +200,7 @@ if (isset($_POST["submit"])) {
             }
 
             // put mention into the admin log
-            HookManager::do_hook('Core::EditUserPost', [ 'user'=>&$thisuser ] );
+            HookManager::do_hook('Core::EditUserPost', [ 'user'=>$thisuser ]);
             $gCms->clear_cached_files();
             $url = 'listusers.php?' . $urlext;
             if ($message) {
