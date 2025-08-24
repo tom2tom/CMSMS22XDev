@@ -14,8 +14,6 @@
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
-#$Id$
 
 class News extends CMSModule
 {
@@ -30,17 +28,16 @@ class News extends CMSModule
     public function GetEventHelp($eventname) { return $this->Lang('eventhelp-' . $eventname); }
     public function GetFriendlyName() { return $this->Lang('news'); }
     public function GetName() { return 'News'; }
-    public function GetVersion() { return '2.51.15'; }
+    public function GetVersion() { return '2.51.16'; }
     public function HasAdmin() { return TRUE; }
     public function InstallPostMessage() { return $this->Lang('postinstall');  }
     public function IsPluginModule() { return TRUE; }
     public function LazyLoadAdmin() { return TRUE; }
-    public function LazyLoadFrontend() { return TRUE; }
-    public function MinimumCMSVersion() { return '2.2.16'; } //for localedate_format modifier
+    public function LazyLoadFrontend() { return TRUE; } // OR false to handle an intra-module news_image tag?
+    public function MinimumCMSVersion() { return '2.2.22F2'; } //for cleanUrlPath
 
     public function GetHelp()
     {
-        //TODO default values per respective News preferences
         $this->CreateParameter('action', 'default', $this->Lang('helpaction'));
         $this->CreateParameter('articleid', '', $this->Lang('help_articleid'));
         $this->CreateParameter('browsecat', 0, $this->Lang('helpbrowsecat'));
@@ -50,86 +47,17 @@ class News extends CMSModule
         $this->CreateParameter('detailtemplate', '', $this->Lang('helpdetailtemplate'));
         $this->CreateParameter('formtemplate', '', $this->Lang('helpformtemplate'));
         $this->CreateParameter('idlist', '', $this->Lang('help_idlist'));
-        $this->CreateParameter('moretext', 'more...', $this->Lang('helpmoretext')); // TODO More...
-        $this->CreateParameter('number', 1000, $this->Lang('helpnumber')); //TODO 100?
-        $this->CreateParameter('pagelimit', 1000, $this->Lang('help_pagelimit')); //TODO match 'number'
+        $this->CreateParameter('moretext', $this->Lang('more'), $this->Lang('helpmoretext'));
+        $val = (int)$this->GetPreference('article_pagelimit', 10);
+        $this->CreateParameter('number', $val, $this->Lang('helpnumber'));
+        $this->CreateParameter('pagelimit', $val, $this->Lang('help_pagelimit'));
         $this->CreateParameter('showall', 0, $this->Lang('helpshowall'));
         $this->CreateParameter('showarchive', 0, $this->Lang('helpshowarchive'));
-        $this->CreateParameter('sortasc', 'true', $this->Lang('helpsortasc')); //TODO allow bool
+        $this->CreateParameter('sortasc', 'true', $this->Lang('helpsortasc'));
         $this->CreateParameter('sortby', 'news_date', $this->Lang('helpsortby'));
         $this->CreateParameter('start', 0, $this->Lang('helpstart'));
         $this->CreateParameter('summarytemplate', '', $this->Lang('helpsummarytemplate'));
-/*
-$val = $this->GetPreference('alert_drafts',1);
-$val = $this->GetPreference('allcategories',1);
-$val = $this->GetPreference('allow_fesubmit',1);
-$val = $this->GetPreference('allow_summary_wysiwyg',1);
-$val = $this->GetPreference('allowed_upload_types','bmp,jpg,jpeg,gif,png,svg,webp,ico');
-$val = $this->GetPreference('article_category','');
-$val = $this->GetPreference('article_pagelimit',10);
-$val = $this->GetPreference('article_sortby','news_date');
-$val = $this->GetPreference('auto_create_thumbnails','gif,jpg,jpeg,png');
-$val = $this->GetPreference('clear_category',0);
-$val = $this->GetPreference('current_detail_template','');
-$val = $this->GetPreference('date_format','%e %B %Y %l:%M %p');
-$val = $this->GetPreference('default_category',1);
-$val = $this->GetPreference('detail_returnid',-1);
-$val = $this->GetPreference('email_subject',$val = $this->Lang('subject_newnews'));
-$val = $this->GetPreference('email_subject',$val = $this->Lang('subject_newnews'));
-$val = $this->GetPreference('email_template','Article Approval-Request Email');
-$val = $this->GetPreference('email_to','');
-$val = $this->GetPreference('expired_searchable',1);
-$val = $this->GetPreference('expired_viewable',0);
-$val = $this->GetPreference('expiry_interval',30);
-$val = $this->GetPreference('fesubmit_redirect',0);
-$val = $this->GetPreference('fesubmit_status',0);
-$val = $this->GetPreference('formsubmit_emailaddress','');
-$val = $this->GetPreference('hide_summary_field',0);
-ALL $params USED IN FRONTEND ACTIONS - BUT POSSIBLY OTHERS IN FRONTEND-FORM SUBMISSION ?
-$this->CreateParameter('action', 'default', $this->Lang('helpaction'));
-$this->CreateParameter('approve', '', $this->Lang('helpapprove')qqq_);
-$this->CreateParameter('articleid', '', $this->Lang('helparticleid')qqq_);
-$this->CreateParameter('browsecat', '', $this->Lang('helpbrowsecat')qqq_);
-$this->CreateParameter('browsecattemplate', '', $this->Lang('helpbrowsecattemplate')qqq_);
-$this->CreateParameter('category_id', '', $this->Lang('helpcategory_id')qqq_);
-$this->CreateParameter('category', '', $this->Lang('helpcategory')qqq_);
-$this->CreateParameter('content', '', $this->Lang('helpcontent')qqq_);
-$this->CreateParameter('detailpage', '', $this->Lang('helpdetailpage')qqq_);
-$this->CreateParameter('detailtemplate', '', $this->Lang('helpdetailtemplate')qqq_);
-$this->CreateParameter('enddate_Day', '', $this->Lang('helpenddate_Day')qqq_);
-$this->CreateParameter('enddate_Hour', '', $this->Lang('helpenddate_Hour')qqq_);
-$this->CreateParameter('enddate_Minute', '', $this->Lang('helpenddate_Minute')qqq_);
-$this->CreateParameter('enddate_Month', '', $this->Lang('helpenddate_Month')qqq_);
-$this->CreateParameter('enddate_Second', '', $this->Lang('helpenddate_Second')qqq_);
-$this->CreateParameter('enddate_Year', '', $this->Lang('helpenddate_Year')qqq_);
-$this->CreateParameter('extra', '', $this->Lang('helpextra')qqq_);
-$this->CreateParameter('formtemplate', '', $this->Lang('helpformtemplate')qqq_);
-$this->CreateParameter('idlist', '', $this->Lang('helpidlist')qqq_);
-$this->CreateParameter('input_category', '', $this->Lang('helpinput_category')qqq_);
-$this->CreateParameter('lang', '', $this->Lang('helplang')qqq_);
-$this->CreateParameter('moretext', '', $this->Lang('helpmoretext')qqq_);
-$this->CreateParameter('news_customfield_'.$onefield['id', '', $this->Lang('help')qqq_);
-$this->CreateParameter('number', '', $this->Lang('helpnumber')qqq_);
-$this->CreateParameter('origid', '', $this->Lang('helporigid')qqq_);
-$this->CreateParameter('pagelimit', '', $this->Lang('helppagelimit')qqq_);
-$this->CreateParameter('pagenumber', '', $this->Lang('helppagenumber')qqq_);
-$this->CreateParameter('preview', '', $this->Lang('helppreview')qqq_);
-$this->CreateParameter('showall', '', $this->Lang('helpshowall')qqq_);
-$this->CreateParameter('showarchive', '', $this->Lang('helpshowarchive')qqq_);
-$this->CreateParameter('sortasc', '', $this->Lang('helpsortasc')qqq_);
-$this->CreateParameter('sortby', '', $this->Lang('helpsortby')qqq_);
-$this->CreateParameter('start', '', $this->Lang('helpstart')qqq_);
-$this->CreateParameter('startdate_Day', '', $this->Lang('helpstartdate_Day')qqq_);
-$this->CreateParameter('startdate_Hour', '', $this->Lang('helpstartdate_Hour')qqq_);
-$this->CreateParameter('startdate_Minute', '', $this->Lang('helpstartdate_Minute')qqq_);
-$this->CreateParameter('startdate_Month', '', $this->Lang('helpstartdate_Month')qqq_);
-$this->CreateParameter('startdate_Second', '', $this->Lang('helpstartdate_Second')qqq_);
-$this->CreateParameter('startdate_Year', '', $this->Lang('helpstartdate_Year')qqq_);
-$this->CreateParameter('submit', '', $this->Lang('helpsubmit')qqq_);
-$this->CreateParameter('summary', '', $this->Lang('helpsummary')qqq_);
-$this->CreateParameter('summarytemplate', '', $this->Lang('helpsummarytemplate')qqq_);
-$this->CreateParameter('title', '', $this->Lang('helptitle')qqq_);
-*/
+
         $out = $this->Lang('help');
         $out .= file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'modhelp-extra.htm');
         return $out;
@@ -144,7 +72,7 @@ $this->CreateParameter('title', '', $this->Lang('helptitle')qqq_);
         $this->SetParameterType('browsecat',CLEAN_INT);
         $this->SetParameterType('browsecattemplate',CLEAN_STRING);
         $this->SetParameterType('category',CLEAN_STRING);
-        $this->SetParameterType('category_id',CLEAN_STRING); //TODO INT?
+        $this->SetParameterType('category_id',CLEAN_INT);
         $this->SetParameterType('detailpage',CLEAN_STRING);
         $this->SetParameterType('detailtemplate',CLEAN_STRING);
         $this->SetParameterType('formtemplate',CLEAN_STRING);
@@ -159,15 +87,13 @@ $this->CreateParameter('title', '', $this->Lang('helptitle')qqq_);
         $this->SetParameterType('showall',CLEAN_INT);
         $this->SetParameterType('showarchive',CLEAN_INT);
         $this->SetParameterType('showtemplate',CLEAN_STRING);
-        $this->SetParameterType('sortasc',CLEAN_STRING); // should be int, or boolean
+        $this->SetParameterType('sortasc',CLEAN_STRING); // should be int or bool
         $this->SetParameterType('sortby',CLEAN_STRING);
         $this->SetParameterType('start',CLEAN_INT);
         $this->SetParameterType('summarytemplate',CLEAN_STRING);
 
         // form parameters
         $this->SetParameterType('cancel',CLEAN_STRING);
-        $this->SetParameterType('category',CLEAN_STRING);
-        $this->SetParameterType('category_id',CLEAN_INT); //TODO STRING above
         $this->SetParameterType('content',CLEAN_STRING);
         $this->SetParameterType('enddate',CLEAN_STRING);
         $this->SetParameterType('enddate_Day',CLEAN_STRING);
@@ -197,7 +123,9 @@ $this->CreateParameter('title', '', $this->Lang('helptitle')qqq_);
         $this->SetParameterType('title',CLEAN_STRING);
         $this->SetParameterType('useexp',CLEAN_INT);
 
-        $this->SetParameterType(CLEAN_REGEXP.'/news_customfield_.*/',CLEAN_STRING);
+        $this->SetParameterType(CLEAN_REGEXP.'/news_currentfile_\d+/',CLEAN_STRING);
+        $this->SetParameterType(CLEAN_REGEXP.'/news_customfield_\d+/',CLEAN_STRING);
+        $this->SetParameterType(CLEAN_REGEXP.'/news_wantedfield_\d+/',CLEAN_STRING);
         $this->SetParameterType('junk',CLEAN_STRING);
     }
 
@@ -223,13 +151,13 @@ EOS;
 
     public function SearchResultWithParams($returnid, $articleid, $attr = '', $params = '')
     {
-        $gCms = CmsApp::get_instance();
         $result = array();
 
         if ($attr == 'article') {
+            $gCms = CmsApp::get_instance();
             $db = $gCms->GetDb();
             $q = "SELECT news_title,news_url FROM ".CMS_DB_PREFIX."module_news WHERE news_id = ?";
-            $row = $db->GetRow( $q, array( $articleid ) );
+            $row = $db->GetRow($q, array($articleid));
 
             if ($row) {
                 //0 position is the prefix displayed in the list results.
@@ -263,7 +191,7 @@ EOS;
                 $prettyurl = $row['news_url'];
                 if( $prettyurl == '' ) {
                     $aliased_title = munge_string_to_url($row['news_title']);
-                    $prettyurl = 'news/' . $articleid . "/$detailpage/$aliased_title" . $detailtemplate;
+                    $prettyurl = "news/$articleid/$detailpage/$aliased_title{$detailtemplate}";
                 }
 
                 $parms = array();
@@ -304,8 +232,8 @@ EOS;
                    'checkbox'=>$this->Lang('checkbox'),
                    'textarea'=>$this->Lang('textarea'),
                    'dropdown'=>$this->Lang('dropdown'),
-                   'linkedfile'=>$this->Lang('linkedfile'),
-                   'file'=>$this->Lang('file') ];
+                   'linkedfile'=>$this->Lang('linkedfile'), //file specified by entered url or selected from uploads tree using the FilePicker, no type restriction, similar to content image property
+                   'file'=>$this->Lang('file') ]; // selected and uploaded file, no type-restriction
         return $items;
     }
 
@@ -317,7 +245,7 @@ EOS;
 
     public function get_tasks()
     {
-        if( !$this->GetPreference('alert_drafts',0) ) return [];
+        if( !$this->GetPreference('alert_drafts',1) ) return [];
         $out = array();
         $out[] = new \News\CreateDraftAlertTask();
         return $out;
@@ -333,8 +261,8 @@ EOS;
             $output = array();
             if( $this->CheckPermission('Approve News') ) {
                 $db = $this->GetDb();
-                $query = 'SELECT COUNT(news_id) FROM '.CMS_DB_PREFIX.'module_news n WHERE status != \'published\'
-                  AND (end_time IS NULL OR end_time > NOw())';
+                $query = 'SELECT COUNT(news_id) FROM '.CMS_DB_PREFIX.'module_news WHERE status != \'published\'
+                  AND (end_time IS NULL OR end_time > NOW())';
                 $count = $db->GetOne($query);
                 if( $count ) {
                     $obj = new stdClass();
@@ -369,11 +297,11 @@ EOS;
                               array('returnid'=>$this->GetPreference('detail_returnid',-1)));
         cms_route_manager::add_static($route);
 
-        $query = 'SELECT news_id,news_url FROM '.CMS_DB_PREFIX.'module_news WHERE status = ? AND news_url != ? AND '
-            . '('.$db->ifNull('start_time',$db->DbTimeStamp(1)).' < NOW()) AND '
-            . '(('.$db->IfNull('end_time',$db->DbTimeStamp(1)).' = '.$db->DbTimeStamp(1).') OR (end_time > NOW()))';
-        $query .= ' ORDER BY news_date DESC';
-        $tmp = $db->GetArray($query,array('published',''));
+        $query = 'SELECT news_id,news_url FROM '.CMS_DB_PREFIX.'module_news WHERE status = ?' .
+            ' AND news_url IS NOT NULL AND news_url != \'\'' .
+            ' AND (start_time IS NULL OR start_time <= NOW()) AND (end_time IS NULL OR end_time > NOW()))' .
+            ' ORDER BY news_date DESC';
+        $tmp = $db->GetArray($query,array('published'));
 
         if( is_array($tmp) ) {
             foreach( $tmp as $one ) {
