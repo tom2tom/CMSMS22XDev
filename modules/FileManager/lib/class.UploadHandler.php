@@ -44,11 +44,12 @@ class UploadHandler extends jquery_upload_handler
     parent::__construct($options);
   }
 
-  protected function is_file_acceptable($file)
+  protected function is_file_acceptable($filename)
   {
     $config = cms_config::get_instance();
     if( !empty($config['developer_mode']) ) return TRUE;
-    if( !filemanager_utils::is_restricted_file($file) ) return TRUE;
+    $fullname = $this->options['upload_dir'].$filename;
+    if( !filemanager_utils::is_restricted_file($fullname) ) return TRUE;
     //TODO feedback to user
     //$mod = ; $msg = ; audit('',$mod->GetName(), $msg);
     return FALSE;
@@ -60,7 +61,7 @@ class UploadHandler extends jquery_upload_handler
     if( is_object($fileobject) && $fileobject->name != '' ) {
       $config = cms_config::get_instance();
       $perms = octdec($config['default_upload_permission']);
-      $file = filemanager_utils::join_path(filemanager_utils::get_full_cwd(),$fileobject->name);
+      $file = $this->options['upload_dir'].$fileobject->name; //filepath
       @chmod($file, $perms);
       $parms = HookManager::do_hook( 'FileManager::OnFileUploaded', ['file' => $file] );
       if( is_array($parms) && isset($parms['file']) ) $file = $parms['file']; // file name could have changed.
