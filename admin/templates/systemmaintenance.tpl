@@ -28,7 +28,7 @@
 		<fieldset>
 			<legend>{lang('sysmain_content_status')}&nbsp;</legend>
 			<form action="{$formurl}" method="post">
-				{$pagecount} {lang('sysmain_pagesfound')}
+				{lang('sysmain_pagesfound',$pagecount)}
 
 				<div class="pageoverflow">
 					<p class="pagetext">
@@ -51,37 +51,37 @@
 				</div>
 			</form>
 
-			{if $withoutaliascount!="0"}
+			{if $withoutaliascount > 0}
 				<form action="{$formurl}" method="post" onsubmit="return confirm('{lang("sysmain_confirmfixaliases")|escape:"javascript"}');">
 					<div class="pageoverflow">
-						<p class="pagetext">{$withoutaliascount} {lang('sysmain_pagesmissinalias')}:</p>
+						<p class="pagetext">{lang('sysmain_pagesmissinalias',$withoutaliascount)}:</p>
 						<p class="pageinput">
 							{foreach $pagesmissingalias as $page}
 								{*{$page.count}.*} {$page.content_name}<br>
 							{/foreach}
 							<br>
-							<input class="pagebutton" type="submit" name="addaliases" data-ui-icon="ui-icon-wrench" value="{lang('sysmain_fixaliases')}">
+							<input class="pagebutton" type="submit" name="addaliases" data-ui-icon="ui-icon-gear" value="{lang('sysmain_fixaliases')}">
 						</p>
 					</div>
 				</form>
 			{/if}
 
-			{if $invalidtypescount!="0"}
+			{if $invalidtypescount > 0}
 				<form action="{$formurl}" method="post" onsubmit="return confirm('{lang("sysmain_confirmfixtypes")|escape:"javascript"}');">
 					<div class="pageoverflow">
-						<p class="pagetext">{$invalidtypescount} {lang('sysmain_pagesinvalidtypes')}:</p>
+						<p class="pagetext">{lang('sysmain_pagesinvalidtypes',$invalidtypescount)}:</p>
 						<p class="pageinput">
 							{foreach $pageswithinvalidtype as $page}
 								{$page.content_name} <em>({$page.content_alias}) - {$page.type}</em><br>
 							{/foreach}
 							<br>
-							<input class="pagebutton" type="submit" name="fixtypes" data-ui-icon="ui-icon-wrench" value="{lang('sysmain_fixtypes')|escape:'javascript'}">
+							<input class="pagebutton" type="submit" name="fixtypes" data-ui-icon="ui-icon-gear" value="{lang('sysmain_fixtypes')|escape:'javascript'}">
 						</p>
 					</div>
 				</form>
 			{/if}
 
-			{if $invalidtypescount=="0" && $withoutaliascount==""}
+			{if $invalidtypescount == 0 && $withoutaliascount == 0}
 				<p class="green"><strong>{lang('sysmain_nocontenterrors')}</strong></p>
 			{/if}
 
@@ -94,7 +94,7 @@
 				<legend>{lang('sysmain_database_status')}</legend>
 				<p>{$tablecount} {lang('sysmain_tablesfound',$nonseqcount)}</p>
 
-				{if $errorcount==0}
+				{if $errorcount == 0}
 					<p class="green"><strong>{lang('sysmain_nostr_errors')}</strong></p>
 				{else}
 					<p class="red"><strong>{$errorcount} {if $errorcount>1}{lang('sysmain_str_errors')}{else}{lang('sysmain_str_error')}{/if}: {$errortables}</strong></p>
@@ -113,7 +113,7 @@
 						<label for="btnrepair">{lang('sysmain_repairtables')}:</label>
 					</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" id="btnrepair" name="repairall" data-ui-icon="ui-icon-wrench" value="{lang('sysmain_repair')}">
+						<input class="pagebutton" type="submit" id="btnrepair" name="repairall" data-ui-icon="ui-icon-gear" value="{lang('sysmain_repair')}">
 					</p>
 				</div>
 			</fieldset>

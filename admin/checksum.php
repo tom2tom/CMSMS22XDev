@@ -95,7 +95,7 @@ function check_checksum_data(&$report)
 
       $fn = cms_join_path(CMS_ROOT_PATH,$file);
       if( !file_exists( $fn ) ) {
-          $filenotfound[] = $file;
+          $filenotfound[] = '&nbsp;'.$file;
           continue;
       }
 
@@ -112,7 +112,7 @@ function check_checksum_data(&$report)
           continue;
       }
 
-      if( $md5sum != $md5 )  $filesfailed[] = $file;
+      if( $md5sum != $md5 ) $filesfailed[] = '&nbsp;'.$file;
 
       // it passed.
       $filespassed++;
@@ -121,31 +121,27 @@ function check_checksum_data(&$report)
 
   if( $filespassed == 0 || $filenotfound || $errorlines > 0 || $notreadable > 0 || $md5failed > 0 || $filesfailed ) {
     // build the error report
-    $tmp2 = array();
+    $tmp2 = [];
     if( $filespassed == 0 ) $tmp2[] = lang('no_files_scanned');
     if( $errorlines > 0 ) $tmp2[] = lang('lines_in_error',$errorlines);
-    if( $filenotfound ) $tmp2[] = sprintf("%d %s",count($filenotfound),lang('files_not_found'));
-    if( $notreadable > 0 ) $tmp2[] = sprintf("%d %s",$notreadable,lang('files_not_readable'));
-    if( $md5failed > 0 ) $tmp2[] = sprintf("%d %s",$md5failed,lang('files_checksum_failed'));
-
-    $tmp = implode('<br>',$tmp2);
+    if( $notreadable > 0 ) $tmp2[] = lang('files_not_readable',$notreadable);
+    if( $md5failed > 0 ) $tmp2[] = lang('files_checksum_failed',$md5failed);
     if( $filenotfound ) {
-      $tmp .= '<br>'.lang('files_not_found').':';
-      $tmp .= '<br>'.implode('<br>',$filenotfound).'<br>';
+      $tmp2[] = lang('files_not_found',count($filenotfound)).':';
+      $tmp2 = array_merge($tmp2,$filenotfound);
     }
     if( $filesfailed ) {
-      $tmp .= '<br>'.count($filesfailed).' '.lang('files_failed').':';
-      $tmp .= '<br>'.implode('<br>',$filesfailed).'<br>';
+      $tmp2[] = lang('files_failed',count($filesfailed)).':';
+      $tmp2 = array_merge($tmp2,$filesfailed);
     }
-
-    $report = $tmp;
+    $report = implode('<br>',$tmp2);
     return false;
   }
 
   return true;
 }
 
-//returns bool indicating success and if false, sets $report (string)
+//returns false and sets $report (string) upon error, otherwise no return
 function generate_checksum_file(&$report)
 {
   $config = cms_config::get_instance();
@@ -183,7 +179,7 @@ function generate_checksum_file(&$report)
   header('Content-Transfer-Encoding: binary');
   header('Content-Length: ' . strlen($output));
   echo $output;
-  return true;
+  exit;
 };
 
 // Get ready
@@ -198,21 +194,23 @@ if( isset($_POST['action']) ) {
   $res = true;
   $report = '';
   switch($_POST['action']) {
-  case 'upload':
-    $res = check_checksum_data($report);
-    if( $res ) {
-      $themeObject->ShowMessage(lang('checksum_passed'));
-    }
-    break;
-  case 'download':
-    $res = generate_checksum_file($report);
-    if( $res ) {
-      redirect('checksum.php'.$urlext.'&exported=1'); //come back here to show completion message DOESN'T WORK
-      return; //USEFUL?
-    }
-    break;
+    case 'upload':
+      $res = check_checksum_data($report);
+      if( $res ) {
+        $themeObject->ShowMessage(lang('checksum_passed'));
+      }
+      break;
+    case 'download':
+      $res = generate_checksum_file($report);
+      if( $res ) {
+        redirect('checksum.php'.$urlext.'&exported=1'); //come back here to show completion message DOESN'T WORK
+        return; //USEFUL?
+      }
+      break;
   }
-  if( !$res ) $smarty->assign('error',$report);
+  if( !$res ) {
+    $smarty->assign('error',$report);
+  }
 }
 elseif( !empty($_GET['exported']) ) {
   $themeObject->ShowMessage(lang('msg_completed'));
@@ -222,6 +220,7 @@ elseif( !empty($_GET['exported']) ) {
 $smarty->assign('urlext',$urlext)
  ->assign('cms_secure_param_name',CMS_SECURE_PARAM_NAME)
  ->assign('cms_user_key',$_SESSION[CMS_USER_KEY])
+ ->assign('header',$themeObject->ShowHeader('system_verification'))
  ->display('checksum.tpl');
 
 require_once 'footer.php';
