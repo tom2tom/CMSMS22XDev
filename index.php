@@ -34,17 +34,27 @@ if (!isset($_SERVER['REQUEST_URI']) && isset($_SERVER['QUERY_STRING'])) $_SERVER
 require_once(__DIR__.'/lib/include.php');
 
 if (file_exists(TMP_CACHE_LOCATION.'/SITEDOWN')) {
-    echo "<html><head><title>Maintenance</title></head><body><p>Site down for maintenance.</p></body></html>";
+    echo "<!DOCTYPE html>
+<html><head><title>Maintenance</title></head><body><p>Site down for maintenance.</p></body></html>";
     exit;
 }
 
+$proto = (!empty($_SERVER['SERVER_PROTOCOL'])) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1';
+
 if (!is_writable(TMP_TEMPLATES_C_LOCATION) || !is_writable(TMP_CACHE_LOCATION)) {
-    echo '<html><head><title>Error</title></head><body>';
-    echo '<p>The following directories must be writable by the web server:<br>';
-    echo 'tmp/cache<br>';
-    echo 'tmp/templates_c<br></p>';
-    echo '<p>Please correct by executing:<br><em>chmod 777 tmp/cache<br>chmod 777 tmp/templates_c</em><br>or the equivalent for your platform before continuing.</p>';
-    echo '</body></html>';
+    // log this error and relevant filectime()'s because this situation needs investigation!
+    $dir = dirname(TMP_TEMPLATES_C_LOCATION);
+    $t1 = is_dir($dir) ? filectime($dir) : '?';
+    $t2 = is_dir(TMP_TEMPLATES_C_LOCATION) ? filectime(TMP_TEMPLATES_C_LOCATION) : '?';
+    $t3 = is_dir(TMP_CACHE_LOCATION) ? filectime(TMP_CACHE_LOCATION) : '?';
+    audit('', 'Tmp directory problem', "tmp changed $t1, tmp/templates_c changed $t2, tmp/cache changed $t3");
+    header("$proto 500 Internal Server Error");
+    header("Status: 500 Internal Server Error");
+    echo "<!DOCTYPE html>
+<html><head><title>Error</title></head><body>
+<p>The web server is unable to write into one or more of this site's temporary-storage directories.</p>
+<p>Please contact the site administrator to initiate investigation and repair.</p>
+</body></html>";
     exit;
 }
 
@@ -52,7 +62,7 @@ if (!is_writable(TMP_TEMPLATES_C_LOCATION) || !is_writable(TMP_CACHE_LOCATION)) 
 
 // initial setup
 $_app = CmsApp::get_instance(); // internal use only, subject to change.
-$params = array_merge($_GET, $_POST);
+//$params = array_merge($_GET, $_POST); //aka $_REQUEST
 $smarty = $_app->GetSmarty();
 //$smarty->params = $params; never used in core, but might it be for non-core? if so, instead use $smarty.request
 $getid = null; //aka unset, might be populated downstream
@@ -60,7 +70,6 @@ $page = get_pageid_or_alias_from_url($getid);
 $contentops = ContentOperations::get_instance();
 $contentobj = null;
 $trycount = 0;
-$proto = (!empty($_SERVER['SERVER_PROTOCOL'])) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1';
 
 cms_content_cache::get_instance();
 $_tpl_cache = new CmsTemplateCache();
@@ -195,13 +204,13 @@ while( $trycount < 2 ) {
             @ob_end_clean(); //redundant
             header("$proto 404 Not Found");
             header("Status: 404 Not Found");
-            echo '<!DOCTYPE html>
+            echo "<!DOCTYPE html>
 <html><head>
 <title>404 Not Found</title>
 </head><body>
 <h1>Not Found</h1>
 <p>The requested URL was not found on this server.</p>
-</body></html>';
+</body></html>";
             exit;
         }
     }
@@ -238,12 +247,13 @@ while( $trycount < 2 ) {
             header("Cache-Control: post-check=0, pre-check=0", false);
             header("$proto 403 Forbidden");
             header("Status: 403 Forbidden");
-            echo '<!DOCTYPE html>
+            echo "<!DOCTYPE html>
 <html><head>
 <title>403 Forbidden</title>
 </head><body>
-<h1>Forbidden</h1>'.$msg.'
-</body></html>';
+<h1>Forbidden</h1>
+$msg
+</body></html>";
             exit;
         }
     }
