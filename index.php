@@ -39,7 +39,7 @@ if (file_exists(TMP_CACHE_LOCATION.'/SITEDOWN')) {
 }
 
 if (!is_writable(TMP_TEMPLATES_C_LOCATION) || !is_writable(TMP_CACHE_LOCATION)) {
-    echo '<html><title>Error</title></head><body>';
+    echo '<html><head><title>Error</title></head><body>';
     echo '<p>The following directories must be writable by the web server:<br>';
     echo 'tmp/cache<br>';
     echo 'tmp/templates_c<br></p>';
@@ -54,11 +54,13 @@ if (!is_writable(TMP_TEMPLATES_C_LOCATION) || !is_writable(TMP_CACHE_LOCATION)) 
 $_app = CmsApp::get_instance(); // internal use only, subject to change.
 $params = array_merge($_GET, $_POST);
 $smarty = $_app->GetSmarty();
-$smarty->params = $params; //why ? never used
-$page = get_pageid_or_alias_from_url();
+//$smarty->params = $params; never used in core, but might it be for non-core? if so, instead use $smarty.request
+$getid = null; //aka unset, might be populated downstream
+$page = get_pageid_or_alias_from_url($getid);
 $contentops = ContentOperations::get_instance();
 $contentobj = null;
 $trycount = 0;
+$proto = (!empty($_SERVER['SERVER_PROTOCOL'])) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1';
 
 cms_content_cache::get_instance();
 $_tpl_cache = new CmsTemplateCache();
@@ -78,7 +80,7 @@ while( $trycount < 2 ) {
             $contentobj->SetId(__CMS_PREVIEW_PAGE__);
         }
         else {
-            $contentobj = $contentops->LoadContentFromAlias($page,true);
+            $contentobj = $contentops->LoadContentFromAlias($page,true); //no 'extra' properties
         }
 
         if( !is_object($contentobj) ) throw new CmsError404Exception('Page '.$page.' not found');
@@ -108,17 +110,17 @@ while( $trycount < 2 ) {
         if( !$contentobj->IsPermitted() ) throw new CmsError403Exception('Permission denied');
 
         $_app->set_content_object($contentobj);
-        $smarty->assignGlobal('content_obj', $contentobj); //Global deprecated Smarty5+
+        $smarty->assignGlobal('content_obj', $contentobj);
         $smarty->assignGlobal('content_id', $contentobj->Id());
         $smarty->assignGlobal('page_id', $page);
         $smarty->assignGlobal('page_alias', $contentobj->Alias());
         $smarty->assignGlobal('encoding', CmsNlsOperations::get_encoding());
 
         $showtemplate = true;
-
+        //$getid possibly set in get_pageid_or_alias_from_url()
         if ((isset($_REQUEST['showtemplate']) && $_REQUEST['showtemplate'] == 'false') ||
-            (isset($smarty->id) && $smarty->id != '' && isset($_REQUEST[$smarty->id.'showtemplate']) &&
-             $_REQUEST[$smarty->id.'showtemplate'] == 'false')) {
+            ($getid !== null && isset($_REQUEST[$getid.'showtemplate']) &&
+             $_REQUEST[$getid.'showtemplate'] == 'false')) {
             $showtemplate = false;
         }
 
@@ -128,7 +130,7 @@ while( $trycount < 2 ) {
             $smarty->setCaching(Smarty::CACHING_LIFETIME_CURRENT);
         }
 
-        \CMSMS\HookManager::do_hook('Core::ContentPreRender', [ 'content' => &$contentobj ] );
+        \CMSMS\HookManager::do_hook('Core::ContentPreRender', [ 'content' => $contentobj ]);
 
         if( !$showtemplate ) {
             $smarty->setCaching(false);
@@ -144,26 +146,26 @@ while( $trycount < 2 ) {
             $head = '';
             $body = '';
 
-            \CMSMS\HookManager::do_hook('Core::PageTopPreRender', [ 'content'=>&$contentobj, 'html'=>&$top ]);
+            \CMSMS\HookManager::do_hook('Core::PageTopPreRender', [ 'content'=>$contentobj, 'html'=>&$top ]);
             $tpl = $smarty->createTemplate('tpl_top:'.$tpl_id,$cache_id);
             $top .= $tpl->fetch();
             unset($tpl);
-            \CMSMS\HookManager::do_hook('Core::PageTopPostRender', [ 'content'=>&$contentobj, 'html'=>&$top ]);
+            \CMSMS\HookManager::do_hook('Core::PageTopPostRender', [ 'content'=>$contentobj, 'html'=>&$top ]);
 
             // if the request has a mact in it, process and cache the output.
             preprocess_mact($contentobj->Id());
 
-            \CMSMS\HookManager::do_hook('Core::PageBodyPreRender', [ 'content'=>&$contentobj, 'html'=>&$body ]);
+            \CMSMS\HookManager::do_hook('Core::PageBodyPreRender', [ 'content'=>$contentobj, 'html'=>&$body ]);
             $tpl = $smarty->createTemplate('tpl_body:'.$tpl_id,$cache_id);
             $body .= $tpl->fetch();
             unset($tpl);
-            \CMSMS\HookManager::do_hook('Core::PageBodyPostRender', [ 'content'=>&$contentobj, 'html'=>&$body ]);
+            \CMSMS\HookManager::do_hook('Core::PageBodyPostRender', [ 'content'=>$contentobj, 'html'=>&$body ]);
 
-            \CMSMS\HookManager::do_hook('Core::PageHeadPreRender', [ 'content'=>&$contentobj, 'html'=>&$head ]);
+            \CMSMS\HookManager::do_hook('Core::PageHeadPreRender', [ 'content'=>$contentobj, 'html'=>&$head ]);
             $tpl = $smarty->createTemplate('tpl_head:'.$tpl_id,$cache_id);
             $head .= $tpl->fetch();
             unset($tpl);
-            \CMSMS\HookManager::do_hook('Core::PageHeadPostRender', [ 'content'=>&$contentobj, 'html'=>&$head ]);
+            \CMSMS\HookManager::do_hook('Core::PageHeadPostRender', [ 'content'=>$contentobj, 'html'=>&$head ]);
 
             $html = $top.$head.$body;
             $trycount = 99; // no more iterations
@@ -174,7 +176,6 @@ while( $trycount < 2 ) {
         // 404 error thrown
         $page = 'error404';
         $showtemplate = true;
-        $proto = (!empty($_SERVER['SERVER_PROTOCOL'])) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0';
         unset($_REQUEST['mact']);
         unset($_REQUEST['module']);
         unset($_REQUEST['action']);
@@ -210,7 +211,6 @@ while( $trycount < 2 ) {
         //debug_display('handle 403 exception '.$e->getFile().' at '.$e->getLine().' -- '.$e->getMessage());
         $page = 'error403';
         $showtemplate = true;
-        $proto = (!empty($_SERVER['SERVER_PROTOCOL'])) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0';
         unset($_REQUEST['mact']);
         unset($_REQUEST['module']);
         unset($_REQUEST['action']);
@@ -220,7 +220,7 @@ while( $trycount < 2 ) {
         // specified page not found, load the 404 error page.
         $contentobj = $contentops->LoadContentFromAlias('error403',true);
         $msg = $e->GetMessage();
-        if( !$msg ) $msg = '<p>We are sorry, but you do not have the appropriate permission to view this item.</p>';
+        if( !$msg ) $msg = '<p>You do not have the appropriate permission to view this item.</p>';
         if( is_object($contentobj) ) {
             // we have a 403 error page.
             header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
