@@ -4,7 +4,7 @@
 final class news_field
 {
   private $_data = array();
-  private $_displayvalue;
+  private $_displayvalue = null; // aka unset
 
   public function _get_data($key)
   {
@@ -46,23 +46,26 @@ final class news_field
       break;
 
     case 'displayvalue':
-      if( !$this->_displayvalue ) {
+      if( !isset($this->_displayvalue) ) {
         if( isset($this->_data['value']) ) {
           $value = $this->_data['value'];
           $this->_displayvalue = $value;
           if( $this->type == 'dropdown' ) {
             // dropdowns may have a different displayvalue than actual value.
-            if( is_array($this->options) && isset($this->options[$value]) ) $this->_displayvalue = $this->options[$value];
+            if( is_array($this->options) && isset($this->options[$value]) ) { $this->_displayvalue = $this->options[$value]; }
+            else { $this->_displayvalue = ''; }
           }
+        }
+        else {
+          $this->_displayvalue = ''; //TODO translated 'unknown' or 'unspecified' etc
         }
       }
       return $this->_displayvalue;
-      break;
 
     case 'fielddef_id':
       return $this->_data['id'];
     }
-    return null; // no value for unsupported property
+    return null; // no value for unsupported or unavailable property
   }
 
   #[\ReturnTypeWillChange]
@@ -145,7 +148,7 @@ final class news_field
   {
     $db = cmsms()->GetDb();
     $query = 'UPDATE '.CMS_DB_PREFIX.'module_news_fielddefs SET name = ?, type = ?, max_length = ?, modified_date = NOW(),
-              item_orderr = ?, public = ?, extra = ? WHERE id = ?';
+              item_order = ?, public = ?, extra = ? WHERE id = ?';
     $dbr = $db->Execute($query,array($this->name,$this->type,$this->max_length,$this->item_order,$this->public,
                                      serialize($this->extra),$this->id));
     $this->modified_date = $db->DbTimeStamp(time());
