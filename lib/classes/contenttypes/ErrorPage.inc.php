@@ -82,8 +82,9 @@ class ErrorPage extends Content
         //TODO others e.g. $mDefaultContent false ?
     }
 
-    public function display_single_element($one,$adding)
+    protected function display_single_element($one,$adding,$pmac,$pown,$paed)
     {
+        //TODO no help and disabled input(s) if user not authorised per args $pmac, $pown
         switch($one) {
         case 'alias':
             $dropdownopts = '';
@@ -101,7 +102,7 @@ class ErrorPage extends Content
             break;
 
         default:
-            return parent::display_single_element($one,$adding);
+            return parent::display_single_element($one,$adding,$pmac,$pown,$paed);
         }
     }
 

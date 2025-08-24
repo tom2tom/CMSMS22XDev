@@ -90,12 +90,14 @@ class PageLink extends ContentBase
 	public function TabNames()
 	{
 		$res = array(lang('main'));
+		//TODO relevance of $pown for this?
 		if( check_permission(get_userid(),'Manage All Content') ) $res[] = lang('options');
 		return $res;
 	}
 
-	public function display_single_element($one,$adding)
+	protected function display_single_element($one,$adding,$pmac,$pown,$paed)
 	{
+		//TODO no help and disabled input(s) if user not authorised per args $pmac $pown
 		switch($one) {
 		case 'page':
 			$contentops = ContentOperations::get_instance();
@@ -109,7 +111,7 @@ class PageLink extends ContentBase
 			break;
 
 		default:
-			return parent::display_single_element($one,$adding);
+			return parent::display_single_element($one,$adding,$pmac,$pown,$paed);
 		}
 	}
 

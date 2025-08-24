@@ -76,15 +76,16 @@ class Link extends ContentBase
 		return $res;
 	}
 
-	public function display_single_element($one,$adding)
+	protected function display_single_element($one,$adding,$pmac,$pown,$paed)
 	{
+		//TODO no help and disabled input(s) if user not authorised per args $pmac, $pown
 		switch($one) {
 		case 'url':
 			return array(lang('url').':','<input type="text" name="url" size="80" value="'.cms_htmlentities($this->GetPropertyValue('url')).'">');
 			break;
 
 		default:
-			return parent::display_single_element($one,$adding);
+			return parent::display_single_element($one,$adding,$pmac,$pown,$paed);
 		}
 	}
 
