@@ -403,7 +403,7 @@ class CmsLayoutTemplateType
     {
         if( !$this->get_originator() ) throw new CmsInvalidDataException('Invalid Type Originator');
         if( !$this->get_name() ) throw new CmsInvalidDataException('Invalid Type Name');
-        if( !preg_match('/[A-Za-z0-9_\,\.\ ]/',$this->get_name()) ) {
+        if( !preg_match('/[a-zA-Z0-9_,. ]/',$this->get_name()) ) {
             throw new CmsInvalidDataException('Name must contain only letters, numbers and underscores.');
         }
 
@@ -482,7 +482,7 @@ WHERE id = ?';
                                   serialize($this->get_lang_callback()),serialize($this->get_help_callback()),
                                   serialize($this->get_content_callback()),$this->get_content_block_flag() ? 1 : 0,
                                   $this->get_owner(), $now, $this->get_id()));
-        if( $db->Affected_Rows() != 1 || db->ErrorNo() != 0 ) throw new CmsSQLErrorException($db->ErrorMsg());
+        if( $db->Affected_Rows() != 1 || $db->ErrorNo() != 0 ) throw new CmsSQLErrorException($db->ErrorMsg());
         CmsTemplateCache::clear_cache();
         $this->_dirty = FALSE;
         audit($this->get_id(),'Template type', "Updated: {$this->get_name()}");
@@ -494,14 +494,14 @@ WHERE id = ?';
     public function save()
     {
         if( $this->get_id() == 0 ) {
-            HookManager::do_hook('Core::AddTemplateTypePre', [ get_class($this) => &$this ]);
+            HookManager::do_hook('Core::AddTemplateTypePre', [ get_class($this) => $this ]);
             $this->_insert();
-            HookManager::do_hook('Core::AddTemplateTypePost', [ get_class($this) => &$this ]);
+            HookManager::do_hook('Core::AddTemplateTypePost', [ get_class($this) => $this ]);
             return;
         }
-        HookManager::do_hook('Core::EditTemplateTypePre', [ get_class($this) => &$this ]);
+        HookManager::do_hook('Core::EditTemplateTypePre', [ get_class($this) => $this ]);
         $this->_update();
-        HookManager::do_hook('Core::EditTemplateTypePost', [ get_class($this) => &$this ]);
+        HookManager::do_hook('Core::EditTemplateTypePost', [ get_class($this) => $this ]);
     }
 
     /**
@@ -525,7 +525,7 @@ WHERE id = ?';
     {
         if( !$this->get_id() ) return;
 
-        HookManager::do_hook('Core::DeleteTemplateTypePre', [ get_class($this) => &$this ]);
+        HookManager::do_hook('Core::DeleteTemplateTypePre', [ get_class($this) => $this ]);
         $tmp = CmsLayoutTemplate::template_query(array('t:'.$this->get_id()));
         if( is_array($tmp) && count($tmp) ) throw new CmsInvalidDataException('Cannot delete a template type with existing templates');
         $db = CmsApp::get_instance()->GetDb();
@@ -536,7 +536,7 @@ WHERE id = ?';
         $this->_dirty = TRUE;
         CmsTemplateCache::clear_cache();
         audit($this->get_id(),'Template type', "Deleted: {$this->get_name()}");
-        HookManager::do_hook('Core::DeleteTemplateTypePost', [ get_class($this) => &$this ]);
+        HookManager::do_hook('Core::DeleteTemplateTypePost', [ get_class($this) => $this ]);
         $this->_data['id'] = 0;
     }
 
