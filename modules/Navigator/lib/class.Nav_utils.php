@@ -114,23 +114,33 @@ final class Nav_utils
             // and anyway, HasProperty() would otherwise load all available props before checking any
             if( $content->HasProperty('target') ) $obj->target = $content->GetPropertyValue('target');
             if( $deep ) {
-                $config = $gCms->GetConfig();
                 $obj->extra1 = $content->GetPropertyValue('extra1');
                 $obj->extra2 = $content->GetPropertyValue('extra2');
                 $obj->extra3 = $content->GetPropertyValue('extra3');
+                $config = $gCms->GetConfig();
                 $tmp = $content->GetPropertyValue('image');
-                if( !empty($tmp) && $tmp != -1 ) {
-                    $url = get_site_preference('content_imagefield_path').'/'.$tmp;
-                    if( !startswith($url,'/') ) $url = '/'.$url;
-                    $url = $config['image_uploads_url'].$url;
-                    $obj->image = $url;
+                if( $tmp && $tmp != -1 ) {
+                    if( parse_url($tmp,PHP_URL_HOST) ) { // $tmp is absolute url
+                        $obj->image = $tmp;
+                    }
+                    else {
+                        $url = $config['image_uploads_url'];
+                        $p = get_site_preference('content_imagefield_path');
+                        if( $p ) $url .= '/' . strtr($p,'\\','/');
+                        $obj->image = $url .'/'. $tmp;
+                    }
                 }
                 $tmp = $content->GetPropertyValue('thumbnail');
                 if( $tmp && $tmp != -1 ) {
-                    $url = get_site_preference('content_thumbnailfield_path').'/'.$tmp;
-                    if( !startswith($url,'/') ) $url = '/'.$url;
-                    $url = $config['image_uploads_url'].$url;
-                    $obj->thumbnail = $url;
+                    if( parse_url($tmp,PHP_URL_HOST) ) {
+                        $obj->thumbnail = $tmp;
+                    }
+                    else {
+                        $url = $config['image_uploads_url'];
+                        $p = get_site_preference('content_thumbnailfield_path');
+                        if( $p ) $url .= '/' . strtr($p,'\\','/');
+                        $obj->thumbnail = $url .'/'. $tmp;
+                    }
                 }
             }
 
@@ -152,7 +162,7 @@ final class Nav_utils
             // are we recursing?
             if( $children && is_array($children) &&
                 ($nlevels < 0 || $depth+1 < $nlevels) &&
-                (!$collapse || $obj->parent || $obj->current) ) { // always try to display expanded if ->current
+                (!$collapse || $obj->parent || $obj->current) ) { // CHECKME always try to display expanded if ->current
                 $obj->has_children = TRUE;
                 $child_nodes = array();
                 for( $i = 0, $n = count($children); $i < $n; $i++ ) {
