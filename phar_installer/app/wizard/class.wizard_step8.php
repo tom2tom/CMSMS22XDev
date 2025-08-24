@@ -148,7 +148,6 @@ class wizard_step8 extends wizard_step
                 cms_siteprefs::set('sitemask',$salt);
             }
 
-            // work directories for Smarty created in base.php
             require_once $dir.'/base.php';
 
             if( $choices['samplecontent'] ) {
