@@ -1,7 +1,6 @@
 <div class="pagecontainer">
 
 {tab_header name='general' label=lang('general_settings') active=$tab}
-{tab_header name='editcontent' label=lang('editcontent_settings') active=$tab}
 {tab_header name='sitedown' label=lang('sitedown_settings') active=$tab}
 {tab_header name='mail' label=lang('mail_settings') active=$tab}
 {tab_header name='setup' label=lang('setup') active=$tab}
@@ -88,105 +87,6 @@
 				</select>
 			</p>
 		{/if}
-		<div class="pageoverflow">
-			<br>
-			<p class="pageinput">
-				<input type="submit" name="submit" value="{lang('submit')}" class="pagebutton">
-				<input type="submit" name="cancel" value="{lang('cancel')}" class="pagebutton">
-			</p>
-		</div>
-	</form>
-
-{* +++++++++++++++++++++++++++++++++++++++++++ *}
-{tab_start name='editcontent'}
-	<form id="siteprefform_editcontent" method="post" action="{$formurl}">
-		<div>
-			<input type="hidden" name="{$SECURE_PARAM_NAME}" value="{$CMS_USER_KEY}">
-			<input type="hidden" name="active_tab" value="editcontent">
-			<input type="hidden" name="editsiteprefs" value="true">
-		</div>
-		{if !$pretty_urls}
-			<div class="warning" style="display:block">{lang('warn_nosefurl')}&nbsp;&nbsp;{cms_help key2='settings_nosefurl' title=lang('warn_nosefurl')}</div>
-		{/if}
-		<div class="pageoverflow">
-			<p class="pageinput">
-				<input type="submit" name="submit" value="{lang('submit')}" class="pagebutton">
-				<input type="submit" name="cancel" value="{lang('cancel')}" class="pagebutton">
-			</p>
-			<br>
-		</div>
-		{if $pretty_urls}
-			<div class="pageoverflow">
-				<p class="pagetext"><label for="content_autocreate_urls">{lang('content_autocreate_urls')}:</label> {cms_help key2='settings_autocreate_url' title=lang('content_autocreate_urls')}</p>
-				<p class="pageinput">
-					<select id="content_autocreate_urls" name="content_autocreate_urls">
-						{html_options options=$yesno selected=$content_autocreate_urls}
-					</select>
-				</p>
-			</div>
-		{/if}
-		{if $pretty_urls}
-			<div class="pageoverflow">
-				<p class="pagetext"><label for="content_autocreate_flaturls">{lang('content_autocreate_flaturls')}:</label> {cms_help key2='settings_autocreate_flaturls' title=lang('content_autocreate_flaturls')}</p>
-				<p class="pageinput">
-					<select id="content_autocreate_flaturls" name="content_autocreate_flaturls">
-						{html_options options=$yesno selected=$content_autocreate_flaturls}
-					</select>
-				</p>
-			</div>
-		{/if}
-		{if $pretty_urls}
-			<div class="pageoverflow">
-				<p class="pagetext"><label for="content_mandatory_urls">{lang('content_mandatory_urls')}:</label> {cms_help key2='settings_mandatory_urls' title=lang('content_mandatory_urls')}</p>
-				<p class="pageinput">
-					<select id="content_mandatory_urls" name="content_mandatory_urls">
-						{html_options options=$yesno selected=$content_mandatory_urls}
-					</select>
-				</p>
-			</div>
-		{/if}
-		<div class="pageoverflow">
-			<p class="pagetext"><label for="disallowed_contenttypes">{lang('disallowed_contenttypes')}:</label> {cms_help key2='settings_badtypes' title=lang('disallowed_contenttypes')}</p>
-			<p class="pageinput">
-				<select id="disallowed_contenttypes" name="disallowed_contenttypes[]" multiple size="5">
-					{html_options options=$all_contenttypes selected=$disallowed_contenttypes}
-				</select>
-			</p>
-		</div>
-		<div class="pageoverflow">
-			<p class="pagetext"><label for="basic_attributes">{lang('basic_attributes')}:</label> {cms_help key2='settings_basicattribs2' title=lang('basic_attributes')}</p>
-			<p class="pageinput">
-				<select id="basic_attributes" class="multicolumn" name="basic_attributes[]" multiple size="5">
-					{CmsFormUtils::create_option($all_attributes,$basic_attributes)}{*cms_html_options options=$all_attributes selected=$basic_attributes*}
-				</select>
-			</p>
-		</div>
-		<div class="pageoverflow">
-			<p class="pagetext"><label for="imagefield_path">{lang('content_imagefield_path')}:</label> {cms_help key2='settings_imagefield_path' title=lang('content_imagefield_path')}</p>
-			<p class="pageinput">
-				<input id="imagefield_path" type="text" name="content_imagefield_path" size="50" maxlength="255" value="{$content_imagefield_path|cms_escape}">
-			</p>
-		</div>
-		<div class="pageoverflow">
-			<p class="pagetext"><label for="thumbfield_path">{lang('content_thumbnailfield_path')}:</label> {cms_help key2='settings_thumbfield_path' title=lang('content_thumbnailfield_path')}</p>
-			<p class="pageinput">
-				<input id="thumbfield_path" type="text" name="content_thumbnailfield_path" size="50" maxlength="255" value="{$content_thumbnailfield_path|cms_escape}">
-			</p>
-		</div>
-		<div class="pageoverflow">
-			<p class="pagetext"><label for="contentimage_path">{lang('contentimage_path')}:</label> {cms_help key2='settings_contentimage_path' title=lang('contentimage_path')}</p>
-			<p class="pageinput">
-				<input type="text" id="contentimage_path" name="contentimage_path" size="50" maxlength="255" value="{$contentimage_path|cms_escape}">
-			</p>
-		</div>
-		<div class="pageoverflow">
-			<p class="pagetext"><label for="cssnameisblockname">{lang('cssnameisblockname')}:</label> {cms_help key2='settings_cssnameisblockname' title=lang('cssnameisblockname')}</p>
-			<p class="pageinput">
-				<select id="cssnameisblockname" name="content_cssnameisblockname">
-					{cms_yesno selected=$content_cssnameisblockname}
-				</select>
-			</p>
-		</div>
 		<div class="pageoverflow">
 			<br>
 			<p class="pageinput">

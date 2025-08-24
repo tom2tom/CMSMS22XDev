@@ -87,7 +87,6 @@ if (!$access) {
 $gCms = cmsms();
 $db = $gCms->GetDb();
 $config = $gCms->GetConfig();
-$pretty_urls = $config['url_rewriting'] === 'none' ? 0 : 1;
 $error = '';
 $message = '';
 $mail_is_set = cms_siteprefs::get('mail_is_set',0);
@@ -96,8 +95,6 @@ $thumbnail_width = 96;
 $thumbnail_height = 96;
 $sitedownexcludes = '';
 $sitedownexcludeadmins = '';
-$disallowed_contenttypes = '';
-$basic_attributes = '';
 $xmlmodulerepository = '';
 $checkversion = 1;
 $defaultdateformat = '';
@@ -111,20 +108,12 @@ $notices_timeout = 10;
 $sitename = 'CMSMS Website';
 $frontendlang = '';
 $frontendwysiwyg = '';
-$global_umask = '022';
+$global_umask = str_pad(decoct(umask()), 3, '0', STR_PAD_LEFT);
 $logintheme = 'default';
 $backendwysiwyg = '';
 $auto_clear_cache_age = 0;
 $allow_browser_cache = 0;
 $browser_cache_expiry = 60;
-$content_autocreate_urls = 0;
-$content_autocreate_flaturls = 0;
-$content_mandatory_urls = 0;
-$contentimage_useimagepath = 0;
-$content_imagefield_path = '';
-$content_thumbnailfield_path = '';
-$content_cssnameisblockname = 1;
-$contentimage_path = '';
 $adminlog_lifetime = (3600 * 24 * 31);
 $search_module = 'Search';
 $use_smartycache = 0;
@@ -169,15 +158,6 @@ $sitename = cms_html_entity_decode(cms_siteprefs::get('sitename', $sitename));
 $lock_timeout = (int)cms_siteprefs::get('lock_timeout', $lock_timeout);
 $sitedownexcludes = cms_siteprefs::get('sitedownexcludes', $sitedownexcludes);
 $sitedownexcludeadmins = cms_siteprefs::get('sitedownexcludeadmins', $sitedownexcludeadmins);
-$disallowed_contenttypes = cms_siteprefs::get('disallowed_contenttypes', $disallowed_contenttypes);
-$basic_attributes = cms_siteprefs::get('basic_attributes', $basic_attributes);
-$content_autocreate_urls = cms_siteprefs::get('content_autocreate_urls', $content_autocreate_urls);
-$content_autocreate_flaturls = cms_siteprefs::get('content_autocreate_flaturls', $content_autocreate_flaturls);
-$content_mandatory_urls = cms_siteprefs::get('content_mandatory_urls', $content_mandatory_urls);
-$content_imagefield_path = cms_siteprefs::get('content_imagefield_path', $content_imagefield_path);
-$content_thumbnailfield_path = cms_siteprefs::get('content_thumbnailfield_path', $content_thumbnailfield_path);
-$content_cssnameisblockname = cms_siteprefs::get('content_cssnameisblockname', $content_cssnameisblockname);
-$contentimage_path = cms_siteprefs::get('contentimage_path', $contentimage_path);
 $adminlog_lifetime = cms_siteprefs::get('adminlog_lifetime', $adminlog_lifetime);
 $search_module = cms_siteprefs::get('searchmodule', $search_module);
 $use_smartycache = cms_siteprefs::get('use_smartycache', $use_smartycache);
@@ -382,35 +362,10 @@ if (isset($_POST['editsiteprefs'])) {
       }
       break;
 
+/* exported to ContentManager settings UI
     case 'editcontent':
-      if( $pretty_urls ) {
-        $content_autocreate_urls = (int)$_POST['content_autocreate_urls'];
-        cms_siteprefs::set('content_autocreate_urls',$content_autocreate_urls);
-        $content_autocreate_flaturls = (int)$_POST['content_autocreate_flaturls'];
-        cms_siteprefs::set('content_autocreate_flaturls',$content_autocreate_flaturls);
-        $content_mandatory_urls = (int)$_POST['content_mandatory_urls'];
-        cms_siteprefs::set('content_mandatory_urls',$content_mandatory_urls);
-      }
-      $content_imagefield_path = trim($_POST['content_imagefield_path']);
-      cms_siteprefs::set('content_imagefield_path',$content_imagefield_path);
-      $content_thumbnailfield_path = trim($_POST['content_thumbnailfield_path']);
-      cms_siteprefs::set('content_thumbnailfield_path',$content_thumbnailfield_path);
-      $contentimage_path = trim($_POST['contentimage_path']);
-      cms_siteprefs::set('contentimage_path',$contentimage_path);
-      $content_cssnameisblockname = (int)$_POST['content_cssnameisblockname'];
-      cms_siteprefs::set('content_cssnameisblockname',$content_cssnameisblockname);
-      if( isset($_POST['basic_attributes']) ) {
-        $basic_attributes = implode(',',($_POST['basic_attributes']));
-      }
-      else {
-        $basic_attributes = '';
-      }
-      cms_siteprefs::set('basic_attributes',$basic_attributes);
-      $disallowed_contenttypes = '';
-      if( isset($_POST['disallowed_contenttypes']) ) $disallowed_contenttypes = implode(',',$_POST['disallowed_contenttypes']);
-      cms_siteprefs::set('disallowed_contenttypes',$disallowed_contenttypes);
       break;
-
+*/
     case 'sitedown':
       if( isset($_POST['sitedownexcludes']) ) $sitedownexcludes = trim($_POST['sitedownexcludes']);
       $sitedownexcludeadmins = (int)$_POST['sitedownexcludeadmins'];
@@ -593,7 +548,6 @@ $smarty->assign('mailprefs',$mailprefs);
 
 $smarty->assign('languages',get_language_list());
 $smarty->assign('tab',$tab);
-$smarty->assign('pretty_urls',$pretty_urls);
 
 // need a list of wysiwyg modules.
 {
@@ -619,14 +573,6 @@ if ($dir = opendir(__DIR__ . "/themes/"))
   }
 }
 
-$smarty->assign('tabs_end',$themeObject->EndTabContent());
-$smarty->assign('general_start',$themeObject->StartTab("general"));
-$smarty->assign('editcontent_start',$themeObject->StartTab("editcontent"));
-$smarty->assign('sitedown_start',$themeObject->StartTab("sitedown"));
-$smarty->assign('setup_start',$themeObject->StartTab("setup"));
-$smarty->assign('smarty_start',$themeObject->StartTab("smarty"));
-$smarty->assign('tab_end',$themeObject->EndTab());
-
 $smarty->assign('SECURE_PARAM_NAME',CMS_SECURE_PARAM_NAME);
 $smarty->assign('CMS_USER_KEY',$_SESSION[CMS_USER_KEY]);
 $smarty->assign('sitename',$sitename);
@@ -646,57 +592,28 @@ $smarty->assign('defaultdateformat',$defaultdateformat);
 $smarty->assign('lock_timeout',$lock_timeout);
 $smarty->assign('sitedownexcludes',$sitedownexcludes);
 $smarty->assign('sitedownexcludeadmins',$sitedownexcludeadmins);
-$smarty->assign('basic_attributes',explode(',',$basic_attributes));
-$smarty->assign('disallowed_contenttypes',explode(',',$disallowed_contenttypes));
 $smarty->assign('thumbnail_width',$thumbnail_width);
 $smarty->assign('thumbnail_height',$thumbnail_height);
 $smarty->assign('allow_browser_cache',$allow_browser_cache);
 $smarty->assign('browser_cache_expiry',$browser_cache_expiry);
 $smarty->assign('auto_clear_cache_age',$auto_clear_cache_age);
-$smarty->assign('content_autocreate_urls',$content_autocreate_urls);
-$smarty->assign('content_autocreate_flaturls',$content_autocreate_flaturls);
-$smarty->assign('content_mandatory_urls',$content_mandatory_urls);
-$smarty->assign('content_imagefield_path',$content_imagefield_path);
-$smarty->assign('content_thumbnailfield_path',$content_thumbnailfield_path);
-$smarty->assign('content_cssnameisblockname',$content_cssnameisblockname);
-$smarty->assign('contentimage_path',$contentimage_path);
 $smarty->assign('adminlog_lifetime',$adminlog_lifetime);
 $smarty->assign('search_module',$search_module);
 $smarty->assign('use_smartycache',$use_smartycache);
 $smarty->assign('use_smartycompilecheck',$use_smartycompilecheck);
 
 $tmp = array(
-  3600*24=>lang('adminlog_1day'),
-  3600*24*7=>lang('adminlog_1week'),
-  3600*24*14=>lang('adminlog_2weeks'),
-  3600*24*31=>lang('adminlog_1month'),
-  3600*24*31*3=>lang('adminlog_3months'),
-  3600*24*31*6=>lang('adminlog_6months'),
+  86400=>lang('adminlog_1day'),
+  86400*7=>lang('adminlog_1week'),
+  86400*14=>lang('adminlog_2weeks'),
+  86400*31=>lang('adminlog_1month'),
+  86400*91=>lang('adminlog_3months'),
+  86400*182=>lang('adminlog_6months'),
   -1=>lang('adminlog_manual'));
 $smarty->assign('adminlog_options',$tmp);
 
-$all_attributes = [];
-$content_obj = new Content(); // TODO should this be the default type?
-$list = $content_obj->GetProperties();
-if( is_array($list) && count($list) ) {
-  // pre-remove some items.
-  for( $i = 0, $iMax = count($list); $i < $iMax; $i++ ) {
-    $obj = $list[$i];
-    if( $obj->tab == $content_obj::TAB_PERMS ) continue;
-    if( !isset($all_attributes[$obj->tab]) ) $all_attributes[$obj->tab] = array('label'=>lang($obj->tab),'value'=>[]);
-    $all_attributes[$obj->tab]['value'][] = array('value'=>$obj->name,'label'=>lang($obj->name));
-  }
-}
-//$txt = CmsFormUtils::create_option($all_attributes,$basic_attributes);
-//$smarty->assign('basic_options',$txt);
-
-$smarty->assign('all_attributes',$all_attributes);
 $smarty->assign('smarty_cacheoptions',array('always'=>lang('always'),'never'=>lang('never'),'moduledecides'=>lang('moduledecides')));
 $smarty->assign('smarty_cacheoptions2',array('always'=>lang('always'),'never'=>lang('never')));
-
-$contentops = cmsms()->GetContentOperations();
-$all_contenttypes = $contentops->ListContentTypes(false,false);
-$smarty->assign('all_contenttypes',$all_contenttypes);
 
 $yesno = array(0=>lang('no'),1=>lang('yes'));
 $smarty->assign('yesno',$yesno);
