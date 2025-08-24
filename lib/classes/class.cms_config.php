@@ -389,9 +389,14 @@ final class cms_config implements ArrayAccess
         return FALSE;
 
       case 'default_upload_permission':
-        $mask = octdec(cms_siteprefs::get('global_umask','0022')); // c.f. unreliable umask()
-        $val = 0666 & ~$mask;
-        return decoct($val);
+        $mask = cms_siteprefs::get('global_umask');
+        if( $mask ) {
+            $val = octdec($mask);
+        }
+        else {
+            $val = umask(); // unreliable
+        }
+        return decoct(0666 & ~$val);
 
       case 'assume_mod_rewrite':
         // deprecated, backwards compat only
@@ -440,6 +445,7 @@ final class cms_config implements ArrayAccess
       case 'permissive_smarty':
       case 'ignore_lazy_load':
       case 'debug':
+      case 'debug_to_log':
 //    case 'developer_mode': NOPE many isset() checks
       case 'persist_db_conn':
         return false;
