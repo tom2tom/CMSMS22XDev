@@ -74,8 +74,8 @@
 		<div id="wrapper">
 			<h1>Oops!</h1>
 			<p class="info">
-				It looks like something went wrong and an error has occurred.<br>
-				A notification has been added to the admin log.
+				It looks like an error has occurred.<br>
+				Information about this has been added to the admin log.
 			</p>
 			<div class="clear"></div>
 			{if $loggedin}
