@@ -285,10 +285,10 @@
     {if !empty($statustext)}
     <div class="pageoverflow">
       <p class="pagetext">
-        <label for="fld9">*{$statustext}:</label> {cms_help key='help_article_status' title=$statustext}
+        <label for="fld3">*{$statustext}:</label> {cms_help key='help_article_status' title=$statustext}
       </p>
       <p class="pageinput">
-        <select id="fld9" name="{$actionid}status">
+        <select id="fld3" name="{$actionid}status">
           {html_options options=$statuses selected=$status}
         </select>
       </p>
@@ -296,24 +296,6 @@
     {else}
     <input type="hidden" name="{$actionid}status" value="{$status}">
     {/if}
-
-    <div class="pageoverflow">
-      <p class="pagetext">
-        <label for="fld7">{$urltext}:</label> {cms_help key='help_article_url' title=$urltext}
-      </p>
-      <p class="pageinput">
-        <input type="text" id="fld7" name="{$actionid}news_url" value="{$news_url}" size="50" maxlength="255">
-      </p>
-    </div>
-    <div class="pageoverflow">
-      <p class="pagetext">
-        <label for="fld5">{$extratext}:</label> {cms_help key='help_article_extra' title=$extratext}
-      </p>
-      <p class="pageinput">
-        <input type="text" id="fld5" name="{$actionid}extra" value="{$extra|cms_escape}" size="50" maxlength="255">
-      </p>
-    </div>
-
     <div class="pageoverflow">
       <p class="pagetext">
         {$postdatetext}: {cms_help key='help_article_postdate' title=$postdatetext}
@@ -325,10 +307,10 @@
     <div class="pageoverflow">
       <input type="hidden" name="{$actionid}useexp" value="0">
       <p class="pagetext">
-        <label for="fld11">{$useexpirationtext}:</label> {cms_help key='help_article_useexpiry' title=$useexpirationtext}
+        <label for="fld4">{$useexpirationtext}:</label> {cms_help key='help_article_useexpiry' title=$useexpirationtext}
       </p>
       <p class="pageinput">
-        <input id="fld11" type="checkbox" name="{$actionid}useexp"{if $useexp} checked{/if} class="pagecheckbox">
+        <input id="fld4" type="checkbox" name="{$actionid}useexp"{if $useexp} checked{/if} class="pagecheckbox">
       </p>
     </div>
     <div id="expiryinfo"{if $useexp != 1} style="display:none"{/if}>
@@ -349,7 +331,30 @@
         </p>
       </div>
     </div>
-
+    <div class="pageoverflow">
+      <p class="pagetext">
+        <label for="{$imageinputid}">{$imagetext}:</label> {cms_help key='help_article_image' title=$imagetext}
+      </p>
+      <div class="pageinput">
+        {$imageinput}
+      </div>
+    </div>
+    <div class="pageoverflow">
+      <p class="pagetext">
+        <label for="fld7">{$urltext}:</label> {cms_help key='help_article_url' title=$urltext}
+      </p>
+      <p class="pageinput">
+        <input type="text" id="fld7" name="{$actionid}news_url" value="{$news_url}" size="50" maxlength="255">
+      </p>
+    </div>
+    <div class="pageoverflow">
+      <p class="pagetext">
+        <label for="fld9">{$extratext}:</label> {cms_help key='help_article_extra' title=$extratext}
+      </p>
+      <p class="pageinput">
+        <input type="text" id="fld9" name="{$actionid}extra" value="{$extra|cms_escape}" size="50" maxlength="255">
+      </p>
+    </div>
     <div class="pageoverflow">
       <input type="hidden" name="{$actionid}searchable" value="0">
       <p class="pagetext">
