@@ -1,4 +1,8 @@
 <?php
+#CMSMS News module method: uninstall
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#The license at the top of file News.module.php applies to this file.
+
 if (!isset($gCms)) exit;
 
 $dict = NewDataDictionary( $db );
@@ -60,6 +64,10 @@ catch( Exception $e ) {
   // log it
   audit('',$me,'Uninstallation error: '.$e->GetMessage());
 }
+
+// Remove plugin
+$p = cms_join_path(CMS_ROOT_PATH,'lib','plugins','function.news_image.php');
+@unlink($p);
 
 // Remove any uploads
 $p = cms_join_path($config['uploads_path'],'news');
