@@ -257,12 +257,26 @@ function cms_htmlentities($val,$param = ENT_QUOTES,$charset = 'UTF-8',$convert_s
  * A function to output a backtrace into the generated log file.
  *
  * @see debug_to_log, debug_bt
+ *
+ * @param array $trace Optional Event/Throwable trace data. Default [].
+ * @param int $limit Optional depth-limit. See debug_backtrace(). Default 0.
+ * @return void
  */
-function debug_bt_to_log()
+function debug_bt_to_log($trace = [],$limit = 0)
 {
-    $config = cms_config::get_instance();
-    if( $config['debug_to_log'] || (function_exists('get_userid') && get_userid(FALSE)) ) {
-        $bt = debug_backtrace();
+    $show = get_userid(FALSE) != FALSE; //a user is logged into Admin Console aka admin request?
+    if( !$show ) {
+        $config = cms_config::get_instance();
+        $show = $config['debug_to_log']; //unlikely
+    }
+    if( $show ) {
+        if( $trace ) {
+            $num = max(0, (int)$limit);
+            $bt = ($num == 0) ? $trace : array_slice($trace, 0, $num); //TODO properties 'file' 'line' 'class' 'type' 'function' 'args' ignore the latter if not disabled?
+        }
+        else {
+            $bt = debug_backtrace(1, max(0, (int)$limit)); // Populate object and args indices
+        }
         $file = $bt[0]['file'];
         $line = $bt[0]['line'];
 
@@ -296,11 +310,12 @@ function debug_bt_to_log()
 /**
  * A function to generate a backtrace in a readable format.
  *
- * This function does not return but echoes output.
+ * @param int $limit Optional depth-limit. See debug_backtrace(). Default 0.
+ * @return void
  */
-function debug_bt()
+function debug_bt($limit = 0)
 {
-    $bt = debug_backtrace();
+    $bt = debug_backtrace(1, max(0, (int)$limit)); // Populate object and args indices
     $file = $bt[0]['file'];
     $line = $bt[0]['line'];
 
