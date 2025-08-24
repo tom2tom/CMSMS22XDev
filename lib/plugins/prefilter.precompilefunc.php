@@ -27,7 +27,7 @@ function smarty_prefilter_precompilefunc($tpl_output, $smarty)
         switch ($result[0]) {
         case 'cms_stylesheet':
         case 'stylesheet':
-            HookManager::do_hook('Core::StylesheetPreCompile',array('stylesheet'=>&$tpl_output));
+            HookManager::do_hook('Core::StylesheetPreCompile', array('stylesheet'=>&$tpl_output));
             break;
 
         case 'content':

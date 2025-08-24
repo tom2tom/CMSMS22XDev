@@ -70,7 +70,7 @@ if( !empty($params['searchinput']) ) {
     //TODO robust sanitisation of user input c.f. news_ops::execSpecialize()
     $params['searchinput'] = cms_html_entity_decode($params['searchinput'], ENT_COMPAT, 'UTF-8');
     $params['searchinput'] = strip_tags($params['searchinput']);
-    CMSMS\HookManager::do_hook('Search::SearchInitiated', [trim($params['searchinput'])] );
+    CMSMS\HookManager::do_hook('Search::SearchInitiated', [trim($params['searchinput'])]);
 
     $searchstarttime = microtime(true);
 

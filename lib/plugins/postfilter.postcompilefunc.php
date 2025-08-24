@@ -25,7 +25,7 @@ function smarty_postfilter_postcompilefunc($tpl_output, $smarty)
         switch ($result[0]) {
         case 'cms_stylesheet':
         case 'stylesheet':
-            HookManager::do_hook('Core::StylesheetPostCompile',array('stylesheet'=>&$tpl_output));
+            HookManager::do_hook('Core::StylesheetPostCompile', array('stylesheet'=>&$tpl_output));
             break;
 
         case 'content':
@@ -37,7 +37,7 @@ function smarty_postfilter_postcompilefunc($tpl_output, $smarty)
         case 'tpl_top':
         case 'tpl_body':
         case 'tpl_head':
-            HookManager::do_hook('Core::TemplatePostCompile',array('template'=>&$tpl_output,'type'=>$result[0]));
+            HookManager::do_hook('Core::TemplatePostCompile', array('template'=>&$tpl_output,'type'=>$result[0]));
         break;
 
         default:

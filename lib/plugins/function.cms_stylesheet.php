@@ -285,7 +285,7 @@ function cms_stylesheet_writeCache($filename, $list, $trimbackground, $minimize,
 		$_contents);
 	}
 
-	CMSMS\HookManager::do_hook('Core::StylesheetPostRender', [ 'content' => &$_contents ] );
+	CMSMS\HookManager::do_hook('Core::StylesheetPostRender', [ 'content' => &$_contents ]);
 
 	if( $minimize ) {
 		// Compress (quite a bit)

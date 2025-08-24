@@ -110,7 +110,7 @@ class cms_tree
 					}
 				}
 			}
-			}
+		}
 
 		if( $this->has_children() ) {
 			for( $i = 0, $n = count($this->_children); $i < $n; $i++ ) {

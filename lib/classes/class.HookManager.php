@@ -150,8 +150,6 @@ namespace CMSMS {
         }
 
         /**
-
-
          * Add a handler to a hook
          *
          * @param string $name The hook name.  If the hook does not already exist, it is added.
