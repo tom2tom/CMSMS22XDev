@@ -46,6 +46,12 @@
 		</p>
 	</div>
 	<div class="row">
+		<p class="col4"><label for="news_image">{$mod->Lang('image')}:</label></p>
+		<p class="col8">
+			<input id="news_image" type="text" name="{$actionid}icon" value="{$icon}" size="50">
+		</p>
+    </div>
+	<div class="row">
 		<p class="col4">{$mod->Lang('startdate')}:</p>
 		<p class="col8">
 			{$tmp=$actionid|cat:'startdate_'}
