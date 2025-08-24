@@ -55,7 +55,7 @@ if( !is_writable($src) ) {
   $params['fmerror'] = 'notwritable';
   $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
-// TODO c.f. typehelper image types 'jpg','jpeg','bmp','wbmp','gif','png','tiff','tif','webp','avif','heif','svg'
+// TODO c.f. FileTypeHelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','ico','webp','avif','heif','svg','apng'
 switch( $imageinfo['mime'] ) { //OR  switch(mime_content_type($src));
  case 'image/gif':
  case 'image/jpeg':
@@ -141,7 +141,7 @@ if( isset($params['save']) ) {
     $x0 = (int)(($src_w - $new_w) / 2);
     $y0 = (int)(($src_h - $new_h) / 2);
 
-    // TODO c.f. typehelper image types 'jpg','jpeg','bmp','wbmp','gif','png','tiff','tif','webp','avif','heif','svg'
+    // TODO c.f. FileTypeHelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','ico','webp','avif','heif','svg','apng'
     //die("rotated={$src_w}x{$src_h} orig={$width}x{$height} new={$new_w},{$new_h} offset = $x0,$y0");
     $newimg = imagecreatetruecolor($new_w,$new_h);
     imagealphablending($newimg,false);
