@@ -1,4 +1,7 @@
 <?php
+#CMSMS News module class: news_article
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#The license at the top of file News.module.php applies to this file.
 
 class news_article
 {
@@ -59,14 +62,14 @@ class news_article
                 }
             }
             elseif( $author_id < 0 ) {
-                $author_id *= -1;
+                $this->_meta['author'] = $mod->Lang('unknown');
                 $feu = cms_utils::get_module('MAMS');
                 if( !$feu ) {
                     $feu = cms_utils::get_module('FrontEndUsers');
                 }
                 if( $feu ) {
-                    $uinfo = $feu->GetUserInfo($author_id);
-                    if( $uinfo[0] ) $this->_meta['author'] = $uinfo[1]['username'];
+                    $uinfo = $feu->GetUserInfo(-(int)$author_id);
+                    if( $uinfo && $uinfo[0] ) $this->_meta['author'] = $uinfo[1]['username'];
                 }
             }
         }
@@ -115,7 +118,11 @@ class news_article
     {
         if( $id ) $this->_inid = $id;
         if( is_array($params) ) $this->_inparams = $params;
-        if( $returnid != '' ) $this->_meta['returnid'] = $returnid;
+        if( isset($this->_inparams['returnid']) ) {
+            $this->_meta['returnid'] = $params['returnid'];
+        }
+        elseif( $returnid ) { $this->_meta['returnid'] = $returnid;
+        }
     }
 
 
@@ -155,7 +162,7 @@ class news_article
         case 'modified_date':  // db datetime
         case 'category_id':
         case 'status':
-            return $this->_getdata($key); //TODO if ->content|summary includes Smarty tag(s)
+            return $this->_getdata($key);
 
         case 'url':
             return $this->_getdata('news_url');
@@ -319,14 +326,14 @@ class news_article
         case 'news_date':
             $key = 'postdate';
             //no break here
-        case 'create_date':   // db datetime TODO not alterable here ?
-        case 'modified_date': // db datetime TODO not alterable here ?
+        case 'create_date':   // db datetime
+        case 'modified_date': // db datetime
         case 'postdate':      // db datetime
         case 'startdate':     // db datetime
         case 'enddate':       // db datetime
             if( is_int($value) ) {
                 $db = cmsms()->GetDb();
-                $value = trim($db->DbTimeStamp($value),"'");
+                $value = trim($db->DBTimeStamp($value),"'");
             }
             $this->_rawdata[$key] = $value;
             break;
