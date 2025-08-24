@@ -38,7 +38,10 @@ $this->SetPreference('latestdepends',$latestdepends);
 
 
 if( !empty($config['developer_mode']) ) {
-    if( isset($params['url']) ) $this->SetPreference('module_repository',trim($params['url']));
+    if( isset($params['url']) ) {
+        $tmp = ltrim($params['url']);
+        $this->SetPreference('module_repository',rtrim($$tmp,"/ \t"));
+    }
     $disable_caching = (int)get_parameter_value($params,'disable_caching');
     $this->SetPreference('disable_caching',$disable_caching);
     $this->SetPreference('allowuninstall',(int)get_parameter_value($params,'allowuninstall'));
