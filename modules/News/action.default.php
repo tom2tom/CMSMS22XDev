@@ -1,4 +1,8 @@
 <?php
+#CMSMS News module action: default
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#The license at the top of file News.module.php applies to this file.
+
 if( !isset($gCms) ) exit;
 
 if( isset($params['summarytemplate']) ) {
@@ -17,7 +21,6 @@ $cache_id = '|ns'.md5(serialize($params));
 $modname = $this->GetName();
 $tpl = $smarty->createTemplate($this->GetTemplateResource($template), $cache_id, $modname, $smarty);
 if( !$tpl->IsCached() ) {
-//$tpl = $smarty->createTemplate($this->GetTemplateResource($template), null, $modname, $smarty);
     $detailpage = 0;
     $tmp = (int)$this->GetPreference('detail_returnid', -1);
     if( isset($params['detailpage']) ) {
@@ -108,7 +111,7 @@ WHERE status = 'published' AND
         // we're concerned about start time, end time, and news_date
         if( isset($params['showarchive']) ) {
             // show only expired entries.
-            $query1 .= 'IF(end_time IS NULL, 0, end_time < NOW()) ';
+            $query1 .= 'IF(end_time IS NULL, 0, end_time <= NOW()) ';
         }
         else {
             $query1 .= 'IF(start_time IS NULL OR end_time IS NULL, news_date <= NOW(), NOW() BETWEEN start_time AND end_time) ';
@@ -120,11 +123,12 @@ WHERE status = 'published' AND
     switch( $sortby ) {
     case 'news_category':
         if( isset($params['sortasc']) && (strtolower($params['sortasc']) == 'true') ) {
-            $query1 .= "ORDER BY mnc.long_name ASC, mn.news_date ";
+            $dir = 'ASC';
         }
         else {
-            $query1 .= "ORDER BY mnc.long_name DESC, mn.news_date ";
+            $dir = 'DESC';
         }
+        $query1 .= "ORDER BY COALESCE(mnc.long_name,mnc.news_category_name) $dir, mn.news_date ";
         break;
 
     case 'random':
@@ -153,7 +157,7 @@ WHERE status = 'published' AND
         }
     }
 
-    $pagelimit = 1000; // foolish default - 10 or 20 would be sensible
+    $pagelimit = 100; // big default - 10 or 20 would be sensible
     if( isset($params['pagelimit']) ) {
         $pagelimit = (int)$params['pagelimit'];
     }
@@ -234,7 +238,6 @@ WHERE status = 'published' AND
 
     // since CMSMS 2.2 article properties (title, summary, content) have not been
     // Smarty-processed before display, to protect against 'risky' content
-    // TODO instead properly sanitize those values during article-save
 
     if( $dbresult ) {
         // build a list of news id's so we can preload stuff from other tables.
@@ -255,11 +258,13 @@ WHERE status = 'published' AND
                 $onerow->author = $row['username'];
                 $onerow->authorname = trim($row['first_name'].' '.$row['last_name']);
             }
-            else if( $onerow->author_id == 0 ) {
+            elseif( $onerow->author_id == 0 ) {
                 $onerow->author = $this->Lang('anonymous');
                 $onerow->authorname = $this->Lang('unknown');
             }
-            else {
+            else { // < 0
+                $onerow->author = $this->Lang('unknown');
+                $onerow->authorname = $this->Lang('unknown');
                 if( !isset($feu) ) {
                     $feu = $this->GetModuleInstance('MAMS');
                     if( !$feu ) {
@@ -267,27 +272,16 @@ WHERE status = 'published' AND
                     }
                 }
                 if( $feu ) {
-                    $uinfo = $feu->GetUserInfo($onerow->author_id * -1); //TODO adapt for MAMS
-                    if( $uinfo[0] ) $onerow->author = $uinfo[1]['username'];
+                    $uinfo = $feu->GetUserInfo(-(int)$onerow->author_id);
+                    if( $uinfo && $uinfo[0] ) $onerow->author = $uinfo[1]['username'];
+                    //stet ->authorname
                 }
             }
             $onerow->id = $row['news_id'];
-            //if () $X = $smarty->fetch('string:'.$Y);
-            $onerow->title = $row['news_title'] ? news_ops::execSpecialize($row['news_title']) : (string)$row['news_title']; //TODO if contains Smarty tag(s)
-            $onerow->content = $row['news_data'] ? news_ops::execSpecialize($row['news_data']) : (string)$row['news_data']; //ditto
-            $str = $row['summary'] ? news_ops::execSpecialize($row['summary']) : (string)$row['summary']; // ditto
-            if( $str ) {
-                if( preg_match('/^\s*<br ?\/?>\s*$/', $str) ) {
-                    $onerow->summary = '';
-                }
-                else {
-                    $onerow->summary = trim($str);
-                }
-            }
-            else {
-                $onerow->summary = '';
-            }
-            if( !empty($row['news_extra']) ) $onerow->extra = news_ops::execSpecialize($row['news_extra']); // TODO CHECK FORMAT
+            $onerow->title = ($row['news_title']) ? news_ops::execSpecialize($row['news_title']) : (string)$row['news_title'];
+            $onerow->content = ($row['news_data']) ? news_ops::execSpecialize($row['news_data']) : (string)$row['news_data'];
+            $onerow->summary = ($row['summary']) ? news_ops::execSpecialize($row['summary']) : (string)$row['summary'];
+            $onerow->extra = (isset($row['news_extra'])) ? (($row['news_extra']) ? news_ops::execSpecialize($row['news_extra']) : (string)$row['news_extra']) : '';
             $onerow->postdate = $row['news_date'];
             $onerow->startdate = $row['start_time'];
             $onerow->enddate = $row['end_time'];
@@ -298,9 +292,9 @@ WHERE status = 'published' AND
             //
             // Handle the custom fields
             //
-            $onerow->fields = news_ops::get_fields($row['news_id'], TRUE); //TODO sanitize untrusted content
-            $onerow->fieldsbyname = $onerow->fields; // dumb, I know.
-            $onerow->file_location = $config['uploads_url'].'/news/id'.$row['news_id'];
+            $onerow->fields = news_ops::get_fields($row['news_id'], TRUE);
+            $onerow->fieldsbyname = $onerow->fields; // an alias for in-template use?
+            $onerow->file_location = $config['uploads_url'].'/news/id'.$row['news_id']; // OR /News/ ? for any 'file'-type fields
 
             $moretext = (!empty($params['moretext'])) ? trim($params['moretext']) : $this->Lang('more');
 
@@ -345,7 +339,7 @@ WHERE status = 'published' AND
             $dbresult->MoveNext();
         }
         $dbresult->Close();
-    } // if $dbresult
+    } // $dbresult
 
     $tpl->assign('itemcount', count($entryarray));
     $tpl->assign('items', $entryarray);
@@ -378,7 +372,7 @@ WHERE status = 'published' AND
     $tpl->assign('category_name', $catName);
     $tpl->assign('count', count($catarray));
     $tpl->assign('cats', $catarray);
-} //if IsCached
+} // IsCached
 
 $tpl->display();
 
