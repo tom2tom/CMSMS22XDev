@@ -60,10 +60,12 @@ if( !empty($tmp) ) {
 if( $userid == '' ) {
   // not logged in to the admin console
   // see if we're logged into FEU.
-  $module = $this->GetModuleInstance('FrontEndUsers');
-  if( $module ) {
-    $userid = $module->LoggedInId();
-    $userid = $userid * -1;
+  $module = $this->GetModuleInstance('MAMS');
+  if (!$module) {
+    $module = $this->GetModuleInstance('FrontEndUsers');
+  }
+  if ($module) {
+    $userid = -(int)$module->LoggedInId();
   }
 }
 
@@ -197,6 +199,9 @@ while ($dbresult && $row = $dbresult->FetchRow()) {
     $categorylist[$row['news_category_id']] = $row['long_name'];
 }
 
+$input = 'IMAGE SELECTOR GOES HERE'; //image input TODO
+$inputid = 'BLAH'; //its id attrib
+
 // Display template
 $tpl->assign('category_id',$category_id);
 $tpl->assign('title',$title);
@@ -209,6 +214,8 @@ $tpl->assign('allow_summary_wysiwyg',$this->GetPreference('allow_summary_wysiwyg
 $tpl->assign('startdate', $startdate);
 $tpl->assign('enddate', $enddate);
 $tpl->assign('status',$this->CreateInputHidden($id,'status',$status));
+$tpl->assign('imageinput', $input);
+$tpl->assign('imageinputid', $inputid);
 
 $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_news_fielddefs WHERE public = 1 ORDER BY item_order';
 $dbr = $db->Execute($query);
