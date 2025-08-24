@@ -1,4 +1,7 @@
 <?php
+#CMSMS News module action: deletecategory
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#The license at the top of file News.module.php applies to this file.
 
 use CMSMS\HookManager;
 
@@ -32,6 +35,5 @@ HookManager::do_hook('News::NewsCategoryDeleted', [ 'category_id'=>$catid, 'name
 audit($catid,$this->GetName().' category', "Deleted: {$row['news_category_name']}");
 
 news_admin_ops::UpdateHierarchyPositions();
-$params = array('tab_message'=> 'categorydeleted', '__activetab' => 'categories');
 $this->Setmessage($this->Lang('categorydeleted'));
 $this->RedirectToAdminTab('categories','','admin_settings');

@@ -1,4 +1,7 @@
 <?php
+#CMSMS News module class: News_AdminSearch_slave
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#The license at the top of file News.module.php applies to this file.
 
 final class News_AdminSearch_slave extends AdminSearch_slave
 {

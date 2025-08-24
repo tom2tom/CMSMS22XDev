@@ -1,9 +1,12 @@
 <?php
+#CMSMS News module action: editcategory
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#The license at the top of file News.module.php applies to this file.
 
 use CMSMS\HookManager;
 
-if (!isset($gCms)) exit;
-if (!$this->CheckPermission('Modify Site Preferences')) return;
+if( !isset($gCms) ) exit;
+if( !$this->CheckPermission('Modify Site Preferences') ) return;
 
 $this->SetCurrentTab('categories');
 if (isset($params['cancel'])) $this->RedirectToAdminTab('','','admin_settings');
