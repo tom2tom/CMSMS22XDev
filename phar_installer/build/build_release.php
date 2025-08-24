@@ -43,6 +43,8 @@ $all_excludes = [
 '~svn\-~',
 '~index\.html?$~',
 '~[\\/]config\.php$~',
+'~\.htaccess$~',
+'~web\.config$~',
 '~\.bak$~',
 '/~$/',
 '~\.#~',
@@ -306,8 +308,8 @@ function copy_source_files()
   $excludes = $src_excludes;
   // contents to be skipped but not in $excludes ?
   rrmdir($indir.'/tmp/cache');
-  rrmdir($indir.'/tmp/templates_c');
   rrmdir($indir.'/tmp/configs');
+  rrmdir($indir.'/tmp/templates_c');
   $l = strlen($indir);
   @mkdir($tmpdir);
   echo "INFO: Copying source files from $indir to $tmpdir\n";
