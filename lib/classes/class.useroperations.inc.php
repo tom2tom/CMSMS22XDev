@@ -78,7 +78,7 @@ class UserOperations
 	 * @returns array An array of User objects
 	 * @since 0.6.1
 	 */
-	function LoadUsers($limit = 10000,$offset = 0)
+	public function LoadUsers($limit = 10000,$offset = 0)
 	{
 		if( !is_array($this->_users) ) {
 			$gCms = CmsApp::get_instance();
@@ -121,7 +121,7 @@ FROM ".CMS_DB_PREFIX."users ORDER BY username";
 	 * @param mixed $groupid Group for the loaded users
 	 * @return array An array of User objects
 	 */
-	function LoadUsersInGroup($groupid)
+	public function LoadUsersInGroup($groupid)
 	{
 		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
@@ -166,7 +166,7 @@ WHERE g.group_id=? ORDER BY username";
 	 * @return mixed If successful, the filled User object.  Otherwise null.
 	 * @since 0.6.1
 	 */
-	function LoadUserByUsername($username, $password = '', $activeonly = true, $adminaccessonly = false)
+	public function LoadUserByUsername($username, $password = '', $activeonly = true, $adminaccessonly = false)
 	{
 		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
@@ -212,7 +212,7 @@ WHERE g.group_id=? ORDER BY username";
 	 * @return mixed If successful, the filled User object.  If it fails, it returns null.
 	 * @since 0.6.1
 	 */
-	function LoadUserByID($id)
+	public function LoadUserByID($id)
 	{
 		$id = (int)$id;
 		if( $id < 1 ) return null; // no object
@@ -254,7 +254,7 @@ WHERE g.group_id=? ORDER BY username";
 	 * @return mixed The new user id.  If it fails, it returns -1.
 	 * @since 0.6.1
 	 */
-	function InsertUser($user)
+	public function InsertUser($user)
 	{
 		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
@@ -280,7 +280,7 @@ WHERE g.group_id=? ORDER BY username";
 	 * @param mixed $user User object to save
 	 * @return mixed If successful, true.  If it fails, false.
 	 */
-	function UpdateUser($user)
+	public function UpdateUser($user)
 	{
 		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
@@ -305,7 +305,7 @@ WHERE g.group_id=? ORDER BY username";
 	 * @param mixed $id Id of the user to delete
 	 * @returns mixed If successful, true.  If it fails, false.
 	 */
-	function DeleteUserByID($id)
+	public function DeleteUserByID($id)
 	{
 		if( $id <= 1 ) return false;
 		if( !check_permission(get_userid(),'Manage Users') ) return false;
@@ -313,16 +313,16 @@ WHERE g.group_id=? ORDER BY username";
 		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
 
-		$query = "DELETE FROM ".CMS_DB_PREFIX."user_groups where user_id = ?";
+		$query = "DELETE FROM ".CMS_DB_PREFIX."user_groups WHERE user_id = ?";
 		$db->Execute($query, array($id));
 
-		$query = "DELETE FROM ".CMS_DB_PREFIX."additional_users where user_id = ?";
+		$query = "DELETE FROM ".CMS_DB_PREFIX."additional_users WHERE user_id = ?";
 		$db->Execute($query, array($id));
 
-		$query = "DELETE FROM ".CMS_DB_PREFIX."users where user_id = ?";
+		$query = "DELETE FROM ".CMS_DB_PREFIX."users WHERE user_id = ?";
 		$dbresult = $db->Execute($query, array($id));
 
-		$query = "DELETE FROM ".CMS_DB_PREFIX."userprefs where user_id = ?";
+		$query = "DELETE FROM ".CMS_DB_PREFIX."userprefs WHERE user_id = ?";
 		$dbresult = $db->Execute($query, array($id));
 
 		if( $dbresult ) return true;
@@ -336,7 +336,7 @@ WHERE g.group_id=? ORDER BY username";
 	 * @param mixed $id Id of the user to count
 	 * @return int Number of pages they own.  0 if any problems.
 	 */
-	function CountPageOwnershipByID($id)
+	public function CountPageOwnershipByID($id)
 	{
 		$result = 0;
 		$gCms = CmsApp::get_instance();
@@ -379,7 +379,7 @@ WHERE g.group_id=? ORDER BY username";
 	 * @param int $currentuserid
 	 * @param string $name The HTML element name.
 	 */
-	function GenerateDropdown($currentuserid=0, $name='ownerid')
+	public function GenerateDropdown($currentuserid=0, $name='ownerid')
 	{
 		$result = '';
 		$list = $this->GetList();
@@ -397,42 +397,38 @@ WHERE g.group_id=? ORDER BY username";
 
 
 	/**
-	 * Tests $uid is a member of the group identified by $gid
+	 * Test if the specified user is a member of the group identified by $gid
 	 *
 	 * @param int $uid User ID to test
 	 * @param int $gid Group ID to test
 	 * @return true if test passes, false otherwise
 	 */
-	function UserInGroup($uid,$gid)
+	public function UserInGroup($uid,$gid)
 	{
 		$groups = $this->GetMemberGroups($uid);
-		if( in_array($gid,$groups) ) return TRUE;
-		return FALSE;
+		return ($groups && in_array($gid,$groups));
 	}
 
 	/**
-	 * Test if the specified user is a member of the admin group, or is the first user account
+	 * Test if the specified user is the first user account or is a member of the admin group
 	 *
 	 * @param int $uid
 	 * @return bool
 	 */
 	public function IsSuperuser($uid)
 	{
-		if( $uid == 1 ) return TRUE;
-		$groups = $this->GetMemberGroups();
-		if( is_array($groups) && count($groups) ) {
-			if( in_array($uid,$groups) ) return TRUE;
-		}
-		return FALSE;
+		if( $uid == 1 ) return true;
+		$groups = $this->GetMemberGroups($uid);
+		return ($groups && in_array(1,$groups));
 	}
 
 	/**
-	 * Get the ids of all groups to which the user belongs.
+	 * Get the ids of all groups to which the specified user belongs.
 	 *
 	 * @param int $uid
 	 * @return array
 	 */
-	function GetMemberGroups($uid)
+	public function GetMemberGroups($uid)
 	{
 		if( !is_array(self::$_user_groups) || !isset(self::$_user_groups[$uid]) ) {
 			$db = CmsApp::get_instance()->GetDb();
@@ -450,7 +446,7 @@ WHERE g.group_id=? ORDER BY username";
 	 * @param int $uid
 	 * @param int $gid
 	 */
-	function AddMemberGroup($uid,$gid)
+	public function AddMemberGroup($uid,$gid)
 	{
 		$uid = (int)$uid;
 		$gid = (int)$gid;
@@ -466,9 +462,8 @@ VALUES (?,?,$now,$now)";
 	}
 
 	/**
-	 * Test if the user has the specified permission
-	 *
-	 * Given the users member groups, test if any of those groups have the specified permission.
+	 * Test if the specified user is the super-user, or if any usergroup
+	 * to which the specified user belongs has the specified permission.
 	 *
 	 * @param int $userid
 	 * @param string $permname
@@ -476,20 +471,22 @@ VALUES (?,?,$now,$now)";
 	 */
 	public function CheckPermission($userid,$permname)
 	{
-		if( $userid <= 0 ) return FALSE;
+		if( $userid <= 0 ) return false;
+		if( $userid == 1 ) return true;
 		$groups = $this->GetMemberGroups($userid);
-		if( !is_array($groups) ) return FALSE;
-		if( in_array(1,$groups) ) return TRUE; // member of admin group
+		if( !$groups ) return false;
+		if( in_array(1,$groups) ) return true; // member of admin group can do everything
 
 		try {
+			$ops = GroupOperations::get_instance();
 			foreach( $groups as $gid ) {
-				if( GroupOperations::get_instance()->CheckPermission($gid,$permname) ) return TRUE;
+				if( $ops->CheckPermission($gid,$permname) ) return true;
 			}
 		}
 		catch( CmsException $e ) {
 			// nothing here.
 		}
-		return FALSE;
+		return false;
 	}
 }
 
