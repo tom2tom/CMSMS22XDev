@@ -1,4 +1,8 @@
 <?php
+#CMSMS News module action: detail
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#The license at the top of file News.module.php applies to this file.
+
 if (!isset($gCms)) exit;
 
 //
@@ -10,7 +14,7 @@ if (!empty($params['detailtemplate'])) {
 else {
     $tpl = CmsLayoutTemplate::load_dflt_by_type('News::detail');
     if( !is_object($tpl) ) {
-        audit('',$this->GetName().':detail','No default summary template found');
+        audit('',$this->GetName().':detail','No default detail template found');
         return;
     }
     $template = $tpl->get_name();
@@ -42,8 +46,8 @@ if( $id == '_preview_' && isset($_SESSION['news_preview']) && isset($params['pre
 
 $tpl = $smarty->createTemplate($this->GetTemplateResource($template),$cache_id,$compile_id,$smarty);
 if( $preview || !$tpl->IsCached() ) {
-//$tpl = $smarty->createTemplate($this->GetTemplateResource($template),null,null,$smarty);
-//if( $preview ) {
+    // since CMSMS 2.2 article fields title, summary, content etc have not been
+    // Smarty-processed before display, to protect against 'risky' content
     if( isset($params['articleid']) && $params['articleid'] == -1 ) {
         $article = news_ops::get_latest_article();
     }
@@ -56,11 +60,6 @@ if( $preview || !$tpl->IsCached() ) {
         throw new CmsError404Exception('Article '.(int)$params['articleid'].' not found, or otherwise unavailable');
 //      return; useless here
     }
-
-    // since CMSMS 2.2 article fields summary, content etc have not been
-    // Smarty-processed before display, to protect against 'risky' content
-    // TODO instead properly sanitize those fields during article-save
-    // if () $X = $smarty->fetch('string:'.$Y);
 
     $article->set_linkdata($id,$params);
 
