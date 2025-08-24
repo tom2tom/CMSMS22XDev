@@ -97,7 +97,7 @@ abstract class filehandler
   protected function is_imagefile($filespec)
   {
       // this method uses (ugly) extensions because we cannot rely on finfo_open being available.
-      $image_exts = ['jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff'.'tif','webp','svg','ico'];
+      $image_exts = ['jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','webp','svg','ico'];
       $ext = strtolower(substr(strrchr($filespec,'.'),1));
       return in_array($ext,$image_exts);
   }
