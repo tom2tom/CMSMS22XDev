@@ -238,7 +238,8 @@ abstract class ContentBase
 	protected $mSecure = false;
 
 	/**
-	 * The URL which may be accessed to display this content item
+	 * The site-root-relative URL-path which may be used to display
+	 * this item
 	 * String
 	 *
 	 * @internal
@@ -489,9 +490,9 @@ abstract class ContentBase
 
 	/**
 	 * Set the alias for this content page.
-	 * If an empty alias is supplied, and depending upon the doAutoAliasIfEnabled flag, and config entries
-	 * a suitable alias may be calculated from other data in the page object
-	 * This method relies on the menutext and the name of the content page already being set.
+	 * If $alias is empty, and depending upon $doAutoAliasIfEnabled and
+	 * config entries, a suitable alias may be calculated from the menutext
+	 * or name of this page, which properties must have been already set.
 	 *
 	 * @param string $alias The alias
 	 * @param bool $doAutoAliasIfEnabled Whether an alias should be calculated or not.
@@ -499,27 +500,27 @@ abstract class ContentBase
 	public function SetAlias($alias = '',$doAutoAliasIfEnabled = true)
 	{
 		$contentops = ContentOperations::get_instance();
-		$config = cms_config::get_instance();
-		if ($alias == '' && $doAutoAliasIfEnabled && $config['auto_alias_content'] == true) {
-			// auto generate an alias
-			$alias = trim($this->mMenuText);
-			if ($alias == '') $alias = trim($this->mName);
-			$alias = strip_tags($alias ); // since 2.2.18 = breaker?
-			$alias = preg_replace('/&#?[a-z0-9]{2,8};/i','',$alias); // ditto
-			$tolower = true;
-			$alias = munge_string_to_url($alias, $tolower);
-			$res = $contentops->CheckAliasValid($alias);
-			if( !$res ) {
-				$alias = 'p'.$alias;
-				$res = $contentops->CheckAliasValid($alias);
-				if( !$res ) throw new CmsContentException(lang('invalidalias2'));
+		if( !$alias && $doAutoAliasIfEnabled ) {
+			$config = cms_config::get_instance();
+			if( $config['auto_alias_content'] ) {
+				// generate an alias, with appended discriminator like '-N' if needed to prevent duplication
+				$alias = trim($this->mMenuText);
+				if( !$alias ) { $alias = trim($this->mName); }
+				if( $alias ) {
+					//c.f. $sanitize_fn in include.php but also omit quote-chars
+					$tmp = preg_replace(['/<[^>]*>/','/(<|%3c)(\?|%3f)php.*$/i','/(<|%3c)(\?|%3f)=?.*$/i'],['','',''],$alias);
+					$tmp = strtr($tmp,["\0"=>'',"'"=>'','"'=>'']);
+					$alias = munge_string_to_url($tmp,true);
+					$testnum = 2;
+					while( $contentops->CheckAliasUsed($alias,$this->mId) ) {
+						$alias .= '-' . $testnum++;
+					}
+				}
 			}
 		}
 
 		if( $alias ) {
-			// Make sure auto-generated new alias is not already in use on a different page, if it does, add "-2" to the alias
-
-			// make sure we start with a valid alias.
+			// throw if the alias includes unwanted content (no prior-cleanup here)
 			$res = $contentops->CheckAliasValid($alias);
 			if( !$res ) throw new CmsContentException(lang('invalidalias2'));
 
@@ -1002,7 +1003,8 @@ abstract class ContentBase
 
 	/**
 	 * Return whether this page should be accessed via a secure protocol.
-	 * The secure flag effects whether the ssl protocol and appropriate config entries are used when generating urls to this page.
+	 * The secure flag affects whether the ssl protocol and appropriate
+	 * config entries are used when generating urls representing this page.
 	 *
 	 * @return bool
 	 */
@@ -1013,22 +1015,23 @@ abstract class ContentBase
 
 	/**
 	 * Set whether this page should be accessed via a secure protocol.
-	 * The secure flag affects whether the ssl protocol and appropriate config entries are used when generating urls to this page.
+	 * The secure flag affects whether the ssl protocol and appropriate
+	 * config entries are used when generating urls representing this page.
 	 *
 	 * @param bool $secure
 	 */
 	public function SetSecure($secure)
 	{
-		$this->mSecure = $secure;
+		$this->mSecure = (bool) $secure;
 	}
 
 	/**
-	 * Return the page url (if any) associated with this content page.
-	 * The page url is not the complete URL to the content page, but merely the 'stub' or 'slug' appended after the root url when accessing the site
-	 * If the page is specified as the default page then the "page url" will be ignored.
-	 * Some content types do not support page urls.
+	 * Return the page url property (if any) of this content page.
+	 * The page url is not a complete URL to access the page, but
+	 * only the 'path' to be appended to the site root url in order to
+	 * access the page. Some content types do not support page urls.
 	 *
-	 * @return string
+	 * @return string maybe empty
 	 */
 	public function URL()
 	{
@@ -1036,15 +1039,19 @@ abstract class ContentBase
 	}
 
 	/**
-	 * Set the page url (if any) associated with this content page.
+	 * Set (or remove) the url-path associated with this content page.
 	 * Note: some content types do not support page urls.
-	 * The url should be relative to the root url.  i.e: /some/path/to/the/page
 	 *
-	 * @param string $url
+	 * @param string $url An url path relative to the site-root url
+	 *  and without leading '/' e.g. some/Path/to/THE-good stuff
+	 *  May be empty
 	 */
 	public function SetURL($url)
 	{
-		$this->mURL = $url;
+		if( $url ) {
+			$this->mURL = cms_utils::cleanUrlPath((string)$url);
+		}
+		$this->mURL = '';
 	}
 
 	/**
@@ -1064,7 +1071,7 @@ abstract class ContentBase
 	 */
 	public function SetLastModifiedBy($lastmodifiedby)
 	{
-		$lastmodifiedby = (int)$lastmodifiedby;
+		$lastmodifiedby = (int) $lastmodifiedby;
 		if( $lastmodifiedby > 0 ) $this->mLastModifiedBy = $lastmodifiedby;
 	}
 
@@ -1543,7 +1550,7 @@ VALUES (?,?,?,?,$now,$now)";
 	 */
 	public function Save()
 	{
-		HookManager::do_hook('Core::ContentEditPre', [ 'content' => &$this ]);
+		HookManager::do_hook('Core::ContentEditPre', [ 'content' => $this ]);
 
 		if( !is_array($this->_props) || $this->_selectedprops ) { // some specific prop(s) were loaded with cores
 			debug_buffer('save is loading properties');
@@ -1570,7 +1577,7 @@ VALUES (?,?,?,?,$now,$now)";
 					$contentops->SetAllHierarchyPositions($this->_otherparent_hier);
 				}
 			}
-			HookManager::do_hook('Core::ContentEditPost', [ 'content' => &$this ]);
+			HookManager::do_hook('Core::ContentEditPost', [ 'content' => $this ]);
 		}
 		else {
 			//TODO handle error e.g. warning to user
@@ -1865,7 +1872,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		}
 
 		if (is_array($this->_props) && count($this->_props)) {
-			// TODO perhaps some error checking there
+			// TODO perhaps some error checking here if not done during ValidateData()
 			debug_buffer('save from ' . __LINE__);
 //TODO		$result = $result &&
 			$this->_save_properties();
@@ -1898,15 +1905,14 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	}
 
 	/**
-	 * Test if the content object is valid.
-	 * This function is used to check that no compulsory argument
-	 * has been forgotten by the user
-	 *
-	 * We do not check the Id because there can be no Id (new content)
-	 * That's up to Save to check this.
+	 * Validate the content object.
+	 * This checks that no compulsory argument has been omitted by the user,
+	 * and that some properties have an acceptable value, if any.
+	 * The Id property is checked elsewhere (during save) because
+	 * there can be no Id for new content.
 	 *
 	 * @abstract
-	 * @returns	array of error string(s), or empty
+	 * @return array of error string(s), or empty
 	 */
 	public function ValidateData()
 	{
@@ -1921,7 +1927,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				$this->mName = $this->mMenuText;
 			}
 			else {
-				$errors[]= lang('nofieldgiven',array(lang('title')));
+				$errors[] = lang('nofieldgiven',array(lang('title')));
 			}
 		}
 
@@ -1930,7 +1936,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				$this->mMenuText = $this->mName;
 			}
 			else {
-				$errors[]=lang('nofieldgiven',array(lang('menutext')));
+				$errors[] = lang('nofieldgiven',array(lang('menutext')));
 			}
 		}
 
@@ -1939,13 +1945,13 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				$contentops = ContentOperations::get_instance();
 				$error = $contentops->CheckAliasError($this->mAlias, $this->mId);
 				if ($error) {
-					$errors[]= $error;
+					$errors[] = $error;
 				}
 			}
 		}
 
 		$auto_type = content_assistant::auto_create_url();
-		if( $this->mURL == '' && cms_siteprefs::get('content_autocreate_urls') ) {
+		if( !$this->mURL && cms_siteprefs::get('content_autocreate_urls') ) {
 			// create a valid url.
 			if( !$this->DefaultContent() ) {
 				if( cms_siteprefs::get('content_autocreate_flaturls',0) ) {
@@ -1953,7 +1959,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 					$this->mURL = $this->mAlias;
 				}
 				else {
-					// if it don't explicitly say 'flat' we're creating a hierarchical url.
+					// if it doesn't explicitly say 'flat' we're creating a hierarchical url.
 					$gCms = CmsApp::get_instance();
 					$tree = $gCms->GetHierarchyManager();
 					$node = $tree->find_by_tag('id',$this->ParentId());
@@ -1983,17 +1989,54 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				}
 			}
 		}
-		if( $this->mURL == '' && cms_siteprefs::get('content_mandatory_urls') && !$this->mDefaultContent &&
-			$this->HasUsableLink() ) {
+		if( !$this->mURL && cms_siteprefs::get('content_mandatory_urls') &&
+			!$this->mDefaultContent && $this->HasUsableLink() ) {
 			// page is navigable and its url is mandatory but empty
 			$errors[] = lang('content_mandatory_urls');
 		}
 		elseif( $this->mURL ) {
-			// page url is not empty, check for validity.
-			$this->mURL = strtolower(trim($this->mURL," /\t\r\n\0\x08")); // silently delete bad chars. and convert to lowercase.
-			if( $this->mURL && !content_assistant::is_valid_url($this->mURL,$this->mId) ) {
-				// and validate the URL.
-				$errors[] = lang('invalid_url2');
+			// page url-path is not falsy, sanitise it
+			$val = cms_utils::cleanUrlPath($this->mURL);
+			if( $val ) {
+				// check for duplicate. TODO stand-alone method for the following?
+				//c.f. $contentops->CheckAliasUsed($val, $this->mId);
+				cms_route_manager::load_routes();
+				$route = cms_route_manager::find_match($val,true);
+				if( $route ) {
+					$exists = true;
+					if( $route->is_content() ) {
+						if( $this->mId == '' || $this->mId == $route->get_content() ) {
+							$exists = false;
+						}
+					}
+					if( $exists ) $errors[] = lang('urlalreadyused');
+				}
+				$this->mURL = $val; // i.e. no change if bad
+			} else {
+				$errors[] = lang('invalid_url');
+			}
+		}
+		else {
+			$this->mURL = ''; // in case it's some other falsy
+		}
+
+		if( !empty($this->_props['image'])) {
+			list($val,$msg) = cms_utils::validate_url(trim($this->_props['image']),'image');
+			if( $val ) {
+				//anything more here?
+			}
+			else {
+				$errors[] = $msg;
+			}
+		}
+
+		if( !empty($this->_props['thumbnail'])) {
+			list($val,$msg) = cms_utils::validate_url(trim($this->_props['thumbnail']),'image');
+			if( $val ) {
+				//anything more here?
+			}
+			else {
+				$errors[] = $msg;
 			}
 		}
 
@@ -2007,7 +2050,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	 */
 	function Delete()
 	{
-		HookManager::do_hook('Core::ContentDeletePre', [ 'content' => &$this ]);
+		HookManager::do_hook('Core::ContentDeletePre', [ 'content' => $this ]);
 		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
 
@@ -2033,7 +2076,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			if( $this->mURL ) cms_route_manager::del_static($this->mURL);
 		}
 
-		HookManager::do_hook('Core::ContentDeletePost', [ 'content' => &$this ]);
+		HookManager::do_hook('Core::ContentDeletePost', [ 'content' => $this ]);
 		$this->mId = -1;
 		$this->mItemOrder = -1;
 		$this->mOldItemOrder = -1;
@@ -2267,6 +2310,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	 */
 	public function GetEditableProperties()
 	{
+		//TODO relevance of $pown, $paed for this?
 		if( !check_permission(get_userid(),'Manage All Content') ) {
 			$basic_attributes = array('title','parent');
 			$tmp_basic_attributes = cms_siteprefs::get('basic_attributes');
@@ -2370,17 +2414,46 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	 * Get the elements for a specific tab.
 	 *
 	 * @param string $key tab key
-	 * @param bool   $adding  Whether this is an add or edit operation.
-	 * @return array An array of arrays.  Index 0 of each element should be a prompt field, and index 1 should be the input field for the prompt.
+	 * @param bool   $adding  Whether this is an add-page operation. Default false i.e. edit.
+	 * @return array Each member an array like:
+	 *  [0] label element typically accompanied by a help element e.g. a cms_help tag
+	 *  [1] input element, or possibly > 1 if a hidden element is involved, with related js
 	 */
 	public function GetTabElements($key,$adding = false)
 	{
+		$userid = get_userid();
+		$pmac = check_permission($userid,'Manage All Content') || check_permission($userid,'Modify Any Page');
+		$pown = !$adding && $userid == $this->mOwner;
+		$paed = false;
+		if( !$adding ) {
+			$eds = $this->GetAdditionalEditors();
+			if( $eds ) {
+				if( in_array($userid,$eds) ) {
+					$paed = true;
+				} else {
+					$ingrps = UserOperations::get_instance()->GetMemberGroups($userid);
+					if( $ingrps ) {
+						foreach( $eds as $eid ) {
+							if( $eid < 0 && in_array(-(int)$eid,$ingrps) ) {
+								$paed = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+
 		$props = $this->_GetEditableProperties();
 		$out = [];
 		foreach( $props as $one ) {
 			if( empty($one->tab) ) $one->tab = self::TAB_MAIN;
 			if( $key != $one->tab ) continue;
-			$out[] = $this->display_single_element($one->name,$adding);
+			$res = $this->display_single_element($one->name,$adding,$pmac,$pown,$paed);
+			if( $res ) {
+//				if( !($pmac || $pown || $paed) ) {} TODO scrub help from $res[0], disable relevant element(s) in $res[1]
+				$out[] = $res;
+			}
 		}
 		return $out;
 	}
@@ -2410,6 +2483,8 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	/**
 	 * Return a list of additional editors.
 	 * Note: in the returned array, group id's are specified as negative integers.
+	 * Additional editors should not be modifiable unless the current user is
+	 * authorized to Manage All Content.
 	 *
 	 * @return array user ids and/or group ids, or possibly empty
 	 */
@@ -2449,8 +2524,8 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	}
 
 	/**
-	 * A utility method to return all of the user ids and group ids in a format
-	 * suitable for use in a select element.
+	 * A utility method to return all of the user ids and group ids in
+	 * a format suitable for use in a select element.
 	 * Note: group ids are expressed as negative integers in the keys.
 	 * @return array
 	 */
@@ -2465,8 +2540,8 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			$opts[$oneuser->id] = $oneuser->username;
 		}
 		foreach ($allgroups as $onegroup) {
-			if( $onegroup->id == 1 ) continue; // exclude admin group (they have all privileges anyways)
-			$val = $onegroup->id*-1;
+			if( $onegroup->id == 1 ) continue; // ignore admin group (its members have all privileges anyways)
+			$val = $onegroup->id * -1; // aka -(int)$onegroup->id
 			$opts[$val] = lang('group').': '.$onegroup->name;
 		}
 
@@ -2632,12 +2707,17 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	 *
 	 * @abstract
 	 * @param string $name The property name
-	 * @param bool $adding Whether or not we are in add-content mode (otherwise, edit).
-	 * @return array consisting of two elements (normally label and input) or empty.
+	 * @param bool $adding Whether we are in add-content mode (otherwise, edit).
+	 * @param bool $pmac Whether the current user is authorized to manage all content
+	 * @param bool $pown Whether the current user is the owner of this content
+	 * @param bool $paed Whether the current user is an additional-editor of this content
+	 * @return array consisting of two elements (normally label+help and input) or empty.
 	 */
-	protected function display_single_element($name,$adding)
+	protected function display_single_element($name,$adding,$pmac,$pown,$paed)
 	{
+//TODO no help and disabled input element(s) if user not authorised to edit a property per args $pmac etc
 		$config = cms_config::get_instance();
+		$userid = get_userid(false);
 
 		switch( $name ) {
 		case 'cachable':
@@ -2656,16 +2736,20 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 						 '<input type="text" name="menutext" id="in_menutext" value="'.cms_htmlentities($this->mMenuText).'">');
 
 		case 'parent':
-			$contentops = ContentOperations::get_instance();
-			$tmp = $contentops->CreateHierarchyDropdown($this->mId,$this->mParentId,'parent_id',false,false,false,false,true); //CHANGES: was allow_all (hence inactive pages selection) was use_perms (when selecting not editing)
-			if( $tmp ) {
-				$help = cms_admin_utils::get_help_tag('core','help_content_parent',lang('help_title_content_parent'));
-				return array('<label for="parent_id">*'.lang('parent').':</label>&nbsp;'.$help,$tmp);
+			if( $pmac || $pown ) { // this is partial response to BR #12789
+				$contentops = ContentOperations::get_instance();
+				$tmp = $contentops->CreateHierarchyDropdown($this->mId,$this->mParentId,'parent_id',false,false,false,false,true); //CHANGES: was allow_all (hence inactive pages selection) was use_perms (when selecting not editing)
+				if( $tmp ) {
+					$help = cms_admin_utils::get_help_tag('core','help_content_parent',lang('help_title_content_parent'));
+					return array('<label for="parent_id">*'.lang('parent').':</label>&nbsp;'.$help,$tmp);
+				}
+				break;
 			}
-			if( !check_permission(get_userid(),'Manage All Content') ) {
-				return array('','<input type="hidden" name="parent_id" value="'.$this->mParentId.'">');
+			else {
+				$p = strrpos($this->mHierarchyPath,'/');
+				$tmp = ($p > 0) ? substr($this->mHierarchyPath,0,$p) : lang('none');
+				return array('<label for="parent_id">'.lang('parent').':</label>','<input type="hidden" name="parent_id" value="'.$this->mParentId.'"><span id="parent_id">'.$tmp.'</span>');
 			}
-			break;
 
 		case 'default': //since 2.2.19F2
 			$help = cms_admin_utils::get_help_tag('core','help_content_default',lang('help_title_content_default'));
@@ -2684,7 +2768,6 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				$xmsg = '';
 			}
 			return array('<label for="id_default">'.lang('default').':</label>&nbsp;'.$help,'<input type="hidden" name="default" value="0"><input class="pagecheckbox" type="checkbox" name="default" id="id_default" value="1"'.($this->mDefaultContent?' checked':'').'>'.$xmsg);
-			break;
 
 		case 'active':
 			if( !$this->DefaultContent() ) {
@@ -2722,43 +2805,40 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			return array('<label for="secure">'.lang('secure_page').':</label>'.$help,$str);
 
 		case 'page_url':
-			if( !$this->DefaultContent() ) {
-				$must = ( cms_siteprefs::get('content_mandatory_urls',0) ) ? '*' : '';
-				$prompt = "<label for=\"page_url\">$must".lang('page_url');
-				if( $config['url_rewriting'] == 'none' ) {
-					$prompt .= ' ('.lang('nouse').')';
-				}
-				$prompt .= ':</label>&nbsp;';
-				$help = cms_admin_utils::get_help_tag('core','help_page_url',lang('help_title_page_url'));
-				$str = '<input type="text" name="page_url" id="page_url" value="'.$this->mURL.'" size="50" maxlength="255">';
-				return array($prompt.$help,$str);
+			$must = (!$this->DefaultContent() && cms_siteprefs::get('content_mandatory_urls',0)) ? '*' : '';
+			$prompt = "<label for=\"page_url\">$must".lang('page_url');
+			if( $config['url_rewriting'] == 'none' ) {
+				$prompt .= ' ('.lang('nouse').')';
 			}
-			else {
-				return array('<label for="page_url" disabled>'.lang('page_url').':</label>',
-							'<input type="text" id="page_url" value="" size="50" disabled>');
-			}
-			break;
+			$prompt .= ':</label>&nbsp;';
+			$help = cms_admin_utils::get_help_tag('core','help_page_url',lang('help_title_page_url'));
+			$str = '<input type="text" name="page_url" id="page_url" value="'.$this->mURL.'" size="50" maxlength="255">';
+			return array($prompt.$help,$str);
 
 		case 'image':
-		//TODO support selection also from any of: assetspath/images; themesroot/*; themesroot/*/images; themesroot/*/media
-			$dir = $config['image_uploads_path'];
+		//TODO support selection also from any of: assetspath/images; themesroot/*; themesroot/*/images; themesroot/*/media, $config['image_uploads_path'] when subdir exists
+			$dir = $config['image_uploads_path']; // preference-defined subdirs might be relevant
 			if( ($tmp = cms_siteprefs::get('content_imagefield_path')) ) { $dir .= DIRECTORY_SEPARATOR . trim($tmp,' \\/'); }
 			$data = $this->GetPropertyValue('image');
 			$filepicker = cms_utils::get_filepicker_module();
 			if( $filepicker ) {
-				$profile = $filepicker->get_default_profile($dir,get_userid());
+				$profile = $filepicker->get_default_profile($dir,$userid);
 				$profile = $profile->overrideWith(['top'=>$dir,'type'=>'image']);
 				$input = $filepicker->get_html('image',$data,$profile);
+				preg_match('/id="(.+?)"/',$input,$matches);
+				$htmlid = $matches[1];
 			}
 			else {
 				$helper = new CMSMS\FileTypeHelper($config);
 				$exts = $helper->get_file_type_extensions('image',true);
 				$picks = implode(',',$exts);
+				//TODO opportunity for entering non-selected url
 				$input = create_file_dropdown('image',$dir,$data,$picks,'',true,'','',false,true);
+				$htmlid = 'image';
 			}
 			if( !$input ) return [];
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_image',lang('help_title_content_image'));
-			return array('<label for="image">'.lang('image').':</label>'.$help,$input);
+			return array('<label for="'.$htmlid.'">'.lang('image').':</label>'.$help,"<div>\n{$input}\n</div>");
 /*
 			$dir = $config['image_uploads_path']; if appropriate, .= DIRECTORY_SEPARATOR. trim cms_siteprefs::get('content_imagefield_path'));
 			$data = $this->GetPropertyValue('image');
@@ -2772,13 +2852,15 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		case 'thumbnail':
 		//TODO support selection-places as for 'image' ibid
 			$dir = $config['image_uploads_path'];
-			if( ($tmp = cms_siteprefs::get('content_imagefield_path')) ) { $dir .= DIRECTORY_SEPARATOR . trim($tmp,' \\/'); }
+			if( ($tmp = cms_siteprefs::get('content_thumbnailfield_path')) ) { $dir .= DIRECTORY_SEPARATOR . trim($tmp,' \\/'); }
 			$data = $this->GetPropertyValue('thumbnail');
 			$filepicker = cms_utils::get_filepicker_module();
 			if( $filepicker ) {
-				$profile = $filepicker->get_default_profile( $dir,get_userid() );
+				$profile = $filepicker->get_default_profile($dir,$userid);
 				$profile = $profile->overrideWith(['top'=>$dir,'type'=>'image','match_prefix'=>'thumb_']);
 				$input = $filepicker->get_html('thumbnail',$data,$profile);
+				preg_match('/id="(.+?)"/',$input,$matches);
+				$htmlid = $matches[1];
 			}
 			else {
 				// thumbnailable filetypes per FileManager TODO mebbe any existing 'small' image or svg?
@@ -2786,11 +2868,13 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				if (PHP_VERSION_ID >= 70200) { $exts .= ',bmp'; }
 				if (PHP_VERSION_ID >= 80100) { $exts .= ',avif'; }
 				$exts .= ',webp';
+				//TODO opportunity for entering non-selected url
 				$input = create_file_dropdown('thumbnail',$dir,$data,$exts,'',true,'','thumb_',false,true);
+				$htmlid = 'thumbnail';
 			}
 			if( !$input ) return [];
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_thumbnail',lang('help_title_content_thumbnail'));
-			return array('<label for="thumbnail">'.lang('thumbnail').':</label>'.$help,$input);
+			return array('<label for="'.$htmlid.'">'.lang('thumbnail').':</label>'.$help,"<div>\n{$input}\n</div>");
 
 		case 'titleattribute':
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_titleattribute',lang('help_title_content_ta'));
@@ -2823,8 +2907,8 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 						 '<input type="text" name="extra3" id="extra3" maxlength="255" size="80" value="'.cms_htmlentities($this->GetPropertyValue('extra3')).'">');
 
 		case 'owner':
-			$showadmin = ContentOperations::get_instance()->CheckPageOwnership(get_userid(),$this->mId);
-			if (!$adding && ($showadmin || check_permission(get_userid(),'Manage All Content'))) {
+			$showadmin = ContentOperations::get_instance()->CheckPageOwnership($userid,$this->mId);
+			if( !$adding && ($showadmin || $pmac || $pown) ) {
 				$userops = UserOperations::get_instance();
 				$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_owner',lang('help_title_content_owner'));
 				return array('<label for="owner">'.lang('owner').':</label>'.$help,$userops->GenerateDropdown($this->Owner()));
@@ -2832,9 +2916,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			break;
 
 		case 'additionaleditors':
-			// do owner/additional-editor stuff
-			if( $adding || check_permission(get_userid(),'Manage All Content') ||
-				ContentOperations::get_instance()->CheckPageOwnership(get_userid(),$this->mId) ) {
+			if( $pmac || ($pown && !$adding) ) {
 				return $this->ShowAdditionalEditors();
 			}
 			break;
