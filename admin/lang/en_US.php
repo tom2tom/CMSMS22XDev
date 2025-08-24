@@ -463,7 +463,9 @@ $lang['event_desc_edituserpost'] = "Sent after edits to a user are saved";
 $lang['event_desc_edituserpre'] = "Sent before edits to a user are saved";
 $lang['event_desc_loginfailed'] = "Sent after a user failed to log in to the Admin panel";
 $lang['event_desc_loginpost'] = "Sent after a user logs in to the Admin panel";
+$lang['event_desc_loginpre'] = "Sent before a user logs in to the Admin panel";
 $lang['event_desc_logoutpost'] = "Sent after a user logs out of the Admin panel";
+$lang['event_desc_logoutpre'] = "Sent before a user logs out of the Admin panel";
 $lang['event_desc_lostpassword'] = 'Sent when the lost password form is submitted';
 $lang['event_desc_lostpasswordreset'] = 'Sent when the lost password form is submitted';
 $lang['event_desc_moduleinstalled'] = "Sent after a module is installed";
@@ -1083,6 +1085,7 @@ $lang['logintitle'] = "Log in to the %s website Administration Console";
 $lang['login_failed'] = "User Login Failed";
 $lang['login_info'] = "For the Admin Console to work properly";
 $lang['login_info_params'] = "<ol>
+  <li>PHP sessions must be enabled</li>
   <li>Cookies must be enabled in your browser</li>
   <li>Javascript must be enabled in your browser</li>
   <li>Popup windows must be allowed for the following address:</li>
@@ -1297,9 +1300,7 @@ $lang['permission_information'] = "Permission Information";
 $lang['perm_Add_Pages'] = 'Add Pages';
 $lang['perm_Add_Templates'] = 'Add Templates';
 //$lang['perm_Advanced_usage_of_the_File_Manager_module'] = 'Advanced usage of the File Manager module'; //already in FileManager
-$lang['perm_Approve_News_For_Frontend_Display'] = 'Approve News for Frontend Display'; //TODO migrate to News
 $lang['perm_Clear_Admin_Log'] = 'Clear Admin Log';
-$lang['perm_Delete_News_Articles'] = 'Delete News Articles'; //TODO migrate to News
 $lang['perm_Manage_All_Content'] = 'Manage All Content';
 $lang['permdesc_Manage_All_Content'] = 'A user with this permission can perform all tasks on any and all content pages';
 //$lang['perm_Manage_Designs'] = 'Manage Designs'; //TODO if actually needed, migrate to DesignManager
@@ -1308,7 +1309,6 @@ $lang['perm_Manage_Jobs'] = 'Manage Asynchronous Jobs'; //TODO migrate CmsJobMan
 $lang['perm_Manage_My_Account'] = 'Manage My Account';
 $lang['perm_Manage_My_Bookmarks'] = 'Manage My Bookmarks';
 $lang['perm_Manage_My_Settings'] = 'Manage My Settings';
-$lang['perm_Modify_News'] = 'Modify News Articles'; //TODO migrate to News.
 $lang['perm_Manage_Stylesheets'] = 'Manage Stylesheets';
 $lang['perm_Manage_Users'] = 'Manage Users';
 $lang['perm_Modify_Any_Page'] = 'Modify Any Page';
@@ -1621,7 +1621,7 @@ $lang['warning_upgrade'] = "<em><strong>Warning:</strong></em> CMSMS is in need 
 $lang['warning_upgrade_info1'] = "The website is now running schema version %s and needs to be upgraded to version %s";
 $lang['warning_upgrade_info2'] = "Please click the following link: %s.";
 $lang['warn_addgroup'] = "Creating a new group does not assign any permission. You will need to assign permission(s) to the new group in a 'Change Permissions' action.";
-$lang['warn_admin_ipandcookies'] = "Warning: Admin activities use cookies and tracks your IP address";
+$lang['warn_admin_ipandcookies'] = "Note: Admin activities use cookies (for internal functional purposes only) and might track your IP address (for those same purposes)";
 //$lang['warn_bulk_settemplate'] = '<strong>Warning:</strong> This is potentially a destructive operation, and may break an existing website.  <span style="color: red;">Use caution!</span>';
 $lang['warn_nosefurl'] = "SEO-friendly ('pretty') URLs have not been configured. Settings related to those are not displayed here.";
 $lang['welcomemsg'] = "Welcome %s";

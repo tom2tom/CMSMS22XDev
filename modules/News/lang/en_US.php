@@ -42,7 +42,8 @@ $lang['category_label'] = 'Category:';
 $lang['checkbox'] = 'Checkbox';
 $lang['close'] = 'Close';
 $lang['content'] = 'Content';
-$lang['customfields'] = 'Field Definitions';
+$lang['current'] = 'Current';
+$lang['customfields'] = 'Custom Fields'; // was 'Field Definitions' see 'fielddefs' for that
 
 // D
 $lang['dateformat'] = '%s not in a valid yyyy-mm-dd hh:mm:ss format';
@@ -52,7 +53,7 @@ $lang['delete'] = 'Delete';
 $lang['delete_article'] = 'Delete Article';
 $lang['delete_selected'] = 'Delete Selected Articles';
 $lang['deprecated'] = 'unsupported';
-$lang['description'] = 'Add, edit and remove News articles';
+$lang['description'] = 'Add, edit and remove news articles';
 $lang['desc_adminsearch'] = 'Search all news articles (regardless of status or expiry)';
 $lang['desc_news_settings'] = 'Adjust News settings';
 $lang['detailtemplate'] = 'Detail Templates';
@@ -100,8 +101,8 @@ $lang['eventhelp-NewsArticleAdded'] = '<h4>Parameters</h4>
 <li>"content" - Content of the article</li>
 <li>"summary" - Summary of the article</li>
 <li>"status" - Status of the article ("draft" or "published")</li>
-<li>"start_time" - Date the article should start being displayed</li>
-<li>"end_time" - Date the article should stop being displayed</li>
+<li>"start_time" - Datetime when the article should start being displayed</li>
+<li>"end_time" - Datetime when the article should stop being displayed</li>
 <li>"useexp" - Whether the expiration date should be ignored or not</li>
 </ul>
 ';
@@ -122,8 +123,8 @@ $lang['eventhelp-NewsArticleEdited'] = '<h4>Parameters</h4>
 <li>"content" - Content of the article</li>
 <li>"summary" - Summary of the article</li>
 <li>"status" - Status of the article ("draft" or "publish")</li>
-<li>"start_time" - Date the article should start being displayed</li>
-<li>"end_time" - Date the article should stop being displayed</li>
+<li>"start_time" - Datetime when the article should start being displayed</li>
+<li>"end_time" - Datetime when the article should stop being displayed</li>
 <li>"useexp" - Whether the expiration date should be ignored or not</li>
 </ul>
 <p><strong>Note:</strong> Not all parameters may be present when this event is sent.</p>
@@ -168,6 +169,7 @@ $lang['extra_label'] = 'Extra:';
 $lang['fesubmit_redirect'] = 'Page to redirect to after a news article has been submitted via the frontend';
 $lang['fesubmit_status'] = 'The status of news articles submitted via the frontend';
 $lang['fielddef'] = 'Field Definition';
+$lang['fielddefs'] = 'Field Definitions';
 $lang['fielddefadded'] = 'Field definition successfully added';
 $lang['fielddefdeleted'] = 'Field definition deleted';
 $lang['fielddefupdated'] = 'Field definition updated';
@@ -186,13 +188,22 @@ $lang['help'] = <<<EOF
 <h4>Numerous display methods</h4>
 <p>The parameters supported by the news module, and support for numerous templates of each time mean that your options for displaying news articles are limitless.</p>
 <h4>Custom Fields</h4>
-<p>The News module allows defining numerous custom fields (including files and images) that will allow you to attach PDF files or numerous images to your articles.</p>
+<p>The News module supports tailored custom fields for inclusion in articles. Supported field-types are
+<ul>
+<li>checkbox</li>
+<li>dropdown - a single-choice &lt;select/&gt; element</li>
+<li>file - a FilePicker-selected file, expected to be an image</li>
+<li>linkedfile - an uploaded file, also expected to be an image</li>
+<li>textarea a &lt;textarea/&gt; element</li>
+<li>textbox - an input-text element</li>
+</ul>
+</p>
 <h4>Categories</h4>
 <p>News supplies a hierarchical category mechanism for organizing your articles.  A news article can only be in one place in the hierarchy.</p>
 <h4>Expiry and Status</h4>
 <p>Each news article can have an optional expiry date, after which it will not be shown on your web page.  As well, articles can be marked as <em>draft</em> to remove them permanently from your web page.</p>
 <h3>Security</h3>
-<p>The user must belong to a group with the 'Modify News' permission in order to add or edit News entries.</p>
+<p>The user must belong to a group with the 'Modify News Articles' permission in order to add or edit News entries.</p>
 <p>As well, In order to delete news entries, the user must belong to a group with the 'Delete News Articles' permission.</p>
 <p>In order to edit the layout templates, the user must belong to a group with the 'Modify Templates' permission.</p>
 <p>In order to edit the global news preferences, the user must belong to a group with the 'Modify Site Preferences' permission.</p>
@@ -259,9 +270,9 @@ $lang['help_category_name'] = 'Enter a name for this category.  The name should 
 $lang['help_category_parent'] = 'Optionally specify a parent category to build a hierarchy of categories.';
 $lang['help_fesubmit_redirect'] = 'Page to redirect to after a successful frontend submission';
 $lang['help_fielddef_maxlen'] = 'For text fields you can specify the maximum length of user input (in characters)';
-$lang['help_fielddef_name'] = 'Each field definition must have a name.  Though not strictly necessary, the field name should contain only alphanumeric characters and the underscore.  Refrain from using whitespace in the field name.';
+$lang['help_fielddef_name'] = 'Each field definition must have a name.  Though not strictly enforced, the field name should contain only alphanumeric characters and underscores.';
 $lang['help_fielddef_options'] = 'Here you may specify the valid options for dropdown fields.';
-$lang['help_fielddef_public'] = 'Specify if the field definition is public or not.  Public field definitions are viewable in frontend views, and can be entered by the fesubmit action.  Custom fields that are not public can only be edited in the Admin interface by authorized administrators.';
+$lang['help_fielddef_public'] = 'Choose whether the field is public or not.  Public fields are viewable in frontend views, and can be entered by the fesubmit action.  Fields that are not public can only be edited in the Admin Console by authorized administrators.';
 $lang['help_fielddef_type'] = 'Each custom field can be of a different type for different purposes.  Select the field type that best matches the purpose of the field.';
 $lang['help_idlist'] = 'Applicable only to the default action (summary view).  This parameter accepts a comma separated list of numeric article ids and allows further filtering articles to only the article ids specified.  The actual list of articles output is still subject to article status, expiry date, and other parameters.';
 $lang['help_opt_alert_drafts'] = 'If enabled, you will receive notifications (alerts) indicating that one or more news articles needs to be reviewed and published.';
@@ -275,7 +286,7 @@ $lang['hide_summary_field'] = 'Hide the summary field when adding or editing art
 
 // I
 $lang['image'] = 'Image';
-$lang['info_allow_fesubmit'] = 'This option controls whether frontend submission of articles will function at all for this site. Be careful about enabling this.';
+$lang['info_allow_fesubmit'] = 'This option controls whether frontend submission of articles will function for this site.  Be careful about enabling this.  Frontend submission has been deprecated for many years, and the capabilty will be removed.';
 $lang['info_categories'] = 'For organization purposes news articles can be organized into hierarchical categories';
 $lang['info_detail_returnid'] = 'This preference is used to determine a page (and therefore a template) to use to view detail pages.  Custom news Detail URLs will not work if this parameter is not set to a valid page.  Additionally, if this preference is set, and no detailpage parameter is provided on the news tag, then this value will be used for detail links';
 $lang['info_expired_searchable'] = 'If enabled, expired articles may continue to be indexed by the search module, and appear in search results';
@@ -333,11 +344,11 @@ $lang['optionsupdated'] = 'The options were successfully updated.';
 
 // P
 $lang['parent'] = 'Parent';
-//$lang['perm_Approve_News'] = 'Approve News for Frontend Display'; TODO migrate these from admin-lang
-//$lang['perm_Delete_News'] = 'Delete News Articles';
-//$lang['perm_Modify_News'] = 'Modify News Articles';
+$lang['perm_Approve_News'] = 'Approve News for Frontend Display';
+$lang['perm_Delete_News'] = 'Delete News Articles';
+$lang['perm_Modify_News'] = 'Modify News Articles';
 $lang['postdate'] = 'Post Date';
-$lang['postinstall'] = 'Make sure to set the "Modify News" permission on users who will be administering News items.';
+$lang['postinstall'] = 'Make sure to set the "Modify News Articles" permission for users who will be administering News items.';
 $lang['post_date_asc'] = 'Post Date Ascending';
 $lang['post_date_desc'] = 'Post Date Descending';
 $lang['preview'] = 'Preview';
@@ -432,6 +443,7 @@ $lang['up'] = 'Up';
 $lang['uploadscategory'] = 'Uploads Category';
 $lang['url'] = 'URL (path|slug)';
 $lang['useexpiration'] = 'Use Expiration Date';
+$lang['usefield'] = 'Use this field';
 
 // V
 $lang['viewfilter'] = 'View Filter';
