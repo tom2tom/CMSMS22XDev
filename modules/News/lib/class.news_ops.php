@@ -19,12 +19,12 @@
 
 final class news_ops
 {
-protected function __construct() {}
-
 private static $_categories_loaded;
 private static $_cached_categories;
 private static $_cached_fielddefs;
 private static $_cached_fieldvals;
+
+private function __construct() {}
 
 public static function get_categories($id,$params,$returnid=-1)
 {
@@ -135,8 +135,7 @@ public static function get_category_list()
 {
     self::get_all_categories();
     $categorylist = array();
-    if (self::$_cached_categories)
-    {
+    if( self::$_cached_categories ) {
         for( $i = 0, $n = count(self::$_cached_categories); $i < $n; $i++ ) {
             $row = self::$_cached_categories[$i];
             $categorylist[$row['long_name']] = $row['news_category_id'];
@@ -148,9 +147,8 @@ public static function get_category_list()
 public static function get_category_names_by_id()
 {
     self::get_all_categories();
-    if (!empty(self::$_cached_categories))
-    {
-        $list = array();
+    $list = array();
+    if( !empty(self::$_cached_categories) ) {
         for( $i = 0, $n = count(self::$_cached_categories); $i < $n; $i++ ) {
             $list[self::$_cached_categories[$i]['news_category_id']] = self::$_cached_categories[$i]['news_category_name'];
         }
@@ -230,9 +228,10 @@ public static function fill_article_from_formparams(news_article $news,$params,$
         case 'content':
         case 'summary':
         case 'status':
+        case 'icon':
         case 'news_url':
         case 'useexp':
-        case 'extra':
+        case 'extra': // [un]serialized where?
             $news->$key = $value;
             break;
 
@@ -286,12 +285,16 @@ private static function get_article_from_row($row,$get_fields = 'PUBLIC')
             $article->category_id = $value;
             break;
 
+        case 'news_category_name':
+            $article->category_name = (string)$value;
+            break;
+
         case 'news_title':
-            $article->title = $value; // TODO rigorously sanitize potentially untrusted content
+            $article->title = $value; // TODO rigorously sanitize potentially untrusted content if () $X = $smarty->fetch('string:'.$Y)
             break;
 
         case 'news_data':
-            $article->content = $value; // TODO rigorously sanitize potentially untrusted content
+            $article->content = $value; // TODO somewhere, if has tag(s) processed via Smarty, rigorously sanitize potentially untrusted content if () $X = $smarty->fetch('string:'.$Y)
             break;
 
         case 'news_date':
@@ -299,7 +302,7 @@ private static function get_article_from_row($row,$get_fields = 'PUBLIC')
             break;
 
         case 'summary':
-            $article->summary = $value; // TODO rigorously sanitize potentially untrusted content
+            $article->summary = $value; // TODO somewhere, if has tag(s) processed via Smarty, rigorously sanitize potentially untrusted content if () $X = $smarty->fetch('string:'.$Y)
 
         case 'start_time':
             $article->startdate = $value;
@@ -311,6 +314,10 @@ private static function get_article_from_row($row,$get_fields = 'PUBLIC')
 
         case 'status':
             $article->status = $value;
+            break;
+
+        case 'icon':
+            $article->image_url = self::useformat_url($value); //TODO sanitize per cms_utils::validate_url($value,'image')
             break;
 
         case 'create_date':
@@ -326,12 +333,13 @@ private static function get_article_from_row($row,$get_fields = 'PUBLIC')
             break;
 
         case 'news_extra':
-            $article->extra = $value; // TODO rigorously sanitize potentially untrusted content
+            $article->extra = $value; // TODO rigorously sanitize potentially untrusted content if () $X = $smarty->fetch('string:'.$Y)
             break;
 
         case 'news_url':
-            $article->news_url = $value;
+            $article->news_url = $value; //TODO sanitize per cms_utils::cleanUrlPath()
             break;
+//      case 'searchable': $article->searchable = (bool)$value; break;
         }
     }
 
@@ -348,6 +356,11 @@ private static function get_article_from_row($row,$get_fields = 'PUBLIC')
     return $article;
 }
 
+/**
+ *
+ * @param bool $for_display Default true.
+ * @return mixed string | null
+ */
 public static function get_latest_article($for_display = TRUE)
 {
     $db = CmsApp::get_instance()->GetDb();
@@ -361,6 +374,13 @@ public static function get_latest_article($for_display = TRUE)
     return self::get_article_from_row($row,($for_display)?'PUBLIC':'ALL');
 }
 
+/**
+ *
+ * @param type $article_id
+ * @param bool $for_display Default true
+ * @param bool $allow_expired Default false
+ * @return mixed string | null
+ */
 public static function get_article_by_id($article_id,$for_display = TRUE,$allow_expired = FALSE)
 {
     $db = CmsApp::Get_instance()->GetDb();
@@ -454,7 +474,7 @@ public static function get_fields($news_id,$public_only = true,$filled_only = FA
         }
         $results[$field['name']] = $obj;
     }
-    /*
+/*
     foreach( self::$_cached_fieldvals[$news_id] as $fid => $data ) {
         if( !$public_only || $data->public ) {
             if( !$filled_only || (isset($data->value) && $data->value != '') ) {
@@ -462,7 +482,7 @@ public static function get_fields($news_id,$public_only = true,$filled_only = FA
             }
         }
     }
-    */
+*/
     return $results;
 }
 
@@ -474,6 +494,7 @@ public static function get_fields($news_id,$public_only = true,$filled_only = FA
  * in a textarea element?
  * Entitized content is interpreted, but not (url-, rawurl-, base64-) encoded content.
  * Does not deal with image-file content. Inline <svg/> will be handled anyway.
+ * Does not deal with Smarty tags like {stuff}
  * @internal
  * @since 2.2.18
  * @see https://portswigger.net/web-security/cross-site-scripting/cheat-sheet
@@ -536,6 +557,38 @@ public static function execSpecialize($val)
         $val = strtr($tmp2, "\2\3", '<>');
     }
     return $val;
+}
+
+/**
+ * Adjust $url to a consistent format for storage
+ * @param string $url
+ * @return string
+ */
+public static function storeformat_url($url)
+{
+    if (startswith($url,CMS_ROOT_URL)) { $ret = str_replace(CMS_ROOT_URL, '', $url); }
+    elseif (startswith($url,'[ROOT_URL]')) { $ret = str_replace('[ROOT_URL]', '', $url); }
+    else {
+       //TODO support '//sitehost....'
+       $ret = $url;
+    }
+    //any other processing goes here
+    return $ret;
+}
+
+/**
+ * Adjust $url (retrieved from storage) to a consistent usable format
+ * @param string $url '/'-prefixed if site-root-relative
+ * @return string
+ */
+public static function useformat_url($url)
+{
+    if ($url) {
+        if (startswith($url,'//')) { return $url; }
+        if ($url[0] != '/') { return $url; }
+        return CMS_ROOT_URL.$url;
+    }
+    return '';
 }
 
 } // end of class
