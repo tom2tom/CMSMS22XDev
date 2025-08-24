@@ -94,7 +94,7 @@ $(function() {
 <div class="row c_full">
 	<div class="pageoptions grid_6" style="margin-top:8px">
 {if $can_add}
-	<a href="{cms_action_url action=addarticle}">{admin_icon icon='newobject.gif' alt=$mod->Lang('addarticle')} {$mod->Lang('addarticle')}</a>&nbsp;
+	<a href="{cms_action_url action=addarticle}">{admin_icon icon='newobject.gif'} {$mod->Lang('addarticle')}</a>&nbsp;
 {/if}
 	<a id="toggle_filter"{if $curcategory} style="font-weight:bold;color:green"{/if}>{admin_icon icon='view.gif' alt=$mod->Lang('viewfilter')}{if $curcategory} *{/if}
 	{$mod->Lang('viewfilter')}</a>
@@ -154,12 +154,12 @@ $(function() {
 			<td>{if isset($entry->approve_link)}{$entry->approve_link}{/if}</td>
 			<td>
 			{if isset($entry->edit_url)}
-			<a href="{$entry->edit_url}" title="{$mod->Lang('editarticle')}">{admin_icon icon='edit.gif'}</a>
+			<a href="{$entry->edit_url}" title="{$mod->Lang('editarticle')}">{admin_icon icon='edit.gif' alt=$mod->Lang('edit')}</a>
 			{/if}
 			</td>
 			<td>
 			{if isset($entry->delete_url)}
-			<a class="delete_article" href="{$entry->delete_url}" title="{$mod->Lang('delete_article')}">{admin_icon icon='delete.gif'}</a>
+			<a class="delete_article" href="{$entry->delete_url}" title="{$mod->Lang('delete_article')}">{admin_icon icon='delete.gif' alt=$mod->Lang('delete')}</a>
 			{/if}
 			</td>
 			<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->id}" title="{$mod->Lang('toggle_bulk')}"></td>
