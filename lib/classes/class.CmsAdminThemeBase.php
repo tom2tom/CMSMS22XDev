@@ -1588,17 +1588,17 @@ class CmsAdminThemeNotification
 	/**
 	 * @ignore
 	 */
-	private $_module;
+	private $module;
 
 	/**
 	 * @ignore
 	 */
-	private $_priority;
+	private $priority;
 
 	/**
 	 * @ignore
 	 */
-	private $_html;
+	private $html;
 
 
 	/**
@@ -1614,7 +1614,7 @@ class CmsAdminThemeNotification
 			return $this->$key;
 		}
 
-		throw new CmsInvalidDataException('Attempt to retrieve invalid property from CmsAdminThemeNotification');
+		throw new CmsInvalidDataException('Attempt to retrieve invalid property of CmsAdminThemeNotification');
 	}
 
 
@@ -1632,7 +1632,7 @@ class CmsAdminThemeNotification
 			return;
 		}
 
-		throw new CmsInvalidDataException('Attempt to set invalid property from CmsAdminThemeNotification');
+		throw new CmsInvalidDataException('Attempt to set invalid property of CmsAdminThemeNotification');
 	}
 } // end of class
 
