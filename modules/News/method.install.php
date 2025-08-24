@@ -1,4 +1,8 @@
 <?php
+#CMSMS News module method: install
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#The license at the top of file News.module.php applies to this file.
+
 if( !isset($gCms) ) exit;
 
 if( !class_exists('news_admin_ops') ) {
@@ -14,10 +18,11 @@ else {
     $uid = get_userid();
 }
 
+//author_id may be > 0 (admin user) < 0 (logged-in fe user) == 0 (unknown user)
 $dict = NewDataDictionary($db);
 $flds = "
 news_id I KEY,
-news_category_id I,
+news_category_id I DEFAULT 1,
 news_title C(255),
 news_data X,
 news_date DT,
@@ -28,7 +33,7 @@ status C(25),
 icon C(255),
 create_date DT,
 modified_date DT,
-author_id I,
+author_id I DEFAULT 0,
 news_extra C(255),
 news_url C(255),
 searchable I1 DEFAULT 0
@@ -53,18 +58,17 @@ news_category_id I KEY,
 news_category_name C(255) NOTNULL,
 parent_id I,
 hierarchy C(255) NOTNULL,
-item_order I,
+item_order I4,
 long_name X,
 create_date DT,
 modified_date DT
 ";
 
-//$taboptarray = array('mysql' => 'ENGINE=MyISAM', 'mysqli' => 'ENGINE=MyISAM');
 $sqlarray = $dict->CreateTableSQL(CMS_DB_PREFIX."module_news_categories",$flds, $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 $sql = <<<EOS
 ALTER TABLE `{$pref}module_news_categories`
-CHANGE `hierarchy` `hierarchy` varchar(255) CHARACTER SET ascii COLLATE ascii_bin DEFAULT NULL,
+CHANGE `hierarchy` `hierarchy` varchar(255) CHARACTER SET ascii COLLATE ascii_bin,
 CHANGE `create_date` `create_date` datetime NULL DEFAULT current_timestamp(),
 CHANGE `modified_date` `modified_date` datetime DEFAULT NULL ON UPDATE current_timestamp()
 EOS;
@@ -75,11 +79,10 @@ $db->CreateSequence(CMS_DB_PREFIX."module_news_categories_seq");
 $flds = "
 id I KEY AUTO,
 name C(255),
-type C(50),
-max_length I,
+type C(24),
 create_date DT,
 modified_date DT,
-item_order I,
+item_order I2,
 public I1,
 extra X
 ";
@@ -89,6 +92,7 @@ $sqlarray = $dict->CreateTableSQL(CMS_DB_PREFIX."module_news_fielddefs", $flds, 
 $dict->ExecuteSQLArray($sqlarray);
 $sql = <<<EOS
 ALTER TABLE `{$pref}module_news_fielddefs`
+CHANGE `type` `type` varchar(24) NULL CHARACTER SET ascii COLLATE ascii_bin,
 CHANGE `create_date` `create_date` datetime NULL DEFAULT current_timestamp(),
 CHANGE `modified_date` `modified_date` datetime DEFAULT NULL ON UPDATE current_timestamp()
 EOS;
@@ -110,10 +114,10 @@ CHANGE `modified_date` `modified_date` datetime DEFAULT NULL ON UPDATE current_t
 EOS;
 $dict->ExecuteSQLArray($sqlarray);
 
-// Set Permission
-$this->CreatePermission('Modify News', lang('perm_Modify_News'));//TODO migrate these to module-lang
-$this->CreatePermission('Approve News', lang('perm_Approve_News_For_Frontend_Display'));
-$this->CreatePermission('Delete News', lang('perm_Delete_News_Articles'));
+// Create Permissions
+$this->CreatePermission('Modify News', $this->Lang('perm_Modify_News'));
+$this->CreatePermission('Approve News', $this->Lang('perm_Approve_News'));
+$this->CreatePermission('Delete News', $this->Lang('perm_Delete_News'));
 
 // Setup summary template
 try {
@@ -308,12 +312,15 @@ $this->SetPreference('email_subject',$this->Lang('subject_newnews'));
 $this->SetTemplate('email_template',$this->GetDfltEmailTemplate());
 
 // Other preferences
-$this->SetPreference('allowed_upload_types','bmp,jpg,jpeg,gif,png,svg,avif,webp,ico'); // c.f. FileTypeHelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','ico','webp','avif','heif','svg'
+$this->SetPreference('allow_fesubmit',0);
+$this->SetPreference('allowed_upload_types','bmp,jpg,jpeg,gif,png,svg,avif,webp,ico'); // c.f. FileTypeHelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','ico','webp','avif','heif','svg','apng'
 $this->SetPreference('auto_create_thumbnails','png,jpg,jpeg,gif,wbmp,webp'); // c.f. FileManager thumbnailable types some PHP's also bmp, avif UNUSED
-/* other possibles
+$this->SetPreference('expired_searchable',1);
+$this->SetPreference('expired_viewable',0);
+$this->SetPreference('expiry_interval',30); //default 30-days lifetime
+/* others used around the module
 $this->SetPreference('alert_drafts',1);
 $this->SetPreference('allcategories',1);
-$this->SetPreference('allow_fesubmit',1);
 $this->SetPreference('allow_summary_wysiwyg',1);
 $this->SetPreference('article_category','');
 $this->SetPreference('article_pagelimit',10); //default 10 articles per displayed (expandable) page
@@ -323,15 +330,10 @@ $this->SetPreference('current_detail_template',''); //no preferred 'News::detail
 $this->SetPreference('date_format','%e %B %Y %l:%M %p');
 $this->SetPreference('default_category',1);
 $this->SetPreference('detail_returnid',-1); //no default post-detail page
-$this->SetPreference('email_subject',$this->Lang('subject_newnews'));
-$this->SetPreference('email_template','Article Approval-Request Email'); // notice-body generator
 $this->SetPreference('email_to','');
-$this->SetPreference('expired_searchable',1);
-$this->SetPreference('expired_viewable',0);
-$this->SetPreference('expiry_interval',30); //default 30-days lifetime
-$this->SetPreference('fesubmit_redirect',0);
-$this->SetPreference('fesubmit_status',0);
-$this->SetPreference('formsubmit_emailaddress','');
+$this->SetPreference('fesubmit_emailaddress','');
+$this->SetPreference('fesubmit_redirect',-1); //no default post-submit page
+$this->SetPreference('fesubmit_status','draft');
 $this->SetPreference('hide_summary_field',0);
 */
 $longnow = trim($db->DBTimeStamp(time()), '\'');
@@ -406,5 +408,15 @@ $this->RegisterSmartyPlugin('news','function','function_plugin');
 
 // and routes...
 $this->CreateStaticRoutes();
+
+// and plugin
+$from = __DIR__.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'function.news_image.php';
+$to = cms_join_path(CMS_ROOT_PATH,'lib','plugins','function.news_image.php');
+if( copy($from,$to) ) {
+    chmod($to,0644);
+}
+else {
+    audit('', 'News module', 'Failed to install news_image plugin');
+}
 
 ?>
