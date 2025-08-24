@@ -38,7 +38,7 @@ $submitted = (isset($_REQUEST["submitted"])) ? (int)$_REQUEST["submitted"] : -1;
 
 $gCms = cmsms();
 $userops = $gCms->GetUserOperations();
-$adminuser = ($userops->UserInGroup($userid,1) || $userid == 1);
+$adminuser = $userops->IsSuperuser($userid);
 $group_name = '';
 $message = '';
 

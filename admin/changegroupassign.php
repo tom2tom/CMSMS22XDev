@@ -39,7 +39,7 @@ $group_id = (isset($_REQUEST['group_id'])) ? (int)$_REQUEST['group_id'] : -1;
 $group_name = '';
 $gCms = cmsms();
 $userops = $gCms->GetUserOperations();
-$adminuser = ($userops->UserInGroup($userid,1) || $userid == 1);
+$adminuser = $userops->IsSuperuser($userid);
 $message = '';
 
 require_once 'header.php';
