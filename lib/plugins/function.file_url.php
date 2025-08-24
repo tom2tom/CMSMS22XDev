@@ -17,36 +17,38 @@
 
 function smarty_function_file_url($params, $template)
 {
-    $config = \cms_config::get_instance();
-    $dir = $config['uploads_path'];
-    $file = trim(get_parameter_value($params,'file'));
-    $add_dir = trim(get_parameter_value($params,'dir'));
-    $assign = trim(get_parameter_value($params,'assign'));
-
+    $file = trim(get_parameter_value($params,'file'),' \/');
     if( !$file ) {
-        trigger_error('file_url plugin: invalid file parameter');
+        trigger_error('file_url plugin: missing or invalid file parameter');
         return '';
     }
+
+    $config = \cms_config::get_instance();
+    $dir = $config['uploads_path'];
+
+    $add_dir = trim(get_parameter_value($params,'dir'),' \/');
     if( $add_dir ) {
-        if( startswith( $add_dir, '/') ) $add_dir = substr($add_dir,1);
-        $dir = $dir.'/'.$add_dir;
+        $dir .= DIRECTORY_SEPARATOR.strtr($add_dir,'\/',DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR);
         if( !is_dir($dir) || !is_readable($dir) ) {
             trigger_error("file_url plugin: dir=$add_dir invalid directory name specified");
             return '';
         }
     }
 
-    $fullpath = $dir.'/'.$file;
+    $fullpath = $dir.DIRECTORY_SEPARATOR.$file;
     if( !is_file($fullpath) || !is_readable($fullpath) ) {
-        // no error log here.
-        return '';
+        // try to use $file (i.e. something not relative to uploads) as fallback 
+        if( !is_file($file) || !is_readable($file) ) {
+            // no error log here
+            return '';
+        }
+        $fullpath = $file;
     }
 
-    // convert it to a url
-    $out = $config['uploads_url'].'/';
-    if( $add_dir ) $out .= $add_dir.'/';
-    $out .= $file;
+    // convert to url
+    $out = str_replace([CMS_ROOT_PATH,'\\'],[CMS_ROOT_URL,'/'],$fullpath);
 
+    $assign = trim(get_parameter_value($params,'assign'));
     if( $assign ) {
         $template->assign($assign,$out);
         return '';
