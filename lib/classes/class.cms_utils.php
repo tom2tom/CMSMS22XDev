@@ -478,6 +478,30 @@ final class cms_utils
 
 		return [false,lang('informationmissing').': image url'];
 	}
+
+	/**
+	 * Poll the database content-tables for pages having any property,
+	 * or specified property(ies), whose value matches a wanted value
+	 * @since 2.2.22F2
+	 *
+	 * @param mixed $needle what to search for
+	 * @param mixed $field content-table(s) property name(s) array | string,
+	 *  single name or comma-separated series. Default '' hence all properties.
+	 * @param bool $strict whether to precisely match $needle. Default false.
+	 *  If false, value types need not be the same, and string-values
+	 *  need not have the same case, and need not be the entire content
+	 *  of a field i.e. *$needle* will match
+	 *
+	 * @return array, having member(s) each like: page-numeric-id=>row, or empty.
+	 *  Each such row will be an array of matches like field1=>val1[,field2=>val2....]
+	 */
+	public static function find_content($needle, $field = '', $strict = false)
+	{
+		if (!class_exists('Search_content',false)) {
+			self::get_module('Search'); // so that Search-autoloading will work
+		}
+		return Search_content::Find($needle,$field,$strict);
+	}
 } // end of class
 
 ?>
