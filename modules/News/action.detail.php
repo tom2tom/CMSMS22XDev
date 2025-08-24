@@ -56,6 +56,12 @@ if( $preview || !$tpl->IsCached() ) {
         throw new CmsError404Exception('Article '.(int)$params['articleid'].' not found, or otherwise unavailable');
 //      return; useless here
     }
+
+    // since CMSMS 2.2 article fields summary, content etc have not been
+    // Smarty-processed before display, to protect against 'risky' content
+    // TODO instead properly sanitize those fields during article-save
+    // if () $X = $smarty->fetch('string:'.$Y);
+
     $article->set_linkdata($id,$params);
 
     if( !empty($params['origid']) ) {
@@ -70,7 +76,7 @@ if( $preview || !$tpl->IsCached() ) {
 
     $catName = '';
     if (isset($params['category_id'])) {
-        $catName = $db->GetOne('SELECT news_category_name FROM '.CMS_DB_PREFIX . 'module_news_categories where news_category_id=?',array((int)$params['category_id']));
+        $catName = $db->GetOne('SELECT news_category_name FROM '.CMS_DB_PREFIX . 'module_news_categories WHERE news_category_id=?',array((int)$params['category_id']));
     }
     $tpl->assign('category_name',$catName);
     unset($params['articleid']);
