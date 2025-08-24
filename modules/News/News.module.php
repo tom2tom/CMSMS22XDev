@@ -16,7 +16,6 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #$Id$
-//if( !isset($gCms) ) exit;
 
 class News extends CMSModule
 {
@@ -26,6 +25,7 @@ class News extends CMSModule
     public function GetAuthor() { return 'Ted Kulp'; }
     public function GetAuthorEmail() { return 'wishy@cmsmadesimple.org'; }
     public function GetChangeLog() { return file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'changelog.htm'); }
+    public function GetDependencies() { return ['FilePicker'=>'1.0']; }
     public function GetEventDescription($eventname) { return $this->Lang('eventdesc-' . $eventname); }
     public function GetEventHelp($eventname) { return $this->Lang('eventhelp-' . $eventname); }
     public function GetFriendlyName() { return $this->Lang('news'); }
@@ -227,7 +227,7 @@ EOS;
         $result = array();
 
         if ($attr == 'article') {
-            $db = $this->GetDb();
+            $db = $gCms->GetDb();
             $q = "SELECT news_title,news_url FROM ".CMS_DB_PREFIX."module_news WHERE news_id = ?";
             $row = $db->GetRow( $q, array( $articleid ) );
 
