@@ -1,30 +1,18 @@
 <?php
+#CMSMS News module action: admin_addfielddef
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#The license at the top of file News.module.php applies to this file.
+
 if (!isset($gCms)) exit;
 if (!$this->CheckPermission('Modify Site Preferences')) return;
 
-if (isset($params['cancel'])) $this->RedirectToAdminTab('customfields','','admin_settings');
+if (isset($params['cancel'])) $this->RedirectToAdminTab('customfields', '', 'admin_settings');
 
-$name = '';
-if (isset($params['name'])) $name = trim($params['name']);
-
-$type = '';
-if (isset($params['type'])) $type = $params['type'];
-
-$max_length = 255;
-if (isset($params['max_length'])) $max_length = max(0,(int)$params['max_length']);
-
-$public = 1;
-if( isset($params['public']) ) $public = (int)$params['public'];
-
-
-$arr_options = array();
-$options = '';
-if( isset($params['options']) ) {
-    $options = trim($params['options']);
-    $arr_options = news_admin_ops::optionstext_to_array($options);
-}
-
-$userid = get_userid();
+$name = (isset($params['name'])) ? trim($params['name']) : ''; // sanitize ?
+$type = (isset($params['type'])) ? $params['type'] : '';
+$public = (isset($params['public'])) ? (int)$params['public'] : 1;
+$options = (isset($params['options'])) ? trim($params['options']) : '';
+$max_length = (isset($params['max_length'])) ? max(1, (int)$params['max_length']) : -1;
 
 if (isset($params['submit'])) {
     $error = false;
@@ -39,14 +27,21 @@ if (isset($params['submit'])) {
     }
 
     if( !$error ) {
-        $max = $db->GetOne('SELECT max(item_order) + 1 FROM ' . CMS_DB_PREFIX . 'module_news_fielddefs');
-        if( $max == null ) $max = 1; //sql return value null
+        $order = $db->GetOne('SELECT MAX(item_order) + 1 FROM ' . CMS_DB_PREFIX . 'module_news_fielddefs');
+        if( $order == null ) { $order = 1; } //sql return value null
 
-        $now = trim($db->DBTimeStamp(time()), "'");
-        $extra = array('options'=>$arr_options);
-        $query = 'INSERT INTO '.CMS_DB_PREFIX.'module_news_fielddefs (name, type, max_length, item_order, create_date, modified_date, public, extra) VALUES (?,?,?,?,?,?,?,?)';
-        $parms = array($name, $type, $max_length, $max, $now, $now, $public, serialize($extra));
-        $db->Execute($query, $parms);
+        $props = array();
+        if( $options ) {
+            $props['options'] = news_admin_ops::optionstext_to_array($options);
+        }
+        if( $max_length > 0 ) {
+            $props['max_length'] = $max_length;
+        }
+        $extra = ($props) ? serialize($props) : null;
+
+        $now = $db->DBTimeStamp(time());
+        $query = 'INSERT INTO '.CMS_DB_PREFIX."module_news_fielddefs (name, type, item_order, create_date, modified_date, public, extra) VALUES (?,?,?,$now,$now,?,?)";
+        $db->Execute($query, array($name, $type, $order, $public, $extra));
 
         // put mention into the admin log
         $fdid = $db->Insert_ID();
@@ -67,21 +62,19 @@ $tpl = $smarty->createTemplate("module_file_tpl:$modname;editfielddef.tpl", null
 $tpl->assign('title', $this->Lang('addfielddef'));
 $tpl->assign('startform', $this->CreateFormStart($id, 'admin_addfielddef', $returnid));
 $tpl->assign('endform', $this->CreateFormEnd());
+$tpl->assign('showtypechooser', true);
 $tpl->assign('nametext', $this->Lang('name'));
 $tpl->assign('typetext', $this->Lang('type'));
 $tpl->assign('maxlengthtext', $this->Lang('maxlength'));
-$tpl->assign('showinputtype', true);
 $tpl->assign('info_maxlength', $this->Lang('info_maxlength'));
 $tpl->assign('userviewtext', $this->Lang('public'));
 
 $tpl->assign('name', $name);
 $tpl->assign('fieldtypes', $this->GetFieldTypes());
 $tpl->assign('type', $type);
-$tpl->assign('max_length', $max_length);
+if( $max_length > 0 ) { $tpl->assign('max_length', $max_length); }
 $tpl->assign('public', $public);
 $tpl->assign('options', $options);
-
-//$tpl->assign('mod',$this);
 $tpl->display();
 
 // EOF
