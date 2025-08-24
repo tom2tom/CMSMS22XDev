@@ -62,9 +62,9 @@ catch( Exception $e ) {
 }
 
 // Remove any uploads
-$fp = cms_join_path($config['uploads_path'],'news');
-if( is_dir($fp) ) {
-  recursive_delete($fp);
+$p = cms_join_path($config['uploads_path'],'news');
+if( is_dir($p) ) {
+  recursive_delete($p);
 }
 
 ?>
