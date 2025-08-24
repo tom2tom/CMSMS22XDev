@@ -46,11 +46,17 @@
 <h3>field Object Reference</h3>
 <p>The news_field object contains data about the fields and their values that are associated with a particular news article.</p>
 <ul class="helptext">
-  <li>id (integer)  = The id of the field definition</li>
-  <li>name (string) = The name of the field</li>
-  <li>type (string) = The type of field</li>
-  <li>max_length (integer) = The maximum length of the field (applicable only to text fields)</li>
-  <li>item_order (integer) = The order of the field</li>
-  <li>public (integer) = A flag indicating wether the field is public or not</li>
-  <li>value (mixed)    = The value of the field.</li>
+  <li>alias (string)        = Munged variant of name</li>
+  <li>create_date (string)  = Formatted like Y-m-d H:i:s</li>
+  <li>displayvalue (string) = Displayable value, sometimes a derivative of value</li>
+  <li>fielddef_id (integer) = Alias of id</li>
+  <li>id (integer)          = The numeric id of the field definition</li>
+  <li>item_order (integer)  = The display order of the field</li>
+  <li>max_length (integer)  = The maximum length of the field (applicable only to text fields)</li>
+  <li>modified_date (string) = Formatted like Y-m-d H:i:s or empty</li>
+  <li>name (string)        = The name of the field</li>
+  <li>options (array)      = Dropdown field options</li>
+  <li>public (integer)     = A flag indicating whether the field is public</li>
+  <li>type (string)        = One of checkbox,dropdown,file,linkedfile,textarea or textbox</li>
+  <li>value (mixed)        = The value of the field.</li>
 </ul>
