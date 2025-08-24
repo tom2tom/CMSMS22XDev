@@ -98,7 +98,7 @@ class FileTypeHelper
      *
      * @param string $member One of (_image_extensions, _audio_extensions,
      *  _video_extensions, _xml_extensions, _document_extensions, _exe_extensions)
-     * @param string $str A comma separated string of extensions for that file type
+     * @param string $str Comma-separated (case-insensitive) extensions for that file type
      */
     protected function update_config_extensions( $member, $str = '' )
     {
@@ -106,9 +106,9 @@ class FileTypeHelper
         if( !$str ) return;
 
         $out = $this->$member;
-        $list = explode(',',$str);
+        $list = explode(',', strtolower($str));
         foreach( $list as $one ) {
-            $one = strtolower(trim($one));
+            $one = trim($one);
             if( !$one || in_array($one, $out) ) continue;
             $out[] = $one;
         }
