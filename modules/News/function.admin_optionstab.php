@@ -1,33 +1,27 @@
 <?php
-if( !isset($gCms) ) exit;
+#CMSMS News module function
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#The license at the top of file News.module.php applies to this file.
 
-// CreateFormStart sets up a proper form tag that will cause the submit to
-// return control to this module for processing.
+if( !isset($gCms) ) exit;
+if( !$this->CheckPermission('Modify Site Preferences') ) return; // or a new Modify News Settings permission
+
 $tpl->assign('startform', $this->CreateFormStart($id, 'updateoptions', $returnid));
 $tpl->assign('endform', $this->CreateFormEnd());
 
-$tpl->assign('title_formsubmit_emailaddress',$this->Lang('formsubmit_emailaddress'));
-$tpl->assign('formsubmit_emailaddress',$this->GetPreference('formsubmit_emailaddress',''));
+$tpl->assign('title_fesubmit_emailaddress',$this->Lang('formsubmit_emailaddress'));
+$tpl->assign('fesubmit_emailaddress',$this->GetPreference('fesubmit_emailaddress'));
 
 $tpl->assign('title_email_subject',$this->Lang('email_subject'));
-$tpl->assign('email_subject',$this->GetPreference('email_subject',''));
+$tpl->assign('email_subject',$this->GetPreference('email_subject'));
 
 $tpl->assign('title_email_template',$this->Lang('email_template'));
 $tpl->assign('email_template',$this->GetTemplate('email_template'));
 
-$categorylist = array();
-$query = "SELECT * FROM ".CMS_DB_PREFIX."module_news_categories ORDER BY hierarchy";
-$dbresult = $db->Execute($query);
-if ($dbresult) {
-    while ($row = $dbresult->FetchRow()) {
-        $categorylist[$row['long_name']] = $row['news_category_id'];
-    }
-    $dbresult->Close();
-}
-
 $tpl->assign('title_default_category', $this->Lang('default_category'));
-$tpl->assign('categorylist',array_flip($categorylist));
-$tpl->assign('default_category',$this->GetPreference('default_category'));
+$categorylist = $db->GetAssoc('SELECT news_category_id,COALESCE(long_name,news_category_name) FROM '.CMS_DB_PREFIX.'module_news_categories ORDER BY hierarchy');
+$tpl->assign('categorylist',$categorylist);
+$tpl->assign('default_category',$this->GetPreference('default_category'),1);
 
 $tpl->assign('title_allowed_upload_types',$this->Lang('allowed_upload_types'));
 $tpl->assign('allowed_upload_types',$this->GetPreference('allowed_upload_types'));
@@ -41,7 +35,7 @@ $tpl->assign('title_allow_summary_wysiwyg',$this->Lang('allow_summary_wysiwyg'))
 $tpl->assign('allow_summary_wysiwyg',$this->GetPreference('allow_summary_wysiwyg',1));
 
 $tpl->assign('title_expiry_interval',$this->Lang('expiry_interval'));
-$tpl->assign('expiry_interval',$this->GetPreference('expiry_interval',180));
+$tpl->assign('expiry_interval',$this->GetPreference('expiry_interval',30));
 
 $tpl->assign('title_expired_searchable',$this->Lang('expired_searchable'));
 $tpl->assign('expired_searchable',$this->GetPreference('expired_searchable'));
@@ -74,4 +68,4 @@ $tpl->assign('title_fesubmit_settings',$this->Lang('title_fesubmit_settings'));
 $tpl->assign('title_notification_settings',$this->Lang('title_notification_settings'));
 $tpl->assign('title_detail_settings',$this->Lang('title_detail_settings'));
 $tpl->assign('allow_fesubmit',$this->GetPreference('allow_fesubmit',0));
-$tpl->assign('alert_drafts',$this->GetPreference('alert_drafts',0));
+$tpl->assign('alert_drafts',$this->GetPreference('alert_drafts',1));
