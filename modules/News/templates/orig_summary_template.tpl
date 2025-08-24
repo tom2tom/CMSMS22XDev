@@ -11,7 +11,7 @@
 {/if}
 <li{if $node.index == 0} class="firstnewscat"{/if}>
 {if $node.count > 0}
-	<a href="{$node.url}">{$node.news_category_name}</a>{else}<span>{$node.news_category_name} </span>{/if}
+  <a href="{$node.url}">{$node.news_category_name}</a>{else}<span>{$node.news_category_name} </span>{/if}
 {/foreach}
 {repeat string="</li></ul>" times=$node.depth-1}</li>
 </ul>
@@ -34,10 +34,10 @@
 {/if}
 </p>
 {/if}
+{*news_image src='/News/someimagefile' width=30*}
 {foreach $items as $entry}
+{*if !empty($entry->image_url)}article-image handling stuff{/if*}
 <div class="NewsSummary">
-
-{*if !empty($entry->image_url)}TODO article-image handling{/if*}
 
 {if $entry->postdate}
   <div class="NewsSummaryPostdate">
@@ -46,7 +46,7 @@
 {/if}
 
 <div class="NewsSummaryLink">
-{* note, for security purposes, because News articles can come from untrused sources, we do not pass the title through smarty in the default templates *}
+{* note, for security purposes, because News articles can come from untrused sources, we do not pass the title through Smarty in the default templates *}
 <a href="{$entry->moreurl}" title="{$entry->title|cms_escape:'htmlall'}">{$entry->title|cms_escape}</a>
 </div>
 
@@ -61,7 +61,7 @@
 {/if}
 
 {if $entry->summary}
-{* note, for security purposes, because News articles can come from untrused sources, we do not pass the summary through smarty in the default templates *}
+{* note, for security purposes, because News articles can come from untrusted sources, we do not pass the summary through Smarty in the default templates *}
   <div class="NewsSummarySummary">
     {$entry->summary}
   </div>
@@ -70,37 +70,34 @@
     [{$entry->morelink}]
   </div>
 
-{else if $entry->content}
-{* note, for security purposes, because News articles can come from untrused sources, we do not pass the content through smarty in the default templates *}
+{elseif $entry->content}
+{* note, for security purposes, because News articles can come from untrusted sources, we do not pass the content through Smarty in the default templates *}
   <div class="NewsSummaryContent">
     {$entry->content}
   </div>
 {/if}
 
-{if isset($entry->extra)}
+{if !empty($entry->extra)}
   <div class="NewsSummaryExtra">
     {$entry->extra}
   </div>
 {/if}
 {if !empty($entry->fields)}
   {foreach $entry->fields as $field}
-  <div class="NewsSummaryField">
-    {if $field->type == 'file'}
-{* assume the field value is an image to be displayed *}
+   <div class="NewsSummaryField">
+    {strip}{if $field->type == 'file'}
       {if !empty($field->value)}
-      <img src="{$entry->file_location}/{$field->value}" alt="{$field->value}">
+{* assume the field value is an image to be displayed *}
+      {$field->name}:&nbsp;<img src="{$entry->file_location}/{$field->value}" alt="{$field->value}">
       {/if}
     {elseif $field->type == 'linkedfile'}
-{* also assume this one's an image *}
       {if !empty($field->value)}
-      <img src="{file_url file=$field->value}" alt="{$field->value}">
+      <a href="{file_url file=$field->value}" title="{$field->displayvalue}">{$field->name}</a>
       {/if}
-    {elseif $field->type == 'checkbox'}
-      {$field->name}:&nbsp;{if $field->value}Yes{else}No{/if}
     {else}
       {$field->name}:&nbsp;{$field->displayvalue}
-    {/if}
-  </div>
+    {/if}{/strip}
+   </div>
   {/foreach}
 {/if}
 
