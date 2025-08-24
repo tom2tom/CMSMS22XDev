@@ -53,6 +53,7 @@ if ($url) {
 	$url = urldecode($url);
 	//this validation should be in a standalone function, for use by
 	//both add- and edit-bookmark scripts
+	//see also cms_utils::validate_url()
 	$url = str_replace('[ROOT_URL]', CMS_ROOT_URL, $url);
 	$extsub = substr($urlext, 1);
 	if (strpos($url, '[SECURITYTAG]') !== false) { // deprecated
@@ -60,6 +61,7 @@ if ($url) {
 	}
 
 	// mimic FILTER_SANITIZE_URL, but allowing relevant valid UTF-8 and extended-ASCII chars
+	// see also cms_utils::cleanUrlPath(), cms_utils::validate_url()
 	if (preg_match('/[^\x20-\x7e\pL\p{Nd}\p{Po}\x82-\x84\x88\x8a\x8c\x8e\x91-\x94\x96-\x98\x9a\x9c\x9e\x9f\xa8\xad\xb4\xb7\xb8\xc0-\xf6\xf8-\xff]/u', $url)) {
 		unset($_POST['addbookmark']);
 		$error = lang('illegalcharacters', lang('url'));
