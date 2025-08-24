@@ -266,7 +266,7 @@ class OneElevenTheme extends CmsAdminThemeBase
 		$smarty->assign('pagetitle', $title);
 		$smarty->assign('subtitle', $this->subtitle);
 		$alias = $this->get_value('pagetitle');
-		$smarty->assign('pagealias', ($alias ? munge_string_to_url($alias) : ''));
+		$smarty->assign('pagealias', ($alias ? munge_string_to_url($alias) : '')); //for use in classname
 
 		// module name?
 		if (($module_name = $this->get_value('module_name'))) {
