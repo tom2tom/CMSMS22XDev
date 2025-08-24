@@ -30,11 +30,11 @@ define('MINIMUM_REPOSITORY_VERSION','1.5');
 
 class ModuleManager extends CMSModule
 {
-  const _dflt_request_url = 'https://www.cmsmadesimple.org/ModuleRepository/request/v2/';
+  const _dflt_request_url = 'https://www.cmsmadesimple.org/ModuleRepository/request/v2'; // no trailing '/'
 
-  public function GetName() { return get_class($this); }
+  public function GetName() { return 'ModuleManager'; }
   public function GetFriendlyName() { return $this->Lang('friendlyname'); }
-  public function GetVersion() { return '2.1.10'; }
+  public function GetVersion() { return '2.1.11'; }
   public function GetHelp() { return $this->Lang('help'); }
   public function GetAuthor() { return 'Robert Campbell'; }
   public function GetAuthorEmail() { return ''; }
