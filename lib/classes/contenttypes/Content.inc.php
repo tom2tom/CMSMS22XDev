@@ -174,8 +174,11 @@ class Content extends ContentBase
 				$val = $params[$oneparam];
 				switch( $oneparam ) {
 				case 'pagedata':
-					// verbatim
-					// TODO sanitize c.f. content parts of editusertag.php
+					// verbatim TODO OR sanitize c.f. content parts of editusertag.php
+					break;
+				case 'image':
+				case 'thumbnail':
+					// verbatim TODO OR ensure absolute url if stored as root-relative
 					break;
 				default:
 					if( $blocks && isset($blocks[$oneparam]) ) {
@@ -414,17 +417,20 @@ class Content extends ContentBase
 	 * Given information about a single property this method returns that property
 	 *
 	 * @param string $one The property name
-	 * @param string $adding A flag indicating whether or not we are in add or edit mode
-	 * @return array consisting of two elements: A label, and the input element HTML and javascript.
+	 * @param string $adding A flag indicating whether we are in add mode False = edit
+	 * @return array with 2 members:
+	 *  [0] label element, typically accompanied by a cms_help tag
+	 *  [1] HTML input element(s) and related javascript.
 	 * @internal
 	 */
-	protected function display_single_element($one,$adding)
+	protected function display_single_element($one,$adding,$pmac,$pown,$paed)
 	{
 		static $_designs;
 		static $_types;
 		static $_designtree;
 		static $_designlist;
 		static $_templates;
+		//TODO no help and disabled input(s) if user not authorised per args $pmac etc
 		if( $_designlist == null ) { // i.e. static var not yet assigned
 			$_tpl = CmsLayoutTemplate::template_query(array('as_list'=>1));
 			if( is_array($_tpl) && count($_tpl) > 0 ) {
@@ -516,9 +522,7 @@ class Content extends ContentBase
 						  <input id="id_disablewysiwyg" type="checkbox" name="disable_wysiwyg" value="1"'.($disable_wysiwyg==1?' checked':'').'>');
 
 		case 'wantschildren':
-			$uid = get_userid(FALSE);
-			if ( check_permission($uid,'Manage All Content') ||
-				ContentOperations::get_instance()->CheckPageOwnership($uid,$this->mId) ) {
+			if ( $pmac || $pown ) {
 				$wantschildren = $this->WantsChildren();
 				$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_page_wantschildren',lang('help_title_page_wantschildren'));
 				return array('<label for="id_wantschildren">'.lang('wantschildren').':</label>'.$help,
@@ -538,7 +542,7 @@ class Content extends ContentBase
 			}
 			else {
 				// call the parent class
-				return parent::display_single_element($one,$adding);
+				return parent::display_single_element($one,$adding,$pmac,$pown,$paed);
 			}
 		}
 	}
@@ -564,13 +568,14 @@ class Content extends ContentBase
 		$adminonly = cms_to_bool($this->_get_param($blockInfo,'adminonly',0));
 		if( $adminonly ) {
 			$uid = get_userid(FALSE);
-			$res = \UserOperations::get_instance()->UserInGroup($uid,1);
+			$res = \UserOperations::get_instance()->UserInGroup($uid,1); //OR bullet-proof ->IsSuperuser($uid) ?
 			if( !$res ) return '';
 		}
+        //TODO relevance of distinct parameters-source
 		$adminonly = cms_to_bool(get_parameter_value($blockInfo,'adminonly',0));
 		if( $adminonly ) {
 			$uid = get_userid(FALSE);
-			$res = \UserOperations::get_instance()->UserInGroup($uid,1);
+			$res = \UserOperations::get_instance()->UserInGroup($uid,1); //OR bullet-proof ->IsSuperuser($uid) ?
 			if( !$res ) return '';
 		}
 		if( $this->Id() < 1 && empty($value) ) {
@@ -625,15 +630,15 @@ class Content extends ContentBase
 		$adminonly = cms_to_bool($this->_get_param($blockInfo,'adminonly',0));
 		if( $adminonly ) {
 			$uid = get_userid(FALSE);
-			$res = \UserOperations::get_instance()->UserInGroup($uid,1);
+			$res = \UserOperations::get_instance()->UserInGroup($uid,1); //OR bullet-proof ->IsSuperuser($uid) ?
 			if( !$res ) return '';
 		}
 		$config = \cms_config::get_instance();
-		$dir = $config['uploads_path'];
+		$dir = $config['uploads_path']; //TODO also support $config['image_uploads_path']
+		$rp1 = realpath($dir);
 		$adddir = get_site_preference('contentimage_path');
 		if( !empty($blockInfo['dir']) ) { $adddir = $blockInfo['dir']; }
 		if( $adddir ) { $dir .= DIRECTORY_SEPARATOR . trim($adddir, ' \\/'); }
-		$rp1 = realpath($config['uploads_path']);
 		$rp2 = realpath($dir);
 
 		if( !startswith($rp2,$rp1) ) {
@@ -649,12 +654,12 @@ class Content extends ContentBase
 		$filepicker = \cms_utils::get_filepicker_module();
 		if( $filepicker ) {
 			$profile_name = get_parameter_value($blockInfo,'profile');
-			$profile = $filepicker->get_profile_or_default($profile_name, $dir, get_userid() );
-			$parms = ['top'=>$dir, 'type'=>'image' ];
+			$profile = $filepicker->get_profile_or_default($profile_name,$dir,get_userid());
+			$parms = ['top'=>$dir, 'type'=>'image'];
 			if( $sort ) $parms['sort'] = TRUE;
 			if( $prefix ) $parms['exclude_prefix'] = $prefix;
-			$profile = $profile->overrideWith( $parms );
-			$input = $filepicker->get_html( $inputname, $value, $profile);
+			$profile = $profile->overrideWith($parms);
+			$input = $filepicker->get_html($inputname,$value,$profile);
 			return $input;
 		}
 		else {
@@ -676,7 +681,7 @@ class Content extends ContentBase
 		$adminonly = cms_to_bool($this->_get_param($blockInfo,'adminonly',0));
 		if( $adminonly ) {
 			$uid = get_userid(FALSE);
-			$res = \UserOperations::get_instance()->UserInGroup($uid,1);
+			$res = \UserOperations::get_instance()->UserInGroup($uid,1); //OR bullet-proof ->IsSuperuser($uid) ?
 			if( !$res ) return [];
 		}
 
