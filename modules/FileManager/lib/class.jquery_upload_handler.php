@@ -14,7 +14,7 @@
 
 abstract class jquery_upload_handler
 {
-    private $options;
+    protected $options;
 
     function __construct($options = []) {
         $this->options = array(
@@ -95,7 +95,7 @@ abstract class jquery_upload_handler
         $new_width = $img_width * $scale;
         $new_height = $img_height * $scale;
         $new_img = @imagecreatetruecolor($new_width, $new_height);
-        // TODO c.f. typehelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','webp','avif','heif','svg'
+        // TODO c.f. FileTypeHelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','ico','webp','avif','heif','svg','apng'
         switch (strtolower(substr(strrchr($file_name, '.'), 1))) {
             case 'jpg':
             case 'jpeg':

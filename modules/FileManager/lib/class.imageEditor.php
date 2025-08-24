@@ -36,7 +36,7 @@ final class imageEditor
 	public static function resize($image, $mimeType, $image_width, $image_height)
 	{
 		$newImage = @imagecreatetruecolor($image_width, $image_height);
-		// c.f. typehelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff'.'tif','webp','avif','heif','svg'
+		// c.f. FileTypeHelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','ico','webp','avif','heif','svg','apng'
 		if ($mimeType && ($mimeType == 'image/gif' || $mimeType == 'image/png')) {
 			//Keep transparency
 			imagecolortransparent($newImage, imagecolorallocatealpha($newImage, 0, 0, 0, 127));
@@ -63,7 +63,7 @@ final class imageEditor
 	public static function crop($image, $mimeType, $crop_x, $crop_y, $crop_width, $crop_height)
 	{
 		$newImage = @imagecreatetruecolor($crop_width, $crop_height);
-		// c.f. typehelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff'.'tif','webp','avif','heif','svg'
+		// c.f. FileTypeHelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','ico','webp','avif','heif','svg','apng'
 		if ($mimeType && ($mimeType == 'image/gif' || $mimeType == 'image/png')) {
 			//Keep transparency
 			imagecolortransparent($newImage, imagecolorallocatealpha($newImage, 0, 0, 0, 127));
@@ -88,7 +88,7 @@ final class imageEditor
 		if (!$info) {
 			return '';
 		}
-		// c.f. typehelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff'.'tif','webp','avif','heif','svg'
+		// c.f. FileTypeHelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','ico','webp','avif','heif','svg','apng'
 		$mime = image_type_to_mime_type($info[2]); //OR mime_content_type($path)
 		switch ($mime) {
 			case 'image/jpeg':
@@ -135,7 +135,7 @@ final class imageEditor
 		if (!$mimeType){
 			return "Invalid image type"; //TODO langify this e.g send lang key
 		}
-		// c.f. typehelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff'.'tif','webp','avif','heif','svg'
+		// c.f. FileTypeHelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','ico','webp','avif','heif','svg','apng'
 		switch ($mimeType) {
 			case 'image/jpeg':
 				return imagecreatefromjpeg($path);
@@ -167,7 +167,7 @@ final class imageEditor
 	 */
 	public static function save($image, $path, $mimeType)
 	{
-		// TODO c.f. typehelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','webp','avif','heif','svg'
+		// TODO c.f. FileTypeHelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','ico','webp','avif','heif','svg','apng'
 		switch ($mimeType) {
 			case 'image/jpeg':
 				return imagejpeg($image, $path);
