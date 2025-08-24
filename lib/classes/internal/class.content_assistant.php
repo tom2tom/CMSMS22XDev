@@ -56,26 +56,27 @@ class content_assistant
 
 
   /**
-   * A utility function to test if the supplied url path is valid for the supplied content id
+   * A utility function to test if the supplied urlpath is acceptable
+   * for the supplied content id. Checks content and uniqueness.
    *
-   * @param string The partial url path to test
+   * @param string The url path to test
+   * @param mixed int | numeric string | '' $content_id Default ''
    * @return bool
    */
   public static function is_valid_url($url,$content_id = '')
   {
-    // check for starting or ending slashes
-    if( startswith($url,'/') || endswith($url,'/') ) return FALSE;
+    if( $url[0] == '/') return FALSE; // trailing '/' ok
 
-    // first check for invalid chars.
-	if( munge_string_to_url($url,TRUE,TRUE) != $url ) return FALSE;
+    // check for invalid char(s).
+    if( $url != cms_utils::cleanUrlPath($url) ) return FALSE;
 
-     // now check for duplicates.
     cms_route_manager::load_routes();
+    // check for duplicate. See also $contentops->CheckAliasUsed($url,(int)$content_id)
     $route = cms_route_manager::find_match($url,TRUE);
     if( !$route ) return TRUE;
     if( $route->is_content() ) {
-		if($content_id == '' || ($route->get_content() == $content_id)) return TRUE;
-	}
+      if( $content_id == '' || $content_id == $route->get_content() ) return TRUE;
+    }
     return FALSE;
   }
 } // end of class

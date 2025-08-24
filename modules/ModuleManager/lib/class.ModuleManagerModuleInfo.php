@@ -162,8 +162,9 @@ class ModuleManagerModuleInfo extends CmsExtendedModuleInfo implements ArrayAcce
 
     public static function get_all_module_info($can_check_forge = TRUE)
     {
-        if( is_array(self::$_minfo) ) return self::$_minfo;
-
+        if( is_array(self::$_minfo) ) {
+            return self::$_minfo;
+        }
         $ops = ModuleOperations::get_instance();
         $allknownmodules = $ops->FindAllModules();
 
@@ -171,7 +172,7 @@ class ModuleManagerModuleInfo extends CmsExtendedModuleInfo implements ArrayAcce
         $out = array();
         foreach( $allknownmodules as $module_name ) {
             try {
-                $info = new ModuleManagerModuleInfo($module_name,TRUE,$can_check_forge);
+                $info = new self($module_name,TRUE,$can_check_forge);
                 $out[$module_name] = $info;
             }
             catch( \Exception $e ) {
@@ -186,8 +187,9 @@ class ModuleManagerModuleInfo extends CmsExtendedModuleInfo implements ArrayAcce
     public static function get_module_info($module)
     {
         $tmp = self::get_all_module_info();
-        if( isset($tmp[$module]) ) return $tmp[$module];
-
+        if( isset($tmp[$module]) ) {
+            return $tmp[$module];
+        }
         return [];
     }
 
