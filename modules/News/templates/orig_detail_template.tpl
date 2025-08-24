@@ -3,6 +3,7 @@
   {* note this syntax ensures that the canonical variable is set into global scope *}
   {$canonical=$entry->canonical scope=global}
 {/if}
+{*news_image src='some image url' width=30 etc*}
 {*if !empty($entry->image_url)}article-image handling stuff{/if*}
 {if $entry->postdate}
   <div id="NewsPostDetailDate">
@@ -14,6 +15,7 @@
 <hr id="NewsPostDetailHorizRule">
 
 {if $entry->summary}
+{* note, for security purposes we do not pass the summary through Smarty before display. This is because articles can come from untrusted sources. *}
   <div id="NewsPostDetailSummary">
     <strong>
       {$entry->summary}
@@ -33,7 +35,7 @@
 {/if}
 
 <div id="NewsPostDetailContent">
-{* note, for security purposes we do not pass the content through Smarty before displaying it.  This is because articles can come from untrusted sources. *}
+{* note, for security purposes we do not pass the content through Smarty before display. This is because articles can come from untrusted sources. *}
   {$entry->content}
 </div>
 
@@ -45,20 +47,18 @@
 {if !empty($entry->fields)}
   {foreach $entry->fields as $field}
    <div class="NewsDetailField">
-    {if $field->type == 'file'}
+    {strip}{if $field->type == 'file'}
 {* this template assumes that every file-field value is an image of some sort, because News doesn't distinguish *}
       {if !empty($field->value)}
-      <img src="{$entry->file_location}/{$field->value}" alt="{$field->value}">
+      {$field->name}:&nbsp;<img src="{$entry->file_location}/{$field->value}" alt="{$field->value}">
       {/if}
     {elseif $field->type == 'linkedfile'}
       {if !empty($field->value)}
-      <img src="{file_url file=$field->value}" alt="{$field->value}">
+      <a href="{file_url file=$field->value}" title="{$field->displayvalue}">{$field->name}</a>
       {/if}
-    {elseif $field->type == 'checkbox'}
-      {$field->name}:&nbsp;{if $field->value}Yes{else}No{/if}
     {else}
       {$field->name}:&nbsp;{$field->displayvalue}
-    {/if}
+    {/if}{/strip}
    </div>
   {/foreach}
 {/if}

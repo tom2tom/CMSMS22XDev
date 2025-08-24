@@ -1,12 +1,11 @@
-{* this is a sample detail template that works with the Simplex theme *}
+{* this is a sample news-detail template that works with the Simplex theme *}
 {* set a canonical variable that can be used in the head section if process_whole_template is false in the config.php *}
 {if isset($entry->canonical)}
   {$canonical=$entry->canonical scope=global}
   {$main_title=$entry->title scope=global}
 {/if}
-
-{*if !empty($entry->image_url)}TODO article-image handling{/if*}
-{* <h2>{$entry->title|cms_escape:'htmlall'}</h2> *}
+{*news_image src='/news/somepath/somefile.png' width=30 example image tag *}
+{* <h2>{$entry->title|cms_escape:'htmlall'}</h2> example title *}
 {if $entry->summary}
   {$entry->summary}
 {/if}
@@ -17,21 +16,18 @@
 {if !empty($entry->fields)}
   {foreach $entry->fields as $field}
    <div>
-    {if $field->type == 'file'}
+    {strip}{if $field->type == 'file'}
 {* this template assumes that every file-field value is an image of some sort, because News doesn't distinguish *}
      {if !empty($field->value)}
-      <img src="{$entry->file_location}/{$field->value}" alt="{$field->value}">
+      {$field->name}: <img src="{$entry->file_location}/{$field->value}" alt="{$field->value}">
      {/if}
     {elseif $field->type == 'linkedfile'}
-{* also assume this one's an image *}
      {if !empty($field->value)}
-      <img src="{file_url file=$field->value}" alt="{$field->value}">
+      <a href="{file_url file=$field->value}" title="{$field->displayvalue}">{$field->name}</a>
      {/if}
-    {elseif $field->type == 'checkbox'}
-      {$field->name}: {if $field->value}Yes{else}No{/if}
     {else}
       {$field->name}: {$field->displayvalue}
-    {/if}
+    {/if}{/strip}
    </div>
   {/foreach}
 {/if}
