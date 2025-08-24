@@ -47,7 +47,7 @@ if (isset($_GET["userplugin_id"])) {
             $userplugin_name = $row['userplugin_name'];
         }
 
-        HookManager::do_hook('Core::DeleteUserDefinedTagPre',  [ 'id'=>$userplugin_id, 'name'=>&$userplugin_name] );
+        HookManager::do_hook('Core::DeleteUserDefinedTagPre', ['id'=>$userplugin_id, 'name'=>&$userplugin_name]);
 
         $query = 'SELECT event_id,handler_id,handler_order FROM '.CMS_DB_PREFIX.'event_handlers
                            WHERE tag_name = ?';
@@ -61,11 +61,11 @@ if (isset($_GET["userplugin_id"])) {
                 $eid = $tmp['event_id'];
 
                 $db->Execute($q1,array($hid));
-                $db->Execute($q2,array($tmp['handler_order'],$eid));
+                $db->Execute($q2,array($tmp['handler_order'], $eid));
             }
         }
 
-        $query = "DELETE FROM ".CMS_DB_PREFIX."userplugins where userplugin_id = ?";
+        $query = "DELETE FROM ".CMS_DB_PREFIX."userplugins WHERE userplugin_id = ?";
         $result = $db->Execute($query,array($userplugin_id));
         if ($result) {
             global_cache::clear(get_class(UserTagOperations::get_instance()));

@@ -199,10 +199,10 @@ final class Events
 	{
 		$db = CmsApp::get_instance()->GetDb();
 
-		//Non eof these string-fields may be null-valued
-		$q = 'SELECT e.originator, e.event_name, e.event_id, count(eh.event_id) as usage_count FROM '.CMS_DB_PREFIX.
-			'events e left outer join '.CMS_DB_PREFIX.
-			'event_handlers eh on e.event_id=eh.event_id GROUP BY e.originator, e.event_name, e.event_id ORDER BY originator,event_name';
+		//None of these string-fields may be null-valued
+		$q = 'SELECT e.originator, e.event_name, e.event_id, COUNT(eh.event_id) AS usage_count FROM '.CMS_DB_PREFIX.
+			'events e LEFT JOIN '.CMS_DB_PREFIX.
+			'event_handlers eh ON e.event_id=eh.event_id GROUP BY e.originator, e.event_name, e.event_id ORDER BY originator,event_name';
 
 		$dbresult = $db->Execute( $q );
 		if( $dbresult == false ) return [];

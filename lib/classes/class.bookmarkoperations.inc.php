@@ -174,7 +174,7 @@ class BookmarkOperations
 	{
 		$db = \CmsApp::get_instance()->GetDb();
 
-		$query = "DELETE FROM ".CMS_DB_PREFIX."admin_bookmarks where bookmark_id = ?";
+		$query = "DELETE FROM ".CMS_DB_PREFIX."admin_bookmarks WHERE bookmark_id = ?";
 		$dbresult = $db->Execute($query, array($id));
 		if ($dbresult) return true;
 		return false;
