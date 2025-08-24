@@ -5,39 +5,51 @@
   {$main_title=$entry->title scope=global}
 {/if}
 
+{*if !empty($entry->image_url)}TODO article-image handling{/if*}
 {* <h2>{$entry->title|cms_escape:'htmlall'}</h2> *}
 {if $entry->summary}
-    {$entry->summary}
+  {$entry->summary}
 {/if}
-    {$entry->content}
+  {$entry->content}
 {if $entry->extra}
-    {$extra_label} {$entry->extra}
+  {$extra_label} {$entry->extra}
 {/if}
-{if $return_url}
-    <br>
-    <span class="back">&#8592; {$return_url}{if $category_name} - {$category_link}{/if}</span>
-{/if}
-
-{if isset($entry->fields)}
+{if !empty($entry->fields)}
   {foreach $entry->fields as $field}
-     <div>
-        {if $field->type == 'file'}
-      {* this template assumes that every file uploaded is an image of some sort, because News doesn't distinguish *}
-          <img src="{$entry->file_location}/{$field->value}" alt="">
-        {else}
-          {$field->name}: {$field->value}
-        {/if}
-     </div>
+   <div>
+    {if $field->type == 'file'}
+{* this template assumes that every file-field value is an image of some sort, because News doesn't distinguish *}
+     {if !empty($field->value)}
+      <img src="{$entry->file_location}/{$field->value}" alt="{$field->value}">
+     {/if}
+    {elseif $field->type == 'linkedfile'}
+{* also assume this one's an image *}
+     {if !empty($field->value)}
+      <img src="{file_url file=$field->value}" alt="{$field->value}">
+     {/if}
+    {elseif $field->type == 'checkbox'}
+      {$field->name}: {if $field->value}Yes{else}No{/if}
+    {else}
+      {$field->name}: {$field->displayvalue}
+    {/if}
+   </div>
   {/foreach}
 {/if}
-    <footer class="news-meta">
-    {if $entry->postdate}
-        {$entry->postdate|cms_date_format}
-    {/if}
-    {if $entry->category}
-        <strong>{$category_label}</strong> {$entry->category}
-    {/if}
-    {if $entry->author}
-        <strong>{$author_label}</strong> {$entry->author}
-    {/if}
-    </footer>
+{if $entry->postdate || $entry->category || $entry->author}
+  <footer class="news-meta">
+  {if $entry->postdate}
+    {$entry->postdate|cms_date_format}
+  {/if}
+  {if $entry->category}
+    <strong>{$category_label}</strong> {$entry->category}
+  {/if}
+  {if $entry->author}
+    <strong>{$author_label}</strong> {$entry->author}
+  {/if}
+  </footer>
+{elseif $return_url}
+  <br>
+{/if}
+{if $return_url}
+  <span class="back">&#8592; {$return_url}{if $category_name} - {$category_link}{/if}</span>
+{/if}

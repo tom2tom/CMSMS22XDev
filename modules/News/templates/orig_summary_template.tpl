@@ -24,7 +24,7 @@
 {* if you don't want category browsing on your summary page, remove this line and everything above it *}
 
 {if $pagecount > 1}
-  <p>
+<p>
 {if $pagenumber > 1}
 {$firstpage}&nbsp;{$prevpage}&nbsp;
 {/if}
@@ -37,65 +37,70 @@
 {foreach $items as $entry}
 <div class="NewsSummary">
 
+{*if !empty($entry->image_url)}TODO article-image handling{/if*}
+
 {if $entry->postdate}
-	<div class="NewsSummaryPostdate">
-		{$entry->postdate|cms_date_format}
-	</div>
+  <div class="NewsSummaryPostdate">
+    {$entry->postdate|cms_date_format}
+  </div>
 {/if}
 
 <div class="NewsSummaryLink">
+{* note, for security purposes, because News articles can come from untrused sources, we do not pass the title through smarty in the default templates *}
 <a href="{$entry->moreurl}" title="{$entry->title|cms_escape:'htmlall'}">{$entry->title|cms_escape}</a>
 </div>
 
 <div class="NewsSummaryCategory">
-	{$category_label} {$entry->category}
+  {$category_label} {$entry->category}
 </div>
 
 {if $entry->author}
-	<div class="NewsSummaryAuthor">
-		{$author_label} {$entry->author}
-	</div>
+  <div class="NewsSummaryAuthor">
+    {$author_label} {$entry->author}
+  </div>
 {/if}
 
 {if $entry->summary}
-{* note, for security purposes, incase News articles can come from untrused sources, we do not pass the summary or content through smarty in the default templates *}
-	<div class="NewsSummarySummary">
-		{$entry->summary}
-	</div>
+{* note, for security purposes, because News articles can come from untrused sources, we do not pass the summary through smarty in the default templates *}
+  <div class="NewsSummarySummary">
+    {$entry->summary}
+  </div>
 
-	<div class="NewsSummaryMorelink">
-		[{$entry->morelink}]
-	</div>
+  <div class="NewsSummaryMorelink">
+    [{$entry->morelink}]
+  </div>
 
 {else if $entry->content}
-{* note, for security purposes, incase News articles can come from untrused sources, we do not pass the summary or content through smarty in the default templates *}
-	<div class="NewsSummaryContent">
-		{$entry->content}
-	</div>
+{* note, for security purposes, because News articles can come from untrused sources, we do not pass the content through smarty in the default templates *}
+  <div class="NewsSummaryContent">
+    {$entry->content}
+  </div>
 {/if}
 
 {if isset($entry->extra)}
-    <div class="NewsSummaryExtra">
-        {$entry->extra}
-{*      {cms_module module='Uploads' mode='simpleurl' upload_id=$entry->extravalue} *}
-    </div>
+  <div class="NewsSummaryExtra">
+    {$entry->extra}
+  </div>
 {/if}
 {if !empty($entry->fields)}
   {foreach $entry->fields as $field}
-     <div class="NewsSummaryField">
-        {if $field->type == 'file'}
-          {if !empty($field->value)}
-            <img src="{$entry->file_location}/{$field->value}">
-          {/if}
-        {elseif $field->type == 'linkedfile'}
-          {* also assume it's an image... *}
-          {if !empty($field->value)}
-            <img src="{file_url file=$field->value}" alt="{$field->value}">
-          {/if}
-        {else}
-          {$field->name}:&nbsp;{$field->value}
-        {/if}
-     </div>
+  <div class="NewsSummaryField">
+    {if $field->type == 'file'}
+{* assume the field value is an image to be displayed *}
+      {if !empty($field->value)}
+      <img src="{$entry->file_location}/{$field->value}" alt="{$field->value}">
+      {/if}
+    {elseif $field->type == 'linkedfile'}
+{* also assume this one's an image *}
+      {if !empty($field->value)}
+      <img src="{file_url file=$field->value}" alt="{$field->value}">
+      {/if}
+    {elseif $field->type == 'checkbox'}
+      {$field->name}:&nbsp;{if $field->value}Yes{else}No{/if}
+    {else}
+      {$field->name}:&nbsp;{$field->displayvalue}
+    {/if}
+  </div>
   {/foreach}
 {/if}
 
