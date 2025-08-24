@@ -1,4 +1,8 @@
 <?php
+#CMSMS News module action: approvearticle
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#The license at the top of file News.module.php applies to this file.
+
 if( !isset($gCms) ) exit();
 if( !$this->CheckPermission('Approve News') ) exit();
 
@@ -46,7 +50,7 @@ if( is_object($search) ) {
       $flds = $db->GetArray($query,array($articleid));
       if( is_array($flds) ) {
         for( $i = 0; $i < count($flds); $i++ ) {
-          $text .= ' '.$flds[$i]['value'];
+          $text .= ' '.$flds[$i]['displayvalue'];
         }
       }
 
