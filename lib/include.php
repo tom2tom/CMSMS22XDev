@@ -39,8 +39,6 @@
  * CMS_LOGIN_PAGE     - Indicates that the file was included from the admin login form.
  */
 
-$dirname = __DIR__;
-
 define('CMS_DEFAULT_VERSIONCHECK_URL', 'https://www.cmsmadesimple.org/latest_version.php');
 define('CMS_SECURE_PARAM_NAME', '__c'); // this is used for CSRF protection
 define('CMS_USER_KEY', '_userkey_'); // this is used for CSRF protection
@@ -90,19 +88,20 @@ array_walk($_SERVER, $sanitize_fn);
 array_walk($_GET, $sanitize_fn);
 
 // include some stuff
-require_once $dirname . DIRECTORY_SEPARATOR . 'compat.functions.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'misc.functions.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'version.php'; // tells us where the config file is and other things.
-require_once $dirname . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'class.CmsException.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'class.HookManager.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'class.cms_config.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'class.CmsApp.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'autoloader.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'module.functions.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'page.functions.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'content.functions.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'translation.functions.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'html_entity_decode_php4.php';
+$dirname = __DIR__ . DIRECTORY_SEPARATOR;
+require_once $dirname . 'compat.functions.php';
+require_once $dirname . 'misc.functions.php';
+require_once $dirname . 'version.php'; // tells us where the config file is and other things.
+require_once $dirname . 'classes' . DIRECTORY_SEPARATOR . 'class.CmsException.php';
+require_once $dirname . 'classes' . DIRECTORY_SEPARATOR . 'class.HookManager.php';
+require_once $dirname . 'classes' . DIRECTORY_SEPARATOR . 'class.cms_config.php';
+require_once $dirname . 'classes' . DIRECTORY_SEPARATOR . 'class.CmsApp.php';
+require_once $dirname . 'autoloader.php';
+require_once $dirname . 'module.functions.php';
+require_once $dirname . 'page.functions.php';
+require_once $dirname . 'content.functions.php';
+require_once $dirname . 'translation.functions.php';
+require_once $dirname . 'html_entity_decode_php4.php';
 
 debug_buffer('done loading basic files');
 
@@ -132,7 +131,7 @@ if( isset($CMS_ADMIN_PAGE) ) {
     }
 }
 
-require_once($dirname.DIRECTORY_SEPARATOR.'std_hooks.php');
+require_once $dirname . 'std_hooks.php';
 
 // new for 2.0 ... this creates a mechanism whereby items can be cached automatically, and fetched (or calculated) via the use of a callback
 // if the cache is too old, or the cached value has been cleared or not yet been saved.
@@ -242,7 +241,7 @@ if( !isset($DONT_LOAD_SMARTY) ) {
     static $lang = null;
     if( $lang === null ) {
         // once per request
-        $smarty->assign('sitename', cms_siteprefs::get('sitename', 'CMSMS Site')); //Global deprecated Smarty5+
+        $smarty->assign('sitename', cms_siteprefs::get('sitename', 'CMSMS Site'));
 
         $lang = '';
         $ldir = 'ltr';
