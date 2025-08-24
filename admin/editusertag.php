@@ -61,7 +61,7 @@ if( isset($_POST['submit']) || isset($_POST['apply']) ) {
     if( $record['userplugin_name'] == '' ) {
         $error[] = lang('nofieldgiven',array(lang('name')));
     }
-    elseif( preg_match('<^[ a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$>',$record['userplugin_name']) == 0 ) { //TODO === 0 OR != 1 ?
+    elseif( preg_match('<^[a-zA-Z_ \x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$>',$record['userplugin_name']) == 0 ) { //TODO === 0 OR != 1 ?
         $error[] = lang('error_udt_name_chars');
     }
     else {

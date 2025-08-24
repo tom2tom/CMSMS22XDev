@@ -28,7 +28,7 @@ if (!$access) {
   exit(lang('no_permission')); //TODO throw if can be caught
 }
 
-include_once("header.php");
+include_once "header.php";
 
 require_once cms_join_path(dirname(__DIR__), 'lib', 'test.functions.php');
 
@@ -36,8 +36,6 @@ $gCms = cmsms();
 $smarty = $gCms->GetSmarty(); //also in header.php
 $smarty->caching = false;
 $smarty->force_compile = true;
-$db = $gCms->GetDb();
-
 $smarty->assign('theme', $themeObject);
 
 /*
@@ -46,7 +44,7 @@ $smarty->assign('theme', $themeObject);
  *
  */
 
-
+$db = $gCms->GetDb();
 $query = "SHOW TABLES LIKE ?";
 $tablestmp = $db->GetArray($query,array(CMS_DB_PREFIX.'%'));
 $tables = array();
@@ -136,7 +134,7 @@ if (count($errortables) > 0) {
  * Cache and content
  *
  */
-$contentops = cmsms()->GetContentOperations();
+$contentops = $gCms->GetContentOperations();
 
 if (isset($_POST['updateurls'])) {
   cms_route_manager::rebuild_static_routes();
@@ -146,7 +144,7 @@ if (isset($_POST['updateurls'])) {
 }
 
 if (isset($_POST['clearcache'])) {
-  cmsms()->clear_cached_files(-1);
+  $gCms->clear_cached_files(-1);
   audit('', 'System maintenance', 'Smarty page-content caches cleared');
 //TODO also do $contentops->SetContentModified();
   $themeObject->ShowMessage(lang("cachecleared"));
@@ -171,56 +169,43 @@ foreach ($contenttypes as $typeid => $typename) {
 
 if (isset($_POST["addaliases"])) {
   $count = 0;
-  $query = "SELECT * FROM " . CMS_DB_PREFIX . "content";
-  $allcontent = $db->Execute($query);
+  $query = "SELECT content_id,content_name,type,menu_text,content_alias FROM " . CMS_DB_PREFIX . "content WHERE content_alias IS NULL OR content_alias=''";
+  $allcontent = $db->GetArray($query);
   if ($allcontent) {
-    while ($contentpiece = $allcontent->FetchRow()) {
+    $query2 = "UPDATE " . CMS_DB_PREFIX . "content SET content_alias=? WHERE content_id=?";
+    foreach ($allcontent as $contentpiece) {
       foreach( [
         'content_name',
         'type',
-        'hierarchy',
         'menu_text',
-        'content_alias',
-        'id_hierarchy',
-        'hierarchy_path',
-        'prop_names',
-        'metadata',
-        'titleattribute',
-        'tabindex',
-        'accesskey',
-        'page_url'
+        'content_alias'
       ] as $fld ) {
         if ($contentpiece[$fld] === null) $contentpiece[$fld] = '';
       }
       $content_id = (int)$contentpiece['content_id'];
-      if (trim($contentpiece['content_alias']) == '' && $contentpiece['type'] != 'separator' ) {
-
+      if (trim($contentpiece['content_alias']) == '' && $contentpiece['type'] != 'separator') {
         $alias = trim($contentpiece['menu_text']);
         if ($alias == '') {
           $alias = trim($contentpiece['content_name']);
         }
-
-        $tolower = true;
-        $alias = munge_string_to_url($alias, $tolower);
-        if ($contentops->CheckAliasError($alias, $content_id)) {
+        $alias = munge_string_to_url($alias, true);
+        if (!$alias) continue; //TODO throw
+        if ($contentops->CheckAliasUsed($alias, $content_id)) {
+          // Some other page uses it already, generate a suffixed variant
           $alias_num_add = 2;
-          // If a '-2' version of the alias already exists
-          // Check the '-3' version etc.
-          while ($contentops->CheckAliasError($alias . '-' . $alias_num_add)) {
+          // If a '-2' variant of the alias is used, try '-3', etc.
+          while ($contentops->CheckAliasUsed($alias . '-' . $alias_num_add)) {
             $alias_num_add++;
           }
           $alias .= '-' . $alias_num_add;
         }
-        $query2 = "UPDATE " . CMS_DB_PREFIX . "content SET content_alias=? WHERE content_id=?"; //TODO prepared statement for this
-        $params2 = array($alias, $content_id);
-        $dbresult = $db->Execute($query2, $params2);
+        $dbresult = $db->Execute($query2, array($alias, $content_id));
         $count++;
-
       }
     }
-    $allcontent->Close();
-    if ($count > 0) { $contentops->SetAllHierarchyPositions(); } // update hierarchy_path's
+    $contentops->SetAllHierarchyPositions(); // update hierarchy_path's
   }
+
   audit('', 'System maintenance', "Updated $count page(s) whose alias was missing");
   $themeObject->ShowMessage($count . " " . lang("sysmain_aliasesfixed"));
   $smarty->assign("active_content", "true");
@@ -230,18 +215,16 @@ if (isset($_POST["addaliases"])) {
 if (isset($_POST["fixtypes"])) {
   $count = 0;
   $query = "SELECT content_id,type FROM " . CMS_DB_PREFIX . "content";
-  $allcontent = $db->Execute($query);
+  $allcontent = $db->GetArray($query);
   if ($allcontent) {
-    while ($contentpiece = $allcontent->FetchRow()) {
-      if (!isset($contentpiece['type']) ||
+    $query2 = "UPDATE " . CMS_DB_PREFIX . "content SET type='content' WHERE content_id=?";
+    foreach ($allcontent as $contentpiece) {
+      if (!$contentpiece['type'] ||
           !in_array($contentpiece['type'], $simpletypes)) {
-        $query2 = "UPDATE " . CMS_DB_PREFIX . "content SET type='content' WHERE content_id=?";
-        $params2 = array($contentpiece['content_id']);
-        $dbresult = $db->Execute($query2, $params2);
+        $dbresult = $db->Execute($query2, array($contentpiece['content_id']));
         $count++;
       }
     }
-    $allcontent->Close();
   }
 
   audit('', 'System maintenance', "Converted $count page(s) with invalid content type");
@@ -250,27 +233,17 @@ if (isset($_POST["fixtypes"])) {
 }
 
 
-$query = "SELECT * FROM " . CMS_DB_PREFIX . "content";
-$allcontent = $db->Execute($query);
 $pages = array();
 $withoutalias = array();
 $invalidtypes = array();
+$query = "SELECT content_name,type,content_alias FROM " . CMS_DB_PREFIX . "content ORDER BY hierarchy_path";
+$allcontent = $db->GetArray($query);
 if ($allcontent) {
-  while ($contentpiece = $allcontent->FetchRow()) {
+  foreach ($allcontent as $contentpiece) {
     foreach( [
       'content_name',
       'type',
-      'hierarchy',
-      'menu_text',
       'content_alias',
-      'id_hierarchy',
-      'hierarchy_path',
-      'prop_names',
-      'metadata',
-      'titleattribute',
-      'tabindex',
-      'accesskey',
-      'page_url'
     ] as $fld ) {
       if ($contentpiece[$fld] === null) $contentpiece[$fld] = '';
     }
@@ -281,16 +254,14 @@ if ($allcontent) {
     if (!in_array($contentpiece['type'], $simpletypes)) {
       $invalidtypes[] = $contentpiece;
     }
-    //print_r($contentpiece);
   }
-  $allcontent->Close();
 }
-$smarty->assignByRef("pagesmissingalias", $withoutalias);
-$smarty->assignByRef("pageswithinvalidtype", $invalidtypes);
 
 $smarty->assign("pagecount", count($pages));
-$smarty->assign("invalidtypescount", count($invalidtypes));
+$smarty->assign("pagesmissingalias", $withoutalias);
 $smarty->assign("withoutaliascount", count($withoutalias));
+$smarty->assign("pageswithinvalidtype", $invalidtypes);
+$smarty->assign("invalidtypescount", count($invalidtypes));
 
 /*
  *
@@ -303,7 +274,7 @@ if (is_readable($ch_filename)) {
     $changelog = @file($ch_filename);
 
     for ($i = 0, $n = count($changelog); $i < $n; $i++) {
-      if (substr($changelog[$i], 0, 7) == "Version") {
+      if (strncmp($changelog[$i], "Version", 7) == 0) {
         if ($i == 0) {
           $changelog[$i] = "<div class=\"version\"><h3>" . $changelog[$i] . "</h3>";
         } else {
@@ -323,6 +294,6 @@ $smarty->assign('backurl', $themeObject->BackUrl());
 
 $smarty->display('systemmaintenance.tpl');
 
-include_once("footer.php");
+include_once "footer.php";
 
 ?>

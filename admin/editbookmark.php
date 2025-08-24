@@ -41,21 +41,23 @@ if (isset($_POST['url'])) {
 if ($url) {
 	$url = html_entity_decode($url);
 	$url = urldecode($url);
-	//this validation should be in a standalone function, for use by both
-	//add- and edit-bookmark scripts
+	//this validation should be in a standalone function, for use by
+	//both add- and edit-bookmark scripts
+	//see also cms_utils::validate_url()
 	$url = str_replace('[ROOT_URL]', CMS_ROOT_URL, $url);
 	$extsub = substr($urlext, 1);
 	if (strpos($url, '[SECURITYTAG]') !== false) { // deprecated
-		$url = str_replace('[SECURITYTAG]', $extsub, $url);
+		$url = str_replace('[SECURITYTAG]', $extsub, $url); // allow parsing
 	}
 
-	// mimic FILTER_SANITIZE_URL, allowing valid UTF-8 and extended-ASCII chars
-	if (preg_match('/[^\x21-\x7e\p{L}\p{N}\p{Po}\x82-\x84\x88\x8a\x8c\x8e\x91-\x94\x96-\x98\x9a\x9c\x9e\x9f\xa8\xad\xb4\xb7\xb8\xc0-\xf6\xf8-\xff]/u', $url)) {
+	// mimic FILTER_SANITIZE_URL, but allowing relevant valid UTF-8 and extended-ASCII chars
+	// see also cms_utils::cleanUrlPath(), cms_utils::validate_url()
+	if (preg_match('/[^\x20-\x7e\pL\p{Nd}\p{Po}\x82-\x84\x88\x8a\x8c\x8e\x91-\x94\x96-\x98\x9a\x9c\x9e\x9f\xa8\xad\xb4\xb7\xb8\xc0-\xf6\xf8-\xff]/u', $url)) {
 		unset($_POST['editbookmark']);
 		$error .= '<li>'.lang('illegalcharacters', lang('url')).'</li>';
 	}
 	else {
-		$validurl = function(string $checkurl, array $blockhosts = []): bool {
+		$validurl = function($checkurl, array $blockhosts = []) {
 			$parts = parse_url($checkurl);
 			if ($parts) {
 				if (empty($parts['scheme'])) {
@@ -63,6 +65,7 @@ if ($url) {
 				}
 				$val = strtolower($parts['scheme']);
 				// lots of valid schemes https://en.wikipedia.org/wiki/List_of_URI_schemes
+				// TODO also exclude ws[s]?
 				if (in_array($val, [
 				'attachment',
 				'blob',
@@ -82,34 +85,37 @@ if ($url) {
 				])) {
 					return false;
 				}
-				// some typo checks
-				similar_text($val, 'https', $p1);
-				$near = ($p1 > 60 && $p1 < 100);
-				if ($near) {
-					similar_text($val, 'http', $p2);
-					$near = ($p2 > 60 && $p2 < 100);
+/*
+				// typo? TODO send correction upstream
+				$p1 = 0.0;
+				foreach (['https', 'http'] as $check) {
+					similar_text($val, $check, $p1);
+					if ($p1 > 60 && $p1 < 100) {
+//						$url = str_replace($val, $check, $url);
+//						$val = $check;
+						break;
+					}
 				}
-				if ($near) {
-					return false;
-				}
-
-				if (empty($parts['host'])
-				 || in_array($parts['host'], $blockhosts)) {
+*/
+				if (empty($parts['host']) ||
+					($blockhosts && in_array(strtolower($parts['host']), array_map('strtolower', $blockhosts)))) { // caseless check
 					return false;
 				}
 				//TODO other sanity checks, malevolence checks
 				//e.g. refer to https://owasp.org/www-community/attacks/Forced_browsing
 				//www.example.com/function.jsp?fwd=admin.jsp
 				//www.example.com/example.php?url=http://malicious.example.com
+				//TODO other url-part(s) ok ? i.e. port user pass query fragment
 				return true;
 			}
 			return false;
 		};
 
+		$reported = false;
+
 		//$sitehost = parse_url(CMS_ROOT_URL, PHP_URL_HOST);
 		//treated as ok for frontend urls (MAMS aside?)
-		//TODO blacklisted hosts?
-		$reported = false;
+		//TODO blacklisted hosts? e.g. a site-preference
 		if (!$validurl($url, [])) {
 			unset($_POST['editbookmark']);
 			$error .= '<li>'.lang('error_badfield', lang('url')).'</li>';

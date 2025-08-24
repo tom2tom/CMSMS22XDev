@@ -666,26 +666,14 @@ $smarty->assign('use_smartycache',$use_smartycache);
 $smarty->assign('use_smartycompilecheck',$use_smartycompilecheck);
 
 $tmp = array(
-  60*60*24=>lang('adminlog_1day'),
-  60*60*24*7=>lang('adminlog_1week'),
-  60*60*24*14=>lang('adminlog_2weeks'),
-  60*60*24*31=>lang('adminlog_1month'),
-  60*60*24*31*3=>lang('adminlog_3months'),
-  60*60*24*31*6=>lang('adminlog_6months'),
+  3600*24=>lang('adminlog_1day'),
+  3600*24*7=>lang('adminlog_1week'),
+  3600*24*14=>lang('adminlog_2weeks'),
+  3600*24*31=>lang('adminlog_1month'),
+  3600*24*31*3=>lang('adminlog_3months'),
+  3600*24*31*6=>lang('adminlog_6months'),
   -1=>lang('adminlog_manual'));
 $smarty->assign('adminlog_options',$tmp);
-
-$smarty->assign('lang_autoclearcache',lang('autoclearcache'));
-
-$smarty->assign('lang_cancel',lang('cancel'));
-$smarty->assign('lang_submit',lang('submit'));
-$smarty->assign('lang_clearcache',lang('clearcache'));
-$smarty->assign('lang_clear',lang('clear'));
-$smarty->assign('lang_frontendlang',lang('frontendlang'));
-$smarty->assign('lang_frontendwysiwygtouse',lang('frontendwysiwygtouse'));
-$smarty->assign('lang_template',lang('template'));
-$smarty->assign('lang_date_format_string_help',lang('date_format_string_help'));
-$smarty->assign('lang_info_sitedownexcludes',lang('info_sitedownexcludes'));
 
 $all_attributes = [];
 $content_obj = new Content(); // TODO should this be the default type?
@@ -719,8 +707,8 @@ $smarty->assign('titlemenu',$titlemenu);
 $smarty->assign('backurl', $themeObject->backUrl());
 $smarty->assign('formurl', $thisurl);
 
-# begin output
+// begin output
 $smarty->display('siteprefs.tpl');
-include_once("footer.php");
+include_once "footer.php";
 
 ?>
