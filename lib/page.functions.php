@@ -127,7 +127,7 @@ function check_permission($userid, $permname)
 
 /**
  * Checks that the given userid is the owner of the given contentid.
- * (members of the admin group have all permission)
+ * (the superuser and members of the admin group have all permissions and are akin to owners)
  *
  * @internal
  * @since 0.1
@@ -138,7 +138,7 @@ function check_permission($userid, $permname)
 function check_ownership($userid, $contentid = '')
 {
     $userops = UserOperations::get_instance();
-    $adminuser = $userops->UserInGroup($userid,1);
+    $adminuser = $userops->UserInGroup($userid,1); // OR bullet-proof ->IsSuperuser($userid);
     if( $adminuser ) return true;
 
     return ContentOperations::get_instance()->CheckPageOwnership($userid,$contentid);
@@ -284,16 +284,15 @@ function set_site_preference($prefname, $value)
  * A function to create a text area control
  *
  * @internal
- * @access private
- * @param boolean $enablewysiwyg Wether or not we are enabling a wysiwyg.  If false, and forcewysiwyg is not empty then a syntax area is used.
+ * @param bool    $enablewysiwyg Wether or not we are enabling a wysiwyg.  If false, and forcewysiwyg is not empty then a syntax area is used.
  * @param string  $text The contents of the text area
  * @param string  $name The name of the text area
  * @param string  $classname An optional class name
  * @param string  $id An optional ID (HTML ID) value
  * @param string  $encoding The optional encoding
  * @param string  $stylesheet Optional style information
- * @param integer $width Width (the number of columns) (CSS can and will override this)
- * @param integer $height Height (the number of rows) (CSS can and will override this)
+ * @param int     $width Width (the number of columns) (CSS can and will override this)
+ * @param int     $height Height (the number of rows) (CSS can and will override this)
  * @param string  $forcewysiwyg Optional name of the syntax hilighter or wysiwyg to use.  If empty, preferences indicate which a syntax editor or wysiwyg should be used.
  * @param string  $wantedsyntax Optional name of the language used.  If non empty it indicates that a syntax highlihter will be used.
  * @param string  $addtext Optional additional text to include in the textarea tag
@@ -421,28 +420,25 @@ function create_file_dropdown($name,$dir,$value,$allowed_extensions,$optprefix='
  *
  * @internal
  * @ignore
- * @access private
+ * @param ?string $getid Reference to null-valued variable, possibly populated here
  * @return string
  */
-function get_pageid_or_alias_from_url()
+function get_pageid_or_alias_from_url(&$getid)
 {
     $config = \cms_config::get_instance();
-    $contentops = ContentOperations::get_instance();
-    $smarty = \Smarty_CMS::get_instance();
-
-    $params = $_REQUEST;
-    if (isset($params['mact'])) {
-        $ary = explode(',', cms_htmlentities((string) $params['mact']), 4);
-        $smarty->id = (isset($ary[1])?$ary[1]:'');
-    }
-
-    $wanted = FALSE;
     $query_var = $config['query_var'];
-    if (isset($smarty->id) && isset($params[$smarty->id . 'returnid'])) {
-        // get page from returnid parameter in module action
-        $page = (int)$params[$smarty->id . 'returnid'];
+    $contentops = ContentOperations::get_instance();
+    $wanted = FALSE;
+
+    if (isset($_REQUEST['mact'])) {
+        $ary = explode(',', cms_htmlentities((string) $_REQUEST['mact']), 4);
+        $getid = (isset($ary[1])?$ary[1]:'');
+        if (isset($_REQUEST[$getid . 'returnid'])) {
+            // get page from returnid parameter in module action
+            $page = (int)$_REQUEST[$getid . 'returnid'];
+        }
     }
-    else if( isset($_REQUEST[$query_var]) ) {
+    elseif( isset($_REQUEST[$query_var]) ) {
         // using non friendly urls... get the page alias/id from the query var.
         $page = @trim((string) $_REQUEST[$query_var]);
         $wanted = TRUE;
@@ -454,7 +450,7 @@ function get_pageid_or_alias_from_url()
         if (isset($_SERVER['REQUEST_URI']) && !endswith($_SERVER['REQUEST_URI'], 'index.php')) {
             $matches = array();
             if (preg_match('/.*index\.php\/(.*?)$/', $_SERVER['REQUEST_URI'], $matches)) {
-                // pretty urls... grab all the stuff after the index.php
+                // pretty url... grab all the stuff after the index.php
                 $page = $matches[1];
             }
         }
@@ -483,7 +479,7 @@ function get_pageid_or_alias_from_url()
     $page = trim($page, '/');
 
     // check whether a route matches
-    $route = cms_route_manager::find_match($page);
+    $route = cms_route_manager::find_match($page); //TODO exact route if appropriate e.g. content page
     if( is_object($route) ) {
         if( $route->is_content() ) {
             // a route to a page
@@ -518,7 +514,7 @@ function get_pageid_or_alias_from_url()
             // add a mact to $_REQUEST so that subsequent operations can grab it
             $_REQUEST['mact'] = $matches['module'] . ',' . $matches['id'] . ',' . $matches['action'] . ',' . $matches['inline'];
 
-            $smarty->id = $matches['id'];
+            $getid = $matches['id'];
             $page = $matches['returnid'];
         }
     }
