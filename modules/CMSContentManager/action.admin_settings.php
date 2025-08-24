@@ -31,6 +31,7 @@ $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_settings.tpl", nu
 require __DIR__.DIRECTORY_SEPARATOR.'function.admin_general_tab.php';
 require __DIR__.DIRECTORY_SEPARATOR.'function.admin_listsettings_tab.php';
 require __DIR__.DIRECTORY_SEPARATOR.'function.admin_pagedefaults_tab.php';
+require __DIR__.DIRECTORY_SEPARATOR.'function.admin_globalsettings_tab.php';
 
 if( empty($seetab) ) {
     $seetab = (!empty($params['__activetab'])) ? $params['__activetab'] : '';
