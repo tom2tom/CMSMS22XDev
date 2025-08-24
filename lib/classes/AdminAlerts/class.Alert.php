@@ -165,7 +165,7 @@ abstract class Alert
             break;
 
         default:
-            throw new \InvalidArgumentException("$key is not a settable member of ".get_class($this));
+            throw new \LogicException("$key is not a settable member of ".get_class($this));
         }
     }
 
