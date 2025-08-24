@@ -36,14 +36,9 @@ $(function() {
   $('#_preview_').on('click', function() {
     if( typeof tinymce !== 'undefined') tinymce.triggerSave(); // TODO create a "save editor content" API that can be generally used
     var data = $('#Edit_Content').find('input:not([type="submit"]), select, textarea').serializeArray();
-    data.push({
-      'name': '{$actionid}preview',
-      'value': 1
-    },
-    {
-      'name': '{$actionid}ajax',
-      'value': 1
-    });
+    data.push(
+      { 'name': "{$actionid}preview", 'value': 1 },
+      { 'name': "{$actionid}ajax", 'value': 1 });
     $.post('{$preview_ajax_url}&showtemplate=false', data, function(resultdata, text) {
       if( typeof resultdata !== 'undefined' && resultdata && resultdata.response == 'Error' ) {
         $('#previewframe').attr('src','about:blank').hide();
@@ -111,14 +106,9 @@ $(function() {
     // apply does not do an unlock.
     if( typeof tinymce !== 'undefined') tinymce.triggerSave(); // TODO create a "save editor content" API that can be generally used
     var data = $('#Edit_Content').find('input:not([type=submit]), select, textarea').serializeArray();
-    data.push({
-      'name': '{$actionid}ajax',
-      'value': 1
-    },
-    {
-      'name': '{$actionid}apply',
-      'value': 1
-    });
+    data.push(
+     { 'name': "{$actionid}apply", 'value': 1 },
+     { 'name': "{$actionid}ajax", 'value': 1 });
     $.ajax({
       type: 'POST',
       url: '{$apply_ajax_url}',
