@@ -40,7 +40,7 @@
       <input type="hidden" name="{$actionid}allow_summary_wysiwyg" value="0">
       <p class="pagetext"><label for="fld4">{$title_allow_summary_wysiwyg}: {cms_help key='help_opt_allow_summary_wysiwyg' title=$title_allow_summary_wysiwyg}</label></p>
       <p class="pageinput">
-        <input type="checkbox" id="fld4" name="{$actionid}allow_summary_wysiwyg" value="1" {if $allow_summary_wysiwyg} checked{/if}>
+        <input type="checkbox" id="fld4" name="{$actionid}allow_summary_wysiwyg" value="1"{if $allow_summary_wysiwyg} checked{/if}>
       </p>
     </div>
     <div class="pageoverflow">
@@ -79,9 +79,9 @@
       <legend>{$title_notification_settings}</legend>
       <div class="information">{$mod->Lang('info_fesubmit_notification')}</div>
       <div class="pageoverflow">
-        <p class="pagetext"><label for="fld6">{$title_formsubmit_emailaddress}:</label></p>
+        <p class="pagetext"><label for="fld6">{$title_fesubmit_emailaddress}:</label></p>
         <p class="pageinput">
-          <input type="text" id="fld6" name="{$actionid}formsubmit_emailaddress" value="{$formsubmit_emailaddress|cms_escape}" size="50" maxlength="255">
+          <input type="text" id="fld6" name="{$actionid}fesubmit_emailaddress" value="{$fesubmit_emailaddress|cms_escape}" size="50" maxlength="255">
         </p>
       </div>
       <div class="pageoverflow">
