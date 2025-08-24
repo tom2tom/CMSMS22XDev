@@ -186,20 +186,20 @@ final class ModuleOperations
         };
 
         $fh = fopen($dir."/moduleinfo.ini",'w');
-        fputs($fh,"[module]\n");
-        fputs($fh,$to_string('name',$modinstance->GetName()));
-        fputs($fh,$to_string('version',$modinstance->GetVersion()));
-        //fputs($fh,$to_string('description',$modinstance->GetAdminDescription())); // language sensitive.
-        fputs($fh,$to_string('author',$modinstance->GetAuthor()));
-        fputs($fh,$to_string('authoremail',$modinstance->GetAuthorEmail()));
-        fputs($fh,$to_string('mincmsversion',$modinstance->MinimumCMSVersion()));
-        fputs($fh,$to_string('lazyloadadmin',($modinstance->LazyLoadAdmin())?'1':'0'));
-        fputs($fh,$to_string('lazyloadfrontend',($modinstance->LazyLoadFrontend())?'1':'0'));
+        fwrite($fh,"[module]\n");
+        fwrite($fh,$to_string('name',$modinstance->GetName()));
+        fwrite($fh,$to_string('version',$modinstance->GetVersion()));
+        //fwrite($fh,$to_string('description',$modinstance->GetAdminDescription())); // language sensitive.
+        fwrite($fh,$to_string('author',$modinstance->GetAuthor()));
+        fwrite($fh,$to_string('authoremail',$modinstance->GetAuthorEmail()));
+        fwrite($fh,$to_string('mincmsversion',$modinstance->MinimumCMSVersion()));
+        fwrite($fh,$to_string('lazyloadadmin',($modinstance->LazyLoadAdmin())?'1':'0'));
+        fwrite($fh,$to_string('lazyloadfrontend',($modinstance->LazyLoadFrontend())?'1':'0'));
         $depends = $modinstance->GetDependencies();
         if( is_array($depends) && count($depends) ) {
-            fputs($fh,"[depends]\n");
+            fwrite($fh,"[depends]\n");
             foreach( $depends as $key => $val ) {
-                fputs($fh,$to_string($key,$val));
+                fwrite($fh,$to_string($key,$val));
             }
         }
         fclose($fh);
