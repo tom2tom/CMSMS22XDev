@@ -5,8 +5,15 @@ Version 2.2.23F2 - Regina
  - Add to cms_http_request class support for HEAD requests, for use in url validation etc
  - Add method cms_utils::find_content() for finding pages with a wanted value in the whole, or part, of any content field
  - Add class and method Search_content::Find() as the backend processor for cms_utils::find_content()
+ - Improve returned-value formatting in get_parameter_value()
+ - Relocate config.php out of site-root folder
  - Consolidate content-related settings UI: migrate global-settings tab to ContentManager-settings tab
  - Deprecate folder-creation using 0777 permissions (should be 0775 at most, for site security). Unconventional sites which rely on 'world-write' would be wise to prepare, by adding relevant user(s) to the PHP-user's (typically the server-user's) group.
+ - Cancel long-standing deprecation of module method SetParameters and revert it to its original role in help-generation
+ - Main autoloader for classes also handles namespaced interfaces and traits associated with modules
+ - Add capacity to autoload module-re[ated clases etc indepentlty of the module
+ - Correct LoginOperations-class namespace
+ - Progressively update recorded password-hashes
 
 Version 2.2.22F2 - Whitehorse
 -------------------------------
