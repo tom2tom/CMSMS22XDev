@@ -34,7 +34,7 @@ class ResultSet extends \CMSMS\Database\ResultSet
         $this->_fields = [];
     }
 
-    public function Fields( $key = '' )
+    public function Fields($key = '')
     {
         if( $this->_fields ) {
             if( !$key ) return $this->_fields;

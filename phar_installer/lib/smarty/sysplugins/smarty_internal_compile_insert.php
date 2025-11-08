@@ -111,7 +111,7 @@ class Smarty_Internal_Compile_Insert extends Smarty_Internal_CompileBase
             include_once $_filepath;
             if (!is_callable($_function)) {
                 $compiler->trigger_template_error(
-                    " {insert} function '{$_function}' is not callable in script file '{$_script}'",
+                    "{insert} function '{$_function}' is not callable in script file '{$_script}'",
                     null,
                     true
                 );

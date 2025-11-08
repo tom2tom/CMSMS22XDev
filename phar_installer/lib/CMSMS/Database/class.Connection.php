@@ -704,7 +704,7 @@ namespace CMSMS\Database;
             if( !class_exists($connection_class) ) throw new \LogicException('Could not find a database abstraction layer named '.$spec->type);
 
             $obj = new $connection_class($spec);
-            if( !($obj instanceof Connection ) ) throw new \LogicException("$connection_class is not derived from the primary database class.");
+            if( !($obj instanceof Connection) ) throw new \LogicException("$connection_class is not derived from the primary database class.");
             if( $spec->debug ) $obj->SetDebugMode();
             $obj->Connect();
 

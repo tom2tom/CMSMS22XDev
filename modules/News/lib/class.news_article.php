@@ -121,7 +121,8 @@ class news_article
         if( isset($this->_inparams['returnid']) ) {
             $this->_meta['returnid'] = $params['returnid'];
         }
-        elseif( $returnid ) { $this->_meta['returnid'] = $returnid;
+        elseif( $returnid ) {
+            $this->_meta['returnid'] = $returnid;
         }
     }
 

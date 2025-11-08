@@ -83,4 +83,3 @@ class UploadHandler extends jquery_upload_handler
     }
   }
 }
-

@@ -28,8 +28,8 @@ function smarty_function_browser_lang($params, $smarty)
   //
   // get the accepted languages
   //
-  $accept_str = get_parameter_value( $params, 'accepted' );
-  if( !$accept_str ) $accept_str = get_parameter_value( $params, 'accept' );
+  $accept_str = get_parameter_value($params, 'accepted');
+  if( !$accept_str ) $accept_str = get_parameter_value($params, 'accept');
   if( $accept_str ) {
       $tmp = trim($accept_str);
       $tmp = trim($tmp,',');

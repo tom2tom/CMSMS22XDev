@@ -6,4 +6,3 @@ Copyright (C) 1991, 1999 Free Software Foundation, Inc.
 
 Read the full license at
 https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
-

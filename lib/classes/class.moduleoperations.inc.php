@@ -243,8 +243,8 @@ final class ModuleOperations
         $depends = $modinstance->GetDependencies();
         foreach( $depends as $key=>$val ) {
             $xmltxt .= "	<requires>\n";
-            $xmltxt .= "	  <requiredname>$key</requiredname>\n";
-            $xmltxt .= "	  <requiredversion>$val</requiredversion>\n";
+            $xmltxt .= "		<requiredname>$key</requiredname>\n";
+            $xmltxt .= "		<requiredversion>$val</requiredversion>\n";
             $xmltxt .= "	</requires>\n";
         }
         foreach( $files as $file ) {
@@ -254,14 +254,14 @@ final class ModuleOperations
 
             $xmltxt .= "	<file>\n";
             $filespec = $dir.DIRECTORY_SEPARATOR.$file;
-            $xmltxt .= "	  <filename>$file</filename>\n";
+            $xmltxt .= "		<filename>$file</filename>\n";
             if( @is_dir( $filespec ) ) {
-                $xmltxt .= "	  <isdir>1</isdir>\n";
+                $xmltxt .= "		<isdir>1</isdir>\n";
             }
             else {
-                $xmltxt .= "	  <isdir>0</isdir>\n";
+                $xmltxt .= "		<isdir>0</isdir>\n";
                 $data = base64_encode(file_get_contents($filespec));
-                $xmltxt .= "	  <data><![CDATA[".$data."]]></data>\n";
+                $xmltxt .= "		<data><![CDATA[".$data."]]></data>\n";
             }
 
             $xmltxt .= "	</file>\n";
@@ -273,7 +273,6 @@ final class ModuleOperations
         unset($CMSMS_GENERATING_XML);
         return $xmltxt;
     }
-
 
     /**
      * Unpackage a module from an xml string
@@ -443,7 +442,6 @@ final class ModuleOperations
         return $moduledetails;
     }
 
-
     /**
      * @ignore
      */
@@ -480,7 +478,7 @@ VALUES (?,?,?,NOW(),NOW())';
                     $dbr = $db->Execute($query,array($depname,$module_obj->GetName(),$depversion));
                 }
             }
-            $this->_generate_moduleinfo( $module_obj );
+            $this->_generate_moduleinfo($module_obj);
             $this->_moduleinfo = array();
             $gCms->clear_cached_files();
 
@@ -492,7 +490,6 @@ VALUES (?,?,?,NOW(),NOW())';
         // install returned something.
         return array(FALSE,$result);
     }
-
 
     /**
      * Install a module into the database
@@ -528,7 +525,6 @@ VALUES (?,?,?,NOW(),NOW())';
         return $res;
     }
 
-
     /**
      * @ignore
      */
@@ -548,7 +544,7 @@ VALUES (?,?,?,NOW(),NOW())';
                 }
 
                 $all_deps = $this->_get_all_module_dependencies();
-                if( is_array($all_deps) && count($all_deps) ) {
+                if( $all_deps && is_array($all_deps) ) {
                     foreach( $all_deps as $mname => $deps ) {
                         if( is_array($deps) && count($deps) && isset($this->_moduleinfo[$mname]) ) {
                             $minfo =& $this->_moduleinfo[$mname];
@@ -561,7 +557,6 @@ VALUES (?,?,?,NOW(),NOW())';
 
         return $this->_moduleinfo;
     }
-
 
     /**
      * @ignore
@@ -601,7 +596,6 @@ VALUES (?,?,?,NOW(),NOW())';
                 }
             }
         }
-
 
         // now load the module itself.
         if( !class_exists($module_name) ) {
@@ -711,7 +705,6 @@ VALUES (?,?,?,NOW(),NOW())';
         return FALSE;
     }
 
-
     /**
      * Return all modules whose code is present in the modules directory.
      *
@@ -727,12 +720,12 @@ VALUES (?,?,?,NOW(),NOW())';
                 $fn = "$dir/$file/$file.module.php";
                 if( @is_file($fn) ) $result[] = $file;
             }
+            closedir($handle);
+            sort($result);
         }
 
-        sort($result);
         return $result;
     }
-
 
     /**
      * Return the information stored in the database about all installed modules.
@@ -745,6 +738,18 @@ VALUES (?,?,?,NOW(),NOW())';
         return $this->_get_module_info();
     }
 
+    /**
+     * Test if the specified module name is for an installed module
+     * @since 2.2.23F2
+     *
+     * @param string $module_name The module name
+     * @return bool
+     */
+    public function IsModuleInstalled($module_name)
+    {
+        $allinfo = $this->_get_module_info();
+        return ($allinfo) ? isset($allinfo[$module_name]) : false; // no module installed
+    }
 
     /**
      * Load all modules that are available to be loaded.
@@ -756,8 +761,8 @@ VALUES (?,?,?,NOW(),NOW())';
      *
      * @access public
      * @internal
-     * @param noadmin boolean whether to ignore modules marked as
-     *  admin_only in the database. Default false i.e. load all
+     * @param bool $noadmin whether to ignore modules marked as
+     *  admin_only in the database. Default false i.e. load all UNUSED
      */
     public function LoadModules($noadmin = FALSE)
     {
@@ -798,7 +803,7 @@ VALUES (?,?,?,NOW(),NOW())';
     /**
      * @ignore
      */
-    private function _upgrade_module( $module_obj, $to_version = '' )
+    private function _upgrade_module($module_obj, $to_version = '')
     {
         // we can't upgrade a module if the schema is not up to date.
         $gCms = CmsApp::get_instance();
@@ -851,7 +856,6 @@ VALUES (?,?,?,NOW(),NOW())';
         return array(FALSE,$result);
     }
 
-
     /**
      * Upgrade a module
      * @internal This should never be called for upgrading arbitrary modules.
@@ -862,13 +866,12 @@ VALUES (?,?,?,NOW(),NOW())';
      * @param string $to_version The destination version
      * @return bool Whether or not the upgrade was successful
      */
-    public function UpgradeModule( $module_name, $to_version = '')
+    public function UpgradeModule($module_name, $to_version = '')
     {
         $module_obj = $this->get_module_instance($module_name,'',TRUE);
         if( !is_object($module_obj) ) return array(FALSE,lang('errormodulenotloaded'));
         return $this->_upgrade_module($module_obj,$to_version);
     }
-
 
     /**
      * Uninstall a module
@@ -877,7 +880,7 @@ VALUES (?,?,?,NOW(),NOW())';
      * @param string $module The name of the module to upgrade
      * @return array Returns a tuple of whether the install was successful and a message if applicable
      */
-    public function UninstallModule( $module)
+    public function UninstallModule($module)
     {
         $gCms = \CmsApp::get_instance();
         $db = $gCms->GetDb();
@@ -949,7 +952,6 @@ VALUES (?,?,?,NOW(),NOW())';
         return array(FALSE,$result);
     }
 
-
     /**
      * Test if a module is active
      *
@@ -964,7 +966,6 @@ VALUES (?,?,?,NOW(),NOW())';
 
         return (bool)$info[$module_name]['active'];
     }
-
 
     /**
      * Activate a module
@@ -996,7 +997,6 @@ VALUES (?,?,?,NOW(),NOW())';
         return TRUE;
     }
 
-
     /**
      * Return all loaded modules.  This will include all
      * modules loaded into memory at the current time
@@ -1007,7 +1007,6 @@ VALUES (?,?,?,NOW(),NOW())';
     {
         return $this->_modules;
     }
-
 
     /**
      * Return the names of all modules that we currently know about
@@ -1048,7 +1047,6 @@ VALUES (?,?,?,NOW(),NOW())';
         }
         return $result;
     }
-
 
     /**
      * Return installed modules that have the specified capability.
@@ -1136,7 +1134,6 @@ VALUES (?,?,?,NOW(),NOW())';
         return $obj;
     }
 
-
     /**
      * Test if the specified module name is a system module
      *
@@ -1147,7 +1144,6 @@ VALUES (?,?,?,NOW(),NOW())';
     {
         return in_array($module_name,$this->cmssystemmodules);
     }
-
 
     /**
      * Return the current syntax highlighter module object
@@ -1175,7 +1171,6 @@ VALUES (?,?,?,NOW(),NOW())';
         $obj = null;
         return $obj;
     }
-
 
     /**
      * Return the current wysiwyg module object
@@ -1209,7 +1204,6 @@ VALUES (?,?,?,NOW(),NOW())';
         return $obj;
     }
 
-
     /**
      * Return the current search module object
      *
@@ -1225,7 +1219,6 @@ VALUES (?,?,?,NOW(),NOW())';
         if( $module_name && $module_name != 'none' && $module_name != '-1' ) $obj = $this->get_module_instance($module_name);
         return $obj;
     }
-
 
     /**
      * Return the current filepicker module object.
@@ -1243,7 +1236,6 @@ VALUES (?,?,?,NOW(),NOW())';
         return $obj;
     }
 
-
     /**
      * Alias for the GetSyntaxHiglighter method.
      *
@@ -1257,7 +1249,6 @@ VALUES (?,?,?,NOW(),NOW())';
     {
         return $this->GetSyntaxHighlighter($module_name);
     }
-
 
     /**
      * Check whether a module is queued for install.
@@ -1302,7 +1293,6 @@ VALUES (?,?,?,NOW(),NOW())';
         if( !isset($_SESSION['moduleoperations'][$module_name]) ) $_SESSION['moduleoperations'][$module_name] = 1;
     }
 
-
     /**
      * Get list of modules queued for install.
      *
@@ -1319,7 +1309,6 @@ VALUES (?,?,?,NOW(),NOW())';
         }
         return '';
     }
-
 
     /**
      * Unload a module from memory
@@ -1358,6 +1347,6 @@ VALUES (?,?,?,NOW(),NOW())';
 
         return $params;
     }
-} // end of class
+} // class
 
 ?>
