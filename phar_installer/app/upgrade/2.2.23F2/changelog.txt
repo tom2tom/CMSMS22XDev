@@ -1,0 +1,5 @@
+Feature requests
+Extra utils methods including comprehensive content-search
+Consolidate content-related settings UI
+DB-table field adjustments
+Bugfixes
