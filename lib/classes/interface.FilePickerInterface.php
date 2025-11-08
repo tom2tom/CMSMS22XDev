@@ -47,7 +47,7 @@ interface FilePickerInterface
      * Generate HTML to display an input field that is initialized with the filepicker plugin.
      *
      * @param string $name The name for the input field.
-     * @param string $value the current value for the input filed
+     * @param string $value the current value for the input field
      * @param \FilePicker\Profile $profile The profile to use when building the filepicker interface.
      * @return string
      */
