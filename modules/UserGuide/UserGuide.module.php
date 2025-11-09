@@ -92,11 +92,11 @@ class UserGuide extends CMSModule
         }
     }
 
-    public function InitializeAdmin() {}
+//    public function InitializeAdmin() {}
 
     public function InitializeFrontend()
     {
-        $this->RestrictUnknownParams();
+//      $this->RestrictUnknownParams(); does nothing
         $this->SetParameterType('gid', CLEAN_INT);
         $this->SetParameterType('list', CLEAN_STRING);
         $this->SetParameterType('tplid', CLEAN_INT);
