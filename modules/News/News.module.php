@@ -38,7 +38,7 @@ class News extends CMSModule
 
     public function GetHelp()
     {
-        $this->CreateParameter('action', 'default', $this->Lang('helpaction'));
+        $this->CreateParameter('action', 'default', $this->Lang('helpaction')); // always?
         $this->CreateParameter('articleid', '', $this->Lang('help_articleid'));
         $this->CreateParameter('browsecat', 0, $this->Lang('helpbrowsecat'));
         $this->CreateParameter('browsecattemplate', '', $this->Lang('helpbrowsecattemplate'));
@@ -57,6 +57,7 @@ class News extends CMSModule
         $this->CreateParameter('sortby', 'news_date', $this->Lang('helpsortby'));
         $this->CreateParameter('start', 0, $this->Lang('helpstart'));
         $this->CreateParameter('summarytemplate', '', $this->Lang('helpsummarytemplate'));
+        //TODO all Set in InitializeFrontend()
 
         $out = $this->Lang('help');
         $out .= file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'modhelp-extra.htm');
@@ -65,8 +66,7 @@ class News extends CMSModule
 
     public function InitializeFrontend()
     {
-        $this->RestrictUnknownParams();
-
+//      $this->RestrictUnknownParams(); does nothing
         $this->SetParameterType('articleid',CLEAN_INT);
         $this->SetParameterType('assign',CLEAN_STRING);
         $this->SetParameterType('browsecat',CLEAN_INT);
