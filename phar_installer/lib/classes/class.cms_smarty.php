@@ -29,9 +29,10 @@ class cms_smarty extends Smarty
       @mkdir($dirs[$i],0777,TRUE);
       if( !is_dir($dirs[$i]) ) throw new Exception('Required directory '.$dirs[$i].' does not exist');
     }
+    // the installer is a closed system, so no need for Smarty's security mechanisms
     $this->registerPlugin('modifier','tr',array($this,'modifier_tr')); //for Smarty5, wherein unregistered methods are not supported
     // $_call->func(args) can be used in templates instead of func(args) for Smarty5
-    $this->assignGlobal('_call', new Install_TemplateCaller($this)); //for Smarty 4.5.1+, wherein PHP function-calls are deprecated then (in 5+) blocked Deprecated method Smarty5+
+    $this->assignGlobal('_call', new Install_TemplateCaller($this)); //for Smarty 4.5.1+, wherein PHP function-calls are deprecated then (in 5+) blocked
     // _call::class__method(args) can be used in templates instead of unregistered class::method(args) for Smarty 4.5.1+
     $this->registerClass('_call', Install_TemplateCaller::class);
   }
@@ -50,46 +51,31 @@ class cms_smarty extends Smarty
 
 /**
  * Workaround for Smarty5's disabling of all PHP function calls and
- * un-registered static-method calls
+ * un-registered static-method calls in templates
+ * $_call->func(args) can be used instead of an unregistered func(args)
+ * _call::class__method(args) can be used instead of an unregistered class::method(args)
+ * No name-checking (because no security-policy use in the installer)
  * @since 2.2.19F2
  */
 class Install_TemplateCaller
 {
-    private $php_functions; // normally, unset means no use, empty array means no restriction
-    private static $static_classes; // ditto
+  #[\ReturnTypeWillChange]
+  public function __call($name,$args)
+  {
+    return $name(...$args);
+  }
 
-    public function __construct($smarty)
-    {
-        if ($smarty->security_policy) {
-            $this->php_functions = &$smarty->security_policy->php_functions; //TODO check with Smarty5
-            self::$static_classes = &$smarty->security_policy->static_classes; //TODO check with Smarty5
-        } else {
-            // Smarty4 defaults + tr = OK here?
-            $this->php_functions = ['count', 'empty', 'in_array', 'is_array', 'isset', 'sizeof', 'time', 'tr'];
-            self::$static_classes = [];
-        }
+  #[\ReturnTypeWillChange]
+  public static function __callStatic($name, $args)
+  {
+    $pos = strpos($name,'__');
+    if( $pos !== FALSE ) {
+      $classname = substr($name,0,$pos);
+      $name = substr_replace($name,'::',$pos,2); // replace 1st occurrence
+      return $name(...$args);
     }
-
-    #[\ReturnTypeWillChange]
-    public function __call($name, $args)
-    {
-        if (!$this->php_functions || in_array($name, $this->php_functions)) {
-            return $name(...$args);
-        }
-        return "<!-- prohibited function $name called -->";
-    }
-
-    #[\ReturnTypeWillChange]
-    public static function __callStatic($name, $args)
-    {
-        if (self::$static_classes !== null && (!self::$static_classes ||
-           ($classname = substr($name, 0, strpos($name, '__')) && in_array($classname, self::$static_classes)))) {
-            $num = 1;
-            $name = str_replace('__', '::', $name, $num);
-            return $name(...$args);
-        }
-        return "<!-- prohibited static function $name called -->";
-    }
+    return "<!-- malformed static function $name called -->";
+  }
 }
 
 ?>
