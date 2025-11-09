@@ -591,25 +591,90 @@ ORDER BY V.news_id,D.item_order';
       '/\b(on[\w.:\-]{4,})\s*=\s*(["\']?.+?["\']?)/i' => function($matches) {
         return $matches[1].'&#61;'.strtr($matches[2], ['"' => '&#34;', "'" => '&#39;', '(' => '&#40;', ')' => '&#41;']);
       },
-      //callables like class::func
-      '/([a-zA-Z0-9_\x80-\xff]+?)\s*?::\s*?([a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*?)\s*?\(/' => function($matches) {
-        return $matches[1] . '&#58;&#58;' . $matches[1] . '&#40;';
+      //callables like class::method (ignoring any namespace)
+      // letters & numbers'/[a-zA-Z0-9\x83\x88\x8a\x8c\x8e\x9a\x9c\x9e\x9f\xa8\xb8\xc0-\xd6\xd8-\xf6\xf8-\xff\pL\p{Nd}]/u'
+      '/([a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*)\s*::\s*([a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*)\s*\(/m' => function($matches) {
+        return $matches[1].'&#58;&#58;'.$matches[2].'&#40;';
+      },
+      //simple\plain callables (any namespace ignored)
+      '/([a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*?)\s*?\(/' => function($matches) {
+        return $matches[1].'&#40;';
+      },
+      //all callables like `str` aka shell_exec('str') are bad
+      //no reason for Smarty `-enclosed content e.g. `$module.contact` here
+     '/`(.*)`/m' => function($matches) {
+        return '&#96;'.$matches[1].'&#96;'; // or &grave;
+      },
+      //single `
+      '/([^`]*)`([^`]*)/m' => function($matches) {
+        return $matches[1].'&#96;'.$matches[2]; // or &grave;
       },
       // embeds
       '/(embe)(d)/i' => function($matches) {
         return $matches[1].'&#'.ord($matches[2]).';';
       }
-      ] as $regex => $replacer ) {
-        $val = preg_replace_callback($regex, $replacer, $val);
-      }
+    ] as $regex => $replacer ) {
+      $val = preg_replace_callback($regex, $replacer, $val);
+    }
 
     if( $revert ) {
       // preserve valid content like <p>
       $tmp = strtr($val, '<>', "\2\3");
-      $tmp2 = htmlentities($tmp, $flags, 'UTF-8', false);
+      $tmp2 = htmlentities($tmp, $flags, 'UTF-8', false); //this might convert content not previously decoded
       $val = strtr($tmp2, "\2\3", '<>');
     }
     return $val;
+  }
+
+  /**
+   * Validate the specified linkedfile-field value.
+   *
+   * @param string $val Absolute or relative filepath, or url, or empty
+   * @param string $uploadspath Absolute filepath of site uploads folder
+   * @return string $val or adjusted form of $val or false upon error
+   */
+  public static function check_linkedfile($val,$uploadspath)
+  {
+    $tv = trim((string)$val);
+    if( !$tv ) return $tv;
+    if( !preg_match('^(?:[a-z\-]+:)?(?://.*\.[^/]+)$/igm', $tv) ) { // a data: url would pass this test
+      if( startswith($tv, 'data:') ) { return false; } // no data: url for a linked file
+      // it's not an url, process filepath
+      if( !preg_match('~^(?:/|\\|[A-Z]{1,2}:(\\\\|//))~i', $tv) ||
+        ((($c = $tv[0]) == '/' || $c == '\\') && !startswith($tv, CMS_ROOT_PATH)) ) {
+        // it's a relative path
+        $prefix = basename($uploadspath);
+        if( preg_match("~^([\/]\s*?$prefix\s*)[\/]~", $tv, $matches) ) {
+          $tv = str_replace($matches[1], '', $tv); // now uploads-relative
+          $tv = $uploadspath . $tv;
+        } else {
+          $tv = CMS_ROOT_PATH . DIRECTORY_SEPARATOR . ltrim($tv, '\/');
+          // OR poll and use other other relative or a themes-place ?
+        }
+      }
+      if( is_file($tv) && is_readable($tv) ) {
+        $helper = new CMSMS\FileTypeHelper();
+        if( !$helper->is_executable($tv) ) {
+          if( startswith($tv, $uploadspath) ) {
+            return substr($tv, strlen($uploadspath));
+          }
+          return $tv;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    } else {
+      // it's an url
+      $res = cms_utils::validate_url($tv, 'media,document'); //or '!executable'
+      if( $res === true ) {
+        return $tv;
+      } else {
+        // anything more here e.g. log?
+        return false;
+      }
+    }
   }
 
   /**
