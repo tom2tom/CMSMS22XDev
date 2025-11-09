@@ -17,8 +17,8 @@
 
 function smarty_function_anchor($params, $smarty)
 {
-	$to = (isset($params['anchor'])) ? trim($params['anchor']) : '';
-	if( $to === '' ) return '<!-- anchor tag: no anchor provided -->';
+    $to = (isset($params['anchor'])) ? trim($params['anchor']) : '';
+    if( $to === '' ) return '<!-- anchor tag: no anchor provided -->';
 
     //current content useless for runtime-populated pages e.g. News details
     if( !empty($_SERVER['QUERY_STRING']) ) {
@@ -44,11 +44,11 @@ function smarty_function_anchor($params, $smarty)
     if( isset($params['accesskey']) && $params['accesskey'] !== '' ) $accesskey = ' accesskey="'.$params['accesskey'].'"';
 
     $url = preg_replace('/&(?!amp;)/','&amp;',$url.'#'.rawurlencode($to));
-    if( !empty($params['onlyhref']) && cms_to_bool($params['onlyhref']) ) {
+    if( isset($params['onlyhref']) && cms_to_bool($params['onlyhref']) ) {
         $tmp = $url;
     }
     else {
-        $text = trim(get_parameter_value($params,'text'));
+        $text = get_parameter_value($params,'text');
         if( $text === '' ) {
             $text = htmlentities($to).'<!-- anchor tag: no text provided -->';
         }
