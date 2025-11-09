@@ -20,12 +20,12 @@
 $handlers = ob_list_handlers();
 for ($cnt = 0; $cnt < count($handlers); $cnt++) { ob_end_clean(); }
 
-$CMS_ADMIN_PAGE=1;
+$CMS_ADMIN_PAGE = 1;
 require_once("../lib/include.php");
 $ruid = get_userid(FALSE);
 if( !$ruid ) return;
 
-$fh = fopen('php://input','r');
+$fh = fopen('php://input','r'); // TODO don't assume stream is enabled
 $txt = fread($fh,8192);
 $data = '';
 if( $txt ) {
@@ -37,10 +37,11 @@ if( !is_array($data) ) {
 
 $opt = get_parameter_value($data,'opt','setup');
 $type = get_parameter_value($data,'type');
-$oid = get_parameter_value($data,'oid'); // might be 0 or -1
-$uid = get_parameter_value($data,'uid'); // might be 0
-$lock_id = get_parameter_value($data,'lock_id');
-$lifetime = (int) get_parameter_value($data,'lifetime',cms_siteprefs::get('lock_timeout',60));
+$oid = get_parameter_value($data,'oid',0); // might be 0 or -1
+$uid = get_parameter_value($data,'uid',0);
+$lock_id = get_parameter_value($data,'lock_id',0);
+$lifetime = get_parameter_value($data,'lifetime',-1);
+if ($lifetime == -1) $lifetime = (int)cms_siteprefs::get('lock_timeout',60);
 
 $out = array();
 $out['status'] = 'success';
