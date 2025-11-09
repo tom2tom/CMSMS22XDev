@@ -41,106 +41,37 @@ if (isset($_POST['url'])) {
 if ($url) {
 	$url = html_entity_decode($url);
 	$url = urldecode($url);
-	//this validation should be in a standalone function, for use by
-	//both add- and edit-bookmark scripts
-	//see also cms_utils::validate_url()
 	$url = str_replace('[ROOT_URL]', CMS_ROOT_URL, $url);
 	$extsub = substr($urlext, 1);
 	if (strpos($url, '[SECURITYTAG]') !== false) { // deprecated
 		$url = str_replace('[SECURITYTAG]', $extsub, $url); // allow parsing
 	}
 
-	// mimic FILTER_SANITIZE_URL, but allowing relevant valid UTF-8 and extended-ASCII chars
-	// see also cms_utils::cleanUrlPath(), cms_utils::validate_url()
-	if (preg_match('/[^\x20-\x7e\pL\p{Nd}\p{Po}\x82-\x84\x88\x8a\x8c\x8e\x91-\x94\x96-\x98\x9a\x9c\x9e\x9f\xa8\xad\xb4\xb7\xb8\xc0-\xf6\xf8-\xff]/u', $url)) {
+	$res = cms_utils::validate_url($url, '!executable');
+	if ($res !== true) {
+		$error .= '<li>'.$res.'</li>';
 		unset($_POST['editbookmark']);
-		$error .= '<li>'.lang('illegalcharacters', lang('url')).'</li>';
 	}
-	else {
-		$validurl = function($checkurl, array $blockhosts = []) {
-			$parts = parse_url($checkurl);
-			if ($parts) {
-				if (empty($parts['scheme'])) {
-					return false;
-				}
-				$val = strtolower($parts['scheme']);
-				// lots of valid schemes https://en.wikipedia.org/wiki/List_of_URI_schemes
-				// TODO also exclude ws[s]?
-				if (in_array($val, [
-				'attachment',
-				'blob',
-				'chrome',
-				'cid',
-				'data',
-				'dns',
-				'example',
-				'file',
-				'filesystem',
-				'ftp',
-				'query',
-				'sftp',
-				'tel',
-				'tftp',
-				'view-source',
-				])) {
-					return false;
-				}
-/*
-				// typo? TODO send correction upstream
-				$p1 = 0.0;
-				foreach (['https', 'http'] as $check) {
-					similar_text($val, $check, $p1);
-					if ($p1 > 60 && $p1 < 100) {
-//						$url = str_replace($val, $check, $url);
-//						$val = $check;
-						break;
-					}
-				}
-*/
-				if (empty($parts['host']) ||
-					($blockhosts && in_array(strtolower($parts['host']), array_map('strtolower', $blockhosts)))) { // caseless check
-					return false;
-				}
-				//TODO other sanity checks, malevolence checks
-				//e.g. refer to https://owasp.org/www-community/attacks/Forced_browsing
-				//www.example.com/function.jsp?fwd=admin.jsp
-				//www.example.com/example.php?url=http://malicious.example.com
-				//TODO other url-part(s) ok ? i.e. port user pass query fragment
-				return true;
-			}
-			return false;
-		};
 
-		$reported = false;
-
-		//$sitehost = parse_url(CMS_ROOT_URL, PHP_URL_HOST);
-		//treated as ok for frontend urls (MAMS aside?)
-		//TODO blacklisted hosts? e.g. a site-preference
-		if (!$validurl($url, [])) {
+	// revert placeholder if any
+	$url = str_replace($extsub, '[SECURITYTAG]', $url);
+	$config = cms_config::get_instance();
+	if (startswith($url, $config['admin_url'])) {
+		//TODO somewhere apply a permission-check akin to admin menu generation
+		if (strpos($url, '[SECURITYTAG]') === false) {
 			unset($_POST['editbookmark']);
-			$error .= '<li>'.lang('error_badfield', lang('url')).'</li>';
-			$reported = true;
-		}
-
-		$url = str_replace($extsub, '[SECURITYTAG]', $url); // if any
-		$config = cms_config::get_instance();
-		if (startswith($url, $config['admin_url'])) {
-			//TODO somewhere apply a permission-check akin to admin menu generation
-			if (strpos($url, '[SECURITYTAG]') === false) {
-				unset($_POST['editbookmark']);
-				if (!$reported) { // don't repeat same error
-					$error .= '<li>'.lang('error_badfield', lang('url')).'</li>';
-				}
-			}
-		}
-		elseif (strpos($url, '[SECURITYTAG]') !== false) {
-			unset($_POST['editbookmark']);
-			if (!$reported) {
+			if (!$reported) { // don't repeat same error
 				$error .= '<li>'.lang('error_badfield', lang('url')).'</li>';
 			}
 		}
 	}
-}
+	elseif (strpos($url, '[SECURITYTAG]') !== false) {
+		unset($_POST['editbookmark']);
+		if (!$reported) {
+			$error .= '<li>'.lang('error_badfield', lang('url')).'</li>';
+		}
+	}
+} // url
 
 $bookmark_id = -1;
 if (isset($_POST['bookmark_id'])) {
@@ -167,7 +98,7 @@ if (isset($_POST['editbookmark'])) {
 		$markobj = new Bookmark();
 		$markobj->bookmark_id = $bookmark_id;
 		$markobj->title = $title;
-		$markobj->url = $url;
+		$markobj->url = $url; // revert any encoding removed during parsing ?
 		$markobj->user_id = $userid;
 
 		$result = $markobj->save();
