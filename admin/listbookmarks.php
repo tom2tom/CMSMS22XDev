@@ -27,22 +27,28 @@ require_once 'header.php';
 
 $page = (isset($_GET['page'])) ? (int)$_GET['page'] : 1;
 $limit = 20; // max items per page
+$showinfo = false;
 
 $show = [];
 $userid = get_userid();
 $bookops = cmsms()->GetBookmarkOperations();
 $marklist = $bookops->LoadBookmarks($userid);
 if ($marklist) {
+	$urlext = CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 	$gmax = $page * $limit;
 	for ($ctr = $gmax - $limit; $ctr < $gmax; $ctr++) {
 		if (isset($marklist[$ctr])) {
+			//replicate part of BookmarkOperations::_prep_for_saving()
+			$marklist[$ctr]->url = str_replace($urlext,'[SECURITYTAG]',$marklist[$ctr]->url);
 			$show[] = $marklist[$ctr];
 		}
 	}
+	$showinfo = !cms_userprefs::get_for_user($userid,'bookmarks',false);
 }
 
 $smarty = Smarty_CMS::get_instance();
 $smarty->assign('header',$themeObject->ShowHeader('bookmarks'));
+$smarty->assign('showinfo',$showinfo);
 $smarty->assign('iconadd',$themeObject->DisplayImage('icons/system/newobject.gif',lang('addbookmark'),'','','systemicon'));
 $smarty->assign('iconedit',$themeObject->DisplayImage('icons/system/edit.gif',lang('editbookmark'),'','','systemicon'));
 $smarty->assign('icondelete',$themeObject->DisplayImage('icons/system/delete.gif',lang('delete'),'','','systemicon'));
