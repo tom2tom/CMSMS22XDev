@@ -75,7 +75,7 @@ final class modulerep_client
                 throw new CmsInvalidDataException($mod->Lang('error_missingparam'));
             }
         }
-        if( count($out) == 0 ) new CmsInvalidDataException($mod->Lang('error_missingparam'));
+        if( count($out) == 0 ) throw new CmsInvalidDataException($mod->Lang('error_missingparam'));
 
         $url = $mod->GetPreference('module_repository');
         if( !$url ) return array(false,$mod->Lang('error_norepositoryurl'));
