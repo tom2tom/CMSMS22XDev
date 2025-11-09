@@ -39,12 +39,12 @@ final class CMSSmartySecurityPolicy extends Smarty_Security
         although such a policy is defined here
         CMSMS 2.0 to 2.2.18 enabled overriding some of these policy
         settings by modules, possibly narrowing or expanding the scope
-        of what Smarty allowed for frontend requests. For now at least,
+        of what Smarty allows for frontend requests. For now at least,
         that capability remains. As of 2.2.19, also for admin requests.
         */
 //Smarty 2,3 only $this->php_handling = Smarty::PHP_REMOVE;
         $this->secure_dir = null; // don't trust anywhere not explicitly whitelisted
-        $this->php_modifiers = [];  // allow any php function BUT any such modifier deprecated since 4.3.0 TODO consider same as php_functions (breaker)
+        $this->php_modifiers = [];  // allow any php function TODO consider same as php_functions (breaker)
         $this->streams = null; // no usable streams
 //Smarty 2,3 only $this->allow_php_tag = false;
         $gCms = CmsApp::get_instance();
@@ -54,7 +54,7 @@ final class CMSSmartySecurityPolicy extends Smarty_Security
             if( $config['permissive_smarty'] ) {
                 // some permissive settings
                 $this->static_classes = []; // allow all classes' static method-calls
-                $this->php_functions = []; // allow any php functions
+                $this->php_functions = []; // allow any php function
             }
             else {
                 $this->static_classes = null; // no class static-method calls
@@ -76,7 +76,7 @@ final class CMSSmartySecurityPolicy extends Smarty_Security
                     'nl2br','number_format',
                     'print_r',
                     'rawurlencode',
-                    'shuffle','sizeof','sort','startswith','str_replace','strcasecmp','strcmp','strftime','CMSMS\strftime','strlen','strpos','strtolower','strtotime','strtoupper','substr',
+                    'shuffle','sizeof','sort','startswith','str_contains','str_ends_with','str_replace','str_starts_with','strcasecmp','strcmp','strftime','CMSMS\strftime','strlen','strpos','strtolower','strtotime','strtoupper','substr',
                     'time',
                     'trim','ltrim','rtrim', //since 2.2.17
                     'urlencode',
