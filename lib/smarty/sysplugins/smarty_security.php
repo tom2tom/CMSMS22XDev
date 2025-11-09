@@ -10,14 +10,14 @@
  * FIXME: Smarty_Security API
  *      - getter and setter instead of public properties would allow cultivating an internal cache properly
  *      - current implementation of isTrustedResourceDir() assumes that Smarty::$template_dir and Smarty::$config_dir
- *      are immutable the cache is killed every time either of the variables change. That means that two distinct
+ *      are immutable the cache is killed every time either of those variables changes. That means that two distinct
  *      Smarty objects with differing
  *        $template_dir or $config_dir should NOT share the same Smarty_Security instance,
  *        as this would lead to (severe) performance penalty! how should this be handled?
  */
 
 /**
- * This class does contain the security settings
+ * This class contains the security settings
  */
 class Smarty_Security
 {
@@ -76,7 +76,7 @@ class Smarty_Security
     public $trusted_static_methods = array();
 
     /**
-     * This is an array of trusted static properties.
+     * This is an array of trusted classes and static properties.
      * If empty access to all static classes and properties is allowed.
      * Format:
      * array (
@@ -96,16 +96,16 @@ class Smarty_Security
      *
      * @var array
      */
-    public $php_functions = array('isset', 'empty', 'count', 'sizeof', 'in_array', 'is_array', 'time',);
+    public $php_functions = array('isset', 'empty', 'count', 'sizeof', 'in_array', 'is_array', 'time');
 
     /**
-     * This is an array of trusted PHP modifiers.
+     * This is an array of trusted PHP modifiers etc.
      * If empty all modifiers are allowed.
      * To disable all modifier set $php_modifiers = null.
      *
      * @var array
      */
-    public $php_modifiers = array('escape', 'count', 'sizeof', 'nl2br',);
+    public $php_modifiers = array('escape', 'count', 'sizeof', 'nl2br'); //'escape' not PHP callable, of course
 
     /**
      * This is an array of allowed tags.
@@ -298,14 +298,17 @@ class Smarty_Security
      * Check if static class method/property is trusted.
      *
      * @param string $class_name
-     * @param string $params
+     * @param array $params with members
+     *  [0] name of property/method, '$'-prefixed for a property
+     *  [1] UNUSED
+     *  [2] N/A or 'method' or anything non-falsy to process a property
      * @param object $compiler compiler object
      *
-     * @return boolean                 true if class method is trusted
+     * @return boolean                 true if class method/property is trusted
      */
     public function isTrustedStaticClassAccess($class_name, $params, $compiler)
     {
-        if (!isset($params[ 2 ])) {
+        if (empty($params[ 2 ])) {
             // fall back
             return $this->isTrustedStaticClass($class_name, $compiler);
         }
@@ -318,7 +321,7 @@ class Smarty_Security
             $name = substr($params[ 0 ], 1);
         }
         if (isset($allowed)) {
-            if (empty($allowed)) {
+            if (!$allowed) {
                 // fall back
                 return $this->isTrustedStaticClass($class_name, $compiler);
             }
@@ -378,7 +381,7 @@ class Smarty_Security
             if (empty($this->disabled_tags) || !in_array($tag_name, $this->disabled_tags)) {
                 return true;
             } else {
-                $compiler->trigger_template_error("tag '{$tag_name}' disabled by security setting", null, true);
+                $compiler->trigger_template_error("tag '{$tag_name}' not allowed by security setting", null, true);
             }
         } elseif (in_array($tag_name, $this->allowed_tags) && !in_array($tag_name, $this->disabled_tags)) {
             return true;
@@ -430,7 +433,7 @@ class Smarty_Security
                 return true;
             } else {
                 $compiler->trigger_template_error(
-                    "modifier '{$modifier_name}' disabled by security setting",
+                    "modifier '{$modifier_name}' not allowed by security setting",
                     null,
                     true
                 );
@@ -450,7 +453,7 @@ class Smarty_Security
     }
 
     /**
-     * Check if constants are enabled or trusted
+     * Check if constant is enabled or trusted.
      *
      * @param string $const    constant name
      * @param object $compiler compiler object
@@ -472,21 +475,21 @@ class Smarty_Security
         if ($this->allow_constants) {
             return true;
         }
-        $compiler->trigger_template_error("Security: access to constants not permitted");
+        $compiler->trigger_template_error("Security: access to constant '{$const}' not permitted");
         return false;
     }
 
     /**
      * Check if stream is trusted.
      *
-     * @param string $stream_name
+     * @param string $stream_name The stream's scheme/wrapper
      *
      * @return boolean         true if stream is trusted
      * @throws SmartyException if stream is not trusted
      */
     public function isTrustedStream($stream_name)
     {
-        if (isset($this->streams) && (empty($this->streams) || in_array($stream_name, $this->streams))) {
+        if (isset($this->streams) && (!$this->streams || in_array($stream_name, $this->streams))) {
             return true;
         }
         throw new SmartyException("stream '{$stream_name}' not allowed by security setting");
@@ -496,7 +499,7 @@ class Smarty_Security
      * Check if directory of file resource is trusted.
      *
      * @param string    $filepath
-     * @param bool|null $isConfig Default null
+     * @param bool|null $isConfig Default null UNUSED
      *
      * @return bool true if directory is trusted
      * @throws \SmartyException if directory is not trusted
@@ -538,10 +541,10 @@ class Smarty_Security
     }
 
     /**
-     * Check if URI (e.g. {fetch} or {html_image}) is trusted
+     * Check if URI  is trusted (e.g. for {fetch} or {html_image}).
      * To simplify things, isTrustedUri() resolves all input to "{$PROTOCOL}://{$HOSTNAME}".
      * So "http://username:password@hello.world.example.org:8080/some-path?some=query-string"
-     * is reduced to "http://hello.world.example.org" prior to applying the patters from {@link $trusted_uri}.
+     * is reduced to "http://hello.world.example.org" prior to applying the patterns from {@link $trusted_uri}.
      *
      * @param string $uri
      *
@@ -564,7 +567,7 @@ class Smarty_Security
     }
 
     /**
-     * Remove old directories and its sub folders, add new directories
+     * Remove old directories and sub directories, add new directories
      *
      * @param array $oldDir
      * @param array $newDir
@@ -587,7 +590,7 @@ class Smarty_Security
     }
 
     /**
-     * Check if file is inside a valid directory
+     * Check if file is inside a valid directory.
      *
      * @param string $filepath
      * @param array  $dirs valid directories
@@ -621,10 +624,10 @@ class Smarty_Security
     }
 
     /**
-     * Loads security class and enables security
+     * Apply or revert a security class
      *
-     * @param \Smarty                $smarty
-     * @param string|Smarty_Security $security_class if a string is used, it must be class-name
+     * @param \Smarty                     $smarty
+     * @param string|Smarty_Security|null $security_class If a string is used, it must be class-name
      *
      * @return \Smarty current Smarty instance for chaining
      * @throws \SmartyException when an invalid class name is provided
@@ -651,7 +654,7 @@ class Smarty_Security
     }
 
     /**
-     * Start template processing
+     * Method called at start of template rendering
      *
      * @param $template
      *
@@ -665,7 +668,7 @@ class Smarty_Security
     }
 
     /**
-     * Exit template processing
+     * Method called at end of template rendering
      */
     public function endTemplate()
     {
@@ -675,7 +678,7 @@ class Smarty_Security
     }
 
     /**
-     * Register callback functions call at start/end of template rendering
+     * Register functions called at start/end of template rendering
      *
      * @param \Smarty_Internal_Template $template
      */
