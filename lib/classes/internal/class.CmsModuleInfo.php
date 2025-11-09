@@ -133,8 +133,8 @@ class CmsModuleInfo implements ArrayAccess
         $arr['name'] = isset($data['name'])?trim($data['name']):$module_name;
         $arr['version'] = isset($data['version'])?trim($data['version']):'0.0.1';
         $arr['description'] = isset($data['description'])?trim($data['description']):'';
-        $arr['author'] = trim(get_parameter_value($data,'author',lang('notspecified')));
-        $arr['authoremail'] = trim(get_parameter_value($data,'authoremail',lang('notspecified')));
+        $arr['author'] = get_parameter_value($data,'author',lang('notspecified'));
+        $arr['authoremail'] = get_parameter_value($data,'authoremail',lang('notspecified'));
         $arr['mincmsversion'] = isset($data['mincmsversion'])?trim($data['mincmsversion']):CMS_VERSION;
         $arr['lazyloadadmin'] = cms_to_bool(get_parameter_value($data,'lazyloadadmin',FALSE));
         $arr['lazyloadfrontend'] = cms_to_bool(get_parameter_value($data,'lazyloadfrontend',FALSE));

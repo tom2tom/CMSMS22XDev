@@ -28,7 +28,7 @@ function smarty_function_page_image($params, $smarty)
     if( $tag && $full ) { $full = false; }
     elseif( !($tag || $full) ) { $full = true; }
     $thumbnail = $get_bool($params,'thumbnail',false);
-    $assign = trim(get_parameter_value($params,'assign'));
+    $assign = get_parameter_value($params,'assign');
     unset($params['assign'],$params['full'],$params['tag'],$params['thumbnail']);
 
     $contentobj = cms_utils::get_current_content();

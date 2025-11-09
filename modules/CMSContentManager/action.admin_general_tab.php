@@ -50,13 +50,13 @@ foreach( $params['taborders'] as $name=>$val ) {
     }
 }
 //process added custom-tab if any
-$newtab = get_parameter_value($params,'customtabid',''); // TODO sanitize
+$newtab = get_parameter_value($params,'customtabid'); // TODO sanitize
 if( $newtab ) {
     $val = (int)$params['customtaborder'];
     if( $val < 1 ) {
         $val = 99; //placeholder, prob. last
     }
-    $name = get_parameter_value($params,'customtabname','');
+    $name = get_parameter_value($params,'customtabname');
     if( $name ) {
         // TODO sanitize
     } else {

@@ -389,7 +389,7 @@ final class CMS_Content_Block
                     $img = $tmp . '/' . $img;
                 }
 
-                $urlonly = cms_to_bool(get_parameter_value($params,'urlonly'));
+                $urlonly = get_parameter_value($params,'urlonly', FALSE);
                 if( $urlonly ) {
                     $out = $img;
                 }

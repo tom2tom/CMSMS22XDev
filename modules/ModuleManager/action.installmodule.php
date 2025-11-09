@@ -35,7 +35,7 @@ try {
     $module_name = get_parameter_value($params,'name');
     $module_version  = get_parameter_value($params,'version');
     $module_filename  = get_parameter_value($params,'filename');
-    $module_size = get_parameter_value($params,'size');
+    $module_size = get_parameter_value($params,'size',0);
     if( !isset($params['doinstall']) ) {
         if( $module_name == '' || $module_version == '' || $module_filename == '' || $module_size < 100 ) {
             throw new CmsInvalidDataException( $this->Lang('error_missingparams') );

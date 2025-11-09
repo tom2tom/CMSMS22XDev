@@ -25,10 +25,10 @@ function smarty_function_cms_pageoptions($params, $smarty)
   $curpage = max(1,min($numpages,$curpage));
   $surround = 3;
   if( isset($params['surround']) ) $surround = (int)$params['surround'];
-  $surrund = max(1,min(20,$surround));
-  $elipsis = get_parameter_value($params,'elipsis','');
-  $bare = cms_to_bool(get_parameter_value($params,'bare',0));
-  
+  $surround = max(1,min(20,$surround));
+  $elipsis = get_parameter_value($params,'elipsis');
+  $bare = get_parameter_value($params,'bare',FALSE);
+
   $list = array();
   for( $i = 1; $i <= min($surround,$numpages); $i++ ) {
     $list[] = (int)$i;

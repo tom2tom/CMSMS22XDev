@@ -8,7 +8,7 @@ if( !isset($params['mod']) ) {
 }
 $state = 0;
 if( isset($params['state']) ) $state = (int)$params['state'];
-$module = trim(get_parameter_value($params,'mod'));
+$module = get_parameter_value($params,'mod');
 $ops = ModuleOperations::get_instance();
 
 $query = "UPDATE ".CMS_DB_PREFIX."modules SET active = ? WHERE module_name = ?";

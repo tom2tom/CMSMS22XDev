@@ -295,14 +295,14 @@ final class CmsFormUtils
 
         $required = cms_to_bool(get_parameter_value($parms,'required','false'));
         if( $required ) $attribs['required'] = 'required';
-        $attribs['cols'] = get_parameter_value($parms,'cols');
+        $attribs['cols'] = get_parameter_value($parms,'cols',20);
         $attribs['cols'] = get_parameter_value($parms,'width',$attribs['cols']);
         if( $attribs['cols'] <= 0 || $attribs['cols'] == '') $attribs['cols'] = 20;
-        $attribs['rows'] = get_parameter_value($parms,'rows');
+        $attribs['rows'] = get_parameter_value($parms,'rows',5);
         $attribs['rows'] = get_parameter_value($parms,'height',$attribs['rows']);
         if( $attribs['rows'] <= 0 || $attribs['cols'] == '' ) $attribs['rows'] = 5;
-        $attribs['maxlength'] = get_parameter_value($parms,'maxlength');
-        if( $attribs['maxlength'] <= 0 ) $attribs['maxlength'] = '';
+        $attribs['maxlength'] = get_parameter_value($parms,'maxlength',0);
+        if( $attribs['maxlength'] <= 0 ) unset($attribs['maxlength']);
         $attribs['placeholder'] = get_parameter_value($parms,'placeholder');
 
         $addtext = get_parameter_value($parms,'addtext');

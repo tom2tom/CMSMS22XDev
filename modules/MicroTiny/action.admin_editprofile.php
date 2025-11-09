@@ -26,7 +26,7 @@ if( isset($params['cancel']) ) {
 }
 
 try {
-  $name = trim(get_parameter_value($params,'profile'));
+  $name = get_parameter_value($params,'profile');
   if( !$name ) throw new Exception($this->Lang('error_missingparam'));
 
   // load the profile

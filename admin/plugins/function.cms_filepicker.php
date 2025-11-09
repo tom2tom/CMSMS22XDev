@@ -20,14 +20,15 @@ function smarty_function_cms_filepicker($params,$template)
     $filepicker = \cms_utils::get_filepicker_module();
     if( !$filepicker ) return '';
 
-    $name = trim(get_parameter_value($params,'name','picker')); //default name, since 2.2.19
+    $name = get_parameter_value($params,'name','picker'); //default name, since 2.2.19
     if( !$name ) return '';
-    $profile_name = trim(get_parameter_value($params,'profile'));
-    $prefix = trim(get_parameter_value($params,'prefix'));
-    $value = trim(get_parameter_value($params,'value'));
-    $top = trim(get_parameter_value($params,'top'));
-    $type = trim(get_parameter_value($params,'type'));
-    $required = cms_to_bool(get_parameter_value($params,'required'));
+
+    $profile_name = get_parameter_value($params,'profile');
+    $prefix = get_parameter_value($params,'prefix');
+    $value = get_parameter_value($params,'value');
+    $top = get_parameter_value($params,'top');
+    $type = get_parameter_value($params,'type');
+    $required = get_parameter_value($params,'required',false);
 
     $profile = $filepicker->get_profile_or_default($profile_name);
     $parms = [];

@@ -19,9 +19,9 @@ function smarty_function_thumbnail_url($params,$template)
 {
     $config = \cms_config::get_instance();
     $dir = $config['uploads_path']; //TODO relevance of $config['image_uploads_path'] and cms_siteprefs::get('content_thumbnailfield_path'))
-    $file = trim(get_parameter_value($params,'file'));
-    $add_dir = trim(get_parameter_value($params,'dir'));
-    $assign = trim(get_parameter_value($params,'assign'));
+    $file = get_parameter_value($params,'file');
+    $add_dir = get_parameter_value($params,'dir');
+    $assign = get_parameter_value($params,'assign');
 
     if( !$file ) {
         trigger_error('thumbnail_url plugin: invalid file parameter');

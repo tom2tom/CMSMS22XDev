@@ -30,7 +30,7 @@ if( !$this->VisibleToAdminUser() ) exit;
 if( isset($params['cancel']) ) $this->RedirectToAdminTab();
 
 try {
-    $profile_id = (int) get_parameter_value($params,'pid');
+    $profile_id = get_parameter_value($params,'pid',0);
     $profile = new Profile();
 
     if( $profile_id > 0 ) {

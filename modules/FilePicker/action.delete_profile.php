@@ -27,7 +27,7 @@ use FilePicker\ProfileDAO;
 if( !defined('CMS_VERSION') ) exit;
 
 try {
-    $profile_id = (int) get_parameter_value($params,'pid');
+    $profile_id = get_parameter_value($params,'pid',0);
     if( $profile_id < 1 ) throw new \LogicException('Invalid profile id passed to delete_profile action');
 
     $profile = $this->_dao->loadById( $profile_id );
