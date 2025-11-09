@@ -37,18 +37,32 @@ function smarty_function_file_url($params, $template)
 
     $fullpath = $dir.DIRECTORY_SEPARATOR.$file;
     if( !is_file($fullpath) || !is_readable($fullpath) ) {
-        // try to use $file (i.e. something not relative to uploads) as fallback 
-        if( !is_file($file) || !is_readable($file) ) {
+        // try to use $file (if it represents something relative to uploads) as fallback
+        $alt = false;
+        if( !preg_match('~^(?:/|\\|[A-Z]{1,2}:(\\\\|//))~i',$file) ||
+           ((($c = $file[0]) == '/' || $c == '\\') && !startswith($file,CMS_ROOT_PATH)) ) {
+            // $file is a relative path
+            $file = $config['uploads_path'].DIRECTORY_SEPARATOR.strtr($file,'\/',DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR);
+        }
+        if( startswith($file,$config['uploads_path']) ) {
+            if( is_file($file) && is_readable($file) ) {
+                $helper = new CMSMS\FileTypeHelper($config);
+                if( !$helper->is_executable($file) ) {
+                    $fullpath = $file;
+                    $alt = true;
+                }
+            }
+        }
+        if( !$alt ) {
             // no error log here
             return '';
         }
-        $fullpath = $file;
     }
 
     // convert to url
     $out = str_replace([CMS_ROOT_PATH,'\\'],[CMS_ROOT_URL,'/'],$fullpath);
 
-    $assign = trim(get_parameter_value($params,'assign'));
+    $assign = get_parameter_value($params,'assign');
     if( $assign ) {
         $template->assign($assign,$out);
         return '';
