@@ -53,7 +53,7 @@ class Smarty_CMS extends CMSSmartyBase
 //      global $CMS_INSTALL_PAGE; //see CmsApp::STATE_INSTALL usage
         parent::__construct();
 
-//Smarty 2,3      $this->direct_access_security = TRUE;
+//Smarty 2,3      $this->direct_access_security = true;
         // Set template_c and cache dirs
         $this->setCompileDir(TMP_TEMPLATES_C_LOCATION);
         $this->setCacheDir(TMP_CACHE_LOCATION);
@@ -72,7 +72,7 @@ class Smarty_CMS extends CMSSmartyBase
         $this->registerResource('cms_stylesheet',new CmsStylesheetResource());
 
         // register default plugin handler
-        $this->registerDefaultPluginHandler(array($this, 'defaultPluginHandler'));
+        $this->registerDefaultPluginHandler(array($this,'defaultPluginHandler'));
 
         // Load User Defined Tags
         $_gCms = CmsApp::get_instance();
@@ -92,11 +92,11 @@ class Smarty_CMS extends CMSSmartyBase
         $this->addPluginsDir($config['assets_path'].'/plugins');
         $this->addPluginsDir(cms_join_path(CMS_ROOT_PATH,'plugins')); // deprecated
         $this->addPluginsDir(cms_join_path(CMS_ROOT_PATH,'lib','plugins'));
-        $this->addTemplateDir(cms_join_path(CMS_ROOT_PATH, 'lib', 'assets', 'templates'));
+        $this->addTemplateDir(cms_join_path(CMS_ROOT_PATH,'lib','assets','templates'));
 
         if( $_gCms->is_frontend_request() ) {
             $this->addTemplateDir($config['assets_path'].'/templates');
-            $this->setConfigDir([$config['assets_path'].'/configs', TMP_CONFIG_LOCATION]);
+            $this->setConfigDir([$config['assets_path'].'/configs',TMP_CONFIG_LOCATION]);
 
             // Check if we are at install page, don't register anything if so, cause nothing below is needed.
 //see STATE_INSTALL below            if(isset($CMS_INSTALL_PAGE)) return;
@@ -132,7 +132,7 @@ class Smarty_CMS extends CMSSmartyBase
             $admin_dir = $config['admin_path'];
             $this->addPluginsDir($admin_dir.'/plugins');
             $this->setTemplateDir($admin_dir.'/templates');
-            $this->setConfigDir([$config['assets_path'].'/configs', $admin_dir.'/configs', TMP_CONFIG_LOCATION]);
+            $this->setConfigDir([$config['assets_path'].'/configs',$admin_dir.'/configs',TMP_CONFIG_LOCATION]);
             // TODO custom security for admin might be a breaker
             $this->enableSecurity('CMSSmartySecurityPolicy');
         }
@@ -141,9 +141,9 @@ class Smarty_CMS extends CMSSmartyBase
             // no change to default security during installer run
         }
         // $_call->func(args) can be used in templates instead of func(args) for Smarty 4.5.1+
-        $this->assignGlobal('_call', new Smarty_TemplateCaller($this));
+        $this->assignGlobal('_call',new Smarty_TemplateCaller($this));
         // _call::class__method(args) can be used in templates instead of class::method(args) for Smarty 4.5.1+
-        $this->registerClass('_call', Smarty_TemplateCaller::class);
+        $this->registerClass('_call',Smarty_TemplateCaller::class);
     }
 
     /**
@@ -200,34 +200,40 @@ class Smarty_CMS extends CMSSmartyBase
         $this->autoload_filters = array('pre'=>$pre,'post'=>$post,'output'=>$output);
     }
 
-    public function registerClass($a,$b)
+    /**
+     * Register class to be used in templates, and explicitly enable its use
+     *
+     * @param string $name key in recorded classes array
+     * @param string $classname possibly-namespaced name understood by PHP
+     */
+    public function registerClass($name,$classname)
     {
         if( $this->security_policy ) {
             if( $this->security_policy->static_classes === null ) {
-                //return; //TODO non-compat but consistent with permissive smarty etc
-                $this->security_policy->static_classes = [$a]; //deprecated since 2.2.19 ? or ok ?
+                //return; TODO non-compat but consistent with permissive smarty etc
+                $this->security_policy->static_classes = [$name]; //deprecated since 2.2.19 ? or ok ?
             }
             elseif( $this->security_policy->static_classes !== [] ) {
-                $this->security_policy->static_classes[] = $a; //top-up the whitelist
+                $this->security_policy->static_classes[] = $name; //top-up the whitelist
             }
         }
-        parent::registerClass($a,$b);
+        parent::registerClass($name,$classname);
     }
 
     /**
-     * Registers plugin to be used in templates
+     * Registers plugin for use in templates, without any duplication-error
      *
      * @param string   $type       plugin type
      * @param string   $tag        name of template tag
      * @param callback $callback   PHP callback to register
      * @param bool  $cacheable  if true (default) this function is cachable
-     * @param array    $cache_attr caching attributes if any
+     * @param array|null $cache_attr caching attributes if any
      * @return Smarty_Internal_Templatebase current Smarty_Internal_Templatebase (or Smarty or Smarty_Internal_Template) instance for chaining
      * @throws SmartyException when the plugin tag is invalid
      */
     public function registerPlugin($type, $tag, $callback, $cacheable = true, $cache_attr = null)
     {
-        if( !isset($this->registered_plugins[$type][$tag]) ) {
+        if( !isset($this->registered_plugins[$type][$tag]) ) { // don't barf if already registered
             return parent::registerPlugin($type,$tag,$callback,$cacheable,$cache_attr);
         }
         return $this;
@@ -249,7 +255,7 @@ class Smarty_CMS extends CMSSmartyBase
         debug_buffer('',"Start Load Smarty Plugin $name/$type");
 
         // plugins with the smarty_cms_function
-        $cachable = TRUE;
+        $cachable = true;
         $dirs = [];
         $dirs[] = cms_join_path(CMS_ROOT_PATH,'assets','plugins',$type.'.'.$name.'.php');
         $dirs[] = cms_join_path(CMS_ROOT_PATH,'plugins',$type.'.'.$name.'.php');
@@ -267,28 +273,28 @@ class Smarty_CMS extends CMSSmartyBase
                 if( !function_exists($func) ) continue;
 
                 $callback = $func;
-                $cachable = FALSE;
+                $cachable = false;
                 debug_buffer('',"End Load Smarty Plugin $name/$type");
-                return TRUE;
+                return true;
             }
         }
 
-        if( CmsApp::get_instance()->is_frontend_request() ) {
+//        if( CmsApp::get_instance()->is_frontend_request() ) { also allow for admin requests
             $row = cms_module_smarty_plugin_manager::load_plugin($name,$type);
             if( $row && !empty($row['callback']) &&
                 is_array($row['callback']) && count($row['callback']) == 2 &&
                 is_string($row['callback'][0]) && is_string($row['callback'][1]) ) {
                 $callback = $row['callback'][0].'::'.$row['callback'][1];
                 $cachable = $row['cachable'];
-                return TRUE;
+                return true;
             }
-        }
+//        }
 
-        return FALSE;
+        return false;
     }
 
     /**
-     * Test if a smarty plugin with the specified name already exists.
+     * Test if a Smarty plugin with the specified name already exists.
      *
      * @param string the plugin name
      * @return bool
@@ -299,7 +305,7 @@ class Smarty_CMS extends CMSSmartyBase
     }
 
     /**
-     * Set the global cacheid.
+     * Set the global cache id.
      * This is a prefix that is used when smarty caching is enabled.
      *
      * @param int $id
@@ -384,7 +390,7 @@ class Smarty_CMS extends CMSSmartyBase
             }
             if( startswith($name, 'string:') ) {
                 if( strlen($name) > 22 ) {
-                    $name = substr($name, 0, 22) . '...';
+                    $name = substr($name,0,22) . '...';
                 }
             }
             debug_buffer('','Fetch '.$name.' start');
@@ -446,7 +452,7 @@ class Smarty_CMS extends CMSSmartyBase
      * @param mixed $type
      * @return mixed
      */
-    public function clearCache($template_name,$cache_id = null,$compile_id = null,$exp_time = null,$type = null)
+    public function clearCache($template_name, $cache_id = null, $compile_id = null, $exp_time = null, $type = null)
     {
         if( is_null($cache_id) || $cache_id === '' ) {
             $cache_id = $this->_global_cache_id;
@@ -467,7 +473,7 @@ class Smarty_CMS extends CMSSmartyBase
      * @param mixed $parent
      * @return mixed
      */
-    public function isCached($template = null,$cache_id = null,$compile_id = null, $parent = null)
+    public function isCached($template = null, $cache_id = null, $compile_id = null, $parent = null)
     {
         if( is_null($cache_id) || $cache_id === '' ) {
             $cache_id = $this->_global_cache_id;
@@ -488,7 +494,7 @@ class Smarty_CMS extends CMSSmartyBase
     public function errorConsole(Exception $e)
     {
         $this->force_compile = true;
-        //$this->debugging = get_userid(FALSE);
+        //$this->debugging = get_userid(false);
 
         $this->assign('e_line', $e->getLine());
         $this->assign('e_file', $e->getFile());
@@ -516,7 +522,8 @@ class Smarty_CMS extends CMSSmartyBase
      * class name format: Smarty_PluginType_PluginName
      * plugin filename format: plugintype.pluginname.php
      *
-     * Note: this method overrides the one in the smarty base class and provides more testing.
+     * Note: this method overrides the one in the Smarty base class
+     * and provides more testing.
      *
      * @param string $plugin_name    class plugin name to load
      * @param bool   $check          check if already loaded
@@ -587,7 +594,7 @@ class Smarty_CMS extends CMSSmartyBase
 } // end of class
 
 /**
- * Workaround for Smarty5's disabling of all PHP function calls
+ * Workaround for some Smartys' (e.g. V5) disabling of all PHP function calls
  * @since 2.2.19F2
  */
 class Smarty_TemplateCaller
