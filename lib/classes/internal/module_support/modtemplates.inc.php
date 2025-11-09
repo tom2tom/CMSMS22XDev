@@ -141,7 +141,7 @@ function cms_module_ProcessTemplate($modinstance, $tpl_name, $designation = '', 
 	if( $smarty->caching != Smarty::CACHING_OFF ) {
 		$smarty->caching = ($modinstance->can_cache_output())?Smarty::CACHING_LIFETIME_CURRENT:Smarty::CACHING_OFF;
 	}
-	$result = $smarty->fetch('module_file_tpl:'.$modinstance->GetName().';'.$tpl_name, $cacheid, ($designation != ''?$designation:$modinstance->GetName()));
+	$result = $smarty->fetch('module_file_tpl:'.$modinstance->GetName().';'.$tpl_name, $cacheid, ($designation ?:$modinstance->GetName()));
 	$smarty->caching = $oldcache;
 
 	return $result;
