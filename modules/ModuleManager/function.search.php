@@ -25,16 +25,13 @@
 if( !isset($gCms) ) exit;
 
 global $CMS_VERSION;
-$caninstall = true;
-if( FALSE == can_admin_upload() ) {
-    echo '<div class="pageerrorcontainer"><div class="pageoverflow"><p class="pageerror">'.$this->Lang('error_permissions').'</p></div></div>';
-    $caninstall = false;
-}
 
-// see if there are saved results
+$caninstall = can_admin_upload();
 $search_data = [];
 $term = '';
 $advanced = 0;
+$nonemsg = '';
+// see if there are saved results
 if( isset($_SESSION['modmgr_search']) ) $search_data = unserialize($_SESSION['modmgr_search']);
 if( isset($_SESSION['modmgr_searchterm']) ) $term = (string)$_SESSION['modmgr_searchterm'];
 if( isset($_SESSION['modmgr_searchadv']) ) $advanced = (int)$_SESSION['modmgr_searchadv'];
@@ -64,15 +61,19 @@ if( isset($params['submit']) ) {
         $advanced = (int)$params['advanced'];
 
         $res = modulerep_client::search($term,$advanced);
-        if( !is_array($res) || $res[0] == FALSE ) throw new \Exception($this->Lang('error_search').' '.$res[1]);
+        if( !is_array($res) || !$res[0] ) throw new \Exception($this->Lang('error_search').' '.$res[1]);
         if( !is_array($res[1]) ) throw new \Exception($this->Lang('search_noresults'));
 
-        $res = $res[1];
-        $data = array();
-        if( count($res) ) $res = modmgr_utils::build_module_data($res, $instmodules);
-
-        $moduledir = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.'modules';
-        $writable = is_writable($moduledir);
+//      $data = array(); UNUSED
+        if( $res[1] ) {
+            $res = modmgr_utils::build_module_data($res[1], $instmodules);
+            $moduledir = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.'modules';
+            $writable = is_writable($moduledir);
+        }
+        else {
+            $res = [];
+            $nonemsg = $this->Lang('search_noresults');
+        }
 
         for( $i = 0; $i < count($res); $i++ ) {
             $row =& $res[$i];
@@ -113,9 +114,9 @@ if( isset($params['submit']) ) {
                 $obj->status = $this->Lang('newerversion');
                 break;
             case 'notinstalled':
-                $mod = $moduledir.DIRECTORY_SEPARATOR.$row['name'];
-                if( (($writable && is_dir($mod) && is_directory_writable( $mod )) ||
-                     ($writable && !file_exists( $mod ) )) && $caninstall ) {
+                $modpath = $moduledir.DIRECTORY_SEPARATOR.$row['name'];
+                if( (($writable && is_dir($modpath) && is_directory_writable($modpath)) ||
+                     ($writable && !file_exists($modpath) )) && $caninstall ) {
                     $obj->candownload = TRUE;
                     $obj->status = $this->CreateLink( $id, 'installmodule', $returnid,
                                                       $this->Lang('download'),
@@ -128,9 +129,9 @@ if( isset($params['submit']) ) {
                 break;
 
             case 'upgrade':
-                $mod = $moduledir.DIRECTORY_SEPARATOR.$row['name'];
-                if( (($writable && is_dir($mod) && is_directory_writable( $mod )) ||
-                     ($writable && !file_exists( $mod ) )) && $caninstall ) {
+                $modpath = $moduledir.DIRECTORY_SEPARATOR.$row['name'];
+                if( (($writable && is_dir($modpath) && is_directory_writable($modpath)) ||
+                     ($writable && !file_exists($modpath) )) && $caninstall ) {
                     $obj->candownload = TRUE;
                     $obj->status = $this->CreateLink( $id, 'installmodule', $returnid,
                                                       $this->Lang('upgrade'),
@@ -149,15 +150,23 @@ if( isset($params['submit']) ) {
         }
         $_SESSION['modmgr_search'] = serialize($search_data);
         $_SESSION['mogmgr_searchterm'] = $term;
-        $_SESSION['modmgr_searchadv'] = $params['advanced'];
+        $_SESSION['modmgr_searchadv'] = $advanced;
     }
     catch( \Exception $e ) {
         $clear_search();
-        echo $this->ShowErrors($e->GetMessage());
+        $nonemsg = $e->GetMessage();
     }
 }
 
-if( $search_data ) $tpl->assign('search_data',$search_data);
+if( $search_data ) {
+    $tpl->assign('search_data',$search_data);
+    if( !$caninstall ) {
+        $tpl->assign('permsmsg',$this->Lang('error_permissions'));
+    }
+}
+elseif( $nonemsg ) {
+    $tpl->assign('nofindmsg',$nonemsg);
+}
 $tpl->assign('term',$term);
 $tpl->assign('advanced',$advanced);
 $tpl->assign('formstart',$this->CreateFormStart($id,'defaultadmin','','post','',false,'',array('__activetab'=>'search')));
