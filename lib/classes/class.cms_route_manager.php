@@ -322,7 +322,7 @@ final class cms_route_manager
 
 	/**
 	 * Register a new route.
-	 * This is just an alias (for compatibility reasons) to the add_dynamc method.
+	 * This is an alias (for compatibility reasons) of the add_dynamic method.
 	 *
 	 * @see add_dynamic
 	 * @param CmsRoute $route The route to register
@@ -354,8 +354,13 @@ final class cms_route_manager
 
 		// todo:
 		$modules = ModuleOperations::get_instance()->GetLoadedModules();
-		foreach( $modules as $name => &$module ) {
-			$module->SetParameters();
+		foreach( $modules as $module ) {
+			if ($flag) {
+				$module->InitializeAdmin();
+			}
+			else {
+				$module->InitializeFrontend();
+			}
 		}
 		unset($module);
 
