@@ -8,7 +8,6 @@ use CMSMS\Database\Connection;
 use CMSMS\Database\ConnectionSpec;
 use CMSMS\Database\DatabaseException;
 use Exception;
-use function __appbase\get_app;
 use function __appbase\lang;
 use function __appbase\smarty;
 
@@ -50,18 +49,34 @@ class wizard_step4 extends wizard_step
 
         $action = $wiz->get_data('action');
         if( $action == 'freshen' || $action == 'upgrade' ) {
-            // read config data from config.php for freshen,upgrade session.
-            $app = get_app();
-            $destdir = $app->get_destdir();
-            $config_file = $destdir.'/config.php';
-            require_once $config_file;
+            // read config data from config.php etc
+            $version_info = $wiz->get_data('version_info');
+            require_once $version_info['config_file'];
             $this->_config['dbtype'] = $config['dbms'];
-            $this->_config['dbhost'] = $config['db_hostname'];
-            $this->_config['dbuser'] = $config['db_username'];
-            $this->_config['dbpass'] = $config['db_password'];
-            $this->_config['dbname'] = $config['db_name'];
+            if( isset($config['db_hostname']) ) {
+                $this->_config['dbhost'] = $config['db_hostname'];
+                $this->_config['dbuser'] = $config['db_username'];
+                $this->_config['dbpass'] = $config['db_password'];
+                $this->_config['dbname'] = $config['db_name'];
+                if( !empty($config['db_port']) ) $this->_config['dbport'] = (int)$config['db_port'];
+            } else {
+                $bp = $tmp['dest'].DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR;
+                require_once $bp.'classes'.DIRECTORY_SEPARATOR.'class.CmsApp.php';
+                require_once $bp.'misc.functions.php';
+                require_once $bp .'classes'.DIRECTORY_SEPARATOR.'class.cms_config.php';
+                $realconfig = \CmsApp::get_instance()->GetConfig();
+                $ppath = file_get_contents($bp.'classes'.DIRECTORY_SEPARATOR.'dbPath');
+                $path = private_place('db.ini',$realconfig,['dbase'=>$ppath]);
+                if( !$path ) throw new Exception(lang('error_invalidconfig'));
+                $tmp = parse_ini_file($path,FALSE,INI_SCANNER_TYPED);
+                if( $tmp === FALSE) throw new Exception(lang('error_invalidconfig'));
+                $this->_config['dbhost'] = $tmp['hostname'];
+                $this->_config['dbuser'] = $tmp['username'];
+                $this->_config['dbpass'] = $tmp['password'];
+                $this->_config['dbname'] = $tmp['basename'];
+                if( !empty($tmp['port']) ) $this->_config['dbport'] = (int)$tmp['port'];
+            }
             $this->_config['dbprefix'] = $config['db_prefix'];
-            if( isset($config['db_port']) ) $this->_config['dbport'] = $config['db_port']; // TODO default null or 0
             if( isset($config['query_var']) ) $this->_config['query_var'] = $config['query_var'];
             if( isset($config['timezone']) ) $this->_config['timezone'] = $config['timezone'];
         }
@@ -71,32 +86,30 @@ class wizard_step4 extends wizard_step
     {
         $action = $this->get_wizard()->get_data('action');
         if( $action != 'freshen' ) {
-            if( empty($config['dbtype']) ) throw new Exception(lang('error_nodbtype'));
-            if( empty($config['dbhost']) ) throw new Exception(lang('error_nodbhost'));
-            if( empty($config['dbname']) ) throw new Exception(lang('error_nodbname'));
-            if( empty($config['dbuser']) ) throw new Exception(lang('error_nodbuser'));
-            if( empty($config['dbpass']) ) throw new Exception(lang('error_nodbpass'));
-            if( empty($config['dbprefix']) && $action == 'install' ) {
+            foreach(['dbtype','dbhost','dbname','dbuser','dbpass'] as $key) {
+                if( empty($config[$key]) ) { throw new Exception(lang("error_no{$key}")); }
+            }
+            if( $action == 'install' && empty($config['dbprefix']) ) {
                 throw new Exception(lang('error_nodbprefix'));
             }
+            $longnames = ['host','name','user','password','tables-prefix'];
+            foreach(['dbhost','dbname','dbuser','dbpass','dbprefix'] as $i => $key) {
+                if( !empty($config[$key]) && preg_match('/[\\\']/',$config[$key]) ) {
+                    throw new Exception(lang('error_invalidtypedvar',lang['database'].' '.$longnames[$i]));
+                }
+            }
         }
+
         if( empty($config['timezone']) ) {
             throw new Exception(lang('error_notimezone'));
         }
 
-        $re = '/^[a-zA-Z0-9_\.]*$/';
-        if( !(empty($config['query_var']) || preg_match($re,$config['query_var'])) ) {
+        if( !(empty($config['query_var']) || preg_match('/^[a-zA-Z0-9_\.]*$/',$config['query_var'])) ) {
             throw new Exception(lang('error_invalidqueryvar'));
         }
 
         $all_timezones = timezone_identifiers_list();
         if( !in_array($config['timezone'],$all_timezones) ) throw new Exception(lang('error_invalidtimezone'));
-
-        if( $config['dbpass'] ) {
-            if( strpos($config['dbpass'],"'") !== FALSE || strpos($config['dbpass'],'\\') !== FALSE ) {
-                throw new Exception(lang('error_invaliddbpassword'));
-            }
-        }
 
         if( $action != 'freshen' ) {
             // try a test connection
