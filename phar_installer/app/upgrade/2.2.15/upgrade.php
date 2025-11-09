@@ -20,8 +20,8 @@ if (is_array($homepages) && count($homepages))  {
         $url = str_replace('&amp;','&',$url);
         $tmp = explode('?',$url);
         @parse_str($tmp[1],$tmp2);
-        if( in_array('_s_',array_keys($tmp2)) ) unset($tmp2['_s_']);
-        if( in_array('sp_',array_keys($tmp2)) ) unset($tmp2['sp_']);
+        if( array_key_exists('_s_',$tmp2) ) unset($tmp2['_s_']);
+        if( array_key_exists('sp_',$tmp2) ) unset($tmp2['sp_']);
 
         $tmp2['_CMSKEY_'] = 'XXXX'; // current secure param
 
