@@ -56,7 +56,7 @@ class cms_mailer
     static $regdone = false;
     if (!$exceptions && PHP_VERSION_ID >= 80000) {
         $flag = true;
-        if (!$regdone) audit('', 'cms_mailer', 'spl_autoload always throws upon error');
+//      if (!$regdone) audit('', 'cms_mailer', 'spl_autoload always throws upon error');
     } else {
         $flag = $exceptions;
     }
@@ -131,7 +131,7 @@ class cms_mailer
    */
   public function MailerAutoload($classname)
   {
-    if ($classname[0] === 'P' && strpos($classname, 'PHPMailer') === 0) {
+    if ($classname[0] == 'P' && strpos($classname, 'PHPMailer') === 0) {
       $class = basename(strtr($classname, '\\', DIRECTORY_SEPARATOR));
       //NOTE sources include a composer-compatible 'src' folder below 'phpmailer'
       $filename = cms_join_path(dirname(__DIR__), 'phpmailer', 'src', $class.'.php');
@@ -141,7 +141,7 @@ class cms_mailer
       return;
     }
     //support some oauth2 providers
-    if ($classname[0] === 'L' && strpos($classname, 'League\OAuth2\Client') === 0) {
+    if ($classname[0] == 'L' && strpos($classname, 'League\OAuth2\Client') === 0) {
       //League\OAuth2\Client\A\class
       $sp = str_replace('League\OAuth2\Client\\', '', $classname);
       $bp = strtr($sp, '\\', DIRECTORY_SEPARATOR);
