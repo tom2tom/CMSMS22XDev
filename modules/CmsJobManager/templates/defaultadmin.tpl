@@ -41,7 +41,7 @@ $(function() {
              {$job->start|relative_time}
            </span>
         </td>
-        <td>{$recur_list[$job->frequency]}</td>
+        <td>{if $job->frequency !== null}{$recur_list[$job->frequency]}{/if}</td>
         <td>{if $job->until}{$job->until|localedate_format:'%x %X'}{/if}</td>
         <td>{if $job->errors > 0}<span style="color:red">{$job->errors}</span>{/if}</td>
         <td></td>
@@ -51,8 +51,7 @@ $(function() {
   </table>
 {/if}
 
-{* delete me before distributing - TODO ??
-
+{* delete me before distributing - TODO
 <a id="simple1" href="{cms_action_url action=test1}" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary">
 <span class="ui-button-icon-primary ui-icon ui-icon-check"></span>
 <span class="ui-button-text">Simple Derived Class Test</span>
@@ -62,5 +61,4 @@ $(function() {
 <span class="ui-button-icon-primary ui-icon ui-icon-check"></span>
 <span class="ui-button-text">Simple Derived Cron Test</span>
 </a>
-
 *}
