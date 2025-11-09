@@ -34,7 +34,7 @@ class wizard_step8 extends wizard_step
             $spec->username = $choices['db_username'];
             $spec->password = $choices['db_password'];
             $spec->dbname = $choices['db_name'];
-            $spec->port = isset($choices['db_port']) ? $choices['db_port'] : 0; //TODO mysqli default null not 0
+            $spec->port = !empty($choices['db_port']) ? (int)$choices['db_port'] : 0; // TODO mysqli default null not 0
             $spec->prefix = $choices['db_prefix'];
         }
         else {
@@ -43,7 +43,7 @@ class wizard_step8 extends wizard_step
             $spec->username = $choices['dbuser'];
             $spec->password = $choices['dbpass'];
             $spec->dbname = $choices['dbname'];
-            $spec->port = isset($choices['dbport']) ? $choices['dbport'] : 0; // TODO default null ?
+            $spec->port = !empty($choices['dbport']) ? (int)$choices['dbport'] : 0; // TODO default null ?
             $spec->prefix = $choices['dbprefix'];
         }
         if( !defined('CMS_DB_PREFIX') ) { //sometimes undefined when installer is running
@@ -114,8 +114,10 @@ class wizard_step8 extends wizard_step
             $this->write_config($choices,$destdir);
             $this->connect_to_cmsms($destdir);
 
+            $this->write_dbconfig($choices);
             // connect to the database, ready for downstream use
             $db = $this->db_connect($choices);
+            if( !$db ) throw new Exception(lang('error_internal',805));
 
             require_once __DIR__.'/msg_functions.php';
 
@@ -126,12 +128,12 @@ class wizard_step8 extends wizard_step
             $admin_user = null; // no object
 //          $db_prefix = CMS_DB_PREFIX;
             $dir = $app->get_appdir().'/install';
-            if( !is_dir($dir) ) throw new Exception(lang('error_internal',805));
+            if( !is_dir($dir) ) throw new Exception(lang('error_internal',808));
 
             // install the schema
             $this->message(lang('install_schema'));
             $fn = $dir.'/schema.php';
-            if( !file_exists($fn) ) throw new Exception(lang('error_internal',806));
+            if( !file_exists($fn) ) throw new Exception(lang('error_internal',809));
 
             global $CMS_INSTALL_DROP_TABLES, $CMS_INSTALL_CREATE_TABLES;
             $CMS_INSTALL_DROP_TABLES = 1; // TODO only for upgrades
@@ -246,8 +248,15 @@ class wizard_step8 extends wizard_step
         try {
             $this->write_config($choices,$destdir);
             $this->connect_to_cmsms($destdir);
-            // setup database connection for use here and downstream
+
+            $fp = private_place('',null,['dbase'=>1]);
+            if( !is_dir($fp) || !is_file($fp.'/db.ini') ) {
+                $this->write_dbconfig($choices);
+            }
+
+            // open database connection for use here and downstream
             $db = $this->db_connect($choices);
+            if( !$db ) throw new Exception(lang('error_internal',818));
 
             $this->conform_langs($wiz,$db);
 //          $this->conform_themes($wiz,$db,$destdir);
@@ -304,6 +313,18 @@ class wizard_step8 extends wizard_step
                 ob_end_clean();
             }
         }
+        else {
+            $destfn = "$destdir/lib/config.php";
+            if( !is_file($destfn) ) {
+                $fn = "$destdir/config.php";
+                if( is_file($fn) ) {
+                   if( !rename($fn,$destfn) ) throw new Exception(lang('error_internal', 'config-file move failed'));
+                }
+                else {
+                    //throw
+                }
+            }
+        }
         $db = $this->db_connect($choices);
         $this->conform_langs($wiz,$db);
 //      $this->conform_themes($wiz,$db,$destdir);
@@ -353,26 +374,31 @@ class wizard_step8 extends wizard_step
     {
         // [re]create config file
         // so that CMSMS can connect to the database.
-        $fn = "$destdir/config.php";
+        $fn = "$destdir/lib/config.php";
+        if( !is_file($fn) ) {
+            $fn = "$destdir/config.php";
+        }
         if( is_file($fn) ) {
             $this->verbose(lang('install_backupconfig'));
-            $destfn = $destdir.'/bak.config.php';
+            $destfn = $destdir.'/lib/bak.config.php';
             if( !copy($fn,$destfn) ) throw new Exception(lang('error_backupconfig'));
+            if( $fn == "$destdir/config.php" ) {
+                unlink($fn); // its replacment will be elsewhere
+            }
         }
 
         $newconfig = [];
         $newconfig['dbms'] = trim($choices['dbtype']);
-        $newconfig['db_hostname'] = trim($choices['dbhost']);
-        $newconfig['db_username'] = trim($choices['dbuser']);
-        $newconfig['db_password'] = trim($choices['dbpass']);
-        $newconfig['db_name'] = trim($choices['dbname']);
+//        $newconfig['db_hostname'] = trim($choices['dbhost']); now stored separately, in .ini file
+//        $newconfig['db_username'] = trim($choices['dbuser']);
+//        $newconfig['db_password'] = trim($choices['dbpass']);
+//        $newconfig['db_name'] = trim($choices['dbname']);
         $newconfig['db_prefix'] = trim($choices['dbprefix']);
         $newconfig['timezone'] = trim($choices['timezone']);
         if( $choices['query_var'] ) $newconfig['query_var'] = trim($choices['query_var']);
-        if( isset($choices['dbport']) ) {
-            $num = (int)$choices['dbport'];
-            if( $num > 0 ) { $newconfig['db_port'] = $num; }
-        }
+//        if( !empty($choices['dbport']) ) {
+//            $newconfig['db_port'] = (int)$choices['dbport']; }
+//        }
 
         $this->message(lang('install_createconfig'));
         global $CMS_INSTALL_PAGE;
@@ -399,13 +425,46 @@ class wizard_step8 extends wizard_step
 //        }
         $config->merge($newconfig);
         if( !defined('CONFIG_FILE_LOCATION') ) {
-            define('CONFIG_FILE_LOCATION', $destdir.DIRECTORY_SEPARATOR.'config.php');
+            define('CONFIG_FILE_LOCATION',$fp.'config.php');
         }
         $config->save();
         // double-check, in case there's PHP silliness
         if( !is_readable(CONFIG_FILE_LOCATION) ) {
             throw new Exception('Failed to record config file');
         }
+    }
+
+    private function write_dbconfig($choices)
+    {
+        $fp = private_place('',null,['dbase'=>1]);
+        if( !is_dir($fp) ) {
+            mkdir($fp,0777,true); // or less e.g. 0700
+            touch($fp.'/index.html');
+        }
+        $fp .= '/db.ini';
+        if( is_file($fp) && !is_writable($fp) ) {
+            throw new Exception('Cannot record database config file');
+        }
+        $output = <<<EOS
+;CMS Made Simple database-connection parameters
+;PROTECT THIS FILE AGAINST INVALID INSPECTION OR CHANGE !
+;Supporting information is at https://docs.cmsmadesimple.org/configuration/config-file/config-reference
+
+EOS;
+        $keynames = ['hostname','basename','username','password'];
+        foreach( ['host','name','user','pass'] as $i => $k ) {
+            $key = $keynames[$i];
+            $val = $choices["db{$k}"];
+            $output .= "$key = '$val'\n";
+        }
+        if( !empty($choices['dbport']) ) {
+            $val = (int)$choices['dbport'];
+            $output .= "port = $val\n";
+        }
+        file_put_contents($fp,$output);
+        usleep(40000);
+        chmod($fp,0444); // or less e.g. 0400
+        touch($fp);
     }
 
     protected function display()

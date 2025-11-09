@@ -148,6 +148,17 @@ class wizard_step7 extends wizard_step
                 }
             }
         }
+
+        //record backup private-path identifier
+        $fp = $top_dir.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'classes'.DIRECTORY_SEPARATOR.'dbPath';
+        if (!is_file($fp)) {
+            $perms = 0777;
+            @mkdir(dirname($fp), $perms);
+            file_put_contents($fp,"\$config['admin_path'],configs,private");
+            usleep(40000);// wait a while in case the OS does async file-writes
+            $perms = 0444; //TODO suitable restricted-file permissions e.g. 0444 & ~umask()
+            chmod($fp,$perms);
+        }
     }
 
     private function do_manifests()
