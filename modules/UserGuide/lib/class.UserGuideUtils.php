@@ -33,6 +33,7 @@ class UserGuideUtils
     {
         $val = trim((string)$val);
         if (!$val) { return $val; }
+        //this stuff prob'ly irrelevant ...
         //WYSIWYG editor might have arbitrarily added para tags
         // to surround otherwise plaintext content
         if (startswith($val, '<p>') && endswith($val, '</p>')) {
@@ -59,7 +60,6 @@ class UserGuideUtils
         $val = preg_replace(['/(<|%3c)(\?|%3f)php/i', '/(<|%3c)(\?|%3f)=/i', '/(<|%3c)(\?|%3f)(\s|\n)/i'], ['&#60;&#63;php', '&#60;&#63;=', '&#60;&#63; '], $val);
         //TODO maybe disable SmartyBC-supported {php}{/php}
         //$val = preg_replace('~\{/?php\}~i', '', $val); but with current smarty delim's
-        $val = str_replace('`', '&#96;', $val);
         foreach ([
              // script tags like <script or <script> or <script X> X = e.g. 'defer'
             '/(<|%3c)\s*(scrip)t([^>]*)((>|%3e)?)/i' => function($matches) {
@@ -77,17 +77,31 @@ class UserGuideUtils
             '/\b(on[\w.:\-]{4,})\s*=\s*(["\']?.+?["\']?)/i' => function($matches) {
                 return $matches[1].'&#61;'.strtr($matches[2], ['"' => '&#34;', "'" => '&#39;', '(' => '&#40;', ')' => '&#41;']);
             },
-            //callables like class::func
-            '/([a-zA-Z0-9_\x80-\xff]+?)\s*?::\s*?([a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*?)\s*?\(/' => function($matches) {
-                return $matches[1] . '&#58;&#58;' . $matches[1] . '&#40;';
+            //callables like class::method (any namespace ignored)
+            // letters & numbers'/[a-zA-Z0-9\x83\x88\x8a\x8c\x8e\x9a\x9c\x9e\x9f\xa8\xb8\xc0-\xd6\xd8-\xf6\xf8-\xff\pL\p{Nd}]/u'
+            '/([a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*)\s*::\s*([a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*)\s*\(/m' => function($matches) {
+                return $matches[1].'&#58;&#58;'.$matches[1].'&#40;';
+            },
+            //simple\plain callables (any namespace ignored)
+            '/([a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*?)\s*?\(/' => function($matches) {
+                return $matches[1].'&#40;';
+            },
+            //all callables like `str` aka shell_exec('str') are bad
+            //no reason for Smarty `-enclosed content e.g. `$module.contact` here
+            '/`(.*)`/m' => function($matches) {
+                return '&#96;'.$matches[1].'&#96;'; // or &grave;
+            },
+            //single `
+            '/([^`]*)`([^`]*)/m' => function($matches) {
+                return $matches[1].'&#96;'.$matches[2]; // or &grave;
             },
             // embeds
             '/(embe)(d)/i' => function($matches) {
                 return $matches[1].'&#'.ord($matches[2]).';';
             }
-            ] as $regex => $replacer) {
-                $val = preg_replace_callback($regex, $replacer, $val);
-            }
+        ] as $regex => $replacer) {
+            $val = preg_replace_callback($regex, $replacer, $val);
+        }
 
         if ($revert) {
             // preserve valid content like <p>
