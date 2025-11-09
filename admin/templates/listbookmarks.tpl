@@ -10,7 +10,7 @@
   </div>
 {/if}
 {if $marklist}
-  <p class="pagewarning visible">{lang('show_shortcuts_message')}</p>
+  {if $showinfo}<p class="information message">{lang('show_shortcuts_message')}</p>{/if}
   <table class="pagetable">
     <thead>
     <tr>
