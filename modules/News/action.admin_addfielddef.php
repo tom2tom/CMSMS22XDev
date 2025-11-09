@@ -11,14 +11,14 @@ if (isset($params['cancel'])) $this->RedirectToAdminTab('customfields', '', 'adm
 $name = (isset($params['name'])) ? trim($params['name']) : ''; // sanitize ?
 $type = (isset($params['type'])) ? $params['type'] : '';
 $public = (isset($params['public'])) ? (int)$params['public'] : 1;
-$options = (isset($params['options'])) ? trim($params['options']) : '';
+$options = (!empty($params['options'])) ? news_ops::execSpecialize(trim($params['options'])) : '';
 $max_length = (isset($params['max_length'])) ? max(1, (int)$params['max_length']) : -1;
 
 if (isset($params['submit'])) {
     $error = false;
     if ($name == '') $error = $this->Lang('nonamegiven');
 
-    if( !$error && $type == 'dropdown' && count($arr_options) == 0 ) $error = $this->Lang('error_nooptions');
+    if( !$error && $type == 'dropdown' && !$options ) $error = $this->Lang('error_nooptions');
 
     if( !$error ) {
         $query = 'SELECT id FROM '.CMS_DB_PREFIX.'module_news_fielddefs WHERE name = ?';
@@ -40,8 +40,8 @@ if (isset($params['submit'])) {
         $extra = ($props) ? serialize($props) : null;
 
         $now = $db->DBTimeStamp(time());
-        $query = 'INSERT INTO '.CMS_DB_PREFIX."module_news_fielddefs (name, type, item_order, create_date, modified_date, public, extra) VALUES (?,?,?,$now,$now,?,?)";
-        $db->Execute($query, array($name, $type, $order, $public, $extra));
+        $query = 'INSERT INTO '.CMS_DB_PREFIX."module_news_fielddefs (name,type,item_order,create_date,modified_date,public,extra) VALUES (?,?,$order,$now,$now,$public,?)";
+        $db->Execute($query, array($name, $type, $extra));
 
         // put mention into the admin log
         $fdid = $db->Insert_ID();
@@ -76,5 +76,3 @@ if( $max_length > 0 ) { $tpl->assign('max_length', $max_length); }
 $tpl->assign('public', $public);
 $tpl->assign('options', $options);
 $tpl->display();
-
-// EOF
