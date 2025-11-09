@@ -30,11 +30,11 @@ define ('IMAGE_MIME', 'mime');
  *    [channels] => int (channels),
  *    [mime] => string (mime-type)
  *
- * Returns false if $file is not a file, no arguments are supplied, $file is not an image, or otherwise fails.
+ * Returns false if $file is empty or is not a file or not an image, or the function otherwise fails.
  *
- **/
-function image_info($file = '', $out = '') {
-
+ */
+function image_info($file = '', $out = '')
+{
   // If $file is not supplied or is not a file, warn the user and return false.
   if ( !$file || !is_file($file)) {
    // echo '<p><b>Warning:</b> image_info() => first argument must be a file.</p>';
@@ -55,7 +55,7 @@ function image_info($file = '', $out = '') {
        // If $out is supplied, but is not a valid key, empty it.
        if ( $out && !in_array($out, $redefine_keys)) $out = '';
 
-       // Assign usefull values for the third index.
+       // Assign useful values for the third index.
        $types = array(
        1 => 'GIF',
        2 => 'JPG',
@@ -88,8 +88,10 @@ function image_info($file = '', $out = '') {
        $temp = array_values($temp);
 
        // Make an array using values from $redefine_keys as keys and values from $temp as values.
-       foreach ($temp AS $k => $v) {
-         $data[$redefine_keys[$k]] = $v;
+       foreach ($temp as $k => $v) {
+         if (array_key_exists($k, $redefine_keys)) { //TODO deal with undocumented extra data sometimes
+           $data[$redefine_keys[$k]] = $v; //TODO can $v be null ?
+         }
        }
 
        // Make 'type' useful.
@@ -100,10 +102,11 @@ function image_info($file = '', $out = '') {
 }
 
 
-function GetFileInfo($filename,$ext,$dir=false) {
-  $result="";
+function GetFileInfo($filename, $ext, $dir = false)
+{
+  $result = "";
   if ($dir) {
-    $result="&nbsp;";
+    $result = "&nbsp;";
   } else {
 
     switch (strtolower($ext)) {
@@ -121,7 +124,5 @@ function GetFileInfo($filename,$ext,$dir=false) {
   }
   return $result;
 }
-
-
 
 ?>
