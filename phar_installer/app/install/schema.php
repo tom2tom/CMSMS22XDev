@@ -52,7 +52,7 @@ if (isset($CMS_INSTALL_CREATE_TABLES)) {
  }
 
  $dbdict = NewDataDictionary($db);
- $taboptarray = array('mysqli' => 'ENGINE MyISAM CHARACTER SET utf8 COLLATE utf8_general_ci');
+ $taboptarray = array('mysqli' => 'ENGINE MyISAM');
  $success = ilang('done');
  $failed = ilang('failed');
 
@@ -378,7 +378,7 @@ EOS;
 	$flds = "
 		user_id I KEY,
 		username C(25),
-		password C(40),
+		password C(128),
 		admin_access I1,
 		first_name C(50),
 		last_name C(50),
@@ -390,8 +390,13 @@ EOS;
 	$sqlarray = $dbdict->CreateTableSQL(CMS_DB_PREFIX."users", $flds, $taboptarray);
 	$return = $dbdict->ExecuteSQLArray($sqlarray);
 	$ado_ret = ($return == 2) ? $success : $failed;
+	$pref = CMS_DB_PREFIX;
+	$sql = <<<EOS
+	ALTER TABLE `{$pref}users`
+	CHANGE `password` `password` varchar(128) CHARACTER SET ascii COLLATE ascii_bin
+EOS;
+	$db->Execute($sql);
 	verbose_msg(ilang('install_created_table', 'users', $ado_ret));
-
 
 	$flds = "
 		userplugin_id I KEY,
