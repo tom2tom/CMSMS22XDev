@@ -222,9 +222,9 @@ EOF;
 $lang['helpaction'] = <<<EOT
 Override the default action.  Possible values are:
 <ul>
-<li>&quot;detail&quot; - to display a specified articleid in detail mode.</li>
-<li>&quot;default&quot; - to display the summary view</li>
-<li>&quot;fesubmit&quot; - <strong>Deprecated</strong> to display the frontend form for allowing users to submit news articles on the front end. Add the <code>{cms_init_editor}</code> tag in the metadata section to initialize the selected WYSIWYG editor. (Site Admin >> Global Settings)</li>
+<li>&quot;detail&quot; - display a specified article in detail mode</li>
+<li>&quot;default&quot; - display the summary view</li>
+<li>&quot;fesubmit&quot; <strong>Deprecated</strong> - display the form for submitting news articles from the front end, or from the admin console by non-News-authorised users. Add the <code>{cms_init_editor}</code> tag in the metadata section to initialize the selected WYSIWYG editor. (Site Admin >> Global Settings)</li>
 <li>&quot;browsecat&quot; - to display a browsable category list.</li>
 </ul>
 EOT;
@@ -234,11 +234,11 @@ $lang['helpcategory'] = 'Used in the summary view to display only items for the 
 $lang['helpdetailpage'] = 'Page to display News details in.  This can either be a page alias or an id. Used to allow details to be displayed in a different template from the summary.  This parameter will have no effect for articles with custom URLs.';
 $lang['helpdetailtemplate'] = 'Use a separate database template for displaying the article detail. This template must exist in the Design Manager, though it does not need to be the default.  If this parameter is not specified, then the current template marked as default will be used.  This parameter is not used when generating urls if custom urls are specified.';
 $lang['helpformtemplate'] = 'Use a database template for displaying the article submission form. This template must exist in the Design Manager, though it does not need to be the default.  If this parameter is not specified, then the current template marked as default will be used.';
-$lang['helpmoretext'] = 'Text to display at the end of a news item if it goes over the summary length.  Defaults to "More"';
-$lang['helpnumber'] = 'Maximum number of items to display (per page) -- leaving empty will show all items.  This is a synonym for the pagelimit parameter.';
+$lang['helpmoretext'] = 'Text to display at the end of a news item if it exceeds the summary length.  Defaults to "More"';
+$lang['helpnumber'] = 'This is a synonym for the pagelimit parameter.';
 $lang['helpshowall'] = 'Show all articles, irrespective of end date';
 $lang['helpshowarchive'] = 'Show only expired news articles.';
-$lang['helpsortasc'] = 'Sort news items in ascending date order rather than descending.';
+$lang['helpsortasc'] = 'Sort news items in ascending order instead of descending.';
 $lang['helpsortby'] = 'Field to sort by.  Options are: "news_date", "summary", "news_data", "news_category", "news_title", "news_extra", "end_time", "start_time", "random".  Defaults to "news_date". If "random" is specified, the sortasc parameter is ignored.';
 $lang['helpstart'] = 'Start at the nth item -- leaving empty will start at the first item.';
 $lang['helpsummarytemplate'] = 'Use a separate database template for displaying the article summary.  This template must exist in the Design Manager, though it does not need to be the default.  If this parameter is not specified, then the current template marked as default will be used.';

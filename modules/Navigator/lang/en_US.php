@@ -77,8 +77,8 @@ $lang['help_action'] = 'Specify the action of the module.  This module supports 
 </ul>';
 $lang['help_collapse'] = 'When enabled, only items directly related to the current active page will be output';
 $lang['help_childrenof'] = 'This option will display only items that are descendants of the selected page id or alias.  i.e: <code>{Navigator childrenof=$page_alias}</code> will only display the children of the current page.';
-$lang['help_excludeprefix'] = 'Exclude all items (and their children) who\'s page alias matches one of the specified (comma separated) prefixes.  This parameter must not be used in conjunction with the includeprefix parameter.';
-$lang['help_includeprefix'] = 'Include only those items who\'s page alias matches one of the specified (comma separated) prefixes.  This parameter cannot be combined with the excludeprefix parameter.';
+$lang['help_excludeprefix'] = 'Exclude all items (and their children) whose page alias matches one of the specified (comma separated) prefixes.  This parameter must not be used in conjunction with the includeprefix parameter.';
+$lang['help_includeprefix'] = 'Include only those items whose page alias matches one of the specified (comma separated) prefixes.  This parameter cannot be combined with the excludeprefix parameter.';
 $lang['help_items'] = 'Specify a comma separated list of page aliases that this navigation should display.';
 $lang['help_loadprops'] = 'Use this parameter when NOT using advanced properties in your navigator template.  This will disable the loading of all of the content properties for each node (such as extra1, image, thumbnail, etc.).  This will dramatically decrease the number of queries required to build a navigation, and increase memory requirements, but will remove the possibility for much more advanced displays';
 $lang['help_nlevels'] = 'Alias for number_of_levels';
