@@ -137,12 +137,13 @@ $entryarray = array();
 // SQL_CALC_FOUND_ROWS is deprecated. Instead exectute the query with LIMIT, and then again with COUNT(*) for the FOUND_ROWS()
 $query1 = "SELECT SQL_CALC_FOUND_ROWS n.*,nc.news_category_name,nc.long_name FROM ".CMS_DB_PREFIX."module_news n LEFT OUTER JOIN ".CMS_DB_PREFIX."module_news_categories nc ON n.news_category_id = nc.news_category_id ";
 $parms = array();
-if ($curcategory != '') {
-    $query1 .= " WHERE nc.long_name LIKE ?";
+if ($curcategory) {
     if( $allcategories == 'yes' ) {
+	    $query1 .= " WHERE nc.long_name LIKE ?"; //TODO if long_name IS NULL
         $parms[] = $curcategory.'%';
     }
     else {
+    	$query1 .= " WHERE nc.long_name = ?"; //TODO if long_name IS NULL
         $parms[] = $curcategory;
     }
 }
