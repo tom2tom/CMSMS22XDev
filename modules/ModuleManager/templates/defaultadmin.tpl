@@ -1,11 +1,20 @@
+{if $pmod}
+<script>
+$(function() {
+  $('#page_tabs > #installed').trigger('click');
+});
+</script>
+{/if}
+{if $pmod && $connected}
 <div class="pagewarning">
   <h3>{$mod->Lang('notice')}</h3>
   <p>{$mod->Lang('general_notice')}</p>
   <h3>{$mod->Lang('use_at_your_own_risk')}</h3>
   <p>{$mod->Lang('compatibility_disclaimer')}</p>
 </div>
+{/if}
 {if $pmod}
-{tab_header name='installed' label=$mod->Lang('installed') active=$tab}
+{tab_header name='installed' label=$mod->Lang('local') active=$tab}
 {if $connected}
 {tab_header name='newversions' label=$newcount active=$tab}
 {tab_header name='search' label=$mod->Lang('search') active=$tab}
