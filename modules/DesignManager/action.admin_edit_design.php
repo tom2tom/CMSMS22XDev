@@ -29,7 +29,7 @@ if( isset($params['cancel']) ) {
 
 $design = null; // no object
 try {
-    if( !isset($params['design']) || $params['design'] == '' ) {
+    if( !isset($params['design']) || $params['design'] == '' || $params['design'] == 0 ) {
         $design= new CmsLayoutCollection();
 // no name yet $design->set_name('New Design');
     }
