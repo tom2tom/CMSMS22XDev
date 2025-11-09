@@ -58,6 +58,7 @@ class content_assistant
   /**
    * A utility function to test if the supplied urlpath is acceptable
    * for the supplied content id. Checks content and uniqueness.
+   * @see also cms_utils::validate_url()
    *
    * @param string The url path to test
    * @param mixed int | numeric string | '' $content_id Default ''

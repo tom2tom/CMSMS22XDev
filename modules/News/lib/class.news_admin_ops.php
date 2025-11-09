@@ -182,8 +182,4 @@ final class news_admin_ops
         }
         return trim($txt);
     }
-} // end of class
-
-#
-# EOF
-#
+} // class

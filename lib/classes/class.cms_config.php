@@ -162,11 +162,11 @@ final class cms_config implements ArrayAccess
   {
     $this->_types                              = [];
     $this->_types['dbms']                      = self::TYPE_STRING;
-    $this->_types['db_hostname']               = self::TYPE_STRING;
-    $this->_types['db_username']               = self::TYPE_STRING;
-    $this->_types['db_password']               = self::TYPE_STRING;
-    $this->_types['db_name']                   = self::TYPE_STRING;
-    $this->_types['db_port']                   = self::TYPE_INT;
+    $this->_types['db_hostname']               = self::TYPE_STRING; // deprecated since 2.2.23F2
+    $this->_types['db_username']               = self::TYPE_STRING; // deprecated since 2.2.23F2
+    $this->_types['db_password']               = self::TYPE_STRING; // deprecated since 2.2.23F2
+    $this->_types['db_name']                   = self::TYPE_STRING; // deprecated since 2.2.23F2
+    $this->_types['db_port']                   = self::TYPE_INT; // deprecated since 2.2.23F2
     $this->_types['db_prefix']                 = self::TYPE_STRING;
     $this->_types['root_url']                  = self::TYPE_STRING;
     $this->_types['ssl_url']                   = self::TYPE_STRING; // deprecated since 2.2
@@ -429,6 +429,7 @@ final class cms_config implements ArrayAccess
       case 'db_password':
       case 'db_name':
         // these guys have to be set TODO sometimes during installer before/when creating config
+        // maybe obfuscate the deprecated ones e.g. hash('md4'|'fnv1a64',uniqid().something str_shuffle(CMS_VERSION_NAME))
         stack_trace();
         die('FATAL ERROR: Could not find database connection key "'.$key.'" in the config file');
       break;

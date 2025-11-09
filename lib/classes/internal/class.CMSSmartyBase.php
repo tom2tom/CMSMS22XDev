@@ -40,21 +40,6 @@ class CMSSmartyBase extends Smarty
      */
     public $_version = Smarty::SMARTY_VERSION;
 
-    /* *
-     * This is an array of directories where trusted php scripts reside.
-     *
-     * @var array
-     */
-//see smarty_security class   public $trusted_dir = array();
-
-    /* *
-     * Pass any child-constructor up the tree
-     */
-/*    public function __construct()
-    {
-        parent::__construct();
-    }
-*/
     /**
      * wrapper for assign_by_ref
      *

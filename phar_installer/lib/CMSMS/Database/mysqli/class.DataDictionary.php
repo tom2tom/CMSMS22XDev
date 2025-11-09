@@ -245,6 +245,7 @@ class DataDictionary extends \CMSMS\Database\DataDictionary
 
         $name = rtrim($name);
         // if name contains special characters, quote it
+        // letters & numbers '/[a-zA-Z0-9\x83\x88\x8a\x8c\x8e\x9a\x9c\x9e\x9f\xa8\xb8\xc0-\xd6\xd8-\xf6\xf8-\xff\pL\p{Nd}]/u'
         $patn = ($allowBrackets) ? '\w$()\x80-\xff' : '\w$\x80-\xff';
         if (preg_match('/[^'.$patn.']/', $name)) {
             return '`'.$name.'`';

@@ -27,8 +27,8 @@
 class BookmarkOperations
 {
 	/**
-	 * Prepares a url for saving by replacing security tags with a holder
-	 * string so it can be replaced when retrieved and not break security.
+	 * Prepares an url for saving by replacing security tag etc with
+	 * placeholders so they can be replaced when retrieved and not break security.
 	 * @deprecated since 2.2.19 admin-url placeholders contribute to
 	 *  bypassing permissions, should not be allowed or used
 	 *
@@ -45,8 +45,8 @@ class BookmarkOperations
 	}
 
 	/**
-	 * Prepares a url for displaying by replacing the holder for the security
-	 * tag with the actual value.
+	 * Prepares an url for display/activation by replacing placeholders (for
+	 * the security tag etc) with their actual value.
 	 * @deprecated since 2.2.19 admin-url placeholders contribute to
 	 *  bypassing permissions, should not be allowed or used
 	 *

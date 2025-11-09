@@ -162,7 +162,7 @@ function localedate_adjust($fmt)
     "\x14",
     'W',
     ];
-    if (strncasecmp(PHP_OS, 'WIN', 3) === 0) {
+    if (strncasecmp(PHP_OS, 'WIN', 3) == 0) {
 /* TODO see
 https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/strftime-wcsftime-strftime-l-wcsftime-l?redirectedfrom=MSDN&view=msvc-170
 re other uses of '#' modifier
@@ -208,6 +208,7 @@ function localedate_ise($st, $mode, $locale)
                 $s = IntlDateFormatter::formatObject($dt, 'aa', $locale);
                 if ($mode == "\7") {
                     // force upper-case, any charset
+                    // letters '/[\x83\x88\x8a\x8c\x8e\x9a\x9c\x9e\x9f\xa8\xb8\xc0-\xd6\xd8-\xf6\xf8-\xff\pL]/u'
                     if (!preg_match('/[\x80-\xff]/', $s)) {
                         return strtoupper($s);
                     } elseif (function_exists('mb_strtoupper')) {
@@ -265,6 +266,7 @@ function localedate_ise($st, $mode, $locale)
                 $s = nl_langinfo($fmt);
                 if ($mode == "\7") {
                     // force upper-case, any charset
+                    // letters '/[\x83\x88\x8a\x8c\x8e\x9a\x9c\x9e\x9f\xa8\xb8\xc0-\xd6\xd8-\xf6\xf8-\xff\pL]/u'
                     if (!preg_match('/[\x80-\xff]/', $s)) {
                         return strtoupper($s);
                     } elseif (function_exists('mb_strtoupper')) {
