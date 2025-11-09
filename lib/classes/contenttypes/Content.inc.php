@@ -565,19 +565,20 @@ class Content extends ContentBase
 		$required = cms_to_bool($this->_get_param($blockInfo,'required'));
 		$placeholder = trim($this->_get_param($blockInfo,'placeholder'));
 		$maxlength = (int) $this->_get_param($blockInfo,'maxlength',255);
-		$adminonly = cms_to_bool($this->_get_param($blockInfo,'adminonly',0));
+		$adminonly = cms_to_bool($this->_get_param($blockInfo,'adminonly',FALSE));
 		if( $adminonly ) {
 			$uid = get_userid(FALSE);
 			$res = \UserOperations::get_instance()->UserInGroup($uid,1); //OR bullet-proof ->IsSuperuser($uid) ?
 			if( !$res ) return '';
 		}
-        //TODO relevance of distinct parameters-source
-		$adminonly = cms_to_bool(get_parameter_value($blockInfo,'adminonly',0));
+/* TODO relevance of distinct extra check
+		$adminonly = get_parameter_value($blockInfo,'adminonly',FALSE);
 		if( $adminonly ) {
 			$uid = get_userid(FALSE);
 			$res = \UserOperations::get_instance()->UserInGroup($uid,1); //OR bullet-proof ->IsSuperuser($uid) ?
 			if( !$res ) return '';
 		}
+*/
 		if( $this->Id() < 1 && empty($value) ) {
 			$value = trim($this->_get_param($blockInfo,'default'));
 		}
