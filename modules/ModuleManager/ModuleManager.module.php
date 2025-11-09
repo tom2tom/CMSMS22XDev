@@ -56,29 +56,26 @@ class ModuleManager extends CMSModule
     $smarty = cmsms()->GetSmarty();
     $modname = $this->GetName();
     $tpl = $smarty->createTemplate("module_file_tpl:$modname;error.tpl",null,null); //no parent
-    $tpl->assign('title_error', $this->Lang('error'));
-    $tpl->assign('message', $message);
-    $tpl->assign('link_back',$this->CreateLink($id,'defaultadmin',$returnid, $this->Lang('back_to_module_manager')));
+    $tpl->assign('title_error',$this->Lang('error'));
+    $tpl->assign('message',$message);
+    $tpl->assign('link_back',$this->CreateLink($id,'defaultadmin',$returnid,$this->Lang('back_to_module_manager')));
     $tpl->display();
   }
 
   public function Install()
   {
-    $this->SetPreference('module_repository',ModuleManager::_dflt_request_url);
+    $this->SetPreference('module_repository',self::_dflt_request_url);
   }
 
   public function Upgrade($oldversion, $newversion)
   {
-    $this->SetPreference('module_repository',ModuleManager::_dflt_request_url);
+    $this->SetPreference('module_repository',self::_dflt_request_url);
   }
 
   public function DoAction($action, $id, $params, $returnid=-1)
   {
-    $smarty = cmsms()->GetSmarty();
-    $smarty->assign($this->GetName(), $this);
-    $smarty->assign('mod', $this);
-    @set_time_limit(9999);
-    return parent::DoAction( $action, $id, $params, $returnid );
+    @set_time_limit(1999);
+    return parent::DoAction($action,$id,$params,$returnid);
   }
 
 } // end of class
