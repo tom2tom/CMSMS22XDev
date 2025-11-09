@@ -2021,22 +2021,46 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		}
 
 		if( !empty($this->_props['image'])) {
-			list($val,$msg) = cms_utils::validate_url(trim($this->_props['image']),'image');
-			if( $val ) {
-				//anything more here?
+			$s = $val = trim($this->_props['image']);
+			if( strpos($val,'/') === false ) {
+				$config = cms_config::get_instance();
+				$tmp = $config['image_uploads_path'].'/'.cms_siteprefs::get('content_imagefield_path').'/'.$val;
+				$val = str_replace(['\\','//',CMS_ROOT_PATH],['/','/',CMS_ROOT_URL],$tmp); //order preserves scheme://
+			}
+			elseif( $val[0] != '/' && strpos($val,':', 1) === false ) { //TODO not protocol-relative or starts with a scheme
+				if( !isset($config) ) { $config = cms_config::get_instance(); }
+				$s = '/'.$val;
+				$tmp = $config['image_uploads_path'].$s;
+				$val = str_replace(['\\','//',CMS_ROOT_PATH],['/','/',CMS_ROOT_URL],$tmp);
+			}
+			$res = cms_utils::validate_url($val,'image'); //aka CMSMS\FileType::TYPE_IMAGE
+			if( $res === true ) {
+				$this->_props['image'] = $s;
 			}
 			else {
-				$errors[] = $msg;
+				$errors[] = $res;
 			}
 		}
 
 		if( !empty($this->_props['thumbnail'])) {
-			list($val,$msg) = cms_utils::validate_url(trim($this->_props['thumbnail']),'image');
-			if( $val ) {
-				//anything more here?
+			$s = $val = trim($this->_props['thumbnail']);
+			if( strpos($val,'/') === false ) {
+				if( !isset($config) ) { $config = cms_config::get_instance(); }
+				$tmp = $config['image_uploads_path'].'/'.cms_siteprefs::get('content_thumbnailfield_path').'/'.$val;
+				$val = str_replace(['\\','//',CMS_ROOT_PATH],['/','/',CMS_ROOT_URL],$tmp);
+			}
+			elseif( $val[0] != '/' && strpos($val,':', 1) === false ) { //TODO not protocol-relative or starts with a scheme
+				if( !isset($config) ) { $config = cms_config::get_instance(); }
+				$s = '/'.$val;
+				$tmp = $config['image_uploads_path'].$s;
+				$val = str_replace(['\\','//',CMS_ROOT_PATH],['/','/',CMS_ROOT_URL],$tmp);
+			}
+			$res = cms_utils::validate_url($val,'image'); //aka CMSMS\FileType::TYPE_IMAGE
+			if( $res === true ) {
+				$this->_props['thumbnail'] = $s;
 			}
 			else {
-				$errors[] = $msg;
+				$errors[] = $res;
 			}
 		}
 
@@ -2816,14 +2840,14 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			return array($prompt.$help,$str);
 
 		case 'image':
-		//TODO support selection also from any of: assetspath/images; themesroot/*; themesroot/*/images; themesroot/*/media, $config['image_uploads_path'] when subdir exists
+		//TODO support selection also from any of: assetspath/images; themesroot/*; themesroot/*/images; themesroot/*/media
 			$dir = $config['image_uploads_path']; // preference-defined subdirs might be relevant
 			if( ($tmp = cms_siteprefs::get('content_imagefield_path')) ) { $dir .= DIRECTORY_SEPARATOR . trim($tmp,' \\/'); }
 			$data = $this->GetPropertyValue('image');
 			$filepicker = cms_utils::get_filepicker_module();
 			if( $filepicker ) {
 				$profile = $filepicker->get_default_profile($dir,$userid);
-				$profile = $profile->overrideWith(['top'=>$dir,'type'=>'image']);
+				$profile = $profile->overrideWith(['top'=>$dir,'type'=>'image']); // aka CMSMS\FileType::TYPE_IMAGE
 				$input = $filepicker->get_html('image',$data,$profile);
 				preg_match('/id="(.+?)"/',$input,$matches);
 				$htmlid = $matches[1];
@@ -2833,7 +2857,8 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				$exts = $helper->get_file_type_extensions('image',true);
 				$picks = implode(',',$exts);
 				//TODO opportunity for entering non-selected url
-				$input = create_file_dropdown('image',$dir,$data,$picks,'',true,'','',false,true);
+				$prefix = strtr(str_replace(CMS_ROOT_PATH,'',$dir),'\\','/'); // root-relative-url format
+				$input = create_file_dropdown('image',$dir,$data,$picks,$prefix,true,'','',false,true);
 				$htmlid = 'image';
 			}
 			if( !$input ) return [];
@@ -2869,7 +2894,8 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				if (PHP_VERSION_ID >= 80100) { $exts .= ',avif'; }
 				$exts .= ',webp';
 				//TODO opportunity for entering non-selected url
-				$input = create_file_dropdown('thumbnail',$dir,$data,$exts,'',true,'','thumb_',false,true);
+				$prefix = strtr(str_replace(CMS_ROOT_PATH,'',$dir),'\\','/'); // root-relative-url format
+				$input = create_file_dropdown('thumbnail',$dir,$data,$exts,$prefix,true,'','thumb_',false,true);
 				$htmlid = 'thumbnail';
 			}
 			if( !$input ) return [];
