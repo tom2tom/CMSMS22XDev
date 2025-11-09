@@ -646,14 +646,15 @@ class Smarty extends Smarty_Internal_TemplateBase
     protected $accessMap = array(
         'template_dir' => 'TemplateDir', 'config_dir' => 'ConfigDir',
         'plugins_dir'  => 'PluginsDir', 'compile_dir' => 'CompileDir',
-        'cache_dir'    => 'CacheDir',
+        'cache_dir'    => 'CacheDir'
     );
 
     /**
-     * PHP7 Compatibility mode
+     * flag whether to mute some types of warning triggered on PHP7+
+     * a poor alternative to fixing warning-causes
      * @var bool
      */
-    private $isMutingUndefinedOrNullWarnings = false;
+    public $muteWarnings = false;
 
     /**
      * Initialize new Smarty object
@@ -709,7 +710,7 @@ class Smarty extends Smarty_Internal_TemplateBase
     /**
      * Disable security
      *
-     * @return Smarty current Smarty instance for chaining
+     * @return Smarty                 current Smarty instance for chaining
      */
     public function disableSecurity()
     {
@@ -876,7 +877,7 @@ class Smarty extends Smarty_Internal_TemplateBase
                 $this->plugins_dir = (array)$this->plugins_dir;
             }
             foreach ($this->plugins_dir as $k => $v) {
-                $this->plugins_dir[ $k ] = $this->_realpath(rtrim((string)$v, '/\\') . DIRECTORY_SEPARATOR, true);
+                $this->plugins_dir[ $k ] = $this->_realpath(rtrim((string)$v, '\/') . DIRECTORY_SEPARATOR, true);
             }
             $this->_cache[ 'plugin_files' ] = array();
             $this->_pluginsDirNormalized = true;
@@ -1316,9 +1317,7 @@ class Smarty extends Smarty_Internal_TemplateBase
             return $this->{$method}();
         } elseif (isset($this->_cache[ $name ])) {
             return $this->_cache[ $name ];
-        } elseif (in_array($name, $this->obsoleteProperties)) {
-            return null;
-        } else {
+        } elseif (!in_array($name, $this->obsoleteProperties)) {
             trigger_error('Undefined property: ' . get_class($this) . '::$' . $name, E_USER_NOTICE);
         }
         return null;
@@ -1355,7 +1354,7 @@ class Smarty extends Smarty_Internal_TemplateBase
      */
     private function _normalizeDir($dirName, $dir)
     {
-        $this->{$dirName} = $this->_realpath(rtrim((string)$dir, '/\\') . DIRECTORY_SEPARATOR, true);
+        $this->{$dirName} = $this->_realpath(rtrim((string)$dir, '\/') . DIRECTORY_SEPARATOR, true);
     }
 
     /**
@@ -1387,19 +1386,38 @@ class Smarty extends Smarty_Internal_TemplateBase
     }
 
     /**
-     * Mutes errors for "undefined index", "undefined array key" and "trying to read property of null".
-     *
-     * @void
+     * Set/clear flag for muting several errors: "undefined index", "undefined array key" and "trying to read property of null".
+     * @param bool $state Default true
      */
-    public function muteUndefinedOrNullWarnings(): void {
-        $this->isMutingUndefinedOrNullWarnings = true;
+    public function setMuteWarnings($state = true)
+    {
+        $this->muteWarnings = $state;
     }
 
     /**
-     * Indicates if Smarty will mute errors for "undefined index", "undefined array key" and "trying to read property of null".
-     * @bool
+     * Alias of setMuteWarnings(true)
+     * @deprecated since 4.4.2
      */
-    public function isMutingUndefinedOrNullWarnings(): bool {
-        return $this->isMutingUndefinedOrNullWarnings;
+    public function muteUndefinedOrNullWarnings()
+    {
+        $this->muteWarnings = true;
+    }
+
+    /**
+     * Get flag indicating whether Smarty will mute errors for "undefined index", "undefined array key" and "trying to read property of null".
+     * @return bool
+     */
+    public function getMuteWarnings()
+    {
+        return $this->muteWarnings;
+    }
+
+    /**
+     * Alias of getMuteWarnings()
+     * @deprecated since 4.4.2
+     */
+    public function isMutingUndefinedOrNullWarnings()
+    {
+        return $this->muteWarnings;
     }
 }
