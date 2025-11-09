@@ -88,7 +88,7 @@ if (isset($_POST['submit_account']) && check_permission($userid,'Manage My Accou
     switch ($key) {
       case 'user': //account
         //scrub malicious/XSS & invalid content
-        $username = preg_replace('/[^a-zA-Z0-9._\- \x8c\x8e\x9c\x9e\x9f\xc0-\xd6\xd8-\xf6\xf8-\xff\pL\p{Nd}/p{Po}]/u', '', trim($val));
+        $username = preg_replace('/[^a-zA-Z0-9._\- \x8c\x8e\x9c\x9e\x9f\xc0-\xd6\xd8-\xf6\xf8-\xff\pL\p{Nd}\p{Po}]/u', '', trim($val));
         break;
       case 'firstname':
       case 'lastname':
@@ -162,14 +162,14 @@ if (isset($_POST['submit_prefs']) && check_permission($userid,'Manage My Setting
   if (isset($_POST['old_default_cms_lang'])) $old_default_cms_lang = cleanValue($_POST['old_default_cms_lang']);
   if (isset($_POST['admintheme'])) { $admintheme = cleanValue($_POST['admintheme']); }
   else { $admintheme = null; } //aka unset
-  $bookmarks = (isset($_POST['bookmarks']) ? 1 : 0);
-  $indent = (isset($_POST['indent']) ? true : false);
-  $paging = (isset($_POST['paging']) ? 1 : 0);
+  $bookmarks = (!empty($_POST['bookmarks']) ? 1 : 0);
+  $indent = (!empty($_POST['indent']));
+  $paging = (!empty($_POST['paging']) ? 1 : 0);
   $date_format_string = trim(strip_tags(substr($_POST['date_format_string'], 0, 20)));
   $default_parent = '';
   if (isset($_POST['parent_id'])) $default_parent = (int)$_POST['parent_id'];
   $homepage = cleanValue($_POST['homepage']);
-  $hide_help_links = (isset($_POST['hide_help_links']) ? 1 : 0);
+  $hide_help_links = (!empty($_POST['hide_help_links']) ? 1 : 0);
 
   // Set prefs
   cms_userprefs::set_for_user($userid, 'wysiwyg', $wysiwyg);
