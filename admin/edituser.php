@@ -202,7 +202,7 @@ if (isset($_POST["submit"])) {
             // put mention into the admin log
             HookManager::do_hook('Core::EditUserPost', [ 'user'=>$thisuser ]);
             $gCms->clear_cached_files();
-            $url = 'listusers.php?' . $urlext;
+            $url = 'listusers.php' . $urlext;
             if ($message) {
                 $message = rawurlencode($message);
                 $url .= '&message=' . $message;
