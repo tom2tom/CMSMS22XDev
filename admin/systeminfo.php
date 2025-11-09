@@ -233,7 +233,7 @@ else {
                              'green');
   }
   else {
-    $tmp[1]['curlversion'] = testDummy('curlversion',lang('test_curlversion'),'yellow',
+    $tmp[1]['curlversion'] = testDummy('curlversion',lang('curlversion'),'yellow',
                              lang('curl_versionstr',$curl_version,$min_curlversion));
   }
 }
