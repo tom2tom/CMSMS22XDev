@@ -94,7 +94,13 @@ if( isset($params['submit']) ) {
         if( !$content ) throw new CmsException($this->Lang('nocontentgiven'));
         if( !empty($params['summary']) ) $summary = news_ops::execSpecialize(trim($params['summary']));
         if( !empty($params['extra']) ) $extra = news_ops::execSpecialize(trim($params['extra']));
-        if( !empty($params['icon']) ) $icon = trim($params['icon']); // TODO sanitize e.g. cms_utils::validate_url($value,'image')
+        if( !empty($params['icon']) ) {
+            $icon = trim($params['icon']);
+            $res = cms_utils::validate_url($icon,'image');
+            if( $res !== TRUE ) {
+                $icon = '';
+            }
+        }
         if( isset($params['category_id']) ) $category_id = (int)$params['category_id'];
         if( isset($params['input_category']) ) $category_id = (int)$params['input_category'];
 
@@ -178,12 +184,9 @@ VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,1)';
                         }
                     }
                 }
-                // cache the linkedfile fields
+                // cache the possibly-wanted linkedfile fields
                 $query = 'SELECT id FROM ' . CMS_DB_PREFIX . "module_news_fielddefs WHERE type='linkedfile'";
                 $lfields = $db->GetCol($query);
-                if( $lfields ) {
-                    $prefix = basename($config['uploads_path']);
-                }
             }
         }
 
@@ -192,10 +195,15 @@ VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,1)';
                 $fldid = (int)substr($key,17);
                 if( $wantedfields && !empty($wantedfields[$fldid]) ) { // use this one
                     if( !$front && $lfields && in_array($fldid,$lfields) ) {
-                        if( preg_match("~^([\/]\s*?$prefix\s*)[\/]~",$value,$matches) ) {
-                            $value = str_replace($matches[1],'',$value);
+                        if( $value ) {
+                            $tmp = news_ops::check_linkedfile($value,$config['uploads_path']);
+                            if( $tmp != $value ) {
+                                //do stuff
+                                $value = $tmp;
+                            }
                         } else {
-                           // {file_url}-incompatible value might work ?
+                            //not really wanted ...
+                            continue;
                         }
                     }
                     $query = 'INSERT INTO '.CMS_DB_PREFIX."module_news_fieldvals

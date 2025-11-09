@@ -54,13 +54,9 @@ if (isset($params['submit'])) {
     }
 
     if (!$error && $image_url) {
-        list($valid, $msg) = cms_utils::validate_url($image_url,'image');
-        if (!$valid) {
-            if ($msg) {
-                $error = $this->ShowErrors($msg);
-            } else {
-                $error = $this->ShowErrors($this->Lang('error_unknown'));
-            }
+        $res = cms_utils::validate_url($image_url, 'image');
+        if ($res !== TRUE) {
+            $error = $this->ShowErrors($res);
         }
     }
 
@@ -137,6 +133,17 @@ VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
             if ($ffields) {
                 foreach ($ffields as $fid) {
                     if (!empty($wantedfields[$fid])) { // use this one
+                        /*
+                        the recorded value for a 'file' field is like
+                          somefile.ext
+                        which file will have been saved (see above) as
+                          $config['uploads_path'].DIRECTORY_SEPARATOR
+                         .'news'.DIRECTORY_SEPARATOR.
+                          'id'.$articleid.DIRECTORY_SEPARATOR.
+                          somefile.ext
+                        the default displayer for that tag involves
+                         <img src="{$entry->file_location}/{$field->value}"
+                        */
                         $elem = $id . 'customfield_' . $fid;
                         if (isset($_FILES[$elem]) && $_FILES[$elem]['name'] != '') {
                             if ($_FILES[$elem]['error'] != 0 || $_FILES[$elem]['tmp_name'] == '') {
@@ -156,42 +163,34 @@ VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
                     }
                 }
             }
-            // cache the linkedfile fields
+            // cache the potential wanted linkedfile fields
             $query = 'SELECT id FROM ' . CMS_DB_PREFIX . "module_news_fielddefs WHERE type='linkedfile'";
             $lfields = $db->GetCol($query);
-            if ($lfields) {
-                $prefix = basename($config['uploads_path']);
-            }
 
             if (isset($params['customfield']) && !$error) {
                 $longnow = $db->DBTimeStamp($now);
                 $query = 'INSERT INTO ' . CMS_DB_PREFIX . "module_news_fieldvals (news_id,fielddef_id,value,create_date,modified_date) VALUES (?,?,?,$longnow,$longnow)";
                 foreach ($params['customfield'] as $fldid => $value) {
                     if ($wantedfields && !empty($wantedfields[$fldid])) { // use this one
-                        /*
-                        the recorded value for a 'file' field is like
-                          somefile.ext
-                        which file will have been saved (see above) as
-                          $config['uploads_path'].DIRECTORY_SEPARATOR
-                         .'news'.DIRECTORY_SEPARATOR.
-                          'id'.$articleid.DIRECTORY_SEPARATOR.
-                          somefile.ext
-                        the default displayer for that tag involves
-                         <img src="{$entry->file_location}/{$field->value}"
-
-                        the default FipePicker-generated value for a 'linkedfile' field is like
-                          /uploads/somepath/to/somefile.ext
-                        but the user can change that or enter/paste some other url altogether
-                        the default displayer for a 'linkedfile' field involves
-                          {file_url file=$field->value}
-                        and that tag looks for $config['uploads_path'][/dir parameter]/file parameter
-                        so the recorded value needs adjustment (strip '/uploads') as well as sanitisation
-                        */
                         if ($lfields && in_array($fldid, $lfields)) {
-                            if (preg_match("~^([\/]\s*?$prefix\s*)[\/]~", $value, $matches)) {
-                                $value = str_replace($matches[1], '', $value);
+                            /*
+                            the default FipePicker-generated value for a 'linkedfile' field is like
+                              /uploads/somepath/to/somefile.ext
+                            but the user can change that or enter/paste some other url altogether
+                            the default displayer for a 'linkedfile' field involves
+                              {file_url file=$field->value}
+                            and that tag looks for $config['uploads_path'][/dir parameter]/file parameter
+                            so the recorded value needs adjustment (strip '/uploads') as well as sanitisation
+                            */
+                            if ($value) {
+                                $tmp = news_ops::check_linkedfile($value, $config['uploads_path']);
+                                if ($tmp != $value) {
+                                    //do stuff
+                                    $value = $tmp;
+                                }
                             } else {
-                                // {file_url}-incompatible value might work ?
+                                //not really wanted ...
+                                continue;
                             }
                         }
 
