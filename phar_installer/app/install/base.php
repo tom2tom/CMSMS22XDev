@@ -16,8 +16,9 @@ cms_siteprefs::set('allow_browser_cache',1); // allow browser to cache cachable 
 cms_siteprefs::set('auto_clear_cache_age',60); // cache files for only 60 days by default
 cms_siteprefs::set('browser_cache_expiry',60); // browser can cache pages for 60 minutes.
 $txt = str_pad(decoct(umask()),3,'0',STR_PAD_LEFT);
-cms_siteprefs::set('global_umask',$txt); //deprecated since 2.2.19 (setting umask is bad on multi-threaded servers)
+cms_siteprefs::set('global_umask',$txt); // deprecated since 2.2.19 (setting umask is bad on multi-threaded servers)
 cms_siteprefs::set('metadata',"<meta name=\"Generator\" content=\"CMS Made Simple - Copyright (C) 2004-" . date('Y') . ". All rights reserved.\">\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\r\n");
+cms_siteprefs::set('privatePath',"\$config['admin_path'],configs,private");
 cms_siteprefs::set('sitedownmessage','<p>Site is currently down for maintenance</p>');
 cms_siteprefs::set('use_smartycache',0); // do not cache frontend pages
 cms_siteprefs::set('use_smartycompilecheck',0); // do not compile-check frontend page templates
@@ -232,6 +233,7 @@ $create_private_dir($destdir,'tmp','templates_c');
 $create_private_dir($destdir,'uploads'); // since 2.2.22F2 not in archive if themes data not in here
 $create_private_dir($destdir,'uploads','images');
 $create_private_dir($destdir,'admin','configs'); // since 2.2.20
+$create_private_dir($destdir,'admin','configs','private'); // since 2.2.23F2
 // create the assets directory structure
 verbose_msg(ilang('install_createassets'));
 $create_private_dir($destdir,'assets');
