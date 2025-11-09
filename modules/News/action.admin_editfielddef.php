@@ -13,7 +13,7 @@ $origname = (isset($params['origname'])) ? $params['origname'] : ''; //htmlspeci
 $name = (isset($params['name'])) ? trim($params['name']) : ''; // sanitize ?
 $type = (isset($params['type'])) ? $params['type'] : '';
 $public = (isset($params['public'])) ? (int)$params['public'] : 0;
-$options = (isset($params['options'])) ? trim($params['options']) : ''; // sanitize ?
+$options = (!empty($params['options'])) ? news_ops::execSpecialize(trim($params['options'])) : '';
 $max_length = (isset($params['max_length'])) ? max(1, (int)$params['max_length']) : -1;
 
 if (isset($params['submit'])) {
@@ -36,7 +36,7 @@ if (isset($params['submit'])) {
     }
     $extra = ($props) ? serialize($props) : null;
 
-    $query = 'UPDATE '.CMS_DB_PREFIX.'module_news_fielddefs SET name = ?, type = ?, modified_date = '.$db->DBTimeStamp(time()).', public = ?, extra = ? WHERE id = ?';
+    $query = 'UPDATE '.CMS_DB_PREFIX.'module_news_fielddefs SET name = ?,type = ?,modified_date = '.$db->DBTimeStamp(time()).',public = ?,extra = ? WHERE id = ?';
     $res = $db->Execute($query, array($name, $type, $public, $extra, $fdid));
 
     if (!$res) exit( $db->ErrorMsg() );
@@ -93,5 +93,3 @@ $tpl->assign('public', $public);
 $tpl->assign('options', $options);
 
 $tpl->display();
-
-// EOF
