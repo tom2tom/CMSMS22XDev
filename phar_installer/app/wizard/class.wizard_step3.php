@@ -95,6 +95,17 @@ class wizard_step3 extends wizard_step
             $obj->fail_key = 'fail_config_writable';
             $tests[] = $obj;
 
+            if ( $action == 'upgrade' ) {
+                // database-credentials file must be writable
+                $dest = $app->get_destdir().'/admin/configs/private/db.ini';
+                if( is_file($dest) ) {
+                    $obj = new _tests_\boolean_test('config_writable',is_writable($dest));
+                    $obj->required = true;
+                    $obj->fail_key = 'fail_config_writable';
+                    $tests[] = $obj;
+                }
+            }
+
             if( version_compare($version_info['version'],'2.2') < 0 ) {
                 $dir = $app->get_destdir().'/assets';
                 if( is_dir($dir) ) {
