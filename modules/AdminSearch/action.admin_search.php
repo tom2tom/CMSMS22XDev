@@ -56,6 +56,9 @@ if( isset($params['submit']) ) {
         return;
     }
 }
+elseif( empty($params['slaves']) ) {
+    return; // nothing to process (not an error ATM)
+}
 
 // save the search
 $userid = get_userid();
