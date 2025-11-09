@@ -2,16 +2,14 @@
 <h3>{$header}</h3>
 {/if}
 
-{if isset($letters)}
-<p class="pagerows">{$letters}</p>
-{/if}
-<div style="clear:both">&nbsp;</div>
-{if !empty($message)}
-<p class="pageerror">{$message}</p>
+{if isset($errmessage1)}
+<p class="pagewarning">{$errmessage1}</p>
+<br>
 {/if}
 
-{function get_module_status_icon}
+{if !empty($items)}
 {strip}
+{function get_module_status_icon}
 {if $status == 'stale'}
 {$stale_img}
 {elseif $status == 'warn'}
@@ -19,20 +17,18 @@
 {elseif $status == 'new'}
 {$new_img}
 {/if}
-{/strip}
 {/function}
-
-{if !empty($items)}
+{/strip}
 <table class="pagetable scrollable">
 	<thead>
 		<tr>
 			<th></th>
-			<th>{$nametext}</th>
-			<th><span title="{$ModuleManager->Lang('title_modulelastversion')}">{$vertext}</span></th>
-			<th><span title="{$ModuleManager->Lang('title_modulereleasedate')}">{$ModuleManager->Lang('releasedate')}</span></th>
-{*			<th><span title="{$ModuleManager->Lang('title_moduledownloads')}">{$ModuleManager->Lang('downloads')}</span></th>*}
-			<th>{$sizetext}</th>
-			<th>{$statustext}</th>
+			<th>{$mod->Lang('nametext')}</th>
+			<th><span title="{$mod->Lang('title_modulelastversion')}">{$mod->Lang('vertext')}</span></th>
+			<th><span title="{$mod->Lang('title_modulereleasedate')}">{$mod->Lang('releasedate')}</span></th>
+{*			<th><span title="{$mod->Lang('title_moduledownloads')}">{$mod->Lang('downloads')}</span></th>*}
+			<th>{$mod->Lang('sizetext')}</th>
+			<th>{$mod->Lang('statustext')}</th>
 			<th>&nbsp;</th>
 			<th>&nbsp;</th>
 			<th>&nbsp;</th>
@@ -41,7 +37,7 @@
 	<tbody>
 {foreach $items as $entry}
 		{cycle values="row1,row2" assign='rowclass'}
-			<tr class="{$rowclass}"{if $entry->age=='new'} style="font-weight:bold"{/if}>
+		<tr class="{$rowclass}"{if $entry->age=='new'} style="font-weight:bold"{/if}>
 			<td>{get_module_status_icon status=$entry->age}</td>
 			<td><span title="{$entry->description|default:''|adjust:'strip_tags'|cms_escape}">{$entry->name}</span></td>
 			<td>{$entry->version}</td>
@@ -49,11 +45,13 @@
 {*			<td>{$entry->downloads}</td>*}
 			<td>{$entry->size}</td>
 			<td>{$entry->status}</td>
-			<td><span title="{$ModuleManager->Lang('title_modulereleasedepends')}">{$entry->dependslink}</span></td>
-			<td><span title="{$ModuleManager->Lang('title_modulereleasehelp')}">{$entry->helplink}</span></td>
-			<td><span title="{$ModuleManager->Lang('title_modulereleaseabout')}">{$entry->aboutlink}</span></td>
+			<td><span title="{$mod->Lang('title_modulereleasedepends')}">{$entry->dependslink}</span></td>
+			<td><span title="{$mod->Lang('title_modulereleasehelp')}">{$entry->helplink}</span></td>
+			<td><span title="{$mod->Lang('title_modulereleaseabout')}">{$entry->aboutlink}</span></td>
 		</tr>
 {/foreach}
 	</tbody>
 </table>
+{else}
+<p class="pageerror">{$errmessage2}</p>
 {/if}

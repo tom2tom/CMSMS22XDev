@@ -4,17 +4,17 @@ if( !$this->CheckPermission('Modify Modules') ) return;
 $this->SetCurrentTab('installed');
 
 try {
-    $mod = get_parameter_value($params,'mod');
-    if( !$mod ) {
+    $modname = get_parameter_value($params,'mod');
+    if( !$modname ) {
         $this->SetError($this->Lang('error_missingparams'));
         $this->RedirectToAdminTab();
     }
 
     $ops = ModuleOperations::get_instance();
-    $modinstance = $ops->get_module_instance($mod,'',TRUE);
+    $modinstance = $ops->get_module_instance($modname,'',TRUE);
     if( !is_object($modinstance) ) {
         // uh-oh
-        $this->SetError($this->Lang('error_getmodule',htmlspecialchars($mod)));
+        $this->SetError($this->Lang('error_getmodule',htmlspecialchars($modname)));
         $this->RedirectToAdminTab();
     }
 
@@ -26,8 +26,8 @@ try {
         try {
             if( !isset($params['confirm']) || $params['confirm'] != 1 ) throw new \RuntimeException($this->Lang('error_notconfirmed'));
             $postmsg = $modinstance->UninstallPostMessage();
-            if( $postmsg == '' ) $postmsg = $this->Lang('msg_module_uninstalled',$mod);
-            $result = $ops->UninstallModule($mod);
+            if( $postmsg == '' ) $postmsg = $this->Lang('msg_module_uninstalled',$modname);
+            $result = $ops->UninstallModule($modname);
             if( $result[0] == FALSE ) throw new \RuntimeException($result[1]);
             $this->SetMessage($postmsg);
             $this->RedirectToAdminTab();
@@ -37,9 +37,9 @@ try {
         }
     }
 
-    $modname = $this->GetName();
-    $tpl = $smarty->createTemplate("module_file_tpl:$modname;local_uninstall.tpl",null,$modname,$smarty);
-    $tpl->assign('module_name',$modinstance->GetName());
+    $myname = $this->GetName();
+    $tpl = $smarty->createTemplate("module_file_tpl:$myname;local_uninstall.tpl",null,$myname,$smarty);
+    $tpl->assign('module_name',$modinstance->GetName()); // aka $modname
     $tpl->assign('module_version',$modinstance->GetVersion());
     $msg = $modinstance->UninstallPreMessage();
     if( !$msg ) $msg = $this->Lang('msg_module_uninstall');

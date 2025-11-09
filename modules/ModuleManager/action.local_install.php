@@ -3,14 +3,14 @@ if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Modify Modules') ) return;
 $this->SetCurrentTab('installed');
 
-$mod = get_parameter_value($params,'mod');
-if( !$mod ) {
+$modname = get_parameter_value($params,'mod');
+if( !$modname ) {
   $this->SetError($this->Lang('error_missingparams'));
   $this->RedirectToAdminTab();
 }
 
 $ops = ModuleOperations::get_instance();
-$result = $ops->InstallModule($mod);
+$result = $ops->InstallModule($modname);
 if( !is_array($result) || !isset($result[0]) ) $result = array(FALSE,$this->Lang('error_moduleinstallfailed'));
 
 if( $result[0] == FALSE ) {
@@ -18,15 +18,15 @@ if( $result[0] == FALSE ) {
   $this->RedirectToAdminTab();
 }
 
-$modinstance = $ops->get_module_instance($mod,'',TRUE);
+$modinstance = $ops->get_module_instance($modname,'',TRUE);
 if( !is_object($modinstance) ) {
   // uh-oh...
-  $this->SetError($this->Lang('error_getmodule',$mod));
+  $this->SetError($this->Lang('error_getmodule',$modname));
   $this->RedirectToAdminTab();
 }
 
 $msg = $modinstance->InstallPostMessage();
-if( !$msg ) $msg = $this->Lang('msg_module_installed',$mod);
+if( !$msg ) $msg = $this->Lang('msg_module_installed',$modname);
 $this->SetMessage($msg);
 $this->RedirectToAdminTab();
 

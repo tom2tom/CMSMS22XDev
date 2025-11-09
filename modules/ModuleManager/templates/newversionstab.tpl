@@ -22,13 +22,13 @@
 	<thead>
 		<tr>
 			<th></th>
-			<th>{$nametext}</th>
-			<th><span title="{$ModuleManager->Lang('title_newmoduleversion')}">{$vertext}</span></th>
-			<th><span title="{$ModuleManager->Lang('title_yourmoduledate')}">{$ModuleManager->Lang('releasedate')}</span></th>
-{*			<th><span title="{$ModuleManager->Lang('title_moduledownloads2')}">{$ModuleManager->Lang('downloads')}</span></th>*}
-			<th><span title="{$ModuleManager->Lang('title_modulesize2')}">{$sizetext}</span></th>
-			<th><span title="{$ModuleManager->Lang('title_yourmoduleversion')}">{$haveversion}</span></th>
-			<th><span title="{$ModuleManager->Lang('title_modulestatus')}">{$statustext}</span></th>
+			<th>{$mod->Lang('nametext')}</th>
+			<th><span title="{$mod->Lang('title_newmoduleversion')}">{$mod->Lang('vertext')}</span></th>
+			<th><span title="{$mod->Lang('title_yourmoduledate')}">{$mod->Lang('releasedate')}</span></th>
+{*			<th><span title="{$mod->Lang('title_moduledownloads2')}">{$mod->Lang('downloads')}</span></th>*}
+			<th><span title="{$mod->Lang('title_modulesize2')}">{$mod->Lang('sizetext')}</span></th>
+			<th><span title="{$mod->Lang('title_yourmoduleversion')}">{$mod->Lang('yourversion')}</span></th>
+			<th><span title="{$mod->Lang('title_modulestatus')}">{$mod->Lang('statustext')}</span></th>
 			<th>&nbsp;</th>
 			<th>&nbsp;</th>
 			<th>&nbsp;</th>
@@ -49,9 +49,9 @@
 		<td>{$entry->size|default:''}</td>
 		<td>{if isset($entry->haveversion)}{$entry->haveversion}{/if}</td>
 		<td>{$entry->status|default:''}</td>
-		<td><a href="{$entry->depends_url}" title="{$ModuleManager->Lang('title_moduledepends')}">{$ModuleManager->Lang('dependstxt')}</a></td>
-		<td><a href="{$entry->help_url}" title="{$ModuleManager->Lang('title_modulehelp')}">{$ModuleManager->Lang('helptxt')}</a></td>
-		<td><a href="{$entry->about_url}" title="{$ModuleManager->Lang('title_moduleabout')}">{$ModuleManager->Lang('abouttxt')}</a></td>
+		<td><a href="{$entry->depends_url}" title="{$mod->Lang('title_moduledepends')}">{$mod->Lang('dependstxt')}</a></td>
+		<td><a href="{$entry->help_url}" title="{$mod->Lang('title_modulehelp')}">{$mod->Lang('helptxt')}</a></td>
+		<td><a href="{$entry->about_url}" title="{$mod->Lang('title_moduleabout')}">{$mod->Lang('abouttxt')}</a></td>
 	</tr>
 {/foreach}
 	</tbody>

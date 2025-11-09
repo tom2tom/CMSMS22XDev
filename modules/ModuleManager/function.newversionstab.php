@@ -52,15 +52,15 @@ if( !empty($newversions) ) {
             $onerow->$key = $val;
         }
 
-        $mod = $this->GetModuleInstance($row['name']);
-        if( !is_object($mod) ) {
+        $modinstance = $this->GetModuleInstance($row['name']);
+        if( !is_object($modinstance) ) {
             $onerow->error = $this->Lang('error_module_object',$row['name']);
         }
         else {
-            $mver = $mod->GetVersion();
+            $mver = $modinstance->GetVersion();
             if( version_compare($row['version'],$mver) > 0 ) {
-                $modinst = cms_utils::get_module($row['name']);
-                if( is_object($modinst) ) $onerow->haveversion = $modinst->GetVersion();
+                $modinst2 = cms_utils::get_module($row['name']);
+                if( is_object($modinst2) ) $onerow->haveversion = $modinst2->GetVersion();
 
                 $onerow->age = modmgr_utils::get_status($row['date']);
                 $onerow->downloads = $row['downloads'];
@@ -123,9 +123,3 @@ if( $results ) {
 else {
     $tpl->assign('nvmessage',$this->Lang('all_modules_up_to_date'));
 }
-
-$tpl->assign('haveversion',$this->Lang('yourversion'));
-$tpl->assign('nametext',$this->Lang('nametext'));
-$tpl->assign('vertext',$this->Lang('vertext'));
-$tpl->assign('sizetext',$this->Lang('sizetext'));
-$tpl->assign('statustext',$this->Lang('statustext'));

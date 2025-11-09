@@ -1,12 +1,12 @@
 {if $is_upgrade}
-  <h3>{$ModuleManager->Lang('upgrade_module')} {$module_name} <em>({$ModuleManager->Lang('vertext')} {$module_version})</em></h3>
+  <h3>{$mod->Lang('upgrade_module')} {$module_name} <em>({$mod->Lang('vertext')} {$module_version})</em></h3>
 {else}
-  <h3>{$ModuleManager->Lang('install_module')} {$module_name} <em>({$ModuleManager->Lang('vertext')} {$module_version})</em></h3>
+  <h3>{$mod->Lang('install_module')} {$module_name} <em>({$mod->Lang('vertext')} {$module_version})</em></h3>
 {/if}
 
 <div class="warning">
-  <h3>{$ModuleManager->Lang('notice')}</h3>
-  <p>{$ModuleManager->Lang('time_warning')}</p>
+  <h3>{$mod->Lang('notice')}</h3>
+  <p>{$mod->Lang('time_warning')}</p>
 </div>
 <div class="clearb"></div>
 
@@ -17,8 +17,8 @@
   {/foreach}
   {if $has_custom}
     <div class="warning">
-      <h3>{$ModuleManager->Lang('warning')}</h3>
-      <p>{$ModuleManager->Lang('warn_modulecustom')}</p>
+      <h3>{$mod->Lang('warning')}</h3>
+      <p>{$mod->Lang('warn_modulecustom')}</p>
       <ul>
         {foreach $dependencies as $name => $rec}
           {if $rec.has_custom}<li>{$name}</li>{/if}
@@ -30,16 +30,16 @@
 
   {if count($dependencies) > 1}
     <div class="warning">
-      <h3>{$ModuleManager->Lang('warning')}</h3>
-      <p>{$ModuleManager->Lang('warn_dependencies')}</p>
+      <h3>{$mod->Lang('warning')}</h3>
+      <p>{$mod->Lang('warn_dependencies')}</p>
     </div>
 
     <ul>
     {foreach $dependencies as $name => $rec}
       <li>
-        {if $rec.action == 'i'}{$ModuleManager->Lang('depend_install',$rec.name,$rec.version)}
-        {elseif $rec.action == 'u'}{$ModuleManager->Lang('depend_upgrade',$rec.name,$rec.version)}
-        {elseif $rec.action == 'a'}{$ModuleManager->Lang('depend_activate',$rec.name)}{/if}
+        {if $rec.action == 'i'}{$mod->Lang('depend_install',$rec.name,$rec.version)}
+        {elseif $rec.action == 'u'}{$mod->Lang('depend_upgrade',$rec.name,$rec.version)}
+        {elseif $rec.action == 'a'}{$mod->Lang('depend_activate',$rec.name)}{/if}
       </li>
     {/foreach}
     </ul>
@@ -52,11 +52,11 @@
 <div class="pageoverflow">
   <p class="pageinput">
   {if count($dependencies) > 1}
-    <input type="submit" name="{$actionid}submit" value="{$ModuleManager->Lang('install_procede')}">
+    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('install_procede')}">
   {else}
-    <input type="submit" name="{$actionid}submit" value="{$ModuleManager->Lang('install_submit')}">
+    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('install_submit')}">
   {/if}
-    <input type="submit" name="{$actionid}cancel" value="{$ModuleManager->Lang('cancel')}">
+    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
   </p>
 </div>
 {$formend}

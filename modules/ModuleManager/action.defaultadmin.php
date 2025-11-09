@@ -55,7 +55,7 @@ modmgr_utils::get_images();
 $newversions = [];
 if( $connection_ok ) {
     try {
-        $newversions = modulerep_client::get_newmoduleversions();
+        $newversions = modulerep_client::get_newmoduleversions(); // note downstream module-processing might clobber assigned $mod value!
     }
     catch( Exception $e ) {
         echo $this->ShowErrors($e->GetMessage());
@@ -74,6 +74,8 @@ $tpl = $smarty->createTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,
 $tpl->assign('connected', $connection_ok);
 $tpl->assign('pmod', $pmod);
 $tpl->assign('pset', $pset);
+$tpl->assign('mod', $this); // re-assign, in case the normal default assignment was clobbered by another module, downstream
+$tpl->parent->assign('mod', $this); // also in the global-Smarty vars
 
 $num = ( is_array($newversions) ) ? count($newversions) : 0;
 $label = $num.' '.$this->Lang('tab_newversions');
