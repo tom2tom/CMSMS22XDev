@@ -386,8 +386,8 @@ abstract class Smarty_Internal_TemplateCompilerBase
     public function compileTemplate(
         Smarty_Internal_Template $template,
         $nocache = null,
-        ?Smarty_Internal_TemplateCompilerBase $parent_compiler = null
-    ) {
+        ?Smarty_Internal_TemplateCompilerBase $parent_compiler = null)
+    {
         // get code frame of compiled template
         $_compiled_code = $template->smarty->ext->_codeFrame->create(
             $template,
@@ -417,8 +417,8 @@ abstract class Smarty_Internal_TemplateCompilerBase
     public function compileTemplateSource(
         Smarty_Internal_Template $template,
         $nocache = null,
-        ?Smarty_Internal_TemplateCompilerBase $parent_compiler = null
-    ) {
+        ?Smarty_Internal_TemplateCompilerBase $parent_compiler = null)
+    {
         try {
             // save template object in compiler class
             $this->template = $template;
@@ -575,7 +575,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
                                      true,
                                      false
                                  )->nocache;
-            // todo $this->template->compiled->properties['variables'][$var] = $this->tag_nocache | $this->nocache;
+// TODO $this->template->compiled->properties['variables'][$var] = $this->tag_nocache | $this->nocache;
         }
         return '$_smarty_tpl->tpl_vars[' . $variable . ']->value';
     }
@@ -616,7 +616,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
 
                 if ($func_name === 'isset') {
                     if (count($parameter) === 0) {
-                        $this->trigger_template_error('Illegal number of parameter in "isset()"');
+                        $this->trigger_template_error("wrong number of parameters for 'isset()'");
                     }
 
                     $pa = array();
@@ -638,7 +638,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
                 )
                 ) {
                     if (count($parameter) !== 1) {
-                        $this->trigger_template_error("Illegal number of parameter in '{$func_name()}'");
+                        $this->trigger_template_error("wrong number of parameters for '{$func_name}()'");
                     }
                     if ($func_name === 'empty') {
                         return $func_name . '(' .
@@ -657,8 +657,8 @@ abstract class Smarty_Internal_TemplateCompilerBase
 
     /**
      * Determines whether the passed string represents a valid (PHP) variable.
-     * This is important, because `isset()` only works on variables and `empty()` can only be passed
-     * a variable prior to php5.5
+     * This is important, because `isset()` only works on variables and
+     * `empty()` can only be passed a variable prior to PHP 5.5
      * @param $string
      * @return bool
      */
@@ -824,7 +824,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
             }
             return $function;
         }
-        // loop through plugin dirs and find the plugin
+        // poll plugin dirs to find the plugin
         $function = 'smarty_' . $plugin_type . '_' . $plugin_name;
         $file = $this->smarty->loadPlugin($function, false);
         if (is_string($file)) {
@@ -913,20 +913,20 @@ abstract class Smarty_Internal_TemplateCompilerBase
     /**
      * Append code segments and remove unneeded ?> <?php transitions
      *
-     * @param string $left
-     * @param string $right
+     * @param string|null $left
+     * @param string|null $right
      *
      * @return string
      */
     public function appendCode($left, $right)
     {
-        if (preg_match('/\s*\?>\s?$/D', $left) && preg_match('/^<\?php\s+/', $right)) {
-            $left = preg_replace('/\s*\?>\s?$/D', "\n", $left);
-            $left .= preg_replace('/^<\?php\s+/', '', $right);
+        $leftm = $left && preg_match('/\s*\?>\s?$/D', $left, $ml);
+        $rightm = $leftm && $right && preg_match('/^\s*<\?php\s+/', $right, $mr);
+        if ($leftm && $rightm) {
+            return str_replace([$ml[0].$mr[0], $ml[0]], ["\n", "\n"], $left) . str_replace([$ml[0].$mr[0], $mr[0]], ["\n", ''], $right);
         } else {
-            $left .= $right;
+            return $left . $right;
         }
-        return $left;
     }
 
     /**
@@ -1003,13 +1003,13 @@ abstract class Smarty_Internal_TemplateCompilerBase
     }
 
     /**
-     * Set nocache flag in variable or create new variable
+     * Set nocache flag in variable or create new variable with that flag
      *
      * @param string $varName
      */
     public function setNocacheInVariable($varName)
     {
-        // create nocache var to make it know for further compiling
+        // create nocache var to make it known for further compiling
         if ($_var = $this->getId($varName)) {
             if (isset($this->template->tpl_vars[ $_var ])) {
                 $this->template->tpl_vars[ $_var ] = clone $this->template->tpl_vars[ $_var ];
@@ -1447,7 +1447,8 @@ abstract class Smarty_Internal_TemplateCompilerBase
      */
     abstract protected function doCompile($_content, $isTemplateSource = false);
 
-    public function cStyleComment($string) {
+    public function cStyleComment($string)
+    {
         return '/*' . str_replace('*/', '* /' , $string) . '*/';
     }
 
