@@ -1,5 +1,5 @@
 <?php
-#Class: CMSMS\LoginOperations
+#Class: CMSMS\internal\LoginOperations
 #(c) 2016 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 #
 #$Id$
 
-namespace CMSMS;
+namespace CMSMS\internal;
 
 final class LoginOperations
 {
@@ -63,11 +63,9 @@ final class LoginOperations
         $oneuser = $userops->LoadUserByID((int) $uid);
         if( !$oneuser ) return FALSE;
         if( !$oneuser->active ) return FALSE;
-        $checksum = (string) $checksum;
         if( !$checksum ) return FALSE;
 
-        if( !password_verify( $oneuser->id.$oneuser->password.__FILE__, $checksum ) ) return FALSE;
-        return TRUE;
+        return password_verify($oneuser->id.$oneuser->password.basename(__FILE__),(string)$checksum);
     }
 
     public function save_authentication(\User $user, /*?\User */$effective_user = null) // no object uncomment for PHP 7.1+ .. 8.4+
@@ -80,7 +78,7 @@ final class LoginOperations
         $private_data['username'] = $user->username;
         $private_data['eff_uid'] = 0;
         $private_data['eff_username'] = '';
-        $private_data['hash'] = password_hash( $user->id.$user->password.__FILE__, PASSWORD_BCRYPT );
+        $private_data['hash'] = password_hash($user->id.$user->password.basename(__FILE__),PASSWORD_BCRYPT); //this is used like a password
         if( $effective_user && $effective_user->id > 0 && $effective_user->id != $user->id ) {
             $private_data['eff_uid'] = $effective_user->id;
             $private_data['eff_username'] = $effective_user->username;
