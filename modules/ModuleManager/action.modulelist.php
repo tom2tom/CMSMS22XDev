@@ -28,11 +28,11 @@ if( !$this->CheckPermission('Modify Modules') ) exit;
 $modname = $this->GetName();
 
 $_SESSION[$modname]['active_tab'] = 'modules'; //TODO '__activetab' ?
-if( !isset($params['name']) ) $this->Redirect($id,'defaultadmin');
+if( !isset($params['name']) ) $this->Redirect($id, 'defaultadmin');
 
 $prefix = trim($params['name']);
-$repmodules = modulerep_client::get_repository_modules($prefix,FALSE,TRUE);
-if( !is_array($repmodules) || $repmodules[0] === FALSE ) $this->Redirect($id,'defaultadmin'); // for some reason, nothing matched.
+$repmodules = modulerep_client::get_repository_modules($prefix, FALSE, TRUE);
+if( !is_array($repmodules) || $repmodules[0] === FALSE ) $this->Redirect($id, 'defaultadmin'); // for some reason, nothing matched.
 
 $repmodules = $repmodules[1];
 
@@ -41,14 +41,9 @@ if( !$result[0] ) {
   $this->_DisplayErrorPage($id, $params, $returnid, $result[1]);
   return;
 }
-
 $instmodules = $result[1];
 
-$caninstall = true;
-if( FALSE == can_admin_upload() ) {
-  echo '<div class="pageerrorcontainer"><div class="pageoverflow"><p class="pageerror">'.$this->Lang('error_permissions').'</p></div></div>';
-  $caninstall = false;
-}
+$caninstall = can_admin_upload();
 
 $tpl = $smarty->createTemplate("module_file_tpl:$modname;showmodule.tpl", null, $modname, $smarty);
 
@@ -97,9 +92,9 @@ if( $data ) {
       $onerow->status = $this->Lang('newerversion');
       break;
     case 'notinstalled':
-      $mod = $moduledir.DIRECTORY_SEPARATOR.$row['name'];
-      if( (($writable && is_dir($mod) && is_directory_writable( $mod )) ||
-           ($writable && !file_exists( $mod ) )) && $caninstall ) {
+      $modpath = $moduledir.DIRECTORY_SEPARATOR.$row['name'];
+      if( (($writable && is_dir($modpath) && is_directory_writable( $modpath )) ||
+           ($writable && !file_exists($modpath) )) && $caninstall ) {
         $onerow->status = $this->CreateLink( $id, 'installmodule', $returnid,
                              $this->Lang('download'),
                              array('name' => $row['name'],
@@ -113,9 +108,9 @@ if( $data ) {
       break;
 
     case 'upgrade':
-      $mod = $moduledir.DIRECTORY_SEPARATOR.$row['name'];
-      if( (($writable && is_dir($mod) && is_directory_writable( $mod )) ||
-           ($writable && !file_exists( $mod ) )) && $caninstall ) {
+      $modpath = $moduledir.DIRECTORY_SEPARATOR.$row['name'];
+      if( (($writable && is_dir($modpath) && is_directory_writable( $modpath )) ||
+           ($writable && !file_exists($modpath) )) && $caninstall ) {
         $onerow->status = $this->CreateLink( $id, 'installmodule', $returnid,
                              $this->Lang('upgrade'),
                              array('name' => $row['name'],
@@ -130,19 +125,21 @@ if( $data ) {
     }
 
     $onerow->size = (int)((float) $row['size'] / 1024.0 + 0.5);
-    if( isset( $row['description'] ) ) $onerow->description=$row['description'];
+    if( isset($row['description']) ) $onerow->description = $row['description'];
     $rowarray[] = $onerow;
   } // for
 
   $tpl->assign('items', $rowarray);
   $tpl->assign('itemcount', count($rowarray));
 }
+else {
+  $tpl->assign('errmessage2', $this->Lang('error_missingmoduleinfo', $prefix));
+}
 
 modmgr_utils::get_images();
-$tpl->assign('nametext',$this->Lang('nametext'));
-$tpl->assign('vertext',$this->Lang('vertext'));
-$tpl->assign('sizetext',$this->Lang('sizetext'));
-$tpl->assign('statustext',$this->Lang('statustext'));
-$tpl->assign('header',$this->Lang('versionsformodule',$prefix));
 
+$tpl->assign('header', $this->Lang('versionsformodule', $prefix));
+if( !$caninstall ) {
+  $tpl->assign('errmessage1', $this->Lang('error_permissions'));
+}
 $tpl->display();
