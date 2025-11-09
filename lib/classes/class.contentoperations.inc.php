@@ -975,7 +975,8 @@ EOS;
 	public function CheckAliasValid($alias)
 	{
 		if( ((int)$alias > 0 || (float)$alias > 0.00001) && is_numeric($alias) ) return FALSE;
-		return ($alias == munge_string_to_url($alias,true));
+		$tmp = munge_string_to_url($alias,TRUE);
+		return ($tmp == mb_strtolower($alias));
 	}
 
 	/**
