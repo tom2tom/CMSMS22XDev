@@ -295,8 +295,13 @@ class OneElevenTheme extends CmsAdminThemeBase
 		$marks = [];
 		$config = cms_config::get_instance();
 		$urlext = CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
-		$ops = CmsApp::get_instance()->GetBookmarkOperations();
-		$list = $ops->LoadBookmarks($userid);
+		if (cms_userprefs::get_for_user($userid, 'bookmarks', 0)) {
+			$ops = CmsApp::get_instance()->GetBookmarkOperations();
+			$list = $ops->LoadBookmarks($userid);
+		}
+		else {
+			$list = [];
+		}
 		if ($list) {
 			$icon = $this->DisplayImage('icons/system/bookmark.png', 'bookmark', '', '', 'systemicon'); //TODO relevant alt
 			foreach ($list as $obj) {
