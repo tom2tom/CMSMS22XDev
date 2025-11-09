@@ -1,4 +1,5 @@
 <?php
+use function __appbase\joinpath;
 
 $config = CmsApp::get_instance()->GetConfig(); // OR cms_config::get_instance();
 $bt = $config['themes_path'];
@@ -10,7 +11,7 @@ if( !is_dir($bt) ) {
 $bf = $config['uploads_path'];
 if( is_dir($bf) ) {
 	//redundant file
-	$fp = cms_join_path($bf,'images','thumb_logo1.gif');
+	$fp = joinpath($bf,'images','thumb_logo1.gif');
 	if( is_file($fp) ) {
 		unlink($fp);
 	}
