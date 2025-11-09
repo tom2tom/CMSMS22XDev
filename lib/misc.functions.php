@@ -218,6 +218,58 @@ function cms_relative_path($in,$relative_to = '')
     return substr($in,strlen($to));
 }
 
+
+/**
+ * Return the accessor for private/restricted files, or a specific one of those.
+ * Typically a server-accessible filepath, but possibly (in future) a web-hook.
+ * No check of the determined value.
+ * @since 2.2.23F2
+ *
+ * @param string $fn Optional file-basename Default ''
+ * @param cms_config|null $config Optional config object Default null
+ * @param array $context Optional permissions-limiter etc Default []
+ * @return string maybe empty if $context is unacceptable
+ */
+function private_place($fn='',$config=null,$context=[])
+{
+    if( !$config ) {
+        $config = cmsms()->GetConfig();
+    }
+    if( !empty($context['dbase']) ) {
+        // cannot use dbase-recorded value
+        //NOTE any change to this must be compatible with and manually migrated to installer wizard_step_4
+        if( is_string($context['dbase']) ) {
+            $rp = $context['dbase'];
+        } else {
+            $fp = dirname(debug_backtrace(3)[1]['file']).DIRECTORY_SEPARATOR.'dbPath';
+            $rp = is_file($fp) ? file_get_contents($fp) : '';
+        }
+    } else {
+        $rp = cms_siteprefs::get('privatePath');
+    }
+    if( $rp ) {
+        $tmp = preg_replace('~\s*[,\\/]+\s*~', DIRECTORY_SEPARATOR, trim($rp,' \/'));
+        $rp = preg_replace_callback('~\$config\[\s*([\'"])(.+)\1\s*\]~', function($m) use($config)
+        {
+            return $config[$m[2]];
+        }, $tmp);
+        // general test for non-absolute path: !preg_match('~^ *(?:\/|\\\\|\w:\\\\|\w:\/)~', $rp)
+        if( !(startswith($rp, CMS_ROOT_PATH) || preg_match('~^ *(?:\/|\\\\|\w:\\\\|\w:\/)~', $rp)) ) {
+            $fp = CMS_ROOT_PATH . DIRECTORY_SEPARATOR . $rp;
+        }
+        else {
+            $fp = $rp;
+        }
+        $fp = realpath($fp);
+        if( $fp ) {
+            return ($fn) ? $fp . DIRECTORY_SEPARATOR . $fn : $fp;
+        }
+    }
+    //default
+    $fp = implode(DIRECTORY_SEPARATOR, [$config['admin_path'], 'configs', 'private']);
+    return ($fn) ? $fp.DIRECTORY_SEPARATOR.$fn : $fp;
+}
+
 /**
  * Perform HTML entity conversion on a string.
  *
@@ -284,7 +336,7 @@ function debug_bt_to_log($trace = [],$limit = 0)
         $out[] = "Backtrace in $file on line $line";
 
         $bt = array_reverse($bt);
-        foreach($bt as $trace) {
+        foreach( $bt as $trace ) {
             if( $trace['function'] == 'debug_bt_to_log' ) continue;
 
             $file = '';
@@ -300,7 +352,7 @@ function debug_bt_to_log($trace = [],$limit = 0)
         }
 
         $filename = TMP_CACHE_LOCATION . '/debug.log';
-        foreach ($out as $txt) {
+        foreach( $out as $txt ) {
             error_log($txt . "\n", 3, $filename);
         }
     }
@@ -323,7 +375,7 @@ function debug_bt($limit = 0)
 
     $bt = array_reverse($bt);
     echo "<pre><dl>\n";
-    foreach($bt as $trace) {
+    foreach( $bt as $trace ) {
         $file = $trace['file'];
         $line = $trace['line'];
         $function = $trace['function'];
@@ -439,7 +491,7 @@ function debug_to_log($var,$title = '',$filename = '')
             if( $x !== FALSE && $x < (time() - 24 * 3600) ) unlink($filename);
         }
         $errlines = explode("\n",debug_display($var, $title, false, false, true));
-        foreach ($errlines as $txt) {
+        foreach( $errlines as $txt ) {
             error_log($txt . "\n", 3, $filename);
         }
     }
@@ -462,19 +514,22 @@ function debug_buffer($var,$title = '')
 
 
 /**
- * Return $value if it's set and same basic type as $default_value,
- * Otherwise return $default_value. Note. Also will trim($value) if $value is not numeric.
- *
+ * Return the supplied $value if it's non-null and the same basic type as
+ * $default_value. Otherwise return $default_value, or
+ * $_SESSION['parameter_values'][$session_key] if that's set.
+ * Note: this function trim()'s non-numeric values, and records the
+ * returned value as $_SESSION['parameter_values'][$session_key] if
+ * $session_key is not falsy.
  * @ignore
- * @param string $value
- * @param mixed $default_value
- * @param mixed $session_key
- * @deprecated
+ *
+ * @param mixed $value Might be array
+ * @param mixed $default_value Default ''
+ * @param mixed $session_key Default ''
  * @return mixed
  */
 function _get_value_with_default($value,$default_value = '',$session_key = '')
 {
-    if( $session_key != '' ) {
+    if( $session_key ) {
         if( isset($_SESSION['default_values'][$session_key]) ) $default_value = $_SESSION['default_values'][$session_key];
     }
 
@@ -489,82 +544,124 @@ function _get_value_with_default($value,$default_value = '',$session_key = '')
                 $return_value[] = _get_value_with_default($element, $default_value);
             }
         }
+        elseif( is_numeric($default_value) ) {
+            if( is_numeric($value) ) {
+                $return_value = $value;
+            }
+        }
         else {
-            if( is_numeric($default_value) ) {
-                if( is_numeric($value) ) {
-                    $return_value = $value;
-                }
-            }
-            else {
-                $return_value = trim($value);
-            }
+            $return_value = is_string($value) ? trim($value) : $value;
         }
     }
 
-    if( $session_key != '' ) $_SESSION['default_values'][$session_key] = $return_value;
+    if( $session_key ) $_SESSION['default_values'][$session_key] = $return_value;
     return $return_value;
 }
 
 
 /**
- * Retrieve the $value from the $parameters array checking for $parameters[$value] and
- * $params[$id.$value].
- * Returns $default if $value is not in $params array.
- * Note: This function will also trim() string values.
+ * Return a named value from the specified container, or a variant of
+ * such value, or a default value if $key is not a property/member/key
+ * of $container or if $container[$key] is null or if $container[$key]
+ * not an acceptable type.
  *
- * @param array $parameters
- * @param string $value
- * @param mixed $default_value
- * @param string $session_key
+ * @param mixed $container Array or object implementing ArrayAcess
+ * @param string $key Identifier of the wanted property
+ * @param varargs $args Array with 0, 1 or 2 members:
+ *  [0] mixed $default_value ('' is assumed if $args[0] is N/A)
+ *  [1] string $session_key ('' is assumed if $args[0] is present but $args[1] is N/A or falsy)
+ * If $session_key is not falsy, $_SESSION['parameter_values'][$session_key]
+ * (if any) will be used instead of $default_value.
  * @return mixed
+ * Note: this function trim()'s returned string values, and records the
+ * returned value as $_SESSION['parameter_values'][$session_key] if
+ * $session_key is not falsy.
  */
-function get_parameter_value($parameters,$value,$default_value = '',$session_key = '')
+function get_parameter_value($container,$key,...$args)
 {
-    if( $session_key != '' ) {
-        if( isset($_SESSION['parameter_values'][$session_key]) ) $default_value = $_SESSION['parameter_values'][$session_key];
+    $session_key = (count($args) == 2 && $args[1]) ? trim((string)$args[1]) : '';
+    if( $session_key && isset($_SESSION['parameter_values'][$session_key]) ) {
+        $default_value = $_SESSION['parameter_values'][$session_key];
+    }
+    else {
+        // support distinction between explicit and implicit empty-string value
+        $default_value = ($args && array_key_exists(0, $args)) ? $args[0] : ''; // might be null
     }
 
-    // set our return value to the default initially and overwrite with $value if we like it.
     $return_value = $default_value;
-    if( isset($parameters[$value]) ) {
-        if( is_bool($default_value) ) {
-            // want a bool return_value
-            if( isset($parameters[$value]) ) $return_value = (bool)$parameters[$value];
-        }
-        else {
-            // is $default_value a number?
-            $is_number = false;
-            if( is_numeric($default_value) ) $is_number = true;
-
-            if( is_array($parameters[$value]) ) {
-                // $parameters[$value] is an array - validate each element.
-                $return_value = array();
-                foreach( $parameters[$value] as $element ) {
-                    $return_value[] = _get_value_with_default($element, $default_value);
+    if( isset($container[$key]) ) { // OR array_key_exists($key, $container) back-incompatible check also for null value
+        $found_value = $container[$key];
+        // substitute the found value if we like it
+        switch (gettype($default_value)) {
+            case 'string':
+                if( is_string($found_value) ) { $return_value = trim($found_value); }
+                elseif( !$args ) { // implicit $default_value, so 'non-strict' type-comparison
+                    if( is_numeric($found_value) ) { $return_value = (string)$found_value; }
+                    elseif( is_bool($found_value) ) { $return_value = ($found_value) ? 'true' : 'false'; }
+                    elseif( !is_scalar($found_value) ) { $return_value = $found_value; } // object, array etc verbatim
                 }
-            }
-            else {
-                if( is_numeric($default_value) ) {
-                    // default value is a number, we only like $parameters[$value] if it's a number too.
-                    if( is_numeric($parameters[$value]) ) $return_value = $parameters[$value];
+                break;
+            case 'integer':
+                if( is_numeric($found_value) ) {
+                    $tmp = (is_string($found_value)) ? 0 + $found_value : $found_value;
+                    if( $tmp === (int)$tmp ) { $return_value = $tmp; }
+                    else {
+                        //round a float towards 0
+                        $return_value = (int)floor($tmp);
+                        if( $return_value < 0 ) $return_value++;
+                    }
                 }
-                elseif( is_string($default_value) ) {
-                    $return_value = trim($parameters[$value]);
+                elseif( is_string($found_value) ) {
+                    $tmp = trim($found_value);
+                    if( $tmp[0] == '0' ) {
+                        if( $tmp[1] == 'x' && preg_match('/\G[0-9a-f]+$/i', $tmp, null, 0, 2) ) {
+                            $return_value = (int)base_convert($tmp, 16, 10);
+                        }
+                        elseif( preg_match('/\G[0-7]+\s$/', $tmp, null, 0, 1) ) {
+                            $return_value = (int)base_convert($tmp, 8, 10);
+                        }
+                        elseif( $tmp[1] == 'b' && preg_match('/\G[01]+$/', $tmp, null, 0, 2) ) {
+                            $return_value = (int)base_convert($tmp, 2, 10);
+                        }
+                    }
+                }
+                break;
+            case 'double':
+                if( is_numeric($found_value) ) {
+                    $return_value = (is_string($found_value)) ? 0.0 + $found_value : (float)$found_value;
+                }
+                break;
+            case 'boolean':
+                if( is_bool($found_value) ) { $return_value = $found_value; }
+                elseif( is_numeric($found_value) ) { $return_value = (bool)$found_value; }
+                elseif( is_string($found_value) ) { $return_value = cms_to_bool(trim($found_value)); }
+                else { $return_value = ($found_value != false); }
+                break;
+            case 'array':
+                if( is_array($found_value) ) { $return_value = $found_value; }
+                break;
+            default: // some other default type
+                if( is_array($found_value) ) {
+                    // process each member independently
+                    $return_value = [];
+                    foreach( $found_value as $element ) {
+                        $return_value[] = _get_value_with_default($element, $default_value);
+                    }
                 }
                 else {
-                    $return_value = $parameters[$value];
+                    $return_value = (!is_string($found_value)) ? $found_value : trim($found_value);
                 }
-            }
         }
     }
-
-    if( $session_key != '' ) $_SESSION['parameter_values'][$session_key] = $return_value;
+    if( $session_key ) {
+        $_SESSION['parameter_values'][$session_key] = $return_value; // record default for next/later call
+    }
     return $return_value;
 }
 
 
 /**
- * A method to remove a permission from the database.
+ * Remove a permission from the permissions table.
  *
  * @internal
  * @ignore
@@ -584,7 +681,7 @@ function cms_mapi_remove_permission($permission_name)
 
 
 /**
- * A method to add a permission to the CMSMS permissions table.
+ * Add a permission to the permissions table.
  *
  * @internal
  * @ignore
@@ -711,24 +808,24 @@ function get_recursive_file_list($path,$excludes,$maxdepth = -1,$mode = 'FULL',$
     };
 
     $path = rtrim($path, "/\\") . DIRECTORY_SEPARATOR;
-    $dirlist = array () ;
+    $dirlist = array();
     if( $mode != "FILES" ) { $dirlist[] = $path ; }
-    if( $handle = opendir ( $path ) ) {
-        while( false !== ( $file = readdir ( $handle ) ) ) {
+    if( $handle = opendir($path) ) {
+        while( false !== ($file = readdir($handle)) ) {
             if( $file == '.' || $file == '..' ) continue;
             if( $excludes && $fn( $file, $excludes ) ) continue;
 
             $file = $path . $file ;
             if( ! @is_dir ( $file ) ) { if( $mode != "DIRS" ) { $dirlist[] = $file ; } }
             elseif( $d >= 0 && ($d < $maxdepth || $maxdepth < 0) ) {
-                $result = get_recursive_file_list ( $file, $excludes, $maxdepth , $mode , $d + 1 ); //recurse
-                $dirlist = array_merge ( $dirlist , $result ) ;
+                $result = get_recursive_file_list($file, $excludes, $maxdepth, $mode, $d + 1); //recurse
+                $dirlist = array_merge($dirlist, $result);
             }
         }
-        closedir ( $handle ) ;
+        closedir($handle);
     }
-    if( $d == 0 ) { natcasesort ( $dirlist ) ; }
-    return ( $dirlist ) ;
+    if( $d == 0 ) { natcasesort($dirlist); }
+    return $dirlist;
 }
 
 
@@ -747,7 +844,7 @@ function recursive_delete($dirname)
         if( $file != "." && $file != ".." ) {
             if( !is_dir($dirname."/".$file) ) {
                 if( !@unlink ($dirname."/".$file) ) {
-                    closedir( $dir_handle );
+                    closedir($dir_handle);
                     return false;
                 }
             }
@@ -772,30 +869,30 @@ function recursive_delete($dirname)
  */
 function chmod_r($path,$mode)
 {
-    if( !is_dir( $path ) ) return chmod( $path, $mode );
+    if( !is_dir($path) ) return chmod($path, $mode);
 
-    $dh = @opendir( $path );
+    $dh = @opendir($path);
     if( !$dh ) return FALSE;
 
-    while( $file = readdir( $dh ) ) {
+    while( $file = readdir($dh) ) {
         if( $file == '.' || $file == '..' ) continue;
 
         $p = $path.DIRECTORY_SEPARATOR.$file;
-        if( is_dir( $p ) ) {
-            if( !@chmod_r( $p, $mode ) ) {
+        if( is_dir($p) ) {
+            if( !@chmod_r($p, $mode) ) {
                 closedir( $dh );
                 return false;
             }
         }
-        elseif( !is_link( $p ) ) {
+        elseif( !is_link($p) ) {
             if( !@chmod( $p, $mode ) ) {
                 closedir( $dh );
                 return false;
             }
         }
     }
-    @closedir( $dh );
-    return @chmod( $path, $mode );
+    @closedir($dh);
+    return @chmod($path, $mode);
 }
 
 
@@ -952,8 +1049,8 @@ function can_admin_upload()
     }
 
     // now check to see if we can write to the directories
-    if( !is_writable( $dir_modules ) ) return FALSE;
-    if( !is_writable( $dir_uploads ) ) return FALSE;
+    if( !is_writable($dir_modules) ) return FALSE;
+    if( !is_writable($dir_uploads) ) return FALSE;
 
     // It all worked.
     return TRUE;
@@ -1059,7 +1156,7 @@ function cms_ipmatches($ip,$checklist)
 
             $maskl = 0;
 
-            for ($i = 0; $i< 31; $i++) {
+            for( $i = 0; $i < 31; $i++ ) {
                 if( $i < $regs[5]-1) $maskl = $maskl + pow(2,(30-$i) );
             }
 
@@ -1165,9 +1262,9 @@ BAD including a session identifier means exposing implementation detail in URLs
 
 
 /**
- * A simple function to convert a value to a corresponding bool.
- * Reports TRUE for strings 'y', 'yes', 'true', 'on' (all case insensitive),
- * TRUE for numerics > 0 or < 0, FALSE for all other values.
+ * A function to convert the supplied value to a corresponding boolean.
+ * Reports TRUE for strings '1', 'y', 'yes', 'true', 'on' (all case insensitive),
+ * TRUE for numerics > 0 or < 0, TRUE for boolean true, FALSE for all other values.
  *
  * @param mixed $val Value to test. Normally a scalar.
  */
@@ -1258,7 +1355,7 @@ function cms_get_jquery($exclude = '',$ssl = false,$cdn = false,$append = '',$cu
     // Check if we need to exclude some script(s)
     if( !empty($exclude) ) {
         $exclude_list = explode(",", trim(str_replace(' ','',$exclude)));
-        foreach($exclude_list as $one) {
+        foreach( $exclude_list as $one ) {
             $one = trim(strtolower($one));
 
             // find a match
@@ -1286,7 +1383,7 @@ function cms_get_jquery($exclude = '',$ssl = false,$cdn = false,$append = '',$cu
     // optionally add stuff to the end e.g. a jQuery plugin or stylesheet
     if( !empty($append) ) {
         $append_list = explode(",", trim(str_replace(' ','',$append)));
-        foreach($append_list as $key => $item) {
+        foreach( $append_list as $key => $item ) {
             $scripts['user_'.$key] = array('local'=>$item);
         }
     }
@@ -1341,8 +1438,9 @@ function setup_session($cachable = false)
     static $_setup_already = FALSE;
     if( $_setup_already ) return;
 
-    $_f = $_l = null; // no return values
-    if( headers_sent( $_f, $_l) ) throw new \LogicException("Attempt to set headers, but headers were already sent at: $_f::$_l");
+    if( headers_sent($_f,$_l) ) {
+        throw new \LogicException("Attempt to set headers, but headers were already sent: $_f line $_l");
+    }
 
     if( $cachable ) {
         if( $_SERVER['REQUEST_METHOD'] != 'GET' || isset($CMS_ADMIN_PAGE) || isset($CMS_INSTALL_PAGE) ) $cachable = FALSE;
@@ -1360,7 +1458,7 @@ function setup_session($cachable = false)
     }
 
     // setup session with different id and start it
-    $session_name = 'CMSSESSID'.substr(md5(__DIR__.CMS_VERSION), 0, 12);
+    $session_name = 'CMSSESSID'.substr(md5(__DIR__.CMS_VERSION),0,12);
     if( !isset($CMS_INSTALL_PAGE) ) {
         @session_name($session_name);
         @ini_set('url_rewriter.tags', '');
