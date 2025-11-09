@@ -433,8 +433,17 @@ $(function() {
 					</p>
 				</div>
 		</fieldset>
+{if !empty($privatePath)}
 		<div class="pageoverflow">
-			<br>
+			<p class="pagetext"><label for="ppath">{lang('protected_data_path')}:</label> {cms_help key2='siteprefs_protected_path' title=lang('protected_data_path')}</p>
+			<p class="pageinput">
+				<input type="text" id="ppath" name="privatePath" size="50" value="{$privatePath}">
+			</p>
+			<p class="warning">{lang('warn_protected_path')}</p>
+		</div>
+{/if}
+		<br>
+		<div class="pageoverflow">
 			<p class="pageinput">
 				<input type="submit" name="submit" value="{lang('submit')}" class="pagebutton">
 				<input type="submit" name="cancel" value="{lang('cancel')}" class="pagebutton">

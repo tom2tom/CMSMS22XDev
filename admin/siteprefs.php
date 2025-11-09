@@ -80,13 +80,14 @@ function siteprefs_display_permissions($permsarr)
 }
 
 $access = check_permission($userid, 'Modify Site Preferences');
-if (!$access) {
+if( !$access ) {
   exit(lang('no_permission')); //TODO throw if can be caught
 }
 
 $gCms = cmsms();
 $db = $gCms->GetDb();
 $config = $gCms->GetConfig();
+$devmode = !empty($config['developer_mode']);
 $error = '';
 $message = '';
 $mail_is_set = cms_siteprefs::get('mail_is_set',0);
@@ -114,7 +115,7 @@ $backendwysiwyg = '';
 $auto_clear_cache_age = 0;
 $allow_browser_cache = 0;
 $browser_cache_expiry = 60;
-$adminlog_lifetime = (3600 * 24 * 31);
+$adminlog_lifetime = 86400 * 31;
 $search_module = 'Search';
 $use_smartycache = 0;
 $use_smartycompilecheck = 1;
@@ -159,6 +160,9 @@ $lock_timeout = (int)cms_siteprefs::get('lock_timeout', $lock_timeout);
 $sitedownexcludes = cms_siteprefs::get('sitedownexcludes', $sitedownexcludes);
 $sitedownexcludeadmins = cms_siteprefs::get('sitedownexcludeadmins', $sitedownexcludeadmins);
 $adminlog_lifetime = cms_siteprefs::get('adminlog_lifetime', $adminlog_lifetime);
+if( $devmode ) {
+  $ppath = cms_siteprefs::get('privatePath');
+}
 $search_module = cms_siteprefs::get('searchmodule', $search_module);
 $use_smartycache = cms_siteprefs::get('use_smartycache', $use_smartycache);
 $use_smartycompilecheck = cms_siteprefs::get('use_smartycompilecheck', $use_smartycompilecheck);
@@ -170,7 +174,7 @@ if( $tmp ) {
 /**
  * Check tab
  */
-$tab='';
+$tab = '';
 if( isset($_POST['active_tab']) ) $tab = trim(cleanValue($_POST['active_tab']));
 
 /**
@@ -396,7 +400,7 @@ if (isset($_POST['editsiteprefs'])) {
         if( !startswith($key,$prefix) ) continue;
         $key = substr($key,strlen($prefix));
         switch ($key) {
-          case'from':
+          case 'from':
             //TODO scrub malicious/XSS, invalid content
             //PHP FILTER_SANITIZE_EMAIL is not sufficient TODO
             $mclean[$key] = filter_var(trim($val),FILTER_SANITIZE_EMAIL);
@@ -462,9 +466,9 @@ if (isset($_POST['editsiteprefs'])) {
       if (isset($_POST['xmlmodulerepository'])) $xmlmodulerepository = cleanValue($_POST['xmlmodulerepository']);
       if (isset($_POST['checkversion'])) $checkversion = (int) $_POST['checkversion'];
       if (isset($_POST['global_umask'])) $global_umask = cleanValue($_POST['global_umask']);
-      cms_siteprefs::set('global_umask', $global_umask);
-      cms_siteprefs::set('xmlmodulerepository', $xmlmodulerepository);
-      cms_siteprefs::set('checkversion', $checkversion);
+      cms_siteprefs::set('global_umask',$global_umask);
+      cms_siteprefs::set('xmlmodulerepository',$xmlmodulerepository);
+      cms_siteprefs::set('checkversion',$checkversion);
       cms_siteprefs::set('lock_timeout',$lock_timeout);
       if( isset($_POST['allow_browser_cache']) ) {
         $allow_browser_cache = (int)$_POST['allow_browser_cache'];
@@ -481,6 +485,30 @@ if (isset($_POST['editsiteprefs'])) {
       if (isset($_POST['adminlog_lifetime'])) {
         $adminlog_lifetime = (int)$_POST['adminlog_lifetime'];
         cms_siteprefs::set('adminlog_lifetime',$adminlog_lifetime);
+      }
+      if ($devmode && isset($_POST['privatePath'])) {
+        $opath = $ppath;
+        $ofull = private_place('',$config);
+        $ppath = trim($_POST['privatePath'],' ,\\/');
+        $ppath = strtr($ppath,[' '=>'','/'=>',','\\'=>',']);
+        cms_siteprefs::set('privatePath',$ppath);
+        $pfull = private_place('',$config);
+        if( !$pfull ) {
+          audit('','Global settings','Ignored invalid path: '.$ppath);
+          cms_siteprefs::set('privatePath',$opath);
+          //$error .= "<li>".lang('TODO')."</li>";
+        }
+        elseif( $pfull != $ofull ) {
+          //TODO check stuff, do stuff e.g. rename, move content
+          audit('','Global settings','Private path changed from: '.$opath);
+          audit('','Global settings','Private path changed to: '.$ppath);
+          $fp = cms_join_path(CMS_ROOT_PATH,'lib','classes','dbPath');
+          chmod($fp,0666);
+          file_put_contents($fp,$ppath);
+          usleep(40000);
+          chmod($fp,0444);
+          //TODO reconcile access by installer upgrade or refresh ?
+        }
       }
       break;
 
@@ -514,11 +542,11 @@ if (isset($_POST['editsiteprefs'])) {
 
 include_once("header.php");
 
-if ($error != "") $themeObject->ShowErrors($error);
-if ($message != "") $themeObject->ShowMessage($message);
+if( $error ) $themeObject->ShowErrors($error);
+if( $message ) $themeObject->ShowMessage($message);
 
 // Make sure cache folder is writable
-if (FALSE == is_writable(TMP_CACHE_LOCATION) ||
+if( FALSE == is_writable(TMP_CACHE_LOCATION) ||
     FALSE == is_writable(TMP_TEMPLATES_C_LOCATION) ) {
   $themeObject->ShowErrors(lang('cachenotwritable'));
 }
@@ -562,7 +590,7 @@ $smarty->assign('tab',$tab);
 if ($dir = opendir(__DIR__ . "/themes/"))
 {
   $themes = [];
-  while (($file = readdir($dir)) !== false ) {
+  while( ($file = readdir($dir)) !== false ) {
     if( @is_dir("themes/".$file) && ($file[0]!='.') && @is_readable("themes/{$file}/{$file}Theme.php")) {
       $themes[$file] = $file;
     }
@@ -598,6 +626,9 @@ $smarty->assign('allow_browser_cache',$allow_browser_cache);
 $smarty->assign('browser_cache_expiry',$browser_cache_expiry);
 $smarty->assign('auto_clear_cache_age',$auto_clear_cache_age);
 $smarty->assign('adminlog_lifetime',$adminlog_lifetime);
+if( $devmode ) {
+  $smarty->assign('privatePath',$ppath);
+}
 $smarty->assign('search_module',$search_module);
 $smarty->assign('use_smartycache',$use_smartycache);
 $smarty->assign('use_smartycompilecheck',$use_smartycompilecheck);
