@@ -15,7 +15,6 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#
 #$Id$
 
 /**
@@ -69,7 +68,6 @@ class UserOperations
 		return self::$_instance;
 	}
 
-
 	/**
 	 * Gets a list of all users
 	 *
@@ -113,7 +111,6 @@ FROM ".CMS_DB_PREFIX."users ORDER BY username";
 
 		return $this->_users;
 	}
-
 
 	/**
 	 * Gets a list of all users in a given group
@@ -163,7 +160,7 @@ WHERE g.group_id=? ORDER BY username";
 	 * @param mixed $password Password to check
 	 * @param mixed $activeonly Only load the user if she/he is active. Default true,
 	 * @param mixed $adminaccessonly Only load the user if she/he has admin access. Default false,
-	 * @return mixed If successful, the filled User object.  Otherwise null.
+	 * @return mixed a populated User object | null
 	 * @since 0.6.1
 	 */
 	public function LoadUserByUsername($username, $password = '', $activeonly = true, $adminaccessonly = false)
@@ -175,14 +172,9 @@ WHERE g.group_id=? ORDER BY username";
 		$where = array();
 		$joins = array();
 
-		$query = "SELECT u.user_id FROM ".CMS_DB_PREFIX."users u";
+		$query = "SELECT u.user_id,u.password FROM ".CMS_DB_PREFIX."users u";
 		$where[] = 'username = ?';
 		$params[] = $username;
-
-		if ($password) {
-			$where[] = 'password = ?';
-			$params[] = md5(get_site_preference('sitemask','').$password);
-		}
 
 		if ($activeonly) {
 			$joins[] = CMS_DB_PREFIX."user_groups ug ON u.user_id = ug.user_id";
@@ -196,20 +188,36 @@ WHERE g.group_id=? ORDER BY username";
 		if( !empty($joins) ) $query .= ' LEFT JOIN '.implode(' LEFT JOIN ',$joins);
 		if( !empty($where) ) $query .= ' WHERE '.implode(' AND ',$where);
 
-		$id = $db->GetOne($query,$params);
-		if( $id > 0 ) {
-			$result = self::LoadUserByID($id);
+		$row = $db->GetRow($query,$params);
+		if( !$row ) return null;
+		if( $password ) {
+			// validate it
+			$l = strlen($row['password']);
+			if( $l > 32 ) { // non-md5 value
+				$valid = password_verify($password,$row['password']);
+			}
+			else { // original md5 hash
+				$valid = ($row['password'] = md5(get_site_preference('sitemask','').$password));
+			}
+			if( !$valid ) {
+				return null;
+			}
 		}
-		else { $result = null; } // no object
-
-		return $result;
+		if( $row['user_id'] > 0 ) { // should never fail
+			if( $password && $l == 32 ) {
+				$hash = password_hash($password,PASSWORD_BCRYPT); //PASSWORD_ARGON2I or PASSWORD_ARGON2ID might be relevant in future
+				$this->SetPasswordRaw((int)$row['user_id'],$hash); //record replacement hash
+			}
+			return $this->LoadUserByID($row['user_id']);
+		}
+		return null; // no object
 	}
 
 	/**
 	 * Loads a User corresponding to the specified user id.
 	 *
-	 * @param mixed $id User id to load
-	 * @return mixed If successful, the filled User object.  If it fails, it returns null.
+	 * @param int|string|null $id numeric id of User to load
+	 * @return populated User object | null
 	 * @since 0.6.1
 	 */
 	public function LoadUserByID($id)
@@ -222,26 +230,23 @@ WHERE g.group_id=? ORDER BY username";
 		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
 
-		$query = "SELECT username, password, active, first_name, last_name, admin_access, email FROM ".CMS_DB_PREFIX."users WHERE user_id = ?";
-		$dbresult = $db->Execute($query, array($id));
-        if( $dbresult ) {
-            while( $row = $dbresult->FetchRow() ) {
-                foreach( ['username','first_name','last_name','email','password'] as $fld ) {
-                    if( $row[$fld] === null ) $row[$fld] = '';
-                }
-                $oneuser = new User();
-                $oneuser->id = $id;
-                $oneuser->username = $row['username'];
-                $oneuser->password = $row['password'];
-                $oneuser->firstname = $row['first_name'];
-                $oneuser->lastname = $row['last_name'];
-                $oneuser->email = $row['email'];
-                $oneuser->adminaccess = (int)$row['admin_access'];
-                $oneuser->active = (int)$row['active'];
-                $result = $oneuser;
-            }
-            $dbresult->Close();
-        }
+		$query = 'SELECT username, password, active, first_name, last_name, admin_access, email FROM '.CMS_DB_PREFIX.'users WHERE user_id = ?';
+		$dbresult = $db->GetRow($query, array($id));
+		if( $dbresult ) {
+			foreach( ['username','first_name','last_name','email','password'] as $fld ) {
+				if( $dbresult[$fld] === null ) $dbresult[$fld] = '';
+			}
+			$oneuser = new User();
+			$oneuser->id = $id;
+			$oneuser->username = $dbresult['username'];
+			$oneuser->password = $dbresult['password']; // hash
+			$oneuser->firstname = $dbresult['first_name'];
+			$oneuser->lastname = $dbresult['last_name'];
+			$oneuser->email = $dbresult['email'];
+			$oneuser->adminaccess = (int)$dbresult['admin_access']; //what is this property used for? proxy for enabled ?
+			$oneuser->active = (int)$dbresult['active'];
+			$result = $oneuser;
+		}
 
 		$this->_saved_users[$id] = $result;
 		return $result;
@@ -296,6 +301,20 @@ WHERE g.group_id=? ORDER BY username";
 		$dbresult = $db->Execute($query, array($user->username, $user->password, $user->active, $user->firstname, $user->lastname, $user->email, 1, $user->id));
 		if( $dbresult ) return true;
 		return false;
+	}
+
+	/**
+	 * Update the recorded password-hash for the specified user
+	 * @since 2.2.23F2
+	 * @param int $id numeric identifier of the user
+	 * @param string $hash value to be recorded
+	 */
+	public function SetPasswordRaw($id,$hash)
+	{
+		$db = CmsApp::get_instance()->GetDb();
+		$now = $db->DBTimeStamp(time());
+		$query = 'UPDATE '.CMS_DB_PREFIX."users SET password = ?,modified_date = $now WHERE user_id=?";
+		$db->Execute($query, array($hash, $id));
 	}
 
 	/**
@@ -394,7 +413,6 @@ WHERE g.group_id=? ORDER BY username";
 		}
 		return $result;
 	}
-
 
 	/**
 	 * Test if the specified user is a member of the group identified by $gid

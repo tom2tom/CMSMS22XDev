@@ -38,7 +38,7 @@ class User
 	public $username;
 
 	/**
-	 * @var string $password Password (md5 encoded)
+	 * @var string $password Password Hash
 	 */
 	public $password;
 
@@ -71,7 +71,7 @@ class User
 	public $pagecount; //ditto
 
 	/**
-	 * Generic constructor.  Runs the SetInitialValues fuction.
+	 * Generic constructor.  Runs the SetInitialValues function.
 	 */
 	function __construct()
 	{
@@ -96,22 +96,21 @@ class User
 	}
 
 	/**
-	 * Encrypts and sets password for the User
+	 * Hash and cache the password for this User
 	 *
 	 * @since 0.6.1
 	 * @param string $password The plaintext password.
 	 */
 	function SetPassword($password)
 	{
-		$this->password = md5(get_site_preference('sitemask','').$password);
+		$this->password = password_hash($password, PASSWORD_BCRYPT); //PASSWORD_ARGON2I or PASSWORD_ARGON2ID might be relevant in future
 	}
 
 	/**
-	 * Saves the user to the database.  If no user_id is set, then a new record
-	 * is created.  If the uset_id is set, then the record is updated to all values
-	 * in the User object.
+	 * Save this User to the database.  If no user_id property is set, then a new record
+	 * is created.  If user_id is set, then the record is updated.
 	 *
-	 * @returns mixed If successful, true.  If it fails, false.
+	 * @return bool indicating success.
 	 * @since 0.6.1
 	 */
 	function Save()
@@ -134,10 +133,10 @@ class User
 	}
 
 	/**
-	 * Delete the record for this user from the database and resets
-	 * all values to their initial values.
+	 * Delete the record for this User from the database and reset
+	 * all object properties to their initial values.
 	 *
-	 * @returns mixed If successful, true.  If it fails, false.
+	 * @return bool indicating success.
 	 * @since 0.6.1
 	 */
 	function Delete()
