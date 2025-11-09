@@ -468,7 +468,7 @@ final class filemanager_utils
             $fh = finfo_open(FILEINFO_MIME_TYPE);
             if( $fh ) {
                 $mime_type = finfo_file($fh,$filename);
-                finfo_close($fh);
+                if( PHP_VERSION_ID < 80500 ) finfo_close($fh);
                 if( $mime_type ) return $mime_type;
             }
         }

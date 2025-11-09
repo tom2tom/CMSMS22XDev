@@ -839,7 +839,7 @@ class cms_http_request
             $this->_setError(curl_error($ch));
 
             // Close PHP cURL handle
-            curl_close($ch);
+            if (PHP_VERSION_ID < 80500) curl_close($ch);
         }
         else { // Not using cURL
             // Get a file pointer
@@ -1087,9 +1087,9 @@ class cms_http_request
                 $value = urldecode($this->_tokenize(';'));
 
                 switch ($name) {
-                    case 'path' : $path = $value; break;
-                    case 'domain' : $domain = $value; break;
-                    case 'secure' : $secure = ($value) ? '1' : '0'; break;
+                    case 'path': $path = $value; break;
+                    case 'domain': $domain = $value; break;
+                    case 'secure': $secure = ($value) ? '1' : '0'; break;
                 }
             }
 

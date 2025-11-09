@@ -157,7 +157,7 @@ class FileTypeHelper
         $fh = finfo_open(FILEINFO_MIME_TYPE);
         if( $fh ) {
             $mime_type = finfo_file($fh,$filename);
-            finfo_close($fh);
+            if( PHP_VERSION_ID < 80500 ) { finfo_close($fh); }
             return $mime_type;
         }
         return '';
@@ -274,7 +274,7 @@ class FileTypeHelper
         if( $this->_use_mimetype && $this->is_readable( $filename ) ) {
             $type = $this->get_mime_type( $filename );
             switch( $type ) {
-            case 'text/xml';
+            case 'text/xml':
             case 'application/xml':
             case 'application/rss+xml':
                 return TRUE;

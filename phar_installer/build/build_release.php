@@ -45,6 +45,7 @@ $all_excludes = [
 '~[\\/]config\.php$~',
 '~\.htaccess$~',
 '~web\.config$~',
+'~db\.ini$~',
 '~\.bak$~',
 '/~$/',
 '~\.#~',
@@ -595,7 +596,7 @@ try {
             }
             $phar[$relname]->setMetaData(array('mime-type'=>$mimetype));
         }
-        if( $finfo ) {
+        if( $finfo && PHP_VERSION_ID < 80500 ) {
             finfo_close($finfo);
         }
 
