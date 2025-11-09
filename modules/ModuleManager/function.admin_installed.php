@@ -12,6 +12,5 @@ catch( Exception $e ) {
     echo $this->ShowErrors($e->GetMessage());
     return;
 }
-$tpl->assign($modname,$this); // $ModuleManager variable used in template
 $tpl->assign('allow_export',(!empty($config['developer_mode']))?1:0);
 $tpl->assign('allow_modman_uninstall',$this->GetPreference('allowuninstall',0));

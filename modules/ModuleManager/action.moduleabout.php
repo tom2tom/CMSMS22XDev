@@ -74,9 +74,6 @@ if( !$about ) {
 $modname = $this->GetName();
 $tpl = $smarty->createTemplate("module_file_tpl:$modname;remotecontent.tpl",null,$modname,$smarty);
 $tpl->assign('title',$this->Lang('abouttxt'));
-$tpl->assign('moduletext',$this->Lang('nametext'));
-$tpl->assign('vertext',$this->Lang('vertext'));
-$tpl->assign('xmltext',$this->Lang('xmltext'));
 $tpl->assign('modulename',$name);
 $tpl->assign('moduleversion',$version);
 $tpl->assign('xmlfile',$xmlfile);
