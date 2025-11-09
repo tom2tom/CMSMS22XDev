@@ -20,7 +20,7 @@
 use CMSMS\HookManager;
 
 /**
- * A class to manage a collection (or theme) of Templates and Stylesheets
+ * A class to manage a collection (or design) of Templates and Stylesheets
  *
  * @package CMS
  * @license GPL
@@ -88,8 +88,8 @@ class CmsLayoutCollection
     private function __clone() {}
 
     /**
-     * Get the theme id
-     * Only themes that have been saved to the database have an id.
+     * Get the design id
+     * Only designs that have been saved to the database have an id.
      * @return int maybe 0
      */
     public function get_id()
@@ -98,7 +98,7 @@ class CmsLayoutCollection
     }
 
     /**
-     * Get the theme name
+     * Get the design name
      * @return string
      */
     public function get_name()
@@ -107,8 +107,8 @@ class CmsLayoutCollection
     }
 
     /**
-     * Set the theme name
-     * This marks the theme as dirty
+     * Set the design name
+     * This marks the design as dirty
      *
      * @throws CmsInvalidDataException
      * @param string $str
@@ -122,7 +122,7 @@ class CmsLayoutCollection
 
     /**
      * Get the default flag
-     * Note, only one theme can be the default.
+     * Note, only one design can be the default.
      *
      * @return bool
      */
@@ -133,9 +133,9 @@ class CmsLayoutCollection
 
 
     /**
-     * Sets this theme as the default theme.
+     * Sets this design as the default design.
      * Sets the dirty flag.
-     * Note, only one theme can be the default.
+     * Note, only one design can be the default.
      *
      * @param mixed $flag bool|int\string supported by cms_to_bool() Default true
      */
@@ -147,7 +147,7 @@ class CmsLayoutCollection
     }
 
     /**
-     * Get the theme description
+     * Get the design description
      *
      * @return string
      */
@@ -157,7 +157,7 @@ class CmsLayoutCollection
     }
 
     /**
-     * Set the theme description
+     * Set the design description
      *
      * @param string $str
      */
@@ -168,7 +168,7 @@ class CmsLayoutCollection
     }
 
     /**
-     * Get the timestamp representing when this theme was first recorded.
+     * Get the timestamp representing when this design was first recorded.
      * The creation timestamp is specified automatically on the first save
      *
      * @return int maybe 0
@@ -179,7 +179,7 @@ class CmsLayoutCollection
     }
 
     /**
-     * Get the timestamp representing the latest modification datetime of this theme
+     * Get the timestamp representing the latest modification datetime of this design
      *
      * @return int maybe 0
      */
@@ -189,7 +189,7 @@ class CmsLayoutCollection
     }
 
     /**
-     * Test if this theme has stylesheets attached to it
+     * Test if this design has stylesheets attached to it
      *
      * @return bool
      */
@@ -199,7 +199,7 @@ class CmsLayoutCollection
     }
 
     /**
-     * Get the list of stylesheets (if any) associated with this theme.
+     * Get the list of stylesheets (if any) associated with this design.
      *
      * @return array of integers
      */
@@ -209,7 +209,7 @@ class CmsLayoutCollection
     }
 
     /**
-     * Set the list of stylesheets associated with this theme
+     * Set the list of stylesheets associated with this design
      *
      * @throws CmsLogicException
      * @param array $id_array Array of integer stylesheet ids.
@@ -227,7 +227,7 @@ class CmsLayoutCollection
     }
 
     /**
-     * Add a stylesheet to this theme
+     * Add a stylesheet to this design
      *
      * @throws CmsLogicException
      * @param mixed $css Either an integer stylesheet id, or a CmsLayoutStylesheet object
@@ -250,7 +250,7 @@ class CmsLayoutCollection
     }
 
     /**
-     * Remove a stylesheet from this theme
+     * Remove a stylesheet from this design
      *
      * @throws CmsLogicException
      * @param mixed $css Either an integer stylesheet id, or a CmsLayoutStylesheet object
@@ -281,7 +281,7 @@ class CmsLayoutCollection
     }
 
     /**
-     * Test if this theme has templates associated with it
+     * Test if this design has templates associated with it
      *
      * @return bool
      */
@@ -305,7 +305,7 @@ class CmsLayoutCollection
     }
 
     /**
-     * Set the list of templates associated with this theme
+     * Set the list of templates associated with this design
      *
      * @throws CmsLogicException
      * @param array $id_array Array of integer template ids
@@ -323,7 +323,7 @@ class CmsLayoutCollection
     }
 
     /**
-     * Add a template to the list of templates associated with this theme.
+     * Add a template to the list of templates associated with this design.
      *
      * @throws CmsLogicException
      * @param mixed $tpl Accepts either an integer template id, or an instance of a CmsLayoutTemplate object
@@ -345,7 +345,7 @@ class CmsLayoutCollection
     }
 
     /**
-     * Delete a template from the list of templates associated with this theme
+     * Delete a template from the list of templates associated with this design
      *
      * @throws CmsInvalidDataException
      * @param mixed $tpl Either an integer template id, or a CmsLayoutTemplate object
@@ -498,8 +498,8 @@ class CmsLayoutCollection
 
     /**
      * Save this design
-     * This method will send the AddDesignPre and AddDesignPost events before and after saving a new theme
-     * and the EditDesignPre and EditDesignPost events before and after saving an existing theme.
+     * This method will send the AddDesignPre and AddDesignPost events before and after saving a new design
+     * and the EditDesignPre and EditDesignPost events before and after saving an existing design.
      */
     public function save()
     {
@@ -519,7 +519,7 @@ class CmsLayoutCollection
      * This class will not allow deleting designs that have templates associated with them.
      *
      * @throws CmsLogicException
-     * @param bool $force Force deleting the theme even if there are templates attached
+     * @param bool $force Force deleting the design even if there are templates attached
      */
     public function delete($force = FALSE)
     {
@@ -589,14 +589,15 @@ class CmsLayoutCollection
     }
 
     /**
-     * Load a theme object
+     * Load a Design object
      *
      * @throws CmsDataNotFoundException
-     * @param mixed $x - Accepts either an integer theme id, or a theme name,
+     * @param mixed $x - Accepts either an integer design id, or a design name,
      * @return CmsLayoutCollection
      */
     public static function load($x)
     {
+        if ($x == 0) return null; //adding, nothing to load
         $db = CmsApp::get_instance()->GetDb();
         $row = [];
         if( is_numeric($x) && $x > 0 ) {
@@ -634,7 +635,7 @@ class CmsLayoutCollection
     }
 
     /**
-     * Load all themes
+     * Load all designs
      *
      * @param string $quick Do not load the templates and stylesheets.
      * @return array CmsLayoutCollection objects ordered by their design_id, or maybe empty
@@ -706,7 +707,7 @@ class CmsLayoutCollection
     }
 
     /**
-     * Load the default theme
+     * Load the default design
      *
      * @throws CmsInvalidDataException
      * @return CmsLayoutCollection
@@ -726,7 +727,7 @@ class CmsLayoutCollection
     }
 
     /**
-     * Given a base name, suggest a name for a copied theme
+     * Given a base name, suggest a name for a copied design
      *
      * @param string $newname
      * @return string
