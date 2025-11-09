@@ -20,8 +20,8 @@
 /**
  * Methods for modules to do miscellaneous functions
  *
- * @since		1.0
- * @package		CMS
+ * @since   1.0
+ * @package CMS
  * @license GPL
  */
 
@@ -31,16 +31,15 @@
 function cms_module_GetAbout($modinstance)
 {
 	$str = '';
-	if ($modinstance->GetAuthor() != '') {
-		$str .= "<br>".lang('author').": " . $modinstance->GetAuthor();
-		if ($modinstance->GetAuthorEmail() != '') $str .= ' &lt;' . $modinstance->GetAuthorEmail() . '&gt;';
-		$str .= "<br>";
+	if (($val = $modinstance->GetAuthor())) {
+		$str = '<br>'.lang('author').': ' . $val;
+		if (($val = $modinstance->GetAuthorEmail())) $str .= ' &lt;' . $val . '&gt;';
 	}
-	$str .= "<br>".lang('version').": " .$modinstance->GetVersion() . "<br>";
+	if ($str) $str .= '<br><br>';
+	$str .= lang('version').': ' .$modinstance->GetVersion();
 
-	if ($modinstance->GetChangeLog() != '') {
-		$str .= "<br>".lang('changehistory').":<br>";
-		$str .= $modinstance->GetChangeLog() . '<br>';
+	if (($val = $modinstance->GetChangeLog())) {
+		$str .= '<br><br>'.lang('changehistory').':<br>' .$val;
 	}
 	return $str;
 }
@@ -53,29 +52,39 @@ function cms_module_GetHelpPage($modinstance)
 	$str = '';
 	@ob_start();
 	echo $modinstance->GetHelp();
-	$str .= @ob_get_contents();
-	@ob_end_clean();
+	$str .= @ob_get_clean();
 	$dependencies = $modinstance->GetDependencies();
-	if (count($dependencies) > 0 ) {
-		$str .= '<h3>'.lang('dependencies').'</h3>';
-		$str .= '<ul>';
+	if ($dependencies) {
+		$str .= "\n".'<h3>'.lang('dependencies').'</h3><ul>';
 		foreach( $dependencies as $dep => $ver ) {
-			$str .= '<li>';
-			$str .= $dep.' =&gt; '.$ver;
-			$str .= '</li>';
+			$str .= "<li>$dep =&gt; $ver</li>";
 		}
 		$str .= '</ul>';
 	}
-	$paramarray = $modinstance->GetParameters();
-	if (count($paramarray) > 0) {
-		$str .= '<h3>'.lang('parameters').'</h3>';
-		$str .= '<ul>';
-		foreach ($paramarray as $oneparam) {
+	$parameters = $modinstance->GetParameters();
+	if ($parameters) {
+		usort($parameters, function($a, $b) {
+			$ret = strcmp($a['name'], $b['name']);
+			return ($ret != 0) ? $ret : strcmp($a['help'], $b['help']);
+		});
+		$done = [];
+		$str .= "\n".'<h3>'.lang('frontendparameters').'</h3><ul>';
+		foreach ($parameters as $oneparam) {
+			if( isset($done[$oneparam['name']]) ) {
+				continue; // ignore duplicates by 'name' property
+			}
+			$done[$oneparam['name']] = 1;
 			$str .= '<li>';
-			$help = '';
-			if ($oneparam['optional'] == true) $str .= '<em>(optional)</em> ';
-			if( isset($oneparam['help']) ) $help = $oneparam['help'];
-			$str .= $oneparam['name'].'="'.$oneparam['default'].'" - '.$help.'</li>';
+			if ($oneparam['optional']) { $str .= '<em>(optional)</em> '; }
+			$dflt = $oneparam['default'];
+			if (!(is_numeric($dflt) ||
+				strcasecmp($dflt, 'null') == 0 //CHECKME
+// || strcasecmp($dflt, 'true') == 0 || strcasecmp($dflt, 'false') == 0 nicer but incompatible
+				) ) {
+				$dflt = "'$dflt'";
+			}
+			$help = (!empty($oneparam['help'])) ? ' - '.$oneparam['help'] : '';
+			$str .= $oneparam['name'].'='.$dflt.$help.'</li>';
 		}
 		$str .= '</ul>';
 	}
