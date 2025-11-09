@@ -39,7 +39,7 @@
 function get_userid($redirect = true)
 {
     if( cmsms()->is_cli() ) return 1;
-    $login_ops = \CMSMS\LoginOperations::get_instance();
+    $login_ops = CMSMS\internal\LoginOperations::get_instance();
     $uid = $login_ops->get_effective_uid();
     if( !$uid && $redirect ) {
         $config = \cms_config::get_instance();
@@ -62,7 +62,7 @@ function get_userid($redirect = true)
 function get_username($check = true)
 {
     if( cmsms()->is_cli() ) return '';
-    $login_ops = \CMSMS\LoginOperations::get_instance();
+    $login_ops = CMSMS\internal\LoginOperations::get_instance();
     $uname = $login_ops->get_effective_username();
     if( !$uname && $check ) {
         $config = \cms_config::get_instance();
@@ -91,7 +91,7 @@ function check_login($no_redirect = false)
     $res = false;
     if( $uid > 0 ) {
         $res = true;
-        $login_ops = \CMSMS\LoginOperations::get_instance();
+        $login_ops = CMSMS\internal\LoginOperations::get_instance();
         $res = $login_ops->validate_requestkey();
     }
     if( !$res ) {
@@ -380,7 +380,8 @@ function pagination($page, $totalrows, $limit)
  *  Such value must begin with "$optprefix/" if $optprefix is not empty.
  * @param string $allowed_extensions Comma-separated, any-case, series
  *  of filename extension(s) to be included (exclusions not supported)
- * @param string $optprefix Prefix to fadd to each value in the output. Default ''
+ * @param string $optprefix Relative filepath to prepend to each option-value
+ *  in the output. No trailing separator. Default ''
  * @param bool $addnone Whether to prepend a -1=>'none' option. Default false
  * @param string $extratext Additional details for the html element. Default ''
  * @param stting $fileprefix Prefix to use for filtering items. Default ''
@@ -402,8 +403,9 @@ function create_file_dropdown($name,$dir,$value,$allowed_extensions,$optprefix='
   }
 
   if( $sortresults ) natcasesort($files);
+  $sep = ($optprefix != '/') ? '/' : '';
   foreach( $files as $file ) {
-    $opt = ( $optprefix ) ? $optprefix.'/'.$file : $file;
+    $opt = ( $optprefix) ? $optprefix.$sep.$file : $file;
     $txt = ( $opt == $value ) ? ' selected' : ''; // OR $file == $value ?
     $out .= "  <option value=\"{$opt}\"{$txt}>$file</option>\n";
   }

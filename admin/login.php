@@ -17,12 +17,11 @@
 #
 #$Id$
 
-//namespace CMSMS;
 use CMSMS\HookManager;
-use CMSMS\LoginOperations;
+use CMSMS\internal\LoginOperations;
 
-$CMS_ADMIN_PAGE=1;
-$CMS_LOGIN_PAGE=1;
+$CMS_ADMIN_PAGE = 1;
+$CMS_LOGIN_PAGE = 1;
 
 require_once("../lib/include.php");
 $gCms = CmsApp::get_instance();

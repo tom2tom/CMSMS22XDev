@@ -61,7 +61,7 @@ if( isset($_GET['switchuser']) ) {
             $error .= '<li>'.lang('userdisabled').'</li>';
         }
         else {
-            CMSMS\LoginOperations::get_instance()->set_effective_user($to_user);
+            CMSMS\internal\LoginOperations::get_instance()->set_effective_user($to_user);
             redirect('index.php'.$urlext.'&section=usersgroups');
         }
     }
