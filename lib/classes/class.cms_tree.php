@@ -239,10 +239,13 @@ class cms_tree
 	 */
 	public function add_node(cms_tree $node)
 	{
-		if( !is_array($this->_children) ) $this->_children = array();
-
-		for( $i = 0, $n = count($this->_children); $i < $n; $i++ ) {
-			if( $this->_children[$i] == $node ) return; //FALSE;
+		if( is_array($this->_children) ) {
+			for( $i = 0, $n = count($this->_children); $i < $n; $i++ ) { // OR array_search($node, $this->_children) != FALSE
+				if( $this->_children[$i] == $node ) return; //FALSE;
+			}
+		}
+		else {
+			$this->_children = array();
 		}
 		$node->_parent = $this;
 		$this->_children[] = $node;
@@ -250,7 +253,7 @@ class cms_tree
 
 
 	/**
-	 * Count the number of direct children to this node.
+	 * Count the number of direct children of this node.
 	 *
 	 * @return int
 	 */
@@ -262,7 +265,7 @@ class cms_tree
 
 
 	/**
-	 * Count the number of siblings that this node has.
+	 * Count the number of siblings of this node.
 	 *
 	 * @return int
 	 */
