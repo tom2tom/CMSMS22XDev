@@ -15,24 +15,28 @@ class wizard_step2 extends wizard_step
     private function get_cmsms_info($dir)
     {
         if( !$dir ) return [];
-        if( !is_dir($dir.'/modules') ) return [];
-        if( !is_file($dir.'/version.php') && !is_file("$dir/lib/version.php") ) return [];
-        if( !is_file($dir.'/include.php') && !is_file("$dir/lib/include.php") ) return [];
-        if( !is_file($dir.'/config.php') ) return [];
-        if( !is_file($dir.'/moduleinterface.php') ) return [];
+        if( !is_dir("$dir/modules") ) return [];
+        if( !(is_file("$dir/version.php") || is_file("$dir/lib/version.php")) ) return [];
+        if( !(is_file("$dir/include.php") || is_file("$dir/lib/include.php")) ) return [];
+        if( !(is_file("$dir/config.php") || is_file("$dir/lib/config.php")) ) return [];
+        if( !is_file("$dir/moduleinterface.php") ) return [];
 
         $info = array();
         if( is_file("$dir/version.php") ) {
-            include($dir.'/version.php');
-            $info['mtime'] = filemtime($dir.'/version.php');
+            include("$dir/version.php");
+            $info['mtime'] = filemtime("$dir/version.php");
         } else {
             include("$dir/lib/version.php");
-            $info['mtime'] = filemtime($dir.'/lib/version.php');
+            $info['mtime'] = filemtime("$dir/lib/version.php");
         }
         $info['version'] = $CMS_VERSION;
         $info['version_name'] = $CMS_VERSION_NAME;
         $info['schema_version'] = $CMS_SCHEMA_VERSION;
-        $info['config_file'] = $dir.'/config.php';
+        if( is_file("$dir/lib/config.php") ) {
+            $info['config_file'] = "$dir/lib/config.php";
+        } else {
+            $info['config_file'] = "$dir/config.php";
+        }
 
         $app = get_app();
         $app_config = $app->get_config();
@@ -45,8 +49,7 @@ class wizard_step2 extends wizard_step
             elseif( $dvc > 0 ) { $info['error_status'] = 'too_new'; }
         }
 
-        $fn = $dir.'/config.php';
-        require_once $fn;
+        require_once $info['config_file'];
         $info['config'] = $config;
         if( isset($config['admin_dir']) ) {
             if( $config['admin_dir'] != 'admin' ) throw new Exception(lang('error_admindirrenamed'));
