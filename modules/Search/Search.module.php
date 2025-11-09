@@ -40,14 +40,13 @@ class Search extends CMSModule
     public function MinimumCMSVersion() { return '2.0'; }
     public function GetAdminDescription() { return $this->Lang('description'); }
     public function VisibleToAdminUser() { return $this->CheckPermission('Manage Search'); }
-    public function GetHelp() { return $this->Lang('help'); }
     public function GetAuthor() { return 'Ted Kulp'; }
     public function GetAuthorEmail() { return 'ted@cmsmadesimple.org'; }
     public function GetChangeLog() { return @file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'changelog.htm'); }
     public function GetEventDescription( $eventname ) { return $this->Lang('eventdesc-' . $eventname); }
     public function GetEventHelp( $eventname ) { return $this->Lang('eventhelp-' . $eventname); }
 
-    public function InitializeAdmin()
+    public function GetHelp()
     {
         $this->CreateParameter('inline','false',$this->Lang('param_inline'));
         $this->CreateParameter('passthru_*','null',$this->Lang('param_passthru'));
@@ -63,12 +62,13 @@ class Search extends CMSModule
         $this->CreateParameter('search_method','get',$this->Lang('search_method'));
         $this->CreateParameter('formtemplate','',$this->Lang('param_formtemplate'));
         $this->CreateParameter('resulttemplate','',$this->Lang('param_resulttemplate'));
+
+        return $this->Lang('help');
     }
 
     public function InitializeFrontend()
     {
-        $this->RestrictUnknownParams();
-
+//      $this->RestrictUnknownParams(); does nothing
         $this->SetParameterType('inline',CLEAN_STRING);
         $this->SetParameterType(CLEAN_REGEXP.'/passthru_.*/',CLEAN_STRING);
         $this->SetParameterType('modules',CLEAN_STRING);
@@ -85,6 +85,7 @@ class Search extends CMSModule
         $this->SetParameterType('formtemplate',CLEAN_STRING);
         $this->SetParameterType('resulttemplate',CLEAN_STRING);
     }
+
     //@return string
     protected function GetSearchHtmlTemplate()
     {
