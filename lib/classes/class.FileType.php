@@ -9,14 +9,14 @@
 namespace CMSMS;
 
 /**
- * A simple abstract class that defines constants for numerous file types.
+ * A simple class that defines constants for various file types.
  *
  * @package CMS
  * @license GPL
  * @author Robert Campbell
  * @since  2.2
  */
-abstract class FileType
+class FileType
 {
     const TYPE_IMAGE = 'image';
     const TYPE_AUDIO = 'audio';
@@ -27,4 +27,4 @@ abstract class FileType
     const TYPE_ARCHIVE = 'archive';
     const TYPE_EXECUTABLE = 'executable';
     const TYPE_ANY = 'any';
-} // end of class.
+}
