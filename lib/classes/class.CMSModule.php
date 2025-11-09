@@ -13,7 +13,7 @@
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #$Id$
 
@@ -22,9 +22,9 @@
  *
  * All modules should inherit and extend this class with their functionality.
  *
- * @since		0.9
+ * @since       0.9
  * @version     2.0
- * @package		CMS
+ * @package     CMS
  * @property    CmsApp $cms A reference to the application object (deprecated)
  * @property    Smarty_CMS $smarty A reference to the global smarty object (deprecated)
  * @property    cms_config $config A reference to the global app configuration object (deprecated)
@@ -39,12 +39,12 @@ abstract class CMSModule
      */
 
     /**
-     * A hash of the parameters passed in to the module action
+     * Acceptable frontend-action parameters
      *
      * @access private
      * @ignore
      */
-    private $params = array();
+    private $params;
 
     /**
      * @access private
@@ -82,11 +82,11 @@ abstract class CMSModule
      */
     private $param_map = array();
 
-    /**
+    /* *
      * @access private
      * @ignore
-    private $restrict_unknown_params = TRUE;
-     */
+     * /
+    private $restrict_unknown_params = true;*/
 
     /**
      * @access private
@@ -162,7 +162,7 @@ abstract class CMSModule
     #[\ReturnTypeWillChange]
     public function __call($name, $args)
     {
-        return FALSE;
+        return false;
     }
 
     /**
@@ -262,7 +262,7 @@ abstract class CMSModule
      * @param bool $cachable whether this function is cachable.
      * @param int $usage Indicates frontend (0), or frontend and backend (1) availability.
      */
-    public function RegisterSmartyPlugin($name,$type,$callback,$cachable = TRUE,$usage = 0)
+    public function RegisterSmartyPlugin($name,$type,$callback,$cachable = true,$usage = 0)
     {
         if( !$name || !$type || !$callback ) throw new CmsException('Invalid data passed to RegisterSmartyPlugin');
 
@@ -289,19 +289,17 @@ abstract class CMSModule
     }
 
     /**
-     * Register a plugin to smarty with the
-     * name of the module.  This method should be called
-     * from the module constructor, or from the SetParameters
-     * method.
+     * Register a Smarty plugin having the name of the module.
+     * This method should be called during the module constructor, or
+     * during its SetParameters()
      *
-     * Note:
      * @final
      * @see CMSModule::SetParameters
      * @see can_cache_output
      * @param bool $forcedb Indicate whether this registration should be forced to be entered in the database. Default value is false (for compatibility)
      * @param bool|null $cachable Indicate whether this plugins output should be cachable.  If null, use the site preferences, and the can_cache_output method.  Otherwise a bool is expected.
      */
-    final public function RegisterModulePlugin($forcedb = FALSE,$cachable = false)
+    final public function RegisterModulePlugin($forcedb = false,$cachable = false)
     {
         global $CMS_ADMIN_PAGE;
         global $CMS_INSTALL_PAGE;
@@ -310,23 +308,24 @@ abstract class CMSModule
         $admin_req = (isset($CMS_ADMIN_PAGE) && !$this->LazyLoadAdmin())?1:0;
         $fe_req = (!isset($CMS_ADMIN_PAGE) && !$this->LazyLoadFrontend())?1:0;
         if( ($fe_req || $admin_req) && !$forcedb ) {
-            if( isset($CMS_INSTALL_PAGE) ) return TRUE;
+            if( isset($CMS_INSTALL_PAGE) ) return true;
 
             // no lazy loading.
             $gCms = CmsApp::get_instance();
             $smarty = $gCms->GetSmarty();
             $smarty->registerPlugin('function', $this->GetName(), array($this->GetName(), 'function_plugin'), $cachable);
-            return TRUE;
+            return true;
         }
         else {
             return cms_module_smarty_plugin_manager::addStatic($this->GetName(), $this->GetName(), 'function', 'function_plugin', $cachable);
-            return TRUE;
+            return true;
         }
     }
 
     /**
-     * Callback to determine if the output from a call to the module can be cached by smarty.
+     * Report whether the output from a call to the module can be cached by smarty.
      *
+     * @final
      * @since 1.11
      * @author Robert Campbell
      * @return bool
@@ -334,12 +333,12 @@ abstract class CMSModule
     final public function can_cache_output()
     {
         global $CMS_ADMIN_PAGE, $CMS_INSTALL_PAGE, $CMS_STYLESHEET;
-        if( isset($CMS_ADMIN_PAGE) || isset($CMS_INSTALL_PAGE) || isset($CMS_STYLESHEET) ) return FALSE;
+        if( isset($CMS_ADMIN_PAGE) || isset($CMS_INSTALL_PAGE) || isset($CMS_STYLESHEET) ) return false;
         return $this->AllowSmartyCaching();
     }
 
     /**
-     * Callback to determine if the output from a call to the module can be cached by smarty.
+     * Report whether output generated by the module can be cached by Smarty.
      *
      * @since 1.11
      * @author Robert Campbell
@@ -347,7 +346,7 @@ abstract class CMSModule
      */
     public function AllowSmartyCaching()
     {
-        return FALSE;
+        return false;
     }
 
     /**
@@ -357,7 +356,7 @@ abstract class CMSModule
      */
 
     /**
-     * Returns a sufficient about page for a module
+     * Returns an about-page for the module
      *
      * @abstract
      * @return string The about page HTML text.
@@ -369,8 +368,7 @@ abstract class CMSModule
     }
 
     /**
-     * Returns a sufficient help page for a module
-     * this function should not be overridden
+     * Returns a help page for the module
      *
      * @return string The help page HTML text.
      * @final
@@ -389,8 +387,7 @@ abstract class CMSModule
      */
     public function GetName()
     {
-        $tmp = get_class($this);
-        return basename(str_replace('\\','/',$tmp));
+        return basename(strtr(get_called_class(), '\\', DIRECTORY_SEPARATOR));
     }
 
     /**
@@ -460,13 +457,22 @@ abstract class CMSModule
     /**
      * Returns the help for the module
      *
-     * Note: New for CMSMS 1.11.12 - If the global variable CMSMS_GENERATING_XML is set
-     * it indicates that the help output will be stored in an XML file.  This variable
-     * can be used to check whether advanced html output (like links to other documents)
-     * should be generated.
-	 *
+     * If global variable CMSMS_GENERATING_XML is set, it indicates that
+     * the help output will be stored in an XML file. This variable can
+     * be checked to determine whether advanced html output (like links
+     * to other documents) should be generated.
+     *
+     * If the module has frontend actions, and those involve request-parameters
+     * which will be filtered in accord with data recorded via SetParameterType
+     * calls, then this method could include CreateParameter calls for
+     * each acceptable frontend parameter, instead of placing those in a
+     * SetParameters method.
+     *
+     * @see CMSModule::SetParameterType
+     * @see CMSModule::CreateParameter
+     * @see CMSModule::GetHelpPage
      * @abstract
-     * @return string Help HTML Text.
+     * @return string Help HTML text.
      */
     public function GetHelp()
     {
@@ -504,7 +510,7 @@ abstract class CMSModule
      * Note: This method is not compatible wih lazy loading in the front end.
      *
      * @final
-     * @see SetParameters
+     * @see CMSModule::SetParameters
      * @param string $routeregex Regular Expression Route to register
      * @param array $defaults Associative array containing defaults for parameters that might not be included in the url
      */
@@ -524,27 +530,39 @@ abstract class CMSModule
     public function CreateStaticRoutes() {}
 
     /**
-     * Returns a list of parameters and their help strings in a hash.  This is generally
-     * used internally.
+     * Returns the acceptable frontend-action parameters and their
+     * details.
      *
      * @final
      * @internal
-     * @access private
-     * @return array
+     * @return array maybe empty
      */
     final public function GetParameters()
     {
-        if( count($this->params) == 0 ) $this->InitializeAdmin(); // quick hack to load parameters if they are not already loaded.
+        if( !isset($this->params) ) {
+            $this->params = [];
+            if( method_exists(get_called_class(), 'SetParameters') ) {
+                $this->SetParameters();
+            }
+            if( !$this->params && method_exists(get_called_class(), 'InitializeAdmin') ) {
+                // deprecated approach to cacheing action-help
+                try {  // but general init might do inappropriate stuff !
+                    $this->InitializeAdmin();
+                } catch (Exception $e) {
+                    //nothing here
+                }
+            }
+        }
         return $this->params;
     }
 
     /**
      * Method to sanitize all entries in a hash
-     * This method is called by the module api to clean incoming parameters in the frontend.
-     * It uses the map created with the SetParameterType() method in the module api.
+     * This method is called by the module API to clean incoming parameters
+     * in the frontend.
+     * It uses the map created using the SetParameterType() method in the module API.
      *
      * @internal
-     * @deprecated
      * @param string Module Name
      * @param array  Hash data
      * @param array  A map of param names and type information
@@ -566,11 +584,11 @@ abstract class CMSModule
                     // Key not found in the map
                     // see if one matches via regular expressions
                     foreach( $map as $mk => $mv ) {
-                        if( FALSE === strpos($mk, CLEAN_REGEXP) ) continue;
+                        if( false === strpos($mk, CLEAN_REGEXP) ) continue;
 
                         // mk is a regular expression
                         $ss = substr($mk,strlen(CLEAN_REGEXP));
-                        if( $ss !== FALSE ) {
+                        if( $ss !== false ) {
                             if( preg_match($ss, $key) ) {
                                 // it matches, we now know what type to use
                                 $paramtype = $mv;
@@ -580,31 +598,26 @@ abstract class CMSModule
                     }
                 }
 
-                if( $paramtype != '' ) {
+                if( $paramtype ) {
                     switch( $paramtype ) {
-                    case 'CLEAN_INT':
+                    case CLEAN_INT:
                         $mappedcount++;
                         $mapped = true;
                         $value = (int) $value;
                         break;
-                    case 'CLEAN_FLOAT':
+                    case CLEAN_FLOAT:
                         $mappedcount++;
                         $mapped = true;
                         $value = (float) $value;
                         break;
-                    case 'CLEAN_NONE':
-                        // pass through without cleaning.
+                    case CLEAN_NONE:
+                        // no cleaning
                         $mappedcount++;
                         $mapped = true;
                         break;
-                    case 'CLEAN_STRING':
-                        $value = cms_htmlentities($value);
-                        $mappedcount++;
-                        $mapped = true;
-                        break;
-                    case 'CLEAN_FILE':
+                    case CLEAN_FILE:
                         $value = realpath($value);
-                        if( $value === FALSE ) {
+                        if( $value === false ) {
                             $value = CLEANED_FILENAME;
                         }
                         else {
@@ -613,13 +626,14 @@ abstract class CMSModule
                         $mappedcount++;
                         $mapped = true;
                         break;
+//                  case CLEAN_STRING:
                     default:
+                        $value = cms_htmlentities($value); //pathetic! TODO sanitize robustly
                         $mappedcount++;
                         $mapped = true;
-                        $value = cms_htmlentities($value);
                         break;
                     } // switch
-                } // if $paramtype
+                } // $paramtype
             }
 
             // we didn't clean this yet
@@ -642,82 +656,49 @@ abstract class CMSModule
     }
 
     /**
-     * This method can be used to perform initialization functions that should be done both for frontend and admin requests
-     * but not necessarily for lightweight module load requests (such as needed by ModuleManager).
-     *
-     * Note: This method is called from within the InitializeFrontend() and InitializeAdmin methods. so, if your module
-     * overrides one or both of these methods be sure to call the appropriate parent method.
+     * Originally, this method was for cacheing information about
+     * acceptable frontend-action parameters, for display in module help.
+     * Since CMSMS 1.0 this method might have also or instead been used
+     * to perform miscellaneous initializations for frontend and/or
+     * admin requests.
+     * Since CMSMS 1.10 this method, or at least using it to perform
+     * such initializations, was deprecated, as it was superseded by
+     * InitializeAdmin() and InitializeFrontend().
+     * In 2.2.23F2 this method was un-deprecated but its role reverted
+     * to original i.e. the method should only include one or more
+     * CreateParameter() calls.
      *
      * @abstract
      * @see CreateParameter
      * @see InitializeFrontend()
      * @see InitializeAdmin()
-     * @deprecated
      */
-    function SetParameters() {}
-
-    /**
-     * Called from within the constructor, ONLY for frontend module
-     * actions.  This method should be overridden to create routes, and
-     * set handled parameters, and perform other initialization tasks
-     * that need to be setup for all frontend actions.
-     *
-     * @abstract
-     * @see SetParameterType
-     * @see RegisterRoute
-     * @see RestrictUnknownParams
-     * @see RegisterModulePlugin
-     */
-    protected function InitializeFrontend()
+    public function SetParameters()
     {
-        $this->SetParameters(); // for backwards compatibility purposes. may be removed.
-    }
-
-    /**
-     * Called from within the constructor, ONLY for admin module
-     * actions.  This method should be overridden to create routes, and
-     * set handled parameters, and perform other initialization tasks
-     * that need to be setup for all frontend actions.
-     *
-     * @abstract
-     * @see CreateParameter
-     */
-    protected function InitializeAdmin()
-    {
-        $this->SetParameters(); // for backwards compatibility purposes. may be removed.
     }
 
     /**
      * A method to indicate that the system should drop and optionally
      * generate an error about unknown parameters on frontend actions.
-     *
-     * @see SetParameterType
-     * @see CreateParameter
      * @final
-     * @deprecated
+     * @deprecated since 2.2.8 Does nothing
+     *
      * @param bool $flag Indicates whether unknown params should be restricted.
      */
-    final public function RestrictUnknownParams($flag = true)
+    final public function RestrictUnknownParams($flag=true)
     {
-        // do nothing (2.2.8)
     }
 
     /**
-     * Indicate the name of, and type of a parameter that is
-     * acceptable for frontend actions.
+     * Declare the name and type of a parameter that is acceptable for
+     * frontend actions
      *
-     * possible values for type are:
-     * CLEAN_INT,CLEAN_FLOAT,CLEAN_NONE,CLEAN_STRING,CLEAN_REGEXP,CLEAN_FILE
-     *
-     * i.e:
-     * $this->SetParameterType('numarticles',CLEAN_INT);
-     *
-     * @see CreateParameter
-     * @see SetParameters
+     * @see CMSModule::CreateParameter
+     * @see CMSModule::SetParameters
      * @final
-     * @deprecated
-     * @param string $param Parameter name;
-     * @param define $type  Parameter type;
+     * @param string $param Parameter name
+     * @param strint $type  Parameter type Possible values are:
+     * 'CLEAN_INT','CLEAN_FLOAT','CLEAN_STRING','CLEAN_REGEXP','CLEAN_FILE','CLEAN_NONE'
      */
     final public function SetParameterType($param, $type)
     {
@@ -727,6 +708,7 @@ abstract class CMSModule
         case CLEAN_NONE:
         case CLEAN_STRING:
         case CLEAN_FILE:
+        case CLEAN_REGEXP:
             $this->param_map[trim($param)] = $type;
             break;
         default:
@@ -736,25 +718,57 @@ abstract class CMSModule
     }
 
     /**
-     * Create a parameter and it's documentation for display in the
-     * module help.
+     * Record information about an acceptable (frontend-action) parameter
+     * for display in the module help
      *
-     * i.e:
-     * $this->CreateParameter('numarticles',100000,$this->Lang('help_numarticles'),true);
-     *
-     * @see SetParameters
-     * @see SetParameterType
+     * @see CMSModule::SetParameters
+     * @see CMSModule::SetParameterType
      * @final
-     * @deprecated
      * @param string $param Parameter name;
      * @param string $defaultval Default parameter value
      * @param string $helpstring Help String
-     * @param bool $optional Flag indicating whether this parameter is optional or required.
+     * @param bool $optional Flag indicating whether this parameter is optional. Default true.
      */
     final public function CreateParameter($param, $defaultval='', $helpstring='', $optional=true)
     {
-        array_push($this->params, array('name' => $param,'default' => $defaultval,'help' => $helpstring,
-                                        'optional' => $optional ));
+        if( !isset($this->params) ) { $this->params = []; }
+        $this->params[] = [
+            'name' => (string)$param,
+            'default' => $defaultval,
+            'help' => (string)$helpstring,
+            'optional' => (bool)$optional
+        ];
+    }
+
+    /**
+     * Called from within the module constructor, ONLY for module frontend
+     * actions. This method should be overridden to create routes, and
+     * set handled parameters, and perform other initialization tasks
+     * needed for all frontend actions.
+     *
+     * @abstract
+     * @see SetParameterType
+     * @see RegisterRoute
+     * @see RestrictUnknownParams
+     * @see RegisterModulePlugin
+     */
+    protected function InitializeFrontend()
+    {
+//      $this->SetParameters(); // back-compatibility deprecated since 1.10
+    }
+
+    /**
+     * Called from within module the constructor, ONLY for module admin
+     * actions. This method should be overridden to create routes, and
+     * perform other initialization tasks needed for all admin actions.
+     *
+     * @abstract
+     * @see CMSModule::SetParameters
+     * @see CMSModule::CreateParameter
+     */
+    protected function InitializeAdmin()
+    {
+//      $this->SetParameters(); // back-compatibility deprecated since 1.10
     }
 
     /**
@@ -876,7 +890,7 @@ abstract class CMSModule
      */
     function GetContentBlockFieldInput($blockName,$value,$params,$adding,ContentBase $content_obj)
     {
-        return FALSE;
+        return false;
     }
 
     /**
@@ -986,10 +1000,10 @@ abstract class CMSModule
             if( !isset($CMS_INSTALL_PAGE) ) $smarty = $gCms->GetSmarty();
 
             $res = include($filename);
-            if( $res == 1 || $res == '' ) return FALSE;
+            if( $res == 1 || $res == '' ) return false;
             return $res;
         }
-        return FALSE;
+        return false;
     }
 
 
@@ -1001,7 +1015,7 @@ abstract class CMSModule
      */
     public function InstallPostMessage()
     {
-        return FALSE;
+        return false;
     }
 
     /**
@@ -1027,7 +1041,7 @@ abstract class CMSModule
             $smarty = $gCms->GetSmarty();
 
             $res = include($filename);
-            if( $res == 1 || $res == '') return FALSE;
+            if( $res == 1 || $res == '') return false;
             if( is_string($res)) {
                 $modops = $gCms->GetModuleOperations();
                 $modops->SetError($res);
@@ -1035,7 +1049,7 @@ abstract class CMSModule
             return $res;
         }
         else {
-            return FALSE;
+            return false;
         }
     }
 
@@ -1060,7 +1074,7 @@ abstract class CMSModule
      */
     public function UninstallPreMessage()
     {
-        return FALSE;
+        return false;
     }
 
     /**
@@ -1071,7 +1085,7 @@ abstract class CMSModule
      */
     public function UninstallPostMessage()
     {
-        return FALSE;
+        return false;
     }
 
     /**
@@ -1099,10 +1113,10 @@ abstract class CMSModule
             $smarty = $gCms->GetSmarty();
 
             $res = include($filename);
-            if( $res == 1 || $res == '' ) return FALSE;
+            if( $res == 1 || $res == '' ) return false;
             return $res;
         }
-        return FALSE;
+        return false;
     }
 
     /**
@@ -1465,11 +1479,11 @@ abstract class CMSModule
 
         $gCms = CmsApp::get_instance(); // in scope for compatibility reasons.
         //$smarty = $gCms->GetSmarty(); // use the passed in template.
-        $smarty->assign('actionid',$id);
-        $smarty->assign('actionparams',$params);
-        $smarty->assign('returnid',$returnid);
-        $smarty->assign('actionmodule',$this->GetName());
-        $smarty->assign('mod',$this);
+        $smarty->assign('actionid',$id,true);
+        $smarty->assign('actionparams',$params,true);
+        $smarty->assign('returnid',$returnid,true);
+        $smarty->assign('actionmodule',$this->GetName(),true);
+        $smarty->assign('mod',$this,true);
 
         $saved_action_tpl = $this->_action_tpl;
         $this->_action_tpl = $smarty;
@@ -1522,7 +1536,7 @@ abstract class CMSModule
      * @param string $returnid The id to eventually return to when the module is finished it's task
      * @param string $contents The text that will have to be clicked to follow the link
      * @param string $tooltiptext The helptext to be shown as tooltip-popup
-     * @param string $params An array of params that should be included in the URL of the link.	 These should be in a $key=>$value format.
+     * @param array  $params Parameters to be included in the URL of the link. These should be in a $key=>$value format.
      * @deprecated
      * @return string
      */
@@ -2326,7 +2340,7 @@ abstract class CMSModule
         if( $params == '' ) $params = array();
         if( $tab != '' ) $params['__activetab'] = $tab;
         if( empty($action) ) $action = 'defaultadmin';
-        $this->Redirect('m1_',$action,'',$params,FALSE);
+        $this->Redirect('m1_',$action,'',$params,false);
     }
 
     /**
@@ -2435,19 +2449,17 @@ abstract class CMSModule
 
     /**
      * Returns the corresponding translated string for the id given.
-     * This method accepts variable arguments.  The first argument (required) is the language string key (a string)
-     * Further arguments may be sprintf arguments matching the specified key.
+     * This method accepts variable arguments.
+     * The first (required) argument is the language-key (string)
+     * Further optional argument(s) are sprintf value(s) (mixed)
+     * consistent with the language value for the key.
      *
      * @return string
      */
     public function Lang()
     {
-        //Push module name onto front of array
         $args = func_get_args();
-        array_unshift($args,'');
-        $args[0] = $this->GetName();
-
-        return CmsLangOperations::lang_from_realm($args);
+        return CmsLangOperations::lang_from_realm($this->GetName(), ...$args);
     }
 
     /**
@@ -2502,7 +2514,7 @@ abstract class CMSModule
      */
     final public function GetTemplateResource($template)
     {
-        if( strpos($template,':') !== FALSE ) {
+        if( strpos($template,':') !== false ) {
             if( startswith($template,'string:') || startswith($template,'eval:') || startswith($template,'extends:') ) {
                 throw new \LogicException('Invalid smarty resource specified for a module template.');
             }
