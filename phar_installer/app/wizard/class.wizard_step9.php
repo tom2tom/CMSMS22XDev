@@ -71,7 +71,7 @@ class wizard_step9 extends wizard_step
         $this->message(lang('msg_clearedcache'));
 
         // write protect config.php
-        @chmod("$destdir/config.php",0444); //TODO 0440 better c.f. global_umask site-preference
+        @chmod($version_info['config_file'],0444); //TODO 0440 better c.f. global_umask site-preference
 
         audit('','CMSMS version','Upgraded to '.CMS_VERSION);
 
@@ -127,7 +127,7 @@ class wizard_step9 extends wizard_step
         }
 
         // write protect config.php
-        @chmod("$destdir/config.php",0444); // TODO 0440 better c.f. global_umask site-preference
+        @chmod("$destdir/lib/config.php",0444); // TODO 0440 better c.f. global_umask site-preference
 
         $root_url = $app->get_root_url();
         if( endswith($root_url,'/') ) $root_url = rtrim($root_url,' /');
@@ -206,7 +206,7 @@ class wizard_step9 extends wizard_step
         @mkdir($destdir.'/tmp/templates_c',0777,TRUE);
 
         // write protect config.php
-        @chmod("$destdir/config.php",0444); // TODO 0440 better c.f. global_umask site-preference
+        @chmod("$destdir/lib/config.php",0444); // TODO 0440 better c.f. global_umask site-preference
 
         // clear the cache
         $this->connect_to_cmsms($destdir);
@@ -244,7 +244,7 @@ class wizard_step9 extends wizard_step
                 $CMS_PHAR_INSTALLER = 1; //TODO now unused
             }
             // setup and initialize the cmsms API's
-            // note DONT_LOAD_DB and DONT_LOAD_SMARTY are used.
+            // note $DONT_LOAD_DB and $DONT_LOAD_SMARTY are used downstream.
             require_once $fp;
             // $config does [did?] not define this when installer is running.
             if( !defined('CMS_DB_PREFIX') ) {
