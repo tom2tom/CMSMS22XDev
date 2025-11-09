@@ -125,7 +125,6 @@ final class cms_admin_utils
 		$key1 = '';
 		$key2 = '';
 		$title = '';
-		$titlekey = '';
 		foreach( $params as $key => $value ) {
 			switch( $key ) {
 			case 'key1':
@@ -137,11 +136,10 @@ final class cms_admin_utils
 			case 'key':
 				$key2 = trim($value);
 				break;
-			case 'titlekey':
-				$titlekey = $value;
-				break;
 			case 'title':
-				$title = $value;
+			case 'titlekey':
+				$title = trim($value);
+				break;
 			}
 		}
 
@@ -161,6 +159,7 @@ final class cms_admin_utils
 		$key = $key1;
 		if( $key2 !== '' ) $key .= '__'.$key2;
 		if( $title === '' ) $title = $key2;
+		$title = strip_tags($title);
 
 		$icon = self::get_icon('info.gif');
 		if( !$icon ) return '';
