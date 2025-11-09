@@ -82,7 +82,6 @@ final class Navigator extends CMSModule
     public function GetAdminSection() { return 'layout'; }
     public function LazyLoadFrontend() { return TRUE; }
     public function LazyLoadAdmin() { return TRUE; }
-    public function GetHelp($lang='en_US') { return $this->Lang('help'); }
     public function GetAuthor() { return 'Robert Campbell'; }
     public function GetAuthorEmail() { return ''; }
     public function GetChangeLog() { return file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'changelog.htm'); }
@@ -108,7 +107,7 @@ final class Navigator extends CMSModule
         $this->SetParameterType('includeprefix',CLEAN_STRING);
     }
 
-    public function InitializeAdmin()
+    public function GetHelp()
     {
         $this->CreateParameter('items', 'contact,home', $this->Lang('help_items'));
         $this->CreateParameter('nlevels', '1', $this->Lang('help_nlevels'));
@@ -127,6 +126,8 @@ final class Navigator extends CMSModule
         $this->CreateParameter('root','',$this->Lang('help_root2'));
         $this->CreateParameter('includeprefix','',$this->Lang('help_includeprefix'));
         $this->CreateParameter('excludeprefix','',$this->Lang('help_excludeprefix'));
+
+        return $this->Lang('help');
     }
 
     final public static function nav_breadcrumbs($params,$smarty)
