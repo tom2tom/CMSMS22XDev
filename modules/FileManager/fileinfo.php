@@ -12,6 +12,39 @@ define ('IMAGE_CHANNELS', 'channels');
 define ('IMAGE_MIME', 'mime');
 
 /**
+ * Get all PHP's filetype constants
+ * @return array
+ */
+function get_image_types()
+{
+  $itypes = [
+    IMAGETYPE_GIF,
+    IMAGETYPE_JPEG,
+    IMAGETYPE_JPEG2000,
+    IMAGETYPE_PNG,
+    IMAGETYPE_SWF,
+    IMAGETYPE_PSD,
+    IMAGETYPE_BMP,
+    IMAGETYPE_WBMP,
+    IMAGETYPE_XBM,
+    IMAGETYPE_TIFF_II, //9
+    IMAGETYPE_TIFF_MM, //9
+    IMAGETYPE_IFF,
+    IMAGETYPE_JB2,
+    IMAGETYPE_JPC,
+    IMAGETYPE_JP2,
+    IMAGETYPE_JPX,
+    IMAGETYPE_ICO,
+    IMAGETYPE_UNKNOWN
+  ];
+  if (defined('IMAGETYPE_AVIF')) $itypes[] = IMAGETYPE_AVIF; // PHP 8.1+
+  if (defined('IMAGETYPE_SWC')) $itypes[] = IMAGETYPE_SWC; // sometimes N/A
+  if (defined('IMAGETYPE_WEBP')) $itypes[] = IMAGETYPE_WEBP; // PHP 7.1+
+  sort($itypes);
+  return $itypes;
+}
+
+/**
  * Get information about the specified image-file
  *
  * @param string $file Filepath to be processed. Default ''
@@ -39,7 +72,7 @@ define ('IMAGE_MIME', 'mime');
 function image_info($file = '', $out = '')
 {
   if (!$file || !is_file($file)) {
-   // echo '<p><b>Error:</b> image_info() => first argument must be a file.</p>';
+    // echo '<p><b>Error:</b> image_info() => first argument must be a file.</p>';
     return false;
   }
   // Per PHP advice - don't rely on getimagesize() to detect image.
@@ -122,29 +155,21 @@ function image_info($file = '', $out = '')
  * Get image width, height, bits properties
  *
  * @param string $filename Filesystem path
- * @param string $ext file extension, any case. But only 'png' or 'gif' or 'jpg' will be processed
- * @param bool $dir Whether processing a folder. Default false
+ * @param string $ext Filename-extension of $filename (any case) UNUSED
+ * @param bool $dir Flag whether processing a folder. Default false
  * @return string maybe '&nbsp;'
 */
 function GetFileInfo($filename, $ext, $dir = false)
 {
-  if ($dir) {
-    $result = '&nbsp;';
-  } else {
-    switch (strtolower($ext)) {
-      //TODO handle all types supported by image_info()
-      case 'png':
-      case 'gif':
-      case 'jpg':
-        $imginfo = image_info($filename);
-        if ($imginfo) {
-          $result = $imginfo['width'].'x'.$imginfo['height'].'x'.$imginfo['bits'];
-        }
-        break;
-      default:
-        $result = '&nbsp;';
+  if (!$dir) {
+    $helper = new FileTypeHelper();
+    if ($helper->get_extension($filename)) {
+      $info = image_info($filename);
+      if ($info) {
+        return $info['width'].'x'.$info['height'].'x'.$info['bits'];
+      }
     }
   }
-  return $result;
+  return '&nbsp;';
 }
 ?>
