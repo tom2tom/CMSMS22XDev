@@ -136,7 +136,7 @@ for( $i = 0, $n = count($filelist); $i < $n; $i++ ) {
     }
     elseif( $filelist[$i]['image'] ) {
       $onerow->type[] = 'image';
-      $params['imagesrc'] = $path.'/'.$itmname; //TODO all url-format seps?
+      $params['imagesrc'] = $path.'/'.$itmname; //TODO all url-format seps? strtr($path, '\\','/')
       if( $this->GetPreference('showthumbnails', 0) ) {
         $onerow->thumbnail = $this->GetThumbnailLink($filelist[$i], $path);
       }
