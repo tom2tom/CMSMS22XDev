@@ -24,7 +24,8 @@ switch($current_version) {
 	case "0.1.1":
 	case "0.1.2":
 	case "0.1.3":
-	case "0.1.4": $this->Install(true);
+	case "0.1.4":
+		$this->Install(true);
 }
 
 if( version_compare($oldversion,'0.4.3') <= 0 ) { //or possibly earlier
@@ -42,4 +43,17 @@ if( version_compare($oldversion,'1.4.5') <= 0 ) {
 }
 if( version_compare($oldversion,'1.6.2') < 0 ) {
 	$this->CreateEvent('OnFileDeleted');
+}
+if( version_compare($oldversion,'1.6.15') < 0 ) {
+	// remove redundant filetype-icons
+	$dir = cms_join_path($this->GetModulePath(),'icons','themes','default','extensions','16px');
+	if (is_dir($dir)) {
+		recursive_delete($dir);
+	}
+	//adjust deprecated format
+	$iconsize = $this->GetPreference('iconsize',24);
+	$tmp = str_replace('px','',$iconsize);
+	if ($iconsize != $tmp) {
+		$this->setPreference('iconsize',(int)$tmp);
+	}
 }
