@@ -74,7 +74,7 @@ if( $USE_THEME ) {
     @ob_end_clean();
 
     // deprecate this.
-    $txt = $modinst->GetHeaderHTML($action);
+    $txt = $modinst->GetHeaderHTML();
     if( $txt ) $themeObject->add_headtext($txt);
 
     // call admin_add_headtext to get any admin data to add to the <head>
