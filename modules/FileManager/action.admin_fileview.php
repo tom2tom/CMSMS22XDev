@@ -53,7 +53,10 @@ foreach( ['name','size'] as $prefix ) { //,'type','date'
 }
 
 $devmode = !empty($config['developer_mode']);
-$basurl = $this->GetModuleURLPath();
+$baseurl = $this->GetModuleURLPath();
+$iconsize = $this->GetPreference('iconsize',24);
+$iconsize = str_replace('px','',$iconsize); //adjust deprecated format
+$emsize = $iconsize / 16;
 $countdirs = 0;
 $countfiles = 0;
 $countfilesize = 0;
@@ -78,7 +81,7 @@ for( $i = 0, $n = count($filelist); $i < $n; $i++ ) {
 
   if( $filelist[$i]['dir'] ) {
     $urlname = 'dir_' . $onerow->urlname;
-    $value = ( isset($params[$urlname]) ) ? $value = 'true' : '';
+    $value = (isset($params[$urlname])) ? 'true' : '';
     $onerow->checkbox = $this->CreateInputCheckBox($id, $urlname , 'true', $value);
 
     $parms = ['newdir' => $itmname, 'path' => $path, 'sortby' => $sortby];
@@ -88,17 +91,16 @@ for( $i = 0, $n = count($filelist); $i < $n; $i++ ) {
     if( $itmname != '..' ) {
       $countdirs++;
       $onerow->type = ['dir'];
-      $onerow->txtlink = "<a class=\"dirlink\" href=\"{$url}\" title=\"{$this->Lang('title_changedir')}\">{$itmname}</a>";
+      $onerow->txtlink = "<a class=\"dirlink\" href=\"$url\" title=\"{$this->Lang('title_changedir')}\">$itmname</a>";
       $onerow->filedate = $filelist[$i]['date']; //template uses {$file->filedate|cms_date_format}
     }
     else {
       // for accessing the parent directory
-      $onerow->type = []; // need something ...
+      $onerow->type = []; // need something
       $onerow->noCheckbox = 1;
-      $icon = $basurl.'/icons/themes/default/actions/dir_up.gif';
-      $img_tag = '<img src="'.$icon.'" width="32" title="'.$this->Lang('title_changeupdir').'">';
+      $img_tag = '<img src="'.$baseurl.'/icons/themes/default/actions/dir_up.png" style="height:'.$emsize.'em;vertical-align:middle;border:0" title="'.$this->Lang('title_changeupdir').'">';
       $onerow->iconlink = $this->CreateLink($id, 'changedir', '', $img_tag, $parms);
-      $onerow->txtlink = "<a class=\"dirlink\" href=\"{$url}\" title=\"{$this->Lang('title_changeupdir')}\">{$itmname}</a>";
+      $onerow->txtlink = "<a class=\"dirlink\" href=\"$url\" style=\"vertical-align:super\" title=\"{$this->Lang('title_changeupdir')}\">$itmname</a>";
       $onerow->fileaction = '&nbsp;';
       $onerow->filepermissions = '&nbsp;';
       $onerow->filedate = '';
@@ -107,7 +109,7 @@ for( $i = 0, $n = count($filelist); $i < $n; $i++ ) {
   }
   else { // not a dir
     $urlname = 'file_' . $onerow->urlname;
-    $value = ( isset($params[$urlname]) ) ? 'true' : '';
+    $value = (isset($params[$urlname])) ? 'true' : '';
     $onerow->checkbox = $this->CreateInputCheckBox($id, $urlname, 'true', $value);
 
     $countfiles++;
