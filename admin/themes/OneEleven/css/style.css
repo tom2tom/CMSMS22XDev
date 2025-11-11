@@ -631,12 +631,12 @@ div.pagecontainer .h-inside {
 	clear: right;
 }
 .startalign {
-	text-align: start;
-	text-align: left;
+	text-align: start !important;
+	text-align: left !important;
 }
 .endalign {
-	text-align: end;
-	text-align: right;
+	text-align: end !important;
+	text-align: right !important;
 }
 /* Format code chunks */
 pre, code, samp, kbd {
@@ -2048,7 +2048,7 @@ textarea.pageextrasmalltextarea {
 #page_content {
 	background: #fff;
 	border-radius: 0 0 4px 4px;
-	padding: 20px 10px;
+	padding: 16px 10px;
 	border: 1px solid #ddd;
 	border-top: 3px solid #ddd;
 }
