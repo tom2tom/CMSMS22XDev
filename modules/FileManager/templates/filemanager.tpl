@@ -140,13 +140,13 @@ $(function() {
 			<tr>
 				<th class="pageicon">&nbsp;</th>
 				<th>{$filenametext}</th>
-				<th class="pageicon">{$filetypetext}</th>
-				<th class="pageicon">{$fileinfotext}</th>
-				<th class="pageicon" title="{$mod->Lang('title_col_fileowner')}">{$fileownertext}</th>
-				<th class="pageicon" title="{$mod->Lang('title_col_fileperms')}">{$filepermstext}</th>
-				<th class="pageicon endalign" title="{$mod->Lang('title_col_filesize')}">{$filesizetext}</th>
+				<th>{$filetypetext}</th>
+				<th>{$fileinfotext}</th>
+				<th title="{$mod->Lang('title_col_fileowner')}">{$fileownertext}</th>
+				<th title="{$mod->Lang('title_col_fileperms')}">{$filepermstext}</th>
+				<th class="endalign" title="{$mod->Lang('title_col_filesize')}">{$filesizetext}</th>
 				<th></th>
-				<th class="pageicon" title="{$mod->Lang('title_col_filedate')}">{$filedatetext}</th>
+				<th title="{$mod->Lang('title_col_filedate')}">{$filedatetext}</th>
 				<th class="pageicon">
 					<input type="checkbox" name="tagall" value="tagall" id="tagall" title="{$mod->Lang('title_tagall')}">
 				</th>
