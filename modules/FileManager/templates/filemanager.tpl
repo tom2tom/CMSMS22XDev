@@ -36,7 +36,7 @@ function enable_action_buttons() {
         enable_button('#btn_delete,#btn_move');
     }
 }
-$(function () {
+$(function() {
     enable_action_buttons();
 
     $('#refresh').off('click').on('click', function(e) {
@@ -161,9 +161,9 @@ $(function () {
 			{$thedate='&nbsp;'}
 			{/if}
 			{/strip}<tr class="{$rowclass}">
-				<td style="vertical-align:middle">{if isset($file->thumbnail) && $file->thumbnail!=''}{$file->thumbnail}{else}{$file->iconlink}{/if}</td>
+				<td style="vertical-align:middle">{if !empty($file->thumbnail)}{$file->thumbnail}{else}{$file->iconlink}{/if}</td>
 				<td class="clickable" style="vertical-align:middle">{$file->txtlink}</td>
-				<td class="clickable" style="vertical-align:middle">{$file->mime}</td>{*TODO migrate these styles to external css for rtl etc *}
+				<td class="clickable" style="vertical-align:middle">{$file->mime}</td>
 				<td class="clickable" style="padding-{$ndside}:8px;white-space:pre;vertical-align:middle">{$file->fileinfo}</td>
 				<td class="clickable" style="padding-{$ndside}:8px;white-space:pre;vertical-align:middle">{if isset($file->fileowner)}{$file->fileowner}{else}&nbsp;{/if}</td>
 				<td class="clickable" style="padding-{$ndside}:8px;vertical-align:middle">{$file->filepermissions}</td>
@@ -172,8 +172,8 @@ $(function () {
 				<td class="clickable" style="padding-{$ndside}:8px;white-space:pre;vertical-align:middle">{$thedate}</td>
 				<td>
 				{if !isset($file->noCheckbox)}
-					<label for="x_{$idx}" style="display:none">{$mod->Lang('toggle')}</label>
-					<input type="checkbox" title="{$mod->Lang('toggle')}" id="x_{$idx}" name="{$actionid}selall[]" value="{$file->urlname}" class="fileselect {' '|adjust:'implode':$file->type}"{if isset($file->checked)} checked{/if}>
+					<label for="ck_{$idx}" style="display:none">{$mod->Lang('toggle')}</label>
+					<input type="checkbox" title="{$mod->Lang('toggle')}" id="ck_{$idx}" name="{$actionid}selall[]" value="{$file->urlname}" class="fileselect {' '|adjust:'implode':$file->type}"{if isset($file->checked)} checked{/if}>
 				{/if}
 				</td>
 			</tr>
