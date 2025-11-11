@@ -16,12 +16,12 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-if (!function_exists("cmsms")) exit;
+if (!function_exists('cmsms')) exit;
 $this->CreatePermission('Use FileManager Advanced',$this->Lang("permissionadvanced"));
 
 $this->SetPreference('advancedmode',0);
-$this->SetPreference("iconsize","32px");
-$this->SetPreference("showhiddenfiles",0);
+$this->SetPreference('iconsize',24); // aka medium
+$this->SetPreference('showhiddenfiles',0);
 $this->SetPreference('showthumbnails',1);
 $this->SetPreference('create_thumbnails',1);
 $this->SetPreference('permissionstyle','xxx');

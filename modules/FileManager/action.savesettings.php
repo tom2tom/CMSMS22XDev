@@ -23,7 +23,7 @@ $this->SetPreference('advancedmode',(int)$params['advancedmode']);
 $this->SetPreference('showhiddenfiles',(int)$params['showhiddenfiles']);
 $this->SetPreference('showthumbnails',(int)$params['showthumbnails']);
 $this->SetPreference('create_thumbnails',(int)$params['create_thumbnails']);
-$this->SetPreference('iconsize',$params['iconsize']); //string 32px etc
+$this->SetPreference('iconsize',(int)$params['iconsize']); //16, 24 or 32 (px)
 $this->SetPreference('permissionstyle',$params['permissionstyle']); //string 'xxx' etc
 
 $this->SetMessage($this->Lang('settingssaved'));

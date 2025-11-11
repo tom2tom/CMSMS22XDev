@@ -60,24 +60,26 @@ final class FileManager extends CMSModule
     }
 
     public function GetFileIcon($extension,$isdir = false) {
-        if (empty($extension)) $extension = '---'; // hardcode extension to something.
-        if ($extension[0] == ".") $extension = substr($extension,1);
-        $iconsize = $this->GetPreference("iconsize","32px");
-        $iconsizeHeight = str_replace("px","",$iconsize);
-
-        $result = "";
+        $iconsize = $this->GetPreference('iconsize',24);
+        $iconsize = str_replace('px','',$iconsize); //adjust deprecated format
+        $emsize =  $iconsize / 16;
+        $baseurl = $this->GetModuleURLPath();
+        // TODO migrate the following to the template
         if ($isdir) {
-            $result = "<img height=\"".$iconsizeHeight."\" style=\"vertical-align:middle;border:0;\" src=\"".CMS_ROOT_URL."/modules/FileManager/icons/themes/default/extensions/".$iconsize."/dir.png\" ".
-                "alt=\"directory\">";
-            return $result;
-        }
-
-        if (file_exists(CMS_ROOT_PATH."/modules/FileManager/icons/themes/default/extensions/".$iconsize."/".strtolower($extension).".png")) {
-            $result = "<img height='".$iconsizeHeight."' style='vertical-align:middle;border:0;' src='".CMS_ROOT_URL."/modules/FileManager/icons/themes/default/extensions/".$iconsize."/".strtolower($extension).".png' ".
-                "alt='".$extension."-file'>";
+            $result = '<img src="'.$baseurl.'/icons/themes/default/extensions/32px/dir.png" alt="directory" style="height:'.$emsize.'em;vertical-align:middle;border:0">';
         } else {
-            $result = "<img height='".$iconsizeHeight."' style='vertical-align:middle;border:0;' src='".CMS_ROOT_URL."/modules/FileManager/icons/themes/default/extensions/".$iconsize."/0.png' ".
-                "alt='".$extension."-file'>";
+            if ($extension) {
+                $extension = strtolower($extension);
+                if ($extension[0] == '.') { $extension = substr($extension,1); }
+            } else {
+                $extension = 'other'; // unmatched among icons
+            }
+            if (file_exists(cms_join_path($this->GetModulePath(),'icons','themes','default','extensions','32px',$extension.'.png'))) {
+                $iname = $extension;
+            } else {
+                $iname = '0';
+            }
+            $result = '<img src="'.$baseurl.'/icons/themes/default/extensions/32px/'.$iname.'.png" alt="'.$extension.'-file" style="height:'.$emsize.'em;vertical-align:middle;border:0">';
         }
         return $result;
     }

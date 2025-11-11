@@ -19,12 +19,13 @@
 if (!function_exists('cmsms')) exit;
 if (!$this->CheckPermission('Modify Site Preferences')) return;
 
-$advancedmode=$this->GetPreference('advancedmode',0);
-$showhiddenfiles=$this->GetPreference('showhiddenfiles',0);
-$showthumbnails=$this->GetPreference('showthumbnails',1);
-$createthumbnails=$this->GetPreference('create_thumbnails',1);
-$iconsize=$this->GetPreference('iconsize','16px');
-$permissionstyle=$this->GetPreference('permissionstyle','xxx');
+$advancedmode = $this->GetPreference('advancedmode',0);
+$showhiddenfiles = $this->GetPreference('showhiddenfiles',0);
+$showthumbnails = $this->GetPreference('showthumbnails',1);
+$createthumbnails = $this->GetPreference('create_thumbnails',1);
+$iconsize = $this->GetPreference('iconsize',24);
+$iconsize = str_replace('px','',$iconsize); //adjust deprecated format
+$permissionstyle = $this->GetPreference('permissionstyle','xxx');
 
 $modname = $this->GetName();
 $tpl = $smarty->createTemplate("module_file_tpl:$modname;settings.tpl",null,$modname,$smarty);
@@ -35,11 +36,12 @@ $tpl->assign('showhiddenfiles',$showhiddenfiles);
 $tpl->assign('showthumbnails',$showthumbnails);
 $tpl->assign('create_thumbnails',$createthumbnails);
 $iconsizes = array(
- '16px' => $this->Lang('smallicons').' (16px)',
- '32px' => $this->Lang('largeicons').' (32px)');
+ 16=>$this->Lang('smallicons'),
+ 24=>$this->Lang('mediumicons'),
+ 32=>$this->Lang('largeicons'));
 $tpl->assign('iconsizes',$iconsizes);
-$tpl->assign('iconsize',$iconsize);
-$permstyles=array(
+$tpl->assign('iconsize',(int)$iconsize);
+$permstyles = array(
  'xxxxxxxxx'=>$this->Lang('rwxstyle'),
  'xxx'=>$this->Lang('755style'));
 $tpl->assign('permstyles',$permstyles);
