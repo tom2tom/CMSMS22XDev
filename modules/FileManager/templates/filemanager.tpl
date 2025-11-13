@@ -100,16 +100,15 @@ $(function() {
 </script>
 
 {function filebtn icon='ui-icon-check'}
-{if !empty($text)}
+{strip}{if !empty($text)}
   {$addclass='ui-button-text-icon-primary'}
   {if empty($title)}{$title=$text}{/if}
 {else}
   {$addclass='ui-button-icon-primary'}
 {/if}
-<button type="submit" name="{$iname}" id="{$id}" title="{$title|default:''}" class="filebtn ui-button ui-widget ui-state-default ui-corner-all {$addclass}">
-  <span class="ui-icon ui-button-icon-primary {$icon}"></span>
-  {if !empty($text)}<span class="ui-button-text">{$text}</span>{/if}
-</button>
+<button type="submit" name="{$iname}" id="{$id}" title="{$title|default:''}" class="filebtn ui-button ui-widget ui-state-default ui-corner-all {$addclass}" style="margin:0 -1px">
+  <span class="ui-icon ui-button-icon-primary {$icon}"{if !empty($text)} style="margin-{$ndside}:2px"{/if}></span>
+  {if !empty($text)}<span class="ui-button-text">{$text}</span>{/if}</button>{/strip}
 {/function}
 
 <div id="popup" style="display:none">
@@ -120,6 +119,7 @@ $(function() {
 	{$vformstart}
 	<div>
 	<fieldset>
+{strip}
 		{filebtn id='btn_newdir' iname="{$actionid}fileactionnewdir" icon='ui-icon-circle-plus' text=$mod->Lang('newdir') title=$mod->Lang('title_newdir')}
 		{filebtn id='btn_view' iname="{$actionid}fileactionview" icon='ui-icon-circle-zoomin' text=$mod->Lang('view') title=$mod->Lang('title_view')}
 		{filebtn id='btn_rename' iname="{$actionid}fileactionrename" icon='ui-icon-gear' text=$mod->Lang('rename') title=$mod->Lang('title_rename')}
@@ -130,6 +130,7 @@ $(function() {
 		{filebtn id='btn_thumb' iname="{$actionid}fileactionthumb" icon='ui-icon-star' text=$mod->Lang('thumbnail') title=$mod->Lang('title_thumbnail')}
 		{filebtn id='btn_resizecrop' iname="{$actionid}fileactionresizecrop" icon='ui-icon-image' text=$mod->Lang('resizecrop') title=$mod->Lang('title_resizecrop')}
 		{filebtn id='btn_rotate' iname="{$actionid}fileactionrotate" icon='ui-icon-arrowrefresh-1-s' text=$mod->Lang('rotate') title=$mod->Lang('title_rotate')}
+{/strip}
 	</fieldset>
 	</div>
 {/if}{* NOT noform *}

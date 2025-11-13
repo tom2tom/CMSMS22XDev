@@ -443,8 +443,9 @@ License GPL2+
                     icons: {
                         primary: icon
                     },
-                    label: label
+                    label: "<span class='ui-button-text'>" + label + "</span>"
                 });
+                $btn.find('.ui-button-icon-space').remove();
                 button.replaceWith($btn);
             });
 

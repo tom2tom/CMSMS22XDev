@@ -748,7 +748,7 @@ input[type="button"],
 input[type="submit"],
 .ui-button {
 	border: 1px solid #d3d3d3;
-	padding: .4em 1em;
+	padding: .4em .625em;
 	background: #cecece url(themes/OneEleven/css/default-cmsms/images/ui-bg_highlight-soft_75_cecece_1x100.png) 50% 50% repeat-x;
 	font-weight: normal;
 	color: #555;
@@ -784,6 +784,17 @@ input[type="submit"]:disabled,
 .ui-button:disabled {
 	pointer-events: none;
 }
+/*CSS4 or jQuery*/
+button[type="submit"]:has(> .ui-button-icon-primary),
+input[type="submit"]:has(> .ui-button-icon-primary) {
+	margin: 0 1px;
+	padding: .45em .375em;
+	height: 2.2em;
+}
+button[type="submit"] > .ui-button-icon-primary,
+input[type="submit"] > .ui-button-icon-primary {
+	vertical-align: bottom;
+}
 .ui-button {
 	outline: none;
 	margin: 4px 0;
@@ -792,11 +803,21 @@ input[type="submit"]:disabled,
 	font-size: 12px;
 	margin-left: 2px;
 }
+button[type="submit"] > .ui-button-text,
+input[type="submit"] > .ui-button-text {
+	margin-left: 1px;
+}
 button.ui-button.ui-state-active {
 	border: 1px solid #d3d3d3;
 	background: #cecece url(themes/OneEleven/css/default-cmsms/images/ui-bg_highlight-soft_75_cecece_1x100.png) 50% 50% repeat-x;
 	font-weight: normal;
 	color: #147fdb;
+}
+/* small-sized jqui button-icons */
+[class^="ui-icon-"],
+[class*=" ui-icon-"] {
+	margin-right: 1px;
+	width: 14px;
 }
 input[type="checkbox"] {
 	background: #fff;
