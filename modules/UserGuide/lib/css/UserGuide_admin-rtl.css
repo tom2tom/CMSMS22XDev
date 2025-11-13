@@ -98,7 +98,8 @@
 .guide .admin-only {
   position: absolute;
   top: -10px;
-  left: 40px
+  left: 40px;
+  font-size: .9375em
 }
 /*.sortable-list tr {
   cursor: move;
@@ -112,24 +113,21 @@ div.pagecontainer .fatinput {
 #inform {
   display: none
 }
-/* prettified file selector */
+/* prettied file selector */
 #infile {
   position: absolute;
   width: 0.1px;
   height: 0.1px;
   opacity: 0
 }
-#selectorlabel {
-  height: 1.5rem;
-  padding: 0.5rem 0.8rem 0
-}
 /* fake buttons */
-a#export,
-a#export2,
-a#importold,
-a#importvold {
+#selectorlabel,
+#export,
+#export2,
+#importold,
+#importvold {
   height: 1.5rem;
-  padding: 0.5rem 0.8rem 0
+  padding: 0.5rem 0.5rem 0
 }
 /* spinner */
 @keyframes spin {

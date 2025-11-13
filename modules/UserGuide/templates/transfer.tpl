@@ -33,11 +33,11 @@ $(function() {
 <br>
 {/if}
 {if ($havexml || $havegz)}
-<p class="pagetext" style="margin:0;cursor:default">{$mod->Lang('importdata')}</p>
+<p class="pagetext">{$mod->Lang('importdata')}</p>
 <label id="selectorlabel" class="ui-button ui-corner-all ui-widget" for="infile">
  <span class="ui-button-icon ui-icon ui-icon-search"></span>
- <span class="ui-button-icon-space"></span>
- {$mod->Lang('selectfile')}...</label>
+ <span class="ui-button-text">{$mod->Lang('selectfile')}</span>
+</label><br>
 {form_start action='import' id='inform'}
   <input type="file" id="infile" name="{$actionid}imported" accept="{$seltypes}">
   <div class="pageinput">
