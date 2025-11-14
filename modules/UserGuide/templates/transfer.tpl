@@ -19,7 +19,6 @@ $(function() {
   <a id="export" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" href="{cms_action_url action=export type=gzip}">
     <span class="ui-button-icon ui-icon ui-icon-arrowreturnthick-1-s"></span> {$mod->Lang('export_archive')}
   </a>
-{if $havexml}<span>&nbsp;</span>{/if}
 {/if}
 {if $havexml}
   <a id="export2" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" href="{cms_action_url action=export type=xml}">
@@ -30,10 +29,9 @@ $(function() {
 {else}
 <p class="error">{$mod->Lang('no_importing')}</p>
 {/if}
-<br>
 {/if}
 {if ($havexml || $havegz)}
-<p class="pagetext">{$mod->Lang('importdata')}</p>
+<p class="pagetext" style="margin-bottom:0">{$mod->Lang('importdata')}</p>
 <label id="selectorlabel" class="ui-button ui-corner-all ui-widget" for="infile">
  <span class="ui-button-icon ui-icon ui-icon-search"></span>
  <span class="ui-button-text">{$mod->Lang('selectfile')}</span>
@@ -49,7 +47,6 @@ $(function() {
 <p class="error">{$mod->Lang('no_importing')}</p>
 {/if}
 {if $have_UserGuide2}
-<br>
 <div class="pageoverflow">
   <label class="pagetext" for="importold">{$mod->Lang('import_UserGuide2')}</label><br>
   <a id="importold" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" href="{cms_action_url action='import_module' source='UserGuide2'}">
