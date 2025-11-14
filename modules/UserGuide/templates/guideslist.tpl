@@ -41,7 +41,7 @@
 {/if}
 {if $pmod}
   {$addname = $mod->Lang('add_item')}
-  <div class="pageoptions"><a href="{cms_action_url action=edit gid=0}">{admin_icon icon='newobject.gif'} {$addname}</a></div>
+  <div class="pageoptions"><a href="{cms_action_url action=edit gid=0}">{admin_icon icon='newobject.gif'} <span style="vertical-align:text-top;font-size:.75em">{$addname}</span></a></div>
 {else}
 <br>
 {/if}
