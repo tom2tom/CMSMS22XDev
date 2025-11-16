@@ -228,7 +228,7 @@ $(function() {
   {if $content_obj->HasPreview()}
     {tab_start name='_preview_'}
       <div class="pagewarning">{$mod->Lang('info_preview_notice')}</div>
-      <iframe name="_previewframe_" class="preview" id="previewframe"></iframe>
+      <iframe id="previewframe" class="preview"></iframe>
       <div id="previewerror" class="red" style="display:none;color:#000">
         <fieldset>
           <legend>Errors</legend>{*TODO langify*}
