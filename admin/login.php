@@ -265,6 +265,8 @@ else if( isset($_POST['loginsubmit']) ) {
 // Language shizzle
 cms_admin_sendheaders();
 header("Content-Language: " . CmsNlsOperations::get_current_language());
+header("Cache-Control: no-store");
+header("Expires: 0");
 
 $themeObject = cms_utils::get_theme_object();
 $vars = array('error'=>$error);

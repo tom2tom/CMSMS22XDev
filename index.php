@@ -233,7 +233,7 @@ while( $trycount < 2 ) {
         if( is_object($contentobj) ) {
             // we have a 403 error page.
             header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-            header("Cache-Control: no-store, no-cache, must-revalidate");
+            header("Cache-Control: no-store");
             header("Cache-Control: post-check=0, pre-check=0", false);
             header("$proto 403 Forbidden");
             header("Status: 403 Forbidden");
@@ -243,7 +243,7 @@ while( $trycount < 2 ) {
             // no 403 error page
             @ob_end_clean(); //redundant
             header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-            header("Cache-Control: no-store, no-cache, must-revalidate");
+            header("Cache-Control: no-store");
             header("Cache-Control: post-check=0, pre-check=0", false);
             header("$proto 403 Forbidden");
             header("Status: 403 Forbidden");
@@ -272,6 +272,19 @@ $msg
 if( !headers_sent() ) {
     $ct = $_app->get_content_type();
     header("Content-Type: $ct; charset=" . CmsNlsOperations::get_encoding());
+    if ($contentobj->Cachable() && cms_siteprefs::get('allow_browser_cache', 0)) {
+       $ttl = cms_siteprefs::get('browser_cache_expiry', 60) * 60;
+    }
+    else {
+        $ttl = 0;
+    }
+    if ($ttl > 0) {
+        header("Cache-Control: max-age=$ttl, no-cache"); //FOR HTTP/1.1
+    }
+    else {
+        header("Cache-Control: no-store");
+        header("Expires: 0");
+    }
 }
 echo $html;
 
@@ -309,7 +322,3 @@ if ( $debug && !is_sitedown() ) {
 }
 
 exit;
-
-#
-# EOF
-#
