@@ -396,14 +396,14 @@ WHERE g.group_id=? ORDER BY username";
 	 *
 	 * @deprecated
 	 * @param int $currentuserid
-	 * @param string $name The HTML element name.
+	 * @param string $name The HTML element name and id. Default 'ownerid'.
 	 */
 	public function GenerateDropdown($currentuserid=0, $name='ownerid')
 	{
 		$result = '';
 		$list = $this->GetList();
 		if( $list ) {
-			$result = '<select name="'.$name.'">';
+			$result = '<select id="'.$name.'" name="'.$name.'">';
 			foreach( $list as $uid => $username ) {
 				$result .= '<option value="'.$uid.'"';
 				if( $uid == $currentuserid ) $result .= ' selected="selected"';
