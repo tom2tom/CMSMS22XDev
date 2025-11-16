@@ -307,16 +307,16 @@ $lang['lock_warning'] = 'Another user is editing this item. You will not be able
 
 //M
 $lang['media_type_all'] = 'All';
-$lang['media_type_aural'] = 'Aural';
-$lang['media_type_speech'] = 'Speech';
-$lang['media_type_braille'] = 'Braille';
-$lang['media_type_embossed'] = 'Embossed';
-$lang['media_type_handheld'] = 'Handheld';
+$lang['media_type_aural'] = 'Aural'; // deprecated type
+$lang['media_type_speech'] = 'Speech';  // maybe deprecated type
+$lang['media_type_braille'] = 'Braille'; // deprecated type
+$lang['media_type_embossed'] = 'Embossed'; // deprecated type
+$lang['media_type_handheld'] = 'Handheld'; // deprecated type
 $lang['media_type_print'] = 'Print';
-$lang['media_type_projection'] = 'Projection';
+$lang['media_type_projection'] = 'Projection'; // deprecated type
 $lang['media_type_screen'] = 'Screen';
-$lang['media_type_tty'] = 'TTY';
-$lang['media_type_tv'] = 'TV';
+$lang['media_type_tty'] = 'TTY'; // deprecated type
+$lang['media_type_tv'] = 'TV'; // deprecated type
 $lang['moddescription'] = 'A module for managing layout templates';
 $lang['modified'] = 'Modified';
 $lang['msg_allpagesupdated'] = 'All content pages were updated';
