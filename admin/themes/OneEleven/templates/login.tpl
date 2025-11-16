@@ -5,9 +5,6 @@
     <meta charset="{$encoding}">
     <title>{lang('logintitle',$sitename)}</title>
     <base href="{$config.admin_url}/">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <meta name="generator" content="CMS Made Simple - Copyright (C) 2004-{$smarty.now|date_format:'Y'}. All rights reserved.">
     <meta name="robots" content="noindex, nofollow">
     <meta name="referrer" content="origin">

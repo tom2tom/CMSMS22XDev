@@ -7,9 +7,6 @@
     <meta charset="utf-8">
     <title>{$thetitle}{sitename}</title>
     <base href="{$config.admin_url}/">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <meta name="generator" content="CMS Made Simple - Copyright (C) 2004-{$smarty.now|date_format:'Y'}. All rights reserved.">
     <meta name="robots" content="noindex, nofollow">
     <meta name="referrer" content="origin">
@@ -38,7 +35,7 @@
     <!-- start container -->
     <div id="oe_container" class="sidebar-on">
       <!-- start header -->
-      <header role="banner" class="cf header">
+      <header class="cf header">
         <!-- start header-top -->
         <div class="header-top cf">
           <!-- logo -->
@@ -94,9 +91,9 @@
               {if isset($module_help_url)}<span class="helptext"><a href="{$module_help_url}">{lang('module_help')}</a></span>{/if}
             </header>
             {if $pagetitle && $subtitle}<header class="subheader"><h3 class="subtitle">{$subtitle}</h3></header>{/if}
-            <section class="cf">
+            <div class="cf">
               {$content}
-            </section>
+            </div>
           </article>
           {/strip}
         </div>
