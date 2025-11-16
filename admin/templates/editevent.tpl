@@ -77,3 +77,4 @@
    <input type="submit" name="close" data-ui-icon="ui-icon-closethick" value="{lang('close')}">
  </form>
 </div>
+</div>
