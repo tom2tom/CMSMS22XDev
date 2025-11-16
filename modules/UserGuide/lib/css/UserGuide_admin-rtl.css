@@ -32,12 +32,13 @@
   margin-bottom: 1rem;
   font-size: 1rem
 }
-/*TODO avoid theme-specific styling*/
+/*TODO avoid theme-specific styling* /
 #oe_mainarea .guide ul,
 #oe_mainarea .guide ol {
-  margin-right: 0;
+  margin-left: 0;
   overflow: hidden
 }
+*/
 .guide li {
   margin: 0 2rem .3rem 0
 }
@@ -110,16 +111,33 @@
 div.pagecontainer .fatinput {
   padding: 0.25rem
 }
-#inform {
-  display: none
+/*#inform {
+  display: none .visuallyhidden instead, for #selectorlabel validity
+}
+*/
+.visuallyhidden {
+  position: absolute;
+  right: -9999em;
+/*
+  height: 1px;
+  width: 1px;
+  margin: -1px;
+  padding: 0;
+  clip-path: rect(0,0,0,0);
+  clip: rect(0,0,0,0);
+  border: 0;
+  overflow: hidden;
+*/
 }
 /* prettied file selector */
+/* see #inform
 #infile {
   position: absolute;
   width: 0.1px;
   height: 0.1px;
   opacity: 0
 }
+*/
 /* fake buttons */
 #selectorlabel,
 #export,
