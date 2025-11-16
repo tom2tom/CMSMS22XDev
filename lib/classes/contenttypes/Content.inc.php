@@ -496,7 +496,7 @@ class Content extends ContentBase
 						 CmsFormUtils::create_textarea(array('name'=>'metadata','value'=>$this->MetaData(),
 															 'classname'=>'pagesmalltextarea',
 															 'width'=>80,'height'=>3,
-															 'id'=>'metadata')));
+															 'id'=>'id_pagemetadata')));
 
 		case 'pagedata':
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_pagedata',lang('help_title_content_pagedata'));

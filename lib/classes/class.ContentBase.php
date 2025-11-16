@@ -2765,7 +2765,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				$tmp = $contentops->CreateHierarchyDropdown($this->mId,$this->mParentId,'parent_id',false,false,false,false,true); //CHANGES: was allow_all (hence inactive pages selection) was use_perms (when selecting not editing)
 				if( $tmp ) {
 					$help = cms_admin_utils::get_help_tag('core','help_content_parent',lang('help_title_content_parent'));
-					return array('<label for="parent_id">*'.lang('parent').':</label>&nbsp;'.$help,$tmp);
+					return array('<label for="cms_hierdropdown1_0">*'.lang('parent').':</label>&nbsp;'.$help,$tmp);
 				}
 				break;
 			}
@@ -2937,7 +2937,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			if( !$adding && ($showadmin || $pmac || $pown) ) {
 				$userops = UserOperations::get_instance();
 				$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_owner',lang('help_title_content_owner'));
-				return array('<label for="owner">'.lang('owner').':</label>'.$help,$userops->GenerateDropdown($this->Owner()));
+				return array('<label for="ownerid">'.lang('owner').':</label>'.$help,$userops->GenerateDropdown($this->Owner()));
 			}
 			break;
 

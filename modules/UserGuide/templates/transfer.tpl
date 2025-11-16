@@ -36,7 +36,7 @@ $(function() {
  <span class="ui-button-icon ui-icon ui-icon-search"></span>
  <span class="ui-button-text">{$mod->Lang('selectfile')}</span>
 </label><br>
-{form_start action='import' id='inform'}
+{form_start action='import' id='inform' class='visuallyhidden'}
   <input type="file" id="infile" name="{$actionid}imported" accept="{$seltypes}">
   <div class="pageinput">
     <p id="filesel">&nbsp;</p>
