@@ -359,7 +359,7 @@ try {
                     if( $content_type == strtolower($classname) ) break;//NOTE conform this if relation between classname and type ever changes
                 }
                 $tmp = array('<label for="content_type">*'.$this->Lang('prompt_editpage_contenttype').':</label>&nbsp;'.$help,
-                "<p id=\"content_type\" class=\"pageinput\">$publicname</p><input type=\"hidden\" name=\"{$id}content_type\" value=\"$content_type\">");
+                "<span id=\"content_type\" class=\"pageinput\">$publicname</span><input type=\"hidden\" name=\"{$id}content_type\" value=\"$content_type\">");
             }
             if( $contentarray ) {
                 array_unshift($contentarray, $tmp);
