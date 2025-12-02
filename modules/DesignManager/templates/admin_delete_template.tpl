@@ -7,29 +7,29 @@
 <fieldset>
   <div class="startside">
   <div class="pageoverflow">
-    <p class="pagetext"><label for="tpl_name">{$mod->Lang('prompt_name')}:</label> {cms_help key2='help_copytemplate_name' title=$mod->Lang('prompt_name')}</p>
-    <p class="pageinput" id="tpl_name">{$tpl->get_name()}</p>
+    <p class="pagetext"><label>{$mod->Lang('prompt_name')}:</label></p>
+    <p class="pageinput">{$tpl->get_name()}</p>
   </div>
 {if !empty($type_list)}
   <div class="pageoverflow">
-    <p class="pagetext"><label for="tpl_types">{$mod->Lang('prompt_type')}:</label></p>
-    <p class="pageinput" id="tpl_types">
+    <p class="pagetext"><label>{$mod->Lang('prompt_type')}:</label></p>
+    <p class="pageinput">
       {$type_list[$tpl->get_type_id()]}
     </p>
   </div>
 {/if}
 {if !empty($category_list)}
   <div class="pageoverflow">
-    <p class="pagetext"><label for="tpl_cats">{$mod->Lang('prompt_category')}:</label></p>
-    <p class="pageinput" id="tpl_cats">
+    <p class="pagetext"><label>{$mod->Lang('prompt_category')}:</label></p>
+    <p class="pageinput">
       {$category_list[$tpl->get_category_id()|default:0]}
     </p>
   </div>
 {/if}
 {if !empty($design_list)}
   <div class="pageoverflow">
-    <p class="pagetext"><label for="tpl_des">{$mod->Lang('prompt_designs')}:</label></p>
-    <p class="pageinput" id="tpl_des">
+    <p class="pagetext"><label>{$mod->Lang('prompt_designs')}:</label></p>
+    <p class="pageinput">
       {foreach $tpl->get_designs() as $dsn}
         {$design_list[$dsn]}
         {if !$dsn@last}<br>{/if}
@@ -42,18 +42,18 @@
   <div class="startside last">
 {if $tpl->get_id()}
     <div class="pageoverflow">
-      <p class="pagetext"><label for="tpl_created">{$mod->Lang('prompt_created')}:</label></p>
-      <p class="pageinput" id="tpl_created">{$tpl->get_created()|localedate_format:'%x %X'}</p>
+      <p class="pagetext"><label>{$mod->Lang('prompt_created')}:</label></p>
+      <p class="pageinput">{$tpl->get_created()|localedate_format:'%x %X'}</p>
     </div>
     <div class="pageoverflow">
-      <p class="pagetext"><label for="tpl_modified">{$mod->Lang('prompt_modified')}:</label></p>
-      <p class="pageinput" id="tpl_modified">{$tpl->get_modified()|localedate_format:'%x %X'}</p>
+      <p class="pagetext"><label>{$mod->Lang('prompt_modified')}:</label></p>
+      <p class="pageinput">{$tpl->get_modified()|localedate_format:'%x %X'}</p>
     </div>
 {/if}
 {if !empty($user_list)}
     <div class="pageoverflow">
-      <p class="pagetext"><label for="tpl_users">{$mod->Lang('prompt_owner')}:</label></p>
-      <p class="pageinput" id="tpl_users">
+      <p class="pagetext"><label>{$mod->Lang('prompt_owner')}:</label></p>
+      <p class="pageinput">
         {$user_list[$tpl->get_owner_id()]}
       </p>
     </div>

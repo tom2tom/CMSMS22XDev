@@ -71,7 +71,7 @@
       </p>
     </div>
     <div class="pageoverflow">
-      <p class="pagetext">{$title_fesubmit_redirect}: {cms_help key='help_fesubmit_redirect' title=$title_fesubmit_redirect}</p>
+      <p class="pagetext"><label for="cms_hierdropdown1_0">{$title_fesubmit_redirect}:</label> {cms_help key='help_fesubmit_redirect' title=$title_fesubmit_redirect}</p>
       <p class="pageinput">{$input_fesubmit_redirect}</p>
     </div>
 
@@ -103,7 +103,7 @@
   <fieldset>
     <legend>{$title_detail_settings}</legend>
     <div class="pageoverflow">
-      <p class="pagetext">{$title_detail_returnid}: {cms_help key='info_detail_returnid' title=$title_detail_returnid}</p>
+      <p class="pagetext"><label for="cms_hierdropdown2_0">{$title_detail_returnid}:</label> {cms_help key='info_detail_returnid' title=$title_detail_returnid}</p>
       <p class="pageinput">{$input_detail_returnid}</p>
     </div>
     <div class="pageoverflow">

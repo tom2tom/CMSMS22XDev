@@ -7,14 +7,14 @@
   <div class="startside">
 {/if}
     <div class="pageoverflow">
-      <p class="pagetext"><label for="tpl_name">{$mod->Lang('prompt_name')}:</label></p>
-      <p class="pageinput" id="tpl_name">{$tpl->get_name()}</p>
+      <p class="pagetext"><label>{$mod->Lang('prompt_name')}:</label></p>
+      <p class="pageinput">{$tpl->get_name()}</p>
     </div>
 
 {if !empty($type_list)}
     <div class="pageoverflow">
-      <p class="pagetext"><label for="ttype">{$mod->Lang('prompt_type')}:</label></p>
-      <p class="pageinput" id="ttype">
+      <p class="pagetext"><label>{$mod->Lang('prompt_type')}:</label></p>
+      <p class="pageinput">
         {$type_list[$tpl->get_type_id()]}
       </p>
     </div>
@@ -22,8 +22,8 @@
 
 {if !empty($user_list)}
     <div class="pageoverflow">
-      <p class="pagetext"><label for="tpl_own">{$mod->Lang('prompt_owner')}:</p>
-      <p class="pageinput" id="tpl_own">
+      <p class="pagetext"><label>{$mod->Lang('prompt_owner')}:</label></p>
+      <p class="pageinput">
         {$user_list[$tpl->get_owner_id()]}
       </p>
     </div>
@@ -31,8 +31,8 @@
 
 {if !empty($category_list)}
     <div class="pageoverflow">
-      <p class="pagetext"><label for="tpl_cats">{$mod->Lang('prompt_category')}:</p>
-      <p class="pageinput" id="tpl_cats">
+      <p class="pagetext"><label>{$mod->Lang('prompt_category')}:</label></p>
+      <p class="pageinput">
         {$category_list[$tpl->get_category_id()|default:0]}
       </p>
     </div>
@@ -42,12 +42,12 @@
   <p class="startside" style="width:5%;min-width:1em"></p>
   <div class="startside last">
     <div class="pageoverflow">
-      <p class="pagetext"><label for="tpl_creatat">{$mod->Lang('prompt_created')}:</label></p>
-      <p class="pageinput" id="tpl_creatat">{$tpl->get_created()|localedate_format:'%x %X'}</p>
+      <p class="pagetext"><label>{$mod->Lang('prompt_created')}:</label></p>
+      <p class="pageinput">{$tpl->get_created()|localedate_format:'%x %X'}</p>
     </div>
     <div class="pageoverflow">
-      <p class="pagetext"><label for="tpl_modat">{$mod->Lang('prompt_modified')}:</label></p>
-      <p class="pageinput" id="tpl_modat">{$tpl->get_modified()|localedate_format:'%x %X'}</p>
+      <p class="pagetext"><label>{$mod->Lang('prompt_modified')}:</label></p>
+      <p class="pageinput">{$tpl->get_modified()|localedate_format:'%x %X'}</p>
     </div>
   </div>{* column *}
 {/if}

@@ -206,7 +206,7 @@
   <div class="pageoverflow">
     <div class="pageinput">
       <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
-      &nbsp;<input type="submit" id="{$actionid}cancel" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
+      &nbsp;<input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
 {if isset($articleid)}
       &nbsp;<input type="submit" name="{$actionid}apply" data-ui-icon="ui-icon-caret-1-n" value="{$mod->Lang('apply')}">
 {/if}
@@ -222,7 +222,7 @@
     {if $inputauthor}
     <div class="pageoverflow">
       <p class="pagetext">
-        *{$authortext}:
+        <label>{$authortext}:</label>
       </p>
       <div class="pageinput">
         {$inputauthor}
@@ -250,19 +250,19 @@
     {if empty($hide_summary_field)}
     <div class="pageoverflow">
       <p class="pagetext">
-        {$summarytext}: {cms_help key='help_article_summary' title=$summarytext}
+        <label>{$summarytext}:</label> {cms_help key='help_article_summary' title=$summarytext}
       </p>
       <div class="pageinput">
-        {$inputsummary}
+        {$inputsummary}{*no id attr for TMCE-related elements*}
       </div>
     </div>
     {/if}
     <div class="pageoverflow">
       <p class="pagetext">
-        *{$contenttext}: {cms_help key='help_article_content' title=$contenttext}
+        <label>*{$contenttext}:</label> {cms_help key='help_article_content' title=$contenttext}
       </p>
       <div class="pageinput">
-        {$inputcontent}
+        {$inputcontent}{*no id attr for TMCE-related elements*}
       </div>
     </div>
     {if !empty($statustext)}
@@ -281,9 +281,9 @@
     {/if}
     <div class="pageoverflow">
       <p class="pagetext">
-        {$postdatetext}: {cms_help key='help_article_postdate' title=$postdatetext}
+        <label>{$postdatetext}:</label> {cms_help key='help_article_postdate' title=$postdatetext}
       </p>
-      <div class="pageinput">
+      <div class="pageinput">{*no id attr for datetime selector elements*}
         {html_select_date prefix=$postdateprefix time=$postdate start_year='1980' end_year='+15'} {html_select_time prefix=$postdateprefix time=$postdate}
       </div>
     </div>
@@ -299,17 +299,17 @@
     <div id="expiryinfo"{if $useexp != 1} style="display:none"{/if}>
       <div class="pageoverflow">
         <p class="pagetext">
-          {$startdatetext}: {cms_help key='help_article_startdate' title=$startdatetext}
+          <label>{$startdatetext}:</label> {cms_help key='help_article_startdate' title=$startdatetext}
         </p>
-        <div class="pageinput">
+        <div class="pageinput">{*no id attr for datetime selector elements*}
           {html_select_date prefix=$startdateprefix time=$startdate start_year="-10" end_year="+15"} {html_select_time prefix=$startdateprefix time=$startdate}
         </div>
       </div>
       <div class="pageoverflow">
         <p class="pagetext">
-          {$enddatetext}: {cms_help key='help_article_enddate' title=$enddatetext}
+          <label>{$enddatetext}:</label> {cms_help key='help_article_enddate' title=$enddatetext}
         </p>
-        <div class="pageinput">
+        <div class="pageinput">{*no id attr for datetime selector elements*}
           {html_select_date prefix=$enddateprefix time=$enddate start_year="-10" end_year="+15"} {html_select_time prefix=$enddateprefix time=$enddate}
         </div>
       </div>
@@ -411,7 +411,7 @@
   <div class="pageoverflow">
     <div class="pageinput">
       <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
-      &nbsp;<input type="submit" id="{$actionid}cancel" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
+      &nbsp;<input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
 {if isset($articleid)}
       &nbsp;<input type="submit" name="{$actionid}apply" data-ui-icon="ui-icon-caret-1-n" value="{$mod->Lang('apply')}">
 {/if}

@@ -36,14 +36,14 @@ $(function() {
   <div class="startside">
     <div class="pageoverflow">
       <p class="pagetext">
-        {$mod->Lang('prompt_orig_name')}:
+        <label>{$mod->Lang('prompt_orig_name')}:</label>
       </p>
       <p class="pageinput">
         {$design_info.name}
       </p>
     </div>
     <div class="pageoverflow">
-      <p class="pagetext"><label for="import_create">{$mod->Lang('prompt_created')}:</label>&nbsp;{cms_help key2='help_import_created' title=''}</p>
+      <p class="pagetext"><label>{$mod->Lang('prompt_created')}:</label>&nbsp;{cms_help key2='help_import_created' title=''}</p>
       <p class="pageinput">
         {$tmp=$design_info.generated|localedate_format:'%x %X'}{if $tmp == ''}{$tmp=$mod->Lang('unknown')}{/if}
         <span id="import_create" style="color:red">{$tmp}</span>
@@ -53,7 +53,7 @@ $(function() {
   <p class="startside" style="width:5%;min-width:1em"></p>
   <div class="startside last">
     <div class="pageoverflow">
-      <p class="pagetext"><label for="cmsver">{$mod->Lang('prompt_cmsversion')}:</label>&nbsp;{cms_help key2='help_import_cmsversion' title=$mod->Lang('prompt_cmsversion')}</p>
+      <p class="pagetext"><label>{$mod->Lang('prompt_cmsversion')}:</label>&nbsp;{cms_help key2='help_import_cmsversion' title=$mod->Lang('prompt_cmsversion')}</p>
       <p class="pageinput">
 {if version_compare($design_info.cmsversion,$cms_version) < 0}
         <span id="cmsver" style="color:red">{$design_info.cmsversion}</span>
@@ -161,10 +161,10 @@ $(function() {
 </div>
 <br>
 <div class="pageoverflow">
-  <p class="pageinput">
+  <div class="pageinput">
     <input type="submit" name="{$actionid}next2" data-ui-icon="ui-icon-triangle-2-e-w" value="{$mod->Lang('next')}">
     <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
-  </p>
+  </div>
 </div>
 {form_end}
 

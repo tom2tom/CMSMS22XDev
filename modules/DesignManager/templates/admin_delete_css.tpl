@@ -6,22 +6,20 @@
   <div class="startside">
 {/if}
     <div class="pageoverflow">
-      <p class="pagetext"><label for="css_name">{$mod->Lang('prompt_name')}:</label></p>
-      <p class="pageinput" id="css_name">{$snm}</p>
+      <p class="pagetext"><label>{$mod->Lang('prompt_name')}:</label></p>
+      <p class="pageinput">{$snm}</p>
     </div>
 {if $sid > 0}
   </div>{* column *}
   <p class="startside" style="width:5%;min-width:1em"></p>
   <div class="startside last">
     <div class="pageoverflow">
-      <p class="pagetext"><label for="css_created">{$mod->Lang('prompt_created')}:</label></p>
-      <p class="pageinput" id="css_created">{$css->get_created()|localedate_format:'%x %X'}</p>
-      </p>
+      <p class="pagetext"><label>{$mod->Lang('prompt_created')}:</label></p>
+      <p class="pageinput">{$css->get_created()|localedate_format:'%x %X'}</p>
     </div>
     <div class="pageoverflow">
-      <p class="pagetext"><label for="css_modified">{$mod->Lang('prompt_modified')}:</label></p>
-      <p class="pageinput" id="css_modified">{$css->get_modified()|localedate_format:'%x %X'}</p>
-      </p>
+      <p class="pagetext"><label>{$mod->Lang('prompt_modified')}:</label></p>
+      <p class="pageinput">{$css->get_modified()|localedate_format:'%x %X'}</p>
     </div>
   </div>{* column *}
 {/if}

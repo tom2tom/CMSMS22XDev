@@ -126,7 +126,7 @@ $(function() {
     <div class="pageoverflow">
       <p class="pagetext"><label for="tpl_name">*{$mod->Lang('prompt_name')}:</label>&nbsp;{cms_help key2=help_template_name title=$mod->Lang('prompt_name')}</p>
       <p class="pageinput">
-        <input id="tpl_name" type="text" name="{$actionid}name" size="50" maxlength="90" value="{$template->get_name()}" {if $has_manage_right}placeholder="{$mod->Lang('newname')}"{else}style="border:0;pointer-events:none" readonly{/if}>
+        <input type="text" id="tpl_name" name="{$actionid}name" size="50" maxlength="90" value="{$template->get_name()}" {if $has_manage_right}placeholder="{$mod->Lang('newname')}"{else}style="border:0;pointer-events:none" readonly{/if}>
       </p>
     </div>
 {$usage_str=$template->get_usage_string()}
@@ -142,13 +142,13 @@ $(function() {
   </div>{* column *}
   <div class="grid_6">
     <div class="pageoverflow">
-      <p class="pagetext"><label for="tpl_created">{$mod->Lang('prompt_created')}:</label>&nbsp;{cms_help key2='help_tpl_created' title=$mod->Lang('prompt_created')}</p>
+      <p class="pagetext"><label>{$mod->Lang('prompt_created')}:</label>&nbsp;{cms_help key2='help_tpl_created' title=$mod->Lang('prompt_created')}</p>
       <p class="pageinput">
         {$template->get_created()|localedate_format:'%x %X'}
       </p>
     </div>
     <div class="pageoverflow" id="tpl_modified_cont">
-      <p class="pagetext"><label for="tpl_modified">{$mod->Lang('prompt_modified')}:</label>&nbsp;{cms_help key2='help_tpl_modified' title=$mod->Lang('prompt_modified')}</p>
+      <p class="pagetext"><label>{$mod->Lang('prompt_modified')}:</label>&nbsp;{cms_help key2='help_tpl_modified' title=$mod->Lang('prompt_modified')}</p>
       <p class="pageinput">
         {$template->get_modified()|localedate_format:'%x %X'}
       </p>
@@ -173,8 +173,10 @@ $(function() {
 {tab_start name='content'}
 <div class="pageoverflow">
   <p class="pagetext">
-{if !$isfile}
-    <label for="content">{lang('content')}:</label>&nbsp;{cms_help key2=help_template_contents title=lang('content')}
+{if $isfile}
+  <label>{lang('content')}:</label>
+{else}
+  <label for="content">{lang('content')}:</label>&nbsp;{cms_help key2=help_template_contents title=lang('content')}
 {/if}
 {if !empty($helptext)}
     <a id="a_helptext" href="javascript:void(0);" class="endside last">{$mod->Lang('prompt_template_help')}</a>
@@ -194,8 +196,8 @@ $(function() {
 {if !$has_manage_right}
   <input type="hidden" name="{$actionid}description" value="{$template->get_description()}">
 {/if}
-  <p class="pagetext"><label for="description">{$mod->Lang('prompt_description')}:</label>&nbsp;{cms_help key2=help_template_description title=$mod->Lang('prompt_description')}</p>
-  <p class="pageinput"{if !$has_manage_right} id="description"{/if}>
+  <p class="pagetext"><label{if $has_manage_right} for="description"{/if}>{$mod->Lang('prompt_description')}:</label>&nbsp;{cms_help key2=help_template_description title=$mod->Lang('prompt_description')}</p>
+  <p class="pageinput">
 {if $has_manage_right}
     <textarea id="description" name="{$actionid}description">{$template->get_description()}</textarea>
 {else}
@@ -254,7 +256,7 @@ $(function() {
 {if $type_is_readonly}
         <input type="hidden" name="{$actionid}type" value="{$tval}">
 {/if}
-        <p class="pagetext"><label for="tpl_type">{$mod->Lang('prompt_type')}:</label>&nbsp;{cms_help key2=help_template_type title=$mod->Lang('prompt_type')}</p>
+        <p class="pagetext"><label{if !$type_is_readonly} for="tpl_type"{/if}>{$mod->Lang('prompt_type')}:</label>&nbsp;{cms_help key2=help_template_type title=$mod->Lang('prompt_type')}</p>
         <p class="pageinput">
 {if $type_is_readonly}
           <span id="tpl_type">{$type_list[$tval]}</span>
@@ -268,7 +270,7 @@ $(function() {
       {if $type_obj->get_dflt_flag()}
       <div class="pageoverflow">{$tval=$template->get_type_dflt()}
         <p class="pagetext"><label for="tpl_dflt">{$mod->Lang('prompt_default')}:</label>&nbsp;{cms_help key2=help_template_dflt title=$mod->Lang('prompt_default')}</p>
-        <p class="pageinput"{if $tval} id="tpl_dflt"{/if}>
+        <p class="pageinput">
           <select id="tpl_dflt" name="{$actionid}default">
             {cms_yesno selected=$tval}
           </select>

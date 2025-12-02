@@ -112,8 +112,8 @@ $(function() {
   <br>
   <div class="pageoverflow">
 {if $sheets_list}
-    {$t=$mod->Lang('frontend_styles')}<label class="pagetext" for="allsheets">{$t}:</label> {cms_help key2='help_propstyles' title=$t}<br>
-    <table id="allsheets" class="pagetable" style="width:max-content">
+    {$t=$mod->Lang('frontend_styles')}<label class="pagetext">{$t}:</label> {cms_help key2='help_propstyles' title=$t}<br>
+    <table class="pagetable" style="width:max-content">
       <thead>
       <tr>
         <th>{lang('name')}</th>

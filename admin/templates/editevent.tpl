@@ -3,15 +3,15 @@
  <fieldset>
  <legend>{lang('event')}</legend>
  <div class="pageoverflow">
-   <p class="pagetext">{lang('name')}</p>
+   <p class="pagetext"><label>{lang('name')}</label></p>
    <p class="pageinput">{$event}</p>
  </div>
  <div class="pageoverflow">
-   <p class="pagetext">{lang('originator')}</p>
+   <p class="pagetext"><label>{lang('originator')}</label></p>
    <p class="pageinput">{$modulename}</p>
  </div>
  <div class="pageoverflow">
-   <p class="pagetext">{lang('description')}</p>
+   <p class="pagetext"><label>{lang('description')}</label></p>
    <p class="pageinput">{$description}</p>
  </div>
  </fieldset>
