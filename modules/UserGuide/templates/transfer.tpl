@@ -16,12 +16,12 @@ $(function() {
 <div class="pageoverflow">
   <label class="pagetext" for="{if $havegz}export{else}export2{/if}">{$mod->Lang('exportdata')}</label><br>
 {if $havegz}
-  <a id="export" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" href="{cms_action_url action=export type=gzip}">
+  <a id="export" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" href="{cms_action_url action=export type=gzip}" role="button">
     <span class="ui-button-icon ui-icon ui-icon-arrowreturnthick-1-s"></span> {$mod->Lang('export_archive')}
   </a>
 {/if}
 {if $havexml}
-  <a id="export2" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" href="{cms_action_url action=export type=xml}">
+  <a id="export2" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" href="{cms_action_url action=export type=xml}" role="button">
     <span class="ui-button-icon ui-icon ui-icon-arrowreturnthick-1-s"></span> {$mod->Lang('export_xml')}
   </a>
 {/if}
@@ -32,7 +32,7 @@ $(function() {
 {/if}
 {if ($havexml || $havegz)}
 <p class="pagetext" style="margin-bottom:0">{$mod->Lang('importdata')}</p>
-<label id="selectorlabel" class="ui-button ui-corner-all ui-widget" for="infile">
+<label id="selectorlabel" class="ui-button ui-corner-all ui-widget" for="infile" role="button">
  <span class="ui-button-icon ui-icon ui-icon-search"></span>
  <span class="ui-button-text">{$mod->Lang('selectfile')}</span>
 </label><br>
@@ -49,7 +49,7 @@ $(function() {
 {if $have_UserGuide2}
 <div class="pageoverflow">
   <label class="pagetext" for="importold">{$mod->Lang('import_UserGuide2')}</label><br>
-  <a id="importold" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" href="{cms_action_url action='import_module' source='UserGuide2'}">
+  <a id="importold" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" href="{cms_action_url action='import_module' source='UserGuide2'}" role="button">
     <span class="ui-button-icon ui-icon ui-icon-arrowreturnthick-1-n"></span> {$mod->Lang('import')}
   </a>
 </div>
@@ -57,7 +57,7 @@ $(function() {
 {if $have_UsersGuide}
 <div class="pageoverflow">
   <label class="pagetext" for="importvold">{$mod->Lang('import_UsersGuide')}</label><br>
-  <a id="importvold" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" href="{cms_action_url action='import_module' source='UsersGuide'}">
+  <a id="importvold" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary" href="{cms_action_url action='import_module' source='UsersGuide'}" role="button">
     <span class="ui-button-icon ui-icon ui-icon-arrowreturnthick-1-n"></span> {$mod->Lang('import')}
   </a>
 </div>
