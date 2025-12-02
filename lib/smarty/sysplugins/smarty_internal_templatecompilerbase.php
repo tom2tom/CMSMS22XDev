@@ -920,13 +920,13 @@ abstract class Smarty_Internal_TemplateCompilerBase
      */
     public function appendCode($left, $right)
     {
-        $leftm = $left && preg_match('/\s*\?>\s?$/D', $left, $ml);
-        $rightm = $leftm && $right && preg_match('/^\s*<\?php\s+/', $right, $mr);
-        if ($leftm && $rightm) {
-            return str_replace([$ml[0].$mr[0], $ml[0]], ["\n", "\n"], $left) . str_replace([$ml[0].$mr[0], $mr[0]], ["\n", ''], $right);
+        if ($left && preg_match('/\s*\?>\s?$/D', $left) && $right && preg_match('/^<\?php\s+/', $right)) {
+            $left = preg_replace('/\s*\?>\s?$/D', "\n", $left);
+            $left .= preg_replace('/^<\?php\s+/', '', $right);
         } else {
-            return $left . $right;
+            $left .= $right;
         }
+        return $left;
     }
 
     /**
