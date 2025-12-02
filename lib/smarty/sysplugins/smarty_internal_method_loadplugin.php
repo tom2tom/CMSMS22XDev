@@ -19,20 +19,22 @@ class Smarty_Internal_Method_LoadPlugin
     public $plugin_files = array();
 
     /**
-     * Takes unknown classes and loads plugin files for them
-     * class name format: Smarty_PluginType_PluginName
-     * plugin filename format: plugintype.pluginname.php
+     * Load the specified-plugin handler or class
      *
-     * @param \Smarty $smarty
-     * @param string  $plugin_name class plugin name to load
-     * @param bool    $check       check if already loaded
+     * @param Smarty $smarty
+     * @param string $plugin_name wanted callable or filename or classname
+     *   callable format: Smarty_PluginType_PluginName (any case) e.g. smarty_function_fixit
+     *   filename format: plugintype.pluginname.php e.g. function.fixit.php
+     *   classname format: same as callable
+     *   [Pp]lugintype may be 'internal' to identify a system-plugin class
+     * @param bool   $check       check if already loaded
      *
-     * @return bool|string
-     * @throws \SmartyException
+     * @return string | bool filepath or true (if already loaded) or false (if not found)
+     * @throws SmartyException if format of $plugin_name is invalid
      */
     public function loadPlugin(Smarty $smarty, $plugin_name, $check)
     {
-        // if function or class exists, exit silently (already loaded)
+        // if function or class exists, nothing more to do
         if ($check && (is_callable($plugin_name) || class_exists($plugin_name, false))) {
             return true;
         }
@@ -105,7 +107,7 @@ class Smarty_Internal_Method_LoadPlugin
                 }
             }
         }
-        // no plugin loaded
+        // no match found
         return false;
     }
 }

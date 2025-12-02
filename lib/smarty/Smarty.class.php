@@ -993,7 +993,7 @@ class Smarty extends Smarty_Internal_TemplateBase
             $tpl->inheritance = null;
             $tpl->tpl_vars = $tpl->config_vars = array();
         } else {
-            /* @var Smarty_Internal_Template $tpl */
+            /* @var Smarty_Internal_Template or subclass $tpl */
             $tpl = new $this->template_class($template, $this, null, $cache_id, $compile_id, null, null);
             $tpl->templateId = $_templateId;
         }
@@ -1019,15 +1019,17 @@ class Smarty extends Smarty_Internal_TemplateBase
     }
 
     /**
-     * Takes unknown classes and loads plugin files for them
-     * class name format: Smarty_PluginType_PluginName
-     * plugin filename format: plugintype.pluginname.php
+     * Load handler for the specified plugin or class
      *
-     * @param string $plugin_name class plugin name to load
-     * @param bool   $check       check if already loaded
+     * @param string $plugin_name wanted callable or filename or classname
+     *   callable format: Smarty_PluginType_PluginName (any case) e.g. smarty_function_fixit
+     *   filename format: plugintype.pluginname.php e.g. function.fixit.php
+     *   classname format: same as callable
+     *   [Pp]lugintype may be 'internal' to identify a system-plugin class
+     * @param bool   $check       check if already loaded Default true
      *
-     * @return string |boolean filepath of loaded file or false
-     * @throws \SmartyException
+     * @return string | bool filepath or true (if already loaded) or false (if not found)
+     * @throws \SmartyException if format of $plugin_name is invalid
      */
     public function loadPlugin($plugin_name, $check = true)
     {
