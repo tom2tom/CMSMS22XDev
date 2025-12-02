@@ -58,7 +58,7 @@ final class CMSSmartySecurityPolicy extends Smarty_Security
             }
             else {
                 $this->static_classes = null; // no class static-method calls
-                // allow most methods that do modification of data to be displayed.
+                // allow most methods that do modification or analysis of data to be displayed.
                 // e.g. string searches, array searches, string comparison, formatting, sorting, etc.
                 $this->php_functions = [
                     'array_sum','array_combine','array_diff','array_flip','array_rand','array_reverse','array_search','asort',
@@ -76,7 +76,7 @@ final class CMSSmartySecurityPolicy extends Smarty_Security
                     'nl2br','number_format',
                     'print_r',
                     'rawurlencode',
-                    'shuffle','sizeof','sort','startswith','str_contains','str_ends_with','str_replace','str_starts_with','strcasecmp','strcmp','strftime','CMSMS\strftime','strlen','strpos','strtolower','strtotime','strtoupper','substr',
+                    'shuffle','sizeof','sort','startswith','str_contains','str_ends_with','str_replace','str_starts_with','strcasecmp','strcmp','strftime','CMSMS\strftime','strlen','strnatcasecmp','strnatcmp','strncasecmp','strncmp','strpos','strtolower','strtotime','strtoupper','substr',
                     'time',
                     'trim','ltrim','rtrim', //since 2.2.17
                     'urlencode',
