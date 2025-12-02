@@ -2,11 +2,11 @@
 $(function() {
   $('#runbtn').button({
     icons: { primary: 'ui-icon-gear' }
-  });
-  $(document).on('click', '#runbtn', function(ev) {
+  })
+  .on('click', function(ev) {
     // get the data
     ev.preventDefault();
-    cms_confirm("{lang('confirm_runusertag')|strip|escape:'quotes'}").done(function() {
+    cms_confirm('{lang('confirm_runusertag')|strip|escape:'quotes'}').done(function() {
       var code = $('#udtcode').val();
       if( code.length == 0 ) {
         var d = '{lang("noudtcode")}',
@@ -45,7 +45,7 @@ $(function() {
     });
   });
 
-  $(document).on('click', '#applybtn', function() {
+  $('#applybtn').on('click', function() {
     var data = $('#edit_userplugin').find('input:not([type="submit"]), select, textarea').serializeArray();
     data.push(
       { 'name': 'ajax', 'value': 1 },
@@ -114,9 +114,9 @@ $(function() {
 {if $record.create_date}
 			<div class="pageoverflow">
 				<p class="pagetext">
-					<label for="creatat">{lang('created_at')}:</label>
+					<label>{lang('created_at')}:</label>
 				</p>
-				<p class="pageinput" id="creatat">
+				<p class="pageinput">
 					{$record.create_date|cms_date_format}
 				</p>
 			</div>
@@ -124,9 +124,9 @@ $(function() {
 {if $record.modified_date}
 			<div class="pageoverflow">
 				<p class="pagetext">
-					<label for="modat">{lang('last_modified_at')}:</label>
+					<label>{lang('last_modified_at')}:</label>
 				</p>
-				<p class="pageinput" id="modat">
+				<p class="pageinput">
 					{$record.modified_date|cms_date_format}
 				</p>
 			</div>
@@ -150,10 +150,10 @@ $(function() {
 	{tab_start name='description'}
 		<div class="pageoverflow">
 			<p class="pagetext">
-				<label for="description">{lang('description')}:</label>&nbsp;{cms_help key1=h_udtdesc title=lang('description')}
+				<label for="udtdesc">{lang('description')}:</label>&nbsp;{cms_help key1=h_udtdesc title=lang('description')}
 			</p>
 			<p class="pageinput">
-				<textarea id="description" name="description" rows="3" cols="80">{$record.description}</textarea>
+				<textarea id="udtdesc" name="description" rows="3" cols="80">{$record.description}</textarea>
 			</p>
 		</div>
 	{tab_end}

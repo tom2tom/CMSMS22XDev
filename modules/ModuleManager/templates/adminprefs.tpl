@@ -1,17 +1,17 @@
 <script>
 $(function() {
-  $(document).on('click','#reseturl',function(ev) {
+  $('#reseturl').on('click', function(ev) {
       ev.preventDefault();
       var form = $(this).closest('form');
-      cms_confirm("{$mod->Lang('confirm_reseturl')|escape:'javascript'}").done(function() {
+      cms_confirm('{$mod->Lang('confirm_reseturl')|escape:'javascript'}').done(function() {
           $('#inp_reset').val(1);
           form.trigger('submit');
       });
   });
-  $(document).on('click','#settings_submit',function(ev) {
+  $('#settings_submit').on('click', function(ev) {
       ev.preventDefault();
       var form = $(this).closest('form');
-      cms_confirm("{$mod->Lang('confirm_settings')|escape:'javascript'}").done(function() {
+      cms_confirm('{$mod->Lang('confirm_settings')|escape:'javascript'}').done(function() {
           form.trigger('submit');
       });
   });

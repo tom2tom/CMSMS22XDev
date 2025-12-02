@@ -12,7 +12,7 @@ $(function() {
       $('#rotimg').rotate({ animateTo: ui.value });
     }
   });
-  $(document).on('click', 'button.autorotate', function() {
+  $('.autorotate').on('click', function() {
     var id = $(this).attr('id');
     var dir = id.substr(0,3);
     var val = parseInt(id.substr(3),10);
@@ -26,7 +26,7 @@ $(function() {
 </script>
 <h3>{$mod->Lang('rotateimage')}</h3>
 <div class="information">{$mod->Lang('info_rotate')}</div>
-<p class="pagetext">{$mod->Lang('image')}: {$filename}</p>
+<p class="pagetext"><label>{$mod->Lang('image')}:</label> {$filename}</p>
 <div class="pageoverflow">
   <p class="pageinput">
     <img id="rotimg" src="{$image}" width="{$width}" height="{$height}">

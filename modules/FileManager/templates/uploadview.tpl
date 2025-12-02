@@ -25,12 +25,11 @@ $(function() {
     }, 100);
   });
 
-  $(document).on('click', '#cancel', function(e) {
+  $('#cancel').on('click', function(e) {
     e.preventDefault();
     aborting = true;
     var ul = $('#fileupload').data('fileupload');
-    if( typeof ul !== 'undefined' )
-    {
+    if( typeof ul !== 'undefined' ) {
       var data = {};
       data.errorThrown = 'abort';
       ul._trigger('fail', e, data);

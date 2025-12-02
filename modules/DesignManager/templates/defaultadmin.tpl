@@ -5,13 +5,12 @@ $(function() {
     $('#'+n).dialog();
   });
 
-  $(document).on('click','#clearlocks,#cssclearlocks',function(ev) {
-     ev.preventDefault();
-     var url = $(this).attr('href');
-     cms_confirm("{$mod->Lang('confirm_clearlocks')|escape:'javascript'}").done(function() {
-       window.location.href = url;
-     });
-     return false;
+  $('#clearlocks,#cssclearlocks').on('click', function(ev) {
+    ev.preventDefault();
+    var _url = $(this).attr('href');
+    cms_confirm('{$mod->Lang('confirm_clearlocks')|escape:'javascript'}').done(function() {
+      window.location.href = _url;
+    });
   });
 });
 </script>

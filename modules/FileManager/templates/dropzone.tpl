@@ -2,10 +2,8 @@
 {* IE sucks... we only get here for REAL browsers. *}
 <script>{literal}
 $(function() {
-
     var thediv = '#theme_dropzone';
-
-    $(document).on('dialogopen', '.drop .dialog', function(event,ui) {
+    $('.drop .dialog').on('dialogopen', function(event,ui) {
         var url = '{/literal}{$chdir_url}{literal}';
             url = url.replace(/amp;/g,'')+'&showtemplate=false';
 

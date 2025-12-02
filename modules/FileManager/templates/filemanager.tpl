@@ -47,16 +47,16 @@ $(function() {
         return false;
     });
 
-    $(document).on('dropzone_chdir', $(this), function (e, data) {
+    $(document).on('dropzone_chdir', $(this), function(e, data) { // $(this) === $(document) ?
         // if change dir via the dropzone, make sure filemanager refreshes.
         location.reload();
     });
-    $(document).on('dropzone_stop', $(this), function (e, data) {
+    $(document).on('dropzone_stop', $(this), function(e, data) { // $(this) === $(document) ?
         // if change dir via the dropzone, make sure filemanager refreshes.
         location.reload();
     });
 
-    $(document).on('change', '#filesarea input[type="checkbox"].fileselect', function (e) {
+    $('#filesarea input[type="checkbox"].fileselect').on('change', function(e) {
         e.stopPropagation();
         var t = $(this).prop('checked');
         // adjust the parent row
@@ -68,7 +68,7 @@ $(function() {
         enable_action_buttons();
     });
 
-    $(document).on('change', '#tagall', function () {
+    $('#tagall').on('change', function() {
         if ($(this).is(':checked')) {
             $('#filesarea input:checkbox.fileselect').prop('checked', true).trigger('change');
         } else {
@@ -76,7 +76,7 @@ $(function() {
         }
     });
 
-    $(document).on('click', '#btn_view', function () {
+    $('#btn_view').on('click', function() {
         // find the selected item.
         var tmp = $('#filesarea input[type="checkbox"]').filter(':checked').val();
         var url = '{$viewfile_url}&showtemplate=false&{$actionid}viewfile=' + tmp;
@@ -88,7 +88,7 @@ $(function() {
         return false;
     });
 
-    $(document).on('click', 'td.clickable', function () {
+    $('td.clickable').on('click', function() {
         var t = $(this).parent().find(':checkbox').prop('checked');
         if (!t) {
             $(this).parent().find(':checkbox').prop('checked', true).trigger('change');
@@ -141,11 +141,10 @@ $(function() {
 			<tr>
 				<th class="pageicon">&nbsp;</th>
 				<th>{$filenametext}</th>
-				<th>{$filetypetext}</th>
-				<th>{$fileinfotext}</th>
-				<th title="{$mod->Lang('title_col_fileowner')}">{$fileownertext}</th>
-				<th title="{$mod->Lang('title_col_fileperms')}">{$filepermstext}</th>
-				<th class="endalign" title="{$mod->Lang('title_col_filesize')}">{$filesizetext}</th>
+				<th title="{$mod->Lang('title_col_filetype')}" >{$filetypetext}</th>
+				<th>{$mod->Lang('fileinfo')}</th>
+				<th>{$mod->Lang('fileperms')}</th>
+				<th class="endalign">{$filesizetext}</th>
 				<th></th>
 				<th title="{$mod->Lang('title_col_filedate')}">{$filedatetext}</th>
 				<th class="pageicon">
@@ -166,7 +165,6 @@ $(function() {
 				<td class="clickable" style="vertical-align:middle">{$file->txtlink}</td>
 				<td class="clickable" style="vertical-align:middle">{$file->mime}</td>
 				<td class="clickable" style="padding-{$ndside}:8px;white-space:pre;vertical-align:middle">{$file->fileinfo}</td>
-				<td class="clickable" style="padding-{$ndside}:8px;white-space:pre;vertical-align:middle">{if isset($file->fileowner)}{$file->fileowner}{else}&nbsp;{/if}</td>
 				<td class="clickable" style="padding-{$ndside}:8px;vertical-align:middle">{$file->filepermissions}</td>
 				<td class="clickable endalign" style="padding-{$ndside}:4px;white-space:pre;vertical-align:middle">{$file->filesize}</td>
 				<td class="clickable" style="padding-{$stside}:0;vertical-align:middle">{if isset($file->filesizeunit)}{$file->filesizeunit}{else}&nbsp;{/if}</td>
@@ -183,7 +181,7 @@ $(function() {
 		<tfoot>
 			<tr>
 				<td>&nbsp;</td>
-				<td colspan="9">{$countstext}</td>
+				<td colspan="8">{$countstext}</td>
 			</tr>
 		</tfoot>
 	</table>

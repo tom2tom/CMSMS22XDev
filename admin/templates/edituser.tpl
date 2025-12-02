@@ -1,7 +1,11 @@
 <script>
 $(function() {
-    $(document).on('click', '#submit', function() {
-        return confirm("{lang('confirm_edituser')|escape:'javascript'}");{*TODO cms_confirm().done(returnttrue).fail(returnfalse)*}
+    $('#submit').on('click', function(ev) {
+        ev.preventDefault();
+        var form = $(this).closest('form');
+        cms_confirm('{lang('confirm_edituser')|escape:'javascript'}').done(function() {
+            form.trigger('submit');
+        });
     });
     {if $manage_users}
     $('#copyusersettings').on('change', function() {
@@ -11,17 +15,11 @@ $(function() {
          } else {
              $('#clearusersettings').prop('disabled', true);
          }
-     });
-
-     $('#clearusersettings').on('click', function () {
-         $('#copyusersettings').val(-1);
-
-         var v = $(this).prop('checked');
-         if (v) {
-             $('#copyusersettings').prop('disabled', true);
-         } else {
-             $('#copyusersettings').prop('disabled', false);
-         }
+    });
+    $('#clearusersettings').on('click', function() {
+        $('#copyusersettings').val(-1);
+        var v = $(this).prop('checked');
+        $('#copyusersettings').prop('disabled', v);
     });
     {/if}
 });
@@ -146,11 +144,9 @@ $(function() {
             <p class="pagetext">
                 <label for="copyusersettings" title="{lang('info_copyusersettings')}">{lang('copyusersettings')}:</label>&nbsp;{cms_help realm='admin' key='info_copyusersettings' title=lang('copyusersettings')}
             </p>
-            <p class="pageinput">
-                <select id="copyusersettings" name="copyusersettings">
-                    {html_options options=$users}
-                </select>
-            </p>
+            <div class="pageinput">
+                {$userselect}
+            </div>
         </div>
         <div class="pageoverflow">
             <p class="pagetext">
