@@ -184,42 +184,44 @@ class Smarty_Security
     private $_current_template_nesting = 0;
 
     /**
-     * Cache for $resource_dir lookup
+     * Cache for resource-directories
      *
      * @var array
+     * each member like dir-path-with-trailing-separator => true
      */
     protected $_resource_dir = array();
 
     /**
-     * Cache for $template_dir lookup
+     * Cache for template-directories
      *
      * @var array
      */
     protected $_template_dir = array();
 
     /**
-     * Cache for $config_dir lookup
+     * Cache for config-directories
      *
      * @var array
      */
     protected $_config_dir = array();
 
     /**
-     * Cache for $secure_dir lookup
+     * Cache for secure-directories
      *
      * @var array
      */
     protected $_secure_dir = array();
 
-    /**
-     * Cache for $php_resource_dir lookup
+    /* *
+     * Cache for php_resource directories
+     * Now-unused relic from Smarty3's isTrustedPHPDir()
      *
      * @var array
      */
-    protected $_php_resource_dir = null;
+//   protected $_php_resource_dir = null;
 
     /**
-     * Cache for $trusted_dir lookup
+     * Cache for trusted-directories
      *
      * @var array
      */
@@ -233,7 +235,7 @@ class Smarty_Security
     protected $_include_path_status = false;
 
     /**
-     * Cache for $_include_array lookup
+     * Cache for included-directories
      *
      * @var array
      */
@@ -499,16 +501,20 @@ class Smarty_Security
      * Check if directory of file resource is trusted.
      *
      * @param string    $filepath
-     * @param bool|null $isConfig Default null UNUSED
+     * @param bool|null $isConfig Default null
      *
      * @return bool true if directory is trusted
-     * @throws \SmartyException if directory is not trusted
      */
     public function isTrustedResourceDir($filepath, $isConfig = null)
     {
+        $needle = dirname($filepath);
+        if (!is_dir($needle)) {
+            return false;
+        }
+
         if ($this->_include_path_status !== $this->smarty->use_include_path) {
-            $_dir =
-                $this->smarty->use_include_path ? $this->smarty->ext->_getIncludePath->getIncludePathDirs($this->smarty) : array();
+            $_dir = $this->smarty->use_include_path ?
+                $this->smarty->ext->_getIncludePath->getIncludePathDirs($this->smarty) : array();
             if ($this->_include_dir !== $_dir) {
                 $this->_updateResourceDir($this->_include_dir, $_dir);
                 $this->_include_dir = $_dir;
@@ -533,15 +539,27 @@ class Smarty_Security
             $this->_updateResourceDir($this->_secure_dir, $this->secure_dir);
             $this->_secure_dir = $this->secure_dir;
         }
-        $addPath = $this->_checkDir($filepath, $this->_resource_dir);
-        if ($addPath !== false) {
-            $this->_resource_dir = array_merge($this->_resource_dir, $addPath);
+
+        $nc = strtr($needle,'\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        $props = ($isConfig) ? ['_include_dir', '_config_dir'] : ['_include_dir', '_template_dir', '_secure_dir'];
+        foreach ($props as $propval) {
+            if ($this->$propval) {
+                foreach ($this->$propval as $one) {
+                    $oc = strtr($one, '\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR);
+                    if (strpos($oc, $nc) === 0) {
+                        if (!isset($this->_resource_dir[$nc])) {
+                            $this->_resource_dir[$nc] = true;
+                        }
+                        return true;
+                    }
+                }
+            }
         }
-        return true;
+        return false;
     }
 
     /**
-     * Check if URI  is trusted (e.g. for {fetch} or {html_image}).
+     * Check if URI is trusted (e.g. for {fetch} or {html_image}).
      * To simplify things, isTrustedUri() resolves all input to "{$PROTOCOL}://{$HOSTNAME}".
      * So "http://username:password@hello.world.example.org:8080/some-path?some=query-string"
      * is reduced to "http://hello.world.example.org" prior to applying the patterns from {@link $trusted_uri}.
@@ -567,60 +585,26 @@ class Smarty_Security
     }
 
     /**
-     * Remove old directories and sub directories, add new directories
+     * Remove old directories and sub-directories, add new directories
      *
      * @param array $oldDir
      * @param array $newDir
      */
-    private function _updateResourceDir($oldDir, $newDir)
+    private function _updateResourceDir(array $oldDir, array $newDir)
     {
         foreach ($oldDir as $directory) {
-//           $directory = $this->smarty->_realpath($directory, true);
+//          $directory = $this->smarty->_realpath($directory, true);
             $length = strlen($directory);
-            foreach ($this->_resource_dir as $dir) {
-                if (substr($dir, 0, $length) === $directory) {
+            foreach ($this->_resource_dir as $dir => $v) { // $v always true
+                if (strncmp($dir, $directory, $length) == 0) {
                     unset($this->_resource_dir[ $dir ]);
                 }
             }
         }
         foreach ($newDir as $directory) {
-//           $directory = $this->smarty->_realpath($directory, true);
+//          $directory = $this->smarty->_realpath($directory, true);
             $this->_resource_dir[ $directory ] = true;
         }
-    }
-
-    /**
-     * Check if file is inside a valid directory.
-     *
-     * @param string $filepath
-     * @param array  $dirs valid directories
-     *
-     * @return array|bool
-     * @throws \SmartyException
-     */
-    private function _checkDir($filepath, $dirs)
-    {
-        $directory = dirname($this->smarty->_realpath($filepath, true)) . DIRECTORY_SEPARATOR;
-        $_directory = array();
-        if (!preg_match('#[\\\\/][.][.][\\\\/]#', $directory)) {
-            while (true) {
-                // test if the directory is trusted
-                if (isset($dirs[ $directory ])) {
-                    return $_directory;
-                }
-                // abort if we've reached root
-                if (!preg_match('#[\\\\/][^\\\\/]+[\\\\/]$#', $directory)) {
-                    // give up
-                    break;
-                }
-                // remember the directory to add it to _resource_dir in case we're successful
-                $_directory[ $directory ] = true;
-                // bubble up one level
-                $directory = preg_replace('#[\\\\/][^\\\\/]+[\\\\/]$#', DIRECTORY_SEPARATOR, $directory);
-            }
-        }
-        // give up
-        throw new SmartyException(sprintf('Smarty Security: not trusted file path \'%s\' ', $filepath));
     }
 
     /**
