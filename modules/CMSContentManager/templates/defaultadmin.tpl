@@ -27,8 +27,7 @@ function cms_CMloadUrl(link, lang) {
 
 function cms_CMtoggleState(el) {
   $(el).prop('disabled', true);
-
-  $(document).on('click', 'input:checkbox', function() {
+  $('input:checkbox').on('click', function() {
     var state = $('input:checkbox').is(':checked');
     $(el).prop('disabled', !state);
   });
@@ -36,17 +35,21 @@ function cms_CMtoggleState(el) {
 
 $(function() {
   cms_busy();
+  // dynamically populate the pages-list div
   $('#content_area').autoRefresh({
     url: '{$ajax_get_content}',
     done_handler: function() {
       cms_CMtoggleState('#multiaction');
       cms_CMtoggleState('#multisubmit');
+      $('#selectall').cmsms_checkall({
+       target: '#contenttable'
+      });
       $('#ajax_find').autocomplete({
         source: '{cms_action_url action=admin_ajax_pagelookup forjs=1}&showtemplate=false',
         minLength: 2,
         position: {
-          my: "right top",
-          at: "right bottom"
+          my: 'right top',
+          at: 'right bottom'
         },
         change: function(event, ui) {
           // goes back to the full list, no options
@@ -63,53 +66,35 @@ $(function() {
             });
           });
         }
+      })
+      .on('keypress', function(e) {
+        $('#content_area').autoRefresh('reset');
+        if (e.which == 13) e.preventDefault();
       });
-    }
-  });
-
-  $('#selectall').cmsms_checkall({
-    target: '#contenttable'
-  });
-
-  // these links can't use ajax as they effect pagination.
-//cms_CMloadUrl('a.expandall');
-//cms_CMloadUrl('a.collapseall');
-//cms_CMloadUrl('a.page_collapse');
-//cms_CMloadUrl('a.page_expand');
-
-  cms_CMloadUrl('a.page_sortup');
-  cms_CMloadUrl('a.page_sortdown');
-  cms_CMloadUrl('a.page_setinactive', "{$mod->Lang('confirm_setinactive')|escape:'javascript'}");
-  cms_CMloadUrl('a.page_setactive');
-  cms_CMloadUrl('a.page_setdefault', "{$mod->Lang('confirm_setdefault')|escape:'javascript'}");
-  cms_CMloadUrl('a.page_delete', "{$mod->Lang('confirm_delete_page')|escape:'javascript'}");
-
-  $('a.steal_lock').on('click', function(e) {
-    // we're gonna confirm stealing this lock.
-    e.preventDefault();
-    var self = $(this);
-    cms_confirm("{$mod->Lang('confirm_steal_lock')|escape:'javascript'}").done(function() {
-      var url = self.attr('href') + '{$actionid}steal=1';
-      window.location.href = url;
+    } // done
+  })
+  .on('click', '.steal_lock', function(ev) {
+    // confirm lock-steal
+    ev.preventDefault();
+    var _url = $(this).attr('href');
+    cms_confirm('{$mod->Lang('confirm_steal_lock')|escape:'javascript'}').done(function() {
+      window.location.href = _url;
     });
-  });
-
-  $('a.page_edit').on('click', function(ev) {
+  })
+  .on('click', '.page_edit', function(ev) {
     var v = $(this).data('steal_lock');
     $(this).removeData('steal_lock');
     if (typeof v !== 'undefined' && v != null && !v) return false;
     if (typeof v === 'undefined' || v != null) return true;
-
-    // double-check whether or not this page is locked.
+    // double-check whether this page is locked
     var content_id = $(this).attr('data-cms-content');
-    var url = '{$admin_url}/ajax_lock.php?showtemplate=false';
     var opts = {
       opt: 'check',
       type: 'content',
       oid: content_id
     };
     opts[cms_data.secure_param_name] = cms_data.user_key;
-    $.ajax({
+    $.ajax('{$admin_url}/ajax_lock.php?showtemplate=false', {
       url: url,
       data: opts,
       success: function(data, textStatus, jqXHR) {}
@@ -118,14 +103,14 @@ $(function() {
         if (data.locked) {
           // gotta display a message.
           ev.preventDefault();
-          cms_alert("{$mod->Lang('error_contentlocked')|escape:'javascript'}");
+          cms_alert('{$mod->Lang('error_contentlocked')|escape:'javascript'}');
         }
+      } else {
+       //TODO handle error
       }
     });
-  });
-
-  // filter dialog
-  $('#filter_type').on('change', function() {
+  })
+  .on('change', '#filter_type', function() {
     var map = {
       'DESIGN_ID': '#filter_design',
       'TEMPLATE_ID': '#filter_template',
@@ -135,9 +120,8 @@ $(function() {
     var v = $(this).val();
     $('.filter_fld').hide();
     $(map[v]).show();
-  });
-  $('#filter_type').trigger('change');
-  $(document).on('click', '#myoptions', function() {
+  })
+  .on('click', '#myoptions', function() {
     $('#useroptions').dialog({
       width: 'auto',
       minHeight: 225,
@@ -160,20 +144,37 @@ $(function() {
        }
       ]
     });
+  })
+  .on('click', '#selectall', function() {
+    var state = $(this).is(':checked');
+    $('#multiaction, #multisubmit').prop('disabled', !state);
+  })
+  .on('change', '#selectall,input.multicontent', function() {
+    $('#content_area').autoRefresh('reset');
   });
+
+  // these links can't use ajax as they affect pagination.
+//cms_CMloadUrl('a.expandall');
+//cms_CMloadUrl('a.collapseall');
+//cms_CMloadUrl('a.page_collapse');
+//cms_CMloadUrl('a.page_expand');
+
+  cms_CMloadUrl('a.page_sortup');
+  cms_CMloadUrl('a.page_sortdown');
+  cms_CMloadUrl('a.page_setinactive', '{$mod->Lang('confirm_setinactive')|escape:'javascript'}');
+  cms_CMloadUrl('a.page_setactive');
+  cms_CMloadUrl('a.page_setdefault', '{$mod->Lang('confirm_setdefault')|escape:'javascript'}');
+  cms_CMloadUrl('a.page_delete', '{$mod->Lang('confirm_delete_page')|escape:'javascript'}');
+
+  $('#filter_type').trigger('change');
 
   // other events
-  $(document).on('change', '#selectall,input.multicontent', function() {
+/*  $('#selectall,input.multicontent').on('change', function() {
     $('#content_area').autoRefresh('reset');
   });
-
-  $(document).on('keypress', '#ajax_find', function(e) {
-    $('#content_area').autoRefresh('reset');
-    if (e.which == 13) e.preventDefault();
-  });
-
+*/
   // go to page on option change
-  $(document).on('change', '#{$actionid}curpage', function() {
+  $('#{$actionid}curpage').on('change', function() {
     $(this).closest('form').trigger('submit');
   });
 
@@ -182,27 +183,24 @@ $(function() {
     $('tr.selected').css('background', 'yellow');
   });
 
-  $(document).on('click', 'a#clearlocks', function(ev) {
-    var self = $(this);
+  $('#clearlocks').on('click', function(ev) {
     ev.preventDefault();
-    cms_confirm("{$mod->Lang('confirm_clearlocks')|escape:'javascript'}").done(function() {
-      window.location.href = self.attr('href');
+    var _url = $(this).attr('href');
+    cms_confirm('{$mod->Lang('confirm_clearlocks')|escape:'javascript'}').done(function() {
+      window.location.href = _url;
     });
   });
 
-  $(document).on('click', 'a#ordercontent', function(e) {
+  $('#ordercontent').on('click', function(e) {
     var have_locks = {$have_locks};
     if (!have_locks) {
-      // double-check whether anything is locked
-      var content_id = $(this).attr('data-cms-content');
-      var url = '{$admin_url}/ajax_lock.php?showtemplate=false';
+      // check whether anything is locked
       var opts = {
         opt: 'check',
         type: 'content'
       };
       opts[cms_data.secure_param_name] = cms_data.user_key;
-      $.ajax({
-        url: url,
+      $.ajax('{$admin_url}/ajax_lock.php?showtemplate=false', {
         async: false,
         data: opts
       }).done(function(data) {
