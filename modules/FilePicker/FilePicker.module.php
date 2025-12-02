@@ -70,15 +70,12 @@ final class FilePicker extends CMSModule implements FilePickerInterface
     }
 
     public function GetAdminDescription() { return $this->Lang('moddescription'); }
-//  public function GetAdminSection() { return 'extensions'; } default
     public function GetChangeLog() { return file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'changelog.htm'); }
     public function GetDependencies() { return array('FileManager' => '0.4'); }
     public function GetFriendlyName() { return $this->Lang('friendlyname'); }
     public function GetHelp() { return $this->Lang('help'); }
     public function GetVersion() { return '1.0.8'; }
     public function HasAdmin() { return TRUE; }
-//  public function IsAdminOnly() { return FALSE; } default
-//  public function IsPluginModule() { return FALSE; } default
     public function MinimumCMSVersion() { return '2.2'; }
 
     public function HasCapability( $capability, $params = array() )
@@ -102,12 +99,13 @@ final class FilePicker extends CMSModule implements FilePickerInterface
         return $out;
     }
 
+    //{content_module} tag setup
     public function GetContentBlockFieldInput($blockName, $value, $params, $adding, ContentBase $content_obj)
     {
         if( !$blockName ) return '';
         // workaround $adding not set in ContentManager v1.0 action admin_editcontent
         if (!$adding && version_compare(CMS_VERSION, '2.1') < 0 && $content_obj->Id() == 0) {
-            $adding = true; //TODO no profile-relevance
+            $adding = TRUE; //TODO no profile-relevance
         }
         $uid = get_userid(FALSE);
         $profile_name = get_parameter_value($params, 'profile');
@@ -127,6 +125,7 @@ final class FilePicker extends CMSModule implements FilePickerInterface
         return $this->get_html($blockName, $value, $profile);
     }
 
+    //{content_module} tag retriever
     public function GetContentBlockFieldValue($blockName, $blockParams, $inputParams, ContentBase $content_obj)
     {
         if( $blockName && isset($inputParams[$blockName]) ) {
@@ -135,21 +134,43 @@ final class FilePicker extends CMSModule implements FilePickerInterface
         return ''; // should never happen
     }
 
+    //{content_module} tag validator
     public function ValidateContentBlockFieldValue($blockName, $value, $blockparams, ContentBase $content_obj)
     {
-        if( !$blockName || !$value ) {
-            return lang('informationmissing');
+        $value = trim($value);
+        if( $value ) {
+            $res = cms_utils::validate_url($value, '!' . FileType::TYPE_EXECUTABLE);
+            if( $res !== TRUE ) return $res;
         }
-        //TODO additional relevant checks e.g. URL is valid
+        elseif( isset($blockparams['required']) ) {
+            return $this->lang('error_missing_value', $blockName);
+        }
         return '';
     }
 
+    //{content_module} tag renderer
+    // If $blockparams includes a member 'format', then values
+    // 'absolute' 'anchor' and 'image' may be specified for that parameter
     public function RenderContentBlockField($blockName, $value, $blockparams, ContentBase $content_obj)
     {
-        if( $blockName ) {
-            //TODO is there any merit in a constant-format relative url, applied here?
-            // or some specific format applied via extra arg(s) from upstream?
-            return (string)$value;
+        $value = trim($value);
+        if( $value ) {
+            if( !empty($blockparams['format']) ) {
+                switch ($blockparams['format']) {
+                    case 'absolute':
+                        if ($value[0] == '/' && $value[1] != '/') return CMS_ROOT_URL . $value;
+                        break;
+                    case 'anchor':
+                        $url = ($value[0] == '/' && $value[1] != '/') ? CMS_ROOT_URL . $value : $value;
+                        return "<a href=\"$url\" target=\"_blank\">$blockName</a>";
+                        break;
+                    case 'image':
+                        $url = ($value[0] == '/' && $value[1] != '/') ? CMS_ROOT_URL . $value : $value;
+                        return "<img src=\"$url\" title=\"$blockName\">";
+                        break;
+                }
+            }
+            return $value;
         }
         return '';
     }
@@ -183,7 +204,7 @@ final class FilePicker extends CMSModule implements FilePickerInterface
     }
 
     //TODO support optional tailored useprefix variable for template & backend js, without clobbering $profile
-    public function get_html($name, $value, Profile $profile, $required = false)
+    public function get_html($name, $value, Profile $profile, $required = FALSE)
     {
         $_instance = 'i'.uniqid();
         if( $value === '-1' ) $value = '';
@@ -284,7 +305,6 @@ final class FilePicker extends CMSModule implements FilePickerInterface
                 }
             }
         }
-        // passed
-        return TRUE;
+        return TRUE; // passed
     }
-} // end of class
+} // class
