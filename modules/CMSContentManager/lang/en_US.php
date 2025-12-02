@@ -62,10 +62,10 @@ $lang['coltitle_view'] = 'The icon in this column allows viewing the page in a n
 $lang['confirm_clearlocks'] = 'Clearing lock(s) could interrupt a working edit session.  Are you sure you want to continue?';
 $lang['confirm_delete_page'] = 'Are you sure you want to delete this content item?';
 $lang['confirm_expandall'] = 'Are you sure you want to expand all content?  On large sites this may cause problems.  Please use caution';
-$lang['confirm_reorder'] = 'Are you sure you want to save the content in this order';
+$lang['confirm_reorder'] = 'Are you sure you want to save the content in this order?';
 $lang['confirm_setdefault'] = 'Are you sure you want to change the default content page for this website?';
 $lang['confirm_setinactive'] = 'Are you sure you want to set this page inactive? This page will not be viewable, and may affect the behavior of a working website?';
-$lang['confirm_steal_lock'] = 'This page is locked.  Although you may steal this lock it is not always a nice thing to do.  The other party may lose valuable content edits.\n\n Are you sure you want to continue?';
+$lang['confirm_steal_lock'] = 'You can steal the lock on this page, but doing so would destroy the other editor\'s unsaved work, if any.\nAre you sure you want to continue?';
 $lang['confirm_viewpage'] = 'Are you sure you want to open a new window to view this page?';
 $lang['contractall'] = 'Collapse All';
 $lang['critical_error'] = '** ERROR **';
@@ -97,7 +97,8 @@ $lang['error_setactive'] = 'Could not activate this page.  This could be a datab
 $lang['error_setdefault'] = 'Could not change the default content page.  This could be a database problem, or a permissions issue.';
 $lang['error_setinactive'] = 'Could not deactivate this page.  This could be a database problem, or a permissions issue.';
 $lang['error_template_notavailable'] = 'Either there is no template associated with this object, or it is not available for edit.  Perhaps it has been deleted?';
-$lang['err_nomatchingcontent'] = 'Sorry... there does not appear to be any content that matches your criteria';
+$lang['errors'] = 'Errors';
+$lang['err_nomatchingcontent'] = 'There does not appear to be any content that matches your criteria';
 $lang['expandall'] = 'Expand All';
 
 //F
@@ -110,8 +111,8 @@ $lang['go'] = 'Go';
 
 //H
 $lang['help_content_type'] = 'The content type controls the overall function of an item.  Some content types are used for building HTML pages, while others are for building links or other navigation functions.';
-$lang['help_general_lockrefresh'] = 'Specify the number of seconds (at most) after which a lock should be refreshed.  Setting a value of 0 will disable refreshing of locks.<br><strong>Note:</strong> locks are not refreshed unless there are some changes in the form.<br>The minimum value for this field (other than 0) is 30.';
-$lang['help_general_locktimeout'] = 'Specify the number of minutes after which a non-refreshed lock will expire.  Specifying a value of 0 will disable locking all together.  The minimum value for this field is 5 and the maximum value is 480.';
+$lang['help_general_lockrefresh'] = 'Specify the maximum number of seconds after which a lock should be refreshed.  Setting a value of 0 will disable refreshing of locks.<br><strong>Note:</strong> locks are not refreshed unless there are changes in the form.<br>The minimum value for this field (other than 0) is 30.';
+$lang['help_general_locktimeout'] = 'Specify the number of minutes after which a non-refreshed lock will expire.  Setting a value of 0 will disable locking altogether.  Otherwise, the minimum value is 5 and the maximum is 480.';
 $lang['help_general_templatelistmode'] = 'This option controls how templates will be listed in the add/edit content form.';
 $lang['help_listsettings_namecolumn'] = 'Specify what text should be displayed in the &quot;Name&quot; column of the content list view.  Choose either the page title, or menu text';
 $lang['help_listsettings_visiblecolumns'] = 'Select which columns to display in the content list view.  Use caution here as some functionality may not be available if the column is hidden';
@@ -145,9 +146,9 @@ $lang['info_preview_notice'] = '<strong>Warning:</strong> This preview panel beh
 
 //L
 $lang['legend_tabs'] = 'Tabs Display';
-$lang['locked_by'] = 'Locked By';
+$lang['locked_by'] = 'Locked by';
 $lang['locked_since'] = 'Since';
-$lang['locked_steal'] = 'You can steal this lock';
+$lang['locked_steal'] = 'You can steal the lock on this page';
 $lang['lock_expired'] = 'Expired';
 $lang['lock_expires'] = 'Expires';
 

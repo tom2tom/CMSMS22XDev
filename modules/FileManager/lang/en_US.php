@@ -95,12 +95,11 @@ $lang['fileexistsdest'] = '%s already exists at the destination';
 $lang['fileimagetype'] = 'Cannot perform this action on this type of image';
 $lang['fileinfo'] = 'File Info';
 $lang['filemovesame'] = 'Cannot move a directory';
-$lang['filename'] = 'File Name'; //OR 'Item Name' ?
+$lang['filename'] = 'Name'; //OR 'Item Name' (incl. dirs)
 $lang['fileno'] = 'File no.';
 $lang['filenotfound'] = 'File not found';
 $lang['filenotimage'] = 'File specified is not an image (or there is some error with the file)';
 $lang['fileoutsideuploads'] = 'You are not allowed to modify files outside the uploads directory! (That requires the Advanced File Management permission)';
-$lang['fileowner'] = 'Owner';
 $lang['fileperms'] = 'Permissions';
 $lang['files'] = 'files';
 $lang['filescopiedfailed'] = '%s file(s) failed being copied';
@@ -110,6 +109,7 @@ $lang['filesdeletedsuccessfully'] = '%s file(s) was successfully deleted';
 $lang['filesize'] = 'Size';
 $lang['filesmovedfailed'] = '%s file(s) failed being moved';
 $lang['filesmovedsuccessfully'] = '%s file(s) was successfully moved';
+$lang['filetype'] = 'Type';
 $lang['fileview'] = 'File view';
 $lang['folder'] = 'Folder';
 $lang['friendlyname'] = 'File Manager';
@@ -168,7 +168,6 @@ $lang['largeicons'] = 'Large';
 // M
 $lang['mb'] = 'Mb';
 $lang['mediumicons'] = 'Medium';
-$lang['mimetype'] = 'Mime Type';
 $lang['moddescription'] = 'Handling of files and directories in the upload-file section of CMSMS';
 $lang['morethanonefiledirselected'] = 'Only one file or directory should be marked for this action.';
 $lang['move'] = 'Move';
@@ -199,7 +198,6 @@ $lang['notwritable'] = 'Not writable';
 // O
 $lang['ok'] = 'OK';
 $lang['others'] = 'Others';
-$lang['owner'] = 'Owner';
 
 // P
 $lang['packfileopenfail'] = 'Could not open the packed file for unpacking (non-supported format?)';
@@ -283,12 +281,14 @@ $lang['summary'] = '%s %s in %s %s and %s %s'; // new
 $lang['switchtofileview'] = 'Switch to file view';
 
 // T
+$lang['thousanddelimiter'] = 'Thousand delimiter';
+$lang['thumberror'] = 'Problem creating thumbnail';
+$lang['thumbnail'] = 'Thumbnail';
+$lang['thumbsuccess'] = 'Thumbnail successfully created';
 $lang['title_changedir'] = 'Change working directory to this directory';
 $lang['title_changeupdir'] = 'Go to the parent folder';
-$lang['title_col_filedate'] = 'This column displays the last modification date of the file';
-$lang['title_col_fileperms'] = 'This column displays the permissions of the file';
-$lang['title_col_filesize'] = 'This column displays the size of the file';
-$lang['title_col_fileowner'] = 'This column displays the user name of the owner of the file';
+$lang['title_col_filedate'] = 'This column displays the latest modification date/time of the item';
+$lang['title_col_filetype'] = 'This column displays the MIME type of the file';
 $lang['title_copy'] = 'Copy the selected item(s)';
 $lang['title_delete'] = 'Delete the selected item(s)';
 $lang['title_dropzone'] = 'You can drop files here from your file manager to automatically begin uploading';
@@ -305,10 +305,6 @@ $lang['title_thumbnail'] = 'Create a thumbnail of the selected image';
 $lang['title_unpack'] = 'Unpack the selected archive';
 $lang['title_view'] = 'View the selected item';
 $lang['title_view_newwindow'] = 'View the selected item in a new window';
-$lang['thousanddelimiter'] = 'Thousand delimiter';
-$lang['thumberror'] = 'Problem creating thumbnail';
-$lang['thumbnail'] = 'Thumbnail';
-$lang['thumbsuccess'] = 'Thumbnail successfully created';
 $lang['toggle'] = 'Toggle selection';
 $lang['top'] = 'Top';
 

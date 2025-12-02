@@ -24,6 +24,7 @@ $lang['error_ajax_fileexists'] = 'Sorry, a file or directory with that name alre
 $lang['error_ajax_mkdir'] = 'A problem occurred creating a the directory %s';
 $lang['error_ajax_writepermission'] = 'Sorry, you do not have permission to write to this directory';
 $lang['error_failed_ajax'] = 'A problem occurred with an ajax request';
+$lang['error_missing_value'] = 'A value is required for the %s block';
 $lang['error_problem_upload'] = 'Sorry, a problem occurred uploading';
 $lang['error_upload_acceptFileTypes'] = 'Files of this type are not acceptable in this scope.';
 $lang['error_upload_maxFileSize'] = 'The file is too large';
@@ -115,8 +116,7 @@ $lang['help'] = <<<EOT
 
 <h3>Content Block for Page Templates</h3>
 <p>This module also provides a content block to enable the FilePicker to be used in page templates. This can be used as an alternative to the {content_image} plugin.</p>
-<p><code>{content_module module=FilePicker block=string
-[profile=string]}</code></p>
+<p><code>{content_module module=FilePicker block=string [profile=string]}</code></p>
 <p>The standard content_module plugin parameters of label, required, tab, priority and assign are also available.</p>
 
 <h3>Support</h3>

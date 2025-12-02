@@ -173,7 +173,7 @@ $lang['help_cmscontentmanager_help'] = <<<EOT
 
  <h4>Content Locking</h4>
    <p>Content locking is a mechanism that prevents two editors from editing the same item at the same time, and therefore destroying each others work.  Admin users are given exclusive access to a content item until such time as they submit the changes.</p>
-   <p>If a content item is locked, you will not be able to edit it until the lock has expired.  See below for information on lock expiring.  Once a lock has expired, a user will have the option of stealing the lock from the original editor and beginning a new edit session.</p>
+   <p>If a content item is locked, you will not be able to edit it until the lock has been released or has expired.  See below for information on lock expiry.  After a lock has expired, a user will have the option of stealing the lock from the original editor and beginning a new edit session.</p>
    <p>A special icon is displayed on the content item row to indicate that the lock can be stolen.</p>
 
  <h4>Configuration</h4>
@@ -482,7 +482,6 @@ $lang['help_designmanager_help'] = <<<EOT
           <li>Copy - Display a form to allow copying the selected template to a new name.  For convenience a default new name will be provided.</li>
           <li>Delete - Display a form to allow deleting the selected template.  Extra confirmation is required for this action as no checks are possible to see if the template is in use by any page, or recursively by any other template.</li>
        </ul>
-
      </li>
      <li>Multiselect:
        <p>This column (depending upon permissions) will display a checkbox allowing the selection of multiple templates to perform actions on all of them simultaneously.</p>

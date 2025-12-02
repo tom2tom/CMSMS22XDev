@@ -34,7 +34,6 @@ $lang['help_function_cms_html_options'] = <<<'EOT'
  <li>title - <em>(string)</em> A title attribute for the option.</li>
  <li>class - <em>(string)</em> A class name for the option.</li>
 </ul>
-
 <h3>Example:</h3>
 <pre><code>
 {$opts[]=['label'=>'Bird','value'=>'b','title'=>'I have a pet bird']}
@@ -780,7 +779,6 @@ EOT;
 Note: Google needs to have your website indexed for this to work. You can submit your website to Google <a href="http://www.google.com/addurl.html">here</a>.</p>
 <h3>What if I want to change the look of the textbox or button?</h3>
 <p>The look of the textbox and button can be changed via css. The textbox is given an id of textSearch and the button is given an id of buttonSearch.</p>
-
 <h3>What parameters does it take?</h3>
 <ul>
  <li><em>(optional)</em> domain - This tells google the website domain to search. This script tries to determine this automatically.</li>
@@ -890,7 +888,6 @@ that works without modifying the embedded application.</p>
  <li><em>(required)</em>url - the url to be included</li>
  <li><em>(required)</em>header=true - this will generate the header code for good resizing of the IFRAME.</li>
  <li>(optional)name - an optional name to use for the iframe (instead of myframe).<p>If this option is used, it must be used identically in both calls, i.e: {embed header=true name=foo} and {embed name=foo url=http://www.google.com} calls.</p></li>
-
 </ul>
 EOT;
 */

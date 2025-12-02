@@ -10,9 +10,9 @@ $lang['allowed_upload_types'] = 'Allow only files with these extensions to be up
 $lang['allow_summary_wysiwyg'] = 'Allow using a WYSIWYG editor on the summary field';
 $lang['anonymous'] = 'Anonymous';
 $lang['apply'] = 'Apply';
-$lang['approve'] = 'Set Status to \'Published\'';
+$lang['approve'] = 'Set status to &apos;Published&apos;';
 $lang['areyousure'] = 'Are you sure you want to delete?';
-$lang['areyousure_deletemultiple'] = 'Are you sure you want to delete multiple articles';
+$lang['areyousure_deletemultiple'] = 'Are you sure you want to delete multiple articles?';
 $lang['areyousure_multiple'] = 'Are you sure you want to perform this action on multiple articles?';
 $lang['article'] = 'Article';
 $lang['articleadded'] = 'The article was successfully added.';
@@ -161,13 +161,13 @@ $lang['expired_viewable'] = 'Expired articles can be viewed in the detail view';
 $lang['expiry'] = 'Expiry';
 $lang['expiry_date_asc'] = 'Expiry Date Ascending';
 $lang['expiry_date_desc'] = 'Expiry Date Descending';
-$lang['expiry_interval'] = 'The number of days (by default) before an article expires (if expiry is selected)';
+$lang['expiry_interval'] = 'Default number of days until articles expire (if expiry is selected)';
 $lang['extra'] = 'Extra';
 $lang['extra_label'] = 'Extra:';
 
 // F
 $lang['fesubmit_redirect'] = 'Page to redirect to after a news article has been submitted via the frontend';
-$lang['fesubmit_status'] = 'The status of news articles submitted via the frontend';
+$lang['fesubmit_status'] = 'Status of news articles submitted via the frontend';
 $lang['fielddef'] = 'Field Definition';
 $lang['fielddefs'] = 'Field Definitions';
 $lang['fielddefadded'] = 'Field definition successfully added';
@@ -257,7 +257,7 @@ EOS;
 $lang['help_article_postdate'] = 'The postdate <em>(usually the current date, for new articles)</em> is the date that will be used as the publication date for the article.  It is also used in sorting';
 $lang['help_article_searchable'] = 'This field indicates whether this article should be indexed by the search module';
 $lang['help_article_startdate'] = 'When use expiry is enabled, this date specifies the date from which the article will be visible on the website';
-$lang['help_article_status'] = 'If you want the article to be immediately viewable by others then select a status of published.  If you would like to continue working on this article for a while, then select draft.';
+$lang['help_article_status'] = 'If you want the article to be immediately viewable by others then select status &apos;Published&apos;.  If you would like to continue working on this article for a while, then select &apos;Draft&apos;.';
 $lang['help_article_summary'] = 'Enter a brief paragraph to describe the article.  This summary may be used when displaying views of a number of articles';
 $lang['help_article_title'] = 'Enter the article title.  It should be a brief, and should not include any html tags.';
 $lang['help_article_url'] = 'The optional article url <em>(some other platforms call this a slug)</em> is a unique url suffix to access this article.  Users can navigate to &lt;site_root&gt;/&lt;your_url&gt; to view this article.';
@@ -280,7 +280,7 @@ $lang['help_opt_allowed_upload_types'] = 'For custom fields of type &quot;file&q
 $lang['help_opt_dflt_category'] = 'This option allows specifying the default category for new news articles.';
 $lang['help_opt_hide_summary'] = 'This option allows disabling the summary field when adding and/or editing a news article <em>(including with the fesubmit action)</em>';
 $lang['help_opt_allow_summary_wysiwyg'] = 'This field indicates whether a WYSIWYG editor should be enabled for the summary field when editing an article.  In many circumstances the summary field is a simple text field, however this is optional.<br>This setting is ignored if the summary field is disabled completely <em>(see above)</em>';
-$lang['help_opt_expiry_interval'] = 'Set the default number of days (minimum 1) That articles will expire in when article expiry is enabled.   The expiry date can be adjusted when adding or editing a news article';
+$lang['help_opt_expiry_interval'] = 'Set the default number of days (minimum 1) after which articles will expire (when article-expiry is enabled).  The expiry date can be adjusted when adding or editing a news article';
 $lang['help_pagelimit'] = 'Maximum number of items to display (per page).  If this parameter is not supplied all matching items will be displayed.  If it is, and there are more items available than specified in the parameter, text and links will be supplied to allow scrolling through the results.  The maximum value for this parameter is 1000.';
 $lang['hide_summary_field'] = 'Hide the summary field when adding or editing articles';
 
@@ -378,7 +378,7 @@ $lang['reorder_categories'] = 'Reorder Categories';
 $lang['reset'] = 'Reset';
 $lang['resettodefault'] = 'Reset to Factory Defaults';
 $lang['restoretodefaultsmsg'] = 'This operation will restore the template contents to their system defaults.  Are you sure you want to proceed?';
-$lang['revert'] = 'Set Status to \'Draft\'';
+$lang['revert'] = 'Set status to &apos;Draft&apos;';
 
 // S
 $lang['searchable'] = 'Searchable';
