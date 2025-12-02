@@ -40,3 +40,28 @@ EOS;
 $db->Execute($sql);
 
 $db->Execute("UPDATE {$pref}version SET version = 203");
+
+//deal with deprecated css media-types
+$deprec = ['aural','speech','braille','embossed','handheld','projection','tty','tv'];
+$repl =   ['','','','','screen','','print','screen'];
+$sql = "UPDATE {$pre}flayout_stylesheets SET media_type=? WHERE id=?";
+$sql2 = "DELETE FROM {$pref}layout_stylesheets WHERE id=?";
+$sql3 = "DELETE FROM {$pref}layout_design_cssassoc WHERE css_id=?";
+$data = $db->GetAssoc("SELECT id,media_type FROM {$pref}layout_stylesheets");
+foreach ($data as $id => $type) {
+    $tmp = str_replace($deprec, $repl, $type);
+    if ($tmp != $type) {
+        $exp = explode(',', $tmp);
+        $exp = array_filter($exp);
+        $exp = array_unique($exp);
+        if ($exp) {
+            $newtype = implode(',', $exp);
+            if ($newtype != $type) {
+                $db->execute($sql, [$newtype, $id]);
+            }
+        } else {
+            $db->execute($sql2, [$id]);
+            $db->execute($sql3, [$id]);
+        }
+    }
+}
