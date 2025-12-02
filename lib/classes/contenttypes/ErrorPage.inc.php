@@ -89,12 +89,10 @@ class ErrorPage extends Content
         case 'alias':
             $dropdownopts = '';
             //$dropdownopts = '<option value="">'.lang('none').'</option>';
-            foreach ($this->error_types as $code=>$name)
-            {
+            foreach ($this->error_types as $code=>$name) {
                 $dropdownopts .= '<option value="error' . $code . '"';
-                if ('error'.$code == $this->mAlias)
-                {
-                    $dropdownopts .= ' selected="selected" ';
+                if ('error'.$code == $this->mAlias) {
+                    $dropdownopts .= ' selected';
                 }
                 $dropdownopts .= ">{$name} ({$code})</option>";
             }
@@ -114,32 +112,25 @@ class ErrorPage extends Content
         $errors = parent::ValidateData();
 
         //Do our own alias check
-        if ($this->mAlias == '')
-        {
+        if ($this->mAlias == '') {
             $errors[] = lang('nofieldgiven', array(lang('error_type')));
         }
-        else if (in_array($this->mAlias, $this->error_types)) //TODO can never succeed
-        {
+        elseif (in_array($this->mAlias, $this->error_types)) { //TODO can never succeed
             $errors[] = lang('nofieldgiven', array(lang('error_type')));
         }
-        else if ($this->mAlias != $this->mOldAlias)
-        {
+        elseif ($this->mAlias != $this->mOldAlias) {
             $gCms = cmsms();
             $contentops = $gCms->GetContentOperations();
             $error = $contentops->CheckAliasError($this->mAlias, $this->mId);
-            if ($error)
-            {
-                if ($error == lang('aliasalreadyused'))
-                {
+            if ($error) {
+                if ($error == lang('aliasalreadyused')) {
                     $errors[] = lang('errorpagealreadyinuse');
                 }
-                else
-                {
+                else {
                     $errors[] = $error;
                 }
             }
         }
-
         return $errors;
     }
 }

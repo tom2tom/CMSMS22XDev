@@ -25,7 +25,7 @@ function smarty_cms_function_cms_yesno($params, $smarty)
     $out = '';
     foreach( $opts as $k => $v ) {
         $out .= '<option value="'.$k.'"';
-        if( isset($params['selected']) && $k == $params['selected'] ) $out .= ' selected="selected"';
+        if( isset($params['selected']) && $k == $params['selected'] ) $out .= ' selected';
         $out .= '>'.$v.'</option>';
     }
     $out .= "\n";

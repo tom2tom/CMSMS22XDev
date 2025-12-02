@@ -16,7 +16,7 @@
 		<p>{lang('help_systeminformation')}</p>
 	</div>
 <hr>
-<table class="pagetable" summary="{lang('cms_install_information')}">
+<table class="pagetable">
 	<thead>
 		<tr>
 			<th colspan="3">{lang('cms_install_information')}</th>
@@ -31,7 +31,7 @@
 	</tbody>
 </table>
 <br><br>
-<table class="pagetable" summary="{lang('installed_modules')}">
+<table class="pagetable">
 	<thead>
 		<tr>
 			<th colspan="3">{lang('installed_modules')}</th>
@@ -49,7 +49,7 @@
 </table>
 <br><br>
 
-<table class="pagetable" summary="{lang('config_information')}">
+<table class="pagetable">
 	<thead>
 		<tr>
 			<th colspan="3">{lang('config_information')}</th>
@@ -75,7 +75,7 @@
 <br><br>
 
 
-<table class="pagetable" summary="{lang('performance_information')}">
+<table class="pagetable">
 	<thead>
 		<tr>
 			<th colspan="3">{lang('performance_information')}</th>
@@ -100,7 +100,7 @@
 </table>
 <br><br>
 
-<table class="pagetable" summary="{lang('php_information')}">
+<table class="pagetable">
 	<thead>
 		<tr>
 			<th colspan="3">{lang('php_information')}</th>
@@ -129,7 +129,7 @@
 	</tbody>
 </table>
 <br><br>
-<table class="pagetable" summary="{lang('server_information')}">
+<table class="pagetable">
 	<thead>
 		<tr>
 			<th colspan="3">{lang('server_information')}</th>
@@ -152,7 +152,7 @@
 	</tbody>
 </table>
 <br><br>
-<table class="pagetable" summary="{lang('permission_information')}">
+<table class="pagetable">
 	<thead>
 		<tr>
 			<th colspan="3">{lang('permission_information')}</th>

@@ -60,7 +60,7 @@ function smarty_function_cms_pageoptions($params, $smarty)
   else {
     $out = '';
     $fmt = '<option value="%d">%s</option>';
-    $fmt2 = '<option value="%d" selected="selected">%s</option>';
+    $fmt2 = '<option value="%d" selected>%s</option>';
     foreach( $list as $pagenum ) {
       if( $pagenum == $curpage ) {
 	$out .= sprintf($fmt2,$pagenum,$pagenum);
