@@ -17,8 +17,6 @@
 
 function smarty_function_admin_icon($params,$template)
 {
-    $smarty = $template->smarty;
-
     if( !cmsms()->test_state(CmsApp::STATE_ADMIN_PAGE) ) return '';
 
     $icon = '';
@@ -57,7 +55,7 @@ function smarty_function_admin_icon($params,$template)
     $out .= '>';
 
     if( isset($params['assign']) ) {
-        $smarty->assign(trim($params['assign']),$out);
+        $template->assign(trim($params['assign']),$out);
         return '';
     }
     return $out;

@@ -17,7 +17,6 @@
 
 function smarty_function_cms_admin_user($params,$template)
 {
-  $smarty = $template->smarty;
   $out = '';
 
   if( cmsms()->test_state(CmsApp::STATE_ADMIN_PAGE) ) {
@@ -48,7 +47,7 @@ function smarty_function_cms_admin_user($params,$template)
   }
 
   if( isset($params['assign']) ) {
-    $smarty->assign($params['assign'],$out);
+    $template->assign($params['assign'],$out);
     return '';
   }
   return $out;
