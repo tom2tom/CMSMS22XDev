@@ -16,8 +16,8 @@
 		</div>
 		<div class="pageoverflow">
 			<p class="pageinput">
-				<input type="submit" name="submit" value="{lang('submit')}" class="pagebutton">
-				<input type="submit" name="cancel" value="{lang('cancel')}" class="pagebutton">
+				<input type="submit" name="submit" value="{lang('submit')}">
+				<input type="submit" name="cancel" value="{lang('cancel')}">
 			</p>
 			<br>
 		</div>
@@ -90,8 +90,8 @@
 		<div class="pageoverflow">
 			<br>
 			<p class="pageinput">
-				<input type="submit" name="submit" value="{lang('submit')}" class="pagebutton">
-				<input type="submit" name="cancel" value="{lang('cancel')}" class="pagebutton">
+				<input type="submit" name="submit" value="{lang('submit')}">
+				<input type="submit" name="cancel" value="{lang('cancel')}">
 			</p>
 		</div>
 	</form>
@@ -107,8 +107,8 @@
 		<div class="information" style="display:block">{lang('info_settings_sitedown')}</div>
 		<div class="pageoverflow">
 			<p class="pageinput">
-				<input type="submit" name="submit" value="{lang('submit')}" class="pagebutton">
-				<input type="submit" name="cancel" value="{lang('cancel')}" class="pagebutton">
+				<input type="submit" name="submit" value="{lang('submit')}">
+				<input type="submit" name="cancel" value="{lang('cancel')}">
 			</p>
 			<br>
 		</div>
@@ -149,8 +149,8 @@
 		<br>
 		<div class="pageoverflow">
 			<div class="dialogoptions">
-				<input type="submit" name="submit" value="{lang('submit')}" class="pagebutton">
-				<input type="submit" name="cancel" value="{lang('cancel')}" class="pagebutton">
+				<input type="submit" name="submit" value="{lang('submit')}">
+				<input type="submit" name="cancel" value="{lang('cancel')}">
 			</div>
 		</div>
 	</form>
@@ -158,8 +158,7 @@
 {* +++++++++++++++++++++++++++++++++++++++++++ *}
 {tab_start name='mail'}
 <script>
-function on_mailer()
-{
+function on_mailer() {
   var v = $('#mailer').val();
   if( v == 'mail' ) {
     $('#set_smtp').find('input,select').prop('disabled',true);
@@ -175,23 +174,21 @@ function on_mailer()
   }
 }
 $(function() {
-  $(document).on('click', '#mailertest', function(e) {
+  $('#mailertest').on('click', function() {
     $('#testpopup').dialog({
       width: 'auto',
       modal: true
     });
     return false;
   });
-
-  $(document).on('click', '#testcancel', function(e) {
+  $('#testcancel').on('click', function() {
     $('#testpopup').dialog('close');
     return false;
   });
-  $(document).on('click','#testsend', function(e) {
+  $('#testsend').on('click', function() {
     $('#testpopup').dialog('close');
     $(this).closest('form').trigger('submit');
   });
-
   $('#mailer').on('change', function() {
     on_mailer();
   });
@@ -231,9 +228,9 @@ $(function() {
 		</div>
 		<div class="pageoverflow">
 			<p class="pageinput">
-				<input type="submit" name="submit" value="{lang('submit')}" class="pagebutton">
-				<input id="mailertest" type="submit" name="testemail" data-ui-icon="ui-icon-gear" value="{lang('test')}" class="pagebutton">
-				<input type="submit" name="cancel" value="{lang('cancel')}" class="pagebutton">
+				<input type="submit" name="submit" value="{lang('submit')}">
+				<input id="mailertest" type="submit" name="testemail" data-ui-icon="ui-icon-gear" value="{lang('test')}">
+				<input type="submit" name="cancel" value="{lang('cancel')}">
 			</p>
 			<br>
 		</div>
@@ -343,8 +340,8 @@ $(function() {
 		<div class="pageoverflow">
 			<br>
 			<p class="pageinput">
-				<input type="submit" name="submit" value="{lang('submit')}" class="pagebutton">
-				<input type="submit" name="cancel" value="{lang('cancel')}" class="pagebutton">
+				<input type="submit" name="submit" value="{lang('submit')}">
+				<input type="submit" name="cancel" value="{lang('cancel')}">
 			</p>
 		</div>
 	</form>
@@ -358,80 +355,78 @@ $(function() {
 			<input type="hidden" name="editsiteprefs" value="true">
 		</div>
 		<div class="pageoverflow">
-			<p class="pageinput">
-				<input type="submit" name="submit" value="{lang('submit')}" class="pagebutton">
-				<input type="submit" name="cancel" value="{lang('cancel')}" class="pagebutton">
-			</p>
-			<br>
+			<div class="pageinput">
+				<input type="submit" name="submit" value="{lang('submit')}">
+				<input type="submit" name="cancel" value="{lang('cancel')}">
+			</div>
 		</div>
-
+		<br>
 		<fieldset>
 			<legend>{lang('browser_cache_settings')}</legend>
-				<div class="pageoverflow">
-					<p class="pagetext"><label for="allow_browser_cache">{lang('allow_browser_cache')}:</label> {cms_help key2='settings_browsercache' title=lang('allow_browser_cache')}</p>
-					<p class="pageinput">
-						<select id="allow_browser_cache" name="allow_browser_cache">
-							{cms_yesno selected=$allow_browser_cache}
-						</select>
-					</p>
-				</div>
-				<div class="pageoverflow">
-					<p class="pagetext"><label for="browser_expiry">{lang('browser_cache_expiry')}:</label> {cms_help key2='settings_browsercache_expiry' title=lang('browser_cache_expiry')}</p>
-					<p class="pageinput">
-						<input type="text" id="browser_expiry" name="browser_cache_expiry" value="{$browser_cache_expiry}" size="6" maxlength="10">
-					</p>
-				</div>
+			<div class="pageoverflow">
+				<p class="pagetext"><label for="allow_browser_cache">{lang('allow_browser_cache')}:</label> {cms_help key2='settings_browsercache' title=lang('allow_browser_cache')}</p>
+				<p class="pageinput">
+					<select id="allow_browser_cache" name="allow_browser_cache">
+						{cms_yesno selected=$allow_browser_cache}
+					</select>
+				</p>
+			</div>
+			<div class="pageoverflow">
+				<p class="pagetext"><label for="browser_expiry">{lang('browser_cache_expiry')}:</label> {cms_help key2='settings_browsercache_expiry' title=lang('browser_cache_expiry')}</p>
+				<p class="pageinput">
+					<input type="text" id="browser_expiry" name="browser_cache_expiry" value="{$browser_cache_expiry}" size="6" maxlength="10">
+				</p>
+			</div>
 		</fieldset>
 
 		<fieldset>
 			<legend>{lang('server_cache_settings')}</legend>
-				<div class="pageoverflow">
-					<p class="pagetext"><label for="autoclearcache2">{lang('autoclearcache2')}:</label> {cms_help key2='settings_autoclearcache' title=lang('autoclearcache2')}</p>
-					<p class="pageinput">
-						<input id="autoclearcache2" type="text" name="auto_clear_cache_age" size="4" value="{$auto_clear_cache_age}" maxlength="4">
-					</p>
-				</div>
+			<div class="pageoverflow">
+				<p class="pagetext"><label for="autoclearcache2">{lang('autoclearcache2')}:</label> {cms_help key2='settings_autoclearcache' title=lang('autoclearcache2')}</p>
+				<p class="pageinput">
+					<input id="autoclearcache2" type="text" name="auto_clear_cache_age" size="4" value="{$auto_clear_cache_age}" maxlength="4">
+				</p>
+			</div>
 		</fieldset>
 		<fieldset>
 			<legend>{lang('general_operation_settings')}</legend>
-				<div class="pageoverflow">
-					<p class="pagetext"><label for="umask">{lang('global_umask')}:</label> {cms_help key2='settings_umask' title=lang('global_umask')}</p>
-					<p class="pageinput">
-						<input id="umask" type="text" class="pagesmalltextarea" name="global_umask" size="4" value="{$global_umask}">
-					</p>
-				</div>
-				{if isset($testresults)}
-					<div class="pageoverflow">
-						<p class="pagetext">{lang('results')}</p>
-						<p class="pageinput"><strong>{$testresults}</strong></p>
-					</div>
-				{/if}
-				<div class="pageoverflow">
-					<p class="pagetext">&nbsp;</p>
-					<p class="pageinput"><input type="submit" name="testumask" data-ui-icon="ui-icon-gear" value="{lang('test')}" class="pagebutton"></p>
-				</div>
-				<div class="pageoverflow">
-					<p class="pagetext"><label for="lock_timeout">{lang('admin_lock_timeout')}:</label> {cms_help key2='settings_lock_timeout' title=lang('admin_lock_timeout')}</p>
-					<p class="pageinput">
-						<input type="text" id="lock_timeout" name="lock_timeout" size="3" value="{$lock_timeout}">
-					</p>
-				</div>
-				<div class="pageoverflow">
-					<p class="pagetext"><label for="adminlog">{lang('adminlog_lifetime')}:</label> {cms_help key2='settings_adminlog_lifetime' title=lang('adminlog_lifetime')}</p>
-					<p class="pageinput">
-						<select id="adminlog" name="adminlog_lifetime">
-							{html_options options=$adminlog_options selected=$adminlog_lifetime}
-						</select>
-					</p>
-				</div>
-				<div class="pageoverflow">
-					<p class="pagetext"><label for="checkversion">{lang('checkversion')}:</label> {cms_help key2='settings_checkversion' title=lang('checkversion')}</p>
-					<p class="pageinput">
-						<select id="checkversion" name="checkversion">
-							{cms_yesno options=$checkversion selected=$checkversion}
-						</select>
-					</p>
-				</div>
+			<div class="pageoverflow">
+				<p class="pagetext"><label for="umask">{lang('global_umask')}:</label> {cms_help key2='settings_umask' title=lang('global_umask')}</p>
+				<p class="pageinput">
+					<input id="umask" type="text" class="pagesmalltextarea" name="global_umask" size="4" value="{$global_umask}">
+				</p>
+			</div>
+		{if isset($testresults)}
+			<div class="pageoverflow">
+				<p class="pagetext"><label>{lang('results')}</label></p>
+				<p class="pageinput"><strong>{$testresults}</strong></p>
+			</div>
+		{/if}
+			<div class="pageoverflow">
+				<p class="pageinput"><input type="submit" name="testumask" data-ui-icon="ui-icon-gear" value="{lang('test')}"></p>
+			</div>
+			<div class="pageoverflow">
+				<p class="pagetext"><label for="lock_timeout">{lang('admin_lock_timeout')}:</label> {cms_help key2='settings_lock_timeout' title=lang('admin_lock_timeout')}</p>
+				<p class="pageinput">
+					<input type="text" id="lock_timeout" name="lock_timeout" size="3" value="{$lock_timeout}">
+				</p>
+			</div>
+			<div class="pageoverflow">
+				<p class="pagetext"><label for="adminlog">{lang('adminlog_lifetime')}:</label> {cms_help key2='settings_adminlog_lifetime' title=lang('adminlog_lifetime')}</p>
+				<p class="pageinput">
+					<select id="adminlog" name="adminlog_lifetime">
+						{html_options options=$adminlog_options selected=$adminlog_lifetime}
+					</select>
+				</p>
+			</div>
+			<div class="pageoverflow">
+				<p class="pagetext"><label for="checkversion">{lang('checkversion')}:</label> {cms_help key2='settings_checkversion' title=lang('checkversion')}</p>
+				<p class="pageinput">
+					<select id="checkversion" name="checkversion">
+						{cms_yesno options=$checkversion selected=$checkversion}
+					</select>
+				</p>
+			</div>
 		</fieldset>
 {if !empty($privatePath)}
 		<div class="pageoverflow">
@@ -444,10 +439,10 @@ $(function() {
 {/if}
 		<br>
 		<div class="pageoverflow">
-			<p class="pageinput">
-				<input type="submit" name="submit" value="{lang('submit')}" class="pagebutton">
-				<input type="submit" name="cancel" value="{lang('cancel')}" class="pagebutton">
-			</p>
+			<div class="pageinput">
+				<input type="submit" name="submit" value="{lang('submit')}">
+				<input type="submit" name="cancel" value="{lang('cancel')}">
+			</div>
 		</div>
 	</form>
 
@@ -460,13 +455,12 @@ $(function() {
 			<input type="hidden" name="editsiteprefs" value="true">
 		</div>
 		<div class="pageoverflow">
-			<p class="pageinput">
-				<input type="submit" name="submit" value="{lang('submit')}" class="pagebutton">
-				<input type="submit" name="cancel" value="{lang('cancel')}" class="pagebutton">
-			</p>
-			<br>
+			<div class="pageinput">
+				<input type="submit" name="submit" value="{lang('submit')}">
+				<input type="submit" name="cancel" value="{lang('cancel')}">
+			</div>
 		</div>
-
+		<br>
 		<div class="pageoverflow">
 			<p class="pagetext"><label for="smartycache">{lang('prompt_use_smartycaching')}:</label> {cms_help key2='settings_smartycaching' title=lang('prompt_use_smartycaching')}</p>
 			<p class="pageinput">
