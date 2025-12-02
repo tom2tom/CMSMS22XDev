@@ -25,11 +25,11 @@ $(function () {
             });
         }
     });
-    $('#categorylist a.del_cat').on('click', function(ev) {
-        var self = $(this);
+    $('#categorylist .del_cat').on('click', function(ev) {
         ev.preventDefault();
-        cms_confirm("{$mod->Lang('confirm_delete_category')|escape:'javascript'}").done(function() {
-            window.location.href = self.attr('href');
+        var _url = $(this).attr('href');
+        cms_confirm('{$mod->Lang('confirm_delete_category')|escape:'javascript'}').done(function() {
+            window.location.href = _url;
         });
     });
 });

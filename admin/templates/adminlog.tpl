@@ -2,9 +2,9 @@
 $(function() {
   $('#clearlog').on('click', function(ev) {
     ev.preventDefault();
-    var _hr = $(this).attr('href');
-    cms_confirm("{$sysmain_confirmclearlog|escape:'javascript'}").done(function() {
-      window.location.href = _hr;
+    var _url = $(this).attr('href');
+    cms_confirm('{$sysmain_confirmclearlog|escape:'javascript'}').done(function() {
+      window.location.href = _url;
     });
   });
   $('#pagesel').on('change', function() {

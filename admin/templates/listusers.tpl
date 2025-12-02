@@ -5,25 +5,25 @@ $(function() {
 
     $('.switchuser').on('click', function(ev) {
         ev.preventDefault();
-        var _href = $(this).attr('href');
-        cms_confirm("{lang('confirm_switchuser')|escape:'javascript'}").done(function() {
-            window.location.href = _href;
+        var _url = $(this).attr('href');
+        cms_confirm('{lang('confirm_switchuser')|escape:'javascript'}').done(function() {
+            window.location.href = _url;
         });
     });
 
     $('.toggleactive').on('click', function(ev) {
         ev.preventDefault();
-        var _href = $(this).attr('href');
-        cms_confirm("{lang('confirm_toggleuseractive')|escape:'javascript'}").done(function() {
-            window.location.href = _href;
+        var _url = $(this).attr('href');
+        cms_confirm('{lang('confirm_toggleuseractive')|escape:'javascript'}').done(function() {
+            window.location.href = _url;
         });
     });
 
-    $(document).on('click', '.js-delete', function(ev) {
+    $('.js-delete').on('click', function(ev) {
         ev.preventDefault();
-        var _href = $(this).attr('href');
-        cms_confirm("{lang('confirm_delete_user')|escape:'javascript'}").done(function() {
-            window.location.href = _href;
+        var _url = $(this).attr('href');
+        cms_confirm('{lang('confirm_delete_user')|escape:'javascript'}').done(function() {
+            window.location.href = _url;
         });
     });
 
@@ -46,14 +46,14 @@ $(function() {
         ev.preventDefault();
         var v = $('#withselected').val();
         if( v === 'delete' ) {
-            cms_confirm("{lang('confirm_delete_user')|escape:'javascript'}").done(function() {
+            cms_confirm('{lang('confirm_delete_user')|escape:'javascript'}').done(function() {
                 $('#listusers').off('submit');
                 $('#bulksubmit').trigger('click');
             }).fail(function() {
                 return false;
             });
         } else {
-            cms_confirm("{lang('confirm_bulkuserop')|escape:'javascript'}").done(function() {
+            cms_confirm('{lang('confirm_bulkuserop')|escape:'javascript'}').done(function() {
                 $('#listusers').off('submit');
                 $('#bulksubmit').trigger('click');
                 return true;

@@ -2,24 +2,24 @@
 $(function() {
   $('a.mod_upgrade').on('click', function(ev) {
       ev.preventDefault();
-      var href = $(this).attr('href');
-      cms_confirm("{$mod->Lang('confirm_upgrade')|escape:'javascript'}").done(function() {
-          window.location.href = href;
-      })
+      var _url = $(this).attr('href');
+      cms_confirm('{$mod->Lang('confirm_upgrade')|escape:'javascript'}').done(function() {
+          window.location.href = _url;
+      });
   });
   $('a.mod_remove').on('click', function(ev) {
       ev.preventDefault();
-      var href = $(this).attr('href');
-      cms_confirm("{$mod->Lang('confirm_remove')|escape:'javascript'}").done(function() {
-          window.location.href = href;
-      })
+      var _url = $(this).attr('href');
+      cms_confirm('{$mod->Lang('confirm_remove')|escape:'javascript'}').done(function() {
+          window.location.href = _url;
+      });
   });
   $('a.mod_chmod').on('click', function(ev) {
       ev.preventDefault();
-      var href = $(this).attr('href');
-      cms_confirm("{$mod->Lang('confirm_chmod')|escape:'javascript'}").done(function() {
-          window.location.href = href;
-      })
+      var _url = $(this).attr('href');
+      cms_confirm('{$mod->Lang('confirm_chmod')|escape:'javascript'}').done(function() {
+          window.location.href = _url;
+      });
   });
 
   $('#importbtn').on('click', function() {

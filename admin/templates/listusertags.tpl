@@ -2,9 +2,9 @@
 $(function() {
   $('a.delusertag').on('click',function(ev) {
     ev.preventDefault();
-    var _hr = $(this).attr('href');
-    cms_confirm("{lang('confirm_deleteusertag')|cms_escape:'javascript'}").done(function() {
-      window.location.href = _hr;
+    var _url = $(this).attr('href');
+    cms_confirm('{lang('confirm_deleteusertag')|cms_escape:'javascript'}').done(function() {
+      window.location.href = _url;
     });
   });
 });

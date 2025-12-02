@@ -3,11 +3,10 @@
 $(function() {
   $('a.del_fielddef').on('click', function(ev) {
     ev.preventDefault();
-    var url = $(this).attr('href');
-    cms_confirm("{$mod->Lang('areyousure')|escape:'javascript'}").done(function() {
-       window.location.href = url;
+    var _url = $(this).attr('href');
+    cms_confirm('{$mod->Lang('areyousure')|escape:'javascript'}').done(function() {
+      window.location.href = _url;
     });
-    return false;
   });
 });
 </script>

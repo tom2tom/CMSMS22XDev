@@ -3,11 +3,10 @@
 $(function() {
   $('a.del_cat').on('click', function(ev) {
     ev.preventDefault();
-    var url = $(this).attr('href');
-    cms_confirm("{$mod->Lang('areyousure')|escape:'javascript'}").done(function() {
-      window.location.href = url;
+    var _url = $(this).attr('href');
+    cms_confirm('{$mod->Lang('areyousure')|escape:'javascript'}').done(function() {
+      window.location.href = _url;
     });
-    return false;
   });
 });
 </script>
@@ -30,7 +29,7 @@ $(function() {
 	<tbody>
 {foreach $citems as $entry}
 		<tr class="{$entry->rowclass}">
-			<td>{repeat string='&nbsp;&gt;&nbsp' times=$entry->depth}<a href="{$entry->edit_url}" title="{$mod->Lang('edit')}">{$entry->name|cms_escape}</a></td>
+			<td>{repeat string='&nbsp;&gt;&nbsp;' times=$entry->depth}<a href="{$entry->edit_url}" title="{$mod->Lang('edit')}">{$entry->name|cms_escape}</a></td>
 			<td><a href="{$entry->edit_url}" title="{$mod->Lang('edit')}">{admin_icon icon='edit.gif' alt=$mod->Lang('edit')}</a></td>
 			<td><a href="{$entry->delete_url}" title="{$mod->Lang('delete')}" class="del_cat">{admin_icon icon='delete.gif' alt=$mod->Lang('delete')}</a></td>
 		</tr>
