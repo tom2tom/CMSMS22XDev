@@ -207,8 +207,6 @@ $smarty->assign('disp_group',$disp_group);
 $tmp = base64_encode(json_encode($sel_group_ids));
 $sig = md5(__FILE__.$tmp);
 $smarty->assign('hidden2','<input type="hidden" name="sel_groups" value="'.$sig.'::'.$tmp.'">');
-$smarty->assign('submit','<input type="submit" name="changeperm" value="'.lang('submit').'" class="pagebutton">');
-$smarty->assign('cancel','<input type="submit" name="cancel" value="'.lang('cancel').'" class="pagebutton">');
 $smarty->display('changegroupperm.tpl');
 
 require_once 'footer.php';

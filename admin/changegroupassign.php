@@ -136,8 +136,6 @@ $smarty->assign('user_id',$userid);
 $smarty->assign('hiddenname',CMS_SECURE_PARAM_NAME);
 $smarty->assign('hiddenval',$_SESSION[CMS_USER_KEY]);
 $smarty->assign('header',$themeObject->ShowHeader('groupassignments',array($group_name)));
-$smarty->assign('submit','<input type="submit" name="changegrp" value="'.lang('submit').'" class="pagebutton">');
-$smarty->assign('cancel','<input type="submit" name="cancel" value="'.lang('cancel').'" class="pagebutton">');
 if( !empty($message) ) echo $themeObject->ShowMessage($message);
 $smarty->display('changeusergroup.tpl');
 
