@@ -9,7 +9,7 @@
     <input type="hidden" name="{$hiddenname}" value="{$hiddenval}">
     <input type="hidden" name="bookmark_id" value="{$bookmark_id}">
     <input type="hidden" name="userid" value="{$userid}">
-   
+
     <div class="pageoverflow">
       <p class="pagetext"><label for="marktitl">{lang('title')}:</label></p>
       <p class="pageinput"><input type="text" id="marktitl" name="title" size="50" maxlength="255" value="{$title}"></p>
@@ -20,10 +20,10 @@
     </div>
     <br>
     <div class="pageoverflow">
-      <p class="pageinput">
-        <input type="submit" class="pagebutton" name="editbookmark" value="{lang('submit')}">
-        <input type="submit" class="pagebutton" name="cancel" value="{lang('cancel')}">
-      </p>
+      <div class="pageinput">
+        <input type="submit" name="editbookmark" value="{lang('submit')}">
+        <input type="submit" name="cancel" value="{lang('cancel')}">
+      </div>
     </div>
   </form>
 </div>

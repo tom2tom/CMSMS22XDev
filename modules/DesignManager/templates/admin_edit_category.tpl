@@ -7,10 +7,10 @@
 {form_start __activetab='categories'}
 <input type="hidden" name="{$actionid}cat" value="{$catid}">
 <div class="pageoverflow">
-  <p class="pageinput">
+  <div class="pageinput">
     <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
     <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
-  </p>
+  </div>
 </div>
 <div class="pageoverflow">
   <p class="pagetext"><label for="cat_name">*{$mod->Lang('prompt_name')}:</label>&nbsp;{cms_help key='help_category_name' title=$mod->Lang('prompt_name')}</p>
@@ -25,4 +25,3 @@
   </p>
 </div>
 {form_end}
-{/strip}</div>

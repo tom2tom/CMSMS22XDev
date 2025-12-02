@@ -68,16 +68,16 @@ $(function() {
 {/if}
 	<div class="pageoverflow">
 		<p class="pagetext"><label for="fld_public">{$userviewtext}:</label> {cms_help key='help_fielddef_public' title=$userviewtext}</p>
-		<p class="pageinput">
+		<div class="pageinput">
 			<input type="hidden" name="{$actionid}public" value="0">
 			<input type="checkbox" id="fld_public" name="{$actionid}public" value="1"{if $public} checked{/if}>
-		</p>
+		</div>
 	</div>
 	<br>
 	<div class="pageoverflow">
-		<p class="pageinput">
+		<div class="pageinput">
 			<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
 			<input type="submit" id="{$actionid}cancel" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
-		</p>
+		</div>
 	</div>
 {$endform}

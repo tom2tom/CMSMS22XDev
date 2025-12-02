@@ -2,7 +2,7 @@
 
 {$startform}
 <div class="pageoverflow">
-  <p class="pagetext">{$mod->Lang('itemstocopy')}:</p>
+  <p class="pagetext"><label>{$mod->Lang('itemstocopy')}:</label></p>
   <p class="pageinput">
     <ul>
     {foreach $selall as $one}
@@ -29,9 +29,9 @@
 {/if}
 <br>
 <div class="pageoverflow">
-  <p class="pageinput">
+  <div class="pageinput">
     <input type="submit" name="{$actionid}submit" data-ui-icon="ui-icon-copy" value="{$mod->Lang('copy')}">
     <input type="submit" name="{$actionid}cancel" data-ui-icon="ui-icon-cancel" value="{$mod->Lang('cancel')}">
-  </p>
+  </div>
 </div>
 {$endform}

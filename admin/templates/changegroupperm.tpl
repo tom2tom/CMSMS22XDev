@@ -29,9 +29,10 @@
 	</div>
 
 	<div class="pageoverflow">
-		<p class="pageoptions">
-			{$submit} {$cancel}
-		</p>
+		<div class="pageoptions">
+			<input type="submit" name="changeperm" value="{lang('submit')}">
+			<input type="submit" name="cancel" value="{lang('cancel')}">
+		</div>
 	</div>
 {$np=0}
 	<table class="pagetable scrollable" id="permtable">
@@ -67,9 +68,10 @@
 	</table>
 {if $np > 10}
 	<div class="pageoverflow">
-		<p class="pageoptions">
-			{$submit} {$cancel}
-		</p>
+		<div class="pageoptions">
+			<input type="submit" name="changeperm" value="{lang('submit')}">
+			<input type="submit" name="cancel" value="{lang('cancel')}">
+		</div>
 	</div>
 {/if}
 </form>

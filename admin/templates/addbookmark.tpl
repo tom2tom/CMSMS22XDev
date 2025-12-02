@@ -18,10 +18,10 @@
     </div>
     <br>
     <div class="pageoverflow">
-      <p class="pageinput">
-        <input type="submit" class="pagebutton" name="addbookmark" value="{lang('submit')}">
-        <input type="submit" class="pagebutton" name="cancel" value="{lang('cancel')}">
-      </p>
+      <div class="pageinput">
+        <input type="submit" name="addbookmark" value="{lang('submit')}">
+        <input type="submit" name="cancel" value="{lang('cancel')}">
+      </div>
     </div>
   </form>
 </div>
