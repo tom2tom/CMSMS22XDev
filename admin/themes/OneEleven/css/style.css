@@ -1,7 +1,7 @@
 /*!
- * Theme: OneEleven 2012-2024
+ * Theme: OneEleven 2012-2025
  * Author: Goran Ilic (ja@ich-mach-das.at) - http://dev.cmsmadesimple.org/users/uniqu3
- * Version: 1.3
+ * Version: 1.4
  */
 /* NORMALIZE BROWSER
 /* normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
@@ -1884,7 +1884,15 @@ td.icons_wide {
 	margin-bottom: 1px;
 	display: block;
 	position: relative;
+	background-color: #a6c7e8;
+	color: #00008b;
 	cursor: move;
+}
+#oe_mainarea .sortable-list li a {
+	color: #00008b;
+}
+#oe_mainarea .sortable-list li a:hover {
+	text-decoration: underline;
 }
 #oe_mainarea .sortable-list li .sortable-remove {
 	float: right;
@@ -1893,6 +1901,10 @@ td.icons_wide {
 #oe_mainarea .available-templates li .sortable-remove,
 #oe_mainarea .available-stylesheets li .sortable-remove {
 	display: none;
+}
+#oe_mainarea .available-templates li .sortable-remove:hover,
+#oe_mainarea .available-stylesheets li .sortable-remove:hover {
+	text-decoration: none;
 }
 #oe_mainarea .sortable-list > li.ui-state-highlight {
 	padding: 14px 0;
