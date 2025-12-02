@@ -261,7 +261,7 @@ verbose_msg(ilang('install_stylesheets'));
 $css = new CmsLayoutStylesheet();
 $css->set_name('Handheld');
 $css->set_description('Stylesheet for older mobile devices');
-$css->set_media_types('handheld');
+$css->set_media_types('screen'); // not 'handheld' (deprecated)
 $css->set_content(<<<EOT
 /*********************************************\nSample stylesheet for mobile and small screen handheld devices\n\nJust a simple layout suitable for smaller screens with less \nstyling cabapilities and minimal css\n\nNote: If you dont want to support mobile devices you can\nsafely remove this stylesheet.\n*********************************************/\n/* remove all padding and margins and set width to 100%. This should be default for handheld devices but its good to set these explicitly */\nbody {\nmargin:0;\npadding:0;\nwidth:100%;\n}\n\n/* hide accessibility noprint and definition */\n.accessibility,\n.noprint,\ndfn {\ndisplay:none;\n}\n\n/* dont want to download image for header so just set bg color */\ndiv#header,\ndiv#footer {\nbackground-color: #385C72;\ncolor: #fff;\ntext-align:center;\n}\n\n/* text colors for header and footer */\ndiv#header a,\ndiv#footer a {\ncolor: #fff;\n}\n\n/* this doesnt look as nice, but takes less space */\ndiv#menu_vert ul li,\ndiv#menu_horiz ul li {\ndisplay:inline;\n}\n\n/* small border at the bottom to have some indicator */\ndiv#menu_vert ul,\ndiv#menu_horiz ul {\nborder-bottom:1px solid #fff;\n}\n\n/* save some space */\ndiv.breadcrumbs {\ndisplay:none;\n}
 EOT
