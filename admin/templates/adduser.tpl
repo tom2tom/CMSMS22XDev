@@ -107,11 +107,9 @@
         <p class="pagetext">
             {lang('copyusersettings')}:&nbsp;{cms_help realm='admin' key='info_copyusersettings' title=lang('copyusersettings')}
         </p>
-        <p class="pageinput">
-            <select name="copyusersettings">
-                {html_options options=$users}
-            </select>
-        </p>
+        <div class="pageinput">
+            {$userselect}
+        </div>
     </div>
     {tab_end}
 
