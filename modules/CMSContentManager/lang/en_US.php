@@ -148,7 +148,7 @@ $lang['info_preview_notice'] = '<strong>Warning:</strong> This preview panel beh
 $lang['legend_tabs'] = 'Tabs Display';
 $lang['locked_by'] = 'Locked by';
 $lang['locked_since'] = 'Since';
-$lang['locked_steal'] = 'You can steal the lock on this page';
+$lang['locked_steal'] = 'You can steal the lock on this page'; //see also 'prompt_steal_lock_edit'
 $lang['lock_expired'] = 'Expired';
 $lang['lock_expires'] = 'Expires';
 
