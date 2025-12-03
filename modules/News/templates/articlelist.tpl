@@ -6,12 +6,10 @@ $(function() {
   $('#selall').cmsms_checkall();
   $('a.delete_article').on('click', function(ev) {
     ev.preventDefault();
-    var url = $(this).attr('href');
-    cms_confirm("{$mod->Lang('areyousure')|escape:'javascript'}").done(function() {
-      window.location.href = url;
-      return true;
+    var _url = $(this).attr('href');
+    cms_confirm('{$mod->Lang('areyousure')|escape:'javascript'}').done(function() {
+      window.location.href = _url;
     });
-    return false;
   });
   $('#articlelist').on('cms_checkall_toggle','[type="checkbox"]',function() {
     var l = $('#articlelist :checked').length;
@@ -32,10 +30,9 @@ $(function() {
   $('#bulkactions').on('click','#btnbulk',function(ev) {
     ev.preventDefault();
     var form = $(this).closest('form');
-    cms_confirm("{$mod->Lang('areyousure_multiple')|escape:'javascript'}").done(function() {
+    cms_confirm('{$mod->Lang('areyousure_multiple')|escape:'javascript'}').done(function() {
       form.trigger('submit');
     });
-    return false;
   });
 {/if}
   $('#toggle_filter').on('click', function(ev) {
@@ -53,7 +50,11 @@ $(function() {
 });
 </script>
 <div id="filter" title="{$filtertext}" style="display:none">
-	{$startaform}
+	<form method="post" action="moduleinterface.php">
+	<div class="hidden">
+		<input type="hidden" name="mact" value="News,m1_,defaultadmin,0">
+		<input type="hidden" name="{$securename}" value="{$securekey}">
+	</div>
 	<div class="pageoverflow">
 	<p class="pagetext"><label for="filter_category">{$prompt_category}:</label> {cms_help key='help_articles_filtercategory' title=$prompt_category}</p>
 	<p class="pageinput">
@@ -69,7 +70,7 @@ $(function() {
 	<div class="pageoverflow">
 	<p class="pagetext"><label for="filter_sortby">{$prompt_sorting}:</label> {cms_help key='help_articles_sortby' title=$prompt_sorting}</p>
 	<p class="pageinput">
-		<select id="filter_sorting" name="{$actionid}sortby">
+		<select id="filter_sortby" name="{$actionid}sortby">
 		{html_options options=$sortlist selected=$sortby}
 		</select>
 	</p>
@@ -93,15 +94,17 @@ $(function() {
 </div>
 <div class="row c_full">
 	<div class="pageoptions grid_6" style="margin-top:8px">
-{if $can_add}
-	<a href="{cms_action_url action=addarticle}">{admin_icon icon='newobject.gif'} {$mod->Lang('addarticle')}</a>&nbsp;
-{/if}
+	{if isset($addlink)}{$addlink}&nbsp;{/if}
 	<a id="toggle_filter"{if $curcategory} style="font-weight:bold;color:green"{/if}>{admin_icon icon='view.gif' alt=$mod->Lang('viewfilter')}{if $curcategory} *{/if}
 	{$mod->Lang('viewfilter')}</a>
 	</div>
 {if $aitemcount > 0 && $pagecount > 1}
 	<div class="pageoptions grid_6 endalign">
-		{$startaform}
+		<form method="post" action="moduleinterface.php">
+		<div class="hidden">
+			<input type="hidden" name="mact" value="News,m1_,defaultadmin,0">
+			<input type="hidden" name="{$securename}" value="{$securekey}">
+		</div>
 		<label for="pnum">{$mod->Lang('prompt_page')}</label>&nbsp;
 		<select id="pnum" name="{$actionid}pagenumber">
 		{cms_pageoptions numpages=$pagecount curpage=$pagenumber}
@@ -113,7 +116,11 @@ $(function() {
 </div>{* .row *}
 
 {if !empty($aitems)}
-{$startaform}
+<form method="post" action="moduleinterface.php">
+<div class="hidden">
+	<input type="hidden" name="mact" value="News,m1_,defaultadmin,0">
+	<input type="hidden" name="{$securename}" value="{$securekey}">
+</div>
 <table class="pagetable" id="articlelist">
 	<thead>
 		<tr>
@@ -151,7 +158,7 @@ $(function() {
 			{/if}
 			</td>
 			<td>{$entry->category|cms_escape}</td>
-			<td>{if isset($entry->approve_link)}{$entry->approve_link}{/if}</td>
+			<td style="text-align:center">{if isset($entry->approve_link)}{$entry->approve_link}{/if}</td>
 			<td>
 			{if isset($entry->edit_url)}
 			<a href="{$entry->edit_url}" title="{$mod->Lang('editarticle')}">{admin_icon icon='edit.gif' alt=$mod->Lang('edit')}</a>
@@ -172,7 +179,7 @@ $(function() {
 {/if}
 
 <div style="width:99%">
-{if isset($addlink)}
+{if isset($addlink) && $aitemcount > 8}
 	<div class="pageoptions startside last">
 		<p class="pageoptions">{$addlink}</p>
 	</div>

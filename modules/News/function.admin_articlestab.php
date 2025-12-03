@@ -11,7 +11,6 @@ if (isset($params['bulk_action']) ) {
         echo $this->ShowErrors($this->Lang('error_noarticlesselected'));
     }
     else {
-
         $sel = array();
         foreach( $params['sel'] as $one ) {
             $one = (int)$one;
@@ -23,7 +22,7 @@ if (isset($params['bulk_action']) ) {
         switch($params['bulk_action']) {
         case 'delete':
             if (!$this->CheckPermission('Delete News')) {
-                echo $this->ShowErrors($this->Lang('needpermission', array('Modify News')));
+                echo $this->ShowErrors($this->Lang('needpermission',array('Modify News')));
             }
             else {
                 foreach( $sel as $news_id ) {
@@ -83,7 +82,7 @@ if( isset($params['submitfilter']) ) {
         $this->SetPreference('article_category',trim($params['category']));
     }
     if( isset( $params['sortby'] ) ) {
-        $this->SetPreference('article_sortby', str_replace("'",'_',$params['sortby']));
+        $this->SetPreference('article_sortby',str_replace("'",'_',$params['sortby']));
     }
     if( isset( $params['pagelimit'] ) ) {
         $this->SetPreference('article_pagelimit',(int)$params['pagelimit']);
@@ -151,7 +150,7 @@ $query1 .= ' ORDER by '.$sortby;
 
 $pagenumber = max(1,$pagenumber);
 $startelement = ($pagenumber-1) * $pagelimit;
-$dbresult = $db->SelectLimit( $query1, $pagelimit, $startelement, $parms);
+$dbresult = $db->SelectLimit( $query1,$pagelimit,$startelement,$parms);
 $numrows = (int) $db->GetOne('SELECT FOUND_ROWS()');
 $pagecount = (int)ceil($numrows/$pagelimit);
 
@@ -169,7 +168,7 @@ if ($dbresult) {
 
     $onerow->id = $row['news_id'];
     $onerow->news_title = $row['news_title'] ? news_ops::execSpecialize($row['news_title']) : (string)$row['news_title'];
-    $onerow->title = $this->CreateLink($id, 'editarticle', $returnid, $row['news_title'], array('articleid'=>$row['news_id']));
+    $onerow->title = $this->CreateLink($id,'editarticle',$returnid,$row['news_title'],array('articleid'=>$row['news_id']));
     $onerow->data = $row['news_data'] ? news_ops::execSpecialize($row['news_data']) : (string)$row['news_data'];
     $onerow->expired = 0;
     if( ($row['end_time'] != '') && ($db->UnixTimeStamp($row['end_time']) < time()) ) $onerow->expired = 1;
@@ -182,14 +181,14 @@ if ($dbresult) {
     $onerow->status = $this->Lang($row['status']);
     if( $this->CheckPermission('Approve News') ) {
         if( $row['status'] == 'published' ) {
-            $onerow->approve_link = $this->CreateLink($id, 'approvearticle',
+            $onerow->approve_link = $this->CreateLink($id,'approvearticle',
                                                       $returnid,
-                                                      $admintheme->DisplayImage('icons/system/true.gif', $this->Lang('revert'),'','','systemicon'), array('approve'=>0,'articleid'=>$row['news_id']));
+                                                      $admintheme->DisplayImage('icons/system/true.gif',$this->Lang('revert'),'','','systemicon'),array('approve'=>0,'articleid'=>$row['news_id']));
         }
         else {
             $onerow->approve_link = $this->CreateLink($id,'approvearticle',
                                                       $returnid,
-                                                      $admintheme->DisplayImage('icons/system/false.gif', $this->Lang('approve'),'','','systemicon'), array('approve'=>1,'articleid'=>$row['news_id']));
+                                                      $admintheme->DisplayImage('icons/system/false.gif',$this->Lang('approve'),'','','systemicon'),array('approve'=>1,'articleid'=>$row['news_id']));
         }
     }
     $onerow->category = ($row['long_name']) ?: $row['news_category_name'];
@@ -197,13 +196,13 @@ if ($dbresult) {
     $onerow->rowclass = $rowclass;
 
     if( $this->CheckPermission('Modify News') ) {
-        $onerow->edit_url = $this->create_url($id, 'editarticle', $returnid,
+        $onerow->edit_url = $this->create_url($id,'editarticle',$returnid,
                                               array('articleid'=>$row['news_id']));
-        $onerow->editlink = $this->CreateLink($id, 'editarticle', $returnid,
-                                              $admintheme->DisplayImage('icons/system/edit.gif', $this->Lang('edit'),'','','systemicon'), array('articleid'=>$row['news_id']));
+        $onerow->editlink = $this->CreateLink($id,'editarticle',$returnid,
+                                              $admintheme->DisplayImage('icons/system/edit.gif',$this->Lang('edit'),'','','systemicon'),array('articleid'=>$row['news_id']));
     }
     if( $this->CheckPermission('Delete News') ) {
-        $onerow->delete_url = $this->create_url($id, 'deletearticle', $returnid, array('articleid'=>$row['news_id']));
+        $onerow->delete_url = $this->create_url($id,'deletearticle',$returnid,array('articleid'=>$row['news_id']));
     }
 
     $entryarray[] = $onerow;
@@ -212,14 +211,11 @@ if ($dbresult) {
   $dbresult->Close();
 }
 
-$tpl->assign('aitems', $entryarray);
-$tpl->assign('aitemcount', count($entryarray));
-
-$tpl->assign('startaform',$this->CreateFormStart($id,'defaultadmin',$returnid));
-$tpl->assign('endform',$this->CreateFormEnd());
+$tpl->assign('aitems',$entryarray);
+$tpl->assign('aitemcount',count($entryarray));
 
 if( $this->CheckPermission('Modify News') ) {
-    $tpl->assign('addlink', $this->CreateLink($id, 'addarticle', $returnid, $admintheme->DisplayImage('icons/system/newobject.gif', $this->Lang('addarticle'),'','','systemicon'), array(), '', false, false, '') .' '. $this->CreateLink($id, 'addarticle', $returnid, $this->Lang('addarticle'), array(), '', false, false, 'class="pageoptions"'));
+    $tpl->assign('addlink',$this->CreateLink($id,'addarticle',$returnid,$admintheme->DisplayImage('icons/system/newobject.gif',$this->Lang('addarticle'),'','','systemicon'),array(),'',false,false,'') .' '. $this->CreateLink($id,'addarticle',$returnid,$this->Lang('addarticle'),array(),'',false,false,'class="pageoptions"'));
 }
 $tpl->assign('can_add',$this->CheckPermission('Modify News'));
 $tpl->assign('submit_reassign',$this->CreateInputSubmit($id,'submit_reassign',$this->Lang('submit')));
@@ -236,9 +232,13 @@ $tpl->assign('filtertext',$this->Lang('title_filter'));
 $tpl->assign('statustext',$this->Lang('status'));
 $tpl->assign('startdatetext',$this->Lang('startdate'));
 $tpl->assign('enddatetext',$this->Lang('enddate'));
-$tpl->assign('titletext', $this->Lang('title'));
-$tpl->assign('postdatetext', $this->Lang('postdate'));
-$tpl->assign('categorytext', $this->Lang('category'));
+$tpl->assign('titletext',$this->Lang('title'));
+$tpl->assign('postdatetext',$this->Lang('postdate'));
+$tpl->assign('categorytext',$this->Lang('category'));
 
 $iconsurl = $config['admin_url'].'/themes/'.$admintheme->themeName.'/images/icons/system';
 $tpl->assign('iconurl',$iconsurl);
+
+$tpl->assign('securename',CMS_SECURE_PARAM_NAME);
+$tpl->assign('securekey',$_SESSION[CMS_USER_KEY]);
+$tpl->assign('endform',$this->CreateFormEnd());
