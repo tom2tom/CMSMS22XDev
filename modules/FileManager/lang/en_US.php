@@ -126,7 +126,7 @@ $lang['help_showhiddenfiles'] = '<p>When enabled files and directories whose nam
 $lang['help_showthumbnails'] = 'If enabled, the file list will display a thumbnail <em>(if one exists)</em> for all images.  If disabled, the system will attempt to display an icon representing the file type.';
 $lang['help']=<<<EOF
 <h3>What does this do?</h3>
-<p>This module provides your CMS Made Simple website with file management functions.</p>
+<p>This module provides file management functions for this CMS Made Simple website.</p>
 EOF;
 $lang['help_postrotate'] = <<<EOT
 <p>Options:</p>
