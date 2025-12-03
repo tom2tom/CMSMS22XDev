@@ -29,7 +29,7 @@ $(function() {
 <p class="pagetext"><label>{$mod->Lang('image')}:</label> {$filename}</p>
 <div class="pageoverflow">
   <p class="pageinput">
-    <img id="rotimg" src="{$image}" width="{$width}" height="{$height}">
+    <img id="rotimg" src="{$image}" alt="Image to rotate" width="{$width}" height="{$height}">
   </p>
 </div>
 {$startform}

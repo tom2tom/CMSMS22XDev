@@ -55,12 +55,12 @@
 	<div class="alert-head ui-corner-all {if $one->priority == '_high'}ui-state-error red{elseif $one->priority == '_normal'}ui-state-highlight orange{else}ui-state-highlightblue{/if}">
 	{$icon=$one->get_icon()}
 	{if $icon}
-		<img class="alert-icon ui-icon" alt="" src="{$icon}" title="{lang('remove_alert')}">
+		<img class="alert-icon ui-icon" alt="" src="{$icon}" alt="{lang('remove_alert')}" alt="{lang('remove_alert')}" title="{lang('remove_alert')}">
 	{else}
-		<span class="alert-icon ui-icon {if $one->priority != '_low'}ui-icon-alert{else}ui-icon-info{/if}" title="{lang('remove_alert')}"></span>
+		<span class="alert-icon ui-icon {if $one->priority != '_low'}ui-icon-alert{else}ui-icon-info{/if}" alt="{lang('remove_alert')}" title="{lang('remove_alert')}"></span>
 	{/if}
 		<span class="alert-title">{$one->get_title()|default:lang('alert')}</span>
-		<span class="alert-remove ui-icon ui-icon-close" title="{lang('remove_alert')}"></span>
+		<span class="alert-remove ui-icon ui-icon-close" title="{lang('remove_alert')}" role="button"></span>
 		<div class="alert-msg">{$one->get_message()}</div>
 	</div>
 	</li>

@@ -56,7 +56,7 @@ input.invalid { background-color: salmon; }
 {$formstart}
 <div>
   <div id="test1" class="startside" style="width:75%">
-    <img id="img" src="{$image}" alt="">
+    <img id="img" src="{$image}" alt="Image to pie">
   </div>
   <div class="startside last" style="position:relative;z-index:500;margin:1em">
     <div style="pageoverflow">
