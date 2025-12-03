@@ -329,10 +329,11 @@ final class filemanager_utils
     /**
      *
      * @param string $path CMS_ROOT_PATH-relative, maybe empty. Default ''
+     * @param string $sortby Optional sort-type 'name','size' etc with 'asc' or 'desc' suffix. Default ''
      *
      * @return array
      */
-    public static function get_file_list($path = '')//: array
+    public static function get_file_list($path = '',$sortby ='')//: array
     {
         if( !$path ) $path = self::get_cwd();
         $advancedmode = self::check_advanced_mode();
@@ -391,13 +392,6 @@ final class filemanager_utils
             // test for image
             $info['image'] = self::is_image_file($fullname);
 
-            if ($statinfo && function_exists('posix_getpwuid')) {
-                $userinfo = @posix_getpwuid($statinfo['uid']);
-                $info['fileowner'] = isset($userinfo['name']) ? $userinfo['name'] : $mod->Lang('unknown');
-            } else {
-                $info['fileowner'] = lang('n_a');
-            }
-
             $info['writable'] = is_writable($fullname);
             if ($statinfo) {
                 $mode = $statinfo['mode'];
@@ -414,12 +408,15 @@ final class filemanager_utils
         }
         closedir($dir);
 
-        if (!empty($_SESSION['FMnewsortby'])) {
-            $sortby = $_SESSION['FMnewsortby'];
+        if (!$sortby) {
+            if (!empty($_SESSION['FMsortby'])) {
+                $sortby = $_SESSION['FMsortby'];
+            }
+            else {
+                $sortby = 'nameasc';
+            }
         }
-        else {
-            $sortby = 'nameasc';
-        }
+
         usort($result, function ($a, $b) use ($sortby) {
             if ($a['name'] == '..') return -1;
             if ($b['name'] == '..') return 1;
@@ -429,7 +426,7 @@ final class filemanager_utils
             if ($a['dir'] xor $b['dir']) {
                 return ($a['dir']) ? -1 : 1;
             }
-            //TODO support sorting on mime, date
+
             switch($sortby) {
             case 'sizeasc':
                 if (!$a['dir'] || !$b['dir']) {
@@ -445,9 +442,27 @@ final class filemanager_utils
                 }
                 return strncasecmp($a['name'],$b['name'],strlen($a['name']));
 
-            case 'namedesc': return strncasecmp($b['name'],$a['name'],strlen($b['name']));
+            case 'datedasc':
+                $n = (int)($a['date'] - $b['date']);
+                return ($n !== 0) ? $n : strncasecmp($a['name'],$b['name'],strlen($a['name']));
 
-            default: return strncasecmp($a['name'],$b['name'],strlen($a['name']));
+            case 'datedesc':
+                $n = (int)($b['date'] - $a['date']);
+                return ($n !== 0) ? $n : strncasecmp($a['name'],$b['name'],strlen($a['name']));
+
+            case 'typeasc':
+                $n = strcasecmp($a['mime'], $b['mime']);
+                return ($n !== 0) ? $n : strncasecmp($a['name'],$b['name'],strlen($a['name']));
+
+            case 'typedesc':
+                $n = strcasecmp($b['mime'], $a['mime']);
+                return ($n !== 0) ? $n : strncasecmp($a['name'],$b['name'],strlen($a['name']));
+
+            case 'namedesc':
+                return strncasecmp($b['name'],$a['name'],strlen($b['name']));
+
+            default:
+                return strncasecmp($a['name'],$b['name'],strlen($a['name']));
             }
         });
         return $result;
