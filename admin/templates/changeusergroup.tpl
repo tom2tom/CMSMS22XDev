@@ -21,7 +21,7 @@
   <select name="groupsel" id="groupsel">
   {foreach $allgroups as $thisgroup}
     {if $thisgroup->id == $disp_group}
-    <option value="{$thisgroup->id}" selected="selected">{$thisgroup->name}</option>
+    <option value="{$thisgroup->id}" selected>{$thisgroup->name}</option>
     {else}
     <option value="{$thisgroup->id}">{$thisgroup->name}</option>
     {/if}
@@ -37,7 +37,8 @@
   <input type="hidden" name="submitted" value="1">
 </div>
 <div class="pageoptions">
-  {$submit} {$cancel}
+  <input type="submit" name="changegrp" value="{lang('submit')}">
+  <input type="submit" name="cancel" value="{lang('cancel')}">
 </div>
 <table class="pagetable" id="permtable">
   <thead>
@@ -89,7 +90,8 @@
 </table>
 {if count($users) > 8}
 <div class="pageoptions">
-  {$submit} {$cancel}
+  <input type="submit" name="changegrp" value="{lang('submit')}">
+  <input type="submit" name="cancel" value="{lang('cancel')}">
 </div>
 {/if}
 </form>
