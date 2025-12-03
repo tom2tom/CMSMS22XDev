@@ -166,7 +166,7 @@ final class FilePicker extends CMSModule implements FilePickerInterface
                         break;
                     case 'image':
                         $url = ($value[0] == '/' && $value[1] != '/') ? CMS_ROOT_URL . $value : $value;
-                        return "<img src=\"$url\" title=\"$blockName\">";
+                        return "<img src=\"$url\" alt=\"$blockName image\" title=\"$blockName\">";
                         break;
                 }
             }
