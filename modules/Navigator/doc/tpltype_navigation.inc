@@ -1,12 +1,3 @@
-<style type="text/css">
-	ul.helptext {
-	  list-style-type: disc;
-	  margin-left: 1em;
-	  margin-bottom: 1em;
-	}
-</style>
-
-
 <h2>Navigator menu template help</h2>
 
 <p>The Navigator template outputs an array of Nodes representing pages that match the criteria specified on the call to the Navigator module.  This is a nested array of nodes that should be displayed using a recursive algorithhm.</p>

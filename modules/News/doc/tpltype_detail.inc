@@ -1,11 +1,3 @@
-<style type="text/css">
-	ul.helptext {
-	  list-style-type: disc;
-	  margin-left: 1em;
-	  margin-bottom: 1em;
-	}
-</style>
-
 <h2>News module entry object reference:</h2>
 
 <p>The News module's detail view exports the following variables:</p>

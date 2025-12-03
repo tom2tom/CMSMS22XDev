@@ -1,11 +1,3 @@
-<style type="text/css">
-	ul.helptext {
-	  list-style-type: disc;
-	  margin-left: 1em;
-	  margin-bottom: 1em;
-	}
-</style>
-
 <h2>News summary template help</h2>
 
 <h3>Assigned Variables</h3>

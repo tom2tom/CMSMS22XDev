@@ -1,11 +1,3 @@
-<style type="text/css">
-	ul.helptext {
-	  list-style-type: disc;
-	  margin-left: 1em;
-	  margin-bottom: 1em;
-	}
-</style>
-
 <h2>News form template help</h2>
 
 <div class="information">Templates of this type are used by the fesubmit action of the News module. <strong>Note: This action is deprecated</strong>.</div>
