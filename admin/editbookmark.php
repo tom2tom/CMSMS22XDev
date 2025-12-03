@@ -47,7 +47,7 @@ if ($url) {
 		$url = str_replace('[SECURITYTAG]', $extsub, $url); // allow parsing
 	}
 
-	$res = cms_utils::validate_url($url, '!executable');
+	$res = cms_utils::validate_url($url, '!executable'); // aka '!'.CMSMS\FileType::TYPE_EXECUTABLE
 	if ($res !== true) {
 		$error .= '<li>'.$res.'</li>';
 		unset($_POST['editbookmark']);

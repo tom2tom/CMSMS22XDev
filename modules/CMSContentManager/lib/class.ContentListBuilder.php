@@ -581,6 +581,7 @@ final class ContentListBuilder
 
 	/**
 	 * Load all content that the user has access to.
+     * @return array page numeric ids (as strings)
 	 */
 	private function _load_editable_content()
 	{

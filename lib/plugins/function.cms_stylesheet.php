@@ -186,10 +186,10 @@ function smarty_function_cms_stylesheet($params, $smarty)
 				if (isset($params['media'])) {
 					if( !in_array($params['media'],$one->get_media_types()) ) continue;
 					$media_query = '';
-					$media_type = $params['media'];
+					$media_type = $params['media']; // possibly deprecated
 				} else {
 					$media_query = $one->get_media_query();
-					$media_type  = implode(',',$one->get_media_types());
+					$media_type  = implode(',',$one->get_media_types()); // possibly includes deprecated
 				}
 
 				$filename = 'stylesheet_'.hash($algo,'single'.$one->get_id().$use_https.$one->get_modified().$fnsuffix).'.css';
