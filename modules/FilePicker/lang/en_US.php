@@ -115,8 +115,9 @@ $lang['help'] = <<<EOT
 <p>Additionally, this module can be called directly via the <code>{cms_module module=FilePicker action=select name=string [profile=string] [type=string] [value=string]}</code> tag, but this is not recommended.   See the {cms_filepicker} tag for information about the type, and other parameters.</p>
 
 <h3>Content Block for Page Templates</h3>
-<p>This module also provides a content block to enable the FilePicker to be used in page templates. This can be used as an alternative to the {content_image} plugin.</p>
-<p><code>{content_module module=FilePicker block=string [profile=string]}</code></p>
+<p>This module also provides a content block to enable a file-picker to be used in page templates. This can, for example, be used as an alternative to the {content_image} plugin.</p>
+<p><code>{content_module module=FilePicker block=string [profile=string] [format=string]}</code></p>
+<p>By default the file-picker generates a site-root-url-relative urlpath. The optional format parameter allows that to be tailored when displaying the block. Recognised values are 'absolute', 'anchor' and 'image'. The latter two initiate creation of corresponding html elelements.</p>
 <p>The standard content_module plugin parameters of label, required, tab, priority and assign are also available.</p>
 
 <h3>Support</h3>
