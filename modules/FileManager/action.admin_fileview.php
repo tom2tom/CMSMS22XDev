@@ -24,31 +24,33 @@ $tpl = $smarty->createTemplate("module_file_tpl:$modname;filemanager.tpl", null,
 
 if( !empty($params['newsort']) ) {
   $sortby = $params['newsort'];
+  $_SESSION['FMsortby'] = $sortby;
 }
-elseif( !empty($_SESSION['FMnewsortby']) ) {
-  $sortby = $_SESSION['FMnewsortby'];
+elseif( !empty($_SESSION['FMsortby']) ) {
+  $sortby = $_SESSION['FMsortby'];
 }
 else {
-  $sortby = 'namedesc'; //hence start with nameasc
+  $sortby = 'nameasc';
+  $_SESSION['FMsortby'] = $sortby;
 }
-//TODO support sorting also on mime, date (here and backend)
-foreach( ['name','size'] as $prefix ) { //,'type','date'
+
+// sortable-column headings have a link
+foreach( ['name','size','type','date'] as $prefix ) {
   $titlelink = $this->Lang('file'.$prefix);
-  $sortparm = $prefix.'asc';
-  if( $sortby == $sortparm ) {
-    $sortparm = $newsort = $prefix.'desc';
+  if( $sortby == $prefix.'asc' ) {
     $titlelink .= ' &#9652;'; //up triangle (in some fonts)
+    $newsort = $prefix.'desc';
   }
   elseif( $sortby == $prefix.'desc' ) {
-    $newsort = $sortparm;
-    $titlelink .= ' &#9662;'; //down triangle
+    $titlelink .= ' &#9662;'; //down triangle (in some fonts)
+    $newsort = $prefix.'asc';
   }
   else {
     $titlelink .= ' &#9671;'; //diamond
+    $newsort = $prefix.'asc';
   }
   //sort-list links don't want most or all supplied $params
-  //TODO any of them need pass thru via link urls?
-  $titlelink = $this->CreateLink($id, 'defaultadmin', $returnid, $titlelink, ['newsort' => $sortparm]);
+  $titlelink = $this->CreateLink($id, 'defaultadmin', $returnid, $titlelink, ['newsort' => $newsort]);
   $tpl->assign('file'.$prefix.'text', $titlelink);
 }
 
@@ -62,7 +64,7 @@ $countfiles = 0;
 $countfilesize = 0;
 $files = [];
 $path = filemanager_utils::get_cwd();
-$filelist = filemanager_utils::get_file_list($path);
+$filelist = filemanager_utils::get_file_list($path,$sortby);
 
 for( $i = 0, $n = count($filelist); $i < $n; $i++ ) {
   $itmname = $filelist[$i]['name'];
@@ -150,7 +152,6 @@ for( $i = 0, $n = count($filelist); $i < $n; $i++ ) {
 
   $onerow->fileinfo = trim($filelist[$i]['fileinfo']);
   if( $itmname != '..' ) {
-    $onerow->fileowner = $filelist[$i]['fileowner'];
     $onerow->filepermissions = $filelist[$i]['permissions'];
   }
   $files[] = $onerow;
@@ -205,19 +206,12 @@ else {
   $counts = $this->Lang('emptydirectory');
 }
 $tpl->assign('countstext', $counts);
-$tpl->assign('filedatetext', $this->Lang('filedate')); //TODO make this or its column clickable for sorting
-$tpl->assign('fileinfotext', $this->Lang('fileinfo'));
-$tpl->assign('fileownertext', $this->Lang('fileowner'));
-$tpl->assign('filepermstext', $this->Lang('fileperms'));
-$tpl->assign('filesizetext', $this->Lang('filesize')); //TODO make this or its column clickable for sorting
-$tpl->assign('filetypetext', $this->Lang('mimetype')); //TODO make this or its column clickable for sorting
-$tpl->assign('actionstext', $this->Lang('actions'));
-//$tpl->assign('confirm_unpack', $this->Lang('confirm_unpack'));
+
 if( empty($params['noform']) ) {
   $tpl->assign('vformstart', $this->CreateFormStart($id, 'fileaction', $returnid, 'post', '', false, '', ['newsort' => $newsort, 'path' => $path]));
   $tpl->assign('formend', $this->CreateFormEnd());
   $url = $this->Create_url($id, 'admin_fileview', '', ['noform' => 1]);
-  $tpl->assign('refresh_url', str_replace('&amp;', '&', $url)); //.'&showtemplate=false'
+  $tpl->assign('refresh_url', str_replace('&amp;', '&', $url)); //.'&showtemplate=false' ?
   $url = $this->create_url($id, 'admin_fileview', '', ['viewfile' => 1]); //was 'ajax' ?
   $tpl->assign('viewfile_url', str_replace('&amp;', '&', $url));
   $tpl->display();
