@@ -194,13 +194,7 @@ if ($error != '') {
     echo $themeObject->ShowErrors('<ul class="error">' . $error . '</ul>');
 }
 
-$out      = array(-1 => lang('none'));
-$userlist = UserOperations::get_instance()->LoadUsers();
-
-foreach ($userlist as $one) {
-    $out[$one->id] = $one->username;
-}
-
+$selector = UserOperations::get_instance()->GenerateDropdown(0, 'copyusersettings', [], [-1=>lang('none')]);
 if ($assign_group_perm) {
     $groups = GroupOperations::get_instance()->LoadGroups();
     $smarty->assign('groups', $groups);
@@ -217,7 +211,7 @@ $smarty->assign('email', $email);
 $smarty->assign('copyusersettings', $copyusersettings);
 $smarty->assign('sel_groups', $sel_groups);
 $smarty->assign('my_userid', get_userid());
-$smarty->assign('users', $out);
+$smarty->assign('userselect', $selector);
 
 $smarty->display('adduser.tpl');
 

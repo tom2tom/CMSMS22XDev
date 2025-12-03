@@ -182,7 +182,7 @@ if (isset($_POST["submit"])) {
 
         if ($result) {
             if (isset($_POST['copyusersettings']) && $_POST['copyusersettings'] > 0) {
-                // copy user preferences from the template user to this user.
+                // copy user preferences from the specified user to this one
                 $prefs = cms_userprefs::get_all_for_user((int)$_POST['copyusersettings']);
                 if (is_array($prefs) && count($prefs)) {
                     cms_userprefs::remove_for_user($user_id);
@@ -230,14 +230,7 @@ include_once ('header.php');
 
 if (!empty($error)) echo $themeObject->ShowErrors('<ul class="error">' . $error . '</ul>');
 
-$out      = array(-1 => lang('none'));
-$userlist = UserOperations::get_instance()->LoadUsers();
-
-foreach ($userlist as $one) {
-    if ($one->id == $user_id) continue;
-    $out[$one->id] = $one->username;
-}
-
+$selector = UserOperations::get_instance()->GenerateDropdown(0, 'copyusersettings', [$user_id], [-1=>lang('none')]);
 if ($assign_group_perm && !$access_user) {
     $groups = GroupOperations::get_instance()->LoadGroups();
     $smarty->assign('groups', $groups);
@@ -255,7 +248,7 @@ $smarty->assign('tplmaster', $tplmaster);
 $smarty->assign('copyfromtemplate', $copyfromtemplate);
 $smarty->assign('access_user', $access_user);
 $smarty->assign('manage_users', $manage_users);
-$smarty->assign('users', $out);
+$smarty->assign('userselect', $selector);
 
 $smarty->display('edituser.tpl');
 
