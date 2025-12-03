@@ -58,7 +58,7 @@ class UserOperations
 	private $_saved_users = array();
 
 	/**
-	 * Get the reference to the only instance of this object
+	 * Get the singleton instance of this object
 	 *
 	 * @return UserOperations
 	 */
@@ -69,12 +69,11 @@ class UserOperations
 	}
 
 	/**
-	 * Gets a list of all users
+	 * Get a list of all or some backend users
 	 *
-	 * @param int $limit The maximum number of users to return
-	 * @param int $offset The offset
-	 * @returns array An array of User objects
-	 * @since 0.6.1
+	 * @param int $limit The maximum number of users to return Default 10000
+	 * @param int $offset The offset of the 1st returned user Default 0
+	 * @return array User objects ordered by account/username
 	 */
 	public function LoadUsers($limit = 10000,$offset = 0)
 	{
@@ -113,7 +112,7 @@ FROM ".CMS_DB_PREFIX."users ORDER BY username";
 	}
 
 	/**
-	 * Gets a list of all users in a given group
+	 * Get a list of all users in a given group
 	 *
 	 * @param mixed $groupid Group for the loaded users
 	 * @return array An array of User objects
@@ -153,7 +152,7 @@ WHERE g.group_id=? ORDER BY username";
 	}
 
 	/**
-	 * Loads a user by username.
+	 * Load a user by username.
 	 * Does not use a cache, so use sparingly.
 	 *
 	 * @param mixed $username Username to load
@@ -161,7 +160,6 @@ WHERE g.group_id=? ORDER BY username";
 	 * @param mixed $activeonly Only load the user if she/he is active. Default true,
 	 * @param mixed $adminaccessonly Only load the user if she/he has admin access. Default false,
 	 * @return mixed a populated User object | null
-	 * @since 0.6.1
 	 */
 	public function LoadUserByUsername($username, $password = '', $activeonly = true, $adminaccessonly = false)
 	{
@@ -214,11 +212,10 @@ WHERE g.group_id=? ORDER BY username";
 	}
 
 	/**
-	 * Loads a User corresponding to the specified user id.
+	 * Load a User corresponding to the specified user id.
 	 *
 	 * @param int|string|null $id numeric id of User to load
 	 * @return populated User object | null
-	 * @since 0.6.1
 	 */
 	public function LoadUserByID($id)
 	{
@@ -253,11 +250,10 @@ WHERE g.group_id=? ORDER BY username";
 	}
 
 	/**
-	 * Saves a new user to the database.
+	 * Save a new user in the database.
 	 *
 	 * @param mixed $user User object to save
 	 * @return mixed The new user id.  If it fails, it returns -1.
-	 * @since 0.6.1
 	 */
 	public function InsertUser($user)
 	{
@@ -279,9 +275,8 @@ WHERE g.group_id=? ORDER BY username";
 	}
 
 	/**
-	 * Updates an existing user in the database.
+	 * Update an existing user in the database.
 	 *
-	 * @since 0.6.1
 	 * @param mixed $user User object to save
 	 * @return mixed If successful, true.  If it fails, false.
 	 */
@@ -306,6 +301,7 @@ WHERE g.group_id=? ORDER BY username";
 	/**
 	 * Update the recorded password-hash for the specified user
 	 * @since 2.2.23F2
+	 *
 	 * @param int $id numeric identifier of the user
 	 * @param string $hash value to be recorded
 	 */
@@ -318,9 +314,8 @@ WHERE g.group_id=? ORDER BY username";
 	}
 
 	/**
-	 * Deletes an existing user from the database.
+	 * Delete an existing user from the database.
 	 *
-	 * @since 0.6.1
 	 * @param mixed $id Id of the user to delete
 	 * @returns mixed If successful, true.  If it fails, false.
 	 */
@@ -351,7 +346,6 @@ WHERE g.group_id=? ORDER BY username";
 	/**
 	 * Show the number of pages the given user's id owns.
 	 *
-	 * @since 0.6.1
 	 * @param mixed $id Id of the user to count
 	 * @return int Number of pages they own.  0 if any problems.
 	 */
@@ -374,10 +368,10 @@ WHERE g.group_id=? ORDER BY username";
 	}
 
 	/**
-	 * Generate an array of admin userids to usernames, suitable for use in a dropdown.
+	 * Generate a map of admin userids to usernames, suitable for use in a dropdown.
+	 * @since 2.2
 	 *
 	 * @return array
-	 * @since 2.2
 	 */
 	public function GetList()
 	{
@@ -394,22 +388,32 @@ WHERE g.group_id=? ORDER BY username";
 	/**
 	 * Generate an HTML select element containing a user list
 	 *
-	 * @deprecated
-	 * @param int $currentuserid
+	 * @param int $selectedid Value of an initially-selected option. Default 0 hence nothing selected.
 	 * @param string $name The HTML element name and id. Default 'ownerid'.
+	 * @param array $ignores Since 2.2.23F2 Ids of users to be omitted from the selector. Default [].
+	 * @param array $prepend Since 2.2.23F2 Selector-option(s) to be prepended e.g. [-1 => 'None'] or [[-9 => 'None'],...[0 => 'Custom']]
+     * @return string
 	 */
-	public function GenerateDropdown($currentuserid=0, $name='ownerid')
+	public function GenerateDropdown($selectedid=0, $name='ownerid', $ignores=[], $prepend=[])
 	{
 		$result = '';
 		$list = $this->GetList();
 		if( $list ) {
-			$result = '<select id="'.$name.'" name="'.$name.'">';
-			foreach( $list as $uid => $username ) {
-				$result .= '<option value="'.$uid.'"';
-				if( $uid == $currentuserid ) $result .= ' selected="selected"';
-				$result .= '>'.$username.'</option>';
+			if( $prepend ) {
+				$list = $prepend + $list;
 			}
-			$result .= '</select>';
+			$out = ["<select id=\"$name\" name=\"$name\">"];
+			foreach( $list as $uid => $username ) {
+				if( !$ignores || !in_array($uid,$ignores) ) {
+					$opt = "<option value=\"$uid\"";
+					if( $uid == $selectedid ) $opt .= ' selected';
+					$opt .= ">$username</option>";
+					$out[] = $opt;
+				}
+			}
+			$out[] = '</select>';
+			$out[] = '';
+			$result = implode("\n",$out);
 		}
 		return $result;
 	}
