@@ -1,16 +1,10 @@
 <div class="pagecontainer">
-
-{$theme->StartTabHeaders()}
-	{$theme->SetTabHeader('content',lang('sysmaintab_content'),isset($active_content))}
-	{$theme->SetTabHeader('database',lang('sysmaintab_database'),isset($active_database))}
-	{if isset($changelog)}
-		{$theme->SetTabHeader('changelog',lang('sysmaintab_changelog'),isset($active_changelog))}
-	{/if}
-{$theme->EndTabHeaders()}
-
-{$theme->StartTabContent()}
-
-	{$theme->StartTab('content')}
+	{tab_header name='content' label=lang('sysmaintab_content') active=$active_content}
+	{tab_header name='database' label=lang('sysmaintab_database') active=$active_database}
+{if !empty($changelog)}
+	{tab_header name='changelog' label=lang('sysmaintab_changelog') active=$active_changelog}
+{/if}
+	{tab_start name='content'}
 		<form action="{$formurl}" method="post">
 			<fieldset>
 				<legend>{lang('sysmain_cache_status')}&nbsp;</legend>
@@ -19,7 +13,7 @@
 						<label for="btnclear">{lang('clearcache')}:</label>
 					</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" id="btnclear" name="clearcache" data-ui-icon="ui-icon-minusthick" value="{lang('clear')}">
+						<input type="submit" id="btnclear" name="clearcache" data-ui-icon="ui-icon-minusthick" value="{lang('clear')}">
 					</p>
 				</div>
 			</fieldset>
@@ -27,15 +21,18 @@
 
 		<fieldset>
 			<legend>{lang('sysmain_content_status')}&nbsp;</legend>
+			<p>{lang('sysmain_pagesfound',$pagecount)}</p>
+		{if $invalidtypescount == 0 && $withoutaliascount == 0}
+			<p class="green"><strong>{lang('sysmain_nocontenterrors')}</strong></p>
+		{/if}
+			<br>
 			<form action="{$formurl}" method="post">
-				{lang('sysmain_pagesfound',$pagecount)}
-
 				<div class="pageoverflow">
 					<p class="pagetext">
 						<label for="btnhier">{lang('sysmain_updatehierarchy')}:</label>
 					</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" id="btnhier" name="updatehierarchy" data-ui-icon="ui-icon-gear" value="{lang('sysmain_update')}">
+						<input type="submit" id="btnhier" name="updatehierarchy" data-ui-icon="ui-icon-gear" value="{lang('sysmain_update')}">
 					</p>
 				</div>
 			</form>
@@ -46,49 +43,43 @@
 						<label for="btnurls">{lang('sysmain_updateurls')}:</label>
 					</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" id="btnurls" name="updateurls" data-ui-icon="ui-icon-gear" value="{lang('sysmain_update')}">
+						<input type="submit" id="btnurls" name="updateurls" data-ui-icon="ui-icon-gear" value="{lang('sysmain_update')}">
 					</p>
 				</div>
 			</form>
 
-			{if $withoutaliascount > 0}
-				<form action="{$formurl}" method="post" onsubmit="return confirm('{lang("sysmain_confirmfixaliases")|escape:"javascript"}');">
-					<div class="pageoverflow">
-						<p class="pagetext">{lang('sysmain_pagesmissinalias',$withoutaliascount)}:</p>
-						<p class="pageinput">
-							{foreach $pagesmissingalias as $page}
-								{*{$page.count}.*} {$page.content_name}<br>
-							{/foreach}
-							<br>
-							<input class="pagebutton" type="submit" name="addaliases" data-ui-icon="ui-icon-gear" value="{lang('sysmain_fixaliases')}">
-						</p>
-					</div>
-				</form>
-			{/if}
+		{if $withoutaliascount > 0}
+			<form action="{$formurl}" method="post" onsubmit="return confirm('{lang('sysmain_confirmfixaliases')|escape:'javascript'}');">
+				<div class="pageoverflow">
+					<p class="pagetext"><label>{lang('sysmain_pagesmissinalias',$withoutaliascount)}:</label></p>
+					<p class="pageinput">
+						{foreach $pagesmissingalias as $page}
+							{*{$page.count}.*} {$page.content_name}<br>
+						{/foreach}
+						<br>
+						<input type="submit" name="addaliases" data-ui-icon="ui-icon-gear" value="{lang('sysmain_fixaliases')}">
+					</p>
+				</div>
+			</form>
+		{/if}
 
-			{if $invalidtypescount > 0}
-				<form action="{$formurl}" method="post" onsubmit="return confirm('{lang("sysmain_confirmfixtypes")|escape:"javascript"}');">
-					<div class="pageoverflow">
-						<p class="pagetext">{lang('sysmain_pagesinvalidtypes',$invalidtypescount)}:</p>
-						<p class="pageinput">
-							{foreach $pageswithinvalidtype as $page}
-								{$page.content_name} <em>({$page.content_alias}) - {$page.type}</em><br>
-							{/foreach}
-							<br>
-							<input class="pagebutton" type="submit" name="fixtypes" data-ui-icon="ui-icon-gear" value="{lang('sysmain_fixtypes')|escape:'javascript'}">
-						</p>
-					</div>
-				</form>
-			{/if}
-
-			{if $invalidtypescount == 0 && $withoutaliascount == 0}
-				<p class="green"><strong>{lang('sysmain_nocontenterrors')}</strong></p>
-			{/if}
-
+		{if $invalidtypescount > 0}
+			<form action="{$formurl}" method="post" onsubmit="return confirm('{lang('sysmain_confirmfixtypes')|escape:'javascript'}');">
+				<div class="pageoverflow">
+					<p class="pagetext"><label>{lang('sysmain_pagesinvalidtypes',$invalidtypescount)}:</label></p>
+					<p class="pageinput">
+						{foreach $pageswithinvalidtype as $page}
+							{$page.content_name} <em>({$page.content_alias}) - {$page.type}</em><br>
+						{/foreach}
+						<br>
+						<input type="submit" name="fixtypes" data-ui-icon="ui-icon-gear" value="{lang('sysmain_fixtypes')|escape:'javascript'}">
+					</p>
+				</div>
+			</form>
+		{/if}
 		</fieldset>
-	{$theme->EndTab()}
 
-	{$theme->StartTab('database')}
+	{tab_start name='database'}
 		<form action="{$formurl}" method="post">
 			<fieldset>
 				<legend>{lang('sysmain_database_status')}</legend>
@@ -105,7 +96,7 @@
 						<label for="btntables">{lang('sysmain_optimizetables')}:</label>
 					</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" id="btntables" name="optimizeall" data-ui-icon="ui-icon-star" value="{lang('sysmain_optimize')}">
+						<input type="submit" id="btntables" name="optimizeall" data-ui-icon="ui-icon-star" value="{lang('sysmain_optimize')}">
 					</p>
 				</div>
 				<div class="pageoverflow">
@@ -113,20 +104,18 @@
 						<label for="btnrepair">{lang('sysmain_repairtables')}:</label>
 					</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" id="btnrepair" name="repairall" data-ui-icon="ui-icon-gear" value="{lang('sysmain_repair')}">
+						<input type="submit" id="btnrepair" name="repairall" data-ui-icon="ui-icon-gear" value="{lang('sysmain_repair')}">
 					</p>
 				</div>
 			</fieldset>
 		</form>
-	{$theme->EndTab()}
 
-	{if isset($changelog)}
-		{$theme->StartTab('changelog')}
-			<p class="file">{$changelogfilename}</p>
-			<div class="changelog">{$changelog}</div>
-		{$theme->EndTab()}
-	{/if}
-
-{$theme->EndTabContent()}
-
+{if !empty($changelog)}
+	{tab_start name='changelog'}
+		<p class="file">{$changelogfilename}</p>
+		<div class="changelog">
+			{$changelog}
+		</div>
+{/if}
+	{tab_end}
 </div>
