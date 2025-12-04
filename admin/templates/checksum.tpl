@@ -42,7 +42,7 @@
       <p class="information">{lang('info_validation')}</p>
       <div class="pageoverflow">
         <p class="pagetext"><label for="filesel">{lang('select_file')}</label></p>
-        <p class="pageinput"><input type="file" id="filesel" name="cksumdat" size="30" maxlength="255" accept=".dat"></p>
+        <p class="pageinput"><input type="file" id="filesel" name="cksumdat" size="30" accept=".dat"></p>
       </div>
       <br>
       <div class="pageoverflow">
