@@ -103,22 +103,24 @@ class Smarty_Parser extends Smarty_CMS
 	}
 
 	/* *
-	 * Takes unknown classes and loads plugin files for them
-	 * class name format: Smarty_PluginType_PluginName
-	 * plugin filename format: plugintype.pluginname.php
-	 *
+	 * Try to load the handler for the specified plugin or class
 	 * Note: this method overrides the one in the smarty base class and provides more testing.
 	 *
-	 * @param string $plugin_name    class plugin name to load
-	 * @param bool   $check          check if already loaded
-	 * @return string filepath of loaded file or empty
-	 */
-/*
+	 * @param string $plugin_name wanted callable or filename or classname
+	 *   callable format: Smarty_PluginType_PluginName (any case) e.g. smarty_function_fixit
+	 *   filename format: plugintype.pluginname.php e.g. function.fixit.php
+	 *   classname format: same as callable
+	 *   [Pp]lugintype may be 'internal' to identify a system-plugin class
+	 * @param bool   $check check if already loaded Default true
+	 *
+	 * @return string | bool filepath or true (if already loaded) or false (if not found)
+	 * @throws \SmartyException if format of $plugin_name is invalid
+	 * /
 	public function loadPlugin($plugin_name, $check = true)
 	{
-		// if function or class exists, exit silently (already loaded)
+		// if function or class exists, nothing more to do
 		if ($check && (is_callable($plugin_name) || class_exists($plugin_name, false))) {
-			return 'TODO some string';
+			return true;
 		}
 
 		// Plugin name is expected to be: Smarty_[Type]_[Name]
@@ -128,7 +130,7 @@ class Smarty_Parser extends Smarty_CMS
 		// count($_name_parts) < 3 === !isset($_name_parts[2])
 		if (!isset($_name_parts[2]) || strtolower($_name_parts[0]) !== 'smarty') {
 			throw new SmartyException("plugin {$plugin_name} is not a valid name format");
-			return ''; useless here
+			return false; useless here
 		}
 
 		// if type is "internal", get plugin from sysplugins
@@ -138,7 +140,7 @@ class Smarty_Parser extends Smarty_CMS
 				require_once($file);
 				return $file;
 			} else {
-				return '';
+				return false;
 			}
 		}
 
@@ -185,8 +187,8 @@ class Smarty_Parser extends Smarty_CMS
 				}
 			}
 		}
-		// no plugin loaded
-		return '';
+		// no match found
+		return false;
 	}
 */
 
