@@ -57,13 +57,13 @@ final class LoginOperations
 
     protected function _check_passhash($uid,$checksum)
     {
+        if( !$checksum ) return FALSE;
         // we already validated that payload was not corrupt
         // now we validate that the user is valid.
         $userops = \UserOperations::get_instance();
         $oneuser = $userops->LoadUserByID((int) $uid);
         if( !$oneuser ) return FALSE;
         if( !$oneuser->active ) return FALSE;
-        if( !$checksum ) return FALSE;
 
         return password_verify($oneuser->id.$oneuser->password.basename(__FILE__),(string)$checksum);
     }

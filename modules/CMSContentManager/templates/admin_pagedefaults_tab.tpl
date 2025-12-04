@@ -9,7 +9,7 @@
 	</p>
 </div>
 <div class="pageoverflow">
-	<p class="pagetext"><label for="contenttype">{$mod->Lang('prompt_pagedflt_contenttype')}</label>:&nbsp;{cms_help key2='help_pagedflt_contenttype' title=$mod->Lang('prompt_pagedflt_contenttype')}</p>
+	<p class="pagetext"><label for="contenttype">{$mod->Lang('prompt_pagedflt_contenttype')}:</label>&nbsp;{cms_help key2='help_pagedflt_contenttype' title=$mod->Lang('prompt_pagedflt_contenttype')}</p>
 	<p class="pageinput">
 		<select id="contenttype" name="{$actionid}contenttype">
 			{html_options options=$all_contenttypes selected=$page_prefs.contenttype}

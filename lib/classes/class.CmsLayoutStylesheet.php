@@ -678,7 +678,7 @@ VALUES (?,?,?,?,?,?,?)';
 	}
 
 	/**
-	 * Get any applicable lock for this stylesheet
+	 * Get the lock (if any) for this stylesheet
 	 * @see CmsLock
 	 *
 	 * @return mixed CmsLock | null
@@ -687,14 +687,14 @@ VALUES (?,?,?,?,?,?,?)';
 	{
 		$locks = self::get_locks();
 		$sid = $this->get_id();
-		return ( isset($locks[$sid]) ) ? $locks[$sid] : null;
+		return ( $locks && isset($locks[$sid]) ) ? $locks[$sid] : null;
 	}
 
 	/**
-	 * Test if this stylesheet currently has a lock.
+	 * Test if this stylesheet currently has a lock held by a user other
+	 * than the specified one
 	 *
-	 * @param int $userid since 2.2.22F2 Optional id of the current user
-	 *  A lock held by that user will be ignored
+	 * @param int $userid since 2.2.22F2 Optional user id Default 0
 	 * @return bool
 	 */
 	public function locked($userid = 0)
@@ -761,7 +761,7 @@ VALUES (?,?,?,?,?,?,?)';
 	}
 
 	/**
-	 * Load the specified stylesheet object
+	 * Get the specified stylesheet object
 	 *
 	 * @param mixed $a Either an integer stylesheet id, or a string stylesheet name.
 	 * @param bool $force  @since 2.2.21F2 Whether to always re-generate the stylesheet object, ignoring any cache. Default false.
@@ -885,25 +885,20 @@ VALUES (?,?,?,?,?,?,?)';
 	}
 
 	/**
-	 * Load all stylesheet objects
+	 * Get all stylesheets
 	 *
-	 * @param bool $as_list a flag indicating the output format
-	 * @return mixed If $as_list is true then the output will be an associated array
-	 *  of stylesheet id and stylesheet name suitable for use in an html select element.
-	 *  Otherwise, an array of CmsLayoutStylesheet objects is returned
+	 * @param bool $as_names Flag indicating the wanted output format. Default false.
+	 * @return array If $as_names is true then the array will be a map of
+	 *  stylesheet ids to names, suitable for use in an html select element.
+	 *  Otherwise, a map of ids to CmsLayoutStylesheet objects.
 	 */
-	public static function get_all($as_list = FALSE)
+	public static function get_all($as_names = FALSE)
 	{
 		$db = CmsApp::get_instance()->GetDb();
 
-		if( $as_list ) {
-			$out = array();
-			$query = 'SELECT id,name FROM '.CMS_DB_PREFIX.self::TABLENAME.' ORDER BY modified DESC';
-			$dbr = $db->GetArray($query);
-			foreach( $dbr as $row ) {
-				$out[$row['id']] = $row['name'];
-			}
-			return $out;
+		if( $as_names ) {
+			$query = 'SELECT id,name FROM '.CMS_DB_PREFIX.self::TABLENAME.' ORDER BY name';
+			return $db->GetAssoc($query);
 		}
 		else {
 			$query = 'SELECT id FROM '.CMS_DB_PREFIX.self::TABLENAME.' ORDER BY modified DESC';
@@ -911,7 +906,6 @@ VALUES (?,?,?,?,?,?,?)';
 			return self::load_bulk($ids,FALSE);
 		}
 	}
-
 
 	/**
 	 * Test if the specific stylesheet (by name or id) is loaded

@@ -216,11 +216,9 @@ class OneElevenTheme extends CmsAdminThemeBase
 		// is the website set down for maintenance?
 		if (get_site_preference('enablesitedownmessage') == '1') { $smarty->assign('is_sitedown', 'true'); }
 
-		$_contents = $smarty->fetch('topcontent.tpl');
+		$smarty->display('topcontent.tpl');
 		$smarty->template_dir = $otd;
-		echo $_contents;
 	}
-
 
 	public function do_login($params) {
 //		$config = cms_config::get_instance();

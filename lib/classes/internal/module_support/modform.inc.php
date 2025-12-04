@@ -443,8 +443,8 @@ function cms_module_CreateInputSubmit($modinstance, $id, $name, $value='', $addt
   else {
     $text .= '"submit"';
   }
-  if ($confirmtext != '' ) $text .= ' onclick="return confirm(\''.$confirmtext.'\');"';
-  if ($addttext != '') $text .= ' '.$addttext;
+  if ($confirmtext) $text .= ' onclick="return confirm(\''.$confirmtext.'\');"';
+  if ($addttext) $text .= ' '.$addttext;
 
   $text .= '>';
   return $text . "\n";
@@ -459,7 +459,7 @@ function cms_module_CreateInputReset($modinstance, $id, $name, $value='Reset', $
   $name = cms_htmlentities($name);
 
   $text = '<input type="reset" class="cms_reset" name="'.$id.$name.'" value="'.$value.'"';
-  if ($addttext != '') $text .= ' '.$addttext;
+  if ($addttext) $text .= ' '.$addttext;
   $text .= '>';
   return $text . "\n";
 }
@@ -467,13 +467,13 @@ function cms_module_CreateInputReset($modinstance, $id, $name, $value='Reset', $
 /**
  * @access private
  */
-function cms_module_CreateFileUploadInput($modinstance, $id, $name, $addttext='', $size='10', $maxlength='255')
+function cms_module_CreateFileUploadInput($modinstance, $id, $name, $addttext='', $size='10')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
 
-  $text = '<input type="file" class="cms_browse" name="'.$id.$name.'" size="'.$size.'" maxlength="'.$maxlength.'"';
-  if ($addttext != '') $text .= ' '.$addttext;
+  $text = '<input type="file" class="cms_browse" name="'.$id.$name.'" size="'.$size.'"';
+  if ($addttext) $text .= ' '.$addttext;
   $text .= '>';
   return $text . "\n";
 }
@@ -490,19 +490,19 @@ function cms_module_CreateInputDropdown($modinstance, $id, $name, $items, $selec
 
   $text = '<select class="cms_dropdown" name="'.$id.$name.'"';
   if( $addttext ) $text .= ' ' . $addttext;
-  $text .= '>';
+  $text .= ">\n";
   $count = 0;
   if( is_array($items) && count($items) > 0 ) {
     foreach( $items as $key=>$value ) {
       $text .= '<option value="'.$value.'"';
-      if( $selectedindex == $count || $selectedvalue == $value ) $text .= ' ' . 'selected="selected"';
+      if( $selectedindex == $count || $selectedvalue == $value ) $text .= ' selected';
       $text .= '>';
       $text .= $key;
-      $text .= '</option>';
+      $text .= "</option>\n";
       $count++;
     }
   }
-  $text .= '</select>'."\n";
+  $text .= "</select>\n";
 
   return $text;
 }
@@ -552,21 +552,21 @@ function cms_module_CreateInputSelectList($modinstance, $id, $name, $items, $sel
 
   if( strstr($name,'[]') === FALSE && $multiple ) $name.='[]';
   $text = '<select class="cms_select" name="'.$id.$name.'"';
-  if ($addttext != '') $text .= ' ' . $addttext;
-  if( $multiple ) $text .= ' multiple ';
-  $text .= 'size="'.$size.'">';
+  if( $addttext ) $text .= ' ' . $addttext;
+  if( $multiple ) $text .= ' multiple';
+  $text .= ' size="'.$size."\">\n";
   $count = 0;
   foreach( $items as $key=>$value ) {
     $value = cms_htmlentities($value);
 
     $text .= '<option value="'.$value.'"';
-    if( is_array($selecteditems) && in_array($value, $selecteditems) ) $text .= ' ' . 'selected="selected"';
+    if( is_array($selecteditems) && in_array($value, $selecteditems) ) $text .= ' selected';
     $text .= '>';
     $text .= $key;
-    $text .= '</option>';
+    $text .= "</option>\n";
     $count++;
   }
-  $text .= '</select>'."\n";
+  $text .= "</select>\n";
 
   return $text;
 }

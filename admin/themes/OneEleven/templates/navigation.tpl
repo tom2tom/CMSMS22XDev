@@ -7,7 +7,7 @@
 {/if}
 {foreach $nav as $navitem}
 	<li class="nav{if !isset($navitem.system) && (isset($navitem.module) || isset($navitem.firstmodule))} module{/if}{if !empty($navitem.selected) || (isset($smarty.get.section) && $smarty.get.section == $navitem.name|lower)} current{/if}">
-		<a href="{$navitem.url}" class="{$navitem.name|lower}{if isset($navitem.children)} parent{/if}"{if isset($navitem.target)} target="_blank"{/if} title="{if !empty($navitem.description)}{$navitem.description|adjust:'strip_tags'}{else}{$navitem.title|adjust:'strip_tags'}{/if}"{if substr($navitem.url,0,6) == 'logout' && isset($is_sitedown)} onclick="return confirm('{lang("maintenance_warning")|escape:"javascript"}');"{/if}>
+		<a href="{$navitem.url}" class="{$navitem.name|lower}{if isset($navitem.children)} parent{/if}"{if isset($navitem.target)} target="_blank"{/if} title="{if !empty($navitem.description)}{$navitem.description|adjust:'strip_tags'}{else}{$navitem.title|adjust:'strip_tags'}{/if}"{if (isset($is_sitedown) && strncmp($navitem.url,'logout',6) == 0)} onclick="return confirm('{lang('maintenance_warning')|escape:'javascript'}');"{/if}>
 			{$navitem.title}
 		</a>
 	{if $depth == '0'}

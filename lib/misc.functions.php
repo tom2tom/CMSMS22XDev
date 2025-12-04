@@ -1307,16 +1307,17 @@ function cms_to_bool($val)
  * @param string $exclude A comma separated list of script names or aliases to exclude.
  * @param bool $ssl Force use of the ssl_url for the root url to necessary scripts.
  * @param bool $cdn Force the use of a CDN url for the libraries if one is known
- * @param string  $append A comma separated list of library URLS to the output
- * @param string  $custom_root A custom root URL for all scripts (when using local mode).  If this is spefied the $ssl param will be ignored.
+ * @param string $append A comma separated list of library URLS to the output
+ * @param string $custom_root A custom root URL for all scripts (when using local mode).
+ *   If this is specified the $ssl param will be ignored.
  * @param bool $include_css Optionally output stylesheet tags for the included javascript libraries.
  */
 function cms_get_jquery($exclude = '',$ssl = false,$cdn = false,$append = '',$custom_root = '',$include_css = true)
 {
     $config = cms_config::get_instance();
-    $base_url = $config->smart_root_url(); //TODO deprecated since 2.2
+    $base_url = $config->smart_root_url(); //TODO deprecated since 2.2 use CMS_ROOT_URL
     if( $ssl ) $base_url = $config['ssl_url']; //TODO deprecated since 2.2
-    $basePath = ($custom_root != '') ? trim($custom_root,'/') : $base_url;
+    $basePath = ($custom_root) ? trim($custom_root,'/') : $base_url;
 
     $scripts = array();
     // Scripts to include NOTE keep {cms_jquery} tag help reconciled with the following
@@ -1329,7 +1330,7 @@ function cms_get_jquery($exclude = '',$ssl = false,$cdn = false,$append = '',$cu
                                 'local'=>$basePath.'/lib/jquery/js/jquery-ui-1.13.3.custom.min.js',
                                 'aliases'=>array('jquery-ui.min.js','ui'),
                                 'css_cdn'=>'https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.3/jquery-ui.min.css',
-    //                              'css_sri'=>'',
+//                              'css_sri'=>'',
                                 'css'=>$basePath.'/lib/jquery/css/smoothness/jquery-ui-1.13.3.custom.min.css');
     $scripts['nestedSortable'] = array('local'=>$basePath.'/lib/jquery/js/jquery.mjs.nestedSortable.min.js');
     //TODO Use native JSON.stringify (browsers since 2009)
