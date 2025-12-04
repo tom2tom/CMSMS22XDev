@@ -63,31 +63,8 @@ try {
         echo $this->ShowErrors($e->GetMessage());
     }
 
-    $modname = $this->GetName();
-    $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_edit_design.tpl",null,$modname,$smarty);
-
-    $templates = CmsLayoutTemplate::get_editable_templates(get_userid());
-    if( $templates ) {
-        usort($templates,function($a,$b) {
-                return strcasecmp($a->get_name(),$b->get_name());
-            });
-        $tpl->assign('all_templates',$templates);
-    }
-
-    $stylesheets = CmsLayoutStylesheet::get_all();
-    if( $stylesheets ) {
-        usort($stylesheets,function($a,$b) {
-                return strcasecmp($a->get_name(),$b->get_name());
-            });
-        $out = [];
-        $out2 = [];
-        for( $i = 0,$n = count($stylesheets); $i < $n; $i++ ) {
-            $out[$stylesheets[$i]->get_id()] = $stylesheets[$i]->get_name();
-            $out2[$stylesheets[$i]->get_id()] = $stylesheets[$i];
-        }
-        $tpl->assign('list_stylesheets',$out);
-        $tpl->assign('all_stylesheets',$out2);
-    }
+    $templates = CmsLayoutTemplate::get_all(true); // no editing here, so NOT get_editable_templates(get_userid()) 
+    $stylesheets = CmsLayoutStylesheet::get_all(true);
 
     if( $design->get_id() > 0 ) {
         CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('edit_design').': '.$design->get_name()." ({$design->get_id()})");
@@ -96,10 +73,17 @@ try {
         CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('new_design'));
     }
 
+    $modname = $this->GetName();
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_edit_design.tpl",null,$modname,$smarty);
+
+    $base_url = $this->GetModuleURLPath();
+    $tpl->assign('base_url',$base_url);
+    $tpl->assign('all_templates',$templates);
+    $tpl->assign('all_stylesheets',$stylesheets);
+    $tpl->assign('design',$design);
     $tpl->assign('manage_stylesheets',$this->CheckPermission('Manage Stylesheets'));
     $tpl->assign('manage_templates',$this->CheckPermission('Modify Templates'));
-    $tpl->assign('design',$design);
-
+    $tpl->assign('icon_delete',$base_url.'/icons/delete.png');
     $tpl->display();
 }
 catch( CmsException $e ) {
@@ -107,7 +91,4 @@ catch( CmsException $e ) {
     $this->RedirectToAdminTab();
 }
 
-#
-# EOF
-#
 ?>
