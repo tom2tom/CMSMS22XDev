@@ -1,3 +1,4 @@
+{if $manageaccount || $managesettings}
 <script>
 $(function() {
   $('.helpicon').on('click',function() {
@@ -6,18 +7,28 @@ $(function() {
   });
 });
 </script>
-
+{/if}
 <div class="pagecontainer">
-{$tab_start}
-
+{if $manageaccount && $managesettings}
 {if $manageaccount}
-  {$maintab_start}
+{tab_header name='main' label=lang('useraccount') active=$tab}
+{/if}
+{if $managesettings}
+{tab_header name='settings' label=lang('usersettings') active=$tab}
+{/if}
+{/if}
+{if $manageaccount}
+{if $managesettings}
+{tab_start name='main'}
+{else}
+<h3>{lang('useraccount')}</h3>
+{/if}
   <form method="post" action="{$formurl}">
-    <input type="hidden" name="active_tab" value="maintab">
+    <input type="hidden" name="active_tab" value="main">
     <div class="pageoverflow">
       <div class="pageinput">
-        <input class="pagebutton" type="submit" name="submit_account" value="{lang('submit')}">
-        <input class="pagebutton" type="submit" name="cancel" value="{lang('cancel')}">
+        <input type="submit" name="submit_account" value="{lang('submit')}">
+        <input type="submit" name="cancel" value="{lang('cancel')}">
       </div>
     </div>
 
@@ -51,21 +62,23 @@ $(function() {
       <p class="pageinput"><input type="text" id="email" name="email" size="40" maxlength="255" value="{$userobj->email}" class="standard"></p>
     </div>
   </form>
-  {$tab_end}
 {/if}
-
 {if $managesettings}
-{$advancedtab_start}
+{if $manageaccount}
+{tab_start name='settings'}
+{else}
+<h3>{lang('usersettings')}</h3>
+{/if}
   <form method="post" action="{$formurl}">
-    <div class="invisible">
-      <input type="hidden" name="active_tab" value="advtab">
+    <div class="hidden">
+      <input type="hidden" name="active_tab" value="settings">
       <input type="hidden" name="edituserprefs" value="true">
       <input type="hidden" name="old_default_cms_lang" value="{$old_default_cms_lang}">
     </div>
     <div class="pageoverflow">
       <p class="pageinput">
-        <input type="submit" name="submit_prefs" value="{lang('submit')}" class="pagebutton">
-        <input type="submit" name="cancel" value="{lang('cancel')}" class="pagebutton">
+        <input type="submit" name="submit_prefs" value="{lang('submit')}">
+        <input type="submit" name="cancel" value="{lang('cancel')}">
       </p>
     </div>
     <fieldset>
@@ -112,14 +125,14 @@ $(function() {
           {$opts['menutext']=lang('menutext')}
           {$opts['title']=lang('title')}
           <select id="ce_navdisplay" name="ce_navdisplay">
-          {html_options options=$opts selected=$ce_navdisplay}
+            {html_options options=$opts selected=$ce_navdisplay}
           </select>
         </p>
       </div>
 
       <div class="pageoverflow">
-        <p class="pagetext"><label for="parent_id">{lang('defaultparentpage')}:</label>&nbsp;{cms_help key2='help_myaccount_dfltparent' title=lang('defaultparentpage')}</p>
-        <p class="pageinput" id="parent_id">{$default_parent}</p>
+        <p class="pagetext"><label for="cms_hierdropdown1_0">{lang('defaultparentpage')}:</label>&nbsp;{cms_help key2='help_myaccount_dfltparent' title=lang('defaultparentpage')}</p>
+        <p class="pageinput">{$default_parent}</p>
       </div>
 
       <div class="pageoverflow">
@@ -141,7 +154,6 @@ $(function() {
           </select>
         </p>
       </div>
-
 {/if}
       <div class="pageoverflow">
         <p class="pagetext"><label for="homepage">{lang('homepage')}:</label>&nbsp;{cms_help key2='help_myaccount_homepage' title=lang('homepage')}</p>
@@ -164,15 +176,16 @@ $(function() {
     </fieldset>
 
     <div class="pageoverflow">
-      <p class="pageinput">
-        <input type="submit" name="submit_prefs" value="{lang('submit')}" class="pagebutton">
-        <input type="submit" name="cancel" value="{lang('cancel')}" class="pagebutton">
-      </p>
+      <div class="pageinput">
+        <input type="submit" name="submit_prefs" value="{lang('submit')}">
+        <input type="submit" name="cancel" value="{lang('cancel')}">
+      </div>
     </div>
   </form>
-
-{$tab_end}
 {/if}
-
-{$tabs_end}
+{if $manageaccount || $managesettings}
+{tab_end}
+{else}
+<p class="information">Nothing can be done here</p>
+{/if}
 </div>
