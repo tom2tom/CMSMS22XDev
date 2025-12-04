@@ -19,7 +19,7 @@
 
 use CMSMS\HookManager;
 
-/**
+/*
  * Init variables / objects
  */
 
@@ -29,11 +29,11 @@ $CMS_ADMIN_PAGE = 1;
 //$CMS_TOP_MENU = 'admin';
 //$CMS_ADMIN_TITLE = 'myaccount';
 
-require_once ("../lib/include.php"); // might change the password recorded in $_POST[]
+require_once '../lib/include.php'; // might change the password recorded in $_POST[]
 check_login();
 
 $urlext = '?' . CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY];
-if( isset($_POST["cancel"]) ) {
+if( isset($_POST['cancel']) ) {
   redirect('index.php' . $urlext . '&section=usersgroups');
 }
 $userid = get_userid(); // Also checks login - again!
@@ -47,7 +47,7 @@ $db = cmsms()->GetDb();
 $error = '';
 $message = '';
 
-/**
+/*
  * Get preferences
  */
 $wysiwyg = cms_userprefs::get_for_user($userid, 'wysiwyg');
@@ -65,19 +65,19 @@ $default_parent = cms_userprefs::get_for_user($userid, 'default_parent', -2);
 $homepage = cms_userprefs::get_for_user($userid, 'homepage');
 $hide_help_links = cms_userprefs::get_for_user($userid, 'hide_help_links', 0);
 
-/**
+/*
  * Check tab
  */
 $tab = '';
-if( isset($_POST['active_tab']) ) $tab = trim(cleanValue($_POST['active_tab']));
+if( isset($_POST['active_tab']) ) { $tab = trim(cleanValue($_POST['active_tab'])); }
 
-/**
+/*
  * Submit account
  *
  * NOTE: assumes that we successfully acquired the user object.
  */
 if (isset($_POST['submit_account']) && check_permission($userid,'Manage My Account')) {
-  // Collect params
+  // collect params
   $username    = '';
   $password    = '';
   $passwordagain = '';
@@ -139,17 +139,17 @@ if (isset($_POST['submit_account']) && check_permission($userid,'Manage My Accou
 
     if ($result) {
       // put mention into the admin log
-        audit($userid, 'Admin user', "Edited: $userobj->username");
-        HookManager::do_hook('Core::EditUserPost', [ 'user'=>$userobj ]);
-        $message = lang('accountupdated');
+      audit($userid, 'Admin user', "Edited: $userobj->username");
+      HookManager::do_hook('Core::EditUserPost', [ 'user'=>$userobj ]);
+      $message = lang('accountupdated');
     } else {
-        // throw exception? update just failed.
+      // throw? update just failed
     }
   }
-} // end of account submit
+}
 
-/**
- * Submit prefs
+/*
+ * Record submitted prefs
  */
 if (isset($_POST['submit_prefs']) && check_permission($userid,'Manage My Settings')) {
   // Get values from request and drive em to variables
@@ -189,13 +189,12 @@ if (isset($_POST['submit_prefs']) && check_permission($userid,'Manage My Setting
   audit($userid, 'Admin user', "Edited: $userobj->username");
   $message = lang('prefsupdated');
   cmsms()->clear_cached_files();
-} // end of prefs submit
+}
 
-/**
+/*
  * Build page
  */
-
-include_once "header.php";
+require_once 'header.php';
 
 if ($error) {
   $themeObject->ShowErrors($error);
@@ -204,83 +203,68 @@ if ($message) {
   $themeObject->ShowMessage($message);
 }
 
-$smarty = Smarty_CMS::get_instance();
-$smarty->assign('SECURE_PARAM_NAME', CMS_SECURE_PARAM_NAME); // assigned in include.php?
-$smarty->assign('CMS_USER_KEY', $_SESSION[CMS_USER_KEY]); // assigned in include.php?
+$tpl = $smarty->createTemplate('myaccount.tpl', null, null, $smarty, false);
+
+$tpl->assign('SECURE_PARAM_NAME', CMS_SECURE_PARAM_NAME); // defined in include.php?
+$tpl->assign('CMS_USER_KEY', $_SESSION[CMS_USER_KEY]); // set in include.php?
+$tpl->assign('tab', $tab);
 
 $contentops = cmsms()->GetContentOperations();
-// Html editor
+// html editor
 $tmp = module_meta::get_instance()->module_list_by_capability(CmsCoreCapabilities::WYSIWYG_MODULE);
 $tmp2 = array(-1 => lang('none'));
 for ($i = 0; $i < count($tmp); $i++) {
   $tmp2[$tmp[$i]] = $tmp[$i];
 }
 
-$smarty -> assign('wysiwyg_opts', $tmp2);
+$tpl->assign('wysiwyg_opts', $tmp2);
 
-// Syntaxhighlight editor
+// syntax highlight editor
 $tmp = module_meta::get_instance()->module_list_by_capability(CmsCoreCapabilities::SYNTAX_MODULE);
 $tmp2 = array(-1 => lang('none'));
 for ($i = 0; $i < count($tmp); $i++) {
   $tmp2[$tmp[$i]] = $tmp[$i];
 }
 
-$smarty->assign('syntax_opts', $tmp2);
+$tpl->assign('syntax_opts', $tmp2);
 
-// Admin themes
+// admin themes
 $allthemes = (array)CmsAdminThemeBase::GetAvailableThemes();
 
-// Modules
+// modules
 $allmodules = ModuleOperations::get_instance()->GetInstalledModules();
 $modules = array();
 foreach ((array)$allmodules as $onemodule) {
   $modules[$onemodule] = $onemodule;
 }
 
-// Tabs
-$out = $themeObject->StartTabHeaders();
-if( check_permission($userid,'Manage My Account') ) {
-  $out .= $themeObject->SetTabHeader('maintab',lang('useraccount'), ('maintab' == $tab)?true:false);
-}
-if( check_permission($userid,'Manage My Settings') ) {
-  $out .= $themeObject->SetTabHeader('advancedtab',lang('userprefs'), ('advtab' == $tab)?true:false);
-}
-$out .= $themeObject->EndTabHeaders() . $themeObject->StartTabContent();
-$smarty->assign('tab_start',$out);
-
-$smarty->assign('tabs_end', $themeObject->EndTabContent());
-$smarty->assign('maintab_start', $themeObject->StartTab("maintab"));
-$smarty->assign('advancedtab_start', $themeObject->StartTab("advancedtab"));
-$smarty->assign('tab_end', $themeObject->EndTab());
-
-// Prefs
-$smarty->assign('module_opts', $modules);
-$smarty->assign('wysiwyg', $wysiwyg);
-$smarty->assign('ce_navdisplay', $ce_navdisplay);
-$smarty->assign('syntaxhighlighter', $syntaxhighlighter);
-$smarty->assign('language_opts', get_language_list());
-$smarty->assign('default_cms_language', $default_cms_language);
-$smarty->assign('old_default_cms_lang', $old_default_cms_lang);
-$smarty->assign('bookmarks', $bookmarks);
+$tpl->assign('module_opts', $modules);
+$tpl->assign('wysiwyg', $wysiwyg);
+$tpl->assign('ce_navdisplay', $ce_navdisplay);
+$tpl->assign('syntaxhighlighter', $syntaxhighlighter);
+$tpl->assign('language_opts', get_language_list());
+$tpl->assign('default_cms_language', $default_cms_language);
+$tpl->assign('old_default_cms_lang', $old_default_cms_lang);
+$tpl->assign('bookmarks', $bookmarks);
 if( count($allthemes) > 1 ) {
-  $smarty->assign('themes_opts', $allthemes);
-  $smarty->assign('admintheme', $admintheme);
+  $tpl->assign('themes_opts', $allthemes);
+  $tpl->assign('admintheme', $admintheme);
 }
-$smarty->assign('hide_help_links', $hide_help_links);
-$smarty->assign('indent', $indent);
-$smarty->assign('paging', $paging);
-$smarty->assign('date_format_string', $date_format_string);
-$smarty->assign('default_parent', $contentops->CreateHierarchyDropdown(0, $default_parent, 'parent_id', false, true));
-$smarty->assign('homepage', $themeObject->GetAdminPageDropdown('homepage', $homepage, 'homepage'));
-$smarty->assign('pagelimit_opts', [10 => 10, 20 => 20, 50 => 50, 100 => 100]);
-$smarty->assign('backurl', $themeObject -> backUrl());
-$smarty->assign('formurl', $thisurl);
-$smarty->assign('userobj', $userobj);
-$smarty->assign('manageaccount', check_permission($userid,'Manage My Account'));
-$smarty->assign('managesettings', check_permission($userid,'Manage My Settings'));
+$tpl->assign('hide_help_links', $hide_help_links);
+$tpl->assign('indent', $indent);
+$tpl->assign('paging', $paging);
+$tpl->assign('date_format_string', $date_format_string);
+$tpl->assign('default_parent', $contentops->CreateHierarchyDropdown(0, $default_parent, 'parent_id', false, true));
+$tpl->assign('homepage', $themeObject->GetAdminPageDropdown('homepage', $homepage, 'homepage'));
+$tpl->assign('pagelimit_opts', [10 => 10, 20 => 20, 50 => 50, 100 => 100]);
+$tpl->assign('backurl', $themeObject->backUrl());
+$tpl->assign('formurl', $thisurl);
+$tpl->assign('userobj', $userobj);
+$tpl->assign('manageaccount', check_permission($userid,'Manage My Account'));
+$tpl->assign('managesettings', check_permission($userid,'Manage My Settings'));
 
-// Output
-$smarty->display('myaccount.tpl');
-include_once ("footer.php");
+$tpl->display();
+
+require_once 'footer.php';
 
 ?>
