@@ -17,7 +17,7 @@
     </div>
     <div class="pageoverflow">
       <p class="pagetext"><label for="txtdesc">{lang('description')}:</label></p>
-      <p class="pageinput"><input type="text" id="textdesc" name="description" maxlength="255" size="80" value="{$description}"></p>
+      <p class="pageinput"><input type="text" id="txtdesc" name="description" maxlength="255" size="80" value="{$description}"></p>
     </div>
     <div class="pageoverflow">
       <input type="hidden" name="active" value="0">
@@ -26,8 +26,8 @@
     </div>
     <br>
     <div class="pageinput">
-      <input type="submit" class="pagebutton" name="editroup" value="{lang('submit')}">
-      <input type="submit" class="pagebutton" name="cancel" value="{lang('cancel')}">
+      <input type="submit" name="editroup" value="{lang('submit')}">
+      <input type="submit" name="cancel" value="{lang('cancel')}">
     </div>
   </form>
 </div>
