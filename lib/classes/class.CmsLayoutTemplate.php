@@ -778,7 +778,7 @@ VALUES (?,?,?,?,?,?,?,?,?,?)';
 	}
 
 	/**
-	 * Get any applicable lock for this template object
+	 * Get the lock (if any) for this template object
 	 * @see CmsLock
 	 *
 	 * @return mixed CmsLock | null
@@ -787,14 +787,14 @@ VALUES (?,?,?,?,?,?,?,?,?,?)';
 	{
 		$locks = self::get_locks();
 		$tid = $this->get_id();
-		return ( isset($locks[$tid]) ) ? $locks[$tid] : null;
+		return ( $locks && isset($locks[$tid]) ) ? $locks[$tid] : null;
 	}
 
 	/**
-	 * Test if this template currently has a lock
+	 * Test if this template currently has a lock held by a user other
+	 * than the specified one
 	 *
-	 * @param int $userid since 2.2.22F2 Optional id of the current user
-	 *  A lock held by that user will be ignored
+	 * @param int $userid since 2.2.22F2 Optional user id Default 0
 	 * @return bool
 	 */
 	public function locked($userid = 0)
@@ -870,7 +870,7 @@ VALUES (?,?,?,?,?,?,?,?,?,?)';
 	 * @param bool $deep Optionally load attached data.
 	 * @return array Array of CmsLayoutTemplate objects
 	 */
-	public static function load_bulk($list,$deep = true)
+	public static function load_bulk($list,$deep = TRUE)
 	{
 		if( !is_array($list) || count($list) == 0 ) return [];
 
@@ -922,14 +922,39 @@ VALUES (?,?,?,?,?,?,?,?,?,?)';
 	}
 
 	/**
-	 * Load a specific template
+	 * Get all templates
+	 * @since 2.2.23F2
+	 *
+	 * @param bool $as_names Flag indicating the wanted output format. Default false.
+	 * @return array If $as_names is true then the array will be a map of
+	 *  template ids to names, suitable for use in an html select element.
+	 *  Otherwise, a map of ids to CmsLayoutTemplate objects.
+	 */
+	public static function get_all($as_names = FALSE)
+	{
+		$db = CmsApp::get_instance()->GetDb();
+
+		if( $as_names ) {
+			$query = 'SELECT id,name FROM '.CMS_DB_PREFIX.self::TABLENAME.' ORDER BY name';
+			return $db->GetAssoc($query);
+		}
+		else {
+			$query = 'SELECT id FROM '.CMS_DB_PREFIX.self::TABLENAME.' ORDER BY modified DESC';
+			$ids = $db->GetCol($query);
+			return self::load_bulk($ids,FALSE);
+		}
+	}
+
+	/**
+	 * Get a specific template
 	 *
 	 * @throws CmsDataNotFoundException
 	 * @param mixed $a Either an integer template id, or a template name (string)
-	 * @param bool $force  @since 2.2.21F2 Whether to always re-generate the content object, ignoring any cache. Defaults to false.
+	 * @param bool $force  @since 2.2.21F2 Whether to always re-generate
+	 *  the content object, ignoring any cache. Default false.
 	 * @return CmsLayoutTemplate
 	 */
-	public static function load($a,$force = false)
+	public static function load($a,$force = FALSE)
 	{
 		static $_nn = 0;
 
