@@ -1,7 +1,8 @@
+<link href="{$base_url}/lib/edit_design.css" rel="stylesheet">{*TODO should be in <head/> element*}
 <script>
-var __changed=0;
+var __changed = 0;
 function set_changed() {
-  __changed=1;
+  __changed = 1;
   console.debug('design is changed');
 }
 function save_design() {
@@ -19,11 +20,11 @@ $(function() {
   $('ul.available-items').on('click', 'li', function () {
     $(this).toggleClass('selected ui-state-hover');
   });
-  $(document).on('click', '#submitme,#applyme', function() {
+  $('#submitme,#applyme').on('click', function() {
     $('select.selall').attr('multiple','multiple');
     $('select.selall option').prop('selected',true);
   });
-  $(document).on('change',':input',function() {
+  $(':input').on('change', function() {
     set_changed();
   });
 });
@@ -46,7 +47,7 @@ $(function() {
   <div class="startside">
 {/if}
     <div class="pageoverflow">
-      <p class="pagetext"><label for="design_name">{$mod->Lang('prompt_name')}</label>:&nbsp;{cms_help key2='help_design_name' title=$mod->Lang('prompt_name')}</p>
+      <p class="pagetext"><label for="design_name">{$mod->Lang('prompt_name')}:</label>&nbsp;{cms_help key2='help_design_name' title=$mod->Lang('prompt_name')}</p>
       <p class="pageinput">
         <input type="text" id="design_name" name="{$actionid}name" value="{$design->get_name()}" size="50" maxlength="90" placeholder="{$mod->Lang('newname')}">
       </p>
@@ -56,15 +57,15 @@ $(function() {
   <p class="startside" style="width:5%;min-width:1em"></p>
   <div class="startside last">
     <div class="pageoverflow">
-      <p class="pagetext"><label for="created">{$mod->Lang('prompt_created')}:</label>&nbsp;{cms_help key2='help_design_created' title=$mod->Lang('prompt_created')}</p>
-      <p class="pageinput" id="created">
+      <p class="pagetext"><label>{$mod->Lang('prompt_created')}:</label>{*&nbsp;{cms_help key2='help_design_created' title=$mod->Lang('prompt_created')*}</p>
+      <p class="pageinput">
         {$design->get_created()|localedate_format:'%x %X'}
       </p>
     </div>
 
     <div class="pageoverflow">
-      <p class="pagetext"><label for="modified">{$mod->Lang('prompt_modified')}:</label>&nbsp;{cms_help key2='help_design_modified' title=$mod->Lang('prompt_modified')}</p>
-      <p class="pageinput" id="modified">
+      <p class="pagetext"><label>{$mod->Lang('prompt_modified')}:</label>{*&nbsp;{cms_help key2='help_design_modified' title=$mod->Lang('prompt_modified')*}</p>
+      <p class="pageinput">
         {$design->get_modified()|localedate_format:'%x %X'}
       </p>
     </div>
@@ -77,9 +78,9 @@ $(function() {
 {tab_header name='stylesheets' label=$mod->Lang('prompt_stylesheets')}
 {tab_start name='description'}
   <div class="pageoverflow">
-    <p class="pagetext"><label for="description">{$mod->Lang('prompt_description')}:</label>&nbsp;{cms_help key2=help_design_description title=$mod->Lang('prompt_description')}</p>
+    <p class="pagetext"><label for="tadesc">{$mod->Lang('prompt_description')}:</label>&nbsp;{cms_help key2=help_design_description title=$mod->Lang('prompt_description')}</p>
     <p class="pageinput">
-      <textarea id="description" name="{$actionid}description" rows="5">{$design->get_description()}</textarea>
+      <textarea id="tadesc" name="{$actionid}description" rows="5">{$design->get_description()}</textarea>
     </p>
   </div>
 {tab_start name='templates'}
