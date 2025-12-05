@@ -77,6 +77,7 @@ try {
     }
 
     $tpl->assign('have_tpl_locks',$have_locks);
+    if( $have_locks ) { $tpl->assign('iconsteal_url',$this->GetModuleURLPath().'/icons/steal.png'); }
     $tpl->assign('have_tpl_selflocks',$self_locks);
     if( $self_locks ) { $tpl->assign('which_selflocks',$itemids); }
     $tpl->assign('lock_timeout',$this->GetPreference('lock_timeout'));
@@ -87,8 +88,7 @@ try {
         $this->CheckPermission('Modify Templates') ||
         $this->CheckPermission('Add Templates'));
     $tpl->assign('userid',$userid);
-
-   $tpl->display();
+    $tpl->display();
 }
 catch( Exception $e ) {
     echo '<div class="red">'.$e->GetMessage().'</div>';

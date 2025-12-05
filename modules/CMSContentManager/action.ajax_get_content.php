@@ -78,8 +78,8 @@ try {
     $dolock = CmsContentManagerUtils::locking_enabled();
     if( $dolock ) {
         $userid = get_userid(false);
-        $locks = CmsLockOperations::get_locks('content',0,$userid); //lock(s) held by other users
-        $have_locks = $locks && is_array($locks);
+        $other_locks = CmsLockOperations::get_locks('content',0,$userid); //lock(s) held by other users
+        $have_locks = $other_locks && is_array($other_locks);
         $locks = CmsLockOperations::get_locks('content',$userid); //lock(s) held by current user
         if( $locks && is_array($locks) ) {
             // grab page-hierarchy numbers for Smarty tip
@@ -108,12 +108,19 @@ try {
     else {
         $have_locks = false;
         $self_locks = false;
+//      $other_locks = null;
     }
+
+    if ($have_locks) {
+        $tpl->assign('iconsteal_url',$this->GetModuleURLPath().'/images/steal.png');
+    }
+
     $url = $this->create_url($id,'ajax_get_content',$returnid);
 
     $tpl->assign('indent',!$filter && cms_userprefs::get('indent',1));
     $tpl->assign('locking',$dolock);
     $tpl->assign('have_locks',$have_locks);
+//  $tpl->assign('other_locks',$other_locks); for processing lock-id in template
     $tpl->assign('have_selflocks',$self_locks);
     if( $self_locks && $itemstip ) { $tpl->assign('which_selflocks',$itemstip); }
     $tpl->assign('pagelimit',$pagelimit);

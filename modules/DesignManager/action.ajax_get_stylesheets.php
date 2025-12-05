@@ -60,10 +60,10 @@ try {
     $tpl->assign('have_css_locks',$have_locks);
     $tpl->assign('have_css_selflocks',$self_locks);
     if( $self_locks ) { $tpl->assign('which_selflocks',$itemids); }
+    if( $have_locks ) { $tpl->assign('iconsteal_url',$this->GetModuleURLPath().'/icons/steal.png'); }
     $tpl->assign('lock_timeout',$this->GetPreference('lock_timeout'));
 //  $tpl->assign('has_add_right',$this->CheckPermission('X') || $this->CheckPermission('Y'));
     $tpl->assign('userid',$userid);
-
     $tpl->display();
 }
 catch( Exception $e ) {
