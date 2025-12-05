@@ -31,16 +31,10 @@
 #END_LICENSE
 
 /**
- * Classes and utilities for managing locks.
- * @package CMS
- * @license GPL
- */
-
-/**
- * A singleton class providing utilities for interacting with locks.
+ * A class of utility methods for interacting with locks.
  *
  * @package CMS
- * @licsense GPL
+ * @license GPL
  * @since 2.0
  */
 final class CmsLockOperations
@@ -51,8 +45,8 @@ final class CmsLockOperations
   private function __construct($type,$id) {}
 
   /**
-   * Touch any lock of the specified type and id and that matches the
-   * current user's UID
+   * Touch any lock of the specified type and id and which is held by
+   * the current user
    *
    * @param int $lock_id The lock identifier
    * @param string $type The type of object being locked
@@ -63,18 +57,18 @@ final class CmsLockOperations
   {
     $uid = get_userid(FALSE);
     try {
-        $lock = CmsLock::load_by_id($lock_id,$type,$oid,$uid);
-        $lock->save();
-        return $lock['expires'];
+      $lock = CmsLock::load_by_id($lock_id,$type,$oid,$uid);
+      $lock->save();
+      return $lock['expires'];
     }
     catch (Exception $e) {
-        return 0;
+      return 0;
     }
   }
 
   /**
-   * Delete any lock of the specified type and id and that matches the
-   * current user's UID
+   * Delete any lock of the specified type and id and which is held by
+   * the current user
    *
    * @param int $lock_id The lock identifier
    * @param string $type The type of object being locked
@@ -86,25 +80,37 @@ final class CmsLockOperations
   }
 
   /**
-   * Delete any lock of the specified type and id and that matches the
-   * current user's UID
+   * Delete any lock of the specified type and id and which is held by
+   * the specified user, or by any user
    *
    * @param int $lock_id The lock identifier
    * @param string $type The type of object being locked
    * @param int $oid The object identifier
+   * @param int $heldby since 2.2.23F2 Optional UID whose locks are to
+   *  be processed Default 0
+   *  0   = current user
+   *  > 0 = specific user
+   *  < 0 = any user
    */
-  public static function unlock($lock_id,$type,$oid)
+  public static function unlock($lock_id,$type,$oid,$heldby = 0)
   {
-      if( $lock_id > 0 ) {
-          $uid = get_userid(FALSE);
-          try {
-              $lock = CmsLock::load_by_id($lock_id,$type,$oid,$uid);
-              if( $lock ) $lock->delete();
-          }
-          catch (Exception $e) {
-              //nothing here
-          }
+    if( $lock_id > 0 ) {
+      if( $heldby >= 0 ) {
+        $uid = ($heldby > 0) ? $heldby : get_userid(FALSE);
+        try {
+          $lock = CmsLock::load_by_id($lock_id,$type,$oid,$uid);
+          if( $lock ) $lock->delete();
+        }
+        catch (Exception $e) {
+          //nothing here
+        }
       }
+      else {
+        $db = CmsApp::get_instance()->GetDb();
+        $query = 'DELETE FROM '.CMS_DB_PREFIX.CmsLock::LOCK_TABLE.' WHERE id = ?';
+        $db->Execute($query, [$lock_id]);
+      }
+    }
   }
 
   /**
@@ -112,19 +118,19 @@ final class CmsLockOperations
    *
    * @param string $type The type of object being locked
    * @param int $oid The object identifier
-   * @return int, possibly 0
+   * @return int (lock-id) or 0 if none found
    */
   public static function is_locked($type,$oid)
   {
-      try {
-          $lock = CmsLock::load($type,$oid); //TODO silly protocol
-          sleep(1); // wait for potential asynchronous requests to complete.
-          $lock = CmsLock::load($type,$oid);
-          return $lock['id'];
-      }
-      catch( CmsNoLockException $e ) {
-          return 0;
-      }
+    try {
+      $lock = CmsLock::load($type,$oid); //TODO silly protocol
+      sleep(1); // wait for potential asynchronous requests to complete.
+      $lock = CmsLock::load($type,$oid);
+      return $lock['id'];
+    }
+    catch( CmsNoLockException $e ) {
+      return 0;
+    }
   }
 
   /**
@@ -153,9 +159,9 @@ final class CmsLockOperations
    * specified UID or by users other than the specified UID
    *
    * @param string $type The type of locked object
-   * @param int $heldby since 2.2.22F2 Optional UID whose locks are to be identified
-   * @param int $notby since 2.2.22F2 Optional UID whose locks are to be ignored
-   * @return array CmsLock object(s) or empty
+   * @param int $heldby since 2.2.22F2 Optional UID whose locks are to be identified Default 0
+   * @param int $notby since 2.2.22F2 Optional UID whose locks are to be ignored Default 0
+   * @return array CmsLock object(s) keyed by lock-id, or empty
    */
   public static function get_locks($type,$heldby = 0,$notby = 0)
   {
@@ -176,7 +182,8 @@ final class CmsLockOperations
     $locks = array();
     foreach( $dbr as $row ) {
       $obj = CmsLock::from_row($row);
-      $locks[] = $obj;
+      $id = (int)$row['id'];
+      $locks[$id] = $obj;
     }
     return $locks;
   }
@@ -185,7 +192,7 @@ final class CmsLockOperations
    * Delete locks held by the current user
    *
    * @param string $type The type of lock to delete.
-   *  If empty all types of locks can be deleted. Default ''
+   *  If empty all types of lock will be deleted. Default ''
    */
   public static function delete_for_user($type = '')
   {
@@ -194,15 +201,12 @@ final class CmsLockOperations
     $parms = array($uid);
     $query = 'DELETE FROM '.CMS_DB_PREFIX.CmsLock::LOCK_TABLE.' WHERE uid = ?';
     if( $type ) {
-        $query .= ' AND type = ?';
-        $parms[] = trim($type);
+      $query .= ' AND type = ?';
+      $parms[] = trim($type);
     }
     $db->Execute($query,$parms);
   }
 
-} // end of class
+} // class
 
-#
-# EOF
-#
 ?>
