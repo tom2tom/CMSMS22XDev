@@ -1269,19 +1269,23 @@ abstract class CmsAdminThemeBase
 
 
 	/**
-	 * Return an array of admin pages, suitable for use in a dropdown.
+	 * Retrieve the site's admin pages, suitably-formatted for use in a dropdown.
 	 *
 	 * @internal
 	 * @since 1.12
-	 * @param bool $none A flag indicating wether 'none' should be the first option.
-	 * @return array The keys of the array are langified strings to display to the user.  The values are URLS.
+	 * @param bool $none Flag whether to prepend a 'None' option. Default true.
+	 * @return array Each member like 'menu-label' => 'action-urlpath'
+	 * The labels are adapted from the admin menu: section-titles and descendents like
+	 * 'Site&nbsp;Admin' or '&nbsp;&nbsp;Tags'
+	 * The urlpaths are site-root-url-relative, like
+	 *  index.php?section=content&amp;[SECURITYTAG] or
+	 *  moduleinterface.php?mact=CMSContentManager,m1_,admin_settings,0&amp;[SECURITYTAG]
 	 */
 	public function GetAdminPages($none = TRUE)
 	{
 		$opts = array();
 		if( $none ) $opts[ucfirst(lang('none'))] = '';
 
-		$depth = 0;
 		$menuItems = $this->get_admin_navigation();
 		foreach( $menuItems as $sectionKey=>$menuItem ) {
 			if( $menuItem['parent'] != -1 ) continue; // only parent pages
@@ -1311,45 +1315,49 @@ abstract class CmsAdminThemeBase
 	}
 
 	/**
-	 * Returns a select list of the pages in the system for use in
-	 * various admin pages.
+	 * Return a <select/> element having options for all of the site's
+	 * admin pages (derived from the admin-console menu).
 	 *
 	 * @internal
-	 * @param string $name - The html name of the select box
-	 * @param string $selected - If a matching id is found in the list, that item
-	 *						   is marked as selected.
-	 * @return string The select list of pages
+	 * @param string $name The name-attribute of the created select
+	 * @param string $selected An urlpath (like listusertags.php?[SECURITYTAG])
+	 *  If that value is present in the pages list, the corresponding option
+	 *  will be selected in the created <select>.
+	 *  See CmsAdminThemeBase::GetAdminPages() for more detail about the urlpaths.
+	 * @param string $id Optional id-attribute of the created select. Default ''
+	 * @return string html
 	 */
 	public function GetAdminPageDropdown($name,$selected,$id = '')
 	{
-		$opts = $this->GetAdminPages();
-		$attrs = array('name'=>trim((string)$name));
-		if( $id ) $attrs['id'] = trim((string)$id);
-		$output = '<select ';
+		$attrs = array('name' => trim((string)$name));
+		if( $id ) { $attrs['id'] = trim((string)$id); }
+		else { $attrs['id'] = $attrs['name']; }
+		$output = '<select';
 		foreach( $attrs as $key => $val ) {
-			$output .= ' '.$key.'='.$val;
+			if( $val ) { $output .= " $key=\"$val\""; }
 		}
-		$output .= '>';
+		$output .= ">\n";
 
-		foreach( $opts as $key => $value ) {
-			if( $value == $selected ) {
-				$output .= sprintf("<option selected=\"selected\" value=\"%s\">%s</option>\n",
-								   $value,$key);
+		$opts = $this->GetAdminPages();
+		foreach( $opts as $key => $val ) {
+			if( $val == $selected ) {
+				$output .= sprintf("<option value=\"%s\" selected>%s</option>\n",
+								   $val,$key);
 			}
 			else {
 				$output .= sprintf("<option value=\"%s\">%s</option>\n",
-								   $value,$key);
+								   $val,$key);
 			}
 		}
-		$output .= '</select>'."\n";
+		$output .= "</select>\n";
 		return $output;
 	}
 
 
 	/**
-	 *  BackUrl
-	 *  "Back" Url - link to the next-to-last item in the breadcrumbs
-	 *  for the back button.
+	 * Generate a link to the next-to-last item in the breadcrumbs
+	 * for the back button.
+	 * @return string
 	 */
 	public function BackUrl()
 	{
@@ -1366,11 +1374,11 @@ abstract class CmsAdminThemeBase
 
 	/**
 	 * Add text to the head section of the output
-	 *
-	 * The CMSMS core code calls this method to add text and javascript to output in the head section required for various functionality.
+	 * The CMSMS core code calls this method to add text and javascript
+	 * to be output in the head section required for various functionality.
+	 * @since 2.2
 	 *
 	 * @param string $txt The text to add to the head section.
-	 * @since 2.2
 	 * @author Robert Campbell
 	 */
 	public function add_headtext($txt)
@@ -1381,11 +1389,10 @@ abstract class CmsAdminThemeBase
 
 	/**
 	 * Get text that needs to be injected into the head section of the output.
-	 *
 	 * This method is typically called by the admin theme itself to get the text to render.
+	 * @since 2.2
 	 *
 	 * @return string
-	 * @since 2.2
 	 * @author Robert Campbell
 	 */
 	public function get_headtext()
@@ -1395,9 +1402,9 @@ abstract class CmsAdminThemeBase
 
 	/**
 	 * Add text to the footer of the output, immediately before the </body> tag.
+	 * @since 2.2
 	 *
 	 * @param string $txt The text to add to the end of the output.
-	 * @since 2.2
 	 * @author Robert Campbell
 	 */
 	public function add_footertext($txt)
@@ -1408,11 +1415,10 @@ abstract class CmsAdminThemeBase
 
 	/**
 	 * Get text that needs to be injected into the footer section of the output.
-	 *
 	 * This method is typically called by the admin theme itself to get the text to render.
+	 * @since 2.2
 	 *
 	 * @return string
-	 * @since 2.2
 	 * @author Robert Campbell
 	 */
 	public function get_footertext()
