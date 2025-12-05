@@ -14,7 +14,7 @@
 						{if $icon}
 						<img class="alert-icon ui-icon" src="{$icon}" alt="{lang('remove_alert')}" title="{lang('remove_alert')}">
 						{else}
-						<span class="alert-icon ui-icon {if $one->priority != '_low'}ui-icon-alert{else}ui-icon-info{/if}" alt="{lang('remove_alert')}" title="{lang('remove_alert')}"></span>
+						<span class="alert-icon ui-icon {if $one->priority != '_low'}ui-icon-alert{else}ui-icon-info{/if}" title="{lang('remove_alert')}"></span>
 						{/if}
 						<span class="alert-title">{$one->title|default:'No title given'}</span>
 						<span class="alert-remove ui-icon ui-icon-close" title="{lang('remove_alert')}"></span>
