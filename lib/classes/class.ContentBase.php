@@ -2217,7 +2217,12 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		}
 
 		// owner
-		if (isset($params['ownerid'])) $this->SetOwner((int) $params['ownerid']);
+		if (isset($params['owner'])) {
+			$this->SetOwner($params['owner']); // does validity check
+//		}
+//		else {
+//			//TODO some default?
+		}
 
 		// additional editors
 		if (isset($params['additional_editors'])) {
@@ -2807,10 +2812,10 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 		case 'target':
 			$text = '<option value="---">'.lang('none').'</option>';
-			$text .= '<option value="_blank"'.($this->GetPropertyValue('target')=='_blank'?' selected="selected"':'').'>_blank</option>';
-			$text .= '<option value="_parent"'.($this->GetPropertyValue('target')=='_parent'?' selected="selected"':'').'>_parent</option>';
-			$text .= '<option value="_self"'.($this->GetPropertyValue('target')=='_self'?' selected="selected"':'').'>_self</option>';
-			$text .= '<option value="_top"'.($this->GetPropertyValue('target')=='_top'?' selected="selected"':'').'>_top</option>';
+			$text .= '<option value="_blank"'.($this->GetPropertyValue('target') == '_blank' ? ' selected' : '').'>_blank</option>';
+			$text .= '<option value="_parent"'.($this->GetPropertyValue('target') == '_parent' ? ' selected' : '').'>_parent</option>';
+			$text .= '<option value="_self"'.($this->GetPropertyValue('target') == '_self' ? ' selected' : '').'>_self</option>';
+			$text .= '<option value="_top"'.($this->GetPropertyValue('target') == '_top' ? ' selected' : '').'>_top</option>';
 			$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_target',lang('help_title_content_target'));
 			return array('<label for="target">'.lang('target').':</label>'.$help,
 						 '<select name="target" id="target">'.$text.'</select>');
@@ -2937,7 +2942,8 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			if( !$adding && ($showadmin || $pmac || $pown) ) {
 				$userops = UserOperations::get_instance();
 				$help = '&nbsp;'.cms_admin_utils::get_help_tag('core','help_content_owner',lang('help_title_content_owner'));
-				return array('<label for="ownerid">'.lang('owner').':</label>'.$help,$userops->GenerateDropdown($this->Owner()));
+				$input = $userops->GenerateDropdown($this->Owner(),'owner',[],[-1=>lang('none')]);
+				return array('<label for="owner">'.lang('owner').':</label>'.$help,$input);
 			}
 			break;
 
