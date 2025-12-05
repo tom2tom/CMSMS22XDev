@@ -1,3 +1,4 @@
+<link href="{$base_url}/lib/help_templates.css" rel="stylesheet">{*TODO should be in <head/> element*}
 <script>
 $(function() {
 {$locker=$tpl_id > 0 && isset($lock_timeout) && $lock_timeout > 0}{if $locker}
@@ -88,12 +89,21 @@ $(function() {
   $('#a_helptext').on('click',function(e) {
     e.preventDefault();
     var dlg = $('#helptext_dlg');
-    if (dlg.length > 0) dlg.dialog({ width: 'auto' });
+    if (dlg.length > 0) {
+      var cd = $(this).closest('div'),
+       wd = cd.innerWidth() - 20,
+       hd = cd.innerHeight() - 20;
+      dlg.dialog({
+        width: wd - 50,
+        maxWidth: wd,
+        maxHeight: hd
+      });
+    }
   });
 });
 </script>
 
-{$helptext=$type_obj->get_template_helptext($type_obj->get_name())}
+{$helptext=$type_obj->get_template_helptext()}
 {if $helptext}
 <div id="helptext_dlg" title="{$mod->Lang('prompt_template_help')}" style="display:none">
   {$helptext}
@@ -101,21 +111,21 @@ $(function() {
 {/if}
 
 {$get_lock = $template->get_lock()}
-{capture assign='disable'}
-{if (isset($get_lock) && ($userid != $get_lock.uid))} disabled{/if}
-{/capture}
-{if isset($get_lock)}
+{if ($get_lock && $userid != $get_lock.uid)}
+{$disable=' disabled'}
 <p class="warning lock-warning">{$mod->Lang('lock_warning')}</p>
+{else}
+{$disable=''}
 {/if}
 
 {form_start id='form_edittemplate' extraparms=$extraparms}
 <div class="cf">{*$tplid=$template->get_id()*}
   <div class="pageoverflow">
     <p class="pageinput">
-      <input type="submit" id="submitbtn" name="{$actionid}submit" value="{$mod->Lang('submit')}"{$disable|strip}>
+      <input type="submit" id="submitbtn" name="{$actionid}submit" value="{$mod->Lang('submit')}"{$disable}>
       <input type="submit" id="cancelbtn" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
 {if $tpl_id > 0}
-      <input type="submit" id="applybtn" name="{$actionid}apply" data-ui-icon="ui-icon-caret-1-n" value="{$mod->Lang('apply')}"{$disable|strip}>
+      <input type="submit" id="applybtn" name="{$actionid}apply" data-ui-icon="ui-icon-caret-1-n" value="{$mod->Lang('apply')}"{$disable}>
 {/if}
     </p>
   </div>
@@ -196,10 +206,10 @@ $(function() {
 {if !$has_manage_right}
   <input type="hidden" name="{$actionid}description" value="{$template->get_description()}">
 {/if}
-  <p class="pagetext"><label{if $has_manage_right} for="description"{/if}>{$mod->Lang('prompt_description')}:</label>&nbsp;{cms_help key2=help_template_description title=$mod->Lang('prompt_description')}</p>
+  <p class="pagetext"><label{if $has_manage_right} for="tadesc"{/if}>{$mod->Lang('prompt_description')}:</label>&nbsp;{cms_help key2=help_template_description title=$mod->Lang('prompt_description')}</p>
   <p class="pageinput">
 {if $has_manage_right}
-    <textarea id="description" name="{$actionid}description">{$template->get_description()}</textarea>
+    <textarea id="tadesc" name="{$actionid}description">{$template->get_description()}</textarea>
 {else}
     {$template->get_description()}
 {/if}
