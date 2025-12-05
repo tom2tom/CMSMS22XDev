@@ -413,7 +413,7 @@ $lang['username'] = 'User name';
 # V
 
 # W
-$lang['warn_disable_functions'] = 'Note: one or more PHP core functions are disabled. This can have negative impact on your CMSMS installation, particularly with third party extensions. Please keep an eye on your error log. Your disabled functions are: <br><br>%s';
+$lang['warn_disable_functions'] = 'Note: one or more PHP core functions are disabled. This can have negative impact on your CMSMS installation, particularly with third party extensions. Please keep an eye on your error log. The disabled functions are:<br><br>%s';
 $lang['warn_email'] = 'Note: for security reasons, the sent email will not include the recorded password.<br>You\'ll need to communicate that to the user separately.<br>Or an experienced user might initiate a lost-password process.';
 $lang['warn_max_execution_time'] = 'Although the host\'s max execution time of %s meets or exceeds the minimum value of %s, we recommend you increase it to %s or greater';
 $lang['warn_memory_limit'] = 'The host\'s memory limit value is %s, which is above the minimum of %s. However, %s is recommended';
