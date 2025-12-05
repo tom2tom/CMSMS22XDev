@@ -17,6 +17,7 @@ Version 2.2.23F2 - Regina
  - Support module-plugin tags in admin templates
  - Progressively update recorded password-hashes
  - Replace or remove deprecated media-types in stylesheets
+ - Correct html errors exposed by extensive validation
 
 Version 2.2.22F2 - Whitehorse
 -------------------------------

@@ -54,7 +54,7 @@ If we have missed anybody please contact us and we will add your name for future
 - Paco Orozco -- pakusland [AT] gmail [DOT] com
 - Patricia Brun Torre -- cmsms [AT] virtuaza [DOT] org
 - Takayuki Kobayashi -- koba [AT] zuifu [DOT] com
-- clementina immirzi -- clementinai [AT] yahoo [DOT] com
+- Clementina Immirzi -- clementinai [AT] yahoo [DOT] com
 - Ronny Krijt -- r.krijt [AT] gmail [DOT] com
 - Ilya  -- ilia3d [AT] web [DOT] de
 - Birger Eriksson -- birger [AT] pckart [DOT] se
@@ -106,3 +106,4 @@ Translators are automatically removed from the list if not active two years befo
 Contributors
 ------------
 Leendert Meyer: Horizontal menu patch and svn cleanup scripts
+Jean-Claude Etiemble: Testing and debugging par excellence
