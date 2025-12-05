@@ -106,21 +106,21 @@ $(function() {
 </script>
 
 {$get_lock = $css->get_lock()}
-{capture assign='disable'}
-{if (isset($get_lock) && ($userid != $get_lock.uid))} disabled{/if}
-{/capture}
-{if isset($get_lock)}
+{if ($get_lock && $userid != $get_lock.uid)}
+{$disable=' disabled'}
 <p class="warning lock-warning">{$mod->Lang('lock_warning')}</p>
+{else}
+{$disable=''}
 {/if}
 
 {form_start id='form_editcss' extraparms=$extraparms}
 <div class="cf">
     <div class="pageoverflow">
         <p class="pageinput">
-            <input type="submit" id="submitbtn" name="{$actionid}submit" value="{$mod->Lang('submit')}"{$disable|strip}>
+            <input type="submit" id="submitbtn" name="{$actionid}submit" value="{$mod->Lang('submit')}"{$disable}>
             <input type="submit" id="cancelbtn" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
 {if $css_id > 0}
-            <input type="submit" id="applybtn" name="{$actionid}apply" data-ui-icon="ui-icon-caret-1-n" value="{$mod->Lang('apply')}"{$disable|strip}>
+            <input type="submit" id="applybtn" name="{$actionid}apply" data-ui-icon="ui-icon-caret-1-n" value="{$mod->Lang('apply')}"{$disable}>
 {/if}
         </p>
     </div>
