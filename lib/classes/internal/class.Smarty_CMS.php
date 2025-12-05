@@ -294,7 +294,7 @@ class Smarty_CMS extends CMSSmartyBase
     }
 
     /**
-     * Test if a Smarty plugin with the specified name already exists.
+     * Test if a Smarty function-plugin with the specified name is registered.
      *
      * @param string the plugin name
      * @return bool
@@ -361,16 +361,15 @@ class Smarty_CMS extends CMSSmartyBase
     }
 
     /**
-     * fetch a rendered Smarty template
-     * for calling the global Smarty fetch method instead of a template-object's
-     * fetch method directly, which is the case for deprecated methods like
+     * Fetch a rendered Smarty template
+     * Fetching via this method instead of using a template-object's fetch
+     * method directly is done by deprecated methods like
      * CMSModule::ProcessTemplate and CMSModule::ProcessTemplateFromDatabase etc
-     * Note: subclasses ancestor method having different API
      *
-     * @param mixed  $template   resource handle of the template file, or template object, or null Default null
-     * @param mixed  $cache_id   cache id to be used with this template Default null
-     * @param mixed  $compile_id compile id to be used with this template Default null
-     * @param object $parent     next higher level of Smarty variables Default null
+     * @param mixed $template   resource handle of the template file, or template object, or null Default null
+     * @param mixed $cache_id   cache id to be used with this template Default null
+     * @param mixed $compile_id compile id to be used with this template Default null
+     * @param mixed $parent     next higher level of Smarty variables Default null
      *
      * @throws Exception
      * @throws SmartyException
@@ -398,7 +397,8 @@ class Smarty_CMS extends CMSSmartyBase
 
         if( is_object($template) ) {
             $_tpl = $template;
-        } else {
+        }
+        else {
             if( !$parent ) {
                 // get the parent off of the stack.
                 $parent = $this->get_template_parent();
@@ -421,13 +421,13 @@ class Smarty_CMS extends CMSSmartyBase
     }
 
     /**
-     * create a template object
+     * Create a template object
      *
-     * @param string  $template   the resource handle of the template file
-     * @param mixed   $cache_id   cache id to be used with this template
-     * @param mixed   $compile_id compile id to be used with this template
-     * @param object  $parent     next higher level of Smarty variables
-     * @param boolean $do_clone   flag is Smarty object shall be cloned
+     * @param string $template   resource handle of the template file
+     * @param mixed  $cache_id   cache id to be used with this template Default null
+     * @param mixed  $compile_id compile id to be used with this template Default null
+     * @param mixed  $parent     next higher level of Smarty variables Default null
+     * @param bool   $do_clone   flag whether to clone Smarty object Default true
      *
      * @return Smarty_Internal_Template object
      * @throws LogicException or SmartyException
@@ -438,18 +438,23 @@ class Smarty_CMS extends CMSSmartyBase
             if( (strpos($template,'*')) > 0 ) throw new LogicException("$template is an invalid CMSMS resource specification");
             if( (strpos($template,'/')) > 0 ) throw new LogicException("$template is an invalid CMSMS resource specification");
         }
-        return parent::createTemplate($template, $cache_id, $compile_id, $parent, $do_clone );
+        if( is_null($cache_id) || $cache_id === '' ) {
+            $cache_id = $this->_global_cache_id;
+        }
+        elseif( $cache_id[0] == '|' ) {
+            $cache_id = $this->_global_cache_id . $cache_id;
+        }
+        return parent::createTemplate($template, $cache_id, $compile_id, $parent, $do_clone);
     }
 
     /**
-     * clearCache method
-     * NOTE: Smarty itself uses clearCache() methods having different API
+     * Clear cache for a template
      *
-     * @param mixed $template_name
-     * @param int $cache_id
-     * @param int $compile_id
-     * @param mixed $exp_time
-     * @param mixed $type
+     * @param string $template_name
+     * @param mixed $cache_id Default null
+     * @param mixed $compile_id Default null
+     * @param mixed $exp_time expiration time Default null
+     * @param mixed $type resource type Default null
      * @return mixed
      */
     public function clearCache($template_name, $cache_id = null, $compile_id = null, $exp_time = null, $type = null)
@@ -457,20 +462,19 @@ class Smarty_CMS extends CMSSmartyBase
         if( is_null($cache_id) || $cache_id === '' ) {
             $cache_id = $this->_global_cache_id;
         }
-        else if( $cache_id[0] == '|' ) {
+        elseif( $cache_id[0] == '|' ) {
             $cache_id = $this->_global_cache_id . $cache_id;
         }
         return parent::clearCache($template_name,$cache_id,$compile_id,$exp_time,$type);
     }
 
     /**
-     * isCached method
-     * NOTE: Overwrites parent
+     * Get whether a template is cached
      *
-     * @param mixed $template
-     * @param int $cache_id
-     * @param int $compile_id
-     * @param mixed $parent
+     * @param mixed $template Default null
+     * @param mixed $cache_id Default null
+     * @param mixed $compile_id Default null
+     * @param mixed $parent Default null
      * @return mixed
      */
     public function isCached($template = null, $cache_id = null, $compile_id = null, $parent = null)
@@ -478,7 +482,7 @@ class Smarty_CMS extends CMSSmartyBase
         if( is_null($cache_id) || $cache_id === '' ) {
             $cache_id = $this->_global_cache_id;
         }
-        else if( $cache_id[0] == '|' ) {
+        elseif( $cache_id[0] == '|' ) {
             $cache_id = $this->_global_cache_id . $cache_id;
         }
         return parent::isCached($template,$cache_id,$compile_id,$parent);
@@ -518,26 +522,29 @@ class Smarty_CMS extends CMSSmartyBase
     }
 
     /**
-     * Takes unknown classes and loads plugin files for them
-     * class name format: Smarty_PluginType_PluginName
-     * plugin filename format: plugintype.pluginname.php
-     *
+     * Try to find the handler of the named plugin or class
      * Note: this method overrides the one in the Smarty base class
      * and provides more testing.
      *
-     * @param string $plugin_name    class plugin name to load
-     * @param bool   $check          check if already loaded
-     * @return string |boolean filepath of loaded file or false
+     * @param string $plugin_name wanted callable or filename or classname
+     *   callable format: Smarty_PluginType_PluginName (any case) e.g. smarty_function_fixit
+     *   filename format: plugintype.pluginname.php e.g. function.fixit.php
+     *   classname format: same as callable
+     *   [Pp]lugintype may be 'internal' to identify a system-plugin class
+     * @param bool   $check       check if already loaded Default true
+     *
+     * @return string | bool filepath or true (if already loaded) or false (if not found)
+     * @throws \SmartyException if format of $plugin_name is invalid
      */
     public function loadPlugin($plugin_name, $check = true)
     {
-        // if function or class exists, exit silently (already loaded)
+        // if function or class exists, nothing more to do
         if( $check && (is_callable($plugin_name) || class_exists($plugin_name, false)) ) return true;
 
-        // Plugin name is expected to be: Smarty_[Type]_[Name]
+        // plugin name is expected to be like: Smarty_[Type]_[Name]
         $_name_parts = explode('_', $plugin_name, 3);
 
-        // class name must have three parts to be valid plugin
+        // plugin name must have three parts to be valid
         // count($_name_parts) < 3 === !isset($_name_parts[2])
         if( !isset($_name_parts[2]) || strtolower($_name_parts[0]) !== 'smarty' ) {
             throw new SmartyException("plugin {$plugin_name} is not a valid name format");
@@ -550,7 +557,8 @@ class Smarty_CMS extends CMSSmartyBase
             if( file_exists($file) ) {
                 require_once($file);
                 return $file;
-            } else {
+            }
+            else {
                 return false;
             }
         }
@@ -560,7 +568,7 @@ class Smarty_CMS extends CMSSmartyBase
 
         $_stream_resolve_include_path = function_exists('stream_resolve_include_path');
 
-        // loop through plugin dirs and find the plugin
+        // poll plugin dirs to find the plugin
         foreach($this->getPluginsDir() as $_plugin_dir) {
             $names = array($_plugin_dir . $_plugin_filename,
                            $_plugin_dir . strtolower($_plugin_filename)
@@ -577,10 +585,10 @@ class Smarty_CMS extends CMSSmartyBase
                     // try PHP include_path
                     if( $_stream_resolve_include_path ) {
                         $file = stream_resolve_include_path($file);
-                    } else {
+                    }
+                    else {
                         $file = Smarty_Internal_Get_Include_Path::getIncludePath($file);
                     }
-
                     if( $file ) {
                         require_once $file;
                         if( is_callable($plugin_name) || class_exists($plugin_name, false) ) return $file;
@@ -588,14 +596,15 @@ class Smarty_CMS extends CMSSmartyBase
                 }
             }
         }
-        // no plugin loaded
+        // no match found
         return false;
     }
-} // end of class
+} // class
 
 /**
  * Workaround for some Smartys' (e.g. V5) disabling of all PHP function calls
  * @since 2.2.19F2
+ * @See also Install_TemplateCaller class
  */
 class Smarty_TemplateCaller
 {
@@ -604,8 +613,8 @@ class Smarty_TemplateCaller
 
     public function __construct($smarty)
     {
-        $this->php_functions = &$smarty->security_policy->php_functions; //TODO check with Smarty5
-        self::$static_classes = &$smarty->security_policy->static_classes; //TODO check with Smarty5
+        $this->php_functions = &$smarty->security_policy->php_functions; //TODO check with Smarty5/6
+        self::$static_classes = &$smarty->security_policy->static_classes; //TODO check with Smarty5/6
     }
 
     #[\ReturnTypeWillChange]
