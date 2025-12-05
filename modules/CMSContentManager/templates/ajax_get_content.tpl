@@ -92,12 +92,12 @@
             <span style="color:red"><strong>{$mod->Lang('lock_expired')}:</strong> {$row.lock.expires|relative_time}</span>
           {else}
             <strong>{$mod->Lang('lock_expires')}:</strong> {$row.lock.expires|relative_time}
-                  {/if}<br>
+          {/if}<br>
             {/strip}{/capture}
             {if !$row.can_steal}
               <span class="tooltip" data-cms-description="{$tooltip_lockinfo|adjust:'htmlentities'}">{$row.page}</span>
             {else}
-              <a href="{cms_action_url action='admin_editcontent' content_id=$row.id}" class="page_edit tooltip steal_lock" accesskey="e" data-cms-content="{$row.id}" data-cms-description="{$tooltip_lockinfo|adjust:'htmlentities'}">{$row.page}</a>
+              <a href="{cms_action_url action='admin_editcontent' content_id=$row.id steal_lock=$row.lock.id}" class="page_edit tooltip steal_lock" accesskey="e" data-cms-content="{$row.id}" data-cms-description="{$tooltip_lockinfo|adjust:'htmlentities'}">{$row.page}</a>
             {/if}
           {else}
             {$row.page}
@@ -181,12 +181,12 @@
          {/if}
       {elseif $column == 'edit'}
         {if $row.can_edit}
-          <a href="{cms_action_url action=admin_editcontent content_id=$row.id}" accesskey="e" class="page_edit" title="{$mod->Lang('addcontent')}" data-cms-content="{$row.id}">
+          <a href="{cms_action_url action=admin_editcontent content_id=$row.id}" accesskey="e" class="page_edit" title="{$mod->Lang('prompt_page_edit')}" data-cms-content="{$row.id}">
         {admin_icon icon='edit.gif' class='page_edit' title=$mod->Lang('prompt_page_edit')}
           </a>
         {elseif isset($row.lock) && $row.can_steal}
-          <a href="{cms_action_url action=admin_editcontent content_id=$row.id}" accesskey="e" class="page_edit" title="{$mod->Lang('addcontent')}" data-cms-content="{$row.id}" class="steal_lock">
-        {admin_icon icon='permissions.gif' class='page_edit steal_lock' title=$mod->Lang('prompt_steal_lock_edit')}
+          <a href="{cms_action_url action=admin_editcontent content_id=$row.id steal_lock=$row.lock.id}" accesskey="e" class="page_edit steal_lock" title="{$mod->Lang('prompt_steal_lock_edit')}" data-cms-content="{$row.id}">
+         <img src="{$iconsteal_url}" class="page_edit steal_lock" alt="{$mod->Lang('prompt_steal_lock_edit')}" title="{$mod->Lang('prompt_steal_lock_edit')}">
           </a>
         {/if}
       {elseif $column == 'delete'}
