@@ -872,7 +872,7 @@ abstract class CMSModule
      */
 
     /**
-     * Get an input field for a module generated content block type.
+     * Get an input field for a module-generated content block type.
      *
      * This method is called from the content edit form when a {content_module} tag is encountered.
      *
@@ -886,7 +886,7 @@ abstract class CMSModule
      * @param array  $params    Associative array containing content block parameters
      * @param bool   $adding   A flag indicating whether the content editor is in create mode (adding) vs. edit mode.
      * @param ContentBase $content_obj The content object being edited.
-     * @return mixed Either an array with two elements (prompt, and xhtml element) or a string containing only the xhtml input element.
+     * @return mixed Either an array with two elements (prompt, and html element) or a string containing only the html input element.
      */
     function GetContentBlockFieldInput($blockName,$value,$params,$adding,ContentBase $content_obj)
     {
@@ -894,7 +894,7 @@ abstract class CMSModule
     }
 
     /**
-     * Return a value for a module generated content block type.
+     * Return a value for a module-generated content block type.
      *
      * This method is called from a {content_module} tag, when the content edit form is being edited.
      *
@@ -918,7 +918,7 @@ abstract class CMSModule
     }
 
     /**
-     * Validate the value for a module generated content block type.
+     * Validate the value for a module-generated content block type.
      *
      * This method is called from a {content_module} tag, when the content edit form is being validated.
      *
@@ -2045,7 +2045,7 @@ abstract class CMSModule
      *
      * @param string $id The id given to the module on execution
      * @param string $name The html name of the dropdown list
-     * @param string $items An array of items to put into the dropdown list... they should be $key=>$value pairs
+     * @param string $items An array of items to put into the dropdown list, each like $publicname=>$value
      * @param string $selectedindex The default selected index of the dropdown list.  Setting to -1 will result in the first choice being selected
      * @param string $selectedvalue The default selected value of the dropdown list.  Setting to '' will result in the first choice being selected
      * @param string $addtext Any additional text that should be added into the tag when rendered
