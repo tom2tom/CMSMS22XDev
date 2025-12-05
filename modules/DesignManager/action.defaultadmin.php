@@ -25,11 +25,10 @@ $filter_tpl_rec = ['tpl'=>'','limit'=>100,'offset'=>0,'sortby'=>'name','sortorde
 $filter_css_rec = ['limit'=>100,'offset'=>0,'sortby'=>'name','sortorder'=>'asc','design'=>''];
 if( isset($params['submit_filter_tpl']) ) {
     if( $params['submit_filter_tpl'] == 1 ) {
-        $filter_tpl_rec['tpl'] = $params['filter_tpl'];
-        $filter_tpl_rec['sortby'] = trim($params['filter_sortby']);
-        $filter_tpl_rec['sortorder'] = trim($params['filter_sortorder']);
-        $filter_tpl_rec['limit'] = (int)$params['filter_limit_tpl'];
-        $filter_tpl_rec['limit'] = max(2,min(100,$filter_tpl_rec['limit']));
+        $filter_tpl_rec['tpl'] = $params['filter_tpl_options'];
+        $filter_tpl_rec['sortby'] = trim($params['filter_tpl_sortby']);
+        $filter_tpl_rec['sortorder'] = trim($params['filter_tpl_sortorder']);
+        $filter_tpl_rec['limit'] = max(2,min(100,(int)$params['filter_tpl_limit']));
     }
     unset($_SESSION[$this->GetName().'tpl_page']);
     cms_userprefs::set($this->GetName().'template_filter',serialize($filter_tpl_rec));
@@ -39,7 +38,7 @@ elseif( isset($params['submit_filter_css']) ) {
         $filter_css_rec['design'] = trim($params['filter_css_design']);
         $filter_css_rec['sortby'] = trim($params['filter_css_sortby']);
         $filter_css_rec['sortorder'] = trim($params['filter_css_sortorder']);
-        $filter_css_rec['limit'] = max(2,min(100,(int)$params['filter_limit_css']));
+        $filter_css_rec['limit'] = max(2,min(100,(int)$params['filter_css_limit']));
     }
     $this->SetCurrentTab('stylesheets');
     unset($_SESSION[$this->GetName().'tpl_page']);
