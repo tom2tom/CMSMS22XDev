@@ -491,12 +491,16 @@ final class CmsApp
 	 */
 	final public function clear_cached_files($age_days = 0)
 	{
-		$age_days = max(-1,(int) $age_days);
-		global $CMS_LOGIN_PAGE, $CMS_INSTALL_PAGE; // not used?... todo remove
 		if( !defined('TMP_CACHE_LOCATION') ) return;
 		$age_days = max(0,(int)$age_days);
-		\CMSMS\HookManager::do_hook('clear_cached_files', [ 'older_than' => $age_days ]);
-		$the_time = time() - $age_days * 24*60*60;
+		if ($age_days > 0) {
+			\CMSMS\HookManager::do_hook('clear_cached_files', [ 'older_than' => $age_days ]);
+			$the_time = ($age_days == 1) ? strtotime('-1 day 00:00') : strtotime("-$age_days days 00:00");
+		}
+		else {
+			\CMSMS\HookManager::do_hook('clear_cached_files', [ 'all' ]);
+			$the_time = time() + 86400; // prevent timezone interference
+		}
 
 		$dirs = array(TMP_CACHE_LOCATION,PUBLIC_CACHE_LOCATION,TMP_TEMPLATES_C_LOCATION);
 		foreach( $dirs as $start_dir ) {
