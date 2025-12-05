@@ -46,12 +46,12 @@ function smarty_function_dump($params, $smarty)
 			$objname = get_class($obj);
 			$str = '';
 			$str .= str_repeat('  ',$level).'Object Name: '.$objname.'<br>';
-			$str .= str_repeat('  ',$level).'Parent: '.get_parent_class($obj)."<br>";
+			$str .= str_repeat('  ',$level).'Parent: '.get_parent_class($obj).'<br>';
 
 			if( !isset($params['nomethods']) ) {
 				$methods = get_class_methods($objname);
 				if( count($methods) ) {
-					$str .= str_repeat('  ',$level).'Methods: <br>';
+					$str .= str_repeat('  ',$level).'Methods:<br>';
 					foreach( $methods as $one )	{
 						$str .= str_repeat('  ',$level).'- '.$one.'<br>';
 					}
@@ -61,7 +61,7 @@ function smarty_function_dump($params, $smarty)
 			if( !isset($params['novars']) )	{
 				$vars = get_object_vars($obj);
 				if( is_array($vars) && count($vars) ) {
-					$str .= str_repeat('  ',$level).'Properties: <br>';
+					$str .= str_repeat('  ',$level).'Properties:<br>';
 					foreach( $vars as $name => $value )	{
 						if( in_array($name,$ignore) ) continue;
 						$acc = build_accessor($accessor,'object',$name);
