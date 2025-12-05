@@ -96,12 +96,23 @@ try {
             $lock_id = CmsLockOperations::is_locked('stylesheet', $ssid);
             if( $lock_id > 0 ) {
                 $lock = CmsLock::load('stylesheet', $ssid);
-                if( $lock['uid'] == $userid || $lock->expired() ) {
-                    // remove it, ready to start again
-                    CmsLockOperations::unlock($lock_id, 'stylesheet', $ssid);
+                if( $lock['uid'] == $userid ) {
+                    if ( $lock->expired() ) {
+                        // remove it, ready to start again
+                        CmsLockOperations::unlock($lock_id, 'stylesheet', $ssid);
+                    }
+                }
+                elseif ( !empty($params['steal_lock']) ) { // the lock-id
+                    // remove somebody else's lock
+                    try {
+                        $lock->delete();
+                    }
+                    catch (Exception $e) {
+                        throw new CmsLockException('CMSEX_L009');
+                    }
                 }
                 else {
-                    // it's owned by somebody else
+                    // it's (still) owned by somebody else
                     throw new CmsLockException('CMSEX_L010');
                 }
             }

@@ -139,11 +139,21 @@ try {
             $lock_id = CmsLockOperations::is_locked('template', $tid);
             if ($lock_id > 0) {
                 $lock = CmsLock::load('template', $tid);
-                if ($lock['uid'] == $userid || $lock->expired()) {
-                    // remove it, ready to start again
-                    CmsLockOperations::unlock($lock_id, 'template', $tid);
+                if ($lock['uid'] == $userid) {
+                    if ($lock->expired()) {
+                        // remove it, ready to start again
+                        CmsLockOperations::unlock($lock_id, 'template', $tid);
+                    }
+                } elseif ( !empty($params['steal_lock'])) { // the lock-id
+                    // remove somebody else's lock
+                    try {
+                        $lock->delete();
+                    }
+                    catch (Exception $e) {
+                        throw new CmsLockException('CMSEX_L009');
+                    }
                 } else {
-                    // it's owned by somebody else
+                    // it's (still) owned by somebody else
                     throw new CmsLockException('CMSEX_L010');
                 }
             }
@@ -238,6 +248,7 @@ try {
         if ($tmp) $tpl->assign('addt_editor_list', $tmp);
     }
     $tpl->assign('userid', $userid);
+    $tpl->assign('base_url', $this->GetModuleURLPath());
     $tpl->display();
 } catch (CmsException $e) {
     $this->SetError($e->GetMessage());

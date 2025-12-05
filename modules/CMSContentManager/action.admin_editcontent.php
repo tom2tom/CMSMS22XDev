@@ -269,16 +269,28 @@ catch( CmsContentException $e ) {
 }
 
 if( $content_id > 0 && CmsContentManagerUtils::locking_enabled() ) {
-    // check whether this thing is locked
+    // check whether this page is locked
     $lock_id = CmsLockOperations::is_locked('content',$content_id);
     if( $lock_id > 0 ) {
         $lock = CmsLock::load('content',$content_id);
-        if( $lock['uid'] == $user_id || $lock->expired() ) {
-            // remove it, ready to start again
-            CmsLockOperations::unlock($lock_id,'content',$content_id);
+        if( $lock['uid'] == $user_id ) {
+            if ( $lock->expired() ) {
+                // remove it, ready to start again
+                CmsLockOperations::unlock($lock_id,'content',$content_id);
+            }
+        }
+        elseif( !empty($params['steal_lock']) ) { // the lock-id
+            // remove somebody else's lock
+            try {
+                $lock->delete();
+            }
+            catch (Exception $e) {
+                $this->SetError(lang('CMSEX_L009'));
+                $this->RedirectToAdminTab();
+            }
         }
         else {
-            // somebody else owns the lock
+            // it's (still) owned by somebody else
             $this->SetError(lang('CMSEX_L010'));
             $this->RedirectToAdminTab();
         }
@@ -354,12 +366,11 @@ try {
                 }
             }
             if( $tmp2 == '' ) {
-                $help = cms_admin_utils::get_help_tag($modname,'help_content_type',$this->Lang('help_title_content_type'));
                 foreach( $typeclasses as $classname => $publicname ) {
-                    if( $content_type == strtolower($classname) ) break;//NOTE conform this if relation between classname and type ever changes
+                    if( $content_type == strtolower($classname) ) { break; }//NOTE conform this if relation between classname and type ever changes
                 }
-                $tmp = array('<label for="content_type">*'.$this->Lang('prompt_editpage_contenttype').':</label>&nbsp;'.$help,
-                "<span id=\"content_type\" class=\"pageinput\">$publicname</span><input type=\"hidden\" name=\"{$id}content_type\" value=\"$content_type\">");
+                $tmp = array('<label>'.$this->Lang('prompt_editpage_contenttype').':</label>',
+                "$publicname\n<input type=\"hidden\" name=\"{$id}content_type\" value=\"$content_type\">");
             }
             if( $contentarray ) {
                 array_unshift($contentarray, $tmp);
