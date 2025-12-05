@@ -1,9 +1,3 @@
-<script>
-$(function() {
- $('#tpl_selall').cmsms_checkall();
-});
-</script>
-
 {form_start action='defaultadmin' __activetab='templates'}{strip}
 
 <div class="row">
@@ -124,8 +118,8 @@ $(function() {
      {/if}
     {else}
       <td>
-     {$lock=$template->get_lock()}{if $lock.expires < $smarty.now}
-        <a href="{$edit_tpl}" data-tpl-id="{$template->get_id()}" accesskey="e" class="steal_tpl_lock">{admin_icon icon='permissions.gif' class='edit_tpl steal_tpl_lock' title=$mod->Lang('prompt_steal_lock')}</a>
+     {$lock=$template->get_lock()}{if $lock && $lock.expires < $smarty.now}
+        <a href="{$edit_tpl}&{$actionid}steal_lock={$lock.id}" data-tpl-id="{$template->get_id()}" accesskey="e" class="steal_tpl_lock"><img src="{$iconsteal_url}" class="edit_tpl steal_tpl_lock" title="{$mod->Lang('prompt_steal_lock')}"></a>
      {/if}
       </td>
       {if $has_add_right}<td></td>{/if}

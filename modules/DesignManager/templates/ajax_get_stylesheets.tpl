@@ -1,9 +1,3 @@
-<script>
-$(function() {
- $('#css_selall').cmsms_checkall();
-});
-</script>
-
 <div class="row">
   <div class="pageoptions startalign last">
     <a id="addcss" accesskey="a" href="{cms_action_url action='admin_edit_css'}" title="{$mod->Lang('create_stylesheet')}">{admin_icon icon='newobject.gif'} {$mod->Lang('create_stylesheet')}</a>&nbsp;&nbsp;
@@ -106,8 +100,8 @@ $(function() {
         </td>
   {else}
         <td>
-   {$lock=$css->get_lock()}{if $lock.expires < $smarty.now}
-          <a href="{$edit_css}" data-css-id="{$css->get_id()}" accesskey="e" class="steal_css_lock">{admin_icon icon='permissions.gif' class='edit_css steal_css_lock' title=$mod->Lang('prompt_steal_lock')}</a>
+   {$lock=$css->get_lock()}{if $lock && $lock.expires < $smarty.now}
+       <a href="{$edit_css}&{$actionid}steal_lock={$lock.id}" data-css-id="{$css->get_id()}" accesskey="e" class="steal_css_lock"><img src="{$iconsteal_url}" class="edit_css steal_css_lock" title="{$mod->Lang('prompt_steal_lock')}"></a>
    {/if}
         </td>
         <td></td>
