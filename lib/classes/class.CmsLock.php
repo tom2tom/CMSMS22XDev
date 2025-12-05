@@ -113,8 +113,8 @@ final class CmsLock implements ArrayAccess
    *
    * @param string $type
    * @param int    $oid      Object Id
-   * @param int    $lifetime (in minutes) The lifetime of the lock before it can be stolen.  If not specified, the
-   *                         system default value will be used.
+   * @param int    $lifetime (in minutes) The interval from lock-creation until when it can be stolen.
+   *                         If not specified, the system default value will be used.
    *
    * @throws \CmsInvalidDataException
    */
@@ -170,15 +170,28 @@ final class CmsLock implements ArrayAccess
     public function offsetSet($key,$value)
     {
         switch( $key ) {
+        case 'id':
+            // can't change this.
+            if( isset($this->_data[$key]) ) throw new CmsInvalidDataException('CMSEX_G001');
+            $this->_data[$key] = (int)$value;
+            $this->_dirty = TRUE;
+            break;
+
         case 'type':
-        case 'oid':
-            if( isset($this->_data['id']) ) throw new CmsInvalidDataException('CMSEX_G001');
+            // can't change this after id-property is set.
+           if( isset($this->_data['id']) ) throw new CmsInvalidDataException('CMSEX_G001');
             $this->_data[$key] = trim($value);
             $this->_dirty = TRUE;
             break;
 
+        case 'oid':
         case 'uid':
-        case 'id':
+            // can't change this after id-property is set.
+            if( isset($this->_data['id']) ) throw new CmsInvalidDataException('CMSEX_G001');
+            $this->_data[$key] = (int)$value;
+            $this->_dirty = TRUE;
+            break;
+
         case 'created':
         case 'modified':
         case 'expires':
@@ -238,23 +251,28 @@ final class CmsLock implements ArrayAccess
         if( !$this->_dirty ) return;
 
         $db = CmsApp::get_instance()->GetDb();
-        $this->_data['expires'] = time()+$this->_data['lifetime']*60;
+        $this->_data['expires'] = time() + $this->_data['lifetime'] * 60;
         if( !isset($this->_data['id']) ) {
             // insert
             $query = 'INSERT INTO '.CMS_DB_PREFIX.self::LOCK_TABLE.' (type,oid,uid,created,modified,lifetime,expires)
 VALUES (?,?,?,?,?,?,?)';
-            $dbr = $db->Execute($query,array($this->_data['type'], $this->_data['oid'], $this->_data['uid'],
+            $dbr = $db->Execute($query, array($this->_data['type'], $this->_data['oid'], $this->_data['uid'],
                                              time(), time(), $this->_data['lifetime'], $this->_data['expires']));
+            if( !$dbr ) {
+                throw new CmsSqlErrorException('CMSEX_SQL001',null,$db->ErrorMsg());
+            }
             $this->_data['id'] = $db->Insert_ID();
         }
         else {
             // update
             $query = 'UPDATE '.CMS_DB_PREFIX.self::LOCK_TABLE.' SET lifetime = ?, expires = ?, modified = ?
 WHERE type = ? AND oid = ? AND uid = ? AND id = ?';
-            $dbr = $db->Execute($query,array($this->_data['lifetime'],$this->_data['expires'],time(),
-                                             $this->_data['type'],$this->_data['oid'],$this->_data['uid'],$this->_data['id']));
+            $db->Execute($query, array($this->_data['lifetime'], $this->_data['expires'], time(),
+                                             $this->_data['type'], $this->_data['oid'], $this->_data['uid'], $this->_data['id']));
+            if( $db->Affected_Rows() != 1 || $db->ErrorNo() != 0 ) {
+                throw new CmsSqlErrorException('CMSEX_SQL001',null,$db->ErrorMsg());
+            }
         }
-        if( !$dbr ) throw new CmsSqlErrorException('CMSEX_SQL001',null,$db->ErrorMsg()); //TODO check Affected_Rows() and ErrorNo() after UPDATE
         $this->_dirty = FALSE;
     }
 
@@ -328,8 +346,9 @@ WHERE type = ? AND oid = ? AND uid = ? AND id = ?';
             $parms[] = $uid;
         }
         $row = $db->GetRow($query,$parms);
-        if( !is_array($row) || count($row) == 0 ) throw new CmsNoLockException('CMSEX_L005','',array($lock_id,$type,$oid,$uid));
-
+        if( !is_array($row) || count($row) == 0 ) {
+            throw new CmsNoLockException('CMSEX_L005','',array($lock_id,$type,$oid,$uid));
+        }
         return self::from_row($row);
     }
 
@@ -355,8 +374,9 @@ WHERE type = ? AND oid = ? AND uid = ? AND id = ?';
             $parms[] = $uid;
         }
         $row = $db->GetRow($query,$parms);
-        if( !is_array($row) || count($row) == 0 ) throw new CmsNoLockException('CMSEX_L005','',array($type,$uid,$uid));
-
+        if( !is_array($row) || count($row) == 0 ) {
+            throw new CmsNoLockException('CMSEX_L005','',array($type,$uid,$uid));
+        }
         return self::from_row($row);
     }
 } // end of class
