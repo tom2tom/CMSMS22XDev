@@ -1131,8 +1131,8 @@ EOT;
 $lang['help_function_cms_filepicker'] = <<<'EOT'
 <h3>What does this do?</h3>
 <p>This plugin will create an input field that is controlled by the <em>(current)</em> file picker module to allow selecting a file.  This is an admin only plugin useful for module templates, and other admin forms.</p>
-<p>This plugin should be used in a module's admin template, and the output created by selecting a file should be handled in the normal way in the modules action php file.</p>
-<p>Note: This plugin will detect (using internal mechanisms) the currently preferred filepicker module, which may be different than the CMSMS core file picker module, and that filepicker module may ignore some of these parameters.</p>
+<p>This plugin should be used in a module's admin template, and the output created by selecting a file should be handled in the normal way in the module's action php file.</p>
+<p>Note: This plugin will use the currently preferred file picker module, which might not be the CMSMS core FilePicker module. If so, that preferred module might ignore some of these parameters.</p>
 <h3>Usage:</h3>
 <ul>
  <li>name - <strong>required</strong> string - The name for the input field.</li>
@@ -1143,7 +1143,7 @@ $lang['help_function_cms_filepicker'] = <<<'EOT'
  <li>type - <em>(optional)</em> string - An indication of the file type that can be selected.
   <p>Possible values are: image,audio,video,media,xml,document,archive,any</p>
  </li>
- <li>required - <em>(optional)</em> boolean - Indicates whether the input field is required.</li>
+ <li>required - <em>(optional)</em> boolean - Indicates that a selection/value is required.</li>
 </ul>
 <h3>Example:</h3>
 <p>Create a filepicker field to allow selecting images in the images/apples directory.</p>
