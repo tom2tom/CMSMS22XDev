@@ -112,7 +112,7 @@
 
 {if !empty($changelog)}
 	{tab_start name='changelog'}
-		<p class="file">{$changelogfilename}</p>
+{*		<p class="file">{$changelogfilename}</p>*}
 		<div class="changelog">
 			{$changelog}
 		</div>

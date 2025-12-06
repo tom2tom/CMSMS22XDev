@@ -286,7 +286,7 @@ if (is_readable($ch_filename)) {
   $changelog = implode('<br>', $changelog);
   $changelog = str_replace(["</h3>\n<br>", "<br>\n</div>"], ["</h3>\n", '</div>'], $changelog);
   $tpl->assign('changelog', $changelog);
-  $tpl->assign('changelogfilename', $ch_filename);
+//$tpl->assign('changelogfilename', $ch_filename); don't reveal site filepath
 //$active_log = true;
 }
 
