@@ -49,7 +49,7 @@ $(function() {
   });
 });
 </script>
-<div id="filter" title="{$filtertext}" style="display:none">
+<div id="filter" style="display:none">
 	<form method="post" action="moduleinterface.php">
 	<div class="hidden">
 		<input type="hidden" name="mact" value="News,m1_,defaultadmin,0">
@@ -62,7 +62,7 @@ $(function() {
 		<select id="filter_category" name="{$actionid}category">
 		{html_options options=$categorylist selected=$curcategory}
 		</select>
-		<input id="filter_allcategories" type="checkbox" name="{$actionid}allcategories" style="vertical-align:middle" value="yes"{if $allcategories=="yes"} checked{/if}>
+		<input id="filter_allcategories" type="checkbox" name="{$actionid}allcategories" style="vertical-align:middle" value="1"{if $allcategories} checked{/if}>
 		<label for="filter_allcategories">{$prompt_showchildcategories}</label>
 		{cms_help key='help_articles_filterchildcats' title=$prompt_showchildcategories}
 	</p>
@@ -95,8 +95,10 @@ $(function() {
 <div class="row c_full">
 	<div class="pageoptions grid_6" style="margin-top:8px">
 	{if isset($addlink)}{$addlink}&nbsp;{/if}
-	<a id="toggle_filter"{if $curcategory} style="font-weight:bold;color:green"{/if}>{admin_icon icon='view.gif' alt=$mod->Lang('viewfilter')}{if $curcategory} *{/if}
-	{$mod->Lang('viewfilter')}</a>
+	<a id="toggle_filter" title="{$mod->Lang('viewfilter')}">
+	{admin_icon icon='view.gif' alt=$mod->Lang('viewfilter')} {$mod->Lang('filter')}
+	</a>
+	{if $have_filter}&nbsp;<span id="filtermsg" title="{$mod->Lang('title_filterapplied')}">({$mod->Lang('filterapplied')})</span>{/if}
 	</div>
 {if $aitemcount > 0 && $pagecount > 1}
 	<div class="pageoptions grid_6 endalign">
@@ -130,9 +132,9 @@ $(function() {
 			<th>{$startdatetext}</th>
 			<th>{$enddatetext}</th>
 			<th>{$categorytext}</th>
-			<th class="pageicon">{$statustext}</th>
+			<th style="text-align:center">{$statustext}</th>
 			<th class="pageicon">&nbsp;</th>
-			<th class="pageicon">&nbsp;</th>
+{if $can_delete}			<th class="pageicon">&nbsp;</th>{/if}
 			<th class="pageicon"><input type="checkbox" id="selall" value="1" title="{$mod->Lang('selectall')}"></th>
 		</tr>
 	</thead>
@@ -164,18 +166,18 @@ $(function() {
 			<a href="{$entry->edit_url}" title="{$mod->Lang('editarticle')}">{admin_icon icon='edit.gif' alt=$mod->Lang('edit')}</a>
 			{/if}
 			</td>
+{if $can_delete}
 			<td>
-			{if isset($entry->delete_url)}
 			<a class="delete_article" href="{$entry->delete_url}" title="{$mod->Lang('delete_article')}">{admin_icon icon='delete.gif' alt=$mod->Lang('delete')}</a>
-			{/if}
 			</td>
+{/if}
 			<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->id}" title="{$mod->Lang('toggle_bulk')}"></td>
 		</tr>
 	{/foreach}
 	</tbody>
 </table>
 {else}
-	<p class="warning">{if $curcategory}{$mod->Lang('noarticles')}{else}{$mod->Lang('noarticlesinfilter')}{/if}</p>
+	<p class="information">{if !$have_filter}{$mod->Lang('noarticles')}{else}{$mod->Lang('noarticlesinfilter')}{/if}</p>
 {/if}
 
 <div style="width:99%">
@@ -188,7 +190,7 @@ $(function() {
 	<div id="bulkactions" class="pageoptions endside last">
 		<label for="selbulk">{$mod->Lang('with_selected')}:</label>
 		<select id="selbulk" name="{$actionid}bulk_action">
-{if isset($submit_massdelete)}
+{if $can_delete}
 			<option value="delete">{$mod->Lang('bulk_delete')}</option>
 {/if}
 			<option value="setdraft">{$mod->Lang('bulk_setdraft')}</option>

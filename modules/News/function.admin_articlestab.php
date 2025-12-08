@@ -68,18 +68,20 @@ if( $categorylist ) {
     $categorylist = [$this->Lang('allcategories') => ''] + $categorylist;
 }
 
-$pagenumber = 1;
-if( isset($_SESSION['news_pagenumber']) ) {
-    $pagenumber = (int)$_SESSION['news_pagenumber'];
-}
-if( isset( $params['pagenumber'] ) ) {
+if( isset($params['pagenumber']) ) {
     $pagenumber = (int)$params['pagenumber'];
     $_SESSION['news_pagenumber'] = $pagenumber;
+}
+elseif( isset($_SESSION['news_pagenumber']) ) {
+    $pagenumber = (int)$_SESSION['news_pagenumber'];
+}
+else {
+    $pagenumber = 1;
 }
 
 if( isset($params['submitfilter']) ) {
     if( isset( $params['category']) ) {
-        $this->SetPreference('article_category',trim($params['category']));
+        $this->SetPreference('article_category',(int)($params['category']));
     }
     if( isset( $params['sortby'] ) ) {
         $this->SetPreference('article_sortby',str_replace("'",'_',$params['sortby']));
@@ -87,8 +89,8 @@ if( isset($params['submitfilter']) ) {
     if( isset( $params['pagelimit'] ) ) {
         $this->SetPreference('article_pagelimit',(int)$params['pagelimit']);
     }
-    $allcategories = (isset($params['allcategories'])?$params['allcategories']:'no');
-    $this->SetPreference('allcategories',$allcategories);
+    $allcategories = !empty($params['allcategories']); // i.e. descendent-categories too
+    $this->SetPreference('allcategories',($allcategories)?'yes':'no');
     unset($_SESSION['news_pagenumber']);
     $pagenumber = 1;
 }
@@ -119,7 +121,7 @@ $sortlist[$this->Lang('status_desc')] = 'status DESC';
 $tpl->assign('prompt_category',$this->Lang('category'));
 $tpl->assign('categorylist',array_flip($categorylist));
 $tpl->assign('curcategory',$curcategory);
-$tpl->assign('allcategories',$allcategories);
+$tpl->assign('allcategories',$allcategories == 'yes');
 $tpl->assign('sortlist',array_flip($sortlist));
 $tpl->assign('pagelimits',array(10=>10,25=>25,50=>50,250=>250,500=>500,1000=>1000));
 $tpl->assign('pagelimit',$pagelimit);
@@ -137,24 +139,36 @@ $entryarray = array();
 $query1 = "SELECT SQL_CALC_FOUND_ROWS n.*,nc.news_category_name,nc.long_name FROM ".CMS_DB_PREFIX."module_news n LEFT OUTER JOIN ".CMS_DB_PREFIX."module_news_categories nc ON n.news_category_id = nc.news_category_id ";
 $parms = array();
 if ($curcategory) {
+    $scats = array_flip($categorylist); // see also above
+    $cname = isset($scats[$curcategory]) ? $scats[$curcategory] : 'NOMATCH';
     if( $allcategories == 'yes' ) {
-	    $query1 .= " WHERE nc.long_name LIKE ?"; //TODO if long_name IS NULL
-        $parms[] = $curcategory.'%';
+        $query1 .= ' WHERE nc.long_name LIKE ?';
+        $parms[] = $cname.'%';
     }
     else {
-    	$query1 .= " WHERE nc.long_name = ?"; //TODO if long_name IS NULL
-        $parms[] = $curcategory;
+        $query1 .= ' WHERE nc.news_category_name = ?';
+        $parms[] = $cname;
     }
+    $have_filter = true;
+}
+else {
+    $have_filter = false;
 }
 $query1 .= ' ORDER by '.$sortby;
 
 $pagenumber = max(1,$pagenumber);
 $startelement = ($pagenumber-1) * $pagelimit;
-$dbresult = $db->SelectLimit( $query1,$pagelimit,$startelement,$parms);
-$numrows = (int) $db->GetOne('SELECT FOUND_ROWS()');
+$dbresult = $db->SelectLimit($query1,$pagelimit,$startelement,$parms);
+$numrows = (int)$db->GetOne('SELECT FOUND_ROWS()');
 $pagecount = (int)ceil($numrows/$pagelimit);
+if ($pagenumber > 1 && $pagecount < $pagenumber) {
+    $_SESSION['news_pagenumber'] = --$pagenumber;
+    $startelement = ($pagenumber-1) * $pagelimit;
+    $dbresult = $db->SelectLimit($query1,$pagelimit,$startelement,$parms);
+    $numrows = (int)$db->GetOne('SELECT FOUND_ROWS()');
+    $pagecount = (int)ceil($numrows/$pagelimit);
+}
 
-//$tpl->assign('mod',$this);
 $tpl->assign('pagenumber',$pagenumber);
 $tpl->assign('pagecount',$pagecount);
 $tpl->assign('oftext',$this->Lang('prompt_of'));
@@ -218,17 +232,11 @@ if( $this->CheckPermission('Modify News') ) {
     $tpl->assign('addlink',$this->CreateLink($id,'addarticle',$returnid,$admintheme->DisplayImage('icons/system/newobject.gif',$this->Lang('addarticle'),'','','systemicon'),array(),'',false,false,'') .' '. $this->CreateLink($id,'addarticle',$returnid,$this->Lang('addarticle'),array(),'',false,false,'class="pageoptions"'));
 }
 $tpl->assign('can_add',$this->CheckPermission('Modify News'));
-$tpl->assign('submit_reassign',$this->CreateInputSubmit($id,'submit_reassign',$this->Lang('submit')));
+$tpl->assign('can_delete',$this->CheckPermission('Delete News'));
 $tpl->assign('categoryinput',$this->CreateInputDropdown($id,'category',$categorylist));
-if( $this->CheckPermission('Delete News') ) {
-    $tpl->assign('submit_massdelete',
-        $this->CreateInputSubmit($id,'submit_massdelete',$this->Lang('delete_selected'),
-                                 '','',$this->Lang('areyousure_deletemultiple')));
-}
-
+$tpl->assign('have_filter',$have_filter);
 $tpl->assign('reassigntext',$this->Lang('reassign_category'));
 $tpl->assign('selecttext',$this->Lang('select'));
-$tpl->assign('filtertext',$this->Lang('title_filter'));
 $tpl->assign('statustext',$this->Lang('status'));
 $tpl->assign('startdatetext',$this->Lang('startdate'));
 $tpl->assign('enddatetext',$this->Lang('enddate'));
