@@ -16,7 +16,7 @@
    {/if}
   {/if}
     <a id="myoptions" accesskey="o" title="{$mod->Lang('prompt_settings')}">{admin_icon icon='edit.gif' alt=$mod->Lang('prompt_settings')}&nbsp;{$mod->Lang('prompt_settings')}</a>
-    {if !empty($have_filter)}<span style="color:red"><em>({$mod->Lang('filter_applied')})</em></span>{/if}
+    {if !empty($have_filter)}<span id="filtermsg">({$mod->Lang('filter_applied')})</span>{/if}
   </div>
 
   <div class="pageoptions endside options-form grid_4">

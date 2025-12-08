@@ -9,7 +9,7 @@
     <a accesskey="l" title="{$mod->Lang('title_clearlocks2')}{if !empty($which_selflocks)} ({$which_selflocks}){/if}" href="{cms_action_url action='admin_clearlocks' type='stylesheet' self=1}">{admin_icon icon='run.gif' alt=''}&nbsp;{$mod->Lang('prompt_clearlocks2')}</a>&nbsp;&nbsp;
  {/if}
  {if $css_filter && $css_filter.design}
-    <span style="color:green" title="{$mod->Lang('title_filterapplied')}">{$mod->Lang('filterapplied')}</span>
+    <span id="filtermsg" title="{$mod->Lang('title_filterapplied')}">({$mod->Lang('filterapplied')})</span>
  {/if}
 {/if}
   </div>
