@@ -71,7 +71,7 @@ final class ModuleOperations
     /**
      * @ignore
      */
-    //TODO these are file-basename patterns, so descendents of .svn, .git would be allowed?
+    //TODO these are file-basename patterns, so descendants of .svn, .git would be allowed?
     private $xml_exclude_files = array('^\.svn' , '^CVS$' , '^\#.*\#$' , '~$', '\.bak$', '^\.git', '^\.tmp$');
 
     /**

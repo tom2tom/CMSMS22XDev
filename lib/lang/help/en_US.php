@@ -199,7 +199,7 @@ $lang['help_cmscontentmanager_help'] = <<<EOT
            <p><strong>Note:</strong> When selecting many content items, or content items with many descendants, this can be a very memory, database and time intensive operation.</p>
          </li>
          <li>Set Active
-           <p>This option will ensure that the content items selected are marked as &quot;Active&quot;.  Users will be asked to confirm the operation. This operation does not work on descendent of the selected pages.</p>
+           <p>This option will ensure that the content items selected are marked as &quot;Active&quot;.  Users will be asked to confirm the operation. This operation does not work on descendants of the selected pages.</p>
            <p>Only users with the &quot;Manage All Content&quot; permission can use this option.</p>
          </li>
          <li>Set Inactive

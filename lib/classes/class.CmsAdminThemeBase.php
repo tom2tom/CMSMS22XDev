@@ -1275,7 +1275,7 @@ abstract class CmsAdminThemeBase
 	 * @since 1.12
 	 * @param bool $none Flag whether to prepend a 'None' option. Default true.
 	 * @return array Each member like 'menu-label' => 'action-urlpath'
-	 * The labels are adapted from the admin menu: section-titles and descendents like
+	 * The labels are adapted from the admin menu: section-titles and descendants like
 	 * 'Site&nbsp;Admin' or '&nbsp;&nbsp;Tags'
 	 * The urlpaths are site-root-url-relative, like
 	 *  index.php?section=content&amp;[SECURITYTAG] or

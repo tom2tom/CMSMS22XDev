@@ -35,8 +35,8 @@ class UserGuideXML
      '^index\.html?$',
      '^\.htaccess$',
      '^web\.config$',
-     '\.git', //TODO also all descendant files
-     '\.svn', //TODO also all descendant files
+     '\.git', //TODO also all descendent files
+     '\.svn', //TODO also all descendent files
      'cvs$',
      '~$',
      '\.bak$',
