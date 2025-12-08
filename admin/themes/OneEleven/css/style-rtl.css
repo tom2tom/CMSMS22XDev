@@ -2835,3 +2835,6 @@ a.toggle-dropzone:focus {
 	background: #00f;
 	color: #fff;
 }*/
+#filtermsg {
+	color: #008f00; /*OR #6b008f;*/
+}

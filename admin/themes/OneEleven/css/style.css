@@ -1870,7 +1870,7 @@ td.icons_wide {
 .pointer {
 	cursor: pointer;
 }
-#oe_mainarea ul.sortable-list {
+#oe_mainarea .sortable-list {
 	list-style: none;
 	padding: 0;
 	margin: 0;
@@ -2835,3 +2835,6 @@ a.toggle-dropzone:focus {
 	background: #00f;
 	color: #fff;
 }*/
+#filtermsg {
+	color: #008f00; /*OR #6b008f;*/
+}
