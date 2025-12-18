@@ -4,18 +4,10 @@
 # Module CMSContentManager action
 # (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
-#-------------------------------------------------------------------------
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-#
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -25,26 +17,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 # Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
 #-------------------------------------------------------------------------
 #END_LICENSE
+
+use CMSContentManager\ContentListFilter;
+
 if( !isset($gCms) ) exit;
-$error = '';
-
-if( !function_exists('cm_prettyurls_ok') ) {
-  function cm_prettyurls_ok()
-  {
-    static $_prettyurls_ok = -1;
-    if( -1 < $_prettyurls_ok ) return $_prettyurls_ok;
-
-    $config = cmsms()->GetConfig();
-    if( isset($config['url_rewriting']) && $config['url_rewriting'] != 'none' )
-      $_prettyurls_ok = 1;
-    else
-      $_prettyurls_ok = 0;
-    return $_prettyurls_ok;
-  }
-}
 
 if( isset($params['multisubmit']) && isset($params['multiaction']) &&
     isset($params['multicontent']) && is_array($params['multicontent']) && count($params['multicontent']) > 0 ) {
@@ -55,14 +33,23 @@ if( isset($params['multisubmit']) && isset($params['multiaction']) &&
   }
   // redirect to special action to handle bulk content stuff.
   $this->Redirect($id,'admin_multicontent',$returnid,
-		  array('multicontent'=>base64_encode(serialize($params['multicontent'])),
-			'multiaction'=>$params['multiaction']));
+          array('multicontent'=>base64_encode(serialize($params['multicontent'])),
+            'multiaction'=>$params['multiaction']));
 }
+
+$error = '';
+$cm_prettyurls_ok = function() use($config) {
+  static $_prettyurls_ok = null;
+  if( $_prettyurls_ok === null ) {
+    $_prettyurls_ok = (isset($config['url_rewriting']) && $config['url_rewriting'] != 'none');
+  }
+  return $_prettyurls_ok;
+};
 
 $modname = $this->GetName();
 $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_pages_tab.tpl",null,$modname,$smarty);
 
-$tpl->assign('prettyurls_ok',cm_prettyurls_ok());
+$tpl->assign('prettyurls_ok',$cm_prettyurls_ok());
 $tpl->assign('can_add_content',$this->CheckPermission('Add Pages') || $this->CheckPermission('Manage All Content'));
 $tpl->assign('can_reorder_content',$this->CheckPermission('Manage All Content'));
 
@@ -124,26 +111,32 @@ if( isset($params['delete']) ) {
 // build the display
 //
 
-if( isset($params['setoptions']) ) {
-  cms_userprefs::set($this->GetName().'_pagelimit',(int)$params['pagelimit']);
+$savedlimit = 0;
+$tmp = cms_userprefs::get($modname.'_pages_filter');
+if( $tmp ) {
+  $tmp = unserialize($tmp);
+  if( $tmp ) {
+    $savedlimit = $tmp['limit'];
+  }
 }
-$pagelimit = cms_userprefs::get($this->GetName().'_pagelimit',500);
+if( $savedlimit == 0 ) {
+  $allpages = (int)$db->GetOne('SELECT COUNT(*) FROM '.CMS_DB_PREFIX.'content');
+  if ($allpages > 50) { $pagelimit = 100; }
+  elseif ($allpages > 25) { $pagelimit = 50; }
+  elseif ($allpages > 10) { $pagelimit = 25; }
+  else { $pagelimit = 10; }
+}
+else {
+  $pagelimit = $savedlimit;
+}
 
 $builder->set_pagelimit($pagelimit);
 $builder->set_page($curpage);
 $editinfo = $builder->get_content_list();
-$npages = $builder->get_numpages();
-$pagelimits = array(10=>10,25=>25,100=>100,250=>250,500=>500);
-$tpl->assign('pagelimits',$pagelimits);
-$pagelist = array();
-for( $i = 0; $i < $npages; $i++ ) {
-  $pagelist[$i+1] = $i+1;
-}
-$tpl->assign('pagelimit',$pagelimit);
-$tpl->assign('pagelist',$pagelist);
+$npages = $builder->get_numpages(); // might differ from $allpages
 $tpl->assign('curpage',$curpage);
 $tpl->assign('npages',$npages);
-$columns  = $builder->get_display_columns();
+$columns = $builder->get_display_columns();
 $tpl->assign('columns',$columns);
 if( $this->GetPreference('list_namecolumn','menutext') == 'title' ) {
   $tpl->assign('colhdr_page',$this->Lang('colhdr_name'));
@@ -176,7 +169,5 @@ $opts = bulkcontentoperations::get_operation_list();
 $tpl->assign('bulk_options',$opts);
 
 $tpl->display();
-#
-# EOF
-#
+
 ?>
