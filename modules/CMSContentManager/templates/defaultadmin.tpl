@@ -106,7 +106,8 @@ $(function() {
           cms_alert('{$mod->Lang('error_contentlocked')|escape:'javascript'}');
         }
       } else {
-       //TODO handle error
+        ev.preventDefault();
+        cms_alert('{lang('error_internal')|escape:'javascript'}');
       }
     });
   })
@@ -122,13 +123,13 @@ $(function() {
     $(map[v]).show();
   })
   .on('click', '#myoptions', function() {
-    $('#useroptions').dialog({
+    $('#pagelistoptions').dialog({
       width: 'auto',
       minHeight: 225,
       resizable: true,
       buttons: [
        {
-        text: "{$mod->Lang('apply')|escape:'javascript'}",
+        text: '{lang('apply')|escape:'javascript'}',
         icon: 'ui-icon-caret-1-n',
         click: function() {
          $(this).dialog('close');
@@ -136,7 +137,16 @@ $(function() {
         }
        },
        {
-        text: "{$mod->Lang('cancel')|escape:'javascript'}",
+        text: '{lang('reset')|escape:'javascript'}',
+        icon: 'ui-icon-arrowrefresh-1-n',
+        click: function() {
+         $(this).dialog('close');
+         $('#settype').val(-1);
+         $('#myoptions_form').trigger('submit');
+        }
+       },
+       {
+        text: '{lang('cancel')|escape:'javascript'}',
         icon: 'ui-icon-cancel',
         click: function() {
          $(this).dialog('close');
@@ -144,6 +154,9 @@ $(function() {
        }
       ]
     });
+  })
+  .on('change', '#curpage', function() {
+    $(this).closest('form').trigger('submit');
   })
   .on('click', '#selectall', function() {
     var state = $(this).is(':checked');
@@ -173,11 +186,6 @@ $(function() {
     $('#content_area').autoRefresh('reset');
   });
 */
-  // go to page on option change
-  $('#{$actionid}curpage').on('change', function() {
-    $(this).closest('form').trigger('submit');
-  });
-
   $(document).ajaxComplete(function() {
     $('#selectall').cmsms_checkall();
     $('tr.selected').css('background', 'yellow');
@@ -216,11 +224,11 @@ $(function() {
 });
 </script>
 
-<div id="useroptions" style="display:none" title="{$mod->Lang('title_userpageoptions')}">
+<div id="pagelistoptions" style="display:none" title="{$mod->Lang('title_userpageoptions')}">
 	{form_start action='defaultadmin' id='myoptions_form'}
+		<input type="hidden" id="settype" name="{$actionid}setoptions" value="1">
 		<div style="display:table">
 		<div style="display:table-row">
-			<input type="hidden" name="{$actionid}setoptions" value="1">
 			<label for="page_limits" class="endalign" style="display:table-cell;padding-{$ndside}:.5em">{$mod->Lang('prompt_pagelimit')}:</label>
 			<select id="page_limits" style="display:table-cell" name="{$actionid}pagelimit">
 				{html_options options=$pagelimits selected=$pagelimit}
@@ -264,7 +272,5 @@ $(function() {
 	{form_end}
 </div>
 <div class="clearb"></div>
-
-{/if}{* ajax *}
-
+{/if}{* not ajax *}
 <div id="content_area"></div>
