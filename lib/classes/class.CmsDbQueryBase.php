@@ -240,8 +240,8 @@ abstract class CmsDbQueryBase
             case 'EOF': return $this->_rs->EOF();
             case 'limit': return $this->_limit;
             case 'offset': return $this->_offset;
-            case 'totalrows': return $this->_totalmatchingrows;
-            case 'numpages': return ceil($this->_totalmatchingrows / $this->_limit);
+            case 'totalrows': return (int)$this->_totalmatchingrows;
+            case 'numpages': return (int)ceil(($this->_totalmatchingrows / $this->_limit) - 0.001);
             default: return null; // any unrecognised property
         }
     }
