@@ -1,21 +1,13 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module CMSContentManager classes ContentListBuilder, ContentListFilter, ContentListQuery
+# CMSContentManager module classes: ContentListBuilder, ContentListFilter, ContentListQuery
 # (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
-#
-#-------------------------------------------------------------------------
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-#
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -25,7 +17,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 # Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
 #-------------------------------------------------------------------------
 #END_LICENSE
 
@@ -107,26 +98,25 @@ final class ContentListQuery extends \CmsDbQueryBase
 	public function __construct(ContentListFilter $filter)
 	{
 		$this->_filter = $filter;
-		$this->_limit = 1000;
+		$this->_limit = 500; // arbitrary initial guess
 		$this->_offset = 0;
 	}
 
 	public function set_limit($limit)
 	{
-		$this->_limit = max(1,$limit);
+		$this->_limit = max(1,(int)$limit);
 	}
 
 	public function set_offset($offset)
 	{
-		$this->_offset = max(0,$offset);
+		$this->_offset = max(0,(int)$offset);
 	}
 
 	public function execute()
 	{
 		if( $this->_rs ) return;
 
-		// SQL_CALC_FOUND_ROWS is deprecated. Instead exectute the query with LIMIT, and then again with COUNT(*) for the FOUND_ROWS()
-		$sql = 'SELECT SQL_CALC_FOUND_ROWS C.content_id FROM '.CMS_DB_PREFIX.'content C';
+		$sql = 'SELECT C.content_id FROM '.CMS_DB_PREFIX.'content C';
 		$where = $parms = [];
 		switch( $this->_filter->type ) {
 		case ContentListFilter::EXPR_OWNER:
@@ -142,8 +132,7 @@ final class ContentListQuery extends \CmsDbQueryBase
 			$parms[] = (int) $this->_filter->expr;
 			break;
 		case ContentListFilter::EXPR_DESIGN:
-			$sql .= ' INNER JOIN '.CMS_DB_PREFIX.'content_props P ON C.content_id = P.content_id AND P.prop_name = ?';
-			$parms[] = 'design_id';
+			$sql .= ' INNER JOIN '.CMS_DB_PREFIX."content_props P ON C.content_id = P.content_id AND P.prop_name = 'design_id'";
 			$where[] = 'P.content = ?';
 			$parms[] = (int) $this->_filter->expr;
 			break;
@@ -155,7 +144,7 @@ final class ContentListQuery extends \CmsDbQueryBase
 		$db = \cms_utils::get_db();
 		$this->_rs = $db->SelectLimit($sql,$this->_limit,$this->_offset,$parms);
 		if( $db->ErrorMsg() ) throw new \CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
-		$this->_totalmatchingrows = $db->GetOne('SELECT FOUND_ROWS()');
+		$this->_totalmatchingrows = $db->GetOne(str_replace('C.content_id','COUNT(*)',$sql));
 	}
 
 	public function GetObject()
@@ -169,11 +158,9 @@ final class ContentListQuery extends \CmsDbQueryBase
 
 /**
  * A class for building and managing content lists.
- *
- * This is an internal class.  Not intended for use by external third parties.
+ * This class is not intended for use by non-core operations.
  * @final
  * @internal
- * @ignore
  * @package CMS
  * @author Robert Campbell
  */
@@ -184,7 +171,7 @@ final class ContentListBuilder
 	private $_userid;
 	private $_use_perms = TRUE;
 	private $_filter = null; // no object
-	private $_pagelimit = 500;
+	private $_pagelimit = 500; // arbitrary initial guess
 	private $_offset = 0;
 	private $_pagelist;
 	private $_seek_to;
@@ -193,8 +180,9 @@ final class ContentListBuilder
 
 	/**
 	 * Constructor
+	 * Caches the current user's id and pages (if any) opened by that user
 	 *
-	 * Caches the opened pages, and userid
+	 * @param $mod CMSContentManager object
 	 */
 	public function __construct(CMSContentManager $mod)
 	{
@@ -204,13 +192,22 @@ final class ContentListBuilder
 		if( $tmp ) $this->_opened_array = explode(',',$tmp);
 	}
 
+	/**
+	 * [Un]set the displayed-flag for the specified column
+	 *
+	 * @param string $column 'expand' etc
+	 * @param bool $state Default true
+	 */
 	public function column_state($column,$state = TRUE)
 	{
 		$this->_display_columns[$column] = $state;
 	}
 
 	/**
-	 * Expand a section, given a parent page_id.  Results in the children of this page being visible.
+	 * Expand a specified section of the list.
+	 * Results in the children of this page being visible in the content list.
+	 *
+	 * @param int $parent_page_id Page identifier
 	 */
 	public function expand_section($parent_page_id)
 	{
@@ -225,7 +222,8 @@ final class ContentListBuilder
 	}
 
 	/**
-	 * Marks all parent pages as expanded.  Results in all content pages being visible.
+	 * Mark all parent-pages as expanded.
+	 * Results in all content pages being visible.
 	 */
 	public function expand_all()
 	{
@@ -252,7 +250,8 @@ final class ContentListBuilder
 	}
 
 	/**
-	 * Marks all parent pages as collapsed.  Results in no child pages beng visible.
+	 * Mark all parent-pages as collapsed.
+	 * Results in no child pages beng visible.
 	 */
 	public function collapse_all()
 	{
@@ -261,7 +260,10 @@ final class ContentListBuilder
 	}
 
 	/**
-	 * Collapse a parent page, results in its child pages not being visible in the content list.
+	 * Collapse the specified section of the list.
+	 * Results in its child pages not being visible.
+	 *
+	 * @param int $parent_page_id Page identifier
 	 */
 	public function collapse_section($parent_page_id)
 	{
@@ -284,7 +286,10 @@ final class ContentListBuilder
 	}
 
 	/**
-	 * Toggle the active state of a content page
+	 * [Un]set the active-flag for the specified page
+	 *
+	 * @param int $page_id Page identifier (>0)
+	 * @param bool $state Default true
 	 */
 	public function set_active($page_id,$state = TRUE)
 	{
@@ -305,9 +310,10 @@ final class ContentListBuilder
 	}
 
 	/**
-	 * Set the filter
+	 * Set or clear the pages-list filter
 	 *
-	 * @param ContentListFilter $filter an optional filter.  Use null to invalidate any filter.
+	 * @param mixed ContentListFilter | null $filter an optional filter
+	 *            or null to invalidate any filter.
 	 */
 	public function set_filter(/*?ContentListFilter */$filter = null) // uncomment for PHP 7.1+ .. 8.4+
 	{
@@ -315,24 +321,21 @@ final class ContentListBuilder
 	}
 
 	/**
-	 * Set the page limit.
-	 * This must be called BEFORE get_content_list() is called.
+	 * Set the page limit/max-length/max-rows.
+	 * This must be called before get_content_list() is called.
 	 *
-	 * @param integer The page limit (min 1, max 500)
+	 * @param int $n The page limit (min 1, max 500), typically 10|25|50|100
 	 * @return void
 	 */
 	public function set_pagelimit($n)
 	{
-		$n = (int)$n;
-		$n = max(1,min(500,$n));
-		$this->_pagelimit = $n;
+		$this->_pagelimit = max(1,min(500,(int)$n));
 	}
 
-
 	/**
-	 * Get the page limit.
+	 * Get the page limit
 	 *
-	 * @return integer
+	 * @return int
 	 */
 	public function get_pagelimit()
 	{
@@ -340,45 +343,72 @@ final class ContentListBuilder
 	}
 
 	/**
-	 * Set the page offset
+	 * Get page limits/lengths tailored for the maximum no. of displayed rows.
+	 * For use in a page-length selector.
+	 * @since 2.2.23F2
+	 *
+	 * $param int $n Maximum number of displayable rows
+	 *
+	 * @return array each member like N => N, where N >= 10
+	 */
+	public function get_pagelengths($n)
+	{
+		$lengths = [10 => 10];
+		if( $n > 10 ) { $lengths[25] = 25; }
+		if( $n > 25 ) { $lengths[50] = 50; }
+		if( $n > 50 ) { $lengths[100] = 100; }
+		if( $n > 100 ) { $lengths[500] = 500; }
+		return $lengths;
+	}
+
+	/**
+	 * Set the page offset.
 	 * This must be called before get_content_list() is called.
 	 *
 	 * @param int page offset (min 0, max is set by get_content_list())
 	 */
 	public function set_offset($n)
 	{
-		$n = (int)$n;
-		$n = max(0,$n);
-		$this->_offset = $n;
+		$this->_offset = max(0,(int)$n);
 	}
 
 	/**
-	 * Get the current offset
+	 * Get the page offset
 	 *
-	 * @return integer
+	 * @return int
 	 */
 	public function get_offset()
 	{
 		return $this->_offset;
 	}
 
+	/**
+	 * Set the seek-to property
+	 *
+	 * @param int seek to (>= 1)
+	 */
 	public function seek_to($n)
 	{
-		$n = (int)$n;
-		$n = max(1,$n);
-		$this->_seek_to = $n;
+		$this->_seek_to = max(1,(int)$n);
 	}
 
+	/**
+	 * Set the offset corresponding to the specified page
+	 *
+	 * @param int page (>= 1)
+	 */
 	public function set_page($n)
 	{
-		$n = (int)$n;
-		$n = max(1,$n);
+		$n = max(1,(int)$n);
 		$this->_offset = $this->_pagelimit * ($n-1);
 	}
 
 	/**
-	 * This can be called after the content list is returned as
-	 * the offset can be adjusted because of seeking to a content id.
+	 * Get the page corresponding to the current offset and page-size.
+	 * This can be called after the content list is returned because
+	 * the offset can be adjusted due to seeking to a content id.
+	 *
+	 * @return int
 	 */
 	public function get_page()
 	{
@@ -387,21 +417,20 @@ final class ContentListBuilder
 
 	/**
 	 * Get the number of pages.
-	 * Can only be called AFTER get_content_list has been called.
+	 * This can only be called after get_content_list() has been called.
 	 *
-	 * @return integer
+	 * @return int
 	 */
 	public function get_numpages()
 	{
-		if( !is_array($this->_pagelist) ) return 0;
-		$npages = (int)(count($this->_pagelist) / $this->_pagelimit);
-		if( count($this->_pagelist) % $this->_pagelimit  != 0 ) $npages++;
-		return $npages;
+		if( !$this->_pagelist ) return 0;
+		return (int)ceil((count($this->_pagelist) / $this->_pagelimit) - 0.001);
 	}
 
 	/**
 	 * Set the specified page as the default page, if possible
-	 * @param integer The page number
+	 *
+	 * @param int $page_id Page identifier (> 0)
 	 *
 	 * @return bool
 	 */
@@ -436,7 +465,12 @@ final class ContentListBuilder
 	}
 
 	/**
-	 * Move a content page up or down wrt its peers.
+	 * Move the specified content page up or down wrt its peers.
+	 *
+	 * @param int $page_id Page identifier (>0)
+	 * @param int $direction <0 (up) or >0 (down)
+	 *
+	 * @return bool indicating success
 	 */
 	public function move_content($page_id,$direction)
 	{
@@ -466,9 +500,11 @@ final class ContentListBuilder
 	}
 
 	/**
-	 * Delete a content page.
+	 * Delete the specified content page
 	 *
-	 * returns error message on failure.  null on success;
+	 * @param int $page_id Page identifier (>0)
+	 *
+	 * @return mixed string error message on failure | null on success
 	 */
 	public function delete_content($page_id)
 	{
@@ -516,6 +552,11 @@ final class ContentListBuilder
 		$contentops->SetAllHierarchyPositions($tophier);
 	}
 
+	/**
+	 * Check whether URL re-writing is configured for this site
+	 *
+	 * @return bool
+	 */
 	public function pretty_urls_configured()
 	{
 		$config = \cms_config::get_instance();
@@ -523,10 +564,12 @@ final class ContentListBuilder
 	}
 
 	/**
-	 * Get the columns that are visible to display in the content list
+	 * Get the content list columns with their respective visibility-indicators.
 	 *
-	 * @return array associative array.  Column key is the key, and a string (either, 'icon','normal' to indicate
-	 * how the column header is intended.  or empty/null to indicate if the column should be hidden.
+	 * @return array Each member having a string column key as its key,
+	 *  and a mixed value: string ('icon' or 'normal') indicating how the
+	 *  column header is to be displayed, or empty/null indicating that
+	 *  the column should not be displayed.
 	 */
 	public function get_display_columns()
 	{
@@ -553,6 +596,8 @@ final class ContentListBuilder
 		$columnstodisplay['edit'] = in_array('edit',$cols) ? 'icon' : '';
 		$columnstodisplay['delete'] = (in_array('delete',$cols) && ($mod->CheckPermission('Remove Pages') || $mod->CheckPermission('Manage All Content'))) ? 'icon' : '';
 		$columnstodisplay['multiselect'] = (in_array('multiselect',$cols) && ($mod->CheckPermission('Remove Pages') || $mod->CheckPermission('Manage All Content'))) ? 'icon' : '';
+//		$columnstodisplay['created'] = (in_array('created',$cols)) ? 'normal' : '';
+//		$columnstodisplay['lastmodified'] = (in_array('lastmodified',$cols)) ? 'normal' : '';
 
 		foreach( $columnstodisplay as $key => $val ) {
 			if( isset($this->_display_columns[$key]) ) $columnstodisplay[$key] = $val && $this->_display_columns[$key];
@@ -563,6 +608,10 @@ final class ContentListBuilder
 
 	/**
 	 * Recursive function to generate a list of all content pages.
+	 *
+	 * @param cms_tree $node
+	 *
+	 * @return array
 	 */
 	private function _get_all_pages(\cms_tree $node)
 	{
@@ -580,8 +629,9 @@ final class ContentListBuilder
 	}
 
 	/**
-	 * Load all content that the user has access to.
-     * @return array page numeric ids (as strings)
+	 * Load all content that the current user has access to.
+	 *
+	 * @return array page numeric ids (as strings)
 	 */
 	private function _load_editable_content()
 	{
@@ -712,7 +762,12 @@ final class ContentListBuilder
 	}
 
 	/**
-	 * Given a content id and a userid indicate whether the user has access to all peers of the content page.
+	 * Check whether the specified user has access to all peers of the specified content page
+	 *
+	 * @param int $content_id page identifier
+	 * @param int $userid user identifier Default 0 (hence the recorded user)
+	 * @return bool
+	 *
 	 */
 	private function _check_peer_authorship($content_id,$userid = 0)
 	{
@@ -722,7 +777,12 @@ final class ContentListBuilder
 	}
 
 	/**
-	 * Checks if the specified user is the author of the specified content page
+	 * Check if the specified user is the author of the specified content page
+	 *
+	 * @param int $content_id page identifier
+	 * @param int $userid user identifier Default 0 (hence the recorded user)
+	 *
+	 * @return bool
 	 */
 	private function _check_authorship($content_id,$userid = 0)
 	{
@@ -731,7 +791,9 @@ final class ContentListBuilder
 	}
 
 	/**
-	 * Get current page-locks for all users.
+	 * Get current page-locks for all users
+	 *
+	 * @return array
 	 */
 	public function get_locks()
 	{
@@ -748,7 +810,10 @@ final class ContentListBuilder
 	}
 
 	/**
-	 * Test for lock(s), optionally excluding any held by a specified user.
+	 * Test for lock(s), optionally excluding any held by a specified user
+	 *
+	 * @param int $userid user identifier Default 0 (hence no exclusion)
+	 * @return bool
 	 */
 	public function have_locks($userid = 0)
 	{
@@ -768,6 +833,9 @@ final class ContentListBuilder
 	 * Check whether the specified page is locked for the specified user.
 	 * Locked if other-user-held lock is recorded, unlocked if no lock, or
 	 * a $userid-held lock
+	 * @ignore
+	 *
+	 * @return bool
 	 */
 	private function _is_locked($page_id,$userid)
 	{
@@ -788,6 +856,9 @@ final class ContentListBuilder
 	/**
 	 * Check whether the site default-page (if any) is locked by a user
 	 * other than the one specified (or if that's 0, whether locked by any user)
+	 * @ignore
+	 *
+	 * @return bool
 	 */
 	private function _is_default_locked($userid)
 	{
@@ -805,6 +876,12 @@ final class ContentListBuilder
 		return $locks[$dflt_content_id]['uid'] != $userid;
 	}
 
+	/**
+	 * Check whether the lock (if any) on the specified page has expired
+	 * @ignore
+	 *
+	 * @return bool
+	 */
 	private function _is_lock_expired($page_id)
 	{
 		$locks = $this->get_locks();
@@ -817,7 +894,9 @@ final class ContentListBuilder
 	}
 
 	/**
-	 * Load, and cache all users
+	 * Load and cache all users
+	 *
+	 * @return array
 	 */
 	private function _get_users()
 	{
@@ -836,7 +915,11 @@ final class ContentListBuilder
 	}
 
 	/**
-	 * Given a list of displayable pages, builds display info for each page.
+	 * Build display info for each specified page
+	 *
+	 * @param array $page_list Numeric identifiers of the wanted pages
+	 *
+	 * @return array
 	 */
 	private function _get_display_data($page_list)
 	{
@@ -1044,7 +1127,8 @@ final class ContentListBuilder
 
 	/**
 	 * Master function
-	 * @return array of display data for viewable/editable content, or empty
+	 *
+	 * @return array Display data for viewable/editable content, or empty
 	 */
 	public function get_content_list()
 	{
@@ -1053,8 +1137,16 @@ final class ContentListBuilder
 		return [];
 	}
 
+/* TODO new method to get displayed-rows, with minimal overhead/delay
+ for tailoring pagelengths via $this->get_pagelengths()
+	public function get_content_length()
+	{
+		return 0;
+	}
+*/
 	/**
-	 * Test if this content list supports multiselect
+	 * Check whether this content list supports multiselect
+	 *
 	 * @return bool
 	 */
 	public function supports_multiselect()
