@@ -53,7 +53,7 @@ $lang['create_category'] = 'Create New Category';
 $lang['create_design'] = 'Create New Design';
 $lang['create_stylesheet'] = 'Create New Stylesheet';
 $lang['create_template'] = 'Create New Template';
-$lang['css_filter'] = 'Filter Stylesheets';
+$lang['css_filter'] = 'Stylesheets List Settings'; // dialog heading
 $lang['category_reordered'] = 'Category order changed';
 
 //D
@@ -98,7 +98,6 @@ $lang['export'] = 'Export';
 $lang['export_design'] = 'Export Design to XML';
 
 //F
-$lang['filter'] = 'Filter';
 $lang['filterapplied'] = 'Filter applied';
 $lang['friendlyname'] = 'Design Manager';
 
@@ -308,6 +307,7 @@ $lang['lock_refresh'] = 'Lock Refresh Interval (seconds)';
 $lang['lock_warning'] = 'Another user is editing this item. You will not be able to save any of your work until lock time out expires.';
 
 //M
+$lang['media'] = 'Media'; // filter-type label
 $lang['media_type_all'] = 'All';
 $lang['media_type_aural'] = 'Aural'; // deprecated type
 $lang['media_type_speech'] = 'Speech';  // maybe deprecated type
@@ -380,10 +380,8 @@ $lang['prompt_dest_template'] = 'Destination Template';
 $lang['prompt_dflt'] = 'Default';
 $lang['prompt_dflt_tpl'] = 'This is the default template for its type';
 $lang['prompt_edit'] = 'Edit';
-$lang['prompt_editfilter'] = 'View filter'; // applies also to stylesheets
 $lang['prompt_filename'] = 'Filename';
 $lang['prompt_filetemplate'] = 'Template File';
-$lang['prompt_filter'] = 'Filter';
 $lang['prompt_firstpage'] = 'First page';
 $lang['prompt_has_dflt'] = 'Has Default Template Contents';
 $lang['prompt_help'] = 'Help';
@@ -392,14 +390,14 @@ $lang['prompt_id'] = 'Id';
 $lang['prompt_import'] = 'Create a new template of this type'; //confusing key: an icon title-attribute, nothing to do with importing
 $lang['prompt_import_xml_file'] = 'Upload a Design XML File';
 $lang['prompt_lastpage'] = 'Last page';
-$lang['prompt_limit'] = 'Page Limit'; //aka Page Length
+$lang['prompt_limit'] = 'Page Limit';
 $lang['prompt_listable'] = 'Listable';
 $lang['prompt_lockedby'] = 'Locked by';
 $lang['prompt_lockedsince'] = 'Since';
 $lang['prompt_lockexpired'] = 'Expired';
 $lang['prompt_lockexpires'] = 'Expires';
 $lang['prompt_locksettings'] = 'Locking';
-$lang['prompt_media'] = 'Media';//new list-column title
+$lang['prompt_media'] = 'Media'; // see also 'media'
 $lang['prompt_media_type'] = 'Media Type';
 $lang['prompt_media_query'] = 'Media Query';
 $lang['prompt_modified'] = 'Modified Date';
@@ -474,6 +472,7 @@ $lang['title_css_selectall'] = 'Select <em>(or deselect)</em> all visible styles
 $lang['title_delete'] = 'Delete the selected items';
 $lang['title_designmanager_settings'] = 'Settings - Design Manager';
 $lang['title_designs_default'] = 'The default design is automatically selected when creating new content pages.';
+$lang['title_editsettings'] = 'Change settings';
 $lang['title_filter'] = 'Select an item in this list to reduce the number of visible templates';
 $lang['title_filter_design'] = 'Optionally filter the displayed stylesheets by the associated design/theme';
 //$lang['title_filterapplied'] = 'A filter has been selected which limits the number of templates listed';
@@ -494,7 +493,7 @@ $lang['title_tpl_import_type'] = 'For organizational purposes, and to provide so
 $lang['title_tpl_modified'] = 'This column displays the date/time when each template was last modified';
 $lang['title_tpl_name'] = 'This column displays the unique name of each template';
 $lang['title_tpl_type'] = 'This column displays the type of each template';
-$lang['tpl_filter'] = 'Filter Templates';
+$lang['tpl_filter'] = 'Templates List Settings'; // dialog heading
 $lang['tpl_originators'] = 'Originators';
 $lang['tpl_type'] = 'Template Type';
 $lang['tpl_types'] = 'Template Types';
@@ -516,8 +515,8 @@ $lang['warning_editdesign_nostylesheets'] = 'There are no stylesheets available 
 //$lang['warning_edittemplate_nostylesheets'] = 'No stylesheet is attached';
 $lang['warning_edittemplate_notemplates'] = 'We could not find any template that you have permission to edit';
 $lang['warning_no_design'] = 'No design is recorded';
-$lang['warning_no_templates_available'] = 'We could not find any template that matches the filter criteria (if any) and that you have permission to edit';
-$lang['warning_no_stylesheets'] = 'We could find no stylesheet that matches the filter criteria (if any) and that you have permission to edit';
+$lang['warning_no_templates'] = 'We could not find a template that matches the filter criteria (if any) and that you have permission to edit';
+$lang['warning_no_stylesheets'] = 'We could not find a stylesheet that matches the filter criteria (if any) and that you have permission to edit';
 $lang['warning_set_all_pages'] = '<strong>Warning:</strong> This is a potentially destructive operation!  You are asking that all content pages be set use this template.  Please confirm this action.';
 $lang['whats_this'] = 'What\'s this?';
 

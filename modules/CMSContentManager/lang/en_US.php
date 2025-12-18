@@ -98,11 +98,11 @@ $lang['error_setdefault'] = 'Could not change the default content page.  This co
 $lang['error_setinactive'] = 'Could not deactivate this page.  This could be a database problem, or a permissions issue.';
 $lang['error_template_notavailable'] = 'Either there is no template associated with this object, or it is not available for edit.  Perhaps it has been deleted?';
 $lang['errors'] = 'Errors';
-$lang['err_nomatchingcontent'] = 'There does not appear to be any content that matches your criteria';
+$lang['err_nomatchingcontent'] = 'We could not find a page that matches the filter criteria';
 $lang['expandall'] = 'Expand All';
 
 //F
-$lang['filter_applied'] = 'Filter applied';
+$lang['filterapplied'] = 'Filter applied';
 $lang['find'] = 'Find';
 $lang['friendlyname'] = 'Content Manager';
 
@@ -139,10 +139,6 @@ $lang['info_ordercontent'] = 'Drag and drop elements to adjust their order in th
 $lang['info_ordertabs'] = 'When editing a page, displayed tabs will be ordered in accord with increasing value of order-preference values, as displayed here. Any positive integer may be applied in each case. They do not need to be sequential.';
 $lang['info_pagedflt'] = 'This panel allows setting default values for various content properties when creating a new page of type &quot;Content&quot; <em>or its derived types.  These settings will have no effect on existing pages, and user settings may override some settings.</em>';
 $lang['info_preview_notice'] = '<strong>Warning:</strong> This preview panel behaves much like a browser window allowing you to navigate away from the initially previewed page. However, if you do that, you may experience unexpected behavior. If you navigate away from the initial display and return, you may not see the un-committed content until you make a change to the content in the main tab, and then reload this tab. When adding content, if you navigate away from this page, you will be unable to return, and must refresh this panel.';
-
-//J
-
-//K
 
 //L
 $lang['legend_tabs'] = 'Tabs Display';
@@ -193,10 +189,10 @@ $lang['prompt_content_id'] = 'Content ID';
 $lang['prompt_created'] = 'Created';
 $lang['prompt_design'] = 'Design';
 $lang['prompt_editor'] = 'Editor';
-$lang['prompt_editpage_addcontent']= 'Add Content Page';
+$lang['prompt_editpage_addcontent'] = 'Add Content Page';
 $lang['prompt_editpage_contenttype'] = 'Content Type';
-$lang['prompt_editpage_editcontent']= 'Edit Content Page';
-$lang['prompt_editsettings']= 'Edit Settings';
+$lang['prompt_editpage_editcontent'] = 'Edit Content Page';
+$lang['prompt_editsettings'] = 'Change settings'; // title and alt attrib's
 $lang['prompt_expandall'] = 'Expand all content pages';
 $lang['prompt_filter_type'] = 'Filter Type';
 $lang['prompt_general'] = 'General';
@@ -248,7 +244,7 @@ $lang['prompt_page_title'] = 'Title';
 $lang['prompt_page_view'] = 'View this page in another window';
 $lang['prompt_preview'] = 'Preview';
 $lang['prompt_secure'] = 'Secure';
-$lang['prompt_settings'] = 'Settings';
+//$lang['prompt_settings'] = 'Settings'; use lang['settings']
 $lang['prompt_showinmenu'] = 'Shown in Navigations';
 $lang['prompt_showmore'] = 'Show more';
 $lang['prompt_steal_lock_edit'] = 'Steal this lock and edit the page';
@@ -259,8 +255,6 @@ $lang['prompt_template'] = 'Template';
 $lang['prompt_template_list_mode'] = 'Template list mode';
 $lang['prompt_title'] = 'Title';
 $lang['prompt_withselected'] = 'With Selected';
-
-//Q
 
 //R
 $lang['reorderpages'] = 'Reorder Content';
@@ -281,22 +275,14 @@ $lang['title_editpage_submit'] = 'Save the changes to this content page, and ret
 $lang['title_editpage_view'] = 'View the current content page (saved changes only)';
 $lang['title_listcontent_find'] = 'Enter a portion of a page title or menu text and select a matching page';
 $lang['title_locked'] = 'This page is being edited by another user';
-$lang['title_userpageoptions'] = 'Page List Options';
+$lang['title_userpageoptions'] = 'Pages List Settings'; // dialog heading
 $lang['toggle'] = 'Toggle Selected';
-
-//U
-
-//V
 
 //W
 $lang['warn_destructive'] = 'This operation can have undesired side effects, please exercise extreme caution';
 $lang['warn_notemplates_for_design'] = 'Sorry, but it does not appear that there are any usable page templates for the selected design';
 
-//X
-
 //Y
 $lang['yes'] = 'Yes';
-
-//Z
 
 ?>
