@@ -15,8 +15,8 @@
     <a href="{cms_action_url action=admin_clearlocks self=1}" accesskey="l" title="{$mod->Lang('title_clearlocks2')}{if !empty($which_selflocks)} ({$which_selflocks}){/if}">{admin_icon icon='run.gif' alt=''}&nbsp;{$mod->Lang('prompt_clearlocks2')}</a>
    {/if}
   {/if}
-    <a id="myoptions" accesskey="o" title="{$mod->Lang('prompt_settings')}">{admin_icon icon='edit.gif' alt=$mod->Lang('prompt_settings')}&nbsp;{$mod->Lang('prompt_settings')}</a>
-    {if !empty($have_filter)}<span id="filtermsg">({$mod->Lang('filter_applied')})</span>{/if}
+    <a id="myoptions" accesskey="o" title="{$mod->Lang('prompt_editsettings')}">{admin_icon icon='edit.gif' alt=$mod->Lang('prompt_editsettings')} {lang('settings')}</a>
+    {if !empty($have_filter)}<span id="filtermsg">({$mod->Lang('filterapplied')})</span>{/if}
   </div>
 
   <div class="pageoptions endside options-form grid_4">
@@ -27,13 +27,13 @@
   {if !empty($content_list) && $npages > 1}
     {form_start action='defaultadmin'}
       <span>{$mod->Lang('page')}:&nbsp;
-      <select name="{$actionid}curpage" id="{$actionid}curpage">
-        {html_options options=$pagelist selected=$curpage}
+      <select id="curpage" name="{$actionid}curpage">
+        {cms_pageoptions numpages=$npages curpage=$pagenumber}
       </select>
-      <button name="{$actionid}submitpage" class="invisible ui-button ui-widget ui-corner-all ui-state-default ui-button-text-icon-primary">
-        <span class="ui-button-icon-primary ui-icon ui-icon-check"></span>
+{*    <button class="ui-button ui-corner-all">
+        <span class="ui-button-icon-primary ui-icon ui-icon-arrowthick-1-{if $stside=='left'}w{else}e{/if}"></span>
         <span class="ui-button-text">{$mod->Lang('go')}</span>
-      </button>
+      </button>*}
       </span>
     {form_end}
   {/if}
@@ -43,10 +43,12 @@
 {form_start action='defaultadmin' id='listform'}
   <div id="contentlist">{* everything from here down is part of the ajax stuff *}
   {* error container *}
-  {if isset($error)}
-  <div id="error_cont" class="red" style="color:red;width:80%;margin-{$stside}:2%;margin-{$ndside}:10%;text-align:center;vertical-align:middle">{$error}</div>
+  {if !empty($error)}
+  <div id="error_cont" class="red" style="margin-left:2%;margin-right:2%;text-align:center;vertical-align:middle">{$error}</div>
   {/if}
-
+  {if !empty($infomsg)}
+  <div id="info_cont" class="blueinfo" style="margin-left:2%;margin-right:2%;text-align:center;vertical-align:middle">{$infomsg}</div>
+  {/if}
   {if isset($content_list)}
     {function do_content_row}
       {foreach $columns as $column => $flag}
@@ -78,7 +80,8 @@
             {if $row.secure}<strong>{$mod->Lang('prompt_secure')}:</strong> {$mod->Lang('yes')}<br>{/if}
             <strong>{$mod->Lang('prompt_cachable')}:</strong> {if $row.cachable}{$mod->Lang('yes')}{else}{$mod->Lang('no')}{/if}<br>
             <strong>{$mod->Lang('prompt_showinmenu')}:</strong> {if $row.showinmenu}{$mod->Lang('yes')}{else}{$mod->Lang('no')}{/if}<br>
-            <strong>{lang('wantschildren')}:</strong> {if $row.wantschildren|default:1}{$mod->Lang('yes')}{else}{$mod->Lang('no')}{/if}
+            <strong>{lang('wantschildren')}:</strong> {if $row.wantschildren|default:1}{$mod->Lang('yes')}{else}{$mod->Lang('no')}{/if}<br>
+            <strong>{$mod->Lang('prompt_lastmodified')}:</strong> {$row.lastmodified|cms_date_format}
           {/strip}{/capture}
 
           <a href="{cms_action_url action='admin_editcontent' content_id=$row.id}" class="page_edit tooltip" accesskey="e" data-cms-content="{$row.id}" data-cms-description="{$tooltip_pageinfo|adjust:'cms_htmlentities'}">{$row.page|default:''}</a>
@@ -253,10 +256,13 @@
     {if $multiselect && isset($bulk_options)}
       <div class="pageoptions grid_6 endalign">
         <label for="multiaction">{$mod->Lang('prompt_withselected')}:</label>&nbsp;&nbsp;
-        <select name="{$actionid}multiaction" id="multiaction">
+        <select id="multiaction" name="{$actionid}multiaction">
           {html_options options=$bulk_options}
         </select>
-        <input type="submit" id="multisubmit" name="{$actionid}multisubmit" accesskey="s" data-ui-icon="ui-icon-gear" value="{$mod->Lang('submit')}">
+        <button id="multisubmit" class="ui-button ui-corner-all" name="{$actionid}multisubmit" accesskey="s">
+          <span class="ui-button-icon-primary ui-icon ui-icon-gear"></span>
+          <span class="ui-button-text">{$mod->Lang('submit')}</span>
+        </button>
       </div>
     {/if}
   </div>
