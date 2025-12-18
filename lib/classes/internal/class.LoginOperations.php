@@ -27,7 +27,7 @@ final class LoginOperations
 
     protected function __construct()
     {
-        $this->_loginkey = sha1( CMS_VERSION.$this->_get_salt() );
+        $this->_loginkey = sha1(CMS_VERSION.$this->_get_salt());
     }
 
     public static function get_instance()
@@ -39,7 +39,7 @@ final class LoginOperations
     public function deauthenticate()
     {
         \cms_cookies::erase($this->_loginkey);
-        \cms_cookies::erase(CMS_USER_KEY);
+//      \cms_cookies::erase(CMS_USER_KEY); never used
         \cms_cookies::erase(CMS_SECURE_PARAM_NAME);
         unset($_SESSION[$this->_loginkey],$_SESSION[CMS_USER_KEY]);
     }
@@ -49,7 +49,7 @@ final class LoginOperations
         // if we do not have a presaved salt.. we generate one
         $salt = \cms_siteprefs::get(__CLASS__);
         if( !$salt ) {
-            $salt = sha1( rand().__FILE__.rand().time() );
+            $salt = sha1(mt_rand().__FILE__.mt_rand().time());
             \cms_siteprefs::set(__CLASS__,$salt);
         }
         return $salt;
@@ -83,8 +83,8 @@ final class LoginOperations
             $private_data['eff_uid'] = $effective_user->id;
             $private_data['eff_username'] = $effective_user->username;
         }
-        $enc = base64_encode( json_encode( $private_data ) );
-        $hash = sha1( $this->_get_salt() . $enc );
+        $enc = base64_encode(json_encode($private_data));
+        $hash = sha1($this->_get_salt() . $enc);
         $_SESSION[$this->_loginkey] = $hash.'::'.$enc;
         \cms_cookies::set($this->_loginkey,$_SESSION[$this->_loginkey]);
 
@@ -98,37 +98,44 @@ final class LoginOperations
 
     protected function _get_data()
     {
-        if( !empty($this->_data) ) return $this->_data;
-
+        if( !empty($this->_data) ) {
+            return $this->_data;
+        }
         // using session, and-or cookie data see if we are authenticated
         if( isset($_SESSION[$this->_loginkey]) ) {
             $private_data = $_SESSION[$this->_loginkey];
         }
         else {
             $private_data = [];
-            if( isset($_COOKIE[$this->_loginkey]) ) $private_data = $_SESSION[$this->_loginkey] = $_COOKIE[$this->_loginkey];
+            if( isset($_COOKIE[$this->_loginkey]) ) {
+                $private_data = $_SESSION[$this->_loginkey] = $_COOKIE[$this->_loginkey];
+            }
         }
 
         if( !$private_data ) return [];
         $parts = explode('::',$private_data,2);
         if( count($parts) != 2 ) return [];
 
-        if( $parts[0] != sha1( $this->_get_salt() . $parts[1] ) ) return []; // payload corrupted.
-        $private_data = json_decode( base64_decode( $parts[1]), TRUE );
+        if( $parts[0] != sha1($this->_get_salt() . $parts[1]) ) return []; // payload corrupted.
+        $private_data = json_decode(base64_decode($parts[1]),TRUE);
 
         if( !is_array($private_data) ) return [];
         if( empty($private_data['uid']) ) return [];
         if( empty($private_data['username']) ) return [];
         if( empty($private_data['hash']) ) return [];
 
-        // now authenticate the passhash
-        // requires a database query
-        if( !\CmsApp::get_instance()->is_frontend_request() && !$this->_check_passhash($private_data['uid'],$private_data['hash']) ) return [];
+        // authenticate the passhash (requires a database query)
+        if( !(\CmsApp::get_instance()->is_frontend_request() || // should never happen, here
+              $this->_check_passhash($private_data['uid'],$private_data['hash'])) ) {
+            return [];
+        }
 
         // if we get here, the user is authenticated.
         // set the session key from the cookie if it exists.
         if( !isset($_SESSION[CMS_USER_KEY]) ) {
-            if( \cms_cookies::exists(CMS_SECURE_PARAM_NAME) ) $_SESSION[CMS_USER_KEY] = \cms_cookies::get(CMS_SECURE_PARAM_NAME);
+            if( \cms_cookies::exists(CMS_SECURE_PARAM_NAME) ) {
+                $_SESSION[CMS_USER_KEY] = \cms_cookies::get(CMS_SECURE_PARAM_NAME);
+            }
         }
 
         $this->_data = $private_data;
@@ -137,16 +144,13 @@ final class LoginOperations
 
     public function validate_requestkey()
     {
-        // asume we are authenticated
-        // now we validate that the request has the user key in it somewhere.
-        if( !isset($_SESSION[CMS_USER_KEY]) ) throw new \LogicException('Internal: User key not found in session.');
-
-        // we check GET and POST vars specifically incase $_REQUEST also contains cookie values.
+        // check that the session includes the user key.
+        if( !isset($_SESSION[CMS_USER_KEY]) ) throw new \LogicException('Internal error: User key not found in session.');
+        // check GET and POST vars in case $_REQUEST also contains cookie values.
         $v = '<no$!tgonna!$happen>';
         if( isset($_GET[CMS_SECURE_PARAM_NAME]) ) $v = $_GET[CMS_SECURE_PARAM_NAME];
         if( isset($_POST[CMS_SECURE_PARAM_NAME]) ) $v = $_POST[CMS_SECURE_PARAM_NAME];
-
-        // validate the key in the request against what we have in the session.
+        // check the key in the request against the key in the session.
         if( $v != $_SESSION[CMS_USER_KEY] ) {
             $config = \cms_config::get_instance();
             if( !isset($config['stupidly_ignore_xss_vulnerability']) ) return FALSE;
@@ -180,16 +184,16 @@ final class LoginOperations
     {
         $data = $this->_get_data();
         if( !$data ) return 0;
-        if( isset($data['eff_uid']) && $data['eff_uid'] ) return $data['eff_uid'];
-        return $this->get_loggedin_uid();
+        if( isset($data['eff_uid']) && $data['eff_uid'] > 0 ) return $data['eff_uid'];
+        return $data['uid'];
     }
 
     public function get_effective_username()
     {
         $data = $this->_get_data();
         if( !$data ) return '';
-        if( isset($data['eff_username']) && $data['eff_username'] ) return $data['eff_username'];
-        return $this->get_loggedin_username();
+        if( isset($data['eff_username']) && $data['eff_username'] ) return trim($data['eff_username']);
+        return trim($data['username']);
     }
 
     public function set_effective_user(/*?\User */$e_user = null) // no object uncomment for PHP 7.1+ .. 8.4+
