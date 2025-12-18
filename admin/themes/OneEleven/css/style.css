@@ -912,6 +912,15 @@ table.pagetable a.text-red {
 	background: #cee6f2 url(themes/OneEleven/images/icons/extra/info.png) 10px 50% no-repeat;
 	border: 1px solid #058dc7;
 }
+.blueinfo {
+	display: inline-block;
+	margin: 10px 0;
+	padding: 10px;
+	background: #cee6f2;
+	color: #058dc7;
+	border: 1px solid #058dc7;
+	border-radius: 4px;
+}
 .message:hover {
 	cursor: help;
 }
