@@ -33,15 +33,15 @@
  * is a member of the admin group, then allow emulating that effective uid.
  *
  * @since 0.1
- * @param  boolean $redirect Redirect to the admin login page if the user is not logged in.
- * @return integer The UID of the logged in administrator, otherwise FALSE
+ * @param  boolean $redirect Redirect to the admin login page if there is no logged-in user.
+ * @return integer The UID of the logged in administrator, otherwise 0
  */
 function get_userid($redirect = true)
 {
     if( cmsms()->is_cli() ) return 1;
     $login_ops = CMSMS\internal\LoginOperations::get_instance();
     $uid = $login_ops->get_effective_uid();
-    if( !$uid && $redirect ) {
+    if( $uid == 0 && $redirect ) {
         $config = \cms_config::get_instance();
         redirect($config['admin_url']."/login.php");
     }
