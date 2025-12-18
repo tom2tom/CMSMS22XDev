@@ -66,6 +66,7 @@ class CmsLayoutStylesheetQuery extends CmsDbQueryBase
 
         $sortorder = 'ASC';
         $sortby = 'S.name';
+        $sortex = '';
         $this->_limit = 1000;
         $this->_offset = 0;
         $db = cmsms()->GetDb();
@@ -117,6 +118,12 @@ class CmsLayoutStylesheetQuery extends CmsDbQueryBase
                 case 'design':
                     if( !$have_design ) throw new CmsInvalidDataException('Cannot sort by item_order/design if design_id is not known');
                     $sortby = 'D.item_order';
+                    $sortex = ',S.name';
+                    break;
+
+                case 'media':
+                    $sortby = 'S.media_type';
+                    $sortex = ',S.name';
                     break;
 
                 case 'name':
@@ -143,11 +150,11 @@ class CmsLayoutStylesheetQuery extends CmsDbQueryBase
         }
 
         if( count($where) ) $query .= ' WHERE '.implode(' AND ',$where);
-        $query .= ' ORDER BY '.$sortby.' '.$sortorder;
+        $query .= ' ORDER BY '.$sortby.' '.$sortorder.$sortex;
 
         $this->_rs = $db->SelectLimit($query,$this->_limit,$this->_offset);
         if( $db->ErrorMsg() != '' ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
-        $this->_totalmatchingrows = $db->GetOne('SELECT FOUND_ROWS()');
+        $this->_totalmatchingrows = $db->GetOne('SELECT FOUND_ROWS()'); // deprecated use COUNT(*)
     }
 
     /**
