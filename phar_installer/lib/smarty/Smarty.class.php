@@ -993,7 +993,7 @@ class Smarty extends Smarty_Internal_TemplateBase
             $tpl->inheritance = null;
             $tpl->tpl_vars = $tpl->config_vars = array();
         } else {
-            /* @var Smarty_Internal_Template $tpl */
+            /* @var Smarty_Internal_Template or subclass $tpl */
             $tpl = new $this->template_class($template, $this, null, $cache_id, $compile_id, null, null);
             $tpl->templateId = $_templateId;
         }

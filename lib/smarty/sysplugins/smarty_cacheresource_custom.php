@@ -53,8 +53,8 @@ abstract class Smarty_CacheResource_Custom extends Smarty_CacheResource
      * @param string       $name       template name
      * @param string|null  $cache_id   cache id
      * @param string|null  $compile_id compile id
-     * @param integer|null $exp_time   seconds till expiration
-     * @param string       $content    content to cache
+     * @param integer|null $exp_time   seconds until expiration
+     * @param string       $content    content to save
      *
      * @return boolean      success
      */
@@ -66,7 +66,7 @@ abstract class Smarty_CacheResource_Custom extends Smarty_CacheResource
      * @param string|null  $name       template name
      * @param string|null  $cache_id   cache id
      * @param string|null  $compile_id compile id
-     * @param integer|null $exp_time   seconds till expiration time
+     * @param integer|null $exp_time   seconds until expiration
      *
      * @return integer      number of deleted caches
      */
@@ -209,10 +209,10 @@ abstract class Smarty_CacheResource_Custom extends Smarty_CacheResource
     /**
      * Empty cache
      *
-     * @param Smarty  $smarty   Smarty object
-     * @param integer $exp_time expiration time (number of seconds, not timestamp)
+     * @param Smarty   $smarty   Smarty object
+     * @param int|null $exp_time seconds until expiration Default null
      *
-     * @return integer number of cache files deleted
+     * @return integer number of cache items deleted
      */
     public function clearAll(Smarty $smarty, $exp_time = null)
     {
@@ -226,7 +226,7 @@ abstract class Smarty_CacheResource_Custom extends Smarty_CacheResource
      * @param string      $resource_name template name
      * @param string|null $cache_id      cache id
      * @param string|null $compile_id    compile id
-     * @param integer     $exp_time      expiration time (number of seconds, not timestamp)
+     * @param int|null    $exp_time      seconds until expiration
      *
      * @return int number of cache files deleted
      * @throws SmartyException

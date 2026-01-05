@@ -68,7 +68,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
      *
      * @var int
      */
-    public $caching = 0;
+    public $caching = 0; //aka Smarty::CACHING_OFF
 
     /**
      * tag stack

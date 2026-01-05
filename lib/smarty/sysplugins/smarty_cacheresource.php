@@ -96,10 +96,10 @@ abstract class Smarty_CacheResource
     /**
      * Empty cache
      *
-     * @param Smarty  $smarty   Smarty object
-     * @param integer $exp_time expiration time (number of seconds, not timestamp)
+     * @param Smarty   $smarty   Smarty object
+     * @param int|null $exp_time seconds until expiration Default null
      *
-     * @return integer number of cache files deleted
+     * @return integer number of cache items deleted
      */
     abstract public function clearAll(Smarty $smarty, $exp_time = null);
 
@@ -110,9 +110,9 @@ abstract class Smarty_CacheResource
      * @param string  $resource_name template name
      * @param string  $cache_id      cache id
      * @param string  $compile_id    compile id
-     * @param integer $exp_time      expiration time (number of seconds, not timestamp)
+     * @param integer $exp_time      seconds until expiration
      *
-     * @return integer number of cache files deleted
+     * @return integer number of cache items deleted
      */
     abstract public function clear(Smarty $smarty, $resource_name, $cache_id, $compile_id, $exp_time);
 

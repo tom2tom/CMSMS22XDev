@@ -1028,7 +1028,7 @@ class Smarty extends Smarty_Internal_TemplateBase
      *   [Pp]lugintype may be 'internal' to identify a system-plugin class
      * @param bool   $check       check if already loaded Default true
      *
-     * @return string | bool filepath or true (if already loaded) or false (if not found)
+     * @return string | bool handler-filepath or true (if already loaded) or false (if not found)
      * @throws \SmartyException if format of $plugin_name is invalid
      */
     public function loadPlugin($plugin_name, $check = true)

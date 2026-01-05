@@ -160,10 +160,10 @@ class Smarty_Internal_CacheResource_File extends Smarty_CacheResource
     /**
      * Empty cache
      *
-     * @param Smarty  $smarty
-     * @param integer $exp_time expiration time (number of seconds, not timestamp)
+     * @param Smarty   $smarty
+     * @param int|null $exp_time seconds until expiration Default null
      *
-     * @return integer number of cache files deleted
+     * @return integer number of cache items deleted
      */
     public function clearAll(Smarty $smarty, $exp_time = null)
     {
