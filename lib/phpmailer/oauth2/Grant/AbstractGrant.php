@@ -53,7 +53,6 @@ abstract class AbstractGrant
      *
      * @return string
      */
-    #[\ReturnTypeWillChange]
     public function __toString()
     {
         return $this->getName();
