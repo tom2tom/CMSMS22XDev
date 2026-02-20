@@ -1,6 +1,7 @@
 <?php
 $lang['friendlyname'] = 'CMSMailer';
 
+//TODO possibly IsHTML() should become a get-and-set method
 $lang['help'] = '<h3>What Does This Do?</h3>
 <p>This module is mainly for managing changes of backend mail-send libraries, independently from CMSMS core updates.</p>
 <p>This module continues to provide long-deprecated methods which wrap cms_mailer class methods, some of them with a slightly different name. As such, CMSMailer can be, but these days should not be, used by other modules.</p>
@@ -222,7 +223,6 @@ $lang['help'] = '<h3>What Does This Do?</h3>
 </li>
 <li><p><b>bool IsHTML( $bool )</b></p>
 <p>Set the html flag</p>
-<p><i>Note</i> possibly this should be a get and set method</p>
 </li>
 <li><p><b>bool IsMail()</b></p>
 <p>Check whether we are using mail</p>
@@ -247,18 +247,12 @@ $lang['help'] = '<h3>What Does This Do?</h3>
 </li>
 </ul>
 <h3>Support</h3>
-<p>There are a couple of resources available to help you with this module:</p>
-<ul>
-<li>For the latest version of this module, FAQs, or to file a Bug Report, please visit the CMSMS Forge.</li>
-<li>Additional discussion of this module may be found in the <a href=\'https://forum.cmsmadesimple.org\'>CMS Made Simple Forums</a>.</li>
-</ul>
-<p>As per the GPL, this software is provided as-is. Please read the text
-of the license for the full disclaimer.</p>
-
+<p>As per its license, this module is provided as-is. Please read the text of the license (see below) for the full disclaimer.</p>
+<p>Discussion of this module may be found in the <a href=\'https://forum.cmsmadesimple.org\' target="_blank">CMSMS Forum</a> or on the <a href="https://cms-made-simple.slack.com" target="_blank">CMSMS Slack channel</a> (after signing up <a href="https://www.cmsmadesimple.org/support/documentation/chat" target="_blank">here</a>).</li>
+<p>To submit a Bug Report or Feature Request, please visit the <a href="https://dev.cmsmadesimple.org/projects/cmsmadesimple" target="_blank">CMSMS Forge</a>.</li>
 <h3>Copyright and License</h3>
 <p>Copyright &copy; 2005-2023 CMS Made Simple Foundation Inc <a href=\'mailto:foundation@smamadesimple.org\'>&lt;CMSMS Foundation&gt;</a>. All rights reserved.</p>
-<p>This module has been released under the <a href=\'http://www.gnu.org/licenses/licenses.html#GPL\'>GNU General Public License</a>. This module may not be distributed or used otherwise than in accordance with that license.</p>
-';
+<p>This module has been released under version 2 of the <a href=\'http://www.gnu.org/licenses/licenses.html#GPL\'>GNU General Public License</a>. This module may not be distributed or used otherwise than in accordance with that license, or a later version of that licence granted by the module\'s distributor.</p>';
 
 $lang['moddescription'] = 'This is an email-libraries version-manager and a deprecated simple wrapper around cms_mailer class methods.';
 $lang['postinstall'] = 'CMSMailer module has been successfully installed';
