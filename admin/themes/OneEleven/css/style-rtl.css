@@ -917,7 +917,6 @@ table.pagetable a.text-red {
 	margin: 10px 0;
 	padding: 10px;
 	background: #cee6f2;
-	color: #058dc7;
 	border: 1px solid #058dc7;
 	border-radius: 4px;
 }
@@ -1516,8 +1515,8 @@ nav ul#oe_pagemenu li.current li a:active {
 	overflow: auto;
 }
 #oe_mainarea header.pageheader {
-	max-height: 63px;
-	margin-bottom: 15px;
+	max-height: 3.25em;
+	margin-bottom: 0.5em;
 	position: relative;
 	border-bottom: 1px solid #fa8004;
 }
@@ -1584,21 +1583,20 @@ footer#oe_footer a:hover, footer#oe_footer a:active {
 	padding: 0 8px 0 0;
 }
 /* --- CONTENT --- */
-#oe_mainarea header.pageheader h1 {
+#oe_mainarea header.pageheader h1, /* unlikely to use */
+#oe_mainarea header.pageheader h2 {
 	font-size: 18px;
-	line-height: 63px;
+	line-height: 3;
 	font-weight: normal;
-	width: auto;
 	margin: 0;
 	padding: 0;
 	float: right;
-	display: inline;
 	color: #147fdb;
 }
 #oe_mainarea header.pageheader .module-icon {
 	vertical-align: middle;
-	margin-left: 15px;
-	max-height: 32px;
+	margin-left: 10px;
+	max-height: 24px;
 }
 #oe_mainarea header.pageheader span.helptext,
 .pageheader span.helptext {
@@ -1879,7 +1877,7 @@ td.icons_wide {
 .pointer {
 	cursor: pointer;
 }
-#oe_mainarea ul.sortable-list {
+#oe_mainarea .sortable-list {
 	list-style: none;
 	padding: 0;
 	margin: 0;
@@ -1993,10 +1991,10 @@ div.pagecontainer fieldset {
 	margin: 10px 0;
 }
 div.pagecontainer legend {
-	font-weight: bold;
-	color: #585858;
 	padding: 0 5px;
-	font-size: 14px;
+	color: #585858;
+	font-weight: bold;
+	font-size: 16px;/* match h3 */
 }
 .pageinput input,
 .pageinput textarea,
