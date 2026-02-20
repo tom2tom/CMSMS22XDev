@@ -29,7 +29,7 @@ function smarty_function_metadata($params, $smarty)
 	if( isset($config['showbase'])) $showbase = $config['showbase'];
 
 	// But allow a parameter to override it
-	if (isset($params['showbase']))	{
+	if (isset($params['showbase'])) {
 		if ($params['showbase'] == false || $params['showbase'] == 'false') $showbase = false;
 	}
 
@@ -41,7 +41,7 @@ function smarty_function_metadata($params, $smarty)
 		$result .= "\n<base href=\"".$base."/\">\n";
 	}
 
-	$result .= get_site_preference('metadata', '');
+	$result .= cms_siteprefs::get('metadata', '');
 
 	if (is_object($content_obj) && $content_obj->Metadata() != '') $result .= "\n" . $content_obj->Metadata();
 
@@ -50,7 +50,7 @@ function smarty_function_metadata($params, $smarty)
 	}
 
 	\CMSMS\HookManager::do_hook('metadata_postrender', [ 'content_id'=>$content_obj->Id(), 'html'=>&$result ]);
-	if( isset($params['assign']) )	{
+	if( isset($params['assign']) ) {
 		$smarty->assign(trim($params['assign']),$result);
 		return '';
 	}

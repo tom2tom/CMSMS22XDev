@@ -239,7 +239,7 @@ abstract class DataDictionary
 	 *
 	 * @internal
 	 */
-	protected $renameColumn = 'ALTER TABLE %s RENAME COLUMN %s TO %s';	// table, old-column, new-column, column-definitions (not used by default)
+	protected $renameColumn = 'ALTER TABLE %s RENAME COLUMN %s TO %s'; // table, old-column, new-column, column-definitions (not used by default)
 
 	/**
 	 * @ignore
@@ -841,7 +841,7 @@ abstract class DataDictionary
 		if ( isset($idxoptions[$this->upperName]) )
 			$s .= $idxoptions[$this->upperName];
 
-		if ( is_array($flds) )	$flds = implode(', ',$flds);
+		if ( is_array($flds) ) $flds = implode(', ',$flds);
 		$s .= '(' . $flds . ')';
 		$sql[] = $s;
 

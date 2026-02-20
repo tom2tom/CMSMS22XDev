@@ -314,7 +314,7 @@ class langtools
     if( !$realm ) $realm = self::DFLT_REALM;
     if( $realm == self::DFLT_REALM ) $realm = 'app';
     $dir = app::get_appdir()."/lang/$realm";
-    if( !is_dir($dir) )	throw new langtools_Exception('Language directory '.$dir.' not found');
+    if( !is_dir($dir) ) throw new langtools_Exception('Language directory '.$dir.' not found');
 
     return $dir;
   }

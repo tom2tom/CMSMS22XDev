@@ -9,7 +9,7 @@ class DraftMessageAlert extends \CMSMS\AdminAlerts\TranslatableAlert
 {
     public function __construct($count)
     {
-        parent::__construct([ 'Approve News'] );
+        parent::__construct([ 'Approve News' ]);
         $this->name = __CLASS__;
         $this->priority = self::PRIORITY_LOW;
         $this->titlekey = 'title_draft_entries';

@@ -1,101 +1,101 @@
 {if !isset($noform)}
 <script>
 function enable_button(idlist) {
-    $(idlist).prop('disabled',false).removeClass('ui-state-disabled ui-button-disabled');
+  $(idlist).prop('disabled',false).removeClass('ui-state-disabled ui-button-disabled');
 }
 function disable_button(idlist) {
-    $(idlist).prop('disabled',true).addClass('ui-state-disabled ui-button-disabled');
+  $(idlist).prop('disabled',true).addClass('ui-state-disabled ui-button-disabled');
 }
 function enable_action_buttons() {
-    var files = $('#filesarea input[type="checkbox"].fileselect').filter(':checked').length,
-        dirs = $('#filesarea input[type="checkbox"].dir').filter(':checked').length,
-        arch = $('#filesarea input[type="checkbox"].archive').filter(':checked').length,
-        text = $('#filesarea input[type="checkbox"].text').filter(':checked').length,
-        imgs = $('#filesarea input[type="checkbox"].image').filter(':checked').length;
+  var files = $('#filesarea input[type="checkbox"].fileselect').filter(':checked').length,
+    dirs = $('#filesarea input[type="checkbox"].dir').filter(':checked').length,
+    arch = $('#filesarea input[type="checkbox"].archive').filter(':checked').length,
+    text = $('#filesarea input[type="checkbox"].text').filter(':checked').length,
+    imgs = $('#filesarea input[type="checkbox"].image').filter(':checked').length;
 
-    disable_button('button.filebtn');
-    $('button.filebtn').prop('disabled',true);
-    if (files === 0 && dirs === 0) {
-        // nothing selected, enable anything with select_none
-        enable_button('#btn_newdir');
-    } else if (files === 1) {
-        // 1 selected, enable anything with select_one
-        enable_button('#btn_rename');
-        enable_button('#btn_move');
-        enable_button('#btn_delete');
+  disable_button('button.filebtn');
+  $('button.filebtn').prop('disabled',true);
+  if (files === 0 && dirs === 0) {
+    // nothing selected, enable anything with select_none
+    enable_button('#btn_newdir');
+  } else if (files === 1) {
+    // 1 selected, enable anything with select_one
+    enable_button('#btn_rename');
+    enable_button('#btn_move');
+    enable_button('#btn_delete');
 
-        if (dirs === 0) enable_button('#btn_copy');
-        if (arch === 1) enable_button('#btn_unpack');
-        if (imgs === 1) enable_button('#btn_view,#btn_thumb,#btn_resizecrop,#btn_rotate');
-        if (text === 1) enable_button('#btn_view');
-    } else if (files > 1 && dirs == 0) {
-        // multiple files selected
-        enable_button('#btn_delete,#btn_copy,#btn_move');
-    } else if (files > 1 && dirs > 0) {
-        // multiple selected, at least one dir.
-        enable_button('#btn_delete,#btn_move');
-    }
+    if (dirs === 0) enable_button('#btn_copy');
+    if (arch === 1) enable_button('#btn_unpack');
+    if (imgs === 1) enable_button('#btn_view,#btn_thumb,#btn_resizecrop,#btn_rotate');
+    if (text === 1) enable_button('#btn_view');
+  } else if (files > 1 && dirs == 0) {
+    // multiple files selected
+    enable_button('#btn_delete,#btn_copy,#btn_move');
+  } else if (files > 1 && dirs > 0) {
+    // multiple selected, at least one dir.
+    enable_button('#btn_delete,#btn_move');
+  }
 }
 $(function() {
+  enable_action_buttons();
+
+  $('#refresh').off('click').on('click', function(e) {
+    // ajaxy reload for the files area.
+//  var url = '{$refresh_url}'+'&showtemplate=false'; needed?
+//  $('#filesarea').load(url);
+    $('#filesarea').load('{$refresh_url}');
+    return false;
+  });
+
+  $(document).on('dropzone_chdir', $(this), function(e, data) { // $(this) === $(document) ?
+    // if change dir via the dropzone, make sure filemanager refreshes.
+    location.reload();
+  });
+  $(document).on('dropzone_stop', $(this), function(e, data) { // $(this) === $(document) ?
+    // if change dir via the dropzone, make sure filemanager refreshes.
+    location.reload();
+  });
+
+  $('#filesarea input[type="checkbox"].fileselect').on('change', function(e) {
+    e.stopPropagation();
+    var t = $(this).prop('checked');
+    // adjust the parent row
+    if (t) {
+      $(this).closest('tr').addClass('selected');
+    } else {
+      $(this).closest('tr').removeClass('selected');
+    }
     enable_action_buttons();
+  });
 
-    $('#refresh').off('click').on('click', function(e) {
-        // ajaxy reload for the files area.
-//      var url = '{$refresh_url}'+'&showtemplate=false'; needed?
-//      $('#filesarea').load(url);
-        $('#filesarea').load('{$refresh_url}');
-        return false;
-    });
+  $('#tagall').on('change', function() {
+    if ($(this).is(':checked')) {
+      $('#filesarea input:checkbox.fileselect').prop('checked', true).trigger('change');
+    } else {
+      $('#filesarea input:checkbox.fileselect').prop('checked', false).trigger('change');
+    }
+  });
 
-    $(document).on('dropzone_chdir', $(this), function(e, data) { // $(this) === $(document) ?
-        // if change dir via the dropzone, make sure filemanager refreshes.
-        location.reload();
+  $('#btn_view').on('click', function() {
+    // find the selected item.
+    var tmp = $('#filesarea input[type="checkbox"]').filter(':checked').val();
+    var url = '{$viewfile_url}&showtemplate=false&{$actionid}viewfile=' + tmp;
+    $('#popup_contents').load(url);
+    $('#popup').dialog({
+      minWidth: 380,
+      maxHeight: 600
     });
-    $(document).on('dropzone_stop', $(this), function(e, data) { // $(this) === $(document) ?
-        // if change dir via the dropzone, make sure filemanager refreshes.
-        location.reload();
-    });
+    return false;
+  });
 
-    $('#filesarea input[type="checkbox"].fileselect').on('change', function(e) {
-        e.stopPropagation();
-        var t = $(this).prop('checked');
-        // adjust the parent row
-        if (t) {
-            $(this).closest('tr').addClass('selected');
-        } else {
-            $(this).closest('tr').removeClass('selected');
-        }
-        enable_action_buttons();
-    });
-
-    $('#tagall').on('change', function() {
-        if ($(this).is(':checked')) {
-            $('#filesarea input:checkbox.fileselect').prop('checked', true).trigger('change');
-        } else {
-            $('#filesarea input:checkbox.fileselect').prop('checked', false).trigger('change');
-        }
-    });
-
-    $('#btn_view').on('click', function() {
-        // find the selected item.
-        var tmp = $('#filesarea input[type="checkbox"]').filter(':checked').val();
-        var url = '{$viewfile_url}&showtemplate=false&{$actionid}viewfile=' + tmp;
-        $('#popup_contents').load(url);
-        $('#popup').dialog({
-          minWidth: 380,
-          maxHeight: 600
-        });
-        return false;
-    });
-
-    $('td.clickable').on('click', function() {
-        var t = $(this).parent().find(':checkbox').prop('checked');
-        if (!t) {
-            $(this).parent().find(':checkbox').prop('checked', true).trigger('change');
-        } else {
-            $(this).parent().find(':checkbox').prop('checked', false).trigger('change');
-        }
-    });
+  $('td.clickable').on('click', function() {
+    var t = $(this).parent().find(':checkbox').prop('checked');
+    if (!t) {
+      $(this).parent().find(':checkbox').prop('checked', true).trigger('change');
+    } else {
+      $(this).parent().find(':checkbox').prop('checked', false).trigger('change');
+    }
+  });
 });
 </script>
 
@@ -106,7 +106,7 @@ $(function() {
 {else}
   {$addclass='ui-button-icon-primary'}
 {/if}
-<button type="submit" name="{$iname}" id="{$id}" title="{$title|default:''}" class="filebtn ui-button ui-widget ui-state-default ui-corner-all {$addclass}" style="margin:0 -1px">
+<button type="submit" name="{$iname}" id="{$id}" title="{$title|default:''}" class="filebtn ui-button ui-state-default ui-corner-all {$addclass}" style="margin:0 -1px">
   <span class="ui-icon ui-button-icon-primary {$icon}"{if !empty($text)} style="margin-{$ndside}:2px"{/if}></span>
   {if !empty($text)}<span class="ui-button-text">{$text}</span>{/if}</button>{/strip}
 {/function}

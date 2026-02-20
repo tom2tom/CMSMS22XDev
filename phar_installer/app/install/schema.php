@@ -532,7 +532,7 @@ EOS;
 		name C(100) NOTNULL,
 		content X2,
 		description X,
- 		media_type C(255),
+		media_type C(255),
 		media_query X,
 		created I,
 		modified I";

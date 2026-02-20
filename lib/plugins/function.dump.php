@@ -52,28 +52,28 @@ function smarty_function_dump($params, $smarty)
 				$methods = get_class_methods($objname);
 				if( count($methods) ) {
 					$str .= str_repeat('  ',$level).'Methods:<br>';
-					foreach( $methods as $one )	{
+					foreach( $methods as $one ) {
 						$str .= str_repeat('  ',$level).'- '.$one.'<br>';
 					}
 				}
 			}
 
-			if( !isset($params['novars']) )	{
+			if( !isset($params['novars']) ) {
 				$vars = get_object_vars($obj);
 				if( is_array($vars) && count($vars) ) {
 					$str .= str_repeat('  ',$level).'Properties:<br>';
-					foreach( $vars as $name => $value )	{
+					foreach( $vars as $name => $value ) {
 						if( in_array($name,$ignore) ) continue;
 						$acc = build_accessor($accessor,'object',$name);
 
 						$type = gettype($value);
-						if( $type == 'object' )	{
+						if( $type == 'object' ) {
 							$str .= str_repeat('  ',$level).'- '.'<u>'.$name.': Object</u> <em>{$'.$acc.'}</em><br>';
-							if( isset($params['recurse']) )	$str .= dump_object($params,$value,$level+1,$ignore,$acc);
+							if( isset($params['recurse']) ) $str .= dump_object($params,$value,$level+1,$ignore,$acc);
 						}
 						else if( $type == 'array' ) {
 							$str .= str_repeat('  ',$level).'- '.'<u>'.$name.': Array ('.count($value).')</u> <em>{$'.$acc.'}</em><br>';
-							if( isset($params['recurse']) )	$str .= dump_array($params,$value,$level+1,$ignore,$acc);
+							if( isset($params['recurse']) ) $str .= dump_array($params,$value,$level+1,$ignore,$acc);
 						}
 						else if( $type == 'NULL' ) {
 							$str .= str_repeat('  ',$level).'- '.$name.': NULL <em>{$'.$acc.'}</em><br>';
@@ -102,13 +102,13 @@ function smarty_function_dump($params, $smarty)
 			foreach( $data as $key => $value ) {
 				$acc = build_accessor($accessor,'array',$key);
 				$type = gettype($value);
-				if( is_object($value) )	{
+				if( is_object($value) ) {
 					$str .= str_repeat('  ',$level).'- <u>'.$key.' = Object</u> <em>{$'.$acc.'}</em><br>';
-					if( isset($params['recurse']) )	$str .= dump_object($params,$value,$level+1,$ignore,$acc);
+					if( isset($params['recurse']) ) $str .= dump_object($params,$value,$level+1,$ignore,$acc);
 				}
-				else if( is_array($value) )	{
+				else if( is_array($value) ) {
 					$str .= str_repeat('  ',$level)."- <u>$key = Array (".count($value).')</u> <em>{$'.$acc.'}</em><br>';
-					if( isset($params['recurse']) )	$str .= dump_array($params,$value,$level+1,$ignore,$acc);
+					if( isset($params['recurse']) ) $str .= dump_array($params,$value,$level+1,$ignore,$acc);
 				}
 				else if( $type == 'NULL' ) {
 					$str .= str_repeat('  ',$level).'- '.$name.': NULL <em>{$'.$acc.'\}</em><br>';
@@ -157,7 +157,7 @@ function smarty_function_dump($params, $smarty)
 		if( $pos2 === FALSE ) $pos2 = 1000000;
 		$pos = $pos1;
 		$len = 2;
-		if( $pos2 < $pos1 )	{
+		if( $pos2 < $pos1 ) {
 			$pos = $pos2;
 			$len = 1;
 		}

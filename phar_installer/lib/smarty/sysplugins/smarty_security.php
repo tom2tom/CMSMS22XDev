@@ -597,13 +597,13 @@ class Smarty_Security
             $length = strlen($directory);
             foreach ($this->_resource_dir as $dir => $v) { // $v always true
                 if (strncmp($dir, $directory, $length) == 0) {
-                    unset($this->_resource_dir[ $dir ]);
+                    unset($this->_resource_dir[$dir]);
                 }
             }
         }
         foreach ($newDir as $directory) {
 //          $directory = $this->smarty->_realpath($directory, true);
-            $this->_resource_dir[ $directory ] = true;
+            $this->_resource_dir[$directory] = true;
         }
     }
 

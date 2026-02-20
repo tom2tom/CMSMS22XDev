@@ -44,12 +44,12 @@ function smarty_function_cms_selflink($params, $smarty)
 	$dir = '';
 	$pageid = 0;
 
-	$rellink = (isset($params['rellink']) && $params['rellink'] == '1' ? true : false);
-	if ( isset($params['urlparam']) && ( strlen($params['urlparam']) > 0 ) ) $urlparam = trim($params['urlparam']);
+	$rellink = isset($params['rellink']) && $params['rellink'] == '1';
+	if( isset($params['urlparam']) && ( strlen($params['urlparam']) > 0 ) ) $urlparam = trim($params['urlparam']);
 
-	if (isset($params['page']) or isset($params['href'])) {
+	if( isset($params['page']) || isset($params['href']) ) {
 		$page = ''; // mixed
-		if (isset($params['href'])) {
+		if( isset($params['href']) ) {
 			$page = trim($params['href']);
 			$urlonly = 1;
 		}
@@ -68,8 +68,7 @@ function smarty_function_cms_selflink($params, $smarty)
 			}
 		}
 	}
-
-	else if( isset($params['dir']) ) {
+	elseif( isset($params['dir']) ) {
 		$startpage = 0;
 		if( $pageid ) $startpage = $pageid;
 		if( !$startpage ) $startpage = $gCms->get_content_id();

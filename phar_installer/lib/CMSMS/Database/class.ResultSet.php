@@ -182,14 +182,15 @@ abstract class Resultset
      * @param string $field An optional field name, if not specified, the entire row will be returned.
      * @return mixed a single value, or null, or an array maybe empty
      */
-    abstract public function Fields( $field = '' );
+    abstract public function Fields($field = '');
 
     /**
      * Fetch the current row, and move to the next row.
      *
      * @return array
      */
-    public function FetchRow() {
+    public function FetchRow()
+    {
         if( $this->EOF() ) return false;
         $out = $this->fields();
         $this->MoveNext();

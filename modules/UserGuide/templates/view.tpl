@@ -1,7 +1,7 @@
 <h3>{$name}</h3>
 <div class="pageoverflow">
  <div class="guide">
-{$content}
+  {$content}
  </div>
 </div>
 {form_start}
