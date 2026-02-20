@@ -1,141 +1,141 @@
 <?php
-if( !isset($gCms) ) exit;
-if( !isset($_REQUEST['cms_cron']) ) exit();
+/*
+CMSMS CmsJobManager module action: process
+(C) 2016 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+The license at the top of file CmsJobManager.module.php applies to this file.
+*/
 
-while(ob_get_level()) @ob_end_clean();
+use CMSMS\Async\Job;
+use CMSMS\JobOperations;
+
+while( ob_get_level() ) { @ob_end_clean(); }
 ignore_user_abort();
 header('Connection: close');
 header('X-CMSMS: Processing');
 echo ' '; // single character
 flush();
 
-if( !function_exists('_cmsjobmgr_errorhandler') ) {
-    // on cleanup, put this cruft into a utils class..
-    function _cmsjobmgr_process_errors()
-    {
-        $fn = md5(__FILE__).'.err';
-        $fn = TMP_CACHE_LOCATION.'/'.$fn;
-        if( !is_file($fn) ) return;
-
-        $data = file_get_contents($fn);
-        @unlink($fn);
-        if( !$data ) return;
-
-        $tmp = explode("\n",$data);
-        if( !is_array($tmp) || !count($tmp) ) return;
-
-        $job_ids = [];
-        foreach( $tmp as $one ) {
-            $one = (int) $one;
-            if( $one < 1 ) continue;
-            if( !in_array($one,$job_ids) ) $job_ids[] = $one;
-        }
-
-        // have jobs to increase error count on.
-        $db = \cms_utils::get_db();
-        $sql = 'UPDATE '.CmsJobManager::table_name().' SET errors = errors + 1 WHERE id IN ('.implode(',',$job_ids).')';
-        $db->Execute($sql);
-        debug_to_log('Increased error count on '.count($job_ids).' jobs ');
-    }
-
-    function _cmsjobmgr_put_error($job_id)
-    {
-        $fn = md5(__FILE__).'.err';
-        $fn = TMP_CACHE_LOCATION.'/'.$fn;
-        $fh = fopen($fn,'a');
-        fwrite($fh,$job_id."\n");
-        fclose($fh);
-    }
-
-    function _cmsjobmgr_joberrorhandler($job,$errmsg,$errfile,$errline)
-    {
-        // no access to the database here.
-        debug_to_log('Fatal error occurred processing async jobs at: '.$errfile.':'.$errline);
-        debug_to_log('Msg: '.$errmsg);
-
-        if( !is_object($job) ) return;
-        _cmsjobmgr_put_error($job->id);
-    }
-
-    function _cmsjobmgr_errorhandler()
-    {
-        $err = error_get_last();
-        if( is_null($err) ) return;
-        if( $err['type'] != E_ERROR ) return;
-        $mod = \ModuleOperations::get_instance()->get_module_instance('CmsJobManager');
-        $job = $mod->get_current_job();
-        if( !$job ) return;
-
-        _cmsjobmgr_joberrorhandler($job,$err['message'],$err['file'],$err['line']);
-    }
+if( !isset($gCms) ) exit;
+if( !isset($_REQUEST['cms_cron']) ) {
+    exit;
 }
 
+$now = time();
+$last_run = (int)$this->GetPreference('last_processing');
+$gap = JobOperations::get_async_freq();
+if( $now < $last_run + $gap ) {
+    exit; // too soon
+}
+$current_job = null; // the intra-loop 'current' job, if any - used during error handling
+
+if( !function_exists('_cmsjobmgr_errorhandler') ) {
+ function _cms_jobmgr_joberrorhandler($job,$errmsg,$errfile,$errline)
+ {
+    debug_to_log('Fatal error occurred processing async jobs at: '.$errfile.':'.$errline);
+    debug_to_log('Msg: '.$errmsg);
+    if( is_object($job) ) {
+        // add the id to the cache of error-jobs
+        $fn = TMP_CACHE_LOCATION.DIRECTORY_SEPARATOR.JobOperations::ERRFILE;
+        $fh = fopen($fn,'a');
+        fwrite($fh,$job->id."\n");
+        fclose($fh);
+    }
+ }
+ function _cmsjobmgr_errorhandler()
+ {
+    global $current_job;
+    $err = error_get_last();
+    if( is_null($err) ) return;
+    if( $err['type'] != E_ERROR ) return;
+    if( $current_job ) {
+        _cms_jobmgr_joberrorhandler($current_job,$err['message'],$err['file'],$err['line']);
+    }
+ }
+}
 register_shutdown_function('_cmsjobmgr_errorhandler');
 
+$save_time = function($job_id,$stamp) use($db)
+{
+    $sql = 'UPDATE '.CMS_DB_PREFIX.Job::RECORDTABLE.' SET start = ? WHERE id = ?';
+    $db->Execute($sql,[$stamp,$job_id]);
+};
+
+$me = $this->GetName();
 try {
-    $now = time();
-    $last_run = (int) $this->GetPreference('last_processing');
-    if( $last_run >= $now - \CmsJobManager\utils::get_async_freq() ) return;
-
-    _cmsjobmgr_process_errors();
-    \CmsJobManager\JobQueue::clear_bad_jobs();
-
-    $jobs = \CmsJobManager\JobQueue::get_jobs();
-    if( !is_array($jobs) || !count($jobs) ) return; // nothing to do.
-
     if( $this->is_locked() ) {
         if( $this->lock_expired() ) {
-            debug_to_log($this->GetName().': Removing an expired lock (probably an error occurred)');
-            audit('',$this->GetName(),'Removing an expired lock. An error probably occurred with a previous job.');
+            debug_to_log($me.': Removing an expired lock (probably an error occurred)');
+            audit('',$me,'Removing an expired lock. An error probably occurred during previous job-processing.');
             $this->unlock();
-        } else {
-            debug_to_log($this->GetName().': Processing still locked (probably because of an error)... wait for a bit');
-            audit('',$this->GetName(),'Processing is already occurring.');
+        }
+        else {
+            debug_to_log($me.': Processing still locked (probably due to an error)... try again later');
+            audit('',$me,'Processing is already occurring');
             exit;
         }
     }
+    $this->lock(); // block parallel processing
 
-    $time_limit = (int) $config['cmsjobmanager_timelimit'];
-    if( !$time_limit ) $time_limit = (int) ini_get('max_execution_time');
-    $time_limit = max(30,min(1800,$time_limit)); // no stupid time limit values
-    set_time_limit($time_limit);
+    JobOperations::process_errors();
+    JobOperations::clear_bad_jobs();
+
+    $config = cms_config::get_instance();
+    $devreport = !empty($config['developer_mode']);
+    $time_limit = JobOperations::get_batch_timeout();
     $started_at = $now;
 
-    $this->lock(); // get a new lock.
+    set_time_limit($time_limit);
+    JobOperations::record_eligible_jobs();
+    $jobs = JobOperations::get_jobs();
+
     foreach( $jobs as $job ) {
-        // make sure we are not out of time.
-        if( $now - $time_limit >= $started_at ) break;
-        try {
-            $this->set_current_job($job);
-            $job->execute();
-            if( \CmsJobManager\utils::job_recurs($job) ) {
-                $job->start = \CmsJobManager\utils::calculate_next_start_time($job);
-                if( $job->start ) {
-                    $this->errors = 0;
-                    $this->save_job($job);
-                } else {
-                    $this->delete_job($job);
-                }
-            } else {
-                $this->delete_job($job);
-            }
-            $this->set_current_job(null);
-            if( !empty($config['developer_mode']) ) audit('',$this->GetName(),'Processed job '.$job->name);
+        // skip future-start jobs
+        if( (int)$job->start > $now ) {
+            continue;
         }
-        catch( \Exception $e ) {
-            $job = $this->get_current_job();
-            audit('',$this->GetName(),'An error occurred while processing: '.$job->name);
-            _cmsjobmgr_joberrorhandler($job,$e->GetMessage(),$e->GetFile(),$e->GetLine());
+        try {
+            $current_job = $job;
+            if( $job instanceof RegularJob ) {
+                $nextat = 1; // force a downstream test whether to execute now
+            }
+            else {
+                $nextat = JobOperations::calculate_next_start_time($job);
+            }
+            if( $nextat == 0 ) {
+                if ( $job->id > 0 ) {
+                    $job->delete();
+                }
+            }
+            elseif( $nextat <= time() + 1 ) {
+                $pst = $job->start;
+                $res = $job->execute($now); // updates start property to $now, errors property if needed
+                if( $job->start != $pst ) {
+                    $job->save(); // record updated start, errors
+                    if( $devreport ) {
+                        audit('',$me,'Processed job '.$job->name);
+                    }
+                }
+            }
+            $current_job = null;
+        }
+        catch( Exception $e ) {
+            audit($job->id,$me,'An error occurred while processing job '.$job->name);
+            _cms_jobmgr_joberrorhandler($current_job,$e->GetMessage(),$e->GetFile(),$e->GetLine());
+            $current_job = null;
+        }
+        $now = time(); // update for timeout-check
+        // make sure we have not timed out
+        if( $now - $time_limit >= $started_at ) {
+            break;
         }
     }
-    $this->unlock();
-    $this->GetPreference('last_processing',$now);
 }
-catch( \Exception $e ) {
-    // some other error occurred, not processing jobs.
+catch( Exception $e ) {
     debug_to_log('--Major async processing exception--');
     debug_to_log('exception '.$e->GetMessage());
     debug_to_log($e->GetTraceAsString());
 }
+$this->SetPreference('last_processing',$now);
+$this->unlock();
 
 exit;
