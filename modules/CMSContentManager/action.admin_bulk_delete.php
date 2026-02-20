@@ -144,7 +144,7 @@ foreach( $pagelist as $pid ) {
   if( !is_object($content) ) continue; // this should never happen either
 
   if( $content->DefaultContent() ) {
-    echo $this->ShowErrors($this->Lang('error_delete_defaultcontent'));
+    $this->ShowErrors($this->Lang('error_delete_defaultcontent'));
     continue;
   }
 

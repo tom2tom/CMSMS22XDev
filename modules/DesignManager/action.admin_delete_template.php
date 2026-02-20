@@ -38,7 +38,7 @@ try {
 
   if( isset($params['submit']) ) {
     if( !isset($params['check1']) || !isset($params['check2']) ) {
-      echo $this->ShowErrors($this->Lang('error_notconfirmed'));
+      $this->ShowErrors($this->Lang('error_notconfirmed'));
     }
     else {
       $tpl_ob->delete();

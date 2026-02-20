@@ -60,7 +60,7 @@ try {
         $bulk_op = 'bulk_action_delete';
         if( isset($params['submit']) ) {
             if( !isset($params['check1']) || !isset($params['check2']) ) {
-                echo $this->ShowErrors($this->Lang('error_notconfirmed'));
+                $this->ShowErrors($this->Lang('error_notconfirmed'));
             }
             else {
                 foreach( $templates as $one ) {

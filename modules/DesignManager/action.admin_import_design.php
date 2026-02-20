@@ -60,7 +60,7 @@ try {
       }
     }
     catch( CmsException $e ) {
-      echo $this->ShowErrors($e->GetMessage()); //TODO ensure this works
+      $this->ShowErrors($e->GetMessage()); //TODO ensure this works
     }
 
     $modname = $this->GetName();
@@ -84,11 +84,11 @@ try {
 
       if( isset($params['next2']) ) { // submit-button name
         if( empty($params['check1']) ) {
-          echo $this->ShowErrors($this->Lang('error_notconfirmed'));
+          $this->ShowErrors($this->Lang('error_notconfirmed'));
           //fall into re-display
         }
         elseif( empty($params['newname']) ) {
-          echo $this->ShowErrors($this->Lang('error_missingparam'));
+          $this->ShowErrors($this->Lang('error_missingparam'));
         }
         else {
           // redirect back to here for step3.
@@ -122,7 +122,7 @@ try {
       $tpl->display();
     }
     catch( CmsException $e ) {
-      echo $this->ShowErrors($e->GetMessage());
+      $this->ShowErrors($e->GetMessage());
     }
     break;
 

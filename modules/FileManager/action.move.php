@@ -128,7 +128,7 @@ if( isset($params['submit']) ) {
     }
 } // submit
 
-if( $errors ) echo $this->ShowErrors($errors);
+if( $errors ) $this->ShowErrors($errors);
 $params['selall'] = (count($selall) > 1) ? serialize($params['selall']) : reset($params['selall']);
 
 $modname = $this->GetName();

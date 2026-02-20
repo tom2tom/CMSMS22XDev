@@ -9,7 +9,7 @@ try {
 }
 catch( Exception $e ) {
     debug_to_log($e);
-    echo $this->ShowErrors($e->GetMessage());
+    $this->ShowErrors($e->GetMessage());
     return;
 }
 $tpl->assign('allow_export',(!empty($config['developer_mode']))?1:0);

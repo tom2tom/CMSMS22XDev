@@ -50,7 +50,7 @@ try {
       }
     }
     catch( Exception $e ) {
-      echo $this->ShowErrors($e->GetMessage());
+      $this->ShowErrors($e->GetMessage());
     }
   }
 

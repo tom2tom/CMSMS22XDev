@@ -27,7 +27,7 @@ if (isset($params['newdirname'])) {
   $newdirname = trim($params['newdirname']);
 
   if (!filemanager_utils::is_valid_filename($newdirname) ) {
-    echo $this->ShowErrors($this->Lang('invalidnewdir'));
+    $this->ShowErrors($this->Lang('invalidnewdir'));
     //fallthrough
   } else {
     $base = CMS_ROOT_PATH;
@@ -35,7 +35,7 @@ if (isset($params['newdirname'])) {
     $newdir = $this->Slash($base, $newdir);
 
     if (is_dir($newdir)) {
-      echo $this->ShowErrors($this->Lang('direxists'));
+      $this->ShowErrors($this->Lang('direxists'));
       //fallthrough
     } else {
       if (mkdir($newdir)) {
