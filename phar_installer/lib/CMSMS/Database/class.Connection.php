@@ -5,28 +5,18 @@
 # (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 # A class to define interaction with a database.
 #
-#-------------------------------------------------------------------------
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-#
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
+# along with this program; if not, read the licence online at:
+# http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
 #END_LICENSE
 
@@ -109,6 +99,7 @@ namespace CMSMS\Database;
          *
          * @internal
          */
+        // TODO used only in error handling, but still a security risk - crash can disclose confidential properties
         protected $_connectionSpec;
 
         /**
@@ -592,7 +583,7 @@ namespace CMSMS\Database;
         public function Time() { return $this->UnixTimeStamp(); }
 
         /**
-         * An Alias for the UnixDate method.
+         * An alias for the UnixDate method.
          *
          * @return int
          */
@@ -715,7 +706,7 @@ namespace CMSMS\Database;
     } // end of class
 
     /**
-     * A special type of exception related to database queries.
+     * A custom exception related to database queries.
      */
     class DatabaseException extends \LogicException
     {
@@ -746,6 +737,7 @@ namespace CMSMS\Database;
 
         /**
          * Get the SQL statement related to this exception.
+         *
          * @return string
          */
         public function getSQL() { return $this->_sql; }
@@ -759,6 +751,6 @@ namespace CMSMS\Database;
     }
 
     /**
-     * A special exception indicating a problem connecting to the database.
+     * A custom exception indicating a problem connecting to the database.
      */
     class DatabaseConnectionException extends \Exception {}
