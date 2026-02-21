@@ -195,7 +195,7 @@ WHERE g.group_id=? ORDER BY username";
 				$valid = password_verify($password,$row['password']);
 			}
 			else { // original md5 hash
-				$valid = ($row['password'] = md5(get_site_preference('sitemask','').$password));
+				$valid = ($row['password'] = md5(cms_siteprefs::get('sitemask','').$password));
 			}
 			if( !$valid ) {
 				return null;
@@ -344,7 +344,7 @@ WHERE g.group_id=? ORDER BY username";
 	}
 
 	/**
-	 * Show the number of pages the given user's id owns.
+	 * Show the number of pages the given userid owns.
 	 *
 	 * @param mixed $id Id of the user to count
 	 * @return int Number of pages they own.  0 if any problems.
@@ -355,15 +355,8 @@ WHERE g.group_id=? ORDER BY username";
 		$gCms = CmsApp::get_instance();
 		$db = $gCms->GetDb();
 
-		$query = "SELECT count(*) AS num FROM ".CMS_DB_PREFIX."content WHERE owner_id = ?";
-		$dbresult = $db->Execute($query, array($id));
-
-		if( $dbresult && $dbresult->RecordCount() > 0 ) {
-			$row = $dbresult->FetchRow();
-			if( isset($row["num"]) ) $result = $row["num"];
-		}
-		if( $dbresult ) $dbresult->Close();
-
+		$query = "SELECT COUNT(*) FROM ".CMS_DB_PREFIX."content WHERE owner_id = ?";
+		$dbresult = (int)$db->GetOne($query, array($id));
 		return $result;
 	}
 
