@@ -61,7 +61,7 @@ final class UserTagOperations
 		if( !isset($this->_cache[$name]) ) return null; // no result
 
 		// it's a UDT alright
-		$this->CallUserTag($name,$arguments);
+		$this->CallUserTag($name,$arguments); // void
 	}
 
 	/**
@@ -248,7 +248,7 @@ final class UserTagOperations
 	}
 
 
- 	/**
+	/**
 	 * Return a list (suitable for use in a pulldown) of user tags.
 	 *
 	 * @return array|false
@@ -271,7 +271,7 @@ final class UserTagOperations
 	 *
 	 * @param string $name The name of the user defined tag
 	 * @param array  $params Optional parameters.
-	 * @return mixed|false The returned data from the user defined tag, or FALSE if the UDT could not be found.
+	 * @return mixed The returned data from the user defined tag, or FALSE if the UDT could not be found.
 	 */
 	function CallUserTag($name, &$params)
 	{
@@ -301,7 +301,7 @@ final class UserTagOperations
 			// TODO also validate potentially risky content
 			// The following did, or should have, happened when the tag was saved.
 			// TODO possible startswith short '<?' or TODO '<%' or '<%=' tag
-			// in princple, frontend Smarty-security-policy aught to apply to $code content 
+			// in princple, frontend Smarty-security-policy aught to apply to $code content
 			if( startswith($row['code'],'<?') ) {
 				if( strncasecmp($row['code'],'<?php',5) == 0 ) { $code = substr($row['code'],5); }
 				elseif( $row['code'][2] == '=' ) { $code = substr($row['code'],3); } //'<?=' is also valid
