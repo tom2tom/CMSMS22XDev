@@ -659,7 +659,7 @@ VALUES (?,?,?,NOW(),NOW())';
             allow_admin_lang(TRUE); // isn't this ugly.
             if( isset($info[$module_name]) && $info[$module_name]['status'] == 'installed' ) {
                 $dbversion = $info[$module_name]['version'];
-                if( version_compare($dbversion, $obj->GetVersion()) == -1 ) {
+                if( version_compare($dbversion, $obj->GetVersion()) < 0 ) {
                     // looks like upgrade is needed
                     if( in_array($module_name,$this->cmssystemmodules) || $this->IsQueuedForInstall($module_name) && !$gCms->is_frontend_request() ) {
                         // we're allowed to upgrade
@@ -815,7 +815,7 @@ VALUES (?,?,?,NOW(),NOW())';
         $dbversion = $info[$module_name]['version'];
         if( $to_version == '' ) $to_version = $module_obj->GetVersion();
         $dbversion = $info[$module_name]['version'];
-        if( version_compare($dbversion, $to_version) != -1 ) {
+        if( version_compare($dbversion, $to_version) >= 0 ) {
           return array(TRUE); // nothing to do.
         }
 
@@ -877,8 +877,8 @@ VALUES (?,?,?,NOW(),NOW())';
      * Uninstall a module
      *
      * @internal
-     * @param string $module The name of the module to upgrade
-     * @return array Returns a tuple of whether the install was successful and a message if applicable
+     * @param string $module The name of the module to uninstall
+     * @return array A tuple of whether the install was successful and a message if applicable
      */
     public function UninstallModule($module)
     {
@@ -928,9 +928,6 @@ VALUES (?,?,?,NOW(),NOW())';
                     }
                 }
 
-                $jobmgr = \ModuleOperations::get_instance()->get_module_instance('CmsJobManager');
-                if( $jobmgr ) $jobmgr->delete_jobs_by_module( $module );
-
                 $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'module_smarty_plugins WHERE module=?',array($module));
                 $db->Execute('DELETE FROM '.CMS_DB_PREFIX."siteprefs WHERE sitepref_name LIKE '". str_replace("'",'',$db->qstr($module))."_mapi_pref%'");
                 $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'routes WHERE key1 = ?',array($module));
@@ -943,8 +940,8 @@ VALUES (?,?,?,NOW(),NOW())';
             // Removing module from info
             $this->_moduleinfo = array();
 
-            audit('','Module','Uninstalled '.$module);
             \CMSMS\HookManager::do_hook('Core::ModuleUninstalled', [ 'name' => $module ]);
+            audit('','Module','Uninstalled '.$module);
             return array(TRUE);
         }
 
