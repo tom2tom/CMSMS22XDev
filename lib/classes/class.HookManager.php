@@ -96,7 +96,8 @@ namespace CMSMS {
     /**
      * A class to manage hooks, and to call hook handlers.
      *
-     * This class is capable of managing a flexible list of hooks, registering handlers for those hooks, and calling the handlers
+     * This class is capable of managing a flexible list of hooks,
+     * registering handlers for those hooks, and calling the handlers
      * and/or related events.
      *
      * @package CMS
@@ -200,7 +201,7 @@ namespace CMSMS {
             $name = trim($name);
 
             $is_event = false;
-            $module = '';
+            $module = ''; // might be 'Core'
             $eventname = '';
             if( strpos($name,':') !== FALSE ) list($module,$eventname) = explode('::',$name);
             if( $module && $eventname ) $is_event = true;
@@ -321,18 +322,18 @@ namespace CMSMS {
             $name = array_shift($args);
             $name = trim($name);
             //if( is_array($args) && count($args) == 1 && is_array($args[0]) && !$is_assoc($args[0]) ) $args = $args[0];
-            $is_event = false;
+            $is_event = FALSE;
             $module = '';
             $eventname = '';
             if( strpos($name,':') !== FALSE ) list($module,$eventname) = explode('::',$name);
             if( $module && $eventname ) $is_event = true;
 
-            if( !$is_event && ( !isset(self::$_hooks[$name]) || !count(self::$_hooks[$name]->handlers) )  ) return []; // nothing to do.
+            if( !$is_event && ( !isset(self::$_hooks[$name]) || !count(self::$_hooks[$name]->handlers) ) ) return []; // nothing to do.
 
             // sort the handlers.
             if( !self::$_hooks[$name]->sorted ) {
                 if( count(self::$_hooks[$name]->handlers) > 1 ) {
-                    usort(self::$_hooks[$name]->handlers,function($a,$b){
+                    usort(self::$_hooks[$name]->handlers,function($a,$b) {
                             if( $a->priority < $b->priority ) return -1;
                             if( $a->priority > $b->priority ) return 1;
                             return 0;
