@@ -480,11 +480,13 @@ abstract class CMSModule
     }
 
     /**
-     * Returns XHTML that needs to go between the <head> tags when this module is called from an admin side action.
+     * Return the HTML that needs to go in the <head/> element when this
+     * module is called from an admin side action.
+     * @deprecated since 2.2 instead register a hook-handler
+     *  CMSMS\HookManager::add_hook('admin_add_headtext',function(){return html})
+     * @see HookManager::do_hook_accumulate()
      *
-     * This method is called by the admin theme when executing an action for a specific module.
-     *
-     * @return string XHTML text
+     * @return string HTML text
      */
     public function GetHeaderHTML()
     {
@@ -1286,11 +1288,12 @@ abstract class CMSModule
      */
 
     /**
-     * Returns true if the modules thinks it has the capability specified
+     * Returns true if the module has the specified capability
      *
      * @abstract
-     * @param string $capability an id specifying which capability to check for, could be "wysiwyg" etc.
-     * @param array  $params An associative array further params to get more detailed info about the capabilities. Should be syncronized with other modules of same type
+     * @param string $capability Identifier of which capability to check for.
+     *  Could be like CmsCoreCapabilities::* or explicit "wysiwyg" etc.
+     * @param array  $params Optional details about the wanted capability. Should be synchronized with other modules of same type
      * @return bool
      */
     public function HasCapability($capability, $params = array())
@@ -1299,11 +1302,17 @@ abstract class CMSModule
     }
 
     /**
-     * Returns a list of the tasks that this module manages
+     * Returns the *Task classes and/or *Job classes (if any) that this module provides.
      *
      * @since 1.8
      * @abstract
-     * @return array of CmsRegularTask objects, or one object, or empty if not handled.
+     * @param vararg $aspaths Since 2.2.23F2. Flag whether to return the
+     *  filepath for each task instead of instantiated object.
+     *  Default not provided, hence false.
+     *  Each sub-class' method can check func_num_args() and func_get_arg(0)
+     *  to decide about returning paths.
+     * @return array of CmsRegularTask object(s), or object-filepath
+     *  string(s), or empty if nothing is provided.
      */
     public function get_tasks()
     {
@@ -1390,8 +1399,8 @@ abstract class CMSModule
             if( isset( $_SESSION[$e_key]) ) $errors = $_SESSION[$e_key];
             if( isset( $_SESSION[$m_key]) ) $messages = $_SESSION[$m_key];
             unset( $_SESSION[$e_key], $_SESSION[$m_key] );
-            if( is_array($errors) && count($errors) ) echo $this->ShowErrors($errors);
-            if( is_array($messages) && count($messages) ) echo $this->ShowMessage($messages[0]);
+            if( is_array($errors) && count($errors) ) $this->ShowErrors($errors);
+            if( is_array($messages) && count($messages) ) $this->ShowMessage($messages[0]);
         }
 
         if ($name != '') {
@@ -2404,11 +2413,11 @@ abstract class CMSModule
      */
 
     /**
-     * Get a reference to another module object
+     * Get a named module object
      *
      * @final
      * @param string $module The required module name.
-     * @return CMSModule The module object, or FALSE
+     * @return CMSModule The module object, or null
      */
     public static function GetModuleInstance($module)
     {
@@ -2516,8 +2525,9 @@ abstract class CMSModule
     {
         if( strpos($template,':') !== false ) {
             if( startswith($template,'string:') || startswith($template,'eval:') || startswith($template,'extends:') ) {
-                throw new \LogicException('Invalid smarty resource specified for a module template.');
+                throw new \LogicException('Invalid Smarty resource specified for a module template.');
             }
+//          elseif( startswith($template,'file:') ) { MAYBE validate the filepath? }
             return $template;
         }
         if( endswith($template,'.tpl') ) return 'module_file_tpl:'.$this->GetName().';'.$template;
@@ -2873,16 +2883,15 @@ abstract class CMSModule
 
     /**
      * ShowMessage
-     * Returns a formatted page status message
      *
      * @final
      * @param string $message Message to be shown
-     * @return string
+     * @return empty string
      */
     public function ShowMessage($message)
     {
         $theme = cms_utils::get_theme_object();
-        if( is_object($theme) ) return $theme->ShowMessage($message);
+        if( is_object($theme) ) $theme->ShowMessage($message);
         return '';
     }
 
@@ -2907,12 +2916,12 @@ abstract class CMSModule
      *
      * @final
      * @param string|string[] $errors array or string of errors to be shown
-     * @return string
+     * @return empty string
      */
     public function ShowErrors($errors)
     {
         $theme = cms_utils::get_theme_object();
-        if( is_object($theme) ) return $theme->ShowErrors($errors);
+        if( is_object($theme) ) $theme->ShowErrors($errors);
         return '';
     }
 
@@ -3075,14 +3084,14 @@ abstract class CMSModule
      * Add an event handler for an existing eg event.
      *
      * @final
-     * @param string $modulename       The name of the module sending the event, or 'Core'
-     * @param string $eventname       The name of the event
-     * @param bool $removable      Can this event be removed from the list?
+     * @param string $originator The name of the module sending the event, or 'Core'
+     * @param string $eventname  The name of the event
+     * @param bool $removable    Optional flag whether this event may be removed Default true
      * @returns bool
      */
-    final public function AddEventHandler( $modulename, $eventname, $removable = true )
+    final public function AddEventHandler( $originator, $eventname, $removable = true )
     {
-        Events::AddEventHandler( $modulename, $eventname, false, $this->GetName(), $removable );
+        Events::AddEventHandler( $originator, $eventname, false, $this->GetName(), $removable );
     }
 
 
