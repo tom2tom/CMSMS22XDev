@@ -47,7 +47,7 @@ final class CmsLangOperations
     /**
      * @ignore
      */
-    private static $_allow_nonadmin_lang;
+    private static $_allow_nonadmin_lang = FALSE;
 
     /**
      * @ignore
@@ -137,8 +137,8 @@ final class CmsLangOperations
      * Given a realm name and a key, test if the language string exists in the realm.
      *
      * @since 2.2
-     * @param string $realm The realm name (required)
-     * @param string $key The language key (required)
+     * @param mixed string $realm The realm name, or a 2-member array having realm and key
+     * @param string $key The language key if $realm is a string
      * @return bool
      */
     public static function lang_key_exists()
@@ -178,6 +178,8 @@ final class CmsLangOperations
      * @param string The language string key (required)
      * @param mixed  Further arguments to this function are passed to vsprintf
      * @return string
+     * @throws if the current realm is admin and the current request is
+     *  not compatible with that or explicitly enabled
      */
     public static function lang_from_realm()
     {
@@ -224,32 +226,33 @@ final class CmsLangOperations
     }
 
     /**
-     * A simple wrapper around the lang_from_realm method that assumes the self::CMSMS_ADMIN_REALM realm.
-     * Note, under normal circumstances this will generate an error if called from a frontend action.
+     * A wrapper around the lang_from_realm method that assumes the
+     * current realm, typically the admin realm.
+     * Note, under normal circumstances this will generate an error if
+     * called from a frontend action.
      * This function accepts variable arguments.
      *
      * @see lang_from_realm
-     * @param string Key (required) the language string key
+     * @param mixed language key string, or array in which 1st member is
+     *  the language key
      * @param mixed  Optional further arguments.
      * @return string
      */
-    public static function lang()
+    public static function lang(...$args)
     {
-        $args = func_get_args();
         if( count($args) == 1 && is_array($args[0]) ) $args = $args[0];
-
-        array_unshift($args,self::$_current_realm);
-        return self::lang_from_realm($args);
+        return self::lang_from_realm(self::$_current_realm, ...$args);
     }
 
 
     /**
-     * Allow nonadmin requests to call lang functions.
-     * normally, an error would be generated if calling core lang functions from an frontend action.
-     * this method will disable or enable that check.
+     * Allow or prevent non-admin requests using admin lang strings.
+     * Normally, an error would be generated if trying to access admin
+     * lang strings from a frontend action.
+     * This method disables or enables that error.
      *
      * @internal
-     * @param bool flag
+     * @param bool Optional flag Default true
      */
     public static function allow_nonadmin_lang($flag = TRUE)
     {
@@ -258,11 +261,10 @@ final class CmsLangOperations
 
 
     /**
-     * Test to see if a language key exists in the current lang file.
-     * This function uses the current language.
+     * Test if a language key exists in the current lang realm.
      *
      * @param string $key The language key
-     * @param string $realm The language realm
+     * @param string $realm Optional language realm. If not specified, the current realm is assumed.
      * @return bool
      */
     public static function key_exists($key,$realm = '')
@@ -270,17 +272,15 @@ final class CmsLangOperations
         if( !$realm ) $realm = self::$_current_realm;
         self::_load_realm($realm);
         $curlang = CmsNlsOperations::get_current_language();
-        if( isset(self::$_langdata[$curlang][$realm][$key]) ) return TRUE;
-        return FALSE;
+        return isset(self::$_langdata[$curlang][$realm][$key]);
     }
 
     /**
-     * Set the realm for further lang calls.
-     *
+     * Set the realm for subsequent lang calls.
      * @since 2.0
-     * @author Robert Campbell
-     * @param string $realm The realm name.  If no name specified, self::CMSMS_ADMIN_REALM is assumed'
-     * @return string the old realm name.
+     *
+     * @param string $realm Optional realm name. If not specified, the admin realm is assumed.
+     * @return string the replaced realm name.
      */
     public static function set_realm($realm = self::CMSMS_ADMIN_REALM)
     {
@@ -290,7 +290,3 @@ final class CmsLangOperations
         return $old;
     }
 } // end of class
-
-#
-# EOF
-#
