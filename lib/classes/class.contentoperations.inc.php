@@ -1,5 +1,5 @@
 <?php
-#CMS Made Simple class ContentOperations
+#CMS Made Simple class ContentOperations (aliased as ContentManager)
 #(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
@@ -187,7 +187,7 @@ class ContentOperations
 	 * @param int $id The numeric id of the content object to load
 	 * @param bool $loadprops Also load the extra properties of that content object. Default false.
 	 *   @since 2.2.22F2 If false, the 'target' property is always loaded, but might be ''.
-	 * @param bool $force  @since 2.2.21F2 Whether to always re-generate the content object, ignoring any cache. Defaults to false.
+	 * @param bool $force  @since 2.2.21F2 Whether to always re-generate the content object, ignoring any cache. Default false.
 	 * @return mixed ContentBase | null The loaded content object, if any.
 	 */
 	public function LoadContentFromId($id,$loadprops = false,$force = false)
@@ -229,14 +229,14 @@ AND P.prop_name = 'target' WHERE C.content_id = ?";
 	 * Without any 'extra' properties.
 	 *
 	 * @param string $alias The alias of the content object to load
-	 * @param bool $only_active If true, only return the object if its active-flag is true. Defaults to false.
+	 * @param bool $only_active If true, only return the object if its active-flag is true. Default false.
 	 * @return mixed ContentBase | null The loaded content object, if any.
 	 */
 	public function LoadContentFromAlias($alias,$only_active = false)
 	{
 		if( cms_content_cache::content_exists($alias) ) return cms_content_cache::get_content($alias);
 
-		$hm = Cmsapp::get_instance()->GetHierarchyManager();
+		$hm = CmsApp::get_instance()->GetHierarchyManager();
 		$node = $hm->sureGetNodeByAlias($alias);
 		if( !$node ) return null;
 		if( $only_active && !$node->get_tag('active') ) return null;
@@ -752,7 +752,7 @@ AND P.prop_name = 'target' WHERE C.content_id = ?";
 					unset($contentprops[$id]);
 				}
 
-				// cache the content objects
+				// cache the content object
 				cms_content_cache::add_content($id,$contentobj->Alias(),$contentobj);
 				unset($contentobj);
 			}
@@ -830,7 +830,7 @@ AND P.prop_name = 'target' WHERE C.content_id = ?";
 	 *  or itself. Can be -1.  Default 0
 	 * @param int $selected Numeric id of the currently selected content object (new in 2.2). Default 0
 	 *  Can be -1. (Before 2.2 this parameter was $parent)
-	 * @param string $name The html name attribute of the created dropdown. Default 'parent_id'
+	 * @param string $name The html name attribute of the created input element. Default 'parent_id'
 	 * @param bool $allowcurrent If false, $current cannot be selected, nor
 	 *  can its children. Used to prevent circular deadlocks. Default false
 	 * @param bool $use_perms If true, shows only the items which the current
@@ -842,18 +842,35 @@ AND P.prop_name = 'target' WHERE C.content_id = ?";
 	 * @param bool $for_child If true, assume that we want to select a new child
 	 *  item and obey the WantsChildren property of each ancestor item (new in 2.2). Default false
 	 *  (Before 2.2 this parameter was $use_name)
+	 * @param string $id Since 2.2.23F2 Optional html id attribute of the
+	 *  created input element to.use instead of the default (cms_hierdropdownN). Default ''
+	 * @param mixed $title Since 2.2.23F2 Optional title attribute of the
+	 *  created input element to use instead of the default (lang('title_hierselect')). Default null
+	 *  Note: this is not the title of any of the js-added select elements.
 	 * @return string Html for an input to be hidden plus js to populate a
 	 *  dropdown of the hierarchy via ajax and the hierselector widget.
 	 */
 	public function CreateHierarchyDropdown($current = 0, $selected = 0,
 			$name = 'parent_id', $allowcurrent = false, $use_perms = false,
-			$ignore_current = false, $allow_all = false, $for_child = false)
+			$ignore_current = false, $allow_all = false, $for_child = false,
+			$id = '', $title = null)
 	{
 		static $count = 0;
+
+		if( $count == 0 ) { // once-per-request
+			$root_url = CMS_ROOT_URL;
+			// $themeObject maybe set upstream
+			if( !isset($themeObject) ) {
+				$themeObject = cms_utils::get_theme_object();
+			}
+			$themeObject->add_footertext("<script src=\"$root_url/lib/jquery/js/jquery.cmsms_hierselector.js\"></script>\n");
+		}
+
 		$count++;
-		$id = 'cms_hierdropdown'.$count; //TODO API to allow setting this via method args
+		$htmlid = $id ?: 'cms_hierdropdown'.$count;
 		$uid = get_userid(FALSE);
-		$ttl = lang('title_hierselect');
+		$ttl = ($title === null) ? '' : (($title) ?: lang('title_hierselect'));
+		$ot = ($ttl !== '') ? ' title="$ttl"' : '';
 
 		$opts = [
 		 'current' => (int)$current,
@@ -868,15 +885,15 @@ AND P.prop_name = 'target' WHERE C.content_id = ?";
 		$str = '';
 		foreach( $opts as $key => $val ) {
 			if( is_bool($val) ) $val = ($val) ? 'true' : 'false';
-			$str .= "$key:$val, ";
+			$str .= "$key:$val,";
 		}
 		$str = rtrim($str,' ,'); // no redundant trailer
 
 		$out = <<<EOS
-<input type="text" id="$id" name="$name" class="cms_hierdropdown" title="$ttl" value="$selected" size="50" maxlength="50">
+<input type="text" id="$htmlid" name="$name" class="cms_hierdropdown"{$ot} value="$selected" size="50" maxlength="50">
 <script>
 $(function() {
- $('#$id').hierselector({
+ $('#$htmlid').hierselector({
   $str
  });
 });
@@ -886,9 +903,9 @@ EOS;
 	}
 
 	/**
-	 * Gets the content id of the page marked as default
+	 * Returns the content id of the page marked as default
 	 *
-	 * @return int The id of the default page. false if not found.
+	 * @return mixed int the default-page id | FALSE if not found.
 	 */
 	public function GetDefaultPageID()
 	{
@@ -896,41 +913,39 @@ EOS;
 	}
 
 	/**
-	 * Returns the content id given a valid content alias.
+	 * Returns the content id of the page having the given alias.
 	 *
 	 * @param string $alias The alias to query
-	 * @return int The resulting id.  null if not found.
+	 * @return mixed int the page id | null if not found
 	 */
 	public function GetPageIDFromAlias( $alias )
 	{
 		$hm = CmsApp::get_instance()->GetHierarchyManager();
 		$node = $hm->sureGetNodeByAlias($alias);
 		if( $node ) return $node->get_tag('id');
+		return null;
 	}
 
 	/**
 	 * Returns the content id given a valid hierarchical position.
 	 *
 	 * @param string $position The position to query
-	 * @return int The resulting id.  false if not found.
+	 * @return mixed the page id | false if not found.
 	 */
 	public function GetPageIDFromHierarchy($position)
 	{
-		$gCms = CmsApp::get_instance();
-		$db = $gCms->GetDb();
-
+		$db = CmsApp::get_instance()->GetDb();
 		$query = "SELECT content_id FROM ".CMS_DB_PREFIX."content WHERE hierarchy = ?";
-		$row = $db->GetRow($query, array($this->CreateUnfriendlyHierarchyPosition($position)));
-
-		if (!$row) return false;
-		return $row['content_id'];
+		$num = $db->GetOne($query, array($this->CreateUnfriendlyHierarchyPosition($position)));
+		if( $num ) return (int)$num;
+		return FALSE;
 	}
 
 	/**
 	 * Returns the content alias given a valid content id.
 	 *
 	 * @param int $id The content id to query
-	 * @return string The resulting content alias, or empty if not found.
+	 * @return string The page alias | empty if not found.
 	 */
 	public function GetPageAliasFromID($id)
 	{
@@ -966,7 +981,7 @@ EOS;
 	/**
 	 * Check if a candidate alias has valid content.
 	 * It might be appropriate to sanitize $alias using
-	 * munge_string_to_url(,true) before calling here.
+	 * munge_string_to_url($alias,TRUE) before calling here.
 	 * @since 2.2.2
 	 *
 	 * @param string $alias The alias to check
@@ -1066,14 +1081,14 @@ EOS;
 	public function register_routes()
 	{
 		$gCms = CmsApp::get_instance();
- 		$db = $gCms->GetDb();
+		$db = $gCms->GetDb();
 
 		$query = 'SELECT content_id,page_url FROM '.CMS_DB_PREFIX.'content
 WHERE active = 1 AND default_content = 0 AND page_url != \'\'';
 		$data = $db->GetArray($query);
- 		if( is_array($data) ) {
- 			foreach( $data as $onerow ) {
- 				$route = new CmsRoute($onerow['page_url'],$onerow['content_id'],'',TRUE);
+		if( is_array($data) ) {
+			foreach( $data as $onerow ) {
+				$route = new CmsRoute($onerow['page_url'],$onerow['content_id'],'',TRUE);
 				cms_route_manager::register($route);
 			}
 		}
