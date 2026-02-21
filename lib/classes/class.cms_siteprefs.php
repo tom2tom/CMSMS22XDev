@@ -53,8 +53,6 @@ final class cms_siteprefs
 	private static function _read()
 	{
 		$db = CmsApp::get_instance()->GetDb();
-
-		if( !$db ) return [];
 		$query = 'SELECT sitepref_name,sitepref_value FROM '.CMS_DB_PREFIX.'siteprefs';
 		$dbr = $db->GetArray($query);
 		if( is_array($dbr) ) {
@@ -78,8 +76,24 @@ final class cms_siteprefs
 	public static function get($key,$dflt = '')
 	{
 		$prefs = global_cache::get(__CLASS__);
-		if( isset($prefs[$key]) )  return $prefs[$key];
+		if( isset($prefs[$key]) ) return $prefs[$key];
 		return $dflt;
+	}
+
+
+	/**
+	 * Retrieve a site preference without checking the cached preference-values
+	 * @since 2.2.23F2
+	 *
+	 * @param string $key The preference name
+	 * @return mixed string | null
+	 */
+	public static function get_forced($key)
+	{
+		$db = CmsApp::get_instance()->GetDb();
+		$query = 'SELECT sitepref_value FROM '.CMS_DB_PREFIX.'siteprefs WHERE sitepref_name = ?';
+		$dbr = $db->GetOne($query,array($key));
+		return ($dbr !== FALSE) ? $dbr : null;
 	}
 
 
@@ -92,8 +106,7 @@ final class cms_siteprefs
 	public static function exists($key)
 	{
 		$prefs = global_cache::get(__CLASS__);
-		if( is_array($prefs) && in_array($key,array_keys($prefs)) ) return TRUE;
-		return FALSE;
+		return ($prefs && is_array($prefs) && array_key_exists($key,$prefs));
 	}
 
 
@@ -149,10 +162,7 @@ final class cms_siteprefs
 		$query = 'SELECT sitepref_name FROM '.CMS_DB_PREFIX.'siteprefs WHERE sitepref_name LIKE ?';
 		$db = CmsApp::get_instance()->GetDb();
 		$dbr = $db->GetCol($query,array($prefix.'%'));
-		if( is_array($dbr) && count($dbr) ) return $dbr;
+		if( $dbr && is_array($dbr) ) return $dbr;
 		return [];
 	}
 } // end of class
-
-#
-# EOF
