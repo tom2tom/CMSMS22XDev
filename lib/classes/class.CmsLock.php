@@ -114,11 +114,12 @@ final class CmsLock implements ArrayAccess
    * @param string $type
    * @param int    $oid      Object Id
    * @param int    $lifetime (in minutes) The interval from lock-creation until when it can be stolen.
-   *                         If not specified, the system default value will be used.
+   *                         If not specified > 0, the system default value will be used. Default 0
+   * @param int    $userid   If not specified > 0, the current user's id will be used. Default 0
    *
    * @throws \CmsInvalidDataException
    */
-    public function __construct($type,$oid,$lifetime = 0)
+    public function __construct($type,$oid,$lifetime = 0,$userid = 0)
     {
         $type = trim($type);
         $oid = trim($oid);
@@ -126,8 +127,9 @@ final class CmsLock implements ArrayAccess
 
         $this->_data['type'] = $type;
         $this->_data['oid'] = $oid;
-        $this->_data['uid'] = get_userid(FALSE);
-        if( $lifetime == 0 ) { $lifetime = cms_siteprefs::get('lock_timeout',60); }
+        if( $userid < 1 ) $userid = get_userid(FALSE);
+        $this->_data['uid'] = $userid;
+        if( $lifetime < 1 ) { $lifetime = cms_siteprefs::get('lock_timeout',60); }
         $this->_data['lifetime'] = max(1,(int)$lifetime);
         $this->_dirty = TRUE;
     }
