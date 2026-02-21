@@ -159,7 +159,7 @@ final class GroupOperations
 
 		$db = CmsApp::get_instance()->GetDb();
 
-		$new_id = $db->GenId(CMS_DB_PREFIX.'group_perms_seq');
+		$new_id = $db->GenID(CMS_DB_PREFIX.'group_perms_seq');
 		if( !$new_id ) return;
 
 		$now = $db->DBTimeStamp(time());
