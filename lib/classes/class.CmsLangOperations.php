@@ -171,8 +171,8 @@ final class CmsLangOperations
      * Given a realm name, a key, and optional parameters, return a translated string
      * This function accepts variable arguments.  If no key/realm combination can be found
      * then an -- Add-Me string will be returned indicating that this key needs translating.
-     * This function uses the currently set language, and will load the translations from disk
-     * if necessary.
+     * This function uses the currently set realm, and will load its
+     * translations if necessary.
      *
      * @param string The realm name (required)
      * @param string The language string key (required)
