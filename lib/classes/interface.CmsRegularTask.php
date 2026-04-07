@@ -14,26 +14,26 @@
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
-#
 
 /**
- * Task class interface definition
- * @license GPL
- * @package CMS
- */
-
-/**
- * An interface to define how tasks should work.
- *
+ * An interface to define how Tasks should work
+ * @deprecated since 2.2.23F2 instead use Jobs and Job-subclasses
  * @package CMS
  * @license GPL
  * @since 1.8
  */
 interface CmsRegularTask
 {
+ /**
+  * For effective timestamp recording, the object needs to have an 
+  * id property to record the $id of the 'wrapper' RegularJob
+  * @since 2.2.23F2
+  */
+//public int $id; // PHP 8.4+
+
+
   /**
-   * Get the name for this task
+   * Get the name of the Task
    *
    * @return string
    */
@@ -41,7 +41,7 @@ interface CmsRegularTask
 
 
   /**
-   * Get the description for this task.
+   * Get the description of the Task
    *
    * @return string
    */
@@ -49,37 +49,41 @@ interface CmsRegularTask
 
 
   /**
-   * Test if a function should be executed given the supplied time argument
+   * Test whether the Task should be executed
    *
-   * @param   int $time The time at which any comparisons for execution should be performed.  If empty the current time is assumed.
-   * @returns boolean TRUE IF the task should be executed, FALSE otherwise.
+   * @param mixed $time The timestamp representing task execution time
+   *   to be used during the test. Assume the current time if falsy.
+   * @return bool TRUE if the task should be executed, FALSE otherwise.
    */
   public function test($time = '');
 
 
   /**
-   * Execute a given task
+   * Execute the Task
    *
-   * @param  int $time The time at which the task should consider the execution occurred at.  Assume the current time if empty.
+   * @param mixed $time The timestamp representing when the task is being executed.
+   *   Assume the current time if falsy.
    * @return bool TRUE on success, FALSE otherwise.
    */
   public function execute($time = '');
 
 
   /**
-   * Execute steps that should be taken on success of this task.
-   * This method is called after the execute step if the execute step returned TRUE.
+   * Do things consequent on successful execution of the Task.
+   * This method is called after execute() returns TRUE.
    *
-   * @param  int $time The time at which the task should consider the execution occurred at.  Assume the current time if empty.
+   * @param mixed $time The timestamp representing when the task was executed.
+   *   Assume the current time if falsy.
    */
   public function on_success($time = '');
 
 
   /**
-   * Execute steps that should be taken on failure of this task.
-   * This method is called after the execute step if the execute step returned FALSE.
+   * Do things consequent on failure of the Task.
+   * This method is called after execute() returns FALSE.
    *
-   * @param  int $time The time at which the task should consider the execution occurred at.  Assume the current time if empty.
+   * @param int $time The timestamp representing when the task was executed.
+   *   Assume the current time if empty.
    */
   public function on_failure($time = '');
 

@@ -26,13 +26,13 @@ use LogicException;
 
 /**
  * A RegularJob wraps a CmsRegularTask pseudocron Task in an
- * asynchronous background CronJob.
+ * asynchronous background Job.
  *
  * @package CMS
  * @since 2.2.23F2
  * @property CmsRegularTask $_task The Task to be adapted
  */
-class RegularJob extends CronJob
+class RegularJob extends Job
 {
     /**
      * @val CmsRegularTask
@@ -138,7 +138,7 @@ class RegularJob extends CronJob
             return $this->displayrecr;
         }
         $val = $this->get_frequency;
-        if( !$val || $val == CronJob::RECUR_NONE || $val == CronJob::RECUR_NONE_CUSTOM ) {
+        if( !$val || $val == Job::RECUR_NONE || $val == Job::RECUR_NONE_CUSTOM ) {
             return '';
         }
         return 'Custom';
@@ -151,6 +151,9 @@ class RegularJob extends CronJob
      */
     public function execute($now = 0)
     {
+        if( property_exists($this->_task,'id') ) {
+            $this->_task->id = $this->id; // use the correct job id for cached properties
+        }
         if( $now == 0 ) { $now = time(); }
         if( !$this->_task->test($now) ) {
             return false;

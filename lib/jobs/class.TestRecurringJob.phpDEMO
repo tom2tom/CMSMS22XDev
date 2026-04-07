@@ -1,0 +1,48 @@
+<?php
+
+namespace CMSMS\jobs;
+
+use CMSMS\Async\Job;
+use CMSMS\JobOperations;
+
+class TestRecurringJob extends Job
+{
+    private $propname;
+    private $reps;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->name = 'TestRecurringJob';
+        $this->recurs = Job::RECUR_15M;
+        $this->until = strtotime('+1 day', time());
+        $s = hash('fnv1a64', __FILE__);// some uniqueness
+        $this->propname = "TestRecurringJob:$s:times";
+        $this->reps = JobOperations::retrieve_timestamp($this->id, $this->propname); // not a stamp, of course
+    }
+
+    public function fill_description()
+    {
+        $this->description = 'Bumps a counter, rolling it over after 10';
+    }
+
+    public function execute($time = 0)
+    {
+        if( !$time ) { $time = time(); }
+        $this->record_exec_time($time);
+        if( $this->start > $time ) return true;
+        $this->force_start = $time;
+
+        $num = $this->reps + 1;
+        if ($num < 11) {
+            $this->reps = $num;
+            $this->until = $time + 6000; // 100 mins
+            $this->record_timestamp($this->id, $this->propname, $num);
+        } else {
+            $this->reps = 0;
+            $this->until = strtotime('+1 day', $time);
+            $this->remove_timestamp($this->id, $this->propname);
+        }
+        return true;
+    }
+}

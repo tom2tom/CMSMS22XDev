@@ -1,21 +1,22 @@
 <?php
-#CMS Made Simple backend processing script
-#(c) 2026 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
-#
-#This program is free software; you can redistribute it and/or modify
-#it under the terms of the GNU General Public License as published by
-#the Free Software Foundation; either version 2 of the License, or
-#(at your option) any later version.
-#
-#This program is distributed in the hope that it will be useful,
-#but WITHOUT ANY WARRANTY; without even the implied warranty of
-#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#GNU General Public License for more details.
-#You should have received a copy of the GNU General Public License
-#along with this program. If not, read the license online at
-#https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+/*
+MS Made Simple backend processing script
+(C) 2026 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 
-use CMSMS\Async\Job;
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+You should have received a copy of the GNU General Public License
+along with this program. If not, read the license online at:
+https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+*/
+
 use CMSMS\JobOperations;
 
 while( ob_get_level() ) {
@@ -37,7 +38,7 @@ $DONT_LOAD_SMARTY = 1;
 require_once '../lib/include.php';
 
 $now = time();
-$last_run = (int)cms_siteprefs::get_forced('last_processing');
+$last_run = (int)JobOperations::retrieve_timestamp(0,'last_processing');
 $gap = JobOperations::get_async_freq();
 if( $now < $last_run + $gap ) {
     exit; // too soon
@@ -73,7 +74,7 @@ register_shutdown_function('_cmsjobmgr_errorhandler');
 $db = CmsApp::get_instance()->GetDb();
 $save_time = function($job_id,$stamp) use($db)
 {
-    $sql = 'UPDATE '.CMS_DB_PREFIX.Job::RECORDTABLE.' SET start = ? WHERE id = ?';
+    $sql = 'UPDATE '.CMS_DB_PREFIX.JobOperations::RECORDTABLE.' SET start = ? WHERE id = ?';
     $db->Execute($sql,[$stamp,$job_id]);
 };
 
@@ -108,7 +109,7 @@ try {
 
     foreach( $jobs as $job ) {
         // skip future-start jobs
-        if( (int)$job->start > $now ) {
+        if( (int)$job->start > $now ) { // OR allow a little slop ?
             continue;
         }
         try {
@@ -153,7 +154,7 @@ catch (Exception $e) {
     debug_to_log('exception '.$e->GetMessage());
     debug_to_log($e->GetTraceAsString());
 }
-cms_siteprefs::set('last_processing',$now);
+JobOperations::record_timestamp(0,'last_processing',$now);
 JobOperations::unlock();
 
 exit;
