@@ -31,7 +31,7 @@ class cms_smarty extends Smarty
     }
     // the installer is a closed system, so no need for Smarty's security mechanisms
     $this->registerPlugin('modifier','tr',array($this,'modifier_tr')); //for Smarty5, wherein unregistered methods are not supported
-    // $_call->func(args) can be used in templates instead of func(args) for Smarty5
+    // $_call->func(args) can be used in templates instead of func(args) for Smarty 4.5.1+
     $this->assignGlobal('_call', new Install_TemplateCaller($this)); //for Smarty 4.5.1+, wherein PHP function-calls are deprecated then (in 5+) blocked
     // _call::class__method(args) can be used in templates instead of unregistered class::method(args) for Smarty 4.5.1+
     $this->registerClass('_call', Install_TemplateCaller::class);
@@ -66,11 +66,10 @@ class Install_TemplateCaller
   }
 
   #[\ReturnTypeWillChange]
-  public static function __callStatic($name, $args)
+  public static function __callStatic($name,$args)
   {
     $pos = strpos($name,'__');
     if( $pos !== FALSE ) {
-      $classname = substr($name,0,$pos);
       $name = substr_replace($name,'::',$pos,2); // replace 1st occurrence
       return $name(...$args);
     }
