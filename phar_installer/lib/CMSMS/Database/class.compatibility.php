@@ -60,8 +60,10 @@ namespace CMSMS\Database {
         public static function init(\cms_config $config)
         {
             $path = private_place('db.ini',$config,['dbase'=>1]);
-            $tmp = parse_ini_file($path, false, INI_SCANNER_TYPED); //PHP5.6.1+
-            if( $tmp === false ) {
+            if( $path ) {
+                $tmp = parse_ini_file($path,false,INI_SCANNER_TYPED); //PHP5.6.1+
+            }
+            if( !$path || $tmp === false ) {
                 debug_to_log("Database connection error: failed to read config data");
                 return null; //TODO throw
             }
@@ -71,7 +73,7 @@ namespace CMSMS\Database {
             $spec->username = $tmp['username'];
             $spec->password = $tmp['password'];
             $spec->dbname = $tmp['basename'];
-            $port = (!empty($tmp['port'])) ? (int)$tmp['port'] : 0; //TODO default null instead of 0?
+            $port = (!empty($tmp['port'])) ? (int)$tmp['port'] : 0; //TODO default null (hence PHP ini value) instead of 0?
             $spec->port = $port;
             $spec->debug = CMS_DEBUG;
 
