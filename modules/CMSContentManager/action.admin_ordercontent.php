@@ -125,12 +125,12 @@ if( !empty($params['orderlist']) ) {
     $this->RedirectToAdminTab('pages');
 }
 
+CMSMS\HookManager::add_hook('admin_add_headtext', function() {
+    $root_url = CMS_ROOT_URL;
+    return "<script src=\"$root_url/lib/jquery/js/jquery.mjs.nestedSortable.min.js\"></script>\n";
+});
+
 $modname = $this->GetName();
 $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_ordercontent.tpl",null,$modname,$smarty);
 $tpl->assign('tree',$tree);
 $tpl->display();
-
-#
-# EOF
-#
-?>

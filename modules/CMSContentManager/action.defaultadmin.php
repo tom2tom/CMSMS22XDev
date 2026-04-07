@@ -169,6 +169,11 @@ else {
     $filter = null;
 }
 
+CMSMS\HookManager::add_hook('admin_add_headtext', function() {
+    $root_url = CMS_ROOT_URL;
+    return "<script src=\"$root_url/lib/jquery/js/jquery.cmsms_autorefresh.js\" defer></script>\n";
+});
+
 $tpl = $smarty->createTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,$modname,$smarty);
 
 $url = $this->create_url($id,'ajax_get_content',$returnid);

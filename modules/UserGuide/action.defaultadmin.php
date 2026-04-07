@@ -10,6 +10,9 @@ use UserGuide\UserGuideQuery;
 if (!isset($gCms)) {
     exit;
 }
+
+$this->SetupHeadtext();
+
 $pmod = $this->CheckPermission(UserGuide::MANAGE_PERM);
 $pset = $pmod || $this->CheckPermission(UserGuide::SETTINGS_PERM);
 $tab = (!empty($params['active_tab'])) ? $params['active_tab'] : '';

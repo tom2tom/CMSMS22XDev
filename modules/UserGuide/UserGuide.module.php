@@ -63,24 +63,6 @@ class UserGuide extends CMSModule
         return $this->Lang('help', $licence);
     }
 
-    public function GetHeaderHTML()
-    {
-        $me = $this->GetName();
-        $baseurl = $this->GetModuleURLPath();
-        $tmp = "<link rel=\"stylesheet\" href=\"{$baseurl}/lib/css/{$me}_admin.css\">\n"; // or .min for production
-        if ($this->GetPreference('customCSS')) {
-            $config = cms_config::get_instance();
-            $astdir = $config['assets_dir'];
-            $custom = cms_join_path(CMS_ROOT_PATH, $astdir, 'module_custom', $me, 'custom.css');
-            if (file_exists($custom)) {
-                $url = implode('/', CMS_ROOT_URL, $astdir, 'module_custom', $me, 'custom.css');
-                $tmp .= "<link rel=\"stylesheet\" href=\"$url\">\n";
-            }
-        }
-//if needed $tmp .= "<script src=\"$baseurl/lib/js/{$me}_admin.js\"></script>\n"; // or .min for production
-        return $tmp;
-    }
-
     public function HasCapability($capability, $params = [])
     {
         switch ($capability) {
@@ -107,6 +89,26 @@ class UserGuide extends CMSModule
         $this->SetParameterType('pagelength', CLEAN_INT);
         $this->SetParameterType(CLEAN_REGEXP.'/X.* NO WHITESPACE HERE /',CLEAN_STRING);
 */
+    }
+
+    protected function SetupHeadtext()
+    {
+        CMSMS\HookManager::add_hook('admin_add_headtext',function() {
+            $me = $this->GetName();
+            $baseurl = $this->GetModuleURLPath();
+            $tmp = "<link rel=\"stylesheet\" href=\"{$baseurl}/lib/css/{$me}_admin.css\">\n"; // or .min for production
+            if ($this->GetPreference('customCSS')) {
+                $config = cms_config::get_instance();
+                $astdir = $config['assets_dir'];
+                $custom = cms_join_path(CMS_ROOT_PATH, $astdir, 'module_custom', $me, 'custom.css');
+                if (file_exists($custom)) {
+                    $url = implode('/', CMS_ROOT_URL, $astdir, 'module_custom', $me, 'custom.css');
+                    $tmp .= "<link rel=\"stylesheet\" href=\"$url\">\n";
+                }
+            }
+//if needed $tmp .= "<script src=\"$baseurl/lib/js/{$me}_admin.js\" defer></script>\n"; // or .min for production
+            return $tmp;
+        });
     }
 
     public static function type_lang_callback($type)

@@ -19,6 +19,8 @@
 if (!function_exists('cmsms')) exit;
 if (!$this->CheckPermission('Modify Site Preferences')) return;
 
+$this->SetupHeadtext('admin_settings');
+
 $advancedmode = $this->GetPreference('advancedmode',0);
 $showhiddenfiles = $this->GetPreference('showhiddenfiles',0);
 $showthumbnails = $this->GetPreference('showthumbnails',1);

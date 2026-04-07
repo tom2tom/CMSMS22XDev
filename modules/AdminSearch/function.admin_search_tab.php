@@ -12,13 +12,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
+# along with this program; if not, read the licence online at
+# https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
 if( !isset($gCms) ) exit;
 if( !$this->VisibleToAdminUser() ) exit;
+
+$this->SetupHeadtext();
 
 $modname = $this->GetName();
 $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_search_tab.tpl",null,$modname,$smarty);
@@ -31,7 +31,7 @@ $tpl->assign('ajax_url',$url);
 $tpl->assign('js_url',$this->GetModuleURLPath().'/lib/admin_search_tab.js');
 
 $userid = get_userid();
-$tmp = get_preference($userid,$modname.'saved_search');
+$tmp = cms_userprefs::get_for_user($userid,$modname.'saved_search');
 if( $tmp ) {
   $tpl->assign('saved_search',unserialize($tmp));
 }
@@ -40,7 +40,3 @@ $slaves = AdminSearch_tools::get_slave_classes();
 $tpl->assign('slaves',$slaves);
 
 $tpl->display();
-#
-# EOF
-#
-?>

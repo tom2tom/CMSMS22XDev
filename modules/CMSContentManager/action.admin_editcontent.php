@@ -297,6 +297,12 @@ if( $content_id > 0 && CmsContentManagerUtils::locking_enabled() ) {
     }
 }
 
+CMSMS\HookManager::add_hook('admin_add_headtext', function() {
+    $root_url = CMS_ROOT_URL;
+    return "<script src=\"$root_url/lib/jquery/js/jquery.cmsms_dirtyform.js\" defer></script>\n".
+      "<script src=\"$root_url/lib/jquery/js/jquery.cmsms_lock.js\" defer></script>\n";
+});
+
 //
 // BUILD THE DISPLAY
 //
@@ -387,9 +393,9 @@ catch( Exception $e ) {
     $error = $e->GetMessage();
 }
 
-if( $error ) echo $this->ShowErrors($error);
+if( $error ) $this->ShowErrors($error);
 
-// give stuff to smarty.
+// give stuff to Smarty.
 $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_editcontent.tpl",null,$modname,$smarty);
 
 if( $content_obj->HasPreview() ) {

@@ -22,22 +22,26 @@ if (!$this->CheckPermission('Modify Files')) exit;
 if (!empty($params['fmmessage'])) {
     // gotta get rid of this stuff
     $count = (!empty($params['fmmessagecount'])) ? $params['fmmessagecount'] : '';
-    echo $this->ShowMessage($this->Lang($params['fmmessage'],$count));
+    $this->ShowMessage($this->Lang($params['fmmessage'],$count));
 }
 
 if (!empty($params['fmerror'])) {
     // gotta get rid of this stuff
     $count = (!empty($params['fmerrorcount'])) ? $params['fmerrorcount'] : '';
-    echo $this->ShowErrors($this->Lang($params['fmerror'],$count));
+    $this->ShowErrors($this->Lang($params['fmerror'],$count));
 }
 
 if (isset($params['newsort'])) {
    $_SESSION['FMnewsortby'] = trim(cleanValue($params['newsort']));
 }
 
+$this->SetupHeadtext('defaultadmin');
+
 $path = trim(ltrim(filemanager_utils::get_cwd(),DIRECTORY_SEPARATOR));
-if (filemanager_utils::can_do_advanced() && $this->GetPreference('advancedmode',0)) {
-    $path = '::top::'.DIRECTORY_SEPARATOR.$path; // placeholder for 'root'
+if (filemanager_utils::can_do_advanced() && $this->GetPreference('advancedmode',0)) { //i.e. ::check_advanced_mode() without special-allowance for development
+    // placeholder for 'root-path'
+    if ($path) { $path = '::top::'.DIRECTORY_SEPARATOR.$path; }
+    else { $path = '::top::'; }
 }
 $tmp_path_parts = explode(DIRECTORY_SEPARATOR,$path);
 $path_parts = [];
@@ -46,7 +50,7 @@ for ($i = 0, $n = count($tmp_path_parts); $i < $n; $i++) {
     $obj = new stdClass();
     $obj->name = $tmp_path_parts[$i];
     if ($obj->name == '::top::') {
-        $obj->name = 'root';
+        $obj->name = 'root'; // translated?
     }
     if ($i < $n - 1) {
         // not the last/lowest path-part

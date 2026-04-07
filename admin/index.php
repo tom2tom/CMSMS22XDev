@@ -25,23 +25,35 @@ $CMS_ADMIN_PAGE = 1;
 //$CMS_ADMIN_TITLE = 'mainmenu';
 //$CMS_EXCLUDE_FROM_RECENT = 1;
 
-require_once("../lib/include.php");
+require_once '../lib/include.php';
 
-// if this page was accessed directly, and the secure param name is not in the URL
-// but it is in the session, assume it is correct.
-if( isset($_SESSION[CMS_USER_KEY]) && !isset($_GET[CMS_SECURE_PARAM_NAME]) ) $_GET[CMS_SECURE_PARAM_NAME] = $_SESSION[CMS_USER_KEY];
+// if this page was accessed directly, and the secure param name is not
+// in the URL but it is in the session, assume it is correct.
+if( !isset($_GET[CMS_SECURE_PARAM_NAME]) && isset($_SESSION[CMS_USER_KEY]) ) {
+    $_GET[CMS_SECURE_PARAM_NAME] = $_SESSION[CMS_USER_KEY];
+}
 
 check_login();
 
-include_once("header.php");
 $section = (isset($_GET['section'])) ? trim($_GET['section']) : '';
-// todo: we should just be getting the html, and giving it to the theme. maybe
+require_once 'header.php';
+$smarty->changeCaching(false); // user-permissions might change available links
 $themeObject->do_toppage($section);
-$out = \CMSMS\HookManager::do_hook_accumulate('admin_add_headtext');
-if( $out && count($out) ) {
-    foreach( $out as $one ) {
-        $one = trim($one);
-        if( $one ) $themeObject->add_headtext($one);
+
+// run hook to get content to be inserted into <head/>
+$all = CMSMS\HookManager::do_hook_accumulate('admin_add_headtext');
+if( $all && is_array($all) ) {
+    foreach( $all as $txt ) {
+        $txt = trim($txt);
+        if( $txt ) { $themeObject->add_headtext($txt); }
     }
 }
-include_once("footer.php");
+// run hook to get content to be inserted before the </body> tag
+$all = CMSMS\HookManager::do_hook_accumulate('admin_add_bottomtext');
+if( $all && is_array($all) ) {
+    foreach( $all as $txt ) {
+        $txt = trim($txt);
+        if( $txt ) { $themeObject->add_footertext($txt); }
+    }
+}
+require_once 'footer.php';

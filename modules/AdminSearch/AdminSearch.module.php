@@ -12,10 +12,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
+# along with this program; if not, read the license online at:
+# https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
 if( !isset($gCms) ) exit;
 
@@ -40,15 +38,9 @@ final class AdminSearch extends CMSModule
     return $this->can_search();
   }
 
-  public function GetHeaderHTML()
-  {
-    $baseurl = $this->GetModuleURLPath();
-    return "<link rel=\"stylesheet\" href=\"$baseurl/lib/admin_search.css\">\n";
-  }
-
   protected function can_search()
   {
-      return $this->CheckPermission('Use Admin Search');
+    return $this->CheckPermission('Use Admin Search');
   }
 
   public function InstallPostMessage()
@@ -64,21 +56,27 @@ final class AdminSearch extends CMSModule
   public function DoAction($name,$id,$params,$returnid='')
   {
     $smarty = cmsms()->GetSmarty();
-    $smarty->assign('mod',$this);
+    $smarty->assign('mod',$this); //redundant? see CMSModule::DoActionBase()
     return parent::DoAction($name,$id,$params,$returnid);
+  }
+
+  protected function SetupHeadtext()
+  {
+    CMSMS\HookManager::add_hook('admin_add_headtext',function() {
+      $baseurl = $this->GetModuleURLPath();
+      return "<link rel=\"stylesheet\" href=\"$baseurl/lib/admin_search.css\">\n";
+    });
   }
 
   public function HasCapability($capability,$params=array())
   {
-    if( $capability == CmsCoreCapabilities::ADMINSEARCH ) return TRUE;
-    return FALSE;
+    return ($capability == CmsCoreCapabilities::ADMINSEARCH);
   }
 
   public function get_adminsearch_slaves()
   {
-    $dir = __DIR__.'/lib/';
-    $files = glob($dir.'/class.AdminSearch*slave.php');
-    if( count($files) ) {
+    $files = glob(__DIR__.'/lib/class.AdminSearch*slave.php');
+    if( $files ) {
       $output = array();
       foreach( $files as $onefile ) {
         $parts = explode('.',basename($onefile));
@@ -89,10 +87,4 @@ final class AdminSearch extends CMSModule
       return $output;
     }
   }
-
 } // class
-
-#
-# EOF
-#
-?>

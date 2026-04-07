@@ -1,6 +1,6 @@
 <?php
 #CMS Made Simple admin console script
-#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#(c) 2004-2025 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -12,94 +12,105 @@
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 #You should have received a copy of the GNU General Public License
-#along with this program; if not, write to the Free Software
-#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#along with this program. If not, read the license online at
+#https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #
 #$Id$
 
-$CMS_ADMIN_PAGE=1;
-$CMS_MODULE_PAGE=1;
+$nomod = empty($_REQUEST['mact']);
+if( !$nomod ) {
+    $ary = explode(',', $_REQUEST['mact'], 4);
+    if( empty($ary[0]) ) { // no module specified
+        $nomod = true;
+    }
+}
+if( $nomod ) {
+    require_once __DIR__.DIRECTORY_SEPARATOR.'index.php';
+    return;
+}
+
+$CMS_ADMIN_PAGE = 1;
+$CMS_MODULE_PAGE = 1;
 
 $orig_memory = (function_exists('memory_get_usage')?memory_get_usage():0);
 $starttime = microtime();
 
-require_once("../lib/include.php");
-//$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+require_once dirname(__DIR__).DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'include.php';
 
 check_login();
 $userid = get_userid();
 if( isset($_SESSION['cms_passthru']) ) {
     // remove me, this is a hack for something
-    $_REQUEST = array_merge($_REQUEST,$_SESSION['cms_passthru']);
+    $_REQUEST = array_merge($_REQUEST, $_SESSION['cms_passthru']);
     unset($_SESSION['cms_passthru']);
 }
 
-$smarty = \Smarty_CMS::get_instance();
-// $smarty->assign('date_format_string',cms_userprefs::get_for_user($userid,'date_format_string','%x %X'));
-
-$id = 'm1_';
-$module = '';
-$action = 'defaultadmin'; // or 'default' if this is ultimately a frontend request
-$suppressOutput = false;
-if (isset($_REQUEST['mact'])) {
-    $ary = explode(',', cms_htmlentities($_REQUEST['mact']), 4);
-    if ($ary[0]) $module = $ary[0];
-    if (!empty($ary[1])) $id = $ary[1];
-    if (!empty($ary[2])) $action = $ary[2];
-}
-
-$modinst = ModuleOperations::get_instance()->get_module_instance($module);
+$modops = ModuleOperations::get_instance();
+$ary = explode(',', cms_htmlentities($_REQUEST['mact']), 4); // this time, with sanitization OR sanitize each $ary[] member
+$module = ($ary[0]) ?: ''; // also checked above, without sanitization
+$modinst = $modops->get_module_instance($module);
 if( !$modinst ) {
-    trigger_error('Module '.$module.' not found in memory. This could indicate that the module is in need of upgrade or that there are other problems');
-    redirect('index.php');
+    trigger_error('Module '.$module.' not found in memory. This could indicate that the module is in need of upgrade or that there are other problems.');
+    return;
 }
 
-$USE_THEME = true;
-if( isset($_REQUEST['showtemplate']) && ($_REQUEST['showtemplate'] == 'false')) {
-    // for simplicity and compatibility with the frontend.
-    $USE_THEME = false;
-}
-if( $USE_THEME && $modinst->SuppressAdminOutput($_REQUEST) != false || isset($_REQUEST['suppressoutput']) ) $USE_THEME = false;
+$id = (!empty($ary[1])) ? $ary[1] : 'm1_';
+$action = (!empty($ary[2])) ? $ary[2] : 'defaultadmin';
+$params = $modops->GetModuleParameters($id);
+$smarty = Smarty_CMS::get_instance();
+
+$USE_THEME = (!isset($_REQUEST['showtemplate']) || $_REQUEST['showtemplate'] != 'false')
+ && !(isset($_REQUEST['suppressoutput']) || $modinst->SuppressAdminOutput($_REQUEST));
 
 // module output
-$params = ModuleOperations::get_instance()->GetModuleParameters($id);
 if( $USE_THEME ) {
     $themeObject = cms_utils::get_theme_object();
     $themeObject->set_action_module($module);
 
-    // get module output
+    // get action output (out-of-order)
     @ob_start();
     echo $modinst->DoActionBase($action, $id, $params, '', $smarty);
-    $content = @ob_get_contents();
-    @ob_end_clean();
+    $content = @ob_get_clean();
 
-    // deprecate this.
+    // deprecated since 2.2 - just use the hook as follows
     $txt = $modinst->GetHeaderHTML();
     if( $txt ) $themeObject->add_headtext($txt);
 
-    // call admin_add_headtext to get any admin data to add to the <head>
-    $out = \CMSMS\HookManager::do_hook_accumulate('admin_add_headtext');
-    if( $out && !empty($out) ) {
-        foreach( $out as $one ) {
-            $one = trim($one);
-            if( $one ) $themeObject->add_headtext($one);
+    // run hook to get content to be inserted into <head/>
+    $all = CMSMS\HookManager::do_hook_accumulate('admin_add_headtext');
+    if( $all && is_array($all) ) {
+        foreach( $all as $txt ) {
+            $txt = trim($txt);
+            if( $txt ) $themeObject->add_headtext($txt);
+        }
+    }
+    // run hook to get content to be inserted before the </body> tag
+    $all = CMSMS\HookManager::do_hook_accumulate('admin_add_bottomtext');
+    if( $all && is_array($all) ) {
+        foreach( $all as $txt ) {
+            $txt = trim($txt);
+            if( $txt ) { $themeObject->add_footertext($txt); }
         }
     }
 
-    include_once("header.php");
-
-    // this is hackish
-    echo '<div class="pagecontainer">';
-    echo '<div class="pageoverflow">';
     $title = $themeObject->title;
-    $module_help_type = 'both';
-    if( $title ) $module_help_type = '';
+    // $module_help_type as used here affects $title-processing but has no effect on help-display
+    $module_help_type = ($title) ? false : true;
     if( !$title ) $title = $themeObject->get_active_title();
     if( !$title ) $title = $modinst->GetFriendlyName();
-    echo $themeObject->ShowHeader($title,'','',$module_help_type).'</div>';
-    echo $content;
-    echo '</div>';
-    include_once("footer.php");
+    $themeObject->ShowHeader($title, [], '', $module_help_type);
+    require_once 'header.php';
+    // this is hackish, could otherwise be in a simple template
+    echo <<<EOS
+<div class="pagecontainer">
+ $content
+</div>
+
+EOS;
+    require_once 'footer.php';
 } else {
     echo $modinst->DoActionBase($action, $id, $params, '', $smarty);
 }
+
+$obj = new CMSMS\JobCheck();
+$obj->initiate_background_processing();
