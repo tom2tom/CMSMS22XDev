@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # Module DesignManager class dm_xml_reader
-# (c) 2012 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -55,4 +55,4 @@ class dm_xml_reader extends XMLReader
     $this->__setup();
     return parent::read();
   }
-} // end of class
+} // class
