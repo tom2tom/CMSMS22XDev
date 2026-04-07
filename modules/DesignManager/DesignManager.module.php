@@ -2,7 +2,7 @@
 #-------------------------------------------------------------------------
 # Module: DesignManager - A CMSMS addon module to provide template and
 # stylesheet management.
-# (c) 2012 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@ if( !isset($gCms) ) exit;
 final class DesignManager extends CMSModule
 {
     public function GetFriendlyName() { return $this->Lang('friendlyname'); }
-    public function GetVersion() { return '1.2'; }
-    public function MinimumCMSVersion()  { return '2.2'; }
+    public function GetVersion() { return '1.3'; }
+    public function MinimumCMSVersion()  { return '2.2.23F2'; } // uses additional design-object properties 
     public function LazyLoadAdmin() { return TRUE; }
     public function LazyLoadFrontend() { return TRUE; }
     public function IsPluginModule() { return FALSE; }
