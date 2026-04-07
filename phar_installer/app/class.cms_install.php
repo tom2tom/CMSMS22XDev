@@ -39,24 +39,27 @@ class cms_install extends app
 
     public function get_tmpdir()
     {
-        // because phar uses tmpfile() we need to set the TMPDIR environment variable
-        // with whatever directory we find.
         $config = $this->get_config();
         return $config['tmpdir'];
     }
 
     private function fixup_tmpdir_environment()
     {
-        // if the system temporary directory is not the same as the config temporary directory
+        // Because phar uses tmpfile() we need to set the TMPDIR environment-variable
+        // to the appropriate directory. IS THIS CORRECT ?
+        // If the system temporary directory is not the same as the $config temporary-directory
         // then we attempt to putenv the TMPDIR environment variable
         // so that tmpfile() will work as it uses the system temporary directory which can read from environment variables
-        $sys_tmpdir = '';
-        if( function_exists('sys_get_temp_dir') ) $sys_tmpdir = rtrim(sys_get_temp_dir(),'\\/');
-        $config = $this->get_config();
-        if( (!$sys_tmpdir || !is_dir($sys_tmpdir) || !is_writable($sys_tmpdir)) && $sys_tmpdir != $config['tmpdir'] ) {
-            @putenv('TMPDIR='.$config['tmpdir']);
-            $try1 = getenv('TMPDIR');
-            if( $try1 != $config['tmpdir'] ) throw new RuntimeException('Sorry, putenv does not work on this system, and your system temporary directory is not set properly.');
+        $sys_tmpdir = (function_exists('sys_get_temp_dir')) ? rtrim(sys_get_temp_dir(),' \\/') : '';
+        if( (!$sys_tmpdir || !is_dir($sys_tmpdir) || !is_writable($sys_tmpdir)) ) {
+            $config = $this->get_config();
+            if( $config['tmpdir'] && $config['tmpdir'] != $sys_tmpdir ) {
+                @putenv('TMPDIR='.$config['tmpdir']);
+                $try1 = getenv('TMPDIR');
+                if( $try1 != $config['tmpdir'] ) throw new RuntimeException('Putenv does not work on this system');
+            } else {
+                throw new RuntimeException('The system temporary directory is not set properly.');
+            }
         }
     }
 
@@ -66,7 +69,7 @@ class cms_install extends app
 
         // initialize the session.
         $sess = session::get();
-        $junk = $sess[__CLASS__]; // this is junk, but triggers session to start.
+        $junk = $sess[__CLASS__]; // this is unused, but triggers session to start.
 
         // get the request
         $request = request::get();
