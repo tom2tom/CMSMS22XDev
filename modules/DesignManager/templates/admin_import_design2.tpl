@@ -33,6 +33,28 @@ $(function() {
 <div class="pageinfo">{$mod->Lang('info_import_xml_step2')}</div>
 
 <fieldset>
+{if !empty($currentversion)}
+ <p class="pagetext"><label>{$mod->Lang('installed_version', $currentname)}:</label></p>
+ <p class="pageinput">{$currentversion}</p>
+{/if}
+ <p class="pagetext"><label>{$mod->Lang('import_version')}:</label></p>
+ <p class="pageinput">{$importversion}</p>
+ <p class="pagetext"><label>{$mod->Lang('import_requires')}:</p>
+ <p class="pageinput">
+{if empty($importrequires)}
+  {lang('none')}
+{else}
+ <ul>
+{foreach $importrequires as $elem}
+  <li>{$elem}</li>{/foreach}
+ </ul>
+{/if}
+ </p>
+ <p class="pagetext"><label>{$mod->Lang('prompt_notes')}:</label></p>
+ <p class="pageinput">{$importnotes}</p>
+</fieldset>
+
+<fieldset>
   <div class="startside">
     <div class="pageoverflow">
       <p class="pagetext">
@@ -67,7 +89,7 @@ $(function() {
 <div class="pageoverflow">
   <p class="pagetext"><label for="import_newname">{$mod->Lang('newname')}:</label> {cms_help key2='help_import_newname' title=$mod->Lang('newname')}</p>
   <p class="pageinput">
-	<input id="import_newname" type="text" name="{$actionid}newname" value="{$new_name}" size="50" maxlength="50" placeholder="{$mod->Lang('name')}">
+    <input id="import_newname" type="text" name="{$actionid}newname" value="{$new_name}" size="50" maxlength="50" placeholder="{$mod->Lang('name')}">
   </p>
 </div>
 

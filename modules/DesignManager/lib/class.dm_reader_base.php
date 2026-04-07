@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # Module DesignManager class dm_reader_base
-# (c) 2012 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -12,10 +12,10 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
+#
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+# along with this program; if not, read the license online at:
+# https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
 
 abstract class dm_reader_base
@@ -39,17 +39,17 @@ abstract class dm_reader_base
         if( $description ) $this->_suggested_description = (string)$description;
     }
 
-    public function get_filename()
+    protected function get_filename()
     {
         return $this->_filename;
     }
 
-    public function get_suggested_name()
+    protected function get_suggested_name()
     {
         return $this->_suggested_name;
     }
 
-    public function get_suggested_description()
+    protected function get_suggested_description()
     {
         return $this->_suggested_description;
     }
@@ -66,7 +66,7 @@ abstract class dm_reader_base
     /**
      * Retrieve an array of hashes representing template information.
      * each hash will have a name,key,desc,data,type_originator,type_name fields.
-     * all data should be base64 decoded.
+     * All data should be base64 decoded.
      */
     abstract public function get_template_list();
 
@@ -79,7 +79,7 @@ abstract class dm_reader_base
 
     /**
      * Actually do the importing..
-     * Can Throw.
+     * Can throw.
      */
     abstract public function import();
 
@@ -92,12 +92,12 @@ abstract class dm_reader_base
     abstract protected function get_destination_dir();
 
     /**
-     * Get a finalized new name for this new design.
+     * Get a new name for this design.
      *
      * Use the suggested name if possible, check for duplicate names
      * Throw on failure.
      */
-    public function get_new_name()
+    protected function get_new_name()
     {
         $name = $this->get_suggested_name();
         if( !$name ) {
@@ -112,24 +112,21 @@ abstract class dm_reader_base
             $name = substr($t,$x);
         }
 
-        // now see if it's a duplicate name
+        // adjust a duplicate name
         $list = CmsLayoutCollection::get_list();
         $orig_name = $name;
-        if( is_array($list) && count($list) ) {
-            $name_list = array_values($list);
-            $n = 1;
-            while( $n < 100 ) {
-                if( !in_array($name,$name_list) ) {
+        if( $list && is_array($list) ) {
+            for( $n = 1; $n < 101; $n++ ) {
+                if( !in_array($name,$list) ) {
+// TODO an existing files-place in $config['themes_path'] also counts as a duplicate
                     break;
                 }
-                $n++;
-                $name = "$orig_name $n";
+                $name = "$orig_name($n)";
             }
-            if( $n >= 100 ) {
-                throw new CmsException('Could not determine a new name for this design');
+            if( $n == 101 ) {
+                throw new RuntimeException('Could not determine a new name for design '.$orig_name);
             }
         }
-
         return $name;
     }
 

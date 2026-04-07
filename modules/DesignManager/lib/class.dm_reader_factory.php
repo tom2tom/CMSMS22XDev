@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # Module DesignManager class dm_reader_factory
-# (c) 2012 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -12,10 +12,10 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
+#
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+# along with this program; if not, read the license online at:
+# https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
 
 final class dm_reader_factory
@@ -32,12 +32,14 @@ final class dm_reader_factory
   {
     $mod = cms_utils::get_module('DesignManager');
     if( !is_readable($xmlfile) ) throw new CmsFileSystemException($mod->Lang('error_filenotfound',$xmlfile));
-    $fh = fopen($xmlfile,'r');
-    if( !$fh ) throw new CmsException($mod->Lang('error_fileopen',$xmlfile));
-    $str = fread($fh,200);
-    fclose($fh);
-    if( strpos($str,'<!DOCTYPE') === FALSE ) throw new CmsException($mod->Lang('error_readxml'));
-
+    $fh = fopen($xmlfile,'rb');
+    if( $fh ) {
+        $str = fread($fh,200);
+        fclose($fh);
+        if( !$str || strpos($str,'<!DOCTYPE') === FALSE ) throw new CmsException($mod->Lang('error_readxml'));
+    } else {
+        throw new CmsException($mod->Lang('error_fileopen',$xmlfile));
+    }
     // get the first element
     $x = '<!ELEMENT ';
     $p = strpos($str,$x);

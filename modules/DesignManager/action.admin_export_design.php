@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # Module DesignManager action
-# (c) 2012 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -12,10 +12,10 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
+#
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+# along with this program; if not, read the license online at:
+# https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
 
 if( !isset($gCms) ) exit;
@@ -23,121 +23,70 @@ if( !$this->CheckPermission('Manage Designs') ) return;
 
 $this->SetCurrentTab('designs');
 
-if( empty($params['design']) ) {
-  $this->SetError($this->Lang('error_missingparam')); //TODO silence, prob due to polling and page-refreshing
+if( isset($params['cancel']) ) {
+  $this->SetMessage($this->Lang('msg_cancelled'));
+  $this->RedirectToAdminTab();
+}
+if( isset($params['close']) ) {
   $this->RedirectToAdminTab();
 }
 
-$ref_map = [];
-function _ref_map_get_sig($fn,$type = 'URL')
-{
-  global $ref_map;
-  if( $ref_map ) {
-    foreach( $ref_map as $key => $val ) {
-      if( $fn == $val ) return $key;
+if( empty($params['design']) ) {
+  $this->SetError($this->Lang('error_missingparam')); //TODO silent if missing due to polling and page-refreshing
+  $this->RedirectToAdminTab();
+}
+
+$the_design = CmsLayoutCollection::load($params['design']);
+if( !$the_design ) {
+  $this->SetError(lang('internal_error'));
+  $this->RedirectToAdminTab();
+}
+
+if( !isset($params['next1']) ) {
+  //display the setup page
+  $t1 = $the_design->get_created();
+  $t2 = $the_design->get_modified();
+  $modname = $this->GetName();
+  $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_export_design.tpl",null,$modname,$smarty);
+  $tpl->assign('did',$the_design->get_id());
+  $tpl->assign('created',$t1);
+  if( $t2 > $t1 + 59 ) {
+    $tpl->assign('modified',$t2);
+  }
+  $tpl->assign('pagetitle',$this->Lang('export_title',$the_design->get_name()));
+  $tpl->assign('description',$the_design->get_description());
+  $tpl->assign('version',$the_design->get_version());
+  $tpl->assign('requires',$the_design->get_requires(3));
+  $tpl->display();
+  return;
+}
+
+$reqs = [];
+if( !empty($params['requires']) ) {
+  // downstream expects array-format(4)
+  $arr = preg_split('/ *(\r\n|\n|,) */',$params['requires'],-1,PREG_SPLIT_NO_EMPTY);
+  foreach($arr as $dep) {
+    if( preg_match('~^\s*([^<>=!\s]+)\s*([<>=!]{1,2})?\s*([a-zA-Z0-9.]+)?\s*$~',$dep,$matches) ) {
+      if( isset($matches[2]) && isset($matches[3]) ) {
+        $reqs[$matches[1]] = [$matches[2],$matches[3]];
+      }
+      else {
+        $reqs[$matches[1]] = [];
+      }
     }
   }
-  $sig = '__'.$type.'::'.md5($fn).'__';
-  $ref_map[$sig] = $fn;
-  return $sig;
 }
-
-function _get_css_urls($css_content)
-{
-  $content = $css_content;
-  $regex='/url\s*\(\"*(.*)\"*\)/i';
-  $content = preg_replace_callback($regex,
-    function($matches) {
-      $url = $matches[1];
-      if( !startswith($url,'http') || startswith($url,CMS_ROOT_URL) || startswith($url,'[[root_url]]') ) {
-        $sig = _ref_map_get_sig($url);
-        $sig = "url(".$sig.")";
-        return $sig;
-      }
-      return $matches[0];
-    },
-    $content);
-
-  return $content;
-}
-
-function _get_sub_templates($template)
-{
-  $t_matches_a = [];
-
-  $replace_fn = function($matches) {
-    $out = preg_replace_callback("/template\s*=[\\\"']{0,1}([a-zA-Z0-9._\ \:\-\/]+)[\\\"']{0,1}/i",
-      function($matches) {
-        $type = 'TPL';
-        if( endswith($matches[1],'.tpl') ) $type = 'MM';
-        $sig = _ref_map_get_sig($matches[1],$type);
-        return str_replace($matches[1],$sig,$matches[0]);
-      },$matches[0]);
-    return $out;
-  };
-
-  $replace_fn2 = function($matches) {
-    $out = preg_replace_callback("/name\s*=[\\\"']{0,1}([a-zA-Z0-9._\ \:\-\/]+)[\\\"']{0,1}/i",
-      function($matches) {
-        $sig = _ref_map_get_sig($matches[1],'TPL');
-        return str_replace($matches[1],$sig,$matches[0]);
-      },$matches[0]);
-    return $out;
-  };
-
-  $replace_fn3 = function($matches) {
-    $out = preg_replace_callback("/file\s*=[\\\"']{0,1}([a-zA-Z0-9._\ \:\-\/]+)[\\\"']{0,1}/i",
-      function($matches) {
-        $bad = ['string:','startswith','module_db_tpl','module_file_tpl',
-             'tpl_top','tpl_body','tpl_head','file:http'];
-        foreach( $bad as $badone ) {
-          if( endswith($matches[1],$badone) ) return $matches[0];
-        }
-
-        $sig = _ref_map_get_sig($matches[1],'TPL');
-        return str_replace($matches[1],$sig,$matches[0]);
-      },$matches[0]);
-    return $out;
-  };
-
-  $regex='/\{menu.*\}/';
-  $template = preg_replace_callback( $regex, $replace_fn, $template );
-
-  $regex='/\{.*MenuManager.*\}/'; //WHAT ?? gone from core
-  $template = preg_replace_callback( $regex, $replace_fn, $template );
-
-  $regex='/\{global_content.*\}/'; //deprecated since CMSMS 2.2.0
-  $template = preg_replace_callback( $regex, $replace_fn2, $template );
-
-  $regex='/\{include.*\}/';
-  $template = preg_replace_callback( $regex, $replace_fn3, $template );
-
-  return $template;
-}
-
-
-function _get_tpl_urls($tpl_content)
-{
-  $content = $tpl_content;
-  foreach( ['href', 'src', 'url'] as $type ) {
-    $innerT = '[a-z0-9:?=&@/._-]+?';
-    $content = preg_replace_callback("|$type\=([\"'`])(".$innerT.")\\1|i",
-      function($matches) {
-        $url = $matches[2];
-        if( !startswith($url,'http') || startswith($url,CMS_ROOT_URL) || startswith($url,'{root_url}') ) {
-          $sig = _ref_map_get_sig($url);
-          return $sig;
-        }
-        return $matches[0];
-      },
-      $content);
-  }
-  return $content;
-}
+// cache without update of recorded design-properties
+$name = $the_design->get_name();
+$space = 'dm'.hash('crc32',$name); // must be replicated in the exporter class
+$_SESSION[$space]['description'] = $params['description'];
+$_SESSION[$space]['version'] = $params['version'];
+$_SESSION[$space]['requires'] = $reqs;
+$_SESSION[$space]['notes'] = $params['notes'];
 
 try {
   // and the work...
-  $the_design = CmsLayoutCollection::load($params['design']);
+  //TODO arrange to access supplementary info
   $exporter = new dm_design_exporter($the_design);
   $xml = $exporter->get_xml();
 
@@ -145,21 +94,18 @@ try {
   $num = count(ob_list_handlers());
   for ($cnt = 0; $cnt < $num; $cnt++) { ob_end_clean(); }
 
+  $fn = munge_string_to_url($name);
   // headers
   header('Content-Description: File Transfer');
   header('Content-Type: application/force-download');
-  header('Content-Disposition: attachment; filename='.munge_string_to_url($the_design->get_name()).'.xml');
+  header("Content-Disposition: attachment; filename=$fn.xml");
 
   // output
   echo $xml;
   exit;
 }
-catch( \Exception $e ) {
+catch( Exception $e ) {
   $this->SetError($e->GetMessage());
   $this->RedirectToAdminTab();
 }
-
-#
-# EOF
-#
 ?>
