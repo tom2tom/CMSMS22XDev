@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # Module DesignManager action
-# (c) 2012 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ try {
         $bulk_op = 'bulk_action_delete_css';
         if( isset($params['submit']) ) {
             if( !isset($params['check1']) || !isset($params['check2']) ) {
-                echo $this->ShowErrors($this->Lang('error_notconfirmed'));
+                $this->ShowErrors($this->Lang('error_notconfirmed'));
             }
             else {
                 $stylesheets = CmsLayoutStylesheet::load_bulk($params['css_select']);
