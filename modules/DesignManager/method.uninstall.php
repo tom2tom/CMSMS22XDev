@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # DesignManager module uninstall script
-# (c) 2012 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,3 +29,8 @@ if( !isset($gCms) ) exit;
 //}
 
 $this->RemovePreference();
+
+// remove user-specific filter-preferences
+$modname = $this->GetName();
+$sql = 'DELETE FROM '.CMS_DB_PREFIX."userprefs WHERE preference LIKE $modname%";
+$db->Execute($sql);
