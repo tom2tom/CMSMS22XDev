@@ -16,7 +16,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-if (!function_exists("cmsms")) exit;
+if( !function_exists("cmsms") ) exit;
 
 $current_version = $oldversion;
 switch($current_version) {
@@ -47,13 +47,29 @@ if( version_compare($oldversion,'1.6.2') < 0 ) {
 if( version_compare($oldversion,'1.6.15') < 0 ) {
 	// remove redundant filetype-icons
 	$dir = cms_join_path($this->GetModulePath(),'icons','themes','default','extensions','16px');
-	if (is_dir($dir)) {
+	if( is_dir($dir) ) {
 		recursive_delete($dir);
 	}
-	//adjust deprecated format
+	// adjust deprecated format
 	$iconsize = $this->GetPreference('iconsize',24);
 	$tmp = str_replace('px','',$iconsize);
 	if ($iconsize != $tmp) {
 		$this->setPreference('iconsize',(int)$tmp);
+	}
+}
+if( version_compare($oldversion,'1.6.16') < 0 ) {
+	// add cwd-timestamps to support cleanup
+	$now = time();
+	$winsep = (DIRECTORY_SEPARATOR == '\\');
+	$list = UserOperations::get_instance()->GetList();
+	foreach( $list as $uid => $uname ) {
+		$val = cms_userprefs::get_for_user($uid,'filemanager_cwd');
+		if( $val ) {
+			if( $winsep ) {
+				$val = strtr($val,'/','\\');
+				cms_userprefs::set_for_user($uid,'filemanager_cwd',$val);
+			}
+			cms_userprefs::set_for_user($uid,'filemanager_cwd_recorded',$now);
+		}
 	}
 }
