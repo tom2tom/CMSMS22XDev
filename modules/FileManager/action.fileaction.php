@@ -68,49 +68,22 @@ foreach ($filerec as $key => $value) {
   $dirlist[$value2] = $value2;
 }
 
-if (isset($params['fileactionnewdir']) || $fileaction == 'newdir') {
-  require __DIR__.DIRECTORY_SEPARATOR.'action.newdir.php';
-  return;
-}
-
-if (isset($params['fileactionrename']) || $fileaction == 'rename') {
-  require __DIR__.DIRECTORY_SEPARATOR.'action.rename.php';
-  return;
-}
-
-if (isset($params['fileactiondelete']) || $fileaction == 'delete') {
-  require __DIR__.DIRECTORY_SEPARATOR.'action.delete.php';
-  return;
-}
-
-if (isset($params['fileactioncopy']) || $fileaction == 'copy') {
-  require __DIR__.DIRECTORY_SEPARATOR.'action.copy.php';
-  return;
-}
-
-if (isset($params['fileactionmove']) || $fileaction == 'move') {
-  require __DIR__.DIRECTORY_SEPARATOR.'action.move.php';
-  return;
-}
-
-if (isset($params['fileactionunpack']) || $fileaction == 'unpack') {
-  require __DIR__.DIRECTORY_SEPARATOR.'action.unpack.php';
-  return;
-}
-
-if (isset($params['fileactionthumb']) || $fileaction == 'thumb') {
-  require __DIR__.DIRECTORY_SEPARATOR.'action.thumb.php';
-  return;
-}
-
-if (isset($params['fileactionresizecrop']) || $fileaction == 'resizecrop') {
-  require __DIR__.DIRECTORY_SEPARATOR.'action.resizecrop.php';
-  return;
-}
-
-if (isset($params['fileactionrotate']) || $fileaction == 'rotate') {
-  require __DIR__.DIRECTORY_SEPARATOR.'action.rotate.php';
-  return;
+foreach (array(
+  'newdir',
+  'rename',
+  'delete',
+  'copy',
+  'move',
+  'unpack',
+  'thumb',
+  'resizecrop',
+  'rotate'
+ ) as $op) {
+  if ($fileaction == $op || isset($params["fileaction{$op}"])) {
+    $this->SetupHeadtext($op);
+    require __DIR__.DIRECTORY_SEPARATOR."action.$op.php";
+    return;
+  }
 }
 
 $this->Redirect($id,'defaultadmin',$returnid,array('path'=>$params['path'],'fmerror'=>'unknownfileaction'));
