@@ -1,5 +1,5 @@
 <?php
-#FileManager module action
+#FileManager module action delete
 #(c) 2006-8 Morten Poulsen <morten@poulsen.org>
 #(c) 2008 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
@@ -45,48 +45,50 @@ unset($one);
 // process form
 $errors = array();
 if( isset($params['submit']) ) {
-//$advancedmode = filemanager_utils::check_advanced_mode();
-  $basedir = CMS_ROOT_PATH; //TODO func($advancedmode?)
-  $cwd = filemanager_utils::get_cwd();
-  foreach( $selall as $file ) {
+  $curdir = CMS_ROOT_PATH.filemanager_utils::get_cwd(); // i.e. root.site-root-relative
+  foreach( $selall as $item ) {
     // build complete path
-    $fn = filemanager_utils::join_path($basedir,$cwd,$file);
+    $fn = filemanager_utils::join_path($curdir,$item);
     if( !file_exists($fn) ) continue; // no error here.
 
     if( !is_writable($fn) ) {
-      $errors[] = $this->Lang('error_notwritable',$file);
+      $errors[] = $this->Lang('error_notwritable',$item);
       continue;
     }
 
+    $tn = '';
     if( is_dir($fn) ) {
-      // check to make sure it's empty
+      // check it's 'empty'
       $tmp = scandir($fn);
-      if( count($tmp) > 2 ) { // account for . and ..
-        $errors[] = $this->Lang('error_dirnotempty',$file);
+      if( count($tmp) > 2 ) { // allow for . and ..
+        $errors[] = $this->Lang('error_dirnotempty',$item);
         continue;
       }
-    }
-
-    $thumb = '';
-    if( filemanager_utils::is_image_file($file) ) {
-      // check for thumb, make sure it's writable.
-      $thumb = filemanager_utils::join_path($basedir,filemanager_utils::get_cwd(),'thumb_'.basename($file));
-      if( file_exists($fn) && !is_writable($fn) ) $errors[] = $this->Lang('error_thumbnotwritable',$file);
-    }
-
-    // at this point, we should be good to delete.
-    if( is_dir($fn) ) {
       @rmdir($fn);
       $type = 'directory';
-    } else {
+    }
+    else{
+      if( filemanager_utils::is_image_file($fn) ) {
+        // check for corresponding writable thumbnail
+        $tn = filemanager_utils::join_path($curdir,'thumb_'.$item);
+        if( file_exists($tn) ) {
+          if( !is_writable($tn) ) {
+            $errors[] = $this->Lang('error_thumbnotwritable',$item);
+            continue;
+          }
+        }
+        else {
+          $tn = '';
+        }
+      }
       @unlink($fn);
+      if( $tn ) @unlink($tn);
       $type = 'file';
     }
-    if( $thumb ) @unlink($thumb);
 
+    audit('','FileManager',"Removed $type: $fn");
     $parms = array('file'=>$fn);
-    if( $thumb ) $parms['thumb'] = $thumb;
-    audit('','FileManager', "Removed $type: $fn");
+    if( $tn ) $parms['thumb'] = $tn;
     HookManager::do_hook('FileManager::OnFileDeleted', $parms); //aka send event
   } // foreach
 
@@ -105,9 +107,9 @@ if( $errors ) {
   $tpl->assign('errors',$errors);
 }
 
-$tpl->assign('selall', $selall); //un-munged data for UI display
+$tpl->assign('selall',$selall); //un-munged data for UI display
 $params['selall'] = (count($selall) > 1) ? serialize($params['selall']) : reset($params['selall']);
-$tpl->assign('startform', $this->CreateFormStart($id,'fileaction',$returnid,'post','',false,'',$params));
-$tpl->assign('endform', $this->CreateFormEnd());
+$tpl->assign('startform',$this->CreateFormStart($id,'fileaction',$returnid,'post','',false,'',$params));
+$tpl->assign('endform',$this->CreateFormEnd());
 
 $tpl->display();

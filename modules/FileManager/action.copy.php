@@ -1,7 +1,7 @@
 <?php
 #FileManager module action
 #(c) 2006-8 Morten Poulsen <morten@poulsen.org>
-#(c) 2008-2025 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#(c) 2008-2026 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -45,19 +45,19 @@ if( !$dirlist ) {
   $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 
-$cwd = filemanager_utils::get_cwd();
+$cwd = filemanager_utils::get_cwd(); // site-root-relative
+$advancedmode = filemanager_utils::check_advanced_mode();
+$basedir = ($advancedmode) ? CMS_ROOT_PATH : $config['uploads_path'];
 
 $errors = array();
 if( isset($params['submit']) ) {
-  $advancedmode = filemanager_utils::check_advanced_mode();
-  $basedir = ( $advancedmode ) ? CMS_ROOT_PATH : $config['uploads_path'];
-
-  $destdir = trim($params['destdir']);
-  if( $destdir == $cwd && count($selall) > 1 ) $errors[] = $this->Lang('movedestdirsame');
+  $destdir = trim($params['destdir']); // $basedir-relative
+  $destloc = filemanager_utils::join_path($basedir,$destdir);
+  if( !is_dir($destloc) || !is_writable($destloc) ) $errors[] = $this->Lang('invalidmovedir');
 
   if( !$errors ) {
-    $destloc = filemanager_utils::join_path($basedir,$destdir);
-    if( !is_dir($destloc) || ! is_writable($destloc) ) $errors[] = $this->Lang('invalidmovedir');
+    $p1 = CMS_ROOT_PATH.$cwd;
+    if( $p1 == $destloc && count($selall) > 1 ) $errors[] = $this->Lang('movedestdirsame');
   }
 
   if( !$errors ) {
@@ -92,7 +92,7 @@ if( isset($params['submit']) ) {
         $dest_thumb = '';
         if( filemanager_utils::is_image_file($file) ) {
           $tmp = 'thumb_'.$file;
-          $src_thumb = filemanager_utils::join_path($basedir,$cwd,$tmp);
+          $src_thumb = filemanager_utils::join_path(CMS_ROOT_PATH,$cwd,$tmp);
           $dest_thumb = filemanager_utils::join_path($basedir,$destdir,$tmp);
           if( $destname ) $dest_thumb = filemanager_utils::join_path($basedir,$destdir,'thumb_'.$destname);
 
@@ -133,7 +133,17 @@ if( isset($params['submit']) ) {
   }
 } // submit
 
-if( $errors ) echo $this->ShowErrors($errors);
+if( $errors ) $this->ShowErrors($errors);
+
+// $dirlist options are effectivley $basedir-relative
+// so likewise for the current/selected option
+if( $advancedmode ) {
+  $sel = $cwd;
+}
+else {
+  $n = strlen($basedir) - strlen(CMS_ROOT_PATH);
+  $sel = substr($cwd, $n);
+}
 
 $modname = $this->GetName();
 $tpl = $smarty->createTemplate("module_file_tpl:$modname;copy.tpl",null,$modname,$smarty);
@@ -141,8 +151,8 @@ $tpl = $smarty->createTemplate("module_file_tpl:$modname;copy.tpl",null,$modname
 $params['selall'] = (count($selall) > 1) ? serialize($params['selall']) : reset($params['selall']);
 $tpl->assign('startform',$this->CreateFormStart($id,'fileaction',$returnid,'post','',false,'',$params));
 $tpl->assign('endform',$this->CreateFormEnd());
-$tpl->assign('cwd','/'.$cwd); //DIRECTORY_SEPARATOR ?
 $tpl->assign('dirlist',$dirlist);
+$tpl->assign('dirsel',$sel);
 $tpl->assign('selall',$selall); //unmunged for UI display
 
 $tpl->display();

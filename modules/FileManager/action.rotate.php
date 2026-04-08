@@ -38,9 +38,8 @@ if( count($selall) > 1 ) {
   $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 
-$basedir = CMS_ROOT_PATH; //OR uploads-top per $advancedmode ?
 $filename = $this->decodefilename($selall[0]);
-$src = filemanager_utils::join_path($basedir,filemanager_utils::get_cwd(),$filename);
+$src = filemanager_utils::join_path(CMS_ROOT_PATH,filemanager_utils::get_cwd(),$filename);
 if( !file_exists($src) ) {
   $params['fmerror'] = 'filenotfound';
   $this->Redirect($id,'defaultadmin',$returnid,$params);
@@ -197,11 +196,13 @@ if( isset($params['save']) ) {
 $modname = $this->GetName();
 $tpl = $smarty->createTemplate("module_file_tpl:$modname;filerotate.tpl",null,$modname,$smarty);
 
-$opts = array('none'=>$this->Lang('none'),
-            'crop'=>$this->Lang('crop'),
-            'resize'=>$this->Lang('resize'));
-$tpl->assign('opts',$opts);
+$opts = array(
+ 'none'=>$this->Lang('none'),
+ 'crop'=>$this->Lang('crop'),
+ 'resize'=>$this->Lang('resize')
+);
 $url = filemanager_utils::get_cwd_url()."/$filename";
+$tpl->assign('opts',$opts);
 $tpl->assign('postrotate',$postrotate);
 $tpl->assign('createthumb',$createthumb);
 $tpl->assign('filename',$filename);
@@ -213,7 +214,4 @@ $tpl->assign('startform',$this->CreateFormStart($id,'rotate',$returnid,'post',''
 $tpl->assign('endform',$this->CreateFormEnd());
 $tpl->display();
 
-#
-# EOF
-#
 ?>
