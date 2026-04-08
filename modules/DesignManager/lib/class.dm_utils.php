@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # Module DesignManager class dm_utils
-# (c) 2012 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,15 +13,12 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+# along with this program; if not, read tthe license online at:
+# https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
 
 final class dm_utils
 {
-	public function __construct() {}
-
 	public static function locking_enabled()
 	{
 		$mod = cms_utils::get_module('DesignManager');
@@ -61,4 +58,28 @@ final class dm_utils
 		return $_slocks;
 	}
 
-} // end of class
+	/**
+	 * Adjust the supplied string to a form suitable for use in a
+	 * filesystem (folder) name.
+	 * The result will have only letter(s), number(s), regular bracket(s),
+	 * single-dash(es) and/or single-underscore(s)
+	 * @since 1.2.1
+	 *
+	 * @param string | null $name
+	 * @return string
+	 */
+	public static function munge_name_to_dir($name)
+	{
+		$tmp = trim((string)$name);
+		if( $tmp ) {
+			// replace/remove most unwanted chars
+			$tmp = preg_replace(
+				['/[{}[\]]/', '/[^\pL\p{Nd}_\-. ()]/u'], ['_', ''], $tmp);
+			// replace spaces, dots and remove extra dashes and underscores
+			$tmp = str_replace(
+				[' ', '.', '---', '--', '___', '__'],
+				['-', '-', '-', '-', '_', '_'], $tmp);
+		}
+		return $tmp;
+	}
+} // class
