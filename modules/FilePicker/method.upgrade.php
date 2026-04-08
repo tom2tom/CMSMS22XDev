@@ -22,13 +22,14 @@
 
 use FilePicker\ProfileDAO;
 
-if( version_compare($oldversion, '1.0.9') < 0 ) {
+if( version_compare($oldversion, '1.1') < 0 ) {
     // consistent names for datestamp (I) fields
     $tbl = ProfileDAO::table_name();
     $db->Execute("ALTER TABLE `$tbl`
 RENAME COLUMN `create_date` TO `created`,
 RENAME COLUMN `modified_date` TO `modified`");
     // adjust property names and values in recorded serialized profiles
+    // TODO other prop(s) might also be bad so unserialize, fix, serialize
     $data = $db->GetArray("SELECT id,data,created,modified FROM $tbl");
     if( $data ) {
         $sql = "UPDATE $tbl SET data=? WHERE id=?";
@@ -47,4 +48,7 @@ RENAME COLUMN `modified_date` TO `modified`");
             $db->Execute($sql, [$fix, (int)$row['id']]);
         }
     }
+    // counter for unique recorded-profile identifiers
+    $db->CreateSequence("{$tbl}_seq");
+    $db->Execute("ALTER TABLE `{$tbl}_seq` MODIFY `id` int unsigned NOT NULL");
 }
