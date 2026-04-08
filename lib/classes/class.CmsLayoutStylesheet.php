@@ -154,6 +154,8 @@ class CmsLayoutStylesheet
 	{
 		$str = trim((string)$str);
 		if( !$str ) throw new CmsInvalidDataException('Template content cannot be empty');
+		//TODO deal with OS-incompatible line-breaks?
+		//$str = (strncasecmp(PHP_OS, 'WIN', 3) != 0) ? strtr($str, ["\r\n"=>"\n", "\r"=>"\n"]) : str_replace(["\r","\n","\r\r\n"], ["\r\n","\r\n","\r\n"], $str);
 		$this->_data['content'] = $str;
 		$this->_dirty = TRUE;
 	}
@@ -324,7 +326,6 @@ class CmsLayoutStylesheet
 	{
 		return (int)$this->_data['modified'];
 	}
-
 
 	/**
 	 * Get the design id's (if any) that this stylesheet is associated with
@@ -927,20 +928,20 @@ VALUES (?,?,?,?,?,?,?)';
 	/**
 	 * Generate a unique name for a stylesheet
 	 *
-	 * @throws CmsInvalidDataException
-	 * @throws CmsLogicException
 	 * @param string $prototype A prototype template name
 	 * @param string $prefix An optional name prefix.
+	 * @throws CmsInvalidDataException
+	 * @throws CmsLogicException
 	 */
 	public static function generate_unique_name($prototype,$prefix = '')
 	{
 		if( !$prototype ) throw new CmsInvalidDataException('Prototype name cannot be empty');
 		$db = CmsApp::get_instance()->GetDb();
 		$query = 'SELECT id FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE name = ?';
-		for( $i = 0; $i < 25; $i++ ) {
-			$name = $prefix.$prototype; // $i = 1
-			if( $i == 0 ) $name = $prototype;
-			elseif( $i > 1 ) $name = $prefix.$prototype.' '.$i;
+		for( $i = 1; $i < 26; $i++ ) {
+			if( $i == 1 ) { $name = $prototype; }
+			elseif( $i == 2 && $prefix !== '' ) { $name = $prefix.$prototype; }
+			else { $name = $prefix.$prototype.' '.$i; }
 			$dbr = $db->GetOne($query,array($name));
 			if( !$dbr ) return $name;
 		}
@@ -948,7 +949,7 @@ VALUES (?,?,?,?,?,?,?)';
 	}
 
 	/**
-	 * Get the name of the file used or potentially used to record this stylsheet's contents.
+	 * Get the name of the file used or potentially used to record this stylesheet's contents.
 	 *
 	 * @since 2.2
 	 * @return string

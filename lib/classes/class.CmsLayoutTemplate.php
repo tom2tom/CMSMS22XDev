@@ -145,6 +145,8 @@ class CmsLayoutTemplate
 	{
 		$str = trim($str);
 		if( !$str ) $str = '{* Empty Smarty Template *}';
+		//TODO deal with OS-incompatible line-breaks?
+		//$str = (strncasecmp(PHP_OS, 'WIN', 3) != 0) ? strtr($str, ["\r\n"=>"\n", "\r"=>"\n"]) : str_replace(["\r","\n","\r\r\n"], ["\r\n","\r\n","\r\n"], $str);
 		$this->_data['content'] = $str;
 		$this->_dirty = TRUE;
 	}
@@ -635,7 +637,7 @@ WHERE id = ?';
 			// it's default for a type, unset default flag for all other records having that type
 			$query = 'UPDATE '.CMS_DB_PREFIX.self::TABLENAME.' SET type_dflt = 0 WHERE id != ? AND type_id = ? AND type_dflt = 1';
 			$db->Execute($query,array($tid,$this->get_type_id())); // return value unreliable after UPDATE
-			if( $db->errorNo() != 0 ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
+			if( $db->ErrorNo() != 0 ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
 		}
 
 		$query = 'DELETE FROM '.CMS_DB_PREFIX.self::ADDUSERSTABLE.' WHERE tpl_id = ?';
@@ -1212,20 +1214,20 @@ VALUES (?,?,?,?,?,?,?,?,?,?)';
 	/**
 	 * Generate a unique name for a template
 	 *
-	 * @throws CmsInvalidDataException
-	 * @throws CmsLogicException
 	 * @param string $prototype A prototype template name
 	 * @param string $prefix An optional name prefix.
+	 * @throws CmsInvalidDataException
+	 * @throws CmsLogicException
 	 */
 	public static function generate_unique_name($prototype,$prefix = '')
 	{
 		if( !$prototype ) throw new CmsInvalidDataException('Prototype name cannot be empty');
 		$db = CmsApp::get_instance()->GetDb();
 		$query = 'SELECT id FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE name = ?';
-		for( $i = 0; $i < 25; $i++ ) {
-			$name = $prefix.$prototype; // $i = 1
-			if( $i == 0 ) $name = $prototype;
-			elseif( $i > 1 ) $name = $prefix.$prototype.' '.$i;
+		for( $i = 1; $i < 26; $i++ ) {
+			if( $i == 1 ) { $name = $prototype; }
+			elseif( $i == 2 && $prefix !== '' ) { $name = $prefix.$prototype; }
+			else { $name = $prefix.$prototype.' '.$i; }
 			$dbr = $db->GetOne($query,array($name));
 			if( !$dbr ) return $name;
 		}
