@@ -66,7 +66,7 @@ function smarty_modifier_debug_print_var($var, $max = 10, $length = 40, $depth =
             } else {
                 $results = htmlspecialchars((string)$var);
             }
-            $results = '<i>' . $results . '</i>';
+            $results = '<em>' . $results . '</em>';
             break;
         case 'integer':
         case 'float':
