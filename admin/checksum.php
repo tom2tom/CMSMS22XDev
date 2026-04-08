@@ -183,9 +183,9 @@ function generate_checksum_file(&$report)
 };
 
 // Get ready
-$smarty = Smarty_CMS::get_instance();
-$smarty->caching = false;
-$smarty->force_compile = true;
+
+$smarty->changeCaching(false);
+$tpl = $smarty->createTemplate('admin_tpl:checksum.tpl',null,null,$smarty,false);
 $urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
 // Handle output
@@ -209,20 +209,16 @@ if( isset($_POST['action']) ) {
       break;
   }
   if( !$res ) {
-    $smarty->assign('error',$report);
+    $tpl->assign('error',$report);
   }
 }
 elseif( !empty($_GET['exported']) ) {
   $themeObject->ShowMessage(lang('msg_completed'));
 }
+$themeObject->set_value('pagetitle','system_verification');
 
-// Display the output
-$smarty->assign('urlext',$urlext)
- ->assign('cms_secure_param_name',CMS_SECURE_PARAM_NAME)
- ->assign('cms_user_key',$_SESSION[CMS_USER_KEY])
- ->assign('header',$themeObject->ShowHeader('system_verification'))
- ->display('checksum.tpl');
+$tpl->assign('securename',CMS_SECURE_PARAM_NAME)
+ ->assign('secureval',$_SESSION[CMS_USER_KEY]);
+$tpl->display();
 
 require_once 'footer.php';
-
-?>

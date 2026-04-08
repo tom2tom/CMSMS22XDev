@@ -17,13 +17,13 @@
 #
 #$Id$
 
-$CMS_ADMIN_PAGE=1;
-require_once("../lib/include.php");
+$CMS_ADMIN_PAGE = 1;
+require_once "../lib/include.php";
 check_login();
 $userid = get_userid();
 if( !check_permission($userid, 'Modify User-defined Tags') ) return;
 
-$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+$urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 if( isset($_POST['cancel']) ) redirect('listusertags.php'.$urlext);
 
 $tagops = cmsms()->GetUserTagOperations();
@@ -31,8 +31,8 @@ $themeObject = null; // object not yet set
 $userplugin_id = 0;
 
 if( !isset($_POST['ajax']) ) {
-    include_once('header.php');
-    $themeObject->set_value('pagetitle','userdefinedtags'); // generic header for oneeleven
+    require_once 'header.php';
+    $themeObject->set_value('pagetitle', 'userdefinedtags');
 }
 
 $record = array('userplugin_id'=>'',
@@ -59,7 +59,7 @@ if( isset($_POST['submit']) || isset($_POST['apply']) ) {
 
     // validate
     if( $record['userplugin_name'] == '' ) {
-        $error[] = lang('nofieldgiven',array(lang('name')));
+        $error[] = lang('nofieldgiven',lang('name'));
     }
     elseif( preg_match('<^[a-zA-Z_ \x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$>',$record['userplugin_name']) == 0 ) { //TODO === 0 OR != 1 ?
         $error[] = lang('error_udt_name_chars');
@@ -75,7 +75,7 @@ if( isset($_POST['submit']) || isset($_POST['apply']) ) {
     }
 
     if( $record['code'] == '' ) {
-        $error[] = lang('nofieldgiven', array(lang('code')));
+        $error[] = lang('nofieldgiven',lang('code'));
     }
     else {
         $code = $record['code'];
@@ -160,7 +160,7 @@ if( isset($_POST['submit']) || isset($_POST['apply']) ) {
     }
     else {
         if( isset($_POST['submit']) ) {
-            echo $themeObject->ShowErrors($error);
+            $themeObject->ShowErrors($error);
         }
         else {
             // ajaxy.
@@ -171,15 +171,8 @@ if( isset($_POST['submit']) || isset($_POST['apply']) ) {
     }
 }
 
-//
-// give everything to smarty.
-//
-$smarty = Smarty_CMS::get_instance();
-$smarty->assign('record',$record);
-$smarty->display('editusertag.tpl');
-include_once("footer.php");
+$tpl = $smarty->createTemplate('admin_tpl:editusertag.tpl',null,null,$smarty,false);
+$tpl->assign('record',$record);
+$tpl->display();
 
-#
-# EOF
-#
-?>
+require_once 'footer.php';

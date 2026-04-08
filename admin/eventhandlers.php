@@ -20,7 +20,7 @@
 $CMS_ADMIN_PAGE = 1;
 //$CMS_LOAD_ALL_PLUGINS = 1; ?
 
-require_once("../lib/include.php");
+require_once '../lib/include.php';
 
 check_login();
 
@@ -30,28 +30,30 @@ if (!$access) {
 	exit(lang('no_permission')); //TODO throw if can be caught
 }
 
-include_once 'header.php';
+require_once 'header.php';
 
 $action = (!empty($_REQUEST['action'])) ? $_REQUEST['action'] : '';
 $event = (!empty($_REQUEST['event'])) ? $_REQUEST['event'] : '';
-$module = (!empty($_REQUEST['module'])) ? $_REQUEST['module'] : '';
+$originator = (!empty($_REQUEST['originator'])) ? $_REQUEST['originator'] : '';
 $modulefilter = (!empty($_REQUEST['modulefilter'])) ? $_REQUEST['modulefilter'] : '';
 
-$smarty = Smarty_CMS::get_instance(); //also in header.php
-$smarty->caching = false;
-//$smarty->force_compile = true;
-$smarty->assign('hiddenname',CMS_SECURE_PARAM_NAME);
-$smarty->assign('hiddenval',$_SESSION[CMS_USER_KEY]);
-$smarty->assign('header',$themeObject->ShowHeader('eventhandlers'));
+$themeObject->set_value('pagetitle', 'eventhandlers');
+
+$smarty->changeCaching(false);
+$tplname = ($action == 'showeventhelp') ? 'eventhelp.tpl' : 'listevents.tpl';
+$tpl = $smarty->createTemplate("admin_tpl:$tplname",null,null,$smarty,false);
+// see also $smarty-assigned var $secureparam
+$tpl->assign('securename',CMS_SECURE_PARAM_NAME);
+$tpl->assign('secureval',$_SESSION[CMS_USER_KEY]);
 
 switch( $action ) {
 	case 'showeventhelp':
-		if( $module == 'Core' ) {
+		if( $originator == 'Core' ) {
 			$desctext = Events::GetEventDescription($event);
 			$text = Events::GetEventHelp($event);
 		}
 		else {
-			$moduleobj = cms_utils::get_module($module);
+			$moduleobj = cms_utils::get_module($originator);
 			if( is_object($moduleobj) ) {
 				$desctext = $moduleobj->GetEventDescription($event);
 				$text = $moduleobj->GetEventHelp($event);
@@ -64,13 +66,12 @@ switch( $action ) {
 		if( $text && strpos($text,'Parameters') !== false ) {
 			$text = str_replace('Parameters',lang('parameters'),$text);
 		}
-		$handlers = Events::ListEventHandlers($module,$event); //array, maybe empty
+		$handlers = Events::ListEventHandlers($originator,$event,true); //array, maybe empty
 
-		$smarty->assign('desctext',$desctext)
+		$tpl->assign('desctext',$desctext)
 		->assign('event',$event)
 		->assign('hlist',$handlers)
-		->assign('text',$text)
-		->display('eventhelp.tpl');
+		->assign('text',$text);
 		break;
 
 	default:
@@ -86,16 +87,14 @@ switch( $action ) {
 		$editicon = $themeObject->DisplayImage('icons/system/edit.gif',lang('edit'),'','','systemicon');
 		$infoicon = $themeObject->DisplayImage('icons/system/info.gif',lang('help'),'','','systemicon');
 
-		$smarty->assign('access',$access)
+		$tpl->assign('access',$access)
 		->assign('editImg',$editicon)
 		->assign('events',$events)
 		->assign('infoImg',$infoicon)
 		->assign('modlist',$modlist)
-		->assign('modulefilter',$modulefilter)
-		->assign('urlext','?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY])
-		->display('listevents.tpl');
+		->assign('modulefilter',$modulefilter);
 }
 
-include_once 'footer.php';
+$tpl->display();
 
-?>
+require_once 'footer.php';

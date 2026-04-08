@@ -19,7 +19,7 @@
 
 $CMS_ADMIN_PAGE = 1;
 
-require_once("../lib/include.php");
+require_once '../lib/include.php';
 
 check_login();
 
@@ -49,23 +49,21 @@ if ($grouplist) {
 	}
 }
 
-$smarty = Smarty_CMS::get_instance(); // also assigned in header.php
-$smarty->assign('padd',check_permission($userid,'Add Groups'));
-$smarty->assign('header',$themeObject->ShowHeader('currentgroups'));
-$smarty->assign('iconadd',$themeObject->DisplayImage('icons/system/newobject.gif',lang('addgroup'),'','','systemicon'));
-$smarty->assign('iconedit',$themeObject->DisplayImage('icons/system/edit.gif',lang('editgroup'),'','','systemicon'));
-$smarty->assign('icondelete',$themeObject->DisplayImage('icons/system/delete.gif',lang('delete'),'','','systemicon'));
-$smarty->assign('icontrue',$themeObject->DisplayImage('icons/system/true.gif',lang('true'),'','','systemicon'));
-$smarty->assign('iconfalse',$themeObject->DisplayImage('icons/system/false.gif',lang('false'),'','','systemicon'));
-$smarty->assign('icongroup',$themeObject->DisplayImage('icons/system/groupassign.gif',lang('assignments'),'','','systemicon'));
-$smarty->assign('iconperms',$themeObject->DisplayImage('icons/system/permissions.gif',lang('permissions'),'','','systemicon'));
-$smarty->assign('urlext','?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY]);
+$themeObject->set_value('pagetitle', 'currentgroups');
+
+$tpl = $smarty->createTemplate('admin_tpl:listgroups.tpl',null,null,$smarty,false);
+$tpl->assign('padd',check_permission($userid,'Add Groups'))
+ ->assign('iconadd',$themeObject->DisplayImage('icons/system/newobject.gif',lang('addgroup'),'','','systemicon'))
+ ->assign('iconedit',$themeObject->DisplayImage('icons/system/edit.gif',lang('editgroup'),'','','systemicon'))
+ ->assign('icondelete',$themeObject->DisplayImage('icons/system/delete.gif',lang('delete'),'','','systemicon'))
+ ->assign('icontrue',$themeObject->DisplayImage('icons/system/true.gif',lang('true'),'','','systemicon'))
+ ->assign('iconfalse',$themeObject->DisplayImage('icons/system/false.gif',lang('false'),'','','systemicon'))
+ ->assign('icongroup',$themeObject->DisplayImage('icons/system/groupassign.gif',lang('assignments'),'','','systemicon'))
+ ->assign('iconperms',$themeObject->DisplayImage('icons/system/permissions.gif',lang('permissions'),'','','systemicon'))
+ ->assign('grouplist',$showgroups);
 if (($n = count($grouplist)) > $limit) {
-	$smarty->assign('pagination',pagination($page,$n,$limit));
+	$tpl->assign('pagination',pagination($page,$n,$limit));
 }
-$smarty->assign('grouplist',$showgroups);
-$smarty->display('listgroups.tpl');
+$tpl->display();
 
 require_once 'footer.php';
-
-?>

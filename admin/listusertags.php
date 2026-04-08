@@ -19,7 +19,7 @@
 
 $CMS_ADMIN_PAGE = 1;
 
-require_once("../lib/include.php");
+require_once '../lib/include.php';
 
 check_login();
 $userid = get_userid();
@@ -28,9 +28,9 @@ if (!$access) {
     exit(lang('no_permission')); //TODO throw if can be caught
 }
 
-include_once("header.php");
+require_once 'header.php';
 
-$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+$urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
 function listudt_summarize($str,$numwords,$ets='...')
 {
@@ -44,7 +44,7 @@ function listudt_summarize($str,$numwords,$ets='...')
     return $tmp;
 }
 
-if (!empty($_GET['message'])) echo $themeObject->ShowMessage(lang($_GET['message']));
+if (!empty($_GET['message'])) $themeObject->ShowMessage(lang($_GET['message']));
 
 $list = UserTagOperations::get_instance()->ListUserTags();
 $tags = [];
@@ -58,10 +58,10 @@ if( $list && is_array($list) ) {
         $tags[$id] = $rec;
     }
 }
-$smarty = Smarty_CMS::get_instance(); // also in header.php
-$smarty->assign('tags',$tags);
-$smarty->assign('addurl','editusertag.php'.$urlext);
-$smarty->assign('urlext',$urlext);
-$smarty->display('listusertags.tpl');
 
-include_once("footer.php");
+$tpl = $smarty->createTemplate('admin_tpl:listusertags.tpl',null,null,$smarty,false);
+$tpl->assign('tags',$tags)
+ ->assign('addurl','editusertag.php'.$urlext);
+$tpl->display();
+
+require_once 'footer.php';

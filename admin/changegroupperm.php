@@ -20,7 +20,7 @@
 $CMS_ADMIN_PAGE = 1;
 
 require_once '../lib/include.php';
-$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+$urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
 check_login();
 
@@ -45,9 +45,8 @@ $message = '';
 require_once 'header.php';
 
 $db = $gCms->GetDb();
-$smarty = $gCms->GetSmarty(); //also in header.php
 
-$load_perms = function() use ($db) {
+$load_perms = function() use($db) {
     $query = "SELECT p.permission_id, p.permission_source, p.permission_text, up.group_id FROM ".
     CMS_DB_PREFIX."permissions p LEFT JOIN ".CMS_DB_PREFIX.
     "group_perms up ON p.permission_id = up.permission_id ORDER BY p.permission_text";
@@ -55,13 +54,13 @@ $load_perms = function() use ($db) {
     $result = $db->Execute($query);
 
     // use hooks to localize permissions.
-    \CMSMS\HookManager::add_hook('localizeperm',function($perm_name){
+    \CMSMS\HookManager::add_hook('localizeperm',function($perm_name) {
             $key = 'perm_'.str_replace(' ','_',$perm_name);
             if( \CmsLangOperations::lang_key_exists('admin',$key) ) return \CmsLangOperations::lang_from_realm('admin',$key);
             return $perm_name;
         },\CMSMS\HookManager::PRIORITY_HIGH);
 
-    \CMSMS\HookManager::add_hook('getperminfo',function($perm_name){
+    \CMSMS\HookManager::add_hook('getperminfo',function($perm_name) {
             $key = 'permdesc_'.str_replace(' ','_',$perm_name);
             if( \CmsLangOperations::lang_key_exists('admin',$key) ) return \CmsLangOperations::lang_from_realm('admin',$key);
         // return null
@@ -143,8 +142,9 @@ foreach( $group_list as $onegroup ) {
     }
 }
 
-$smarty->assign('group_list',$sel_groups);
-$smarty->assign('allgroups',$allgroups);
+$tpl = $smarty->createTemplate('admin_tpl:changegroupperm.tpl',null,null,$smarty,false);
+$tpl->assign('group_list',$sel_groups);
+$tpl->assign('allgroups',$allgroups);
 
 if ($submitted == 1) {
     // we have group permissions
@@ -198,15 +198,20 @@ if ($submitted == 1) {
 
 $perm_struct = $load_perms();
 
-$smarty->assign('perms',$group_perms($perm_struct));
-$smarty->assign('hiddenname',CMS_SECURE_PARAM_NAME);
-$smarty->assign('hiddenval',$_SESSION[CMS_USER_KEY]);
-$smarty->assign('header',$themeObject->ShowHeader('groupperms',array($group_name)));
-if( !empty($message) ) $smarty->assign('message',$themeObject->ShowMessage($message));
-$smarty->assign('disp_group',$disp_group);
+$themeObject->set_value('pagetitle','groupperms');
+//$themeObject->set_value('extra_lang_params', [group_name]);
+
+if( !empty($message) ) $themeObject->ShowMessage($message);
+
+$tpl->assign('perms',$group_perms($perm_struct));
+// see also $smarty-assigned var $secureparam
+$tpl->assign('securename',CMS_SECURE_PARAM_NAME);
+$tpl->assign('secureval',$_SESSION[CMS_USER_KEY]);
+//if( !empty($message) ) $tpl->assign('message',$message);
+$tpl->assign('disp_group',$disp_group);
 $tmp = base64_encode(json_encode($sel_group_ids));
 $sig = md5(__FILE__.$tmp);
-$smarty->assign('hidden2','<input type="hidden" name="sel_groups" value="'.$sig.'::'.$tmp.'">');
-$smarty->display('changegroupperm.tpl');
+$tpl->assign('hiddenval2',"$sig::$tmp");
+$tpl->display();
 
 require_once 'footer.php';

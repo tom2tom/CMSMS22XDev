@@ -19,7 +19,7 @@
 
 $CMS_ADMIN_PAGE = 1;
 
-require_once("../lib/include.php");
+require_once '../lib/include.php';
 
 check_login();
 
@@ -46,19 +46,19 @@ if ($marklist) {
 	$showinfo = !cms_userprefs::get_for_user($userid,'bookmarks',false);
 }
 
-$smarty = Smarty_CMS::get_instance();
-$smarty->assign('header',$themeObject->ShowHeader('bookmarks'));
-$smarty->assign('showinfo',$showinfo);
-$smarty->assign('iconadd',$themeObject->DisplayImage('icons/system/newobject.gif',lang('addbookmark'),'','','systemicon'));
-$smarty->assign('iconedit',$themeObject->DisplayImage('icons/system/edit.gif',lang('editbookmark'),'','','systemicon'));
-$smarty->assign('icondelete',$themeObject->DisplayImage('icons/system/delete.gif',lang('delete'),'','','systemicon'));
-$smarty->assign('urlext','?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY]);
+$themeObject->set_value('pagetitle', 'bookmarks');
+
+$smarty->changeCaching(false);
+$tpl = $smarty->createTemplate('admin_tpl:listbookmarks.tpl',null,null,$smarty,false);
+// see also $smarty-assigned var $secureparam
+$tpl->assign('showinfo',$showinfo)
+ ->assign('iconadd',$themeObject->DisplayImage('icons/system/newobject.gif',lang('addbookmark'),'','','systemicon'))
+ ->assign('iconedit',$themeObject->DisplayImage('icons/system/edit.gif',lang('editbookmark'),'','','systemicon'))
+ ->assign('icondelete',$themeObject->DisplayImage('icons/system/delete.gif',lang('delete'),'','','systemicon'));
 if (($n = count($marklist)) > $limit) {
-	$smarty->assign('pagination',pagination($page,$n,$limit));
+	$tpl->assign('pagination',pagination($page,$n,$limit));
 }
-$smarty->assign('marklist',$show);
-$smarty->display('listbookmarks.tpl');
+$tpl->assign('marklist',$show);
+$tpl->display();
 
 require_once 'footer.php';
-
-?>

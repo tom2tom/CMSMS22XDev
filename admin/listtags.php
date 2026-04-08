@@ -49,10 +49,10 @@ $find_file = function($filename) use($dirs) {
     return '';
 };
 
-require_once "header.php";
+require_once 'header.php';
 
-$smarty = Smarty_CMS::get_instance(); //also in header.php
-$smarty->assign('header',$themeObject->ShowHeader('tags'));
+$themeObject->set_value('pagetitle','tags');
+$tpl = $smarty->createTemplate('admin_tpl:listtags.tpl',null,null,$smarty,false);
 
 if( $action == "showpluginhelp" ) {
     $content = '';
@@ -74,28 +74,28 @@ if( $action == "showpluginhelp" ) {
     }
 
     if( $content ) {
-        $smarty->assign('subheader',lang('pluginhelp',array($plugin)));
-        $smarty->assign('content',$content);
+        $tpl->assign('subheader',lang('pluginhelp',$plugin));
+        $tpl->assign('content',$content);
     }
     else {
-        $smarty->assign('error',lang('nopluginhelp'));
+        $tpl->assign('error',lang('nopluginhelp'));
     }
 }
 elseif( $action == "showpluginabout" ) {
     $file = $find_file("$type.$plugin.php");
     if( file_exists($file) ) require_once($file);
 
-    $smarty->assign('subheader',lang('pluginabout',$plugin));
+    $tpl->assign('subheader',lang('pluginabout',$plugin));
     $func_name = 'smarty_cms_about_'.$type.'_'.$plugin;
     if( function_exists($func_name) ) {
         @ob_start();
         call_user_func_array($func_name, array());
         $content = @ob_get_contents();
         @ob_end_clean();
-        $smarty->assign('content',$content);
+        $tpl->assign('content',$content);
     }
     else {
-        $smarty->assign('error',lang('nopluginabout'));
+        $tpl->assign('error',lang('nopluginabout'));
     }
 }
 else {
@@ -178,9 +178,9 @@ else {
         return strcmp($a['name'],$b['name']);
     });
 
-    $smarty->assign('plugins',$file_array);
+    $tpl->assign('plugins',$file_array);
 }
 
-$smarty->display('listtags.tpl');
+$tpl->display();
 
-require_once "footer.php";
+require_once 'footer.php';

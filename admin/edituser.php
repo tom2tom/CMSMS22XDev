@@ -226,31 +226,31 @@ if (isset($_POST["submit"])) {
  * Display view
  ---------------------*/
 
-include_once ('header.php');
+require_once 'header.php';
 
-if (!empty($error)) echo $themeObject->ShowErrors('<ul class="error">' . $error . '</ul>');
+if (!empty($error)) $themeObject->ShowErrors('<ul class="error">' . $error . '</ul>');
 
-$selector = UserOperations::get_instance()->GenerateDropdown(0, 'copyusersettings', [$user_id], [-1=>lang('none')]);
+$tpl = $smarty->createTemplate('admin_tpl:edituser.tpl', null, null, $smarty, false);
+
+$selector = UserOperations::get_instance()->GenerateDropdown(0, 'copyusersettings', [$user_id], [-1 => lang('none')]);
 if ($assign_group_perm && !$access_user) {
     $groups = GroupOperations::get_instance()->LoadGroups();
-    $smarty->assign('groups', $groups);
-    $smarty->assign('membergroups', UserOperations::get_instance()->GetMemberGroups($user_id));
+    $tpl->assign('groups', $groups);
+    $tpl->assign('membergroups', UserOperations::get_instance()->GetMemberGroups($user_id));
 }
 
-$smarty->assign('user_id', $user_id);
-$smarty->assign('user', $user);
-$smarty->assign('firstname', $firstname);
-$smarty->assign('lastname', $lastname);
-$smarty->assign('email', $email);
-$smarty->assign('adminaccess', $adminaccess);
-$smarty->assign('active', $active);
-$smarty->assign('tplmaster', $tplmaster);
-$smarty->assign('copyfromtemplate', $copyfromtemplate);
-$smarty->assign('access_user', $access_user);
-$smarty->assign('manage_users', $manage_users);
-$smarty->assign('userselect', $selector);
+$tpl->assign('user_id', $user_id)
+ ->assign('user', $user)
+ ->assign('firstname', $firstname)
+ ->assign('lastname', $lastname)
+ ->assign('email', $email)
+ ->assign('adminaccess', $adminaccess)
+ ->assign('active', $active)
+ ->assign('tplmaster', $tplmaster)
+ ->assign('copyfromtemplate', $copyfromtemplate)
+ ->assign('access_user', $access_user)
+ ->assign('manage_users', $manage_users)
+ ->assign('userselect', $selector);
+$tpl->display();
 
-$smarty->display('edituser.tpl');
-
-include_once ('footer.php');
-?>
+require_once 'footer.php';

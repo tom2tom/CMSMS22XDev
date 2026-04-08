@@ -58,7 +58,7 @@ if( isset($_POST['editgroup']) ) {
     $validinfo = true;
     if( !$group ) {
         $validinfo = false;
-        $error .= '<li>'.lang('nofieldgiven', array(lang('groupname'))).'</li>';
+        $error .= '<li>'.lang('nofieldgiven', lang('groupname')).'</li>';
     }
 
     if( $validinfo ) {
@@ -89,21 +89,20 @@ elseif( $group_id != -1 ) {
 
 require_once 'header.php';
 
+$themeObject->set_value('pagetitle', 'editgroup');
 //if( $group ) $CMS_ADMIN_SUBTITLE = $group; does nothing
 
-$smarty = Smarty_CMS::get_instance();
-$smarty->assign('header',$themeObject->ShowHeader('editgroup'));
-$smarty->assign('hiddenname',CMS_SECURE_PARAM_NAME);
-$smarty->assign('hiddenval',$_SESSION[CMS_USER_KEY]);
-$smarty->assign('access',$access);
-$smarty->assign('active',(bool)$active);
-$smarty->assign('error',$error);
-$smarty->assign('group_id',$group_id);
-$smarty->assign('useringroup',$useringroup);
-$smarty->assign('group',$group);
-$smarty->assign('description',$description);
-$smarty->display('editgroup.tpl');
+$tpl = $smarty->createTemplate('admin_tpl:editgroup.tpl',null, null, $smarty, false);
+// see also $smarty-assigned var $secureparam
+$tpl->assign('securename',CMS_SECURE_PARAM_NAME)
+ ->assign('secureval', $_SESSION[CMS_USER_KEY])
+ ->assign('access', $access)
+ ->assign('active', (bool)$active)
+ ->assign('error', $error)
+ ->assign('group_id', $group_id)
+ ->assign('useringroup', $useringroup)
+ ->assign('group', $group)
+ ->assign('description', $description);
+$tpl->display();
 
 require_once 'footer.php';
-
-?>

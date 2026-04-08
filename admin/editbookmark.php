@@ -47,9 +47,11 @@ if ($url) {
 		$url = str_replace('[SECURITYTAG]', $extsub, $url); // allow parsing
 	}
 
+	$reported = false;
 	$res = cms_utils::validate_url($url, '!executable'); // aka '!'.CMSMS\FileType::TYPE_EXECUTABLE
 	if ($res !== true) {
 		$error .= '<li>'.$res.'</li>';
+		if ($res == 'TODO') { $reported = true; }
 		unset($_POST['editbookmark']);
 	}
 
@@ -87,11 +89,11 @@ if (isset($_POST['editbookmark'])) {
 	$validinfo = true;
 	if ($title == '') {
 		$validinfo = false;
-		$error .= '<li>'.lang('nofieldgiven', [lang('title')]).'</li>';
+		$error .= '<li>'.lang('nofieldgiven', lang('title')).'</li>';
 	}
 	if ($url == '') {
 		$validinfo = false;
-		$error .= '<li>'.lang('nofieldgiven', [lang('url')]).'</li>';
+		$error .= '<li>'.lang('nofieldgiven', lang('url')).'</li>';
 	}
 
 	if ($validinfo) {
@@ -129,18 +131,17 @@ elseif ($bookmark_id != -1) {
 }
 
 require_once 'header.php';
+$themeObject->set_value('pagetitle', 'editbookmark');
 
-$smarty = Smarty_CMS::get_instance();
-$smarty->assign('error',$error);
-$smarty->assign('header',$themeObject->ShowHeader('editbookmark'));
-$smarty->assign('hiddenname',CMS_SECURE_PARAM_NAME);
-$smarty->assign('hiddenval',$_SESSION[CMS_USER_KEY]);
-$smarty->assign('bookmark_id',$bookmark_id);
-$smarty->assign('userid',$userid);
-$smarty->assign('title',$title);
-$smarty->assign('url',$url);
-$smarty->display('editbookmark.tpl');
+$tpl = $smarty->createTemplate('admin_tpl:editbookmark.tpl', null, null, $smarty, false);
+// see also $smarty-assigned var $secureparam
+$tpl->assign('error', $error)
+ ->assign('securename', CMS_SECURE_PARAM_NAME)
+ ->assign('secureval', $_SESSION[CMS_USER_KEY])
+ ->assign('bookmark_id', $bookmark_id)
+ ->assign('userid', $userid)
+ ->assign('title', $title)
+ ->assign('url', $url);
+$tpl->display();
 
 require_once 'footer.php';
-
-?>

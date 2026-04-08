@@ -20,12 +20,12 @@
 $CMS_ADMIN_PAGE = 1;
 
 require_once '../lib/include.php';
-$urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+$secureparm = CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
 check_login();
 
 if (isset($_POST['cancel'])) {
-	redirect('listbookmarks.php'.$urlext);
+	redirect('listbookmarks.php?'.$secureparm);
 }
 
 $title = '';
@@ -52,9 +52,8 @@ if ($url) {
 	$url = html_entity_decode($url);
 	$url = urldecode($url);
 	$url = str_replace('[ROOT_URL]', CMS_ROOT_URL, $url);
-	$extsub = substr($urlext, 1);
 	if (strpos($url, '[SECURITYTAG]') !== false) { // deprecated
-		$url = str_replace('[SECURITYTAG]', $extsub, $url); // allow parsing
+		$url = str_replace('[SECURITYTAG]', $secureparm, $url); // allow parsing
 	}
 
 	$res = cms_utils::validate_url($url, '!'.CMSMS\FileType::TYPE_EXECUTABLE);
@@ -63,8 +62,8 @@ if ($url) {
 		unset($_POST['addbookmark']);
 	}
 
-	// revert placeholder if any
-	$url = str_replace($extsub, '[SECURITYTAG]', $url);
+	// reinstate placeholder if any
+	$url = str_replace($secureparm, '[SECURITYTAG]', $url);
 	$config = cms_config::get_instance();
 	if (startswith($url, $config['admin_url'])) {
 		//TODO somewhere apply a permission-check akin to admin menu generation
@@ -82,11 +81,11 @@ if ($url) {
 if (isset($_POST['addbookmark'])) {
 	$validinfo = true;
 	if ($title == '') {
-		$error .= lang('nofieldgiven', [lang('title')]);
+		$error .= lang('nofieldgiven', lang('title'));
 		$validinfo = false;
 	}
 	elseif ($url == '') {
-		$error .= lang('nofieldgiven', [lang('url')]); // joined error string?
+		$error .= lang('nofieldgiven', lang('url')); // joined error string?
 		$validinfo = false;
 	}
 
@@ -99,7 +98,7 @@ if (isset($_POST['addbookmark'])) {
 		$result = $markobj->save();
 
 		if ($result) {
-			redirect('listbookmarks.php'.$urlext);
+			redirect('listbookmarks.php?'.$secureparm);
 		}
 		else {
 			$error .= lang('errorinsertingbookmark');
@@ -108,16 +107,14 @@ if (isset($_POST['addbookmark'])) {
 }
 
 require_once 'header.php';
+$themeObject->set_value('pagetitle', 'addbookmark');
 
-$smarty = Smarty_CMS::get_instance();
-$smarty->assign('error',$error);
-$smarty->assign('header',$themeObject->ShowHeader('addbookmark'));
-$smarty->assign('hiddenname',CMS_SECURE_PARAM_NAME);
-$smarty->assign('hiddenval',$_SESSION[CMS_USER_KEY]);
-$smarty->assign('title',$title);
-$smarty->assign('url',$url);
-$smarty->display('addbookmark.tpl');
+$tpl = $smarty->createTemplate('admin_tpl:addbookmark.tpl', null, null, $smarty, false);
+$tpl->assign('error', $error);
+$tpl->assign('securename', CMS_SECURE_PARAM_NAME); // see also $smarty-assigned var $secureparam
+$tpl->assign('secureval', $_SESSION[CMS_USER_KEY]);
+$tpl->assign('title', $title);
+$tpl->assign('url', $url);
+$tpl->display();
 
 require_once 'footer.php';
-
-?>

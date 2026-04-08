@@ -157,7 +157,7 @@ if (isset($_POST["submit"])) {
             } else {
                 cms_userprefs::set_for_user($userid, 'default_cms_language', cms_userprefs::get_for_user($adminid, 'default_cms_language'));
                 cms_userprefs::set_for_user($userid, 'wysiwyg', cms_userprefs::get_for_user($adminid, 'wysiwyg'));
-                cms_userprefs::set_for_user($userid, 'admintheme', get_site_preference('logintheme', CmsAdminThemeBase::GetDefaultTheme()));
+                cms_userprefs::set_for_user($userid, 'admintheme', cms_siteprefs::get('logintheme', CmsAdminThemeBase::GetDefaultTheme()));
                 cms_userprefs::set_for_user($userid, 'bookmarks', cms_userprefs::get_for_user($adminid, 'bookmarks'));
                 cms_userprefs::set_for_user($userid, 'recent', cms_userprefs::get_for_user($adminid, 'recent'));
             }
@@ -188,32 +188,33 @@ if (isset($_POST["submit"])) {
  * Display view
  ---------------------*/
 
-include_once ('header.php');
+require_once 'header.php';
 
-if ($error != '') {
-    echo $themeObject->ShowErrors('<ul class="error">' . $error . '</ul>');
+$tpl = $smarty->createTemplate('admin_tpl:adduser.tpl', null, null, $smarty, false);
+
+if ($error) {
+    $themeObject->ShowErrors('<ul class="error">' . $error . '</ul>');
 }
 
 $selector = UserOperations::get_instance()->GenerateDropdown(0, 'copyusersettings', [], [-1=>lang('none')]);
 if ($assign_group_perm) {
     $groups = GroupOperations::get_instance()->LoadGroups();
-    $smarty->assign('groups', $groups);
+    $tpl->assign('groups', $groups);
 }
 
-$smarty->assign('adminaccess', $adminaccess);
-$smarty->assign('active', $active);
-$smarty->assign('user', $user);
-$smarty->assign('password', $password);
-$smarty->assign('passwordagain', $passwordagain);
-$smarty->assign('firstname', $firstname);
-$smarty->assign('lastname', $lastname);
-$smarty->assign('email', $email);
-$smarty->assign('copyusersettings', $copyusersettings);
-$smarty->assign('sel_groups', $sel_groups);
-$smarty->assign('my_userid', get_userid());
-$smarty->assign('userselect', $selector);
+$tpl->assign('adminaccess', $adminaccess)
+ ->assign('active', $active)
+ ->assign('user', $user)
+ ->assign('password', $password)
+ ->assign('passwordagain', $passwordagain)
+ ->assign('firstname', $firstname)
+ ->assign('lastname', $lastname)
+ ->assign('email', $email)
+ ->assign('copyusersettings', $copyusersettings)
+ ->assign('sel_groups', $sel_groups)
+ ->assign('my_userid', $userid)
+ ->assign('userselect', $selector);
 
-$smarty->display('adduser.tpl');
+$tpl->display();
 
-include_once ('footer.php');
-?>
+require_once 'footer.php';

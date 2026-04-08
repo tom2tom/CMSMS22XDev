@@ -16,13 +16,14 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #$Id$
+
 $CMS_ADMIN_PAGE = 1;
 $orig_memory = (function_exists('memory_get_usage')?memory_get_usage():0);
-require_once("../lib/include.php");
+require_once '../lib/include.php';
 check_login();
 
 $userid = get_userid();
-if (!check_permission($userid, 'Modify Site Preferences')) {
+if( !check_permission($userid,'Modify Site Preferences') ) {
     exit(lang('no_permission')); //TODO throw if can be caught
 }
 
@@ -30,31 +31,30 @@ $gCms = CmsApp::get_instance();
 $db = $gCms->GetDb();
 $themeObject = cms_utils::get_theme_object();
 
-// get the total number of records.
-$totalrows = $db->GetOne("SELECT COUNT(timestamp) FROM ".CMS_DB_PREFIX."adminlog");
+// get the total number of records NOTE filtered records prob'ly less than this
+$totalrows = $db->GetOne('SELECT COUNT(*) FROM '.CMS_DB_PREFIX.'adminlog');
 
-$urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
-$smarty->assign("urlext",$urlext);
+$access = check_permission($userid,'Clear Admin Log');
 
-$access = check_permission($userid, 'Clear Admin Log');
-
-if (isset($_GET['clear']) && $access) {
-    $query = "DELETE FROM ".CMS_DB_PREFIX."adminlog";
+if( $access && isset($_GET['clear']) ) {
+    $query = 'DELETE FROM '.CMS_DB_PREFIX.'adminlog';
     $db->Execute($query);
     unset($_SESSION['adminlog_page']);
-    echo $themeObject->ShowMessage(lang('adminlogcleared'));
+    unset($_REQUEST['page']);
+    $themeObject->ShowMessage(lang('adminlogcleared'));
     // put mention into the admin log
-    audit('', 'Admin log', 'Cleared');
+    audit('','Admin log','Cleared');
 }
 
+//TODO paging doesn't properly-handle filtering
 $page = ( isset($_SESSION['adminlog_page']) ) ? (int) $_SESSION['adminlog_page'] : 1;
-if (isset($_REQUEST['page'])) {
+if( isset($_REQUEST['page']) ) {
     $page = (int) $_REQUEST['page'];
     $_SESSION['adminlog_page'] = $page;
 }
 
-$limit = 25;
-$npages = ceil($totalrows / $limit);
+$limit = 25; //aka page-length & db-query length
+$npages = (int)ceil(($totalrows / $limit) - 0.001); //WRONG if filtered
 $page = max(1,min($npages,$page));
 $from = ($page-1) * $limit;
 $orig_filter = new stdClass();
@@ -70,13 +70,13 @@ if( isset($_POST['filterapply']) ) {
     $filter->action = trim(cleanValue($_POST['filteraction']));
     $filter->item_name = trim(cleanValue($_POST['filteritem']));
     $_SESSION['adminlog_filter'] = $filter;
-    $page = 1;
     unset($_SESSION['adminlog_page']);
+    $page = 1;
 } else if( isset($_POST['filterreset']) ) {
     $filter = $orig_filter;
     unset($_SESSION['adminlog_filter']);
-    $page = 1;
     unset($_SESSION['adminlog_page']);
+    $page = 1;
 }
 $filter_applied = ($filter != $orig_filter);
 
@@ -101,17 +101,17 @@ if( $where ) {
 $sql .= ' ORDER BY timestamp DESC';
 
 if( isset($_GET['download']) ) {
-    // we are downloading: honor the filters but skip paging
-    $result = $db->Execute($sql, $parms);
+    // when downloading, honor the filter but skip paging
+    $result = $db->Execute($sql,$parms);
     header('Content-Type: text/plain');
     header('Content-Disposition: attachment; filename="adminlog.txt"');
     if( $result && $result->RecordCount() > 0 ) {
-        $dateformat = trim(cms_userprefs::get_for_user(get_userid(),'date_format_string','%x %X'));
+        $dateformat = trim(cms_userprefs::get_for_user($userid,'date_format_string','%x %X'));
         if( !$dateformat ) $dateformat = '%x %X';
         while ($row = $result->FetchRow()) {
             echo locale_ftime($dateformat,$row['timestamp'])."|";
             echo $row['username'] . "|";
-            echo (((int)$row['item_id']==-1)?'':$row['item_id']) . "|";
+            echo (((int)$row['item_id'] == -1) ? '' : $row['item_id']) . "|";
             echo $row['item_name'] . "|";
             echo $row['action'];
             echo "\n";
@@ -125,10 +125,13 @@ if( isset($_GET['download']) ) {
 $result = $db->SelectLimit($sql,$limit,$from,$parms);
 
 // begin output
-include_once("header.php");
-$smarty->assign("header",$themeObject->ShowHeader('adminlog'));
-if ($result && $result->RecordCount() > 0) {
+require_once 'header.php';
+$themeObject->set_value('pagetitle','adminlog');
 
+$tpl = $smarty->createTemplate('admin_tpl:adminlog.tpl',null,null,$smarty,false);
+
+if ($result && $result->RecordCount() > 0) {
+    //TODO paging doesn't properly-handle filtering
     $pagelist = array();
     if( $npages < 20 ) {
         for( $i = 1; $i <= $npages; $i++ ) {
@@ -162,52 +165,53 @@ if ($result && $result->RecordCount() > 0) {
         sort($pagelist);
         $pagelist = array_combine($pagelist,$pagelist);
     }
-    $smarty->assign('page',$page);
-    $smarty->assign('pagelist',$pagelist);
-    $smarty->assign("downloadlink",$themeObject->DisplayImage('icons/system/attachment.gif', lang('download'),'','','systemicon'));
-    $smarty->assign("langdownload",lang("download"));
+    $tpl->assign('page',$page);
+    $tpl->assign('pagelist',$pagelist);
+    $tpl->assign('downloadlink',$themeObject->DisplayImage('icons/system/attachment.gif',lang('download'),'','','systemicon'));
+    $tpl->assign('langdownload',lang('download'));
+    $tpl->assign('languser',lang('user'));
+    $tpl->assign('langitemid',lang('itemid'));
+    $tpl->assign('langitemname',lang('itemname'));
+    $tpl->assign('langaction',lang('action'));
+    $tpl->assign('langdate',lang('date'));
 
-    $smarty->assign("languser",lang("user"));
-    $smarty->assign("langitemid",lang("itemid"));
-    $smarty->assign("langitemname",lang("itemname"));
-    $smarty->assign("langaction",lang("action"));
-    $smarty->assign("langdate",lang("date"));
-
-    $loglines=array();
+    $loglines = array();
     while ($row = $result->FetchRow()) {
-        $one=array();
+        $one = array();
         $one['ip_addr'] = $row['ip_addr'];
-        $one["username"] = $row["username"];
-        $one["itemid"] = ($row["item_id"]!=-1?$row["item_id"]:"&nbsp;");
-        $one["itemname"] = cleanValue($row["item_name"]);
-        $one["action"] = cleanValue($row["action"]);
-        $one["date"] = $row['timestamp'];
+        $one['username'] = $row['username'];
+        $one['itemid'] = ($row['item_id'] != -1) ? $row['item_id']:'&nbsp;';
+        $one['itemname'] = cleanValue($row['item_name']);
+        $one['action'] = cleanValue($row['action']);
+        $one['date'] = $row['timestamp'];
 
-        $loglines[]=$one;
+        $loglines[] = $one;
     }
-    $smarty->assign("loglines",$loglines);
-    $smarty->assign("logempty",false);
+    $tpl->assign('loglines',$loglines);
+    $tpl->assign('logempty',false);
 }
 else {
-    $smarty->assign("langlogempty",lang('adminlogempty'));
-    $smarty->assign("logempty",true);
+    $tpl->assign('langlogempty',lang('adminlogempty'));
+    $tpl->assign('logempty',true);
 }
 
-$smarty->assign("clearicon","");
-if ($access && $result && $result->RecordCount() > 0) {
-    $smarty->assign("clearicon",$themeObject->DisplayImage('icons/system/delete.gif', lang('delete'),'','','systemicon'));
-    $smarty->assign("langclear",lang('clearadminlog'));
+if( $access && $result && $result->RecordCount() > 0 ) {
+    $tpl->assign('clearicon',$themeObject->DisplayImage('icons/system/delete.gif',lang('delete'),'','','systemicon'));
+    $tpl->assign('langclear',lang('clear'));
 }
+else {
+    $tpl->assign('clearicon','');
+}
+if( $result ) $result->Close();
 
-$smarty->assign("sysmain_confirmclearlog",lang('sysmain_confirmclearlog'));
-$smarty->assign("langfilteruser",lang("filteruser"));
-$smarty->assign("langfilteraction",lang("filteraction"));
-$smarty->assign("langfilterapply",lang("filterapply"));
-$smarty->assign("langfilterreset",lang("filterreset"));
-$smarty->assign('filter',$filter);
-$smarty->assign('filter_applied',$filter_applied);
-$smarty->assign('SECURE_PARAM_NAME',CMS_SECURE_PARAM_NAME);
-$smarty->assign('CMS_USER_KEY',$_SESSION[CMS_USER_KEY]);
-$smarty->display('adminlog.tpl');
+// see also $smarty-assigned var $secureparam
+$tpl->assign('sysmain_confirmclearlog',lang('sysmain_confirmclearlog'))
+ ->assign('langfilteruser',lang('filteruser'))
+ ->assign('langfilteraction',lang('filteraction'))
+ ->assign('langfilterapply',lang('filterapply'))
+ ->assign('langfilterreset',lang('filterreset'))
+ ->assign('filter',$filter)
+ ->assign('filter_applied',$filter_applied);
+$tpl->display();
 
-include_once("footer.php");
+require_once 'footer.php';

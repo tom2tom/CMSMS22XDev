@@ -36,7 +36,7 @@ if (!check_permission($userid, 'Manage Users')) {
 $urlext       = '?' . CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY];
 $gCms         = cmsms();
 $db           = $gCms->GetDb();
-$templateuser = cms_siteprefs::get('template_userid');
+//$templateuser = cms_siteprefs::get('template_userid');
 $page         = 1;
 $limit        = 100;
 $message      = '';
@@ -227,34 +227,31 @@ else if (isset($_GET["toggleactive"])) {
  * Display view
  ---------------------*/
 
-include_once ('header.php');
+require_once 'header.php';
 
-if (!empty($error)) echo $themeObject->ShowErrors('<ul class="error">' . $error . '</ul>');
+if (!empty($error)) $themeObject->ShowErrors('<ul class="error">' . $error . '</ul>');
 if (isset($_GET["message"])) $message = preg_replace('/\</', '', $_GET['message']);
-if (!empty($message)) echo '<div class="pagemcontainer"><p class="pagemessage">' . $message . '</p></div>';
+if (!empty($message)) echo '<div class="pagemcontainer"><p class="pagemessage">' . $message . '</p></div>'; // OR $themeObject->ShowMessage()?
 
-$out      = array();
+$out      = [];
 $offset   = ((int)$page - 1) * $limit;
 $userlist = $userops->LoadUsers($limit, $offset);
-$is_admin = $userops->UserInGroup($userid,1); // OR bullet-proof ->IsSuperuser($userid) ?
+$is_admin = $userops->UserInGroup($userid, 1); // OR bullet-proof ->IsSuperuser($userid) ?
+$usage    = []; // extra properties
 
-foreach ($userlist as $one) {
-    $out[$one->id] = $one->username;
+foreach ($userlist as &$one) {
+    $uid = $one->id;
+    $out[$uid] = $one->username;
+    $usage[$uid]['access_to_user'] = (!$is_admin && $userops->UserInGroup($uid, 1)) ? 0 : 1;
 }
+unset($one);
 
-foreach ($userlist as &$oneuser) {
-    $oneuser->access_to_user = 1; // lazily-used class property only used in template as proxy for editable
+$tpl = $smarty->createTemplate('admin_tpl:listusers.tpl', null, null, $smarty, false);
+$tpl->assign('is_admin', $is_admin)
+ ->assign('users', $userlist)
+ ->assign('my_userid', $userid)
+ ->assign('userlist', $out)
+ ->assign('usage', $usage);
+$tpl->display();
 
-    if ($userops->UserInGroup($oneuser->id, 1) && !$userops->UserInGroup($userid, 1)) $oneuser->access_to_user = 0;
-    $oneuser->pagecount = $userops->CountPageOwnershipById($oneuser->id);
-}
-unset($oneuser);
-$smarty->assign('is_admin',$is_admin);
-$smarty->assign('users', $userlist);
-$smarty->assign('my_userid', get_userid());
-$smarty->assign('urlext', $urlext);
-$smarty->assign('userlist', $out);
-
-$smarty->display('listusers.tpl');
-
-include_once ('footer.php');
+require_once 'footer.php';

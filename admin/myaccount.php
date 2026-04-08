@@ -109,13 +109,13 @@ if (isset($_POST['submit_account']) && check_permission($userid,'Manage My Accou
 
   // Do validations
   $validinfo = true;
-  if ($username == "") {
+  if ($username == '') {
     $validinfo = false;
-    $error = lang('nofieldgiven', array(lang('username')));
+    $error = lang('nofieldgiven', lang('username'));
   }
   elseif ( $username != trim($_POST["user"])) {
     $validinfo = false;
-    $error = lang('illegalcharacters', array(lang('username')));
+    $error = lang('illegalcharacters', lang('username'));
   }
   elseif ($password && ($password != $passwordagain)) {
     $validinfo = false;
@@ -153,9 +153,11 @@ if (isset($_POST['submit_account']) && check_permission($userid,'Manage My Accou
  */
 if (isset($_POST['submit_prefs']) && check_permission($userid,'Manage My Settings')) {
   // Get values from request and drive em to variables
-  $wysiwyg = cleanValue($_POST['wysiwyg']);
+  $tmp = $_POST['wysiwyg'];
+  $wysiwyg = ($tmp) ? cleanValue($tmp) : '';
   $ce_navdisplay = cleanValue($_POST['ce_navdisplay']);
-  $syntaxhighlighter = cleanValue($_POST['syntaxhighlighter']);
+  $tmp = $_POST['syntaxhighlighter'];
+  $syntaxhighlighter =  ($tmp) ? cleanValue($tmp) : '';
   $default_cms_language = '';
   if (isset($_POST['default_cms_language'])) $default_cms_language = cleanValue($_POST['default_cms_language']);
   $old_default_cms_lang = '';
@@ -203,16 +205,16 @@ if ($message) {
   $themeObject->ShowMessage($message);
 }
 
-$tpl = $smarty->createTemplate('myaccount.tpl', null, null, $smarty, false);
-
-$tpl->assign('SECURE_PARAM_NAME', CMS_SECURE_PARAM_NAME); // defined in include.php?
-$tpl->assign('CMS_USER_KEY', $_SESSION[CMS_USER_KEY]); // set in include.php?
-$tpl->assign('tab', $tab);
+$tpl = $smarty->createTemplate('admin_tpl:myaccount.tpl', null, null, $smarty, false);
+// see also $smarty-assigned var $secureparam
+$tpl->assign('securename', CMS_SECURE_PARAM_NAME) // defined in include.php?
+ ->assign('secureval', $_SESSION[CMS_USER_KEY]) // set in include.php?
+ ->assign('tab', $tab);
 
 $contentops = cmsms()->GetContentOperations();
 // html editor
 $tmp = module_meta::get_instance()->module_list_by_capability(CmsCoreCapabilities::WYSIWYG_MODULE);
-$tmp2 = array(-1 => lang('none'));
+$tmp2 = array('' => lang('none'));
 for ($i = 0; $i < count($tmp); $i++) {
   $tmp2[$tmp[$i]] = $tmp[$i];
 }
@@ -221,7 +223,7 @@ $tpl->assign('wysiwyg_opts', $tmp2);
 
 // syntax highlight editor
 $tmp = module_meta::get_instance()->module_list_by_capability(CmsCoreCapabilities::SYNTAX_MODULE);
-$tmp2 = array(-1 => lang('none'));
+$tmp2 = array('' => lang('none'));
 for ($i = 0; $i < count($tmp); $i++) {
   $tmp2[$tmp[$i]] = $tmp[$i];
 }
@@ -231,14 +233,8 @@ $tpl->assign('syntax_opts', $tmp2);
 // admin themes
 $allthemes = (array)CmsAdminThemeBase::GetAvailableThemes();
 
-// modules
-$allmodules = ModuleOperations::get_instance()->GetInstalledModules();
-$modules = array();
-foreach ((array)$allmodules as $onemodule) {
-  $modules[$onemodule] = $onemodule;
-}
+$pagesel = $contentops->CreateHierarchyDropdown(0, $default_parent, 'parent_id', false, true, false, false, false, 'selparent');
 
-$tpl->assign('module_opts', $modules);
 $tpl->assign('wysiwyg', $wysiwyg);
 $tpl->assign('ce_navdisplay', $ce_navdisplay);
 $tpl->assign('syntaxhighlighter', $syntaxhighlighter);
@@ -254,7 +250,7 @@ $tpl->assign('hide_help_links', $hide_help_links);
 $tpl->assign('indent', $indent);
 $tpl->assign('paging', $paging);
 $tpl->assign('date_format_string', $date_format_string);
-$tpl->assign('default_parent', $contentops->CreateHierarchyDropdown(0, $default_parent, 'parent_id', false, true));
+$tpl->assign('default_parent', $pagesel);
 $tpl->assign('homepage', $themeObject->GetAdminPageDropdown('homepage', $homepage, 'homepage'));
 $tpl->assign('pagelimit_opts', [10 => 10, 20 => 20, 50 => 50, 100 => 100]);
 $tpl->assign('backurl', $themeObject->backUrl());
@@ -262,9 +258,6 @@ $tpl->assign('formurl', $thisurl);
 $tpl->assign('userobj', $userobj);
 $tpl->assign('manageaccount', check_permission($userid,'Manage My Account'));
 $tpl->assign('managesettings', check_permission($userid,'Manage My Settings'));
-
 $tpl->display();
 
 require_once 'footer.php';
-
-?>

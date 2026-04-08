@@ -68,18 +68,17 @@ if (isset($_POST['addgroup'])) {
 }
 
 require_once 'header.php';
+$themeObject->set_value('pagetitle', 'addgroup');
 
-$smarty = Smarty_CMS::get_instance(); //also set in header.php
-$smarty->assign('header',$themeObject->ShowHeader('addgroup'));
-$smarty->assign('hiddenname',CMS_SECURE_PARAM_NAME);
-$smarty->assign('hiddenval',$_SESSION[CMS_USER_KEY]);
-$smarty->assign('access',$access);
-$smarty->assign('active',(bool)$active);
-$smarty->assign('error',$error);
-$smarty->assign('group',$group);
-$smarty->assign('description',$description);
-$smarty->display('addgroup.tpl');
+$tpl = $smarty->createTemplate('admin_tpl:addgroup.tpl', null, null, $smarty, false);
+// see also $smarty-assigned var $secureparam
+$tpl->assign('securename', CMS_SECURE_PARAM_NAME)
+ ->assign('secureval', $_SESSION[CMS_USER_KEY])
+ ->assign('access', $access)
+ ->assign('active', (bool)$active)
+ ->assign('error', $error)
+ ->assign('group', $group)
+ ->assign('description', $description);
+$tpl->display();
 
 require_once 'footer.php';
-
-?>
