@@ -1,6 +1,6 @@
 <?php
 #CMS Made Simple admin console script
-#(c) 2004-2023 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#(c) 2004-2025 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -12,8 +12,8 @@
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 #You should have received a copy of the GNU General Public License
-#along with this program; if not, write to the Free Software
-#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#along with this program. If not, read the license online at
+#https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #
 #$Id$
 
@@ -53,12 +53,12 @@ function send_recovery_email(User $user)
     $obj = new cms_mailer();
     $obj->IsHTML(TRUE);
     $obj->AddAddress($user->email, html_entity_decode($user->firstname . ' ' . $user->lastname));
-    $obj->SetSubject(lang('lostpwemailsubject',html_entity_decode(get_site_preference('sitename','CMSMS Site'))));
+    $obj->SetSubject(lang('lostpwemailsubject',html_entity_decode(cms_siteprefs::get('sitename','CMSMS Site'))));
 
     $code = md5(md5(__FILE__ . '--' . $user->username . md5($user->password.time())));
     cms_userprefs::set_for_user( $user->id, 'pwreset', $code );
     $url = $config['admin_url'] . '/login.php?recoverme=' . $code;
-    $body = lang('lostpwemail',html_entity_decode(get_site_preference('sitename','CMSMS Site')), $user->username, $url, $url);
+    $body = lang('lostpwemail',html_entity_decode(cms_siteprefs::get('sitename','CMSMS Site')), $user->username, $url, $url);
     $obj->SetBody($body);
 
     if( $obj->Send() ) {
@@ -155,7 +155,7 @@ else if (isset($_REQUEST['forgotpwchangeform']) && $_REQUEST['forgotpwchangeform
             }
         }
         else {
-            $error = lang('nofieldgiven', array(lang('password')));
+            $error = lang('nofieldgiven', lang('password'));
             $changepwhash = $_REQUEST['changepwhash'];
         }
     }
@@ -194,14 +194,19 @@ else if( isset($_POST['loginsubmit']) ) {
     try {
         if( !$username || !$password ) throw new LogicException(lang('usernameincorrect'));
 
+        // send a pre-login event (pre-2.2.7 used key 'user' instead of 'username')
+        HookManager::do_hook('Core::LoginPre', [ 'username'=>$username, 'password'=>$password ]);
+        // if a LoginPre handler doesn't return here, it must locally perform all the following
+
         // load user by name
         $oneuser = $userops->LoadUserByUsername($username, $password, TRUE, TRUE);
         if( !$oneuser ) throw new CmsLoginError(lang('usernameincorrect'));
 
-        // send a pre-login event
-        HookManager::do_hook('Core::LoginPre', [ 'user'=>$oneuser ]);
-
         $login_ops->save_authentication($oneuser);
+
+        // send a post-pw-check event (in case MFA is deployed)
+        HookManager::do_hook('Core::LoginPassed', [ 'user'=>$oneuser ]);
+        // if a LoginPassed handler doesn't return here, it must locally perform all the following
 
         // put mention into the admin log
         audit($oneuser->id, 'Admin user', 'Logged in');
@@ -221,13 +226,13 @@ else if( isset($_POST['loginsubmit']) ) {
             redirect($url);
         }
         else {
-            // find the users homepage, if any, and redirect there.
+            // find the user's homepage, if any, and redirect there.
             $homepage = cms_userprefs::get_for_user($oneuser->id,'homepage');
             if( !$homepage ) {
                 $homepage = $config['admin_url'];
             }
-/*          else if( 0 ) {
-                should be rel. to $config['admin_url']
+/*          elseif( 0 ) {
+                url should be rel. to $config['admin_url']
                 //TODO somewhere, efficiently check page ok (FR#12400)
                 //e.g. after each system upgrade and after each module-uninstall or -deactivate
                 $homepage = $config['admin_url'];
@@ -235,8 +240,6 @@ else if( isset($_POST['loginsubmit']) ) {
 */
             $homepage = CmsAdminUtils::get_session_url($homepage); // involves deprecated conversion of 'placeholders'. instead use verbatim
             $homepage = html_entity_decode($homepage);
-
-            // and redirect.
             redirect($homepage);
         }
     }
