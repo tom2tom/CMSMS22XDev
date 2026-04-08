@@ -1,8 +1,15 @@
 <?php
+/*
+CMSMS FilePicker module class: PathAssistant
+(C) 2016 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+The license at the top of file FilePicker.module.php applies to this file.
+*/
+// arguably this class is sensibly a FileManager thing ...
 namespace FilePicker;
 
 use cms_config;
 use LogicException;
+use function is_absolute_path;
 use function startswith;
 
 class PathAssistant
@@ -115,8 +122,9 @@ class PathAssistant
     //return filepath string
     public function to_absolute( $relative )
     {
-        //TODO handle $relative already an absolute path
-        //if $relative && preg_match('~^ *(?:\/|\\\\|\w:\\\\|\w:\/)~',$relative) throw? return $relative ?
+        if( $relative && is_absolute_path($relative) ) {
+            return $relative; // throw ?
+        }
         $relative = ltrim((string)$relative,' \\/');
         if( $relative ) {
             $relative = strtr($relative,'\\/',DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR); // just in case
@@ -141,13 +149,13 @@ class PathAssistant
     //$relative = filepath [sub-]string (with leading separator or not) or empty
     public function is_valid_relative_path( $relative )
     {
-        $relative  = trim((string)$relative);
-        if( $relative && preg_match('~^ *(?:\/|\\\\|\w:\\\\|\w:\/)~',$relative) ) {
-            $absolute = $relative;
+        $relative = trim((string)$relative);
+        if( $relative && is_absolute_path($relative) ) {
+            $absolute = $relative; // return FALSE ?
         }
         else {
-            $absolute = $this->to_absolute( $relative ); //NOTE forces TRUE return always
+            $absolute = $this->to_absolute($relative); //NOTE forces TRUE return always
         }
-        return $this->is_relative( $absolute );
+        return $this->is_relative($absolute);
     }
-} // end of class
+} // class
