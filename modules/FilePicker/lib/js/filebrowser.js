@@ -11,7 +11,7 @@ function CMSFileBrowser(_settings) {
  cwd
  inst
  lang.confirm_delete
- lang.error_problem_upload
+ lang.err_problem_upload
  onselect
  prefix
  sig
@@ -148,7 +148,7 @@ function CMSFileBrowser(_settings) {
           res = data.result[i];
           if(res.error != undefined) {
             n_errors++;
-            var msg = settings.lang.error_problem_upload + ' ' + res.name;
+            var msg = settings.lang.err_problem_upload + ' ' + res.name;
             if(res.errormsg != undefined) msg += '.<br>' + res.errormsg;
             cms_alert(msg);
           }
