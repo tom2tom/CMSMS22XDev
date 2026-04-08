@@ -19,7 +19,7 @@
 
 $CMS_ADMIN_PAGE = 1;
 
-require_once("../lib/include.php");
+require_once '../lib/include.php';
 
 check_login();
 
@@ -29,7 +29,7 @@ if( isset($_POST['close']) ) {
 }
 
 $userid = get_userid();
-$access = check_permission($userid, "Modify Events");
+$access = check_permission($userid, 'Modify Events');
 if( !$access ) {
 	exit(lang('no_permission')); //TODO throw if can be caught
 }
@@ -39,38 +39,38 @@ $db = $gCms->GetDb();
 
 require_once 'header.php';
 
-//TODO into template
+//TODO into template or themeobject->ShowError()
 function display_error($text)
 {
 	echo "<div class=\"pageerrorcontainer\"><p class=\"pageerror\">$text</p></div>\n";
 }
 
 $action = '';
-$module = '';
+$originator = '';
 $event = '';
 $handler = '';
 
 if( isset($_POST['add']) ) {
 	// we're adding some funky event handler
-	if( !empty($_POST['module']) ) $module = trim(cleanValue($_POST['module']));
+	if( !empty($_POST['originator']) ) $originator = trim(cleanValue($_POST['originator']));
 	if( !empty($_POST['event']) ) $event = trim(cleanValue($_POST['event']));
 	if( !empty($_POST['handler']) ) $handler = trim(cleanValue($_POST['handler']));
-	if( $module && $event && $handler ) {
+	if( $originator && $event && $handler ) {
 		if( startswith($handler, 'm:') ) {
 			$handler = substr($handler, 2);
-			Events::AddEventHandler($module, $event, false, $handler);
+			Events::AddEventTypedHandler($originator, $event, $handler, Events::HANDLERMOD);
 		}
 		else {
-			Events::AddEventHandler($module, $event, $handler);
+			Events::AddEventTypedHandler($originator, $event, $handler, Events::HANDLERUDT);
 		}
 	}
 }
 else {
 	// we're processing an up/down or delete
 	if( !empty($_GET['action']) ) $action = trim(cleanValue($_GET['action']));
-	if( !empty($_GET['module']) ) $module = trim(cleanValue($_GET['module']));
+	if( !empty($_GET['originator']) ) $originator = trim(cleanValue($_GET['originator']));
 	if( !empty($_GET['event']) ) $event = trim(cleanValue($_GET['event']));
-	if( $module == '' || $event == '' || $action == '' ) {
+	if( $originator == '' || $event == '' || $action == '' ) {
 		display_error(lang('missingparams'));
 		return;
 	}
@@ -118,33 +118,34 @@ $usertagops = $gCms->GetUserTagOperations();
 
 $description = '';
 $modulename = '';
-if ($module == 'Core') {
+if ($originator == 'Core') {
 	$description = Events::GetEventDescription($event);
 	$modulename = lang('core');
 }
 else {
-	$objinstance = cms_utils::get_module($module);
+	$objinstance = cms_utils::get_module($originator);
 	$description = $objinstance->GetEventDescription($event);
 	$modulename = $objinstance->GetFriendlyName();
 }
 
-// and now get the list of handlers for this event
-$handlers = Events::ListEventHandlers($module, $event);
+// get the handlers of this event, formatted for public presentation
+$handlers = Events::ListEventHandlers($originator, $event, true);
 
-// and the list of all available handlers
 $allhandlers = array();
-// we get the list of user tags, and add them to the list
+// get all UDTs
 $usertags = $usertagops->ListUserTags();
 foreach( $usertags as $value ) {
 	$allhandlers[$value] = $value;
 }
 
-// and the list of modules, and add them
+// get all available module-handlers
+//$checkmodules = module_meta::get_instance()->module_list_by_capability(CmsCoreCapabilities::EVENTS);
 $allmodules = ModuleOperations::get_instance()->GetInstalledModules();
 foreach( $allmodules as $key ) {
 	if( $key == $modulename ) continue;
 	$modobj = ModuleOperations::get_instance()->get_module_instance($key);
 	if( $modobj && $modobj->HandlesEvents() ) {
+//      if( !in_array($key, $checkmodules) ) { audit('', 'Event handler', "$key module needs capabilities-update"); }
 		$allhandlers[$key] = 'm:'.$key;
 	}
 }
@@ -152,22 +153,22 @@ foreach( $allmodules as $key ) {
 $downImg = $themeObject->DisplayImage('icons/system/arrow-d.gif', lang('down'),'','','systemicon');
 $upImg = $themeObject->DisplayImage('icons/system/arrow-u.gif', lang('up'),'','','systemicon');
 $deleteImg = $themeObject->DisplayImage('icons/system/delete.gif', lang('delete'),'','','systemicon');
+$themeObject->set_value('pagetitle', 'editeventhandler');
 
-$smarty = Smarty_CMS::get_instance();
-$smarty->assign('header',$themeObject->ShowHeader('editeventhandler'));
-$smarty->assign('hiddenname',CMS_SECURE_PARAM_NAME);
-$smarty->assign('hiddenval',$_SESSION[CMS_USER_KEY]);
-$smarty->assign('urlext',$urlext);
-$smarty->assign('selfurl','editevent.php');
-$smarty->assign('description',$description);
-$smarty->assign('event',$event);
-$smarty->assign('allhandlers',$allhandlers);
-$smarty->assign('handlers',$handlers);
-$smarty->assign('icondel',$deleteImg);
-$smarty->assign('icondown',$downImg);
-$smarty->assign('iconup',$upImg);
-$smarty->assign('module',$module);
-$smarty->assign('modulename',$modulename);
-$smarty->display('editevent.tpl');
+$tpl = $smarty->createTemplate('admin_tpl:editevent.tpl', null, null, $smarty, false);
+// see also $smarty-assigned var $secureparam
+$tpl->assign('securename', CMS_SECURE_PARAM_NAME)
+ ->assign('secureval', $_SESSION[CMS_USER_KEY])
+ ->assign('selfurl', 'editevent.php')
+ ->assign('description', $description)
+ ->assign('event', $event)
+ ->assign('allhandlers', $allhandlers)
+ ->assign('handlers', $handlers)
+ ->assign('icondel', $deleteImg)
+ ->assign('icondown', $downImg)
+ ->assign('iconup', $upImg)
+ ->assign('originator', $originator)
+ ->assign('modulename', $modulename);
+$tpl->display();
 
 require_once 'footer.php';
