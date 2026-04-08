@@ -62,6 +62,7 @@ $lang['detail_page'] = 'Detail Page';
 $lang['detail_template'] = 'Detail Template';
 $lang['displaytemplate'] = 'Display Template';
 $lang['down'] = 'Down';
+$lang['draftalert_description'] = 'Generates a notice in the Admin Console about news item(s) waiting for review and approval.';
 $lang['draft'] = 'Draft';
 $lang['dropdown'] = 'Dropdown';
 
@@ -189,7 +190,7 @@ $lang['help'] = <<<EOF
 <h4>Numerous display methods</h4>
 <p>The parameters supported by the news module, and support for numerous templates of each time mean that your options for displaying news articles are limitless.</p>
 <h4>Custom Fields</h4>
-<p>The News module supports tailored custom fields for inclusion in articles. Supported field-types are
+<p>The News module supports tailored custom fields for inclusion in articles. Supported field-types are</p>
 <ul>
 <li>checkbox</li>
 <li>dropdown - a single-choice &lt;select/&gt; element</li>
@@ -198,7 +199,6 @@ $lang['help'] = <<<EOF
 <li>textarea a &lt;textarea/&gt; element</li>
 <li>textbox - an input-text element</li>
 </ul>
-</p>
 <h4>Categories</h4>
 <p>News supplies a hierarchical category mechanism for organizing your articles.  A news article can only be in one place in the hierarchy.</p>
 <h4>Expiry and Status</h4>
