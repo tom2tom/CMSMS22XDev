@@ -51,6 +51,7 @@ $data['filepicker_url'] = $pickurl;
 $data['lang_alert'] = lang('alert');
 $data['lang_cancel'] = lang('cancel');
 $data['lang_choose'] = lang('choose');
+$data['lang_close'] = lang('close');
 $data['lang_confirm'] = lang('confirm');
 $data['lang_disabled'] = lang('disabled');
 $data['lang_error'] = lang('error');
