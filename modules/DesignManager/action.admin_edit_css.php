@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # Module DesignManager action
-# (c) 2012 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -148,6 +148,12 @@ try {
         }
         $tpl->assign('design_list', $tmp);
     }
+
+    CMSMS\HookManager::add_hook('admin_add_headtext', function() {
+        $root_url = CMS_ROOT_URL;
+        return "<script src=\"$root_url/lib/jquery/js/jquery.cmsms_dirtyform.js\" defer></script>\n".
+         "<script src=\"$root_url/lib/jquery/js/jquery.cmsms_lock.js\" defer></script>\n";
+    });
 
     if( $ssid > 0 ) {
         CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('edit_stylesheet').': '.$css_ob->get_name()." ($ssid)");

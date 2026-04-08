@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # Module DesignManager action
-# (c) 2012 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -170,6 +170,14 @@ try {
         $this->ShowErrors($message);
     }
 
+    CMSMS\HookManager::add_hook('admin_add_headtext', function() {
+        $root_url = CMS_ROOT_URL;
+        $base_url = $this->GetModuleURLPath();
+        return "<script src=\"$root_url/lib/jquery/js/jquery.cmsms_dirtyform.js\" defer></script>\n" .
+         "<script src=\"$root_url/lib/jquery/js/jquery.cmsms_lock.js\" defer></script>\n" .
+         "<link href=\"$base_url/lib/help_templates.css\" rel=\"stylesheet\">\n";
+    });
+
     //
     // BUILD THE DISPLAY
     //
@@ -225,7 +233,6 @@ try {
     $tpl->assign('has_themes_right', $this->CheckPermission('Manage Designs'));
 
     if ($this->CheckPermission('Modify Templates') || $tpl_ob->get_owner_id() == $userid) {
-
         $userops = cmsms()->GetUserOperations();
         $allusers = $userops->LoadUsers();
         $tmp = [];
@@ -248,7 +255,6 @@ try {
         if ($tmp) $tpl->assign('addt_editor_list', $tmp);
     }
     $tpl->assign('userid', $userid);
-    $tpl->assign('base_url', $this->GetModuleURLPath());
     $tpl->display();
 } catch (CmsException $e) {
     $this->SetError($e->GetMessage());
