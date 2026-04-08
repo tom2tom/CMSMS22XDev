@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # Module: DesignManager - A CMSMS addon module to provide template management.
-# (c) 2014 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,32 +21,53 @@
 if( !isset($gCms) ) exit;
 if( !$this->VisibleToAdminUser() ) return;
 
-$filter_tpl_rec = ['tpl'=>'','limit'=>100,'offset'=>0,'sortby'=>'name','sortorder'=>'asc'];
-$filter_css_rec = ['limit'=>100,'offset'=>0,'sortby'=>'name','sortorder'=>'asc','design'=>''];
+$modname = $this->GetName();
+//default filter-properties
+//NOTE 'limit' sets db-query no. of selected items, indirectly-related to displayed page-length
+$filter_tpl_rec = ['tpl'=>'','limit'=>10,'offset'=>0,'sortby'=>'name','sortorder'=>'asc'];
+// reconcile with page-length choices set in $getlengths()
+$tnum = $db->GetOne('SELECT COUNT(*) FROM '.CMS_DB_PREFIX.'layout_templates');
+if( $tnum > 50 ) { $filter_tpl_rec['limit'] = 100; }
+elseif( $tnum > 25 ) { $filter_tpl_rec['limit'] = 50; }
+elseif( $tnum > 10 ) { $filter_tpl_rec['limit'] = 25; }
+// might be overridden below by cms_userprefs::get(); // OR $_SESSION only?
+
+$filter_css_rec = ['design'=>'','limit'=>10,'offset'=>0,'sortby'=>'name','sortorder'=>'asc'];
+$snum = $db->GetOne('SELECT COUNT(*) FROM '.CMS_DB_PREFIX.'layout_stylesheets');
+if( $snum > 50 ) { $filter_css_rec['limit'] = 100; }
+elseif( $snum > 25 ) { $filter_css_rec['limit'] = 50; }
+elseif( $snum > 10 ) { $filter_css_rec['limit'] = 25; }
+// might be overridden below by cms_userprefs::get(); // OR $_SESSION only?
+
 if( isset($params['submit_filter_tpl']) ) {
-    if( $params['submit_filter_tpl'] == 1 ) {
+    if( $params['submit_filter_tpl'] == 1 ) { // not resetting
         $filter_tpl_rec['tpl'] = $params['filter_tpl_options'];
+        if( isset($params['filter_tpl_limit']) ) {
+            $filter_tpl_rec['limit'] = max(10,min($tnum,(int)$params['filter_tpl_limit']));
+        }
         $filter_tpl_rec['sortby'] = trim($params['filter_tpl_sortby']);
         $filter_tpl_rec['sortorder'] = trim($params['filter_tpl_sortorder']);
-        $filter_tpl_rec['limit'] = max(2,min(100,(int)$params['filter_tpl_limit']));
     }
-    unset($_SESSION[$this->GetName().'tpl_page']);
-    cms_userprefs::set($this->GetName().'template_filter',serialize($filter_tpl_rec));
+    cms_userprefs::set($modname.'_tpl_filter',serialize($filter_tpl_rec)); // OR $_SESSION-property only?
+    unset($_SESSION[$modname.'_tpl_page']);
+    $this->SetCurrentTab('templates');
 }
 elseif( isset($params['submit_filter_css']) ) {
-    if( $params['submit_filter_css'] == 1 ) {
+    if( $params['submit_filter_css'] == 1 ) { // not resetting
         $filter_css_rec['design'] = trim($params['filter_css_design']);
+        if( isset($params['filter_css_limit']) ) {
+            $filter_css_rec['limit'] = max(10,min($snum,(int)$params['filter_css_limit']));
+        }
         $filter_css_rec['sortby'] = trim($params['filter_css_sortby']);
         $filter_css_rec['sortorder'] = trim($params['filter_css_sortorder']);
-        $filter_css_rec['limit'] = max(2,min(100,(int)$params['filter_css_limit']));
     }
+    cms_userprefs::set($modname.'_css_filter',serialize($filter_css_rec)); // OR $_SESSION only?
+    unset($_SESSION[$modname.'_css_page']);
     $this->SetCurrentTab('stylesheets');
-    unset($_SESSION[$this->GetName().'tpl_page']);
-    cms_userprefs::set($this->GetName().'css_filter',serialize($filter_css_rec));
 }
 elseif( isset($params['submit_create']) ) {
     $tmp = $params['import_type'];
-    if( startswith($tmp, 't:') ) {
+    if( startswith($tmp,'t:') ) {
         $tmp = substr($tmp, 2); // only the type-id is useful
     }
     $this->Redirect($id,'admin_edit_template',$returnid,['import_type'=>$tmp]);
@@ -77,10 +98,10 @@ elseif( isset($params['design_setdflt']) && $this->CheckPermission('Manage Desig
     $new_dflt->save();
 
     $this->SetCurrentTab('designs');
-    echo $this->ShowMessage($this->Lang('msg_dflt_design_saved'));
+    $this->ShowMessage($this->Lang('msg_dflt_design_saved'));
 }
 
-$tmp = cms_userprefs::get($this->GetName().'template_filter');
+$tmp = cms_userprefs::get($modname.'_tpl_filter'); // OR $_SESSION only?
 if( $tmp ) {
     $tmp = unserialize($tmp);
     if( $tmp ) { $filter_tpl_rec = $tmp; }
@@ -89,43 +110,27 @@ if( $tmp ) {
 if( isset($params['tpl_page']) ) {
     $this->SetCurrentTab('templates');
     $page = max(1,(int)$params['tpl_page']);
-    $_SESSION[$this->GetName().'tpl_page'] = $page;
+    $_SESSION[$modname.'_tpl_page'] = $page;
     $filter_tpl_rec['offset'] = ($page - 1) * $filter_tpl_rec['limit'];
 }
-elseif( isset($_SESSION[$this->GetName().'tpl_page']) ) {
-    $page = max(1,(int)$_SESSION[$this->GetName().'tpl_page']);
+elseif( isset($_SESSION[$modname.'_tpl_page']) ) {
+    $page = max(1,(int)$_SESSION[$modname.'_tpl_page']);
     $filter_tpl_rec['offset'] = ($page - 1) * $filter_tpl_rec['limit'];
 }
 
-$efilter = $filter_tpl_rec;
-if( isset($efilter['tpl']) && $efilter['tpl'] != '' ) {
+$efilter = $filter_tpl_rec; // adjust member-key
+if( !empty($efilter['tpl']) ) {
     $efilter[] = $efilter['tpl'];
     unset($efilter['tpl']);
 }
-$modname = $this->GetName();
-$tpl = $smarty->createTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,$modname,$smarty);
-/*
-$templates = [];
-try {
-    $tpl_query = new CmsLayoutTemplateQuery($efilter);
-    $templates = $tpl_query->GetMatches();
-}
-catch( Exception $e ) {
-    // nothing here
-}
-$modname = $this->GetName();
+
+CMSMS\HookManager::add_hook('admin_add_headtext', function() {
+    $root_url = CMS_ROOT_URL;
+    return "<script src=\"$root_url/lib/jquery/js/jquery.cmsms_autorefresh.js\" defer></script>\n";
+});
+
 $tpl = $smarty->createTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,$modname,$smarty);
 
-if( $templates ) {
-    $tpl->assign('templates',$templates);
-    $tpl_nav = [];
-    $tpl_nav['pagelimit'] = $tpl_query->limit;
-    $tpl_nav['numpages'] = $tpl_query->numpages;
-    $tpl_nav['numrows'] = $tpl_query->totalrows;
-    $tpl_nav['curpage'] = (int)($tpl_query->offset / $tpl_query->limit) + 1;
-    $tpl->assign('tpl_nav',$tpl_nav);
-}
-*/
 // build a list of types and categories, and later, designs.
 $opts = ['' => $this->Lang('prompt_none')];
 $originators = [];
@@ -209,33 +214,42 @@ if( $this->CheckPermission('Manage Designs') ) {
 }
 
 if( $this->CheckPermission('Manage Stylesheets') ) {
-    $tmp = cms_userprefs::get($this->GetName().'css_filter');
+    $tmp = cms_userprefs::get($modname.'_css_filter'); // OR $_SESSION only?
     if( $tmp ) {
         $tmp = unserialize($tmp);
         if( $tmp ) { $filter_css_rec = $tmp; }
     }
     if( isset($params['css_page']) ) {
-        $this->SetCurrentTab('stylesheets');
         $page = max(1,(int)$params['css_page']);
-        $_SESSION[$this->GetName().'css_page'] = $page;
+        $_SESSION[$modname.'_css_page'] = $page;
         $filter_css_rec['offset'] = ($page - 1) * $filter_css_rec['limit'];
+        $this->SetCurrentTab('stylesheets');
     }
-    elseif( isset($_SESSION[$this->GetName().'css_page']) ) {
-        $page = max(1,(int)$_SESSION[$this->GetName().'css_page']);
+    elseif( isset($_SESSION[$modname.'_css_page']) ) {
+        $page = max(1,(int)$_SESSION[$modname.'_css_page']);
         $filter_css_rec['offset'] = ($page - 1) * $filter_css_rec['limit'];
     }
 }
 
+$getlengths = function($num) {
+    $lengths = [10 => 10];
+    if( $num > 10 ) { $lengths[25] = 25; }
+    if( $num > 25 ) { $lengths[50] = 50; }
+    if( $num > 50 ) { $lengths[100] = 100; }
+    return $lengths;
+};
 $seetab = (!empty($params['__activetab'])) ? $params['__activetab'] : '';
 $tpl->assign('tab',$seetab);
+$tpl->assign('tpl_filter',$filter_tpl_rec); // filter form propereties
 $tpl->assign('filter_tpl_options',$opts);
-$tpl->assign('tpl_filter',$filter_tpl_rec); // used for filter form
-$tpl->assign('css_filter',$filter_css_rec); // used for filter form
-$tpl->assign('jsoncssfilter',json_encode($filter_css_rec)); // used for ajaxy stuff
-$tpl->assign('jsonfilter',json_encode($efilter)); // used for ajaxy stuff.
+$tpl->assign('tpl_filterpages',$getlengths($tnum));
+$tpl->assign('jsonfilter',json_encode($efilter)); // for templates ajaxy stuff
+$tpl->assign('css_filter',$filter_css_rec); // filter form properties
+$tpl->assign('css_filterpages',$getlengths($snum));
+$tpl->assign('jsoncssfilter',json_encode($filter_css_rec)); // for styles ajaxy stuff
 $tpl->assign('has_add_right',
              $this->CheckPermission('Modify Templates') ||
-             $this->CheckPermission('Add Templates'));
+             $this->CheckPermission('Add Templates')); // for templates only
 $tpl->assign('coretypename',CmsLayoutTemplateType::CORE);
 $tpl->assign('manage_stylesheets',$this->CheckPermission('Manage Stylesheets'));
 $tpl->assign('manage_templates',$this->CheckPermission('Modify Templates'));
@@ -249,7 +263,5 @@ $url = $this->create_url($id,'ajax_get_stylesheets');
 $tpl->assign('ajax_stylesheets_url',str_replace('amp;','',$url));
 
 $tpl->display();
-#
-# EOF
-#
+
 ?>
