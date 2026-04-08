@@ -26,7 +26,7 @@
 // Global
 namespace
 {
-  if(!\function_exists('gzopen') && \function_exists('gzopen64')){
+  if(!\function_exists('gzopen') && \function_exists('gzopen64')) {
     /**
      * Wrapper for gzopen in case it does not exist.
      * Some installs of PHP (after PHP 5.3 use a different zlib library, and therefore gzopen is not defined.
@@ -39,6 +39,11 @@ namespace
       return gzopen64($filename, $mode, $use_include_path);
     }
   }
+
+  // migrated from CmsLayoutCollection class
+  // The alias-class has never been a thing. If really needed, move the
+  // following to where CmsLayoutCollection is known.
+  //class_alias('CmsLayoutCollection','CmsLayoutDesign',false);
 }
 
 namespace CMSMS
@@ -61,7 +66,3 @@ namespace CMSMS
     return \locale_ftime($format, $timestamp, $locale);
   }
 } // end namespace
-
-#
-# EOF
-#
