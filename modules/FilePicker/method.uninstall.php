@@ -1,10 +1,9 @@
 <?php
 # BEGIN_LICENSE
-# #-------------------------------------------------------------------------
+#-------------------------------------------------------------------------
 # Module FilePicker uninstallation script
 # (c) 2016 Fernando Morgado <jomorg@cmsmadesimple.org>
 # (c) 2016 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
-#
 #-------------------------------------------------------------------------
 # This file is part of FilePicker
 # FilePicker is free software; you can redistribute it and/or modify
@@ -17,14 +16,17 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
+# along with this program; if not, read the license online at:
+# https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
 # END_LICENSE
 
 use FilePicker\ProfileDAO;
 
-$dict = NewDataDictionary( $db );
-$sqlarray = $dict->DropTableSQL(ProfileDAO::table_name());
+$dict = NewDataDictionary($db);
+$tbl = ProfileDAO::table_name();
+$sqlarray = $dict->DropTableSQL($tbl);
 $dict->ExecuteSQLArray($sqlarray);
+$db->DropSequence("{$tbl}_seq");
+
+$this->RemovePreference();
