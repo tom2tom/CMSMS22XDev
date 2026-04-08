@@ -86,7 +86,7 @@ function getTestValues( $property )
 	// TODO manually set recommended PHP = earliest current-security-supported micro-version
 	// see https://www.php.net/supported-versions.php and https://www.php.net/releases/index.php
 	$range = array(
-		'php_version'			=> array('minimum'=>$minphp, 'recommended'=>'8.1.33'),
+		'php_version'			=> array('minimum'=>$minphp, 'recommended'=>'8.2.30'),
 		'gd_version'			=> array('minimum'=>2),
 		'memory_limit'			=> array('minimum'=>'16M', 'recommended'=>'24M'),
 		'max_execution_time'	=> array('minimum'=>30, 'recommended'=>60),
@@ -708,14 +708,14 @@ function testUmask( $required, $title, $umask, $message = '', $debug = false, $d
 
 	global $lang_fn;
 
-	if(empty($dir))	$dir = TMP_CACHE_LOCATION;
+	if( empty($dir) ) $dir = TMP_CACHE_LOCATION;
 
 	$_test = true;
-	if($debug) {
+	if( $debug ) {
 		if( (! is_dir($dir)) || (! is_writable($dir)) ) $_test = false;
 	}
-	else {
-		if( (! @is_dir($dir)) || (! @is_writable($dir)) ) $_test = false;
+	elseif( (! @is_dir($dir)) || (! @is_writable($dir)) ) {
+		$_test = false;
 	}
 
 	if(! $_test) {
@@ -752,6 +752,8 @@ function testUmask( $required, $title, $umask, $message = '', $debug = false, $d
 			$test->res = 'yellow';
 			if($required) $test->res = 'red';
 			getTestReturn($test, $required, $message, 'Can.27t_create_file', $lang_fn('errorcantcreatefile').' ('.$test_file.')');
+			$test->value = $umask;
+			$test->secondvalue = null;
 			return $test;
 		}
 
@@ -762,12 +764,16 @@ function testUmask( $required, $title, $umask, $message = '', $debug = false, $d
 		if(! empty($_return)) {
 			$test->res = 'green';
 			getTestReturn($test, $required);
+			$test->value = $umask;
+			$test->secondvalue = null;
 			return $test;
 		}
 	}
 
 	$test->res = 'red';
 	getTestReturn($test, $required, $message, 'Can.27t_create_file', $lang_fn('errorcantcreatefile').' ('.$test_file.')');
+	$test->value = $umask;
+	$test->secondvalue = null;
 	return $test;
 }
 
