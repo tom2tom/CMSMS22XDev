@@ -90,12 +90,12 @@ class Smarty_Internal_Resource_File extends Smarty_Resource
     }
 
     /**
-     * build template filepath by traversing the template_dir array
+     * Build resource filepath by traversing the template_dir array etc
      *
      * @param Smarty_Template_Source   $source    source object
      * @param Smarty_Internal_Template $_template template object
      *
-     * @return string fully qualified filepath
+     * @return mixed fully-qualified filepath string | false
      * @throws SmartyException
      */
     protected function buildFilepath(Smarty_Template_Source $source, ?Smarty_Internal_Template $_template = null)
@@ -106,12 +106,12 @@ class Smarty_Internal_Resource_File extends Smarty_Resource
             $file = $source->smarty->_realpath($file, true);
             return is_file($file) ? $file : false;
         }
-        // go relative to a given template?
+        // relative to the given template ?
         if ($file[ 0 ] === '.' && $_template && $_template->_isSubTpl()
             && preg_match('#^[.]{1,2}[\\\/]#', $file)
         ) {
-            if ($_template->parent->source->type !== 'file' && $_template->parent->source->type !== 'extends'
-                && !isset($_template->parent->_cache[ 'allow_relative_path' ])
+            if (!($_template->parent->source->type == 'file' || $_template->parent->source->type == 'extends')
+             || !isset($_template->parent->_cache[ 'allow_relative_path' ])
             ) {
                 throw new SmartyException("Template '{$file}' cannot be relative to template of resource type '{$_template->parent->source->type}'");
             }
@@ -122,11 +122,12 @@ class Smarty_Internal_Resource_File extends Smarty_Resource
             return is_file($path) ? $path : false;
         }
         // normalize DIRECTORY_SEPARATOR
-        if (strpos($file, DIRECTORY_SEPARATOR === '/' ? '\\' : '/') !== false) {
-            $file = str_replace(DIRECTORY_SEPARATOR === '/' ? '\\' : '/', DIRECTORY_SEPARATOR, $file);
+        $match = (DIRECTORY_SEPARATOR == '/') ? '\\' : '/';
+        if (strpos($file, $match) !== false) {
+            $file = str_replace($match, DIRECTORY_SEPARATOR, $file);
         }
         $_directories = $source->smarty->getTemplateDir(null, $source->isConfig);
-        // template_dir index?
+        // template_dir index ?
         if ($file[ 0 ] === '[' && preg_match('#^\[([^\]]+)\](.+)$#', $file, $fileMatch)) {
             $file = $fileMatch[ 2 ];
             $_indices = explode(',', $fileMatch[ 1 ]);
@@ -157,7 +158,7 @@ class Smarty_Internal_Resource_File extends Smarty_Resource
                 $_directories = $_index_dirs;
             }
         }
-        // relative file name?
+        // relative file name ?
         foreach ($_directories as $_directory) {
             $path = $_directory . $file;
             if (is_file($path)) {
@@ -165,13 +166,13 @@ class Smarty_Internal_Resource_File extends Smarty_Resource
             }
         }
         if (!isset($_index_dirs)) {
-            // Could be relative to cwd
+            // might be relative to cwd
             $path = $source->smarty->_realpath($file, true);
             if (is_file($path)) {
                 return $path;
             }
         }
-        // Use include path ?
+        // use include path ?
         if ($source->smarty->use_include_path) {
             return $source->smarty->ext->_getIncludePath->getIncludePath($_directories, $file, $source->smarty);
         }
