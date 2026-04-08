@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # Module DesignManager action
-# (c) 2012 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ if( isset($params['submit']) ) {
   if( $n != 0 ) $n = max(30,min(3540,$n));
   $this->SetPreference('lock_refresh',$n);
 
-  echo $this->ShowMessage($this->Lang('msg_options_saved'));
+  $this->ShowMessage($this->Lang('msg_options_saved'));
 }
 
 $modname = $this->GetName();
@@ -39,7 +39,4 @@ $tpl->assign('lock_timeout',$this->GetPreference('lock_timeout'));
 $tpl->assign('lock_refresh',$this->GetPreference('lock_refresh'));
 $tpl->display();
 
-#
-# EOF
-#
 ?>
