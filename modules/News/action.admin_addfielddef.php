@@ -53,7 +53,7 @@ if (isset($params['submit'])) {
         $this->RedirectToAdminTab('customfields','','admin_settings');
     }
 
-    if( $error ) echo $this->ShowErrors($error);
+    if( $error ) $this->ShowErrors($error);
 }
 
 //Display template

@@ -35,7 +35,7 @@ if( isset($params['submit']) ) {
   $name = trim($params['name']);
 
   if( $name == '' ) {
-    echo $this->ShowErrors($this->Lang('nonamegiven'));
+    $this->ShowErrors($this->Lang('nonamegiven'));
   }
   else {
     // its an update.
@@ -43,11 +43,11 @@ if( isset($params['submit']) ) {
 WHERE parent_id = ? AND news_category_name = ? AND news_category_id != ?';
     $tmp = $db->GetOne($query,array($parentid,$name,$catid));
     if( $tmp ) {
-      echo $this->ShowErrors($this->Lang('error_duplicatename'));
+      $this->ShowErrors($this->Lang('error_duplicatename'));
     }
     else {
       if( $parentid == $catid ) {
-        echo $this->ShowErrors($this->Lang('error_categoryparent'));
+        $this->ShowErrors($this->Lang('error_categoryparent'));
       }
       else if( $parentid != $row['parent_id'] ) {
         // parent changed

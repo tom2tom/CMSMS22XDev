@@ -5,7 +5,7 @@ if (!$this->CheckPermission('Manage Search')) exit;
 if (isset($params['reindex'])) {
     try {
         $this->Reindex();
-        echo $this->ShowMessage($this->Lang('reindexcomplete'));
+        $this->ShowMessage($this->Lang('reindexcomplete'));
     }
     catch( \Exception $e ) {
         debug_display($e);
@@ -49,11 +49,11 @@ elseif (isset($params['submit'])) {
 
     $curval = (int)$this->GetPreference('usestemming', 0);
     $newval = (!empty($params['usestemming'])) ? 1 : 0;
-    echo $this->ShowMessage($this->Lang('settingssaved'));
+    $this->ShowMessage($this->Lang('settingssaved'));
     if ($newval != $curval) {
         $this->SetPreference('usestemming', $newval);
         $this->Reindex();
-        echo $this->ShowMessage($this->Lang('reindexcomplete'));
+        $this->ShowMessage($this->Lang('reindexcomplete'));
     }
 }
 

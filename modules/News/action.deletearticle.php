@@ -5,8 +5,8 @@
 
 if (!isset($gCms)) exit;
 if (!$this->CheckPermission('Delete News')) {
-    echo $this->ShowErrors($this->Lang('needpermission', array('Modify News')));
-    return;
+    $this->SetError($this->Lang('needpermission', 'Modify News'));
+    $this->Redirect($id, 'defaultadmin', $returnid, array('__activetab' => 'articles'));
 }
 
 $articleid = '';

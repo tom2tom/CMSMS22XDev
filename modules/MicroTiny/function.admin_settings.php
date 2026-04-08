@@ -26,5 +26,5 @@ try {
   $tpl->assign('profiles',$profiles);
 }
 catch( Exception $e ) {
-  echo $this->ShowErrors($e->GetMessage());
+  $this->ShowErrors($e->GetMessage());
 }

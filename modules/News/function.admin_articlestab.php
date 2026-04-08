@@ -8,7 +8,7 @@ if( !$this->CheckPermission('Modify News') ) return; // or a new 'View News' per
 
 if (isset($params['bulk_action']) ) {
     if( !isset($params['sel']) || !is_array($params['sel']) || count($params['sel']) == 0 ) {
-        echo $this->ShowErrors($this->Lang('error_noarticlesselected'));
+        $this->ShowErrors($this->Lang('error_noarticlesselected'));
     }
     else {
         $sel = array();
@@ -22,39 +22,39 @@ if (isset($params['bulk_action']) ) {
         switch($params['bulk_action']) {
         case 'delete':
             if (!$this->CheckPermission('Delete News')) {
-                echo $this->ShowErrors($this->Lang('needpermission',array('Modify News')));
+                $this->ShowErrors($this->Lang('needpermission','Modify News'));
             }
             else {
                 foreach( $sel as $news_id ) {
-                    news_admin_ops::delete_article( $news_id );
+                    news_admin_ops::delete_article($news_id);
                 }
             }
-            echo $this->ShowMessage($this->Lang('msg_success'));
+            $this->ShowMessage($this->Lang('msg_success'));
             break;
 
         case 'setcategory':
             $query = 'UPDATE '.CMS_DB_PREFIX.'module_news SET news_category_id = ?, modified_date = NOW()
-                WHERE news_id IN ('.implode(',',$sel).')';
+WHERE news_id IN ('.implode(',',$sel).')';
             $parms = array((int)$params['category']);
             $db->Execute($query,$parms);
             audit((int)$params['category'],$this->GetName(),'Category of '.count($sel).' articles changed');
-            echo $this->ShowMessage($this->Lang('msg_success'));
+            $this->ShowMessage($this->Lang('msg_success'));
             break;
 
         case 'setpublished':
             $query = 'UPDATE '.CMS_DB_PREFIX.'module_news SET status = ?, modified_date = NOW()
-                WHERE news_id IN ('.implode(',',$sel).')';
+WHERE news_id IN ('.implode(',',$sel).')';
             $db->Execute($query,array('published'));
             audit('',$this->GetName(),'Status of '.count($sel)." articles changed to 'published'");
-            echo $this->ShowMessage($this->Lang('msg_success'));
+            $this->ShowMessage($this->Lang('msg_success'));
             break;
 
         case 'setdraft':
             $query = 'UPDATE '.CMS_DB_PREFIX.'module_news SET status = ?, modified_date = NOW()
-                WHERE news_id IN ('.implode(',',$sel).')';
+WHERE news_id IN ('.implode(',',$sel).')';
             $db->Execute($query,array('draft'));
             audit('',$this->GetName(),'Status of '.count($sel)." articles changed to 'draft'");
-            echo $this->ShowMessage($this->Lang('msg_success'));
+            $this->ShowMessage($this->Lang('msg_success'));
             break;
 
         default:
@@ -79,35 +79,40 @@ else {
     $pagenumber = 1;
 }
 
+$settings = ['category'=>0,'allcategories'=>true,'pagelimit'=>0,'sortby'=>'news_date DESC'];
 if( isset($params['submitfilter']) ) {
     if( isset( $params['category']) ) {
-        $this->SetPreference('article_category',(int)($params['category']));
+        $settings['category'] = (int)($params['category']);
     }
     if( isset( $params['sortby'] ) ) {
-        $this->SetPreference('article_sortby',str_replace("'",'_',$params['sortby']));
+        $settings['sortby'] = str_replace("'",'_',$params['sortby']);
     }
     if( isset( $params['pagelimit'] ) ) {
-        $this->SetPreference('article_pagelimit',(int)$params['pagelimit']);
+        $settings['pagelimit'] = max(2,(int)$params['pagelimit']);
     }
-    $allcategories = !empty($params['allcategories']); // i.e. descendent-categories too
-    $this->SetPreference('allcategories',($allcategories)?'yes':'no');
+    $settings['allcategories'] = !empty($params['allcategories']); // i.e. descendent-categories too
+    cms_userprefs::set($modname.'_articles_filter',serialize($settings));
     unset($_SESSION['news_pagenumber']);
     $pagenumber = 1;
 }
 elseif( isset($params['resetfilter']) ) {
-    $this->SetPreference('article_category','');
-    $this->SetPreference('article_pagelimit',10);
-    $this->SetPreference('article_sortby','news_date DESC');
-    $this->SetPreference('allcategories','no');
+    cms_userprefs::set($modname.'_articles_filter',serialize($settings));
     unset($_SESSION['news_pagenumber']);
     $pagenumber = 1;
 }
 
-$curcategory = $this->GetPreference('article_category');
-$pagelimit = (int) $this->GetPreference('article_pagelimit',10);
-$allcategories = $this->GetPreference('allcategories','no');
+$tmp = cms_userprefs::get($modname.'_articles_filter');
+if( $tmp ) {
+    $tmp = unserialize($tmp);
+}
+if( $tmp ) {
+    $settings = $tmp;
+}
 
-$sortby = $this->GetPreference('article_sortby','news_date DESC');
+$curcategory = $settings['category']; // might be 0
+$allcategories = $settings['allcategories'];
+$sortby = $settings['sortby'];
+
 $sortlist = array();
 $sortlist[$this->Lang('post_date_desc')]='news_date DESC';
 $sortlist[$this->Lang('post_date_asc')]='news_date ASC';
@@ -121,10 +126,8 @@ $sortlist[$this->Lang('status_desc')] = 'status DESC';
 $tpl->assign('prompt_category',$this->Lang('category'));
 $tpl->assign('categorylist',array_flip($categorylist));
 $tpl->assign('curcategory',$curcategory);
-$tpl->assign('allcategories',$allcategories == 'yes');
+$tpl->assign('allcategories',$allcategories != 0);
 $tpl->assign('sortlist',array_flip($sortlist));
-$tpl->assign('pagelimits',array(10=>10,25=>25,50=>50,250=>250,500=>500,1000=>1000));
-$tpl->assign('pagelimit',$pagelimit);
 $tpl->assign('sortby',$sortby);
 $tpl->assign('prompt_showchildcategories',$this->Lang('showchildcategories'));
 $tpl->assign('prompt_sorting',$this->Lang('prompt_sorting'));
@@ -132,43 +135,72 @@ $tpl->assign('submitfilter',
             $this->CreateInputSubmit($id,'submitfilter',$this->Lang('submit')));
 $tpl->assign('prompt_pagelimit',$this->Lang('prompt_pagelimit'));
 
-//Load the current articles
+//Load the applicable articles
 $entryarray = array();
 
-// SQL_CALC_FOUND_ROWS is deprecated. Instead exectute the query with LIMIT, and then again with COUNT(*) for the FOUND_ROWS()
-$query1 = "SELECT SQL_CALC_FOUND_ROWS n.*,nc.news_category_name,nc.long_name FROM ".CMS_DB_PREFIX."module_news n LEFT OUTER JOIN ".CMS_DB_PREFIX."module_news_categories nc ON n.news_category_id = nc.news_category_id ";
+$query1 = 'SELECT n.*,nc.news_category_name,nc.long_name FROM '.CMS_DB_PREFIX.'module_news n LEFT OUTER JOIN '.CMS_DB_PREFIX.'module_news_categories nc ON n.news_category_id = nc.news_category_id';
 $parms = array();
 if ($curcategory) {
     $scats = array_flip($categorylist); // see also above
     $cname = isset($scats[$curcategory]) ? $scats[$curcategory] : 'NOMATCH';
-    if( $allcategories == 'yes' ) {
+    if( $allcategories ) {
         $query1 .= ' WHERE nc.long_name LIKE ?';
         $parms[] = $cname.'%';
     }
     else {
-        $query1 .= ' WHERE nc.news_category_name = ?';
+        $query1 .= ' WHERE nc.long_name = ?';
         $parms[] = $cname;
     }
+    $have_filter = true;
+}
+elseif( !$allcategories ) {
+    $query1 .= " WHERE INSTR(`long_name`, ' | ') = 0";
     $have_filter = true;
 }
 else {
     $have_filter = false;
 }
-$query1 .= ' ORDER by '.$sortby;
+$query2 = str_replace('n.*,nc.news_category_name,nc.long_name', 'COUNT(*)', $query1);
+$query1 .= ' ORDER BY '.$sortby;
+
+$numrows = (int)$db->GetOne($query2);
+$savedlimit = $settings['pagelimit'];
+
+if ($savedlimit == 0) {
+    if ($numrows > 50) { $pagelimit = 100; }
+    elseif ($numrows > 25) { $pagelimit = 50; }
+    elseif ($numrows > 10) { $pagelimit = 25; }
+    else { $pagelimit = 10; }
+}
+else {
+    $pagelimit = $savedlimit;
+}
 
 $pagenumber = max(1,$pagenumber);
 $startelement = ($pagenumber-1) * $pagelimit;
 $dbresult = $db->SelectLimit($query1,$pagelimit,$startelement,$parms);
-$numrows = (int)$db->GetOne('SELECT FOUND_ROWS()');
-$pagecount = (int)ceil($numrows/$pagelimit);
+$pagecount = (int)ceil(($numrows/$pagelimit) - 0.001);
 if ($pagenumber > 1 && $pagecount < $pagenumber) {
+    $numrows = (int)$db->GetOne($query2);
+    if ($savedlimit == 0) {
+        if ($numrows > 50) { $pagelimit = 100; }
+        elseif ($numrows > 25) { $pagelimit = 50; }
+        elseif ($numrows > 10) { $pagelimit = 25; }
+        else { $pagelimit = 10; }
+    }
     $_SESSION['news_pagenumber'] = --$pagenumber;
     $startelement = ($pagenumber-1) * $pagelimit;
     $dbresult = $db->SelectLimit($query1,$pagelimit,$startelement,$parms);
-    $numrows = (int)$db->GetOne('SELECT FOUND_ROWS()');
-    $pagecount = (int)ceil($numrows/$pagelimit);
+    $pagecount = (int)ceil(($numrows/$pagelimit) - 0.001);
 }
 
+$lengths = [10 => 10];
+if ($numrows > 10 ) { $lengths[25] = 25; }
+if ($numrows > 25 ) { $lengths[50] = 50; }
+if ($numrows > 50 ) { $lengths[100] = 100; }
+
+$tpl->assign('pagelimit',$pagelimit);
+$tpl->assign('pagelimits',$lengths);
 $tpl->assign('pagenumber',$pagenumber);
 $tpl->assign('pagecount',$pagecount);
 $tpl->assign('oftext',$this->Lang('prompt_of'));
@@ -233,7 +265,10 @@ if( $this->CheckPermission('Modify News') ) {
 }
 $tpl->assign('can_add',$this->CheckPermission('Modify News'));
 $tpl->assign('can_delete',$this->CheckPermission('Delete News'));
-$tpl->assign('categoryinput',$this->CreateInputDropdown($id,'category',$categorylist));
+if( $categorylist ) {
+    array_shift($categorylist); // no 'allcategories' item in this picker
+    $tpl->assign('categoryinput',$this->CreateInputDropdown($id,'category',$categorylist,-1,'','id="selcategory"'));
+}
 $tpl->assign('have_filter',$have_filter);
 $tpl->assign('reassigntext',$this->Lang('reassign_category'));
 $tpl->assign('selecttext',$this->Lang('select'));
@@ -246,7 +281,6 @@ $tpl->assign('categorytext',$this->Lang('category'));
 
 $iconsurl = $config['admin_url'].'/themes/'.$admintheme->themeName.'/images/icons/system';
 $tpl->assign('iconurl',$iconsurl);
-
 $tpl->assign('securename',CMS_SECURE_PARAM_NAME);
-$tpl->assign('securekey',$_SESSION[CMS_USER_KEY]);
+$tpl->assign('secureval',$_SESSION[CMS_USER_KEY]);
 $tpl->assign('endform',$this->CreateFormEnd());

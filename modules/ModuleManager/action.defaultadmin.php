@@ -44,13 +44,16 @@ if( $tmp && is_array($tmp) ) {
         }
         $tmp2[] = $key.': '.$msg;
     }
-    echo $this->ShowMessage($tmp2);
+    $this->ShowMessage($tmp2);
 }
 
 $connection_ok = modmgr_utils::is_connection_ok();
 
+$modname = $this->GetName();
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,$modname,$smarty);
+
 // this is a bit ugly
-modmgr_utils::get_images();
+modmgr_utils::get_images($tpl);
 
 $newversions = [];
 if( $connection_ok ) {
@@ -58,18 +61,15 @@ if( $connection_ok ) {
         $newversions = modulerep_client::get_newmoduleversions(); // note downstream module-processing might clobber assigned $mod value!
     }
     catch( Exception $e ) {
-        echo $this->ShowErrors($e->GetMessage());
+        $this->ShowErrors($e->GetMessage());
     }
 }
 else {
-    echo $this->ShowErrors($this->Lang('error_request_problem'));
+    $this->ShowErrors($this->Lang('error_request_problem'));
 }
 
 $pmod = $this->CheckPermission('Modify Modules');
 $pset = $this->CheckPermission('Modify Site Preferences');
-
-$modname = $this->GetName();
-$tpl = $smarty->createTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,$modname,$smarty);
 
 $tpl->assign('connected', $connection_ok);
 $tpl->assign('pmod', $pmod);

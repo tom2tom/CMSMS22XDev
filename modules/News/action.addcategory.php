@@ -20,7 +20,7 @@ if (isset($params['name'])) {
         $query = 'SELECT news_category_id FROM '.CMS_DB_PREFIX.'module_news_categories WHERE parent_id = ? AND news_category_name = ?';
         $tmp = $db->GetOne($query,array($parent,$name));
         if( $tmp ) {
-            echo $this->ShowErrors($this->Lang('error_duplicatename'));
+            $this->ShowErrors($this->Lang('error_duplicatename'));
         }
         else {
             $query = 'SELECT max(item_order) FROM '.CMS_DB_PREFIX.'module_news_categories WHERE parent_id = ?';
@@ -44,7 +44,7 @@ if (isset($params['name'])) {
         }
     }
     else {
-        echo $this->ShowErrors($this->Lang('nonamegiven'));
+        $this->ShowErrors($this->Lang('nonamegiven'));
     }
 }
 
