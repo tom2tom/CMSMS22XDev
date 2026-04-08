@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # Module DesignManager action
-# (c) 2012 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,9 +13,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+# along with this program; if not, read the license online at:
+# https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
 
 if( !isset($gCms) ) exit;
@@ -57,10 +56,5 @@ catch( CmsException $e ) {
 
 $modname = $this->GetName();
 $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_edit_category.tpl",null,$modname,$smarty);
-$smarty->assign('category',$category);
+$tpl->assign('category',$category);
 $tpl->display();
-
-#
-# EOF
-#
-?>
