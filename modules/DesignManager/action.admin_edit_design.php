@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # Module DesignManager action
-# (c) 2012 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ if( isset($params['cancel']) ) {
 
 $design = null; // no object
 try {
-    if( !isset($params['design']) || $params['design'] == '' || $params['design'] == 0 ) {
+    if( empty($params['design']) ) {
         $design= new CmsLayoutCollection();
 // no name yet $design->set_name('New Design');
     }
@@ -55,15 +55,15 @@ try {
                 $this->RedirectToAdminTab();
             }
             else {
-                echo $this->ShowMessage($this->Lang('msg_design_saved'));
+                $this->ShowMessage($this->Lang('msg_design_saved'));
             }
         }
     }
     catch( Exception $e ) {
-        echo $this->ShowErrors($e->GetMessage());
+        $this->ShowErrors($e->GetMessage());
     }
 
-    $templates = CmsLayoutTemplate::get_all(true); // no editing here, so NOT get_editable_templates(get_userid()) 
+    $templates = CmsLayoutTemplate::get_all(true); // no editing here, so NOT get_editable_templates(get_userid())
     $stylesheets = CmsLayoutStylesheet::get_all(true);
 
     if( $design->get_id() > 0 ) {
@@ -73,17 +73,21 @@ try {
         CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('new_design'));
     }
 
+    $base_url = $this->GetModuleURLPath();
+    CMSMS\HookManager::add_hook('admin_add_headtext',function() use($base_url) {
+        return "<link href=\"$base_url/lib/edit_design.css\" rel=\"stylesheet\">\n";
+    });
+
     $modname = $this->GetName();
     $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_edit_design.tpl",null,$modname,$smarty);
 
-    $base_url = $this->GetModuleURLPath();
-    $tpl->assign('base_url',$base_url);
+//  $tpl->assign('base_url',$base_url);
     $tpl->assign('all_templates',$templates);
     $tpl->assign('all_stylesheets',$stylesheets);
     $tpl->assign('design',$design);
     $tpl->assign('manage_stylesheets',$this->CheckPermission('Manage Stylesheets'));
     $tpl->assign('manage_templates',$this->CheckPermission('Modify Templates'));
-    $tpl->assign('icon_delete',$base_url.'/icons/delete.png');
+    $tpl->assign('icon_delete',$base_url.'/images/delete.png');
     $tpl->display();
 }
 catch( CmsException $e ) {
