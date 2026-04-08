@@ -10,7 +10,7 @@ if (!defined('CMS_VERSION')) exit;
 if (!$this->CheckPermission('Modify Modules')) exit;
 
 //$current_version = $oldversion;
-if (version_compare($oldversion, '2.0' < 0)) {
+if (version_compare($oldversion, '2.0') < 0) {
     if (class_exists('SimpleXMLElement')) {
         $doer = new UserGuideXML($this);
         if (!$doer->import(__DIR__.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'UserGuide_Default.xml')) {
