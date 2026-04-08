@@ -3,67 +3,74 @@ global $admin_user;
 // NOTE lots of IE6-related tests among the content here, but we don't support such ancient cruft now ...
 
 //
-// Themes
+// Designs
 //
-
-// minimal theme has the minimal template, and no styesheets.
 verbose_msg(ilang('install_default_collections'));
 
 $minimal_theme = new CmsLayoutCollection();
 $minimal_theme->set_name('Minimal');
-$minimal_theme->set_description('Minimal templates and no stylesheets');
 $minimal_theme->set_version('1.0');
+$minimal_theme->set_description('Minimal template and no stylesheet');
+$minimal_theme->set_requires('Navigator');
 $minimal_theme->save();
 
 $simplex_theme = new CmsLayoutCollection();
 $simplex_theme->set_name('Simplex');
+$minimal_theme->set_version('1.0');
 $simplex_theme->set_description('Simplex is a HTML5-based theme. The purpose of this theme is to demonstrate what can be done with CMSMS templates, and how so, using HTML5 and responsive CSS for a better mobile experience.
 All Smarty templates used by the Simplex theme are prefixed with "Simplex", so be careful when renaming or deleting those templates. The theme uses jQuery, which is included with a {cms_jquery} tag. The theme\'s javascript file is minified. If you wish to change some javascript functions, refer to the /assets/themes/Simplex/js/functions.js file and replace file functions.min.js.');
+$simplex_theme->set_requires('Navigator,News,Search');
 $simplex_theme->set_default();
-$minimal_theme->set_version('1.0');
 $simplex_theme->save();
-
-$css_menuleft_1col_theme = new CmsLayoutCollection();
-$css_menuleft_1col_theme->set_name('CSSMenu left + 1 column');
-$css_menuleft_1col_theme->set_description('This is basically the same as the last one, CSSMenu top + 2 column, with the menu on the left instead of across the top there isn\'t a whole lot to say about it.');
-$css_menuleft_1col_theme->set_version('1.0');
-$css_menuleft_1col_theme->save();
 
 $css_menutop_2col_theme = new CmsLayoutCollection();
 $css_menutop_2col_theme->set_name('CSSMenu top + 2 columns');
-$css_menutop_2col_theme->set_description('This is a drop-down menu using only CSS (although some javascript is required for Internet Explorer 6. Note: IE6 will not work properly with two of these menu types in a template at the same time, as the second one will fail to open). The menu can be either vertical or horizontal.');
 $css_menutop_2col_theme->set_version('1.0');
+$css_menutop_2col_theme->set_description('This uses a drop-down menu using only CSS (although some javascript is required for Internet Explorer 6. Note: IE6 will not work properly with two of these menu types in a template at the same time, as the second one will fail to open). The menu can be either vertical or horizontal.');
+$css_menutop_2col_theme->set_requires('Navigator,News,Search');
 $css_menutop_2col_theme->save();
+
+$css_menuleft_1col_theme = new CmsLayoutCollection();
+$css_menuleft_1col_theme->set_name('CSSMenu left + 1 column');
+$css_menuleft_1col_theme->set_version('1.0');
+$css_menuleft_1col_theme->set_description('This is basically the same as CSSMenu top + 2 column, with the menu on the left instead of across the top. There isn\'t a whole lot to say about it.');
+$css_menuleft_1col_theme->set_requires('Navigator,News,Search');
+$css_menuleft_1col_theme->save();
+
+$topsimple_leftsubnav_1col_theme = new CmsLayoutCollection();
+$topsimple_leftsubnav_1col_theme->set_name('Top simple navigation + left subnavigation + 1 column');
+$topsimple_leftsubnav_1col_theme->set_version('1.0');
+$topsimple_leftsubnav_1col_theme->set_description('Using the Navigator module you can easily split the navigation into two parts. On pages using this theme, the top level in the page hierarchy is displayed horizontally and depending on what page is displayed a localized sub-menu is displayed vertically to the left.');
+$topsimple_leftsubnav_1col_theme->set_requires('Navigator,News,Search');
+$topsimple_leftsubnav_1col_theme->save();
 
 $leftsimple_1col_theme = new CmsLayoutCollection();
 $leftsimple_1col_theme->set_name('Left simple navigation + 1 column');
-$leftsimple_1col_theme->set_description('This template has the menu in left sidebar. The menu uses the Simple Navigation menu template. It is styled in the stylesheet called Navigation Simple - Vertical.');
 $leftsimple_1col_theme->set_version('1.0');
+$leftsimple_1col_theme->set_description('This has the menu in left sidebar. The menu uses the Simple Navigation menu template. It is styled in the stylesheet named Navigation Simple - Vertical.');
+$leftsimple_1col_theme->set_requires('Navigator,News,Search');
 $leftsimple_1col_theme->save();
 
 $ncleanblue_theme = new CmsLayoutCollection();
 $ncleanblue_theme->set_name('NCleanBlue');
-$ncleanblue_theme->set_description('This one uses a new menu template so we can style the drop down for the child pages, using an image for the second ul going from the top down, it has an extra li at the bottom of the child pages ul &lt;li class="separator once" style="list-style-type: none;"&gt;&nbsp; &lt;/li&gt this is used to hold the bottom image.');
 $ncleanblue_theme->set_version('1.0');
+$ncleanblue_theme->set_description('This uses a new menu-template so we can style the drop down for the child pages, using an image for the second ul going from the top down, it has an extra li at the bottom of the child pages ul &lt;li class="separator once" style="list-style-type: none;"&gt;&nbsp; &lt;/li&gt this is used to hold the bottom image.');
+$ncleanblue_theme->set_requires('Navigator,News,Search');
 $ncleanblue_theme->save();
 
 $shadowmenu_left_1col_theme = new CmsLayoutCollection();
 $shadowmenu_left_1col_theme->set_name('ShadowMenu left + 1 column');
-$shadowmenu_left_1col_theme->set_description('Using the same menu template as the previous theme. We changed the child ul CSS to use a different top image. This involves changing some of the margin and padding as the images are a different shape. Note the difference in the second level and third level ul images, one has an arrow up and the other has an arrow left.');
 $shadowmenu_left_1col_theme->set_version('1.0');
+$shadowmenu_left_1col_theme->set_description('Uses the same menu-template as NCleanBlue. The child ul CSS uses a different top image. This involves changing some of the margin and padding as the images are a different shape. Note the difference in the second level and third level ul images, one has an arrow up and the other has an arrow left.');
+$shadowmenu_left_1col_theme->set_requires('Navigator,News,Search');
 $shadowmenu_left_1col_theme->save();
 
 $shadowmenu_tab_2col_theme = new CmsLayoutCollection();
 $shadowmenu_tab_2col_theme->set_name('ShadowMenu Tab + 2 columns');
-$shadowmenu_tab_2col_theme->set_description('Using the same menu template as the previous theme. We changed the child ul CSS to use a different top image. This involves changing some of the margin and padding as the images are a different shape. Note the difference in the second level and third level ul images, one has an arrow up and the other has an arrow left.');
 $shadowmenu_tab_2col_theme->set_version('1.0');
+$shadowmenu_tab_2col_theme->set_description('Uses the same menu-template as NCleanBlue. The child ul CSS uses a different top image. This involves changing some of the margin and padding as the images are a different shape. Note the difference in the second level and third level ul images, one has an arrow up and the other has an arrow left.');
+$shadowmenu_tab_2col_theme->set_requires('Navigator,News,Search');
 $shadowmenu_tab_2col_theme->save();
-
-$topsimple_leftsubnav_1col_theme = new CmsLayoutCollection();
-$topsimple_leftsubnav_1col_theme->set_name('Top simple navigation + left subnavigation + 1 column');
-$topsimple_leftsubnav_1col_theme->set_description('Using the Navigator module you can easily split the navigation into two parts. On this page the top level in the page hierarchy is displayed horizontally and depending on what page is displayed a localized sub-menu is displayed vertically to the left.');
-$topsimple_leftsubnav_1col_theme->set_version('1.0');
-$topsimple_leftsubnav_1col_theme->save();
 
 //
 // Types
@@ -86,11 +93,6 @@ $page_template_type->reset_content_to_factory();
 $page_template_type->set_content_block_flag();
 $page_template_type->set_help_callback('CMSMS\internal\TemplateResource::template_help_callback');
 $page_template_type->save();
-
-
-//
-// Template Categories
-//
 
 //
 // Templates
@@ -129,17 +131,17 @@ $template->set_content(<<<'EOT'
 {process_pagedata}<!DOCTYPE html>
 {* Note: anything inside these is a Smarty comment, it will not show up in the page source *}
 <html lang="en">{* If "en" is not the appropriate language tag for your site, replace it (perhaps including a sub-tag). Refer to https://www.w3.org/International/questions/qa-html-language-declarations.en *}
-<head>
+  <head>
 {* The sitename is changed in Site Admin/Global settings. {title} displays the name of the current page *}
     <title>{sitename} - {title}</title>
     {metadata}{* Don't remove this! Metadata are entered in Site Admin/Global settings. *}
     {* No stylesheet is attached to this page's design *}
-</head>
+  </head>
 
-<body>
+  <body>
     {* Start navigation *}
     <div style="float:left;width:25%;">
-       {Navigator loadprops=0 template='minimal_menu'}
+        {Navigator loadprops=0 template='minimal_menu'}
     </div>
     {* End navigation *}
 
@@ -149,7 +151,7 @@ $template->set_content(<<<'EOT'
         {content}
     </div>
     {* End content *}
-</body>
+  </body>
 </html>
 EOT
 );
