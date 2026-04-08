@@ -40,9 +40,9 @@ final class filemanager_utils
         if( strpos($name,'..') !== FALSE ) return FALSE;
         if( $name[0] == '.' || $name[0] == ' ' ) return FALSE;
         if( endswith( $name, '.' ) ) return FALSE;
-        // minimal executable filename-extension check formerly here is now in
-        // self::is_restricted() and nothing about a restricted file's name
-        // per se renders the filename invalid
+        // minimal executable filename-extension check formerly here is
+        // now in self::is_restricted() and nothing about a restricted
+        // file's name per se renders the filename invalid
         if( preg_match('/[\n\r\t\[\]\&\?\<\>\!\@\#\$\%\*\(\)\{\}\|\"\'\:\;\+]/',$name) ) {
             return FALSE;
         }
@@ -50,14 +50,16 @@ final class filemanager_utils
     }
 
     /**
-     * Perform a (useless) site-configuration test and then a user-permission
-     * ('Use FileManager Advanced') test (the result of which is elsewhere
-     * used to decide whether all site folders may be used in FileManager, or
-     * else only the configured uploads-folders-tree).
-     * NOTE $config property 'developer_mode', if set, effectively pre-empts
-     * 'Use FileManager Advanced' permission, and does so for all admin users.
+     * Unless $config property 'developer_mode' exists and is true,
+     * report whether the current user has 'Use FileManager Advanced'
+     * permission. No involvement of FileManager 'advancedmode' preference.
+     * Evaluated only once per request.
      *
-     * @return int 2 or 1 or 0, >0 indicating 'can do'
+     * @return int
+     *  2 if 'developer_mode' is configured
+     *  1 if current user has 'Use FileManager Advanced' permission
+     *  0 otherwise
+     *  i.e .1 or 2 indicating 'advanced' is enabled for the current user
      */
     public static function can_do_advanced()
     {
@@ -69,8 +71,8 @@ final class filemanager_utils
             }
             else {
                 $mod = cms_utils::get_module('FileManager');
-                //user-setting test plus site-setting test (which should always pass)
-                if( $mod->AdvancedAccessAllowed() && startswith($config['uploads_path'],CMS_ROOT_PATH) ) {
+                if( $mod->AdvancedAccessAllowed() && //user-permission test
+                    startswith($config['uploads_path'],CMS_ROOT_PATH) ) { //should never fail i.e. useless
                     $_can_do_advanced = 1;
                 }
                 else {
@@ -82,11 +84,9 @@ final class filemanager_utils
     }
 
     /**
-     * Report whether the return from filemanager_utils::can_do_advanced()
-     * and FileManager-module 'advancedmode' preference are both truthy.
-     * The latter enables all admin users to use all site folders in FileManager.
-     * NOTE 'Use FileManager Advanced' permission has the same effect for
-     * particular user(s) as 'advancedmode' preference has for all users
+     * Report whether 'developer_mode' is currently configured or else
+     * the current user has 'Use FileManager Advanced' permission and
+     * also FileManager-module 'advancedmode' preference is true.
      *
      * @return bool indicating both tests were passed
      */
@@ -98,7 +98,7 @@ final class filemanager_utils
             case 2:
                 return TRUE; //$config['developer_mode']
             case 1:
-                // all users' property test prob effective duplication of permission
+                // module-property test to supplement current-user test
                 $mod = cms_utils::get_module('FileManager');
                 return $mod->GetPreference('advancedmode',FALSE) != FALSE;
             default:
@@ -107,8 +107,8 @@ final class filemanager_utils
     }
 
     /**
-     *
-     * @return string, maybe empty
+     * Get the cwd value, a site-root-relative filepath with leading separator
+     * @return string, maybe empty (in advanced mode)
      */
     public static function get_default_cwd()
     {
@@ -129,7 +129,8 @@ final class filemanager_utils
 
     /**
      *
-     * @param string $path Site root-path relative filepath, maybe empty
+     * @param string $path Site-rootpath-relative filepath
+     *  with leading separator or maybe empty
      *
      * @return bool indicating $path validity
      */
@@ -153,7 +154,7 @@ final class filemanager_utils
         else {
             // advanced mode, path must start with the root path.
             $rprp = realpath(CMS_ROOT_PATH);
-            if( startswith($path,$rprp) ) return TRUE; //always TRUE
+            if( startswith($rpath,$rprp) ) return TRUE;
         }
         return FALSE;
     }
@@ -176,22 +177,26 @@ final class filemanager_utils
 
     /**
      * Record current user's cwd preference
+     * A site-root-relative filepath with leading separator or maybe empty
      *
      * @param string $path filesystem path absolute or site-root-relative
      */
     public static function set_cwd($path)
     {
-        if( startswith($path,CMS_ROOT_PATH) ) $path = cms_relative_path($path,CMS_ROOT_PATH);
-
+        if( startswith($path,CMS_ROOT_PATH) ) {
+            $rpath = realpath($path);
+        }
+        else {
+            $tmp = self::join_path(CMS_ROOT_PATH,$path);
+            $rpath = realpath($tmp);
+        }
         // validate the path.
-        $tmp = self::join_path(CMS_ROOT_PATH,$path);
-        $tmp = realpath($tmp);
-        if( !$tmp || !is_dir($tmp) ) throw new Exception('Cannot set current working directory to an invalid path');
-        $newpath = cms_relative_path($tmp,CMS_ROOT_PATH);
+        if( !$rpath || !is_dir($rpath) ) throw new Exception('Cannot set current working directory to an invalid path');
+        $newpath = cms_relative_path($rpath,CMS_ROOT_PATH);
         if( !self::test_valid_path($newpath) ) throw new Exception('Cannot set current working directory to an invalid path');
 
-        $newpath = str_replace('\\','/',$newpath);
         cms_userprefs::set('filemanager_cwd',$newpath);
+        cms_userprefs::set('filemanager_cwd_recorded',time()); // support timeout
     }
 
     /**
@@ -329,8 +334,9 @@ final class filemanager_utils
     /**
      *
      * @param string $path CMS_ROOT_PATH-relative, maybe empty. Default ''
-     * @param string $sortby Optional sort-type 'name','size' etc with 'asc' or 'desc' suffix. Default ''
-     *
+     * @param string $sortby Optional sort-type
+     *  'name','size' etc with 'asc' or 'desc' suffix. Or 'none'.
+     *  Default '' hence $_SESSION['FMsortby'] or 'nameasc'
      * @return array
      */
     public static function get_file_list($path = '',$sortby ='')//: array
@@ -461,6 +467,9 @@ final class filemanager_utils
             case 'namedesc':
                 return strncasecmp($b['name'],$a['name'],strlen($b['name']));
 
+            case 'none':
+                return 0;
+
             default:
                 return strncasecmp($a['name'],$b['name'],strlen($a['name']));
             }
@@ -590,11 +599,12 @@ final class filemanager_utils
     /**
      * Recursively get directories in and descendent from $startdir
      *
-     * @param string $startdir
+     * @param string $startdir absolute filepath
      * @param bool $showhiddenfiles
      * @param string $prefix e.g. DIRECTORY_SEPARATOR
      *
-     * @return array maybe empty
+     * @return array each member having key and value like prefix.startdir-rel-subdir
+     * or maybe empty
      */
     private static function get_dirs($startdir,$showhiddenfiles,$prefix)
     {
@@ -618,7 +628,7 @@ final class filemanager_utils
 
     /**
      *
-     * @return array
+     * @return array each member having key and value like dir-sep.startdir-relative-subdir
      */
     public static function get_dirlist()
     {
@@ -636,11 +646,12 @@ final class filemanager_utils
         if( $output && is_array($output) ) {
             ksort($output);
             $tmp = [];
+            $sep = DIRECTORY_SEPARATOR;
             if( $advancedmode ) {
-                $tmp['/'] = '/'.basename($startdir).' ('.$mod->Lang('site_root').')'; //DIRECTORY_SEPARATOR?
+                $tmp[$sep] = $sep.basename($startdir).' ('.$mod->Lang('site_root').')';
             }
             else {
-                $tmp['/'] = '/'.basename($startdir).' ('.$mod->Lang('top').')';
+                $tmp[$sep] = $sep.basename($startdir).' ('.$mod->Lang('top').')';
             }
             $output = array_merge($tmp,$output);
         }
