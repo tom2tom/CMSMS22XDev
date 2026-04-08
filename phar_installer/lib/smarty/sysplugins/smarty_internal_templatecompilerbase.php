@@ -911,7 +911,7 @@ abstract class Smarty_Internal_TemplateCompilerBase
     }
 
     /**
-     * Append code segments and remove unneeded ?> <?php transitions
+     * Merge code segments and remove unneeded ?> <?php transitions
      *
      * @param string|null $left
      * @param string|null $right
@@ -920,13 +920,13 @@ abstract class Smarty_Internal_TemplateCompilerBase
      */
     public function appendCode($left, $right)
     {
-        if ($left && preg_match('/\s*\?>\s?$/D', $left) && $right && preg_match('/^<\?php\s+/', $right)) {
+        if ($left && $right &&
+            preg_match('/\s*\?>\s?$/D', $left) &&
+            preg_match('/^<\?php\s+/', $right)) {
             $left = preg_replace('/\s*\?>\s?$/D', "\n", $left);
-            $left .= preg_replace('/^<\?php\s+/', '', $right);
-        } else {
-            $left .= $right;
+            $right = preg_replace('/^<\?php\s+/', '', $right);
         }
-        return $left;
+        return $left . $right;
     }
 
     /**
