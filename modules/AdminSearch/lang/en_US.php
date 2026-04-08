@@ -74,7 +74,7 @@ $lang['search'] = 'Search';
 $lang['search_text'] = 'Search Text';
 $lang['search_results'] = 'Search Results';
 $lang['sectiondesc_oldmodtemplates'] = 'Results in this section are not clickable, as each module provides its own Admin panel interface for editing templates';
-$lang['settings'] = 'Settings';
+//$lang['settings'] = 'Settings';
 $lang['starting'] = 'Starting';
 
 // W
