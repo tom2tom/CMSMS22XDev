@@ -59,7 +59,7 @@ Read about how to use CMSMS in the official documentation (http://docs.cmsmadesi
 
 If you need help, try looking first at the main support page (https://www.cmsmadesimple.org/support/options).
 
-Further insights might be found in the community forum (http://forum.cmsmadesimple.org), on the CMSMS Slack channel (https://cms-made-simple.slack.com) (after joining via https://www.cmsmadesimple.org/support/documentation/chat), and/or some social media sites
+Further insights might be found in the community forum (https://forum.cmsmadesimple.org), on the CMSMS Slack channel (https://cms-made-simple.slack.com) (after joining via https://www.cmsmadesimple.org/support/documentation/chat), and/or some social media sites
 (https://www.facebook.com/cmsmadesimple
 https://www.linkedin.com/groups?gid=1139537
 https://twitter.com/cmsms)
@@ -87,7 +87,7 @@ Read about how to use CMSMS in the official documentation (http://docs.cmsmadesi
 
 If you need help, try looking first at the main support page (https://www.cmsmadesimple.org/support/options).
 
-Further insights might be found in the community forum (http://forum.cmsmadesimple.org), on the CMSMS Slack channel (https://cms-made-simple.slack.com) (after joining via https://www.cmsmadesimple.org/support/documentation/chat), and/or some social media sites
+Further insights might be found in the community forum (https://forum.cmsmadesimple.org), on the CMSMS Slack channel (https://cms-made-simple.slack.com) (after joining via https://www.cmsmadesimple.org/support/documentation/chat), and/or some social media sites
 (https://www.facebook.com/cmsmadesimple
 https://twitter.com/cmsms
 https://www.linkedin.com/groups?gid=1139537)
