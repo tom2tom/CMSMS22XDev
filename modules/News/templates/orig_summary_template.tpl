@@ -18,7 +18,7 @@
 
 {* this displays the category name if you're browsing by category *}
 {if $category_name}
-<h1>{$category_name}</h1>
+<h3>{$category_name}</h3>
 {/if}
 
 {* if you don't want category browsing on your summary page, remove this line and everything above it *}

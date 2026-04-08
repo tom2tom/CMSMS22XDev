@@ -39,7 +39,7 @@
             <a href="javascript:void(0);" title="{lang('open')}/{lang('close')}" class="toggle-info">{lang('open')}/{lang('close')}</a>
           </div>
           <header>
-            <h1>{lang('logintitle',$sitename)}</h1>
+            <h2>{lang('logintitle',$sitename)}</h2>
           </header>
           <form method="post" action="login.php">
             <fieldset>
