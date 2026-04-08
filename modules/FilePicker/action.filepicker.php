@@ -70,9 +70,10 @@ In principle, the request-parameters might include
 CMS_SECURE_PARAM_NAME,'mact','showtemplate',
 '_enc','inst','subdir','nosub','sig','useprefix'
 and/or none|some|all profile properties, some of which may override corresponding current property value:
-'id'(RO),'name'(RO),'create_date'(RO),'modified_date'(?),'file_extensions','prefix',
+'id'(RO),'name'(RO),'created'(RO),'modified'(RO?),
+'file_extensions','prefix','match_prefix','exclude_prefix',
 'top'(RO),'type','can_upload','can_mkdir','can_delete','show_thumbs','show_hidden',
-'sort','match_prefix','exclude_prefix'
+'sort'
 */
 //
 // initialization
@@ -249,9 +250,11 @@ foreach( $css_files as $file ) {
     }
 }
 
+$baseurl = $this->GetModuleURLPath();
 $modname = $this->GetName();
 $tpl = $smarty->createTemplate("module_file_tpl:$modname;filepicker.tpl",null,$modname,$smarty);
-$tpl->assign('cssurl',(($sel_file) ? $this->GetModuleURLPath().$sel_file : ''));
+$tpl->assign('baseurl',$baseurl);
+$tpl->assign('cssurl',(($sel_file) ? $baseurl.$sel_file : ''));
 $tpl->assign('cwd_for_display',$cwd_for_display);
 $tpl->assign('cwd',$cwd);
 $tpl->assign('files',$files);
