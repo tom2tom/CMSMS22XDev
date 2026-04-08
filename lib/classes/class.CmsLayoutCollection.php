@@ -56,8 +56,10 @@ class CmsLayoutCollection
     public $_data = [
      'id' => 0,
      'name' => '',
-     'dflt' => 0,
      'description' => '',
+     'version' => '',
+     'requires' => '',
+     'dflt' => 0,
      'created' => 0,
      'modified' => 0
     ];
@@ -131,7 +133,6 @@ class CmsLayoutCollection
         return (bool)$this->_data['dflt'];
     }
 
-
     /**
      * Sets this design as the default design.
      * Sets the dirty flag.
@@ -186,6 +187,103 @@ class CmsLayoutCollection
     public function get_modified()
     {
         return (int)$this->_data['modified'];
+    }
+
+    /**
+     * Get the version of this design
+     * @since 2.2.23F2
+     * @return string
+     */
+    public function get_version()
+    {
+        return (string)$this->_data['version'];
+    }
+
+    /**
+     * Set or clear the version of this design
+     * @since 2.2.23F2
+     * @param string $vers
+     */
+    public function set_version($vers)
+    {
+        $tmp = trim((string)$vers);
+        if( $tmp ) {
+            $tmp = str_replace([' ',','],['','.'],$tmp);
+        }
+        $this->_data['version'] = $tmp;
+    }
+
+    /**
+     * Get the requirements/dependencies of this design, if any
+     * @since 2.2.23F2
+     * @param int Optional format 1-4
+     * 1 for comma-separated string Default
+     * 2 for <br>-separated string
+     * 3 for newline-separated string
+     * 4 for array each member an array like depname => [] or [op,depversion]
+     * @return mixed array | string
+     */
+    public function get_requires($format = 1)
+    {
+        $res = (string)$this->_data['requires'];
+        if( $res ) {
+            switch ($format) {
+                case 4:
+                $arr = [];
+                foreach(explode(',',$res) as $dep) {
+                    if( preg_match('~^\s*([^<>=!\s]+)\s*([<>=!]{1,2})?\s*([a-zA-Z0-9.]+)?\s*$~',$dep,$matches) ) {
+                        if( isset($matches[2]) && isset($matches[3]) ) {
+                            $arr[$matches[1]] = [$matches[2],$matches[3]];
+                        }
+                        else {
+                            $reqs[$matches[1]] = [];
+                        }
+                    }
+                }
+                return $arr;
+                case 3:
+                return str_replace(',',"\n",$res);
+                case 2:
+                return str_replace(',',"<br>\n",$res);
+                default:
+                return $res;
+            }
+            return (string)$this->_data['requires']; //TODO format
+        }
+        return ($format != 4) ? '' : [];
+    }
+
+    /**
+     * Set or clear the dependencies of this design
+     * @since 2.2.23F2
+     * @param mixed $deps array | string
+     */
+    public function set_requires($deps)
+    {
+        if( $deps) {
+            if( is_array($deps) ) {
+                $out = [];
+                foreach( $deps as $name => $detail) {
+                    if( $detail ) {
+                        $out[] = $name.implode('',$detail);
+                    }
+                    else {
+                        $out[] = $name;
+                    }
+                }
+                $deps = implode(',',$out);
+            }
+            else {
+                $deps = str_replace(
+                [' ','"',"'","\r\n","\n",'<br>',',,'],
+                ['', '', '', ',',   ',', ',',   ','],
+                trim($deps));
+            }
+        }
+        else {
+            $deps = '';
+        }
+        $this->_data['requires'] = $deps;
     }
 
     /**
@@ -426,7 +524,7 @@ class CmsLayoutCollection
         if( $this->get_default() ) {
             $query = 'UPDATE '.CMS_DB_PREFIX.self::TABLENAME.' SET dflt = 0 WHERE id != ?';
             $db->Execute($query,array($did)); //unreliable return value after UPDATE
-            if( $db->errorNo() != 0 ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
+            if( $db->ErrorNo() != 0 ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
 
         }
 
@@ -462,7 +560,7 @@ class CmsLayoutCollection
         $db = CmsApp::get_instance()->GetDb();
         $query = 'UPDATE '.CMS_DB_PREFIX.self::TABLENAME.' SET name = ?, description = ?, dflt = ?, modified = ? WHERE id = ?';
         $db->Execute($query,array($this->get_name(), $this->get_description(), $pd, time(), $did)); //unreliable return value after UPDATE
-        if( $db->errorNo() != 0 ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
+        if( $db->ErrorNo() != 0 ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
 
         if( $this->get_default() ) {
             $query = 'UPDATE '.CMS_DB_PREFIX.self::TABLENAME.' SET dflt = 0 WHERE id != ?';
@@ -691,7 +789,7 @@ class CmsLayoutCollection
     /**
      * Get a list of designs
      *
-     * @param array design names, maybe empty
+     * @param array each member design_id=>design name, or maybe empty
      */
     public static function get_list()
     {
@@ -728,32 +826,22 @@ class CmsLayoutCollection
 
     /**
      * Given a base name, suggest a name for a copied design
+     * @see also: CmsAdminUtils::ITEMNAME_REGEX
      *
-     * @param string $newname
-     * @return string
+     * @param string $newname Optional name-prefix
+     * @return string possibly with numeric suffix (2+) , or maybe empty
      */
     public static function suggest_name($newname = '')
     {
         if( $newname == '' ) $newname = 'New Design';
         $list = self::get_list();
-        $names = array_values($list);
-
         $origname = $newname;
-        $n = 1;
-        while( $n < 100 && in_array($newname,$names) ) {
-            $n++;
+        for( $n = 2; $n <= 100 && in_array($newname,$list); $n++ ) {
             $newname = $origname.' '.$n;
         }
-
-        if( $n == 100 ) return '';
-        return $newname;
+        if( $n < 101 ) return $newname;
+        return '';
     }
 } // end of class
 
-// dunno if this should go here...
-class_alias('CmsLayoutCollection','CmsLayoutDesign',false);
-
-#
-# EOF
-#
 ?>
