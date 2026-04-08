@@ -95,7 +95,7 @@ class wizard_step4 extends wizard_step
             $longnames = ['host','name','user','password','tables-prefix'];
             foreach(['dbhost','dbname','dbuser','dbpass','dbprefix'] as $i => $key) {
                 if( !empty($config[$key]) && preg_match('/[\\\']/',$config[$key]) ) {
-                    throw new Exception(lang('error_invalidtypedvar',lang['database'].' '.$longnames[$i]));
+                    throw new Exception(lang('error_invalidtypedvar',lang('database').' '.$longnames[$i]));
                 }
             }
         }
