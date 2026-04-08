@@ -1,23 +1,44 @@
 Version 2.2.23F2 - Regina
 -------------------------
  - FR #12790 Content-page URL-path property may contain any URL-compatible chars, including upper-case letters. Special chars '@' etc are automatically urlencoded()'d.
- - BR #12791 Missing login/out pre events
+ - BR #12791 Core::Log[in/out]Pre events not created
+ - Revert Core::LoginPre event to pre-2.2.7 operation (sent before any authentication) see FR #12792
+ - Add Core::LoginPassed event, sent after password-check success and before Core::LoginPost
+ - Add support for event-handling by a callable 
  - Add to cms_http_request class support for HEAD requests, for use in url validation etc
  - Add method cms_utils::find_content() for finding pages with a wanted value in the whole, or part, of any content field
  - Add class and method Search_content::Find() as the backend processor for cms_utils::find_content()
+ - Add version and dependencies properties of designs, to support future version-control
+ - Use template-objects instead of global Smarty for generating admin pages
+ - Add and deploy Smarty resources 'admin_tpl' and 'theme_file_tpl'
+ - Smarty caching complies with the 'use_smartycaching' site-preference unless overridden in context
+ - Replace CmsJobManager and associated classes by core classes and admin scripts
+ - Process Job-subclass objects along with Task objects for background operations
+ - Add job-related site preferences
+ - Deprecate task-class filenames ending with '.task.php', instead end with 'Task.php' in accord with the classname
  - Improve returned-value formatting in get_parameter_value()
  - Relocate config.php out of site-root folder
  - Partition config.php into distinct files for database-credentials and other (non-sensitive) parameters 
  - Consolidate content-related settings UI: migrate global-settings tab to ContentManager-settings tab
+ - Change admin-menu label from 'File Picker' to 'Settings - Uploads'
  - Deprecate folder-creation using 0777 permissions (should be 0775 at most, for site security). Unconventional sites which rely on 'world-write' would be wise to prepare, by adding relevant user(s) to the PHP-user's (typically the server-user's) group.
  - Cancel long-standing deprecation of module method SetParameters and revert it to its original role in help-generation
+ - Popup-help-dialog properties can be overridden by cms_help tag attributes
  - Main autoloader for classes also handles namespaced interfaces and traits associated with modules
- - Add capacity to autoload module-related clases etc indepentlty of the module
+ - Add capability to autoload module-related classes etc independently of the module
  - Conform LoginOperations-class namespace to classfile location
  - Support module-plugin tags in admin templates
+ - Add 'admin_add_bottomtext' hook for content-insertion
+ - Reduce the number of js files loaded with every admin request, instead load them when needed via hook
+ - Replace js legacy-method substr
  - Progressively update recorded password-hashes
  - Replace or remove deprecated media-types in stylesheets
+ - Replace usage of deprecated GetHeaderHTML()
+ - Relocate event-description and event-help translatable strings to new 'events' realm
+ - Extra pages and stylesheet in new-site default content
  - Correct html errors exposed by extensive validation
+ - PHPMailer upgraded to version 7.0.1
+ - Supports PHP to 8.5 without deprecation
 
 Version 2.2.22F2 - Whitehorse
 -------------------------------
