@@ -24,8 +24,9 @@ use function get_recursive_file_list;
 use function get_userid;
 use function recursive_delete;
 
-//this would be sensible only if a suitable tarball creator/reader is always available
+//this would be sensible only if a suitable tarball creator/manipulator/reader is always available
 //TODO confirm relevant infrastructure e.g. Phar, PharData, Gzip extensions or equivalent
+//e.g. wapmorgan\UnifiedArchive
 
 class UserGuideIO
 {
@@ -33,7 +34,7 @@ class UserGuideIO
     private $archive; // object
     private $archname; // filepath (pack) or directory path (unpack)
     // module preferences relevant to I/O
-    private $preferences = ['filesFolder'=>''];
+    private $preferences = ['filesFolder'=>'UserGuide'];
     // module preferences retrieved from imported archive
     private $importprefs = [];
     // filepath-basename regex's TODO check these
@@ -60,7 +61,7 @@ class UserGuideIO
             $this->mod = cms_utils::get_module('UserGuide');
         }
         foreach ($this->preferences as $key => $val) {
-            $this->preferences[$key] = $this->mod->GetPreference($key);
+            $this->preferences[$key] = $this->mod->GetPreference($key, $val);
         }
     }
 
