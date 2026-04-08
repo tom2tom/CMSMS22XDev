@@ -51,14 +51,14 @@ class ModuleManager extends CMSModule
   public function UninstallPreMessage() { return $this->Lang('really_uninstall'); }
   public function VisibleToAdminUser() { return ($this->CheckPermission('Modify Site Preferences') || $this->CheckPermission('Modify Modules')); }
 
-  protected function _DisplayErrorPage($id, &$params, $returnid, $message='')
+  protected function _DisplayErrorPage($id, $params=[], $returnid='', $message='')
   {
     $smarty = cmsms()->GetSmarty();
     $modname = $this->GetName();
     $tpl = $smarty->createTemplate("module_file_tpl:$modname;error.tpl",null,null); //no parent
     $tpl->assign('title_error',$this->Lang('error'));
     $tpl->assign('message',$message);
-    $tpl->assign('link_back',$this->CreateLink($id,'defaultadmin',$returnid,$this->Lang('back_to_module_manager')));
+    $tpl->assign('link_back',$this->CreateLink($id,'defaultadmin',$returnid,$this->Lang('back_to_module_manager'),$params));
     $tpl->display();
   }
 
