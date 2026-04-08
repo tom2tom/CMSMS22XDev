@@ -24,17 +24,20 @@ if( is_dir($bf) ) {
 		switch ($name) {
 			case 'images':
 			break;
+			case 'themes':
+			// no break here
 			case 'designs': // merged into themes-place during DesignManager 1.1.2 upgrade
 			break;
 			default:
 			if( $modnames && in_array($name, $modnames) ) break;
-			if( 1 ) break; //TODO if $dp seems a non-theme place e.g. empty ...
+			if( 0 ) break; //TODO if $dp seems a non-theme place e.g. empty ...
+			if( $name == 'simplex' ) { $name = 'Simplex'; } // conform to design name
 			rename($dp, $bt.DIRECTORY_SEPARATOR.$name); //might fail and warn
 			break;
 		}
 	}
 }
-// notionally, 'designs'-place corrections would be done in DM 1.1.2 upgrade
+// notionally, 'designs'-place and 'themes'-place corrections would be done in DM 1.1.2 upgrade
 // but in that case, themes_root/designs etc reversions would be needed during the following
 //TODO [[root_url]]/uploads/designs also in the following?
 //$sql = 'UPDATE '.CMS_DB_PREFIX.'layout_templates SET content=REPLACE(content,"[[uploads_url]]/designs","[[assets_root]]/designs")'; for a distinct 'designs' tree
