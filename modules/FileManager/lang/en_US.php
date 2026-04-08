@@ -159,6 +159,9 @@ $lang['invalidnewdir'] = 'Name of new directory cannot contain chars like /, \\ 
 $lang['itemstocopy'] = 'Copy these Items';
 $lang['itemstomove'] = 'Move these Items';
 
+//J
+$lang['jobcleardirs_description'] = 'Clears old user-preferences which record current directory';
+
 // K
 $lang['kb'] = 'kb';
 
@@ -220,7 +223,7 @@ $lang['pie_crop_h'] = 'crop height';
 $lang['pie_warn_action'] = 'Are you sure? There is no CTRL+Z down here..';
 $lang['pie_warn_reset'] = 'Are you sure? It will reset your current modifications';
 $lang['postinstall'] = 'FileManager module was installed';
-$lang['postrotate'] = 'Action for after image rotation';
+$lang['postrotate'] = 'Operation after image rotation';
 $lang['predefined'] = 'Predefined Angles';
 $lang['prompt_copy'] = 'Copy one or more Items';
 $lang['prompt_dropfiles'] = 'Drop files here to upload';
@@ -260,7 +263,7 @@ $lang['rwxstyle'] = 'rwx style';
 $lang['save'] = 'Save';
 $lang['selecttargetdir'] = 'Select target directory for move/copy';
 $lang['setpermissions'] = 'Set permissions';
-$lang['settings'] = 'Settings';
+//$lang['settings'] = 'Settings';
 $lang['settingsconfirmsingledelete'] = 'Confirm deletion of a single file?';
 $lang['settingssaved'] = 'Settings saved';
 $lang['showhiddenfiles'] = 'Show hidden files';
