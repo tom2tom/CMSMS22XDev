@@ -51,7 +51,7 @@ class content_assistant
    */
   public static function auto_create_url()
   {
-    return get_site_preference('content_autocreate_urls',0);
+    return cms_siteprefs::get('content_autocreate_urls',0);
   }
 
 

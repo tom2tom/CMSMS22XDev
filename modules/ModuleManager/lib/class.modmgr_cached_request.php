@@ -51,7 +51,7 @@ final class modmgr_cached_request
     $fn = $this->_getCacheFile();
     if( !$fn ) return;
 
-    if( !$age ) $age = get_site_preference('browser_cache_expiry',60);
+    if( !$age ) $age = cms_siteprefs::get('browser_cache_expiry',60);
     if( $age ) $age = max(1,(int)$age);
     $atime = time() - ($age * 60);
     $mod = cms_utils::get_module('ModuleManager');

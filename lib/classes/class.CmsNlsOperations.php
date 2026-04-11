@@ -223,7 +223,7 @@ final class CmsNlsOperations
     */
     public static function get_frontend_language()
     {
-        $x = trim(get_site_preference('frontendlang'));
+        $x = trim(cms_siteprefs::get('frontendlang'));
         if( !$x ) $x = 'en_US';
         return $x;
     }

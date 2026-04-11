@@ -65,7 +65,7 @@ $userid = get_userid();
 $searchparams = $params;
 unset($searchparams['submit']);
 unset($searchparams['action']);
-set_preference($userid,$this->GetName().'saved_search',serialize($searchparams));
+cms_userprefs::set_for_user($userid,$this->GetName().'saved_search',serialize($searchparams));
 unset($searchparams['slaves']);
 
 // find search slave classes
@@ -115,8 +115,4 @@ if( $slaves && is_array($slaves) ) {
 //TODO if not debugging and actually searching status_msg($this->Lang('finished'));
 debug_buffer('finished admin search');
 exit;
-
-#
-# EOF
-#
 ?>

@@ -36,13 +36,12 @@
  */
 function smarty_modifier_cms_date_format($datevar, $format = '', $default_date = '')
 {
-	if($format == '') {
-		$format = get_site_preference('defaultdateformat');
-		if($format == '') $format = '%h j, Y';
-		if(!CmsApp::get_instance()->is_frontend_request()) {
-			if($uid = get_userid(false)) {
-				$tmp = get_preference($uid, 'date_format_string');
-				if($tmp != '') $format = $tmp;
+	if ($format == '') {
+		$format = cms_siteprefs::get('defaultdateformat', '%h j, Y');
+		if (!CmsApp::get_instance()->is_frontend_request()) {
+			if ($uid = get_userid(false)) {
+				$tmp = cms_userprefs::get_for_user($uid, 'date_format_string');
+				if ($tmp) $format = $tmp;
 			}
 		}
 	}
@@ -58,5 +57,5 @@ function smarty_modifier_cms_date_format($datevar, $format = '', $default_date =
 	}
 	return $out;
 }
-// EOF
+
 ?>

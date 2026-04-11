@@ -125,7 +125,7 @@ final class Nav_utils
                     }
                     else {
                         $url = $config['image_uploads_url'];
-                        $p = get_site_preference('content_imagefield_path');
+                        $p = cms_siteprefs::get('content_imagefield_path');
                         if( $p ) $url .= '/' . strtr($p,'\\','/');
                         $obj->image = $url .'/'. $tmp;
                     }
@@ -137,7 +137,7 @@ final class Nav_utils
                     }
                     else {
                         $url = $config['image_uploads_url'];
-                        $p = get_site_preference('content_thumbnailfield_path');
+                        $p = cms_siteprefs::get('content_thumbnailfield_path');
                         if( $p ) $url .= '/' . strtr($p,'\\','/');
                         $obj->thumbnail = $url .'/'. $tmp;
                     }
