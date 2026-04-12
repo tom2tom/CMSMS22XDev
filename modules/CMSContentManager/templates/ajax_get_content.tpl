@@ -53,7 +53,7 @@
     {function do_content_row}
       {foreach $columns as $column => $flag}
         {if !$flag}{continue}{/if}
-    <td class="{$column}">
+    <td class="{$column}"{if ($column == 'active' || $column == 'default')} style="text-align:center"{/if}>
       {if $column == 'expand'}
         {if $row.expand == 'open'}
         <a href="{cms_action_url action='defaultadmin' collapse=$row.id}" class="page_collapse" accesskey="C" title="{$mod->Lang('prompt_page_collapse')}">
@@ -215,7 +215,7 @@
       <tr>
         {foreach $columns as $column => $flag}
     {if $flag}
-      <th{if $flag=='icon'} class="pageicon"{/if}><!-- {$column} -->
+      <th{if $flag=='icon'} class="pageicon"{/if}{if $column == 'active' || $column == 'default'} style="text-align:center"{/if}><!-- {$column} -->
       {if $column == 'expand' || $column == 'hier' || $column == 'icon1' || $column == 'view' || $column == 'copy' || $column == 'edit' || $column == 'delete'}
         <span title="{$mod->Lang("coltitle_{$column}")}">&nbsp;</span>{* no column header *}
       {elseif $column == 'multiselect'}
@@ -235,7 +235,7 @@
     <tbody class="contentrows">
       {foreach $content_list as $row}
         {cycle values="row1,row2" assign='rowclass'}
-    <tr id="row_{$row.id}" class="{$rowclass} {if isset($row.selected)}selected{/if}">
+    <tr id="row_{$row.id}" class="{$rowclass}{if isset($row.selected)} selected{/if}">
       {do_content_row row=$row columns=$columns}
     </tr>
       {/foreach}
