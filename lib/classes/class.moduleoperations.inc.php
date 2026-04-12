@@ -41,7 +41,7 @@ final class ModuleOperations
      *
      * @internal
      */
-    protected $cmssystemmodules =  array('AdminSearch', 'CMSContentManager', 'CmsJobManager', 'CMSMailer', 'DesignManager', 'FileManager', 'FilePicker', 'ModuleManager', 'MicroTiny', 'Navigator', 'Search'); // News, UserGuide omitted
+    protected $cmssystemmodules =  array('AdminSearch', 'CMSContentManager', 'CMSMailer', 'DesignManager', 'FileManager', 'FilePicker', 'ModuleManager', 'MicroTiny', 'Navigator', 'Search'); // News, UserGuide omitted
 
     /**
      * @ignore
@@ -140,7 +140,8 @@ final class ModuleOperations
     }
 
     /**
-     * @ignore
+     * @param string $module The module name
+     * @return string
      */
     protected static function get_module_filename($module)
     {
@@ -151,10 +152,11 @@ final class ModuleOperations
     }
 
     /**
-     * Allow setting the classname for a module... useful when the module class file itself is within a namespace.
+     * Set the classname for a module.
+     * Useful when the module class file itself is within a namespace.
      *
      * @param string $module The module name
-     * @param string $classname The class name.
+     * @param string $classname The class name
      */
     public static function set_module_classname($module,$classname)
     {
@@ -180,6 +182,7 @@ final class ModuleOperations
             if( is_numeric($value) && strpos($value,' ') === FALSE ) {
                 $res = "$key = $value".PHP_EOL;
             } else {
+//TODO          $s = smartquote+escape($value); $res = "$key = $s".PHP_EOL;
                 $res = "$key = \"{$value}\"".PHP_EOL;
             }
             return $res;
@@ -376,7 +379,7 @@ final class ModuleOperations
                 break;
 
             case XMLReader::END_ELEMENT:
-            {
+
                 switch( strtoupper($reader->localName) ) {
                 case 'REQUIRES':
                     if( count($requires) == 2 ) {
@@ -396,8 +399,8 @@ final class ModuleOperations
                         }
 
                         // ready to go
-                        $moduledir=$dir.DIRECTORY_SEPARATOR.$moduledetails['name'];
-                        $filename=$moduledir.$moduledetails['filename'];
+                        $moduledir = $dir.DIRECTORY_SEPARATOR.$moduledetails['name'];
+                        $filename = $moduledir.$moduledetails['filename'];
                         if( !file_exists( $moduledir ) ) {
                             if( !@mkdir( $moduledir ) && !is_dir( $moduledir ) ) {
                                 throw new CmsFileSystemException(lang('errorcantcreatefile').': '.$moduledir);
@@ -413,20 +416,21 @@ final class ModuleOperations
                         else {
                             $data = $moduledetails['filedata'];
                             if( strlen( $data ) ) $data = base64_decode( $data );
-                            $fp = @fopen( $filename, "w" );
-                            if( !$fp ) throw new CmsFileSystemException(lang('errorcantcreatefile').' '.$filename);
-                            if( strlen( $data ) ) @fwrite( $fp, $data );
-                            @fclose( $fp );
+                            if( strlen( $data ) ) {
+                                $fh = @fopen( $filename, 'wb' );
+                                if( !$fh ) throw new CmsFileSystemException(lang('errorcantcreatefile').' '.$filename); // TODO can't write
+                                @fwrite( $fh, $data );
+                                @fclose( $fh );
+                            }
                         }
                         unset( $moduledetails['filedata'] );
                         unset( $moduledetails['filename'] );
                         unset( $moduledetails['isdir'] );
                     }
                     break;
-                }
+                } // localName switch
                 break;
-            }
-            }
+            } // nodetype switch
         } // while
 
         $reader->close();
@@ -905,7 +909,7 @@ VALUES (?,?,?,NOW(),NOW())';
             if ($cleanup) {
                 // deprecated
                 $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'module_templates WHERE module_name=?',array($module));
-                $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'event_handlers WHERE module_name=?',array($module));
+                $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'event_handlers WHERE handler=? AND handler_type='.Events::HANDLERMOD,array($module));
                 $db->Execute('DELETE FROM '.CMS_DB_PREFIX.'events WHERE originator=?',array($module));
 
                 $types = \CmsLayoutTemplateType::load_all_by_originator($module);
