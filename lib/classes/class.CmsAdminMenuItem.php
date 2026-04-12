@@ -128,7 +128,7 @@ final class CmsAdminMenuItem
             $obj = new CmsAdminMenuItem();
             $obj->module = $mod->GetName();
             $obj->section = $mod->GetAdminSection();
-            $obj->title   = $mod->GetFriendlyName();
+            $obj->title = $mod->GetFriendlyName();
             $obj->description = $mod->GetAdminDescription();
             $obj->priority = 50;
             $obj->action = 'defaultadmin';
@@ -137,7 +137,3 @@ final class CmsAdminMenuItem
         return $obj;
     }
 } // end of class
-
-#
-# EOF
-#

@@ -30,12 +30,12 @@ try {
     $profile_id = get_parameter_value($params,'pid',0);
     if( $profile_id < 1 ) throw new \LogicException('Invalid profile id passed to delete_profile action');
 
-    $profile = $this->_dao->loadById( $profile_id );
+    $profile = $this->_dao->loadById($profile_id);
     if( !$profile ) throw new \LogicException('Invalid profile id passed to delete_profile action');
 
-    $this->_dao->setDefault( $profile );
+    $this->_dao->setDefault($profile);
 }
 catch( \Exception $e ) {
-    $this->SetError( $e->GetMessage() );
+    $this->SetError($e->GetMessage());
 }
 $this->RedirectToAdminTab();

@@ -53,8 +53,6 @@ final class AdminSearch_content_slave extends AdminSearch_slave
 
         $resultSets = array();
 
-//      $urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
-
         //check the table
         $this->process_query_string($query);
 

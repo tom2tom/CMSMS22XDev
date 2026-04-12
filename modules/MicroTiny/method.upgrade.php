@@ -48,7 +48,4 @@ translations lookup file,
  __DIR__/lib/langs.manifest
 in each case, without a trailing '.js'
 */
-#
-# EOF
-#
 ?>

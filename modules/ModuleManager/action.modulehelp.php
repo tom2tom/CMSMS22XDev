@@ -80,10 +80,7 @@ $tpl->assign('moduleversion',$version);
 $tpl->assign('xmlfile',$xmlfile);
 $tpl->assign('content',$help);
 $tpl->assign('back_url',$this->create_url($id,'defaultadmin',$returnid));
-$tpl->assign('link_back',$this->CreateLink($id,'defaultadmin',$returnid, $this->Lang('back_to_module_manager')));
+$tpl->assign('link_back',$this->CreateLink($id,'defaultadmin',$returnid,$this->Lang('back_to_module_manager')));
 $tpl->display();
 
-#
-# EOF
-#
 ?>

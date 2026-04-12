@@ -4,7 +4,6 @@
 # Module FilePicker action
 # (c) 2016 Fernando Morgado <jomorg@cmsmadesimple.org>
 # (c) 2016 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
-#
 #-------------------------------------------------------------------------
 # This file is part of FilePicker
 # FilePicker is free software; you can redistribute it and/or modify
@@ -23,15 +22,14 @@
 #-------------------------------------------------------------------------
 # END_LICENSE
 
-use FilePicker\ProfileDAO;
 if( !defined('CMS_VERSION') ) exit;
 
 try {
     $profile_id = get_parameter_value($params,'pid',0);
-    if( $profile_id < 1 ) throw new \LogicException('Invalid profile id passed to delete_profile action');
+    if( $profile_id < 1 ) throw new LogicException('Invalid profile id passed to delete_profile action');
 
-    $profile = $this->_dao->loadById( $profile_id );
-    if( !$profile ) throw new \LogicException('Invalid profile id passed to delete_profile action');
+    $profile = $this->_dao->loadById($profile_id);
+    if( !$profile ) throw new LogicException('Invalid profile id passed to delete_profile action');
 
     $dflt_id = $this->_dao->getDefaultProfileId();
     if( $dflt_id == $profile->id ) {
@@ -40,7 +38,7 @@ try {
 
     $this->_dao->delete( $profile );
 }
-catch( \Exception $e ) {
+catch( Exception $e ) {
     $this->SetError( $e->GetMessage() );
 }
 $this->RedirectToAdminTab();
