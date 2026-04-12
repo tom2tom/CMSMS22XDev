@@ -19,6 +19,7 @@ Version 2.2.23F2 - Regina
  - Improve returned-value formatting in get_parameter_value()
  - Relocate config.php out of site-root folder
  - Partition config.php into distinct files for database-credentials and other (non-sensitive) parameters 
+ - Do not reveal database access-credentials when handling error/exception
  - Consolidate content-related settings UI: migrate global-settings tab to ContentManager-settings tab
  - Change admin-menu label from 'File Picker' to 'Settings - Uploads'
  - Deprecate folder-creation using 0777 permissions (should be 0775 at most, for site security). Unconventional sites which rely on 'world-write' would be wise to prepare, by adding relevant user(s) to the PHP-user's (typically the server-user's) group.
