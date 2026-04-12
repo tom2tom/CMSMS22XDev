@@ -5,7 +5,7 @@
   {foreach $nodelist as $node}
     {$spanclass='breadcrumb'}
     {if $node->current}
-      {$spanclass=$spanclass|cat:' current'}
+      {$spanclass='breadcrumb current'}
     {/if}
 
     <span class="{$spanclass}">
@@ -14,7 +14,7 @@
       {elseif $node->type == 'sectionheader'}
         {$node->menutext}&nbsp;
       {else}
-        <a href="{$node->url}" title="{$node->menutext}">{$node->menutext}</a>
+        <a href="{$node->url}" title="{$node->menutext}">{$node->menutext}</a>&nbsp;
       {/if}
     </span>
 
