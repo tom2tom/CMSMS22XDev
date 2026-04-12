@@ -48,10 +48,14 @@
 }
 /* fileslist styles */
 a.filelink:visited {
-  color: #000; /* TODO default text color */
+  color: #000 /* TODO default text color */
 }
 /* image-rotation styles */
 #rotimg {
   position: relative;
   z-index: 0
+}
+/* settings style */
+.cms_helpicon {
+  vertical-align: text-bottom
 }
