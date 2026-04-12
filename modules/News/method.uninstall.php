@@ -42,6 +42,10 @@ $this->RemoveSmartyPlugin();
 $me = $this->GetName();
 cms_route_manager::del_static('',$me);
 
+// Remove user-specific filter-preferences
+$sql = 'DELETE FROM '.CMS_DB_PREFIX."userprefs WHERE preference LIKE {$me}_%";
+$db->Execute($sql);
+
 // Remove all module-templates
 $this->DeleteTemplate();
 
