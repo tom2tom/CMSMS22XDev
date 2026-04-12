@@ -1,5 +1,5 @@
-{if isset($header)}
-<h3>{$header}</h3>
+{if isset($title)}
+<h3>{$title}</h3>
 {/if}
 
 <p class="pagerows">
