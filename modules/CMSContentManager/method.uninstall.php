@@ -9,5 +9,8 @@ $this->RemovePreference();
 
 // Remove user-specific filter-preferences
 $me = $this->GetName();
-$sql = 'DELETE FROM '.CMS_DB_PREFIX."userprefs WHERE preference LIKE {$me}_%";
+$sql = 'DELETE FROM '.CMS_DB_PREFIX."userprefs WHERE preference='{$me}_pages_filter'";
+$db->Execute($sql);
+
+$sql = 'DELETE FROM '.CMS_DB_PREFIX."userprefs WHERE preference='{$me}_bulk_showmore'";
 $db->Execute($sql);
