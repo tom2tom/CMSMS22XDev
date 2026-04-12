@@ -13,6 +13,7 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
@@ -39,7 +40,6 @@ $tpl = $smarty->createTemplate("module_file_tpl:$modname;ajax_get_content.tpl",n
 try {
     // load all the content that this user can display...
     // organize it into a tree
-    require_once __DIR__.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'class.ContentListBuilder.php';
     $builder = new CMSContentManager\ContentListBuilder($this);
     $curpage = (isset($_SESSION[$modname.'_curpage']) && !isset($params['seek'])) ? (int) $_SESSION[$modname.'_curpage'] : 1;
     if( isset($params['curpage']) ) $curpage = (int)$params['curpage'];
@@ -48,6 +48,12 @@ try {
     // build the display
     //
     $builder->set_pagelimit($settings['limit']); //TODO better if func($npages) BUT circular logic
+    if( !empty($settings['type']) ) {
+        $filter = new CMSContentManager\ContentListFilter();
+        $filter->type = $settings['type'];
+        $filter->expr = $settings['expr'];
+        $builder->set_filter($filter);
+    }
     if( isset($params['seek']) && $params['seek'] ) { // i.e. not 0
         $builder->seek_to((int)$params['seek']);
     }

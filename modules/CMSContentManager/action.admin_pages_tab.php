@@ -20,7 +20,7 @@
 #-------------------------------------------------------------------------
 #END_LICENSE
 
-use CMSContentManager\ContentListFilter;
+use CMSContentManager\ContentListBuilder;
 
 if( !isset($gCms) ) exit;
 
@@ -41,7 +41,7 @@ $error = '';
 $cm_prettyurls_ok = function() use($config) {
   static $_prettyurls_ok = null;
   if( $_prettyurls_ok === null ) {
-    $_prettyurls_ok = (isset($config['url_rewriting']) && $config['url_rewriting'] != 'none');
+    $_prettyurls_ok = ($config['url_rewriting'] != 'none');
   }
   return $_prettyurls_ok;
 };
@@ -55,8 +55,7 @@ $tpl->assign('can_reorder_content',$this->CheckPermission('Manage All Content'))
 
 // load all the content that this user can display...
 // organize it into a tree
-require_once __DIR__.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'class.ContentListBuilder.php';
-$builder = new CMSContentManager\ContentListBuilder($this);
+$builder = new ContentListBuilder($this);
 $curpage = 1;
 if( isset($params['curpage']) ) $curpage = (int)$params['curpage'];
 
@@ -116,6 +115,7 @@ $tmp = cms_userprefs::get($modname.'_pages_filter');
 if( $tmp ) {
   $tmp = unserialize($tmp);
   if( $tmp ) {
+    $builder->set_filter($tmp);
     $savedlimit = $tmp['limit'];
   }
 }
