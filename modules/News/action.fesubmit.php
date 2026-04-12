@@ -14,6 +14,9 @@ for article-submission by admin users lacking permission to use the full
 News-admin UI, and/or to enable a custom template for adding an article.
 */
 
+use CMSMS\FilePickerProfile;
+use CMSMS\HookManager;
+
 if( !isset($gCms) ) exit;
 if( !$this->GetPreference('allow_fesubmit',0) ) return;
 
@@ -231,7 +234,7 @@ VALUES ($articleid,$fldid,?,$longnow,$longnow)";
 
         // send an event
         // CHECKME also support 'news_url' property ?
-        \CMSMS\HookManager::do_hook('News::NewsArticleAdded',array(
+        HookManager::do_hook('News::NewsArticleAdded',array(
             'news_id' => $articleid,
             'category_id' => $category_id,
             'title' => $title,
@@ -265,7 +268,8 @@ if( $front ) {
     // linkedfile fields are supported
     $filepicker = cms_utils::get_filepicker_module();
     $profile = $filepicker->get_default_profile($dir,$userid);
-    $profile = $profile->overrideWith(['top'=>$dir,'type'=>'image']); // type not enforced in the picker
+    $parms = ['top'=>$dir,'type'=>'image']; // aka CMSMS\FileType::TYPE_IMAGE BUT type not enforced in the picker
+    $profile->overrideWith($parms); // TODO other property-overrides ? not writability
     $input = $filepicker->get_html($id.'image_url',$data,$profile);
     preg_match('/id="(.+?)"/',$input,$matches);
     $inputid = $matches[1];
