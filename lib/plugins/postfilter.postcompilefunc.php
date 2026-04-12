@@ -24,7 +24,7 @@ function smarty_postfilter_postcompilefunc($tpl_output, $smarty)
     if (count($result) > 1) {
         switch ($result[0]) {
         case 'cms_stylesheet':
-        case 'stylesheet':
+        case 'stylesheet': // un-supported since 1.10
             HookManager::do_hook('Core::StylesheetPostCompile', array('stylesheet'=>&$tpl_output));
             break;
 
