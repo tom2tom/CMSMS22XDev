@@ -18,12 +18,12 @@
 #$Id$
 
 /**
- * This file is included in every page.  It does all setup functions including
+ * This file is included in every request.  It does all setup functions including
  * importing additional functions/classes, setting up sessions and nls, and
- * construction of various important variables like $gCms.
+ * assigning various important variables like $gCms.
  *
- * This function cannot be included by third party applications to create access to CMSMS API's.  It is intended for
- * and supported for use in CMSMS applications only.
+ * This script is not for use by third party applications to create access to
+ * CMSMS API's.  It is intended for and supported for use in CMSMS applications only.
  *
  * @package CMS
  */
@@ -39,9 +39,9 @@
  * CMS_LOGIN_PAGE     - Indicates that the file was included from the admin login form.
  */
 
-define('CMS_DEFAULT_VERSIONCHECK_URL', 'https://www.cmsmadesimple.org/latest_version.php');
-define('CMS_SECURE_PARAM_NAME', '__c'); // this is used for CSRF protection
-define('CMS_USER_KEY', '_userkey_'); // this is used for CSRF protection
+define('CMS_DEFAULT_VERSIONCHECK_URL', 'https://www.cmsmadesimple.org/latest_version.php'); // (used once/day)
+define('CMS_SECURE_PARAM_NAME', '__c'); // used for CSRF protection (first-needed in login.php)
+define('CMS_USER_KEY', '_userkey_'); // used for CSRF protection (first-needed in misc.functions)
 if (!defined('CONFIG_FILE_LOCATION')) {
     define('CONFIG_FILE_LOCATION', dirname(__DIR__) . '/lib/config.php');
 }
@@ -65,7 +65,7 @@ if (!isset($CMS_INSTALL_PAGE) && (!file_exists(CONFIG_FILE_LOCATION) || filesize
  * temporary as we will revisit the security measures used
  * (JoMorg)
  * input-sanitizing is best when context-specific and tailored accordingly,
- * and the original $_SERVER, $_GET values still available
+ * and the original $_SERVER, $_GET values are still available
  *
  * Note: the closure is recursive to allow for parameters with arrays
  * removal of unclosed PHP tags ('/<\?php.*$/i','/<\?=.*$/') is a crasher ?
@@ -96,6 +96,7 @@ require_once $dirname . 'classes' . DIRECTORY_SEPARATOR . 'class.CmsException.ph
 require_once $dirname . 'classes' . DIRECTORY_SEPARATOR . 'class.HookManager.php';
 require_once $dirname . 'classes' . DIRECTORY_SEPARATOR . 'class.cms_config.php';
 require_once $dirname . 'classes' . DIRECTORY_SEPARATOR . 'class.CmsApp.php';
+require_once $dirname . 'classes' . DIRECTORY_SEPARATOR . 'class.JobCheck.php';
 require_once $dirname . 'autoloader.php';
 require_once $dirname . 'module.functions.php';
 require_once $dirname . 'page.functions.php';
@@ -218,10 +219,6 @@ if( !isset($CMS_INSTALL_PAGE) ) {
     $modops = ModuleOperations::get_instance();
     $modops->LoadModules(!isset($CMS_ADMIN_PAGE));
     debug_buffer('End of Loading Modules');
-
-    // test for cron.
-    // we hardcode CmsJobManager here until such a point as we need to abstract it.
-    \CMSMS\Async\JobManager::get_instance()->trigger_async_processing();
 }
 
 //Setup language stuff.... will auto-detect languages (Launch only to admin at this point)
@@ -257,9 +254,19 @@ if( !isset($DONT_LOAD_SMARTY) ) {
                 list($sside,$eside) = ($ldir == 'ltr') ? ['left','right'] : ['right','left'];
             }
         }
-        $smarty->assign('lang', $lang)
+        $smarty->assign('lang', $lang, true)
          ->assign('lang_dir', $ldir)
          ->assign('stside', $sside)
          ->assign('ndside', $eside);
+    }
+}
+
+//bad hack! TODO deploy a better solution for onetime init outside of installer
+if( !isset($CMS_INSTALL_PAGE) ) {
+    try {
+        Events::AddEventTypedHandler('Core', 'ModuleUninstalled', 'CMSMS\JobOperations::clear_module', Events::HANDLERCALL, false);
+    }
+    catch(Exception $e) {
+        // nothing here
     }
 }
