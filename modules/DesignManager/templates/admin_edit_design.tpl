@@ -1,4 +1,3 @@
-<link href="{$base_url}/lib/edit_design.css" rel="stylesheet">{*TODO should be in <head/> element*}
 <script>
 var __changed = 0;
 function set_changed() {
@@ -51,6 +50,10 @@ $(function() {
       <p class="pageinput">
         <input type="text" id="design_name" name="{$actionid}name" value="{$design->get_name()}" size="50" maxlength="90" placeholder="{$mod->Lang('newname')}">
       </p>
+      <p class="pagetext"><label for="design_req">{$mod->Lang('prompt_requires')}:</label>&nbsp;{cms_help key2='help_design_requires' title=$mod->Lang('prompt_requires')}</p>
+      <p class="pageinput">
+        <textarea id="design_req" name="{$actionid}requires" style="width:25em;max-width:90%;height:5em" cols="25" rows="5">{$design->get_requires(3)}</textarea>
+      </p>
     </div>
 {if $did > 0}
   </div>
@@ -73,10 +76,14 @@ $(function() {
 </fieldset>
 {/if}
 
-{tab_header name='description' label=$mod->Lang('prompt_description')}
-{tab_header name='templates' label=$mod->Lang('prompt_templates')}
+{tab_header name='description' label=lang('about')}
+{tab_header name='templates' label=lang('templates')}
 {tab_header name='stylesheets' label=$mod->Lang('prompt_stylesheets')}
 {tab_start name='description'}
+  <p class="pagetext"><label for="design_version">{lang('version')}:</label>&nbsp;{cms_help key2='help_design_version' title=lang('version')}</p>
+  <p class="pageinput">
+    <input type="text" id="design_version" name="{$actionid}version" value="{$design->get_version()}" size="20" maxlength="20" placeholder="{$mod->Lang('version_place')}">
+  </p>
   <div class="pageoverflow">
     <p class="pagetext"><label for="tadesc">{$mod->Lang('prompt_description')}:</label>&nbsp;{cms_help key2=help_design_description title=$mod->Lang('prompt_description')}</p>
     <p class="pageinput">
