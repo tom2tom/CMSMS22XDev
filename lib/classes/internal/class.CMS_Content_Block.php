@@ -63,7 +63,7 @@ final class CMS_Content_Block
     public static function set_primary_content($txt)
     {
         self::$_primary_content = $txt;
-        self::$_primary_content_flag = 1;
+        self::$_primary_content_flag = 1; // true ? txt !== '' ?
     }
 
     public static function get_content_blocks()
@@ -292,7 +292,7 @@ final class CMS_Content_Block
                     if (isset($parms['returnid'])) $returnid = $parms['returnid'];
 
                     $oldcache = $template->caching;
-                    $template->caching = Smarty::CACHING_OFF;
+                    $template->caching = Smarty::CACHING_OFF; //TODO reconcile with site preference per changeCaching() and overrides
                     @ob_start();
                     $result = $modobj->DoActionBase($action,$id,$parms,$returnid,$template);
                     $template->caching = $oldcache;
@@ -305,7 +305,7 @@ final class CMS_Content_Block
             else {
                 $result = '';
 
-                $oldvalue = $template->caching;
+                $oldcache = $template->caching;
                 $template->caching = Smarty::CACHING_OFF;
                 if( isset($_SESSION['__cms_preview__']) && $contentobj->Id() == __CMS_PREVIEW_PAGE__ ) {
                     // note: content precompile/postcompile events will not be triggered in preview.
@@ -316,7 +316,7 @@ final class CMS_Content_Block
                 else {
                     $result = $template->fetch(str_replace(' ','_','content:' . $block),'|'.$block,$contentobj->Id().$block);
                 }
-                $template->caching = $oldvalue;
+                $template->caching = $oldcache;
             }
         }
         self::content_return($result,$params,$template);
@@ -364,10 +364,10 @@ final class CMS_Content_Block
 
         $result = '';
         if( isset($params['block']) ) {
-            $oldvalue = $template->caching;
+            $oldcache = $template->caching;
             $template->caching = Smarty::CACHING_OFF;
             $result = $template->fetch(str_replace(' ','_','content:' . $params['block']),'|'.$params['block'],$contentobj->Id().$params['block']);
-            $template->caching = $oldvalue;
+            $template->caching = $oldcache;
         }
         $img = $result;
 
