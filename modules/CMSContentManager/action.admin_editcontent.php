@@ -129,9 +129,9 @@ try {
         $content_obj->SetPropertyValue('extra2',$pagedefaults['extra2']);
         $content_obj->SetPropertyValue('extra3',$pagedefaults['extra3']);
         $content_obj->SetAdditionalEditors($pagedefaults['addteditors']);
-        $dflt_parent = (int) \cms_userprefs::get('default_parent');
+        $dflt_parent = (int) cms_userprefs::get_for_user($user_id,'default_parent');
         if( $dflt_parent < 1 ) $dflt_parent = -1;
-        if( !$this->CheckPermission('Modify Any Page') || !$this->CheckPermission('Manage All Content') ) {
+        if( !(check_permission($user_id,'Modify Any Page') || check_permission($user_id,'Manage All Content')) ) {
             // we get the list of pages that this user has access to.
             // if she is not an editor of the default page, then use the first page she has access to, or -1
             $list = $contentops->GetPageAccessForUser($user_id);
