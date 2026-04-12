@@ -12,9 +12,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: https://www.gnu.org/licenses/gpl-2.0.html
+# along with this program; if not, read the license online at
+# https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 $all_attrs = [];
 $content = new Content();
@@ -42,4 +41,4 @@ $tpl->assign('content_thumbnailfield_path',cms_siteprefs::get('content_thumbnail
 $tpl->assign('contentimage_path',cms_siteprefs::get('contentimage_path'));
 $disallowed_contenttypes = cms_siteprefs::get('disallowed_contenttypes');
 $tpl->assign('disallowed_contenttypes',explode(',',$disallowed_contenttypes));
-$tpl->assign('pretty_urls',$config['url_rewriting'] !== 'none');
+$tpl->assign('pretty_urls',$config['url_rewriting'] != 'none');
