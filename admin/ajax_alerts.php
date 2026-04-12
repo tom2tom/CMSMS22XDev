@@ -8,22 +8,21 @@
 #(at your option) any later version.
 #
 #This program is distributed in the hope that it will be useful,
-#but WITHOUT ANY WARRANthe TY; without even the implied warranty of
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
+#
 #You should have received a copy of the GNU General Public License
-#along with this program; if not, write to the Free Software
-#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#along with this program. If not, read the license online at:
+#https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #
 #$Id$
 
-$CMS_ADMIN_PAGE=1;
-require_once("../lib/include.php");
-$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+$CMS_ADMIN_PAGE = 1;
+require_once '../lib/include.php';
 try {
-    $out = '';
     $uid = get_userid(FALSE);
-    if( !$uid ) throw new \Exception('Permission Denied'); // should be a 403, but meh.
+    if( !$uid ) throw new Exception('Permission Denied'); // should be a 403, but meh.
 
     $op = cleanValue($_POST['op']);
     if( !$op ) $op = 'delete';
@@ -31,15 +30,15 @@ try {
 
     switch( $op ) {
     case 'delete':
-        $alert = \CMSMS\AdminAlerts\Alert::load_by_name($alert_name);
+        $alert = CMSMS\AdminAlerts\Alert::load_by_name($alert_name);
         $alert->delete();
         break;
     default:
-        throw new \Exception('Unknown operation '.$op);
+        throw new Exception('Unknown operation '.$op);
     }
-    echo $out;
+    echo '';
 }
-catch( \Exception $e ) {
+catch( Exception $e ) {
     // do 500 error.
     $handlers = ob_list_handlers();
     for ($cnt = 0; $cnt < count($handlers); $cnt++) { ob_end_clean(); }
@@ -49,8 +48,4 @@ catch( \Exception $e ) {
     echo $e->GetMessage();
 }
 exit;
-
-#
-# EOF
-#
 ?>
