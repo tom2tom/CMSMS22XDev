@@ -1,4 +1,10 @@
 <?php
+/*
+CMSMS FilePicker module class: UploadHandler
+(C) 2016 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+The license at the top of file FilePicker.module.php applies to this file.
+*/
+
 namespace FilePicker;
 
 use CMSMS\HookManager;
@@ -34,7 +40,7 @@ class UploadHandler extends jquery_upload_handler
     {
         $fileobject = parent::process_error( $fileobject, $error );
         if( $fileobject->error ) {
-            $fileobject->errormsg = $this->_mod->Lang('error_upload_'.$fileobject->error);
+            $fileobject->errormsg = $this->_mod->Lang('err_upload_'.$fileobject->error);
         }
         return $fileobject;
     }
