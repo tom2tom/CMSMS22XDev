@@ -3,6 +3,9 @@
 #(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #The license at the top of file News.module.php applies to this file.
 
+use CMSMS\FilePickerProfile;
+use CMSMS\HookManager;
+
 if (!isset($gCms)) exit;
 if (!$this->CheckPermission('Modify News')) return;
 
@@ -147,7 +150,7 @@ VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
                         $elem = $id . 'customfield_' . $fid;
                         if (isset($_FILES[$elem]) && $_FILES[$elem]['name'] != '') {
                             if ($_FILES[$elem]['error'] != 0 || $_FILES[$elem]['tmp_name'] == '') {
-                                echo $this->ShowErrors($this->Lang('error_upload'));
+                                $this->ShowErrors($this->Lang('error_upload'));
                                 $error = TRUE;
                             } else {
                                 $error = '';
@@ -155,7 +158,7 @@ VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
                                 if ($value !== FALSE) {
                                     $params['customfield'][$fid] = $value; // uploads-relative filepath
                                 } else {
-                                    echo $this->ShowErrors($error);
+                                    $this->ShowErrors($error);
                                     $error = TRUE;
                                 }
                             }
@@ -231,7 +234,7 @@ VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
         }
 
         if (!$error) {
-            \CMSMS\HookManager::do_hook('News::NewsArticleAdded', array(
+            HookManager::do_hook('News::NewsArticleAdded', array(
                 'news_id' => $articleid,
                 'category_id' => $usedcategory,
                 'title' => $title,
@@ -370,10 +373,16 @@ $data = $image_url;
 
 $filepicker = cms_utils::get_filepicker_module();
 $profile = $filepicker->get_default_profile($dir, $userid);
-$profile = $profile->overrideWith(['top'=>$dir, 'type'=>'image']); // type not enforced in the picker
+$parms = ['top'=>$dir, 'type'=>'image']; // aka CMSMS\FileType::TYPE_IMAGE BUT type not enforced in the picker
+$profile->overrideWith($parms); // TODO other property-overrides? not writability
 $input = $filepicker->get_html($id.'image_url', $data, $profile);
 preg_match('/id="(.+?)"/', $input, $matches);
 $inputid = $matches[1];
+
+HookManager::add_hook('admin_add_headtext', function() {
+    $root_url = CMS_ROOT_URL;
+    return "<script src=\"$root_url/lib/jquery/js/jquery.cmsms_dirtyform.js\" defer></script>\n";
+});
 
 /*--------------------
  Pass everything to template

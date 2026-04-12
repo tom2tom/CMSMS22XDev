@@ -292,7 +292,7 @@ ORDER BY V.news_id,D.item_order');
             }
         }
 
-        \CMSMS\HookManager::do_hook('News::NewsArticleEdited', array(
+        CMSMS\HookManager::do_hook('News::NewsArticleEdited', array(
             'news_id' => $articleid,
             'category_id' => $usedcategory,
             'title' => $title,
@@ -337,7 +337,7 @@ ORDER BY V.news_id,D.item_order');
     }
 
     if ($error) {
-        echo $this->ShowErrors($error);
+        $this->ShowErrors($error);
     }
     // end submit or apply
 } elseif (isset($params['preview'])) {
@@ -523,10 +523,16 @@ $data = $image_url;
 $filepicker = cms_utils::get_filepicker_module();
 $userid = get_userid(false);
 $profile = $filepicker->get_default_profile($dir, $userid);
-$profile = $profile->overrideWith(['top'=>$dir, 'type'=>'image']); // this does not enforce image-type in the selector
+$parms = ['top'=>$dir, 'type'=>'image']; // aka CMSMS\FileType::TYPE_IMAGE BUT type is not enforced in the picker
+$profile->overrideWith($parms); // TODO other property-overrides ? not writability
 $input = $filepicker->get_html($id.'image_url', $data, $profile);
 preg_match('/id="(.+?)"/', $input, $matches);
 $inputid = $matches[1];
+
+CMSMS\HookManager::add_hook('admin_add_headtext', function() {
+    $root_url = CMS_ROOT_URL;
+    return "<script src=\"$root_url/lib/jquery/js/jquery.cmsms_dirtyform.js\" defer></script>\n";
+});
 
 /*--------------------
  Pass everything to template
@@ -624,7 +630,7 @@ if ($this->CheckPermission('Approve News')) {
 }
 
 $contentops = cmsms()->GetContentOperations();
-$tpl->assign('preview_page_selector', $contentops->CreateHierarchyDropdown(0, $this->GetPreference('detail_returnid', -1), $id.'previewpage', true));
+$tpl->assign('preview_page_selector', $contentops->CreateHierarchyDropdown(0, $this->GetPreference('detail_returnid', -1), $id.'previewpage', true, false, false, false, false, 'seldetail'));
 
 try {
     // detail templates for preview
