@@ -11,6 +11,7 @@
 #but WITHOUT ANY WARRANTY; without even the implied warranty of
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
+#
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -20,8 +21,8 @@
 /**
  * An abstract class for building queries and managing results.
  *
- * This class is capable of managing a resultset, and encapsulates conversionof database rows into
- * application objects.
+ * This class is capable of managing a resultset, and encapsulates conversion
+ * of database rows into application objects.
  *
  * @since 2.0
  * @package CMS
@@ -42,46 +43,46 @@ abstract class CmsDbQueryBase
 	 *
 	 * @see execute()
 	 */
-    protected $_totalmatchingrows;
+	protected $_totalmatchingrows;
 
 	/**
 	 * The current (integer) offset in the list of results
 	 */
-    protected $_offset = 0;
+	protected $_offset = 0;
 
 	/**
 	 * The (integer) page limit.
 	 */
-    protected $_limit = 1000;
+	protected $_limit = 1000;
 
 	/**
 	 * This property stores the raw database resultset object.
 	 */
-    protected $_rs;
+	protected $_rs;
 
 	/**
 	 * This property stores the original arguments passed to the constructor
 	 * and used when generating the query.
 	 */
-    protected $_args = array();
+	protected $_args = array();
 
 	/**
 	 * Constructor
 	 *
-	 * @param mixed $args associative array (key=>value) with arguments for the query,
-	 *  or a comma-separated string of those arguments.
+	 * @param mixed $args associative? array (key=>value?) with arguments
+	 *  for the query, or a comma-separated string of those arguments.
 	 */
-    public function __construct($args = '')
-    {
-        if( !$args ) return;
+	public function __construct($args = [])
+	{
+		if( !$args ) return;
 
-        if( is_array($args) ) {
-            $this->_args = $args;
-        }
-        else if( is_string($args) ) {
-            $this->_args = explode(',',$args);
-        }
-    }
+		if( is_array($args) ) {
+			$this->_args = $args;
+		}
+		else if( is_string($args) ) {
+			$this->_args = explode(',',$args);
+		}
+	}
 
 	/**
 	 * Execute the query.
@@ -92,21 +93,21 @@ abstract class CmsDbQueryBase
 	 * This method should be smart enough to not execute the database query
 	 * more than once regardless of how many times it is called.
 	 */
-    abstract public function execute();
+	abstract public function execute();
 
-    /**
-     * Return the total number of matching records that match the current query
-     *
+	/**
+	 * Return the total number of matching records that match the current query
+	 *
 	 * If execute has not already been called, this method will do so.
 	 *
 	 * @return int
 	 */
-    public function TotalMatches()
-    {
-        $this->execute();
-        if( $this->_rs ) return $this->_totalmatchingrows;
-        return 0;
-    }
+	public function TotalMatches()
+	{
+		$this->execute();
+		if( $this->_rs ) return $this->_totalmatchingrows;
+		return 0;
+	}
 
 	/**
 	 * Return the number of records that match the the current query
@@ -117,12 +118,12 @@ abstract class CmsDbQueryBase
 	 *
 	 * @return int
 	 */
-    public function RecordCount()
-    {
-        $this->execute();
-        if( $this->_rs ) return $this->_rs->RecordCount();
-        return 0;
-    }
+	public function RecordCount()
+	{
+		$this->execute();
+		if( $this->_rs ) return $this->_rs->RecordCount();
+		return 0;
+	}
 
 
 	/**
@@ -130,24 +131,24 @@ abstract class CmsDbQueryBase
 	 *
 	 * If execute has not been called yet, this method will do so.
 	 */
-    public function MoveNext()
-    {
-        $this->execute();
-        if( $this->_rs ) return $this->_rs->MoveNext();
-        return FALSE;
-    }
+	public function MoveNext()
+	{
+		$this->execute();
+		if( $this->_rs ) return $this->_rs->MoveNext();
+		return FALSE;
+	}
 
 	/**
 	 * Modify the resultset property/object to point to the first of the matched rows.
 	 *
 	 * If execute has not been called yet, this method will do so.
 	 */
-    public function MoveFirst()
-    {
-        $this->execute();
-        if( $this->_rs ) return $this->_rs->MoveFirst();
-        return FALSE;
-    }
+	public function MoveFirst()
+	{
+		$this->execute();
+		if( $this->_rs ) return $this->_rs->MoveFirst();
+		return FALSE;
+	}
 
 	/**
 	 * Modify the resultset property/object to point to the first of the matched rows.
@@ -157,54 +158,54 @@ abstract class CmsDbQueryBase
 	 *
 	 * @see MoveFirst()
 	 */
-    public function Rewind()
-    {
-        $this->execute();
-        if( $this->_rs ) return $this->_rs->MoveFirst();
-        return FALSE;
-    }
+	public function Rewind()
+	{
+		$this->execute();
+		if( $this->_rs ) return $this->_rs->MoveFirst();
+		return FALSE;
+	}
 
 	/**
 	 * Modify the resultset property/object to point to the last of the matched rows.
 	 *
 	 * If execute has not been called yet, this method will do so.
 	 */
-    public function MoveLast()
-    {
-        $this->execute();
-        if( $this->_rs ) return $this->_rs->MoveLast();
-        return FALSE;
-    }
+	public function MoveLast()
+	{
+		$this->execute();
+		if( $this->_rs ) return $this->_rs->MoveLast();
+		return FALSE;
+	}
 
 	/**
 	 * Test if the resultset is pointing past the last record in the returned set
 	 *
 	 * @return bool
 	 */
-    public function EOF()
-    {
-        $this->execute();
-        if( $this->_rs ) return $this->_rs->EOF();
-        return TRUE;
-    }
+	public function EOF()
+	{
+		$this->execute();
+		if( $this->_rs ) return $this->_rs->EOF();
+		return TRUE;
+	}
 
 	/**
 	 * Close the resultset and free any resources it may have claimed.
 	 */
-    public function Close()
-    {
-        $this->execute();
-        if( $this->_rs ) return $this->_rs->Close();
-        return TRUE;
-    }
+	public function Close()
+	{
+		$this->execute();
+		if( $this->_rs ) return $this->_rs->Close();
+		return TRUE;
+	}
 
-    /**
-     * Get the object for the current matching database row.
-     *
-     * @see $this->fields
-     * @return mixed
-     */
-    abstract public function GetObject();
+	/**
+	 * Get the object for the current matching database row.
+	 *
+	 * @see $this->fields
+	 * @return mixed
+	 */
+	abstract public function GetObject();
 
 	/**
 	 * Return an array of matched objects.
@@ -217,34 +218,34 @@ abstract class CmsDbQueryBase
 	 * @see GetObject()
 	 * @return array maybe empty
 	 */
-    public function GetMatches()
-    {
-        $this->MoveFirst();
-        $out = array();
-        while( !$this->EOF() ) {
-            $out[] = $this->GetObject();
-            $this->MoveNext();
-        }
-        return $out;
-    }
+	public function GetMatches()
+	{
+		$this->MoveFirst();
+		$out = array();
+		while( !$this->EOF() ) {
+			$out[] = $this->GetObject();
+			$this->MoveNext();
+		}
+		return $out;
+	}
 
 	/**
 	 * @ignore
 	 */
-    #[\ReturnTypeWillChange]
-    public function __get($key)
-    {
-        $this->execute();
-        switch( $key ) {
-            case 'fields': return ( $this->_rs && !$this->_rs->EOF() ) ? $this->_rs->fields : [];
-            case 'EOF': return $this->_rs->EOF();
-            case 'limit': return $this->_limit;
-            case 'offset': return $this->_offset;
-            case 'totalrows': return (int)$this->_totalmatchingrows;
-            case 'numpages': return (int)ceil(($this->_totalmatchingrows / $this->_limit) - 0.001);
-            default: return null; // any unrecognised property
-        }
-    }
+	#[\ReturnTypeWillChange]
+	public function __get($key)
+	{
+		$this->execute();
+		switch( $key ) {
+			case 'fields': return ( $this->_rs && !$this->_rs->EOF() ) ? $this->_rs->fields : [];
+			case 'EOF': return $this->_rs->EOF();
+			case 'limit': return $this->_limit;
+			case 'offset': return $this->_offset;
+			case 'totalrows': return (int)$this->_totalmatchingrows;
+			case 'numpages': return (int)ceil(($this->_totalmatchingrows / $this->_limit) - 0.001);
+			default: return null; // any unrecognised property
+		}
+	}
 
 } // end of class
 
