@@ -4,28 +4,18 @@
 # Module Navigator installation script
 # (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
-#-------------------------------------------------------------------------
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-#
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
+# along with this program; if not, read the license online at:
+# https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
 #END_LICENSE
 #$Id$
@@ -41,7 +31,7 @@ try {
     $menu_template_type = new CmsLayoutTemplateType();
     $menu_template_type->set_originator($this->GetName());
     $menu_template_type->set_name('navigation');
-    $menu_template_type->set_dflt_flag(TRUE);
+    $menu_template_type->set_dflt_flag();
     $menu_template_type->set_lang_callback('Navigator::page_type_lang_callback');
     $menu_template_type->set_content_callback('Navigator::reset_page_type_defaults');
     $menu_template_type->set_help_callback('Navigator::template_help_callback');
@@ -59,7 +49,7 @@ try {
     $bc_template_type = new CmsLayoutTemplateType();
     $bc_template_type->set_originator($this->GetName());
     $bc_template_type->set_name('breadcrumbs');
-    $bc_template_type->set_dflt_flag(TRUE);
+    $bc_template_type->set_dflt_flag();
     $bc_template_type->set_lang_callback('Navigator::page_type_lang_callback');
     $bc_template_type->set_content_callback('Navigator::reset_page_type_defaults');
     $bc_template_type->set_help_callback('Navigator::template_help_callback');
@@ -82,19 +72,7 @@ try {
         $tpl->set_owner($uid);
         $tpl->set_content($template);
         $tpl->set_type($menu_template_type);
-        $tpl->set_type_dflt(TRUE);
-        $tpl->save();
-    }
-
-    $fn = cms_join_path(__DIR__,'templates','dflt_breadcrumbs.tpl');
-    if( file_exists( $fn ) ) {
-        $template = @file_get_contents($fn);
-        $tpl = new CmsLayoutTemplate();
-        $tpl->set_name(\CmsLayoutTemplate::generate_unique_name('Breadcrumbs'));
-        $tpl->set_owner($uid);
-        $tpl->set_content($template);
-        $tpl->set_type($bc_template_type);
-        $tpl->set_type_dflt(TRUE);
+        $tpl->set_type_dflt();
         $tpl->save();
     }
 
@@ -106,7 +84,6 @@ try {
         $tpl->set_owner($uid);
         $tpl->set_content($template);
         $tpl->set_type($menu_template_type);
-        $tpl->set_type_dflt(TRUE);
         $tpl->save();
     }
 
@@ -118,7 +95,6 @@ try {
         $tpl->set_owner($uid);
         $tpl->set_content($template);
         $tpl->set_type($menu_template_type);
-        $tpl->set_type_dflt(TRUE);
         $tpl->save();
     }
 
@@ -130,7 +106,18 @@ try {
         $tpl->set_owner($uid);
         $tpl->set_content($template);
         $tpl->set_type($menu_template_type);
-        $tpl->set_type_dflt(TRUE);
+        $tpl->save();
+    }
+
+    $fn = cms_join_path(__DIR__,'templates','dflt_breadcrumbs.tpl');
+    if( file_exists( $fn ) ) {
+        $template = @file_get_contents($fn);
+        $tpl = new CmsLayoutTemplate();
+        $tpl->set_name(\CmsLayoutTemplate::generate_unique_name('Breadcrumbs'));
+        $tpl->set_owner($uid);
+        $tpl->set_content($template);
+        $tpl->set_type($bc_template_type);
+        $tpl->set_type_dflt();
         $tpl->save();
     }
 
@@ -145,7 +132,6 @@ try {
             $tpl->set_owner($uid);
             $tpl->set_content($template);
             $tpl->set_type($menu_template_type);
-            $tpl->set_type_dflt(TRUE);
             $tpl->add_design($simplex);
             $tpl->save();
         }
@@ -158,7 +144,6 @@ try {
             $tpl->set_owner($uid);
             $tpl->set_content($template);
             $tpl->set_type($menu_template_type);
-            $tpl->set_type_dflt(TRUE);
             $tpl->add_design($simplex);
             $tpl->save();
         }
@@ -177,8 +162,3 @@ catch( \Exception $e ) {
 // register plugins
 $this->RegisterModulePlugin(true);
 $this->RegisterSmartyPlugin('nav_breadcrumbs','function','nav_breadcrumbs');
-
-#
-# EOF
-#
-?>
