@@ -36,7 +36,7 @@ final class news_admin_ops
         HookManager::do_hook('News::NewsArticleDeleted', ['news_id'=>$articleid]);
 
         // Put mention into the admin log
-        audit($articleid, $mod->GetName().' article', "Deleted: $articleid");
+        audit($articleid, $mod->GetName().' article', 'Deleted');
     }
 
     public static function handle_upload($itemid, $fieldname, &$error)
