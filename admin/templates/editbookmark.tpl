@@ -1,12 +1,10 @@
 <div class="pagecontainer">
-  {$header}
 {if !empty($error)}
-  <br>
   <p class="pageerror">{$error}</p>
   <br>
 {/if}
   <form action="editbookmark.php" method="post">
-    <input type="hidden" name="{$hiddenname}" value="{$hiddenval}">
+    <input type="hidden" name="{$securename}" value="{$secureval}">
     <input type="hidden" name="bookmark_id" value="{$bookmark_id}">
     <input type="hidden" name="userid" value="{$userid}">
 

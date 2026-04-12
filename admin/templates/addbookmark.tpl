@@ -1,13 +1,10 @@
 <div class="pagecontainer">
-  {$header}
 {if !empty($error)}
-  <br>
   <p class="pageerror">{$error}</p>
   <br>
 {/if}
   <form action="addbookmark.php" method="post">
-    <input type="hidden" name="{$hiddenname}" value="{$hiddenval}">
-
+    <input type="hidden" name="{$securename}" value="{$secureval}">
     <div class="pageoverflow">
       <p class="pagetext"><label for="marktitl">{lang('title')}:</label></p>
       <p class="pageinput"><input type="text" id="marktitl" name="title" size="50" maxlength="255" value="{$title}"></p>

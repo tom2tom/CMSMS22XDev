@@ -28,7 +28,7 @@ $(function() {
      </thead>
      <tbody>
      {foreach $tags as $tag_id => $tag}
-       {$edit_url="editusertag.php{$urlext}&amp;userplugin_id={$tag_id}"}
+       {$edit_url="editusertag.php?userplugin_id={$tag_id}&{$secureparam}"}
        <tr class="{cycle values='row1,row2'}">
           <td><a href="{$edit_url}" title="{lang('editusertag')}">{$tag.name}</a></td>
           <td>{$tag.description}</td>
@@ -36,7 +36,7 @@ $(function() {
              <a href="{$edit_url}">{admin_icon icon='edit.gif' title=lang('editusertag')}</a>
           </td>
           <td>
-             <a class="delusertag" href="deleteuserplugin.php{$urlext}&amp;userplugin_id={$tag_id}">{admin_icon icon='delete.gif' title=lang('delete')}</a>
+             <a class="delusertag" href="deleteuserplugin.php?userplugin_id={$tag_id}&{$secureparam}">{admin_icon icon='delete.gif' title=lang('delete')}</a>
           </td>
        </tr>
      {/foreach}

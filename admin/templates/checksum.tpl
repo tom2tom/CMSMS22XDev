@@ -1,6 +1,5 @@
 {* checksums creation and verification template *}
 <div class="pagecontainer">
-  {$header}
 {if !empty($error)}
   <div class="red message no-slide" style="margin:1em">
    <div class="pageoverflow">
@@ -8,7 +7,6 @@
    </div>
   </div>
 {/if}
-
 {if !empty($message)}
   <div class="green success message">
    <div class="pageoverflow">
@@ -18,8 +16,8 @@
 {/if}
 
   <form action="{$smarty.server.PHP_SELF}" method="post" enctype="multipart/form-data">
-    <div>
-      <input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}">
+    <div class="hidden">
+      <input type="hidden" name="{$securename}" value="{$secureval}">
       <input type="hidden" name="action" value="download">
     </div>
     <fieldset>
@@ -33,8 +31,8 @@
   </form>
 
   <form action="{$smarty.server.PHP_SELF}" method="post" enctype="multipart/form-data">
-    <div>
-      <input type="hidden" name="{$cms_secure_param_name}" value="{$cms_user_key}">
+    <div class="hidden">
+      <input type="hidden" name="{$securename}" value="{$secureval}">
       <input type="hidden" name="action" value="upload">
     </div>
     <fieldset>
