@@ -24,14 +24,20 @@ class Connection extends \CMSMS\Database\Connection
                                         $this->_connectionSpec->password,
                                         $this->_connectionSpec->dbname,
                                         $port);
+            // prevent sensitive-information display
+            $this->_connectionSpec->password = 'restricted';
             if( $this->_mysql->connect_error ) {
                 $this->_mysql = null;
                 $this->OnError(self::ERROR_CONNECT,mysqli_connect_errno(),mysqli_connect_error());
                 return FALSE;
             }
+            // prevent sensitive-information display during any crash
+            $this->_connectionSpec->username = 'restricted';
+            $this->_connectionSpec->dbname = 'restricted';
             return TRUE;
         }
         catch( \Exception $e ) {
+            $this->_connectionSpec->password = 'restricted';
             $this->_mysql = null;
             $this->OnError(self::ERROR_CONNECT,mysqli_connect_errno(),mysqli_connect_error());
             return FALSE;
