@@ -32,7 +32,7 @@ if( !isset($params['name']) ) $this->Redirect($id, 'defaultadmin');
 
 $prefix = trim($params['name']);
 $repmodules = modulerep_client::get_repository_modules($prefix, FALSE, TRUE);
-if( !is_array($repmodules) || $repmodules[0] === FALSE ) $this->Redirect($id, 'defaultadmin'); // for some reason, nothing matched.
+if( !is_array($repmodules) || $repmodules[0] === FALSE ) $this->Redirect($id, 'defaultadmin'); // for some reason, nothing matched
 
 $repmodules = $repmodules[1];
 
@@ -136,9 +136,9 @@ else {
   $tpl->assign('errmessage2', $this->Lang('error_missingmoduleinfo', $prefix));
 }
 
-modmgr_utils::get_images();
+modmgr_utils::get_images($tpl);
 
-$tpl->assign('header', $this->Lang('versionsformodule', $prefix));
+$tpl->assign('title', $this->Lang('versionsformodule', $prefix));
 if( !$caninstall ) {
   $tpl->assign('errmessage1', $this->Lang('error_permissions'));
 }
