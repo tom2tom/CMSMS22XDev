@@ -1,7 +1,7 @@
 <?php
 
 use FilePicker\PathAssistant;
-use FilePicker\TemporaryProfileStorage;
+use FilePicker\ProfilesCache;
 use FilePicker\UploadHandler;
 
 if( !isset($gCms) ) exit;
@@ -17,10 +17,19 @@ try {
 
     // get the profile
     $profile = null; // no object
-    if( $sig ) $profile = TemporaryProfileStorage::get($sig);
-    if( !$profile ) $profile = $this->get_default_profile();
+    if( $sig ) {
+        $profile = ProfilesCache::get_instance()->get($sig);
+    }
+    if( $profile ) {
+        // anything needed here ?
+    }
+    else {
+        $dir = $config['uploads_path']; // or $fullpath per below
+        $userid = get_userid(false); // or < 0 frontend id ?
+        $profile = $this->get_default_profile($dir,$userid);
+    }
 
-    // check the cwd make sure it is okay
+    // check $cwd is ok
     $topdir = $profile->top;
     if( !$topdir ) $topdir = $config['uploads_path'];
     $assistant = new PathAssistant($config,$topdir);
@@ -41,23 +50,23 @@ try {
     case 'mkdir':
         if( !$profile->can_mkdir ) throw new LogicException('Internal error: mkdir command executed, but profile prohibits that operation');
         // TODO hidden-attribute check on Windows
-        if( ($val[0] == '.' && !$this->winos) || ($val[0] == '_' && $this->macos) || ($val[0] == '~' && $this->winos) ) throw new RuntimeException($this->Lang('error_ajax_invalidfilename'));
-        if( !is_writable($fullpath) ) throw new RuntimeException($this->Lang('error_ajax_writepermission'));
+        if( ($val[0] == '.' && !$this->winos) || ($val[0] == '_' && $this->macos) || ($val[0] == '~' && $this->winos) ) throw new RuntimeException($this->Lang('err_ajax_invalidfilename'));
+        if( !is_writable($fullpath) ) throw new RuntimeException($this->Lang('err_ajax_writepermission'));
         $destpath = $fullpath.DIRECTORY_SEPARATOR.$val;
-        if( is_dir($destpath) || is_file($destpath) ) throw new RuntimeException($this->Lang('error_ajax_fileexists'));
-        if( !@mkdir($destpath) ) throw new RuntimeException($this->Lang('error_ajax_mkdir ',$cwd.DIRECTORY_SEPARATOR.$val)); // TODO $destpath ?
+        if( is_dir($destpath) || is_file($destpath) ) throw new RuntimeException($this->Lang('err_ajax_fileexists'));
+        if( !@mkdir($destpath) ) throw new RuntimeException($this->Lang('err_ajax_mkdir ',$cwd.DIRECTORY_SEPARATOR.$val)); // TODO $destpath ?
         break;
 
     case 'del':
         if( !$profile->can_delete ) throw new LogicException('Internal error: del command executed, but profile prohibits that operation');
         $val = basename($val);
-        if( ($val[0] == '.' && !$this->winos) || ($val[0] == '_' && $this->macos) || ($val[0] == '~' && $this->winos) ) throw new RuntimeException($this->Lang('error_ajax_invalidfilename'));
-        //if( !is_writable($fullpath) ) throw new \RuntimeException($this->Lang('error_ajax_writepermission'));
+        if( ($val[0] == '.' && !$this->winos) || ($val[0] == '_' && $this->macos) || ($val[0] == '~' && $this->winos) ) throw new RuntimeException($this->Lang('err_ajax_invalidfilename'));
+        //if( !is_writable($fullpath) ) throw new \RuntimeException($this->Lang('err_ajax_writepermission'));
         $destpath = $fullpath.DIRECTORY_SEPARATOR.$val;
-        if( !is_writable($destpath) ) throw new RuntimeException($this->Lang('error_ajax_writepermission').' '.$destpath);
+        if( !is_writable($destpath) ) throw new RuntimeException($this->Lang('err_ajax_writepermission').' '.$destpath);
         if( is_dir($destpath) ) {
             // check if the directory is empty
-            if( count(scandir($destpath)) > 2 ) throw new RuntimeException($this->Lang('error_ajax_dirnotempty'));
+            if( count(scandir($destpath)) > 2 ) throw new RuntimeException($this->Lang('err_ajax_dirnotempty'));
             if( @rmdir($destpath) ) { audit('','FilePicker','Removed directory '.$destpath); }
         } else {
             if( $this->is_image( $destpath ) ) {
