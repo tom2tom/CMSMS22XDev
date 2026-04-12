@@ -138,11 +138,12 @@
 {/strip}
 		<div id="mkdir_dlg" title="{$mod->Lang('title_mkdir')}" style="display:none" data-oklbl="{$mod->Lang('ok')}">
 			<div class="dlg-options">
-				<label for="fld_mkdir">{$mod->Lang('name')}:</label> <input type="text" id="fld_mkdir" size="40">
+				<label for="txtmkdir">{$mod->Lang('name')}:</label>
+				<input type="text" id="txtmkdir" size="40">
 			</div>
 		</div>
-		<script src="{$mod->GetModuleURLPath()}/js/ext/jquery.fileupload.min.js"></script>
-		<script src="{$mod->GetModuleURLPath()}/lib/js/cmsms_filebrowser/filebrowser.js"></script>
+		<script src="{$baseurl}/lib/js/jquery.fileupload.min.js"></script>
+		<script src="{$baseurl}/lib/js/filebrowser.min.js"></script>
 		<script>
 		$(function() {
 			var filepicker = new CMSFileBrowser({
