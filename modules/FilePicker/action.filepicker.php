@@ -21,7 +21,7 @@ use CMSMS\FilePickerProfile;
 use CMSMS\FileType;
 use FilePicker\PathAssistant;
 use FilePicker\Profile;
-use FilePicker\TemporaryProfileStorage;
+use FilePicker\ProfilesCache;
 
 if( !isset($gCms) ) exit;
 if( !check_login(FALSE) ) exit; // admin only.... but any admin
@@ -71,9 +71,9 @@ CMS_SECURE_PARAM_NAME,'mact','showtemplate',
 '_enc','inst','subdir','nosub','sig','useprefix'
 and/or none|some|all profile properties, some of which may override corresponding current property value:
 'id'(RO),'name'(RO),'created'(RO),'modified'(RO?),
-'file_extensions','prefix','match_prefix','exclude_prefix',
-'top'(RO),'type','can_upload','can_mkdir','can_delete','show_thumbs','show_hidden',
-'sort'
+'file_extensions','prefix' ?,'match_prefix','exclude_prefix',
+'top','type',
+'can_upload','can_mkdir','can_delete','show_thumbs','show_hidden','sort'
 */
 //
 // initialization
@@ -89,17 +89,22 @@ if( isset($params['_enc']) ) {
 }
 
 $inst = isset($params['inst']) ? $clean_str($params['inst']) : '';
-$nosub = isset($params['nosub']) ? cms_to_bool($params['nosub']) : false;
+$nosub = isset($params['nosub']) ? cms_to_bool($params['nosub']) : FALSE;
 $sig = isset($params['sig']) ? $clean_str($params['sig']) : '';
-$profile = ( $sig ) ? TemporaryProfileStorage::get($sig) : null; // no object
-if( !$profile ) $profile = $this->get_default_profile();
-if( $profile && !$sig ) { //CHECKME
-    $sig = TemporaryProfileStorage::set($profile);
+$profile = ($sig) ? ProfilesCache::get_instance()->get($sig) : null; // no object
+if( !$profile ) {
+//    if( $sig ) {
+// anything needed here ?
+//    }
+    $dir = $config['uploads_path']; // $assistant->to_absolute($cwd) ?
+    $userid = get_userid(FALSE);
+    $profile = $this->get_default_profile($dir,$userid);
+    $sig = ProfilesCache::get_instance()->set($profile);
 }
 
 // tailor the profile
 $custom = [];
-if( !$this->CheckPermission('Modify Files') ) { //TODO is this the relevant perm for 'normal' uploading?
+if( !$this->CheckPermission('Modify Files') ) {
     $custom = [
      'can_upload'=>FilePickerProfile::FLAG_NONE,
      'can_delete'=>FilePickerProfile::FLAG_NONE,
@@ -113,10 +118,10 @@ if( !$this->CheckPermission('Modify Files') ) { //TODO is this the relevant perm
 //$custom['type'] = $type; //profile type may be unchanged
 $custom['type'] = FileType::TYPE_ANY;
 
-$profile2 = $profile->overrideWith($custom); //CHECKME replacement object cached anywhere? OK?
+$profile->overrideWith($custom);
 
 // get our absolute top directory
-$topdir = $profile2->top;
+$topdir = $profile->top;
 if( !$topdir ) $topdir = $config['uploads_path'];
 $assistant = new PathAssistant($config,$topdir);
 
@@ -127,8 +132,8 @@ $cwd = '';
 if( isset($_SESSION[$sesskey]) ) {
     $cwd = trim($_SESSION[$sesskey]);
 }
-if( !$cwd && $profile2->top ) {
-    $cwd = $assistant->to_relative($profile2->top);
+if( !$cwd && $profile->top ) {
+    $cwd = $assistant->to_relative($profile->top);
 }
 if( !$nosub && isset($params['subdir']) ) {
     try {
@@ -190,7 +195,7 @@ while( FALSE !== ($filename = $dh->read()) ) {
         $url = $this->create_url($id,'filepicker',$returnid,['_enc'=>base64_encode(json_encode($parms))]).'&showtemplate=false';
         $file['chdir_url'] = $url;
         $files[$filename] = $file;
-    } elseif( $accept_file($profile2,$assistant,$startdir,$filename) ) {
+    } elseif( $accept_file($profile,$assistant,$startdir,$filename) ) {
         $file = [
         'isdir' => false,
         'name' => $filename,
@@ -224,7 +229,7 @@ while( FALSE !== ($filename = $dh->read()) ) {
     }
 }
 
-if( $profile2->show_thumbs && $thumbs ) {
+if( $profile->show_thumbs && $thumbs ) {
     // remove from the list thumbnails that are not orphaned
     foreach( $thumbs as $thumb ) {
         if( isset($files[$thumb]) ) unset($files[$thumb]);
@@ -262,12 +267,12 @@ $tpl->assign('sig',$sig);
 $tpl->assign('inst',$inst);
 //$tpl->assign('mod',$this);
 $tpl->assign('prefix',$prefix);
-$tpl->assign('profile',$profile2);
+$tpl->assign('profile',$profile);
 $tpl->assign('type',FileType::TYPE_ANY); //$type);
 $lang = [];
 $lang['confirm_delete'] = $this->Lang('confirm_delete');
 $lang['ok'] = $this->Lang('ok');
-$lang['error_problem_upload'] = $this->Lang('error_problem_upload');
-$lang['error_failed_ajax'] = $this->Lang('error_failed_ajax');
+$lang['err_problem_upload'] = $this->Lang('err_problem_upload');
+$lang['err_failed_ajax'] = $this->Lang('err_failed_ajax');
 $tpl->assign('lang_js',json_encode($lang));
 $tpl->display();
