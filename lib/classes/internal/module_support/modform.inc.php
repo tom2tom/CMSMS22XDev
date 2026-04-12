@@ -40,36 +40,36 @@ function cms_module_CreateFormStart($modinstance, $id, $action='default', $retur
   $enctype = cms_htmlentities($enctype);
   $idsuffix = cms_htmlentities($idsuffix);
 
-  if ($idsuffix == '') $idsuffix = $_formcount++;
+  if( $idsuffix == '' ) { $idsuffix = $_formcount++; }
 
   $goto = 'moduleinterface.php';
-  if( $returnid != '' ) {
+  if( $returnid ) {
     $hm = $gCms->GetHierarchyManager();
     $node = $hm->sureGetNodeById($returnid);
     if( $node ) {
         $content_obj = $node->getContent();
-        if( $content_obj ) $goto = $content_obj->GetURL();
+        if( $content_obj ) { $goto = $content_obj->GetURL(); }
     }
   }
-  if( $gCms->is_https_request() && strpos($goto,':') !== FALSE ) $goto = str_replace('http:','https:',$goto);
+  if( $gCms->is_https_request() && strpos($goto,':') !== FALSE ) { $goto = str_replace('http:','https:',$goto); }
   $goto = ' action="'.$goto.'"';
 
   $text = '<form id="'.$id.'moduleform_'.$idsuffix.'" method="'.$method.'"'.$goto;
   $text .= ' class="cms_form"';
-  if ($enctype != '') $text .= ' enctype="'.$enctype.'"';
-  if ($extra != '') $text .= ' '.$extra;
+  if( $enctype ) { $text .= ' enctype="'.$enctype.'"'; }
+  if( $extra ) { $text .= ' '.$extra; }
   $text .= '>'."\n".'<div class="hidden">'."\n".'<input type="hidden" name="mact" value="'.$modinstance->GetName().','.$id.','.$action.','.($inline == true?1:0).'">'."\n";
-  if ($returnid != '') {
+  if( $returnid ) {
     $text .= '<input type="hidden" name="'.$id.'returnid" value="'.$returnid.'">'."\n";
-    if ($inline) $text .= '<input type="hidden" name="'.$gCms->config['query_var'].'" value="'.$returnid.'">'."\n";
+    if( $inline ) { $text .= '<input type="hidden" name="'.$gCms->config['query_var'].'" value="'.$returnid.'">'."\n"; }
   }
   else {
     $text .= '<input type="hidden" name="'.CMS_SECURE_PARAM_NAME.'" value="'.$_SESSION[CMS_USER_KEY].'">'."\n";
   }
 
-  foreach ($params as $key=>$value) {
+  foreach( $params as $key=>$value ) {
     $value = cms_htmlentities($value);
-    if ($key != 'module' && $key != 'action' && $key != 'id') {
+    if( !($key == 'module' || $key == 'action' || $key == 'id') ) {
       if( is_array($value) ) {
         foreach( $value as $one ) {
           $text .= '<input type="hidden" name="'.$id.$key.'[]" value="'.$one.'">'."\n";
@@ -81,9 +81,9 @@ function cms_module_CreateFormStart($modinstance, $id, $action='default', $retur
     }
   }
 
-//  foreach ($params as $key=>$value) {
+//  foreach( $params as $key=>$value ) {
 //    $value = cms_htmlentities($value);
-//    if ($key != 'module' && $key != 'action' && $key != 'id') {
+//    if( !($key == 'module' || $key == 'action' || $key == 'id') ) {
 //      $text .= '<input type="hidden" name="'.$id.$key.'" value="'.$value.'">'."\n";
 //    }
 //  }
@@ -95,10 +95,10 @@ function cms_module_CreateFormStart($modinstance, $id, $action='default', $retur
 /**
  * @access private
  */
-function cms_module_CreateLabelForInput($modinstance, $id, $name, $labeltext='', $addttext='')
+function cms_module_CreateLabelForInput($modinstance, $id, $name, $labeltext='', $addtext='')
 {
   $text = '<label class="cms_label" for="'.cms_htmlentities($id.$name).'"';
-  if ($addttext != '') $text .= ' ' . $addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= '>'.$labeltext.'</label>'."\n";
   return $text;
 }
@@ -106,7 +106,7 @@ function cms_module_CreateLabelForInput($modinstance, $id, $name, $labeltext='',
 /**
  * @access private
  */
-function cms_module_CreateInputText($modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addttext='')
+function cms_module_CreateInputText($modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addtext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -117,7 +117,7 @@ function cms_module_CreateInputText($modinstance, $id, $name, $value='', $size='
   $value = str_replace('"', '&quot;', $value);
 
   $text = '<input type="text" class="cms_textfield" name="'.$id.$name.'" id="'.$id.$name.'" value="'.$value.'" size="'.$size.'" maxlength="'.$maxlength.'"';
-  if ($addttext != '') $text .= ' ' . $addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= ">\n";
   return $text;
 }
@@ -125,7 +125,7 @@ function cms_module_CreateInputText($modinstance, $id, $name, $value='', $size='
 /**
  * @access private
  */
-function cms_module_CreateInputTextWithLabel($modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addttext='', $label='', $labeladdtext='')
+function cms_module_CreateInputTextWithLabel($modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addtext='', $label='', $labeladdtext='')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
@@ -133,9 +133,9 @@ function cms_module_CreateInputTextWithLabel($modinstance, $id, $name, $value=''
   $size = cms_htmlentities($size);
   $maxlength = cms_htmlentities($maxlength);
 
-  if ($label == '') $label = $name;
+  if( $label == '' ) { $label = $name; }
   $text = '<label class="cms_label" for="'.$id.$name.'" '.$labeladdtext.'>'.$label.'</label>'."\n";
-  $text .= $modinstance->CreateInputText($id, $name, $value, $size, $maxlength, $addttext);
+  $text .= $modinstance->CreateInputText($id, $name, $value, $size, $maxlength, $addtext);
   $text .= "\n";
   return $text;
 }
@@ -143,7 +143,7 @@ function cms_module_CreateInputTextWithLabel($modinstance, $id, $name, $value=''
 /**
  * @access private
  */
-function cms_module_CreateInputColor($modinstance, $id, $name, $value='', $addttext='')
+function cms_module_CreateInputColor($modinstance, $id, $name, $value='', $addtext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -151,7 +151,7 @@ function cms_module_CreateInputColor($modinstance, $id, $name, $value='', $addtt
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="color" class="cms_colorfield" name="'.$id.$name.'" id="'.$id.$name.'" value="'.$value.'"';
-  if ($addttext != '') $text .= ' ' . $addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= ">\n";
   return $text;
 }
@@ -159,7 +159,7 @@ function cms_module_CreateInputColor($modinstance, $id, $name, $value='', $addtt
 /**
  * @access private
  */
-function cms_module_CreateInputDate($modinstance, $id, $name, $value='', $addttext='')
+function cms_module_CreateInputDate($modinstance, $id, $name, $value='', $addtext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -167,7 +167,7 @@ function cms_module_CreateInputDate($modinstance, $id, $name, $value='', $addtte
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="date" class="cms_datefield" name="'.$id.$name.'" id="'.$id.$name.'" value="'.$value.'"';
-  if ($addttext != '') $text .= ' ' . $addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= ">\n";
   return $text;
 }
@@ -175,7 +175,7 @@ function cms_module_CreateInputDate($modinstance, $id, $name, $value='', $addtte
 /**
  * @access private
  */
-function cms_module_CreateInputDatetime($modinstance, $id, $name, $value='', $addttext='')
+function cms_module_CreateInputDatetime($modinstance, $id, $name, $value='', $addtext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -183,7 +183,7 @@ function cms_module_CreateInputDatetime($modinstance, $id, $name, $value='', $ad
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="datetime" class="cms_datefield" name="'.$id.$name.'" id="'.$id.$name.'" value="'.$value.'"';
-  if ($addttext != '') $text .= ' ' . $addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= ">\n";
   return $text;
 }
@@ -191,7 +191,7 @@ function cms_module_CreateInputDatetime($modinstance, $id, $name, $value='', $ad
 /**
  * @access private
  */
-function cms_module_CreateInputDatetimeLocal($modinstance, $id, $name, $value='', $addttext='')
+function cms_module_CreateInputDatetimeLocal($modinstance, $id, $name, $value='', $addtext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -199,7 +199,7 @@ function cms_module_CreateInputDatetimeLocal($modinstance, $id, $name, $value=''
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="datetime-local" class="cms_datefield" name="'.$id.$name.'" id="'.$id.$name.'" value="'.$value.'"';
-  if ($addttext != '') $text .= ' ' . $addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= ">\n";
   return $text;
 }
@@ -207,7 +207,7 @@ function cms_module_CreateInputDatetimeLocal($modinstance, $id, $name, $value=''
 /**
  * @access private
  */
-function cms_module_CreateInputMonth($modinstance, $id, $name, $value='', $addttext='')
+function cms_module_CreateInputMonth($modinstance, $id, $name, $value='', $addtext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -215,7 +215,7 @@ function cms_module_CreateInputMonth($modinstance, $id, $name, $value='', $addtt
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="month" class="cms_datefield" name="'.$id.$name.'" id="'.$id.$name.'" value="'.$value.'"';
-  if ($addttext != '') $text .= ' ' . $addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= ">\n";
   return $text;
 }
@@ -223,7 +223,7 @@ function cms_module_CreateInputMonth($modinstance, $id, $name, $value='', $addtt
 /**
  * @access private
  */
-function cms_module_CreateInputWeek($modinstance, $id, $name, $value='', $addttext='')
+function cms_module_CreateInputWeek($modinstance, $id, $name, $value='', $addtext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -231,7 +231,7 @@ function cms_module_CreateInputWeek($modinstance, $id, $name, $value='', $addtte
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="week" class="cms_datefield" name="'.$id.$name.'" id="'.$id.$name.'" value="'.$value.'"';
-  if ($addttext != '') $text .= ' ' . $addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= ">\n";
   return $text;
 }
@@ -239,7 +239,7 @@ function cms_module_CreateInputWeek($modinstance, $id, $name, $value='', $addtte
 /**
  * @access private
  */
-function cms_module_CreateInputTime($modinstance, $id, $name, $value='', $addttext='')
+function cms_module_CreateInputTime($modinstance, $id, $name, $value='', $addtext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -247,7 +247,7 @@ function cms_module_CreateInputTime($modinstance, $id, $name, $value='', $addtte
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="time" class="cms_datefield" name="'.$id.$name.'" id="'.$id.$name.'" value="'.$value.'"';
-  if ($addttext != '') $text .= ' ' . $addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= ">\n";
   return $text;
 }
@@ -255,7 +255,7 @@ function cms_module_CreateInputTime($modinstance, $id, $name, $value='', $addtte
 /**
  * @access private
  */
-function cms_module_CreateInputNumber($modinstance, $id, $name, $value='', $addttext='')
+function cms_module_CreateInputNumber($modinstance, $id, $name, $value='', $addtext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -263,7 +263,7 @@ function cms_module_CreateInputNumber($modinstance, $id, $name, $value='', $addt
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="number" class="cms_numberfield" name="'.$id.$name.'" id="'.$id.$name.'" value="'.$value.'"';
-  if ($addttext != '') $text .= ' ' . $addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= ">\n";
   return $text;
 }
@@ -271,7 +271,7 @@ function cms_module_CreateInputNumber($modinstance, $id, $name, $value='', $addt
 /**
  * @access private
  */
-function cms_module_CreateInputRange($modinstance, $id, $name, $value='', $addttext='')
+function cms_module_CreateInputRange($modinstance, $id, $name, $value='', $addtext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -279,7 +279,7 @@ function cms_module_CreateInputRange($modinstance, $id, $name, $value='', $addtt
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="range" class="cms_numberfield" name="'.$id.$name.'" id="'.$id.$name.'" value="'.$value.'"';
-  if ($addttext != '') $text .= ' ' . $addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= ">\n";
   return $text;
 }
@@ -287,7 +287,7 @@ function cms_module_CreateInputRange($modinstance, $id, $name, $value='', $addtt
 /**
  * @access private
  */
-function cms_module_CreateInputEmail($modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addttext='')
+function cms_module_CreateInputEmail($modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addtext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -297,7 +297,7 @@ function cms_module_CreateInputEmail($modinstance, $id, $name, $value='', $size=
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="email" class="cms_emailfield" name="'.$id.$name.'" id="'.$id.$name.'" value="'.$value.'" size="'.$size.'" maxlength="'.$maxlength.'"';
-  if ($addttext != '') $text .= ' ' . $addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= ">\n";
   return $text;
 }
@@ -305,7 +305,7 @@ function cms_module_CreateInputEmail($modinstance, $id, $name, $value='', $size=
 /**
  * @access private
  */
-function cms_module_CreateInputTel($modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addttext='')
+function cms_module_CreateInputTel($modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addtext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -315,7 +315,7 @@ function cms_module_CreateInputTel($modinstance, $id, $name, $value='', $size='1
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="tel" class="cms_telfield" name="'.$id.$name.'" id="'.$id.$name.'" value="'.$value.'" size="'.$size.'" maxlength="'.$maxlength.'"';
-  if ($addttext != '') $text .= ' ' . $addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= ">\n";
   return $text;
 }
@@ -323,7 +323,7 @@ function cms_module_CreateInputTel($modinstance, $id, $name, $value='', $size='1
 /**
  * @access private
  */
-function cms_module_CreateInputSearch($modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addttext='')
+function cms_module_CreateInputSearch($modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addtext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -333,7 +333,7 @@ function cms_module_CreateInputSearch($modinstance, $id, $name, $value='', $size
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="search" class="cms_searchfield" name="'.$id.$name.'" id="'.$id.$name.'" value="'.$value.'" size="'.$size.'" maxlength="'.$maxlength.'"';
-  if ($addttext != '') $text .= ' ' . $addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= ">\n";
   return $text;
 }
@@ -341,7 +341,7 @@ function cms_module_CreateInputSearch($modinstance, $id, $name, $value='', $size
 /**
  * @access private
  */
-function cms_module_CreateInputUrl($modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addttext='')
+function cms_module_CreateInputUrl($modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addtext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -351,7 +351,7 @@ function cms_module_CreateInputUrl($modinstance, $id, $name, $value='', $size='1
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="url" class="cms_urlfield" name="'.$id.$name.'" id="'.$id.$name.'" value="'.$value.'" size="'.$size.'" maxlength="'.$maxlength.'"';
-  if ($addttext != '') $text .= ' ' . $addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= ">\n";
   return $text;
 }
@@ -359,7 +359,7 @@ function cms_module_CreateInputUrl($modinstance, $id, $name, $value='', $size='1
 /**
  * @access private
  */
-function cms_module_CreateInputFile($modinstance, $id, $name, $accept='', $size='10',$addttext='')
+function cms_module_CreateInputFile($modinstance, $id, $name, $accept='', $size='10',$addtext='')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
@@ -367,8 +367,8 @@ function cms_module_CreateInputFile($modinstance, $id, $name, $accept='', $size=
   $size = cms_htmlentities($size);
 
   $text='<input type="file" class="cms_browse" name="'.$id.$name.'" size="'.$size.'"';
-  if ($accept != '') $text .= ' accept="' . $accept.'"';
-  if ($addttext != '') $text .= ' ' . $addttext;
+  if( $accept ) { $text .= ' accept="' . $accept.'"'; }
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= ">\n";
   return $text;
 }
@@ -376,7 +376,7 @@ function cms_module_CreateInputFile($modinstance, $id, $name, $accept='', $size=
 /**
  * @access private
  */
-function cms_module_CreateInputPassword($modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addttext='')
+function cms_module_CreateInputPassword($modinstance, $id, $name, $value='', $size='10', $maxlength='255', $addtext='')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
@@ -386,7 +386,7 @@ function cms_module_CreateInputPassword($modinstance, $id, $name, $value='', $si
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="password" class="cms_password" id="'.$id.$name.'" name="'.$id.$name.'" value="'.$value.'" size="'.$size.'" maxlength="'.$maxlength.'"';
-  if ($addttext != '') $text .= ' ' . $addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= ">\n";
   return $text;
 }
@@ -394,7 +394,7 @@ function cms_module_CreateInputPassword($modinstance, $id, $name, $value='', $si
 /**
  * @access private
  */
-function cms_module_CreateInputHidden($modinstance, $id, $name, $value='', $addttext='')
+function cms_module_CreateInputHidden($modinstance, $id, $name, $value='', $addtext='')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
@@ -402,7 +402,7 @@ function cms_module_CreateInputHidden($modinstance, $id, $name, $value='', $addt
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="hidden" id="'.$id.$name.'" name="'.$id.$name.'" value="'.$value.'"';
-  if ($addttext != '') $text .= ' '.$addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= ">\n";
   return $text;
 }
@@ -410,7 +410,7 @@ function cms_module_CreateInputHidden($modinstance, $id, $name, $value='', $addt
 /**
  * @access private
  */
-function cms_module_CreateInputCheckbox($modinstance, $id, $name, $value='', $selectedvalue='', $addttext='')
+function cms_module_CreateInputCheckbox($modinstance, $id, $name, $value='', $selectedvalue='', $addtext='')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
@@ -418,8 +418,8 @@ function cms_module_CreateInputCheckbox($modinstance, $id, $name, $value='', $se
   $selectedvalue = cms_htmlentities($selectedvalue);
 
   $text = '<input type="checkbox" class="cms_checkbox" name="'.$id.$name.'" value="'.$value.'"';
-  if ($selectedvalue == $value) $text .= ' checked';
-  if ($addttext != '') $text .= ' '.$addttext;
+  if( $selectedvalue == $value ) { $text .= ' checked'; }
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= ">\n";
   return $text;
 }
@@ -427,7 +427,7 @@ function cms_module_CreateInputCheckbox($modinstance, $id, $name, $value='', $se
 /**
  * @access private
  */
-function cms_module_CreateInputSubmit($modinstance, $id, $name, $value='', $addttext='', $image='', $confirmtext='')
+function cms_module_CreateInputSubmit($modinstance, $id, $name, $value='', $addtext='', $image='', $confirmtext='')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
@@ -443,8 +443,8 @@ function cms_module_CreateInputSubmit($modinstance, $id, $name, $value='', $addt
   else {
     $text .= '"submit"';
   }
-  if ($confirmtext) $text .= ' onclick="return confirm(\''.$confirmtext.'\');"';
-  if ($addttext) $text .= ' '.$addttext;
+  if( $confirmtext ) { $text .= ' onclick="return confirm(\''.$confirmtext.'\');"'; }
+  if( $addtext ) { $text .= ' ' . $addtext; }
 
   $text .= '>';
   return $text . "\n";
@@ -453,13 +453,13 @@ function cms_module_CreateInputSubmit($modinstance, $id, $name, $value='', $addt
 /**
  * @access private
  */
-function cms_module_CreateInputReset($modinstance, $id, $name, $value='Reset', $addttext='')
+function cms_module_CreateInputReset($modinstance, $id, $name, $value='Reset', $addtext='')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
 
   $text = '<input type="reset" class="cms_reset" name="'.$id.$name.'" value="'.$value.'"';
-  if ($addttext) $text .= ' '.$addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= '>';
   return $text . "\n";
 }
@@ -467,13 +467,13 @@ function cms_module_CreateInputReset($modinstance, $id, $name, $value='Reset', $
 /**
  * @access private
  */
-function cms_module_CreateFileUploadInput($modinstance, $id, $name, $addttext='', $size='10')
+function cms_module_CreateFileUploadInput($modinstance, $id, $name, $addtext='', $size='10')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
 
   $text = '<input type="file" class="cms_browse" name="'.$id.$name.'" size="'.$size.'"';
-  if ($addttext) $text .= ' '.$addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= '>';
   return $text . "\n";
 }
@@ -481,7 +481,7 @@ function cms_module_CreateFileUploadInput($modinstance, $id, $name, $addttext=''
 /**
  * @access private
  */
-function cms_module_CreateInputDropdown($modinstance, $id, $name, $items, $selectedindex, $selectedvalue, $addttext)
+function cms_module_CreateInputDropdown($modinstance, $id, $name, $items, $selectedindex, $selectedvalue, $addtext)
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
@@ -489,13 +489,13 @@ function cms_module_CreateInputDropdown($modinstance, $id, $name, $items, $selec
   $selectedvalue = cms_htmlentities($selectedvalue);
 
   $text = '<select class="cms_dropdown" name="'.$id.$name.'"';
-  if( $addttext ) $text .= ' ' . $addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= ">\n";
   $count = 0;
   if( is_array($items) && count($items) > 0 ) {
     foreach( $items as $key=>$value ) {
       $text .= '<option value="'.$value.'"';
-      if( $selectedindex == $count || $selectedvalue == $value ) $text .= ' selected';
+      if( $selectedindex == $count || $selectedvalue == $value ) { $text .= ' selected'; }
       $text .= '>';
       $text .= $key;
       $text .= "</option>\n";
@@ -510,7 +510,7 @@ function cms_module_CreateInputDropdown($modinstance, $id, $name, $items, $selec
 /**
  * @access private
  */
-function cms_module_CreateInputDataList($modinstance, $id, $name, $value='', $items = [], $size='10', $maxlength='255', $addttext='')
+function cms_module_CreateInputDataList($modinstance, $id, $name, $value='', $items = [], $size='10', $maxlength='255', $addtext='')
 {
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
@@ -520,11 +520,11 @@ function cms_module_CreateInputDataList($modinstance, $id, $name, $value='', $it
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="text" class="cms_datalistfield" name="'.$id.$name.'" list="'.$id.$name.'" value="'.$value.'" size="'.$size.'" maxlength="'.$maxlength.'"';
-  if ($addttext != '') $text .= ' ' . $addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= ">\n";
 
   $text .= '<datalist class="cms_datalist" id="'.$id.$name.'"';
-  if ($addttext != '') $text .= ' ' . $addttext;
+  if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= '>';
   $count = 0;
   if( is_array($items) && count($items) > 0 ) {
@@ -543,24 +543,24 @@ function cms_module_CreateInputDataList($modinstance, $id, $name, $value='', $it
 /**
  * @access private
  */
-function cms_module_CreateInputSelectList($modinstance, $id, $name, $items, $selecteditems=array(), $size=3, $addttext='', $multiple = true)
+function cms_module_CreateInputSelectList($modinstance, $id, $name, $items, $selecteditems=array(), $size=3, $addtext='', $multiple = true)
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
   $size = cms_htmlentities($size);
   $multiple = cms_htmlentities($multiple);
 
-  if( strstr($name,'[]') === FALSE && $multiple ) $name.='[]';
+  if( strstr($name,'[]') === FALSE && $multiple ) { $name.='[]'; }
   $text = '<select class="cms_select" name="'.$id.$name.'"';
-  if( $addttext ) $text .= ' ' . $addttext;
-  if( $multiple ) $text .= ' multiple';
+  if( $addtext ) { $text .= ' ' . $addtext; }
+  if( $multiple ) { $text .= ' multiple'; }
   $text .= ' size="'.$size."\">\n";
   $count = 0;
   foreach( $items as $key=>$value ) {
     $value = cms_htmlentities($value);
 
     $text .= '<option value="'.$value.'"';
-    if( is_array($selecteditems) && in_array($value, $selecteditems) ) $text .= ' selected';
+    if( is_array($selecteditems) && in_array($value, $selecteditems) ) { $text .= ' selected'; }
     $text .= '>';
     $text .= $key;
     $text .= "</option>\n";
@@ -574,7 +574,7 @@ function cms_module_CreateInputSelectList($modinstance, $id, $name, $items, $sel
 /**
  * @access private
  */
-function cms_module_CreateInputRadioGroup($modinstance, $id, $name, $items, $selectedvalue='', $addttext='', $delimiter='')
+function cms_module_CreateInputRadioGroup($modinstance, $id, $name, $items, $selectedvalue='', $addtext='', $delimiter='')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
@@ -587,8 +587,8 @@ function cms_module_CreateInputRadioGroup($modinstance, $id, $name, $items, $sel
 
     $counter = $counter + 1;
     $text .= '<input class="cms_radio" type="radio" name="'.$id.$name.'" id="'.$id.$name.$counter.'" value="'.$value.'"';
-    if( $addttext ) $text .= ' ' . $addttext;
-    if( $selectedvalue == $value ) $text .= ' checked';
+    if( $addtext ) { $text .= ' ' . $addtext; }
+    if( $selectedvalue == $value ) { $text .= ' checked'; }
     $text .= '>';
     $text .= '<label class="cms_label" for="'.$id.$name.$counter.'">'.$key .'</label>' . $delimiter;
   }
@@ -600,9 +600,9 @@ function cms_module_CreateInputRadioGroup($modinstance, $id, $name, $items, $sel
  * @access private
  */
 function cms_module_CreateLink($modinstance, $id, $action, $returnid='', $contents='', $params=array(), $warn_message='',
-							   $onlyhref=false, $inline=false, $addttext='', $targetcontentonly=false, $prettyurl='')
+							   $onlyhref=false, $inline=false, $addtext='', $targetcontentonly=false, $prettyurl='')
 {
-  if( !is_array($params) && $params == '' ) $params = array();
+  if( !is_array($params) && $params == '' ) { $params = array(); }
   $id = cms_htmlentities($id);
   $action = cms_htmlentities($action);
   $returnid = cms_htmlentities($returnid);
@@ -619,8 +619,8 @@ function cms_module_CreateLink($modinstance, $id, $action, $returnid='', $conten
     }
     $beginning .= ' href="';
     $text = $beginning . $text . '"';
-    if( $warn_message ) $text .= ' onclick="return confirm(\''.$warn_message.'\');"';
-    if( $addttext ) $text .= ' ' . $addttext;
+    if( $warn_message ) { $text .= ' onclick="return confirm(\''.$warn_message.'\');"'; }
+    if( $addtext ) { $text .= ' ' . $addtext; }
     $text .= '>'.$contents.'</a>';
   }
   return $text;
@@ -636,7 +636,7 @@ function cms_module_create_url($modinstance,$id,$action,$returnid='',$params=arr
   $config = \cms_config::get_instance();
 
   $text = '';
-  if( empty($prettyurl) && $config['url_rewriting'] != 'none' ) {
+  if( !$prettyurl && $config['url_rewriting'] != 'none' ) {
     // attempt to get a pretty url from the module... this is useful
     // if this method is being called from outside the source module
     // e.g. comments module wants a link to the article the comments are about
@@ -647,31 +647,27 @@ function cms_module_create_url($modinstance,$id,$action,$returnid='',$params=arr
   $base_url = CMS_ROOT_URL;
 
   // get the destination content object
-  if( $returnid ) {
+  if( $returnid ) { // could it be < 0?
     $content_obj = CmsApp::get_instance()->GetContentOperations()->LoadContentFromId($returnid);
-    if( is_object($content_obj) && $content_obj->Secure() ) $base_url = $config['ssl_url'];
+    if( is_object($content_obj) && $content_obj->Secure() ) { $base_url = $config['ssl_url']; }
   }
 
   if( $prettyurl && $config['url_rewriting'] == 'mod_rewrite' ) {
     $text = $base_url . '/' . $prettyurl . $config['page_extension'];
   }
-  else if( $prettyurl && $config['url_rewriting'] == 'internal' ) {
+  elseif( $prettyurl && $config['url_rewriting'] == 'internal' ) {
     $text = $base_url . '/index.php/' . $prettyurl . $config['page_extension'];
   }
   else {
-    $text = '';
-    if ($targetcontentonly || ($returnid != '' && !$inline)) $id = 'cntnt01';
-    $goto = 'index.php';
-    if ($returnid == '') $goto = 'moduleinterface.php';
-
-    $text = $base_url;
-    if( $returnid <= 0 ) $text = $config['admin_url'];
+    if( $targetcontentonly || ($returnid && !$inline) ) { $id = 'cntnt01'; }
+    $goto = ($returnid) ? 'index.php' : 'moduleinterface.php';
+    $text = ($returnid <= 0) ? $config['admin_url'] : $base_url;
 
     $secureparam = '';
-    if( $returnid == '' ) $secureparam='&amp;'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+    if( $returnid == '' ) { $secureparam='&amp;'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY]; }
     $text .= '/'.$goto.'?mact='.$modinstance->GetName().','.$id.','.$action.','.($inline == true?1:0).$secureparam;
-    if( isset($params['returnid']) && $returnid != '' ) unset($params['returnid']);
-    foreach ($params as $key=>$value) {
+    if( isset($params['returnid']) && $returnid != '' ) { unset($params['returnid']); }
+    foreach( $params as $key=>$value ) {
       if( in_array($key,array('assign','id','returnid','action','module')) ) continue;
       $key = cms_htmlentities($key);
       if( is_scalar($value) ) {
@@ -681,9 +677,9 @@ function cms_module_create_url($modinstance,$id,$action,$returnid='',$params=arr
         $text .= '&amp;'.$id.$key.'='.rawurlencode(json_encode($value)); //the receiver needs be able to deal with such things!
       }
     }
-    if ($returnid != '') {
+    if( $returnid ) {
       $text .= '&amp;'.$id.'returnid='.$returnid;
-      if( $inline ) $text .= '&amp;'.$config['query_var'].'='.$returnid;
+      if( $inline ) { $text .= '&amp;'.$config['query_var'].'='.$returnid; }
     }
   }
 
