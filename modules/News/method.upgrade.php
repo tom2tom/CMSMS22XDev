@@ -421,4 +421,11 @@ EOS;
     }
 }
 
+if( version_compare($oldversion,'2.51.17') < 0 ) {
+    //articles-list filter properties are now user-specific
+    $this->RemovePreference('allcategories');
+    $this->RemovePreference('article_category');
+    $this->RemovePreference('article_pagelimit');
+    $this->RemovePreference('article_sortby');
+}
 ?>
