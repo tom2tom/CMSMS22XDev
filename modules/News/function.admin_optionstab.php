@@ -56,11 +56,10 @@ $tpl->assign('input_fesubmit_status',
 $tpl->assign('title_fesubmit_redirect',$this->Lang('fesubmit_redirect'));
 $contentops = $gCms->GetContentOperations();
 $tpl->assign('input_fesubmit_redirect',
-		$contentops->CreateHierarchyDropdown(0,$this->GetPreference('fesubmit_redirect',-1),$id.'fesubmit_redirect',true));
-
+		$contentops->CreateHierarchyDropdown(0,$this->GetPreference('fesubmit_redirect',-1),$id.'fesubmit_redirect',true,false,false,false,false,'selredirect'));
 $tpl->assign('title_detail_returnid',$this->Lang('title_detail_returnid'));
 $tpl->assign('input_detail_returnid',
-		$contentops->CreateHierarchyDropdown(0,$this->GetPreference('detail_returnid',-1),$id.'detail_returnid',true));
+		$contentops->CreateHierarchyDropdown(0,$this->GetPreference('detail_returnid',-1),$id.'detail_returnid',true,false,false,false,false,'selreturn'));
 $tpl->assign('info_detail_returnid',$this->Lang('info_detail_returnid'));
 
 $tpl->assign('title_submission_settings',$this->Lang('title_submission_settings'));
