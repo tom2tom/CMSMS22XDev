@@ -12,40 +12,48 @@
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 #You should have received a copy of the GNU General Public License
-#along with this program; if not, write to the Free Software
-#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#along with this program. If not, read the licence online at
+#https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 function smarty_function_cms_filepicker($params,$template)
 {
-    $filepicker = \cms_utils::get_filepicker_module();
-    if( !$filepicker ) return '';
+    $filepicker = cms_utils::get_filepicker_module();
+    if( !$filepicker ) {
+        if( !empty($params['assign']) ) {
+            $template->assign(trim($params['assign']),'');
+        }
+        return '';
+    }
 
     $name = get_parameter_value($params,'name','picker'); //default name, since 2.2.19
-    if( !$name ) return '';
+    $prefix = get_parameter_value($params,'prefix'); // not a profile property
+    $value = get_parameter_value($params,'value'); // ditto
+    $required = get_parameter_value($params,'required',false); // ditto
 
-    $profile_name = get_parameter_value($params,'profile');
-    $prefix = get_parameter_value($params,'prefix');
-    $value = get_parameter_value($params,'value');
     $top = get_parameter_value($params,'top');
-    $type = get_parameter_value($params,'type');
-    $required = get_parameter_value($params,'required',false);
-
-    $profile = $filepicker->get_profile_or_default($profile_name);
-    $parms = [];
     if( $top ) {
-        // TODO $top might be Windoze-style absolute path and separator might be \ or /
-        //general test for non-absolute path is: !preg_match('~^ *(?:\/|\\\\|\w:\\\\|\w:\/)~',$top)
-        if( !startswith($top,'/') ) $top = cmsms()->GetConfig()['uploads_path'].'/'.$top;
-        if( startswith($top, CMS_ROOT_PATH ) ) $parms['top'] = $top;
+        if( is_absolute_path($top) ) {
+            $config = cms_utils::get_config();
+            $uploads_path = $config['uploads_path'];
+            if( startswith($top,$uploads_path) ) {
+                $params['top'] = substr($top,strlen($uploads_path) + 1); //omit leading separator
+            }
+            else {
+                unset($params['top']);
+            }
+        }
+        else {
+            $params['top'] = ltrim($top,' \/'); //omit any leading separator
+        }
     }
-    if( $type ) $parms['type'] = $type;
-    if( $parms ) {
-        $profile = $profile->overrideWith( $parms );
-    }
+    $profile_name = get_parameter_value($params,'profile');
+    $profile = $filepicker->get_profile_or_default($profile_name, '', get_userid(false));
+    unset($params['can_upload'],$params['can_delete'],$params['can_mkdir']); // prevent overriding these
+    $profile->overrideWith($params);
 
-    $out = $filepicker->get_html( $prefix.$name, $value, $profile, $required );
+    $out = $filepicker->get_html($prefix.$name,$value,$profile,$required);
     if( isset($params['assign']) ) {
-        $template->assign( $params['assign'], $out );
+        $template->assign(trim($params['assign']),$out);
         return '';
     } else {
         return $out;
