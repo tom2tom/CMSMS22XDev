@@ -1,5 +1,5 @@
 <?php
-#CMS Made Simple class CmsTemplateResource
+#CMS Made Simple class TemplateResource
 #(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
@@ -17,6 +17,8 @@
 #
 #$Id$
 
+namespace CMSMS\internal;
+
 /**
  * A simple class for handling layout templates as a resource.
  *
@@ -26,7 +28,7 @@
  * @author Robert Campbell
  * @since 1.12
  */
-class CmsTemplateResource extends CMS_Fixed_Resource_Custom
+class TemplateResource extends Fixed_Resource_Custom
 {
 	private $_section;
 
@@ -35,15 +37,15 @@ class CmsTemplateResource extends CMS_Fixed_Resource_Custom
 		if( in_array($section,array('top','head','body')) ) $this->_section = $section;
 	}
 
-	public function buildUniqueResourceName(Smarty $smarty,$resource_name, $is_config = false)
+	public function buildUniqueResourceName(\Smarty $smarty,$resource_name, $is_config = false)
 	{
 		return parent::buildUniqueResourceName($smarty,$resource_name,$is_config).'--'.$this->_section;
 	}
 
 	private function get_template($name)
 	{
-		$obj = CmsLayoutTemplate::load($name);
-		$ret = new stdClass();
+		$obj = \CmsLayoutTemplate::load($name);
+		$ret = new \stdClass();
 		$ret->modified = $obj->get_modified();
 		$ret->content = $obj->get_content();
 		return $ret;
@@ -51,13 +53,13 @@ class CmsTemplateResource extends CMS_Fixed_Resource_Custom
 
 	protected function fetch($name,&$source,&$mtime)
 	{
-		if( is_sitedown() && CmsApp::get_instance()->is_frontend_request() ) {
+		if( \is_sitedown() && \CmsApp::get_instance()->is_frontend_request() ) {
 			$source = '';
 			$mtime = time();
 			if( $this->_section == 'body' ) {
 				header('HTTP/1.0 503 Service Unavailable');
 				header('Status: 503 Service Unavailable');
-				$source = get_site_preference('sitedownmessage');
+				$source = \cms_siteprefs::get('sitedownmessage');
 			}
 			return;
 		}
@@ -67,9 +69,9 @@ class CmsTemplateResource extends CMS_Fixed_Resource_Custom
 			$mtime = time(); // never cache...
 			return;
 		}
-		else if( startswith($name,'appdata;') ) {
+		else if( \startswith($name,'appdata;') ) {
 			$name = substr($name,8);
-			$source = cms_utils::get_app_data($name);
+			$source = \cms_utils::get_app_data($name);
 			$mtime = time();
 			return;
 		}
@@ -81,8 +83,8 @@ class CmsTemplateResource extends CMS_Fixed_Resource_Custom
 			$tpl = $this->get_template($name);
 			if( !is_object($tpl) ) return;
 		}
-		catch( Exception $e ) {
-			audit('','TemplateResource','Missing template '.$name);
+		catch( \Exception $e ) {
+			\audit('','TemplateResource','Missing template '.$name);
 			return;
 		}
 
@@ -124,33 +126,31 @@ class CmsTemplateResource extends CMS_Fixed_Resource_Custom
 
 	public static function page_type_lang_callback($key)
 	{
-		if( $key == CmsLayoutTemplateType::CORE ) return 'Core';
+		if( $key == \CmsLayoutTemplateType::CORE ) return lang('core');
 		return lang($key);
 	}
 
 	public static function generic_type_lang_callback($key)
 	{
-		if( $key == CmsLayoutTemplateType::CORE ) return 'Core';
+		if( $key == \CmsLayoutTemplateType::CORE ) return lang('core');
 		return lang($key);
 	}
 
 	public static function reset_page_type_defaults()
 	{
 		$config = \cms_config::get_instance();
-		$file = cms_join_path($config['admin_path'],'templates','orig_page_template.tpl');
+		$file = \cms_join_path($config['admin_path'],'templates','orig_page_template.tpl');
 		$contents = '';
 		if( is_file($file) ) $contents = @file_get_contents($file);
 		return $contents;
 	}
 
-    public static function template_help_callback($typename)
-    {
-        $typename = trim($typename);
-        if( $typename == 'generic' ) return;
-        $key = 'tplhelp_'.$typename;
-        return lang($key);
-    }
-} // end of class
-
-#
-# EOF
+	public static function template_help_callback($typename)
+	{
+		$typename = trim($typename);
+		if( $typename == 'generic' ) return;
+		$key = 'tplhelp_'.$typename;
+		return lang($key);
+	}
+}
+class_alias(TemplateResource::class,'CmsTemplateResource',false);

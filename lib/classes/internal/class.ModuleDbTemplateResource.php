@@ -1,5 +1,5 @@
 <?php
-#CMS Made Simple class CMSModuleDbTemplateResource
+#CMS Made Simple class ModuleDbTemplateResource
 #(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
@@ -17,6 +17,8 @@
 #
 #$Id$
 
+namespace CMSMS\internal;
+
 /**
  * A simple class to handle a module database template.
  *
@@ -25,15 +27,15 @@
  * @since 1.11
  * @package CMS
  */
-class CMSModuleDbTemplateResource extends CMS_Fixed_Resource_Custom
+class ModuleDbTemplateResource extends Fixed_Resource_Custom
 {
     protected function fetch($name,&$source,&$mtime)
     {
-        debug_buffer('','CMSModuleDbTemplateResource start'.$name);
-        $db = CmsApp::get_instance()->GetDb();
+        \debug_buffer('','CMSModuleDbTemplateResource start'.$name);
+        $db = \CmsApp::get_instance()->GetDb();
 
         $tmp = explode(';',$name);
-        $query = "SELECT * from ".CMS_DB_PREFIX."module_templates WHERE module_name = ? and template_name = ?";
+        $query = "SELECT * from ".\CMS_DB_PREFIX."module_templates WHERE module_name = ? and template_name = ?";
         $parts = explode(';',$name);
         $row = $db->GetRow($query, $parts);
         if ($row) {
@@ -43,7 +45,7 @@ class CMSModuleDbTemplateResource extends CMS_Fixed_Resource_Custom
         else {
             // fallback to the layout stuff.
             try {
-                $obj = CmsLayoutTemplate::load($parts[1]);
+                $obj = \CmsLayoutTemplate::load($parts[1]);
                 $source = $obj->get_content();
                 $mtime = $obj->get_modified();
             }
@@ -51,46 +53,7 @@ class CMSModuleDbTemplateResource extends CMS_Fixed_Resource_Custom
                 // nothing here.
             }
         }
-        debug_buffer('','CMSModuleDbTemplateResource end'.$name);
+        \debug_buffer('','CMSModuleDbTemplateResource end'.$name);
     }
-} // end of class
-
-
-/**
- * A simple class to handle a module file template.
- *
- * @ignore
- * @internal
- * @package CMS
- * @since 1.11
- */
-class CMSModuleFileTemplateResource extends CMS_Fixed_Resource_Custom
-{
-    protected function fetch($name,&$source,&$mtime)
-    {
-        $source = null;
-        $mtime = null;
-        $params = explode(';',$name);
-        if( count($params) != 2 ) return;
-
-        $module_name = trim($params[0]);
-        $filename = basename(trim($params[1]));
-        $config = \cms_config::get_instance();
-        $files = array();
-        $files[] = cms_join_path($config['assets_path'],'module_custom',$module_name,'templates',$filename);
-        $files[] = cms_join_path(CMS_ROOT_PATH,'modules',$module_name,'templates',$filename);
-
-        foreach( $files as $one ) {
-            if( file_exists($one) ) {
-                $source = @file_get_contents($one);
-                $mtime = @filemtime($one);
-                break;
-            }
-        }
-    }
-} // end of class
-
-
-#
-# EOF
-#
+}
+class_alias(ModuleDbTemplateResource::class,'CMSModuleDbTemplateResource',false); //deprecated

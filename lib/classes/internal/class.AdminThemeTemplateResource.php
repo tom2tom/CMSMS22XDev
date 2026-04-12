@@ -19,9 +19,6 @@
 
 namespace CMSMS\internal;
 
-use cms_config;
-use const CMS_ROOT_PATH;
-
 /**
  * A simple class for handling the admintheme-file Smarty resource.
  *
@@ -30,7 +27,7 @@ use const CMS_ROOT_PATH;
  * @ignore
  * @since 2.2.23F2
  */
-class AdminThemeTemplateResource extends \CMS_Fixed_Resource_Custom
+class AdminThemeTemplateResource extends Fixed_Resource_Custom
 {
     protected function fetch($name,&$source,&$mtime)
     {
@@ -40,8 +37,8 @@ class AdminThemeTemplateResource extends \CMS_Fixed_Resource_Custom
         if( count($params) != 2 ) return;
         $theme_name = trim($params[0]);
         $filename = basename(trim($params[1]));
-        $config = cms_config::get_instance();
-        $fp = cms_join_path(CMS_ROOT_PATH,$config['admin_dir'],'themes',$theme_name,'templates',$filename);
+        $config = \cms_config::get_instance();
+        $fp = \cms_join_path(\CMS_ROOT_PATH,$config['admin_dir'],'themes',$theme_name,'templates',$filename);
         if( file_exists($fp) ) {
             $source = @file_get_contents($fp);
             $mtime = @filemtime($fp);

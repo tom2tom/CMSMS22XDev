@@ -1,5 +1,5 @@
 <?php
-#CMS Made Simple class CMSContentTemplateResource
+#CMS Made Simple class ContentTemplateResource
 #(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
@@ -17,6 +17,8 @@
 #
 #$Id$
 
+namespace CMSMS\internal;
+
 /**
  * A simple class for handling the content smarty resource.
  *
@@ -26,11 +28,11 @@
  * @author Robert Campbell
  * @since 1.11
  */
-class CMSContentTemplateResource extends CMS_Fixed_Resource_Custom
+class ContentTemplateResource extends Fixed_Resource_Custom
 {
     protected function fetch($name,&$source,&$mtime)
     {
-        $gCms = CmsApp::get_instance();
+        $gCms = \CmsApp::get_instance();
         $contentobj = $gCms->get_content_object();
 
         if (!is_object($contentobj)) {
@@ -39,13 +41,13 @@ class CMSContentTemplateResource extends CMS_Fixed_Resource_Custom
             header("Status: 404 Not Found");
             $source = null;
             if ($name == 'content_en') {
-                $source = cms_siteprefs::get('custom404');
+                $source = \cms_siteprefs::get('custom404');
                 $source = trim((string)$source);
             }
             $mtime = time();
             return;
         }
-        else if( isset($_SESSION['__cms_preview_']) && $contentobj->Id() == __CMS_PREVIEW_PAGE__ ) {
+        else if( isset($_SESSION['__cms_preview_']) && $contentobj->Id() == \__CMS_PREVIEW_PAGE__ ) {
             $contentobj = $_SESSION['__cms_preview__'];
             $source = $contentobj->Show($name);
             $source = preg_replace("/\{\/?php\}/", "", $source); //smarty blocks these tags anyway
@@ -63,12 +65,6 @@ class CMSContentTemplateResource extends CMS_Fixed_Resource_Custom
         }
         $source = null;
         $mtime = null;
-        return;
     }
-} // end of class
-
-
-#
-# EOF
-#
-?>
+}
+class_alias(ContentTemplateResource::class, 'CMSContentTemplateResource', false);

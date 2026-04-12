@@ -1,5 +1,5 @@
 <?php
-#CMS Made Simple class CMS_Fixed_Resource_Custom
+#CMS Made Simple class Fixed_Resource_Custom
 #(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
@@ -17,6 +17,8 @@
 #
 #$Id$
 
+namespace CMSMS\internal;
+
 /**
  * A class that fixes a problem with the Smarty_Resource_Custom class
  * TODO check whether overriding
@@ -30,9 +32,9 @@
  * @ignore
  * @package CMS
  */
-abstract class CMS_Fixed_Resource_Custom extends Smarty_Resource_Custom
+abstract class Fixed_Resource_Custom extends \Smarty_Resource_Custom
 {
-    public function populate(Smarty_Template_Source $source, /*?Smarty_Internal_Template */$_template = null)  // uncomment for PHP 7.1+ .. 8.4+
+    public function populate(\Smarty_Template_Source $source, /*?Smarty_Internal_Template */$_template = null)  // uncomment for PHP 7.1+ .. 8.4+
     {
         $source->filepath = $source->type . ':' . $source->name;
         $source->uid = hash('fnv164', $source->filepath); //c.f. Smarty6 id_hash()
@@ -49,5 +51,5 @@ abstract class CMS_Fixed_Resource_Custom extends Smarty_Resource_Custom
         $source->exists = !!$source->timestamp;
     }
 }
+class_alias(Fixed_Resource_Custom::class, 'CMS_Fixed_Resource_Custom', false);
 
-?>
