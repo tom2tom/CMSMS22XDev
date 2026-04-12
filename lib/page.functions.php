@@ -106,7 +106,7 @@ function check_login($no_redirect = false)
             redirect($config['admin_url']."/login.php");
         }
     }
-    return TRUE;
+    return true;
 }
 
 
@@ -196,7 +196,7 @@ function audit($itemid, $itemname, $action)
             $fns = ($mb) ? 'mb_substr' : 'substr';
             $str = $fns($str, 0, $maxl - 4);
             $p = strrpos($str, ' ');
-            if( $p !== FALSE ) {
+            if( $p !== false ) {
                 $str = substr($str, 0, $p);
             }
             return $str . ' ...';
@@ -220,9 +220,9 @@ function audit($itemid, $itemname, $action)
     $app = cmsms();
     $db = $app->GetDb();
 
-    $userid = get_userid(FALSE);
+    $userid = get_userid(false);
     if( $userid < 1 ) $userid = 0;
-    $username = get_username(FALSE);
+    $username = get_username(false);
     if( !$itemid ) $itemid = -1;
 
     $ip_addr = '';
@@ -258,7 +258,7 @@ function get_site_preference($prefname, $defaultvalue = '')
  * @param boolean $uselike Wether or not to remove all preferences that are LIKE the supplied name
  * @return void
  */
-function remove_site_preference($prefname,$uselike=false)
+function remove_site_preference($prefname, $uselike=false)
 {
   cms_siteprefs::remove($prefname,$uselike);
 }
@@ -290,9 +290,9 @@ function set_site_preference($prefname, $value)
  * @param string  $classname An optional class name
  * @param string  $id An optional ID (HTML ID) value
  * @param string  $encoding The optional encoding
- * @param string  $stylesheet Optional style information
- * @param int     $width Width (the number of columns) (CSS can and will override this)
- * @param int     $height Height (the number of rows) (CSS can and will override this)
+ * @param string  $stylesheet Optional stylesheet name (ignored unless a wysiwyg is used)
+ * @param int     $width Width (number of columns) Default 80 (CSS can and will override this)
+ * @param int     $height Height (number of rows) Default 15 (CSS can and will override this)
  * @param string  $forcewysiwyg Optional name of the syntax hilighter or wysiwyg to use.  If empty, preferences indicate which a syntax editor or wysiwyg should be used.
  * @param string  $wantedsyntax Optional name of the language used.  If non empty it indicates that a syntax highlihter will be used.
  * @param string  $addtext Optional additional text to include in the textarea tag
@@ -309,6 +309,7 @@ function create_textarea($enablewysiwyg, $text, $name, $classname = '', $id = ''
   if( $classname ) $parms['class'] = $classname;
   if( $id ) $parms['id'] = $id;
   if( $encoding ) $parms['encoding'] = $encoding;
+  if( $stylesheet ) $parms['cssname'] = $stylesheet;
   if( $width ) $parms['rows'] = $height;
   if( $height ) $parms['cols'] = $width;
   if( $forcewysiwyg ) $parms['forcemodule'] = $forcewysiwyg;
@@ -430,7 +431,8 @@ function get_pageid_or_alias_from_url(&$getid)
     $config = \cms_config::get_instance();
     $query_var = $config['query_var'];
     $contentops = ContentOperations::get_instance();
-    $wanted = FALSE;
+    $wanted = false;
+    $page = '';
 
     if (isset($_REQUEST['mact'])) {
         $ary = explode(',', cms_htmlentities((string) $_REQUEST['mact']), 4);
@@ -443,10 +445,9 @@ function get_pageid_or_alias_from_url(&$getid)
     elseif( isset($_REQUEST[$query_var]) ) {
         // using non friendly urls... get the page alias/id from the query var.
         $page = @trim((string) $_REQUEST[$query_var]);
-        $wanted = TRUE;
+        $wanted = true;
     }
     else {
-        $page = '';
         // either we're using pretty urls
         // or this is the default page.
         if (isset($_SERVER['REQUEST_URI']) && !endswith($_SERVER['REQUEST_URI'], 'index.php')) {
@@ -562,11 +563,11 @@ function preprocess_mact($returnid)
     $smarty = \Smarty_CMS::get_instance();
     $oldcache = $smarty->caching;
     @ob_start();
-    $smarty->caching = Smarty::CACHING_OFF;
+    $smarty->caching = Smarty::CACHING_OFF; //TODO reconcile with site preference per changeCaching() and overrides
     $result = $module_obj->DoActionBase($action, $id, $parms, $returnid, $smarty);
     $smarty->caching = $oldcache;
 
-    if( $result !== FALSE ) echo $result;
+    if( $result !== false ) echo $result;
     $result = @ob_get_clean();
     \CMS_Content_Block::set_primary_content($result);
 }
