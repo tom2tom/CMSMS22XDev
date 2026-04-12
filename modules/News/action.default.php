@@ -181,18 +181,19 @@ WHERE status = 'published' AND
         $startelement = $startelement + (int)$params['start'];
     }
 
-    // SQL_CALC_FOUND_ROWS is deprecated. Instead execute the query with LIMIT, and then again with COUNT(*) for the FOUND_ROWS()
     $dbresult = $db->SelectLimit($query1, $pagelimit, $startelement);
-    $count = (int) $db->GetOne('SELECT FOUND_ROWS()');
+    $tcount = (int) $db->GetOne('SELECT FOUND_ROWS()'); //deprecated
+//  $queryt = preg_replace(['/mn\..*?u\.last_name/s', '/\s*ORDER BY.*$/s'], ['COUNT(*)', ''], $query1);
+//  $tcount = $db->GetOne($queryt):
 
     // Determine number of pages
-    if( $count > 0) {
+    if( $tcount > 0) {
         if( isset($params['start']) ) {
-            $count -= (int)$params['start'];
-            if( $count < 0 ) $count = 0;
+            $tcount -= (int)$params['start'];
+            if( $tcount < 0 ) $tcount = 0;
         }
-        $pagecount = (int)($count / $pagelimit);
-        if( ($count % $pagelimit) != 0 ) $pagecount++;
+        $pagecount = (int)($tcount / $pagelimit);
+        if( ($tcount % $pagelimit) != 0 ) $pagecount++;
     }
     else {
         $pagecount = 1;
