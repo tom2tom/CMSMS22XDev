@@ -1,4 +1,3 @@
-<link href="{$base_url}/lib/help_templates.css" rel="stylesheet">{*TODO should be in <head/> element*}
 <script>
 $(function() {
 {$locker=$tpl_id > 0 && isset($lock_timeout) && $lock_timeout > 0}{if $locker}
