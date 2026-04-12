@@ -400,11 +400,11 @@ final class cms_config implements ArrayAccess
 
       case 'assume_mod_rewrite':
         // deprecated, backwards compat only
-        return $this['url_rewriting'] === 'mod_rewrite';
+        return $this['url_rewriting'] == 'mod_rewrite';
 
       case 'internal_pretty_urls':
         // deprecated, backwards compat only
-        return $this['url_rewriting'] === 'internal';
+        return $this['url_rewriting'] == 'internal';
 
       case 'themes_path':
         // not from config file
