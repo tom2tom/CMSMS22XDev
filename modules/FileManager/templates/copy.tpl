@@ -15,7 +15,7 @@
   <p class="pagetext"><label for="destdir">{$mod->Lang('copy_destdir')}:</label></p>
   <p class="pageinput">
     <select id="destdir" name="{$actionid}destdir">
-    {html_options options=$dirlist selected=$cwd}
+    {html_options options=$dirlist selected=$dirsel}
     </select>
   </p>
 </div>
