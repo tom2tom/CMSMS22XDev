@@ -3,55 +3,48 @@
 #-------------------------------------------------------------------------
 # Module CMSContentManager action
 # (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
-#
 #-------------------------------------------------------------------------
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
 #
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, read the license online at:
+# http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
 #END_LICENSE
+
 if( !isset($gCms) ) exit;
 $this->SetCurrentTab('pages');
-if( !$this->CheckPermission('Manage All Content') ) {
-$this->SetError($this->Lang('error_bulk_permission'));
-$this->RedirectToAdminTab();
-}
-
-if( !isset($params['multicontent']) ) {
-    $this->SetError($this->Lang('error_missingparam'));
-    $this->RedirectToAdminTab();
-}
 
 if( isset($params['cancel']) ) {
     $this->SetMessage($this->Lang('msg_cancelled'));
     $this->RedirectToAdminTab();
 }
+if( !$this->CheckPermission('Manage All Content') ) {
+    $this->SetError($this->Lang('error_bulk_permission'));
+    $this->RedirectToAdminTab();
+}
+if( !isset($params['multicontent']) ) {
+    $this->SetError($this->Lang('error_missingparam'));
+    $this->RedirectToAdminTab();
+}
+$pagelist = unserialize(base64_decode($params['multicontent']));
 
 $hm = $gCms->GetHierarchyManager();
-$pagelist = unserialize(base64_decode($params['multicontent']));
+$modname = $this->GetName();
+$userid = get_userid();
 
 $showmore = 0;
 if( isset($params['showmore']) ) {
     $showmore = (int) $params['showmore'];
-    \cms_userprefs::set('cgcm_bulk_showmore',$showmore);
+    cms_userprefs::set_for_user($userid,"{$modname}_bulk_showmore",$showmore); // never cleared
 }
 if( isset($params['submit']) ) {
     if( !isset($params['confirm1']) || !isset($params['confirm2']) ) {
@@ -77,7 +70,7 @@ if( isset($params['submit']) ) {
 
             $content->SetTemplateId((int)$params['template']);
             $content->SetPropertyValue('design_id',$params['design']);
-            $content->SetLastModifiedBy(get_userid());
+            $content->SetLastModifiedBy($userid);
             $content->Save();
             $i++;
         }
@@ -110,10 +103,9 @@ foreach( $pagelist as $pid ) {
     $rec['alias'] = $content->Alias();
     $displaydata[] = $rec;
 }
-$modname = $this->GetName();
 $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_bulk_setdesign.tpl",null,$modname,$smarty);
 
-$tpl->assign('showmore',\cms_userprefs::get('cgcm_bulk_showmore'));
+$tpl->assign('showmore',cms_userprefs::get_for_user($userid,"{$modname}_bulk_showmore",0));
 $tpl->assign('multicontent',$params['multicontent']);
 $tpl->assign('displaydata',$displaydata);
 $tpl->assign('alldesigns',CmsLayoutCollection::get_list());
@@ -125,7 +117,7 @@ try {
     $dflt_tpl = CmsLayoutTemplate::load_dflt_by_type(CmsLayoutTemplateType::CORE.'::page');
     $dflt_tpl_id = $dflt_tpl->get_id();
 }
-catch( \Exception $e ) {
+catch( Exception $e ) {
     // ignore
 }
 $tpl->assign('dflt_tpl_id',$dflt_tpl_id);
@@ -141,8 +133,4 @@ else {
 }
 
 $tpl->display();
-
-#
-# EOF
-#
 ?>
