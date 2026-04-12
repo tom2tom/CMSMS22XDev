@@ -67,7 +67,7 @@ class PageLink extends ContentBase
 
 		$page = $this->GetPropertyValue('page');
 		if ($page == '-1') {
-			$errors[]= lang('nofieldgiven',array(lang('page')));
+			$errors[]= lang('nofieldgiven',lang('page'));
 		}
 
 		// get the content type of page.
@@ -101,8 +101,8 @@ class PageLink extends ContentBase
 		switch($one) {
 		case 'page':
 			$contentops = ContentOperations::get_instance();
-			$tmp = $contentops->CreateHierarchyDropdown($this->mId,$this->GetPropertyValue('page'),'page',true);
-			if( !empty($tmp) ) return array(lang('destination_page').':',$tmp);
+			$tmp = $contentops->CreateHierarchyDropdown($this->mId,$this->GetPropertyValue('page'),'page',true,false,false,false,false,'selpage');
+			if( $tmp ) return array(lang('destination_page').':',$tmp);
 			break;
 
 		case 'params':

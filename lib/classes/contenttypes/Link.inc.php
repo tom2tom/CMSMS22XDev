@@ -61,7 +61,7 @@ class Link extends ContentBase
 		$errors = parent::ValidateData();
 
 		if ($this->GetPropertyValue('url') == '') {
-			$errors[]= lang('nofieldgiven',array(lang('url')));
+			$errors[]= lang('nofieldgiven',lang('url'));
 		}
 
 		return $errors;
