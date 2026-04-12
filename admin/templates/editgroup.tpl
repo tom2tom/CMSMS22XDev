@@ -1,16 +1,14 @@
 <div class="pagecontainer">
-  {$header}
-  {if $error}
-  <br>
+{if $error}
   <div class="pageerrorcontainer">
     <ul class="pageerror">
       {$error}
     </ul>
   </div>
   <br>
-  {/if}
+{/if}
   <form action="editgroup.php" method="post">
-    <input type="hidden" name="{$hiddenname}" value="{$hiddenval}">
+    <input type="hidden" name="{$securename}" value="{$secureval}">
     <div class="pageoverflow">
       <p class="pagetext"><label for="txtgroup">{lang('name')}:</label></p>
       <p class="pageinput"><input type="text" id="txtgroup" name="group" maxlength="75" size="25" value="{$group}"></p>
@@ -22,7 +20,7 @@
     <div class="pageoverflow">
       <input type="hidden" name="active" value="0">
       <p class="pagetext"><label for="chkactive">{lang('active')}:</label></p>
-      <p class="pageinput"><input type="checkbox" id="chkactive" name="active" class="pagecheckbox"{if $active} checked{/if}></p>
+      <p class="pageinput"><input type="checkbox" id="chkactive" name="active" class="pagecheckbox" value="1"{if $active} checked{/if}></p>
     </div>
     <br>
     <div class="pageinput">
