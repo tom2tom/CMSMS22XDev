@@ -23,18 +23,18 @@ class News extends CMSModule
     public function GetAuthor() { return 'Ted Kulp'; }
     public function GetAuthorEmail() { return 'wishy@cmsmadesimple.org'; }
     public function GetChangeLog() { return file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'changelog.htm'); }
-    public function GetDependencies() { return ['FilePicker'=>'1.0']; }
+    public function GetDependencies() { return ['FilePicker'=>'1.1']; }
     public function GetEventDescription($eventname) { return $this->Lang('eventdesc-' . $eventname); }
     public function GetEventHelp($eventname) { return $this->Lang('eventhelp-' . $eventname); }
     public function GetFriendlyName() { return $this->Lang('news'); }
     public function GetName() { return 'News'; }
-    public function GetVersion() { return '2.51.16'; }
+    public function GetVersion() { return '2.51.17'; }
     public function HasAdmin() { return TRUE; }
     public function InstallPostMessage() { return $this->Lang('postinstall');  }
     public function IsPluginModule() { return TRUE; }
     public function LazyLoadAdmin() { return TRUE; }
     public function LazyLoadFrontend() { return TRUE; } // OR false to handle an intra-module news_image tag?
-    public function MinimumCMSVersion() { return '2.2.22F2'; } //for cleanUrlPath
+    public function MinimumCMSVersion() { return '2.2.23F2'; } //for Jobs processing
 
     public function GetHelp()
     {
@@ -48,16 +48,16 @@ class News extends CMSModule
         $this->CreateParameter('formtemplate', '', $this->Lang('helpformtemplate'));
         $this->CreateParameter('idlist', '', $this->Lang('help_idlist'));
         $this->CreateParameter('moretext', $this->Lang('more'), $this->Lang('helpmoretext'));
-        $val = (int)$this->GetPreference('article_pagelimit', 10);
-        $this->CreateParameter('number', $val, $this->Lang('helpnumber'));
-        $this->CreateParameter('pagelimit', $val, $this->Lang('help_pagelimit'));
+//      $val = (int)$this->GetPreference('article_pagelimit', 10);
+        $this->CreateParameter('number', 0, $this->Lang('helpnumber'));
+        $this->CreateParameter('pagelimit', 0, $this->Lang('help_pagelimit'));
         $this->CreateParameter('showall', 0, $this->Lang('helpshowall'));
         $this->CreateParameter('showarchive', 0, $this->Lang('helpshowarchive'));
         $this->CreateParameter('sortasc', 'true', $this->Lang('helpsortasc'));
         $this->CreateParameter('sortby', 'news_date', $this->Lang('helpsortby'));
         $this->CreateParameter('start', 0, $this->Lang('helpstart'));
         $this->CreateParameter('summarytemplate', '', $this->Lang('helpsummarytemplate'));
-        //TODO all Set in InitializeFrontend()
+        //TODO all the ones Set in InitializeFrontend()
 
         $out = $this->Lang('help');
         $out .= file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'modhelp-extra.htm');
@@ -246,9 +246,16 @@ EOS;
     public function get_tasks()
     {
         if( !$this->GetPreference('alert_drafts',1) ) return [];
-        $out = array();
-        $out[] = new \News\CreateDraftAlertTask();
-        return $out;
+        $fp = cms_join_path(__DIR__,'lib','class.CreateDraftAlertJob.php');
+        if( is_file($fp) ) {
+            if( func_num_args() > 0 && func_get_arg(0) ) { // want filepath(s)
+                return [$fp];
+            } else {
+                require_once $fp;
+                return [new News\CreateDraftAlertJob()];
+            }
+        }
+        return [];
     }
 
     public function GetNotificationOutput($priority = 2)
@@ -297,11 +304,11 @@ EOS;
                               array('returnid'=>$this->GetPreference('detail_returnid',-1)));
         cms_route_manager::add_static($route);
 
-        $query = 'SELECT news_id,news_url FROM '.CMS_DB_PREFIX.'module_news WHERE status = ?' .
+        $query = 'SELECT news_id,news_url FROM '.CMS_DB_PREFIX.'module_news WHERE status = \'published\'' .
             ' AND news_url IS NOT NULL AND news_url != \'\'' .
-            ' AND (start_time IS NULL OR start_time <= NOW()) AND (end_time IS NULL OR end_time > NOW()))' .
+            ' AND (start_time IS NULL OR start_time <= NOW()) AND (end_time IS NULL OR end_time > NOW())' .
             ' ORDER BY news_date DESC';
-        $tmp = $db->GetArray($query,array('published'));
+        $tmp = $db->GetArray($query);
 
         if( is_array($tmp) ) {
             foreach( $tmp as $one ) {
