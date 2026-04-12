@@ -15,8 +15,11 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#
 #$Id$
+
+use CMSMS\FilePickerProfile;
+use CMSMS\FileTypeHelper;
+use CMSMS\internal\page_template_parser;
 
 /**
  * Implements the Content (page) content type.
@@ -350,7 +353,7 @@ class Content extends ContentBase
 		$errors = parent::ValidateData();
 
 		if ($this->mTemplateId <= 0 ) {
-			$errors[] = lang('nofieldgiven',array(lang('template')));
+			$errors[] = lang('nofieldgiven',lang('template'));
 		}
 
 		$blocks = $this->get_content_blocks();
@@ -363,7 +366,7 @@ class Content extends ContentBase
 			foreach($blocks as $blockName => $blockInfo) {
 				if( $blockInfo['id'] == 'content_en' ) $have_content_en = TRUE;
 				if( isset($blockInfo['required']) && $blockInfo['required'] && ($val = $this->GetPropertyValue($blockName)) == '' ) {
-					$errors[] = lang('emptyblock',array($blockName));
+					$errors[] = lang('emptyblock',$blockName);
 				}
 				if( isset($blockInfo['type']) && $blockInfo['type'] == 'module' ) {
 					$module = cms_utils::get_module($blockInfo['module']);
@@ -401,7 +404,7 @@ class Content extends ContentBase
 		$this->_contentBlocks = array();
 		try {
 			$smarty = Smarty_CMS::get_instance();
-			$parser = new CMSMS\internal\page_template_parser('cms_template:'.$this->TemplateId(),$smarty);
+			$parser = new page_template_parser('cms_template:'.$this->TemplateId(),$smarty);
 			$parser->compileTemplateSource();
 
 			$this->_contentBlocks = CMS_Content_Block::get_content_blocks();
@@ -452,7 +455,7 @@ class Content extends ContentBase
 						$dflt_design = CmsLayoutCollection::load_default();
 						$design_id = $dflt_design->get_id();
 					}
-					catch( \Exception $e ) {
+					catch( Exception $e ) {
 						audit($this->mId,'Content','No default design found');
 					}
 				}
@@ -477,7 +480,7 @@ class Content extends ContentBase
 						$dflt_tpl = CmsLayoutTemplate::load_dflt_by_type(CmsLayoutTemplateType::CORE.'::page');
 						$template_id = $dflt_tpl->get_id();
 					}
-					catch( \Exception $e ) {
+					catch( Exception $e ) {
 						audit($this->mId,'Content','No default page template found');
 					}
 				}
@@ -568,7 +571,7 @@ class Content extends ContentBase
 		$adminonly = cms_to_bool($this->_get_param($blockInfo,'adminonly',FALSE));
 		if( $adminonly ) {
 			$uid = get_userid(FALSE);
-			$res = \UserOperations::get_instance()->UserInGroup($uid,1); //OR bullet-proof ->IsSuperuser($uid) ?
+			$res = UserOperations::get_instance()->UserInGroup($uid,1); //OR bullet-proof ->IsSuperuser($uid) ?
 			if( !$res ) return '';
 		}
 /* TODO relevance of distinct extra check
@@ -631,13 +634,13 @@ class Content extends ContentBase
 		$adminonly = cms_to_bool($this->_get_param($blockInfo,'adminonly',0));
 		if( $adminonly ) {
 			$uid = get_userid(FALSE);
-			$res = \UserOperations::get_instance()->UserInGroup($uid,1); //OR bullet-proof ->IsSuperuser($uid) ?
+			$res = UserOperations::get_instance()->UserInGroup($uid,1); //OR bullet-proof ->IsSuperuser($uid) ?
 			if( !$res ) return '';
 		}
-		$config = \cms_config::get_instance();
+		$config = cms_config::get_instance();
 		$dir = $config['uploads_path']; //TODO also support $config['image_uploads_path']
 		$rp1 = realpath($dir);
-		$adddir = get_site_preference('contentimage_path');
+		$adddir = cms_siteprefs::get('contentimage_path');
 		if( !empty($blockInfo['dir']) ) { $adddir = $blockInfo['dir']; }
 		if( $adddir ) { $dir .= DIRECTORY_SEPARATOR . trim($adddir, ' \\/'); }
 		$rp2 = realpath($dir);
@@ -652,19 +655,19 @@ class Content extends ContentBase
 		$prefix = '';
 		if( isset($blockInfo['sort']) ) $sort = (int)$blockInfo['sort'];
 		if( isset($blockInfo['exclude']) ) $prefix = $blockInfo['exclude'];
-		$filepicker = \cms_utils::get_filepicker_module();
+		$filepicker = cms_utils::get_filepicker_module();
 		if( $filepicker ) {
 			$profile_name = get_parameter_value($blockInfo,'profile');
 			$profile = $filepicker->get_profile_or_default($profile_name,$dir,get_userid());
 			$parms = ['top'=>$dir, 'type'=>'image'];
 			if( $sort ) $parms['sort'] = TRUE;
 			if( $prefix ) $parms['exclude_prefix'] = $prefix;
-			$profile = $profile->overrideWith($parms);
+			$profile->overrideWith($parms); // TODO other property-overrides ? not writability
 			$input = $filepicker->get_html($inputname,$value,$profile);
 			return $input;
 		}
 		else {
-			$helper = new CMSMS\FileTypeHelper();
+			$helper = new FileTypeHelper();
 			$exts = $helper->get_file_type_extensions('image',true);
 			$picks = implode(',',$exts);
 			$dropdown = create_file_dropdown($inputname,$dir,$value,$picks,'',true,'',$prefix,false,$sort);
@@ -682,7 +685,7 @@ class Content extends ContentBase
 		$adminonly = cms_to_bool($this->_get_param($blockInfo,'adminonly',0));
 		if( $adminonly ) {
 			$uid = get_userid(FALSE);
-			$res = \UserOperations::get_instance()->UserInGroup($uid,1); //OR bullet-proof ->IsSuperuser($uid) ?
+			$res = UserOperations::get_instance()->UserInGroup($uid,1); //OR bullet-proof ->IsSuperuser($uid) ?
 			if( !$res ) return [];
 		}
 
