@@ -19,8 +19,9 @@
 
 /**
  * A class to represent a template query, and its results.
- * This class accepts in its constructor an array or a comma separated string of filter arguments.
- * Accepted filter arguments are:<br>
+ * An abstraction from interacting directly with the database.
+ * This class accepts in its constructor an array or a comma-separated string
+ * of filter arguments. Accepted arguments are:<br>
  *  o:string - The originator name<br>
  *  i:##,##,## - A list of template id's<br>
  *  t:## - A template type id<br>
@@ -48,19 +49,9 @@
 class CmsLayoutTemplateQuery extends CmsDbQueryBase
 {
 	/**
-	 * @ignore
-	 */
-	private $_sortby = 'tpl.name';
-
-	/**
-	 * @ignore
-	 */
-	private $_sortorder = 'ASC';
-
-	/**
 	 * Execute the query given the parameters saved in the query
 	 *
-o	 * @throws CmsInvalidDataException
+	 * @throws CmsInvalidDataException
 	 * @throws CmsSQLErrorException
 	 * Though this method can be called directly, it is also called by other members automatically.
 	 */
@@ -73,16 +64,18 @@ o	 * @throws CmsInvalidDataException
 			  LEFT JOIN '.CMS_DB_PREFIX.CmsLayoutTemplateType::TABLENAME.' type ON tpl.type_id = type.id';
 		$where = array('id'=>array(),'type'=>array(),'category'=>array(),'user'=>array(),'design'=>array());
 
+		$sortorder = 'ASC';
+		$sortby = 'tpl.name';
+		$sortex = '';
 		$this->_limit = 1000;
 		$this->_offset = 0;
-		$sortex = '';
 		$db = CmsApp::get_instance()->GetDb();
 		foreach( $this->_args as $key => $val ) {
-			if( empty($val) ) continue;
+			if( !$val ) continue;
 			if( is_numeric($key) && $val[1] == ':' ) list($key,$second) = explode(':',$val,2);
 
 			switch( strtolower($key) ) {
-			case 'o': // orginator
+			case 'o':
 			case 'originator':
 				$second = trim($second);
 				$q2 = 'SELECT id FROM '.CMS_DB_PREFIX.CmsLayoutTemplateType::TABLENAME.' WHERE originator = ?';
@@ -93,12 +86,12 @@ o	 * @throws CmsInvalidDataException
 
 			case 'l':
 			case 'listable':
-		if( !isset($second) && $val ) $second = $val;
+				if( !isset($second) && $val ) $second = $val;
 				$second = (cms_to_bool($second)) ? 0 : 1;
 				$where['listable'] = array('listable = '.$second);
 				break;
 
-			case 'i': // id list
+			case 'i':
 			case 'idlist':
 				$second = trim($second);
 				$tmp = explode(',',$second);
@@ -112,19 +105,19 @@ o	 * @throws CmsInvalidDataException
 				$where['id'][] = 'tpl.id IN ('.implode(',',$tmp2).')';
 				break;
 
-			case 't': // type
+			case 't':
 			case 'type':
 				$second = (int)$second;
 				$where['type'][] = 'type_id = '.$db->qstr($second);
 				break;
 
-			case 'c': // category
+			case 'c':
 			case 'category':
 				$second = (int)$second;
 				$where['category'][] = 'category_id = '.$db->qstr($second);
 				break;
 
-			case 'd': // design
+			case 'd':
 			case 'design':
 				// find all the templates in design: d
 				$q2 = 'SELECT tpl_id FROM '.CMS_DB_PREFIX.CmsLayoutCollection::TPLTABLE.' WHERE design_id = ?';
@@ -133,13 +126,13 @@ o	 * @throws CmsInvalidDataException
 				$where['design'][] = 'tpl.id IN ('.implode(',',$tpls).')';
 				break;
 
-			case 'u': // user
+			case 'u':
 			case 'user':
 				$second = (int)$second;
 				$where['user'][] = 'owner_id = '.$db->qstr($second);
 				break;
 
-			case 'e': // editable
+			case 'e':
 			case 'editable':
 				$second = (int)$second;
 				$q2 = 'SELECT DISTINCT tpl_id FROM (
@@ -170,12 +163,14 @@ o	 * @throws CmsInvalidDataException
 					// no break here
 				case 'id':
 				case 'name':
-					$this->_sortby = "tpl.$val";
+					$sortby = "tpl.$val";
 					break;
 
 				case 'type':
-					$sortex = ',tpl.name'; // prob. redundant
-					$this->_sortby = 'CONCAT(type.originator,type.name)';
+					$f = CmsLayoutTemplateType::CORE;
+					$t = lang('core');
+					$sortby = "CONCAT(REPLACE(type.originator,'$f','$t'),type.name)";
+					$sortex = ',tpl.name';
 					break;
 
 				default:
@@ -188,7 +183,7 @@ o	 * @throws CmsInvalidDataException
 				switch( $val ) {
 				case 'ASC':
 				case 'DESC':
-					$this->_sortorder = $val;
+					$sortorder = $val;
 					break;
 
 				default:
@@ -200,15 +195,17 @@ o	 * @throws CmsInvalidDataException
 
 		$tmp = array();
 		foreach( $where as $key => $exprs ) {
-			if( count($exprs) ) $tmp[] = '('.implode(' OR ',$exprs).')';
+			if( $exprs ) $tmp[] = '('.implode(' OR ',$exprs).')';
 		}
-		if( count($tmp) ) $query .= ' WHERE ' . implode(' AND ',$tmp);
-		$query .= ' ORDER BY '.$this->_sortby.' '.$this->_sortorder.$sortex;
+		if( $tmp ) $query .= ' WHERE ' . implode(' AND ',$tmp);
+		$query .= ' ORDER BY '.$sortby.' '.$sortorder.$sortex;
 
 		// execute the query
 		$this->_rs = $db->SelectLimit($query,$this->_limit,$this->_offset);
 		if( !$this->_rs ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
-		$this->_totalmatchingrows = $db->GetOne('SELECT FOUND_ROWS()'); // deprecated use COUNT(*)
+		$this->_totalmatchingrows = $db->GetOne('SELECT FOUND_ROWS()'); // deprecated
+//		$query = preg_replace(['/tpl\.id/','/\s*ORDER BY.*$/s'],['COUNT(*)',''],$query);
+//		$this->_totalmatchingrows = $db->GetOne($query):
 	}
 
 	/**
