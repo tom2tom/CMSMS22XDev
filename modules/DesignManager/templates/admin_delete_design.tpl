@@ -24,6 +24,15 @@
 </div>
 {/if}
 
+{if $hasfiles}
+<div class="pageoverflow">
+  <p class="pagetext"><label for="opt_rm_files">{$mod->Lang('delete_attached_files')}:</label> {cms_help key2='help_rm_files' title=$mod->Lang('delete_attached_files')}</p>
+  <p class="pageinput">
+    <input type="checkbox" id="opt_rm_files" value="yes" name="{$actionid}delete_files">
+  </p>
+</div>
+{/if}
+
 <div class="pageoverflow">
   <p class="pagetext">{$mod->Lang('confirm_delete_1')}:</p>
   <p class="pageinput">
