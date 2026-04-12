@@ -622,7 +622,7 @@ EOT;
 
 $lang['help_myaccount_admincallout'] = 'If enabled administrative bookmarks <em>(shortcuts)</em> will be enabled allowing you to manage a list of frequently used actions in the Admin Console.';
 $lang['help_myaccount_admintheme'] = 'Select an administration theme to use.  Different administration themes have different menu layouts, work better for mobile displays, and have various additional features.';
-$lang['help_myaccount_ce_navdisplay'] = 'Select which content field should be displayed in content lists.  Options include the page title, or menu text.  If &quot;None&quot; is selected, then the site preference will be used';
+$lang['help_myaccount_ce_navdisplay'] = 'Select which content field should be displayed in content lists.  Choices are: page title or menu text.  If &quot;None&quot; is selected, then the site preference will be used';
 $lang['help_myaccount_dateformat'] = 'Specify a date format string to use when dates are displayed.  This string uses <a href="https://php.net/manual/en/function.strftime.php" class="external" target="_blank">strftime</a> format.  <strong>Note:</strong> some third party add-ons may not obey this setting.</strong>';
 $lang['help_myaccount_dfltparent'] = 'Specify the default parent page for creating a new content page.  The use of this setting also depends on your content editing permissions.<br>Drill down to the selected default parent page by selecting the topmost parent, and successive child pages from the provided dropdowns.<br>The text field on the right will always indicate which page is currently selected.';
 $lang['help_myaccount_email'] = 'Specify an email address.  This is used for the lost password functionality, and for any notification emails sent by the system (or add-on modules).';
