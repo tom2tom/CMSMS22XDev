@@ -178,7 +178,7 @@ final class modmgr_utils
 
         if( $md5sum != $dl_md5 ) {
             @unlink($xml_filename);
-            throw new CmsInvalidDataException($mod->Lang('error_checksum',array($md5sum,$dl_md5)));
+            throw new CmsInvalidDataException($mod->Lang('error_checksum',$md5sum,$dl_md5));
         }
 
         return $xml_filename;
@@ -227,51 +227,39 @@ final class modmgr_utils
     {
         $ts = strtotime($date);
         $stale_ts = strtotime('-2 years');
-        $warn_ts = strtotime('-18 months');
-        $new_ts = strtotime('-1 month');
         if( $ts <= $stale_ts ) return 'stale';
+        $warn_ts = strtotime('-18 months');
         if( $ts <= $warn_ts ) return 'warn';
+        $new_ts = strtotime('-1 month');
         if( $ts >= $new_ts ) return 'new';
         return '';
     }
 
-    public static function get_images()
+    public static function get_images($tpl)
     {
         // this is a bit ugly.
         $mod = cms_utils::get_module('ModuleManager');
-        $smarty = cmsms()->GetSmarty();
+        $base_url = $mod->GetModuleURLPath();
 
+        $tpl->assign('stale_img',
+         '<img src="'.$base_url.'/images/error.png" title="'.$mod->Lang('title_stale').'" alt="stale" height="16">');
 
-        $stale_img=$mod->GetModuleURLPath().'/images/error.png';
-        $stale_img = '<img src="'.$stale_img.'" title="'.$mod->Lang('title_stale').'" alt="stale" height="16">';
-        $smarty->assign('stale_img',$stale_img);
+        $tpl->assign('missingdep_img',
+         '<img src="'.$base_url.'/images/puzzle.png" title="'.$mod->Lang('title_missingdeps').'" alt="missingdeps" height="16">');
 
-        $stale_img=$mod->GetModuleURLPath().'/images/puzzle.png';
-        $stale_img = '<img src="'.$stale_img.'" title="'.$mod->Lang('title_missingdeps').'" alt="missingdeps" height="24">';
-        $smarty->assign('missingdep_img',$stale_img);
+        $tpl->assign('warn_img',
+         '<img src="'.$base_url.'/images/warn.png" title="'.$mod->Lang('title_warning').'" alt="warning" height="16">');
 
-        $warn_img=$mod->GetModuleURLPath().'/images/warn.png';
-        $warn_img = '<img src="'.$warn_img.'" title="'.$mod->Lang('title_warning').'" alt="warning" height="16">';
-        $smarty->assign('warn_img',$warn_img);
+        $tpl->assign('new_img',
+         '<img src="'.$base_url.'/images/new.png" title="'.$mod->Lang('title_new').'" alt="new" height="16">');
 
-        $new_img=$mod->GetModuleURLPath().'/images/new.png';
-        $new_img = '<img src="'.$new_img.'" title="'.$mod->Lang('title_new').'" alt="new" height="16">';
-        $smarty->assign('new_img',$new_img);
+        $tpl->assign('star_img',
+         '<img src="'.$base_url.'/images/star.png" title="'.$mod->Lang('title_star').'" alt="star" height="16">');
 
-        $star_img=$mod->GetModuleURLPath().'/images/star.png';
-        $star_img = '<img src="'.$star_img.'" title="'.$mod->Lang('title_star').'" alt="star" height="16">';
-        $smarty->assign('star_img',$star_img);
+        $tpl->assign('system_img',
+         '<img src="'.$base_url.'/images/system.png" title="'.$mod->Lang('title_system').'" alt="system" height="16">');
 
-        $system_img=$mod->GetModuleURLPath().'/images/system.png';
-        $system_img = '<img src="'.$system_img.'" title="'.$mod->Lang('title_system').'" alt="system" height="16">';
-        $smarty->assign('system_img',$system_img);
-
-        $deprecated_img=$mod->GetModuleURLPath().'/images/deprecate.png';
-        $deprecated_img = '<img src="'.$deprecated_img.'" title="'.$mod->Lang('title_deprecated').'" alt="deprecated" height="16">';
-        $smarty->assign('deprecated_img',$deprecated_img);
+        $tpl->assign('deprecated_img',
+         '<img src="'.$base_url.'/images/deprecate.png" title="'.$mod->Lang('title_deprecated').'" alt="deprecated" height="16">');
     }
 } // end of class
-
-#
-# EOF
-#
