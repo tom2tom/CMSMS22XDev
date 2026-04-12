@@ -11,7 +11,7 @@
     <tr>
       <th style="width:5%">{$mod->Lang('prompt_id')}</th>
       <th>{$mod->Lang('prompt_name')}</th>
-      <th class="pageicon"><span title="{$mod->Lang('title_designs_default')}">{lang('default')}</span></th>
+      <th class="pageicon" style="text-align:center"><span title="{$mod->Lang('title_designs_default')}">{lang('default')}</span></th>
       <th class="pageicon"></th>
       <th class="pageicon"></th>
       <th class="pageicon"></th>
@@ -25,7 +25,7 @@
     <tr class="{$rowclass}" onmouseover="this.className='{$rowclass}hover';" onmouseout="this.className='{$rowclass}';">
       <td><a href="{$edit_url}" title="{$mod->Lang('edit_design')}">{$design->get_id()}</a></td>
       <td><a href="{$edit_url}" title="{$mod->Lang('edit_design')}">{$design->get_name()}</a></td>
-      <td>
+      <td style="text-align:center">
       {if $design->get_default()}
         {admin_icon icon='true.gif' title=$mod->Lang('prompt_dflt')}
       {else}
