@@ -4,22 +4,22 @@ $(function() {
     min: -180,
     max: 180,
     value: 0,
-    change: function( event, ui ) {
+    change: function(event, ui) {
      $('#angletxt').val(ui.value);
     },
-    slide: function( event, ui ) {
+    slide: function(event, ui) {
       $('#angletxt').val(ui.value);
       $('#rotimg').rotate({ animateTo: ui.value });
     }
   });
   $('.autorotate').on('click', function() {
     var id = $(this).attr('id');
-    var dir = id.substr(0,3);
-    var val = parseInt(id.substr(3),10);
-    if( dir === 'neg' ) { val = val * -1; }
+    var dir = id.substring(0,3);
+    var val = parseInt(id.substring(3),10);
+    if( dir === 'neg' ) { val = -val; }
     $('#angletxt').val(val);
     $('#rotimg').rotate({ animateTo: val });
-    $('#rotangle').slider( 'value', val );
+    $('#rotangle').slider('value', val);
     return false;
   });
 });
