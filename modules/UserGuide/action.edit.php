@@ -6,7 +6,6 @@ Refer to license and other details at the top of file UserGuide.module.php
 */
 
 use UserGuide\UserGuideItem;
-use UserGuide\UserGuideQuery;
 use UserGuide\UserGuideUtils;
 
 if (!isset($gCms)) {
@@ -123,8 +122,13 @@ if (isset($params['submit']) || isset($params['apply'])) {
         }
     } elseif ($item->save()) {
         if ($newitem) {
-            $query = new UserGuideQuery();
-            $updated = $query->updatePositions(); //$updated unused
+            $db->Execute('SET @rownumber = 0');
+            $sql = 'UPDATE '.CMS_DB_PREFIX.'module_userguide SET position = (@rownumber:=@rownumber+1)
+ORDER BY position';
+            $db->Execute($sql);
+            if ($db->ErrorMsg()) {
+                throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg(). '(updatePositions)');
+            }
         }
         if (isset($params['submit'])) {
             $this->SetMessage($this->Lang('item_saved'));

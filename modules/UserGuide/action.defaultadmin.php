@@ -5,7 +5,7 @@ Copyright (C) 2024 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 Refer to license and other details at the top of file UserGuide.module.php
 */
 
-use UserGuide\UserGuideQuery;
+use UserGuide\UserGuideItem;
 
 if (!isset($gCms)) {
     exit;
@@ -23,23 +23,28 @@ $tpl->assign('pmod', $pmod)
  ->assign('pset', $pset)
  ->assign('tab', $tab);
 
-// All current guides
-$query = new UserGuideQuery();
-$guides = $query->GetMatches(); //sorted by position-field value
-if ($guides) {
-    // TODO setup to process item->restricted as [flattened, encoded|crypted]
-    foreach ($guides as $key => $item) {
-        if ($item->restricted) {
-            switch ($item->restricted) {
+$guides = [];
+
+$sql = 'SELECT * FROM '.CMS_DB_PREFIX.'module_userguide ORDER BY position';
+$data = $db->GetArray($sql);
+if ($data) {
+    // Poll all current guides
+    foreach ($data as $row) {
+        if ($row['restricted']) {
+            switch ($row['restricted']) {
+                // TODO setup to process restricted formats - flattened: encoded|crypted:
                 default:
                     if (!isset($prest)) {
                         $prest = $this->CheckPermission(UserGuide::RESTRICT_PERM);
                     }
                     if (!$prest) {
-                        unset($guides[$key]);
+                        continue 2;
                     }
             }
         }
+        $item = new UserGuideItem();
+        $item->fill_from_array($row);
+        $guides[] = $item;
     }
 }
 $tpl->assign('guides', $guides);

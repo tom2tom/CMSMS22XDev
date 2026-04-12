@@ -6,7 +6,6 @@ Refer to license and other details at the top of file UserGuide.module.php
 */
 
 use UserGuide\UserGuideItem;
-use UserGuide\UserGuideQuery;
 
 if (!isset($gCms)) {
     exit;
@@ -19,8 +18,13 @@ if (isset($params['gid']) && $params['gid'] > 0) {
     $item = UserGuideItem::load_by_id((int)$params['gid']);
     if ($item) {
         if ($item->delete()) {
-            $query = new UserGuideQuery();
-            $updated = $query->updatePositions(); // $updated unused
+            $db->Execute('SET @rownumber = 0');
+            $sql = 'UPDATE '.CMS_DB_PREFIX.'module_userguide SET position = (@rownumber:=@rownumber+1)
+ORDER BY position';
+            $db->Execute($sql);
+            if ($db->ErrorMsg()) {
+                throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg(). '(updatePositions)');
+            }
             $this->SetMessage($this->Lang('item_deleted'));
         } else {
             //TODO report error
