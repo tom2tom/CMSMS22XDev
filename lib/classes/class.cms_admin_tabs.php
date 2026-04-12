@@ -190,10 +190,9 @@ final class cms_admin_tabs
    */
   public static function start_tab($tabid,$params = array(),$infill = FALSE)
   {
-    $message = '';
     if( $tabid == self::$_current_tab && !empty($params['tab_message']) ) {
       $theme = cms_utils::get_theme_object();
-      if( is_object($theme) ) $message = $theme->ShowMessage($params['tab_message']);
+      if( is_object($theme) ) $theme->ShowMessage($params['tab_message']);
     }
 
     if( $infill ) {
@@ -205,7 +204,7 @@ final class cms_admin_tabs
     } else {
       $out = "\n";
     }
-    return $out . '<div id="' . strtolower(str_replace(' ', '_', $tabid)) . "_c\"><!-- StartTab -->\n".$message;
+    return $out . '<div id="' . strtolower(str_replace(' ', '_', $tabid)) . "_c\"><!-- StartTab -->\n";
   }
 
   /**
