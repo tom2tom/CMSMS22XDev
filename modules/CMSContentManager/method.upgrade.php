@@ -17,8 +17,7 @@ if( version_compare($oldversion,'1.1.12') < 0 ) {
 if( version_compare($oldversion,'1.1.14') < 0 ) {
 	// remove (all users') redundant preferences
 	$modname = $this->GetName();
-	$sql = 'DELETE FROM '.CMS_DB_PREFIX."userprefs WHERE preference = {$modname}_pagelimit";
-	$db->Execute($sql);
-	$sql = 'DELETE FROM '.CMS_DB_PREFIX."userprefs WHERE preference = {$modname}_userfilter";
+	$sql = 'DELETE FROM '.CMS_DB_PREFIX."userprefs WHERE preference IN
+('{$modname}_pagelimit','{$modname}_userfilter','cgcm_bulk_showmore','opened_pages')";
 	$db->Execute($sql);
 }
