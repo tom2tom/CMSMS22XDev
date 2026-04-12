@@ -98,8 +98,8 @@ CHANGE `modified_date` `modified_date` datetime DEFAULT NULL ON UPDATE current_t
 EOS;
 
 $flds = "
-news_id I KEY NOT NULL,
-fielddef_id I KEY NOT NULL,
+news_id I KEY,
+fielddef_id I KEY,
 value X,
 create_date DT,
 modified_date DT
@@ -320,11 +320,8 @@ $this->SetPreference('expired_viewable',0);
 $this->SetPreference('expiry_interval',30); //default 30-days lifetime
 /* others used around the module
 $this->SetPreference('alert_drafts',1);
-$this->SetPreference('allcategories',1);
 $this->SetPreference('allow_summary_wysiwyg',1);
 $this->SetPreference('article_category','');
-$this->SetPreference('article_pagelimit',10); //default 10 articles per displayed (expandable) page
-$this->SetPreference('article_sortby','news_date');
 $this->SetPreference('clear_category',0); //don't delete articles in category when category is deleted
 $this->SetPreference('current_detail_template',''); //no preferred 'News::detail'-type template for news-item previews (TODO never changed)
 $this->SetPreference('date_format','%e %B %Y %l:%M %p');
@@ -344,7 +341,7 @@ $db->Execute($query, array($catid, 'General', -1, '001', 1, $longnow, $longnow))
 
 // Setup initial news article
 $articleid = $db->GenID(CMS_DB_PREFIX."module_news_seq");
-$query = 'INSERT INTO '.CMS_DB_PREFIX.'module_news ( news_id, news_category_id, author_id, news_title, news_data, news_date, summary, start_time, end_time, status, icon, searchable, create_date, modified_date ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+$query = 'INSERT INTO '.CMS_DB_PREFIX.'module_news (news_id, news_category_id, author_id, news_title, news_data, news_date, summary, start_time, end_time, status, icon, searchable, create_date, modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 $db->Execute($query, array($articleid, $catid, 1, 'News Module Installed', 'The news module was installed.  Exciting. This news article does not use a Summary field and therefore there is no link to read more. But you can click on the news heading to read the whole article.', $longnow, null, null, null, 'published', null, 1, $longnow, $longnow));
 
 news_admin_ops::UpdateHierarchyPositions();
@@ -353,8 +350,8 @@ news_admin_ops::UpdateHierarchyPositions();
 $perm_id = $db->GetOne("SELECT permission_id FROM ".CMS_DB_PREFIX."permissions WHERE permission_name = 'Modify News'");
 $group_id = $db->GetOne("SELECT group_id FROM `".CMS_DB_PREFIX."groups` WHERE group_name = 'Admin'");
 
-$count = $db->GetOne("SELECT COUNT(*) FROM " . CMS_DB_PREFIX . "group_perms WHERE group_id = ? AND permission_id = ?", array($group_id, $perm_id));
-if( (int)$count == 0 ) {
+$num = $db->GetOne("SELECT COUNT(*) FROM " . CMS_DB_PREFIX . "group_perms WHERE group_id = ? AND permission_id = ?", array($group_id, $perm_id));
+if( (int)$num == 0 ) {
   $new_id = $db->GenID(CMS_DB_PREFIX."group_perms_seq");
   $query = "INSERT INTO " . CMS_DB_PREFIX . "group_perms (group_perm_id, group_id, permission_id, create_date, modified_date) VALUES (".$new_id.", ".$group_id.", ".$perm_id.", ".$longnow.", ".$longnow.")";
   $db->Execute($query);
@@ -362,8 +359,8 @@ if( (int)$count == 0 ) {
 
 $group_id = $db->GetOne("SELECT group_id FROM `".CMS_DB_PREFIX."groups` WHERE group_name = 'Editor'");
 
-$count = $db->GetOne("SELECT COUNT(*) FROM " . CMS_DB_PREFIX . "group_perms WHERE group_id = ? AND permission_id = ?", array($group_id, $perm_id));
-if( (int)$count == 0 ) {
+$num = $db->GetOne("SELECT COUNT(*) FROM " . CMS_DB_PREFIX . "group_perms WHERE group_id = ? AND permission_id = ?", array($group_id, $perm_id));
+if( (int)$num == 0 ) {
   $new_id = $db->GenID(CMS_DB_PREFIX."group_perms_seq");
   $query = "INSERT INTO " . CMS_DB_PREFIX . "group_perms (group_perm_id, group_id, permission_id, create_date, modified_date) VALUES (".$new_id.", ".$group_id.", ".$perm_id.", ".$longnow.", ".$longnow.")";
   $db->Execute($query);
