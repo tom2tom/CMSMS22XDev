@@ -48,6 +48,7 @@ if (!file_exists($src)) {
 $paramsnofiles = [];
 $ext = strtolower(pathinfo($filename,PATHINFO_EXTENSION));
 
+//TODO consider replacing ancient orphan library with wapmorgan\UnifiedArchive
 require_once cms_join_path(__DIR__,'easyarchives','EasyArchive.class.php');
 $worker = new EasyArchive();
 
@@ -70,7 +71,4 @@ try {
 
 $this->Redirect($id,'defaultadmin',$returnid,$paramsnofiles);
 
-#
-# EOF
-#
 ?>
