@@ -1,9 +1,9 @@
-{if isset($header)}
-<h3>{$header}</h3>
+{if isset($title)}
+<h3>{$title}</h3>
 {/if}
 
 {if isset($errmessage1)}
-<p class="pagewarning">{$errmessage1}</p>
+<p class="pageerror">{$errmessage1}</p>
 <br>
 {/if}
 
