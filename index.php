@@ -63,7 +63,7 @@ if (!is_writable(TMP_TEMPLATES_C_LOCATION) || !is_writable(TMP_CACHE_LOCATION)) 
 // initial setup
 $_app = CmsApp::get_instance(); // internal use only, subject to change.
 //$params = array_merge($_GET, $_POST); //aka $_REQUEST
-$smarty = $_app->GetSmarty();
+$smarty = $_app->GetSmarty(); // even if $showtemplate = false in which case will use {content}
 //$smarty->params = $params; never used in core, but might it be for non-core? if so, instead use $smarty.request
 $getid = null; //aka unset, might be populated downstream
 $page = get_pageid_or_alias_from_url($getid);
@@ -119,11 +119,11 @@ while( $trycount < 2 ) {
         if( !$contentobj->IsPermitted() ) throw new CmsError403Exception('Permission denied');
 
         $_app->set_content_object($contentobj);
-        $smarty->assignGlobal('content_obj', $contentobj);
-        $smarty->assignGlobal('content_id', $contentobj->Id());
-        $smarty->assignGlobal('page_id', $page);
-        $smarty->assignGlobal('page_alias', $contentobj->Alias());
-        $smarty->assignGlobal('encoding', CmsNlsOperations::get_encoding());
+        $smarty->assign('content_obj', $contentobj, true);
+        $smarty->assign('content_id', $contentobj->Id(), true);
+        $smarty->assign('page_id', $page, true);
+        $smarty->assign('page_alias', $contentobj->Alias(), true);
+        $smarty->assign('encoding', CmsNlsOperations::get_encoding(), true);
 
         $showtemplate = true;
         //$getid possibly set in get_pageid_or_alias_from_url()
@@ -133,16 +133,22 @@ while( $trycount < 2 ) {
             $showtemplate = false;
         }
 
-        $cache_id = 'p'.$contentobj->Id();
-        $smarty->set_global_cacheid('p'.$contentobj->Id());
-        if( $cachable && $showtemplate && $contentobj->Cachable() && cms_siteprefs::get('use_smartycache',0) ) {
-            $smarty->setCaching(Smarty::CACHING_LIFETIME_CURRENT);
+        $cache_id = 'nocache';
+        if( $showtemplate ) {
+            $docache = cms_siteprefs::get('use_smartycache',false);
+            if( $docache ) {
+                if( $cachable ) {
+                    $cache_id = 'p'.$contentobj->Id();
+                }
+                else {
+                    $smarty->setCaching(Smarty::CACHING_OFF);
+                }
+            }
         }
-
         \CMSMS\HookManager::do_hook('Core::ContentPreRender', [ 'content' => $contentobj ]);
 
         if( !$showtemplate ) {
-            $smarty->setCaching(false);
+//          $smarty->setCaching(Smarty::CACHING_OFF);
             // in smarty 3, we could use eval:{content} I think
             $html = $smarty->fetch('cms_template:notemplate')."\n";
             $trycount = 99;
@@ -161,7 +167,7 @@ while( $trycount < 2 ) {
             unset($tpl);
             \CMSMS\HookManager::do_hook('Core::PageTopPostRender', [ 'content'=>$contentobj, 'html'=>&$top ]);
 
-            // if the request has a mact in it, process and cache the output.
+            // if the request has a mact property, process and cache the output.
             preprocess_mact($contentobj->Id());
 
             \CMSMS\HookManager::do_hook('Core::PageBodyPreRender', [ 'content'=>$contentobj, 'html'=>&$body ]);
@@ -320,5 +326,8 @@ if ( $debug && !is_sitedown() ) {
         echo $error;
     }
 }
+
+$obj = new CMSMS\JobCheck();
+$obj->initiate_background_processing();
 
 exit;
