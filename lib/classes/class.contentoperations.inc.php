@@ -1186,7 +1186,8 @@ ORDER BY B.hierarchy';
 	}
 
 	/**
-	 * Test if the specified user account has edit access to all of the peers of the specified page id
+	 * Test if the specified user has modification permission for all of
+	 * the peers of the specified page id
 	 *
 	 * @param int $userid
 	 * @param int $contentid

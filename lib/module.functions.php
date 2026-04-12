@@ -24,8 +24,8 @@
  *
  * @internal
  * @access private
- * @param array $params A hash of parameters
- * @param object $smarty The smarty template object
+ * @param array $params hash of parameters
+ * @param object $smarty mixed, typically a Smarty_Internal_Template
  * @return string The module output
  */
 function cms_module_plugin($params,$smarty)

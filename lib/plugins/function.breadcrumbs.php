@@ -14,15 +14,11 @@
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
 
-// this plugin is deprecated and should be removed.
-// historically, this plugin has been specially handled
-// (triggered by its name smarty_cms_function...)
-// to ensure that it's never cached
+// this plugin has been non-functional since CMSMS 2.0.
 function smarty_cms_function_breadcrumbs($params, $smarty)
 {
-    echo '<span style="font-weight: bold; color: #f00;">WARNING:<br>The &#123breadcrumbs&#125 tag is removed from CMSMS Core<br>Instead, now use in your HTML template: &#123nav_breadcrumbs&#125 !</span>';
+    echo '<span style="font-weight:bold;color:#f00;">ERROR:<br>The &#123breadcrumbs&#125 plugin has been removed from CMSMS.<br>Instead, use plugin &#123nav_breadcrumbs&#125 !</span>';
     // put mention into the admin log
     audit('', 'Plugin:breadcrumbs', 'Removed from CMSMS. Instead, use &#123nav_breadcrumbs&#125');
 }

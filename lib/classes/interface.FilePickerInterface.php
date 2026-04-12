@@ -19,19 +19,19 @@ namespace CMSMS;
 interface FilePickerInterface
 {
     /**
-     * Given a profile name, and other data return a suitable profile by name, or return a default profile
+     * Given a profile name and other data, return a suitable profile by name, or return a default profile
      *
      * @param string $profile_name the desired profile name to load
-     * @param string $dir A suitable top location
-     * @param int $uid An optional admin user id.
+     * @param string $dir Optional suitable topmost location
+     * @param int $uid Optional admin user id > 0 or frontend user id < 0.
      * @return \FilePicker\Profile
      */
     public function get_profile_or_default( $profile_name, $dir = '', $uid = 0 );
 
     /**
      * Get the default profile for the specified data.
-     * @param string $dir A suitable top location
-     * @param int $uid An optional admin user id.
+     * @param string $dir Optional suitable topmost location
+     * @param int $uid Optional admin user id > 0 or frontend user id < 0.
      * @return \FilePicker\Profile
      */
     public function get_default_profile( $dir = '', $uid = 0 );

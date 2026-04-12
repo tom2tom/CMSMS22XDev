@@ -43,7 +43,7 @@ class User
 	public $password;
 
 	/**
-	 * @var string $firstname Users First Name
+	 * @var string $firstname User's First Name
 	 */
 	public $firstname;
 
@@ -53,7 +53,7 @@ class User
 	public $lastname;
 
 	/**
-	 * @var string $email Users Email Address
+	 * @var string $email User's Email Address
 	 */
 	public $email;
 
@@ -63,15 +63,12 @@ class User
 	public $active;
 
 	/**
-	 * @var bool $adminaccess Flag to tell whether user can login to admin panel
+	 * @var bool $adminaccess Flag whether the user can log in to admin panel
 	 */
 	public $adminaccess;
 
-	public $access_to_user; // unused here, but used for parking a proxy 'editable' property for template
-	public $pagecount; //ditto
-
 	/**
-	 * Generic constructor.  Runs the SetInitialValues function.
+	 * Generic constructor.  Runs the SetInitialValues method.
 	 */
 	function __construct()
 	{

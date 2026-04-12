@@ -95,14 +95,14 @@ final class cms_utils
 	/**
 	 * A convenience function to return the object representing an installed module.
 	 *
-	 * If a version string is passed, a matching object will only be returned IF
-	 * the installed version is greater than or equal to the supplied version.
+	 * If a version string is supplied, an object will only be returned if the
+	 * installed version is greater than or equal to that supplied version.
 	 *
 	 * @see version_compare()
 	 * @see ModuleOperations::get_module_instance
 	 * @since 1.9
 	 * @param string $name The module name
-	 * @param string $version An optional version string
+	 * @param string $version Optional version indentifier
 	 * @return CmsModule The matching module object or null
 	 */
 	public static function get_module($name,$version = '')

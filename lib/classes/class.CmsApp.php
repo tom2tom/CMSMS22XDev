@@ -260,9 +260,9 @@ final class CmsApp
 
 
 	/**
-	 * Get a reference to an installed module instance.
+	 * Get an installed module object.
 	 *
-	 * This method will return a reference to the module object specified if it is installed, and available.
+	 * This method will return the specified module object if it is installed, and available.
 	 * Optionally, a version check can be performed to test if the version of the requested module matches
 	 * that specified.
 	 *
