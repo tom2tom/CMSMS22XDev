@@ -54,20 +54,16 @@ function cms_current_language()
  * Called with the realm first, followed by the key, this method will attempt
  * to load the specific realm data if necessary before doing translation.
  *
- * This method accepts a variable number of arguments.  Any arguments after
- * the realm and the key are passed to the key via vsprintf
- *
- * i.e: lang_by_realm('tasks','my_string');
+ * This method accepts a variable number of arguments. Any argument(s) after
+ * the first (realm) and the second (key) are passed to the key via vsprintf
+ * e.g: lang_by_realm('jobs','my_string','specific name');
  *
  * @since 1.8
- * @param string $realm The realm
- * @param string $key   The lang key and any vspring arguments.
  * @return string
  */
-function lang_by_realm($realm,$key)
+function lang_by_realm(...$args)
 {
-  $args = func_get_args();
-  return CmsLangOperations::lang_from_realm($args);
+  return CmsLangOperations::lang_from_realm(...$args);
 }
 
 
@@ -76,29 +72,28 @@ function lang_by_realm($realm,$key)
  *
  * @internal
  * @ignore
+ * @param bool $flag Default true
  */
 function allow_admin_lang($flag = TRUE)
 {
-  return CmsLangOperations::allow_nonadmin_lang($flag);
+  CmsLangOperations::allow_nonadmin_lang($flag); // d'oh name reversal
 }
 
 
 /**
- * Return a translated string for the default 'admin' realm.
+ * Return a translated string for the 'admin' realm.
  * This function is merely a wrapper around the lang_by_realm function
  * that assumes the realm is 'admin'.
  *
  * This method will throw a notice if it is called from a frontend request
  *
- * i.e: lang('title');
+ * e.g: lang('title');
  *
- * @param string $key The key to translate and then any vsprintf arguments for the key.
  * @see lang_by_realm
  * @return string
  */
-function lang($key)
+function lang(...$args)
 {
-  $args = func_get_args();
   return CmsLangOperations::lang($args);
 }
 
