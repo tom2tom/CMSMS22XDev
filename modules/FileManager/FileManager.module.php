@@ -28,10 +28,9 @@ final class FileManager extends CMSModule
     public function GetEventDescription($name) { return $this->Lang('eventdesc_'.$name); }
     public function GetEventHelp($name) { return $this->Lang('eventhelp_'.$name); }
     public function GetFriendlyName() { return $this->Lang('friendlyname'); }
-    public function GetHeaderHTML() { return $this->_output_header_javascript(); }
     public function GetHelp() { return $this->Lang('help'); }
     public function GetName() { return 'FileManager'; }
-    public function GetVersion() { return '1.6.15'; }
+    public function GetVersion() { return '1.6.16'; }
     public function HasAdmin() { return true; }
     public function InstallPostMessage() { return $this->Lang('postinstall'); }
     public function IsAdminOnly() { return false; }
@@ -44,14 +43,17 @@ final class FileManager extends CMSModule
     public function AccessAllowed() { return $this->CheckPermission('Modify Files'); }
     public function AdvancedAccessAllowed() { return $this->CheckPermission('Use FileManager Advanced'); }
 
-    public function VisibleToAdminUser() {
+    public function VisibleToAdminUser()
+    {
         return $this->CheckPermission('Modify Files') ||
                $this->CheckPermission('Use FileManager Advanced');
     }
 
-    public function HasCapability($capability,$params = array()) {
+    public function HasCapability($capability,$params = array())
+    {
         switch( $capability ) {
-            case 'plugin': //aka CmsCoreCapabilities::PLUGIN_MODULE
+            case CmsCoreCapabilities::PLUGIN_MODULE:
+            case CmsCoreCapabilities::TASKS:
             case 'upload':
                 return true;
             default:
@@ -59,7 +61,8 @@ final class FileManager extends CMSModule
         }
     }
 
-    public function GetFileIcon($extension,$isdir = false) {
+    public function GetFileIcon($extension,$isdir = false)
+    {
         $iconsize = $this->GetPreference('iconsize',24);
         $iconsize = str_replace('px','',$iconsize); //adjust deprecated format
         $emsize =  $iconsize / 16;
@@ -84,8 +87,9 @@ final class FileManager extends CMSModule
         return $result;
     }
 
-    protected function Slash($str,$str2 = "",$str3 = "") {
-        //Three strings not supported yet...
+    protected function Slash($str,$str2 = '',$str3 = '')
+    {
+        // three strings not supported yet...
         if ($str == "") return $str2;
         if ($str2 == "") return $str;
         if ($str[strlen($str)-1] != "/") {
@@ -101,23 +105,26 @@ final class FileManager extends CMSModule
         }
     }
 
-    public function GetPermissions($path,$file) {
+    public function GetPermissions($path,$file)
+    {
         $realpath = $this->Slash(CMS_ROOT_PATH,$path);
         $statinfo = stat($this->Slash($realpath,$file));
         return $statinfo["mode"];
     }
 
-    //@deprecated since CMSMS 2.0
+/*  //@deprecated since CMSMS 2.0
     //this method used only in FileManager actions which are unused in CMSMS2+
-/*  public function GetMode($path,$file) {
+    public function GetMode($path,$file)
+    {
         $realpath = $this->Slash(CMS_ROOT_PATH,$path);
         $statinfo = stat($this->Slash($realpath,$file));
         return filemanager_utils::format_permissions($statinfo["mode"]);
     }
-*/
+
     //@deprecated since CMSMS 2.0
     //this method used only in FileManager actions which are unused in CMSMS2+
-/*  public function GetModeWin($path,$file) {
+    public function GetModeWin($path,$file)
+    {
         $realpath = $this->Slash($realpath,$file);
         if (is_writable($realpath)) {
             return "777";
@@ -125,10 +132,11 @@ final class FileManager extends CMSModule
             return "444";
         }
     }
-*/
+
     //@deprecated since CMSMS 2.0
     //this method used only in FileManager actions which are unused in CMSMS2+
-/*  public function GetModeTable($id,$permissions) {
+    public function GetModeTable($id,$permissions)
+    {
         $smarty = cmsms()->GetSmarty();
         $modname = $this->GetName();
         $tpl = $smarty->createTemplate("module_file_tpl:$modname;modetable.tpl",null,$modname); // no parent
@@ -165,10 +173,11 @@ final class FileManager extends CMSModule
 
         return $tpl->fetch();
     }
-*/
+
     //@deprecated since CMSMS 2.0
     //this method used only in actions which are unused in CMSMS2+
-/*  public function GetModeFromTable($params) {
+    public function GetModeFromTable($params)
+    {
         $owner = 0;
         if (isset($params['ownerr'])) $owner += 4;
         if (isset($params['ownerw'])) $owner += 2;
@@ -184,7 +193,8 @@ final class FileManager extends CMSModule
         return $owner.$group.$others;
     }
 */
-    public function GetThumbnailLink($file,$path) {
+    public function GetThumbnailLink($file,$path)
+    {
         $path = trim($path, ' \\/');
         $path = strtr($path,'\\/',DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR);
         $imagepath = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.$path.DIRECTORY_SEPARATOR.'thumb_'.$file['name'];
@@ -200,51 +210,91 @@ final class FileManager extends CMSModule
         return '';
     }
 
-    public function WinSlashes($path) {
+    public function WinSlashes($path)
+    {
         return str_replace("/","\\",$path);
     }
 
-    public function Slashes($path) {
+    public function Slashes($path)
+    {
         $result = strtr($path,"\\","/");
         return str_replace("//","/",$result);
     }
 
-    protected function _output_header_javascript() {
+    protected function SetupHeadtext($action)
+    {
         $out = '';
-        $jsfiles = array(
-            'jquery-file-upload/jquery.fileupload.min.js',
-            'jqueryrotate/jQueryRotate-2.3.min.js',
-            'jrac/jquery.jrac.min.js'
-        );
-
         $urlpath = $this->GetModuleURLPath();
-        $fmt = '<script src="%s/js/%s"></script>';
+        $cssfiles = array();
+        switch ($action) {
+            case 'defaultadmin':
+                $jsfiles = array('jquery-file-upload/jquery.fileupload.min.js');
+                break;
+            case 'resizecrop':
+                $jsfiles = array('jrac/jquery.jrac.min.js');
+                $cssfiles = array('js/jrac/style.jrac.css');
+                break;
+            case 'rotate':
+                $jsfiles = array('jqueryrotate/jQueryRotate-2.3.min.js');
+                break;
+/*          case 'admin_fileview':
+            case 'newdir':
+            case 'rename':
+            case 'delete':
+            case 'copy':
+            case 'move':
+            case 'unpack':
+            case 'thumb':
+*/
+            default:
+                $jsfiles = array();
+        }
+        $cssfiles += array(999=>'lib/filemanager.css'); // always last
+
         foreach( $jsfiles as $one ) {
-            $out .= sprintf($fmt,$urlpath,$one)."\n";
+            $out .= sprintf("<script src=\"$urlpath/js/%s\" defer></script>\n",$one);
+        }
+        foreach( $cssfiles as $one ) {
+            $out .= sprintf("<link rel=\"stylesheet\" href=\"$urlpath/%s\">\n",$one);
         }
 
-        $fmt = '<link rel="stylesheet" href="%s/js/%s">';
-        $cssfiles = array('jrac/style.jrac.css');
-        foreach( $cssfiles as $one ) {
-            $out .= sprintf($fmt,$urlpath,$one)."\n";
+        if( $out ) {
+            CMSMS\HookManager::add_hook('admin_add_headtext',function() use($out) {
+               return $out;
+            });
         }
-        $out .= "<link rel=\"stylesheet\" href=\"$urlpath/lib/filemanager.css\">\n";
-        return $out;
     }
 
-    protected function encodefilename($filename) {
+    protected function encodefilename($filename)
+    {
         $config = cms_config::get_instance();
         return base64_encode(sha1(__FILE__.$config['dbpassword'].$filename).'|'.$filename); //TODO another less-important entropy-source
     }
 
-    protected function decodefilename($encodedfilename) {
+    protected function decodefilename($encodedfilename)
+    {
         $config = cms_config::get_instance();
         list($sig,$filename) = explode('|',base64_decode($encodedfilename),2);
         if( sha1(__FILE__.$config['dbpassword'].$filename) == $sig ) return $filename; //TODO another less-important entropy-source
         return '';
     }
 
-    public function GetAdminMenuItems() {
+    public function get_tasks()
+    {
+        $fp = cms_join_path(__DIR__,'lib','class.ClearUserDirsJob.php');
+        if( is_file($fp) ) {
+            if( func_num_args() > 0 && func_get_arg(0) ) { // want filepath(s)
+                return [$fp];
+            } else {
+                require_once $fp;
+                return [new FileManager\ClearUserDirsJob()];
+            }
+        }
+        return [];
+    }
+
+    public function GetAdminMenuItems()
+    {
         $out = array();
 
         if( $this->CheckPermission('Modify Files') ) {
