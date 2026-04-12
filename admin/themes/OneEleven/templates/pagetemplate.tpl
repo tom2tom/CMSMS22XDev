@@ -58,7 +58,7 @@
           {/if}
           </div>
           <!-- bookmarks -->
-          {include 'shortcuts.tpl'}
+          {include 'theme_file_tpl:OneEleven;shortcuts.tpl'}
         </div>
         <!-- end header-bottom //-->
       </header>
@@ -73,20 +73,20 @@
           <aside>
             <span title="{lang('open')}/{lang('close')}" class="toggle-button">{lang('open')}/{lang('close')}</span>
           </aside>
-          {include file='navigation.tpl' nav=$theme->get_navigation_tree() depth=0 nocache}
+          {include file='theme_file_tpl:OneEleven;navigation.tpl' nav=$theme->get_navigation_tree() depth=0 nocache}
         </div>
         <!-- end sidebar //-->
         <div class="clear"></div>
         <!-- start main -->
         <div id="oe_mainarea" class="cf">
           {strip}
-          {include 'messages.tpl'}
+          {include 'theme_file_tpl:OneEleven;messages.tpl' nocache}
           <article role="main" class="content-inner">
             <header class="pageheader{if isset($is_ie)} drop-hidden{/if} cf">
-              {if isset($module_icon_url) or isset($pagetitle)}
-              <h1>{if isset($module_icon_url)}<img src="{$module_icon_url}" alt="{$module_name|default:''}" class="module-icon">{/if}
+              {if isset($module_icon_url) || isset($pagetitle)}
+              <h2>{if isset($module_icon_url)}<img src="{$module_icon_url}" alt="{$module_name|default:''}" class="module-icon">{/if}
               {$pagetitle|default:''}
-              </h1>
+              </h2>
               {/if}
               {if isset($module_help_url)}<span class="helptext"><a href="{$module_help_url}">{lang('module_help')}</a></span>{/if}
             </header>
@@ -102,7 +102,7 @@
       </div>
       <!-- end content //-->
       <!-- start footer -->
-      {include 'footer.tpl'}
+      {include 'theme_file_tpl:OneEleven;footer.tpl'}
       <!-- end footer //-->
       {$footertext|default:''}
     </div>
