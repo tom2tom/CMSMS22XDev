@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # Module DesignManager action
-# (c) 2012 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,9 +32,18 @@ try {
         throw new CmsException($this->Lang('error_missingparam'));
     }
     $design = CmsLayoutCollection::load($params['design']);
-
+    $topfiles = '';
+    $nm = $design->get_name();
+    if( $nm ) {
+        $dirnm = dm_utils::munge_name_to_dir($nm);
+        $fp = cms_join_path($config['themes_path'],$dirnm); //OR $config['assets_path'],'themes',$dirnm
+        if( is_dir($fp) ) { //OR $this->is_dir_unused()
+            $topfiles = $fp;
+        }
+    }
     $can_delete_stylesheets = $this->CheckPermission('Manage Stylesheets');
     $can_delete_templates = $this->CheckPermission('Modify Templates');
+    $can_delete_files = $this->CheckPermission('Modify Files');
 
     if( isset($params['submit']) ) {
         if( !isset($params['confirm_delete1']) || $params['confirm_delete1'] != 'yes' ||
@@ -78,11 +87,9 @@ try {
             }
         }
 
-        $nm = $design->get_name();
-        if( $nm !== '' ) {
-            $fp = cms_join_path($config['themes_path'],$nm); //OR $config['assets_path'],'designs',$nm
-            if( is_dir($fp) ) { //OR $this->is_dir_unused()
-                recursive_delete($fp);
+        if( isset($params['delete_files']) && $can_delete_files ) {
+            if( is_dir($topfiles) ) {
+               recursive_delete($topfiles);
             }
         }
 
@@ -98,6 +105,8 @@ try {
 
     $tpl->assign('tpl_permission',$can_delete_templates);
     $tpl->assign('css_permission',$can_delete_stylesheets);
+    $tpl->assign('file_permission',$can_delete_files);
+    $tpl->assign('hasfiles', $topfiles != '');
     $tpl->assign('design',$design);
     $tpl->display();
 }
