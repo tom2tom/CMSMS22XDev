@@ -25,7 +25,7 @@
 /*
 function _cms_load($filename)
 {
-  $gCms = CmsApp::get_instance(); // wierd, but this is required.
+  $gCms = CmsApp::get_instance(); // variable-existence might be checked by the included file
   require_once($filename);
 }
 */
@@ -51,6 +51,11 @@ function cms_autoloader($classname)
         $space = substr($classname,0,$p);
         if( $space == 'CMSMS' ) {
             $sroot = "$rootp{$sp}lib{$sp}classes{$sp}";
+        }
+        elseif( $space == 'CMSAsset' ) {
+            $config = $gCms->GetConfig();
+            $astp = $config['assets_path'];
+            $sroot = "$astp{$sp}";
         }
         else {
             $mpath = "$rootp{$sp}modules{$sp}{$space}{$sp}{$space}.module.php";
@@ -133,9 +138,22 @@ function cms_autoloader($classname)
         return;
     }
 
+    // background tasks and jobs
     if( endswith($classname,'Task') ) {
-        $class = substr($classname,0,-4);
-        $fn = "$rootp{$sp}lib{$sp}tasks{$sp}class.{$class}.task.php";
+        $fn = "$rootp{$sp}lib{$sp}jobs{$sp}class.{$classname}.php";
+        if( is_file($fn) ) {
+            require_once($fn);
+            return;
+        }
+        // historic naming convention (deprecated since 2.2.23F2)
+        $fn = str_replace('Task.php','.task.php',$fn);
+        if( is_file($fn) ) {
+            require_once($fn);
+            return;
+        }
+    }
+    if( endswith($classname,'Job') ) {
+        $fn = "$rootp{$sp}lib{$sp}jobs{$sp}class.{$classname}.php";
         if( is_file($fn) ) {
             require_once($fn);
             return;
