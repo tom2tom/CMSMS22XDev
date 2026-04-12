@@ -15,7 +15,7 @@
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
+
 if( !function_exists('cmsms') ) exit;
 if( !($this->CheckPermission('Modify Files') || $this->AdvancedAccessAllowed())) exit;
 
@@ -38,28 +38,24 @@ if( count($selall) > 1 ) {
   $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 
-$advancedmode = filemanager_utils::check_advanced_mode();
-$basedir = CMS_ROOT_PATH; //OR uploads-top per $advancedmode ?
 $filename = $this->decodefilename($selall[0]);
-$src = filemanager_utils::join_path($basedir,filemanager_utils::get_cwd(),$filename);
+$src = filemanager_utils::join_path(CMS_ROOT_PATH,filemanager_utils::get_cwd(),$filename);
 if( !file_exists($src) ) {
   $params['fmerror'] = 'filenotfound';
   $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
-$thumb = filemanager_utils::join_path($basedir,filemanager_utils::get_cwd(),'thumb_'.$filename);
 
 if( isset($params['submit']) ) {
-  //$thumb = filemanager_utils::join_path($basedir,filemanager_utils::get_cwd(),'thumb_'.$filename); // by mistake for sure... (JM)
-  $thumb = filemanager_utils::create_thumbnail($src, NULL, TRUE);
-
-  if( !$thumb ) {
-    $params['fmerror'] = 'thumberror';
+  if( filemanager_utils::create_thumbnail($src,null,true) ) {
+    $params['fmmessage'] = 'thumbsuccess';
   }
   else {
-    $params['fmmessage'] = 'thumbsuccess';
+    $params['fmerror'] = 'thumberror';
   }
   $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
+
+$thumb = filemanager_utils::join_path(CMS_ROOT_PATH,filemanager_utils::get_cwd(),'thumb_'.$filename);
 
 //
 // build the form
@@ -72,12 +68,8 @@ $tpl->assign('filespec',$src);
 $tpl->assign('thumb',$thumb);
 $tpl->assign('thumbexists',file_exists($thumb));
 $params['selall'] = $selall[0]; // flat value for next pass
-$tpl->assign('startform', $this->CreateFormStart($id, 'fileaction', $returnid,'post','',false,'',$params));
-$tpl->assign('endform', $this->CreateFormEnd());
-
+$tpl->assign('startform',$this->CreateFormStart($id,'fileaction',$returnid,'post','',false,'',$params));
+$tpl->assign('endform',$this->CreateFormEnd());
 $tpl->display();
 
-#
-# EOF
-#
 ?>
