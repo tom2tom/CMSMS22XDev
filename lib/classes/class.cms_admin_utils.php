@@ -4,47 +4,33 @@
 # Class: cms_admin_utils
 # (c) 2010 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
-#-------------------------------------------------------------------------
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-#
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
+# along with this program. If not, read the license online at
+# https://www.gnu.org/licenses/#LicenseURLs
 #-------------------------------------------------------------------------
 #END_LICENSE
-
-/**
- * Static classes providing convenience functions for admin console requests.
- * @package CMS
- * @license GPL
- */
 
 if( !CmsApp::get_instance()->test_state(CmsApp::STATE_ADMIN_PAGE) )
 	throw new CmsLogicException('Attempt to use cms_admin_utils class from an invalid request');
 
 /**
- * A Simple static class providing various convenience utilities for admin requests.
+ * A class of static utility-methods for admin requests.
+ * @since 2.0
+ * @final
+ * @see also CmsAdminUtils class having more methods and less usage
  *
  * @package CMS
  * @license GPL
  * @author Robert Campbell
- * @since 2.0
  */
 final class cms_admin_utils
 {
@@ -92,35 +78,52 @@ final class cms_admin_utils
 	}
 
 	/**
-	 * Get a help tag for displaying inline, popup help.
+	 * Get a tag for displaying a popup dialog.
 	 *
-	 * This method accepts variable arguments.  If only one argument is passed it is assumed to be
-	 * the second key for the help tag and the first key is assumed to be the current module name.
-	 * If two arguments are passed the first argument is assumed to be key1 and the second to be key2.
+	 * This method accepts variable arguments.
+	 * If only one string-argument is passed that is assumed to be the lang key
+	 * for the help tag and the lang realm is assumed to be the current module name.
+	 * If two or more string-arguments are passed the first of them is assumed
+	 * to be the lang realm, the second to be the lang key and the third, if any,
+	 * to be the title value.
+	 * If more than three arguments are provided, args 4+ are assumed to be
+	 * dialog options/properties. See https://api.jqueryui.com/dialog/#quick-nav
+	 * If one array-argument is passed that is assumed to provide all pertinent
+	 * parameters
 	 *
-	 * @param string $keys,... [$key2|$key1,$key2]
-	 * @return string HTML content of the help tag
+	 * @param varargs $args [$key2] | [$key1,$key2, ....]| assoc. array
+	 *
+	 * @return string HTML content of the help tag or empty
 	 */
-	public static function get_help_tag()
+	public static function get_help_tag(...$args)
 	{
 		if( !CmsApp::get_instance()->test_state(CmsApp::STATE_ADMIN_PAGE) ) return '';
 
-		$params = array();
-		$args = func_get_args();
-		if( count($args) >= 2 && is_string($args[0]) && is_string($args[1]) ) {
-			$params['key1'] = $args[0];
-			$params['key2'] = $args[1];
-			if( isset($args[2]) ) $params['title'] = $args[2];
-		}
-		else if( count($args) == 1 && is_string($args[0]) ) {
-			$params['key2'] = $args[0];
-		}
-		else {
-			$params = $args[0];
-		}
-
 		$theme = cms_utils::get_theme_object();
 		if( !is_object($theme) ) return '';
+
+		$params = [];
+		$extras = [];
+		if( count($args) >= 2 ) {
+			if( is_string($args[0]) && is_string($args[1]) ) {
+				$params['key1'] = $args[0];
+				$params['key2'] = $args[1];
+				if( !empty($args[2]) ) $params['title'] = $args[2];
+				$extras = array_diff_key($args,['key'=>1,'key1'=>1,'key2'=>1,'realm'=>1,'title'=>1,'titlekey'=>1]);
+			}
+		}
+		elseif( count($args) == 1 ) {
+			if( !is_array($args[0]) ) {
+				$params['key2'] = (string)$args[0];
+			}
+			else {
+				$params = $args[0];
+				$extras = array_diff_key($params,['key'=>1,'key1'=>1,'key2'=>1,'realm'=>1,'title'=>1,'titlekey'=>1]);
+			}
+		}
+		else {
+			return '';
+		}
 
 		$key1 = '';
 		$key2 = '';
@@ -133,7 +136,6 @@ final class cms_admin_utils
 				break;
 			case 'key':
 			case 'key2':
-			case 'key':
 				$key2 = trim($value);
 				break;
 			case 'title':
@@ -155,19 +157,42 @@ final class cms_admin_utils
 		}
 
 		if( !$key1 ) return '';
-
-		$key = $key1;
-		if( $key2 !== '' ) $key .= '__'.$key2;
+		if( !($key1 == 'none' || $key1 == 'direct') ) {
+			$key = $key1;
+			if( $key2 !== '' ) $key .= '__'.$key2;
+		}
+		elseif( $key2 !== '') {
+			$key = $key2;
+			$title = '';
+		}
+		else {
+			return '';
+		}
 		if( $title === '' ) $title = $key2;
-		$title = strip_tags($title);
-
+		$title = preg_replace('/\s*\(.*\)\s*$/','',strip_tags($title)); // omit any trailing detail
 		$icon = self::get_icon('info.gif');
 		if( !$icon ) return '';
 
-		return '<span class="cms_help" data-cmshelp-key="'.$key.'" data-cmshelp-title="'.$title.'"><img class="cms_helpicon" src="'.$icon.'" alt="'.$title.'"></span>';
-	}
-} // end of class
+		$custom = '';
+		if( $extras ) {
+			foreach( $extras as $xk => $xv ) {
+				//workaround jQ lowercase entire keys in .data object, except after '-'
+				$xxk = preg_replace_callback('/[A-Z]/', function($matches) {
+					return '-'.strtolower($matches[0]);
+				} ,trim($xk,' "\''));
+				if( is_numeric($xv) ) {
+					$xxv = 0 + $xv;
+				}
+				elseif( is_bool($xv) ) {
+					$xxv = (string)$xv;
+				}
+				else {
+					$xxv = trim((string)$xv,' "\'');
+				}
+				$custom .= " data-dialog$xxk=\"$xxv\"";
+			}
+		}
 
-#
-# EOF
-#
+		return '<span class="cms_help" data-cmshelp-key="'.$key.'" data-cmshelp-title="'.$title.'"'.$custom.'><img class="cms_helpicon" src="'.$icon.'" alt="'.$title.'"></span>';
+	}
+} // class
