@@ -26,6 +26,7 @@ Version 2.2.23F2 - Regina
  - Cancel long-standing deprecation of module method SetParameters and revert it to its original role in help-generation
  - Popup-help-dialog properties can be overridden by cms_help tag attributes
  - Main autoloader for classes also handles namespaced interfaces and traits associated with modules
+ - Remove '.inc' from classfile-names to facilitate autoloading
  - Add capability to autoload module-related classes etc independently of the module
  - Conform LoginOperations-class namespace to classfile location
  - Support module-plugin tags in admin templates
