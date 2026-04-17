@@ -3,29 +3,20 @@
 #-------------------------------------------------------------------------
 # Class: cms_utils
 # (c) 2010 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
-#
 #-------------------------------------------------------------------------
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
 #
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, read the license online at
+# https://www.gnu.org/licenses/#LicenseURLs
 #-------------------------------------------------------------------------
 #END_LICENSE
 
@@ -269,13 +260,10 @@ final class cms_utils
 	 */
 	public static function get_real_ip()
 	{
-		$ip = '';
-		if( !empty($_SERVER['REMOTE_ADDR']) ) $ip = $_SERVER['REMOTE_ADDR'];
-		elseif( empty($ip) && !empty($_SERVER['HTTP_CLIENT_IP']) ) $ip = $_SERVER['HTTP_CLIENT_IP'];
-		elseif( empty($ip) && !empty($_SERVER['HTTP_X_FORWARDED_FOR']) ) $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-
-		if( filter_var($ip,FILTER_VALIDATE_IP) ) return $ip;
-		return '';
+		$ip = (!empty($_SERVER['REMOTE_ADDR'])) ? $_SERVER['REMOTE_ADDR'] : '';
+		if (!($ip || empty($_SERVER['HTTP_CLIENT_IP']))) { $ip = $_SERVER['HTTP_CLIENT_IP']; }
+		if (!($ip || empty($_SERVER['HTTP_X_FORWARDED_FOR']))) { $ip = $_SERVER['HTTP_X_FORWARDED_FOR']; }
+		return (filter_var($ip,FILTER_VALIDATE_IP)) ? $ip : '';
 	}
 
 	/**
@@ -344,7 +332,7 @@ final class cms_utils
 	 *  e.g. 'image'. May be comma-separated series of such types.
 	 *  Any type(s) may be negated with a '!' prefix.
 	 *  Used only if $url refers to this site.
-	 * @return true or error message
+	 * @return true or error message (i.e. never false)
 	 */
 	public static function validate_url($url,$type = '')
 	{
@@ -455,11 +443,11 @@ final class cms_utils
 					return rawurlencode($matches[0]);
 				},$u3);
 				$url2 = substr($url,0,$p).$u4;
-				$helper = new CMSMS\FileTypeHelper();
-				$t = '!'.CMSMS\FileType::TYPE_EXECUTABLE;
+				$helper = new FileTypeHelper();
+				$t = '!'.FileType::TYPE_EXECUTABLE;
 				if ($type && strpos($type, $t) !== false) {
 					// prohibit executable ('.php' etc) BUT .php is probably valid
-					foreach ($helper->get_file_type_extensions(CMSMS\FileType::TYPE_EXECUTABLE) as $ext) {
+					foreach ($helper->get_file_type_extensions(FileType::TYPE_EXECUTABLE) as $ext) {
 						if ($ext != 'php') {
 							$l = strlen($ext);
 							if (substr_compare($u4,$ext,-$l,$l,true) == 0) {
@@ -495,8 +483,7 @@ final class cms_utils
 									if ($helperexts && in_array($ext,$helperexts)) {
 										return lang('typenotvalid');
 									}
-								}
-								elseif (!$helperexts || !in_array($ext,$helperexts)) {
+								} elseif (!$helperexts || !in_array($ext,$helperexts)) {
 									return lang('typenotvalid');
 								}
 							}
@@ -530,11 +517,58 @@ final class cms_utils
 						return lang('illegalcharacters',lang('url'));
 					}
 					// offsite-url check
-					$req = new cms_http_request(['timeout' => 3]);
-					$res1 = $req->execute($url2,CMS_ROOT_URL,'HEAD');// for a GET, add nocache header
-					$res2 = $req->getStatus();
-					if ($res1 != 'OK') {
-						return 'The URL is not accessible'; //TODO langify
+					if( function_exists('curl_version') && cms_http_request::is_curl_suitable() ) {
+						$ch = curl_init($url2);
+						curl_setopt_array($ch, [
+							CURLOPT_AUTOREFERER => true,
+							CURLOPT_CONNECTTIMEOUT => 5,
+							CURLOPT_ENCODING => '',
+							CURLOPT_FAILONERROR => true,
+							CURLOPT_FOLLOWLOCATION => true,
+//							CURLOPT_MAXREDIRS => 1,
+							CURLOPT_NOBODY => true,
+							CURLOPT_HEADER => false,
+							CURLOPT_RETURNTRANSFER => false, // was true
+							CURLOPT_TIMEOUT => 3,
+							CURLOPT_USERAGENT => $_SERVER['HTTP_USER_AGENT'] . ' CMSMS:'.CMS_VERSION, // Let webmaster know who's probing
+						]);
+						if( $scheme == 'https' ) {
+							curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,0);
+							curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,0);
+						}
+						// Get the HTML or whatever is linked in $url
+						$response = curl_exec($ch);
+//						$lasturl = curl_getinfo($ch,CURLINFO_EFFECTIVE_URL); // try to get the last url
+//						$info = curl_getinfo($ch); //DEBUG
+						$code = curl_getinfo($ch,CURLINFO_HTTP_CODE); // get http status from last url
+						$error = curl_error($ch); // get error message if any
+						if( PHP_VERSION_ID < 80500 ) { curl_close($ch); }
+						switch ($code) {
+							case 200:
+							case 203:
+							case 226:
+							case 301:
+							case 302:
+							case 304:
+							case 307:
+							case 308:
+								return true;
+							default:
+								if( !$error ) {
+									$error = cms_http_request::http_message($code);
+								}
+								return lang('notreachable_url') . ' ' . $error;
+						}
+					}
+					else {
+						$req = new cms_http_request(['timeout' => 3]);
+						//TODO ->execute() reports 403 for some valid urls, can vary per 'www.' inclusion
+						$response = $req->execute($url2,CMS_ROOT_URL,'HEAD');// for a GET, add nocache header
+						if ($response != 'OK') {
+							$status = $req->getStatus();
+							$error = cms_http_request::http_message($status);
+							return lang('notreachable_url') . ' ' . $error;
+						}
 					}
 				}
 				//TODO data-payload content check ?
@@ -547,7 +581,7 @@ final class cms_utils
 			return true; // the url is valid
 		} // url
 
-		return lang('informationmissing').': image url';
+		return lang('informationmissing').': url';
 	}
 
 	/**
