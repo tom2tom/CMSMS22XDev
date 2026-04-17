@@ -17,8 +17,10 @@
 #
 #$Id$
 
+//namespace CMSMS\contenttypes;
+
 /**
- * Implements the CMS Made Simple Section Header content type
+ * Implements the Section Header content type
  *
  * Section headers are logical ways to organize content.  They usually appear in navigations, but are not navigable.
  *

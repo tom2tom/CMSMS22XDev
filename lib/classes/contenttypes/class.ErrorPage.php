@@ -17,8 +17,10 @@
 #
 #$Id$
 
+//namespace CMSMS\contenttypes;
+
 /**
- * Main class for CMS Made Simple ErrorPage content type
+ * Implements the ErrorPage content type
  *
  * @package CMS
  * @license GPL

@@ -17,6 +17,8 @@
 #
 #$Id$
 
+//namespace CMSMS\contenttypes;
+
 /**
  * Implements the PageLink content type.
  *

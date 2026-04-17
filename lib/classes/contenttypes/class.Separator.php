@@ -17,8 +17,10 @@
 #
 #$Id$
 
+//namespace CMSMS\contenttypes;
+
 /**
- * Implements the CMS Made Simple Separator content type
+ * Implements the Separator content type
  *
  * A separator is used simply for navigations to provide a visual separation
  * between menu items.  Typically as a horizontal or vertical bar.

@@ -17,8 +17,10 @@
 #
 #$Id$
 
+//namespace CMSMS\contenttypes;
+
 /**
- * Implementation of the CMS Made Simple link content type
+ * Implements the Link content type
  *
  * Links are content objects that appear in navigations and implement a link to
  * an external page or site.
@@ -32,7 +34,7 @@ class Link extends ContentBase
 	public function IsCopyable() { return TRUE; }
 	public function IsViewable() { return FALSE; }
 	public function HasSearchableContent() { return FALSE; }
-	public function FriendlyName() { return lang('contenttype_redirlink'); }
+	public function FriendlyName() { return lang('contenttype_link'); }
 
 	public function SetProperties()
 	{
