@@ -1,7 +1,6 @@
 <div class="pagecontainer">
 {if !empty($error)}
-  <p class="pageerror">{$error}</p>
-  <br>
+  <p class="pageerrorcontainer">{$error}</p>
 {/if}
   <form action="addbookmark.php" method="post">
     <input type="hidden" name="{$securename}" value="{$secureval}">
