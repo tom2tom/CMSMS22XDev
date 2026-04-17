@@ -5,7 +5,7 @@
  * This is a wrapper class that uses either cURL or fsockopen to
  * interact with the www. This class can be used by scripts that
  * need to communicate via various APIs which support REST.
- * cURL version 7.19.7 or higher is required.
+ * If cURL is to be used, version 7.19.7 or higher is required.
  *
  * Adapted from HTTP class <http://www.phpfour.com/lib/http>
  * by Emran Hasan <phpfour@gmail.com>
@@ -80,7 +80,7 @@ class cms_http_request
     /**
      * Contains raw post data
      *
-     * @var string
+     * @var urlencoded string like 'para1=val1&para2=val2&...' or empty
      */
     private $rawPostData;
 
@@ -327,16 +327,16 @@ class cms_http_request
         $this->referrer     = CMS_ROOT_URL.'::'.CMS_VERSION;
         $this->username     = '';
         $this->password     = '';
-        $this->redirect     = FALSE;
+        $this->redirect     = TRUE;
+        $this->maxRedirect  = 3;
         $this->result       = null; // mixed
 
         // Set the cookie and agent defaults
         $this->nextToken    = '';
         $this->useCookie    = TRUE;
         $this->saveCookie   = TRUE;
-        $this->maxRedirect  = 3;
-        $this->cookiePath   = TMP_CACHE_LOCATION.'/c'.md5(session_id().__CLASS__).'.dat'; // by default, use a session-specific cookie file.
-        $this->userAgent    = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.9 CMSMS:'.CMS_VERSION;
+        $this->cookiePath   = PUBLIC_CACHE_LOCATION.'/c'.md5(session_id().__CLASS__).'.dat'; // by default, use a session-specific cookie file.
+        $this->userAgent    = $_SERVER['HTTP_USER_AGENT'] .' CMSMS:'.CMS_VERSION;
     }
 
     /**
@@ -418,7 +418,7 @@ class cms_http_request
     /**
      * Set post method and data directly
      *
-     * @param string $data
+     * @param string $data urlencoded string like 'para1=val1&para2=val2&...' or empty
      */
     public function setRawPostData($data)
     {
@@ -429,15 +429,15 @@ class cms_http_request
     /**
      * Set request parameters
      *
-     * @param mixed array or string $dataArray Request parameter(s)
+     * @param array or string $data Request parameter(s)
      */
-    public function setParams($dataArray)
+    public function setParams($data)
     {
-        if (is_array($dataArray)) {
-            $this->params = array_merge($this->params, $dataArray);
+        if (is_array($data)) {
+            $this->params = array_merge($this->params, $data);
         }
         else {
-            $this->setRawPostData($dataArray);
+            $this->setRawPostData($data);
         }
     }
 
@@ -647,10 +647,90 @@ class cms_http_request
     }
 
     /**
+     * Get the (untranslated) string corresponding to the supplied error code
+     * Adapted from https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+     * @since 2.2.23F2
+     *
+     * @param int $code http response code
+     * @return string maybe empty
+     */
+    public static function http_message($code)
+    {
+        switch ($code) {
+        case 100: return 'Continue';
+        case 101: return 'Switching Protocols';
+        case 102: return 'Processing';
+        case 103: return 'Early Hints';
+        case 104: return 'Upload Resumption Supported';
+        case 200: return 'OK';
+        case 201: return 'Created';
+        case 202: return 'Accepted';
+        case 203: return 'Non-Authoritative Information';
+        case 204: return 'No Content';
+        case 205: return 'Reset Content';
+        case 206: return 'Partial Content';
+        case 207: return 'Multi-Status';
+        case 208: return 'Already Reported';
+        case 226: return 'IM Used';
+        case 300: return 'Multiple Choices';
+        case 301: return 'Moved Permanently';
+        case 302: return 'Found';
+        case 303: return 'See Other';
+        case 304: return 'Not Modified';
+        case 305: return 'Use Proxy';
+        case 307: return 'Temporary Redirect';
+        case 308: return 'Permanent Redirect';
+        case 400: return 'Bad Request';
+        case 401: return 'Unauthorized';
+        case 402: return 'Payment Required';
+        case 403: return 'Forbidden';
+        case 404: return 'Not Found';
+        case 405: return 'Method Not Allowed';
+        case 406: return 'Not Acceptable';
+        case 407: return 'Proxy Authentication Required';
+        case 408: return 'Request Timeout';
+        case 409: return 'Conflict';
+        case 410: return 'Gone';
+        case 411: return 'Length Required';
+        case 412: return 'Precondition Failed';
+        case 413: return 'Content Too Large';
+        case 414: return 'URI Too Long';
+        case 415: return 'Unsupported Media Type';
+        case 416: return 'Range Not Satisfiable';
+        case 417: return 'Expectation Failed';
+        case 421: return 'Misdirected Request';
+        case 422: return 'Unprocessable Content';
+        case 423: return 'Locked';
+        case 424: return 'Failed Dependency';
+        case 425: return 'Too Early';
+        case 426: return 'Upgrade Required';
+        case 427: return 'Unassigned';
+        case 428: return 'Precondition Required';
+        case 429: return 'Too Many Requests';
+        case 430: return 'Unassigned';
+        case 431: return 'Request Header Fields Too Large';
+        case 451: return 'Unavailable For Legal Reasons';
+        case 500: return 'Internal Server Error';
+        case 501: return 'Not Implemented';
+        case 502: return 'Bad Gateway';
+        case 503: return 'Service Unavailable';
+        case 504: return 'Gateway Timeout';
+        case 505: return 'HTTP Version Not Supported';
+        case 506: return 'Variant Also Negotiates';
+        case 507: return 'Insufficient Storage';
+        case 508: return 'Loop Detected';
+        case 509: return 'Unassigned';
+        case 510: return 'Not Extended'; //OBSOLETE
+        case 511: return 'Network Authentication Required';
+        default: return '';
+        }
+    }
+
+    /**
      * Execute a HTTP request
      *
      * Automatically uses fsockopen if a suitable cURL is not available.
-     * And follows redirects (if so asked).
+     * And follows redirects (if enabled and needed).
      *
      * @param string $target URL of the target page (optional)
      * @param string $referrer URL of the referrer page (optional)
@@ -679,8 +759,6 @@ class cms_http_request
             $queryString = http_build_query($this->params, '', '&');
         }
 
-        $this->useCurl = $this->useCurl && self::is_curl_suitable();
-
         // GET/HEAD methods configuration
         if ($this->method == 'GET' || $this->method == 'HEAD') {
             if ($queryString) {
@@ -694,14 +772,12 @@ class cms_http_request
             $this->port = $urlParsed['port'];
         }
 
-        // Handle SSL connection request
+        $this->host = $urlParsed['host'];
         if ($urlParsed['scheme'] == 'https') {
-            $this->host = $urlParsed['host'];
             $this->port = ($this->port != 0) ? $this->port : 443;
             $this->_socket = 'ssl://'.$urlParsed['host'].':'.$this->port;
         }
         else {
-            $this->host = $urlParsed['host'];
             $this->port = ($this->port != 0) ? $this->port : 80;
             $this->_socket = 'tcp://'.$urlParsed['host'].':'.$this->port;
         }
@@ -731,25 +807,24 @@ class cms_http_request
         }
 
         // Will we use cURL?
-        if ($this->useCurl) {
+        if ($this->useCurl && self::is_curl_suitable()) {
             // Initialize PHP cURL handle
             $ch = curl_init();
 
             // GET/HEAD method configuration
             if ($this->method == 'GET' || $this->method == 'HEAD') {
-                curl_setopt($ch, CURLOPT_HTTPGET, TRUE);
-                curl_setopt($ch, CURLOPT_POST, FALSE);
-                curl_setopt($ch, CURLOPT_NOBODY, $this->method == 'HEAD'); // effectively this makes the request method HEAD
+                curl_setopt_array($ch, [
+                 CURLOPT_HTTPGET => TRUE,
+                 CURLOPT_POST => FALSE,
+                 CURLOPT_NOBODY => ($this->method == 'HEAD')]); // TRUE makes the request method HEAD
             }
             else {
                 // POST method configuration
-                curl_setopt($ch, CURLOPT_HTTPGET, FALSE);
-                curl_setopt($ch, CURLOPT_POST, TRUE);
-                curl_setopt($ch, CURLOPT_NOBODY, FALSE);
-
-                if (isset($queryString)) { // might be empty
-                    curl_setopt ($ch, CURLOPT_POSTFIELDS, $queryString);
-                }
+                curl_setopt_array($ch, [
+                 CURLOPT_HTTPGET => FALSE,
+                 CURLOPT_POST => TRUE,
+                 CURLOPT_POSTFIELDS => $queryString,// needed even if empty
+                 CURLOPT_NOBODY => FALSE]);
             }
 
             // Basic authentication configuration
@@ -764,34 +839,35 @@ class cms_http_request
             // Custom cookie configuration
             if ($this->useCookie) {
                 // we are sending cookies.
-                if (isset($cookieString)) {
+                if (!empty($cookieString)) {
                     curl_setopt ($ch, CURLOPT_COOKIE, $cookieString);
                 }
-                else {
-                    curl_setopt($ch, CURLOPT_COOKIEFILE, $this->cookiePath);
+                elseif( $this->cookiePath ) {
+                    curl_setopt($ch, CURLOPT_COOKIEFILE, $this->cookiePath); // Empty path is valid
                 }
             }
             if ($this->saveCookie) {
                 curl_setopt($ch, CURLOPT_COOKIEJAR, $this->cookiePath);     // Save cookies here
             }
 
-            curl_setopt($ch, CURLOPT_HEADER,         TRUE);                 // No need for headers
-            if (is_array($this->headerArray)) { // might be empty
+            if ($this->headerArray && is_array($this->headerArray)) { // might be empty
                 curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headerArray);
             }
-            else {
-                curl_setopt($ch, CURLOPT_HEADER,     TRUE);                 // No need of headers
+            curl_setopt_array($ch, [
+             CURLOPT_TIMEOUT        => $this->timeout,
+             CURLOPT_USERAGENT      => $this->userAgent,
+             CURLOPT_URL            => $this->target,
+             CURLOPT_REFERER        => $this->referrer,
+             CURLOPT_VERBOSE        => FALSE,
+             CURLOPT_FOLLOWLOCATION => $this->redirect && $this->maxRedirect > 0,
+             CURLOPT_MAXREDIRS      => $this->maxRedirect, // Limit redirections
+             CURLOPT_HEADER         => TRUE, // No writefunction callback BUT we want to parse the headers in $content, below
+             CURLOPT_RETURNTRANSFER => TRUE
+            ]);
+            if ($urlParsed['scheme'] == 'https') {
+                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);  // No certificate-match DEBUG-only?
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); // No certificate check DEBUG-only?
             }
-            curl_setopt($ch, CURLOPT_TIMEOUT,        $this->timeout);       // Timeout
-            curl_setopt($ch, CURLOPT_USERAGENT,      $this->userAgent);     // Webbot name
-            curl_setopt($ch, CURLOPT_URL,            $this->target);        // Target site
-            curl_setopt($ch, CURLOPT_REFERER,        $this->referrer);      // Referer value
-
-            curl_setopt($ch, CURLOPT_VERBOSE,        FALSE);                // Minimize logs
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);                // No certificate
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, $this->redirect);      // Follow redirects
-            curl_setopt($ch, CURLOPT_MAXREDIRS,      $this->maxRedirect);   // Limit redirections to four
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);                 // Return in string
 
             // Get the target contents
             $content = curl_exec($ch);
@@ -800,17 +876,18 @@ class cms_http_request
                 for ($i = 0; $i < count($tmp); $i++) {
                     if (empty($tmp[$i])) { unset($tmp[$i]); }
                 }
-
                 if (count($tmp) > 1) {
                     // Store the contents
                     $this->result = $tmp[1];
                 }
                 else {
-                    $this->result = '';
+                    $this->result = ''; // failure reports falsy
                 }
-
                 // Parse the headers
                 $this->_parseHeaders($tmp[0]);
+            }
+            else {
+                $this->result = ''; // failure reports falsy
             }
 
             // Get the request info
@@ -836,7 +913,7 @@ class cms_http_request
             }
 
             // Store the error (if any)
-            $this->_setError(curl_error($ch));
+            $this->_setError(curl_error($ch)); // error message if any
 
             // Close PHP cURL handle
             if (PHP_VERSION_ID < 80500) curl_close($ch);
@@ -845,7 +922,7 @@ class cms_http_request
             // Get a file pointer
             $filePointer = @stream_socket_client($this->_socket, $errorNumber, $errorString, $this->timeout);
 
-            // We have an error if pointer is not there
+            // Error if pointer is not there
             if (!$filePointer) {
                 $this->_setError('Failed opening http socket connection: ' . $errorString . ' (' . $errorNumber . ')');
                 return FALSE;
@@ -1264,7 +1341,7 @@ class cms_http_request
      * @internal
      *
      * @param string $error Error message
-     * @return mixed string verbatim $error or null
+     * @return string verbatim $error possibly empty
      */
     private function _setError($error)
     {
@@ -1272,5 +1349,6 @@ class cms_http_request
             $this->error = $error;
             return $error;
         }
+        return '';
     }
 }
