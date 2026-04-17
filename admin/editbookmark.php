@@ -11,18 +11,19 @@
 #but WITHOUT ANY WARRANTY; without even the implied warranty of
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
+#
 #You should have received a copy of the GNU General Public License
-#along with this program; if not, write to the Free Software
-#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#along with this program; if not, read the license online at:
+#https://www.gnu.org/licenses/#LicenseURLs
 #
 #$Id$
 
 $CMS_ADMIN_PAGE = 1;
 
 require_once '../lib/include.php';
-$urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
 check_login();
+$urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
 if (isset($_POST['cancel'])) {
 	redirect('listbookmarks.php'.$urlext);
@@ -51,7 +52,7 @@ if ($url) {
 	$res = cms_utils::validate_url($url, '!executable'); // aka '!'.CMSMS\FileType::TYPE_EXECUTABLE
 	if ($res !== true) {
 		$error .= '<li>'.$res.'</li>';
-		if ($res == 'TODO') { $reported = true; }
+		$reported = true;
 		unset($_POST['editbookmark']);
 	}
 
