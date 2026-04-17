@@ -95,21 +95,6 @@ function cms_autoloader($classname)
         return;
     }
 
-    // lowercase classes
-    $lowercase = strtolower($classname);
-    $fn = "$rootp{$sp}lib{$sp}classes{$sp}class.{$lowercase}.inc.php";
-    if( is_file($fn) && $classname != 'Content' ) {
-        require_once($fn);
-        return;
-    }
-
-    // lowercase internal classes
-    $fn = "$rootp{$sp}lib{$sp}classes{$sp}internal{$sp}class.{$lowercase}.inc.php";
-    if( is_file($fn) && $classname != 'Content' ) {
-        require_once($fn);
-        return;
-    }
-
     // standard interfaces
     $fn = "$rootp{$sp}lib{$sp}classes{$sp}interface.{$classname}.php";
     if( is_file($fn) ) {
@@ -125,7 +110,7 @@ function cms_autoloader($classname)
     }
 
     // standard content types
-    $fn = "$rootp{$sp}lib{$sp}classes{$sp}contenttypes{$sp}{$classname}.inc.php";
+    $fn = "$rootp{$sp}lib{$sp}classes{$sp}contenttypes{$sp}class.{$classname}.php";
     if( is_file($fn) ) {
         require_once($fn);
         return;
