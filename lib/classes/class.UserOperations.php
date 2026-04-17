@@ -20,7 +20,7 @@
 /**
  * Include user class definition
  */
-require_once(__DIR__ . DIRECTORY_SEPARATOR . 'class.user.inc.php');
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'class.User.php';
 
 /**
  * Class for doing user related functions.  Many of the User class methods

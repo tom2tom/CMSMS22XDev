@@ -20,10 +20,10 @@
 /**
  * Include group class definition
  */
-include_once(__DIR__ . DIRECTORY_SEPARATOR . 'class.group.inc.php');
+include_once __DIR__ . DIRECTORY_SEPARATOR . 'class.Group.php';
 
 /**
- * A singleton Class for doing group related functions.
+ * A singleton class for doing group-related functions.
  * Many of the Group object functions are just wrappers around these.
  *
  * @since 0.6
