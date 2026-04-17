@@ -45,7 +45,7 @@ $gCms = cmsms();
 $userops = $gCms->GetUserOperations();
 $useringroup = $userops->UserInGroup($userid,$group_id);
 
-require_once '../lib/classes/class.group.inc.php';
+require_once '../lib/classes/class.Group.php';; //don't bother autoloading
 
 if( $group_id > 0 ) {
     $groupobj = Group::load($group_id);

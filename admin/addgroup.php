@@ -44,8 +44,7 @@ if (isset($_POST['addgroup'])) {
     try {
         if ($group == '') throw new CmsInvalidDataException(lang('nofieldgiven', lang('groupname')));
 
-        require_once '../lib/classes/class.group.inc.php';
-
+        require_once '../lib/classes/class.Group.php'; //don't bother autoloading
         $groupobj = new Group();
         $groupobj->name = $group;
         $groupobj->description = $description;
