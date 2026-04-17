@@ -3,29 +3,20 @@
 #-------------------------------------------------------------------------
 # Module CMSContentManager action
 # (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
-#
 #-------------------------------------------------------------------------
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
 #
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, read the license online at:
+# http://www.gnu.org/licenses/#LicenseURLs
 #-------------------------------------------------------------------------
 #END_LICENSE
 if( !isset($gCms) ) exit;
@@ -94,9 +85,9 @@ try {
         $type_name = $content_obj->Type();
         // can the following ever fail?
         if( !$type_name ) throw new RuntimeException('Could not find content object\'s type');
-        $ph = $contentops->LoadContentType($type_name);
-        if( !$ph ) throw new RuntimeException('Could not find content type named '.$type_name);
-        if( !class_exists($ph->class) ) throw new RuntimeException('Could not find class for content type');
+        $placeholder = $contentops->LoadContentType($type_name);
+        if( !$placeholder ) throw new RuntimeException('Could not find content type named '.$type_name);
+        if( !class_exists($placeholder->class) ) throw new RuntimeException('Could not find class for content type');
         $content_type = $type_name;
         if( !$_POST ) $_SESSION['__cms_copy_id__'] = $from_id; // park it for next time
         // re-populate the content object
