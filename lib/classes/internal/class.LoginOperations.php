@@ -19,6 +19,10 @@
 
 namespace CMSMS\internal;
 
+use const CMS_SECURE_PARAM_NAME;
+use const CMS_USER_KEY;
+use const CMS_VERSION;
+
 final class LoginOperations
 {
     private static $_instance;
