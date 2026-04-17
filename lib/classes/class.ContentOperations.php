@@ -11,10 +11,11 @@
 #but WITHOUT ANY WARRANTY; without even the implied warranty of
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
-#You should have received a copy of the GNU General Public License
-#along with this program; if not, write to the Free Software
-#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
+#You should have received a copy of the GNU General Public License
+#along with this program; if not, read the license online at:
+#https://www.gnu.org/licenses/#LicenseURLs
+
 #$Id$
 
 use CMSMS\internal\global_cachable;
@@ -113,17 +114,16 @@ class ContentOperations
 	}
 
 	/**
-	 * Given an array of content_type and serialized_content, reconstructs a
-	 * content object.  It will handled loading the content type if it hasn't
-	 * already been loaded.
-	 *
+	 * Given an array of content_type and serialized_content, reconstruct a
+	 * content object.  The content type will be loaded if that hasn't
+	 * already been done.
 	 * Expects an associative array with 2 elements:
 	 *   content_type: string A content type name
 	 *   serialized_content: string Serialized form data
-	 *
 	 * @see ContentBase::ListContentTypes
-	 * @param  array $data
-	 * @return ContentBase A content object derived from ContentBase
+	 *
+	 * @param array $data
+	 * @return mixed content object derived from ContentBase | false
 	 */
 	public function LoadContentFromSerializedData(&$data)
 	{
@@ -138,47 +138,48 @@ class ContentOperations
 	}
 
 	/**
-	 * Load a specific content type
-	 *
-	 * This method is called from the autoloader.  There is no need to call it internally
-	 *
-	 * @internal
-	 * @access private
+	 * Load the specified content type
 	 * @final
 	 * @since 1.9
-	 * @param mixed The type.  Either a string, or an instance of CmsContentTypePlaceHolder
+	 *
+	 * @param mixed $type string | CmsContentTypePlaceHolder object
+	 * @return mixed CmsContentTypePlaceHolder object | null
 	 */
 	final public function LoadContentType($type)
 	{
-		if( is_object($type) && $type instanceof CmsContentTypePlaceHolder ) $type = $type->type;
-
-		$ctph = $this->_get_content_type($type);
-		if( is_object($ctph) ) {
-			if( !class_exists( $ctph->class ) && file_exists( $ctph->filename ) ) include_once( $ctph->filename );
+		if( is_object($type) && $type instanceof CmsContentTypePlaceHolder ) {
+			$type = $type->type;
 		}
-
-		return $ctph;
+		$placeholder = $this->_get_content_type($type);
+		if( is_object($placeholder) ) {
+			if( !class_exists( $placeholder->class ) && file_exists( $placeholder->filename ) ) {
+				include_once($placeholder->filename);
+			}
+		}
+		return $placeholder;
 	}
 
 	/**
-	 * Creates a new, empty content object of the given type.
+	 * Create a new empty content object of the given type.
 	 *
 	 * if the content type is registered with the system,
 	 * and the class does not exist, the appropriate filename will be included
 	 * and then, if possible a new object of the designated type will be
 	 * instantiated.
 	 *
-	 * @param mixed $type The type.  Either a string, or an instance of CmsContentTypePlaceHolder
-	 * @return ContentBase (A valid object derived from ContentBase)
+	 * @param mixed $type string | CmsContentTypePlaceHolder object
+	 * @return mixed object derived from ContentBase | null
 	 */
 	public function CreateNewContent($type)
 	{
-		if( is_object($type) && $type instanceof CmsContentTypePlaceHolder ) $type = $type->type;
-
-		$result = null; // no object
-		$ctph = $this->LoadContentType($type);
-		if( is_object($ctph) && class_exists($ctph->class) ) $result = new $ctph->class();
-		return $result;
+		if( is_object($type) && $type instanceof CmsContentTypePlaceHolder ) {
+			$type = $type->type;
+		}
+		$placeholder = $this->LoadContentType($type);
+		if( is_object($placeholder) && class_exists($placeholder->class) ) {
+			return new $placeholder->class();
+		}
+		return null;
 	}
 
 	/**
@@ -205,8 +206,8 @@ class ContentOperations
 			//always retrieve the page's target property if any (per FR#12548)
 			$query = 'SELECT C.*,P.content AS target FROM '.CMS_DB_PREFIX.
 			'content C LEFT JOIN '.CMS_DB_PREFIX.
-			"content_props P on C.content_id=P.content_id
-AND P.prop_name = 'target' WHERE C.content_id = ?";
+			"content_props P ON C.content_id = P.content_id AND P.prop_name = 'target'
+WHERE C.content_id = ?";
 		}
 		$row = $db->GetRow($query,array($id));
 		if( $row ) {
@@ -266,29 +267,20 @@ AND P.prop_name = 'target' WHERE C.content_id = ?";
 	private function _get_std_content_types()
 	{
 		$result = array();
-		$dir = __DIR__.'/contenttypes';
-		$files = glob($dir.'/*.inc.php');
-		if( is_array($files) ) {
+		$sp = DIRECTORY_SEPARATOR;
+		$files = glob(__DIR__."{$sp}contenttypes{$sp}class.*.php");
+		if( $files ) {
 			foreach( $files as $one ) {
 				$obj = new CmsContentTypePlaceHolder();
-				$class = basename($one,'.inc.php');
-				$type  = strtolower($class);
-
-				$obj->class = $class;
-				$obj->type = $type;
 				$obj->filename = $one;
 				$obj->loaded = false;
-				if( $obj->type == 'link' ) {
-					// cough... big hack... cough.
-					$obj->friendlyname_key = 'contenttype_redirlink';
-				}
-				else {
-					$obj->friendlyname_key = 'contenttype_'.$type;
-				}
+				$obj->class = str_replace('class.', '', basename($one,'.php'));
+				$type = strtolower($obj->class);
+				$obj->type = $type;
+				$obj->friendlyname_key = 'contenttype_'.$type;
 				$result[$type] = $obj;
 			}
 		}
-
 		return $result;
 	}
 
@@ -311,24 +303,23 @@ AND P.prop_name = 'target' WHERE C.content_id = ?";
 				}
 			}
 		}
-
 		return $this->_content_types;
 	}
 
 	/**
-	 * Function to return a content type given it's name
+	 * Return a named content type
 	 *
 	 * @since 1.9
 	 * @access private
 	 * @internal
 	 * @param string The content type name
-	 * @return CmsContentTypePlaceHolder placeholder object.
+	 * @return mixed CmsContentTypePlaceHolder object | null
 	 */
 	private function _get_content_type($name)
 	{
-		$name = strtolower($name);
 		$this->_get_content_types();
-		if( is_array($this->_content_types) ) {
+		if( $this->_content_types ) {
+			$name = strtolower((string)$name);
 			if( isset($this->_content_types[$name]) && $this->_content_types[$name] instanceof CmsContentTypePlaceHolder ) {
 				return $this->_content_types[$name];
 			}
