@@ -257,7 +257,7 @@ else {
   $tmp[0]['server_os'] = 'Unknown'; // TODO fallack mechanism
 }
 
-switch($config['dbms']) { //workaround: ServerInfo() is unsupported in adodblite
+switch($config['dbms']) { //workaround: ServerInfo() is unsupported in adodblite and CMSMS Connection
   case 'mysqli':
   case 'mysql':
     $v = $db->GetOne('SELECT version()');
