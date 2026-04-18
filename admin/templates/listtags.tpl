@@ -1,5 +1,4 @@
 <div class="pagecontainer">
-  <div class="pageoverflow">{$header}</div>
   {if isset($subheader)}
     <div class="pageheader">{$subheader}
     {if isset($wiki_url) && isset($image_help_external)}
@@ -9,9 +8,8 @@
     {/if}
     </div>
   {/if}
-
   {if isset($content)}
-    <br>{$content}
+    {$content}<br>
   {elseif isset($error)}
     <div class="pageerrorcontainer"><div class="pageoverflow"><ul class="pageerror"><li>{$error}</li></ul></div></div>
   {elseif !empty($plugins)}
@@ -65,7 +63,7 @@
            {/if}
          </td>
        </tr>
-      {/foreach}
+{/foreach}
       </tbody>
     </table>
   {/if}
