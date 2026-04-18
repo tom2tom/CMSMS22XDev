@@ -17,17 +17,15 @@
 #
 #$Id$
 
-$CMS_ADMIN_PAGE=1;
+$CMS_ADMIN_PAGE = 1;
 
-require_once("../lib/include.php");
-require_once("../lib/classes/class.bookmark.inc.php");
-$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+require_once '../lib/include.php';
+//require_once '../lib/classes/class.Bookmark.php';
 
 check_login();
 
 $bookmark_id = -1;
-if (isset($_GET["bookmark_id"]))
-{
+if (isset($_GET["bookmark_id"])) {
 	$bookmark_id = $_GET["bookmark_id"];
 
 	$result = false;
@@ -35,13 +33,12 @@ if (isset($_GET["bookmark_id"]))
 	$bookops = cmsms()->GetBookmarkOperations();
 	$markobj = $bookops->LoadBookmarkByID($bookmark_id);
 
-	if ($markobj)
-	{
+	if ($markobj) {
 		$result = $markobj->Delete();
 	}
-
 }
 
+$urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 redirect("listbookmarks.php".$urlext);
 
 ?>

@@ -19,13 +19,14 @@
 
 use CMSMS\HookManager;
 
-$CMS_ADMIN_PAGE=1;
+$CMS_ADMIN_PAGE = 1;
 
-require_once("../lib/include.php");
-require_once("../lib/classes/class.group.inc.php");
-$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+require_once '../lib/include.php';
+//require_once '../lib/classes/class.Group.php';
 
 check_login();
+
+$urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
 $group_id = -1;
 if (isset($_GET["group_id"])) {
