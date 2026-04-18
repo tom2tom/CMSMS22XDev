@@ -90,4 +90,53 @@ final class CMSSmartySecurityPolicy extends Smarty_Security
             $this->static_classes = []; // allow any static-method call (Smarty default)
         }
     }
+
+    /**
+     * Validate a file nominated for a 'file:' resource
+     * @since 4.4.3
+     *
+     * @param string $filepath Absolute filepath processed by realpath()
+     * @return bool indicating acceptability
+     */
+    public function isTrustedFile($filepath)
+    {
+        if( startswith($filepath, CMS_ROOT_PATH) ) {
+            $config = cms_config::get_instance();
+            foreach( [
+                $config['uploads_path'],
+                $config['themes_path'],
+                //and where else ? not .../{modules,admin,themes}
+            ] as $prefix ) {
+                if( startswith($filepath,$prefix) ) {
+                    $cnt = file_get_contents($filepath);
+                    if( $cnt ) {
+                        // sniff the content for acceptability
+                        //c.f. CMSModule::ValidateContentBlockFieldValue() and various execSpecialize()'s and page-metadata validation
+                        foreach( [
+                        '/(<|%3c)(\?|%3f)(php|=|\s)/i',
+                        '/(\?|%3f)(>|%3e)>/i',
+                        '/(<|%3c)\s*/?\s*script/i'
+                        ] as $patn ) {
+                            if( preg_match($patn,$cnt) ) { return false; }
+                        }
+                        $oldcache = $this->smarty->caching;
+                        $this->smarty->caching = Smarty::CACHING_OFF;
+                        try {
+                            $this->smarty->fetch("string:{function}$cnt{/function}");
+                            $this->smarty->caching = $oldcache;
+                        }
+                        catch (Exception $e) {
+                            $this->smarty->caching = $oldcache;
+                            return false;
+                        }
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 } // end of class
