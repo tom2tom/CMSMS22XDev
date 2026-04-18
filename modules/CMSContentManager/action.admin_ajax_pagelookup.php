@@ -15,9 +15,8 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
+# along with this program. If not, read the license online at
+# https://www.gnu.org/licenses/#LicenseURLs
 #-------------------------------------------------------------------------
 #END_LICENSE
 
@@ -48,8 +47,8 @@ if( isset($_REQUEST['term']) ) {
 
   $list = $db->GetArray($query,$parms);
   if( $list ) {
-    $builder = new CMSContentManager\ContentListBuilder($this);
-    $builder->expand_all(); // it'd be cool to open all parents to each item.
+    $builder = new CMSContentManager\ListOperations($this);
+    $builder->expand_all(); // show all pages cuz match(es) could be anywhere
     $contentops = ContentOperations::get_instance();
     foreach( $list as $row ) {
       $label = $contentops->CreateFriendlyHierarchyPosition($row['hierarchy']);
@@ -61,8 +60,4 @@ if( isset($_REQUEST['term']) ) {
 
 echo json_encode($out);
 exit;
-
-#
-# EOF
-#
 ?>
