@@ -516,7 +516,7 @@ abstract class CMSModule
      * @param string $routeregex Regular Expression Route to register
      * @param array $defaults Associative array containing defaults for parameters that might not be included in the url
      */
-    final public function RegisterRoute($routeregex, $defaults = array())
+    final public function RegisterRoute($routeregex, array $defaults = [])
     {
         $route = new CmsRoute($routeregex,$this->GetName(),$defaults);
         cms_route_manager::register($route);
@@ -571,7 +571,7 @@ abstract class CMSModule
      * @param bool A flag indicating whether unknown keys in the input data should be allowed.
      * @param bool A flag indicating whether keys should be treated as strings and cleaned.
      */
-    private function _cleanParamHash($modulename,$data,$map = false, $allow_unknown = false,$clean_keys = true)
+    private function _cleanParamHash($modulename,array $data,array $map = [], $allow_unknown = false,$clean_keys = true)
     {
         $mappedcount = 0;
         $result = array();
@@ -890,7 +890,7 @@ abstract class CMSModule
      * @param ContentBase $content_obj The content object being edited.
      * @return mixed Either an array with two elements (prompt, and html element) or a string containing only the html input element.
      */
-    function GetContentBlockFieldInput($blockName,$value,$params,$adding,ContentBase $content_obj)
+    function GetContentBlockFieldInput($blockName,$value,array $params,$adding,ContentBase $content_obj)
     {
         return false;
     }
@@ -914,7 +914,7 @@ abstract class CMSModule
      * @param ContentBase $content_obj The content object being edited.
      * @return mixed|false The content block value if possible.
      */
-    function GetContentBlockFieldValue($blockName,$blockParams,$inputParams,ContentBase $content_obj)
+    function GetContentBlockFieldValue($blockName,array $blockParams,array $inputParams,ContentBase $content_obj)
     {
         return '';
     }
@@ -935,7 +935,7 @@ abstract class CMSModule
      * @param contentBase $content_obj The content object that is currently being edited.
      * @return string An error message if the value is invalid, empty otherwise.
      */
-    function ValidateContentBlockFieldValue($blockName,$value,$blockparams,ContentBase $content_obj)
+    function ValidateContentBlockFieldValue($blockName,$value,array $blockparams,ContentBase $content_obj)
     {
         return '';
     }
@@ -952,7 +952,7 @@ abstract class CMSModule
      * @param ContentBase $content_obj The content object that is currently being displayed
      * @return string
      */
-    function RenderContentBlockField($blockName,$value,$blockparams,ContentBase $content_obj)
+    function RenderContentBlockField($blockName,$value,array $blockparams,ContentBase $content_obj)
     {
         return $value;
     }
@@ -1026,8 +1026,8 @@ abstract class CMSModule
      * It should return a string message if there is a failure. Returning nothing
      * (FALSE) will allow the uninstall procedure to proceed.
      *
-     * The default behaviour of this function is to include a file called method.uninstall.php
-     * in the module directory to do uninstall operations.
+     * The default behaviour of this function is to include a file named
+     * method.uninstall.php in the module directory, to do uninstall operations.
      *
      * @return mixed string|int|bool A result of FALSE indicates that the module
      *  uninstalled correctly. Any other value indicates an error (>1) or error message.
@@ -1056,11 +1056,13 @@ abstract class CMSModule
     }
 
     /**
-     * Function that gets called upon module uninstall, and returns a bool to indicate whether or
-     * not the core should remove all module events, event handlers, module templates, and preferences.
-     * The module must still remove its own database tables and permissions
+     * Function that gets called upon module uninstall, and returns a bool
+     * to indicate whether or not the core should remove all module events,
+     * event handlers, module templates, and preferences.
+     * The module must still remove its own database tables and permissions.
      * @abstract
-     * @return bool Whether the core may remove all module events, event handles, module templates, and preferences on uninstall (defaults to true)
+     * @return bool Whether the core may remove all module events,
+     *  event handlers, module templates, and preferences on uninstall (defaults to true)
      */
     public function AllowUninstallCleanup()
     {
@@ -1068,8 +1070,8 @@ abstract class CMSModule
     }
 
     /**
-     * Display a message and a Yes/No dialog before doing an uninstall. Returning noting
-     * (FALSE) will go right to the uninstall.
+     * Display a message and a Yes/No dialog before doing an uninstall.
+     * Returning nothing (FALSE) will go right to the uninstall.
      *
      * @abstract
      * @return XHTML Text, or FALSE.
@@ -1091,7 +1093,7 @@ abstract class CMSModule
     }
 
     /**
-     * Function to perform any upgrade procedures. This is mostly used to for
+     * Function to perform any upgrade procedures. This is mostly used for
      * updating database tables, but can do other duties as well. It should
      * return a string message if there is a failure. Returning nothing (FALSE)
      * will allow the upgrade procedure to proceed. Upgrades should have a path
@@ -1296,7 +1298,7 @@ abstract class CMSModule
      * @param array  $params Optional details about the wanted capability. Should be synchronized with other modules of same type
      * @return bool
      */
-    public function HasCapability($capability, $params = array())
+    public function HasCapability($capability, array $params = [])
     {
         return false;
     }
@@ -1388,7 +1390,7 @@ abstract class CMSModule
      * @param int $returnid The current page id that is being displayed.
      * @return string output XHTML.
      */
-    public function DoAction($name, $id, $params, $returnid='')
+    public function DoAction($name, $id, array $params, $returnid='')
     {
         if( $returnid == '' ) {
             $errors = [];
@@ -1438,7 +1440,7 @@ abstract class CMSModule
      * @param Smarty_Internal_Template $smarty The current smarty template object. (not actually NULL)
      * @return string The action output.
      */
-    final public function DoActionBase($name, $id, $params, $returnid='', $smarty = NULL)
+    final public function DoActionBase($name, $id, array $params, $returnid='', $smarty=NULL)
     {
         $name = preg_replace('/[^A-Za-z0-9_+-]/', '', $name);
         $modname = $this->GetName();
@@ -1549,7 +1551,7 @@ abstract class CMSModule
      * @deprecated
      * @return string
      */
-    final function CreateTooltipLink($id, $action, $returnid, $contents, $tooltiptext, $params=array())
+    final function CreateTooltipLink($id, $action, $returnid, $contents, $tooltiptext, array $params=[])
     {
         return $this->CreateTooltip($tooltiptext,$contents,"","admin-tooltip",$this->CreateLink($id,$action,$returnid,"admin-tooltip",$params,"",true) );
     }
@@ -1601,7 +1603,7 @@ abstract class CMSModule
      * @return string
      */
     function CreateFrontendFormStart($id,$returnid,$action='default',$method='post',
-                                     $enctype='',$inline=true,$idsuffix='',$params=array())
+                                     $enctype='',$inline=true,$idsuffix='',array $params=[])
     {
         return $this->CreateFormStart($id,$action,$returnid,$method,$enctype,$inline,$idsuffix,$params);
     }
@@ -1615,12 +1617,12 @@ abstract class CMSModule
      * @param string $method Method to use for the form tag.  Defaults to 'post'
      * @param string $enctype Optional enctype to use, Good for situations where files are being uploaded
      * @param bool $inline A flag to determine if actions should be handled inline (no moduleinterface.php -- only works for frontend)
-     * @param string $idsuffix Text to append to the end of the id and name of the form
-     * @param array $params Extra parameters to pass along when the form is submitted
-     * @param string $extra Text to append to the <form>-statement, for instanse for javascript-validation code
+     * @param string $idsuffix Optional text to append to the end of the id and name of the form
+     * @param array $params Optional extra parameters to pass along when the form is submitted
+     * @param string $extra Optional text to append to the <form>-statement, for instance for javascript-validation code
      * @return string
      */
-    function CreateFormStart($id, $action='default', $returnid='', $method='post', $enctype='', $inline=false, $idsuffix='', $params = array(), $extra='')
+    function CreateFormStart($id, $action='default', $returnid='', $method='post', $enctype='', $inline=false, $idsuffix='', array $params=[], $extra='')
     {
         $this->_loadFormMethods();
         return cms_module_CreateFormStart($this, $id, $action, $returnid, $method, $enctype, $inline, $idsuffix, $params, $extra);
@@ -2229,18 +2231,18 @@ abstract class CMSModule
      *
      * @param string $id The id given to the module on execution
      * @param string $action The action that this form should do when the link is clicked
-     * @param string $returnid The id to eventually return to when the module is finished its task. Default ''
-     * @param string $contents The text that will have to be clicked to follow the link. Default ''
-     * @param array $params Parameters to be included in the URL-query of the link. These should be in a $key=>$value format. Default []
-     * @param string $warn_message Text to display in a javascript warning box. If non-empty, and the user clicks no, the link is not followed by the browser. Default ''
-     * @param bool $onlyhref Whether only the href section should be returned. Default false
-     * @param bool $inline Whether the action should be handled inline (no moduleinterface.php - only works for frontend). Default false
-     * @param string $addtext Any additional text that should be added into the tag when rendered. Default ''
-     * @param bool $targetcontentonly Whether the link targets the default content area of the destination page. Default false
+     * @param string $returnid Optional page id to eventually return to when the module is finished its task. Default ''
+     * @param string $contents Optional linktext to be displayed and clicked to follow the link. Default ''
+     * @param array $params Optional parameters to be included in the URL-query of the link. These should be in a $key=>$value format. Default []
+     * @param string $warn_message Optional text to display in a javascript warning box. If non-empty, and the user clicks no, the link is not followed by the browser. Default ''
+     * @param bool $onlyhref Optional flag whether only the href section should be returned. Default false
+     * @param bool $inline Optional flag whether the action should be handled inline (no moduleinterface.php - only works for frontend). Default false
+     * @param string $addtext Optional additional text that should be added into the tag when rendered. Default ''
+     * @param bool $targetcontentonly Optional flag whether the link targets the default content area of the destination page. Default false
      * @param string $prettyurl Optional pretty-url segment (related to the root of the website) for a pretty url. Default ''
      * @return string
      */
-    function CreateLink($id, $action, $returnid='', $contents='', $params=array(),
+    function CreateLink($id, $action, $returnid='', $contents='', array $params=[],
                         $warn_message='', $onlyhref=false, $inline=false, $addtext='',
                         $targetcontentonly=false, $prettyurl='')
     {
@@ -2338,17 +2340,18 @@ abstract class CMSModule
      *
      * @since 1.11
      * @author Robert Campbell
-     * @param string $tab The tab name.  If empty, the current tab is used.
-     * @param mixed|null  $params An assoiciative array of params, or null
-     * @param string $action The action name (if not specified, defaultadmin is assumed)
+     * @param string $tab Optional tab name. If empty or '0', the current tab, if any, is used.
+     * @param mixed  $params Optional associative array of parameters. Default []
+     * @param string $action Optional action name. Default 'defaultadmin'.
      * @see CMSModule::SetCurrentTab
      */
-    public function RedirectToAdminTab($tab = '',$params = '',$action = '')
+    public function RedirectToAdminTab($tab = '',$params = [],$action = '')
     {
-        if( $tab == '' ) if( $this->__current_tab ) $tab = $this->__current_tab;
-        if( $params == '' ) $params = array();
-        if( $tab != '' ) $params['__activetab'] = $tab;
-        if( empty($action) ) $action = 'defaultadmin';
+        if( !$params ) $params = [];
+        if( $params && !is_array($params) ) $params = [$params];
+        if( $tab == '' && $this->__current_tab ) $tab = $this->__current_tab; // i.e. no tab '0'
+        if( $tab ) $params['__activetab'] = $tab;
+        if( !$action ) $action = 'defaultadmin';
         $this->Redirect('m1_',$action,'',$params,false);
     }
 
@@ -2415,13 +2418,13 @@ abstract class CMSModule
     /**
      * Get a named module object
      *
-     * @final
+     * @static
      * @param string $module The required module name.
-     * @return CMSModule The module object, or null
+     * @return mixed CMSModule object or null
      */
     public static function GetModuleInstance($module)
     {
-        return cms_utils::get_module($module);
+        return ModuleOperations::get_instance()->get_module_instance($module);
     }
 
     /**
@@ -3081,26 +3084,26 @@ abstract class CMSModule
 
 
     /**
-     * Add an event handler for an existing eg event.
+     * Record this module as a handler of a specified event.
      *
      * @final
      * @param string $originator The name of the module sending the event, or 'Core'
      * @param string $eventname  The name of the event
      * @param bool $removable    Optional flag whether this event may be removed Default true
-     * @returns bool
+     * @return bool
      */
     final public function AddEventHandler( $originator, $eventname, $removable = true )
     {
-        Events::AddEventHandler( $originator, $eventname, false, $this->GetName(), $removable );
+        return Events::AddEventTypedHandler($originator, $eventname, $this->GetName(), Events::HANDLERMOD, $removable);
     }
 
 
     /**
-     * Inform the system about a new event that can be generated
+     * Record a new event originated by this module.
      *
      * @final
      * @param string $eventname The name of the event
-     * @returns nothing
+     * @return void
      */
     final public function CreateEvent( $eventname )
     {
@@ -3109,7 +3112,7 @@ abstract class CMSModule
 
 
     /**
-     * An event that this module is listening to has occurred, and should be handled.
+     * An event that this module is listening for has occurred, and should be handled.
      * This method must be over-ridden if this module is capable of handling events.
      * of any type.
      *
@@ -3221,7 +3224,7 @@ abstract class CMSModule
      * @param string $eventname The name of the event
      * @param array  $params The parameters associated with this event.
      */
-    final public function SendEvent( $eventname, $params )
+    final public function SendEvent( $eventname, array $params )
     {
         Events::SendEvent($this->GetName(), $eventname, $params);
     }
