@@ -1,8 +1,7 @@
 <script>
 $(function() {
 {if !empty($aitems)}
-  $('#bulkactions').hide();
-  $('#bulk_category').hide();
+  $('#selbulk,#selcategory,#btnbulk').prop('disabled', true);
   $('#selall').cmsms_checkall();
   $('a.delete_article').on('click', function(ev) {
     ev.preventDefault();
@@ -11,28 +10,35 @@ $(function() {
       window.location.href = _url;
     });
   });
-  $('#articlelist').on('cms_checkall_toggle','[type="checkbox"]',function() {
+  $('#articlelist').on('cms_checkall_toggle','[type="checkbox"]', function() {
     var l = $('#articlelist :checked').length;
     if (l === 0) {
-      $('#bulkactions').hide(50);
+      $('#selbulk,#selcategory,#btnbulk').prop('disabled', true);
     } else {
-      $('#bulkactions').show(50);
+      $('#selbulk,#btnbulk').prop('disabled', false);
+      if ($('#selbulk').val() == 'setcategory') {
+        $('#selcategory').prop('disabled', false);
+      }
     }
   });
-  $('#selbulk').on('change',function() {
-    var v = $(this).val();
-    if (v === 'setcategory') {
-      $('#bulk_category').show(50);
-    } else {
-      $('#bulk_category').hide(50);
-    }
-  });
-  $('#bulkactions').on('click','#btnbulk',function(ev) {
+  $('#selpnum').on('change',function(ev) {
     ev.preventDefault();
-    var form = $(this).closest('form');
-    cms_confirm('{$mod->Lang('areyousure_multiple')|escape:'javascript'}').done(function() {
-      form.trigger('submit');
-    });
+    $(this).closest('form').trigger('submit');
+  });
+  $('#selbulk').on('change', function() {
+    var v = $(this).val(),
+     st = (v !== 'setcategory');
+     $('#selcategory').prop('disabled', st);
+  });
+  $('#btnbulk').on('click', function(ev) {
+    ev.preventDefault();
+    var l = $('#articlelist :checked').length; // double-check
+    if (l > 0) {
+      var form = $(this).closest('form');
+      cms_confirm('{$mod->Lang('areyousure_multiple')|escape:'javascript'}').done(function() {
+        form.trigger('submit');
+      });
+    }
   });
 {/if}
   $('#toggle_filter').on('click', function(ev) {
@@ -49,11 +55,11 @@ $(function() {
   });
 });
 </script>
-<div id="filter" style="display:none">
+<div id="filter" style="display:none" title ="{$mod->Lang('prompt_settings')}">
 	<form method="post" action="moduleinterface.php">
 	<div class="hidden">
 		<input type="hidden" name="mact" value="News,m1_,defaultadmin,0">
-		<input type="hidden" name="{$securename}" value="{$securekey}">
+		<input type="hidden" name="{$securename}" value="{$secureval}">
 	</div>
 	<div class="pageoverflow">
 	<p class="pagetext"><label for="filter_category">{$prompt_category}:</label> {cms_help key='help_articles_filtercategory' title=$prompt_category}</p>
@@ -92,27 +98,30 @@ $(function() {
 	</div>
 	{$endform}
 </div>
-<div class="row c_full">
-	<div class="pageoptions grid_6" style="margin-top:8px">
+<div class="row">
+	<div class="pageoptions startalign last"{if $aitemcount > 0 && $pagecount > 1} style="float:{$stside}"{/if}>
 	{if isset($addlink)}{$addlink}&nbsp;{/if}
-	<a id="toggle_filter" title="{$mod->Lang('viewfilter')}">
-	{admin_icon icon='view.gif' alt=$mod->Lang('viewfilter')} {$mod->Lang('filter')}
+	<a id="toggle_filter" title="{$mod->Lang('title_editsettings')}">
+	{admin_icon icon='edit.gif' alt=$mod->Lang('title_editsettings')} {lang('settings')}
 	</a>
 	{if $have_filter}&nbsp;<span id="filtermsg" title="{$mod->Lang('title_filterapplied')}">({$mod->Lang('filterapplied')})</span>{/if}
 	</div>
 {if $aitemcount > 0 && $pagecount > 1}
-	<div class="pageoptions grid_6 endalign">
+	<div class="pageoptions endalign last" style="float:{$ndside};margin-top:-0.5em">
 		<form method="post" action="moduleinterface.php">
 		<div class="hidden">
 			<input type="hidden" name="mact" value="News,m1_,defaultadmin,0">
-			<input type="hidden" name="{$securename}" value="{$securekey}">
+			<input type="hidden" name="{$securename}" value="{$secureval}">
 		</div>
-		<label for="pnum">{$mod->Lang('prompt_page')}</label>&nbsp;
-		<select id="pnum" name="{$actionid}pagenumber">
-		{cms_pageoptions numpages=$pagecount curpage=$pagenumber}
-		</select>&nbsp;
-		<input type="submit" name="{$actionid}paginate" data-ui-icon="ui-icon-triangle-2-e-w" value="{$mod->Lang('prompt_go')}">
-		{$endform}
+		<label for="selpnum">{$mod->Lang('prompt_page')}</label>&nbsp;
+		<select id="selpnum" name="{$actionid}pagenumber">
+			{cms_pageoptions numpages=$pagecount curpage=$pagenumber}
+		</select>
+{*		<button class="ui-button ui-corner-all">
+			<span class="ui-button-icon-primary ui-icon ui-icon-arrowthick-1-{if $stside=='left'}w{else}e{/if}"></span>
+			<span class="ui-button-text">{$mod->Lang('prompt_go')}</span>
+		</button>*}
+		</form>
 	</div>
 {/if}
 </div>{* .row *}
@@ -121,7 +130,7 @@ $(function() {
 <form method="post" action="moduleinterface.php">
 <div class="hidden">
 	<input type="hidden" name="mact" value="News,m1_,defaultadmin,0">
-	<input type="hidden" name="{$securename}" value="{$securekey}">
+	<input type="hidden" name="{$securename}" value="{$secureval}">
 </div>
 <table class="pagetable" id="articlelist">
 	<thead>
@@ -197,10 +206,15 @@ $(function() {
 			<option value="setpublished">{$mod->Lang('bulk_setpublished')}</option>
 			<option value="setcategory">{$mod->Lang('bulk_setcategory')}</option>
 		</select>
+{if !empty($categoryinput)}
 		<div id="bulk_category" style="display:inline-block">
 			{$mod->Lang('category')}: {$categoryinput}
 		</div>
-		<input type="submit" id="btnbulk" name="{$actionid}submit_bulkaction" value="{$mod->Lang('submit')}">
+{/if}
+		<button id="btnbulk" class="ui-button ui-corner-all" name="{$actionid}submit_bulkaction">
+			<span class="ui-button-icon-primary ui-icon ui-icon-gear"></span>
+			<span class="ui-button-text">{$mod->Lang('submit')}</span>
+		</button>
 	</div>
 {/if}
 {*	<div class="clearb"></div>*}
