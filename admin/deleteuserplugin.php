@@ -49,13 +49,13 @@ if (isset($_GET["userplugin_id"])) {
 
         HookManager::do_hook('Core::DeleteUserDefinedTagPre', ['id'=>$userplugin_id, 'name'=>&$userplugin_name]);
 
-        $query = 'SELECT event_id,handler_id,handler_order FROM '.CMS_DB_PREFIX.'event_handlers
-                           WHERE tag_name = ?';
+        $query = 'SELECT event_id,handler_id,handler_order FROM '.CMS_DB_PREFIX.
+        'event_handlers WHERE handler = ? AND handler_type = '.Events::HANDLERUDT;
         $handlers = $db->GetArray($query,array($userplugin_name));
         if( is_array($handlers) && count($handlers) > 0 ) {
             $q1 = 'DELETE FROM '.CMS_DB_PREFIX.'event_handlers WHERE handler_id = ?';
-            $q2 = 'UPDATE '.CMS_DB_PREFIX.'event_handlers SET handler_order = (handler_order - 1)
-                            WHERE handler_order > ? AND event_id = ?';
+            $q2 = 'UPDATE '.CMS_DB_PREFIX.
+            'event_handlers SET handler_order = (handler_order - 1) WHERE handler_order > ? AND event_id = ?';
             foreach( $handlers as $tmp ) {
                 $hid = $tmp['handler_id'];
                 $eid = $tmp['event_id'];
