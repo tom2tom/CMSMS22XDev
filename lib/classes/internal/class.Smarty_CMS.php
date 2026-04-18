@@ -65,11 +65,12 @@ class Smarty_CMS extends CMSSmartyBase
         $this->template_class = 'CMS_Smarty_Template';
 
         // common resources.
-        $this->registerResource('module_db_tpl',new CMSModuleDbTemplateResource());
-        $this->registerResource('module_file_tpl',new CMSModuleFileTemplateResource());
-        $this->registerResource('cms_template',new CmsTemplateResource()); // <- Should proably be global and removed from parser?
-        $this->registerResource('template',new CmsTemplateResource()); // <- Should proably be global and removed from parser? // deprecated
-        $this->registerResource('cms_stylesheet',new CmsStylesheetResource());
+//      $this->registerResource('file',new CMSMS\internal\FileResource()); TODO subclass Smarty resource with more checks
+        $this->registerResource('module_db_tpl',new CMSMS\internal\ModuleDbTemplateResource());
+        $this->registerResource('module_file_tpl',new CMSMS\internal\ModuleFileTemplateResource());
+        $this->registerResource('cms_template',new CMSMS\internal\TemplateResource()); // <- Should proably be global and removed from parser?
+        $this->registerResource('template',new CMSMS\internal\TemplateResource()); // <- Should proably be global and removed from parser? // deprecated
+        $this->registerResource('cms_stylesheet',new CMSMS\internal\StylesheetResource());
 
         // register default plugin handler
         $this->registerDefaultPluginHandler(array($this,'defaultPluginHandler'));
@@ -102,15 +103,33 @@ class Smarty_CMS extends CMSSmartyBase
 //see STATE_INSTALL below            if(isset($CMS_INSTALL_PAGE)) return;
 
             if( is_sitedown() ) {
-                $this->setCaching(false);
-                $this->force_compile = true;
+                $this->setCaching(Smarty::CACHING_OFF);
+                $this->force_compile = true; // redundant with CACHING_OFF ?
+            }
+            else {
+                if( cms_siteprefs::get('use_smartycache',false) ) {
+                    $val = (int)cms_siteprefs::get('SmartyFrontcacheLife',60); // minutes
+                    if( $val > 0 ) {
+                        $this->setCacheLifetime($val * 60);
+                        $val = (CMS_DEBUG || cms_siteprefs::get('use_smartycompilecheck',true)) ? Smarty::COMPILECHECK_ON : Smarty::COMPILECHECK_CACHEMISS;
+                        $this->setCompileCheck($val);
+                        $val = Smarty::CACHING_LIFETIME_SAVED;
+                    }
+                    else {
+                        $val = Smarty::CACHING_OFF;
+                    }
+                }
+                else {
+                    $val = Smarty::CACHING_OFF;
+                }
+                $this->setCaching($val); // might be changed in index.php per page cachability
             }
 
             // Load resources
-            $this->registerResource('tpl_top',new CmsTemplateResource('top'));
-            $this->registerResource('tpl_head',new CmsTemplateResource('head'));
-            $this->registerResource('tpl_body',new CmsTemplateResource('body'));
-            $this->registerResource('content',new CMSContentTemplateResource());
+            $this->registerResource('tpl_top',new CMSMS\internal\TemplateResource('top'));
+            $this->registerResource('tpl_head',new CMSMS\internal\TemplateResource('head'));
+            $this->registerResource('tpl_body',new CMSMS\internal\TemplateResource('body'));
+            $this->registerResource('content',new CMSMS\internal\ContentTemplateResource());
 
             // just for frontend actions.
             $this->registerPlugin('compiler','content','CMS_Content_Block::smarty_compile_fecontentblock',false);
@@ -121,28 +140,29 @@ class Smarty_CMS extends CMSSmartyBase
             // Autoload filters
             $this->autoloadFilters();
 
-            // compile check can only be enabled, if using smarty cache... just for safety.
-            if( cms_siteprefs::get('use_smartycache',0) ) $this->setCompileCheck(cms_siteprefs::get('use_smartycompilecheck',1)); //i.e. default COMPILECHECK_ON c.f. COMPILECHECK_CACHEMISS (2)
-
             // Enable custom security, permissive or not
             $this->enableSecurity('CMSSmartySecurityPolicy');
         }
         elseif( $_gCms->test_state(CmsApp::STATE_ADMIN_PAGE) ) {
-            $this->setCaching(false);
+            /* Some pages e.g. CM and DM polled-lists hate a cached template
+               So admin caching is disabled here but might be enabled in-context */
+            $this->setCaching(Smarty::CACHING_OFF);
             $admin_dir = $config['admin_path'];
-            $this->addPluginsDir($admin_dir.'/plugins');
-            $this->setTemplateDir($admin_dir.'/templates');
-            $this->setConfigDir([$config['assets_path'].'/configs',$admin_dir.'/configs',TMP_CONFIG_LOCATION]);
+            $this->addPluginsDir($admin_dir.DIRECTORY_SEPARATOR.'plugins');
+            $this->setTemplateDir($admin_dir.DIRECTORY_SEPARATOR.'templates');
+            $this->setConfigDir([$config['assets_path'].DIRECTORY_SEPARATOR.'configs',$admin_dir.DIRECTORY_SEPARATOR.'configs',TMP_CONFIG_LOCATION]);
+            $this->registerResource('admin_tpl',new CMSMS\internal\AdminTemplateResource());
+            $this->registerResource('theme_file_tpl',new CMSMS\internal\AdminThemeTemplateResource());
             // TODO custom security for admin might be a breaker
             $this->enableSecurity('CMSSmartySecurityPolicy');
         }
         elseif( $_gCms->test_state(CmsApp::STATE_INSTALL) ) {
-            $this->addTemplateDir($config['assets_path'].'/templates');
+            $this->addTemplateDir($config['assets_path'].DIRECTORY_SEPARATOR.'templates');
             // no change to default security during installer run
         }
-        // $_call->func(args) can be used in templates instead of func(args) for Smarty 4.5.1+
+        // $_call->func(args) can be used in templates instead of func(args) esp. for Smarty 4.5.1+
         $this->assignGlobal('_call',new Smarty_TemplateCaller($this));
-        // _call::class__method(args) can be used in templates instead of class::method(args) for Smarty 4.5.1+
+        // _call::class__method(args) can be used in templates instead of class::method(args) esp. for Smarty 4.5.1+
         $this->registerClass('_call',Smarty_TemplateCaller::class);
     }
 
@@ -206,7 +226,7 @@ class Smarty_CMS extends CMSSmartyBase
      * @param string $name key in recorded classes array
      * @param string $classname possibly-namespaced name understood by PHP
      */
-    public function registerClass($name,$classname)
+    public function registerClass($name, $classname)
     {
         if( $this->security_policy ) {
             if( $this->security_policy->static_classes === null ) {
@@ -221,12 +241,12 @@ class Smarty_CMS extends CMSSmartyBase
     }
 
     /**
-     * Registers plugin for use in templates, without any duplication-error
+     * Register a plugin for use in templates, without any duplication-error
      *
      * @param string   $type       plugin type
      * @param string   $tag        name of template tag
      * @param callback $callback   PHP callback to register
-     * @param bool  $cacheable  if true (default) this function is cachable
+     * @param bool     $cacheable  whether this plugin is cachable Default true
      * @param array|null $cache_attr caching attributes if any
      * @return Smarty_Internal_Templatebase current Smarty_Internal_Templatebase (or Smarty or Smarty_Internal_Template) instance for chaining
      * @throws SmartyException when the plugin tag is invalid
@@ -305,16 +325,16 @@ class Smarty_CMS extends CMSSmartyBase
     }
 
     /**
-     * Set the global cache id.
+     * Set or clear the global cache id.
      * This is a prefix that is used when smarty caching is enabled.
      *
-     * @param int $id
+     * @param mixed $id
      * @internal
      * @return void
      */
     public function set_global_cacheid($id)
     {
-        if( is_null($id) || $id === '' ) {
+        if( $id === null || $id === false || $id === '' || strcasecmp($id,'nocache') == 0 ) {
             $this->_global_cache_id = null;
         }
         else {
@@ -326,7 +346,7 @@ class Smarty_CMS extends CMSSmartyBase
      * Get the global cache id if any.
      *
      * @internal
-     * @return int|null
+     * @return mixed
      */
     public function get_global_cacheid()
     {
@@ -337,8 +357,8 @@ class Smarty_CMS extends CMSSmartyBase
      * Get a suitable parent template for a new template.
      *
      * Smarty uses a stack of ancestor templates. The parent of this
-     * one will be the closest template on that stack, or if there
-     * are no ancestors, then the root Smarty object is used.
+     * one will be the closest template on that stack, or if there is
+     * no ancestor, then the global Smarty object is used.
      *
      * e.g.
      * <code>$smarty->createTemplate('somefile.tpl',$cache_id,$compile_id,$smarty->get_template_parent());</code>
@@ -387,7 +407,7 @@ class Smarty_CMS extends CMSSmartyBase
             else {
                 throw new Exception('Unknown template-value provided to '.__METHOD__);
             }
-            if( startswith($name, 'string:') ) {
+            if( startswith($name,'string:') ) {
                 if( strlen($name) > 22 ) {
                     $name = substr($name,0,22) . '...';
                 }
@@ -403,7 +423,7 @@ class Smarty_CMS extends CMSSmartyBase
                 // get the parent off of the stack.
                 $parent = $this->get_template_parent();
             }
-            $_tpl = $this->createTemplate($template, $cache_id, $compile_id, $parent);
+            $_tpl = $this->createTemplate($template,$cache_id,$compile_id,$parent);
         }
 
         //put the new template onto the stack, and do our work, to handle recursive calls
@@ -434,17 +454,24 @@ class Smarty_CMS extends CMSSmartyBase
      */
     public function createTemplate($template, $cache_id = null, $compile_id = null, $parent = null, $do_clone = true)
     {
-        if( !(startswith($template,'string:') || startswith($template,'eval:')) ) {
-            if( (strpos($template,'*')) > 0 ) throw new LogicException("$template is an invalid CMSMS resource specification");
-            if( (strpos($template,'/')) > 0 ) throw new LogicException("$template is an invalid CMSMS resource specification");
+        if( !(strncasecmp($template,'string:',7) == 0 || strncasecmp($template,'eval:',5) == 0)) { // TODO mebbe a sanity-check for eval: content ?
+            if( strpos($template,'*') !== false ) { throw new LogicException("$template is an invalid CMSMS resource specification"); }
+            if( strncasecmp($template,'file:',5) == 0 ) {
+                // validate the specified file
+                //$file = trim(substr($template,5));
+            }
+            elseif( (strpos($template,'/')) > 0 ) { throw new LogicException("$template is an invalid CMSMS resource specification"); }
         }
-        if( is_null($cache_id) || $cache_id === '' ) {
+        if( $cache_id === null || $cache_id === false || $cache_id === '' ) {
             $cache_id = $this->_global_cache_id;
         }
         elseif( $cache_id[0] == '|' ) {
             $cache_id = $this->_global_cache_id . $cache_id;
         }
-        return parent::createTemplate($template, $cache_id, $compile_id, $parent, $do_clone);
+        elseif( strcasecmp($cache_id,'nocache') == 0 ) { // since 2.2.23F2
+            $cache_id = null;
+        }
+        return parent::createTemplate($template,$cache_id,$compile_id,$parent,$do_clone);
     }
 
     /**
@@ -459,11 +486,14 @@ class Smarty_CMS extends CMSSmartyBase
      */
     public function clearCache($template_name, $cache_id = null, $compile_id = null, $exp_time = null, $type = null)
     {
-        if( is_null($cache_id) || $cache_id === '' ) {
+        if( $cache_id === null || $cache_id === false || $cache_id === '' ) {
             $cache_id = $this->_global_cache_id;
         }
         elseif( $cache_id[0] == '|' ) {
             $cache_id = $this->_global_cache_id . $cache_id;
+        }
+        elseif( strcasecmp($cache_id,'nocache') == 0 ) {
+            $cache_id = null;
         }
         return parent::clearCache($template_name,$cache_id,$compile_id,$exp_time,$type);
     }
@@ -479,11 +509,14 @@ class Smarty_CMS extends CMSSmartyBase
      */
     public function isCached($template = null, $cache_id = null, $compile_id = null, $parent = null)
     {
-        if( is_null($cache_id) || $cache_id === '' ) {
+        if( $cache_id === null || $cache_id === false || $cache_id === '' ) {
             $cache_id = $this->_global_cache_id;
         }
         elseif( $cache_id[0] == '|' ) {
             $cache_id = $this->_global_cache_id . $cache_id;
+        }
+        elseif( $cache_id == 'nocache' ) {
+            $cache_id = null;
         }
         return parent::isCached($template,$cache_id,$compile_id,$parent);
     }
@@ -500,18 +533,18 @@ class Smarty_CMS extends CMSSmartyBase
         $this->force_compile = true;
         //$this->debugging = get_userid(false);
 
-        $this->assign('e_line', $e->getLine());
-        $this->assign('e_file', $e->getFile());
-        $this->assign('e_message', $e->getMessage());
-        $this->assign('e_trace', htmlentities($e->getTraceAsString()));
-        $this->assign('loggedin', get_userid(false));
+        $this->assign('e_line',$e->getLine());
+        $this->assign('e_file',$e->getFile());
+        $this->assign('e_message',$e->getMessage());
+        $this->assign('e_trace',htmlentities($e->getTraceAsString()));
+        $this->assign('loggedin',get_userid(false));
 
         // put mention into the admin log
-        audit('', 'Smarty', 'Error: '.$e->getMessage().'. Backtrace in debug.log.');
+        audit('','Smarty','Error: '.$e->getMessage().'. Backtrace in debug.log.');
         // and into the debug log
         $btarr = $e->getTrace();
-        $btarr[] = ['file'=>$e->getFile(), 'function'=>'unknown', 'line'=>$e->getLine()];
-        debug_bt_to_log($btarr, 3);
+        $btarr[] = ['file'=>$e->getFile(),'function'=>'unknown','line'=>$e->getLine()];
+        debug_bt_to_log($btarr,3);
 
         $output = $this->fetch('cmsms-error-console.tpl');
 
@@ -539,10 +572,10 @@ class Smarty_CMS extends CMSSmartyBase
     public function loadPlugin($plugin_name, $check = true)
     {
         // if function or class exists, nothing more to do
-        if( $check && (is_callable($plugin_name) || class_exists($plugin_name, false)) ) return true;
+        if( $check && (is_callable($plugin_name) || class_exists($plugin_name,false)) ) return true;
 
         // plugin name is expected to be like: Smarty_[Type]_[Name]
-        $_name_parts = explode('_', $plugin_name, 3);
+        $_name_parts = explode('_',$plugin_name,3);
 
         // plugin name must have three parts to be valid
         // count($_name_parts) < 3 === !isset($_name_parts[2])
@@ -569,7 +602,7 @@ class Smarty_CMS extends CMSSmartyBase
         $_stream_resolve_include_path = function_exists('stream_resolve_include_path');
 
         // poll plugin dirs to find the plugin
-        foreach($this->getPluginsDir() as $_plugin_dir) {
+        foreach( $this->getPluginsDir() as $_plugin_dir ) {
             $names = array($_plugin_dir . $_plugin_filename,
                            $_plugin_dir . strtolower($_plugin_filename)
                 );
@@ -577,11 +610,11 @@ class Smarty_CMS extends CMSSmartyBase
             foreach( $names as $file ) {
                 if( file_exists($file) ) {
                     require_once($file);
-                    if( is_callable($plugin_name) || class_exists($plugin_name, false) ) return $file;
+                    if( is_callable($plugin_name) || class_exists($plugin_name,false) ) return $file;
                 }
 
                 if( $this->use_include_path &&
-                    !preg_match('/^([\/\\\\]|[a-zA-Z]:[\/\\\\])/', $_plugin_dir) ) {
+                    !preg_match('/^([\/\\\\]|[a-zA-Z]:[\/\\\\])/',$_plugin_dir) ) {
                     // try PHP include_path
                     if( $_stream_resolve_include_path ) {
                         $file = stream_resolve_include_path($file);
@@ -591,7 +624,7 @@ class Smarty_CMS extends CMSSmartyBase
                     }
                     if( $file ) {
                         require_once $file;
-                        if( is_callable($plugin_name) || class_exists($plugin_name, false) ) return $file;
+                        if( is_callable($plugin_name) || class_exists($plugin_name,false) ) return $file;
                     }
                 }
             }
@@ -599,10 +632,48 @@ class Smarty_CMS extends CMSSmartyBase
         // no match found
         return false;
     }
+
+    /**
+     * Change the current caching mode
+     * For admin scripts (module-actions and others) to tailor their
+     * templates' processing.
+     * Does not involve any module's 'base' properties
+     * @since 3.2.23F2
+     *
+     * @param bool $state The wanted cachability. Default true.
+     * @param array $context parameters for checking whether to enable caching. Default []. UNUSED
+     */
+    public function changeCaching($state = true, array $context = [])
+    {
+        if( $state && $this->caching == Smarty::CACHING_OFF &&
+            cms_siteprefs::get('use_smartycache',false) ) {
+            if( $_REQUEST && !empty($_REQUEST['mact']) ) {
+                //TODO maybe tailor per module & action in mact
+                return; // no automatic caching for module-action requests
+            }
+            if( cmsms()->is_frontend_request() ) {
+                $val = cms_siteprefs::get('SmartyAdmincacheLife',60); // mins
+            }
+            else {
+                $val = cms_siteprefs::get('SmartyFrontcacheLife',30);
+            }
+            if( $val > 0 ) {
+                $this->setCaching(Smarty::CACHING_LIFETIME_SAVED);
+                $this->setCacheLifetime($val * 60); //secs
+            }
+            $this->force_compile = true;
+        }
+        elseif( !($state || $this->caching == Smarty::CACHING_OFF) ) {
+            $this->setCaching(Smarty::CACHING_OFF);
+            $this->force_compile = true;
+        }
+    }
 } // class
 
 /**
  * Workaround for some Smartys' (e.g. V5) disabling of all PHP function calls
+ * $_call->func(args) can be used instead of an unregistered func(args)
+ * _call::class__method(args) can be used instead of an unregistered class::method(args)
  * @since 2.2.19F2
  * @See also Install_TemplateCaller class
  */
@@ -620,7 +691,7 @@ class Smarty_TemplateCaller
     #[\ReturnTypeWillChange]
     public function __call($name, $args)
     {
-        if( $this->php_functions !== null && (!$this->php_functions || in_array($name, $this->php_functions)) ) {
+        if( $this->php_functions !== null && (!$this->php_functions || in_array($name,$this->php_functions)) ) {
             return $name(...$args);
         }
         return "<!-- prohibited function $name called -->";
@@ -629,10 +700,10 @@ class Smarty_TemplateCaller
     #[\ReturnTypeWillChange]
     public static function __callStatic($name, $args)
     {
+        $pos = strpos($name, '__');
         if( self::$static_classes !== null && (!self::$static_classes ||
-           ($classname = substr($name, 0, strpos($name, '__')) && in_array($classname, self::$static_classes))) ) {
-            $num = 1;
-            $name = str_replace('__', '::', $name, $num);
+           ($classname = substr($name, 0, $pos) && in_array($classname, self::$static_classes))) ) {
+            $name = substr_replace($name, '::', $pos, 2);
             return $name(...$args);
         }
         return "<!-- prohibited static function $name called -->";
