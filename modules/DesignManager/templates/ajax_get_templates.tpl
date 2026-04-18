@@ -1,34 +1,37 @@
 {form_start action='defaultadmin' __activetab='templates'}{strip}
 
 <div class="row">
-  <div class="pageoptions startalign last">
+  <div class="pageoptions startalign last"{if !empty($tpl_nav) && $tpl_nav.numpages > 1} style="float:{$stside}"{/if}>
   {if $has_add_right && !empty($list_types)}
-    <a id="addtemplate" accesskey="a" title="{$mod->Lang('create_template')}">{admin_icon icon='newobject.gif' alt=$mod->Lang('create_template')}&nbsp;{$mod->Lang('create_template')}</a>&nbsp;&nbsp;
+    <a id="addtemplate" accesskey="a" title="{$mod->Lang('create_template')}">{admin_icon icon='newobject.gif' alt=$mod->Lang('create_template')} {$mod->Lang('create_template')}</a>&nbsp;&nbsp;
   {/if}
-{if !empty($templates) || !empty($tpl_filter[0])}
-    <a id="edittplfilter" accesskey="f" title="{$mod->Lang('prompt_editfilter')}">{admin_icon icon='view.gif' alt=$mod->Lang('prompt_editfilter')}&nbsp;{$mod->Lang('filter')}</a>&nbsp;&nbsp;
+{if !empty($templates)}
   {if $have_tpl_locks}
     <a id="clearlocks" accesskey="l" title="{$mod->Lang('title_clearlocks')}" href="{cms_action_url action='admin_clearlocks' type='template'}">{admin_icon icon='run.gif' alt=''}&nbsp;{$mod->Lang('prompt_clearlocks')}</a>&nbsp;&nbsp;
   {elseif !empty($have_tpl_selflocks)}
     <a accesskey="l" title="{$mod->Lang('title_clearlocks2')}{if !empty($which_selflocks)} ({$which_selflocks}){/if}" href="{cms_action_url action='admin_clearlocks' type='template' self=1}">{admin_icon icon='run.gif' alt=''}&nbsp;{$mod->Lang('prompt_clearlocks2')}</a>&nbsp;&nbsp;
   {/if}
+{/if}
+{if !empty($templates) || !empty($tpl_filter[0])}
+    <a id="edittplfilter" accesskey="f" title="{$mod->Lang('title_editsettings')}">{admin_icon icon='edit.gif' alt=$mod->Lang('title_editsettings')} {lang('settings')}</a>&nbsp;&nbsp;
   {if !empty($tpl_filter[0])}
     <span id="filtermsg" title="{$mod->Lang('title_filterapplied')}">({$mod->Lang('filterapplied')})</span>
   {/if}
 {/if}
   </div>
-
  {if !empty($tpl_nav) && $tpl_nav.numpages > 1}
-  <div class="pageoptions endalign last">
+  <div class="pageoptions endalign last" style="float:{$ndside};margin-top:-0.5em">
     <label for="tpl_page">{$mod->Lang('prompt_page')}:</label>&nbsp;
-    <select id="tpl_page" name="{$actionid}tpl_page">
+    <select id="tpl_page" name="{$actionid}tpl_page" style="margin-top:4px">
       {cms_pageoptions numpages=$tpl_nav.numpages curpage=$tpl_nav.curpage}
     </select>
-    &nbsp;<input type="submit" data-ui-icon="ui-icon-triangle-2-e-w" value="{$mod->Lang('go')}">
+{*  <button class="ui-button ui-corner-all">
+      <span class="ui-button-icon-primary ui-icon ui-icon-arrowthick-1-{if $stside=='left'}w{else}e{/if}"></span>
+      <span class="ui-button-text">{$mod->Lang('go')}</span>
+    </button>*}
   </div>
  {/if}
 </div>
-
 {if !empty($templates)}
   <table class="pagetable">
     <thead>
@@ -72,19 +75,19 @@
     {/if}
       {* template type column *}
       <td>
-        {include file='module_file_tpl:DesignManager;admin_defaultadmin_tpltype_tooltip.tpl' assign='tpltype_tooltip'}
-        {if !empty($list_types)}<span class="tooltip" data-cms-description='{$tpltype_tooltip}'>{$list_types.$type_id}</span>{/if}
+        {if !empty($list_types)}{$list_types.$type_id}{/if}
       </td>
       {* design column *}
       <td>{$t1=$template->get_designs()}
       {if count($t1) == 1}
           {$t1=$t1[0]}
-       {if $manage_designs}
+{*     {if $manage_designs}
         {cms_action_url action=admin_edit_design design=$t1 assign='edit_design_url'}
         <a href="{$edit_design_url}" title="{$mod->Lang('edit_design')}">{$design_names.$t1}</a>
        {else}
+*}
         {$design_names.$t1}
-       {/if}
+{*       {/if*}
       {elseif count($t1) == 0}
         <span title="{$mod->Lang('help_template_no_designs')}">{$mod->Lang('prompt_none')}</span>
       {else}
@@ -151,11 +154,14 @@
         <option value="export">{$mod->Lang('export')}</option>
         <option value="import">{$mod->Lang('import')}</option>
       </select>
-      <input id="tpl_bulk_submit" class="tpl_bulk_action" type="submit" name="{$actionid}submit_bulk_tpl" value="{$mod->Lang('submit')}">
+      <button id="tpl_bulk_submit" class="ui-button ui-corner-all tpl_bulk_action" name="{$actionid}submit_bulk_tpl">
+        <span class="ui-button-icon ui-icon ui-icon-gear"></span>
+        <span class="ui-button-text">{$mod->Lang('submit')}</span>
+      </button>
     </div>
   </div>
 {else}
-  <p class="information">{$mod->Lang('warning_no_templates_available')}</p>
+  <p class="information">{$mod->Lang('warning_no_templates')}</p>
 {/if}
 
 {/strip}{form_end}
