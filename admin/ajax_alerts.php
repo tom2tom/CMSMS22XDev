@@ -14,7 +14,7 @@
 #
 #You should have received a copy of the GNU General Public License
 #along with this program. If not, read the license online at:
-#https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+#https://www.gnu.org/licenses/#LicenseURLs
 #
 #$Id$
 
