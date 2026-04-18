@@ -93,7 +93,7 @@ $(function() {
       type: 'content',
       oid: content_id
     };
-    opts[cms_data.secure_param_name] = cms_data.user_key;
+    opts[cms_data.secure_param_name] = cms_data.secure_param_value;
     $.ajax('{$admin_url}/ajax_lock.php?showtemplate=false', {
       url: url,
       data: opts,
@@ -207,7 +207,7 @@ $(function() {
         opt: 'check',
         type: 'content'
       };
-      opts[cms_data.secure_param_name] = cms_data.user_key;
+      opts[cms_data.secure_param_name] = cms_data.secure_param_value;
       $.ajax('{$admin_url}/ajax_lock.php?showtemplate=false', {
         async: false,
         data: opts
