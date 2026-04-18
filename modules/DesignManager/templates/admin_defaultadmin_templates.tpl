@@ -46,18 +46,18 @@ $(function() {
       type: 'template',
       oid: tpl_id
     };
-    opts[cms_data.secure_param_name] = cms_data.user_key;
+    opts[cms_data.secure_param_name] = cms_data.secure_param_value;
     $.ajax('{$admin_url}/ajax_lock.php?showtemplate=false', {
       data: opts
     }).done(function(data) {
       if (data.status == 'success') {
         if (data.locked) {
-          // display a message
           ev.preventDefault();
           cms_alert('{$mod->Lang('error_contentlocked')|escape:'javascript'}');
         }
       } else {
-      //TODO handle error
+        ev.preventDefault();
+        cms_alert('{lang('error_internal')|escape:'javascript'}');
       }
     });
   })
@@ -83,6 +83,11 @@ $(function() {
        }
       ]
     });
+  })
+{/if}
+{if 1}{*TODO test*}
+  .on('change', '#tpl_page', function() {
+    $(this).closest('form').trigger('submit');
   })
 {/if}
   .on('click', '#edittplfilter', function() {
@@ -145,15 +150,18 @@ $(function() {
         <option value="desc"{if $tpl_filter.sortorder == 'desc'} selected{/if}>{$mod->Lang('desc')}</option>
       </select>
     </div>
+    <input type="hidden" name="{$actionid}filter_tpl_limit" value="">
+{if count($tpl_filterpages) > 0}
     <div style="display:table-row">
       <label for="filter_tpl_limit" class="endalign" style="display:table-cell;padding-{$ndside}:.5em">{$mod->Lang('prompt_limit')}:</label>
       <select id="filter_tpl_limit" style="display:table-cell" name="{$actionid}filter_tpl_limit" title="{$mod->Lang('title_filterlimit')}">
-        <option value="10"{if $tpl_filter.limit == 10} selected{/if}>10</option>
-        <option value="25"{if $tpl_filter.limit == 25} selected{/if}>25</option>
-        <option value="50"{if $tpl_filter.limit == 50} selected{/if}>50</option>
-        <option value="100"{if $tpl_filter.limit == 100} selected{/if}>100</option>
+        <option value="10"{if (isset($tpl_filter.limit) && $tpl_filter.limit == 10)} selected{/if}>10</option>
+{if isset($tpl_filterpages.25)}        <option value="25"{if (isset($tpl_filter.limit) && $tpl_filter.limit == 25)} selected{/if}>25</option>{/if}
+{if isset($tpl_filterpages.50)}        <option value="50"{if (isset($tpl_filter.limit) && $tpl_filter.limit == 50)} selected{/if}>50</option>{/if}
+{if isset($tpl_filterpages.100)}        <option value="100"{if (isset($tpl_filter.limit) && $tpl_filter.limit == 100)} selected{/if}>100</option>{/if}
       </select>
     </div>
+{/if}
     </div>
   {form_end}
 </div>{*#filtertpldialog*}
