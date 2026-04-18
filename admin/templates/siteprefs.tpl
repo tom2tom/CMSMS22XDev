@@ -1,29 +1,27 @@
 <div class="pagecontainer">
 
-{tab_header name='general' label=lang('general_settings') active=$tab}
+{tab_header name='general' label=lang('general') active=$tab}
 {tab_header name='sitedown' label=lang('sitedown_settings') active=$tab}
 {tab_header name='mail' label=lang('mail_settings') active=$tab}
-{tab_header name='setup' label=lang('setup') active=$tab}
 {tab_header name='smarty' label=lang('smarty_settings') active=$tab}
+{tab_header name='setup' label=lang('advanced') active=$tab}
 
 {* +++++++++++++++++++++++++++++++++++++++++++ *}
 {tab_start name='general'}
 	<form id="siteprefform_general" method="post" action="{$formurl}">
-		<div>
-			<input type="hidden" name="{$SECURE_PARAM_NAME}" value="{$CMS_USER_KEY}">
+		<div class="hidden">
+			<input type="hidden" name="{$securename}" value="{$secureval}">
 			<input type="hidden" name="active_tab" value="general">
-			<input type="hidden" name="editsiteprefs" value="true">
 		</div>
 		<div class="pageoverflow">
 			<p class="pageinput">
-				<input type="submit" name="submit" value="{lang('submit')}">
+				<input type="submit" name="editsiteprefs" data-ui-icon="ui-icon-caret-1-n" value="{lang('apply')}">
 				<input type="submit" name="cancel" value="{lang('cancel')}">
 			</p>
-			<br>
 		</div>
 		<div class="pageoverflow">
 			<p class="pagetext"><label for="sitename">{lang('sitename')}:</label> {cms_help key2='siteprefs_sitename' title=lang('sitename')}</p>
-			<p class="pageinput"><input type="text" id="sitename" class="pagesmalltextarea" name="sitename" size="30" value="{$sitename}"></p>
+			<p class="pageinput"><input type="text" id="sitename" name="sitename" size="30" value="{$sitename}"></p>
 		</div>
 		<div class="pageoverflow">
 			<p class="pagetext"><label for="frontendlang">{lang('frontendlang')}:</label> {cms_help key2='siteprefs_frontendlang' title=lang('frontendlang')}</p>
@@ -58,25 +56,25 @@
 		<div class="pageoverflow">
 			<p class="pagetext"><label for="defaultdateformat">{lang('date_format_string')}:</label> {cms_help key2='siteprefs_dateformat' title=lang('date_format_string')}</p>
 			<p class="pageinput">
-				<input class="pagenb" id="defaultdateformat" type="text" name="defaultdateformat" size="20" maxlength="255" value="{$defaultdateformat}">
+				<input type="text" class="pagenb" id="defaultdateformat" name="defaultdateformat" size="20" maxlength="255" value="{$defaultdateformat}">
 			</p>
 		</div>
 		<div class="pageoverflow">
 			<p class="pagetext"><label for="thumbnail_width">{lang('thumbnail_width')}:</label> {cms_help key2='siteprefs_thumbwidth' title=lang('thumbnail_width')}</p>
 			<p class="pageinput">
-				<input class="pagenb" id="thumbnail_width" type="text" name="thumbnail_width" size="3" maxlength="3" value="{$thumbnail_width}">
+				<input type="text" class="pagenb" id="thumbnail_width" name="thumbnail_width" size="3" maxlength="3" value="{$thumbnail_width}">
 			</p>
 		</div>
 		<div class="pageoverflow">
 			<p class="pagetext"><label for="thumbnail_height">{lang('thumbnail_height')}:</label> {cms_help key2='siteprefs_thumbheight' title=lang('thumbnail_height')}</p>
 			<p class="pageinput">
-				<input id="thumbnail_height" class="pagenb" type="text" name="thumbnail_height" size="3" maxlength="3" value="{$thumbnail_height}">
+				<input type="text" id="thumbnail_height" class="pagenb" name="thumbnail_height" size="3" maxlength="3" value="{$thumbnail_height}">
 			</p>
 		</div>
 		<div class="pageoverflow">
 			<p class="pagetext"><label for="notice_timeout">{lang('notices_timeout')}:</label> {cms_help key2='siteprefs_noticetimeout' title=lang('notices_timeout_short')}</p>
 			<p class="pageinput">
-				<input id="notice_timeout" class="pagenb" type="text" name="notices_timeout" size="3" maxlength="2" value="{$notices_timeout}">
+				<input type="text" id="notice_timeout" class="pagenb" name="notices_timeout" size="3" maxlength="2" value="{$notices_timeout}">
 			</p>
 		</div>
 		{if !empty($search_modules)}
@@ -88,9 +86,8 @@
 			</p>
 		{/if}
 		<div class="pageoverflow">
-			<br>
 			<p class="pageinput">
-				<input type="submit" name="submit" value="{lang('submit')}">
+				<input type="submit" name="editsiteprefs" data-ui-icon="ui-icon-caret-1-n" value="{lang('apply')}">
 				<input type="submit" name="cancel" value="{lang('cancel')}">
 			</p>
 		</div>
@@ -99,18 +96,16 @@
 {* +++++++++++++++++++++++++++++++++++++++++++ *}
 {tab_start name='sitedown'}
 	<form id="siteprefform_sitedown" method="post" action="{$formurl}">
-		<div>
-			<input type="hidden" name="{$SECURE_PARAM_NAME}" value="{$CMS_USER_KEY}">
+		<div class="hidden">
+			<input type="hidden" name="{$securename}" value="{$secureval}">
 			<input type="hidden" name="active_tab" value="sitedown">
-			<input type="hidden" name="editsiteprefs" value="true">
 		</div>
 		<div class="information" style="display:block">{lang('info_settings_sitedown')}</div>
 		<div class="pageoverflow">
 			<p class="pageinput">
-				<input type="submit" name="submit" value="{lang('submit')}">
+				<input type="submit" name="editsiteprefs" data-ui-icon="ui-icon-caret-1-n" value="{lang('apply')}">
 				<input type="submit" name="cancel" value="{lang('cancel')}">
 			</p>
-			<br>
 		</div>
 
 		<div class="pageoverflow">
@@ -146,10 +141,9 @@
 				<br><strong>{lang('your_ipaddress')}:</strong>&nbsp;<span style="color:red">{$site_ipaddr}</span><br>{lang('info_sitedownexcludes')}
 			</p>
 		</div>
-		<br>
 		<div class="pageoverflow">
-			<div class="dialogoptions">
-				<input type="submit" name="submit" value="{lang('submit')}">
+			<div class="pageinput">
+				<input type="submit" name="editsiteprefs" data-ui-icon="ui-icon-caret-1-n" value="{lang('apply')}">
 				<input type="submit" name="cancel" value="{lang('cancel')}">
 			</div>
 		</div>
@@ -160,20 +154,19 @@
 <script>
 function on_mailer() {
   var v = $('#mailer').val();
-  if( v == 'mail' ) {
+  if (v == 'mail') {
     $('#set_smtp').find('input,select').prop('disabled',true);
     $('#set_sendmail').find('input,select').prop('disabled',true);
-  }
-  else if( v == 'smtp' ) {
+  } else if (v == 'smtp') {
     $('#set_smtp').find('input,select').prop('disabled',false);
     $('#set_sendmail').find('input,select').prop('disabled',true);
-  }
-  else if( v == 'sendmail' ) {
-    $('#set_smtp').find('input,select').prop('disabled',true);
+  } else if (v == 'sendmail') {
     $('#set_sendmail').find('input,select').prop('disabled',false);
+    $('#set_smtp').find('input,select').prop('disabled',true);
   }
 }
 $(function() {
+  on_mailer();
   $('#mailertest').on('click', function() {
     $('#testpopup').dialog({
       width: 'auto',
@@ -189,19 +182,28 @@ $(function() {
     $('#testpopup').dialog('close');
     $(this).closest('form').trigger('submit');
   });
+  $('#mailsubmit, #mailsubmit2').on('click', function() {
+    // also submit disabled-element values
+    var fm = $('#siteprefform_mail2');
+    var sel = fm.find(':disabled');
+    if (sel.length > 0) {
+      sel.each(function() {
+        var hin = '<input type="hidden" name="'+this.name+'" value="'+this.value+'">';
+        fm.append(hin);
+      });
+    }
+  });
   $('#mailer').on('change', function() {
     on_mailer();
   });
-  on_mailer();
 });
 </script>
 
 	<div id="testpopup" title="{lang('title_mailtest')}" style="display:none">
 		<form id="siteprefform_mail" method="post" action="{$formurl}">
-			<div>
-				<input type="hidden" name="{$SECURE_PARAM_NAME}" value="{$CMS_USER_KEY}">
+			<div class="hidden">
+				<input type="hidden" name="{$securename}" value="{$secureval}">
 				<input type="hidden" name="active_tab" value="mail">
-				<input type="hidden" name="testmail" value="1">
 			</div>
 			<div class="information">{lang('info_mailtest')}</div>
 			<div class="pageoverflow">
@@ -210,29 +212,26 @@ $(function() {
 					<input type="text" id="testaddress" name="mailtest_testaddress" size="50" maxlength="255">
 				</p>
 			</div>
-			<br>
 			<div class="pageoverflow">
 				<p class="pageinput">
-					<input id="testsend" type="submit" name="sendtest" data-ui-icon="ui-icon-mail-closed" value="{lang('sendtest')}">
-					<input id="testcancel" type="submit" name="cancel" value="{lang('cancel')}">
+					<input type="submit" id="testsend" name="testmail" data-ui-icon="ui-icon-mail-closed" value="{lang('sendtest')}">
+					<input type="submit" id="testcancel" name="cancel" value="{lang('cancel')}">
 				</p>
 			</div>
 		</form>
 	</div>
 
 	<form id="siteprefform_mail2" method="post" action="{$formurl}">
-		<div>
-			<input type="hidden" name="{$SECURE_PARAM_NAME}" value="{$CMS_USER_KEY}">
+		<div class="hidden">
+			<input type="hidden" name="{$securename}" value="{$secureval}">
 			<input type="hidden" name="active_tab" value="mail">
-			<input type="hidden" name="editsiteprefs" value="true">
 		</div>
 		<div class="pageoverflow">
 			<p class="pageinput">
-				<input type="submit" name="submit" value="{lang('submit')}">
-				<input id="mailertest" type="submit" name="testemail" data-ui-icon="ui-icon-gear" value="{lang('test')}">
+				<input type="submit" id="mailsubmit" name="editsiteprefs" data-ui-icon="ui-icon-caret-1-n" value="{lang('apply')}">
+				<input type="submit" id="mailertest" name="testemail" data-ui-icon="ui-icon-gear" value="{lang('test')}">
 				<input type="submit" name="cancel" value="{lang('cancel')}">
 			</p>
-			<br>
 		</div>
 
 		<fieldset id="set_general">
@@ -338,29 +337,67 @@ $(function() {
 				</div>
 		</fieldset>
 		<div class="pageoverflow">
-			<br>
 			<p class="pageinput">
-				<input type="submit" name="submit" value="{lang('submit')}">
+				<input type="submit" id="mailsubmit2" name="editsiteprefs" data-ui-icon="ui-icon-caret-1-n" value="{lang('apply')}">
 				<input type="submit" name="cancel" value="{lang('cancel')}">
 			</p>
 		</div>
 	</form>
-
 {* +++++++++++++++++++++++++++++++++++++++++++ *}
-{tab_start name='setup'}
-	<form id="siteprefform_setup" method="post" action="{$formurl}">
-		<div>
-			<input type="hidden" name="{$SECURE_PARAM_NAME}" value="{$CMS_USER_KEY}">
-			<input type="hidden" name="active_tab" value="setup">
-			<input type="hidden" name="editsiteprefs" value="true">
+{tab_start name='smarty'}
+	<form id="siteprefform_smarty" method="post" action="{$formurl}">
+		<div class="hidden">
+			<input type="hidden" name="{$securename}" value="{$secureval}">
+			<input type="hidden" name="active_tab" value="smarty">
 		</div>
 		<div class="pageoverflow">
 			<div class="pageinput">
-				<input type="submit" name="submit" value="{lang('submit')}">
+				<input type="submit" name="editsiteprefs" data-ui-icon="ui-icon-caret-1-n" value="{lang('apply')}">
 				<input type="submit" name="cancel" value="{lang('cancel')}">
 			</div>
 		</div>
-		<br>
+		<div class="pageoverflow">
+			<p class="pagetext"><label for="smartycache">{lang('prompt_use_smartycaching')}:</label> {cms_help key2='settings_smartycaching' title=lang('prompt_use_smartycaching')}</p>
+			<p class="pageinput">
+				<select id="smartycache" name="use_smartycache">
+					{html_options options=$yesno selected=$use_smartycache}
+				</select>
+			</p>
+		</div>
+		<div class="pageoverflow">
+			<p class="pagetext"><label for="txtfrontcache">{lang('smarty_cache_expiry2')}:</label> {cms_help key2='settings_smartycache_frontlife' title=lang('smarty_cache_expiry2')}</p>
+			<p class="pageinput">
+				<input type="text" id="txtfrontcache" name="SmartyFrontcacheLife" value="{$SmartyFrontcacheLife}" size="3" maxlength="4">
+			</p>
+		</div>
+		<div class="pageoverflow">
+			<p class="pagetext"><label for="txtadmincache">{lang('smarty_cache_expiry1')}:</label> {cms_help key2='settings_smartycache_adminlife' title=lang('smarty_cache_expiry1')}</p>
+			<p class="pageinput">
+				<input type="text" id="txtadmincache" name="SmartyAdmincacheLife" value="{$SmartyAdmincacheLife}" size="3" maxlength="4">
+			</p>
+		</div>
+		<div class="pageoverflow">
+			<p class="pagetext"><label for="compilecheck">{lang('prompt_smarty_compilecheck')}:</label> {cms_help key2='settings_smartycompilecheck' title=lang('prompt_smarty_compilecheck')}</p>
+			<p class="pageinput">
+				<select id="compilecheck" name="use_smartycompilecheck">
+					{html_options options=$yesno selected=$use_smartycompilecheck}
+				</select>
+			</p>
+		</div>
+	</form>
+{* +++++++++++++++++++++++++++++++++++++++++++ *}
+{tab_start name='setup'}
+	<form id="siteprefform_setup" method="post" action="{$formurl}">
+		<div class="hidden">
+			<input type="hidden" name="{$securename}" value="{$secureval}">
+			<input type="hidden" name="active_tab" value="setup">
+		</div>
+		<div class="pageoverflow">
+			<div class="pageinput">
+				<input type="submit" name="editsiteprefs" data-ui-icon="ui-icon-caret-1-n" value="{lang('apply')}">
+				<input type="submit" name="cancel" value="{lang('cancel')}">
+			</div>
+		</div>
 		<fieldset>
 			<legend>{lang('browser_cache_settings')}</legend>
 			<div class="pageoverflow">
@@ -384,7 +421,7 @@ $(function() {
 			<div class="pageoverflow">
 				<p class="pagetext"><label for="autoclearcache2">{lang('autoclearcache2')}:</label> {cms_help key2='settings_autoclearcache' title=lang('autoclearcache2')}</p>
 				<p class="pageinput">
-					<input id="autoclearcache2" type="text" name="auto_clear_cache_age" size="4" value="{$auto_clear_cache_age}" maxlength="4">
+					<input type="text" id="autoclearcache2" name="auto_clear_cache_age" size="4" value="{$auto_clear_cache_age}" maxlength="4">
 				</p>
 			</div>
 		</fieldset>
@@ -393,7 +430,7 @@ $(function() {
 			<div class="pageoverflow">
 				<p class="pagetext"><label for="umask">{lang('global_umask')}:</label> {cms_help key2='settings_umask' title=lang('global_umask')}</p>
 				<p class="pageinput">
-					<input id="umask" type="text" class="pagesmalltextarea" name="global_umask" size="4" value="{$global_umask}">
+					<input type="text" id="umask" name="global_umask" size="4" value="{$global_umask}">
 				</p>
 			</div>
 		{if isset($testresults)}
@@ -428,6 +465,29 @@ $(function() {
 				</p>
 			</div>
 		</fieldset>
+{if !empty($pjobs)}
+		<fieldset>
+			<legend>{lang('async_settings')}</legend>
+			<div class="pageoverflow">
+				<p class="pagetext"><label for="txtintrvl">{lang('settings_jobsinterval')}:</label> {cms_help key2='siteprefs_jobsinterval' title=lang('settings_jobsinterval')}</p>
+				<p class="pageinput">
+					<input type="text" id="txtintrvl" name="jobs_interval" size="3" value="{$jobs_interval}" maxlength="3">
+				</p>
+			</div>
+			<div class="pageoverflow">
+				<p class="pagetext"><label for="txttimo">{lang('settings_jobstimeout')}:</label> {cms_help key2='siteprefs_jobstimeout' title=lang('settings_jobstimeout')}</p>
+				<p class="pageinput">
+					<input type="text" id="txttimo" name="jobs_timeout" size="3" value="{$jobs_timeout}" maxlength="3">
+				</p>
+			</div>
+			<div class="pageoverflow">
+				<p class="pagetext"><label for="txtmxers">{lang('settings_jobmaxerrs')}:</label> {cms_help key2='siteprefs_jobmaxerrs' title=lang('settings_jobmaxerrs')}</p>
+				<p class="pageinput">
+					<input type="text" id="txtmxers" name="job_maxerrs" size="3" value="{$job_maxerrs}" maxlength="2">
+				</p>
+			</div>
+		</fieldset>
+{/if}
 {if !empty($privatePath)}
 		<div class="pageoverflow">
 			<p class="pagetext"><label for="ppath">{lang('protected_data_path')}:</label> {cms_help key2='siteprefs_protected_path' title=lang('protected_data_path')}</p>
@@ -437,45 +497,11 @@ $(function() {
 			<p class="warning">{lang('warn_protected_path')}</p>
 		</div>
 {/if}
-		<br>
 		<div class="pageoverflow">
 			<div class="pageinput">
-				<input type="submit" name="submit" value="{lang('submit')}">
+				<input type="submit" name="editsiteprefs" data-ui-icon="ui-icon-caret-1-n" value="{lang('apply')}">
 				<input type="submit" name="cancel" value="{lang('cancel')}">
 			</div>
-		</div>
-	</form>
-
-{* +++++++++++++++++++++++++++++++++++++++++++ *}
-{tab_start name='smarty'}
-	<form id="siteprefform_smarty" method="post" action="{$formurl}">
-		<div>
-			<input type="hidden" name="{$SECURE_PARAM_NAME}" value="{$CMS_USER_KEY}">
-			<input type="hidden" name="active_tab" value="smarty">
-			<input type="hidden" name="editsiteprefs" value="true">
-		</div>
-		<div class="pageoverflow">
-			<div class="pageinput">
-				<input type="submit" name="submit" value="{lang('submit')}">
-				<input type="submit" name="cancel" value="{lang('cancel')}">
-			</div>
-		</div>
-		<br>
-		<div class="pageoverflow">
-			<p class="pagetext"><label for="smartycache">{lang('prompt_use_smartycaching')}:</label> {cms_help key2='settings_smartycaching' title=lang('prompt_use_smartycaching')}</p>
-			<p class="pageinput">
-				<select id="smartycache" name="use_smartycache">
-					{html_options options=$yesno selected=$use_smartycache}
-				</select>
-			</p>
-		</div>
-		<div class="pageoverflow">
-			<p class="pagetext"><label for="compilecheck">{lang('prompt_smarty_compilecheck')}:</label> {cms_help key2='settings_smartycompilecheck' title=lang('prompt_smarty_compilecheck')}</p>
-			<p class="pageinput">
-				<select id="compilecheck" name="use_smartycompilecheck">
-					{html_options options=$yesno selected=$use_smartycompilecheck}
-				</select>
-			</p>
 		</div>
 	</form>
 {tab_end}
