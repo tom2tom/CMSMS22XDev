@@ -27,20 +27,19 @@ $access = check_permission($userid, 'Modify Site Preferences');
 if (!$access) {
   exit(lang('no_permission')); //TODO throw if can be caught
 }
+$pjobs = check_permission($userid, 'Manage Jobs');
 
 require_once 'header.php';
 require_once cms_join_path(dirname(__DIR__), 'lib', 'test.functions.php');
 
-$gCms = cmsms();
-$smarty->caching = false;
-$smarty->force_compile = true;
-
 $active_content = false;
 $active_db = false;
+$active_jobs = false;
 $active_log = false;
 
-// Database
+$gCms = cmsms();
 
+// Database
 $db = $gCms->GetDb();
 $query = 'SHOW TABLES LIKE ?';
 $tablestmp = $db->GetArray($query, [CMS_DB_PREFIX.'%']);
@@ -55,11 +54,12 @@ foreach ($tablestmp as $table) {
   }
 }
 
-$tpl = $smarty->createTemplate('systemmaintenance.tpl', null, null, $smarty, false);
+$smarty->changeCaching(false);
+$tpl = $smarty->createTemplate('admin_tpl:systemmaintenance.tpl', null, null, $smarty, false);
 $tpl->assign('tablecount', count($tables));
 $tpl->assign('nonseqcount', count($nonseqtables));
 
-function MakeCommaList(array $tables)
+function MakeCommaList(array $tables)//: string
 {
   $out = '';
   foreach ($tables as $table) {
@@ -140,10 +140,20 @@ if (isset($_POST['updateurls'])) {
 
 if (isset($_POST['clearcache'])) {
   $gCms->clear_cached_files();
-  audit('', 'System maintenance', 'Smarty page-content caches cleared');
-  //TODO also do $contentops->SetContentModified();
+  $contentops->SetContentModified();
+  audit('', 'System maintenance', 'Page-content caches cleared');
   $themeObject->ShowMessage(lang('cachecleared'));
   $active_content = true;
+} else {
+  $n = count(scandir(TMP_CACHE_LOCATION, SCANDIR_SORT_NONE));
+  $n += count(scandir(TMP_TEMPLATES_C_LOCATION, SCANDIR_SORT_NONE));
+  $n = max(0, $n-6); // ignore '.' and '..' and 'index.html'
+  $tpl->assign('filescount', $n);
+}
+
+if ($pjobs && isset($_POST['clearjobs'])) {
+  CMSMS\JobOperations::clear_all();
+  $active_jobs = true;
 }
 
 if (isset($_POST['updatehierarchy'])) {
@@ -162,7 +172,7 @@ foreach ($contenttypes as $typeid => $typename) {
 }
 
 if (isset($_POST['addaliases'])) {
-  $count = 0;
+  $n = 0;
   $query = 'SELECT content_id,content_name,type,menu_text,content_alias FROM ' . CMS_DB_PREFIX . "content WHERE content_alias IS NULL OR content_alias=''";
   $allcontent = $db->GetArray($query);
   if ($allcontent) {
@@ -198,19 +208,19 @@ if (isset($_POST['addaliases'])) {
           $alias .= '-' . $alias_num_add;
         }
         $dbresult = $db->Execute($query2, [$alias, $content_id]);
-        ++$count;
+        ++$n;
       }
     }
     $contentops->SetAllHierarchyPositions(); // update hierarchy_path's
   }
 
-  audit('', 'System maintenance', "Updated $count page(s) whose alias was missing");
-  $themeObject->ShowMessage($count . ' ' . lang('sysmain_aliasesfixed'));
+  audit('', 'System maintenance', "Updated $n page(s) whose alias was missing");
+  $themeObject->ShowMessage($n . ' ' . lang('sysmain_aliasesfixed'));
   $active_content = true;
 }
 
 if (isset($_POST['fixtypes'])) {
-  $count = 0;
+  $n = 0;
   $query = 'SELECT content_id,type FROM ' . CMS_DB_PREFIX . 'content';
   $allcontent = $db->GetArray($query);
   if ($allcontent) {
@@ -219,13 +229,13 @@ if (isset($_POST['fixtypes'])) {
       if (!$contentpiece['type'] ||
         !in_array($contentpiece['type'], $simpletypes)) {
         $dbresult = $db->Execute($query2, [$contentpiece['content_id']]);
-        ++$count;
+        ++$n;
       }
     }
   }
 
-  audit('', 'System maintenance', "Converted $count page(s) with invalid content type");
-  $themeObject->ShowMessage($count . ' ' . lang('sysmain_typesfixed'));
+  audit('', 'System maintenance', "Converted $n page(s) with invalid content type");
+  $themeObject->ShowMessage($n . ' ' . lang('sysmain_typesfixed'));
   $active_content = true;
 }
 
@@ -261,6 +271,28 @@ $tpl->assign('withoutaliascount', count($withoutalias));
 $tpl->assign('pageswithinvalidtype', $invalidtypes);
 $tpl->assign('invalidtypescount', count($invalidtypes));
 
+// Jobs
+if ($pjobs) {
+    $query = 'SELECT name,module,errors FROM ' . CMS_DB_PREFIX . CMSMS\JobOperations::RECORDTABLE . ' ORDER BY name,module';
+    $alljobs = $db->GetArray($query);
+    if ($alljobs) {
+        $tpl->assign('jobs', $alljobs);
+        $tpl->assign('jobscount', count($alljobs));
+        $errs = [];
+        foreach ($alljobs as $row) {
+            if ($row['errors'] > 0) {
+                $key = $row['module'] ? $row['module'].'::'.$row['name'] : $row['name'];
+                $errs[$key] = $row['errors'];
+            }
+        }
+        $tpl->assign('jobserrs', $errs);
+    } else {
+        $tpl->assign('jobs', []);
+        $tpl->assign('jobscount', 0);
+    }
+    $tpl->assign('pjobs', true);
+}
+
 // Changelog
 $ch_filename = cms_join_path(dirname(__DIR__), 'doc', 'CHANGELOG.txt');
 
@@ -290,9 +322,10 @@ if (is_readable($ch_filename)) {
 //$active_log = true;
 }
 
+$tpl->assign('active_changelog', $active_log);
 $tpl->assign('active_content', $active_content);
 $tpl->assign('active_database', $active_db);
-$tpl->assign('active_changelog', $active_log);
+$tpl->assign('active_jobs', $active_jobs);
 $tpl->assign('backurl', $themeObject->BackUrl());
 $tpl->display();
 
