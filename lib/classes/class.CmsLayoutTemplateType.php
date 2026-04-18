@@ -134,7 +134,7 @@ class CmsLayoutTemplateType
     public function set_originator($str)
     {
         $str = trim((string)$str);
-        if( !$str ) throw new CmsInvalidDataException('Originator cannot be empty');
+        if( !$str ) throw new CmsInvalidDataException('Template-type originator cannot be empty');
         $this->_data['originator'] = $str;
         $this->_dirty = TRUE;
     }
@@ -158,7 +158,7 @@ class CmsLayoutTemplateType
     public function set_name($str)
     {
         $str = trim((string)$str);
-        if( !$str ) throw new CmsInvalidDataException('Name cannot be empty');
+        if( !$str ) throw new CmsInvalidDataException('Template-type name cannot be empty');
         $this->_data['name'] = $str;
         $this->_dirty = TRUE;
     }
@@ -196,12 +196,14 @@ class CmsLayoutTemplateType
     }
 
     /**
-     * Set the default content used when creating a new template of this  type.
+     * Set the default content used when creating a new template of this type.
      *
      * @param string $str The default template contents.
      */
     public function set_dflt_contents($str)
     {
+        //TODO deal with OS-incompatible line-breaks?
+        //$str = (strncasecmp(PHP_OS, 'WIN', 3) != 0) ? strtr($str, ["\r\n"=>"\n", "\r"=>"\n"]) : str_replace(["\r", "\n", "\r\r\n"], ["\r\n", "\r\n", "\r\n"], $str);
         $this->_data['dflt_contents'] = $str;
         $this->_dirty = TRUE;
     }
@@ -401,27 +403,27 @@ class CmsLayoutTemplateType
      */
     protected function validate($is_insert = TRUE)
     {
-        if( !$this->get_originator() ) throw new CmsInvalidDataException('Invalid Type Originator');
-        if( !$this->get_name() ) throw new CmsInvalidDataException('Invalid Type Name');
+        if( !$this->get_originator() ) throw new CmsInvalidDataException('Invalid template-type originator');
+        if( !$this->get_name() ) throw new CmsInvalidDataException('Invalid template-type name');
         if( !preg_match('/[a-zA-Z0-9_,. ]/',$this->get_name()) ) {
-            throw new CmsInvalidDataException('Name must contain only letters, numbers and underscores.');
+            throw new CmsInvalidDataException('Template-type name can contain only letters, numbers and/or underscores.');
         }
 
         if( !$is_insert ) {
-            if( (int)$this->_data['id'] < 1 ) throw new CmsInvalidDataException('id is not set');
+            if( (int)$this->_data['id'] < 1 ) throw new CmsInvalidDataException('Template-type numeric id is not set');
 
             // check for item with the same name
             $db = CmsApp::get_instance()->GetDb();
             $query = 'SELECT id FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE originator = ? AND name = ? AND id != ?';
             $dbr = $db->GetOne($query,array($this->get_originator(),$this->get_name(),$this->get_id()));
-            if( $dbr ) throw new CmsInvalidDataException('Template Type with the same name already exists.');
+            if( $dbr ) throw new CmsInvalidDataException('Template type having the same name already exists.');
         }
         else {
             // check for item with the same name
             $db = CmsApp::get_instance()->GetDb();
             $query = 'SELECT id FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE originator = ? AND name = ?';
             $dbr = $db->GetOne($query,array($this->get_originator(),$this->get_name()));
-            if( $dbr ) throw new CmsInvalidDataException('Template Type with the same name already exists.');
+            if( $dbr ) throw new CmsInvalidDataException('Template type having the same name already exists.');
         }
     }
 
@@ -613,24 +615,30 @@ WHERE id = ?';
             $tn = call_user_func($t,$this->get_name());
         }
         if( !$to ) $to = $this->get_originator();
-        if( $to == self::CORE ) $to = 'Core';
+        if( $to == self::CORE ) $to = lang('core');
         if( !$tn ) $tn = $this->get_name();
         return $to.'::'.$tn;
     }
 
     /**
-     * Reset the default content of this template type back to factory default
+     * Reset the content of this template type back to factory default
      *
      * @throws CmsException
      * @throws CmsDataNotFoundException
      */
     public function reset_content_to_factory()
     {
-        if( !$this->get_dflt_flag() ) throw new CmsException('This template type does not have default contents');
+        if( !$this->get_dflt_flag() ) {
+            $name = (string)$this->_data['name'];
+            if( !$name ) $name = '<anonymous>';
+            throw new CmsException("Template type '$name' does not have default content");
+        }
         $cb = $this->get_content_callback();
-        if( !$cb ) throw new CmsDataNotFoundException('No callback information to reset content');
-        if( !is_callable($cb) ) throw new CmsDataNotFoundException('No callback information to reset content');
-
+        if( !$cb || !is_callable($cb) ) {
+            $name = (string)$this->_data['name'];
+            if( !$name ) $name = '<anonymous>';
+            throw new CmsDataNotFoundException("Template type '$name' has no callback to reset content");
+        }
         $content = call_user_func($cb,$this);
         $this->set_dflt_contents($content);
     }
@@ -733,7 +741,7 @@ WHERE id = ?';
      */
     public static function load_all_by_originator($originator)
     {
-        if( !$originator ) throw new CmsInvalidDataException('Orignator is empty');
+        if( !$originator ) throw new CmsInvalidDataException('Template-type orignator is empty');
 
         $db = CmsApp::get_instance()->GetDb();
         $query = 'SELECT * FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE originator = ?';
