@@ -290,10 +290,10 @@
     <div class="pageoverflow">
       <input type="hidden" name="{$actionid}useexp" value="0">
       <p class="pagetext">
-        <label for="fld4">{$useexpirationtext}:</label> {cms_help key='help_article_useexpiry' title=$useexpirationtext}
+        <label for="useexp">{$useexpirationtext}:</label> {cms_help key='help_article_useexpiry' title=$useexpirationtext}
       </p>
       <div class="pageinput">
-        <input id="fld4" type="checkbox" name="{$actionid}useexp"{if $useexp} checked{/if} class="pagecheckbox">
+        <input type="checkbox" id="useexp" class="pagecheckbox" name="{$actionid}useexp" value="1"{if $useexp} checked{/if}>
       </div>
     </div>
     <div id="expiryinfo"{if $useexp != 1} style="display:none"{/if}>
@@ -344,7 +344,7 @@
         <label for="searchable">{$mod->Lang('searchable')}:</label> {cms_help key='help_article_searchable' title=$mod->Lang('searchable')}
       </p>
       <div class="pageinput">
-        <input id="searchable" type="checkbox" name="{$actionid}searchable"{if $searchable} checked{/if} class="pagecheckbox">
+        <input type="checkbox" id="searchable" class="pagecheckbox" name="{$actionid}searchable" value="1"{if $searchable} checked{/if}>
       </div>
     </div>
     {if !empty($custom_fields)}
@@ -401,7 +401,7 @@
     <select id="preview_template" name="{$actionid}detailtemplate">
       {html_options options=$detail_templates selected=$cur_detail_template}
     </select>
-    <label for="cms_hierdropdown1_0">{$mod->Lang('detail_page')}:</label>&nbsp;{$preview_page_selector}
+    <label for="seldetail_0">{$mod->Lang('detail_page')}:</label>&nbsp;{$preview_page_selector}
   </fieldset>
   <br>
   <iframe id="previewframe" class="preview" style="height:50em;width:100%;overflow:auto"></iframe>
