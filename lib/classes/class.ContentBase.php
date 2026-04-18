@@ -17,6 +17,7 @@
 #
 #$Id$
 
+use CMSMS\FileTypeHelper;
 use CMSMS\HookManager;
 use CMSMS\internal\global_cache;
 
@@ -948,7 +949,7 @@ abstract class ContentBase
 	/**
 	 * Sets whether this page is valid in page-selectors etc
 	 * @since 2.2.19F2
-	 * @param bool $select
+	 * @param bool $nav
 	 */
 	public function SetNavigable($nav)
 	{
@@ -1137,7 +1138,7 @@ abstract class ContentBase
 	 *
 	 * @since 2.0
 	 * @abstract
-	 * @return bool
+	 * @return bool Default is true
 	 */
 	protected function HasSearchableContent()
 	{
@@ -1150,7 +1151,7 @@ abstract class ContentBase
 	 * The content editor module may adjust it's user interface to not allow setting pages that return false for this method as the default page.
 	 *
 	 * @abstract
-	 * @returns bool Default is false
+	 * @return bool Default is false
 	 */
 	public function IsDefaultPossible()
 	{
@@ -1282,7 +1283,6 @@ abstract class ContentBase
 		$db = CmsApp::get_instance()->GetDb();
 		$query = 'SELECT prop_name FROM '.CMS_DB_PREFIX.'content_props WHERE content_id = ?';
 		$gotprops = $db->GetCol($query,array($this->mId));
-
 		$now = $db->DBTimeStamp(time());
 		$iquery = 'INSERT INTO '.CMS_DB_PREFIX."content_props
 (content_id,type,prop_name,content,create_date,modified_date)
@@ -1290,6 +1290,8 @@ VALUES (?,?,?,?,$now,$now)";
 		$uquery = 'UPDATE '.CMS_DB_PREFIX."content_props SET content = ?, modified_date = $now WHERE content_id = ? AND prop_name = ?";
 		$res = true;
 		foreach( $this->_props as $key => $value ) {
+			//TODO deal with OS-incompatible line-breaks in content_en?
+			//if ($key == 'content_en') $value = (strncasecmp(PHP_OS,'WIN',3) != 0) ? strtr($value,["\r\n"=>"\n","\r"=>"\n"]) : str_replace(["\r","\n","\r\r\n"],["\r\n","\r\n","\r\n"],$value);
 			if( in_array($key,$gotprops) ) {
 				// update
 				$dbr = $db->Execute($uquery,array($value,$this->mId,$key));
@@ -1898,7 +1900,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				$query = 'UPDATE '.CMS_DB_PREFIX.'content SET default_content=0 WHERE content_id=?';
 				$db->Execute($query, array($pid));
 			}
-			global_cache::clear('default_content');
+			global_cache::clear('default_content'); // redundant - upstream calls contentops->SetContentModified()
 			audit($pid, 'Default page', "Changed to $newid: ".$this->mName);
 		}
 		return $result;
@@ -1927,7 +1929,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				$this->mName = $this->mMenuText;
 			}
 			else {
-				$errors[] = lang('nofieldgiven',array(lang('title')));
+				$errors[] = lang('nofieldgiven',lang('title'));
 			}
 		}
 
@@ -1936,7 +1938,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 				$this->mMenuText = $this->mName;
 			}
 			else {
-				$errors[] = lang('nofieldgiven',array(lang('menutext')));
+				$errors[] = lang('nofieldgiven',lang('menutext'));
 			}
 		}
 
@@ -2767,10 +2769,10 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		case 'parent':
 			if( $pmac || $pown ) { // this is partial response to BR #12789
 				$contentops = ContentOperations::get_instance();
-				$tmp = $contentops->CreateHierarchyDropdown($this->mId,$this->mParentId,'parent_id',false,false,false,false,true); //CHANGES: was allow_all (hence inactive pages selection) was use_perms (when selecting not editing)
+				$tmp = $contentops->CreateHierarchyDropdown($this->mId,$this->mParentId,'parent_id',false,false,false,false,false,'selparent'); //CHANGES: was allow_all (hence inactive pages selection) was use_perms (when selecting not editing)
 				if( $tmp ) {
 					$help = cms_admin_utils::get_help_tag('core','help_content_parent',lang('help_title_content_parent'));
-					return array('<label for="cms_hierdropdown1_0">*'.lang('parent').':</label>&nbsp;'.$help,$tmp);
+					return array('<label for="selparent_0">*'.lang('parent').':</label>&nbsp;'.$help,$tmp);
 				}
 				break;
 			}
@@ -2852,13 +2854,14 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			$filepicker = cms_utils::get_filepicker_module();
 			if( $filepicker ) {
 				$profile = $filepicker->get_default_profile($dir,$userid);
-				$profile = $profile->overrideWith(['top'=>$dir,'type'=>'image']); // aka CMSMS\FileType::TYPE_IMAGE
+				$parms = ['top'=>$dir,'type'=>'image']; //aka CMSMS\FileType::TYPE_IMAGE TODO other property-overrides ? not writability
+				$profile->overrideWith($parms);
 				$input = $filepicker->get_html('image',$data,$profile);
 				preg_match('/id="(.+?)"/',$input,$matches);
 				$htmlid = $matches[1];
 			}
 			else {
-				$helper = new CMSMS\FileTypeHelper($config);
+				$helper = new FileTypeHelper($config);
 				$exts = $helper->get_file_type_extensions('image',true);
 				$picks = implode(',',$exts);
 				//TODO opportunity for entering non-selected url
@@ -2887,7 +2890,8 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			$filepicker = cms_utils::get_filepicker_module();
 			if( $filepicker ) {
 				$profile = $filepicker->get_default_profile($dir,$userid);
-				$profile = $profile->overrideWith(['top'=>$dir,'type'=>'image','match_prefix'=>'thumb_']);
+				$parms = ['top'=>$dir,'type'=>'image','match_prefix'=>'thumb_']; //aka CMSMS\FileType::TYPE_IMAGE TODO other property-overrides ?
+				$profile->overrideWith($parms);
 				$input = $filepicker->get_html('thumbnail',$data,$profile);
 				preg_match('/id="(.+?)"/',$input,$matches);
 				$htmlid = $matches[1];
