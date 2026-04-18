@@ -11,7 +11,7 @@
 
 <body>
 	<header id="header">
-		<h1>{sitename}</h1>
+		<h2>{sitename}</h2>
 	</header>
 
 	<nav id="menu">
@@ -19,7 +19,7 @@
 	</nav>
 
 	<section id="content">
-		<h1>{title}</h1>
+		<h2>{title}</h2>
 		{content}
 	</section>
 </body>
