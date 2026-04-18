@@ -46,21 +46,26 @@ $(function() {
       type: 'stylesheet',
       oid: css_id
     };
-    opts[cms_data.secure_param_name] = cms_data.user_key;
+    opts[cms_data.secure_param_name] = cms_data.secure_param_value;
     $.ajax('{$admin_url}/ajax_lock.php?showtemplate=false', {
       data: opts
     }).done(function(data) {
       if (data.status == 'success') {
         if (data.locked) {
-          // display a message
           ev.preventDefault();
           cms_alert('{$mod->Lang('error_contentlocked')|escape:'javascript'}');
         }
       } else {
-      //TODO handle error
+        ev.preventDefault();
+        cms_alert('{lang('error_internal')|escape:'javascript'}');
       }
     });
   })
+{if 1}{*TODO*page check*}
+  .on('change', '#css_page', function() {
+    $(this).closest('form').trigger('submit');
+  })
+{/if}
   .on('click', '#editcssfilter', function() {
     $('#filtercssdlg').dialog({
       width: 'auto',
@@ -110,6 +115,7 @@ $(function() {
       <label for="filter_css_sortby" class="endalign" style="display:table-cell;padding-{$ndside}:.5em">{$mod->Lang('prompt_sortby')}:</label>
       <select id="filter_css_sortby" style="display:table-cell" name="{$actionid}filter_css_sortby" title="{$mod->Lang('title_sortby')}">
         <option value="name"{if $css_filter.sortby == 'name'} selected{/if}>{$mod->Lang('name')}</option>
+        <option value="media"{if $css_filter.sortby == 'media'} selected{/if}>{$mod->Lang('media')}</option>
         <option value="created"{if $css_filter.sortby == 'created'} selected{/if}>{$mod->Lang('created')}</option>
         <option value="modified"{if $css_filter.sortby == 'modified'} selected{/if}>{$mod->Lang('modified')}</option>
       </select>
@@ -121,15 +127,18 @@ $(function() {
         <option value="desc"{if $css_filter.sortorder == 'desc'} selected{/if}>{$mod->Lang('desc')}</option>
       </select>
     </div>
+    <input type="hidden" name="{$actionid}filter_css_limit" value="">
+{if count($css_filterpages) > 0}
     <div style="display:table-row">
       <label for="filter_css_limit" class="endalign" style="display:table-cell;padding-{$ndside}:.5em">{$mod->Lang('prompt_limit')}:</label>
       <select id="filter_css_limit" style="display:table-cell" name="{$actionid}filter_css_limit" title="{$mod->Lang('title_filterlimit')}">
-        <option value="10"{if (isset($css_filter.limit) && ($css_filter.limit == 10))} selected{/if}>10</option>
-        <option value="25"{if (isset($css_filter.limit) && ($css_filter.limit == 25))} selected{/if}>25</option>
-        <option value="50"{if (isset($css_filter.limit) && ($css_filter.limit == 50))} selected{/if}>50</option>
-        <option value="100"{if (isset($css_filter.limit) && ($css_filter.limit == 100))} selected{/if}>100</option>
+        <option value="10"{if (isset($css_filter.limit) && $css_filter.limit == 10)} selected{/if}>10</option>
+{if isset($css_filterpages.25)}        <option value="25"{if (isset($css_filter.limit) && $css_filter.limit == 25)} selected{/if}>25</option>{/if}
+{if isset($css_filterpages.50)}        <option value="50"{if (isset($css_filter.limit) && $css_filter.limit == 50)} selected{/if}>50</option>{/if}
+{if isset($css_filterpages.100)}        <option value="100"{if (isset($css_filter.limit) && $css_filter.limit == 100)} selected{/if}>100</option>{/if}
       </select>
     </div>
+{/if}
     </div>
   {form_end}
 </div>{*#filtercssdlg*}
