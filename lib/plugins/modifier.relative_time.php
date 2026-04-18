@@ -41,29 +41,32 @@ function smarty_modifier_relative_time($timestamp)
         $timestamp = (int) strtotime($timestamp);
     }
     $difference = time() - $timestamp;
-    $periods = array("sec", "min", "hour", "day", "week","month", "year", "decade");
-    $lengths = array("60","60","24","7","4.35","12","10");
-    $total_lengths = count($lengths);
 
-    if ($difference > 0) { // this was in the past
-        $ending = lang('period_ago');
-    } else { // this was in the future
-        $difference = -$difference;
-        $ending = lang('period_fromnow');
+    if ($difference != 0) {
+        if ($difference > 0) { // this was in the past
+            $ending = lang('period_ago');
+        } else { // in the future
+            $difference = -$difference;
+            $ending = lang('period_fromnow');
+        }
+
+        $lengths = array("60","60","24","7","4.35","12","10");
+        $total_lengths = count($lengths);
+        for($j = 0; $j < $total_lengths && $difference > $lengths[$j]; $j++) {
+            $difference /= $lengths[$j];
+        }
+
+        $periods = array("sec","min","hour","day","week","month","year","decade");
+        $period = $periods[$j];
+        $difference = (int)round($difference);
+        if($difference != 1) {
+            $period.= "s";
+        }
+
+        $period = lang('period_'.$period);
+        $text = lang('period_fmt',$difference,$period,$ending);
+    } else {
+        $text = lang('period_now');
     }
-
-    for( $j = 0; $j < $total_lengths && $difference > $lengths[$j]; $j++ ) {
-         $difference /= $lengths[$j];
-    }
-
-    $period = $periods[$j];
-    $difference = (int)round($difference);
-    if($difference != 1) {
-        $period.= "s";
-    }
-
-    $period = lang('period_'.$period);
-    $text = lang('period_fmt',$difference,$period,$ending);
-
     return $text;
 }
