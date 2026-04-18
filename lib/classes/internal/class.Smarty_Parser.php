@@ -34,8 +34,6 @@ class Smarty_Parser extends Smarty_CMS
 
 	/**
 	* Constructor
-	*
-	* @param array The hash of CMSMS config settings
 	*/
 	public function __construct()
 	{
@@ -45,12 +43,12 @@ class Smarty_Parser extends Smarty_CMS
 //		$this->setTemplateDir(cms_join_path(CMS_ROOT_PATH,'tmp','templates')); TODO
 //		$this->setConfigDir(cms_join_path(CMS_ROOT_PATH,'tmp','templates'));
 
-		$this->setCaching(false);
+		$this->setCaching(Smarty::CACHING_OFF);
 		$this->force_compile = true;
 		$this->compile_id = 'parser' . time();
 
 		// register default plugin handler
-		$this->registerDefaultPluginHandler(array(&$this, 'defaultPluginHandler'));
+		$this->registerDefaultPluginHandler(array($this, 'defaultPluginHandler'));
 
 		// Register plugins
 		$this->registerPlugin('compiler','content',array('CMS_Content_Block','smarty_compiler_contentblock'),false);
