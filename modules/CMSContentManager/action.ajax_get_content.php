@@ -40,7 +40,7 @@ $tpl = $smarty->createTemplate("module_file_tpl:$modname;ajax_get_content.tpl",n
 try {
     // load all the content that this user can display...
     // organize it into a tree
-    $builder = new CMSContentManager\ContentListBuilder($this);
+    $builder = new CMSContentManager\ListOperations($this);
     $curpage = (isset($_SESSION[$modname.'_curpage']) && !isset($params['seek'])) ? (int) $_SESSION[$modname.'_curpage'] : 1;
     if( isset($params['curpage']) ) $curpage = (int)$params['curpage'];
 
