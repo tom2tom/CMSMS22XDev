@@ -1,5 +1,19 @@
+{if !empty($handlers)}
+<script>
+$(function() {
+  $('.deleteitem').on('click', function(e) {
+    e.preventDefault();
+    var hn = $(this).data('handler'); // name from clicked row
+    var pr = '{lang('deleteconfirm','^^')|escape:'javascript'}'.replace('^^',hn);
+    var _url = $(this).attr('href');
+    cms_confirm(pr).done(function() {
+      window.location.href = _url;
+    });
+  });
+});
+</script>
+{/if}
 <div class="pagecontainer">
- {$header}
  <fieldset>
  <legend>{lang('event')}</legend>
  <div class="pageoverflow">
@@ -15,14 +29,13 @@
    <p class="pageinput">{$description}</p>
  </div>
  </fieldset>
- <h4>{lang('eventhandler')}</h4>
+ <h3>{lang('eventhandler')}</h3>
 {if !empty($handlers)}
   <table class="pagetable">
   <thead>
     <tr>
       <th>{lang('order')}</th>
-      <th>{lang('user_tag')}</th>
-      <th>{lang('originator')}</th>
+      <th>{lang('handler')}</th>
       <th class="pageicon"></th>
       <th class="pageicon"></th>
       <th class="pageicon"></th>
@@ -32,22 +45,28 @@
     <tr class="{cycle values='row1,row2'}">
       {strip}
       <td>{$one.handler_order}</td>
-      <td>{$one.tag_name}</td>
-      <td>{$one.module_name}</td>
+      <td{if !empty($one.truncated)} title="{lang('title_callable')}"{/if}>
+{if ($one.handler_type == 1)}{*aka Events::HANDLERMOD*}
+       {lang('module')}: {$one.handler}
+{elseif ($one.handler_type == 2)}{*aka Events::HANDLERUDT*}
+       {lang('user_tag')}: {$one.handler}
+{elseif ($one.handler_type == 3)}{*aka Events::HANDLERCALL*}
+       {lang('callable')}: {$one.handler}{if !empty($one.truncated)}<strong>...</strong>{/if}
+{/if}
+     </td>
       <td class="pagepos icons_wide">
       {if !$one@first}
-      <a href="{$selfurl}{$urlext}&event={$event}&module={$module}&action=up&order={$one.handler_order}&handler={$one.handler_id}">{$iconup}</a>
+      <a href="{$selfurl}?event={$event}&originator={$originator}&action=up&order={$one.handler_order}&handler={$one.handler_id}&{$secureparam}">{$iconup}</a>
       {/if}
       </td>
       <td class="pagepos icons_wide">
       {if !$one@last}
-      <a href="{$selfurl}{$urlext}&event={$event}&module={$module}&action=down&order={$one.handler_order}&handler={$one.handler_id}">{$icondown}</a>
+      <a href="{$selfurl}?event={$event}&originator={$originator}&action=down&order={$one.handler_order}&handler={$one.handler_id}&{$secureparam}">{$icondown}</a>
       {/if}
       </td>
       <td class="pagepos icons_wide">
-      {if $one.removable}{if $one.tag_name}{$myname=$one.tag_name}{else}{$myname=$one.module_name}{/if}
-{*TODO replace link onclick handler with some jquery*}
-      <a href="{$selfurl}{$urlext}&event={$event}&module={$module}&action=delete&handler={$one.handler_id}" onclick="return confirm('{lang('deleteconfirm', $myname)}');">{$icondel}</a>
+      {if $one.removable}
+      <a href="{$selfurl}?event={$event}&originator={$originator}&action=delete&handler={$one.handler_id}&{$secureparam}" class="deleteitem" data-handler="{$one.handler}">{$icondel}</a>
       {/if}
       </td>
 {/strip}
@@ -60,8 +79,8 @@
 <div class="pageinput">
 {if $allhandlers}
  <form action="editevent.php" method="post">
-   <input type="hidden" name="{$hiddenname}" value="{$hiddenval}">
-   <input type="hidden" name="module" value="{$module}">
+   <input type="hidden" name="{$securename}" value="{$secureval}">
+   <input type="hidden" name="originator" value="{$originator}">
    <input type="hidden" name="event" value="{$event}">
    <select name="handler">
 {foreach $allhandlers as $key => $value}
@@ -73,7 +92,7 @@
  <br>
 {/if}
  <form action="editevent.php" method="post">
-   <input type="hidden" name="{$hiddenname}" value="{$hiddenval}">
+   <input type="hidden" name="{$securename}" value="{$secureval}">
    <input type="submit" name="close" data-ui-icon="ui-icon-closethick" value="{lang('close')}">
  </form>
 </div>
