@@ -131,14 +131,14 @@ $(function() {
       </div>
 
       <div class="pageoverflow">
-        <p class="pagetext"><label for="cms_hierdropdown1_0">{lang('defaultparentpage')}:</label>&nbsp;{cms_help key2='help_myaccount_dfltparent' title=lang('defaultparentpage')}</p>
+        <p class="pagetext"><label for="selparent_0">{lang('defaultparentpage')}:</label>&nbsp;{cms_help key2='help_myaccount_dfltparent' title=lang('defaultparentpage')}</p>
         <p class="pageinput">{$default_parent}</p>
       </div>
 
       <div class="pageoverflow">
         <input type="hidden" name="indent" value="0">
         <p class="pagetext"><label for="indent">{lang('adminindent')}:</label>&nbsp;{cms_help key2='help_myaccount_indent' title=lang('adminindent')}</p>
-        <p class="pageinput"><input class="pagenb" type="checkbox" id="indent" name="indent" value="1"{if $indent} checked{/if}> {lang('indent')}</p>
+        <p class="pageinput"><input class="pagenb" type="checkbox" id="indent" name="indent" value="1"{if $indent} checked{/if}> <label for="indent">{lang('indent')}</label></p>
       </div>
       <!-- content display //-->
     </fieldset>
@@ -165,13 +165,13 @@ $(function() {
       <div class="pageoverflow">
         <input type="hidden" name="bookmarks" value="0">
         <p class="pagetext"><label for="admincallout">{lang('admincallout')}:</label>&nbsp;{cms_help key2='help_myaccount_admincallout' title=lang('admincallout')}</p>
-        <p class="pageinput"><input class="pagenb" id="admincallout" type="checkbox" name="bookmarks" value="1"{if $bookmarks} checked{/if}> {lang('showbookmarks')}</p>
+        <p class="pageinput"><input class="pagenb" id="admincallout" type="checkbox" name="bookmarks" value="1"{if $bookmarks} checked{/if}> <label for="admincallout">{lang('showbookmarks')}</label></p>
       </div>
 
       <div class="pageoverflow">
         <input type="hidden" name="hide_help_links" value="0">
         <p class="pagetext"><label for="hidehelp">{lang('hide_help_links')}:</label>&nbsp;{cms_help key2='help_myaccount_hidehelp' title=lang('hide_help_links')}</p>
-        <p class="pageinput"><input class="pagenb" id="hidehelp" type="checkbox" name="hide_help_links" value="1"{if $hide_help_links} checked{/if}> {lang('hide_help_links_help')}</p>
+        <p class="pageinput"><input class="pagenb" id="hidehelp" type="checkbox" name="hide_help_links" value="1"{if $hide_help_links} checked{/if}> <label for="hidehelp">{lang('hide_help_links_help')}</label></p>
       </div>
     </fieldset>
 

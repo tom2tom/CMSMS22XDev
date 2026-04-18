@@ -57,7 +57,7 @@
       <p class="pageinput"><input type="checkbox" id="chkalpha" name="{$actionid}alpharesults" value="1"{if $alpha_results} checked{/if}></p>
     </div>
     <div class="pageoverflow">
-      <p class="pagetext"><label for="cms_hierdropdown1_0">{$mod->Lang('prompt_resultpage')}:</label></p>
+      <p class="pagetext"><label for="selpage_0">{$mod->Lang('prompt_resultpage')}:</label></p>
       <p class="pageinput">{page_selector id=selpage name="{$actionid}resultpage" value=$mod->GetPreference('resultpage',-1)}</p>
     </div>
     <br>
