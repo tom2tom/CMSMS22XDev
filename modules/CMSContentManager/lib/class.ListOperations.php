@@ -1,7 +1,7 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# CMSContentManager module class: ContentListBuilder
+# CMSContentManager module class: ListOperations
 # (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, read the license online at:
-# https://www.gnu.org/licenses/old-licenses/gpl.2.0.html
+# https://www.gnu.org/licenses/#LicenseURLs
 #-------------------------------------------------------------------------
 #END_LICENSE
 
@@ -42,14 +42,14 @@ use function check_permission;
 use function get_userid;
 
 /**
- * A class for building and managing content lists.
+ * A class for managing content pages and building and managing content lists.
  * This class is not intended for use by non-core operations.
  * @final
  * @internal
  * @package CMS
  * @author Robert Campbell
  */
-final class ContentListBuilder
+final class ListOperations
 {
 	private $_display_columns = [];
 	private $_filter = null; // no object
@@ -568,8 +568,7 @@ final class ContentListBuilder
 				break;
 			case ContentListFilter::EXPR_EDITOR:
 				if( $editorid != $this->_filter->expr ) {
-					$sql .= ' JOIN '.CMS_DB_PREFIX.'additional_users AU ON C.content_id = AU.content_id';
-					$where[] = 'AU.user_id = ?';
+					$sql .= ' INNER JOIN '.CMS_DB_PREFIX.'additional_users AU ON C.content_id = AU.content_id AND AU.user_id = ?';
 					$parms[] = (int) $this->_filter->expr;
 				}
 				break;
@@ -578,8 +577,7 @@ final class ContentListBuilder
 				$parms[] = (int) $this->_filter->expr;
 				break;
 			case ContentListFilter::EXPR_DESIGN:
-				$sql .= ' JOIN '.CMS_DB_PREFIX.'content_props P ON C.content_id = P.content_id';
-				$where[] = "P.prop_name = 'design_id'";
+				$sql .= ' INNER JOIN '.CMS_DB_PREFIX.'content_props P ON C.content_id=P.content_id AND P.prop_name=\'design_id\'';
 				$where[] = 'P.content = ?';
 				$parms[] = (int) $this->_filter->expr;
 				break;
