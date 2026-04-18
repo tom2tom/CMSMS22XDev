@@ -173,10 +173,9 @@ class FileTypeHelper
      */
     public function is_image( $filename )
     {
-        if( $this->_use_mimetype && $this->is_readable( $filename ) ) {
-            $type = $this->get_mime_type( $filename );
-            $res = startswith( $type, 'image/');
-            if( $res ) return TRUE;
+        if( $this->_use_mimetype && $this->is_readable($filename) ) {
+            $type = $this->get_mime_type($filename);
+            if( startswith($type, 'image/') ) return TRUE;
         }
 
         // fall back to extensions
@@ -187,7 +186,7 @@ class FileTypeHelper
     /**
      * Test if the file specified is a thumbnail.
      * This method first tests if the file is an image, and then if it is
-     * also a thumbnail.
+     * named like a thumbnail.
      *
      * @param string $filename
      * @return bool
