@@ -13,24 +13,24 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
+#
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
+# along with this program; if not, read the license online at:
+# https://www.gnu.org/licenses/#LicenseURLs
 #-------------------------------------------------------------------------
 #END_LICENSE
 
+use CMSContentManager\ListOperations;
 use CMSContentManager\ContentListFilter;
 
 if( !isset($gCms) ) exit;
 // no permissions checks here.
 
-require_once __DIR__.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'class.ContentListBuilder.php';
-
 echo '<noscript><h3 style="color: red; text-align: center;">'.$this->Lang('info_javascript_required').'</h3></noscript>'."\n";
 $error = '';
 
 $modname = $this->GetName();
+$userid = get_userid();
 
 $ajax = 0;
 if( isset($params['ajax']) ) $ajax = 1;
@@ -38,7 +38,7 @@ if( isset($params['curpage']) ) {
     $curpage = max(1,min(500,(int)$params['curpage'])); // 500 is arbitrary guess
 }
 
-$builder = new CMSContentManager\ContentListBuilder($this);
+$builder = new ListOperations($this);
 if( isset($params['expandall']) || isset($_GET['expandall']) ) {
     $builder->expand_all();
     $curpage = 1;
@@ -47,9 +47,9 @@ else if( isset($params['collapseall']) || isset($_GET['collapseall']) ) {
     $builder->collapse_all();
     $curpage = 1;
 }
+$settings = [];
 if( isset($params['setoptions']) ) {
     if( $params['setoptions'] == 1) {
-        $settings = [];
         $settings['limit'] = max(1,min(500,(int)$params['pagelimit']));
         $settings['type'] = (!empty($params['filter_type'])) ? $params['filter_type'] : '';
         switch ($settings['type']) {
@@ -73,11 +73,11 @@ if( isset($params['setoptions']) ) {
     else { // -1 for reset
         $settings = ['limit' => 10,'type' => '','expr' => ''];
     }
-    cms_userprefs::set($modname.'_pages_filter',serialize($settings));
+    cms_userprefs::set_for_user($userid,$modname.'_pages_filter',serialize($settings));
     $curpage = 1;
 }
 else {
-    $tmp = cms_userprefs::get($modname.'_pages_filter');
+    $tmp = cms_userprefs::get_for_user($userid,$modname.'_pages_filter');
     if( $tmp ) {
         $tmp = unserialize($tmp);
     }
@@ -90,7 +90,6 @@ if( isset($params['expand']) ) {
 
 if( isset($params['collapse']) ) {
     $builder->collapse_section($params['collapse']);
-    $curpage = 1;
 }
 
 if( isset($params['setinactive']) ) {
@@ -157,13 +156,15 @@ if( !isset($pagelimits[$pagelimit]) ) {
     };
     $pagelimit = $closest($pagelimits,$pagelimit); // assumes $pagelimits is ascending-sorted
     $settings['limit'] = $pagelimit;
-    cms_userprefs::set($modname.'_pages_filter',serialize($settings));
+    cms_userprefs::set_for_user($userid,$modname.'_pages_filter',serialize($settings));
 }
 
+$builder->set_pagelimit($settings['limit']); //TODO better if func($npages) BUT circular logic
 if( $settings['type'] ) {
     $filter = new ContentListFilter();
     $filter->type = $settings['type'];
     $filter->expr = $settings['expr'];
+    $builder->set_filter($filter);
 }
 else {
     $filter = null;
@@ -185,7 +186,6 @@ $tpl->assign('admin_url',$config['admin_url']);
 $tpl->assign('filter',$filter);
 $tpl->assign('pagelimits',$pagelimits);
 $tpl->assign('pagelimit',$pagelimit); // for <select/> selection
-$userid = get_userid();
 $have_locks = ($builder->get_locks($userid)) ? 1 : 0; // ignore any held by current user (this value used in js only)
 $tpl->assign('have_locks',$have_locks);
 $tpl->assign('locking',CmsContentManagerUtils::locking_enabled());
@@ -196,8 +196,8 @@ $tpl->assign('design_list',CmsLayoutCollection::get_list());
 // selectable templates
 $tpl->assign('template_list',CmsLayoutTemplate::template_query(array('as_list'=>1)));
 // selectable filter-options
-$tpl->assign('options_list',
-['' => $this->Lang('none'),
+$tpl->assign('options_list',[
+ '' => $this->Lang('none'),
  ContentListFilter::EXPR_DESIGN => $this->Lang('prompt_design'),
  ContentListFilter::EXPR_TEMPLATE => $this->Lang('prompt_template'),
  ContentListFilter::EXPR_OWNER => $this->Lang('prompt_owner'),
