@@ -5,7 +5,7 @@
  * This is a wrapper class that uses either cURL or fsockopen to
  * interact with the www. This class can be used by scripts that
  * need to communicate via various APIs which support REST.
- * If cURL is to be used, version 7.19.7 or higher is required.
+ * If cURL is to be used, version 7.19.7 (Nov 2009) or higher is required.
  *
  * Adapted from HTTP class <http://www.phpfour.com/lib/http>
  * by Emran Hasan <phpfour@gmail.com>
@@ -741,9 +741,9 @@ class cms_http_request
     public function execute($target = '', $referrer = '', $method = '', $data = [])
     {
         // Populate the properties
-        $this->target = ($target) ?: $this->target;
-        $this->method = ($method) ?: $this->method;
-        $this->referrer = ($referrer) ?: $this->referrer;
+        if ($target) { $this->target = $target; }
+        if ($method) { $this->method = $method; }
+        if ($referrer) { $this->referrer = $referrer; }
 
         // Add the new params
         if ($data && is_array($data)) {
@@ -762,7 +762,7 @@ class cms_http_request
         // GET/HEAD methods configuration
         if ($this->method == 'GET' || $this->method == 'HEAD') {
             if ($queryString) {
-                $this->target = $this->target . '?' . $queryString;
+                $this->target .= '?' . $queryString;
             }
         }
 
