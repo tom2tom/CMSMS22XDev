@@ -1,4 +1,7 @@
 <?php
+
+use function __appbase\translator;
+
 /**
  * Smarty plugin
  * Type:     modifier
@@ -6,18 +9,18 @@
  * Purpose:  format date/time values
  *
  * @param mixed $datevar      input date-time string | timestamp | DateTime object
- * @param string $format      optional strftime() and/or date()-compatible format for output. Default '%b %e, %Y'
+ * @param string $format      optional strftime() and/or date()-compatible format for output. Default '%h %e, %Y'
  * @param mixed $default_date optional date-time to use if $datevar is empty. Default ''
+ * @param mixed $locale       string | null optional locale to use instead of the default since 2.2.18
  *
  * @return string
  */
-
-function smarty_modifier_localedate_format($datevar, $format = '%b %e, %Y', $default_date = '')
+function smarty_modifier_localedate_format($datevar, $format = '%h %e, %Y', $default_date = '', $locale = '')
 {
-    if (empty($datevar)) {
+    if (!$datevar) {
         $datevar = $default_date;
     }
-    if (empty($datevar)) {
+    if (!$datevar) {
         $st = time();
     } elseif (is_numeric($datevar)) {
         $st = (int)$datevar;
@@ -32,32 +35,38 @@ function smarty_modifier_localedate_format($datevar, $format = '%b %e, %Y', $def
         }
     }
 
-    $outfmt = localedate_adjust($format);
-    $tmp = date($outfmt, $st);
-    $text = preg_replace_callback_array(array(
-        '~[\x01-\x08\x0e\x0f]~' => function($m) use($st) {
-            return localedate_ise ($st, $m[0]);
-        },
-        '~\x11~' => function($m) use($st) { // two-digit century
-            return floor(date('Y', $st) / 100);
-        },
-        '~\x12~' => function($m) use($st) { // week of year, per ISO8601
-            return substr(date('o', $st), -2);
-        },
-        '~\x10~' => function($m) use($st) { // week of year, assuming the first Monday is day 0
-             $n1 = date('Y', $st);
-             $n2 = date('z', strtotime('first monday of january '.$n1));
-             $n1 = date('z', $st);
-             return floor(($n2-$n1) / 7) + 1;
-         },
-        '~\x13~' => function($m) use($st) { // week of year, assuming the first Sunday is day 0
-            $n1 = date('Y', $st);
-            $n2 = date('z', strtotime('first sunday of january '.$n1));
-            $n1 = date('z', $st);
-            return floor(($n2-$n1) / 7) + 1;
-        }
-    ), $tmp);
+    if (!$locale && class_exists('Locale')) {
+        $def = Locale::getDefault();
+        $locale = $def ?: setlocale(LC_TIME, '0');
+    }
 
+    $outfmt = localedate_adjust($format);
+    $text = date($outfmt, $st);
+    $text = preg_replace_callback('~[\x01-\x08\x0b-\x0c]~',
+        function($m) use ($st, $locale) {
+            return localedate_ise($st, $m[0], $locale);
+        }, $text);
+    $text = preg_replace_callback('~[\x11-\x14]~',
+        function($m) use ($st) {
+            switch ($m[0]) {
+                case "\x12": // two-digit century
+                    return (int)(date('Y', $st) / 100 + 0.001);
+                case "\x13": // week of year, per ISO8601
+                    return substr(date('o', $st), -2);
+                case "\x11": // week of year, assuming the first Monday is day 0
+                    $n1 = date('Y', $st);
+                    $n2 = date('z', strtotime('first monday of january '.$n1));
+                    $n1 = date('z', $st);
+                    $w = ($n1 - $n2) / 7 + 0.001; // can be <0, for end of prior year
+                    return ($w >= 0) ? (int)$w + 1 : 52;
+                case "\x14": // week of year, assuming the first Sunday is day 0
+                    $n1 = date('Y', $st);
+                    $n2 = date('z', strtotime('first sunday of january '.$n1));
+                    $n1 = date('z', $st);
+                    $w = ($n1 - $n2) / 7 + 0.001; // can be <0, for end of prior year
+                    return ($w >= 0) ? (int)$w + 1 : 52;
+            }
+        }, $text);
     return $text;
 }
 
@@ -66,7 +75,7 @@ function localedate_adjust($fmt)
     if (!$fmt) {
         return $fmt;
     }
-    $from = array(
+    $from = [
     '%a', // \1
     '%A', // \2
     '%d',
@@ -74,10 +83,10 @@ function localedate_adjust($fmt)
     '%j',
     '%u',
     '%w',
-    '%W', // \10
+    '%W', // \11
     '%b', // \3
-    '%h', // \3
-    '%B', // \4
+    '%h', // \4
+    '%B', // \5
     '%m',
     '%y',
     '%Y',
@@ -89,28 +98,28 @@ function localedate_adjust($fmt)
     '%I',
     '%l',
     '%M',
-    '%p', // \0e
-    '%P', // \0f
+    '%p', // \7
+    '%P', // \x8
     '%r',
     '%R',
     '%S',
     '%T',
-    '%X', // \7
+    '%X', // \b
     '%z',
     '%Z',
-    '%c', // \8
+    '%c', // \c
     '%s',
     '%n',
     '%t',
     '%%',
-    '%C', // \11
-    '%g', // \12
+    '%C', // \12
+    '%g', // \13
     '%G',
-    '%U', // \13
+    '%U', // \14
     '%V',
-    );
+    ];
 
-    $to = array(
+    $to = [
     "\1",
     "\2",
     'd',
@@ -118,10 +127,10 @@ function localedate_adjust($fmt)
     'z',
     'N',
     'w',
-    "\x10",
-    "\3",
+    "\x11",
     "\3",
     "\4",
+    "\5",
     'm',
     'y',
     'Y',
@@ -133,29 +142,28 @@ function localedate_adjust($fmt)
     'h',
     'g',
     'i',
-    "\x0e",
-    "\x0f",
+    "\7",
+    "\x8",
     'h:i:s A',
     'H:i',
     's',
     'H:i:s',
-    "\7",
+    "\xb",
     'O',
     'T',
-    "\x8",
+    "\xc",
     'U',
     "\n",
     "\t",
     '&#37;', // '%' chars are valid but may confuse e.g. Smarty date-munger
-    "\x11",
     "\x12",
-    'o',
     "\x13",
+    'o',
+    "\x14",
     'W',
-    );
-    if (strncasecmp(PHP_OS, 'WIN', 3) === 0) {
-// TODO robustly derive values for Windows OS
-/* see
+    ];
+    if (strncasecmp(PHP_OS, 'WIN', 3) == 0) {
+/* TODO see
 https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/strftime-wcsftime-strftime-l-wcsftime-l?redirectedfrom=MSDN&view=msvc-170
 re other uses of '#' modifier
 */
@@ -164,130 +172,160 @@ re other uses of '#' modifier
     return str_replace($from, $to, $fmt);
 }
 
-function localedate_ise ($st, $mode)
+function localedate_ise($st, $mode, $locale)
 {
-    if (extension_loaded('Intl')) {
-        $dt = new DateTime();
+    if (class_exists('IntlDateFormatter')) {
+        $dt = new DateTime(); //current zone
         $dt->setTimestamp($st);
-        $locale = \__appbase\translator()->get_selected_language();
-
+        if (!$locale) {
+            $locale = translator()->get_selected_language();
+        } else {
+            $locale = trim($locale);
+        }
         switch ($mode) {
-        case "\1": // short day name
-            return datefmt_format_object($dt, 'EEE', $locale);
-        case "\2": // normal day name
-            return datefmt_format_object($dt, 'EEEE', $locale);
-        case "\3": // short month name
-            return datefmt_format_object($dt, 'MMM', $locale);
-        case "\4": // normal month name
-            return datefmt_format_object($dt, 'MMMM', $locale);
-        case "\6": // date only
-            return datefmt_format_object($dt,
-                array(IntlDateFormatter::FULL, IntlDateFormatter::NONE), $locale);
-        case "\7": // time only
-            return datefmt_format_object($dt,
-                array(IntlDateFormatter::NONE, IntlDateFormatter::MEDIUM), $locale);
-        case "\x8": // date and time
-            return datefmt_format_object($dt,
-                array(IntlDateFormatter::FULL, IntlDateFormatter::MEDIUM), $locale);
-        case "\x0e": // am/pm, upper-case
-        case "\x0f": // am/pm, lower-case
-            $s = datefmt_format_object($dt, 'a', $locale);
-            if ($mode == "\x0e") {
-                // force upper-case, any charset
-                if (!preg_match('/[\x80-\xff]/',$s)) { return strtoupper($s); }
-                elseif (function_exists('mb_strtoupper')) { return mb_strtoupper($s); }
-            } else {
-                // force lower-case, any charset
-                if (!preg_match('/[\x80-\xff]/',$s)) { return strtolower($s); }
-                elseif (function_exists('mb_strtolower')) { return mb_strtolower($s); }
-            }
-            return $s;
-        default:
-            return 'Unknown Format';
+            case "\1": // short day name
+                return IntlDateFormatter::formatObject($dt, 'EEE', $locale);
+            case "\2": // normal day name
+                return IntlDateFormatter::formatObject($dt, 'EEEE', $locale);
+            case "\3": // stand-alone short month name
+                return IntlDateFormatter::formatObject($dt, 'LLL', $locale);
+            case "\4": // short month name
+                return IntlDateFormatter::formatObject($dt, 'MMM', $locale);
+            case "\5": // normal month name
+                return IntlDateFormatter::formatObject($dt, 'MMMM', $locale);
+            case "\xc": // date and time
+                return IntlDateFormatter::formatObject($dt,
+                    [IntlDateFormatter::FULL, IntlDateFormatter::MEDIUM], $locale);
+            case "\6": // date only
+                return IntlDateFormatter::formatObject($dt,
+                    [IntlDateFormatter::FULL, IntlDateFormatter::NONE], $locale);
+            case "\xb": // time only
+                return IntlDateFormatter::formatObject($dt,
+                    [IntlDateFormatter::NONE, IntlDateFormatter::MEDIUM], $locale);
+            case "\7": // AM/PM upper-case
+            //no break
+            case "\x8": // am/pm lower-case
+                $s = IntlDateFormatter::formatObject($dt, 'aa', $locale);
+                if ($mode == "\7") {
+                    // force upper-case, any charset
+                    // letters '/[\x83\x88\x8a\x8c\x8e\x9a\x9c\x9e\x9f\xa8\xb8\xc0-\xd6\xd8-\xf6\xf8-\xff\pL]/u'
+                    if (!preg_match('/[\x80-\xff]/', $s)) {
+                        return strtoupper($s);
+                    } elseif (function_exists('mb_strtoupper')) {
+                        return mb_strtoupper($s);
+                    }
+                } else {
+                    // force lower-case, any charset
+                    if (!preg_match('/[\x80-\xff]/', $s)) {
+                        return strtolower($s);
+                    } elseif (function_exists('mb_strtolower')) {
+                        return mb_strtolower($s);
+                    }
+                }
+                return $s;
+            default:
+                return 'Unknown Format';
         }
     } elseif (function_exists('nl_langinfo')) { // not Windows OS
         switch ($mode) {
-        case "\1": // short day name
-            $n = date('w', $st) + 1;
-            $fmt = constant('ABDAY_'.$n);
-            return nl_langinfo($fmt);
-        case "\2": // normal day name
-            $n = date('w', $st) + 1;
-            $fmt = constant('DAY_'.$n);
-            return nl_langinfo($fmt);
-        case "\3": // short month name
-            $n = date('n', $st);
-            $fmt = constant('ABMON_'.$n);
-            return nl_langinfo($fmt);
-        case "\4": // normal month name
-            $n = date('n', $st);
-            $fmt = constant('MON_'.$n);
-            return nl_langinfo($fmt);
-        case "\6": // date without time
-            $fmt = nl_langinfo(D_FMT);
-            $fmt = localedate_adjust($fmt);
-            return date($fmt);
-        case "\7": // time without date
-            $fmt = nl_langinfo(T_FMT);
-            $fmt = localedate_adjust($fmt);
-            return date($fmt);
-        case "\x8": // date and time
-            $fmt = nl_langinfo(D_T_FMT);
-            $fmt = localedate_adjust($fmt);
-            return date($fmt);
-        case "\x0e": // am/pm, upper-case
-        case "\x0f": // am/pm, lower-case
-            $s = date('A', $st);
-            $fmt = ($s == 'AM') ? AM_STR : PM_STR;
-            $s = nl_langinfo($fmt);
-            if ($mode == "\x0e") {
-                // force upper-case, any charset
-                if (!preg_match('/[\x80-\xff]/',$s)) { return strtoupper($s); }
-                elseif (function_exists('mb_strtoupper')) { return mb_strtoupper($s); }
-            } else {
-                // force lower-case, any charset
-                if (!preg_match('/[\x80-\xff]/',$s)) { return strtolower($s); }
-                elseif (function_exists('mb_strtolower')) { return mb_strtolower($s); }
-            }
-            return $s;
-        default:
-            return 'Unknown Format';
+            case "\1": // short day name
+                $n = date('w', $st) + 1;
+                $fmt = constant('ABDAY_'.$n);
+                return nl_langinfo($fmt);
+            case "\2": // normal day name
+                $n = date('w', $st) + 1;
+                $fmt = constant('DAY_'.$n);
+                return nl_langinfo($fmt);
+            case "\3": // stand-alone short month name
+            //no break
+            case "\4": // short month name
+                $n = date('n', $st);
+                $fmt = constant('ABMON_'.$n);
+                return nl_langinfo($fmt);
+            case "\5": // normal month name
+                $n = date('n', $st);
+                $fmt = constant('MON_'.$n);
+                return nl_langinfo($fmt);
+            case "\xc": // date and time
+                $fmt = nl_langinfo(D_T_FMT);
+                $fmt = localedate_adjust($fmt);
+                return date($fmt);
+            case "\6": // date without time
+                $fmt = nl_langinfo(D_FMT);
+                $fmt = localedate_adjust($fmt);
+                return date($fmt);
+            case "\xb": // time without date
+                $fmt = nl_langinfo(T_FMT);
+                $fmt = localedate_adjust($fmt);
+                return date($fmt);
+            case "\7": // AM/PM upper-case
+            //no break
+            case "\x8": // am/pm lower-case
+                $s = date('A', $st);
+                $fmt = ($s == 'AM') ? AM_STR : PM_STR;
+                $s = nl_langinfo($fmt);
+                if ($mode == "\7") {
+                    // force upper-case, any charset
+                    // letters '/[\x83\x88\x8a\x8c\x8e\x9a\x9c\x9e\x9f\xa8\xb8\xc0-\xd6\xd8-\xf6\xf8-\xff\pL]/u'
+                    if (!preg_match('/[\x80-\xff]/', $s)) {
+                        return strtoupper($s);
+                    } elseif (function_exists('mb_strtoupper')) {
+                        return mb_strtoupper($s);
+                    }
+                } else {
+                    // force lower-case, any charset
+                    if (!preg_match('/[\x80-\xff]/', $s)) {
+                        return strtolower($s);
+                    } elseif (function_exists('mb_strtolower')) {
+                        return mb_strtolower($s);
+                    }
+                }
+                return $s;
+            default:
+                return 'Unknown Format';
         }
     } else {
-// TODO robustly derive values for Windows OS
+/* TODO derive localised values when running IIS/Windows OS.
+see e.g.
+https://www.c-sharpcorner.com/uploadfile/vemuhemanth/the-magic-of-date-time-format-in-Asp-Net
+https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/strftime-wcsftime-strftime-l-wcsftime-l?view=msvc-170&redirectedfrom=MSDN
+https://stackoverflow.com/questions/203090/how-do-i-get-current-date-time-on-the-windows-command-line-in-a-suitable-format
+*/
         switch ($mode) {
-        case "\1": // short day name
-            return date('D', $st);
-        case "\2": // normal day name
-            return date('l', $st);
-        case "\3": // short month name
-            return date('M', $st);
-        case "\4": // normal month name
-            return date('F', $st);
-        case "\6": // date only
-            return date('j F Y', $st);
-        case "\7": // time only
-            return date('H:i:s', $st);
-        case "\x8": // date and time
-            return date('j F Y h:i a', $st);
-        case "\x0e": // am/pm, upper-case
-            return date('A', $st);
-        case "\x0f": // am/pm, lower-case
-            return date('a', $st);
-        default:
-            return 'Unknown Format';
+            case "\1": // short day name c.f. C# DateTime 'ddd'
+                return date('D', $st);
+            case "\2": // normal day name c.f. C# DateTime 'dddd'
+                return date('l', $st);
+            case "\3": // stand-alone short month name
+            //no break
+            case "\4": // short month name c.f. C# DateTime 'MMM'
+                return date('M', $st);
+            case "\5": // normal month name c.f. C# DateTime 'MMMM'
+                return date('F', $st);
+            case "\xc": // date and time c.f. C# DateTime 'g' or 'G'
+                return date('j F Y h:i a', $st);
+            case "\6": // date only c.f. C# DateTime 'd' or 'D'
+                return date('j F Y', $st);
+            case "\xb": // time only c.f. C# DateTime 't' or 'T'
+                return date('H:i:s', $st);
+            case "\7": // AM/PM upper-case c.f. C# DateTime 'tt'
+                return date('A', $st);
+            case "\x8": // am/pm lower-case c.f. C# DateTime 'tt'
+                return date('a', $st);
+            default:
+                return 'Unknown Format';
         }
     }
 }
 
 function smarty_cms_help_modifier_localedate_format()
 {
-    echo <<<EOS
+    echo <<<'EOS'
 <p>Replacement for Smarty modifier date_format. This does not use deprecated strftime() to process the format</p>
-<pre>{\$datetimevar|localedate_format[:&apos;optional params&apos;]}</pre>
+<pre>{$datetimevar|localedate_format[:&apos;optional params&apos;]}</pre>
 <p>Parameters</p>
 <ul>
-<li>(<em>optional</em>)string PHP date()- and/or strftime()-compatible format specifier. Default &apos;%b %e, %Y&apos;</li>
+<li>(<em>optional</em>)string PHP date()- and/or strftime()-compatible format specifier. Default &apos;%h %e, %Y&apos;</li>
 <li>(<em>optional</em>)stamp|string|DateTime object default datetime specifier to use if necessary</li>
 </ul>
 EOS;
@@ -295,7 +333,7 @@ EOS;
 
 function smarty_cms_about_modifier_localedate_format()
 {
-    echo <<<EOS
+    echo <<<'EOS'
 <p>Change History:</p>
 <ul>
  <li>None</li>

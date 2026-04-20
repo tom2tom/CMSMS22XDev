@@ -9,9 +9,15 @@ use function __appbase\lang;
 
 abstract class filehandler
 {
-  private $_destdir;
+  protected $_baks; //whether path-separators should be \ instead of /
+  protected $_destdir;
   private $_output_fn;
   private $_languages;
+
+  public function __construct()
+  {
+    $this->_baks = (DIRECTORY_SEPARATOR == '\\');
+  }
 
   protected function get_config()
   {
@@ -44,7 +50,7 @@ abstract class filehandler
 
   public function set_output_fn($fn)
   {
-    if( !is_callable($fn) ) throw new Exception(lang('error_internal',1102));
+    if( !is_callable($fn) ) throw new Exception(lang('error_internal','fh100'));
     $this->_output_fn = $fn;
   }
 
@@ -56,7 +62,7 @@ abstract class filehandler
   protected function is_excluded($filespec)
   {
     $filespec = trim($filespec);
-    if( !$filespec ) throw new Exception(lang('error_internal',1101));
+    if( !$filespec ) throw new Exception(lang('error_internal','fh110'));
     $config = $this->get_config();
     if( !isset($config['install_excludes']) ) return FALSE;
 
@@ -72,9 +78,9 @@ abstract class filehandler
     $filespec = trim($filespec);
     if( !$filespec ) throw new Exception(lang('error_invalidparam','filespec'));
 
-    $dn = dirname($filespec);
-    $tmp = $this->get_destdir()."/$dn";
-    return (is_dir($tmp))?TRUE:FALSE;
+    $tmp = '/'.dirname($filespec);
+    $dn = ($this->_baks) ? strtr($tmp,'/','\\') : strtr($tmp,'\\','/');
+    return is_dir($this->get_destdir().$dn);
   }
 
   protected function create_directory($filespec)
@@ -82,16 +88,17 @@ abstract class filehandler
     $filespec = trim($filespec);
     if( !$filespec ) throw new Exception(lang('error_invalidparam','filespec'));
 
-    $dn = dirname($filespec);
-    $tmp = $this->get_destdir()."/$dn";
+    $tmp = '/'.dirname($filespec);
+    $dn = ($this->_baks) ? strtr($tmp,'/','\\') : strtr($tmp,'\\','/');
+    $tmp = $this->get_destdir().$dn;
     return @mkdir($tmp,0777,TRUE);
   }
 
   protected function is_imagefile($filespec)
   {
       // this method uses (ugly) extensions because we cannot rely on finfo_open being available.
-      $image_exts = ['bmp','jpg','jpeg','gif','png','svg','webp','ico'];
-      $ext = strtolower(substr(strrchr($filespec, '.'), 1));
+      $image_exts = ['jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','ico','webp','avif','heif','svg','apng'];
+      $ext = strtolower(substr(strrchr($filespec,'.'),1));
       return in_array($ext,$image_exts);
   }
 
@@ -99,38 +106,88 @@ abstract class filehandler
   {
     $filespec = trim($filespec);
     if( !$filespec ) throw new Exception(lang('error_invalidparam','filespec'));
-
-    if( $this->is_imagefile($filespec) ) return FALSE;
+    $pchk = substr_compare($filespec,'.php',-4,4) === 0;
+    if( !($pchk || substr_compare($filespec,'.js',-3,3) === 0) ) {
+      return '';
+    }
     $bn = basename($filespec);
-    $dn = dirname($filespec);
-    $fnmatch = 0;
-    $fnmatch = $fnmatch || preg_match('/^[a-zA-Z]{2}_[a-zA-Z]{2}\.php$/',$bn);
-    $fnmatch = $fnmatch || preg_match('/^[a-zA-Z]{2}_[a-zA-Z]{2}\.nls\.php$/',$bn);
-    if( $fnmatch ) return substr($bn,0,strpos($bn,'.'));
+    if( $pchk ) {
+      //CMSMS-used locale identifiers have all been like ab_CD
+      //valid identifiers are not confined to that pattern
+      if( preg_match('/^[a-zA-Z]{2}_[a-zA-Z]{2}\.nls\.php$/',$bn) ) { // {2,} is valid, but currently unused and catches too many files
+        return substr($bn,0,-8);
+      }
+      if( preg_match('/^[a-zA-Z]{2}_[a-zA-Z]{2}\.php$/',$bn) ) { // ditto
+        //(lazily) confirm it's a CMSMS translation
+        if( preg_match('~[\\/]lang[\\/]en_US.php$~',$filespec) ) {
+          return 'en_US';
+        }
+        if( preg_match('~[\\/]lib[\\/]lang[\\/]\w+[\\/]en_US\.php$~',$filespec) ) {
+          return 'en_US';
+        }
+        if( preg_match('~[\\/]lang[\\/]ext[\\/]'.$bn.'$~',$filespec) ) {
+          return substr($bn,0,-4);
+        }
+        if( preg_match('~[\\/]lib[\\/]lang[\\/]\w+[\\/]ext[\\/]'.$bn.'$~',$filespec) ) {
+          return substr($bn,0,-4);
+        }
+      }
+    }
 
-    $nls = get_app()->get_nls();
-    if( !is_array($nls) ) return FALSE; // problem
+    $nls = get_app()->get_nls(); // all possible translations
+    if( !is_array($nls) ) return ''; // problem, treat file as non-lang
 
-    $bn = substr($bn,0,strpos($bn,'.'));
-    $last_dn = basename($dn);
+    //PHPMailer translations are named like .../phpmailer.lang-pt.php
+    if( strncmp($bn,'phpmailer.lang-',15) != 0 ) {
+      $p = strpos($bn,'.');
+      if( $p > 0 ) {
+        $bn = substr($bn,0,$p);
+        $xchk = TRUE;
+      }
+      else {
+        return '';
+      }
+    }
+    else {
+      $p = strpos($bn,'.',15);
+      if( $p > 0 ) {
+        $bn = substr($bn,15,$p-15);
+        $xchk = FALSE;
+      }
+      else {
+        return '';
+      }
+    }
+    if( !preg_match('/^[a-zA-Z]{2}(_[a-zA-Z]{2})?$/',$bn)) { // TODO [a-zA-Z]{2,} is valid, but catches most files
+      return '';
+    }
     foreach( $nls['alias'] as $alias => $code ) {
-      if( $bn == $alias ) return $code;
+      if( strcasecmp($bn,$alias) == 0 ) { //caseless since 2.2.19
+        return $code;
+      }
     }
     foreach( $nls['htmlarea'] as $code => $short ) {
-      if( $bn == $short ) return $code;
+      if( strcasecmp($bn,$short) == 0 ) { //caseless since 2.2.19
+        return $code;
+      }
     }
-
-    return FALSE;
+    if( $xchk && stripos($filespec,'lang') === FALSE ) {
+      return '';
+    }
+    return $bn; //maybe keep this one
   }
 
-  protected function is_accepted_lang($filespec)
+  //$res optional, if non-null is the string value returned by is_langfile()
+  protected function is_accepted_lang($filespec,$res = null)
   {
-    $res = $this->is_langfile($filespec);
-    if( !$res ) return FALSE;
-
-    $langs = $this->get_languages();
-    if( !is_array($langs) || count($langs) == 0 ) return TRUE;
-
+    if( $res === null) { $res = $this->is_langfile($filespec); }
+    if( !$res ) {
+      return FALSE;
+    }
+    $langs = $this->get_languages(); // wanted translations
+    if( !$langs || !is_array($langs) ) {
+      return TRUE; //treat as want everything
+    }
     return in_array($res,$langs);
   }
 

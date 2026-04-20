@@ -36,35 +36,34 @@ final class AdminSearch_css_slave extends AdminSearch_slave
         return $_mod;
     }
 
-    private function get_css_match_info(\CmsLayoutStylesheet $css, &$mod)
+    private function get_css_match_info(\CmsLayoutStylesheet $css, $mod)
     {
 
         $one = $css->get_id();
         $title = $css->get_name();
         if( $css->has_content_file() ) {
-            $config = \cms_config::get_instance();
             $file = $css->get_content_filename();
-            $title = $css->get_name().' ('.cms_relative_path($file,$config['root_path']).')';
+            $title = $css->get_name().' ('.cms_relative_path($file,CMS_ROOT_PATH).')';
         }
         $resultSet = $this->get_resultset($title,AdminSearch_tools::summarize($this->get_description()),$this->get_mod()->create_url( 'm1_','admin_edit_css','', [ 'css'=>$one ] ));
 
         $content = $css->get_name();
         $resultSet->count += $count = $this->get_number_of_occurrences($content);
         if ($this->show_snippets() && $count > 0) {
-            $resultSet->locations[$mod->lang('name')] = $this->generate_snippets($content);
+            $resultSet->locations[$mod->Lang('name')] = $this->generate_snippets($content);
         }
 
         $content = $css->get_content();
         $resultSet->count += $count = $this->get_number_of_occurrences($content);
         if ($this->show_snippets() && $count > 0) {
-            $resultSet->locations[$mod->lang('prompt_stylesheet')] = $this->generate_snippets($content);
+            $resultSet->locations[$mod->Lang('prompt_stylesheet')] = $this->generate_snippets($content);
         }
 
         if( $this->search_descriptions()) {
             $content = $css->get_description();
             $resultSet->count += $count = $this->get_number_of_occurrences($content);
             if ($this->show_snippets() && $count > 0) {
-                $resultSet->locations[$mod->lang('prompt_description')] = $this->generate_snippets($content);
+                $resultSet->locations[$mod->Lang('prompt_description')] = $this->generate_snippets($content);
             }
         }
 

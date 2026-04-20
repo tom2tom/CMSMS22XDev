@@ -1,0 +1,7 @@
+- Smarty upgraded to version 4.5.2 (latest of the stable 4.5.x branch)
+- Deprecated cms_html_entity_decode: scheduled to be removed; PHP native html_entity_decode now supports UTF-8 properly
+- News module is no longer mandatory
+- New optional core module UserGuide
+- MenuManager is no longer re-installed during upgrades
+- Compatibility fixes for PHP 8.2 and 8.3
+- Bugfixes

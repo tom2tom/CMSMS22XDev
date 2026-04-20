@@ -1,13 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: \CMSMS\Database\ConnectionSpec (c) 2015 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A class to define how to connect to a database.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: CMSMS\Database\ConnectionSpec
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A class to define how to connect to a database.
 #
 #-------------------------------------------------------------------------
 #
@@ -47,7 +43,6 @@ namespace CMSMS\Database;
  *
  * @package CMS
  * @author Robert Campbell
- * @copyright Copyright (c) 2015, Robert Campbell <calguy1000@cmsmadesimple.org>
  * @since 2.2
  * @property-read bool $EOF Test if we are at the end of the current resultset.
  * @property-read array $fields Return the current row of the resultset.
@@ -128,11 +123,10 @@ abstract class Resultset
      */
     public function GetAssoc($force_array = false, $first2cols = false)
     {
-        $data = null;
+        $data = [];
         $first_row = $this->Fields();
         if( count($first_row) < 2 ) return $data;
 
-        $data = [];
         $keys = array_keys($first_row);
         $numeric_index = isset($row[0]);
         if( !$first2cols && (count($keys) > 2 || $force_array) ) {
@@ -186,16 +180,17 @@ abstract class Resultset
      * Return the fields of the current resultset, or a single field of it.
      *
      * @param string $field An optional field name, if not specified, the entire row will be returned.
-     * @return mixed|array Either a single value, or an array
+     * @return mixed a single value, or null, or an array maybe empty
      */
-    abstract public function Fields( $field = null );
+    abstract public function Fields($field = '');
 
     /**
      * Fetch the current row, and move to the next row.
      *
      * @return array
      */
-    public function FetchRow() {
+    public function FetchRow()
+    {
         if( $this->EOF() ) return false;
         $out = $this->fields();
         $this->MoveNext();
@@ -215,6 +210,7 @@ abstract class Resultset
     {
         if( $key == 'EOF' ) return $this->EOF();
         if( $key == 'fields' ) return $this->Fields();
+        return null; // no value for unsupported property
     }
 
 }

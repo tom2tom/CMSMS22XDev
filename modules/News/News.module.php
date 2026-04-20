@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple module: News
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -15,146 +14,150 @@
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
-#$Id: News.module.php 2114 2005-11-04 21:51:13Z wishy $
-if( !isset($gCms) ) exit;
 
 class News extends CMSModule
 {
-    function GetName() { return 'News'; }
-    function GetFriendlyName() { return $this->Lang('news'); }
-    function IsPluginModule() { return true; }
-    function HasAdmin() { return true; }
-    function GetVersion() { return '2.51.11'; }
-    function MinimumCMSVersion() { return '2.1.6'; }
-    function GetAdminDescription() { return $this->Lang('description'); }
-    function GetAdminSection() { return 'content'; }
-    function AllowSmartyCaching() { return TRUE; }
-    function LazyLoadFrontend() { return TRUE; }
-    function LazyLoadAdmin() { return TRUE; }
-    function InstallPostMessage() { return $this->Lang('postinstall');  }
-    function GetHelp() { return $this->Lang('help'); }
-    function GetAuthor() { return 'Ted Kulp'; }
-    function GetAuthorEmail() { return 'wishy@cmsmadesimple.org'; }
-    function GetChangeLog() { return file_get_contents(dirname(__FILE__).'/changelog.inc'); }
-    function GetEventDescription( $eventname ) { return $this->lang('eventdesc-' . $eventname); }
-    function GetEventHelp( $eventname ) { return $this->lang('eventhelp-' . $eventname); }
+    public function AllowSmartyCaching() { return TRUE; }
+    public function GetAdminDescription() { return $this->Lang('description'); }
+    public function GetAdminSection() { return 'content'; }
+    public function GetAuthor() { return 'Ted Kulp'; }
+    public function GetAuthorEmail() { return 'wishy@cmsmadesimple.org'; }
+    public function GetChangeLog() { return file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'changelog.htm'); }
+    public function GetDependencies() { return ['FilePicker'=>'1.1']; }
+    public function GetEventDescription($eventname) { return $this->Lang('eventdesc-' . $eventname); }
+    public function GetEventHelp($eventname) { return $this->Lang('eventhelp-' . $eventname); }
+    public function GetFriendlyName() { return $this->Lang('news'); }
+    public function GetName() { return 'News'; }
+    public function GetVersion() { return '2.51.17'; }
+    public function HasAdmin() { return TRUE; }
+    public function InstallPostMessage() { return $this->Lang('postinstall');  }
+    public function IsPluginModule() { return TRUE; }
+    public function LazyLoadAdmin() { return TRUE; }
+    public function LazyLoadFrontend() { return TRUE; } // OR false to handle an intra-module news_image tag?
+    public function MinimumCMSVersion() { return '2.2.23F2'; } //for Jobs processing
 
-    function InitializeFrontend()
+    public function GetHelp()
     {
-        $this->RestrictUnknownParams();
+        $this->CreateParameter('action', 'default', $this->Lang('helpaction')); // always?
+        $this->CreateParameter('articleid', '', $this->Lang('help_articleid'));
+        $this->CreateParameter('browsecat', 0, $this->Lang('helpbrowsecat'));
+        $this->CreateParameter('browsecattemplate', '', $this->Lang('helpbrowsecattemplate'));
+        $this->CreateParameter('category', '', $this->Lang('helpcategory'));
+        $this->CreateParameter('detailpage', '', $this->Lang('helpdetailpage'));
+        $this->CreateParameter('detailtemplate', '', $this->Lang('helpdetailtemplate'));
+        $this->CreateParameter('formtemplate', '', $this->Lang('helpformtemplate'));
+        $this->CreateParameter('idlist', '', $this->Lang('help_idlist'));
+        $this->CreateParameter('moretext', $this->Lang('more'), $this->Lang('helpmoretext'));
+//      $val = (int)$this->GetPreference('article_pagelimit', 10);
+        $this->CreateParameter('number', 0, $this->Lang('helpnumber'));
+        $this->CreateParameter('pagelimit', 0, $this->Lang('help_pagelimit'));
+        $this->CreateParameter('showall', 0, $this->Lang('helpshowall'));
+        $this->CreateParameter('showarchive', 0, $this->Lang('helpshowarchive'));
+        $this->CreateParameter('sortasc', 'true', $this->Lang('helpsortasc'));
+        $this->CreateParameter('sortby', 'news_date', $this->Lang('helpsortby'));
+        $this->CreateParameter('start', 0, $this->Lang('helpstart'));
+        $this->CreateParameter('summarytemplate', '', $this->Lang('helpsummarytemplate'));
+        //TODO all the ones Set in InitializeFrontend()
 
-        $this->SetParameterType('pagelimit',CLEAN_INT);
+        $out = $this->Lang('help');
+        $out .= file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'modhelp-extra.htm');
+        return $out;
+    }
+
+    public function InitializeFrontend()
+    {
+//      $this->RestrictUnknownParams(); does nothing
+        $this->SetParameterType('articleid',CLEAN_INT);
+        $this->SetParameterType('assign',CLEAN_STRING);
         $this->SetParameterType('browsecat',CLEAN_INT);
-        $this->SetParameterType('showall',CLEAN_INT);
-        $this->SetParameterType('showarchive',CLEAN_INT);
-        $this->SetParameterType('sortasc',CLEAN_STRING); // should be int, or boolean
-        $this->SetParameterType('sortby',CLEAN_STRING);
+        $this->SetParameterType('browsecattemplate',CLEAN_STRING);
+        $this->SetParameterType('category',CLEAN_STRING);
+        $this->SetParameterType('category_id',CLEAN_INT);
         $this->SetParameterType('detailpage',CLEAN_STRING);
         $this->SetParameterType('detailtemplate',CLEAN_STRING);
         $this->SetParameterType('formtemplate',CLEAN_STRING);
-        $this->SetParameterType('browsecattemplate',CLEAN_STRING);
-        $this->SetParameterType('summarytemplate',CLEAN_STRING);
-        $this->SetParameterType('moretext',CLEAN_STRING);
-        $this->SetParameterType('category',CLEAN_STRING);
-        $this->SetParameterType('category_id',CLEAN_STRING);
-        $this->SetParameterType('number',CLEAN_INT);
-        $this->SetParameterType('start',CLEAN_INT);
-        $this->SetParameterType('pagenumber',CLEAN_INT);
-        $this->SetParameterType('articleid',CLEAN_INT);
-        $this->SetParameterType('origid',CLEAN_INT);
-        $this->SetParameterType('showtemplate',CLEAN_STRING);
-        $this->SetParameterType('assign',CLEAN_STRING);
-        $this->SetParameterType('inline',CLEAN_STRING);
-        $this->SetParameterType('preview',CLEAN_STRING);
         $this->SetParameterType('idlist',CLEAN_STRING);
+        $this->SetParameterType('inline',CLEAN_STRING);
+        $this->SetParameterType('moretext',CLEAN_STRING);
+        $this->SetParameterType('number',CLEAN_INT);
+        $this->SetParameterType('origid',CLEAN_INT);
+        $this->SetParameterType('pagelimit',CLEAN_INT);
+        $this->SetParameterType('pagenumber',CLEAN_INT);
+        $this->SetParameterType('preview',CLEAN_STRING);
+        $this->SetParameterType('showall',CLEAN_INT);
+        $this->SetParameterType('showarchive',CLEAN_INT);
+        $this->SetParameterType('showtemplate',CLEAN_STRING);
+        $this->SetParameterType('sortasc',CLEAN_STRING); // should be int or bool
+        $this->SetParameterType('sortby',CLEAN_STRING);
+        $this->SetParameterType('start',CLEAN_INT);
+        $this->SetParameterType('summarytemplate',CLEAN_STRING);
 
         // form parameters
-        $this->SetParameterType('submit',CLEAN_STRING);
         $this->SetParameterType('cancel',CLEAN_STRING);
-        $this->SetParameterType('category',CLEAN_STRING);
-        $this->SetParameterType('title',CLEAN_STRING);
         $this->SetParameterType('content',CLEAN_STRING);
-        $this->SetParameterType('summary',CLEAN_STRING);
-        $this->SetParameterType('extra',CLEAN_STRING);
-        $this->SetParameterType('postdate',CLEAN_STRING);
-        $this->SetParameterType('postdate_Hour',CLEAN_STRING);
-        $this->SetParameterType('postdate_Minute',CLEAN_STRING);
-        $this->SetParameterType('postdate_Second',CLEAN_STRING);
-        $this->SetParameterType('postdate_Month',CLEAN_STRING);
-        $this->SetParameterType('postdate_Day',CLEAN_STRING);
-        $this->SetParameterType('postdate_Year',CLEAN_STRING);
-        $this->SetParameterType('startdate',CLEAN_STRING);
-        $this->SetParameterType('startdate_Hour',CLEAN_STRING);
-        $this->SetParameterType('startdate_Minute',CLEAN_STRING);
-        $this->SetParameterType('startdate_Second',CLEAN_STRING);
-        $this->SetParameterType('startdate_Month',CLEAN_STRING);
-        $this->SetParameterType('startdate_Day',CLEAN_STRING);
-        $this->SetParameterType('startdate_Year',CLEAN_STRING);
         $this->SetParameterType('enddate',CLEAN_STRING);
+        $this->SetParameterType('enddate_Day',CLEAN_STRING);
         $this->SetParameterType('enddate_Hour',CLEAN_STRING);
         $this->SetParameterType('enddate_Minute',CLEAN_STRING);
-        $this->SetParameterType('enddate_Second',CLEAN_STRING);
         $this->SetParameterType('enddate_Month',CLEAN_STRING);
-        $this->SetParameterType('enddate_Day',CLEAN_STRING);
+        $this->SetParameterType('enddate_Second',CLEAN_STRING);
         $this->SetParameterType('enddate_Year',CLEAN_STRING);
-        $this->SetParameterType('useexp',CLEAN_INT);
+        $this->SetParameterType('extra',CLEAN_STRING);
         $this->SetParameterType('input_category',CLEAN_STRING);
-        $this->SetParameterType('category_id',CLEAN_INT);
+        $this->SetParameterType('postdate',CLEAN_STRING);
+        $this->SetParameterType('postdate_Day',CLEAN_STRING);
+        $this->SetParameterType('postdate_Hour',CLEAN_STRING);
+        $this->SetParameterType('postdate_Minute',CLEAN_STRING);
+        $this->SetParameterType('postdate_Month',CLEAN_STRING);
+        $this->SetParameterType('postdate_Second',CLEAN_STRING);
+        $this->SetParameterType('postdate_Year',CLEAN_STRING);
+        $this->SetParameterType('startdate',CLEAN_STRING);
+        $this->SetParameterType('startdate_Day',CLEAN_STRING);
+        $this->SetParameterType('startdate_Hour',CLEAN_STRING);
+        $this->SetParameterType('startdate_Minute',CLEAN_STRING);
+        $this->SetParameterType('startdate_Month',CLEAN_STRING);
+        $this->SetParameterType('startdate_Second',CLEAN_STRING);
+        $this->SetParameterType('startdate_Year',CLEAN_STRING);
+        $this->SetParameterType('submit',CLEAN_STRING);
+        $this->SetParameterType('summary',CLEAN_STRING);
+        $this->SetParameterType('title',CLEAN_STRING);
+        $this->SetParameterType('useexp',CLEAN_INT);
 
-        $this->SetParameterType(CLEAN_REGEXP.'/news_customfield_.*/',CLEAN_STRING);
+        $this->SetParameterType(CLEAN_REGEXP.'/news_currentfile_\d+/',CLEAN_STRING);
+        $this->SetParameterType(CLEAN_REGEXP.'/news_customfield_\d+/',CLEAN_STRING);
+        $this->SetParameterType(CLEAN_REGEXP.'/news_wantedfield_\d+/',CLEAN_STRING);
         $this->SetParameterType('junk',CLEAN_STRING);
     }
 
-
-    function InitializeAdmin()
+    public function VisibleToAdminUser()
     {
-        $this->CreateParameter('pagelimit', 1000, $this->Lang('help_pagelimit'));
-        $this->CreateParameter('browsecat', 0, $this->lang('helpbrowsecat'));
-        $this->CreateParameter('showall', 0, $this->lang('helpshowall'));
-        $this->CreateParameter('showarchive', 0, $this->lang('helpshowarchive'));
-        $this->CreateParameter('sortasc', 'true', $this->lang('helpsortasc'));
-        $this->CreateParameter('sortby', 'news_date', $this->lang('helpsortby'));
-        $this->CreateParameter('detailpage', 'pagealias', $this->lang('helpdetailpage'));
-        $this->CreateParameter('detailtemplate', '', $this->lang('helpdetailtemplate'));
-        $this->CreateParameter('summarytemplate', '', $this->lang('helpsummarytemplate'));
-        $this->CreateParameter('formtemplate', '', $this->lang('helpformtemplate'));
-        $this->CreateParameter('browsecattemplate', '', $this->lang('helpbrowsecattemplate'));
-        $this->CreateParameter('moretext', 'more...', $this->lang('helpmoretext'));
-        $this->CreateParameter('category', 'category', $this->lang('helpcategory'));
-        $this->CreateParameter('number', 100000, $this->lang('helpnumber'));
-        $this->CreateParameter('start', 0, $this->lang('helpstart'));
-        $this->CreateParameter('action','default',$this->Lang('helpaction'));
-        $this->CreateParameter('articleid','',$this->Lang('help_articleid'));
-        $this->CreateParameter('idlist','',$this->Lang('help_idlist'));
-    }
-
-    function VisibleToAdminUser()
-    {
-        return $this->CheckPermission('Modify News') || $this->CheckPermission('Modify Site Preferences') ||
+        return $this->CheckPermission('Modify News') ||
+            $this->CheckPermission('Modify Site Preferences') ||
             $this->CheckPermission('Approve News');
     }
 
-    function GetDfltEmailTemplate()
+    public function GetDfltEmailTemplate()
     {
-        $text = "A new news article has been posted to your website.  The details are as follows:\n";
-        $text .= "Title:      {\$title}\n";
-        $text .= "IP Address: {\$ipaddress}\n";
-        $text .= "Summary:    {\$summary|strip_tags}\n";
-        $text .= "Start Date: {\$startdate|localedate_format}\n";
-        $text .= "End Date:   {\$enddate|localedate_format}\n";
-        return $text;
+        return <<<'EOS'
+A new News article has been posted to your website. The details are as follows:
+Title:      {$title}
+Summary:    {$summary|strip_tags}
+Start Date: {$startdate|localedate_format}
+End Date:   {$enddate|localedate_format}
+IP Address: {$ipaddress}
+
+EOS;
     }
 
-    function SearchResultWithParams($returnid, $articleid, $attr = '', $params = '')
+    public function SearchResultWithParams($returnid, $articleid, $attr = '', $params = '')
     {
-        $gCms = CmsApp::get_instance();
         $result = array();
 
         if ($attr == 'article') {
-            $db = $this->GetDb();
+            $gCms = CmsApp::get_instance();
+            $db = $gCms->GetDb();
             $q = "SELECT news_title,news_url FROM ".CMS_DB_PREFIX."module_news WHERE news_id = ?";
-            $row = $db->GetRow( $q, array( $articleid ) );
+            $row = $db->GetRow($q, array($articleid));
 
             if ($row) {
                 //0 position is the prefix displayed in the list results.
@@ -186,39 +189,42 @@ class News extends CMSModule
                 }
 
                 $prettyurl = $row['news_url'];
-                if( $row['news_url'] == '' ) {
+                if( $prettyurl == '' ) {
                     $aliased_title = munge_string_to_url($row['news_title']);
-                    $prettyurl = 'news/' . $articleid.'/'.$detailpage."/$aliased_title".$detailtemplate;
+                    $prettyurl = "news/$articleid/$detailpage/$aliased_title{$detailtemplate}";
                 }
 
                 $parms = array();
                 $parms['articleid'] = $articleid;
-                if( isset($params['detailtemplate']) ) $parms['detailtemplate'] = $params['detailtemplate'];
-                $result[2] = $this->CreateLink('cntnt01', 'detail', $detailpage, '', $parms ,'', true, false, '', true, $prettyurl);
+                if( !empty($params['detailtemplate']) ) $parms['detailtemplate'] = $params['detailtemplate'];
+                $result[2] = $this->create_url('cntnt01', 'detail', $detailpage, $parms, FALSE, TRUE, $prettyurl); //!inline, targetcontentonly
             }
         }
 
         return $result;
     }
 
-    function SearchReindex(&$module)
+    public function SearchReindex($module)
     {
         $db = $this->GetDb();
 
         $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_news WHERE searchable = 1 AND status = ? ORDER BY news_date';
         $result = $db->Execute($query,array('published'));
-
-        while ($result && !$result->EOF) {
-            if ($result->fields['status'] == 'published') {
-                $module->AddWords($this->GetName(),
-                                  $result->fields['news_id'], 'article',
-                                  $result->fields['news_data'] . ' ' . $result->fields['summary'] . ' ' . $result->fields['news_title'] . ' ' . $result->fields['news_title'],
-                                  ($result->fields['end_time'] != NULL && $this->GetPreference('expired_searchable',0) == 0) ?  $db->UnixTimeStamp($result->fields['end_time']) : NULL);
+        if( $result ) {
+            $src = $this->GetName();
+            $exp = $this->GetPreference('expired_searchable',0);
+            while (!$result->EOF) {
+                if ($result->fields['status'] == 'published') {
+                    $module->AddWords($src,
+                                      $result->fields['news_id'], 'article',
+                                      $result->fields['news_data'] . ' ' . $result->fields['summary'] . ' ' . $result->fields['news_title'] . ' ' . $result->fields['news_title'],
+                                      ($result->fields['end_time'] != NULL && $exp == 0) ? $db->UnixTimeStamp($result->fields['end_time']) : NULL); //null for no datetime field value
+                }
+                $result->MoveNext();
             }
-            $result->MoveNext();
+            $result->Close();
         }
     }
-
 
     public function GetFieldTypes()
     {
@@ -226,12 +232,12 @@ class News extends CMSModule
                    'checkbox'=>$this->Lang('checkbox'),
                    'textarea'=>$this->Lang('textarea'),
                    'dropdown'=>$this->Lang('dropdown'),
-                   'linkedfile'=>$this->Lang('linkedfile'),
-                   'file'=>$this->Lang('file') ];
+                   'linkedfile'=>$this->Lang('linkedfile'), //file specified by entered url or selected from uploads tree using the FilePicker, no type restriction, similar to content image property
+                   'file'=>$this->Lang('file') ]; // selected and uploaded file, no type-restriction
         return $items;
     }
 
-    function GetTypesDropdown( $id, $name, $selected = '' )
+    public function GetTypesDropdown( $id, $name, $selected = '' )
     {
         $items = $this->GetFieldTypes();
         return $this->CreateInputDropdown($id, $name, array_flip($items), -1, $selected);
@@ -239,27 +245,34 @@ class News extends CMSModule
 
     public function get_tasks()
     {
-        if( !$this->GetPreference('alert_drafts',0) ) return;
-        $out = array();
-        $out[] = new \News\CreateDraftAlertTask();
-        return $out;
+        if( !$this->GetPreference('alert_drafts',1) ) return [];
+        $fp = cms_join_path(__DIR__,'lib','class.CreateDraftAlertJob.php');
+        if( is_file($fp) ) {
+            if( func_num_args() > 0 && func_get_arg(0) ) { // want filepath(s)
+                return [$fp];
+            } else {
+                require_once $fp;
+                return [new News\CreateDraftAlertJob()];
+            }
+        }
+        return [];
     }
 
-    function GetNotificationOutput($priority = 2)
+    public function GetNotificationOutput($priority = 2)
     {
         // if this user has permission to change News articles from
-        // Draft to published, and there are draft news articles
+        // draft to published, and there are draft news articles,
         // then display a nice message.
         // this is a priority 2 item.
         if( $priority >= 2 ) {
             $output = array();
             if( $this->CheckPermission('Approve News') ) {
                 $db = $this->GetDb();
-                $query = 'SELECT count(news_id) FROM '.CMS_DB_PREFIX.'module_news n WHERE status != \'published\'
-                  AND (end_time IS NULL OR end_time > NOw())';
+                $query = 'SELECT COUNT(news_id) FROM '.CMS_DB_PREFIX.'module_news WHERE status != \'published\'
+                  AND (end_time IS NULL OR end_time > NOW())';
                 $count = $db->GetOne($query);
                 if( $count ) {
-                    $obj = new StdClass;
+                    $obj = new stdClass();
                     $obj->priority = 2;
                     $link = $this->CreateLink('m1_','defaultadmin','', $this->Lang('notify_n_draft_items_sub',$count));
                     $obj->html = $this->Lang('notify_n_draft_items',$link);
@@ -291,11 +304,11 @@ class News extends CMSModule
                               array('returnid'=>$this->GetPreference('detail_returnid',-1)));
         cms_route_manager::add_static($route);
 
-        $query = 'SELECT news_id,news_url FROM '.CMS_DB_PREFIX.'module_news WHERE status = ? AND news_url != ? AND '
-            . '('.$db->ifNull('start_time',$db->DbTimeStamp(1)).' < NOW()) AND '
-            . '(('.$db->IfNull('end_time',$db->DbTimeStamp(1)).' = '.$db->DbTimeStamp(1).') OR (end_time > NOW()))';
-        $query .= ' ORDER BY news_date DESC';
-        $tmp = $db->GetArray($query,array('published',''));
+        $query = 'SELECT news_id,news_url FROM '.CMS_DB_PREFIX.'module_news WHERE status = \'published\'' .
+            ' AND news_url IS NOT NULL AND news_url != \'\'' .
+            ' AND (start_time IS NULL OR start_time <= NOW()) AND (end_time IS NULL OR end_time > NOW())' .
+            ' ORDER BY news_date DESC';
+        $tmp = $db->GetArray($query);
 
         if( is_array($tmp) ) {
             foreach( $tmp as $one ) {
@@ -308,23 +321,25 @@ class News extends CMSModule
     {
         $mod = cms_utils::get_module('News');
         if( is_object($mod) ) return $mod->Lang('type_'.$str);
+        return '';
     }
 
     public static function template_help_callback($str)
     {
-        $str = trim($str);
         $mod = cms_utils::get_module('News');
         if( is_object($mod) ) {
+            $str = trim((string)$str);
             $file = $mod->GetModulePath().'/doc/tpltype_'.$str.'.inc';
             if( is_file($file) ) return file_get_contents($file);
         }
+        return '';
     }
 
     public static function reset_page_type_defaults(CmsLayoutTemplateType $type)
     {
         if( $type->get_originator() != 'News' ) throw new CmsLogicException('Cannot reset contents for this template type');
 
-        $fn = null;
+        $fn = '';
         switch( $type->get_name() ) {
         case 'summary':
             $fn = 'orig_summary_template.tpl';
@@ -342,14 +357,18 @@ class News extends CMSModule
             $fn = 'browsecat.tpl';
         }
 
-        $fn = cms_join_path(__DIR__,'templates',$fn);
-        if( file_exists($fn) ) return @file_get_contents($fn);
+        if( $fn ) {
+            $fn = cms_join_path(__DIR__,'templates',$fn);
+            if( file_exists($fn) ) return @file_get_contents($fn);
+        }
+        return '';
     }
 
     public function HasCapability($capability, $params = array())
     {
         switch( $capability ) {
         case CmsCoreCapabilities::PLUGIN_MODULE:
+        case CmsCoreCapabilities::SEARCH_MODULE:
         case CmsCoreCapabilities::ADMINSEARCH:
         case CmsCoreCapabilities::TASKS:
             return TRUE;

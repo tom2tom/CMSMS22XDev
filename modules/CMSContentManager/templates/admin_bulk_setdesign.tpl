@@ -1,11 +1,11 @@
-<script type="text/javascript">
+<script>
 $(function() {
-   $('#showmore_ctl').click(function(){
-      $(this).closest('form').submit();
+   $('#showmore_ctl').on('click', function() {
+      $(this).closest('form').trigger('submit');
    });
 });
 </script>
-<h3>{$mod->Lang('prompt_bulk_setdesign')}:</h3>
+<h3>{$mod->Lang('prompt_bulk_setdesign')}</h3>
 
 {form_start multicontent=$multicontent}
 <div class="pageoverflow">
@@ -36,28 +36,28 @@ $(function() {
 </div>
 
 <div class="pageoverflow">
+	<input type="hidden" name="{$actionid}showmore" value="0">
 	<p class="pageinput">
-		<label>
-			<input type="hidden" name="{$actionid}showmore" value="0"/>
-			<input type="checkbox" id="showmore_ctl" name="{$actionid}showmore" value="1" {if $showmore}checked{/if}/>
-			{$mod->Lang('prompt_showmore')}</label>
+		<input type="checkbox" id="showmore_ctl" name="{$actionid}showmore" value="1"{if $showmore} checked{/if}>
+		<label for="showmore_ctl">{$mod->Lang('prompt_showmore')}</label>
 	</p>
 </div>
 
 <div class="pageoverflow">
-	<p class="pagetext">{$mod->Lang('prompt_confirm_operation')}:</p>
+	<p class="pagetext"><label>{$mod->Lang('prompt_confirm_operation')}:</label></p>
 	<p class="pageinput">
-		<input type="checkbox" id="confirm1" value="1" name="{$actionid}confirm1" />
+		<input type="checkbox" id="confirm1" value="1" name="{$actionid}confirm1">
 		&nbsp; <label for="confirm1">{$mod->Lang('prompt_confirm1')}</label>
-		<br />
-		<input type="checkbox" id="confirm2" value="1" name="{$actionid}confirm2" />
-		&nbsp; <label for="confirm2">{$mod->Lang('prompt_confirm2')}</label></p>
+		<br>
+		<input type="checkbox" id="confirm2" value="1" name="{$actionid}confirm2">
+		&nbsp; <label for="confirm2">{$mod->Lang('prompt_confirm2')}</label>
+	</p>
 </div>
 
 <div class="pageoverflow">
-	<p class="pageinput">
-		<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />
-		<input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
-	</p>
+	<div class="pageinput">
+		<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
+		<input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
+	</div>
 </div>
 {form_end}

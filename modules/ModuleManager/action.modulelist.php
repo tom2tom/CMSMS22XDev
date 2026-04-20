@@ -1,14 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: ModuleManager (c) 2008 by Robert Campbell 
-#         (calguy1000@cmsmadesimple.org)
-#  An addon module for CMS Made Simple to allow browsing remotely stored
-#  modules, viewing information about them, and downloading or upgrading
-# 
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module ModuleManager action
+# (c) 2008 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -16,12 +10,6 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-#
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin 
-# section that the site was built with CMS Made simple.
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -37,38 +25,35 @@
 if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Modify Modules') ) exit;
 
-$_SESSION[$this->GetName()]['active_tab'] = 'modules';
-if( !isset($params['name']) ) $this->Redirect($id,'defaultadmin');
+$modname = $this->GetName();
+
+$_SESSION[$modname]['active_tab'] = 'modules'; //TODO '__activetab' ?
+if( !isset($params['name']) ) $this->Redirect($id, 'defaultadmin');
 
 $prefix = trim($params['name']);
-$repmodules = modulerep_client::get_repository_modules($prefix,FALSE,TRUE);
-if( !is_array($repmodules) || $repmodules[0] === FALSE ) $this->Redirect($id,'defaultadmin'); // for some reason, nothing matched.
+$repmodules = modulerep_client::get_repository_modules($prefix, FALSE, TRUE);
+if( !is_array($repmodules) || $repmodules[0] === FALSE ) $this->Redirect($id, 'defaultadmin'); // for some reason, nothing matched
 
 $repmodules = $repmodules[1];
-$instmodules = '';
-{
-  $result = modmgr_utils::get_installed_modules();
-  if( ! $result[0] ) {
-    $this->_DisplayErrorPage( $id, $params, $returnid, $result[1] );
-    return;
-  }
-    
-  $instmodules = $result[1];
-}
 
-$caninstall = true;
-if( FALSE == can_admin_upload() ) {
-  echo '<div class="pageerrorcontainer"><div class="pageoverflow"><p class="pageerror">'.$this->Lang('error_permissions').'</p></div></div>';
-  $caninstall = false;
+$result = modmgr_utils::get_installed_modules();
+if( !$result[0] ) {
+  $this->_DisplayErrorPage($id, $params, $returnid, $result[1]);
+  return;
 }
+$instmodules = $result[1];
+
+$caninstall = can_admin_upload();
+
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;showmodule.tpl", null, $modname, $smarty);
 
 $data = modmgr_utils::build_module_data($repmodules,$instmodules,false);
-if( count( $data ) ) {
+if( $data ) {
   $size = count($data);
 
   // check for permissions
-  $moduledir = dirname(dirname(dirname(__FILE__))).DIRECTORY_SEPARATOR."modules";
-  $writable = is_writable( $moduledir );	
+  $moduledir = dirname(__DIR__,2).DIRECTORY_SEPARATOR."modules";
+  $writable = is_writable( $moduledir );
 
   // build the table
   $rowarray = array();
@@ -81,20 +66,20 @@ if( count( $data ) ) {
     $onerow->name = $row['name'];
     $onerow->version = $row['version'];
     $onerow->helplink = $this->CreateLink( $id, 'modulehelp', $returnid,
-					   $this->Lang('helptxt'), 
-					   array('name' => $row['name'],
-						 'version' => $row['version'],
-						 'filename' => $row['filename']));
+                       $this->Lang('helptxt'),
+                       array('name' => $row['name'],
+                         'version' => $row['version'],
+                         'filename' => $row['filename']));
     $onerow->dependslink = $this->CreateLink( $id, 'moduledepends', $returnid,
-					      $this->Lang('dependstxt'), 
-					      array('name' => $row['name'],
-						    'version' => $row['version'],
-						    'filename' => $row['filename']));
+                          $this->Lang('dependstxt'),
+                          array('name' => $row['name'],
+                            'version' => $row['version'],
+                            'filename' => $row['filename']));
     $onerow->aboutlink = $this->CreateLink( $id, 'moduleabout', $returnid,
-					    $this->Lang('abouttxt'), 
-					    array('name' => $row['name'],
-						  'version' => $row['version'],
-						  'filename' => $row['filename']));
+                        $this->Lang('abouttxt'),
+                        array('name' => $row['name'],
+                          'version' => $row['version'],
+                          'filename' => $row['filename']));
 
     switch( $row['status'] ) {
     case 'incompatible':
@@ -107,59 +92,54 @@ if( count( $data ) ) {
       $onerow->status = $this->Lang('newerversion');
       break;
     case 'notinstalled':
-      {
-	$mod = $moduledir.DIRECTORY_SEPARATOR.$row['name'];
-	if( (($writable && is_dir($mod) && is_directory_writable( $mod )) ||
-	     ($writable && !file_exists( $mod ) )) && $caninstall ) {
-	  $onerow->status = $this->CreateLink( $id, 'installmodule', $returnid,
-					       $this->Lang('download'), 
-					       array('name' => $row['name'],
-						     'version' => $row['version'],
-						     'filename' => $row['filename'],
-						     'size' => $row['size']));
-	}
-	else {
-	  $onerow->status = $this->Lang('cantdownload');
-	}
+      $modpath = $moduledir.DIRECTORY_SEPARATOR.$row['name'];
+      if( (($writable && is_dir($modpath) && is_directory_writable( $modpath )) ||
+           ($writable && !file_exists($modpath) )) && $caninstall ) {
+        $onerow->status = $this->CreateLink( $id, 'installmodule', $returnid,
+                             $this->Lang('download'),
+                             array('name' => $row['name'],
+                               'version' => $row['version'],
+                               'filename' => $row['filename'],
+                               'size' => $row['size']));
+      }
+      else {
+        $onerow->status = $this->Lang('cantdownload');
       }
       break;
 
     case 'upgrade':
-      {
-	$mod = $moduledir.DIRECTORY_SEPARATOR.$row['name'];
-	if( (($writable && is_dir($mod) && is_directory_writable( $mod )) ||
-	     ($writable && !file_exists( $mod ) )) && $caninstall ) {
-	  $onerow->status = $this->CreateLink( $id, 'installmodule', $returnid,
-					       $this->Lang('upgrade'), 
-					       array('name' => $row['name'],
-						     'version' => $row['version'],
-						     'filename' => $row['filename'],
-						     'size' => $row['size']));
-	}
-	else {
-	  $onerow->status = $this->Lang('cantdownload');
-	}
+      $modpath = $moduledir.DIRECTORY_SEPARATOR.$row['name'];
+      if( (($writable && is_dir($modpath) && is_directory_writable( $modpath )) ||
+           ($writable && !file_exists($modpath) )) && $caninstall ) {
+        $onerow->status = $this->CreateLink( $id, 'installmodule', $returnid,
+                             $this->Lang('upgrade'),
+                             array('name' => $row['name'],
+                               'version' => $row['version'],
+                               'filename' => $row['filename'],
+                               'size' => $row['size']));
+      }
+      else {
+        $onerow->status = $this->Lang('cantdownload');
       }
       break;
     }
-	    
+
     $onerow->size = (int)((float) $row['size'] / 1024.0 + 0.5);
-    if( isset( $row['description'] ) ) $onerow->description=$row['description'];
+    if( isset($row['description']) ) $onerow->description = $row['description'];
     $rowarray[] = $onerow;
   } // for
 
-  $smarty->assign('items', $rowarray);
-  $smarty->assign('itemcount', count($rowarray));
+  $tpl->assign('items', $rowarray);
+  $tpl->assign('itemcount', count($rowarray));
+}
+else {
+  $tpl->assign('errmessage2', $this->Lang('error_missingmoduleinfo', $prefix));
 }
 
-modmgr_utils::get_images();
-$smarty->assign('nametext',$this->Lang('nametext'));
-$smarty->assign('vertext',$this->Lang('vertext'));
-$smarty->assign('sizetext',$this->Lang('sizetext'));
-$smarty->assign('statustext',$this->Lang('statustext'));
-$smarty->assign('header',$this->Lang('versionsformodule',$prefix));
-echo $this->ProcessTemplate('showmodule.tpl');
-#
-# EOF
-#
-?>
+modmgr_utils::get_images($tpl);
+
+$tpl->assign('title', $this->Lang('versionsformodule', $prefix));
+if( !$caninstall ) {
+  $tpl->assign('errmessage1', $this->Lang('error_permissions'));
+}
+$tpl->display();

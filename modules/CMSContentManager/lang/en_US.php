@@ -1,10 +1,11 @@
 <?php
 
-#A
-$lang['addcontent'] = 'Add New Content';
+//A
+$lang['addcontent'] = 'Add Content Page';
+$lang['addtab'] = 'Add Custom Tab';
 $lang['apply'] = 'Apply';
 
-#B
+//B
 $lang['bulk_active'] = 'Set Active';
 $lang['bulk_cachable'] = 'Set Cachable';
 $lang['bulk_changeowner'] = 'Change Owner';
@@ -17,7 +18,7 @@ $lang['bulk_secure'] = 'Set Secure (HTTPS)';
 $lang['bulk_setdesign'] = 'Set Design &amp; Template';
 $lang['bulk_showinmenu'] = 'Show In Menu';
 
-#C
+//C
 $lang['cancel'] = 'Cancel';
 $lang['close'] = 'Close';
 $lang['colhdr_id'] = 'Id';
@@ -58,23 +59,23 @@ $lang['colhdr_url'] = 'URL';
 $lang['coltitle_url'] = 'The unique URL (relative to the root URL) that can be used to browse to the page';
 $lang['colhdr_view'] = 'View';
 $lang['coltitle_view'] = 'The icon in this column allows viewing the page in a new browser tab.';
-$lang['confirm_clearlocks'] = 'Clearing lock\'s could interrupt a working edit session.  Are you sure you want to continue?';
+$lang['confirm_clearlocks'] = 'Clearing lock(s) could interrupt a working edit session.  Are you sure you want to continue?';
 $lang['confirm_delete_page'] = 'Are you sure you want to delete this content item?';
 $lang['confirm_expandall'] = 'Are you sure you want to expand all content?  On large sites this may cause problems.  Please use caution';
-$lang['confirm_reorder'] = 'Are you sure you want to save the content in this order';
+$lang['confirm_reorder'] = 'Are you sure you want to save the content in this order?';
 $lang['confirm_setdefault'] = 'Are you sure you want to change the default content page for this website?';
 $lang['confirm_setinactive'] = 'Are you sure you want to set this page inactive? This page will not be viewable, and may affect the behavior of a working website?';
-$lang['confirm_steal_lock'] = 'This page is locked.  Although you may steal this lock it is not always a nice thing to do.  The other party may lose valuable content edits.\n\n Are you sure you want to continue?';
+$lang['confirm_steal_lock'] = 'You can steal the lock on this page, but doing so would destroy the other editor\'s unsaved work, if any.\nAre you sure you want to continue?';
 $lang['confirm_viewpage'] = 'Are you sure you want to open a new window to view this page?';
 $lang['contractall'] = 'Collapse All';
 $lang['critical_error'] = '** ERROR **';
 
-#D
+//D
 $lang['desc_contentmanager_settings'] = 'Adjust settings related to listing, or editing content pages';
 
-#E
+//E
 $lang['editcontent_confirm_cancel'] = 'Are you sure you want to cancel this operation?  Any changes will be lost!';
-$lang['error_action_contentlocked'] = 'This operation cannot be performed while there is locked content';
+$lang['error_action_contentlocked'] = 'This operation cannot be performed while there is locked content'; //too broad
 $lang['error_bulk_permission'] = 'You do not have permission to perform this bulk action';
 $lang['error_contentlocked'] = 'It appears that this content is already locked. Try to refresh this page to see up-to-date information';
 $lang['error_contenttype_disallowed'] = 'Default Content Type is also set to Disallowed';
@@ -96,21 +97,22 @@ $lang['error_setactive'] = 'Could not activate this page.  This could be a datab
 $lang['error_setdefault'] = 'Could not change the default content page.  This could be a database problem, or a permissions issue.';
 $lang['error_setinactive'] = 'Could not deactivate this page.  This could be a database problem, or a permissions issue.';
 $lang['error_template_notavailable'] = 'Either there is no template associated with this object, or it is not available for edit.  Perhaps it has been deleted?';
-$lang['err_nomatchingcontent'] = 'Sorry... there does not appear to be any content that matches your criteria';
+$lang['errors'] = 'Errors';
+$lang['err_nomatchingcontent'] = 'We could not find a page that matches the filter criteria';
 $lang['expandall'] = 'Expand All';
 
-#F
-$lang['filter_applied'] = 'Filter Applied';
+//F
+$lang['filterapplied'] = 'Filter applied';
 $lang['find'] = 'Find';
 $lang['friendlyname'] = 'Content Manager';
 
-#G
+//G
 $lang['go'] = 'Go';
 
-#H
+//H
 $lang['help_content_type'] = 'The content type controls the overall function of an item.  Some content types are used for building HTML pages, while others are for building links or other navigation functions.';
-$lang['help_general_lockrefresh'] = 'Specify the number of seconds (at most) at which a lock should be refreshed.  Setting a value of 0 will disable refreshing of locks.<br/><strong>Note:</strong> Locks are not refreshed unless there are some changes in the form.<br />The minimum value for this field (other than 0) is 30.';
-$lang['help_general_locktimeout'] = 'Specify the number of minutes after which a non-refreshed lock will expire.  Specifying a value of 0 will disable locking all together.  The minimum value for this field is 5 and the maximum value is 480.';
+$lang['help_general_lockrefresh'] = 'Specify the maximum number of seconds after which a lock should be refreshed.  Setting a value of 0 will disable refreshing of locks.<br><strong>Note:</strong> locks are not refreshed unless there are changes in the form.<br>The minimum value for this field (other than 0) is 30.';
+$lang['help_general_locktimeout'] = 'Specify the number of minutes after which a non-refreshed lock will expire.  Setting a value of 0 will disable locking altogether.  Otherwise, the minimum value is 5 and the maximum is 480.';
 $lang['help_general_templatelistmode'] = 'This option controls how templates will be listed in the add/edit content form.';
 $lang['help_listsettings_namecolumn'] = 'Specify what text should be displayed in the &quot;Name&quot; column of the content list view.  Choose either the page title, or menu text';
 $lang['help_listsettings_visiblecolumns'] = 'Select which columns to display in the content list view.  Use caution here as some functionality may not be available if the column is hidden';
@@ -128,45 +130,44 @@ $lang['help_pagedflt_searchable'] = 'Specify whether new pages should be searcha
 $lang['help_pagedflt_secure'] = 'Specify whether new pages should be <em>(by default)</em> secure <em>(uses the HTTPS protocol)</em>.  For secure pages to work the site must have a valid certificate installed on the web server, and the site must be configured properly';
 $lang['help_pagedflt_showinmenu'] = 'Specify whether new pages should be visible in normal navigations by default';
 $lang['help_pagedflt_template_id'] = 'Specify the default template to use for the new content page.  The template controls page logic, and what content blocks are visible to the editor';
+$lang['help_tab_id'] = 'Enter something unique and distinctive, and which might be used to assist tabs-sorting. As an example, internal/default tabs have respective ids like \'aa_main\' or \'zz_2logic\'.';
 $lang['help_title_content_type'] = 'Content Type Selector';
 
-#I
+//I
 $lang['info_javascript_required'] = '<strong>Warning:</strong> In order to operate correctly, this module requires a browser with JavaScript support enabled.';
-$lang['info_ordercontent'] = 'Drag and drop elements to adjust their order in the content tree.  <strong>Note: </strong> Some content items, such as separators do not accept children';
+$lang['info_ordercontent'] = 'Drag and drop elements to adjust their order in the content tree.  <strong>Note:</strong> some content items, such as separators, do not accept children.';
+$lang['info_ordertabs'] = 'When editing a page, displayed tabs will be ordered in accord with increasing value of order-preference values, as displayed here. Any positive integer may be applied in each case. They do not need to be sequential.';
 $lang['info_pagedflt'] = 'This panel allows setting default values for various content properties when creating a new page of type &quot;Content&quot; <em>or its derived types.  These settings will have no effect on existing pages, and user settings may override some settings.</em>';
 $lang['info_preview_notice'] = '<strong>Warning:</strong> This preview panel behaves much like a browser window allowing you to navigate away from the initially previewed page. However, if you do that, you may experience unexpected behavior. If you navigate away from the initial display and return, you may not see the un-committed content until you make a change to the content in the main tab, and then reload this tab. When adding content, if you navigate away from this page, you will be unable to return, and must refresh this panel.';
 
-#J
-
-#K
-
-#L
-$lang['locked_by'] = 'Locked By';
+//L
+$lang['legend_tabs'] = 'Tabs Display';
+$lang['locked_by'] = 'Locked by';
 $lang['locked_since'] = 'Since';
-$lang['locked_steal'] = 'You can steal this lock';
+$lang['locked_steal'] = 'You can steal the lock on this page'; //see also 'prompt_steal_lock_edit'
 $lang['lock_expired'] = 'Expired';
 $lang['lock_expires'] = 'Expires';
 
-#M
+//M
 $lang['moddescription'] = 'A module for managing content within CMSMS';
 $lang['msg_bulk_successful'] = 'Bulk content operation successful';
-$lang['msg_editpage_success'] = 'Content Updated';
-$lang['msg_cancelled'] = 'Operation Canceled';
+$lang['msg_editpage_success'] = 'Content updated';
+$lang['msg_cancelled'] = 'Operation canceled';
 $lang['msg_lockscleared'] = 'Locks cleared';
 $lang['msg_lostlock'] = 'The lock on this content page has expired and been lost.  You can no longer save changes to this content page.  Please return to the content list and re-edit this page.';
 $lang['msg_prefs_saved'] = 'Preferences saved';
 
-#N
+//N
 $lang['no'] = 'No';
 $lang['none'] = 'None';
 
-#O
+//O
 $lang['opt_alltemplates'] = 'All templates';
 $lang['opt_alldesign'] = 'All templates associated with the design';
 $lang['opt_allpage'] = 'All page templates';
 $lang['opt_designpage'] = 'All page templates associated with the design';
 
-#P
+//P
 $lang['page'] = 'Page';
 $lang['pages'] = 'Pages';
 $lang['postinstall'] = 'Content module installed';
@@ -178,22 +179,24 @@ $lang['prompt_bulk_delete_content'] = 'Bulk Delete Content Pages';
 $lang['prompt_bulk_delete_content2'] = 'These pages are due to be deleted';
 $lang['prompt_bulk_setdesign'] = 'Bulk Change Template and Design';
 $lang['prompt_cachable'] = 'Cachable';
-$lang['prompt_clearlocks'] = 'Remove content locks';
+$lang['prompt_clearlocks'] = 'Remove Content Locks';
+$lang['prompt_clearlocks2'] = 'Clear Your Locks';
 $lang['prompt_collapseall'] = 'Collapse all pages';
 $lang['prompt_confirm_operation'] = 'Confirm Operation';
 $lang['prompt_confirm1'] = 'Yes, I am sure I want to do this';
-$lang['prompt_confirm2'] = 'Yes, I am really sure I want to do this';
+$lang['prompt_confirm2'] = 'Yes, I am <strong>really sure</strong> I want to do this';
 $lang['prompt_content_id'] = 'Content ID';
 $lang['prompt_created'] = 'Created';
 $lang['prompt_design'] = 'Design';
 $lang['prompt_editor'] = 'Editor';
-$lang['prompt_editpage_addcontent']= 'Add Content Page';
+$lang['prompt_editpage_addcontent'] = 'Add Content Page';
 $lang['prompt_editpage_contenttype'] = 'Content Type';
-$lang['prompt_editpage_editcontent']= 'Edit Content Page';
-$lang['prompt_editsettings']= 'Edit Settings';
+$lang['prompt_editpage_editcontent'] = 'Edit Content Page';
+$lang['prompt_editsettings'] = 'Change settings'; // title and alt attrib's
 $lang['prompt_expandall'] = 'Expand all content pages';
 $lang['prompt_filter_type'] = 'Filter Type';
 $lang['prompt_general'] = 'General';
+$lang['prompt_global'] = 'All Pages'; //tab label
 $lang['prompt_inactive'] = 'Inactive';
 $lang['prompt_locktimeout'] = 'Locking Expiration Time-out (minutes)';
 $lang['prompt_lockrefresh'] = 'Locking Refresh Interval (seconds)';
@@ -204,9 +207,10 @@ $lang['prompt_ordercontent'] = 'Reorder Content';
 $lang['prompt_owner'] = 'Owner';
 $lang['prompt_lastmodified'] = 'Last Modified';
 $lang['prompt_lastmodifiedby'] = 'Last Modified By';
-$lang['prompt_listsettings'] = 'Content List Settings';
+$lang['prompt_listsettings'] = 'Content List'; // tab label
 $lang['prompt_list_namecolumn'] = 'Content Field to Display in Name Column';
 $lang['prompt_list_visiblecolumns'] = 'Visible Columns';
+$lang['prompt_namedtab_order'] = '%s Tab Order';
 $lang['prompt_pagedefaults'] = 'New Page Defaults';
 $lang['prompt_pagedflt_active'] = 'Is this page active?';
 $lang['prompt_pagedflt_addteditors'] = 'Additional Editors';
@@ -240,50 +244,45 @@ $lang['prompt_page_title'] = 'Title';
 $lang['prompt_page_view'] = 'View this page in another window';
 $lang['prompt_preview'] = 'Preview';
 $lang['prompt_secure'] = 'Secure';
-$lang['prompt_settings'] = 'Settings';
+//$lang['prompt_settings'] = 'Settings'; use lang['settings']
 $lang['prompt_showinmenu'] = 'Shown in Navigations';
 $lang['prompt_showmore'] = 'Show more';
 $lang['prompt_steal_lock_edit'] = 'Steal this lock and edit the page';
+$lang['prompt_tab_id'] = 'New Tab Identifier';
+$lang['prompt_tab_name'] = 'New Tab Displayed Name';
+$lang['prompt_tab_order'] = 'New Tab Order';
 $lang['prompt_template'] = 'Template';
 $lang['prompt_template_list_mode'] = 'Template list mode';
 $lang['prompt_title'] = 'Title';
 $lang['prompt_withselected'] = 'With Selected';
 
-#Q
-
-#R
+//R
 $lang['reorderpages'] = 'Reorder Content';
+$lang['removetab'] = 'Remove This Custom Tab';
 $lang['revert'] = 'Revert';
 
-#S
+//S
 $lang['select_all'] = 'Select All';
 $lang['submit'] = 'Submit';
 
-#T
+//T
 $lang['title_clearlocks'] = 'Clear all content locks';
-$lang['title_contentmanager_settings'] = 'Settings - Content Manager';
+$lang['title_clearlocks2'] = 'Clear locks held by you';
+$lang['title_contentmanager_settings'] = 'Settings - Content';
 $lang['title_editpage_apply'] = 'Save the changes to this content page, and continue editing';
 $lang['title_editpage_cancel'] = 'Abandon all unsaved changes to this page, and return to the content list';
 $lang['title_editpage_submit'] = 'Save the changes to this content page, and return to the content list';
 $lang['title_editpage_view'] = 'View the current content page (saved changes only)';
 $lang['title_listcontent_find'] = 'Enter a portion of a page title or menu text and select a matching page';
-$lang['title_locked'] = 'This page is currently being edited by another user';
-$lang['title_userpageoptions'] = 'Page List Options';
+$lang['title_locked'] = 'This page is being edited by another user';
+$lang['title_userpageoptions'] = 'Pages List Settings'; // dialog heading
 $lang['toggle'] = 'Toggle Selected';
 
-#U
-
-#V
-
-#W
+//W
 $lang['warn_destructive'] = 'This operation can have undesired side effects, please exercise extreme caution';
 $lang['warn_notemplates_for_design'] = 'Sorry, but it does not appear that there are any usable page templates for the selected design';
 
-#X
-
-#Y
+//Y
 $lang['yes'] = 'Yes';
-
-#Z
 
 ?>

@@ -1,0 +1,54 @@
+/* styles for edit-design template */
+#available-templates li.selected {
+	background-color: #147fdb;
+	color: #fff;
+}
+#available-templates li:focus {
+	background-color: #147fdb;
+	color: #fff;
+}
+#available-templates li a:focus {
+	color: red;
+}
+#available-templates a.ui-icon+a:focus {
+	border: 2px solid red;
+}
+#selected-templates .sortable-list li a,
+#selected-templates .sortable-list li a:hover {
+	pointer-events: none;
+	text-decoration: none;
+}
+#selected-templates .sortable-list li a.sortable-remove {
+	pointer-events: initial;
+}
+#selected-templates .sortable-list li a.sortable-remove img {
+	border: 0;
+	vertical-align: text-bottom;
+}
+
+#available-stylesheets li.selected {
+	background-color: #147fdb;
+	color: #fff;
+}
+#available-stylesheets li:focus {
+	background-color: #147fdb;
+	color: #fff;
+}
+#available-stylesheets li a:focus {
+	color: red;
+}
+#available-stylesheets a.ui-icon+a:focus {
+	border: 2px solid red;
+}
+#selected-stylesheets .sortable-list li a,
+#selected-stylesheets .sortable-list li a:hover {
+	pointer-events: none;
+	text-decoration: none;
+}
+#selected-stylesheets .sortable-list li a.sortable-remove {
+	pointer-events: initial;
+}
+#selected-stylesheets .sortable-list li a.sortable-remove img {
+	border: 0;
+	vertical-align: text-bottom;
+}

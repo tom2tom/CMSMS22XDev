@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: Navigator (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  An module for CMS Made Simple to allow building hierarchical navigations.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module Navigator action
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -37,7 +32,7 @@ if( !defined('CMS_VERSION') ) exit;
 
 debug_buffer('Start Navigator breadcrumbs action');
 
-$template = null;
+$template = '';
 if( isset($params['template']) ) {
     $template = trim($params['template']);
 }
@@ -51,7 +46,8 @@ else {
 }
 
 $cache_id = '|nav'.md5(serialize($params));
-$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),$cache_id,null,$smarty);
+$modname = $this->GetName();
+$tpl = $smarty->createTemplate($this->GetTemplateResource($template),$cache_id,$modname,$smarty);
 if( !$tpl->isCached() ) {
     //
     // initialization
@@ -110,7 +106,6 @@ $tpl->display();
 unset($tpl);
 
 debug_buffer('End Navigator breadcrumbs action');
-
 
 #
 # EOF

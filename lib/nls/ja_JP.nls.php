@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple translation file
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -23,7 +22,7 @@
 #The modifications to fit it for Gallery were made by Jens Tkotz
 #(http://gallery.meanalto.com) 
 
-#Ideas from Gallery's implementation made to CMS by Ted Kulp
+#Ideas from Gallery's implementation made for CMSMS by Ted Kulp
 
 #Japanese
 #Translation: Nuspace Pty Ltd <http://www.nuspace.net/>
@@ -46,7 +45,7 @@ $nls['locale']['ja_JP'] = 'ja_JP,ja_JP.utf8,ja_JP.utf-8,ja_JP.UTF-8,ja_JP.SJIS,j
 $nls['encoding']['ja_JP'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['ja_JP'] = array(dirname(__FILE__).'/ja_JP/admin.inc.php');
+$nls['file']['ja_JP'] = array(__DIR__.'/ja_JP/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

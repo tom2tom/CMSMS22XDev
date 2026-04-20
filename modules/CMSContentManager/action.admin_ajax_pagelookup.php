@@ -1,38 +1,25 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: Content (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A module for managing content in CMSMS.
-#
+# Module CMSContentManager action
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
-#
-#-------------------------------------------------------------------------
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
 #
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, read the license online at
+# https://www.gnu.org/licenses/#LicenseURLs
 #-------------------------------------------------------------------------
 #END_LICENSE
+
 if( !isset($gCms) ) exit;
 if( !$this->CanEditContent() ) exit;
 
@@ -60,8 +47,8 @@ if( isset($_REQUEST['term']) ) {
 
   $list = $db->GetArray($query,$parms);
   if( $list ) {
-    $builder = new ContentListBuilder($this);
-    $builder->expand_all(); // it'd be cool to open all parents to each item.
+    $builder = new CMSContentManager\ListOperations($this);
+    $builder->expand_all(); // show all pages cuz match(es) could be anywhere
     $contentops = ContentOperations::get_instance();
     foreach( $list as $row ) {
       $label = $contentops->CreateFriendlyHierarchyPosition($row['hierarchy']);
@@ -73,8 +60,4 @@ if( isset($_REQUEST['term']) ) {
 
 echo json_encode($out);
 exit;
-
-#
-# EOF
-#
 ?>

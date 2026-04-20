@@ -1,0 +1,9 @@
+Options -Indexes
+# Deny public executables (other than js)
+<Files ~ "\.(php|php3|php4|php5|phtml|pl|cgi)$">
+#2.4
+	Require all denied
+#2.2
+	Order deny,allow
+	Deny from all
+</Files>

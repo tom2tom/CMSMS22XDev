@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: setlist
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -42,13 +41,13 @@ function smarty_function_setlist($params, $smarty)
 	$smarty->assign($params['var'],$newlist);
 }
 
-function smarty_cms_help_function_setlist() {
-?>
+function smarty_cms_help_function_setlist()
+{?>
 	<p>Populate arrays directly in your template, e.g.:</p>
 	<pre>
 		{setlist var='varname' value='"red":"#f00","green":"#0f0","blue":"#00f","violet":"#f0f","yellow":"#ff0"'}
-		{foreach from=$varname key=color item=colorcode}
-		    {$color} is {$colorcode}<br />
+		{foreach $varname as $color => $colorcode}
+			{$color} is {$colorcode}<br>
 		{/foreach}
 	</pre>
 	<p>It uses JSON syntax (with implicit curly-brace wrappers), so you can do crazy stuff if you choose to:</p>
@@ -60,8 +59,8 @@ function smarty_cms_help_function_setlist() {
 <?php
 }
 
-function smarty_cms_about_function_setlist() {
-?>
+function smarty_cms_about_function_setlist()
+{?>
 	<p>Author: SjG</p>
 
 	<p>Change History:</p>

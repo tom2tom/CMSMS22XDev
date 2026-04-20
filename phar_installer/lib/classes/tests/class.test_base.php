@@ -4,7 +4,6 @@ namespace __appbase\tests;
 
 use __appbase\http_request;
 use __appbase\utils;
-use ArrayAccess;
 use Exception;
 use function __appbase\lang;
 
@@ -41,7 +40,7 @@ function test_is_true($val)
 function test_remote_file($url,$timeout = 3,$searchString = '')
 {
   $timeout = max(1,min(360,$timeout));
-  $req = new http_request;
+  $req = new http_request();
   $req->setTarget($url);
   $req->setTimeout($timeout);
   $req->execute();
@@ -57,19 +56,35 @@ abstract class test_base
   const TEST_FAIL = 'test_fail';
   const TEST_WARN = 'test_warn';
 
-  private static $_keys = array('name','name_key','status','value','required','minimum','maximum','recommended','pass_key','pass_msg','fail_msg',
-				'fail_key','warn_key','warn_msg','msg_key','msg');
+  private static $_keys = array(
+   'fail_key',
+   'fail_msg',
+   'maximum',
+   'minimum',
+   'msg',
+   'msg_key',
+   'name',
+   'name_key',
+   'pass_key',
+   'pass_msg',
+   'recommended',
+   'required',
+   'status',
+   'value',
+   'warn_key',
+   'warn_msg'
+  );
   private $_data = array();
 
-  public function __construct($name,$value,$key = '')
+  public function __construct($name,$value = '',$key = '')
   {
     if( !$name ) throw new Exception(lang('error_test_name'));
     $this->name = $name;
-    $this->name_key = $name;
+    if( $key ) { $this->name_key = $key; }
+    else { $this->name_key = $name; }
     $this->value = $value;
-    if( $key ) $this->name_key = $key;
     $this->status = self::TEST_UNTESTED;
-    $this->required = 0;
+    $this->required = false;
   }
 
   #[\ReturnTypeWillChange]
@@ -154,7 +169,7 @@ abstract class test_base
 
   protected function returnBytes($val)
   {
-      if(is_string($val) && $val != '') {
+      if( is_string($val) && $val ) {
           $val = trim($val);
           $last = strtolower(substr($val,-1));
           $val = (float) substr($val,0,-1);

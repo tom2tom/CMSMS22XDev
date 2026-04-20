@@ -1,16 +1,15 @@
 <h3>{$mod->Lang('edit_profile')}: <em>{$data.label}</em></h3>
 
 {form_start}
-	<input type="hidden" name="{$actionid}profile" value="{$profile}"/>
-	<input type="hidden" name="{$actionid}origname" value="{$data.name}"/>
+	<input type="hidden" name="{$actionid}profile" value="{$profile}">
+	<input type="hidden" name="{$actionid}origname" value="{$data.name}">
 
-	{if $data.system}<div class="information">{$tmp='profiledesc_'|cat:$data.name}{$mod->Lang($tmp)}</div>{/if}
+	{if $data.system}<div class="information">{$tmp='profiledesc_'|cat:$data.name}{$mod->Lang($tmp)}</div><br>{/if}
 
 	<div class="pageoverflow">
-		<p class="pagetext"></p>
 		<p class="pageinput">
-			<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}"/>
-			<input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}"/>
+			<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
+			<input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
 		</p>
 	</div>
 
@@ -20,7 +19,7 @@
 				<label for="profile_name">*{$mod->Lang('profile_name')}:</label>&nbsp;{cms_help key2='mthelp_profilename' title=$mod->Lang('profile_name')}
 			</p>
 			<p class="pageinput">
-				<input type="text" size="40" id="profile_name" name="{$actionid}profile_name" value="{$data.name}" />
+				<input type="text" size="40" id="profile_name" name="{$actionid}profile_name" value="{$data.name}">
 			</p>
 		</div>
 
@@ -29,7 +28,7 @@
 				<label for="profile_label">*{$mod->Lang('profile_label')}:</label>&nbsp;{cms_help key2='mthelp_profilelabel' title=$mod->Lang('profile_label')}
 			</p>
 			<p class="pageinput">
-				<input type="text" size="80" id="profile_label" name="{$actionid}profile_label" value="{$data.label}" />
+				<input type="text" size="80" id="profile_label" name="{$actionid}profile_label" value="{$data.label}">
 			</p>
 		</div>
 	{/if}
@@ -81,11 +80,33 @@
 
 	<div class="pageoverflow">
 		<p class="pagetext">
+			{$t=$mod->Lang('profile_theme')}<label for="theme">{$t}:</label>&nbsp;{cms_help key2='mthelp_profiletheme' title=$t}
+		</p>
+		<p class="pageinput">
+			<select id="theme" name="{$actionid}profile_theme">
+				{html_options options=$themes selected=$data.theme|default:''}
+			</select>
+		</p>
+	</div>
+
+	<div class="pageoverflow">
+		<p class="pagetext">
+			{$t=$mod->Lang('profile_styler')}<label for="styler">{$t}:</label>&nbsp;{cms_help key2='mthelp_profilestyler' title=$t}
+		</p>
+		<p class="pageinput">
+			<select id="styler" name="{$actionid}profile_styler">
+				{html_options options=$stylers selected=$data.styler|default:''}
+			</select>
+		</p>
+	</div>
+
+	<div class="pageoverflow">
+		<p class="pagetext">
 			<label for="profile_dfltstylesheet">{$mod->Lang('profile_dfltstylesheet')}:</label>&nbsp;{cms_help key2='mthelp_dfltstylesheet' title=$mod->Lang('profile_dfltstylesheet')}
 		</p>
 		<p class="pageinput">
 			<select id="profile_dfltstylesheet" name="{$actionid}profile_dfltstylesheet">
-				{html_options options=$stylesheets selected=$data.dfltstylesheet}
+				{html_options options=$stylesheets selected=$data.dfltstylesheet|default:''}
 			</select>
 		</p>
 	</div>
@@ -98,12 +119,11 @@
 			<select id="profile_allowcssoverride" name="{$actionid}profile_allowcssoverride">{cms_yesno selected=$data.allowcssoverride}</select>
 		</p>
 	</div>
-
+	<br>
 	<div class="pageoverflow">
-		<p class="pagetext"></p>
 		<p class="pageinput">
-			<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}"/>
-			<input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}"/>
+			<input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
+			<input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
 		</p>
 	</div>
 {form_end}

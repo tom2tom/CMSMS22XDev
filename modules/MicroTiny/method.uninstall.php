@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Module MicroTiny uninstallation script
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -17,8 +16,8 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-$this->RemovePermission('MicroTiny View HTML Source');
-
+// remove all microtiny_profile objects
+$this->RemovePreference();
 #
 # EOF
 #

@@ -1,108 +1,6 @@
-<script type="text/javascript">
-//<![CDATA[
-{if isset($start_tab_preview)}
-  $(function() {
-    $('[name=m1_apply]').on('click', function(e) {
-
-      e.preventDefault();
-
-      if (typeof tinyMCE !== 'undefined') {
-        tinyMCE.triggerSave();
-      }
-
-      var fm =  $('form'),
-       url = fm.attr('action'),
-       data =fm.find('input:not([type="submit"]), select, textarea').serializeArray();
-
-      data.push(
-      { 'name':'m1_ajax', 'value':1 },
-      { 'name':'m1_apply', 'value':1 },
-      { 'name':'showtemplate', 'value':'false' }
-      );
-
-      $.ajax({
-        url: url,
-        method: 'POST',
-        data: data,
-        dataType: 'json'
-      }).done(function(resultdata) {
-        var htmlShow, details, list, tid = 0;
-        var tip = '{$mod->Lang("close")|htmlspecialchars:(ENT_QUOTES+ENT_SUBSTITUTE):"UTF-8":false}';
-        if (resultdata) {
-          details = resultdata.details;
-          if (resultdata.response === 'Success') {
-            if (details) {
-              details = escapeHtml(details);
-            } else {
-              details = '{$mod->Lang("articleupdated")|htmlspecialchars:(ENT_QUOTES+ENT_SUBSTITUTE):"UTF-8":false}';
-            }
-            htmlShow = '<div class="pagemcontainer">' +
-            '<span id="resultcloser" class="close-warning" title="' + tip + '"></span>' +
-            '<p class="pagemessage">' + details + '</p></div>';
-          } else {
-            var out;
-            if (details) {
-              list = details.constructor === Array;
-              if (list) {
-                out = '';
-                for (var i = 0; i < details.length; ++i) {
-                  out += '<li>' + escapeHtml(details[i]) + '</li>';
-                }
-              } else {
-                details = escapeHtml(details);
-              }
-            } else {
-              list = false;
-              details = '{$mod->Lang("error_unknown")|htmlspecialchars:(ENT_QUOTES+ENT_SUBSTITUTE):"UTF-8":false}';
-            }
-            htmlShow = '<div class="pageerrorcontainer">' +
-            '<span id="resultcloser" class="close-warning" title="' + tip + '"></span>';
-            if (list) {
-              htmlShow += '<ul class="pageerror">' + out + '</ul></div>';
-            } else {
-              htmlShow += '<p class="pageerror">' + details + '</p></div>';
-            }
-          }
-        } else {
-          details = '{lang("error_internal")|htmlspecialchars:(ENT_QUOTES+ENT_SUBSTITUTE):"UTF-8":false}';
-          htmlShow = '<div class="pageerrorcontainer">' +
-          '<span id="resultcloser" class="close-warning" title="' + tip + '"></span>' +
-          '<p class="pageerror">' + details + '</p></div>';
-        }
-        $('#editarticle_result').html(htmlShow).slideDown(600);
-        $('#resultcloser').on('click', function(e) {
-          if (tid > 0) {
-            clearTimeout(tid);
-          }
-          e.preventDefault();
-          $('#editarticle_result').slideUp(600, function() {
-            $(this).empty();
-          });
-        });
-        tid = setTimeout(function() {
-          tid = 0;
-          $('#editarticle_result').slideUp(1500, function() {
-            $(this).empty();
-          });
-        }, 4000);
-      }).fail(function(jqXHR, textStatus, errorThrown) {
-        console.debug('AJAX error: ' + errorThrown);
-      });
-    });
-
-    $('input[name=preview_returnid],#preview_template').on('change', function(e) {
-      e.preventDefault();
-      news_dopreview();
-    });
-
-    $('#preview').on('click', function(e) {
-      e.preventDefault();
-      news_dopreview();
-    });
-  });
-
+<script>
   function escapeHtml(text) {
-   //'&' ignored - no double-escaping
+    //'&' ignored - no double-escaping
     var subs = {
       '"': '&quot;',
       "'": '&#039;',
@@ -112,27 +10,24 @@
     };
     return text.replace(/["'<>\\]/g, function(m) { return subs[m]; });
   }
-
+{if isset($tab_preview)}
   function news_dopreview() {
-
-    if (typeof tinyMCE !== 'undefined') {
-      tinyMCE.triggerSave();
+    if (typeof tinymce !== 'undefined') {
+      tinymce.triggerSave();
     }
 
     var fm = $('form'),
      url = fm.attr('action'),
-     data = fm.find('input:not([type="submit"]), select, textarea').serializeArray(); // TODO handle extra textarea used by wysiwyg-editor
+     fdata = new FormData(fm[0]);
+       fdata.append("{$actionid}preview", 1);
+       fdata.append("{$actionid}ajax", 1);
+       fdata.append('showtemplate', 'false');
 
-    data.push(
-    { 'name':'m1_ajax', 'value':1 },
-    { 'name':'m1_preview', 'value':1 },
-    { 'name':'showtemplate', 'value':'false' }
-    );
-
-    $.ajax({
-      url: url,
+    $.ajax(url, {
       method: 'POST',
-      data: data,
+      data:  fdata,
+      contentType: false,
+      processData: false,
       dataType: 'json'
     }).done(function(resultdata) {
       var details = resultdata.details;
@@ -155,10 +50,10 @@
           }
         } else {
           list = false;
-          details = '{$mod->Lang("error_unknown")|htmlspecialchars:(ENT_QUOTES+ENT_SUBSTITUTE):"UTF-8":false}';
+          details = "{$mod->Lang('error_unknown')|adjust:'htmlspecialchars':(ENT_QUOTES+ENT_SUBSTITUTE):'UTF-8':false}";
         }
         //TODO do not hardcode OneEleven-theme style notification
-        var tip = '{$mod->Lang("close")|htmlspecialchars:(ENT_QUOTES+ENT_SUBSTITUTE):"UTF-8":false}';
+        var tip = "{$mod->Lang('close')|adjust:'htmlspecialchars':(ENT_QUOTES+ENT_SUBSTITUTE):'UTF-8':false}";
         var htmlShow = '<div class="pageerrorcontainer">' +
          '<span id="resultcloser" class="close-warning" title="' + tip + ' "></span>';
         if (list) {
@@ -189,27 +84,118 @@
   }
 {/if}
   $(function() {
-    $('[name=m1_submit],[name=m1_apply]').hide().on('click', function() {
+    $("[name='{$actionid}submit'],[name='{$actionid}apply']").hide().on('click', function() {
       $('#edit_news').dirtyForm('option', 'disabled', true);
     });
-    $('[name=m1_cancel]').on('click', function() {
+    $("[name='{$actionid}cancel']").on('click', function() {
       $('#edit_news').dirtyForm('option', 'disabled', true);
       $(this).closest('form').attr('novalidate', 'novalidate');
     });
     $('#edit_news').dirtyForm({
       onDirty : function() {
-        $('[name=m1_apply],[name=m1_submit]').show('slow');
+        $("[name='{$actionid}apply'],[name='{$actionid}submit']").show('slow');
       }
     });
     $(document).on('cmsms_textchange', function() {
       // editor text change, set the form dirty.
       $('#edit_news').dirtyForm('option', 'dirty', true);
     });
-    $('#fld11').on('click', function() {
+    $('#fld4').on('click', function() {
       $('#expiryinfo').toggle('slow');
     });
+{if isset($articleid)}
+    $("[name='{$actionid}apply']").on('click', function(e) {
+      e.preventDefault();
+      if (typeof tinymce !== 'undefined') {
+        tinymce.triggerSave();
+      }
+      var fm =  $('form'),
+       url = fm.attr('action'),
+       fdata = new FormData(fm[0]);
+       fdata.set("{$actionid}apply", "{$mod->Lang('apply')}");
+       fdata.append("{$actionid}ajax", 1);
+       fdata.append('showtemplate', 'false');
+
+      $.ajax(url, {
+        method: 'POST',
+        data: fdata,
+        contentType: false,
+        processData: false,
+        dataType: 'json'
+      }).done(function(resultdata) {
+        var htmlShow, details, list, tip, tid = 0;
+        if (resultdata) {
+          tip = "{$mod->Lang('close')|adjust:'htmlspecialchars':(ENT_QUOTES+ENT_SUBSTITUTE):'UTF-8':false}";
+          details = resultdata.details;
+          if (resultdata.response === 'Success') {
+            if (details) {
+              details = escapeHtml(details);
+            } else {
+              details = "{$mod->Lang('articleupdated')|adjust:'htmlspecialchars':(ENT_QUOTES+ENT_SUBSTITUTE):'UTF-8':false}";
+            }
+            htmlShow = '<div class="pagemcontainer">' +
+            '<span id="resultcloser" class="close-warning" title="' + tip + '"></span>' +
+            '<p class="pagemessage">' + details + '</p></div>';
+          } else {
+            var out;
+            if (details) {
+              list = details.constructor === Array;
+              if (list) {
+                out = '';
+                for (var i = 0; i < details.length; ++i) {
+                  out += '<li>' + escapeHtml(details[i]) + '</li>';
+                }
+              } else {
+                details = escapeHtml(details);
+              }
+            } else {
+              list = false;
+              details = "{$mod->Lang('error_unknown')|adjust:'htmlspecialchars':(ENT_QUOTES+ENT_SUBSTITUTE):'UTF-8':false}";
+            }
+            htmlShow = '<div class="pageerrorcontainer">' +
+            '<span id="resultcloser" class="close-warning" title="' + tip + '"></span>';
+            if (list) {
+              htmlShow += '<ul class="pageerror">' + out + '</ul></div>';
+            } else {
+              htmlShow += '<p class="pageerror">' + details + '</p></div>';
+            }
+          }
+        } else {
+          details = "{lang('error_internal')|adjust:'htmlspecialchars':(ENT_QUOTES+ENT_SUBSTITUTE):'UTF-8':false}";
+          htmlShow = '<div class="pageerrorcontainer">' +
+          '<span id="resultcloser" class="close-warning" title="' + tip + '"></span>' +
+          '<p class="pageerror">' + details + '</p></div>';
+        }
+        $('#editarticle_result').html(htmlShow).slideDown(600);
+        $('#resultcloser').on('click', function(e) {
+          if (tid > 0) {
+            clearTimeout(tid);
+          }
+          e.preventDefault();
+          $('#editarticle_result').slideUp(600, function() {
+            $(this).empty();
+          });
+        });
+        tid = setTimeout(function() {
+          tid = 0;
+          $('#editarticle_result').slideUp(1500, function() {
+            $(this).empty();
+          });
+        }, 4000);
+      }).fail(function(jqXHR, textStatus, errorThrown) {
+        console.debug('AJAX error: ' + errorThrown);
+      });
+    });
+    $('input[name="preview_returnid"],#preview_template').on('change', function(e) {
+      e.preventDefault();
+      news_dopreview();
+    });
+    $('#preview').on('click', function(e) {
+      e.preventDefault();
+      news_dopreview();
+    });
+{/if}
   });
-//]]>
 </script>
 <h3>{if isset($articleid)}{$mod->Lang('editarticle')}{else}{$mod->Lang('addarticle')}{/if}</h3>
 
@@ -217,219 +203,219 @@
 
 <div id="edit_news">
   {$startform}
-  {strip}{$hidden|default:''}
-  <div class="pageoptions">
-    <p class="pageinput">
-      <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />
-      <input type="submit" id="{$actionid}cancel" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
-      {if isset($articleid)}
-        <input type="submit" name="{$actionid}apply" value="{$mod->Lang('apply')}" />
-      {/if}
-    </p>
+  <div class="pageoverflow">
+    <div class="pageinput">
+      <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
+      &nbsp;<input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
+{if isset($articleid)}
+      &nbsp;<input type="submit" name="{$actionid}apply" data-ui-icon="ui-icon-caret-1-n" value="{$mod->Lang('apply')}">
+{/if}
+    </div>
   </div>
-
-  {if isset($start_tab_headers)}
-  {$start_tab_headers}
-  {$tabheader_article}
-  {$tabheader_preview}
-  {$end_tab_headers}
-
-  {$start_tab_content}
-  {$start_tab_article}
-  {/if}
+  {strip}
+{if isset($tab_preview)}
+  {tab_header name='article' label=$mod->Lang('article')}
+  {tab_header name='preview' label=$mod->Lang('preview')}
+  {tab_start name='article'}
+{/if}
   <div id="edit_article">
     {if $inputauthor}
     <div class="pageoverflow">
       <p class="pagetext">
-        *{$authortext}:
+        <label>{$authortext}:</label>
       </p>
-      <p class="pageinput">
+      <div class="pageinput">
         {$inputauthor}
-      </p>
+      </div>
     </div>
     {/if}
     <div class="pageoverflow">
       <p class="pagetext">
         <label for="fld1">*{$titletext}:</label> {cms_help key='help_article_title' title=$titletext}
       </p>
-      <p class="pageinput">
-        <input type="text" id="fld1" name="{$actionid}title" value="{$title|escape:htmlall}" size="80" maxlength="255" required />
-      </p>
+      <div class="pageinput">
+        <input type="text" id="fld1" name="{$actionid}title" value="{$title|escape:htmlall}" size="80" maxlength="255" required>
+      </div>
     </div>
     <div class="pageoverflow">
       <p class="pagetext">
         <label for="fld2">*{$categorytext}:</label> {cms_help key='help_article_category' title=$categorytext}
       </p>
-      <p class="pageinput">
+      <div class="pageinput">
         <select name="{$actionid}category" id="fld2">
           {html_options options=$categorylist selected=$category}
         </select>
-      </p>
+      </div>
     </div>
-    {if !isset($hide_summary_field) or $hide_summary_field == '0'}
+    {if empty($hide_summary_field)}
     <div class="pageoverflow">
       <p class="pagetext">
-        {$summarytext}: {cms_help key='help_article_summary' title=$summarytext}
+        <label>{$summarytext}:</label> {cms_help key='help_article_summary' title=$summarytext}
       </p>
-      <p class="pageinput">
-        {$inputsummary}
-      </p>
+      <div class="pageinput">
+        {$inputsummary}{*no id attr for TMCE-related elements*}
+      </div>
     </div>
     {/if}
     <div class="pageoverflow">
       <p class="pagetext">
-        *{$contenttext}: {cms_help key='help_article_content' title=$contenttext}
+        <label>*{$contenttext}:</label> {cms_help key='help_article_content' title=$contenttext}
       </p>
-      <p class="pageinput">
-        {$inputcontent}
-      </p>
+      <div class="pageinput">
+        {$inputcontent}{*no id attr for TMCE-related elements*}
+      </div>
     </div>
-    {if isset($statustext)}
+    {if !empty($statustext)}
     <div class="pageoverflow">
       <p class="pagetext">
-        <label for="fld9">*{$statustext}:</label> {cms_help key='help_article_status' title=$statustext}
+        <label for="fld3">*{$statustext}:</label> {cms_help key='help_article_status' title=$statustext}
       </p>
-      <p class="pageinput">
-        <select id="fld9" name="{$actionid}status">
+      <div class="pageinput">
+        <select id="fld3" name="{$actionid}status">
           {html_options options=$statuses selected=$status}
         </select>
-      </p>
+      </div>
     </div>
     {else}
-    <input type="hidden" name="{$actionid}status" value="{$status}" />
+    <input type="hidden" name="{$actionid}status" value="{$status}">
     {/if}
-
+    <div class="pageoverflow">
+      <p class="pagetext">
+        <label>{$postdatetext}:</label> {cms_help key='help_article_postdate' title=$postdatetext}
+      </p>
+      <div class="pageinput">{*no id attr for datetime selector elements*}
+        {html_select_date prefix=$postdateprefix time=$postdate start_year='1980' end_year='+15'} {html_select_time prefix=$postdateprefix time=$postdate}
+      </div>
+    </div>
+    <div class="pageoverflow">
+      <input type="hidden" name="{$actionid}useexp" value="0">
+      <p class="pagetext">
+        <label for="useexp">{$useexpirationtext}:</label> {cms_help key='help_article_useexpiry' title=$useexpirationtext}
+      </p>
+      <div class="pageinput">
+        <input type="checkbox" id="useexp" class="pagecheckbox" name="{$actionid}useexp" value="1"{if $useexp} checked{/if}>
+      </div>
+    </div>
+    <div id="expiryinfo"{if $useexp != 1} style="display:none"{/if}>
+      <div class="pageoverflow">
+        <p class="pagetext">
+          <label>{$startdatetext}:</label> {cms_help key='help_article_startdate' title=$startdatetext}
+        </p>
+        <div class="pageinput">{*no id attr for datetime selector elements*}
+          {html_select_date prefix=$startdateprefix time=$startdate start_year="-10" end_year="+15"} {html_select_time prefix=$startdateprefix time=$startdate}
+        </div>
+      </div>
+      <div class="pageoverflow">
+        <p class="pagetext">
+          <label>{$enddatetext}:</label> {cms_help key='help_article_enddate' title=$enddatetext}
+        </p>
+        <div class="pageinput">{*no id attr for datetime selector elements*}
+          {html_select_date prefix=$enddateprefix time=$enddate start_year="-10" end_year="+15"} {html_select_time prefix=$enddateprefix time=$enddate}
+        </div>
+      </div>
+    </div>
+    <div class="pageoverflow">
+      <p class="pagetext">
+        <label for="{$imageinputid}">{$imagetext}:</label> {cms_help key='help_article_image' title=$imagetext}
+      </p>
+      <div class="pageinput">
+        {$imageinput}
+      </div>
+    </div>
     <div class="pageoverflow">
       <p class="pagetext">
         <label for="fld7">{$urltext}:</label> {cms_help key='help_article_url' title=$urltext}
       </p>
-      <p class="pageinput">
-        <input type="text" id="fld7" name="{$actionid}news_url" value="{$news_url}" size="50" maxlength="255" />
-      </p>
+      <div class="pageinput">
+        <input type="text" id="fld7" name="{$actionid}news_url" value="{$news_url}" size="50" maxlength="255">
+      </div>
     </div>
     <div class="pageoverflow">
       <p class="pagetext">
-        <label for="fld5">{$extratext}:</label> {cms_help key='help_article_extra' title=$extratext}
+        <label for="fld9">{$extratext}:</label> {cms_help key='help_article_extra' title=$extratext}
       </p>
-      <p class="pageinput">
-        <input type="text" id="fld5" name="{$actionid}extra" value="{$extra|cms_escape}" size="50" maxlength="255" />
-      </p>
-    </div>
-
-    <div class="pageoverflow">
-      <p class="pagetext">
-        {$postdatetext}: {cms_help key='help_article_postdate' title=$postdatetext}
-      </p>
-      <p class="pageinput">
-        {html_select_date prefix=$postdateprefix time=$postdate start_year='1980' end_year='+15'} {html_select_time prefix=$postdateprefix time=$postdate}
-      </p>
+      <div class="pageinput">
+        <input type="text" id="fld9" name="{$actionid}extra" value="{$extra|cms_escape}" size="50" maxlength="255">
+      </div>
     </div>
     <div class="pageoverflow">
+      <input type="hidden" name="{$actionid}searchable" value="0">
       <p class="pagetext">
         <label for="searchable">{$mod->Lang('searchable')}:</label> {cms_help key='help_article_searchable' title=$mod->Lang('searchable')}
       </p>
-      <p class="pageinput">
-        <select name="{$actionid}searchable" id="searchable">
-          {cms_yesno selected=$searchable}
-        </select>
-        <br />
-        {$mod->Lang('info_searchable')}
-      </p>
-    </div>
-
-    <div class="pageoverflow">
-      <p class="pagetext">
-        <label for="fld11">{$useexpirationtext}:</label> {cms_help key='help_article_useexpiry' title=$useexpirationtext}
-      </p>
-      <p class="pageinput">
-        <input id="fld11" type="checkbox" name="{$actionid}useexp"{if $useexp} checked="checked"{/if} class="pagecheckbox" />
-      </p>
-    </div>
-    <div id="expiryinfo" {if $useexp != 1}style="display: none;"{/if}>
-      <div class="pageoverflow">
-        <p class="pagetext">
-          {$startdatetext}: {cms_help key='help_article_startdate' title=$startdatetext}
-        </p>
-        <p class="pageinput">
-          {html_select_date prefix=$startdateprefix time=$startdate start_year="-10" end_year="+15"} {html_select_time prefix=$startdateprefix time=$startdate}
-        </p>
-      </div>
-      <div class="pageoverflow">
-        <p class="pagetext">
-          {$enddatetext}: {cms_help key='help_article_enddate' title=$enddatetext}
-        </p>
-        <p class="pageinput">
-          {html_select_date prefix=$enddateprefix time=$enddate start_year="-10" end_year="+15"} {html_select_time prefix=$enddateprefix time=$enddate}
-        </p>
+      <div class="pageinput">
+        <input type="checkbox" id="searchable" class="pagecheckbox" name="{$actionid}searchable" value="1"{if $searchable} checked{/if}>
       </div>
     </div>
-    {if isset($custom_fields)}
+    {if !empty($custom_fields)}
+    <fieldset>
+    <legend>{$mod->Lang('customfields')}</legend>
     {foreach $custom_fields as $field}
-    <div class="pageoverflow">
-      <p class="pagetext">
-        <label for="{$field->idattr}">{$field->prompt|cms_escape}:</label>
-      </p>
-      <p class="pageinput">
+      <div class="pageoverflow">
+        <p class="pagetext">
+          <label for="{$field->idattr}">{$field->prompt|cms_escape}:</label>
+        </p>
+        <div class="pageinput">{$usit = $field->value != false}
         {if $field->type == 'textbox'}
-          <input type="text" id="{$field->idattr}" name="{$field->nameattr}" value="{$field->value}" size="{$field->size}" maxlength="{$field->max_len}" />
+          <input type="text" id="{$field->idattr}" name="{$field->nameattr}" value="{$field->value}" size="{$field->size}" maxlength="{$field->max_len}">
         {elseif $field->type == 'checkbox'}
-          <input type="hidden" name="{$field->nameattr}" value="0" />
-          <input type="checkbox" id="{$field->idattr}" name="{$field->nameattr}" value="1"{if $field->value} checked="checked"{/if} />
+          {$usit=false}{*no sensible default for this type*}
+          <input type="hidden" name="{$field->nameattr}" value="0">
+          <input type="checkbox" id="{$field->idattr}" name="{$field->nameattr}" value="1"{if $field->value} checked{/if}>
         {elseif $field->type == 'textarea'}
-          {cms_textarea id=$field->idattr name=$field->nameattr enablewysiwyg=1 value=$field->value maxlength=$field->max_len}
+          {cms_textarea id=$field->idattr name=$field->nameattr enablewysiwyg=1 rows=5 cols=50 value=$field->value}
         {elseif $field->type == 'file'}
-          {if !empty($field->value)}{$field->value}<br />{/if} <input type="file" id="{$field->idattr}" name="{$field->nameattr}" />{if !empty($field->value)} {$delete_field_val} <input type="checkbox" name="{$field->delete}" value="delete" />{/if}
+          {if !empty($field->value)}
+          <input type="hidden" name="{$actionid}currentfile[{$field->id}]" value="{$field->value}">
+          {$fn=rawurlencode(basename($field->value))}{$mod->Lang('current')}: {$fn}<br>
+          {/if}
+          <input type="file" id="{$field->idattr}" name="{$field->nameattr}" accept="image/*">
         {elseif $field->type == 'dropdown'}
+          {$usit = !($field->value == '' || $field->value == -1)}
           <select id="{$field->idattr}" name="{$field->nameattr}">
             <option value="-1">{$select_option}</option>
             {html_options options=$field->options selected=$field->value}
           </select>
         {elseif $field->type == 'linkedfile'}
-          {if $field->value}
-             {thumbnail_url file=$field->value assign=tmp}
-             {if $tmp}<img src="{$tmp}" alt="{$field->value}" />{/if}
-          {/if}
           {cms_filepicker name="{$field->nameattr}" value=$field->value}
         {/if}
-      </p>
-    </div>
+         <br>
+         <label for="uf{$field->id}">{$mod->Lang('usefield')}</label>&nbsp;
+         <input type="checkbox" id="uf{$field->id}" name="{$actionid}usefield[{$field->id}]" value="1"{if $usit} checked{/if}>
+        </div>
+      </div>
     {/foreach}
+    </fieldset>
     {/if}
   </div>
-  {if isset($end_tab_article)}
-    {$end_tab_article}
-  {/if}
-
 {/strip}
-  {if isset($start_tab_preview)}
-  {$start_tab_preview}
-{strip}
+{if isset($tab_preview)}
+  {tab_start name='preview'}
+  {strip}
   {* display a warning *}
   <div class="pagewarning">
     {$warning_preview}
   </div>
   <fieldset>
-    <label for="preview_template">{$prompt_detail_template}:</label>&nbsp;
+    <label for="preview_template">{$mod->Lang('detail_template')}:</label>&nbsp;
     <select id="preview_template" name="{$actionid}detailtemplate">
       {html_options options=$detail_templates selected=$cur_detail_template}
     </select>
-    <label for="cms_hierdropdown1_0">{$prompt_detail_page}:</label>&nbsp;{$preview_page_selector}
+    <label for="seldetail_0">{$mod->Lang('detail_page')}:</label>&nbsp;{$preview_page_selector}
   </fieldset>
-  <br />
-  <iframe id="previewframe" style="height: 800px; width: 100%; border: 1px solid black; overflow: auto;"></iframe>
-  {$end_tab_preview}
-  {$end_tab_content}
+  <br>
+  <iframe id="previewframe" class="preview" style="height:50em;width:100%;overflow:auto"></iframe>
 {/strip}
-  {/if}
-
+  {tab_end}
+{/if}
   <div class="pageoverflow">
-    <p class="pageinput">
-      <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />&nbsp;
-      <input type="submit" id="{$actionid}cancel" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
-      {if isset($articleid)}
-        &nbsp;<input type="submit" name="{$actionid}apply" value="{$mod->Lang('apply')}" />
-      {/if}
-    </p>
+    <div class="pageinput">
+      <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
+      &nbsp;<input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
+{if isset($articleid)}
+      &nbsp;<input type="submit" name="{$actionid}apply" data-ui-icon="ui-icon-caret-1-n" value="{$mod->Lang('apply')}">
+{/if}
+    </div>
   </div>
   {$endform}
 </div>

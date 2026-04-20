@@ -1,0 +1,3 @@
+Version 2.2.18 - Apex
+-------------------------------
+Don't require Intl extension for strftime()-replacement.

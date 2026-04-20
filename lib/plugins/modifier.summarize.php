@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: summarize
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -22,29 +21,31 @@
  * Type:    modifier
  * Name:    summarize
  * Purpose: returns desired amount of words from the full string
- *        	ideal for article text, etc.
+ *          ideal for article text, etc.
  * Author:  MarkS, AKA Skram, mark@mark-s.net /
- *        	http://dev.cmsmadesimple.org/users/marks/
+ *          http://dev.cmsmadesimple.org/users/marks/
  * ----------------------------------------------------------------
  **/
- 
+
 function smarty_modifier_summarize($string,$numwords='5',$etc='...')
 {
+	if( !$string ) return (string)$string;
+
 	$tmp = explode(" ",strip_tags($string));
 	$stringarray = array();
-	
+
 	for( $i = 0; $i < count($tmp); $i++ )
 	{
 		if( $tmp[$i] != '' ) $stringarray[] = $tmp[$i];
 	}
-	
+
 	if( $numwords >= count($stringarray) )
-    {
+	{
 		return $string;
-    }
-	
+	}
+
 	$tmp = array_slice($stringarray,0,$numwords);
 	$tmp = implode(' ',$tmp).$etc;
-	return $tmp;    
+	return $tmp;
 }
 ?>

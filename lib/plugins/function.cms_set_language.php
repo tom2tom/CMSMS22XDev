@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: cms_set_language
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -18,10 +17,11 @@
 
 function smarty_function_cms_set_language($params, $smarty)
 {
-  $lang = null;
+  $lang = '';
   if( isset($params['lang']) ) {
     $lang = trim($params['lang']);
   }
-  $res = CmsNlsOperations::set_language($lang);
+  CmsNlsOperations::set_language($lang);
+  return '';
 }
 ?>

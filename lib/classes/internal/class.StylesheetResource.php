@@ -1,0 +1,52 @@
+<?php
+#CMS Made Simple class StylesheetResource
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#
+#This program is free software; you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation; either version 2 of the License, or
+#(at your option) any later version.
+#
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#You should have received a copy of the GNU General Public License
+#along with this program; if not, write to the Free Software
+#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#$Id$
+
+namespace CMSMS\internal;
+
+/**
+ * A simple class for handling css code as a resource.
+ *
+ * @package CMS
+ * @internal
+ * @ignore
+ * @author Robert Campbell
+ * @since 1.12
+ */
+class StylesheetResource extends Fixed_Resource_Custom
+{
+    protected function fetch($name,&$source,&$mtime)
+    {
+        // clean up the input
+        $name = trim($name);
+        if( !$name ) return;
+
+        // if called via function.cms_stylesheet, then this stylesheet should be loaded.
+        $obj = \CmsLayoutStylesheet::load($name);
+        if( !$obj ) return;
+
+        // by now everything should be in memory in the CmsLayoutStylesheet internal cache's
+        // put it all together in the order specified.
+        $mtime = $obj->get_modified();
+        $text = '/* CMSMS stylesheet: '.$name.' modified: '.\locale_ftime('%x %X', $mtime)." */\n";
+        $text .= $obj->get_content();
+        if( !\endswith($text,"\n") ) $text .= "\n";
+        $source = $text;
+    }
+}
+class_alias(StylesheetResource::class,'CmsStylesheetResource',false);

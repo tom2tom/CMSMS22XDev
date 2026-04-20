@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple admin console script
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -16,286 +15,318 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: supportinfo.php 4216 2007-10-06 19:28:55Z wishy $
+#$Id$
+
 $CMS_ADMIN_PAGE = 1;
 
-//
-// note, much of this code is mysql specific
-//
-
-require_once("../lib/include.php");
-$urlext = '?' . CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY];
+require_once '../lib/include.php';
 check_login();
 
-
 $userid = get_userid();
-$access = check_permission($userid, "Modify Site Preferences");
+$access = check_permission($userid, 'Modify Site Preferences');
 if (!$access) {
-  die('Permission Denied');
-  return;
+  exit(lang('no_permission')); //TODO throw if can be caught
 }
+$pjobs = check_permission($userid, 'Manage Jobs');
 
-include_once("header.php");
+require_once 'header.php';
+require_once cms_join_path(dirname(__DIR__), 'lib', 'test.functions.php');
 
-define('CMS_BASE', dirname(dirname(__FILE__)));
-require_once cms_join_path(CMS_BASE, 'lib', 'test.functions.php');
-
+$active_content = false;
+$active_db = false;
+$active_jobs = false;
+$active_log = false;
 
 $gCms = cmsms();
-$smarty = $gCms->GetSmarty();
-$smarty->caching = false;
-$smarty->force_compile = true;
+
+// Database
 $db = $gCms->GetDb();
-
-
-$smarty->assign('theme', $themeObject);
-
-/*
- *
- * Database
- *
- */
-
-
-$query = "SHOW TABLES LIKE ?";
-$tablestmp = $db->GetArray($query,array(CMS_DB_PREFIX.'%'));
-$tables = array();
-$nonseqtables = array();
+$query = 'SHOW TABLES LIKE ?';
+$tablestmp = $db->GetArray($query, [CMS_DB_PREFIX.'%']);
+$tables = [];
+$nonseqtables = [];
 foreach ($tablestmp as $table) {
   foreach ($table as $tabeinfo => $tablename) {
     $tables[] = $tablename;
-    if (!stripos($tablename, "_seq")) {
+    if (stripos($tablename, '_seq') === false) {
       $nonseqtables[] = $tablename;
     }
   }
 }
 
-$smarty->assign("tablecount", count($tables));
-$smarty->assign("nonseqcount", count($nonseqtables));
+$smarty->changeCaching(false);
+$tpl = $smarty->createTemplate('admin_tpl:systemmaintenance.tpl', null, null, $smarty, false);
+$tpl->assign('tablecount', count($tables));
+$tpl->assign('nonseqcount', count($nonseqtables));
 
-
-function MakeCommaList($tables)
+function MakeCommaList(array $tables)//: string
 {
-  $out = "";
+  $out = '';
   foreach ($tables as $table) {
-    if ($out != "") $out .= " ,";
-    $out .= "`" . $table . "`";
+    if ($out) {
+      $out .= ' ,';
+    }
+    $out .= "`$table`";
   }
   return $out;
 }
 
-if (isset($_POST["optimizeall"])) {
-  $query = "OPTIMIZE TABLE " . MakeCommaList($nonseqtables);
+if (isset($_POST['optimizeall'])) {
+  $query = 'OPTIMIZE TABLE ' . MakeCommaList($nonseqtables);
   $optimizearray = $db->GetArray($query);
   //print_r($optimizearray);
   $errorsfound = 0;
-  $errordetails = "";
+  $errordetails = '';
   foreach ($optimizearray as $check) {
-    if (isset($check["Msg_text"]) && $check["Msg_text"] != "OK") {
-      $errorsfound++;
-      $errordetails .= "MySQL reports that table " . $check["Table"] . " does not checkout OK.<br />";
+    if (isset($check['Msg_text']) && $check['Msg_text'] != 'OK') {
+      ++$errorsfound;
+      $errordetails .= 'MySQL reports that table ' . $check['Table'] . ' does not checkout OK.<br>';
     }
   }
 
   // put mention into the admin log
-  audit('', 'System Maintenance', 'All db-tables optimized');
-  $themeObject->ShowMessage(lang("sysmain_tablesoptimized"));
-  $smarty->assign("active_database", "true");
+  audit('', 'System maintenance', 'All db-tables optimized');
+  $themeObject->ShowMessage(lang('sysmain_tablesoptimized'));
+  $active_db = true;
 }
 
-if (isset($_POST["repairall"])) {
-  $query = "REPAIR TABLE " . MakeCommaList($tables);
+if (isset($_POST['repairall'])) {
+  $query = 'REPAIR TABLE ' . MakeCommaList($tables);
   $repairarray = $db->GetArray($query);
   $errorsfound = 0;
-  $errordetails = "";
+  $errordetails = '';
   foreach ($repairarray as $check) {
-    if (isset($check["Msg_text"]) && $check["Msg_text"] != "OK") {
-      $errorsfound++;
-      $errordetails .= "MySQL reports that table " . $check["Table"] . " does not checkout OK.<br />";
+    if (isset($check['Msg_text']) && $check['Msg_text'] != 'OK') {
+      ++$errorsfound;
+      $errordetails .= 'MySQL reports that table ' . $check['Table'] . ' does not checkout OK.<br>';
     }
   }
 
   // put mention into the admin log
-  audit('', 'System Maintenance', 'All db-tables repaired');
-  $themeObject->ShowMessage(lang("sysmain_tablesrepaired"));
-  $smarty->assign("active_database", "true");
+  audit('', 'System maintenance', 'All db-tables repaired');
+  $themeObject->ShowMessage(lang('sysmain_tablesrepaired'));
+  $active_db = true;
 }
 
+$urlext = '?' . CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY];
+$tpl->assign('formurl', 'systemmaintenance.php' . $urlext);
 
-$smarty->assign("formurl", "systemmaintenance.php" . $urlext);
-
-
-$query = "CHECK TABLE " . MakeCommaList($tables);
+$query = 'CHECK TABLE ' . MakeCommaList($tables);
 //echo $query;
 $checkarray = $db->GetArray($query);
 //print_r($checkarray);
 
-$errortables = array();
+$errortables = [];
 foreach ($checkarray as $check) {
-  if (isset($check["Msg_text"]) && $check["Msg_text"] != "OK") {
-    $errortables[] = $check["Table"];
+  if (isset($check['Msg_text']) && $check['Msg_text'] != 'OK') {
+    $errortables[] = $check['Table'];
   }
 }
 
-$smarty->assign("errorcount", count($errortables));
+$tpl->assign('errorcount', count($errortables));
 if (count($errortables) > 0) {
-  $smarty->assign("errortables", implode(",", $errortables));
+  $tpl->assign('errortables', implode(',', $errortables));
 }
 
-/*
- *
- * Cache and content
- *
- */
-$contentops = cmsms()->GetContentOperations();
+// Cache and content
+$contentops = $gCms->GetContentOperations();
 
 if (isset($_POST['updateurls'])) {
   cms_route_manager::rebuild_static_routes();
   audit('', 'System maintenance', 'Static routes rebuilt');
-  $themeObject->ShowMessage(lang("routesrebuilt"));
-  $smarty->assign("active_content", "true");
+  $themeObject->ShowMessage(lang('routesrebuilt'));
+  $active_content = true;
 }
 
 if (isset($_POST['clearcache'])) {
-  cmsms()->clear_cached_files(-1);
-  // put mention into the admin log
-  audit('', 'System maintenance', 'Cache cleared');
-  $themeObject->ShowMessage(lang("cachecleared"));
-  $smarty->assign("active_content", "true");
+  $gCms->clear_cached_files();
+  $contentops->SetContentModified();
+  audit('', 'System maintenance', 'Page-content caches cleared');
+  $themeObject->ShowMessage(lang('cachecleared'));
+  $active_content = true;
+} else {
+  $n = count(scandir(TMP_CACHE_LOCATION, SCANDIR_SORT_NONE));
+  $n += count(scandir(TMP_TEMPLATES_C_LOCATION, SCANDIR_SORT_NONE));
+  $n = max(0, $n-6); // ignore '.' and '..' and 'index.html'
+  $tpl->assign('filescount', $n);
 }
 
-if (isset($_POST["updatehierarchy"])) {
+if ($pjobs && isset($_POST['clearjobs'])) {
+  CMSMS\JobOperations::clear_all();
+  $active_jobs = true;
+}
+
+if (isset($_POST['updatehierarchy'])) {
   $contentops->SetAllHierarchyPositions();
   audit('', 'System maintenance', 'Page hierarchy positions updated');
-  $themeObject->ShowMessage(lang("sysmain_hierarchyupdated"));
-  $smarty->assign("active_content", "true");
+  $themeObject->ShowMessage(lang('sysmain_hierarchyupdated'));
+  $active_content = true;
 }
 
-//Setting up types
+//Setup types
 $contenttypes = $contentops->ListContentTypes(false, true);
 //print_r($contenttypes);
-$simpletypes = array();
+$simpletypes = [];
 foreach ($contenttypes as $typeid => $typename) {
   $simpletypes[] = $typeid;
 }
 
-
-if (isset($_POST["addaliases"])) {
-  //$contentops->SetAllHierarchyPositions();
-  $count = 0;
-  $query = "SELECT * FROM " . CMS_DB_PREFIX . "content";
-  $allcontent = $db->Execute($query);
-  while ($contentpiece = $allcontent->FetchRow()) {
-    $content_id = $contentpiece["content_id"];
-    if (trim($contentpiece["content_alias"]) == '' && $contentpiece['type'] != 'separator' ) {
-
-      $alias = trim($contentpiece["menu_text"]);
-      if ($alias == '') {
-        $alias = trim($contentpiece["content_name"]);
-      }
-
-      $tolower = true;
-      $alias = munge_string_to_url($alias, $tolower);
-      if ($contentops->CheckAliasError($alias, $content_id)) {
-        $alias_num_add = 2;
-        // If a '-2' version of the alias already exists
-        // Check the '-3' version etc.
-        while ($contentops->CheckAliasError($alias . '-' . $alias_num_add) !== FALSE) {
-          $alias_num_add++;
+if (isset($_POST['addaliases'])) {
+  $n = 0;
+  $query = 'SELECT content_id,content_name,type,menu_text,content_alias FROM ' . CMS_DB_PREFIX . "content WHERE content_alias IS NULL OR content_alias=''";
+  $allcontent = $db->GetArray($query);
+  if ($allcontent) {
+    $query2 = 'UPDATE ' . CMS_DB_PREFIX . 'content SET content_alias=? WHERE content_id=?';
+    foreach ($allcontent as $contentpiece) {
+      foreach ([
+        'content_name',
+        'type',
+        'menu_text',
+        'content_alias'
+      ] as $fld) {
+        if ($contentpiece[$fld] === null) {
+          $contentpiece[$fld] = '';
         }
-        $alias .= '-' . $alias_num_add;
       }
-      $query2 = "UPDATE " . CMS_DB_PREFIX . "content SET content_alias=? WHERE content_id=?";
-      $params2 = array($alias, $content_id);
-      $dbresult = $db->Execute($query2, $params2);
-      $count++;
-
+      $content_id = (int)$contentpiece['content_id'];
+      if (trim($contentpiece['content_alias']) == '' && $contentpiece['type'] != 'separator') {
+        $alias = trim($contentpiece['menu_text']);
+        if ($alias == '') {
+          $alias = trim($contentpiece['content_name']);
+        }
+        $alias = munge_string_to_url($alias, true);
+        if (!$alias) {
+          continue; //TODO throw
+        }
+        if ($contentops->CheckAliasUsed($alias, $content_id)) {
+          // Some other page uses it already, generate a suffixed variant
+          $alias_num_add = 2;
+          // If a '-2' variant of the alias is used, try '-3', etc.
+          while ($contentops->CheckAliasUsed($alias . '-' . $alias_num_add)) {
+            ++$alias_num_add;
+          }
+          $alias .= '-' . $alias_num_add;
+        }
+        $dbresult = $db->Execute($query2, [$alias, $content_id]);
+        ++$n;
+      }
     }
-  }
-  audit('', 'System maintenance', 'Fixed pages missing aliases, count:' . $count);
-  $themeObject->ShowMessage($count . " " . lang("sysmain_aliasesfixed"));
-  $smarty->assign("active_content", "true");
-}
-
-
-if (isset($_POST["fixtypes"])) {
-  //$contentops->SetAllHierarchyPositions();
-
-  $count = 0;
-  $query = "SELECT * FROM " . CMS_DB_PREFIX . "content";
-  $allcontent = $db->Execute($query);
-  while ($contentpiece = $allcontent->FetchRow()) {
-    if (!in_array($contentpiece["type"], $simpletypes)) {
-      $query2 = "UPDATE " . CMS_DB_PREFIX . "content SET type='content' WHERE content_id=?";
-      $params2 = array($contentpiece["content_id"]);
-      $dbresult = $db->Execute($query2, $params2);
-      $count++;
-    }
+    $contentops->SetAllHierarchyPositions(); // update hierarchy_path's
   }
 
-  audit('', 'System maintenance', 'Converted pages with invalid content types, count:' . $count);
-  $themeObject->ShowMessage($count . " " . lang("sysmain_typesfixed"));
-  $smarty->assign("active_content", "true");
+  audit('', 'System maintenance', "Updated $n page(s) whose alias was missing");
+  $themeObject->ShowMessage($n . ' ' . lang('sysmain_aliasesfixed'));
+  $active_content = true;
 }
 
+if (isset($_POST['fixtypes'])) {
+  $n = 0;
+  $query = 'SELECT content_id,type FROM ' . CMS_DB_PREFIX . 'content';
+  $allcontent = $db->GetArray($query);
+  if ($allcontent) {
+    $query2 = 'UPDATE ' . CMS_DB_PREFIX . "content SET type='content' WHERE content_id=?";
+    foreach ($allcontent as $contentpiece) {
+      if (!$contentpiece['type'] ||
+        !in_array($contentpiece['type'], $simpletypes)) {
+        $dbresult = $db->Execute($query2, [$contentpiece['content_id']]);
+        ++$n;
+      }
+    }
+  }
 
-$query = "SELECT * FROM " . CMS_DB_PREFIX . "content";
-$allcontent = $db->Execute($query);
-$pages = array();
-$withoutalias = array();
-$invalidtypes = array();
-if( is_object($allcontent) ) {
-  while ($contentpiece = $allcontent->FetchRow()) {
-    $pages[] = $contentpiece["content_name"];
-    if (trim($contentpiece["content_alias"]) == "" && $contentpiece['type'] != 'separator') {
+  audit('', 'System maintenance', "Converted $n page(s) with invalid content type");
+  $themeObject->ShowMessage($n . ' ' . lang('sysmain_typesfixed'));
+  $active_content = true;
+}
+
+$pages = [];
+$withoutalias = [];
+$invalidtypes = [];
+$query = 'SELECT content_name,type,content_alias FROM ' . CMS_DB_PREFIX . 'content ORDER BY hierarchy_path';
+$allcontent = $db->GetArray($query);
+if ($allcontent) {
+  foreach ($allcontent as $contentpiece) {
+    foreach ([
+      'content_name',
+      'type',
+      'content_alias',
+    ] as $fld) {
+      if ($contentpiece[$fld] === null) {
+        $contentpiece[$fld] = '';
+      }
+    }
+    $pages[] = $contentpiece['content_name'];
+    if (trim($contentpiece['content_alias']) == '' && $contentpiece['type'] != 'separator') {
       $withoutalias[] = $contentpiece;
     }
-    if (!in_array($contentpiece["type"], $simpletypes)) {
+    if (!in_array($contentpiece['type'], $simpletypes)) {
       $invalidtypes[] = $contentpiece;
     }
-    //print_r($contentpiece);
   }
 }
-$smarty->assign_by_ref("pagesmissingalias", $withoutalias);
-$smarty->assign_by_ref("pageswithinvalidtype", $invalidtypes);
 
-$smarty->assign("pagecount", count($pages));
-$smarty->assign("invalidtypescount", count($invalidtypes));
-$smarty->assign("withoutaliascount", count($withoutalias));
+$tpl->assign('pagecount', count($pages));
+$tpl->assign('pagesmissingalias', $withoutalias);
+$tpl->assign('withoutaliascount', count($withoutalias));
+$tpl->assign('pageswithinvalidtype', $invalidtypes);
+$tpl->assign('invalidtypescount', count($invalidtypes));
 
-/*
-*
-* Changelog
-*
-*/
-$ch_filename = cms_join_path(CMS_BASE, 'doc', 'CHANGELOG.txt');
-$changelog = @file($ch_filename);
-
-if (is_readable($ch_filename)) {
-
-	for ($i = 0; $i < count($changelog); $i++) {
-	  if (substr($changelog[$i], 0, 7) == "Version") {
-		  if ($i == 0) {
-			  $changelog[$i] = "<div class=\"version\"><h3>" . $changelog[$i] . "</h3>";
-		  } else {
-			  $changelog[$i] = "</div><div class=\"version\"><h3>" . $changelog[$i] . "</h3>";
-		  }
-
-	  }
-	}
-
-	$changelog = implode("<br />", $changelog);
-
-	$smarty->assign("changelog", $changelog);
-	$smarty->assign("changelogfilename", $ch_filename);
-
+// Jobs
+if ($pjobs) {
+    $query = 'SELECT name,module,errors FROM ' . CMS_DB_PREFIX . CMSMS\JobOperations::RECORDTABLE . ' ORDER BY name,module';
+    $alljobs = $db->GetArray($query);
+    if ($alljobs) {
+        $tpl->assign('jobs', $alljobs);
+        $tpl->assign('jobscount', count($alljobs));
+        $errs = [];
+        foreach ($alljobs as $row) {
+            if ($row['errors'] > 0) {
+                $key = $row['module'] ? $row['module'].'::'.$row['name'] : $row['name'];
+                $errs[$key] = $row['errors'];
+            }
+        }
+        $tpl->assign('jobserrs', $errs);
+    } else {
+        $tpl->assign('jobs', []);
+        $tpl->assign('jobscount', 0);
+    }
+    $tpl->assign('pjobs', true);
 }
 
-$smarty->assign('backurl', $themeObject->BackUrl());
+// Changelog
+$ch_filename = cms_join_path(dirname(__DIR__), 'doc', 'CHANGELOG.txt');
 
-echo $smarty->fetch('systemmaintenance.tpl');
+if (is_readable($ch_filename)) {
+  $changelog = @file($ch_filename);
+  $open = false;
+  for ($i = 0, $n = count($changelog); $i < $n; ++$i) {
+    if (strncmp($changelog[$i], 'Version', 7) == 0) {
+      if ($i == 0) {
+        $changelog[$i] = "<div class=\"version\">\n<h3>" . trim($changelog[$i]) . "</h3>\n";
+      } else {
+        $changelog[$i] = "\n</div>\n<div class=\"version\">\n<h3>" . rtrim($changelog[$i]) . "</h3>\n";
+      }
+      $open = true;
+    } elseif (trim($changelog[$i]) == '') {
+      unset($changelog[$i]);
+    }
+  }
+  if ($open) {
+    $changelog[$n] = "\n</div>";
+  }
 
+  $changelog = implode('<br>', $changelog);
+  $changelog = str_replace(["</h3>\n<br>", "<br>\n</div>"], ["</h3>\n", '</div>'], $changelog);
+  $tpl->assign('changelog', $changelog);
+//$tpl->assign('changelogfilename', $ch_filename); don't reveal site filepath
+//$active_log = true;
+}
 
-include_once("footer.php");
+$tpl->assign('active_changelog', $active_log);
+$tpl->assign('active_content', $active_content);
+$tpl->assign('active_database', $active_db);
+$tpl->assign('active_jobs', $active_jobs);
+$tpl->assign('backurl', $themeObject->BackUrl());
+$tpl->display();
 
-?>
+require_once 'footer.php';

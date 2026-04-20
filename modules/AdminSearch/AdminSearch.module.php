@@ -12,45 +12,43 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
+# along with this program; if not, read the license online at:
+# https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
 if( !isset($gCms) ) exit;
 
 final class AdminSearch extends CMSModule
 {
-  function GetFriendlyName()  { return $this->Lang('friendlyname');  }
-  function GetVersion()  { return '1.0.6'; }
-  function MinimumCMSVersion()  { return '2.2.15';  }
-  function LazyLoadAdmin() { return TRUE; }
-  function LazyLoadFrontend() { return TRUE; }
-  function IsPluginModule() { return FALSE; }
-  function GetAuthor() { return 'CMS Made Simple Foundation'; }
-  function GetAuthorEmail() { return ''; }
-  function HasAdmin() { return true; }
-  function GetAdminSection() { return 'extensions'; }
-  function GetHelp() { return $this->Lang('help'); }
-  function GetChangeLog() { return file_get_contents(dirname(__FILE__).'/changelog.inc'); }
-  function GetAdminDescription() { return $this->Lang('moddescription'); }
+  public function GetFriendlyName() { return $this->Lang('friendlyname'); }
+  public function GetVersion() { return '1.0.8'; }
+  public function MinimumCMSVersion() { return '2.2.15'; }
+  public function LazyLoadAdmin() { return TRUE; }
+  public function LazyLoadFrontend() { return TRUE; }
+  public function IsPluginModule() { return FALSE; }
+  public function GetAuthor() { return 'Robert Campbell'; }
+  public function GetAuthorEmail() { return ''; }
+  public function HasAdmin() { return true; }
+  public function GetAdminSection() { return 'extensions'; }
+  public function GetHelp() { return $this->Lang('help'); }
+  public function GetChangeLog() { return file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'changelog.htm'); }
+  public function GetAdminDescription() { return $this->Lang('moddescription'); }
 
-  function VisibleToAdminUser()
+  public function VisibleToAdminUser()
   {
     return $this->can_search();
   }
 
   protected function can_search()
   {
-      return $this->CheckPermission('Use Admin Search');
+    return $this->CheckPermission('Use Admin Search');
   }
 
-  function InstallPostMessage()
+  public function InstallPostMessage()
   {
     return $this->Lang('postinstall');
   }
 
-  function UninstallPostMessage()
+  public function UninstallPostMessage()
   {
     return $this->Lang('postuninstall');
   }
@@ -58,35 +56,35 @@ final class AdminSearch extends CMSModule
   public function DoAction($name,$id,$params,$returnid='')
   {
     $smarty = cmsms()->GetSmarty();
-    $smarty->assign('mod',$this);
+    $smarty->assign('mod',$this); //redundant? see CMSModule::DoActionBase()
     return parent::DoAction($name,$id,$params,$returnid);
+  }
+
+  protected function SetupHeadtext()
+  {
+    CMSMS\HookManager::add_hook('admin_add_headtext',function() {
+      $baseurl = $this->GetModuleURLPath();
+      return "<link rel=\"stylesheet\" href=\"$baseurl/lib/admin_search.css\">\n";
+    });
   }
 
   public function HasCapability($capability,$params=array())
   {
-    if( $capability == CmsCoreCapabilities::ADMINSEARCH ) return TRUE;
-    return FALSE;
+    return ($capability == CmsCoreCapabilities::ADMINSEARCH);
   }
 
   public function get_adminsearch_slaves()
   {
-    $dir = dirname(__FILE__).'/lib/';
-    $files = glob($dir.'/class.AdminSearch*slave.php');
-    if( count($files) ) {
+    $files = glob(__DIR__.'/lib/class.AdminSearch*slave.php');
+    if( $files ) {
       $output = array();
       foreach( $files as $onefile ) {
-	$parts = explode('.',basename($onefile));
-	$classname = implode('.',array_slice($parts,1,count($parts)-2));
-	if( $classname == 'AdminSearch_slave' ) continue;
-	$output[] = $classname;
+        $parts = explode('.',basename($onefile));
+        $classname = implode('.',array_slice($parts,1,count($parts)-2));
+        if( $classname == 'AdminSearch_slave' ) continue;
+        $output[] = $classname;
       }
       return $output;
     }
   }
-
 } // class
-
-#
-# EOF
-#
-?>

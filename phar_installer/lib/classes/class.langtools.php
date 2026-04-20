@@ -20,7 +20,7 @@ class langtools
 
   public static function get_instance()
   {
-    if( !is_object(self::$_instance) ) self::$_instance = new self();
+    if( !self::$_instance ) self::$_instance = new self();
     return self::$_instance;
   }
 
@@ -47,7 +47,7 @@ class langtools
       $tmp2 = explode(';q=',$tmp[$i],2);
       if( $tmp2[0] == '' || $tmp2[0] == '*' ) continue;
       $priority = 1;
-      if( isset($tmp2[1]) && $tmp2[1] != '' ) $priority = floatval($tmp2[1]);
+      if( !empty($tmp2[1]) ) $priority = floatval($tmp2[1]);
       $out[] = array('lang'=>$tmp2[0],'priority'=>$priority);
     }
 
@@ -59,7 +59,7 @@ class langtools
   /**
    * Test if a language is available
    *
-   * @param string The language naem
+   * @param string The language name
    * @return boolean
    */
   final public function language_available($str)
@@ -77,7 +77,7 @@ class langtools
    */
   final public function get_available_languages()
   {
-    die('not implemented');
+    throw new Exception('not implemented: '.__METHOD__);
   }
 
 
@@ -132,20 +132,22 @@ class langtools
   /**
    * Find the first allowed language that the browser supports
    *
-   * @return mixed lang string, or null
+   * @return lang string, or empty
    */
   final public function match_browser_lang()
   {
     $langs = $this->get_browser_langs();
     if( is_array($langs) && count($langs) ) {
+      $tools = nlstools::get_instance();
       for( $i = 0; $i < count($langs); $i++ ) {
-	$obj = nlstools::get_instance()->find($langs[$i]['lang']); // does alias lookup.
-	if( $obj ) {
-	  // it's available... now check if it's allowed.
-	  if( $this->language_allowed($obj->name()) ) return $obj->name();
-	}
+        $obj = $tools->find($langs[$i]['lang']); // does alias lookup.
+        if( $obj ) {
+          // it's available... now check if it's allowed.
+          if( $this->language_allowed($obj->name()) ) return $obj->name();
+        }
       }
     }
+    return '';
   }
 
 
@@ -192,10 +194,10 @@ class langtools
     $request = request::get();
     $session = session::get();
 
-    // get the users preferred language.
-    $lang = null;
+    // get the user's preferred language.
+    $lang = '';
     if( isset($request['curlang']) ) $lang = $request['curlang']; // it's stored in the get (or post)
-    if( !$lang && isset($session['current_language']) )	$lang = $session['current_language']; // it's stored in the session
+    if( !$lang && isset($session['current_language']) ) $lang = $session['current_language']; // it's stored in the session
     if( !$lang ) $lang = $this->match_browser_lang(); // not set anywhere. get it from the browser.
 
     // match available languages.
@@ -247,16 +249,15 @@ class langtools
    * Get a hash of languages suitable for display in a dropdown
    *
    * @virtual
-   * @returns a hash
+   * @returns array maybe empty
    */
   public function get_language_list($langs)
   {
-    $outp = null;
+    $outp = [];
     foreach( $langs as $one ) {
       $tmp = nls()->find($one);
       if( !is_object($tmp) ) continue;
 
-      if( !is_array($outp) ) $outp = array();
       $outp[$one] = $tmp->display();
     }
     return $outp;
@@ -284,9 +285,9 @@ class langtools
    *
    * @param string the realm name, if empty the default realm will be used.
    */
-  final public function set_realm($str = '')
+  final public function set_realm($realm = '')
   {
-    if( !$str ) $str = self::DFLT_REALM;
+    if( !$realm ) $realm = self::DFLT_REALM;
     $this->_realm = $realm;
   }
 
@@ -305,7 +306,7 @@ class langtools
    * Return the absolute path to the language directory.
    * Throws an exception if the realm directory does not exist.
    *
-   * @param string The realm name.  If empty, the default realm can be assumed.
+   * @param string The realm name.  If empty or self::DFLT_REALM, the default realm ('app') will be used.
    * @returns string
    */
   public function get_lang_dir($realm = '')
@@ -313,7 +314,7 @@ class langtools
     if( !$realm ) $realm = self::DFLT_REALM;
     if( $realm == self::DFLT_REALM ) $realm = 'app';
     $dir = app::get_appdir()."/lang/$realm";
-    if( !is_dir($dir) )	throw new langtools_Exception('Language directory '.$dir.' not found');
+    if( !is_dir($dir) ) throw new langtools_Exception('Language directory '.$dir.' not found');
 
     return $dir;
   }
@@ -342,7 +343,7 @@ class langtools
   }
 
   /**
-   * Unload the realm
+   * Unload a realm
    *
    * @param string, The realm name. If empty, the default realm is assumed.
    */
@@ -356,22 +357,20 @@ class langtools
    * Translate a string
    * uses the current realm, and the currently selected language.
    *
-   * @param mixed - uses sprintf formatting,
+   * @param varargs - uses sprintf formatting,
    * @return string
    */
-  public function translate()
+  public function translate(...$args)
   {
-    $args = func_get_args();
     if( count($args) == 0 ) return '';
     if( count($args) == 1 && is_array($args[0]) ) $args = $args[0];
-
-    if( !$this->_langdata ) $this->_langdata = array();
-    if( !isset($this->_langdata[$this->_realm]) ) $this->_langdata[$this->_realm] = $this->load_realm($this->_realm);
 
     // check to see if the key is available.
     $key = array_shift($args);
     if( !$key ) return '';
 
+    if( !$this->_langdata ) $this->_langdata = array();
+    if( !isset($this->_langdata[$this->_realm]) ) $this->_langdata[$this->_realm] = $this->load_realm($this->_realm);
     if( !isset($this->_langdata[$this->_realm][$key]) ) {
       return '-- Missing Languagestring - '.$key.' --';
     }
@@ -385,11 +384,10 @@ class langtools
 } // end of class
 
 
-function lang()
+function lang(...$args)
 {
   try {
-    $args = func_get_args();
-    return langtools::get_instance()->translate($args);
+    return langtools::get_instance()->translate(...$args);
   }
   catch( Exception $e ) {
     // nothing here.

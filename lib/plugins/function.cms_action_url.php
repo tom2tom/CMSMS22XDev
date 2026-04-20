@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2013 by Robert Campbell (calguy1000@cmsmadesimple.org)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: cms_action_url
+#(c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -15,15 +14,17 @@
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
 
+// historically, this plugin has been specially handled
+// (triggered by its name smarty_cms_function...)
+// to ensure that it's never cached
 function smarty_cms_function_cms_action_url($params, $smarty)
 {
     $module = $smarty->getTemplateVars('actionmodule');
     $returnid = $smarty->getTemplateVars('returnid');
     $mid = $smarty->getTemplateVars('actionid');
-    $action = null;
-    $assign = null;
+    $action = '';
+    $assign = '';
     $forjs  = 0;
 
     $actionparms = array();
@@ -55,7 +56,7 @@ function smarty_cms_function_cms_action_url($params, $smarty)
 
     // validate params
     $gCms = CmsApp::get_instance();
-    if( $module == '' ) return;
+    if( $module == '' ) return '';
     if( $gCms->test_state(CmsApp::STATE_ADMIN_PAGE) && $returnid == '' ) {
         if( $mid == '' ) $mid = 'm1_';
         if( $action == '' ) $action = 'defaultadmin';
@@ -64,27 +65,27 @@ function smarty_cms_function_cms_action_url($params, $smarty)
         if( $mid == '' ) $mid = 'cntnt01';
         if( $action == '' ) $action = 'default';
         if( $returnid == '' ) {
-	    $returnid = \cms_utils::get_current_pageid();
-	    if( $returnid < 1 ) {
-            	$contentops = $gCms->GetContentOperations();
-            	$returnid = $contentops->GetDefaultContent();
-	    }
+            $returnid = \cms_utils::get_current_pageid();
+            if( $returnid < 1 ) {
+                $contentops = $gCms->GetContentOperations();
+                $returnid = $contentops->GetDefaultContent();
+            }
         }
     }
-    if( $action == '' ) return;
+    if( $action == '' ) return '';
 
     $obj = cms_utils::get_module($module);
-    if( !$obj ) return;
+    if( !$obj ) return '';
 
     $url = $obj->create_url($mid,$action,$returnid,$actionparms);
-    if( !$url ) return;
+    if( !$url ) return '';
 
     if( $forjs ) {
         $url = str_replace('&amp;','&',$url);
     }
     if( $assign ) {
         $smarty->assign($assign,$url);
-        return;
+        return '';
     }
     return $url;
 }

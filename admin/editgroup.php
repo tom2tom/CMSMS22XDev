@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple admin console script
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -16,135 +15,94 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: editgroup.php 11053 2017-02-04 04:20:03Z calguy1000 $
+#$Id$
 
-$CMS_ADMIN_PAGE=1;
+use CMSMS\HookManager;
 
-require_once("../lib/include.php");
-require_once("../lib/classes/class.group.inc.php");
-$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+$CMS_ADMIN_PAGE = 1;
 
+require_once '../lib/include.php';
 check_login();
+$urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
-$gCms = cmsms();
-$db = $gCms->GetDb();
-
-$error = "";
-
-$dropdown = "";
-
-$group = "";
-if (isset($_POST["group"])) $group = cleanValue($_POST["group"]);
-
-$description = "";
-if (isset($_POST["description"])) $description = cleanValue($_POST["description"]);
-
-$group_id = -1;
-if (isset($_POST["group_id"])) $group_id = (int) $_POST["group_id"];
-else if (isset($_GET["group_id"])) $group_id = (int) $_GET["group_id"];
-
-$active = 1;
-if (!isset($_POST["active"]) && isset($_POST["editgroup"]) && $group_id != 1) $active = 0;
-
-if (isset($_POST["cancel"])) {
-	redirect("listgroups.php".$urlext);
-	return;
+if (isset($_POST['cancel'])) {
+    redirect('listgroups.php'.$urlext);
 }
 
 $userid = get_userid();
 $access = check_permission($userid, 'Manage Groups');
+if (!$access) {
+    exit(lang('no_permission')); //TODO throw if can be caught
+}
+
+$error = '';
+$group = (isset($_POST['group'])) ? cleanValue($_POST['group']) : '';
+$description = (isset($_POST['description'])) ? cleanValue($_POST['description']) : '';
+$group_id = (isset($_REQUEST['group_id'])) ? (int)$_REQUEST['group_id'] : -1;
+$active = (isset($_POST['editgroup']) && empty($_POST['active']) && $group_id != 1) ? 0 : 1;
+
+$gCms = cmsms();
 $userops = $gCms->GetUserOperations();
 $useringroup = $userops->UserInGroup($userid,$group_id);
 
-if ($access) {
-    $groupobj = new Group;
-    if( $group_id > 0 ) {
-        $groupobj = Group::load($group_id);
-    }
-    if (isset($_POST["editgroup"])) {
-        $validinfo = true;
-        if ($group == "") {
-            $validinfo = false;
-            $error .= "<li>".lang('nofieldgiven', array(lang('groupname')))."</li>";
-        }
+require_once '../lib/classes/class.Group.php';; //don't bother autoloading
 
-        if ($validinfo) {
-            $groupobj->name = $group;
-            $groupobj->description = $description;
-            $groupobj->active = $active;
-            \CMSMS\HookManager::do_hook('Core::EditGroupPre', [ 'group'=>&$groupobj ] );
-
-            $result = $groupobj->save();
-            if ($result) {
-                \CMSMS\HookManager::do_hook('Core::EditGroupPost', [ 'group'=>&$groupobj ] );
-
-                // put mention into the admin log
-                audit($groupobj->id, 'Admin User Group: '.$groupobj->name, 'Edited');
-                redirect("listgroups.php".$urlext);
-                return;
-            }
-            else {
-                $error .= "<li>".lang('errorupdatinggroup')."</li>";
-            }
-        }
-
-    }
-    else if ($group_id != -1) {
-        $group = $groupobj->name;
-        $description = $groupobj->description;
-        $active = $groupobj->active;
-    }
-}
-
-if (strlen($group) > 0) $CMS_ADMIN_SUBTITLE = $group;
-include_once("header.php");
-
-if (!$access) {
-  echo "<div class=\"pageerrorcontainer\"><p class=\"pageerror\">".lang('noaccessto', array(lang('editgroup')))."</p></div>";
+if( $group_id > 0 ) {
+    $groupobj = Group::load($group_id);
 }
 else {
-  if ($error != "") {
-    echo "<div class=\"pageerrorcontainer\"><ul class=\"pageerror\">".$error."</ul></div>";
-  }
-?>
-
-<div class="pagecontainer">
-	<?php echo $themeObject->ShowHeader('editgroup'); ?>
-	<form method="post" action="editgroup.php">
-        <div>
-          <input type="hidden" name="<?php echo CMS_SECURE_PARAM_NAME ?>" value="<?php echo $_SESSION[CMS_USER_KEY] ?>" />
-        </div>
-	<div class="pageoverflow">
-	  <p class="pagetext"><label for="groupname"><?php echo lang('name')?>:</label></p>
- 	  <p class="pageinput"><input type="text" id="groupname" name="group" maxlength="25" value="<?php echo $group?>" /></p>
-        </div>
-	<div class="pageoverflow">
-	  <p class="pagetext"><label for="description"><?php echo lang('description')?>:</label></p>
- 	  <p class="pageinput"><input type="text" id="description" name="description" size="80" maxlength="255" value="<?php echo $description?>" /></p>
-        </div>
-	<?php if( !$useringroup && ($group_id != 1) ) { ?>
-	  <div class="pageoverflow">
-	    <p class="pagetext"><label for="active"><?php echo lang('active')?>:</label></p>
-	    <p class="pageinput"><input type="checkbox" id="active" name="active" <?php echo ($active == 1?"checked=\"checked\"":"")?> /></p>
-	  </div>
- 	   <?php } else { ?>
-                <div><input type="hidden" name="active" value="<?php echo $active ?>"/></div>
-           <?php } ?>
-		<div class="pageoverflow">
-			<p class="pagetext">&nbsp;</p>
-			<p class="pageinput">
-				<input type="hidden" name="group_id" value="<?php echo $group_id?>" /><input type="hidden" name="editgroup" value="true" />
-				<input type="submit" value="<?php echo lang('submit')?>" class="pagebutton" />
-				<input type="submit" name="cancel" value="<?php echo lang('cancel')?>" class="pagebutton" />
-			</p>
-		</div>
-	</form>
-</div>
-<?php
-
+    $groupobj = new Group();
 }
 
-include_once("footer.php");
+if( isset($_POST['editgroup']) ) {
+    $validinfo = true;
+    if( !$group ) {
+        $validinfo = false;
+        $error .= '<li>'.lang('nofieldgiven', lang('groupname')).'</li>';
+    }
 
+    if( $validinfo ) {
+        $groupobj->name = $group;
+        $groupobj->description = $description;
+        $groupobj->active = $active;
+        HookManager::do_hook('Core::EditGroupPre', ['group'=>$groupobj]);
 
-?>
+        $result = $groupobj->save();
+        if( $result ) {
+            HookManager::do_hook('Core::EditGroupPost', ['group'=>$groupobj]);
+
+            // put mention into the admin log
+            audit($groupobj->id, 'Admin users group',"Edited: $groupobj->name");
+            redirect('listgroups.php'.$urlext);
+//          return;
+        }
+        else {
+            $error .= '<li>'.lang('errorupdatinggroup').'</li>';
+        }
+    }
+}
+elseif( $group_id != -1 ) {
+    $group = $groupobj->name;
+    $description = $groupobj->description;
+    $active = $groupobj->active;
+}
+
+require_once 'header.php';
+
+$themeObject->set_value('pagetitle', 'editgroup');
+//if( $group ) $CMS_ADMIN_SUBTITLE = $group; does nothing
+
+$tpl = $smarty->createTemplate('admin_tpl:editgroup.tpl',null, null, $smarty, false);
+// see also $smarty-assigned var $secureparam
+$tpl->assign('securename',CMS_SECURE_PARAM_NAME)
+ ->assign('secureval', $_SESSION[CMS_USER_KEY])
+ ->assign('access', $access)
+ ->assign('active', (bool)$active)
+ ->assign('error', $error)
+ ->assign('group_id', $group_id)
+ ->assign('useringroup', $useringroup)
+ ->assign('group', $group)
+ ->assign('description', $description);
+$tpl->display();
+
+require_once 'footer.php';

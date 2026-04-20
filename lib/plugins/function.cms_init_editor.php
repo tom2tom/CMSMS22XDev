@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: cms_init_editor
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -16,12 +15,15 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+// historically, this plugin has been specially handled
+// (triggered by its name smarty_cms_function...)
+// to ensure that it's never cached
 function smarty_cms_function_cms_init_editor($params, $smarty)
 {
   $wysiwyg = get_parameter_value($params,'wysiwyg');
-  $force = cms_to_bool(get_parameter_value($params,'force',0));
+  $force = get_parameter_value($params,'force',FALSE);
 
-  $selector = null;
+  $selector = '';
   if( $wysiwyg ) {
     // we specified a wysiwyg, so we're gonna override every wysiwyg area on this page.
     $selector = 'textarea.cmsms_wysiwyg';
@@ -29,21 +31,21 @@ function smarty_cms_function_cms_init_editor($params, $smarty)
   else {
     // we're gonna calll the wysiwygs
     $wysiwygs = CmsFormUtils::get_requested_wysiwyg_modules();
-    if( !is_array($wysiwygs) || count($wysiwygs) == 0 ) return;
+    if( !is_array($wysiwygs) || count($wysiwygs) == 0 ) return '';
     $tmp = array_keys($wysiwygs);
     $wysiwyg = $tmp[0]; // first wysiwyg only, for now.
   }
 
   $mod = ModuleOperations::get_instance()->GetWYSIWYGModule($wysiwyg);
-  if( !is_object($mod) ) return;
+  if( !is_object($mod) ) return '';
 
   // get the output
   $output = $mod->WYSIWYGGenerateHeader($selector);
-  if( !$output ) return;
+  if( !$output ) return '';
 
   if( isset($params['assign']) ) {
     $smarty->assign(trim($params['assign']).$output);
-    return;
+    return '';
   }
   return $output;
 }
@@ -51,7 +53,7 @@ function smarty_cms_function_cms_init_editor($params, $smarty)
 function smarty_cms_about_function_cms_init_editor()
 {
 ?>
-  <p>Author: Robert Campbell&lt;calguy1000@cmsmadesimple.org&gt;</p>
+  <p>Author: Robert Campbell</p>
   <p>Change History:</p>
   <ul>
     <li>None</li>

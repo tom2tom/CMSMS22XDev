@@ -1,170 +1,270 @@
 <?php
+/*
+CMSMS FilePicker module class: Profile
+(C) 2016 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+The license at the top of file FilePicker.module.php applies to this file.
+*/
+
 namespace FilePicker;
 
 use cms_config;
 use cms_utils;
 use CMSMS\FilePickerProfile;
+use CmsDataException;
 use Exception;
-use LogicException;
+use function endswith;
+use function is_absolute_path;
 use function startswith;
 
 class ProfileException extends Exception {}
 
+// no merit in this class being distinct from its parent, unless to
+// support multiple picker-modules or multiple roles for the parent
+
 class Profile extends FilePickerProfile
 {
-    private $_data = [ 'id'=>null, 'name'=>null, 'create_date'=>null, 'modified_date'=>null, 'file_extensions'=>null, 'prefix'=>null ];
-
-    protected function setValue( $key, $val )
+    /**
+     * Constructor
+     *
+     * @param array $params Optional property-names and their values
+     */
+    public function __construct(array $params = [])
     {
-        switch( $key ) {
-        case 'name':
-          case 'prefix':
-          case 'file_extensions':
-            $this->_data[$key] = trim((string)$val);
-            break;
-        case 'create_date':
-        case 'modified_date':
-            $this->_data[$key] = (int)$val;
-            break;
-          default:
-            parent::setValue( $key, $val );
-            break;
-        }
-    }
+        $this->_data += [
+         'id'=>0,
+         'name'=>'',
+         'created'=>0,
+         'modified'=>0,
+         'file_extensions'=>''
+        ];
 
-    public function __construct(array $in = null)
-    {
-        if( !is_array( $in ) ) return;
-
-        parent::__construct($in);
-        foreach( $in as $key => $value ) {
-            switch( $key ) {
-            case 'id':
-                $this->_data[$key] = (int) $value;
-                break;
-            default:
-                $this->setValue( $key, $value );
-                break;
+        if( $params ) {
+            $this->_controls['setall'] = TRUE;
+            foreach( $params as $key => $value ) {
+                switch( $key ) {
+                case 'id':
+                case 'created':
+                    $this->_data[$key] = (int)$value;
+                    break;
+                default:
+                    $this->__set($key, $value);
+                    break;
+                }
             }
+            $this->_controls['setall'] = FALSE;
+        }
+        if( empty($this->_data['created']) ) {
+            $this->_data['created'] = $this->_data['modified'] = time();
+        }
+        if( empty($this->_data['modified']) || $this->_data['modified'] < $this->_data['created'] ) {
+            $this->_data['modified'] = $this->_data['created'];
         }
     }
 
+    /**
+     * @ignore
+     */
     #[\ReturnTypeWillChange]
     public function __get($key)
     {
         switch( $key ) {
         case 'id':
-        case 'create_date':
-        case 'modified_date':
+        case 'created':
+        case 'modified':
             return (int) $this->_data[$key];
+
+        case 'create_date':
+            return (int) $this->_data['created'];
+        case 'modified_date':
+            return (int) $this->_data['modified'];
 
         case 'name':
         case 'file_extensions':
-        case 'prefix':
             return trim((string)$this->_data[$key]);
 
         case 'relative_top':
         case 'reltop':
-            // parent top is checked for relative or absolute
-            // return relative to uploads path
+            // check parent 'top' for relative or absolute
+            // if relative, return relative to uploads path
             $val = parent::__get('top');
-            if( startswith($val,'/') ) {
+            if( $val && is_absolute_path($val) ) {
                 $config = cms_config::get_instance();
                 $uploads_path = $config['uploads_path'];
-                if( startswith( $val, $uploads_path ) ) $val = substr($val,strlen($uploads_path));
-                if( startswith( $val, '/') ) $val = substr($val,1);
+                if( startswith($val, $uploads_path) ) {
+                    $val = substr($val, strlen($uploads_path));
+                    $val = ltrim($val, ' \\/');
+                }
             }
-            return $val;
+            return $val; //empty or non-absolute
 
         case 'top':
-            // parent top is checked for relative or absolute
+            // check parent 'top' for relative or absolute
             // if relative, prepend uploads path
             $val = parent::__get('top');
-            if( !startswith($val,'/') ) {
+            if( !$val || !is_absolute_path($val) ) {
                 $config = cms_config::get_instance();
-                $val = $config['uploads_path'].'/'.$val;
+                if( $val ) {
+                    $val = $config['uploads_path'].DIRECTORY_SEPARATOR.$val;
+                }
+                else {
+                    $val = $config['uploads_path'];
+                }
             }
-            return $val;
+            return $val; // absolute
 
         default:
             return parent::__get($key);
         }
     }
 
+    /**
+     * Set a property of this object
+     *
+     * @param string $key The property name
+     * @param mixed $val The property value
+     */
+    #[\ReturnTypeWillChange]
+    public function __set($key, $val)
+    {
+        switch( $key ) {
+          case 'name':
+          case 'file_extensions':
+            $this->_data[$key] = trim((string)$val);
+            break;
+          case 'id': //TODO special-case value-check?
+          case 'created': // ditto
+          case 'modified':
+            $this->_data[$key] = (int)$val;
+            break;
+          case 'modified_date': // deprecated
+            $this->_data['modified'] = (int)$val;
+            break;
+          case 'create_date': // deprecated
+            $this->_data['created'] = (int)$val;
+            break;
+          default:
+            parent::__set($key, $val);
+            break;
+        }
+    }
+
+    /**
+     * Set a property of this object
+     * This is a deprecated alias of __set()
+     *
+     * @param string $key The property name
+     * @param mixed $val The property value
+     */
+    protected function setValue($key, $val)
+    {
+        $this->__set($key, $val);
+    }
+
+    /**
+     * @throws ProfileException upon error
+     */
     public function validate()
     {
-        if( !$this->name ) throw new ProfileException( 'err_profile_name' );
-        if( $this->reltop && !is_dir($this->top) ) throw new ProfileException('err_profile_topdir');
-    }
-
-    public function withNewId( $new_id = null )
-    {
-        if( !is_null($new_id) ) {
-            $new_id = (int) $new_id;
-            if( $new_id < 1 ) throw new LogicException('Invalid id passed to '.__METHOD__);
+        if( !$this->_data['name'] ) throw new ProfileException('err_profile_name');
+        // like munge_string_to_url without space etc, with utf8 numbers
+        $tmp = preg_replace(['/[^\pL_\p{Nd}]/u', '/_{2,}/'], ['', ''], trim($this->name));
+        if( $tmp != $this->_data['name'] ) throw new ProfileException('err_profile_name');
+        if( $this->reltop && !is_dir($this->_data['top']) ) throw new ProfileException('err_profile_topdir');
+        if( $this->_data['file_extensions'] && preg_match('/[ A-Z]/', $this->_data['file_extensions']) ) {
+            throw new ProfileException('err_profile_extensions');
         }
-        $obj = clone $this;
-        $obj->_data['id'] = $new_id;
-        $obj->_data['create_date'] = $obj->_data['modified_date'] = time();
-        return $obj;
     }
 
-    public function overrideWith( array $params )
+    /**
+     * Change the numeric id of this object
+     * Also sets its created and modified properties to now
+     *
+     * @param int $new_id Optional numeric id. Default 0.
+     *  If supplied, it must be >= 0.
+     * @return self for API back-compatibility (or chaining)
+     * @throws CmsDataException if $new_id < 0
+     */
+    public function withNewId($new_id = 0)
     {
-        $obj = clone( $this );
-        foreach( $params as $key => $val ) {
-            switch( $key ) {
-            case 'id':
-                // cannot set a new id this way
-                break;
+        if( $new_id ) {
+            $new_id = (int) $new_id;
+            if( $new_id < 1 ) throw new CmsDataException('Invalid id passed to '.__METHOD__);
+        }
+        $this->_data['id'] = $new_id;
+        $this->_data['created'] = $this->_data['modified'] = time();
+        return $this;
+    }
 
-            default:
-                $obj->setValue($key,$val);
-                break;
+    /**
+     * Change some or all properties of this object in accord with the
+     * supplied $params
+     * Changing the 'id' property to a non-0 value is not allowed.
+     * Changing the 'created' property is not allowed if 'id' is absent or non-0.
+     *
+     * @param array $params Optional property-names and their values
+     * @return self for API back-compatibility (or chaining)
+     */
+    public function overrideWith(array $params = [])
+    {
+        if( $params ) {
+            $useparms = array_intersect_key($params, $this->_data);
+            if( array_key_exists('id', $useparms) ) {
+                $id = (int)$useparms['id'];
+                if( $id > 0 ) {
+                    unset($useparms['id']); // no id-change allowed this way
+                    unset($useparms['created']);
+                    unset($useparms['create_date']); // deprecated
+                }
+                else {
+                    $useparms['id'] = 0;
+                    $useparms['created'] = $useparms['modified'] = time();
+                }
+            }
+            if( array_key_exists('created', $useparms) ) {
+                if( !isset($useparms['id']) || $useparms['id'] > 0 ) {
+                    unset($useparms['created']);
+                    unset($useparms['create_date']); // deprecated
+                }
+            }
+            foreach( $useparms as $key => $val ) {
+                $this->__set($key,$val);
             }
         }
-        return $obj;
+        return $this;
     }
 
+    /**
+     * Change the 'modified' property of this object to the current timestamp
+     * @deprecated since instead use $obj->modified = time()
+     * @return self for API back-compatibility (or chaining)
+     */
     public function markModified()
     {
-        $obj = clone $this;
-        $obj->_data['modified_date'] = time();
-        return $obj;
+        $this->_data['modified'] = time();
+        return $this;
     }
 
-    public function getRawData()
+    /**
+     * Check the supplied filepath using FilePicker::is_acceptable_filename()
+     * and then, if this object's file_extensions property is not empty,
+     * check the extension of the filepath basename against that property
+     *
+     * @param string $fullpath
+     * @return bool
+     */
+    public function is_filename_acceptable($fullpath)
     {
-        $data = parent::getRawData();
-        $data = array_merge($data,$this->_data);
-        return $data;
-    }
-
-  /**
-   * Note: Doesn't seem to be used anywhere
-   *       we may keep this for external API purposes though (JoMorg)
-   *
-   * @param $file_name
-   *
-   * @return bool
-   */
-    public function is_filename_acceptable( $file_name )
-    {
+        $fullpath = (string)$fullpath;
+        if( $fullpath === '' ) return FALSE;
         $mod = cms_utils::get_module('FilePicker');
-        if( !$mod->is_acceptable_filename($this, $file_name) ) return FALSE;
-        if( !$this->file_extensions ) return FALSE; // OR TRUE if we don't have anything to care about?
+        if( !$mod->is_acceptable_filename($this, $fullpath) ) return FALSE;
+        if( empty($this->_data['file_extensions']) ) return TRUE; // nothing more to check
 
-        // file must have an extension
-        $ext = strtolower(substr(strrchr($file_name, '.'), 1));
-        if( !$ext ) return FALSE; // file has no extension.
-        $list = explode(',',$this->_profile->file_extensions);
-
+        $lcf = strtolower($fullpath);
+        $list = explode(',', $this->_data['file_extensions']);
         foreach( $list as $one ) {
-            $one = strtolower(trim($one));
-            if( !$one ) continue;
-            if( startswith( $one, '.') ) $one = substr($one,1);
-            if( $ext == $one ) return TRUE;
+            if( endswith($lcf, $one) ) return TRUE;
         }
         return FALSE;
     }
-} // end of class
+} // class

@@ -1,4 +1,8 @@
 <?php
+#CMSMS News module action: admin_reorder_cats
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#The license at the top of file News.module.php applies to this file.
+
 if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Modify Site Preferences') ) return;
 $this->SetCurrentTab('categories');
@@ -12,8 +16,8 @@ function news_reordercats_create_flatlist($tree,$parent_id = -1)
       $pid = substr($node[0],strlen('cat_'));
       $data[] = array('id'=>$pid,'parent_id'=>$parent_id,'order'=>$order);
       if( isset($node[1]) && is_array($node[1]) && count($node[1]) > 0 ) {
-	$tmp = news_reordercats_create_flatlist($node[1],$pid);
-	if( is_array($tmp) && count($tmp) ) $data = array_merge($data,$tmp);
+        $tmp = news_reordercats_create_flatlist($node[1],$pid);
+        if( is_array($tmp) && count($tmp) ) $data = array_merge($data,$tmp);
       }
     }
     else {
@@ -22,6 +26,7 @@ function news_reordercats_create_flatlist($tree,$parent_id = -1)
     }
     $order++;
   }
+  unset($node);
   return $data;
 }
 
@@ -33,7 +38,7 @@ else if( isset($params['submit']) ) {
   $flat = news_reordercats_create_flatlist($data);
   if( is_array($flat) && count($flat) ) {
     $query = 'UPDATE '.CMS_DB_PREFIX.'module_news_categories SET parent_id = ?, item_order = ?
-              WHERE news_category_id = ?';
+WHERE news_category_id = ?';
     foreach( $flat as $rec ) {
       $dbr = $db->Execute($query,array($rec['parent_id'],$rec['order'],$rec['id']));
     }
@@ -43,13 +48,13 @@ else if( isset($params['submit']) ) {
   }
 }
 
-
 $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_news_categories ORDER BY hierarchy';
 $allcats = $db->GetArray($query);
 
-
-$smarty->assign('allcats',$allcats);
-echo $this->ProcessTemplate('admin_reorder_cats.tpl');
+$modname = $this->GetName();
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_reorder_cats.tpl",null,$modname,$smarty);
+$tpl->assign('allcats',$allcats);
+$tpl->display();
 
 #
 # EOF

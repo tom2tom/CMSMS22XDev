@@ -1,13 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: \CMSMS\Database\DataDictionary (c) 2015 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A class to define methods of interacting with database tables.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: CMSMS\Database\DataDictionary
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A class to define methods of interacting with database tables.
 #
 #-------------------------------------------------------------------------
 #
@@ -185,7 +181,6 @@ function Lens_ParseArgs($args,$endstmtchar=',',$tokenchars='_.-')
  *
  * @package CMS
  * @author Robert Campbell
- * @copyright Copyright (c) 2015, Robert Campbell <calguy1000@cmsmadesimple.org>
  * @since 2.2
  */
 abstract class DataDictionary
@@ -244,7 +239,7 @@ abstract class DataDictionary
 	 *
 	 * @internal
 	 */
-	protected $renameColumn = 'ALTER TABLE %s RENAME COLUMN %s TO %s';	// table, old-column, new-column, column-definitions (not used by default)
+	protected $renameColumn = 'ALTER TABLE %s RENAME COLUMN %s TO %s'; // table, old-column, new-column, column-definitions (not used by default)
 
 	/**
 	 * @ignore
@@ -327,7 +322,7 @@ abstract class DataDictionary
 	 * @param bool $allowBrackets wether brackets should be quoted or not.
 	 * @return string
 	 */
-	protected function NameQuote($name = NULL,$allowBrackets=false)
+	protected function NameQuote($name = '',$allowBrackets=false)
 	{
 		if (!is_string($name)) return FALSE;
 
@@ -364,17 +359,15 @@ abstract class DataDictionary
 	 * Given an array of SQL commands execute them in sequence.
 	 *
 	 * @param string[] $sql An array of sql commands.
-	 * @param bool $continueOnError wether to continue on errors or not.
-	 * @return int 2 for no errors, 1 if an error occured.
+	 * @param bool $continueOnError whether to continue on errors or not.
+	 * @return int 2 for no errors, 1 if an error occurred, 0 if aborted.
 	 */
 	public function ExecuteSQLArray($sql, $continueOnError = true)
 	{
 		$rez = 2;
-		$conn = &$this->connection;
 		foreach($sql as $line) {
 			try {
-				$ok = $conn->Execute($line);
-				if (!$ok) {
+				if (!$this->connection->Execute($line)) {
 					if (!$continueOnError) return 0;
 					$rez = 1;
 				}
@@ -436,7 +429,7 @@ abstract class DataDictionary
 	 * @param string $tabname The table name
 	 * @return string[] An array of strings suitable for use with the ExecuteSQLArray method
 	 */
-	public function DropIndexSQL ($idxname, $tabname = NULL)
+	public function DropIndexSQL ($idxname, $tabname = '')
 	{
 		return array(sprintf($this->dropIndex, $this->NameQuote($idxname), $this->TableName($tabname)));
 	}
@@ -743,7 +736,7 @@ abstract class DataDictionary
 			// VALIDATE FIELD INFO
 			if (!strlen($fname)) {
 				die('failed');
-				return false;
+				return false; // useless here
 			}
 
 			$fid = strtoupper(preg_replace('/^`(.+)`$/', '$1', $fname));
@@ -848,7 +841,7 @@ abstract class DataDictionary
 		if ( isset($idxoptions[$this->upperName]) )
 			$s .= $idxoptions[$this->upperName];
 
-		if ( is_array($flds) )	$flds = implode(', ',$flds);
+		if ( is_array($flds) ) $flds = implode(', ',$flds);
 		$s .= '(' . $flds . ')';
 		$sql[] = $s;
 
@@ -870,7 +863,7 @@ abstract class DataDictionary
 	 *
 	 * @internal
 	 */
-	protected function get_dbtype_options($opts,$suffix = null)
+	protected function get_dbtype_options($opts,$suffix = '')
 	{
 		$dbtype = $this->_DBType();
 		$list = array($dbtype.$suffix,strtoupper($dbtype).$suffix,strtolower($dbtype).$suffix);
@@ -973,7 +966,7 @@ abstract class DataDictionary
 		// check table exists
 		$cols = $this->MetaColumns($tablename);
 
-		if ( empty($cols)) {
+		if (empty($cols)) {
 			return $this->CreateTableSQL($tablename, $flds, $tableoptions);
 		}
 
@@ -987,10 +980,10 @@ abstract class DataDictionary
 				if ( isset($cols[$k]) && is_object($cols[$k]) ) {
 					$c = $cols[$k];
 					$ml = $c->max_length;
-					$mt = &$this->MetaType($c->type,$ml);
+					$mt = $this->MetaType($c->type,$ml);
 					if ($ml == -1) $ml = '';
 					if ($mt == 'X') $ml = $v['SIZE'];
-					if (($mt != $v['TYPE']) ||  $ml != $v['SIZE']) $holdflds[$k] = $v;
+					if (($mt != $v['TYPE']) || $ml != $v['SIZE']) $holdflds[$k] = $v;
 				} else {
 					$holdflds[$k] = $v;
 				}

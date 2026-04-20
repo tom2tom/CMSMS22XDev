@@ -1,23 +1,20 @@
-<h3>{$mod->Lang('actiondelete')}:</h3>
-{$cancellabel=$mod->Lang('cancel')}
-{if isset($errors)}
-{$cancellabel=$mod->Lang('return')}
+<h3>{$mod->Lang('actiondelete')}</h3>
+<div class="pageoverflow">
+  <p class="pagetext"><label>{$mod->Lang('deleteselected')}:</label></p>
+  <p class="pageinput">
+    {'<br>'|adjust:'implode':$selall}
+  </p>
+</div>
+<br>
+<div class="pageoverflow">
+ {$startform}
+  <div class="pageinput">
+{if empty($errors)}
+    <input type="submit" name="{$actionid}submit" data-ui-icon="ui-icon-trash" value="{lang('delete')}">
+    <input type="submit" name="{$actionid}cancel" data-ui-icon="ui-icon-cancel" value="{lang('cancel')}">
+{else}
+    <input type="submit" name="{$actionid}cancel" data-ui-icon="ui-icon-closethick" value="{lang('close')}">
 {/if}
-
-{$startform}
-<div class="pageoverflow">
-  <p class="pagetext">{$mod->Lang('deleteselected')}:</p>
-  <p class="pageinput">
-    {'<br/>'|implode:$selall}
-  </p>
+  </div>
+ {$endform}
 </div>
-<div class="pageoverflow">
-  <p class="pagetext"></p>
-  <p class="pageinput">
-    {if !isset($errors)}
-    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('delete')}"/>
-    {/if}
-    <input type="submit" name="{$actionid}cancel" value="{$cancellabel}"/>
-  </p>
-</div>
-{$endform}

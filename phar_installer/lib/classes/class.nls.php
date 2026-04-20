@@ -35,7 +35,7 @@ abstract class nls
 
   public function name()
   {
-    $name = get_class();
+    $name = get_class($this);
     if( endswith($name,'_nls') )
     {
       $name = substr($name,0,strlen($name)-4);
@@ -47,7 +47,7 @@ abstract class nls
   {
     if( empty($this->_isocode) )
     {
-      return substr($this->name,0,2);
+      return substr($this->name(),0,2);
     }
     return $this->_isocode;
   }

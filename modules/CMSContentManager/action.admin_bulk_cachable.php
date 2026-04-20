@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: Content (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A module for managing content in CMSMS.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module CMSContentManager action
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -69,7 +64,7 @@ try {
     $content->Save();
     $i++;
   }
-  audit('','Core','Changed cachable status on '.count($multicontent).' pages');
+  audit('','CMSContentManager','Bulk-changed cachable status of '.count($multicontent).' pages');
   $this->SetMessage($this->Lang('msg_bulk_successful'));
 }
 catch( Exception $e ) {

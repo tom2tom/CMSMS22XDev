@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple translation file
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -21,14 +20,11 @@
 #The basic idea and values was taken from then Horde Framework (http://horde.org)
 #The original filename was horde/config/nls.php.
 #The modifications to fit it for Gallery were made by Jens Tkotz
-#(http://gallery.meanalto.com) 
+#(http://gallery.meanalto.com)
 
-#Ideas from Gallery's implementation made to CMS by Ted Kulp
+#Ideas from Gallery's implementation made for CMSMS by Ted Kulp
 
-#US English
-#Created by: Ted Kulp <tedkulp@users.sf.net>
-#Maintained by: Ted Kulp <tedkulp@users.sf.net>
-#This is the default language
+#Created by: Ted Kulp <ted@cmsmadesimple.org>
 
 #Native language name
 $nls['language']['it_IT'] = 'Italiano';
@@ -49,7 +45,7 @@ $nls['locale']['it_IT'] = 'it_IT,it_IT.utf8,it_IT.utf-8,it_IT.UTF-8,it_IT@euro,i
 $nls['encoding']['it_IT'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['it_IT'] = array(dirname(__FILE__).'/it_IT/admin.inc.php');
+$nls['file']['it_IT'] = array(__DIR__.'/it_IT/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

@@ -1,46 +1,61 @@
 <?php
+#Plugin handler: cms_date_format
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#
+#This program is free software; you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation; either version 2 of the License, or
+#(at your option) any later version.
+#
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#You should have received a copy of the GNU General Public License
+#along with this program; if not, write to the Free Software
+#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 /**
  * Smarty plugin
  * Type:     modifier<br>
  * Name:     cms_date_format<br>
  * Purpose:  format a supplied date-time string using PHP date() or strftime()-replacment
  * Input:<br>
- *          - string: input date string
+ *          - datevar: input timestamp or date-time string
  *          - format: strftime()-compatible or date()-compatible format for output
- *          - default_date: default date if $string is empty
+ *          - default_date: default date if $datevar is empty
  *
  * @link http://www.smarty.net/manual/en/language.modifier.date.format.php date_format (Smarty online manual)
  * @author Monte Ohrt <monte at ohrt dot com>
- * @param mixed $string       input date/time, a UNIX timestamp or other format supported by PHP strtotime()
+ * @param mixed $datevar      input date/time, a UNIX timestamp or string in a format supported by strtotime()
  * @param string $format      strftime()- or date()-compatible format for output
- * @param mixed $default_date default date if $string is empty
+ * @param mixed $default_date default date if $datevar is empty
  * @return string | void
  *
  * Modified by Tapio Löytty <stikki@cmsmadesimple.org>
  */
-function smarty_modifier_cms_date_format($string, $format = '', $default_date = '')
+function smarty_modifier_cms_date_format($datevar, $format = '', $default_date = '')
 {
-	if($format == '') {
-		$format = get_site_preference('defaultdateformat');
-		if($format == '') $format = '%b j, Y';
-		if(!CmsApp::get_instance()->is_frontend_request()) {
-			if($uid = get_userid(false)) {
-				$tmp = get_preference($uid, 'date_format_string');
-				if($tmp != '') $format = $tmp;
+	if ($format == '') {
+		$format = cms_siteprefs::get('defaultdateformat', '%h j, Y');
+		if (!CmsApp::get_instance()->is_frontend_request()) {
+			if ($uid = get_userid(false)) {
+				$tmp = cms_userprefs::get_for_user($uid, 'date_format_string');
+				if ($tmp) $format = $tmp;
 			}
 		}
 	}
 
 	if (strpos($format, '%') !== false) {
 		require_once __DIR__.DIRECTORY_SEPARATOR.'modifier.localedate_format.php';
-		$out = smarty_modifier_localedate_format($string, $format, $default_date);
+		$out = smarty_modifier_localedate_format($datevar, $format, $default_date);
 	} else {
 		$fn = cms_join_path(SMARTY_PLUGINS_DIR, 'modifier.date_format.php');
 		if (!is_file($fn)) exit;
 		include_once $fn;
-		$out = smarty_modifier_date_format($string, $format, $default_date);
+		$out = smarty_modifier_date_format($datevar, $format, $default_date);
 	}
 	return $out;
 }
-// EOF
+
 ?>

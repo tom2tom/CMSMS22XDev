@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: Content (c) 2013 by Robert Campbell 
-#         (calguy1000@cmsmadesimple.org)
-#  A module for managing content in CMSMS.
-# 
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module CMSContentManager action
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -19,7 +14,7 @@
 # However, as a special exception to the GPL, this software is distributed
 # as an addon module to CMS Made Simple.  You may not use this software
 # in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin 
+# Made simple that does not indicate clearly and obviously in its admin
 # section that the site was built with CMS Made simple.
 #
 # This program is distributed in the hope that it will be useful,
@@ -82,12 +77,12 @@ if( isset($params['submit']) ) {
     if( $i != count($pagelist) ) {
       throw new CmsException('Bulk operation to change ownership did not adjust all selected pages');
     }
-    audit('','Core','Changed owner on '.count($pagelist).' pages');
+    audit('','CMSContentManager','Bulk-changed owner of '.count($pagelist).' pages to '.$params['owner']);
     $this->SetMessage($this->Lang('msg_bulk_successful'));
     $this->RedirectToAdminTab();
   }
   catch( Exception $e ) {
-    audit('','Core','Bulk setting changing ownership failed: '.$e->GetMessage());
+    audit('','CMSContentManager','Bulk change ownership failed: '.$e->GetMessage());
     $this->SetError($e->GetMessage());
     $this->RedirectToAdminTab();
   }
@@ -109,17 +104,20 @@ foreach( $pagelist as $pid ) {
   $displaydata[] = $rec;
 }
 
-$smarty->assign('multicontent',$params['multicontent']);
-$smarty->assign('displaydata',$displaydata);
+$modname = $this->GetName();
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_bulk_changeowner.tpl",null,$modname,$smarty);
+
+$tpl->assign('multicontent',$params['multicontent']);
+$tpl->assign('displaydata',$displaydata);
 $userlist = UserOperations::get_instance()->LoadUsers();
 $tmp = array();
 foreach( $userlist as $user ) {
   $tmp[$user->id] = $user->username;
 }
-$smarty->assign('userlist',$tmp);
-$smarty->assign('userid',get_userid());
+$tpl->assign('userlist',$tmp);
+$tpl->assign('userid',get_userid());
 
-echo $this->ProcessTemplate('admin_bulk_changeowner.tpl');
+$tpl->display();
 
 #
 # EOF

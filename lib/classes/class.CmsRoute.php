@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: cms_tree (c) 2010 by Robert Campbell
-#  (calguy1000@cmsmadesimple.org)
-#  A simple php tree class.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: CmsRoute
+# (c) 2010 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -45,7 +40,7 @@
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell <calguy1000@cmsmadesimple.org>
+ * @author Robert Campbell
  * @since  1.9
  * @property string $term
  * @property string $key1
@@ -64,30 +59,31 @@ class CmsRoute implements ArrayAccess
 
 	/**
 	 * @ignore
+	 * Dynamic, not stored in $data despite the key there
 	 */
 	private $_results;
 
 	/**
 	 * @ignore
 	 */
-	static private $_keys = array('term','key1','key2','key3','defaults','absolute','results');
+	private static $_keys = array('term','key1','key2','key3','defaults','absolute','results');
 
 	/**
-	 * Construct a new route object.
+	 * Constructor.
 	 *
 	 * @param string $term The route string (or regular expression)
-	 * @param string $key1 The first key. Usually a module name.
-	 * @param array  $defaults An array of parameter defaults for this module.  Only applicable when the destination is a module.
-	 * @param bool $is_absolute Flag indicating wether the term is a regular expression or an absolute string.
-	 * @param string $key2 The second key.
-	 * @param string $key3 The second key.
+	 * @param string $key1 Optional first key. Usually a module name or numeric page-id.
+	 * @param array  $defaults Optional parameter(s) for the module which processes the route. Only applicable when the destination is a module.
+	 * @param bool   $is_absolute Optional flag indicating whether $term is a regular expression or an absolute string. Default FALSE.
+	 * @param string $key2 Optional second key.
+	 * @param string $key3 Optional third key.
 	 */
-	public function __construct($term,$key1 = '',$defaults = null,$is_absolute = FALSE,$key2 = null,$key3 = null)
+	public function __construct($term,$key1 = '',$defaults = [],$is_absolute = FALSE,$key2 = '',$key3 = '')
 	{
 		$this->_data['term'] = $term;
 		$this->_data['absolute'] = $is_absolute;
 
-		if( is_numeric($key1) && empty($key2) ) {
+		if( is_numeric($key1) && !$key2 ) {
 			$this->_data['key1'] = '__CONTENT__';
 			$this->_data['key2'] = (int)$key1;
 		}
@@ -95,28 +91,27 @@ class CmsRoute implements ArrayAccess
 			$this->_data['key1'] = $key1;
 			$this->_data['key2'] = $key2;
 		}
-		if( is_array($defaults) ) $this->_data['defaults'] = $defaults;
-		if( !empty($key3) ) $this->_data['key3'] = $key3;
+		if( $defaults && is_array($defaults) ) $this->_data['defaults'] = $defaults;
+		if( $key3 ) $this->_data['key3'] = $key3;
 	}
 
 	/**
-	 * Static convenience function to create a new route.
+	 * Static convenience function to create a new CmsRoute object.
 	 *
 	 * @param string $term The route string (or regular expression)
-	 * @param string $key1 The first key. Usually a module name
-	 * @param string $key2 The second key
-	 * @param array  $defaults An array of parameter defaults for this module.  Only applicable when the destination is a module
-	 * @param bool $is_absolute Flag indicating wether the term is a regular expression or an absolute string
-	 * @param string $key3 The second key
+	 * @param string $key1 The first key. Usually a module name or numeric page-id
+	 * @param string $key2 Optional second key
+	 * @param array  $defaults Optional parameter(s) for the module which processes the route. Only applicable when the destination is a module.
+	 * @param bool   $is_absolute Optional flag indicating whether $term is a regular expression or an absolute string. Default FALSE.
+	 * @param string $key3 Optional third key
 	 */
-	public static function &new_builder($term,$key1,$key2 = '',$defaults = null,$is_absolute = FALSE,$key3 = '')
+	public static function new_builder($term,$key1,$key2 = '',$defaults = [],$is_absolute = FALSE,$key3 = '')
 	{
-		$obj = new CmsRoute($term,$key1,$defaults,$is_absolute,$key2,$key3);
-		return $obj;
+		return new CmsRoute($term,$key1,$defaults,$is_absolute,$key2,$key3);
 	}
 
 	/**
-	 * Return the signature for a route
+	 * Return the signature of this CmsRoute
 	 */
 	public function signature()
 	{
@@ -132,6 +127,7 @@ class CmsRoute implements ArrayAccess
 	public function offsetGet($key)
 	{
 		if( in_array($key,self::$_keys) && isset($this->_data[$key]) ) return $this->_data[$key];
+		return null; // no value for unrecognised key
 	}
 
 	/**
@@ -152,7 +148,6 @@ class CmsRoute implements ArrayAccess
 		if( in_array($key,self::$_keys) && isset($this->_data[$key]) ) return TRUE;
 		return FALSE;
 	}
-
 
 	/**
 	 * @ignore
@@ -175,36 +170,39 @@ class CmsRoute implements ArrayAccess
 	}
 
 	/**
-	 * Retrieve the destination module name.
+	 * Retrieve the destination module name (if any).
 	 *
 	 * @deprecated
-	 * @return string Destination module name. or null.
+	 * @return string Destination module name, or empty string.
 	 */
 	public function get_dest()
 	{
-		return $this->_data['key1'];
+		if( isset($this->_data['key1']) && !$this->is_content() ) return $this->_data['key1'];
+		return '';
 	}
 
 	/**
 	 * Retrieve the page id, if the destination is a content page.
 	 *
 	 * @deprecated
-	 * @return int Page id, or null.
+	 * @return int Page id, or 0.
 	 */
 	public function get_content()
 	{
 		if( $this->is_content() ) return $this->_data['key2'];
+		return 0;
 	}
 
 	/**
 	 * Retrieve the default parameters for this route
 	 *
 	 * @deprecated
-	 * @return array The default parameters for the route.. Null if no defaults specified.
+	 * @return array The default parameters for the route, or empty if no defaults specified.
 	 */
 	public function get_defaults()
 	{
 		if( isset($this->_data['defaults']) ) return $this->_data['defaults'];
+		return [];
 	}
 
 	/**
@@ -215,46 +213,56 @@ class CmsRoute implements ArrayAccess
 	 */
 	public function is_content()
 	{
-		return ($this->_data['key1'] === '__CONTENT__');
+		return (isset($this->_data['key1']) && $this->_data['key1'] === '__CONTENT__');
 	}
 
 	/**
 	 * Get matching parameter results.
 	 *
 	 * @deprecated
-	 * @return array Matching parameters... or Null
+	 * @return array Matching parameters... or empty
 	 */
 	public function get_results()
 	{
-		return $this->_results;
+		if( isset($this->_results) ) return $this->_results;
+		return [];
 	}
 
 	/**
-	 * Test if this route matches the specified string
-	 * Depending upon the route, either a string comparison or regular expression match
-	 * is performed.
+	 * Test whether this route matches the specified string
+	 * Depending upon the route, either a string comparison or regular
+	 * expression match is performed.
 	 *
 	 * @param string $str The input string
-	 * @param bool $exact Perform an exact string match rather than depending on the route values.
+	 * @param bool $exact Perform an exact string match, not a regular expression match.
 	 * @return bool
 	 */
 	public function matches($str,$exact = false)
 	{
-		$this->_results = null;
-		if( (isset($this->_data['absolute']) && $this->_data['absolute']) || $exact ) {
-			$a = trim($this->_data['term']);
+		if( $exact || !empty($this->_data['absolute']) ) {
+			$a = trim((string)$this->_data['term']);
 			$a = trim($a,'/');
-			$b = trim($str);
+			$b = trim((string)$str);
 			$b = trim($b,'/');
 
-			if( !strcasecmp($a,$b) ) return TRUE;
-			return FALSE;
+			if ( strcasecmp($a,$b) == 0 ) { //too bad if any non-ASCII in there!
+				$this->_results = ['module' => $this->get_dest()] + $this->get_defaults(); //'module' might be '__CONTENT__'
+				return true;
+			}
+			else {
+				$this->_results = [];
+				return false;
+			}
 		}
 
-		$tmp = array();
-		$res = (bool)preg_match($this->_data['term'],$str,$tmp);
-		if( $res && is_array($tmp) ) $this->_results = $tmp;
-		return $res;
+		$tmp = [];
+		if( preg_match((string)$this->_data['term'],$str,$tmp) ) {
+			$this->_results = ['module' => $this->get_dest()] + $this->get_defaults();
+			if( $tmp ) { $this->_results += $tmp; }
+			return true;
+		}
+		$this->_results = [];
+		return false;
 	}
 
 } // end of class

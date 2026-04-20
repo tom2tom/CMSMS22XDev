@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#Plugin handler: cms_jquery
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -18,18 +17,18 @@
 
 function smarty_function_cms_jquery($params, $smarty)
 {
-	$exclude = trim(get_parameter_value($params,'exclude'));
-	$cdn = cms_to_bool(get_parameter_value($params,'cdn'));
-	$append = trim(get_parameter_value($params,'append'));
+	$exclude = get_parameter_value($params,'exclude');
+	$cdn = get_parameter_value($params,'cdn',FALSE);
+	$append = get_parameter_value($params,'append');
 	$ssl = cms_to_bool(get_parameter_value($params,'ssl'));
-	$custom_root = trim(get_parameter_value($params,'custom_root'));
-	$include_css = cms_to_bool(get_parameter_value($params,'include_css',1));
+	$custom_root = get_parameter_value($params,'custom_root');
+	$include_css = get_parameter_value($params,'include_css',TRUE);
 
 	// get the output
 	$out = cms_get_jquery($exclude,$ssl,$cdn,$append,$custom_root,$include_css);
 	if( isset($params['assign']) ) {
 		$smarty->assign(trim($params['assign']),$out);
-		return;
+		return '';
 	}
 
 	return $out;

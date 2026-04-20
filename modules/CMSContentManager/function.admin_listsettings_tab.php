@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: Content (c) 2013 by Robert Campbell 
-#         (calguy1000@cmsmadesimple.org)
-#  A module for managing content in CMSMS.
-# 
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module CMSContentManager tab populator
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -15,12 +10,6 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-#
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin 
-# section that the site was built with CMS Made simple.
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -33,13 +22,11 @@
 #
 #-------------------------------------------------------------------------
 #END_LICENSE
-if( !isset($gCms) ) exit;
-if( !$this->CheckPermission('Modify Site Preferences') ) return;
 
 $opts = array('title'=>$this->Lang('prompt_page_title'),
-	      'menutext'=>$this->Lang('prompt_page_menutext'));
-$smarty->assign('namecolumnopts',$opts);
-$smarty->assign('list_namecolumn',$this->GetPreference('list_namecolumn','title'));
+          'menutext'=>$this->Lang('prompt_page_menutext'));
+$tpl->assign('namecolumnopts',$opts);
+$tpl->assign('list_namecolumn',$this->GetPreference('list_namecolumn','title'));
 
 $dflts = 'expand,icon1,hier,page,alias,url,template,friendlyname,owner,active,default,move,view,copy,edit,delete,multiselect';
 $tmp = explode(',',$dflts);
@@ -47,14 +34,6 @@ $opts = array();
 foreach( $tmp as $one ) {
   $opts[$one] = $this->Lang('colhdr_'.$one);
 }
-$smarty->assign('visible_column_opts',$opts);
+$tpl->assign('visible_column_opts',$opts);
 $tmp = explode(',',$this->GetPreference('list_visiblecolumns',$dflts));
-$smarty->assign('list_visiblecolumns',$tmp);
-
-echo $this->ProcessTemplate('admin_listsettings_tab.tpl');
-
-
-#
-# EOF
-#
-?>
+$tpl->assign('list_visiblecolumns',$tmp);

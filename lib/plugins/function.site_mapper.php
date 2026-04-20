@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: site_mapper
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -19,12 +18,11 @@
 function smarty_function_site_mapper($params, $smarty)
 {
 	$params['module'] = 'Navigator';
-	
-	if( !isset($params['template']) )
-    {
+
+	if( !isset($params['template']) ) {
 		$params['template'] = 'minimal_menu.tpl';
-    }
-	
+	}
+
 	return cms_module_plugin($params,$smarty);
 }
 

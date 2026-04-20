@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: Content (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A module for managing content in CMSMS.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module CMSContentManager action
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -37,12 +32,14 @@ if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Manage All Content') ) return;
 
 if( isset($params['cancel']) ) {
-  $this->SetMessage($this->Lang('msg_cancelled'));
-  $this->RedirectToAdminTab('pages');
+    $this->SetMessage($this->Lang('msg_cancelled'));
+    $this->RedirectToAdminTab('pages');
 }
-if( isset($params['orderlist']) && $params['orderlist'] != '' ) {
+$tree = $gCms->GetHierarchyManager();
 
-    // this function is unused
+if( !empty($params['orderlist']) ) {
+
+/* unused
     function ordercontent_get_node_rec($str,$prefix = 'page_')
     {
         $gCms = cmsms();
@@ -60,65 +57,80 @@ if( isset($params['orderlist']) && $params['orderlist'] != '' ) {
             }
         }
     }
-
-    function ordercontent_create_flatlist($tree,$parent_id = -1)
+*/
+    function ordercontent_create_flatlist($list,$parent_id = -1)
     {
         $data = array();
-        $cur_parent = null;
+        $cur_parent = 0;
         $order = 1;
-        foreach( $tree as &$node ) {
-            if( is_string($node) ) {
-                $pid = (int)substr($node,strlen('page_'));
+        foreach( $list as &$item ) {
+            if( is_string($item) ) {
+                $pid = (int)substr($item,strlen('page_'));
                 $cur_parent = $pid;
                 $data[] = array('id'=>$pid,'parent_id'=>$parent_id,'order'=>$order++);
             }
-            else if( is_array($node) ) {
-                $data = array_merge($data,ordercontent_create_flatlist($node,$cur_parent));
+            elseif( is_array($item) ) {
+                $data = array_merge($data,ordercontent_create_flatlist($item,$cur_parent)); // recurse
             }
         }
+        unset($item);
         return $data;
     }
 
     $orderlist = json_decode($params['orderlist'],TRUE);
 
-    // step 1, create a flat list of the content items, and their new orders, and new parents.
+    // step 1, create a flat list of the content items, and their new orders and new parents.
     $orderlist = ordercontent_create_flatlist($orderlist);
 
-    // step 2, merge in old orders, and old parents
-    $hm = $gCms->GetHierarchyManager();
+    // step 2, merge in old orders and old parents
     $changelist = array();
     foreach( $orderlist as &$rec ) {
-        $node = $hm->find_by_tag('id',$rec['id']);
-        $content = $node->getContent(FALSE,TRUE,TRUE);
-        if( $content ) {
-            $rec['old_parent'] = $content->ParentId();
-            $rec['old_order'] = $content->ItemOrder();
-
-            if( $rec['old_parent'] != $rec['parent_id'] || $rec['old_order'] != $rec['order'] ) $changelist[] = $rec;
+        $node = $tree->find_by_tag('id',$rec['id']);
+        if( $node ) {
+            $content = $node->getContent(FALSE,TRUE,TRUE);
+            if( $content ) {
+                $old_parent = $content->ParentId();
+                if( $old_parent != $rec['parent_id'] ) {
+                    $changelist[] = $rec;
+                }
+                else {
+                    $old_order = $content->ItemOrder();
+                    if( $old_order != $rec['order'] ) {
+                        $changelist[] = $rec;
+                    }
+                }
+            }
+            else {
+                //TODO handle missing-content error
+            }
+        }
+        else {
+            //TODO handle missing-node error
         }
     }
+    unset($rec);
 
     if( !$changelist ) {
-        echo $this->ShowErrors($this->Lang('error_ordercontent_nothingtodo'));
+        $this->SetMessage($this->Lang('error_ordercontent_nothingtodo'));
     }
     else {
-        $query = 'UPDATE '.CMS_DB_PREFIX.'content SET item_order = ?, parent_id = ? WHERE content_id = ?';
+        $stmt = $db->Prepare('UPDATE '.CMS_DB_PREFIX.'content SET item_order = ?, parent_id = ? WHERE content_id = ?');
         foreach( $changelist as $rec ) {
-            $db->Execute($query,array($rec['order'],$rec['parent_id'],$rec['id']));
+            $stmt->Execute(array($rec['order'],$rec['parent_id'],$rec['id']));
         }
         $contentops = $gCms->GetContentOperations();
         $contentops->SetAllHierarchyPositions();
-        audit('',$this->GetName(),'Content pages dynamically reordered');
-        $this->RedirectToAdminTab('pages');
+        audit('',$this->GetName(),count($changelist).' content pages dynamically reordered');
     }
+    $this->RedirectToAdminTab('pages');
 }
 
+CMSMS\HookManager::add_hook('admin_add_headtext', function() {
+    $root_url = CMS_ROOT_URL;
+    return "<script src=\"$root_url/lib/jquery/js/jquery.mjs.nestedSortable.min.js\"></script>\n";
+});
 
-$tree = $gCms->GetHierarchyManager();
-$smarty->assign('tree',$tree);
-echo $this->ProcessTemplate('admin_ordercontent.tpl');
-
-#
-# EOF
-#
-?>
+$modname = $this->GetName();
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_ordercontent.tpl",null,$modname,$smarty);
+$tpl->assign('tree',$tree);
+$tpl->display();

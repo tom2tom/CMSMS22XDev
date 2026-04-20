@@ -11,20 +11,20 @@
 {/if}
 <li{if $node.index == 0} class="firstnewscat"{/if}>
 {if $node.count > 0}
-	<a href="{$node.url}">{$node.news_category_name}</a>{else}<span>{$node.news_category_name} </span>{/if}
+  <a href="{$node.url}">{$node.news_category_name}</a>{else}<span>{$node.news_category_name} </span>{/if}
 {/foreach}
 {repeat string="</li></ul>" times=$node.depth-1}</li>
 </ul>
 
 {* this displays the category name if you're browsing by category *}
 {if $category_name}
-<h1>{$category_name}</h1>
+<h3>{$category_name}</h3>
 {/if}
 
 {* if you don't want category browsing on your summary page, remove this line and everything above it *}
 
 {if $pagecount > 1}
-  <p>
+<p>
 {if $pagenumber > 1}
 {$firstpage}&nbsp;{$prevpage}&nbsp;
 {/if}
@@ -34,68 +34,70 @@
 {/if}
 </p>
 {/if}
+{*news_image src='/News/someimagefile' width=30*}
 {foreach $items as $entry}
+{*if !empty($entry->image_url)}article-image handling stuff{/if*}
 <div class="NewsSummary">
 
 {if $entry->postdate}
-	<div class="NewsSummaryPostdate">
-		{$entry->postdate|cms_date_format}
-	</div>
+  <div class="NewsSummaryPostdate">
+    {$entry->postdate|cms_date_format}
+  </div>
 {/if}
 
 <div class="NewsSummaryLink">
-<a href="{$entry->moreurl}" title="{$entry->title|cms_escape:htmlall}">{$entry->title|cms_escape}</a>
+{* note, for security purposes, because News articles can come from untrused sources, we do not pass the title through Smarty in the default templates *}
+<a href="{$entry->moreurl}" title="{$entry->title|cms_escape:'htmlall'}">{$entry->title|cms_escape}</a>
 </div>
 
 <div class="NewsSummaryCategory">
-	{$category_label} {$entry->category}
+  {$category_label} {$entry->category}
 </div>
 
 {if $entry->author}
-	<div class="NewsSummaryAuthor">
-		{$author_label} {$entry->author}
-	</div>
+  <div class="NewsSummaryAuthor">
+    {$author_label} {$entry->author}
+  </div>
 {/if}
 
 {if $entry->summary}
-{* note, for security purposes, incase News articles can come from untrused sources, we do not pass the summary or content through smarty in the default templates *}
-	<div class="NewsSummarySummary">
-		{$entry->summary}
-	</div>
+{* note, for security purposes, because News articles can come from untrusted sources, we do not pass the summary through Smarty in the default templates *}
+  <div class="NewsSummarySummary">
+    {$entry->summary}
+  </div>
 
-	<div class="NewsSummaryMorelink">
-		[{$entry->morelink}]
-	</div>
+  <div class="NewsSummaryMorelink">
+    [{$entry->morelink}]
+  </div>
 
-{else if $entry->content}
-{* note, for security purposes, incase News articles can come from untrused sources, we do not pass the summary or content through smarty in the default templates *}
-	<div class="NewsSummaryContent">
-		{$entry->content}
-	</div>
+{elseif $entry->content}
+{* note, for security purposes, because News articles can come from untrusted sources, we do not pass the content through Smarty in the default templates *}
+  <div class="NewsSummaryContent">
+    {$entry->content}
+  </div>
 {/if}
 
-{if isset($entry->extra)}
-    <div class="NewsSummaryExtra">
-        {$entry->extra}
-{*      {cms_module module='Uploads' mode='simpleurl' upload_id=$entry->extravalue} *}
-    </div>
+{if !empty($entry->extra)}
+  <div class="NewsSummaryExtra">
+    {$entry->extra}
+  </div>
 {/if}
-{if isset($entry->fields)}
+{if !empty($entry->fields)}
   {foreach $entry->fields as $field}
-     <div class="NewsSummaryField">
-        {if $field->type == 'file'}
-          {if isset($field->value) && $field->value}
-            <img src="{$entry->file_location}/{$field->value}" />
-          {/if}
-        {elseif $field->type == 'linkedfile'}
-          {* also assume it's an image... *}
-          {if !empty($field->value)}
-            <img src="{file_url file=$field->value}" alt="{$field->value}" />
-          {/if}
-        {else}
-          {$field->name}:&nbsp;{$field->value}
-        {/if}
-     </div>
+   <div class="NewsSummaryField">
+    {strip}{if $field->type == 'file'}
+      {if !empty($field->value)}
+{* assume the field value is an image to be displayed *}
+      {$field->name}:&nbsp;<img src="{$entry->file_location}/{$field->value}" alt="{$field->value}">
+      {/if}
+    {elseif $field->type == 'linkedfile'}
+      {if !empty($field->value)}
+      <a href="{file_url file=$field->value}" title="{$field->displayvalue}">{$field->name}</a>
+      {/if}
+    {else}
+      {$field->name}:&nbsp;{$field->displayvalue}
+    {/if}{/strip}
+   </div>
   {/foreach}
 {/if}
 

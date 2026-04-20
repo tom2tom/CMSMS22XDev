@@ -1,14 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html>
 <html lang="en" data-cmsfp-inst="{$inst}">
 	<head>
-		<meta charset="utf-8" />
-		<meta http-equiv="Content-type" content="text/html;charset=utf-8" />
+		<meta charset="utf-8">
+		<meta http-equiv="Content-type" content="text/html;charset=utf-8">
 		<title>{$mod->Lang('filepickertitle')}</title>
-		<link rel="stylesheet" type="text/css" href="{$cssurl}" />
+		{cms_jquery exclude='json,migrate,nestedSortable,cms_autorefresh,cms_dirtyform,cms_filepicker,cms_hiersel,cms_lock'}
+		<link rel="stylesheet" href="{$cssurl}">
 	</head>
-	{strip}
 	<body class="cmsms-filepicker">
-		<div id="full-fp">
+		{strip}<div id="full-fp">
 			<div class="filepicker-navbar">
 				<div class="filepicker-navbar-inner">
 					<div class="filepicker-view-option">
@@ -30,7 +30,7 @@
 							{if $profile->can_upload}
 							<span class="filepicker-button upload-file btn-file">
 								<i class="cmsms-fp-upload"></i> {$mod->Lang('upload')}
-								<input id="filepicker-file-upload" type="file" multiple="" title="{$mod->Lang('select_upload_files')}" />
+								<input id="filepicker-file-upload" type="file" multiple title="{$mod->Lang('select_upload_files')}">
 							</span>
 							{/if}
 						</p>
@@ -52,7 +52,7 @@
 			<div class="filepicker-container">
 				<div id="filepicker-progress" class="filepicker-breadcrumb">
 					<p class="filepicker-breadcrumb-text" title="{$mod->Lang('youareintext')}:"><i class="cmsms-fp-folder-open filepicker-icon"></i> {$cwd_for_display}</p>
-					<p id="filepicker-progress-text" style="display: none;"></p>
+					<p id="filepicker-progress-text" style="display:none"></p>
 				</div>
 				<div id="filelist">
 					<ul class="filepicker-list" id="filepicker-items">
@@ -74,8 +74,8 @@
 							</div>
 						</li>
 						{foreach $files as $file}
-						<li class="filepicker-item{if $file.isdir} dir{else} {$file.filetype}{/if}" title="{if $file.isdir}{$mod->Lang('changedir')}: {/if}{$file.name}" data-fb-ext='{$file.ext}' data-fb-fname="{$file.name}">
-							<div class="filepicker-thumb{if ($profile->show_thumbs && isset($file.thumbnail) && $file.thumbnail != '') || $file.isdir || ($profile->show_thumbs && $file.is_thumb)} no-background{/if}">
+						<li class="filepicker-item{if $file.isdir} dir{else} {$file.filetype}{/if}" title="{if $file.isdir}{$mod->Lang('changedir')}: {/if}{$file.name}" data-fb-ext="{$file.ext}" data-fb-fname="{$file.name}">
+							<div class="filepicker-thumb{if ($profile->show_thumbs && !empty($file.thumbnail)) || $file.isdir || ($profile->show_thumbs && $file.is_thumb)} no-background{/if}">
 							{if !$file.isdir && $profile->can_delete && !$file.isparent}
 								<span class="filepicker-delete filepicker-cmd cmsms-fp-delete" data-cmd="del" title="{$mod->Lang('delete')}">
 									<i class="cmsms-fp-close"></i>
@@ -83,12 +83,12 @@
 							{/if}
 							{if $file.isdir}
 								<a class="icon-no-thumb" href="{$file.chdir_url}" title="{if $file.isdir}{$mod->Lang('changedir')}: {/if}{$file.name}"><i class="cmsms-fp-folder-close"></i></a>
-							{elseif $profile->show_thumbs && isset($file.thumbnail) && $file.thumbnail != ''}
-								<a class="filepicker-file-action js-trigger-insert" href="{$file.relurl}" title="{$file.name}">{$file.thumbnail}</a>
+							{elseif $profile->show_thumbs && !empty($file.thumbnail)}
+								<a class="filepicker-file-action js-trigger-insert" href="{$file.fullurl}" title="{$file.name}" data-fb-relurl="{$file.relurl}">{$file.thumbnail}</a>
 							{elseif $profile->show_thumbs && $file.is_thumb}
-								<a class="filepicker-file-action js-trigger-insert" href="{$file.relurl}" title="{$file.name}"><img src="{$file.fullurl}" alt="{$file.name}" /></a>
+								<a class="filepicker-file-action js-trigger-insert" href="{$file.fullurl}" title="{$file.name}" data-fb-relurl="{$file.relurl}"><img src="{$file.fullurl}" alt="{$file.name}"></a>
 							{else}
-								<a class="filepicker-file-action js-trigger-insert icon-no-thumb" title="{$file.name}" href="{$file.relurl}">
+								<a class="filepicker-file-action js-trigger-insert icon-no-thumb" href="{$file.fullurl}" title="{$file.name}" data-fb-relurl="{$file.relurl}">
 									{if $file.filetype == 'image'}
 										<i class="cmsms-fp-picture"></i>
 									{elseif $file.filetype == 'video'}
@@ -103,20 +103,19 @@
 								</a>
 							{/if}
 
-
 							</div>
 							<div class="filepicker-file-information">
 								<h4 class="filepicker-file-title">
 								{if $file.isdir}
 									<a class="filepicker-dir-action" href="{$file.chdir_url}" title="{if $file.isdir}{$mod->Lang('changedir')}: {/if}{$file.name}">{$file.name}</a>
 								{else}
-									<a class="filepicker-file-action js-trigger-insert" href="{$file.relurl}" title="{if $file.isdir}{$mod->Lang('changedir')}: {/if}{$file.name}" data-fb-filetype="{$file.filetype}">{$file.name}</a>
+									<a class="filepicker-file-action js-trigger-insert" href="{$file.fullurl}" title="{if $file.isdir}{$mod->Lang('changedir')}: {/if}{$file.name}" data-fb-relurl="{$file.relurl}" data-fb-filetype="{$file.filetype}">{$file.name}</a>
 								{/if}
 								</h4>
 							</div>
 							<div class="filepicker-file-details visuallyhidden">
 								<span class="filepicker-file-dimension">
-									{$file.dimensions}
+									{if !$file.isdir}{$file.dimensions}{/if}
 								</span>
 								<span class="filepicker-file-size">
 									{if !$file.isdir}{$file.size}{/if}
@@ -136,27 +135,27 @@
 				</div>
 			</div>
 		</div>
-	</body>
-	{/strip}
-	{cms_jquery exclude='ui_touch_punch,nestedSortable,json,migrate,cms_autorefresh,cms_dirtyform,cms_hiersel,cms_lock,cms_filepicker'}
-	<script type="text/javascript" src="{$mod->GetModuleURLPath()}/js/ext/jquery.fileupload.js"></script>
-	<script type="text/javascript" src="{$mod->GetModuleURLPath()}/lib/js/cmsms_filebrowser/filebrowser.js"></script>
-	<script type="text/javascript">
-	  $(function() {
-	    var options = {};
-	    options.cmd_url = '{cms_action_url action=ajax_cmd forjs=1}&showtemplate=false';
-	    options.cwd = '{$cwd}';
-	    options.sig = '{$sig}';
-	    options.inst = '{$inst}';
-	    options.lang = {$lang_js};
-	    options.prefix = '{$profile->prefix}';
-	    var filepicker = new CMSFileBrowser(options);
-	  })
-	</script>
-
-	<div id="mkdir_dlg" title="{$mod->Lang('title_mkdir')}" style="display: none;" data-oklbl="{$mod->Lang('ok')}">
-		<div class="dlg-options">
-			<label>{$mod->Lang('name')}:</label> <input type="text" id="fld_mkdir" size="40"/>
+{/strip}
+		<div id="mkdir_dlg" title="{$mod->Lang('title_mkdir')}" style="display:none" data-oklbl="{$mod->Lang('ok')}">
+			<div class="dlg-options">
+				<label for="txtmkdir">{$mod->Lang('name')}:</label>
+				<input type="text" id="txtmkdir" size="40">
+			</div>
 		</div>
-	</div>
+		<script src="{$baseurl}/lib/js/jquery.fileupload.min.js"></script>
+		<script src="{$baseurl}/lib/js/filebrowser.min.js"></script>
+		<script>
+		$(function() {
+			var filepicker = new CMSFileBrowser({
+				cmd_url: '{cms_action_url action=ajax_cmd forjs=1}&showtemplate=false',
+				cwd: '{$cwd}',
+				sig: '{$sig}',
+				inst: '{$inst}',
+				prefix: '{$prefix}',
+				type: '{$type}',
+				lang: {$lang_js}
+			});
+		});
+		</script>
+	</body>
 </html>

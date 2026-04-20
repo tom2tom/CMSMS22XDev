@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Module MicroTiny action
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -22,7 +21,7 @@ if( !check_login(FALSE) ) exit; // admin only.... but any admin
 $handlers = ob_list_handlers();
 for ($cnt = 0; $cnt < count($handlers); $cnt++) { ob_end_clean(); }
 
-$out = null;
+$out = null; //empty ajax result
 $term = trim(strip_tags(get_parameter_value($_REQUEST,'term')));
 $alias = trim(strip_tags(get_parameter_value($_REQUEST,'alias')));
 

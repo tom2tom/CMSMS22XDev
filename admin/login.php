@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net) and (c) 2016 by Robert Campbell (calguy1000@cmsmadesimple.org)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple admin console script
+#(c) 2004-2025 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -13,18 +12,19 @@
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 #You should have received a copy of the GNU General Public License
-#along with this program; if not, write to the Free Software
-#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#along with this program. If not, read the license online at
+#https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #
 #$Id$
 
-namespace CMSMS;
+use CMSMS\HookManager;
+use CMSMS\internal\LoginOperations;
 
-$CMS_ADMIN_PAGE=1;
-$CMS_LOGIN_PAGE=1;
+$CMS_ADMIN_PAGE = 1;
+$CMS_LOGIN_PAGE = 1;
 
 require_once("../lib/include.php");
-$gCms = \CmsApp::get_instance();
+$gCms = CmsApp::get_instance();
 $db = $gCms->GetDb();
 
 // if we allow modules to do the login operations
@@ -32,7 +32,7 @@ $db = $gCms->GetDb();
 // getloginModule
 // call the module's getLoginForm() action
 //
-$login_ops = \CMSMS\LoginOperations::get_instance();
+$login_ops = LoginOperations::get_instance();
 
 $error = "";
 $forgotmessage = "";
@@ -45,27 +45,27 @@ $changepwhash = "";
  * @param User $user
  * @return results from the attempt to send a message.
  */
-function send_recovery_email(\User $user)
+function send_recovery_email(User $user)
 {
-    $gCms = \CmsApp::get_instance();
+    $gCms = CmsApp::get_instance();
     $config = $gCms->GetConfig();
 
-    $obj = new \cms_mailer;
+    $obj = new cms_mailer();
     $obj->IsHTML(TRUE);
     $obj->AddAddress($user->email, html_entity_decode($user->firstname . ' ' . $user->lastname));
-    $obj->SetSubject(lang('lostpwemailsubject',html_entity_decode(get_site_preference('sitename','CMSMS Site'))));
+    $obj->SetSubject(lang('lostpwemailsubject',html_entity_decode(cms_siteprefs::get('sitename','CMSMS Site'))));
 
     $code = md5(md5(__FILE__ . '--' . $user->username . md5($user->password.time())));
-    \cms_userprefs::set_for_user( $user->id, 'pwreset', $code );
+    cms_userprefs::set_for_user( $user->id, 'pwreset', $code );
     $url = $config['admin_url'] . '/login.php?recoverme=' . $code;
-    $body = lang('lostpwemail',html_entity_decode(get_site_preference('sitename','CMSMS Site')), $user->username, $url, $url);
+    $body = lang('lostpwemail',html_entity_decode(cms_siteprefs::get('sitename','CMSMS Site')), $user->username, $url, $url);
     $obj->SetBody($body);
 
     if( $obj->Send() ) {
-    audit('','Core','Sent Lost Password Email for '.$user->username);
+        audit($user->id,'Core','Sent lost password email to '.$user->username);
         return true;
     }
-    audit('','Core','Failed to send Lost Password Email for '.$user->username);
+    audit($user->id,'Core','Failed to send lost password email to '.$user->username);
     return false;
 }
 
@@ -79,14 +79,14 @@ function send_recovery_email(\User $user)
 function find_recovery_user($hash)
 {
     if( $hash ) {
-    $gCms = \CmsApp::get_instance();
-    $userops = $gCms->GetUserOperations();
-
-    foreach ($userops->LoadUsers() as $user) {
-        $code = \cms_userprefs::get_for_user( $user->id, 'pwreset' );
-            if( $code && $hash === $code ) { //OR hash_equals($hash, $code) PHP 5.6+
+        $gCms = CmsApp::get_instance();
+        $userops = $gCms->GetUserOperations();
+        // TODO avoid creating all User-objects merely to try to find one of them
+        foreach ($userops->LoadUsers() as $user) {
+            $code = cms_userprefs::get_for_user( $user->id, 'pwreset' );
+            if( $code && $hash === $code ) { //timing attack, hence hash_equals($hash, $code), not a factor here
                 return $user;
-    }
+            }
         }
     }
     return null;
@@ -101,7 +101,7 @@ else if (isset($_REQUEST['forgotpwform']) && isset($_REQUEST['forgottenusername'
     $userops = $gCms->GetUserOperations();
     $forgot_username = cms_html_entity_decode($_REQUEST['forgottenusername']);
     unset($_REQUEST['forgottenusername'],$_POST['forgottenusername']);
-    \CMSMS\HookManager::do_hook('Core::LostPassword', [ 'username'=>$forgot_username] );
+    HookManager::do_hook('Core::LostPassword', [ 'username'=>$forgot_username]);
     $oneuser = $userops->LoadUserByUsername($forgot_username);
     unset($_REQUEST['loginsubmit'],$_POST['loginsubmit']);
 
@@ -118,7 +118,7 @@ else if (isset($_REQUEST['forgotpwform']) && isset($_REQUEST['forgottenusername'
     }
     else {
         unset($_POST['username'],$_POST['password'],$_REQUEST['username'],$_REQUEST['password']);
-        \CMSMS\HookManager::do_hook('Core::LoginFailed', [ 'user'=>$forgot_username ] );
+        HookManager::do_hook('Core::LoginFailed', [ 'user'=>$forgot_username ]);
         $error = lang('usernotfound');
     }
 }
@@ -137,15 +137,15 @@ else if (isset($_REQUEST['forgotpwchangeform']) && $_REQUEST['forgotpwchangeform
         $error = lang('usernotfound');
     }
     else {
-        if ($_REQUEST['password'] != '') {
+        if ($_REQUEST['password']) {
             if ($_REQUEST['password'] == $_REQUEST['passwordagain']) {
                 $user->SetPassword($_REQUEST['password']);
                 $user->Save();
                 // put mention into the admin log
-                \cms_userprefs::remove_for_user( $user->id, 'pwreset' );
-                $ip_passw_recovery = \cms_utils::get_real_ip();
-                audit('','Core','Completed lost password recovery for: '.$user->username.' (IP: '.$ip_passw_recovery.')');
-                \CMSMS\HookManager::do_hook('Core::LostPasswordReset', [ 'uid'=>$user->id, 'username'=>$user->username, 'ip'=>$ip_passw_recovery ] );
+                cms_userprefs::remove_for_user( $user->id, 'pwreset' );
+                $ip_passw_recovery = cms_utils::get_real_ip();
+                audit($user->id,'Core','Completed lost password recovery for '.$user->username.' (IP: '.$ip_passw_recovery.')');
+                HookManager::do_hook('Core::LostPasswordReset', [ 'uid'=>$user->id, 'username'=>$user->username, 'ip'=>$ip_passw_recovery ]);
                 $acceptLogin = lang('passwordchangedlogin');
                 $changepwhash = '';
             }
@@ -155,7 +155,7 @@ else if (isset($_REQUEST['forgotpwchangeform']) && $_REQUEST['forgotpwchangeform
             }
         }
         else {
-            $error = lang('nofieldgiven', array(lang('password')));
+            $error = lang('nofieldgiven', lang('password'));
             $changepwhash = $_REQUEST['changepwhash'];
         }
     }
@@ -168,10 +168,10 @@ if (isset($_SESSION['logout_user_now'])) {
     debug_buffer("Logging out.  Cleaning cookies and session variables.");
     $userid = $login_ops->get_loggedin_uid();
     $username = $login_ops->get_loggedin_username();
-    \CMSMS\HookManager::do_hook('Core::LogoutPre', [ 'uid'=>$userid, 'username'=>$username ] );
+    HookManager::do_hook('Core::LogoutPre', [ 'uid'=>$userid, 'username'=>$username ]);
     $login_ops->deauthenticate(); // unset all the cruft needed to make sure we're logged in.
-    \CMSMS\HookManager::do_hook('Core::LogoutPost', [ 'uid'=>$userid, 'username'=>$username ] );
-    audit($userid, "Admin Username: ".$username, 'Logged Out');
+    HookManager::do_hook('Core::LogoutPost', [ 'uid'=>$userid, 'username'=>$username ]);
+    audit($userid, 'Admin user', 'Logged out');
 }
 
 if( isset($_POST['logincancel']) ) {
@@ -181,63 +181,83 @@ if( isset($_POST['logincancel']) ) {
 else if( isset($_POST['loginsubmit']) ) {
     // login form submitted
     $login_ops->deauthenticate();
-    $username = $password = null;
-    if (isset($_POST["username"])) $username = cleanValue($_POST["username"]);
-    if (isset($_POST["password"])) $password = $_POST["password"];
+    $username = '';
+    if( isset($_POST["username"]) ) $username = cleanValue($_POST["username"]);
+    $password = '';
+    if( isset($_POST["password"]) ) $password = $_POST["password"];
     unset($_POST['username'],$_POST['password'],$_REQUEST['username'],$_REQUEST['password']);
 
     $userops = $gCms->GetUserOperations();
 
-    class CmsLoginError extends \CmsException {}
+    class CmsLoginError extends CmsException {}
 
     try {
-        if( !$username || !$password ) throw new \LogicException(lang('usernameincorrect'));
+        if( !$username || !$password ) throw new LogicException(lang('usernameincorrect'));
+
+        // send a pre-login event (pre-2.2.7 used key 'user' instead of 'username')
+        HookManager::do_hook('Core::LoginPre', [ 'username'=>$username, 'password'=>$password ]);
+        // if a LoginPre handler doesn't return here, it must locally perform all the following
 
         // load user by name
-        // do hooks for authentication
         $oneuser = $userops->LoadUserByUsername($username, $password, TRUE, TRUE);
-        // $oneuser = $userops->LoadUserByUsername($username, $password, TRUE, TRUE);
         if( !$oneuser ) throw new CmsLoginError(lang('usernameincorrect'));
-
-        \CMSMS\HookManager::do_hook('Core::LoginPre', [ 'user'=>$oneuser  ] );
 
         $login_ops->save_authentication($oneuser);
 
+        // send a post-pw-check event (in case MFA is deployed)
+        HookManager::do_hook('Core::LoginPassed', [ 'user'=>$oneuser ]);
+        // if a LoginPassed handler doesn't return here, it must locally perform all the following
+
         // put mention into the admin log
-        audit($oneuser->id, "Admin Username: ".$oneuser->username, 'Logged In');
+        audit($oneuser->id, 'Admin user', 'Logged in');
 
-        // send the post login event
-        \CMSMS\HookManager::do_hook('Core::LoginPost', [ 'user'=>$oneuser ] );
+        // send a post-login event
+        HookManager::do_hook('Core::LoginPost', [ 'user'=>$oneuser ]);
 
-        // redirect outa hre somewhere
+        // redirect outa here somewhere
         if( isset($_SESSION['login_redirect_to']) ) {
             // we previously attempted a URL but didn't have the user key in the request.
-            $url_ob = new \cms_url($_SESSION['login_redirect_to']);
+            $url_ob = new cms_url($_SESSION['login_redirect_to']);
             unset($_SESSION['login_redirect_to']);
             $url_ob->erase_queryvar('_s_');
             $url_ob->erase_queryvar('sp_');
             $url_ob->set_queryvar(CMS_SECURE_PARAM_NAME,$_SESSION[CMS_USER_KEY]);
             $url = (string) $url_ob;
             redirect($url);
-        } else {
-            // find the users homepage, if any, and redirect there.
-            $homepage = \cms_userprefs::get_for_user($oneuser->id,'homepage');
-            if( !$homepage ) $homepage = $config['admin_url'];
-
-            $homepage = \CmsAdminUtils::get_session_url($homepage);
-
-            // and redirect.
+        }
+        else {
+            // find the user's homepage, if any, and redirect there.
+            $homepage = cms_userprefs::get_for_user($oneuser->id,'homepage');
+            if( !$homepage ) {
+                $homepage = $config['admin_url'];
+            }
+/*          elseif( 0 ) {
+                url should be rel. to $config['admin_url']
+                //TODO somewhere, efficiently check page ok (FR#12400)
+                //e.g. after each system upgrade and after each module-uninstall or -deactivate
+                $homepage = $config['admin_url'];
+            }
+*/
+            $homepage = CmsAdminUtils::get_session_url($homepage); // involves deprecated conversion of 'placeholders'. instead use verbatim
             $homepage = html_entity_decode($homepage);
             redirect($homepage);
         }
     }
-    catch( \Exception $e ) {
+    catch( Exception $e ) {
         $error = $e->GetMessage();
-        debug_buffer("Login failed.  Error is: " . $error);
-        \CMSMS\HookManager::do_hook('Core::LoginFailed', [ 'user'=>$username ] );
+        debug_buffer("Login failed. Error was: " . $error);
+        if( $username ) {
+            HookManager::do_hook('Core::LoginFailed', [ 'user'=>$username ]);
+        }
         // put mention into the admin log
-        $ip_login_failed = \cms_utils::get_real_ip();
-        audit('', '(IP: ' . $ip_login_failed . ') ' . "Admin Username: " . $username, 'Login Failed');
+        $ip_login_failed = cms_utils::get_real_ip();
+        if( !empty($oneuser) ) {
+            $id = $oneuser->id;
+        }
+        else {
+            $id = '';
+        }
+        audit($id, 'Admin user', "Login failed (IP: $ip_login_failed)");
     }
 }
 
@@ -247,9 +267,11 @@ else if( isset($_POST['loginsubmit']) ) {
 
 // Language shizzle
 cms_admin_sendheaders();
-header("Content-Language: " . \CmsNlsOperations::get_current_language());
+header("Content-Language: " . CmsNlsOperations::get_current_language());
+header("Cache-Control: no-store");
+header("Expires: 0");
 
-$themeObject = \cms_utils::get_theme_object();
+$themeObject = cms_utils::get_theme_object();
 $vars = array('error'=>$error);
 if( isset($warningLogin) ) $vars['warningLogin'] = $warningLogin;
 if( isset($acceptLogin) ) $vars['acceptLogin'] = $acceptLogin;

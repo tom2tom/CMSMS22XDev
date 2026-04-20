@@ -1,9 +1,9 @@
 {if isset($force_english)}
-	<div class="pagewarning">{$ModuleManager->Lang('help_forceenglish')}</div>
+	<div class="pagewarning">{$mod->Lang('help_forceenglish')}</div>
 {/if}
 
 <div class="pageheader">
-	{if isset($friendly_name) && $friendly_name != ''}
+	{if !empty($friendly_name)}
 		{$friendly_name} <em>({$module_name})</em>
 	{else}
 		{$module_name}

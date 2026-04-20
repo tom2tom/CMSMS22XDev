@@ -1,8 +1,11 @@
 <?php
+#CMSMS News module class: News_AdminSearch_slave
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#The license at the top of file News.module.php applies to this file.
 
 final class News_AdminSearch_slave extends AdminSearch_slave
 {
-  public function get_name() 
+  public function get_name()
   {
     $mod = cms_utils::get_module('News');
     return $mod->Lang('lbl_adminsearch');
@@ -23,7 +26,7 @@ final class News_AdminSearch_slave extends AdminSearch_slave
   public function get_matches()
   {
     $mod = cms_utils::get_module('News');
-    if( !is_object($mod) ) return;
+    if( !is_object($mod) ) return [];
     $db = cmsms()->GetDb();
     // need to get the fielddefs of type textbox or textarea
     $query = 'SELECT id, name FROM '.CMS_DB_PREFIX.'module_news_fielddefs WHERE type IN (?,?)';
@@ -34,8 +37,8 @@ final class News_AdminSearch_slave extends AdminSearch_slave
     $where = array('news_title LIKE ?','news_data LIKE ?','summary LIKE ?');
     $str = '%'.$this->get_text().'%';
     $parms = array($str,$str,$str);
-    
-    // add in fields 
+
+    // add in fields
     $fieldNames = array();
     for( $i = 0; $i < count($fdlist); $i++ ) {
       $tmp = 'FV'.$i;
@@ -63,9 +66,9 @@ final class News_AdminSearch_slave extends AdminSearch_slave
       $resultSets = array();
 
       if ($this->show_snippets()) {
-        $fieldNames['news_title'] = $mod->lang('title');
-        $fieldNames['news_data'] = $mod->lang('content');
-        $fieldNames['summary'] = $mod->lang('summary');
+        $fieldNames['news_title'] = $mod->Lang('title');
+        $fieldNames['news_data'] = $mod->Lang('content');
+        $fieldNames['summary'] = $mod->Lang('summary');
       }
 
       foreach( $dbr as $row ) {
@@ -82,14 +85,15 @@ final class News_AdminSearch_slave extends AdminSearch_slave
           }
         }
       }
-      
-      #processing the results
+
+      //process the results
       foreach ($resultSets as $result_object) {
         $output[] = json_encode($result_object);
       }
-    
+
       return $output;
     }
+    return [];
   }
 } // end of class
 

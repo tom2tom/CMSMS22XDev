@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2016 by Robert Campbell (calguy1000@cmsmadesimple.org)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: page_selector
+#(c) 2016 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -18,16 +17,18 @@
 
 function smarty_function_page_selector($params,$template)
 {
-    $value = (isset($params['value']) ) ? (int) $params['value'] : 0;
-    $name = (isset($params['name']) ) ? trim($params['name']) : 'parent_id';
-    $allowcurrent = (isset($params['allowcurrent']) ) ? cms_to_bool($params['allowcurrent']) : 0;
-    $allow_all = (isset($params['allowall']) ) ? cms_to_bool($params['allowall']) : 0;
-    $for_child = (isset($params['for_child']) ) ? cms_to_bool($params['for_child']) : 0;
-
-    $out = \ContentOperations::get_instance()->CreateHierarchyDropdown('',$value,$name,$allowcurrent,0,0,$allow_all,$for_child);
+    $value = (isset($params['value']) ) ? (int)$params['value'] : 0; // selected-page id
+    $name = (isset($params['name']) ) ? trim($params['name']) : 'page_id'; //input-element name attrib
+    $htmlid = (isset($params['id']) ) ? trim($params['id']) : ''; //input-element id attrib
+    $title = (isset($params['title']) ) ? trim($params['title']) : null; //input-element title attrib
+    $allowcurrent = (isset($params['allowcurrent']) ) ? cms_to_bool($params['allowcurrent']) : false;
+    $allow_all = (isset($params['allow_all']) ) ? cms_to_bool($params['allow_all']) : false;
+    $for_child = (isset($params['for_child']) ) ? cms_to_bool($params['for_child']) : false;
+    // no current-page
+    $out = ContentOperations::get_instance()->CreateHierarchyDropdown(0,$value,$name,$allowcurrent,false,false,$allow_all,$for_child,$htmlid,$title);
     if( isset($params['assign']) )  {
-        $smarty->assign(trim($params['assign']),$out);
-        return;
+        $template->assign(trim($params['assign']),$out);
+        return '';
     }
     return $out;
 }

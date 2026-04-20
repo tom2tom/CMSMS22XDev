@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin prefilter: precompilefunc
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -16,39 +15,39 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-use \CMSMS\HookManager;
+use CMSMS\HookManager;
 
 function smarty_prefilter_precompilefunc($tpl_output, $smarty)
 {
-	$result = explode(':', $smarty->_current_file);
+    $result = (!empty($smarty->smarty->_current_file)) ? explode(':', $smarty->smarty->_current_file) : [];
 
-	if (count($result) > 1)	{
-		if( startswith($result[0],'tmp_') ) $result[0] = 'template';
+    if (count($result) > 1) {
+        if( startswith($result[0],'tmp_') ) $result[0] = 'template';
 
-		switch ($result[0]) {
+        switch ($result[0]) {
         case 'cms_stylesheet':
-        case 'stylesheet':
-            HookManager::do_hook('Core::StylesheetPreCompile',array('stylesheet'=>&$tpl_output));
+        case 'stylesheet': // un-supported since 1.10
+            HookManager::do_hook('Core::StylesheetPreCompile', array('stylesheet'=>&$tpl_output));
             break;
 
-        case "content":
+        case 'content':
             HookManager::do_hook('Core::ContentPreCompile', array('content' => &$tpl_output));
             break;
 
-        case "cms_template":
+        case 'cms_template':
         case 'tpl_top':
         case 'tpl_body':
         case 'tpl_head':
-        case "template":
+        case 'template':
             HookManager::do_hook('Core::TemplatePreCompile', array('template' => &$tpl_output,'type'=>$result[0]));
         break;
 
         default:
             break;
-		}
-	}
+        }
+    }
 
     HookManager::do_hook('Core::SmartyPreCompile', array('content' => &$tpl_output));
 
-	return $tpl_output;
+    return $tpl_output;
 }

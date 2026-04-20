@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: Content (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A module for managing content in CMSMS.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module CMSContentManager action
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -39,11 +34,9 @@ if( !isset($gCms) ) exit;
 // init
 //
 $this->SetCurrentTab('pages');
-$multiaction = null;
-$multicontent = null;
-$module = null;
-$bulkaction = null;
-$pages = null;
+$multiaction = '';
+$multicontent = [];
+//$pages = null;
 
 
 //

@@ -1,6 +1,6 @@
-<script type="text/javascript">
+<script>
 $(function() {
-  $('#design_id').change(function(){
+  $('#design_id').on('change', function() {
     var v = $(this).val();
   });
 });

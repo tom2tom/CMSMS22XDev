@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: Navigator (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  An module for CMS Made Simple to allow building hierarchical navigations.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module Navigator class Nav_utils
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -33,11 +28,11 @@
 #
 #-------------------------------------------------------------------------
 #END_LICENSE
-#$Id: News.module.php 2114 2005-11-04 21:51:13Z wishy $
+#$Id$
 
 final class Nav_utils
 {
-    private static $_excludes;
+    private static $_excludes = [];
     private function __construct() {}
 
     public static function set_excludes($data)
@@ -47,36 +42,38 @@ final class Nav_utils
             foreach( $data as &$one ) {
                 $one = trim($one);
             }
+            unset($one);
             $data = array_unique($data);
-            if( count($data) ) self::$_excludes = $data;
+            self::$_excludes = $data; // possibly empty
+        }
+        else {
+            self::$_excludes = [];
         }
     }
 
     public static function clear_excludes()
     {
-        self::$_excludes = null;
+        self::$_excludes = [];
     }
 
     public static function is_excluded($alias)
     {
-        if( !is_array(self::$_excludes) || count(self::$_excludes) == 0 ) return FALSE;
-        foreach( self::$_excludes as $one ) {
-            if( startswith($alias,$one) ) return TRUE;
+        if( self::$_excludes ) {
+            foreach( self::$_excludes as $one ) {
+                if( startswith($alias,$one) ) return TRUE;
+            }
         }
         return FALSE;
     }
 
     public static function fill_node(cms_content_tree $node,$deep,$nlevels,$show_all,$collapse = FALSE,$depth = 0)
     {
-        if( !is_object($node) ) return;
-        $gCms = CmsApp::get_instance();
-        $hm = $gCms->GetHierarchyManager();
-        $content = $node->getContent(TRUE,TRUE);
+        if( !is_object($node) ) return null; // no object
+        $content = $node->getContent($deep,TRUE);
         if( is_object($content) ) {
-            if( !$content->Active() ) return;
-            if( !$content->ShowInMenu() && !$show_all ) return;
-
-            $obj = new NavigatorNode;
+            if( !$content->Active() ) return null;
+            if( !($show_all || $content->ShowInMenu()) ) return null;
+            $obj = new NavigatorNode();
             $obj->id = $content->Id();
             $obj->url = $content->GetURL();
             $obj->accesskey = $content->AccessKey();
@@ -89,18 +86,18 @@ final class Nav_utils
             $obj->depth = $depth+1;
             $obj->menutext = cms_htmlentities($content->MenuText());
             $obj->raw_menutext = $content->MenuText();
-            $obj->target = '';
             $obj->alias = $content->Alias();
-            $obj->current = FALSE;
-            $obj->parent = FALSE;
-            $obj->has_children = FALSE;
-            $obj->children_exist = FALSE;
+            //other $obj properties:
+            // target, current, parent, has_children, children_exist
+            // are specified in NavigatorNode class
 
+            $gCms = CmsApp::get_instance();
             $cur_content_id = $gCms->get_content_id();
             if( $obj->id == $cur_content_id ) {
-                $obj->current = true;
+                $obj->current = TRUE;
             }
             else {
+                $hm = $gCms->GetHierarchyManager();
                 $tmp_node = $hm->find_by_tag('id',$cur_content_id);
                 while( $tmp_node ) {
                     if( $tmp_node->get_tag('id') == $obj->id ) {
@@ -112,33 +109,46 @@ final class Nav_utils
             }
 
             if( $content->DefaultContent() ) $obj->default = 1;
+            // CMSMS 2.2.22F2 loads the 'target' property along with
+            // core props, regardless of 'deep' parameter supplied to getContent()
+            // and anyway, HasProperty() would otherwise load all available props before checking any
+            if( $content->HasProperty('target') ) $obj->target = $content->GetPropertyValue('target');
             if( $deep ) {
-                if ($content->HasProperty('target')) $obj->target = $content->GetPropertyValue('target');
-                $config = $gCms->GetConfig();
                 $obj->extra1 = $content->GetPropertyValue('extra1');
                 $obj->extra2 = $content->GetPropertyValue('extra2');
                 $obj->extra3 = $content->GetPropertyValue('extra3');
+                $config = $gCms->GetConfig();
                 $tmp = $content->GetPropertyValue('image');
-                if( !empty($tmp) && $tmp != -1 ) {
-                    $url = get_site_preference('content_imagefield_path').'/'.$tmp;
-                    if( !startswith($url,'/') ) $url = '/'.$url;
-                    $url = $config['image_uploads_url'].$url;
-                    $obj->image = $url;
+                if( $tmp && $tmp != -1 ) {
+                    if( parse_url($tmp,PHP_URL_HOST) ) { // $tmp is absolute url
+                        $obj->image = $tmp;
+                    }
+                    else {
+                        $url = $config['image_uploads_url'];
+                        $p = cms_siteprefs::get('content_imagefield_path');
+                        if( $p ) $url .= '/' . strtr($p,'\\','/');
+                        $obj->image = $url .'/'. $tmp;
+                    }
                 }
                 $tmp = $content->GetPropertyValue('thumbnail');
-                if( !empty($tmp) && $tmp != -1 ) {
-                    $url = get_site_preference('content_thumbnailfield_path').'/'.$tmp;
-                    if( !startswith($url,'/') ) $url = '/'.$url;
-                    $url = $config['image_uploads_url'].$url;
-                    $obj->thumbnail = $url;
+                if( $tmp && $tmp != -1 ) {
+                    if( parse_url($tmp,PHP_URL_HOST) ) {
+                        $obj->thumbnail = $tmp;
+                    }
+                    else {
+                        $url = $config['image_uploads_url'];
+                        $p = cms_siteprefs::get('content_thumbnailfield_path');
+                        if( $p ) $url .= '/' . strtr($p,'\\','/');
+                        $obj->thumbnail = $url .'/'. $tmp;
+                    }
                 }
             }
 
             // load all the children ... just to see if we have children that 'could' be displayed
-            $children = null;
+            $children = [];
             if( $node->has_children() ) {
                 $children = $node->getChildren($deep,$show_all);
-                if( is_array($children) && count($children) ) {
+                if( $children && is_array($children) ) {
                     foreach( $children as $node ) {
                         $id = $node->get_tag('id');
                         if( cms_content_cache::content_exists($id) ) {
@@ -150,21 +160,22 @@ final class Nav_utils
             }
 
             // are we recursing?
-            if( is_array($children) && count($children) && ($nlevels < 0 || $depth+1 < $nlevels) &&
-                (($collapse && ($obj->parent || $obj->current)) || !$collapse) ) {
-
+            if( $children && is_array($children) &&
+                ($nlevels < 0 || $depth+1 < $nlevels) &&
+                (!$collapse || $obj->parent || $obj->current) ) { // CHECKME always try to display expanded if ->current
                 $obj->has_children = TRUE;
                 $child_nodes = array();
-                for( $i = 0; $i < count($children); $i++ ) {
+                for( $i = 0, $n = count($children); $i < $n; $i++ ) {
                     if( self::is_excluded($children[$i]->get_tag('alias')) ) continue;
                     $tmp = self::fill_node($children[$i],$deep,$nlevels,$show_all,$collapse,$depth+1);
                     if( is_object($tmp) ) $child_nodes[] = $tmp;
                 }
-                if( count($child_nodes) ) $obj->children = $child_nodes;
+                if( $child_nodes ) $obj->children = $child_nodes;
             }
 
             return $obj;
         }
+        return null; // no object
     }
 } // end of class
 

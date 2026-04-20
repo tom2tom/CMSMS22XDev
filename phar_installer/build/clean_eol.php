@@ -28,6 +28,7 @@ $file_excludes = [
 '/\.jpeg$/i',
 '/\.ico$/i',
 '/COPYING.*$/',
+'/LICENSE$/',
 '/\.otf$/',
 '/\.ttf$/',
 '/\.woff2?$/',

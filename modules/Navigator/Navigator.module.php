@@ -1,13 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: Navigator (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  An module for CMS Made Simple to allow building hierarchical navigations.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module: Navigator
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A module for CMS Made Simple to allow building hierarchical navigations.
 #
 #-------------------------------------------------------------------------
 #
@@ -33,37 +29,40 @@
 #
 #-------------------------------------------------------------------------
 #END_LICENSE
-#$Id:$
+#$Id$
 
 class NavigatorNode
 {
     // Declared properties prevent deprecation warnings
+    // Non-runtime-specific values and 'deep' property values are set
     public $accesskey;
     public $alias;
     public $children;
-    public $children_exist;
+    public $children_exist = false;
     public $created;
-    public $current;
+    public $current = false;
     public $default;
     public $depth;
-    public $extra1;
-    public $extra2;
-    public $extra3;
-    public $has_children;
+    public $extra1 = '';
+    public $extra2 = '';
+    public $extra3 = '';
+    public $has_children = false;
     public $hierarchy;
     public $id;
+    public $image = '';
     public $menutext;
     public $modified;
-    public $parent;
+    public $parent = false;
     public $raw_menutext;
     public $tabindex;
-    public $target;
+    public $target = '';
+    public $thumbnail = '';
     public $titleattribute;
     public $type;
-    public $url;
+    public $url = '';
 
     /**
-     * This little function will remove all silly notices in smarty.
+     * Prevent nondeclared- or unpopulated-property notices.
      */
     #[\ReturnTypeWillChange]
     public function __get($key) { return null; }
@@ -73,20 +72,19 @@ final class Navigator extends CMSModule
 {
     const __DFLT_PAGE = '**DFLT_PAGE**';
 
-    function GetName() { return get_class($this); }
-    function GetFriendlyName() { return $this->Lang('friendlyname'); }
-    function IsPluginModule() { return true; }
-    function HasAdmin() { return false; }
-    function GetVersion() { return '1.0.9'; }
-    function MinimumCMSVersion() { return '2.1.99'; }
-    function GetAdminDescription() { return $this->Lang('description'); }
-    function GetAdminSection() { return 'layout'; }
-    function LazyLoadFrontend() { return TRUE; }
-    function LazyLoadAdmin() { return TRUE; }
-    function GetHelp($lang='en_US') { return $this->Lang('help'); }
-    function GetAuthor() { return 'Robert Campbell'; }
-    function GetAuthorEmail() { return ''; }
-    function GetChangeLog() { return file_get_contents(dirname(__FILE__).'/changelog.inc'); }
+    public function GetName() { return 'Navigator'; }
+    public function GetFriendlyName() { return $this->Lang('friendlyname'); }
+    public function IsPluginModule() { return true; }
+    public function HasAdmin() { return false; }
+    public function GetVersion() { return '1.0.11'; }
+    public function MinimumCMSVersion() { return '2.2'; }
+    public function GetAdminDescription() { return $this->Lang('description'); }
+    public function GetAdminSection() { return 'layout'; }
+    public function LazyLoadFrontend() { return TRUE; }
+    public function LazyLoadAdmin() { return TRUE; }
+    public function GetAuthor() { return 'Robert Campbell'; }
+    public function GetAuthorEmail() { return ''; }
+    public function GetChangeLog() { return file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'changelog.htm'); }
 
     public function InitializeFrontend()
     {
@@ -109,18 +107,18 @@ final class Navigator extends CMSModule
         $this->SetParameterType('includeprefix',CLEAN_STRING);
     }
 
-    public function InitializeAdmin()
+    public function GetHelp()
     {
-        $this->CreateParameter('items', 'contact,home', $this->lang('help_items'));
-        $this->CreateParameter('nlevels', '1', $this->lang('help_nlevels'));
-        $this->CreateParameter('number_of_levels', '1', $this->lang('help_number_of_levels'));
-        $this->CreateParameter('show_all', '0', $this->lang('help_show_all'));
-        $this->CreateParameter('show_root_siblings', '1', $this->lang('help_show_root_siblings'));
-        $this->CreateParameter('start_element', '1.2', $this->lang('help_start_element'));
-        $this->CreateParameter('start_page', '', $this->lang('help_start_page'));
-        $this->CreateParameter('start_text', '', $this->lang('help_start_text'));
-        $this->CreateParameter('start_level', '', $this->lang('help_start_level'));
-        $this->CreateParameter('template', '', $this->lang('help_template'));
+        $this->CreateParameter('items', 'contact,home', $this->Lang('help_items'));
+        $this->CreateParameter('nlevels', '1', $this->Lang('help_nlevels'));
+        $this->CreateParameter('number_of_levels', '1', $this->Lang('help_number_of_levels'));
+        $this->CreateParameter('show_all', '0', $this->Lang('help_show_all'));
+        $this->CreateParameter('show_root_siblings', '1', $this->Lang('help_show_root_siblings'));
+        $this->CreateParameter('start_element', '1.2', $this->Lang('help_start_element'));
+        $this->CreateParameter('start_page', '', $this->Lang('help_start_page'));
+        $this->CreateParameter('start_text', '', $this->Lang('help_start_text'));
+        $this->CreateParameter('start_level', '', $this->Lang('help_start_level'));
+        $this->CreateParameter('template', '', $this->Lang('help_template'));
         $this->CreateParameter('childrenof','',$this->Lang('help_childrenof'));
         $this->CreateParameter('action','',$this->Lang('help_action'));
         $this->CreateParameter('loadprops','',$this->Lang('help_loadprops'));
@@ -128,9 +126,11 @@ final class Navigator extends CMSModule
         $this->CreateParameter('root','',$this->Lang('help_root2'));
         $this->CreateParameter('includeprefix','',$this->Lang('help_includeprefix'));
         $this->CreateParameter('excludeprefix','',$this->Lang('help_excludeprefix'));
+
+        return $this->Lang('help');
     }
 
-    final static public function nav_breadcrumbs($params,$smarty)
+    final public static function nav_breadcrumbs($params,$smarty)
     {
         $params['action'] = 'breadcrumbs';
         $params['module'] = __CLASS__;
@@ -141,13 +141,14 @@ final class Navigator extends CMSModule
     {
         $mod = cms_utils::get_module(__CLASS__);
         if( is_object($mod) ) return $mod->Lang('type_'.$str);
+        return '';
     }
 
     public static function reset_page_type_defaults(CmsLayoutTemplateType $type)
     {
         if( $type->get_originator() != __CLASS__ ) throw new CmsLogicException('Cannot reset contents for this template type');
 
-        $fn = null;
+        $fn = '';
         switch( $type->get_name() ) {
         case 'navigation':
             $fn = 'simple_navigation.tpl';
@@ -157,17 +158,21 @@ final class Navigator extends CMSModule
             break;
         }
 
-        $fn = cms_join_path(dirname(__FILE__),'templates',$fn);
-        if( file_exists($fn) ) return @file_get_contents($fn);
+        if( $fn ) {
+            $fn = cms_join_path(__DIR__,'templates',$fn);
+            if( file_exists($fn) ) return @file_get_contents($fn);
+        }
+        return '';
     }
 
     public static function template_help_callback($str)
     {
-        $str = trim($str);
         $mod = cms_utils::get_module('Navigator');
         if( is_object($mod) ) {
+            $str = trim((string)$str);
             $file = $mod->GetModulePath().'/doc/tpltype_'.$str.'.inc';
             if( is_file($file) ) return file_get_contents($file);
         }
+        return '';
     }
 } // End of class

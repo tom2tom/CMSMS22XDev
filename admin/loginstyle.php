@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple admin console script
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -13,40 +12,36 @@
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 #You should have received a copy of the GNU General Public License
-#along with this program; if not, write to the Free Software
-#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#along with this program. If not, read the license online at
+#https://www.gnu.org/licenses/#LicenseURLs
 #
-#$Id: login.php 4251 2007-11-15 21:34:40Z calguy1000 $
+#$Id$
 
-$CMS_ADMIN_PAGE=1;
-$CMS_LOGIN_PAGE=1;
+$CMS_ADMIN_PAGE = 1;
+$CMS_LOGIN_PAGE = 1;
 
-require_once("../lib/include.php");
-require_once("../lib/classes/class.user.inc.php");
+require_once '../lib/include.php';
+//require_once '../lib/classes/class.User.php';
 
 $themeObject = cms_utils::get_theme_object();
 $theme = $themeObject->themeName;
 
-$cms_readfile = function($filename) {
-  @ob_start();
-  echo file_get_contents($filename);
-  $result = @ob_get_contents();
-  @ob_end_clean();
-  if( !empty($result) ) {
-    echo $result;
-    return TRUE;
-  }
-  return FALSE;
-};
-
-header("Content-type: text/css; charset=" . get_encoding());
-if (file_exists(dirname(__FILE__)."/themes/$theme/css/style.css")) {
-    echo file_get_contents(dirname(__FILE__)."/themes/$theme/css/style.css");
+header("Content-Type: text/css; charset=" . get_encoding());
+$fp = cms_join_path(__DIR__,'themes',$theme,'css','style.css');
+if (file_exists($fp)) {
+    echo file_get_contents($fp);
 }
 else {
-    echo file_get_contents(dirname(__FILE__)."/themes/OneEleven/css/style.css");
+    echo file_get_contents(__DIR__."/themes/OneEleven/css/style.css");
 }
 
-if (file_exists(dirname(__FILE__)."/themes/".$theme."/extcss/style.css")) {
-    $cms_readfile(dirname(__FILE__)."/themes/".$theme."/extcss/style.css");
+$fp = cms_join_path(__DIR__,'themes',$theme,'extcss','style.css');
+if (file_exists($fp)) {
+    @ob_start(); //WHATFOR buffering?
+    echo file_get_contents($fp);
+    $result = @ob_get_contents();
+    @ob_end_clean();
+    if( $result ) {
+        echo $result;
+    }
 }

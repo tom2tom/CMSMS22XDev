@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2010 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple class CmsPermission
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -17,13 +16,7 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #
-#$Id: class.user.inc.php 8109 2012-06-24 20:14:56Z calguy1000 $
-
-/**
- * Class and utilities for working with permissions.
- * @package CMS
- * @license GPL
- */
+#$Id$
 
 /**
  * Simple class for dealing with a permission.
@@ -31,7 +24,7 @@
  * @since 2.0
  * @package CMS
  * @license GPL
- * @author Robert Campbell <calguy1000@gmail.com>
+ * @author Robert Campbell
  */
 final class CmsPermission
 {
@@ -70,6 +63,7 @@ final class CmsPermission
 	{
 		if( !in_array($key,self::$_keys) ) throw new CmsInvalidDataException($key.' is not a valid key for a CmsPermission Object');
 		if( isset($this->_data[$key]) ) return $this->_data[$key];
+		return null; // no value for urecognised key
 	}
 
 	/**
@@ -97,7 +91,7 @@ final class CmsPermission
 		$new_id = $db->GenID(CMS_DB_PREFIX.'permissions_seq');
 		if( !$new_id ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
 
-		$now = $db->DbTimeStamp(time());
+		$now = $db->DBTimeStamp(time());
 		$query = 'INSERT INTO '.CMS_DB_PREFIX."permissions
 (permission_id,permission_name,permission_text,permission_source,create_date,modified_date)
 VALUES (?,?,?,?,$now,$now)";
@@ -125,7 +119,7 @@ VALUES (?,?,?,?,$now,$now)";
 		if( !isset($this->_data['id']) || $this->_data['id'] < 1 ) {
 			// Name must be unique
 			$db = CmsApp::get_instance()->GetDb();
-			$query = 'SElECT permission_id FROM '.CMS_DB_PREFIX.'permissions
+			$query = 'SELECT permission_id FROM '.CMS_DB_PREFIX.'permissions
 WHERE permission_name = ?';
 			$dbr = $db->GetOne($query,array($this->_data['name']));
 			if( $dbr > 0 ) throw new CmsInvalidDataException('Permission with name '.$this->_data['name'].' already exists');
@@ -171,7 +165,7 @@ WHERE permission_name = ?';
 	 * @param string $name
 	 * @return CmsPermission
 	 */
-	public static function &load($name)
+	public static function load($name)
 	{
 		if( is_array(self::$_perm_map) ) {
 			if( (int)$name <= 0 ) {
@@ -182,7 +176,7 @@ WHERE permission_name = ?';
 		}
 
 		$db = CmsApp::get_instance()->GetDb();
-		$row = null;
+		$row = [];
 		if( (int)$name > 0 ) {
 			$query = 'SELECT * FROM '.CMS_DB_PREFIX.'permissions WHERE permission_id = ?';
 			$row = $db->GetRow($query,array((int)$name));
@@ -195,10 +189,14 @@ WHERE permission_name = ?';
 			throw new CmsInvalidDataException('Could not find permission named '.$name);
 		}
 
+		foreach( ['permission_name','permission_text','permission_source','create_date','modified_date'] as $fld ) {
+			if( $row[$fld] === null ) $row[$fld] = '';
+		}
 		$obj = new CmsPermission();
 		$obj->_data['id'] = $row['permission_id'];
 		$obj->_data['name'] = $row['permission_name'];
 		$obj->_data['text'] = $row['permission_text'];
+		$obj->_data['source'] = $row['permission_source'];
 		$obj->_data['create_date'] = $row['create_date'];
 		$obj->_data['modified_date'] = $row['modified_date'];
 

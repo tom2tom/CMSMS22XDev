@@ -1,122 +1,150 @@
 <div class="pagecontainer">
-
-{$theme->StartTabHeaders()}
-	{$theme->SetTabHeader('content',lang('sysmaintab_content'),isset($active_content))}
-	{$theme->SetTabHeader('database',lang('sysmaintab_database'),isset($active_database))}
-	{if isset($changelog)}
-		{$theme->SetTabHeader('changelog',lang('sysmaintab_changelog'),isset($active_changelog))}
-	{/if}
-{$theme->EndTabHeaders()}
-
-{$theme->StartTabContent()}
-
-	{$theme->StartTab('content')}
+	{tab_header name='content' label=lang('sysmaintab_content') active=$active_content}
+	{tab_header name='database' label=lang('sysmaintab_database') active=$active_database}
+{if !empty($pjobs)}
+	{tab_header name='jobs' label=lang('sysmaintab_jobs') active=$active_jobs}
+{/if}
+{if !empty($changelog)}
+	{tab_header name='changelog' label=lang('sysmaintab_changelog') active=$active_changelog}
+{/if}
+	{tab_start name='content'}
 		<form action="{$formurl}" method="post">
 			<fieldset>
-				<legend>{'sysmain_cache_status'|lang}&nbsp;</legend>
+				<legend>{lang('sysmain_cache_status')}&nbsp;</legend>
+{if isset($filescount)}				<p>{lang('sysmain_filesfound',$filescount)}</p>{/if}
 				<div class="pageoverflow">
-					<p class="pagetext">{'clearcache'|lang}:</p>
+					<p class="pagetext">
+						<label for="btnclear">{lang('clearcache')}:</label>
+					</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" name="clearcache" value="{'clear'|lang}"/>
+						<input type="submit" id="btnclear" name="clearcache" data-ui-icon="ui-icon-minusthick" value="{lang('clear')}">
 					</p>
 				</div>
 			</fieldset>
 		</form>
 
 		<fieldset>
-			<legend>{'sysmain_content_status'|lang}&nbsp;</legend>
+			<legend>{lang('sysmain_content_status')}&nbsp;</legend>
+			<p>{lang('sysmain_pagesfound',$pagecount)}</p>
+{if $invalidtypescount == 0 && $withoutaliascount == 0}
+			<p class="green"><strong>{lang('sysmain_nocontenterrors')}</strong></p>
+{/if}
+			<br>
 			<form action="{$formurl}" method="post">
-				{$pagecount} {'sysmain_pagesfound'|lang}
-
 				<div class="pageoverflow">
-					<p class="pagetext">{'sysmain_updatehierarchy'|lang}:</p>
+					<p class="pagetext">
+						<label for="btnhier">{lang('sysmain_updatehierarchy')}:</label>
+					</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" name="updatehierarchy" value="{'sysmain_update'|lang}"/>
+						<input type="submit" id="btnhier" name="updatehierarchy" data-ui-icon="ui-icon-gear" value="{lang('sysmain_update')}">
 					</p>
 				</div>
 			</form>
 
 			<form action="{$formurl}" method="post">
 				<div class="pageoverflow">
-					<p class="pagetext">{'sysmain_updateurls'|lang}:</p>
+					<p class="pagetext">
+						<label for="btnurls">{lang('sysmain_updateurls')}:</label>
+					</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" name="updateurls" value="{'sysmain_update'|lang}"/>
+						<input type="submit" id="btnurls" name="updateurls" data-ui-icon="ui-icon-gear" value="{lang('sysmain_update')}">
 					</p>
 				</div>
 			</form>
 
-			{if $withoutaliascount!="0"}
-				<form action="{$formurl}" method="post" onsubmit="return confirm('{'sysmain_confirmfixaliases'|lang|escape:'javascript'}')" >
-					<div class="pageoverflow">
-						<p class="pagetext">{$withoutaliascount} {'sysmain_pagesmissinalias'|lang}:</p>
-						<p class="pageinput">
-							{foreach $pagesmissingalias as $page}
-								{*{$page.count}.*} {$page.content_name}<br/>
-							{/foreach}
-							<br />
-							<input class="pagebutton" type="submit" name="addaliases" value="{'sysmain_fixaliases'|lang}"/>
-						</p>
-					</div>
-				</form>
-			{/if}
+{if $withoutaliascount > 0}
+			<form action="{$formurl}" method="post" onsubmit="return confirm('{lang('sysmain_confirmfixaliases')|escape:'javascript'}');">
+				<div class="pageoverflow">
+					<p class="pagetext"><label>{lang('sysmain_pagesmissinalias',$withoutaliascount)}:</label></p>
+					<p class="pageinput">
+						{foreach $pagesmissingalias as $page}
+							{*{$page.count}.*} {$page.content_name}<br>
+						{/foreach}
+						<br>
+						<input type="submit" name="addaliases" data-ui-icon="ui-icon-gear" value="{lang('sysmain_fixaliases')}">
+					</p>
+				</div>
+			</form>
+{/if}
 
-			{if $invalidtypescount!="0"}
-				<form action="{$formurl}" method="post" onsubmit="return confirm('{'sysmain_confirmfixtypes'|lang|escape:'javascript'}')" >
-					<div class="pageoverflow">
-						<p class="pagetext">{$invalidtypescount} {'sysmain_pagesinvalidtypes'|lang}:</p>
-						<p class="pageinput">
-							{foreach $pageswithinvalidtype as $page}
-								{$page.content_name} <em>({$page.content_alias}) - {$page.type}</em><br/>
-							{/foreach}
-							<br />
-							<input class="pagebutton" type="submit" name="fixtypes" value="{'sysmain_fixtypes'|lang|escape:'javascript'}"/>
-						</p>
-					</div>
-				</form>
-			{/if}
-
-			{if $invalidtypescount=="0" && $withoutaliascount==""}
-				<p class='green'><strong>{'sysmain_nocontenterrors'|lang}</strong></p>
-			{/if}
-
+{if $invalidtypescount > 0}
+			<form action="{$formurl}" method="post" onsubmit="return confirm('{lang('sysmain_confirmfixtypes')|escape:'javascript'}');">
+				<div class="pageoverflow">
+					<p class="pagetext"><label>{lang('sysmain_pagesinvalidtypes',$invalidtypescount)}:</label></p>
+					<p class="pageinput">
+						{foreach $pageswithinvalidtype as $page}
+							{$page.content_name} <em>({$page.content_alias}) - {$page.type}</em><br>
+						{/foreach}
+						<br>
+						<input type="submit" name="fixtypes" data-ui-icon="ui-icon-gear" value="{lang('sysmain_fixtypes')|escape:'javascript'}">
+					</p>
+				</div>
+			</form>
+{/if}
 		</fieldset>
-	{$theme->EndTab()}
 
-	{$theme->StartTab('database')}
+	{tab_start name='database'}
 		<form action="{$formurl}" method="post">
 			<fieldset>
-				<legend>{'sysmain_database_status'|lang}:&nbsp;</legend>
-				<p>{$tablecount} {'sysmain_tablesfound'|lang:$nonseqcount}</p>
+				<legend>{lang('sysmain_database_status')}</legend>
+				<p>{$tablecount} {lang('sysmain_tablesfound',$nonseqcount)}</p>
 
-				{if $errorcount==0}
-					<p class='green'><strong>{'sysmain_nostr_errors'|lang}</strong></p>
+				{if $errorcount == 0}
+					<p class="green"><strong>{lang('sysmain_nostr_errors')}</strong></p>
 				{else}
-					<p class='red'><strong>{$errorcount} {if $errorcount>1}{'sysmain_str_errors'|lang}{else}{'sysmain_str_error'|lang}{/if}:  {$errortables}</strong></p>
+					<p class="red"><strong>{$errorcount} {if $errorcount>1}{lang('sysmain_str_errors')}{else}{lang('sysmain_str_error')}{/if}: {$errortables}</strong></p>
 				{/if}
 
 				<div class="pageoverflow">
-					<p class="pagetext">{'sysmain_optimizetables'|lang}:</p>
+					<p class="pagetext">
+						<label for="btntables">{lang('sysmain_optimizetables')}:</label>
+					</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" name="optimizeall" value="{'sysmain_optimize'|lang}"/>
+						<input type="submit" id="btntables" name="optimizeall" data-ui-icon="ui-icon-star" value="{lang('sysmain_optimize')}">
 					</p>
 				</div>
 				<div class="pageoverflow">
-					<p class="pagetext">{'sysmain_repairtables'|lang}:</p>
+					<p class="pagetext">
+						<label for="btnrepair">{lang('sysmain_repairtables')}:</label>
+					</p>
 					<p class="pageinput">
-						<input class="pagebutton" type="submit" name="repairall" value="{'sysmain_repair'|lang}"/>
+						<input type="submit" id="btnrepair" name="repairall" data-ui-icon="ui-icon-gear" value="{lang('sysmain_repair')}">
 					</p>
 				</div>
 			</fieldset>
 		</form>
-	{$theme->EndTab()}
-
-	{if isset($changelog)}
-		{$theme->StartTab('changelog')}
-			<p class='file'>{$changelogfilename}</p>
-			<div class="changelog">{$changelog}</div>
-		{$theme->EndTab()}
-	{/if}
-
-{$theme->EndTabContent()}
-
+{if !empty($pjobs)}
+	{tab_start name='jobs'}
+		<fieldset>
+			<legend>{lang('async_status')}</legend>
+			<p>{lang('jobscount',$jobscount)}</p>
+{if $jobscount > 0}
+{if empty($jobserrs)}
+			<p class="green"><strong>{lang('noerrorsinjobs')}</strong></p>
+{else}
+			<p class="red">{lang('errorsinjobs')}</p>
+			<ul style="margin-top:0">
+{foreach $jobserrs as $name => $num}			<li>{$name} ({$num})</li>
+{/foreach}
+			</ul>
+{/if}
+			<form action="{$formurl}" method="post">
+				<p class="pagetext">
+					<label for="btnjobs">{lang(clearjobrecords)}:</label>
+				</p>
+				<p class="pageinput">
+					<input type="submit" id="btnjobs" name="clearjobs" data-ui-icon="ui-icon-minusthick" value="{lang('clear')|escape:'javascript'}">
+				</p>
+			</form>
+		</fieldset>
+{/if}
+{/if}
+{if !empty($changelog)}
+	{tab_start name='changelog'}
+{*		<p class="file">{$changelogfilename}</p>*}
+		<div class="changelog">
+			{$changelog}
+		</div>
+{/if}
+	{tab_end}
 </div>

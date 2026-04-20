@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: CMSContentManager (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A module for managing content in CMSMS.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module CMSContentManager action
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -38,6 +33,7 @@ if( !isset($gCms) ) exit;
 //
 // init
 //
+$uid = get_userid();
 $this->SetCurrentTab('pages');
 
 //
@@ -67,24 +63,8 @@ if( !$node ) {
   $this->SetError($this->Lang('error_invalidpageid'));
   $this->RedirectToAdminTab();
 }
-$from_obj = $node->GetContent(FALSE,FALSE,FALSE);
-if( !$from_obj ) {
-  $this->SetError($this->Lang('error_invalidpageid'));
-  $this->RedirectToAdminTab();
-}
-$from_obj->GetAdditionalEditors();
-$from_obj->HasProperty('anything'); // forces properties to be loaded.
 
-$to_obj = clone $from_obj;
-$to_obj->SetURL('');
-$to_obj->SetName('Copy of '.$from_obj->Name());
-$to_obj->SetMenuText('Copy of '.$from_obj->MenuText());
-$to_obj->SetAlias();
-$to_obj->SetDefaultContent(0);
-$to_obj->SetOwner(get_userid());
-$to_obj->SetLastModifiedBy(get_userid());
-$_SESSION['__cms_copy_obj__'] = ['type'=>$to_obj->Type(), 'obj'=>serialize($to_obj)];
-$this->Redirect($id,'admin_editcontent','',array('content_id'=>-1)); // do not resemble a new page (id == 0)
+$this->Redirect($id,'admin_editcontent','',array('content_id'=>-1,'copy_id'=>$content_id)); // not a new page (whose id == 0)
 
 #
 # EOF

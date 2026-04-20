@@ -21,7 +21,7 @@ CmsNlsOperations::set_language('en_US');
 $files = 0;
 $message = '';
 
-\CMSMS\HookManager::do_hook('ModuleManager::BeforeModuleExport', [ 'module_name' => $module, 'version' => $modinstance->GetVersion() ] );
+\CMSMS\HookManager::do_hook('ModuleManager::BeforeModuleExport', [ 'module_name' => $module, 'version' => $modinstance->GetVersion() ]);
 $xmltext = $ops->CreateXMLPackage($modinstance,$message,$files);
 CmsNlsOperations::set_language($orig_lang);
 if( $old_display_errors !== FALSE ) ini_set('display_errors',$old_display_errors);

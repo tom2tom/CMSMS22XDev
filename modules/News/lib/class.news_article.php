@@ -1,10 +1,40 @@
 <?php
+#CMSMS News module class: news_article
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#The license at the top of file News.module.php applies to this file.
 
 class news_article
 {
-    private static $_keys = array('id','author_id','title','content','summary','extra','news_url','postdate','startdate','enddate',
-                                  'category_id','status','author','authorname','category','canonical','fields','fieldsbyname','customfieldsbyname',
-                                  'useexp','returnid','params','file_location');
+/* UNUSED
+    private static $_keys = array(
+    'author',
+    'author_id',
+    'authorname',
+    'canonical',
+    'category',
+    'category_id',
+    'content',
+    'create_date',
+    'customfieldsbyname',
+    'enddate',
+    'extra',
+    'fields',
+    'fieldsbyname',
+    'file_location',
+    'icon',
+    'id',
+    'modified_date',
+    'news_url',
+    'params',
+    'postdate',
+    'returnid',
+    'startdate',
+    'status',
+    'summary',
+    'title',
+    'useexp'
+    );
+*/
     private $_rawdata = array();
     private $_meta = array();
     private $_inparams = array();
@@ -12,9 +42,8 @@ class news_article
 
     private function _getdata($key)
     {
-        $res = null;
-        if( isset($this->_rawdata[$key]) ) $res = $this->_rawdata[$key];
-        return $res;
+        if( isset($this->_rawdata[$key]) ) return $this->_rawdata[$key];
+        return null; // aka unset
     }
 
 
@@ -32,16 +61,19 @@ class news_article
                     $this->_meta['authorname'] = $theuser->firstname.' '.$theuser->lastname; // is there some locale way we can do this?
                 }
             }
-            else if( $author_id < 0 ) {
-                $author_id *= -1;
-                $feu = cms_utils::get_module('FrontEndUsers');
+            elseif( $author_id < 0 ) {
+                $this->_meta['author'] = $mod->Lang('unknown');
+                $feu = cms_utils::get_module('MAMS');
+                if( !$feu ) {
+                    $feu = cms_utils::get_module('FrontEndUsers');
+                }
                 if( $feu ) {
-                    $uinfo = $feu->GetUserInfo($author_id);
-                    if( $uinfo[0] ) $this->_meta['author'] = $uinfo[1]['username'];
+                    $uinfo = $feu->GetUserInfo(-(int)$author_id);
+                    if( $uinfo && $uinfo[0] ) $this->_meta['author'] = $uinfo[1]['username'];
                 }
             }
         }
-        if( $authorname ) return $this->_meta['authorname'];
+        if( $authorname ) return (isset($this->_meta['authorname'])) ? $this->_meta['authorname'] : null;
         return $this->_meta['author'];
     }
 
@@ -64,10 +96,10 @@ class news_article
             $tmp = $this->news_url;
             if( $tmp == '' ) {
                 $aliased_title = munge_string_to_url($this->title);
-                $tmp = 'news/'.$this->id.'/'.$this->returnid."/{$aliased_title}";
+                $tmp = 'news/'.$this->id.'/'.$this->returnid."/$aliased_title";
             }
             $mod = cms_utils::get_module('News');
-            $canonical = $mod->create_url($this->_inid,'detail',$this->returnid,$this->params,false,false,$tmp);
+            $canonical = $mod->create_url($this->_inid,'detail',$this->returnid,$this->params,FALSE,FALSE,$tmp);
             $this->_meta['canonical'] = $canonical;
         }
         return $this->_meta['canonical'];
@@ -86,7 +118,12 @@ class news_article
     {
         if( $id ) $this->_inid = $id;
         if( is_array($params) ) $this->_inparams = $params;
-        if( $returnid != '' ) $this->_meta['returnid'] = $returnid;
+        if( isset($this->_inparams['returnid']) ) {
+            $this->_meta['returnid'] = $params['returnid'];
+        }
+        elseif( $returnid ) {
+            $this->_meta['returnid'] = $returnid;
+        }
     }
 
 
@@ -117,15 +154,23 @@ class news_article
         case 'content':
         case 'summary':
         case 'extra':
+        case 'icon':
         case 'news_url':
-        case 'postdate':       // db time format
-        case 'startdate':      // db time format
-        case 'enddate':        // db time format
-        case 'create_date':    // db time format
-        case 'modified_date':  // db time format
+        case 'postdate':       // db datetime
+        case 'startdate':      // db datetime
+        case 'enddate':        // db datetime
+        case 'create_date':    // db datetime
+        case 'modified_date':  // db datetime
         case 'category_id':
         case 'status':
             return $this->_getdata($key);
+
+        case 'url':
+            return $this->_getdata('news_url');
+
+        case 'image_url':
+        case 'image':
+            return $this->_getdata('icon'); //might be relative url
 
         case 'file_location':
             $config = \cms_config::get_instance();
@@ -133,31 +178,31 @@ class news_article
             return $url;
 
         case 'author':
-            // metadata.
+            // metadata
             return $this->_getauthorinfo($this->author_id);
 
         case 'authorname':
-            // metadata.
+            // metadata
             return $this->_getauthorinfo($this->author_id,TRUE);
 
+        case 'category_name':
         case 'category':
-            // metadata.
+            // metadata TODO $this->meta['category_name'] content?
             return news_ops::get_category_name_from_id($this->category_id);
 
         case 'useexp':
-            if( isset($this->_meta['useexp']) ) return $this->_meta['useexp'];
-            return 0;
+            if( isset($this->_meta['useexp']) ) return (bool)$this->_meta['useexp'];
+            return false;
 
         case 'canonical':
             // metadata
             return $this->_get_canonical();
-            break;
 
         case 'fields':
         case 'customfieldsbyname': // deprecated
         case 'fieldsbyname': // deprecated
             if( isset($this->_rawdata['fieldsbyname']) ) return $this->_rawdata['fieldsbyname'];
-            break;
+            return [];
 
         case 'returnid':
             // metadata
@@ -174,9 +219,11 @@ class news_article
                     if( !is_object($obj) ) continue;
                     if( $key == $obj->alias ) return $obj->value;
                 }
+                unset($obj);
             }
             //throw new Exception('Requesting invalid data from News article object '.$key);
         }
+        return null; // no value after switch-break
     }
 
 
@@ -191,6 +238,7 @@ class news_article
         case 'content':
         case 'summary':
         case 'extra':
+        case 'icon':
         case 'news_url':
         case 'category_id':
         case 'postdate':
@@ -199,6 +247,13 @@ class news_article
         case 'fieldsbyname':
         case 'status':
             return isset($this->_rawdata[$key]);
+
+        case 'url':
+            return isset($this->_rawdata['news_url']);
+
+        case 'image_url':
+        case 'image':
+            return isset($this->_rawdata['icon']);
 
         case 'customfieldsbyname': // deprecated
         case 'fields': // deprecated
@@ -211,12 +266,19 @@ class news_article
         case 'returnid':
         case 'params':
         case 'useexp':
-            return true;
+            return TRUE;
 
         case 'create_date':
         case 'modified_date':
-            if( $this->id != '' ) return TRUE;
+            if( $this->id != '' ) return TRUE; // shortcut-check ok?
             break;
+
+        case 'news_date':
+            return isset($this->_rawdata['postdate']);
+
+        case 'category_name':
+        case 'category':
+            return isset($this->_meta['category_name']);
 
         default:
             throw new Exception('Requesting invalid data from News article object '.$key);
@@ -236,7 +298,6 @@ class news_article
         case 'content':
         case 'summary':
         case 'extra':
-        case 'news_url':
         case 'category_id':
             $this->_rawdata[$key] = $value;
             break;
@@ -252,16 +313,35 @@ class news_article
             $this->_meta['useexp'] = $value;
             break;
 
-        case 'create_date':   // db time format
-        case 'modified_date': // db time format
-        case 'postdate':      // db time format
-        case 'startdate':     // db time format
-        case 'enddate':       // db time format
+        case 'icon':
+        case 'image_url':
+        case 'image':
+            $this->_rawdata['icon'] = $value; // might be relative url TODO sanitize e.g. cms_utils::validate_url($value,'image')
+            break;
+
+        case 'news_url':
+        case 'url':
+            $this->_rawdata['news_url'] = cms_utils::cleanUrlPath($value);
+            break;
+
+        case 'news_date':
+            $key = 'postdate';
+            //no break here
+        case 'create_date':   // db datetime
+        case 'modified_date': // db datetime
+        case 'postdate':      // db datetime
+        case 'startdate':     // db datetime
+        case 'enddate':       // db datetime
             if( is_int($value) ) {
                 $db = cmsms()->GetDb();
-                $value = $db->DbTimeStamp($value);
+                $value = trim($db->DBTimeStamp($value),"'");
             }
             $this->_rawdata[$key] = $value;
+            break;
+
+        case 'category_name':
+        case 'category':
+            $this->_meta['category_name'] = $value;
             break;
 
         default:
@@ -269,7 +349,6 @@ class news_article
 
         }
     }
-
 }
 
 ?>

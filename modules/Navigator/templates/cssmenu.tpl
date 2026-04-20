@@ -1,6 +1,6 @@
 {* cssmenu *}
 {* this template uses recursion, but not a smarty function. *}
-{* 
+{*
   variables:
   node: contains the current node.
   aclass: is used to build a string containing class names given to the a tag if one is used
@@ -46,18 +46,18 @@
 
   {* build the menu item from the node *}
   {if $node->type == 'sectionheader'}
-    <li class='{implode(' ',$liclass)}'><a{if count($aclass) > 0} class="{implode(' ',$aclass)}"{/if}><span class="sectionheader">{$node->menutext}</span></a>
-      {if isset($node->children)}
+    <li class="{' '|adjust:'implode':$liclass}"><a{if count($aclass) > 0} class="{' '|adjust:'implode':$aclass}"{/if}><span class="sectionheader">{$node->menutext}</span></a>
+      {if !empty($node->children)}
         {include file=$smarty.template nodes=$node->children}
       {/if}
     </li>
   {else if $node->type == 'separator'}
-    <li style="list-style-type: none;"><hr class="menu_separator"/></li>
+    <li style="list-style-type:none"><hr class="menu_separator"></li>
   {else}
     {* regular item *}
-    <li class="{implode(' ',$liclass)}">
-      <a{if count($aclass) > 0} class="{implode(' ',$aclass)}"{/if} href="{$node->url}"{if $node->target ne ""} target="{$node->target}"{/if}><span>{$node->menutext}</span></a>
-      {if isset($node->children)}
+    <li class="{' '|adjust:'implode':$liclass}">
+      <a{if count($aclass) > 0} class="{' '|adjust:'implode':$aclass}"{/if} href="{$node->url}"{if $node->target} target="{$node->target}"{/if}><span>{$node->menutext}</span></a>
+      {if !empty($node->children)}
         {include file=$smarty.template nodes=$node->children}
       {/if}
     </li>

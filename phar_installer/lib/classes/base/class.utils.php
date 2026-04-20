@@ -3,8 +3,6 @@
 namespace __appbase;
 
 use Exception;
-use function __appbase\endswith;
-use function __appbase\startswith;
 
 class utils
 {
@@ -12,7 +10,7 @@ class utils
 
     private function __construct() {}
 
-    static public function redirect($to)
+    public static function redirect($to)
     {
         $_SERVER['PHP_SELF'] = null;
         $schema = $_SERVER['SERVER_PORT'] == '443' ? 'https' : 'http';
@@ -28,14 +26,16 @@ class utils
                     $to .= $components['path'];
                 }
                 //Path is relative, append current directory first.
-                else if (isset($_SERVER['PHP_SELF']) && !is_null($_SERVER['PHP_SELF'])) { //Apache
+                elseif (isset($_SERVER['PHP_SELF']) && !is_null($_SERVER['PHP_SELF'])) { //Apache
                     $to .= (strlen(dirname($_SERVER['PHP_SELF'])) > 1 ?  dirname($_SERVER['PHP_SELF']).'/' : '/') . $components['path'];
                 }
-                else if (isset($_SERVER['REQUEST_URI']) && !is_null($_SERVER['REQUEST_URI'])) { //Lighttpd
-                    if (endswith($_SERVER['REQUEST_URI'], '/'))
+                elseif (isset($_SERVER['REQUEST_URI']) && !is_null($_SERVER['REQUEST_URI'])) { //Lighttpd
+                    if (endswith($_SERVER['REQUEST_URI'], '/')) {
                         $to .= (strlen($_SERVER['REQUEST_URI']) > 1 ? $_SERVER['REQUEST_URI'] : '/') . $components['path'];
-                    else
+                    }
+                    else {
                         $to .= (strlen(dirname($_SERVER['REQUEST_URI'])) > 1 ? dirname($_SERVER['REQUEST_URI']).'/' : '/') . $components['path'];
+                    }
                 }
             }
             else {
@@ -50,14 +50,14 @@ class utils
 
         session_write_close();
 
-        if(headers_sent() ) {
+        if( headers_sent() ) {
             // use javascript instead
-            echo '<script type="text/javascript"><!-- location.replace("'.$to.'"); // --></script><noscript><meta http-equiv="Refresh" content="0;URL='.$to.'"></noscript>';
+            echo '<script>location.replace("'.$to.'");</script><noscript><meta http-equiv="Refresh" content="0;URL='.$to.'"></noscript>';
             exit;
         }
         else {
             header("Location: $to");
-            exit();
+            exit;
         }
     }
 
@@ -83,15 +83,15 @@ class utils
 
   /**
    * cleans passwords for config.php mainly db pass.
-   * we don't want quotes on the string
+   * we don't want quotes in the string
    * @since 1.3.13
    * @param $val
    *
-   * @return string|string[]
+   * @return string
    */
     public static function clean_password($val)
     {
-      if( !$val ) return $val;
+      if( !$val ) return (string)$val;
       $val = trim( (string) $val );
       $val = str_replace(["'", '"'], "", $val);
 
@@ -117,9 +117,10 @@ class utils
         }
 
         if( ini_get('safe_mode') != '1' ) {
-            // last ditch effort to find a place to write to.
-            $tmp = @tempnam('','xxx');
-            if( $tmp && file_exists($tmp) ) {
+            // last ditch effort to find a place to write to
+            $n = mt_rand(1000,9999);
+            $tmp = @tempnam('',"x{$n}x"); // no warning, thanks
+            if( $tmp && file_exists($tmp) ) { //new dummy file in system-default place
                 @unlink($tmp);
                 return realpath(dirname($tmp));
             }
@@ -130,6 +131,7 @@ class utils
 
     public static function is_email($str)
     {
+        //PHP's FILTER_VALIDATE_EMAIL mechanism is incomplete (per RFC5321) - see notes at https://www.php.net/manual/en/function.filter-var.php
         return filter_var($str,FILTER_VALIDATE_EMAIL);
     }
 
@@ -141,7 +143,7 @@ class utils
      * @param  bool    $ignore_specialfiles  Optionally ignore special system files in the check.  Special files include files beginning with ., and php.ini files.
      * @return bool
      */
-    public static function is_directory_writable( $path, $ignore_specialfiles = TRUE )
+    public static function is_directory_writable($path, $ignore_specialfiles = TRUE)
     {
         if ( substr ( $path , strlen ( $path ) - 1 ) != '/' ) $path .= '/' ;
 
@@ -182,7 +184,6 @@ class utils
         return TRUE;
     }
 
-
     public static function get_writable_error()
     {
         return self::$_writable_error;
@@ -190,15 +191,29 @@ class utils
 
     public static function rrmdir($dir)
     {
-        if (is_dir($dir)) {
-            $objects = scandir($dir);
-            foreach ($objects as $object) {
-                if ($object != "." && $object != "..") {
-                    if (filetype($dir."/".$object) == "dir") self::rrmdir($dir."/".$object); else unlink($dir."/".$object);
+        if( is_dir($dir) ) {
+            $items = scandir($dir);
+            if( $items ) {
+                $sep = DIRECTORY_SEPARATOR;
+                foreach( $items as $name ) {
+                    if( !($name == '.' || $name == '..') ) {
+                        $fp = "$dir{$sep}$name";
+                        if( is_dir($fp) ) {
+                            self::rrmdir($fp);
+                        }
+                        else {
+                            //TODO deal with links to dirs?
+                            unlink($fp);
+                        }
+                    }
                 }
             }
-            reset($objects);
-            rmdir($dir);
+            if( $items !== FALSE ) {
+                rmdir($dir);
+            }
+            else {
+              //TODO handle error
+            }
         }
     }
 

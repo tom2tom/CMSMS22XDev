@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple page-related functions
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -16,7 +15,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: page.functions.php 12661 2021-12-13 02:15:11Z tomphantoo $
+#$Id$
 
 /**
  * Page related functions.  Generally these are functions not necessarily
@@ -28,21 +27,21 @@
 
 
 /**
- * Gets the userid of the currently logged in user.
+ * Gets the numeric id of the currently logged in user.
  *
- * If an effective uid has been set in the session, AND the primary user is a member of the admin group
- * then allow emulating that effective uid.
+ * If an effective uid has been set in the session, AND the primary user
+ * is a member of the admin group, then allow emulating that effective uid.
  *
  * @since 0.1
- * @param  boolean $redirect Redirect to the admin login page if the user is not logged in.
- * @return integer The UID of the logged in administrator, otherwise FALSE
+ * @param  boolean $redirect Redirect to the admin login page if there is no logged-in user.
+ * @return integer The UID of the logged in administrator, otherwise 0
  */
 function get_userid($redirect = true)
 {
     if( cmsms()->is_cli() ) return 1;
-    $login_ops = \CMSMS\LoginOperations::get_instance();
+    $login_ops = CMSMS\internal\LoginOperations::get_instance();
     $uid = $login_ops->get_effective_uid();
-    if( !$uid && $redirect ) {
+    if( $uid == 0 && $redirect ) {
         $config = \cms_config::get_instance();
         redirect($config['admin_url']."/login.php");
     }
@@ -53,8 +52,8 @@ function get_userid($redirect = true)
 /**
  * Gets the username of the currently logged in user.
  *
- * If an effective username has been set in the session, AND the primary user is a member of the admin group
- * then return the effective username.
+ * If an effective username has been set in the session, AND the primary user
+ * is a member of the admin group, then return the effective username.
  *
  * @since 2.0
  * @param  boolean $check Redirect to the admin login page if the user is not logged in.
@@ -63,7 +62,7 @@ function get_userid($redirect = true)
 function get_username($check = true)
 {
     if( cmsms()->is_cli() ) return '';
-    $login_ops = \CMSMS\LoginOperations::get_instance();
+    $login_ops = CMSMS\internal\LoginOperations::get_instance();
     $uname = $login_ops->get_effective_username();
     if( !$uname && $check ) {
         $config = \cms_config::get_instance();
@@ -74,11 +73,12 @@ function get_username($check = true)
 
 
 /**
- * Checks to see if the user is logged in and the request has the proper key.  If not, redirects the browser
- * to the admin login.
+ * Checks to see if the user is logged in and the request has the proper key.
+ * If not, and $no_redirect is false, redirects the browser to the admin login.
  *
- * Note: Because this method validates that the secret key is in the URL and matches the one that is in the session
- * this method should only be called from admin actions.
+ * Note: Because this method confirms that the secret key is in the URL
+ * and it matches the one in the session, this method should only be
+ * called during admin requests.
  *
  * @since 0.1
  * @param string $no_redirect If true, then don't redirect if not logged in
@@ -87,11 +87,11 @@ function get_username($check = true)
 function check_login($no_redirect = false)
 {
     $do_redirect = !$no_redirect;
-    $uid = get_userid(!$no_redirect);
+    $uid = get_userid($do_redirect);
     $res = false;
     if( $uid > 0 ) {
         $res = true;
-        $login_ops = \CMSMS\LoginOperations::get_instance();
+        $login_ops = CMSMS\internal\LoginOperations::get_instance();
         $res = $login_ops->validate_requestkey();
     }
     if( !$res ) {
@@ -99,17 +99,15 @@ function check_login($no_redirect = false)
         if( $do_redirect ) {
             // redirect to the admin login.php
             // use SCRIPT_FILENAME and make sure it validates with the root_path
-            $config = \cms_config::get_instance();
-            if( startswith(realpath($_SERVER['SCRIPT_FILENAME']),$config['root_path']) ) {
+            if( startswith(realpath($_SERVER['SCRIPT_FILENAME']),CMS_ROOT_PATH) ) {
                 $_SESSION['login_redirect_to'] = $_SERVER['REQUEST_URI'];
             }
             $config = \cms_config::get_instance();
             redirect($config['admin_url']."/login.php");
         }
     }
-    return TRUE;
+    return true;
 }
-
 
 
 /**
@@ -129,7 +127,7 @@ function check_permission($userid, $permname)
 
 /**
  * Checks that the given userid is the owner of the given contentid.
- * (members of the admin group have all permission)
+ * (the superuser and members of the admin group have all permissions and are akin to owners)
  *
  * @internal
  * @since 0.1
@@ -140,7 +138,7 @@ function check_permission($userid, $permname)
 function check_ownership($userid, $contentid = '')
 {
     $userops = UserOperations::get_instance();
-    $adminuser = $userops->UserInGroup($userid,1);
+    $adminuser = $userops->UserInGroup($userid,1); // OR bullet-proof ->IsSuperuser($userid);
     if( $adminuser ) return true;
 
     return ContentOperations::get_instance()->CheckPageOwnership($userid,$contentid);
@@ -148,9 +146,9 @@ function check_ownership($userid, $contentid = '')
 
 
 /**
- * Checks that the given userid has access to modify the given
- * pageid.  This would mean that they were set as additional
- * authors/editors by the owner.
+ * Checks if the given userid has authority to modify the given pageid.
+ * This would mean that the user is the owner, or was set as additional
+ * author/editor by the owner, or has some 'super' role.
  *
  * @internal
  * @since 0.2
@@ -179,27 +177,55 @@ function author_pages($userid)
 
 
 /**
- * Put an event into the audit (admin) log.  This should be
- * done on most admin events for consistency.
+ * Put an event into the audit (admin) log. This should be done on most
+ * admin events for consistency.
  *
  * @since 0.3
- * @param integer $itemid The item id (perhaps a content id, or a record id from a module)
- * @param string  $itemname The item name (perhaps Content, or the module name)
- * @param string  $action The action that needs to be audited
+ * @param mixed $itemid Integer item identifier (perhaps a content id, or a record id from a module), or falsy
+ * @param mixed $itemname Item name string (perhaps Content, or the module name), or null
+ * @param mixed $action Action string, or null
  * @return void
  */
 function audit($itemid, $itemname, $action)
 {
-    if( !isset($action) ) $action = '-- unset --';
+    $mb = function_exists('mb_strlen');
+    $truncate = function($str, $maxl) use($mb) {
+        $fnl = ($mb) ? 'mb_strlen' : 'strlen';
+        $str = trim($str);
+        if( $fnl($str) > $maxl ) {
+            $fns = ($mb) ? 'mb_substr' : 'substr';
+            $str = $fns($str, 0, $maxl - 4);
+            $p = strrpos($str, ' ');
+            if( $p !== false ) {
+                $str = substr($str, 0, $p);
+            }
+            return $str . ' ...';
+        }
+        return $str;
+    };
+
+    if( is_null($itemname) ) {
+        $itemname = '';
+    }
+    else {
+        $itemname = $truncate($itemname, 50); // ensure value will fit into db utf8 field
+    }
+    if( is_null($action) ) {
+        $action = '-- unset --';
+    }
+    else {
+        $action = $truncate($action, 255);
+    }
+
     $app = cmsms();
     $db = $app->GetDb();
 
-    $userid = get_userid(FALSE);
-    $username = get_username(FALSE);
-    $ip_addr = null;
-    if( $itemid == '' ) $itemid = -1;
+    $userid = get_userid(false);
     if( $userid < 1 ) $userid = 0;
+    $username = get_username(false);
+    if( !$itemid ) $itemid = -1;
 
+    $ip_addr = '';
     if( $userid > 0 && !$app->is_cli() ) $ip_addr = cms_utils::get_real_ip();
 
     $query = "INSERT INTO ".CMS_DB_PREFIX."adminlog (timestamp, user_id, username, item_id, item_name, action, ip_addr) VALUES (?,?,?,?,?,?,?)";
@@ -208,10 +234,10 @@ function audit($itemid, $itemname, $action)
 
 
 /**
- * Gets the given site prefernce
+ * Gets the given site preference
  *
- * @deprecated
  * @since 0.6
+ * @deprecated since 2.2
  * @see cms_siteprefs::get
  * @param string $prefname The preference name
  * @param mixed  $defaultvalue The default value if the preference does not exist
@@ -226,50 +252,47 @@ function get_site_preference($prefname, $defaultvalue = '')
 /**
  * Removes the given site preference
  *
- * @deprecated
+ * @deprecated since 2.2
  * @see cms_siteprefs::remove
  * @param string $prefname Preference name to remove
  * @param boolean $uselike Wether or not to remove all preferences that are LIKE the supplied name
  * @return void
  */
-function remove_site_preference($prefname,$uselike=false)
+function remove_site_preference($prefname, $uselike=false)
 {
-  return cms_siteprefs::remove($prefname,$uselike);
+  cms_siteprefs::remove($prefname,$uselike);
 }
 
 
 /**
- * Sets the given site perference with the given value.
+ * Sets the given site preference with the given value.
  *
- * @deprecated
- * @see cms_siteprefs::set
  * @since 0.6
+ * @deprecated since 2.2
+ * @see cms_siteprefs::set
  * @param string $prefname The preference name
  * @param mixed  $value The preference value (will be stored as a string)
  * @return void
  */
 function set_site_preference($prefname, $value)
 {
-  return cms_siteprefs::set($prefname,$value);
+  cms_siteprefs::set($prefname,$value);
 }
 
 
-
-
 /**
- * A method to create a text area control
+ * A function to create a text area control
  *
  * @internal
- * @access private
- * @param boolean $enablewysiwyg Wether or not we are enabling a wysiwyg.  If false, and forcewysiwyg is not empty then a syntax area is used.
+ * @param bool    $enablewysiwyg Wether or not we are enabling a wysiwyg.  If false, and forcewysiwyg is not empty then a syntax area is used.
  * @param string  $text The contents of the text area
  * @param string  $name The name of the text area
  * @param string  $classname An optional class name
  * @param string  $id An optional ID (HTML ID) value
  * @param string  $encoding The optional encoding
- * @param string  $stylesheet Optional style information
- * @param integer $width Width (the number of columns) (CSS can and will override this)
- * @param integer $height Height (the number of rows) (CSS can and will override this)
+ * @param string  $stylesheet Optional stylesheet name (ignored unless a wysiwyg is used)
+ * @param int     $width Width (number of columns) Default 80 (CSS can and will override this)
+ * @param int     $height Height (number of rows) Default 15 (CSS can and will override this)
  * @param string  $forcewysiwyg Optional name of the syntax hilighter or wysiwyg to use.  If empty, preferences indicate which a syntax editor or wysiwyg should be used.
  * @param string  $wantedsyntax Optional name of the language used.  If non empty it indicates that a syntax highlihter will be used.
  * @param string  $addtext Optional additional text to include in the textarea tag
@@ -286,6 +309,7 @@ function create_textarea($enablewysiwyg, $text, $name, $classname = '', $id = ''
   if( $classname ) $parms['class'] = $classname;
   if( $id ) $parms['id'] = $id;
   if( $encoding ) $parms['encoding'] = $encoding;
+  if( $stylesheet ) $parms['cssname'] = $stylesheet;
   if( $width ) $parms['rows'] = $height;
   if( $height ) $parms['cols'] = $width;
   if( $forcewysiwyg ) $parms['forcemodule'] = $forcewysiwyg;
@@ -303,7 +327,7 @@ function create_textarea($enablewysiwyg, $text, $name, $classname = '', $id = ''
 
 
 /**
- * Creates a string containing links to all the pages.
+ * Create a string containing links to all the pages.
  *
  * @deprecated
  * @internal
@@ -348,41 +372,43 @@ function pagination($page, $totalrows, $limit)
 
 
 /**
- * Create a dropdown form element containing a list of files that match certain conditions
- *
+ * Create a dropdown html element having choices that match certain conditions
  * @internal
- * @param string The name for the select element.
- * @param string The directory name to search for files.
- * @param string The name of the file that should be selected
- * @param string A comma separated list of extensions that should be displayed in the list
- * @param string An optional string with which to prefix each value in the output by
- * @param boolean Wether 'none' should be an allowed option
- * @param string Text containing additional parameters for the dropdown element
- * @param string A prefix to use when filtering files
- * @param boolean A flag indicating wether the files matching the extension and the prefix should be included or excluded from the result set
- * @param boolean A flag indicating wether the output should be sorted.
- * @return string
+ *
+ * @param string $name The name and id attribute for the <select/>.
+ * @param string $dir The directory path to scan for items.
+ * @param string|null $value The value of the item to be initially selected.
+ *  Such value must begin with "$optprefix/" if $optprefix is not empty.
+ * @param string $allowed_extensions Comma-separated, any-case, series
+ *  of filename extension(s) to be included (exclusions not supported)
+ * @param string $optprefix Relative filepath to prepend to each option-value
+ *  in the output. No trailing separator. Default ''
+ * @param bool $addnone Whether to prepend a -1=>'none' option. Default false
+ * @param string $extratext Additional details for the html element. Default ''
+ * @param stting $fileprefix Prefix to use for filtering items. Default ''
+ * @param bool $excludefiles Whether to exclude items beginning with $fileprefix
+ *  from the presented choices. False to include such matches. Ignored if
+ *  $fileprefix is empty. Default true.
+ * @param bool $sortresults Whether to (naturally) sort the choices. Default false
+ * @return string maybe empty
  */
-function create_file_dropdown($name,$dir,$value,$allowed_extensions,$optprefix='',$allownone=false,$extratext='',
-			      $fileprefix='',$excludefiles=1,$sortresults = 0)
+function create_file_dropdown($name,$dir,$value,$allowed_extensions,$optprefix='',
+    $addnone=false,$extratext='',$fileprefix='',$excludefiles=true,$sortresults=false)
 {
-  $files = array();
   $files = get_matching_files($dir,$allowed_extensions,true,true,$fileprefix,$excludefiles);
-  if( $files === false ) return false;
+  if( !$files ) return '';
   $out = "<select name=\"{$name}\" id=\"{$name}\" {$extratext}>\n";
-  if( $allownone ) {
-    $txt = '';
-    if( empty($value) ) $txt = 'selected="selected"';
-    $out .= "  <option value=\"-1\" $txt>--- ".lang('none')." ---</option>\n";
+  if( $addnone ) {
+    $txt = ( empty($value) ) ? ' selected' : '';
+    $out .= "  <option value=\"-1\"{$txt}>--- ".lang('none')." ---</option>\n";
   }
 
   if( $sortresults ) natcasesort($files);
+  $sep = ($optprefix != '/') ? '/' : '';
   foreach( $files as $file ) {
-    $txt = '';
-    $opt = $file;
-    if( !empty($optprefix) ) $opt = $optprefix.'/'.$file;
-    if( $opt == $value ) $txt = 'selected="selected"';
-    $out .= "  <option value=\"{$opt}\" {$txt}>{$file}</option>\n";
+    $opt = ( $optprefix) ? $optprefix.$sep.$file : $file;
+    $txt = ( $opt == $value ) ? ' selected' : ''; // OR $file == $value ?
+    $out .= "  <option value=\"{$opt}\"{$txt}>$file</option>\n";
   }
   $out .= "</select>";
   return $out;
@@ -391,129 +417,120 @@ function create_file_dropdown($name,$dir,$value,$allowed_extensions,$optprefix='
 
 /**
  * A function that, given the current request information will return
- * a pageid or an alias that should be used for the display
+ * a pageid or an alias to be used for the display
  * This method also handles matching routes and specifying which module
  * should be called with what parameters
  *
  * @internal
  * @ignore
- * @access private
+ * @param ?string $getid Reference to null-valued variable, possibly populated here
  * @return string
  */
-function get_pageid_or_alias_from_url()
+function get_pageid_or_alias_from_url(&$getid)
 {
-    $gCms = CmsApp::get_instance();
     $config = \cms_config::get_instance();
-    $contentops = ContentOperations::get_instance();
-    $smarty = \Smarty_CMS::get_instance();
-
-    $params = $_REQUEST;
-    if (isset($params['mact'])) {
-        $ary = explode(',', cms_htmlentities((string) $params['mact']), 4);
-        $smarty->id = (isset($ary[1])?$ary[1]:'');
-    }
-
-    $page = '';
     $query_var = $config['query_var'];
-    if (isset($smarty->id) && isset($params[$smarty->id . 'returnid'])) {
-        // get page from returnid parameter in module action
-        $page = (int)$params[$smarty->id . 'returnid'];
+    $contentops = ContentOperations::get_instance();
+    $wanted = false;
+    $page = '';
+
+    if (isset($_REQUEST['mact'])) {
+        $ary = explode(',', cms_htmlentities((string) $_REQUEST['mact']), 4);
+        $getid = (isset($ary[1])?$ary[1]:'');
+        if (isset($_REQUEST[$getid . 'returnid'])) {
+            // get page from returnid parameter in module action
+            $page = (int)$_REQUEST[$getid . 'returnid'];
+        }
     }
-    else if( isset($_REQUEST[$query_var]) ) {
+    elseif( isset($_REQUEST[$query_var]) ) {
         // using non friendly urls... get the page alias/id from the query var.
         $page = @trim((string) $_REQUEST[$query_var]);
+        $wanted = true;
     }
     else {
         // either we're using pretty urls
         // or this is the default page.
-        if (isset($_SERVER["REQUEST_URI"]) && !endswith($_SERVER['REQUEST_URI'], 'index.php')) {
+        if (isset($_SERVER['REQUEST_URI']) && !endswith($_SERVER['REQUEST_URI'], 'index.php')) {
             $matches = array();
             if (preg_match('/.*index\.php\/(.*?)$/', $_SERVER['REQUEST_URI'], $matches)) {
-                // pretty urls... grab all the stuff after the index.php
+                // pretty url... grab all the stuff after the index.php
                 $page = $matches[1];
             }
         }
     }
 
-    unset($_GET['query_var']);
+    unset($_REQUEST[$query_var],$_GET[$query_var]);
 
-    // by here, if page is empty, use the default page id
-    if ($page == '') $page = $contentops->GetDefaultContent(); // assume default content
+    // by here, if page is falsy, use the default page id
+    if( $page == '' ) $page = $contentops->GetDefaultContent();
 
     // by here, if we're not assuming pretty urls of any sort
-    // and we have a value... we're done.
-    if( $config['url_rewriting'] == 'none' ) return $page;
+    // and we have a $page value... we might be done.
+    if( !$wanted && $config['url_rewriting'] == 'none' ) return $page;
 
-    // some kind of a pretty url.
+    // might be some kind of a pretty url.
     // strip off GET params.
     if( ($tmp = strpos($page,'?')) !== FALSE ) $page = substr($page,0,$tmp);
 
     // strip off page extension
-    if ($config['page_extension'] != '' && endswith($page, $config['page_extension'])) {
-        $page = substr($page, 0, strlen($page) - strlen($config['page_extension']));
+    if ($config['page_extension'] && endswith($page, $config['page_extension'])) {
+        $page = substr($page, 0, 0-strlen($config['page_extension']));
     }
 
     // trim trailing and leading /
-    // it appears that some servers leave in the first / of a request some times which will stop rout matching.
+    // it appears that some servers leave in the first / of a request sometimes which will stop route matching.
     $page = trim($page, '/');
 
-    // see if there's a route that matches.
-    $matched = false;
-    $route = cms_route_manager::find_match($page);
+    // check whether a route matches
+    $route = cms_route_manager::find_match($page); //TODO exact route if appropriate e.g. content page
     if( is_object($route) ) {
-        $matched = true;
-        if( $route['key1'] == '__CONTENT__' ) {
-            // a route to a page.
-            $page = (int)$route['key2'];
+        if( $route->is_content() ) {
+            // a route to a page
+            $page = (int)$route->get_content();
         }
         else {
+            // a module-action route
             $matches = $route->get_results();
-
-            // it's a module route
-            //Now setup some assumptions
-            if (!isset($matches['id'])) $matches['id'] = 'cntnt01';
-            if (!isset($matches['action'])) $matches['action'] = 'defaulturl';
-            if (!isset($matches['inline'])) $matches['inline'] = 0;
-            if (!isset($matches['returnid']))	$matches['returnid'] = ''; #Look for default page
-            if (!isset($matches['module'])) $matches['module'] = $route->get_dest();
-
-            //Get rid of numeric matches
-            foreach ($matches as $key=>$val) {
-                if (is_int($key)) {
+            if( empty($matches['module']) ) {
+                //$_REQUEST['mact'] set below cannot be valid
+                return 0; //OR better, trigger a 404 immediately
+            }
+            // include some defaults if necessary
+            $matches += [
+            'id' => 'cntnt01',
+            // This one is deliberately distinct from the usual 'default' action.
+            // The module's default route-processor-action might actually
+            // be 'defaulturl', or it might be aliased from that in the module
+            'action' => 'defaulturl',
+            'inline' => 0,
+            'returnid' => '' // becomes the default page, below
+            ];
+            // get rid of numeric matches
+            foreach( $matches as $key=>$val ) {
+                if( is_int($key) ) {
                     unset($matches[$key]);
                 }
-                else {
-                    if ($key != 'id') $_REQUEST[$matches['id'] . $key] = $val;
-                }
-            }
-
-            //Now set any defaults that might not have been in the url
-            $tmp = $route->get_defaults();
-            if (is_array($tmp) && count($tmp) > 0) {
-                foreach ($tmp as $key=>$val) {
+                elseif( $key != 'id' ) {
                     $_REQUEST[$matches['id'] . $key] = $val;
-                    if (array_key_exists($key, $matches)) $matches[$key] = $val;
                 }
             }
-
-            //Get a decent returnid
-            if( $matches['returnid'] == '' ) $matches['returnid'] = $contentops->GetDefaultContent();
-
-            // Put the resulting mact into the request so that the subsequent smarty plugins can grab it...
+            // add a mact to $_REQUEST so that subsequent operations can grab it
             $_REQUEST['mact'] = $matches['module'] . ',' . $matches['id'] . ',' . $matches['action'] . ',' . $matches['inline'];
 
+            $getid = $matches['id'];
             $page = $matches['returnid'];
-            $smarty->id = $matches['id'];
         }
     }
+    elseif( ($pos = strrpos($page,'/')) !== false ) {
+        // no route matched, try an alias from the last /
+        $page = substr($page, $pos + 1);
+    }
 
-    // if no route matched... grab the alias from the last /
-    if( $matched == false && ($pos = strrpos($page,'/')) !== FALSE ) $page = substr($page, $pos + 1);
-
-    // if there's nothing use the default content.
-    if( empty($page) ) $page = $contentops->GetDefaultContent(); // maybe it's the home page.
+    // if there's nothing, use the default content
+    if( !$page ) $page = $contentops->GetDefaultContent();
     return $page;
 }
+
 
 /**
  * @ignore
@@ -542,32 +559,36 @@ function preprocess_mact($returnid)
         throw new \CmsError404Exception('Attempt to access module '.$module.' which could not be found (is it properly installed and configured?');
     }
 
-    $smarty = \Smarty_CMS::get_instance();
-    @ob_start();
     $parms = $modops->GetModuleParameters($id);
+    $smarty = \Smarty_CMS::get_instance();
     $oldcache = $smarty->caching;
-    $smarty->caching = false;
+    @ob_start();
+    $smarty->caching = Smarty::CACHING_OFF; //TODO reconcile with site preference per changeCaching() and overrides
     $result = $module_obj->DoActionBase($action, $id, $parms, $returnid, $smarty);
     $smarty->caching = $oldcache;
 
-    if( $result !== FALSE ) echo $result;
-    $result = @ob_get_contents();
-    @ob_end_clean();
+    if( $result !== false ) echo $result;
+    $result = @ob_get_clean();
     \CMS_Content_Block::set_primary_content($result);
 }
 
+
 /**
- * Replacement for deprecated strftime function
+ * Alternative to deprecated strftime() which also processes date/date_format()
+ * formats and which may be used as a drop-in replacement for strftime()
+ * or date(). (Not so for date_format(), whose arguments are in a different order.)
  * @since 2.2.16
  *
  * @param string $format strftime()- and/or date()-compatible format specifier
  * @param mixed $datevar timestamp | date-time-string | DateTime object | empty to use time() value
+ * @param mixed $locale  string | null Since 2.2.18 optional locale to use instead of the default
  * @return string
  */
-function locale_ftime($format, $datevar = null)
+function locale_ftime($format, $datevar = null, $locale = '')
 {
-    // hack to access shared code - do this properly in future!
+    // this approach is clunky, but avoids loading up memory for a method
+    // which is probably rarely used
     $fp = cms_join_path(CMS_ROOT_PATH, 'lib', 'plugins', 'modifier.localedate_format.php');
     require_once $fp;
-    return smarty_modifier_localedate_format($datevar, $format);
+    return smarty_modifier_localedate_format($datevar, $format, '', $locale);
 }

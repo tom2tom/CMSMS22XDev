@@ -1,13 +1,13 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html>
+<!DOCTYPE html>
+<html{if !empty($lang)} lang="{$lang|truncate:5:''}"{/if} dir="{$lang_dir|default:'ltr'}">
 	<head>
-		<meta charset="utf-8" />
+		<meta charset="utf-8">
 		<title>CMS Made Simple - Error Console</title>
-		<meta name="robots" content="noindex, nofollow" />
+		<meta name="robots" content="noindex, nofollow">
 		<style>
 			body {
-				min-width: 900px;
-				font-family: sans-serif;
+				min-width: 50em;
+				font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 				color: #232323;
 				line-height: 1.3;
 				font-size: 12px;
@@ -23,8 +23,8 @@
 			h1 {
 				margin: 0;
 				color: #ddd;
-				font-size: 112px;
-				font-family: Impact, Haettenschweiler, "Franklin Gothic Bold", Charcoal, "Helvetica Inserat", "Bitstream Vera Sans Bold", "Arial Black", sans serif;
+				font-size: 7em;
+				font-family: Impact, Haettenschweiler, "Franklin Gothic Bold", Charcoal, "Helvetica Inserat", "Bitstream Vera Sans Bold", "Arial Black", sans-serif;
 			}
 			h2 {
 				border-radius: 6px;
@@ -36,10 +36,10 @@
 			}
 			pre {
 				border: 1px solid #d5d5d5;
-				border-left: 7px solid #d5d5d5;
+				border-{$stside}: 7px solid #d5d5d5;
 				font-size: 13px;
 				color: #333;
-				font-family: Consolas, 'Andale Mono WT', 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'Courier New', monospace;
+				font-family: 'Lucida Console', 'Lucida Sans Typewriter', 'Courier New', monospace;
 				padding: 15px;
 				overflow: auto;
 				word-wrap: break-word;
@@ -51,12 +51,12 @@
 				font-weight: bold;
 			}
 			.info {
-				float: left;
+				float: {$stside};
 				font-size: 16px;
 				line-height: 25px;
 				color: #999;
 				margin-top: -10px;
-				margin-left: 180px;
+				margin-{$stside}: 10em;
 			}
 			.logo {
 				padding: 20px 0;
@@ -69,13 +69,13 @@
 	</head>
 	<body>
 		<div class="logo">
-			<img src="{root_url}/lib/assets/images/cmsms-logo.png" alt="CMS Made Simple" />
+			<img src="{root_url}/lib/assets/images/cmsms-logo.png" alt="CMS Made Simple">
 		</div>
 		<div id="wrapper">
 			<h1>Oops!</h1>
 			<p class="info">
-				It looks like something went wrong and an error has occurred.<br />
-				A notification has been added to the admin log.
+				It looks like an error has occurred.<br>
+				Information about this has been added to the admin log.
 			</p>
 			<div class="clear"></div>
 			{if $loggedin}

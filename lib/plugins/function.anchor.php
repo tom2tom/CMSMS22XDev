@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: anchor
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -18,8 +17,8 @@
 
 function smarty_function_anchor($params, $smarty)
 {
-	$to = (isset($params['anchor'])) ? trim($params['anchor']) : '';
-	if( $to === '' ) return '<!-- anchor tag: no anchor provided -->';
+    $to = (isset($params['anchor'])) ? trim($params['anchor']) : '';
+    if( $to === '' ) return '<!-- anchor tag: no anchor provided -->';
 
     //current content useless for runtime-populated pages e.g. News details
     if( !empty($_SERVER['QUERY_STRING']) ) {
@@ -27,7 +26,7 @@ function smarty_function_anchor($params, $smarty)
         $config = cmsms()->GetConfig();
         $tmp = $config['query_var'].'=';
         $path = str_replace($tmp,'',$_SERVER['QUERY_STRING']);
-        $url = $config['root_url'].'/'.trim($path,' /');
+        $url = CMS_ROOT_URL.'/'.trim($path,' /');
     }
     else {
         $content = cms_utils::get_current_content();
@@ -45,11 +44,11 @@ function smarty_function_anchor($params, $smarty)
     if( isset($params['accesskey']) && $params['accesskey'] !== '' ) $accesskey = ' accesskey="'.$params['accesskey'].'"';
 
     $url = preg_replace('/&(?!amp;)/','&amp;',$url.'#'.rawurlencode($to));
-    if( !empty($params['onlyhref']) && cms_to_bool($params['onlyhref']) ) {
+    if( isset($params['onlyhref']) && cms_to_bool($params['onlyhref']) ) {
         $tmp = $url;
     }
     else {
-        $text = trim(get_parameter_value($params,'text'));
+        $text = get_parameter_value($params,'text');
         if( $text === '' ) {
             $text = htmlentities($to).'<!-- anchor tag: no text provided -->';
         }

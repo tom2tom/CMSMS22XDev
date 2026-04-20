@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple translation file
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -23,7 +22,7 @@
 #The modifications to fit it for Gallery were made by Jens Tkotz
 #(http://gallery.meanalto.com) 
 
-#Ideas from Gallery's implementation made to CMS by Ted Kulp
+#Ideas from Gallery's implementation made for CMSMS by Ted Kulp
 
 #GR Greek
 #Created by: Panagiotis Skarvelis <sl45sms@yahoo.gr>
@@ -48,7 +47,7 @@ $nls['locale']['el_GR'] = 'el_GR,el_GR.utf8,el_GR.utf-8,el_GR.UTF-8,greek,Greek_
 $nls['encoding']['el_GR'] = "UTF-8";
 
 #Location of the file(s)
-$nls['file']['el_GR'] = array(dirname(__FILE__).'/el_GR/admin.inc.php');
+$nls['file']['el_GR'] = array(__DIR__.'/el_GR/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

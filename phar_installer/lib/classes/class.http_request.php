@@ -19,7 +19,7 @@ namespace __appbase;
  * @link        http://www.phpfour.com/lib/http
  * @since       Version 0.1
  *
- * Modified by Robert Campbell (calguy1000@cmsmadesimple.org)
+ * Modified by Robert Campbell
  * Renamed the class to cms_http_request
  * Fixed some bugs.
  */
@@ -316,46 +316,46 @@ class http_request
     function clear()
     {
         // Set the request defaults
-        $this->host         = '';
-        $this->port         = 0;
-        $this->path         = '';
-        $this->target       = '';
-        $this->method       = 'GET';
-        $this->schema       = 'http';
-        $this->params       = array();
-        $this->headers      = array();
-        $this->cookies      = array();
-        $this->_cookies     = array();
-        $this->headerArray  = array();
-        $this->proxy        = null;
+        $this->host        = '';
+        $this->port        = 0;
+        $this->path        = '';
+        $this->target      = '';
+        $this->method      = 'GET';
+        $this->schema      = 'http';
+        $this->params      = array();
+        $this->headers     = array();
+        $this->cookies     = array();
+        $this->_cookies    = array();
+        $this->headerArray = array();
+        $this->proxy       = null;
 
         // Set the config details
-        $this->debug        = FALSE;
-        $this->error        = '';
-        $this->status       = 0;
-        $this->timeout      = '25';
-        $this->useCurl      = TRUE;
-        $this->referrer     = '';
-        $this->username     = '';
-        $this->password     = '';
-        $this->redirect     = FALSE;
-        $this->result       = null;
+        $this->debug       = FALSE;
+        $this->error       = '';
+        $this->status      = 0;
+        $this->timeout     = '25';
+        $this->useCurl     = TRUE;
+        $this->referrer    = '';
+        $this->username    = '';
+        $this->password    = '';
+        $this->redirect    = FALSE;
+        $this->result      = null;
 
         // Set the cookie and agent defaults
         $app = get_app();
-        $this->nextToken    = '';
-        $this->useCookie    = TRUE;
-        $this->saveCookie   = TRUE;
-        $this->maxRedirect  = 3;
-        $this->cookiePath   = $app->get_tmpdir().'/c'.md5(get_class().session_id()).'.dat'; // by default, use a cookie file that is unique only to this session.
-        $this->userAgent    = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.9';
+        $this->nextToken   = '';
+        $this->useCookie   = TRUE;
+        $this->saveCookie  = TRUE;
+        $this->maxRedirect = 3;
+        $this->cookiePath  = $app->get_tmpdir().'/c'.md5(session_id().__CLASS__).'.dat'; // by default, use a session-specific cookie file.
+        $this->userAgent   = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.9';
     }
 
     /**
      * Clear all cookies
      *
      * @return void
-     * @author Robert Campbell (calguy1000@gmail.com)
+     * @author Robert Campbell
      */
     function resetCookies()
     {
@@ -658,7 +658,7 @@ class http_request
         {
             $this->headerArray = array();
         }
-  
+
         $f = 0;
         if( strpos($str,':') !== FALSE )
         {
@@ -807,11 +807,11 @@ class http_request
             {
                 if(strlen(trim($value)) > 0)
                 {
-                    $tempString[] = $key . "=" . urlencode($value);
+                    $tempString[] = $key . "=" . rawurlencode($value);
                 }
             }
 
-            $cookieString = join('&', $tempString);
+            $cookieString = implode('&', $tempString);
         }
 
         // Do we need to use cURL
@@ -915,7 +915,7 @@ class http_request
             $this->_setError(curl_error($ch));
 
             // Close PHP cURL handle
-            curl_close($ch);
+            if( PHP_VERSION_ID < 80500 ) curl_close($ch);
         }
         else
         {
@@ -940,7 +940,7 @@ class http_request
             }
 
             // Specify the custom cookies
-            if ($this->useCookie && $cookieString != '')
+            if ($this->useCookie && $cookieString)
             {
                 $this->addRequestHeader("Cookie: " . $cookieString);
             }
@@ -952,8 +952,7 @@ class http_request
             }
 
             // Specify the referrer
-            $this->addRequestHeader("Referer: " . $this->referrer);
-            if ($this->referrer != '')
+            if ($this->referrer)
             {
                 $this->addRequestHeader("Referer: " . $this->referrer);
             }
@@ -993,7 +992,7 @@ class http_request
             $this->_parseHeaders($responseHeader);
 
             // Do we have a 301/302 redirect ?
-            if (($this->status == '301' || $this->status == '302') && $this->redirect == TRUE)
+            if (($this->status == '301' || $this->status == '302') && $this->redirect)
             {
                 if ($this->curRedirect < $this->maxRedirect)
                 {
@@ -1174,15 +1173,15 @@ class http_request
             $path        = "/";
             $expires     = "";
 
-            while(($name = trim(urldecode($this->_tokenize("=")))) != "")
+            while( ($name = trim(urldecode($this->_tokenize("=")))) )
             {
                 $value = urldecode($this->_tokenize(";"));
 
                 switch($name)
                 {
-                    case "path"     : $path     = $value; break;
-                    case "domain"   : $domain   = $value; break;
-                    case "secure"   : $secure   = ($value != '') ? '1' : '0'; break;
+                    case "path":   $path   = $value; break;
+                    case "domain": $domain = $value; break;
+                    case "secure": $secure = ($value) ? '1' : '0'; break;
                 }
             }
 
@@ -1370,11 +1369,12 @@ class http_request
      */
     function _setError($error)
     {
-        if ($error != '')
+        if ($error)
         {
             $this->error = $error;
             return $error;
         }
+        return '';
     }
 }
 

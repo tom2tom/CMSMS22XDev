@@ -1,8 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2013 by Ted Kulp (wishy@users.sf.net)
-#(c)2011-2016 by The CMSMS Dev Team
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple initialization script
+#(c) 2011 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -20,34 +18,32 @@
 #$Id$
 
 /**
- * This file is included in every page.  It does all setup functions including
+ * This file is included in every request.  It does all setup functions including
  * importing additional functions/classes, setting up sessions and nls, and
- * construction of various important variables like $gCms.
+ * assigning various important variables like $gCms.
  *
- * This function cannot be included by third party applications to create access to CMSMS API's.  It is intended for
- * and supported for use in CMSMS applications only.
+ * This script is not for use by third party applications to create access to
+ * CMSMS API's.  It is intended for and supported for use in CMSMS applications only.
  *
  * @package CMS
  */
 
 /**
- * Special variables that may be set before this file is included which will influence its behavior.
+ * Global variables that might be set before this file is included and which will influence its behavior.
  *
  * DONT_LOAD_DB       - Indicates that the database should not be initialized and any database related functions should not be called
  * DONT_LOAD_SMARTY   - Indicates that smarty should not be initialized, and no smarty related variables assigned.
  * CMS_INSTALL_PAGE   - Indicates that the file was included from the CMSMS Installation/Upgrade process
- * CMS_PHAR_INSTALLER - Indicates that the file was included from the CMSMS PHAR based installer (note: CMS_INSTALL_PAGE will also be set).
+ * CMS_PHAR_INSTALLER - UNUSED HERE Indicates that the file was included from the CMSMS PHAR based installer (note: CMS_INSTALL_PAGE will also be set).
  * CMS_ADMIN_PAGE     - Indicates that the file was included from an admin side request.
  * CMS_LOGIN_PAGE     - Indicates that the file was included from the admin login form.
  */
 
-$dirname = __DIR__;
-
-define('CMS_DEFAULT_VERSIONCHECK_URL', 'https://www.cmsmadesimple.org/latest_version.php');
-define('CMS_SECURE_PARAM_NAME', '__c'); // this is used for CSRF protection
-define('CMS_USER_KEY', '_userkey_'); // this is used for CSRF protection
+define('CMS_DEFAULT_VERSIONCHECK_URL', 'https://www.cmsmadesimple.org/latest_version.php'); // (used once/day)
+define('CMS_SECURE_PARAM_NAME', '__c'); // used for CSRF protection (first-needed in login.php)
+define('CMS_USER_KEY', '_userkey_'); // used for CSRF protection (first-needed in misc.functions)
 if (!defined('CONFIG_FILE_LOCATION')) {
-    define('CONFIG_FILE_LOCATION', dirname(__DIR__) . '/config.php');
+    define('CONFIG_FILE_LOCATION', dirname(__DIR__) . '/lib/config.php');
 }
 global $CMS_INSTALL_PAGE, $CMS_ADMIN_PAGE, $CMS_LOGIN_PAGE, $DONT_LOAD_DB, $DONT_LOAD_SMARTY;
 
@@ -65,11 +61,14 @@ if (!isset($CMS_INSTALL_PAGE) && (!file_exists(CONFIG_FILE_LOCATION) || filesize
 //$_GET = filter_var_array($_GET, FILTER_SANITIZE_STRING);
 
 /**
- * a replacement for filter_var_array FILTER_SANITIZE_STRING
+ * replacement for the formerly-used, deprecated, filter_var_array FILTER_SANITIZE_STRING
  * temporary as we will revisit the security measures used
  * (JoMorg)
+ * input-sanitizing is best when context-specific and tailored accordingly,
+ * and the original $_SERVER, $_GET values are still available
  *
  * Note: the closure is recursive to allow for parameters with arrays
+ * removal of unclosed PHP tags ('/<\?php.*$/i','/<\?=.*$/') is a crasher ?
  *
  * @param $param
  *
@@ -81,29 +80,29 @@ $sanitize_fn = function (&$param) use (&$sanitize_fn)
     array_walk($param, $sanitize_fn);
   }
   else {
-    $param = preg_replace('/\x00|<[^>]*>?/', '', $param);
-    $param = str_replace(["'", '"'], ['&#39;', '&#34;'], $param);
+    $tmp = preg_replace(['/<[^>]*>/', '/(<|%3c)(\?|%3f)php.*$/i', '/(<|%3c)(\?|%3f)=?.*$/i'], ['', '', ''], $param);
+    return strtr($tmp, ["\0"=>'', "'"=>'&#39;', '"'=>'&#34;']);
   }
-  return $param;
 };
-//TODO input-sanitizing should be context-specific, and original S_SERVER, $_GET values still available e.g. for passwords
 array_walk($_SERVER, $sanitize_fn);
 array_walk($_GET, $sanitize_fn);
 
 // include some stuff
-require_once $dirname . DIRECTORY_SEPARATOR . 'compat.functions.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'misc.functions.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'version.php'; // tells us where the config file is and other things.
-require_once $dirname . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'class.CmsException.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'class.HookManager.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'class.cms_config.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . 'class.CmsApp.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'autoloader.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'module.functions.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'page.functions.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'content.functions.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'translation.functions.php';
-require_once $dirname . DIRECTORY_SEPARATOR . 'html_entity_decode_php4.php';
+$dirname = __DIR__ . DIRECTORY_SEPARATOR;
+require_once $dirname . 'compat.functions.php';
+require_once $dirname . 'misc.functions.php';
+require_once $dirname . 'version.php'; // tells us where the config file is and other things.
+require_once $dirname . 'classes' . DIRECTORY_SEPARATOR . 'class.CmsException.php';
+require_once $dirname . 'classes' . DIRECTORY_SEPARATOR . 'class.HookManager.php';
+require_once $dirname . 'classes' . DIRECTORY_SEPARATOR . 'class.cms_config.php';
+require_once $dirname . 'classes' . DIRECTORY_SEPARATOR . 'class.CmsApp.php';
+require_once $dirname . 'classes' . DIRECTORY_SEPARATOR . 'class.JobCheck.php';
+require_once $dirname . 'autoloader.php';
+require_once $dirname . 'module.functions.php';
+require_once $dirname . 'page.functions.php';
+require_once $dirname . 'content.functions.php';
+require_once $dirname . 'translation.functions.php';
+require_once $dirname . 'html_entity_decode_php4.php';
 
 debug_buffer('done loading basic files');
 
@@ -111,41 +110,43 @@ debug_buffer('done loading basic files');
 $_app = CmsApp::get_instance(); // for use in this file only.
 $config = $_app->GetConfig();
 
-if( $config['debug'] ) {
+if( $config['debug'] ) { // OR CMS_DEBUG
     @ini_set('display_errors',1);
     @error_reporting(E_ALL);
 }
 
 if( cms_to_bool(ini_get('register_globals')) ) {
     echo 'FATAL ERROR: For security reasons register_globals must not be enabled for any CMSMS install.  Please adjust your PHP configuration settings to disable this feature.';
-    die();
+    die;
 }
 
 if( isset($CMS_ADMIN_PAGE) ) {
     setup_session();
 
     function cms_admin_sendheaders($content_type = 'text/html',$charset = '') {
-        // Language shizzle
-        if( !$charset ) $charset = get_encoding();
-        header("Content-Type: $content_type; charset=$charset");
+        if( !headers_sent() ) {
+            // Language shizzle
+            if( !$charset ) $charset = get_encoding();
+            header("Content-Type: $content_type; charset=$charset");
+        }
     }
 }
 
-require_once($dirname.DIRECTORY_SEPARATOR.'std_hooks.php');
+require_once $dirname . 'std_hooks.php';
 
 // new for 2.0 ... this creates a mechanism whereby items can be cached automatically, and fetched (or calculated) via the use of a callback
 // if the cache is too old, or the cached value has been cleared or not yet been saved.
 $obj = new \CMSMS\internal\global_cachable('schema_version',
                function() {
                    $db = \CmsApp::get_instance()->GetDb();
-                   $query = 'SELECT version FROM '.CmsApp::get_instance()->GetDbPrefix().'version';
+                   $query = 'SELECT version FROM '.CMS_DB_PREFIX.'version';
                    return $db->GetOne($query);
                });
 \CMSMS\internal\global_cache::add_cachable($obj);
 $obj = new \CMSMS\internal\global_cachable('latest_content_modification',
                function() {
                    $db = \CmsApp::get_instance()->GetDb();
-                   $query = 'SELECT modified_date FROM '.CmsApp::get_instance()->GetDbPrefix().'content ORDER BY modified_date DESC';
+                   $query = 'SELECT modified_date FROM '.CMS_DB_PREFIX.'content ORDER BY modified_date DESC';
                    $tmp = $db->GetOne($query);
                    return $db->UnixTimeStamp($tmp);
                });
@@ -153,25 +154,23 @@ $obj = new \CMSMS\internal\global_cachable('latest_content_modification',
 $obj = new \CMSMS\internal\global_cachable('default_content',
                function() {
                    $db = \CmsApp::get_instance()->GetDb();
-                   $query = 'SELECT content_id FROM '.CmsApp::get_instance()->GetDbPrefix().'content WHERE default_content = 1';
-                   $tmp = $db->GetOne($query);
-                   return $tmp;
+                   $query = 'SELECT content_id FROM '.CMS_DB_PREFIX.'content WHERE default_content = 1';
+                   return (int)$db->GetOne($query); // 0 if not found
                });
 \CMSMS\internal\global_cache::add_cachable($obj);
 $obj = new \CMSMS\internal\global_cachable('modules',
                function() {
                    $db = \CmsApp::get_instance()->GetDb();
-                   $query = 'SELECT * FROM '.CmsApp::get_instance()->GetDbPrefix().'modules ORDER BY module_name';
-                   $tmp = $db->GetArray($query);
-                   return $tmp;
+                   $query = 'SELECT * FROM '.CMS_DB_PREFIX.'modules ORDER BY module_name';
+                   return $db->GetArray($query);
                });
 \CMSMS\internal\global_cache::add_cachable($obj);
 $obj = new \CMSMS\internal\global_cachable('module_deps',
                function() {
                    $db = \CmsApp::get_instance()->GetDb();
-                   $query = 'SELECT parent_module,child_module,minimum_version FROM '.CmsApp::get_instance()->GetDbPrefix().'module_deps ORDER BY parent_module';
+                   $query = 'SELECT parent_module,child_module,minimum_version FROM '.CMS_DB_PREFIX.'module_deps ORDER BY parent_module';
                    $tmp = $db->GetArray($query);
-                   if( !is_array($tmp) || !count($tmp) ) return;
+                   if( !is_array($tmp) || !count($tmp) ) return [];
                    $out = array();
                    foreach( $tmp as $row ) {
                        $out[$row['child_module']][$row['parent_module']] = $row['minimum_version'];
@@ -210,27 +209,64 @@ if( !isset($_SERVER['REQUEST_URI']) ) {
 
 if( !isset($CMS_INSTALL_PAGE) ) {
     // Set a umask
-    $global_umask = cms_siteprefs::get('global_umask','');
-    if( $global_umask != '' ) umask( octdec($global_umask) );
+    // BUT avoid using umask() in multithreaded webservers. All running scripts use the same umask
+    // Deprecated since 2.2.19
+    $global_umask = cms_siteprefs::get('global_umask');
+    if( $global_umask !== '' ) umask(octdec($global_umask));
 
     // Load all eligible modules
     debug_buffer('Loading Modules');
     $modops = ModuleOperations::get_instance();
     $modops->LoadModules(!isset($CMS_ADMIN_PAGE));
     debug_buffer('End of Loading Modules');
-
-    // test for cron.
-    // we hardcode CmsJobManager here until such a point as we need to abstract it.
-    \CMSMS\Async\JobManager::get_instance()->trigger_async_processing();
 }
 
 //Setup language stuff.... will auto-detect languages (Launch only to admin at this point)
 if( isset($CMS_ADMIN_PAGE) ) CmsNlsOperations::set_language();
 
 if( !isset($DONT_LOAD_SMARTY) ) {
-    debug_buffer('Initialize Smarty');
-    $smarty = $_app->GetSmarty();
-    debug_buffer('Done Initialing Smarty');
-    if( defined('CMS_DEBUG') && CMS_DEBUG ) $smarty->error_reporting = E_ALL;
-    $smarty->assignGlobal('sitename', cms_siteprefs::get('sitename', 'CMSMS Site'));
+    if( CMS_DEBUG ) { //OR $config['debug']
+        debug_buffer('Initialize Smarty');
+        $smarty = $_app->GetSmarty();
+        $smarty->error_reporting = E_ALL;
+        debug_buffer('Done Initializing Smarty');
+    }
+    else {
+        $smarty = $_app->GetSmarty();
+    }
+
+    static $lang = null;
+    if( $lang === null ) {
+        // once per request
+        $smarty->assign('sitename', cms_siteprefs::get('sitename', 'CMSMS Site'));
+
+        $lang = '';
+        $ldir = 'ltr';
+        $sside = 'left';
+        $eside = 'right';
+        CmsNlsOperations::set_language(); // <- NLS detection for frontend
+        $tmp = CmsNlsOperations::get_current_language();
+        if( $tmp ) {
+            $lang = CmsNlsOperations::get_lang_attribute($tmp);
+            $info = CmsNlsOperations::get_language_info($tmp);
+            if( $info ) {
+                $ldir = ($info->direction()) ?: 'ltr';
+                list($sside,$eside) = ($ldir == 'ltr') ? ['left','right'] : ['right','left'];
+            }
+        }
+        $smarty->assign('lang', $lang, true)
+         ->assign('lang_dir', $ldir)
+         ->assign('stside', $sside)
+         ->assign('ndside', $eside);
+    }
+}
+
+//bad hack! TODO deploy a better solution for onetime init outside of installer
+if( !isset($CMS_INSTALL_PAGE) ) {
+    try {
+        Events::AddEventTypedHandler('Core', 'ModuleUninstalled', 'CMSMS\JobOperations::clear_module', Events::HANDLERCALL, false);
+    }
+    catch(Exception $e) {
+        // nothing here
+    }
 }

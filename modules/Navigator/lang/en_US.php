@@ -27,12 +27,12 @@ $lang['help'] = <<<EOT
   <p>Each nav template is provided with an array of node objects that match the criteria specified on the tag.  Below is a description of the members of the node object:</p>
 <ul>
   <li>\$node->id -- The content object integer ID.</li>
-  <li>\$node->type -- The type of the node.  i.e: content, link, pagelink, etc.</li>
+  <li>\$node->type -- The content-type of the node e.g. content, link, pagelink etc.</li>
   <li>\$node->url -- URL to the content object.  This should be used when building links.</li>
   <li>\$node->accesskey -- Access Key, if defined.</li>
   <li>\$node->tabindex -- Tab index, if defined.</li>
   <li>\$node->titleattribute -- Description, or Title attribute (title), if defined.</li>
-  <li>\$node->hierarchy -- Hierarchy position.  (i.e. 1.3.3)</li>
+  <li>\$node->hierarchy -- Hierarchy position.  (e.g. 1.3.3)</li>
   <li>\$node->default -- TRUE if this node refers to the default content object.</li>
   <li>\$node->menutext -- Menu Text</li>
   <li>\$node->raw_menutext -- Menu Text without having html entities converted</li>
@@ -42,10 +42,10 @@ $lang['help'] = <<<EOT
   <li>\$node->extra3 -- This field contains the value of the extra3 page property, unless the loadprops-parameter is set to NOT load the properties.</li>
   <li>\$node->image -- This field contains the value of the image page property (if non empty), unless the loadprops-parameter is set to NOT load the properties.</li>
   <li>\$node->thumbnail -- This field contains the value of the thumbnail page property (if non empty), unless the loadprops-parameter is set to NOT load the properties.</li>
-  <li>\$node->target -- This field contains Target for the link (if non empty), unless the loadprops-parameter is set to NOT load the properties.</li>
+  <li>\$node->target -- This field contains the target attribute for the link (if defined).</li>
   <li>\$node->created -- Item creation date</li>
   <li>\$node->modified -- Item modified date</li>
-  <li>\$node->parent -- TRUE if this node is a parent of the currently selected page</li>
+  <li>\$node->parent -- TRUE if this node is the parent (TBA or other ancesetor) of the currently selected page</li>
   <li>\$node->current -- TRUE if this node is the currently selected page</li>
   <li>\$node->children_exist -- TRUE if this node has any children at all.</li>
   <li>\$node->children -- An array of node objects representing the displayable children of this node. Not set if node does not have children to display.</li>
@@ -53,7 +53,7 @@ $lang['help'] = <<<EOT
 </ul>
 <h3>Examples:</h3>
 <ul>
-   <li>A simple navigation that is only 2 levels deep, using the default template:<br/>
+   <li>A simple navigation that is only 2 levels deep, using the default template:<br>
      <pre><code>{Navigator number_of_levels=2}</code></pre>
    </li>
      <li>Display a simple navigation two levels deep starting with the children of the current page.  Use the default template:</li>
@@ -77,8 +77,8 @@ $lang['help_action'] = 'Specify the action of the module.  This module supports 
 </ul>';
 $lang['help_collapse'] = 'When enabled, only items directly related to the current active page will be output';
 $lang['help_childrenof'] = 'This option will display only items that are descendants of the selected page id or alias.  i.e: <code>{Navigator childrenof=$page_alias}</code> will only display the children of the current page.';
-$lang['help_excludeprefix'] = 'Exclude all items (and their children) who\'s page alias matches one of the specified (comma separated) prefixes.  This parameter must not be used in conjunction with the includeprefix parameter.';
-$lang['help_includeprefix'] = 'Include only those items who\'s page alias matches one of the specified (comma separated) prefixes.  This parameter cannot be combined with the excludeprefix parameter.';
+$lang['help_excludeprefix'] = 'Exclude all items (and their children) whose page alias matches one of the specified (comma separated) prefixes.  This parameter must not be used in conjunction with the includeprefix parameter.';
+$lang['help_includeprefix'] = 'Include only those items whose page alias matches one of the specified (comma separated) prefixes.  This parameter cannot be combined with the excludeprefix parameter.';
 $lang['help_items'] = 'Specify a comma separated list of page aliases that this navigation should display.';
 $lang['help_loadprops'] = 'Use this parameter when NOT using advanced properties in your navigator template.  This will disable the loading of all of the content properties for each node (such as extra1, image, thumbnail, etc.).  This will dramatically decrease the number of queries required to build a navigation, and increase memory requirements, but will remove the possibility for much more advanced displays';
 $lang['help_nlevels'] = 'Alias for number_of_levels';

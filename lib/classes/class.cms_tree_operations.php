@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: cms_tree (c) 2010 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A simple php tree class.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: cms_tree_operations
+# (c) 2010 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -45,8 +40,7 @@
  *
  * @package CMS
  * @license GPL
- * @author  Robert Campbell
- * @copyright Copyright (c) 2010, Robert Campbell <calguy1000@cmsmadesimple.org>
+ * @author Robert Campbell
  * @since 1.9
  */
 class cms_tree_operations
@@ -95,7 +89,6 @@ class cms_tree_operations
           $node = new cms_content_tree(array('id'=>$row['content_id'],'alias'=>$row['content_alias'],'active'=>$row['active']));
 
           // find where to insert it.
-          $parent_node = null;
           if( $row['parent_id'] < 1 ) {
               $parent_node = $tree;
           }

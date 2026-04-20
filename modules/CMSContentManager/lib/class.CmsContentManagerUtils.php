@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: CMSContentManager (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A module for managing content in CMSMS.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module CMSContentManager class CmsContentManagerUtils
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -39,7 +34,7 @@
  */
 
 /**
- * A set of utility methods for the CmsContentManager module.
+ * Utility methods for the CMSContentManager module.
  *
  * This is an internal class.  Use of this class in third party modules will not be supported.
  *
@@ -47,68 +42,65 @@
  * @internal
  * @ignore
  * @author Robert Campbell
- * @copyright Copyright (c) 2013, Robert Campbell <calguy1000@cmsmadesimple.org>
  */
 final class CmsContentManagerUtils
 {
-  private function __construct() {}
+	private function __construct() {}
 
-  public static function get_pagedefaults()
-  {
-      $tpl_id = null;
-      try {
-          $tpl = CmsLayoutTemplate::load_dflt_by_type(CmsLayoutTemplateType::CORE.'::page');
-          $tpl_id = $tpl->get_id();
-      }
-      catch( \CmsDataNotFoundException $e ) {
-          $type = CmsLayoutTemplateType::load(CmsLayoutTemplateType::CORE.'::page');
-          $list = CmsLayoutTemplate::load_all_by_type($type);
-          $tpl = $list[0];
-          $tpl_id = $tpl->get_id();
-      }
+	public static function get_pagedefaults()
+	{
+		try {
+			$tpl = CmsLayoutTemplate::load_dflt_by_type(CmsLayoutTemplateType::CORE.'::page');
+			$tpl_id = $tpl->get_id();
+		}
+		catch( \CmsDataNotFoundException $e ) {
+			$type = CmsLayoutTemplateType::load(CmsLayoutTemplateType::CORE.'::page');
+			$list = CmsLayoutTemplate::load_all_by_type($type);
+			$tpl = $list[0];
+			$tpl_id = $tpl->get_id();
+		}
 
-      $page_prefs = array('contenttype'=>'content', // string
-                          'disallowed_types'=>'', // array of strings
-                          'design_id'=>CmsLayoutCollection::load_default()->get_id(), // int
-                          'template_id'=>$tpl_id,
-                          'parent_id'=>-2, // int
-                          'secure'=>0, // boolean
-                          'cachable'=>1, // boolean
-                          'active'=>1, // boolean
-                          'showinmenu'=>1, // boolean
-                          'metadata'=>'', // string
-                          'content'=>'', // string
-                          'searchable'=>1, // boolean
-                          'addteditors'=>array(), // array of ints.
-                          'extra1'=>'', // string
-                          'extra2'=>'', // string
-                          'extra3'=>''); // string
-      $mod = cms_utils::get_module('CMSContentManager');
-      $tmp = $mod->GetPreference('page_prefs');
-      if( $tmp ) $page_prefs = unserialize($tmp);
+		$page_prefs = array(
+			'contenttype'=>'content', // string
+			'disallowed_types'=>'', // array of strings
+			'design_id'=>CmsLayoutCollection::load_default()->get_id(), // int
+			'template_id'=>$tpl_id,
+			'parent_id'=>-2, // int
+			'secure'=>0, // boolean
+			'cachable'=>1, // boolean
+			'active'=>1, // boolean
+			'showinmenu'=>1, // boolean
+			'metadata'=>'', // string
+			'content'=>'', // string
+			'searchable'=>1, // boolean
+			'addteditors'=>array(), // array of ints.
+			'extra1'=>'', // string
+			'extra2'=>'', // string
+			'extra3'=>''); // string
+		$mod = cms_utils::get_module('CMSContentManager');
+		$tmp = $mod->GetPreference('page_prefs');
+		if( $tmp ) $page_prefs = unserialize($tmp);
 
-      return $page_prefs;
-  }
+		return $page_prefs;
+	}
 
-  public static function locking_enabled()
-  {
-      $mod = cms_utils::get_module('CMSContentManager');
-      $timeout = (int) $mod->GetPreference('locktimeout');
-      if( $timeout > 0 ) return TRUE;
-      return FALSE;
-  }
+	public static function locking_enabled()
+	{
+		$mod = cms_utils::get_module('CMSContentManager');
+		$timeout = (int) $mod->GetPreference('locktimeout');
+		return ( $timeout > 0 );
+	}
 
-  public static function get_pagenav_display()
-  {
-    $userid = get_userid(FALSE);
-    $pref = cms_userprefs::get_for_user($userid,'ce_navdisplay');
-    if( !$pref ) {
-        $mod = cms_utils::get_module('CMSContentManager');
-        $pref = $mod->GetPreference('list_namecolumn');
-        if( !$pref ) $pref = 'title';
-    }
-    return $pref;
-  }
+	public static function get_pagenav_display()
+	{
+		$userid = get_userid(FALSE);
+		$pref = cms_userprefs::get_for_user($userid,'ce_navdisplay');
+		if( !$pref ) {
+			$mod = cms_utils::get_module('CMSContentManager');
+			$pref = $mod->GetPreference('list_namecolumn','title');
+		}
+		return $pref;
+	}
 } // end of class
 #
 # EOF

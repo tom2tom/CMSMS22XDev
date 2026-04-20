@@ -5,6 +5,7 @@ namespace cms_autoinstaller;
 use __appbase\tests as _tests_;
 use __appbase\utils;
 use cms_autoinstaller\wizard_step;
+use Exception;
 use function __appbase\get_app;
 use function __appbase\lang;
 use function __appbase\smarty;
@@ -13,14 +14,14 @@ class wizard_step3 extends wizard_step
 {
     protected function process()
     {
-        die('foo');
+        throw new Exception(lang('error_internal',300));
     }
 
     protected function perform_tests($verbose,&$infomsg,&$tests)
     {
         $app = get_app();
         $wiz = $this->get_wizard();
-        $version_info = $wiz->get_data('version_info'); // only present for upgrades
+        $version_info = $wiz->get_data('version_info'); // populated only for refreshes & upgrades
         $action = $wiz->get_data('action');
         $informational = array();
         $tests = array();
@@ -28,16 +29,33 @@ class wizard_step3 extends wizard_step
         // informational messages...
         $informational[] = new _tests_\informational_test('server_software',$_SERVER['SERVER_SOFTWARE'],'info_server_software');
         $informational[] = new _tests_\informational_test('server_api',PHP_SAPI,'info_server_api');
-        $informational[] = new _tests_\informational_test('server_os',array(PHP_OS,php_uname('r'),php_uname('m')));
+        if( function_exists('php_uname') ) {
+            $informational[] = new _tests_\informational_test('server_os',array(PHP_OS,php_uname('r'),php_uname('m'))); // NOTE PHP_OS is the build-system
+        }
+        else {
+            $informational[] = new _tests_\informational_test('server_os',array('Unknown')); // TODO fallack mechanism
+        }
 
-        // required test for php version
-        $obj = new _tests_\version_range_test('php_version',phpversion());
-        $obj->minimum = '7.0.0';
-        $obj->recommended = '7.4.0';
-        $obj->fail_msg = lang('pass_php_version',$obj->minimum,$obj->recommended,phpversion());
-        $obj->warn_msg = lang('msg_yourvalue',phpversion());
-        $obj->pass_msg = lang('msg_yourvalue',phpversion());
-        $obj->required = true;
+        // required test... php version
+        $v = PHP_VERSION;
+        $obj = new _tests_\version_range_test('php_version',$v);
+         //CMSMS itself doesn't currently need 7+, but Smarty4+ needs 7.1
+        $smarty = smarty();
+        if( version_compare($smarty::SMARTY_VERSION,'4') >= 0 ) {
+            $obj->minimum = '7.1.0';
+        }
+        else {
+            $obj->minimum = '5.6.0';
+        }
+        // set this to the current minimum security-supported micro-version
+        // see www.php.net/supported-versions.php and www.php.net/releases/index.php
+        $app_config = $app->get_config();
+        $prefphp = (!empty($app_config['livephpmin'])) ? $app_config['livephpmin'] : '8.0';
+        $obj->recommended = $prefphp;
+        $obj->fail_msg = lang('fail_php_version',$obj->minimum,$prefphp,$v);
+        $obj->warn_msg = lang('msg_yourvalue',$v);
+        $obj->pass_msg = lang('msg_yourvalue',$v);
+        $obj->required = 1;
         $tests[] = $obj;
 
         // required test... check if most files are writable.
@@ -63,21 +81,32 @@ class wizard_step3 extends wizard_step
 
         // required test... tmpfile
         $fh = tmpfile();
-        $b = ($fh === FALSE)?FALSE:TRUE;
+        $b = ($fh !== FALSE);
         $obj = new _tests_\boolean_test('tmpfile',$b);
-        $obj->required = true;
+        $obj->required = TRUE;
         if( !$b ) $obj->fail_msg = lang('fail_tmpfile');
         $tests[] = $obj;
         unset($fh);
 
         if( $version_info ) {
-            // its an upgrade, config file must be writable.
+            // config file must be writable (even for freshens, which can include timezone change)
             $obj = new _tests_\boolean_test('config_writable',is_writable($version_info['config_file']));
             $obj->required = true;
             $obj->fail_key = 'fail_config_writable';
             $tests[] = $obj;
 
-            if( $action == 'upgrade' && version_compare($version_info['version'],'2.2') < 0 ) {
+            if ( $action == 'upgrade' ) {
+                // database-credentials file must be writable
+                $dest = $app->get_destdir().'/admin/configs/private/db.ini';
+                if( is_file($dest) ) {
+                    $obj = new _tests_\boolean_test('config_writable',is_writable($dest));
+                    $obj->required = true;
+                    $obj->fail_key = 'fail_config_writable';
+                    $tests[] = $obj;
+                }
+            }
+
+            if( version_compare($version_info['version'],'2.2') < 0 ) {
                 $dir = $app->get_destdir().'/assets';
                 if( is_dir($dir) ) {
                     $obj = new _tests_\boolean_test('assets_dir_exists',FALSE);
@@ -88,6 +117,7 @@ class wizard_step3 extends wizard_step
                 }
             }
         } else {
+            // doing an install
             $is_dir_empty = function($dir) {
                 $dir = trim($dir);
                 if( !$dir ) return FALSE;  // fail on invalid dir
@@ -136,8 +166,8 @@ class wizard_step3 extends wizard_step
         $obj->fail_key = 'fail_func_ziparchive';
         $tests[] = $obj;
 
-        // only perform the check below PHP 7.0 (we'll be removing this check on 2.99+)
-        if(version_compare(PHP_VERSION, '7.0.0') < 0)
+        // only perform the check below PHP 7 (we'll be removing this check on 2.99+)
+        if( version_compare(PHP_VERSION, '7.0.0') < 0 )
         {
           // required test ... magic_quotes_runtime
           // TODO: remove on 2.99+ if not removed already as it was removed from PHP since v 5.4.0 (JM)
@@ -146,17 +176,16 @@ class wizard_step3 extends wizard_step
           $obj->fail_key = 'fail_magic_quotes_runtime';
           $tests[] = $obj;
         }
-        // required test ... multibyte extension
-        $obj = new _tests_\boolean_test('multibyte_support',_tests_\test_extension_loaded('mbstring') && function_exists('mb_get_info'));
+        // required test ... Multibyte extension or builtin
+        $obj = new _tests_\boolean_test('multibyte_support',_tests_\test_extension_loaded('Multibyte') || function_exists('mb_get_info'));
         $obj->required = 1;
         $obj->fail_key = 'fail_multibyte_support';
         $tests[] = $obj;
 
-        // recommended test ... intl extension
-        $obj = new _tests_\boolean_test('intl_support',_tests_\test_extension_loaded('intl') && class_exists('IntlDateFormatter'));
+        // recommended test ... Intl extension or builtin
+        $obj = new _tests_\boolean_test('intl_support',_tests_\test_extension_loaded('Intl') || class_exists('IntlDateFormatter',false));
         $obj->required = 0;
         $obj->fail_key = 'fail_intl_support';
-        $obj->warn_key = 'fail_intl_support';
         $tests[] = $obj;
 
         // required test ... at least one supported database driver
@@ -222,11 +251,13 @@ class wizard_step3 extends wizard_step
             }
         }
 
-        // recommended test ... E_STRICT disabled
         $orig_error_level = $app->get_orig_error_level();
-        $obj = new _tests_\boolean_test('errorlevel_estrict',!($orig_error_level & E_STRICT));
-        $obj->warn_key = 'estrict_enabled';
-        $tests[] = $obj;
+        if (PHP_VERSION_ID < 80400) { //E_STRICT deprecated and useless since PHP 8.4
+            // recommended test ... E_STRICT disabled
+            $obj = new _tests_\boolean_test('errorlevel_estrict',!($orig_error_level & E_STRICT));
+            $obj->warn_key = 'estrict_enabled';
+            $tests[] = $obj;
+        }
 
         // recommended test ... E_DEPRECATED disabled
         $obj = new _tests_\boolean_test('errorlevel_edeprecated',!($orig_error_level & E_DEPRECATED));
@@ -239,9 +270,9 @@ class wizard_step3 extends wizard_step
             $obj = new _tests_\range_test('memory_limit',$memory_limit);
             $obj->minimum = '16M';
             $obj->recommended = '32M';
-            $obj->pass_msg = ini_get('memory_limit');
-            $obj->fail_msg = lang('fail_memory_limit',ini_get('memory_limit'),$obj->minimum,$obj->recommended);
-            $obj->warn_msg = lang('warn_memory_limit',ini_get('memory_limit'),$obj->minimum,$obj->recommended);
+            $obj->pass_msg = $memory_limit;
+            $obj->fail_msg = lang('fail_memory_limit',$memory_limit,$obj->minimum,$obj->recommended);
+            $obj->warn_msg = lang('warn_memory_limit',$memory_limit,$obj->minimum,$obj->recommended);
             $obj->required = 1;
             $tests[] = $obj;
         } else {
@@ -272,28 +303,29 @@ class wizard_step3 extends wizard_step
         $tests[] = $obj;
 
         // xml extension
-        $obj = new _tests_\boolean_test('xml_functions',_tests_\test_extension_loaded('xml'));
+        $obj = new _tests_\boolean_test('xml_functions',_tests_\test_extension_loaded('XML'));
         $obj->required = 1;
         $obj->fail_key = 'fail_xml_functions';
         $tests[] = $obj;
 
         // recommended test ... max_execution_time
-        $v = (int) ini_get('max_execution_time');
-        if( $v !== 0 ) {
+        $v = ini_get('max_execution_time');
+        if( (int)$v !== 0 ) {
             $obj = new _tests_\range_test('max_execution_time',$v);
-            $obj->minimum = 30;
-            $obj->recommended = 60;
+            $obj->minimum = '30';
+            $obj->recommended = '60';
             $obj->required = 1;
-            $obj->warn_msg = lang('warn_max_execution_time',ini_get('max_execution_time'),$obj->minimum,$obj->recommended);;
-            $obj->fail_msg = lang('fail_max_execution_time',ini_get('max_execution_time'),$obj->minimum,$obj->recommended);;
+            $obj->warn_msg = lang('warn_max_execution_time',$v,$obj->minimum,$obj->recommended);
+            $obj->fail_msg = lang('fail_max_execution_time',$v,$obj->minimum,$obj->recommended);
             $tests[] = $obj;
         }
 
         // recommended test ... post_max_size
-        $obj = new _tests_\range_test('post_max_size',ini_get('post_max_size'));
+        $v = ini_get('post_max_size');
+        $obj = new _tests_\range_test('post_max_size',$v);
         $obj->minimum = '2M';
         $obj->recommended = '10M';
-        $obj->warn_msg = lang('warn_post_max_size',ini_get('post_max_size'),$obj->minimum,$obj->recommended);
+        $obj->warn_msg = lang('warn_post_max_size',$v,$obj->minimum,$obj->recommended);
         $obj->fail_key = 'fail_post_max_size';
         $tests[] = $obj;
 
@@ -309,8 +341,9 @@ class wizard_step3 extends wizard_step
         $tests[] = $obj;
 
         // recommended test .... disable functions
-        $obj = new _tests_\boolean_test('disable_functions',ini_get('disable_functions') == '');
-        $obj->warn_msg = lang('warn_disable_functions',str_replace(',',', ',ini_get('disable_functions')));
+        $v = ini_get('disable_functions');
+        $obj = new _tests_\boolean_test('disable_functions',$v == '');
+        $obj->warn_msg = lang('warn_disable_functions',str_replace(',',', ',$v));
         $tests[] = $obj;
 
         // recommended test... remote_url
@@ -320,7 +353,7 @@ class wizard_step3 extends wizard_step
         $tests[] = $obj;
 
         // curl extension
-        $obj = new _tests_\boolean_test('curl_extension',_tests_\test_extension_loaded('curl'));
+        $obj = new _tests_\boolean_test('curl_extension',_tests_\test_extension_loaded('cURL'));
         $obj->fail_key = 'fail_curl_extension';
         $tests[] = $obj;
 
@@ -418,7 +451,7 @@ class wizard_step3 extends wizard_step
           ->assign('verbose',$verbose)
           ->assign('retry_url',$_SERVER['REQUEST_URI']);
         if( $verbose ) $smarty->assign('information',$informational);
-        if( count($tests) )	$smarty->assign('tests',$tests);
+        if( count($tests) > 0 ) $smarty->assign('tests',$tests);
         $url = $this->get_wizard()->next_url();
         $smarty->assign('next_url',$url);
 
@@ -437,10 +470,10 @@ class wizard_step3 extends wizard_step
 
     private function _GDVersion()
     {
-        static $gd_version_number = null;
+        static $gd_version_number = null; // aka unset
 
         if(is_null($gd_version_number)) {
-            if(extension_loaded('gd')) {
+            if(extension_loaded('GD')) {
                 if(defined('GD_MAJOR_VERSION')) {
                     $gd_version_number = GD_MAJOR_VERSION;
                     return $gd_version_number;

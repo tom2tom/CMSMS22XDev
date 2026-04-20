@@ -2,7 +2,7 @@
 
 namespace cms_autoinstaller;
 
-use cms_autoinstaller\wizard_step;
+use __appbase\utils as utils2;
 use cms_config;
 use cms_siteprefs;
 use CmsApp;
@@ -11,12 +11,12 @@ use CMSMS\Database\Connection;
 use CMSMS\Database\ConnectionSpec;
 use Exception;
 use RuntimeException;
-//use const CMS_DB_PREFIX;
+use const CMS_DB_PREFIX;
+use const CONFIG_FILE_LOCATION;
 use function __appbase\get_app;
 use function __appbase\lang;
 use function __appbase\smarty;
 use function cmsms;
-use function set_site_preference;
 
 class wizard_step8 extends wizard_step
 {
@@ -25,33 +25,35 @@ class wizard_step8 extends wizard_step
         // nothing here
     }
 
-    private function db_connect($destconfig)
+    private function db_connect($choices)
     {
-        $spec = new ConnectionSpec;
-        if( isset($destconfig['dbms']) ) {
-            $spec->type = $destconfig['dbms'];
-            $spec->host = $destconfig['db_hostname'];
-            $spec->username = $destconfig['db_username'];
-            $spec->password = $destconfig['db_password'];
-            $spec->dbname = $destconfig['db_name'];
-            $spec->prefix = $destconfig['db_prefix'];
+        $spec = new ConnectionSpec();
+        if( isset($choices['dbms']) ) {
+            $spec->type = $choices['dbms'];
+            $spec->host = $choices['db_hostname'];
+            $spec->username = $choices['db_username'];
+            $spec->password = $choices['db_password'];
+            $spec->dbname = $choices['db_name'];
+            $spec->port = !empty($choices['db_port']) ? (int)$choices['db_port'] : 0; // TODO mysqli default null not 0
+            $spec->prefix = $choices['db_prefix'];
         }
         else {
-            $spec->type = $destconfig['dbtype'];
-            $spec->host = $destconfig['dbhost'];
-            $spec->username = $destconfig['dbuser'];
-            $spec->password = $destconfig['dbpass'];
-            $spec->dbname = $destconfig['dbname'];
-            $spec->port = isset($destconfig['dbport']) ? $destconfig['dbport'] : null;
-            $spec->prefix = $destconfig['dbprefix'];
+            $spec->type = $choices['dbtype'];
+            $spec->host = $choices['dbhost'];
+            $spec->username = $choices['dbuser'];
+            $spec->password = $choices['dbpass'];
+            $spec->dbname = $choices['dbname'];
+            $spec->port = !empty($choices['dbport']) ? (int)$choices['dbport'] : 0; // TODO default null ?
+            $spec->prefix = $choices['dbprefix'];
         }
-        if( !defined('CMS_DB_PREFIX')) {
+        if( !defined('CMS_DB_PREFIX') ) { //sometimes undefined when installer is running
             define('CMS_DB_PREFIX',$spec->prefix);
         }
         $db = Connection::initialize($spec);
-        $db->SetErrorHandler(function() { //for debugging use ($db, $logfile)
-            /* normally do nothing */
-// when debugging error_log('step 8 db error "'.$db->ErrorMsg()."\"\n", 3, $logfile);
+        //when debugging $app=get_app();$destdir=$app->get_destdir();$logfile=$destdir.'/installer.log';
+        $db->SetErrorHandler(function() { //when debugging use ($db, $logfile)
+            // normally do nothing
+            // when debugging error_log('step 8 db error "'.$db->ErrorMsg()."\"\n",3,$logfile);
         });
         $db->Execute("SET NAMES 'utf8'");
         compatibility::noop(); // autoload the db class
@@ -62,13 +64,14 @@ class wizard_step8 extends wizard_step
     private function connect_to_cmsms($destdir)
     {
         if( is_file("$destdir/lib/include.php") ) {
-            $app = get_app();
-            global $CMS_INSTALL_PAGE, $DONT_LOAD_DB, $DONT_LOAD_SMARTY, $CMS_VERSION, $CMS_PHAR_INSTALLER;
+            global $CMS_INSTALL_PAGE, $DONT_LOAD_DB, $DONT_LOAD_SMARTY, $CMS_VERSION;
             $CMS_INSTALL_PAGE = 1;
             $DONT_LOAD_DB = 1;
             $DONT_LOAD_SMARTY = 1;
+            $app = get_app();
             if( $app->in_phar() ) {
-                $CMS_PHAR_INSTALLER = 1; //TODO unused anywhere
+                global $CMS_PHAR_INSTALLER;
+                $CMS_PHAR_INSTALLER = 1; //TODO now unused
             }
             if( empty($CMS_VERSION) ) {
                 $CMS_VERSION = $app->get_dest_version(); // default value
@@ -94,22 +97,27 @@ class wizard_step8 extends wizard_step
 
         try {
             $destdir = $app->get_destdir();
-            if( !$destdir ) throw new Exception(lang('error_internal',700));
+            if( !$destdir ) throw new Exception(lang('error_internal',800));
 
             $adminaccount = $wiz->get_data('adminaccount');
-            if( !$adminaccount ) throw new Exception(lang('error_internal',701));
+            if( !$adminaccount ) throw new Exception(lang('error_internal',801));
 
-            $destconfig = $wiz->get_data('config');
-            if( !$destconfig ) throw new Exception(lang('error_internal',703));
+            $choices = $wiz->get_data('config');
+            if( !$choices ) throw new Exception(lang('error_internal',803));
 
             $siteinfo = $wiz->get_data('siteinfo');
-            if( !$siteinfo ) throw new Exception(lang('error_internal',704));
+            if( !$siteinfo ) throw new Exception(lang('error_internal',804));
 
-            $this->write_config();
+            if( isset($siteinfo['theme_relpath']) ) {
+                $choices['theme_entered'] = $siteinfo['theme_relpath'];
+            }
+            $this->write_config($choices,$destdir);
             $this->connect_to_cmsms($destdir);
 
+            $this->write_dbconfig($choices);
             // connect to the database, ready for downstream use
-            $db = $this->db_connect($destconfig);
+            $db = $this->db_connect($choices);
+            if( !$db ) throw new Exception(lang('error_internal',805));
 
             require_once __DIR__.'/msg_functions.php';
 
@@ -117,19 +125,19 @@ class wizard_step8 extends wizard_step
             if( !defined('CMS_ADODB_DT') ) define('CMS_ADODB_DT','DT');
 
             global $admin_user; //global var used downstream
-            $admin_user = null;
+            $admin_user = null; // no object
 //          $db_prefix = CMS_DB_PREFIX;
             $dir = $app->get_appdir().'/install';
-            if( !is_dir($dir) ) throw new Exception(lang('error_internal',705));
+            if( !is_dir($dir) ) throw new Exception(lang('error_internal',808));
 
             // install the schema
             $this->message(lang('install_schema'));
             $fn = $dir.'/schema.php';
-            if( !file_exists($fn) ) throw new Exception(lang('error_internal',706));
+            if( !file_exists($fn) ) throw new Exception(lang('error_internal',809));
 
             global $CMS_INSTALL_DROP_TABLES, $CMS_INSTALL_CREATE_TABLES;
-            $CMS_INSTALL_DROP_TABLES=1; // TODO only for upgrades
-            $CMS_INSTALL_CREATE_TABLES=1;
+            $CMS_INSTALL_DROP_TABLES = 1; // TODO only for upgrades
+            $CMS_INSTALL_CREATE_TABLES = 1;
             include_once $fn;
 
             // install sequence tables
@@ -142,18 +150,18 @@ class wizard_step8 extends wizard_step
                 cms_siteprefs::set('sitemask',$salt);
             }
 
-            // create tmp directories
-            $this->verbose(lang('install_createtmpdirs'));
-            @mkdir($destdir.'/tmp/cache',0777,TRUE);
-            @mkdir($destdir.'/tmp/templates_c',0777,TRUE);
-
             require_once $dir.'/base.php';
 
-            $this->message(lang('install_defaultcontent'));
-            $fn = $dir.'/initial.php';
-            if( $destconfig['samplecontent'] ) $fn = $dir.'/extra.php';
+            if( $choices['samplecontent'] ) {
+                $this->message(lang('install_defaultcontent'));
+                $fn = $dir.'/extra.php';
+            }
+            else {
+                $fn = $dir.'/initial.php';
+            }
             require_once $fn;
 
+//          $this->conform_themes($wiz,$db,$destdir);
             $this->verbose(lang('install_setsitename'));
             cms_siteprefs::set('sitename',$siteinfo['sitename']);
 
@@ -162,8 +170,7 @@ class wizard_step8 extends wizard_step
             $contentops = cmsms()->GetContentOperations();
             $contentops->SetAllHierarchyPositions();
 
-            // todo: install default preferences
-            set_site_preference('global_umask','022');
+//          cms_siteprefs::set('global_umask','022'); installed default preferences in base.php included above
         }
         catch( Exception $e ) {
             $this->error($e->GetMessage());
@@ -174,32 +181,52 @@ class wizard_step8 extends wizard_step
     {
         $app = get_app();
         $destdir = $app->get_destdir();
-        if( !$destdir ) throw new Exception(lang('error_internal',711));
+        if( !$destdir ) throw new Exception(lang('error_internal',811));
 
-        $destconfig = $this->get_wizard()->get_data('config');
-        if( !$destconfig ) throw new Exception(lang('error_internal',712));
+        $wiz = $this->get_wizard();
+        $choices = $wiz->get_data('config');
+        if( !$choices ) throw new Exception(lang('error_internal',812));
 
         // get the list of all available versions that this upgrader knows about
+        //TODO c.f. cms_autoinstaller\utils::get_upgrade_versions() which records versions > $min_upgrade_version
         $dir =  $app->get_appdir().'/upgrade';
-        if( !is_dir($dir) ) throw new Exception(lang('error_internal',713));
+        if( !is_dir($dir) ) throw new Exception(lang('error_internal',813));
 
         $dh = opendir($dir);
-        if( !$dh ) throw new Exception(lang('error_internal',714));
+        if( !$dh ) throw new Exception(lang('error_internal',814));
         $versions = array();
         while( ($file = readdir($dh)) !== false ) {
             if( $file == '.' || $file == '..' ) continue;
-            if( is_dir($dir.'/'.$file) && (is_file("$dir/$file/MANIFEST.DAT") || is_file("$dir/$file/MANIFEST.DAT.gz")) ) $versions[] = $file;
+            if( is_dir("$dir/$file") && (is_file("$dir/$file/MANIFEST.DAT") || is_file("$dir/$file/MANIFEST.DAT.gz")) ) {
+                $versions[] = $file; // ? check $min_upgrade_version
+            }
         }
         closedir($dh);
-        if( count($versions) > 1) usort($versions,'version_compare');
+        if( count($versions) > 1 ) {
+            //accommodate special sorting of versions including: 'dev' < 'a[lpha]< 'b[eta]' <'rc' < '#' < 'p[l]' pre?
+            $care = preg_grep('/([a-z]+)/i',$versions);
+            if( $care ) {
+                foreach( $care as $k => $fixer ) {
+                   $q = preg_replace('/([^a-z])([ce-oqs-z])/i','$1.0$2',$fixer);
+                   if( $q != $fixer ) {
+                       $versions[$k] = $q;
+                   }
+                }
+                uasort($versions,'version_compare');
+                $versions = array_values(array_replace($versions,$care));
+            } else {
+                usort($versions,'version_compare');
+            }
+        }
 
-        global $CMS_INSTALL_PAGE, $DONT_LOAD_DB, $DONT_LOAD_SMARTY, $CMS_VERSION, $CMS_PHAR_INSTALLER;
+        global $CMS_INSTALL_PAGE, $DONT_LOAD_DB, $DONT_LOAD_SMARTY, $CMS_VERSION;
         $CMS_INSTALL_PAGE = 1;
         $DONT_LOAD_DB = 1;
         $DONT_LOAD_SMARTY = 1;
         $CMS_VERSION = $app->get_dest_version();
         if( $app->in_phar() ) {
-            $CMS_PHAR_INSTALLER = 1; //TODO unused anywhere
+            global $CMS_PHAR_INSTALLER;
+            $CMS_PHAR_INSTALLER = 1; //TODO now unused
         }
 
         // setup and initialize the CMSMS API's
@@ -213,28 +240,51 @@ class wizard_step8 extends wizard_step
             throw new RuntimeException('Could not find include.php file in destination');
         }
 
+        $siteinfo = $wiz->get_data('siteinfo');
+        if( isset($siteinfo['theme_relpath']) ) {
+            $choices['theme_entered'] = $siteinfo['theme_relpath'];
+        }
+
         try {
-            $this->write_config();
+            $this->write_config($choices,$destdir);
             $this->connect_to_cmsms($destdir);
-            // setup database connection
-            $db = $this->db_connect($destconfig);
+
+            $fp = private_place('',null,['dbase'=>1]);
+            if( !is_dir($fp) || !is_file($fp.'/db.ini') ) {
+                $this->write_dbconfig($choices);
+            }
+
+            // open database connection for use here and downstream
+            $db = $this->db_connect($choices);
+            if( !$db ) throw new Exception(lang('error_internal',818));
+
+            $this->conform_langs($wiz,$db);
+//          $this->conform_themes($wiz,$db,$destdir);
 
             require_once __DIR__.'/msg_functions.php';
 
-           // ready to do the upgrading now (in a loop)
-           // only perform upgrades for the versions known by the installer that are greater than what is installed.
+            // NOTE included files might change $dir value but must not change $_upsdir_
+            $_upsdir_ = $dir;
+            // ready to do the upgrading now (in a loop)
+            // only perform upgrades for the versions known by the installer
+            // and that are greater than what is installed.
             $current_version = $version_info['version'];
+//          $config = cms_config::get_instance(); // often used downstream
             foreach( $versions as $ver ) {
-                $fn = "$dir/$ver/upgrade.php";
-                if( version_compare($current_version,$ver) < 0 && is_file($fn) ) {
-                    include_once($fn);
+                if( utils::cms_version_compare($ver,$current_version) > 0 ) {
+                    $fn = "$_upsdir_/$ver/upgrade.php";
+                    if( is_file($fn) ) {
+                        include_once $fn;
+                    }
                 }
             }
 
-// former order $this->write_config();
+// former order $this->write_config($choices,$destdir);
 //needed?   $this->connect_to_cmsms($destdir);
+// TODO if upgrade may change content-pages, or (better) actually has done so,
+// then update all hierarchy positions as for install operation
 
-            $this->message(lang('done'));
+//          $this->verbose(lang('done'));
         }
         catch( Exception $e ) {
             $this->error($e->GetMessage());
@@ -243,61 +293,139 @@ class wizard_step8 extends wizard_step
 
     private function do_freshen()
     {
-/* nothing here
-        try {
-            $this->write_config();
+        $app = get_app();
+        $destdir = $app->get_destdir();
+        if( !$destdir ) throw new Exception(lang('error_internal',828));
+        $wiz = $this->get_wizard();
+        $choices = $wiz->get_data('config');
+        if( !$choices ) throw new Exception(lang('error_internal',829));
+        $this->connect_to_cmsms($destdir);
+        // global flags $CMS_INSTALL_PAGE etc are still set, from prior method-call
+        $siteinfo = $wiz->get_data('siteinfo');
+        $config = cms_config::get_instance();
+        if(//change not supported ATM $config['themes_dir'] != $siteinfo['theme_relpath'] ||
+            $config['timezone'] != $choices['timezone'] ) {
+//          $choices['theme_entered'] = $siteinfo['theme_relpath'];
+            $this->write_config($choices,$destdir);
+//          unset($choices['theme_entered']);
+            // cleanup any message-creation scripts
+            for( $i = 0,$n = count(ob_list_handlers()); $i < $n; $i++ ) {
+                ob_end_clean();
+            }
         }
-        catch( Exception $e ) {
-            $this->error($e->GetMessage());
+        else {
+            $destfn = "$destdir/lib/config.php";
+            if( !is_file($destfn) ) {
+                $fn = "$destdir/config.php";
+                if( is_file($fn) ) {
+                   if( !rename($fn,$destfn) ) throw new Exception(lang('error_internal', 'config-file move failed'));
+                }
+                else {
+                    //throw
+                }
+            }
         }
-*/
+        $db = $this->db_connect($choices);
+        $this->conform_langs($wiz,$db);
+//      $this->conform_themes($wiz,$db,$destdir);
     }
 
-    private function write_config()
+    private function conform_langs($wiz,$db)
     {
-        $destconfig = $this->get_wizard()->get_data('config');
-        if( !$destconfig ) throw new Exception(lang('error_internal',700));
-
-        $destdir = get_app()->get_destdir();
-        if( !$destdir ) throw new Exception(lang('error_internal',703));
-
-        // create new config file.
-        // this step has to go here.... as config file has to exist in step9
+        $siteinfo = $wiz->get_data('siteinfo');
+        if( !$siteinfo ) throw new Exception(lang('error_internal',831));
+        $havelangs = [-3 => '',-2 => 'en_US'] + $siteinfo['extlanguages'];
+        $filler = str_repeat('?,',count($havelangs) - 1);
+        $sql = 'UPDATE '.CMS_DB_PREFIX."siteprefs SET sitepref_value='' WHERE sitepref_name='frontendlang' AND sitepref_value NOT IN({$filler}?)";
+        $db->execute($sql,$havelangs);
+        $sql = 'UPDATE '.CMS_DB_PREFIX."userprefs SET value='' WHERE preference='default_cms_language' AND value NOT IN({$filler}?)";
+        $db->execute($sql,$havelangs);
+    }
+/* for this to work properly, we need rigorous distinction between designs and non-design-themes
+    private function conform_themes($wiz,$db,$destdir)
+    {
+        $choices = $wiz->get_data('config');
+        if( !$choices ) throw new Exception(lang('error_internal',834));
+        $demos = (!empty($choices['demothemes'])) ? $choices['demothemes'] : [];
+        if( $demos ) {
+            $siteinfo = $wiz->get_data('siteinfo');
+            if( !$siteinfo ) throw new Exception(lang('error_internal',836));
+            $relpath = ($siteinfo['theme_relpath']) ?: 'assets/themes';
+            $bp = $destdir . DIRECTORY_SEPARATOR . strtr($relpath, '\\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR);
+            $sql = 'SELECT `name` FROM '.CMS_DB_PREFIX.'layout_designs';
+            $designs = $db->GetCol($sql);
+            if( $designs ) {
+                $unwanted = array_udiff($demos,$designs,'strcasecmp'); //TODO preserve data for themes not recorded as a design
+                foreach( $unwanted as $one ) {
+                    $dir = $bp . DIRECTORY_SEPARATOR . $one;
+//                  utils2::rrmdir($dir);
+                }
+            }
+            else {
+                foreach( $demos as $one ) {
+                    $dir = $bp . DIRECTORY_SEPARATOR . $one;
+//                  utils2::rrmdir($dir); //TODO ibid
+                }
+            }
+        }
+    }
+*/
+    private function write_config($choices,$destdir)
+    {
+        // [re]create config file
         // so that CMSMS can connect to the database.
-        $fn = $destdir.'/config.php';
+        $fn = "$destdir/lib/config.php";
+        if( !is_file($fn) ) {
+            $fn = "$destdir/config.php";
+        }
         if( is_file($fn) ) {
             $this->verbose(lang('install_backupconfig'));
-            $destfn = $destdir.'/bak.config.php';
+            $destfn = $destdir.'/lib/bak.config.php';
             if( !copy($fn,$destfn) ) throw new Exception(lang('error_backupconfig'));
+            if( $fn == "$destdir/config.php" ) {
+                unlink($fn); // its replacment will be elsewhere
+            }
         }
 
         $newconfig = [];
-        $newconfig['dbms'] = trim($destconfig['dbtype']);
-        $newconfig['db_hostname'] = trim($destconfig['dbhost']);
-        $newconfig['db_username'] = trim($destconfig['dbuser']);
-        $newconfig['db_password'] = trim($destconfig['dbpass']);
-        $newconfig['db_name'] = trim($destconfig['dbname']);
-        $newconfig['db_prefix'] = trim($destconfig['dbprefix']);
-        $newconfig['timezone'] = trim($destconfig['timezone']);
-        if( $destconfig['query_var'] ) $newconfig['query_var'] = trim($destconfig['query_var']);
-        if( isset($destconfig['dbport']) ) {
-            $num = (int)$destconfig['dbport'];
-            if( $num > 0 ) { $newconfig['db_port'] = $num; }
-        }
+        $newconfig['dbms'] = trim($choices['dbtype']);
+//        $newconfig['db_hostname'] = trim($choices['dbhost']); now stored separately, in .ini file
+//        $newconfig['db_username'] = trim($choices['dbuser']);
+//        $newconfig['db_password'] = trim($choices['dbpass']);
+//        $newconfig['db_name'] = trim($choices['dbname']);
+        $newconfig['db_prefix'] = trim($choices['dbprefix']);
+        $newconfig['timezone'] = trim($choices['timezone']);
+        if( $choices['query_var'] ) $newconfig['query_var'] = trim($choices['query_var']);
+//        if( !empty($choices['dbport']) ) {
+//            $newconfig['db_port'] = (int)$choices['dbport']; }
+//        }
 
         $this->message(lang('install_createconfig'));
         global $CMS_INSTALL_PAGE;
         $CMS_INSTALL_PAGE = 1;
         // get the system config instance, without fully connecting to cmsms
         $fp = $destdir.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR;
-        require $fp.'misc.functions.php';
-        require $fp.'classes'.DIRECTORY_SEPARATOR.'class.CmsApp.php';
-        require $fp.'classes'.DIRECTORY_SEPARATOR.'class.cms_config.php';
-        require $fp.'autoloader.php';
+        // during an upgrade or freshen, these inclusions might already have been loaded, then cached by PHP
+        require_once $fp.'misc.functions.php';
+        require_once $fp.'classes'.DIRECTORY_SEPARATOR.'class.CmsApp.php';
+        require_once $fp.'classes'.DIRECTORY_SEPARATOR.'class.cms_config.php';
+        require_once $fp.'autoloader.php';
         $config = cms_config::get_instance();
+        $patn = '~'.$config['assets_dir'].'[\/]themes~'; //default 'themes_dir' property
+        if( empty($choices['theme_entered']) ) {
+            if( !preg_match($patn, $config['themes_dir']) ) { //TODO check different item in config file, not generated
+                $newconfig['themes_dir'] = 'uploads'; // back-compatibility
+            }
+        }
+        elseif( isset($choices['theme_entered']) && !preg_match($patn, $choices['theme_entered']) ) {
+            $newconfig['themes_dir'] = $choices['theme_entered'];
+        }
+//        else {
+//            //TODO clear $config['themes_dir'] unset stupid?
+//        }
         $config->merge($newconfig);
         if( !defined('CONFIG_FILE_LOCATION') ) {
-            define('CONFIG_FILE_LOCATION', $destdir.'/config.php');
+            define('CONFIG_FILE_LOCATION',$fp.'config.php');
         }
         $config->save();
         // double-check, in case there's PHP silliness
@@ -306,36 +434,73 @@ class wizard_step8 extends wizard_step
         }
     }
 
+    private function write_dbconfig($choices)
+    {
+        $fp = private_place('',null,['dbase'=>1]);
+        if( !is_dir($fp) ) {
+            mkdir($fp,0777,true); // or less e.g. 0700
+            touch($fp.'/index.html');
+        }
+        $fp .= '/db.ini';
+        if( is_file($fp) && !is_writable($fp) ) {
+            throw new Exception('Cannot record database config file');
+        }
+        $output = <<<EOS
+;CMS Made Simple database-connection parameters
+;PROTECT THIS FILE AGAINST INVALID INSPECTION OR CHANGE !
+;Supporting information is at https://docs.cmsmadesimple.org/configuration/config-file/config-reference
+
+EOS;
+        $keynames = ['hostname','basename','username','password'];
+        foreach( ['host','name','user','pass'] as $i => $k ) {
+            $key = $keynames[$i];
+            $val = $choices["db{$k}"];
+            $output .= "$key = '$val'\n";
+        }
+        if( !empty($choices['dbport']) ) {
+            $val = (int)$choices['dbport'];
+            $output .= "port = $val\n";
+        }
+        file_put_contents($fp,$output);
+        usleep(40000);
+        chmod($fp,0444); // or less e.g. 0400
+        touch($fp);
+    }
+
     protected function display()
     {
-        parent::display();
         $wiz = $this->get_wizard();
-        $smarty = smarty();
-        $smarty->assign('next_url',$wiz->next_url())
-         ->display('wizard_step8.tpl');
+        $action = $wiz->get_data('action');
+        if( $action != 'freshen' ) { // for freshens, we only cleanup config file and nls files here
+            parent::display();
+            $smarty = smarty();
+            $smarty->assign('next_url',$wiz->next_url())
+             ->display('wizard_step8.tpl');
+        }
 
         // here, we do the action-specific stuff.
         try {
-            $action = $wiz->get_data('action');
             switch( $action ) {
                 case 'upgrade':
-                    $tmp = $wiz->get_data('version_info'); //valid only for upgrades
+                    $tmp = $wiz->get_data('version_info'); // populated only for refreshes & upgrades
                     if( is_array($tmp) && count($tmp) ) {
                         $this->do_upgrade($tmp);
                         break;
                     }
                     else {
-                        throw new Exception(lang('error_internal',908));
+                        throw new Exception(lang('error_internal',840));
                     }
                     //no break here
                 case 'freshen':
                     $this->do_freshen();
+                    $url = $wiz->next_url();
+                    utils2::redirect($url);
                     break;
                 case 'install':
                     $this->do_install();
                     break;
                 default:
-                    throw new Exception(lang('error_internal',910));
+                    throw new Exception(lang('error_internal',841));
             }
         }
         catch( Exception $e ) {

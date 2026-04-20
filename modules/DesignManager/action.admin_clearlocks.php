@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # Module: DesignManager - A CMSMS addon module to provide template management.
-# (c) 2014 by Robert Campbell <calguy1000@cmsmadesimple.org>
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,17 +15,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
+# Or read it online: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
+
 if( !isset($gCms) ) exit;
 if( !$this->VisibleToAdminUser() ) exit;
 
-$uid = get_userid(FALSE);
-$type = (isset($params['type']) ) ? trim($params['type']) : 'template';
-$is_admin = UserOperations::get_instance($uid,1);
-
-$type = strtolower($type);
+$type = ( isset($params['type']) ) ? trim($params['type']) : '';
+if( $type ) {
+    $type = strtolower($type);
+}
+else {
+    $type = 'template';
+}
 switch( $type ) {
 case 'tpl':
 case 'templates':
@@ -43,17 +45,20 @@ default:
     $this->Redirect($id,'defaultadmin');
 }
 
-if( $is_admin ) {
-    // clear all locks of type content
-    $db = cmsms()->GetDb();
-    $sql = 'DELETE FROM '.CMS_DB_PREFIX.CmsLock::LOCK_TABLE.' WHERE type = ?';
-    $db->Execute($sql,array($type));
-    audit('',$this->GetName(),'Cleared all content locks');
-} else {
-    // clear only my locks
+$uid = get_userid(FALSE);
+$selfheld = !empty($params['self']);
+if( $selfheld ) {
+    // clear self-held locks of the specified type
     CmsLockOperations::delete_for_user($type);
-    audit('',$this->GetName(),'Cleared his own content locks');
+    audit($uid,$this->GetName(),"Cleared her/his own $type locks");
+    $this->SetMessage($this->Lang('msg_lockscleared'));
+}
+elseif( UserOperations::get_instance($uid,1) ) {
+    // clear all locks of the specified type
+    $sql = 'DELETE FROM '.CMS_DB_PREFIX.CmsLock::LOCK_TABLE.' WHERE type = ?';
+    $db->Execute($sql,[$type]);
+    audit('',$this->GetName(),"Cleared all $type locks");
+    $this->SetMessage($this->Lang('msg_lockscleared'));
 }
 
-$this->SetMessage($this->Lang('msg_lockscleared'));
 $this->RedirectToAdminTab();

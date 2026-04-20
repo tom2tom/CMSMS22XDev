@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: Content (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A module for managing content in CMSMS.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module CMSContentManager action
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -45,9 +40,9 @@ if( $is_admin ) {
     $db->Execute($sql,array('content'));
     audit('',$this->GetName(),'Cleared all content locks');
 } else {
-    // clear only my locks
+    // clear self-owned locks only
     CmsLockOperations::delete_for_user($type);
-    audit('',$this->GetName(),'Cleared his own content locks');
+    audit($uid,$this->GetName(),"User cleared her/his own content locks");
 }
 
 $this->SetMessage($this->Lang('msg_lockscleared'));

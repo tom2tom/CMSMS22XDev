@@ -1,13 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: cms_content_tree (c) 2010 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A caching tree for CMSMS content objects.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: cms_content_cache
+# (c) 2010 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A cache for CMSMS content objects.
 #
 #-------------------------------------------------------------------------
 #
@@ -60,22 +56,23 @@ final class cms_content_cache
 	/**
 	 * @ignore
 	 */
-	private static $_alias_map;
+	private static $_alias_map = null; //array or unset/null
 
 	/**
 	 * @ignore
 	 */
-	private static $_id_map;
+	private static $_id_map = null; //array or unset/null
 
 	/**
 	 * @ignore
 	 */
-	private static $_content_cache;
+	private static $_content_cache = null; //array or unset/null
+
 
 	/**
 	 * @ignore
 	 */
-	private $_preload_cache;
+	private $_preload_cache = null; //array or null
 
 	/**
 	 * @ignore
@@ -89,31 +86,31 @@ final class cms_content_cache
 	private function __construct()
 	{
 		if( !CmsApp::get_instance()->is_frontend_request() ) return;
-        debug_buffer('cms_content_cache: begin load needed content objects');
-		$content_ids = null;
+		debug_buffer('cms_content_cache: begin load needed content objects');
+		$content_ids = [];
 		$deep = FALSE;
 		$this->_key = 'pc'.md5($_SERVER['REQUEST_URI'].serialize($_GET));
 		if( ($data = cms_cache_handler::get_instance()->get($this->_key,__CLASS__)) ) {
 			list($lastmtime,$deep,$content_ids) = unserialize($data);
 			if( $lastmtime < ContentOperations::get_instance()->GetLastContentModification() ) {
-				$deep = null;
-				$content_ids = null;
+				$deep = FALSE;
+				$content_ids = [];
 			}
 		}
-		if( is_array($content_ids) && count($content_ids) ) {
+		if( $content_ids ) {
 			$this->_preload_cache = $content_ids;
 			$contentops = ContentOperations::get_instance();
-			$tmp = $contentops->LoadChildren(null,$deep,false,$content_ids);
+			$tmp = $contentops->LoadChildren(0,$deep,false,$content_ids);
 		}
-        debug_buffer('cms_content_cache: end loading needed content objects');
+		debug_buffer('cms_content_cache: end loading needed content objects');
 	}
 
 	/**
 	 * @ignore
 	 */
-	public static function &get_instance()
+	public static function get_instance()
 	{
-		if( !is_object(self::$_instance) ) self::$_instance = new cms_content_cache();
+		if( !is_object(self::$_instance) ) self::$_instance = new self();
 		return self::$_instance;
 	}
 
@@ -137,7 +134,7 @@ final class cms_content_cache
 			}
 
 			if( $dirty ) {
-                $ndeep = array();
+				$ndeep = array();
 				$deep = FALSE;
 				foreach( $list as $one ) {
 					$obj = self::get_content($one);
@@ -145,11 +142,11 @@ final class cms_content_cache
 					$tmp = $obj->Properties();
 					if( is_array($tmp) && count($tmp) ) {
 						$deep = TRUE;
-                        $ndeep[] = $one;
+						$ndeep[] = $one;
 						break;
 					}
 				}
-                $deep = ($deep && count($ndeep) > (count($list) / 4)) ? TRUE : FALSE;
+				$deep = ($deep && count($ndeep) > (count($list) / 4)) ? TRUE : FALSE;
 				$tmp = array(time(),$deep,$list);
 				cms_cache_handler::get_instance()->set($this->_key,serialize($tmp),__CLASS__);
 			}
@@ -159,9 +156,9 @@ final class cms_content_cache
 	/**
 	 * @ignore
 	 */
-	private static function &get_content_obj($hash)
+	private static function get_content_obj($hash)
 	{
-		$res = null;
+		$res = null; // no object
 		if( self::$_content_cache ) {
 			if( isset(self::$_content_cache[$hash]) ) $res = self::$_content_cache[$hash];
 		}
@@ -178,13 +175,12 @@ final class cms_content_cache
    * @param mixed Unique identifier
    * @return ContentBase The contentBase object, or null.
    */
-  public static function &get_content($identifier)
+  public static function get_content($identifier)
   {
-	  $res = null;
 	  $hash = self::content_exists($identifier);
-	  if( $hash === FALSE ) {
+	  if( !$hash ) {
 		  // content doesn't exist...
-          return $res;
+		  return null; // no object
 	  }
 
 	  return self::get_content_obj($hash);
@@ -198,23 +194,23 @@ final class cms_content_cache
    * If the identifier is a string, an alias search is performed.
    *
    * @param mixed Unique identifier
-   * @return bool
+   * @return string maybe empty
    */
   public static function content_exists($identifier)
   {
-	  if( !self::$_content_cache ) return FALSE;
+	  if( !self::$_content_cache ) return '';
 
 	  if( is_numeric($identifier) ) {
-		  if( !self::$_id_map ) return FALSE;
-		  if( !isset(self::$_id_map[$identifier]) ) return FALSE;
-		  return self::$_id_map[$identifier];
+		  if( self::$_id_map && isset(self::$_id_map[$identifier]) ) {
+			return self::$_id_map[$identifier]; //hash value
+		  }
 	  }
 	  else if( is_string($identifier) ) {
-		  if( !self::$_alias_map ) return FALSE;
-		  if( !isset(self::$_alias_map[$identifier]) ) return FALSE;
-		  return self::$_alias_map[$identifier];
+		  if( self::$_alias_map && isset(self::$_alias_map[$identifier]) ) {
+			return self::$_alias_map[$identifier]; //hash value
+		  }
 	  }
-	  return FALSE;
+	  return '';
   }
 
 
@@ -229,7 +225,7 @@ final class cms_content_cache
    * @param ContentBase The content object.
    * @return bool
    */
-  private static function _add_content($id,$alias,ContentBase& $obj)
+  private static function _add_content($id,$alias,ContentBase $obj)
   {
     if( !$id) return FALSE;
     if( !self::$_alias_map ) self::$_alias_map = array();
@@ -251,7 +247,7 @@ final class cms_content_cache
    * @param ContentBase The content object.
    * @return bool
    */
-  public static function add_content($id,$alias,ContentBase& $obj)
+  public static function add_content($id,$alias,ContentBase $obj)
   {
 	  self::_add_content($id,$alias,$obj);
   }
@@ -315,8 +311,7 @@ final class cms_content_cache
    */
   public static function have_preloaded()
   {
-	  if( is_array(self::get_instance()->_preload_cache) ) return TRUE;
-	  return FALSE;
+	  return !empty(self::get_instance()->_preload_cache);
   }
 
   /**

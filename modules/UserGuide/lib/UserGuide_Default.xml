@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<userguide>
+  <dtdversion>1.5</dtdversion>
+  <module>UserGuide</module>
+  <cmsversion>2.2.20#2</cmsversion>
+  <exportdate>2024-04-01 00:00:00</exportdate>
+  <prefs>{"filesFolder":"UserGuide"}</prefs>
+  <guides>
+    <item>{"name":"Introduction","revision":"","position":1,"active":1,"admin":1,"restricted":"","search":1,"smarty":0,"wysiwyg":0,"author":"","template_id":0,"sheets":"","create_date":"2024-04-01 00:00:00","modified_date":null,"content":"&lt;iframe src=\"https://player.vimeo.com/video/929800510?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479\" width=\"100%\" frameborder=\"0\" allow=\"autoplay;fullscreen\" allowfullscreen&gt;&lt;/iframe&gt;"}</item>
+    <item>{"name":"The File Manager","revision":"","position":2,"active":1,"admin":1,"restricted":"","search":1,"smarty":0,"wysiwyg":0,"author":"","template_id":0,"sheets":"","create_date":"2024-04-01 00:00:00","modified_date":null,"content":"&lt;iframe src=\"https://player.vimeo.com/video/929800455?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479\" width=\"100%\" frameborder=\"0\" allow=\"autoplay;fullscreen\" allowfullscreen&gt;&lt;/iframe&gt;"}</item>
+    <item>{"name":"The Content Manager Pt 1","revision":"","position":3,"active":1,"admin":1,"restricted":"","search":1,"smarty":0,"wysiwyg":0,"author":"","template_id":0,"sheets":"","create_date":"2024-04-01 00:00:00","modified_date":null,"content":"&lt;iframe src=\"https://player.vimeo.com/video/929800206?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479\" width=\"100%\" frameborder=\"0\" allow=\"autoplay;fullscreen\" allowfullscreen&gt;&lt;/iframe&gt;"}</item>
+    <item>{"name":"The Content Manager Pt 2","revision":"","position":4,"active":1,"admin":1,"restricted":"","search":1,"smarty":0,"wysiwyg":0,"author":"","template_id":0,"sheets":"","create_date":"2024-04-01 00:00:00","modified_date":null,"content":"&lt;iframe src=\"https://player.vimeo.com/video/929800126?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479 width=\"100%\" frameborder=\"0\" allow=\"autoplay; fullscreen\" allowfullscreen&gt;&lt;/iframe&gt;"}</item>
+    <item>{"name":"The Content Manager Pt 3","revision":"","position":5,"active":1,"admin":1,"restricted":"","search":1,"smarty":0,"wysiwyg":0,"author":"","template_id":0,"sheets":"","create_date":"2024-04-01 00:00:00","modified_date":null,"content":"&lt;iframe src=\"https://player.vimeo.com/video/929800339?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479\" width=\"100%\" frameborder=\"0\" allow=\"autoplay;fullscreen\" allowfullscreen&gt;&lt;/iframe&gt;"}</item>
+    <item>{"name":"News","revision":"","position":6,"active":1,"admin":1,"restricted":"","search":1,"smarty":0,"wysiwyg":0,"author":"","template_id":0,"sheets":"","create_date":"2024-04-01 00:00:00","modified_date":null,"content":"&lt;iframe src=\"https://player.vimeo.com/video/929818091?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479\" width=\"100%\" frameborder=\"0\" allow=\"autoplay;fullscreen\" allowfullscreen&gt;&lt;/iframe&gt;"}</item>
+    <item>{"name":"Getting Further Help","revision":"","position":7,"active":1,"admin":1,"restricted":"","search":1,"smarty":0,"wysiwyg":0,"author":"","template_id":0,"sheets":"","create_date":"2024-04-01 00:00:00","modified_date":null,"content":"&lt;iframe src=\"https://player.vimeo.com/video/929827027?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479\" width=\"100%\" frameborder=\"0\" allow=\"autoplay;fullscreen\" allowfullscreen&gt;&lt;/iframe&gt;"}</item>
+  </guides>
+</userguide>

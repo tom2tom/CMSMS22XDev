@@ -8,7 +8,6 @@ use Exception;
 use function __appbase\get_app;
 use function __appbase\lang;
 use function __appbase\smarty;
-use function __appbase\startswith;
 use function __appbase\translator;
 
 class wizard_step1 extends wizard_step
@@ -65,8 +64,8 @@ class wizard_step1 extends wizard_step
                 if( file_exists("$dir/function.cms_selflink.php") ) return FALSE;
                 break;
 
-            case 'install':
-                if( is_dir("$dir/schemas") ) return FALSE;
+            case 'installer':
+                if( is_dir("$dir/app") ) return FALSE;
                 break;
 
             case 'tmp':
@@ -101,7 +100,7 @@ class wizard_step1 extends wizard_step
         };
 
         $_get_annotation = function($dir) {
-            if( !is_dir($dir) || !is_readable($dir) ) return;
+            if( !is_dir($dir) || !is_readable($dir) ) return '';
             $bn = basename($dir);
             if( $bn != 'lib' && is_file("$dir/version.php" ) ) {
                 @include("$dir/version.php"); // defines in this file can throw notices
@@ -114,16 +113,27 @@ class wizard_step1 extends wizard_step
             if( is_dir("$dir/app") && is_file("$dir/app/class.cms_install.php") ) {
                 return "CMSMS installation assistant";
             }
+            return '';
         };
 
-        $_find_dirs = function($start,$depth = 0) use( &$_find_dirs, &$_get_annotation, $_is_valid_dir ) {
+        if( function_exists('php_uname') && ($str = php_uname('s')) ) { //might return null (undocumented)
+            $winos = stripos($str,'windo') !== false;// running on some flavour of Windows
+            $macos = !$winos && stripos($str,'darwin') !== false;// running on some flavour of MacOS
+        }
+        else {
+            $winos = (PATH_SEPARATOR == ';');
+            $macos = !$winos && (PHP_EOL == "\r" || 0); // TODO robust fallack mechanism for OS X +
+        }
+
+        $_find_dirs = function($start,$depth = 0) use( &$_find_dirs, &$_get_annotation, $_is_valid_dir, $winos, $macos ) {
             if( !is_readable( $start ) ) return [];
             $dh = opendir($start);
-            if( !$dh ) return;
-            $out = array();
+            if( !$dh ) return [];
+            $out = [];
             while( ($file = readdir($dh)) !== FALSE ) {
                 if( $file == '.' || $file == '..' ) continue;
-                if( startswith($file,'.') || startswith($file,'_') ) continue;
+                // TODO hidden-attribute check on $winos c.f. filemanager_utils::is_hidden_file()
+                if( ($file[0] == '.' && !$winos) || ($file[0] == '_' && $macos) || ($file[0] == '~' && $winos) ) continue;
                 $dn = $start.DIRECTORY_SEPARATOR.$file;  // cuz windows blows, and windoze guys are whiners :)
                 if( !@is_readable($dn) ) continue;
                 if( !@is_dir($dn) ) continue;

@@ -1,0 +1,11 @@
+--- themes/silver/theme.js	2023-11-15 00:40:12.000000000 +1100
++++ themes/silver/theme.min.js	2023-12-11 14:37:00.289958302 +1100
+@@ -27241,6 +27241,6 @@
+       return {
+         tooltip: 'Formats',
+-        text: Optional.some(fallbackFormat),
+-        icon: Optional.none(),
++        text: Optional.none(),
++        icon: Optional.some('format'),
+         isSelectedFor: isSelectedFor,
+         getCurrentValue: Optional.none,

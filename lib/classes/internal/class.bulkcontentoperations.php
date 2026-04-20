@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2010 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple class bulkcontentoperations
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -17,10 +16,6 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 #$Id$
-
-/**
- * @package CMS
- */
 
 /**
  * Class for operations dealing with bulk content methods.
@@ -45,7 +40,7 @@ final class bulkcontentoperations
 	 * @param string $module Name of module, defaults to "core"
 	 * @return void
 	 */
-	static public function register_function($label,$name,$module='core')
+	public static function register_function($label,$name,$module='core')
 	{
       if( empty($name) || empty($label) ) return FALSE;
 
@@ -60,7 +55,7 @@ final class bulkcontentoperations
 	 *                                  with a horizontal line.
 	 * @return array The list of operations
 	 */
-	static public function get_operation_list($separate_modules = true)
+	public static function get_operation_list($separate_modules = true)
     {
 		$tmpc = array();
 		$tmpm = array();

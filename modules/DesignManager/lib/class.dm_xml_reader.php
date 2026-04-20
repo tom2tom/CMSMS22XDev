@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: DesignManager - A CMSMS addon module to provide template management.
-# (c) 2012 by Robert Campbell <calguy1000@cmsmadesimple.org>
+# Module DesignManager class dm_xml_reader
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,8 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
+# Or read it online: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
 
 class dm_xml_reader extends XMLReader
@@ -30,7 +29,7 @@ class dm_xml_reader extends XMLReader
     if( strpos($errstr,'XMLReader') !== FALSE ) {
       audit('','DesignManager/dm_xml_reader',$errstr);
       $mod = cms_utils::get_module('DesignManager');
-      throw new CmsXMLErrorException($mod->Lang('error_xmlstructure').':<br/>'.$errstr);
+      throw new CmsXMLErrorException($mod->Lang('error_xmlstructure').':<br>'.$errstr);
       return TRUE;
     }
   }
@@ -39,7 +38,7 @@ class dm_xml_reader extends XMLReader
   {
     if( !$this->_setup ) {
       $this->_old_internal_errors = libxml_use_internal_errors(FALSE);
-      $this->_old_err_handler = set_error_handler(array($this,'__errhandler'));
+      $this->_old_err_handler = set_error_handler([$this,'__errhandler']);
       $this->_setup = TRUE;
     }
   }
@@ -56,9 +55,4 @@ class dm_xml_reader extends XMLReader
     $this->__setup();
     return parent::read();
   }
-} // end of class
-
-#
-# EOF
-#
-?>
+} // class

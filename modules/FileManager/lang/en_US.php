@@ -27,7 +27,7 @@ $lang['confirmselected'] = 'Are you sure?';
 $lang['confirmsingledelete'] = 'Are you sure?';
 $lang['confirmsingledirdelete'] = 'Are you sure this directory should be deleted?';
 $lang['confirm_delete'] = 'Are you sure you want to remove this file?';
-$lang['confirm_unpack'] = 'Are you sure you want to unpack this file?';
+//$lang['confirm_unpack'] = 'Are you sure you want to unpack this file?';
 $lang['copiedto'] = 'copied to';
 $lang['copy'] = 'Copy';
 $lang['copyfailed'] = 'Copy operation failed on %s';
@@ -42,14 +42,14 @@ $lang['createnewdir'] = 'Create new directory';
 $lang['createthumbnail'] = 'Create <em>(or recreate)</em> an image thumbnail';
 $lang['create_thumbnails'] = 'Create thumbnails on upload';
 $lang['crop'] = 'Crop';
-$lang['currentpath'] = 'Current path:';
+$lang['currentpath'] = 'Current path';
 
 // D
 $lang['delete'] = 'Delete';
 $lang['deleteselected'] = 'Delete the selected files/directories';
 $lang['deleteselectedcancelled'] = 'Deletion of selected files canceled';
 $lang['deletesuccess'] = 'Items successfully deleted';
-$lang['desc_filemanager_settings'] = 'Edit File Manager Settings';
+$lang['desc_filemanager_settings'] = 'Adjust File Manager settings';
 $lang['dirchmodfailmulti'] = 'Changing permissions on the directory failed, some of it\'s content may have gotten new permissions, though.';
 $lang['dirchmodfailure'] = 'Changing permissions of the directory failed';
 $lang['dirchmodsuccess'] = 'The directory successfully got new permissions';
@@ -61,9 +61,11 @@ $lang['dirtreedeletefail'] = 'An error occurred when deleting this directory. So
 $lang['dirtreedeletesuccess'] = 'The directory including content was successfully deleted.';
 
 // E
-$lang['enableadvanced'] = 'Enable advanced mode?';
+$lang['emptydirectory'] = 'This directory is empty'; //new
+$lang['enableadvanced'] = 'Enable advanced mode';
 $lang['error_dirnotempty'] = 'Directory %s is not empty';
 $lang['error_notwritable'] = 'No write permission to %s';
+$lang['error_open'] = 'Could not open the file'; // new
 $lang['error_thumbnotwritable'] = '%s has a thumbnail that does not have write permission';
 
 $lang['eventdesc_OnFileDeleted'] = 'Sent after a file is deleted';
@@ -91,14 +93,13 @@ $lang['filedeletefail'] = ' was not deleted due to an error';
 $lang['filedeletesuccess'] = 'was successfully deleted';
 $lang['fileexistsdest'] = '%s already exists at the destination';
 $lang['fileimagetype'] = 'Cannot perform this action on this type of image';
-$lang['fileinfo'] = 'File info';
+$lang['fileinfo'] = 'File Info';
 $lang['filemovesame'] = 'Cannot move a directory';
-$lang['filename'] = 'File name';
+$lang['filename'] = 'Name'; //OR 'Item Name' (incl. dirs)
 $lang['fileno'] = 'File no.';
 $lang['filenotfound'] = 'File not found';
 $lang['filenotimage'] = 'File specified is not an image (or there is some error with the file)';
 $lang['fileoutsideuploads'] = 'You are not allowed to modify files outside the uploads directory! (That requires the Advanced File Management permission)';
-$lang['fileowner'] = 'Owner';
 $lang['fileperms'] = 'Permissions';
 $lang['files'] = 'files';
 $lang['filescopiedfailed'] = '%s file(s) failed being copied';
@@ -108,6 +109,7 @@ $lang['filesdeletedsuccessfully'] = '%s file(s) was successfully deleted';
 $lang['filesize'] = 'Size';
 $lang['filesmovedfailed'] = '%s file(s) failed being moved';
 $lang['filesmovedsuccessfully'] = '%s file(s) was successfully moved';
+$lang['filetype'] = 'Type';
 $lang['fileview'] = 'File view';
 $lang['folder'] = 'Folder';
 $lang['friendlyname'] = 'File Manager';
@@ -116,7 +118,7 @@ $lang['friendlyname'] = 'File Manager';
 $lang['group'] = 'Group';
 
 // H
-$lang['help_advancedmode'] ='<p>Advanced mode allows users to browse and manage all of the files in the CMSMS installation (including system files).</p><br /><p><strong>Use Caution</strong> as it is possible to corrupt a working installation when using advanced mode.</p>';
+$lang['help_advancedmode'] ='<p>Advanced mode allows users to browse and manage all of the files in the CMSMS installation (including system files).</p><br><p><strong>Use Caution</strong> as it is possible to corrupt a working installation when using advanced mode.</p>';
 $lang['help_create_thumbnails'] = 'If enabled, FileManager will automatically create a new thumbnail for each newly uploaded image';
 $lang['help_iconsize'] = 'This option allows specifying the size of the icons displayed in the file list.';
 $lang['help_permissionstyle'] = '<p>This option allows changing the way that permissions are displayed in the file list.  Options include somewhat human readable <em>(rwx)</em> style, or octal <em>(755)</em> format.</p>';
@@ -124,11 +126,11 @@ $lang['help_showhiddenfiles'] = '<p>When enabled files and directories whose nam
 $lang['help_showthumbnails'] = 'If enabled, the file list will display a thumbnail <em>(if one exists)</em> for all images.  If disabled, the system will attempt to display an icon representing the file type.';
 $lang['help']=<<<EOF
 <h3>What does this do?</h3>
-<p>This module provides your CMS Made Simple website with file management functions.</p>
+<p>This module provides file management functions for this CMS Made Simple website.</p>
 EOF;
 $lang['help_postrotate'] = <<<EOT
 <p>Options:</p>
-<br />
+<br>
 <ul>
   <li><strong>None</strong> - No postrotate action will be taken.  The rotated image could be larger than the original image.</li>
   <li><strong>Crop</strong> - The rotated image will be cropped to the size of the original source image.  This may result in some of the image being clipped.</li>
@@ -157,15 +159,18 @@ $lang['invalidnewdir'] = 'Name of new directory cannot contain chars like /, \\ 
 $lang['itemstocopy'] = 'Copy these Items';
 $lang['itemstomove'] = 'Move these Items';
 
+//J
+$lang['jobcleardirs_description'] = 'Clears old user-preferences which record current directory';
+
 // K
 $lang['kb'] = 'kb';
 
 // L
-$lang['largeicons'] = 'Large icons';
+$lang['largeicons'] = 'Large';
 
 // M
-$lang['mb'] = 'mb';
-$lang['mimetype'] = 'Mime Type';
+$lang['mb'] = 'Mb';
+$lang['mediumicons'] = 'Medium';
 $lang['moddescription'] = 'Handling of files and directories in the upload-file section of CMSMS';
 $lang['morethanonefiledirselected'] = 'Only one file or directory should be marked for this action.';
 $lang['move'] = 'Move';
@@ -180,9 +185,9 @@ $lang['move_destdir'] = 'Destination Directory';
 $lang['namealreadyexists'] = 'Name already exists';
 $lang['newdir'] = 'New directory';
 $lang['newdirfail'] = 'An error occurred while trying to create the directory';
-$lang['newdirname'] = 'Create new directory:';
+$lang['newdirname'] = 'Create new directory';
 $lang['newdirsuccess'] = 'The directory was created successfully';
-$lang['newname'] = 'New name:';
+$lang['newname'] = 'New name';
 $lang['newpermissions'] = 'New permissions';
 $lang['newunsupportedarchive'] = '%s is an unsupported archive format';
 $lang['newuploadfailed'] = '%s file(s) failed to upload (or possibly unpack) successfully';
@@ -196,7 +201,6 @@ $lang['notwritable'] = 'Not writable';
 // O
 $lang['ok'] = 'OK';
 $lang['others'] = 'Others';
-$lang['owner'] = 'Owner';
 
 // P
 $lang['packfileopenfail'] = 'Could not open the packed file for unpacking (non-supported format?)';
@@ -219,7 +223,7 @@ $lang['pie_crop_h'] = 'crop height';
 $lang['pie_warn_action'] = 'Are you sure? There is no CTRL+Z down here..';
 $lang['pie_warn_reset'] = 'Are you sure? It will reset your current modifications';
 $lang['postinstall'] = 'FileManager module was installed';
-$lang['postrotate'] = 'Action for after image rotation';
+$lang['postrotate'] = 'Operation after image rotation';
 $lang['predefined'] = 'Predefined Angles';
 $lang['prompt_copy'] = 'Copy one or more Items';
 $lang['prompt_dropfiles'] = 'Drop files here to upload';
@@ -247,6 +251,7 @@ $lang['rotate_neg135'] = 'Negative 135 degrees';
 $lang['rotate_neg90'] = 'Negative 90 degrees';
 $lang['rotate_neg45'] = 'Negative 45 degrees';
 $lang['rotate_neg30'] = 'Negative 30 degrees';
+$lang['rotate_pos0'] = 'Original angle';
 $lang['rotate_pos30'] = 'Positive 30 degrees';
 $lang['rotate_pos45'] = 'Positive 45 degrees';
 $lang['rotate_pos90'] = 'Positive 90 degrees';
@@ -256,10 +261,9 @@ $lang['rwxstyle'] = 'rwx style';
 
 // S
 $lang['save'] = 'Save';
-$lang['savesettings'] = 'Save settings';
 $lang['selecttargetdir'] = 'Select target directory for move/copy';
 $lang['setpermissions'] = 'Set permissions';
-$lang['settings'] = 'Settings';
+//$lang['settings'] = 'Settings';
 $lang['settingsconfirmsingledelete'] = 'Confirm deletion of a single file?';
 $lang['settingssaved'] = 'Settings saved';
 $lang['showhiddenfiles'] = 'Show hidden files';
@@ -271,40 +275,39 @@ $lang['singledirdeletesuccess'] = 'The directory  was successfully deleted';
 $lang['singlefiledeletefail'] = 'An error occurred when trying to delete the file';
 $lang['singlefiledeletesuccess'] = 'The file was successfully deleted';
 $lang['site_root'] = 'Root';
-$lang['smallicons'] = 'Small icons';
+$lang['smallicons'] = 'Small';
 $lang['space'] = 'space';
 $lang['subdir'] = 'subdirectory';
 $lang['subdirs'] = 'subdirectories';
 $lang['submit'] = 'Submit';
+$lang['summary'] = '%s %s in %s %s and %s %s'; // new
 $lang['switchtofileview'] = 'Switch to file view';
 
 // T
+$lang['thousanddelimiter'] = 'Thousand delimiter';
+$lang['thumberror'] = 'Problem creating thumbnail';
+$lang['thumbnail'] = 'Thumbnail';
+$lang['thumbsuccess'] = 'Thumbnail successfully created';
 $lang['title_changedir'] = 'Change working directory to this directory';
 $lang['title_changeupdir'] = 'Go to the parent folder';
-$lang['title_col_filedate'] = 'This column displays the last modification date of the file';
-$lang['title_col_fileperms'] = 'This column displays the permissions of the file';
-$lang['title_col_filesize'] = 'This column displays the size of the file';
-$lang['title_col_fileowner'] = 'This column displays the user name of the owner of the file';
-$lang['title_copy'] = 'Copy the selected item';
-$lang['title_delete'] = 'Delete the selected item';
+$lang['title_col_filedate'] = 'This column displays the latest modification date/time of the item';
+$lang['title_col_filetype'] = 'This column displays the MIME type of the file';
+$lang['title_copy'] = 'Copy the selected item(s)';
+$lang['title_delete'] = 'Delete the selected item(s)';
 $lang['title_dropzone'] = 'You can drop files here from your file manager to automatically begin uploading';
 $lang['title_filefield'] = 'Select one or more files they will automatically begin uploading';
 $lang['title_filemanager_settings'] = 'Settings - File Manager';
-$lang['title_move'] = 'Move the selected item to another folder';
+$lang['title_move'] = 'Move the selected item(s) to another folder';
 $lang['title_newdir'] = 'Create a new directory';
 $lang['title_rawurl'] = 'View this item natively in the browser';
 $lang['title_rename'] = 'Rename the selected item';
-$lang['title_resizecrop'] = 'Resize and/or Crop the selected image';
+$lang['title_resizecrop'] = 'Resize and/or crop the selected image';
 $lang['title_rotate'] = 'Rotate the selected image';
 $lang['title_tagall'] = 'Select all of the visible items';
-$lang['title_thumbnail'] = 'Create a thumbnail of this image';
+$lang['title_thumbnail'] = 'Create a thumbnail of the selected image';
 $lang['title_unpack'] = 'Unpack the selected archive';
 $lang['title_view'] = 'View the selected item';
 $lang['title_view_newwindow'] = 'View the selected item in a new window';
-$lang['thousanddelimiter'] = 'Thousand delimiter';
-$lang['thumberror'] = 'Problem creating thumbnail';
-$lang['thumbnail'] = 'Create Thumbnail';
-$lang['thumbsuccess'] = 'Thumbnail successfully created';
 $lang['toggle'] = 'Toggle selection';
 $lang['top'] = 'Top';
 
@@ -320,7 +323,7 @@ $lang['upgraded'] = 'The FileManager module is upgraded to version %s';
 $lang['uploaderstandard'] = 'Standard HTML input-method (allows unpacking)';
 $lang['uploadfail'] = 'failed to upload successfully';
 $lang['uploadmethod'] = 'Upload method';
-$lang['uploadnewfile'] = 'Upload new file(s):';
+$lang['uploadnewfile'] = 'Upload new file(s)';
 $lang['uploadsuccess'] = 'is uploaded successfully';
 
 // V

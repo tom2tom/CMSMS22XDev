@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: DesignManager - A CMSMS addon module to provide template management.
-# (c) 2012 by Robert Campbell <calguy1000@cmsmadesimple.org>
+# Module DesignManager action
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,95 +15,84 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
+# Or read it online: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
+
 if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Manage Designs') ) return;
 
 $this->SetCurrentTab('designs');
 if( isset($params['cancel']) ) {
-  $this->SetMessage($this->Lang('msg_cancelled'));
-  $this->RedirectToAdminTab();
+    $this->SetMessage($this->Lang('msg_cancelled'));
+    $this->RedirectToAdminTab();
 }
 
-$design = null;
+$design = null; // no object
 try {
-    if( !isset($params['design']) || $params['design'] == '' ) {
-        $design= new CmsLayoutCollection;
-        $design->set_name('New Design');
+    if( empty($params['design']) ) {
+        $design= new CmsLayoutCollection();
+// no name yet $design->set_name('New Design');
     }
     else {
         $design = CmsLayoutCollection::load($params['design']);
     }
 
-	try {
-		if( isset($params['submit']) || isset($params['apply']) || (isset($params['ajax']) && $params['ajax'] == '1') ) {
-			$design->set_name($params['name']);
-			$design->set_description($params['description']);
-			$tpl_assoc = array();
-			if( isset($params['assoc_tpl']) ) $tpl_assoc = $params['assoc_tpl'];
-			$design->set_templates($tpl_assoc);
+    try {
+        if( isset($params['submit']) || isset($params['apply']) || (isset($params['ajax']) && $params['ajax'] == '1') ) {
+            $design->set_name($params['name']);
+            $design->set_description($params['description']);
+            $tpl_assoc = [];
+            if( isset($params['assoc_tpl']) ) $tpl_assoc = $params['assoc_tpl'];
+            $design->set_templates($tpl_assoc);
 
-			$css_assoc = array();
-			if( isset($params['assoc_css']) ) $css_assoc = $params['assoc_css'];
-			$design->set_stylesheets($css_assoc);
-			$design->save();
+            $css_assoc = [];
+            if( isset($params['assoc_css']) ) $css_assoc = $params['assoc_css'];
+            $design->set_stylesheets($css_assoc);
+            $design->save();
 
-			if( isset($params['submit']) ) {
-				$this->SetMessage($this->Lang('msg_design_saved'));
-				$this->RedirectToAdminTab();
-			}
-			else {
-				echo $this->ShowMessage($this->Lang('msg_design_saved'));
-			}
-		}
-	}
-	catch( Exception $e ) {
-		echo $this->ShowErrors($e->GetMessage());
-	}
-
-    $templates = CmsLayoutTemplate::get_editable_templates(get_userid());
-    if( count($templates) ) {
-        usort($templates,function($a,$b) {
-                return strcasecmp($a->get_name(),$b->get_name());
-            });
-        $smarty->assign('all_templates',$templates);
+            if( isset($params['submit']) ) {
+                $this->SetMessage($this->Lang('msg_design_saved'));
+                $this->RedirectToAdminTab();
+            }
+            else {
+                $this->ShowMessage($this->Lang('msg_design_saved'));
+            }
+        }
+    }
+    catch( Exception $e ) {
+        $this->ShowErrors($e->GetMessage());
     }
 
-	$stylesheets = CmsLayoutStylesheet::get_all();
-	if( is_array($stylesheets) && count($stylesheets) ) {
-        usort($stylesheets,function($a,$b){
-                return strcasecmp($a->get_name(),$b->get_name());
-            });
-		$out = array();
-		$out2 = array();
-		for( $i = 0; $i < count($stylesheets); $i++ ) {
-			$out[$stylesheets[$i]->get_id()] = $stylesheets[$i]->get_name();
-			$out2[$stylesheets[$i]->get_id()] = $stylesheets[$i];
-		}
-		$smarty->assign('list_stylesheets',$out);
-		$smarty->assign('all_stylesheets',$out2);
-	}
+    $templates = CmsLayoutTemplate::get_all(true); // no editing here, so NOT get_editable_templates(get_userid())
+    $stylesheets = CmsLayoutStylesheet::get_all(true);
 
     if( $design->get_id() > 0 ) {
-        \CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('edit_design').': '.$design->get_name()." ({$design->get_id()})");
-    } else {
-        \CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('create_design'));
+        CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('edit_design').': '.$design->get_name()." ({$design->get_id()})");
+    }
+    else {
+        CmsAdminThemeBase::GetThemeObject()->SetSubTitle($this->Lang('new_design'));
     }
 
-    $smarty->assign('manage_stylesheets',$this->CheckPermission('Manage Stylesheets'));
-    $smarty->assign('manage_templates',$this->CheckPermission('Modify Templates'));
-    $smarty->assign('design',$design);
-    echo $this->ProcessTemplate('admin_edit_design.tpl');
+    $base_url = $this->GetModuleURLPath();
+    CMSMS\HookManager::add_hook('admin_add_headtext',function() use($base_url) {
+        return "<link href=\"$base_url/lib/edit_design.css\" rel=\"stylesheet\">\n";
+    });
+
+    $modname = $this->GetName();
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_edit_design.tpl",null,$modname,$smarty);
+
+//  $tpl->assign('base_url',$base_url);
+    $tpl->assign('all_templates',$templates);
+    $tpl->assign('all_stylesheets',$stylesheets);
+    $tpl->assign('design',$design);
+    $tpl->assign('manage_stylesheets',$this->CheckPermission('Manage Stylesheets'));
+    $tpl->assign('manage_templates',$this->CheckPermission('Modify Templates'));
+    $tpl->assign('icon_delete',$base_url.'/images/delete.png');
+    $tpl->display();
 }
 catch( CmsException $e ) {
-  $this->SetError($e->GetMessage());
-  $this->RedirectToAdminTab();
+    $this->SetError($e->GetMessage());
+    $this->RedirectToAdminTab();
 }
 
-
-#
-# EOF
-#
 ?>

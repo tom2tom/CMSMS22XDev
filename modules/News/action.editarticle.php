@@ -1,89 +1,92 @@
 <?php
-if (!isset($gCms)) exit;
+#CMSMS News module action: editarticle
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#The license at the top of file News.module.php applies to this file.
 
+if (!isset($gCms)) exit;
 if (!$this->CheckPermission('Modify News')) return;
 
 if (isset($params['cancel'])) $this->Redirect($id, 'defaultadmin', $returnid);
 
 /*--------------------
- * Variables
+ Variables
  ---------------------*/
-$now = time();
-$status       = 'draft';
-if ($this->CheckPermission('Approve News')) $status = 'published';
+$now          = time();
+$me           = $this->GetName();
+$status       = ($this->CheckPermission('Approve News')) ? 'published' : 'draft';
+$ndays        = (int)$this->GetPreference('expiry_interval', 30);
+if ($ndays <= 0) $ndays = 30;
 
-$articleid    = isset($params['articleid']) ? $params['articleid'] : '';
-$author_id    = isset($params['author_id']) ? $params['author_id'] : '-1';
-$content      = isset($params['content']) ? $params['content'] : '';
-$ndays        = (int)$this->GetPreference('expiry_interval', 180);
-if ($ndays == 0) $ndays = 180;
-//TODO preserve existing $endate value if > $now
-$enddate      = strtotime(sprintf("+%d days", $ndays), $now);
-$extra        = isset($params['extra']) ? trim(strip_tags($params['extra'])) : '';
-$news_url     = isset($params['news_url']) ? $params['news_url'] : '';
-$postdate     = $now;
-$searchable   = isset($params['searchable']) ? (int)$params['searchable'] : 1;
-$startdate    = $now;
-$status       = isset($params['status']) ? $params['status'] : $status;
-$summary      = isset($params['summary']) ? $params['summary'] : '';
-$title        = isset($params['title']) ? trim(strip_tags($params['title'])) : '';
-$usedcategory = isset($params['category']) ? $params['category'] : '';
-$useexp       = isset($params['useexp']) ? 1: 0;
-
-if (isset($params['postdate_Month'])) {
-    $postdate = mktime($params['postdate_Hour'], $params['postdate_Minute'], $params['postdate_Second'], $params['postdate_Month'], $params['postdate_Day'], $params['postdate_Year']);
-}
-
-if (isset($params['startdate_Month'])) {
-    $startdate = mktime($params['startdate_Hour'], $params['startdate_Minute'], $params['startdate_Second'], $params['startdate_Month'], $params['startdate_Day'], $params['startdate_Year']);
-}
-
-if (isset($params['enddate_Month'])) {
-    $enddate = mktime($params['enddate_Hour'], $params['enddate_Minute'], $params['enddate_Second'], $params['enddate_Month'], $params['enddate_Day'], $params['enddate_Year']);
-}
+$articleid    = (isset($params['articleid'])) ? (int)$params['articleid'] : 0;
+$author_id    = (isset($params['author_id'])) ? (int)$params['author_id'] : -1;
+$content      = (isset($params['content'])) ? news_ops::execSpecialize(trim($params['content'])) : '';
+$extra        = (isset($params['extra'])) ? news_ops::execSpecialize(trim($params['extra'])) : '';
+$image_url    = (isset($params['image_url'])) ? $params['image_url'] : ''; // sanitized below
+$news_url     = (isset($params['news_url'])) ? $params['news_url'] : ''; // sanitized below
+$searchable   = !empty($params['searchable']);
+$status       = (isset($params['status'])) ? $params['status'] : $status;
+$summary      = (isset($params['summary'])) ? news_ops::execSpecialize(trim($params['summary'])) : '';
+$title        = (isset($params['title'])) ? news_ops::execSpecialize(trim($params['title'])) : '';
+$usedcategory = (isset($params['category'])) ? (int)$params['category'] : $this->GetPreference('default_category', 1);
+$useexp       = !empty($params['useexp']);
+$postdate     = (isset($params['postdate_Month'])) ?
+    mktime($params['postdate_Hour'], $params['postdate_Minute'], $params['postdate_Second'], $params['postdate_Month'], $params['postdate_Day'], $params['postdate_Year']) :
+    $now;
+$startdate    = (isset($params['startdate_Month'])) ?
+    mktime($params['startdate_Hour'], $params['startdate_Minute'], $params['startdate_Second'], $params['startdate_Month'], $params['startdate_Day'], $params['startdate_Year']) :
+    $now;
+$enddate      = (isset($params['enddate_Month'])) ?
+    mktime($params['enddate_Hour'], $params['enddate_Minute'], $params['enddate_Second'], $params['enddate_Month'], $params['enddate_Day'], $params['enddate_Year']) :
+    strtotime(sprintf('+%d days', $ndays), $now);
 
 /*--------------------
- * Logic
+ Logic
  ---------------------*/
 
 if (isset($params['submit']) || isset($params['apply'])) {
     $error = FALSE;
-    if (empty($title)) {
+    if (!$title) {
         $error = $this->Lang('notitlegiven');
-    } else if (empty($content)) {
+    } elseif (!$content) {
         $error = $this->Lang('nocontentgiven');
-    } else if ($useexp == 1) {
-        if ($startdate >= $enddate)
+    } elseif ($useexp) {
+        if ($startdate >= $enddate) {
             $error = $this->Lang('error_invaliddates');
+        }
     }
 
-    $startdatestr = NULL;
-    $enddatestr = NULL;
     if ($useexp) {
-        $startdate = trim($db->DbTimeStamp($startdate), "'");
-        $enddate = trim($db->DbTimeStamp($enddate), "'");
+        $startdate = trim($db->DBTimeStamp($startdate), "'");
+        $enddate = trim($db->DBTimeStamp($enddate), "'");
     }
 
-    if ($error === FALSE && $news_url) {
-        // check for starting or ending slashes
-        if (startswith($news_url, '/') || endswith($news_url, '/')) {
+    if (!$error && $image_url) {
+        $res = cms_utils::validate_url($image_url, 'image');
+        if ($res !== TRUE) {
+            $error = $res;
+        }
+    }
+
+    if (!$error && $news_url) {
+        if ($news_url[0] == '/') { // trailing '/' ok
             $error = $this->Lang('error_invalidurl');
-        }
-        if ($error === FALSE) {
-            // check for invalid chars.
-            $translated = munge_string_to_url($news_url, false, true);
-            if (strtolower($translated) != strtolower($news_url))
+        } else {
+            // check for other invalid chars.
+            $translated = cms_utils::cleanUrlPath($news_url);
+            if ($translated != $news_url) {
                 $error = $this->Lang('error_invalidurl');
+            }
         }
-        if ($error === FALSE) {
+
+        if (!$error) {
             // make sure this url isn't taken.
             cms_route_manager::load_routes();
             $route = cms_route_manager::find_match($news_url, TRUE);
             if ($route) {
                 $dflts = $route->get_defaults();
-                if ($route['key1'] != $this->GetName() || !isset($dflts['articleid']) || $dflts['articleid'] != $articleid) {
+                if ($route['key1'] != $me || !isset($dflts['articleid']) || $dflts['articleid'] != $articleid) {
                     // any other matching route is bad.
-                    $error = $this->Lang('error_invalidurl');
+                    $error = $this->Lang('error_urlused');
                 }
             }
         }
@@ -93,122 +96,176 @@ if (isset($params['submit']) || isset($params['apply'])) {
         //
         // database work
         //
-        $query = 'UPDATE ' . CMS_DB_PREFIX . 'module_news SET news_title=?, news_data=?, summary=?, status=?, news_date=?, news_category_id=?, start_time=?, end_time=?, modified_date=?, news_extra=?, news_url = ?, searchable = ? WHERE news_id = ?';
+        $query = 'UPDATE ' . CMS_DB_PREFIX . 'module_news SET news_category_id=?,news_title=?,news_data=?,summary=?,status=?,icon=?,news_date=?,start_time=?,end_time=?,modified_date=?,news_extra=?,news_url=?,searchable=? WHERE news_id=?';
+        $args = array(
+            $usedcategory,
+            $title,
+            $content,
+            $summary,
+            $status,
+            news_ops::storeformat_url($image_url),
+            trim($db->DBTimeStamp($postdate), "'"),
+            NULL, // undefined DT value in db
+            NULL, // ditto
+            trim($db->DBTimeStamp($now), "'"),
+            $extra,
+            $news_url,
+            ($searchable) ? 1 : 0,
+            $articleid
+        );
         if ($useexp) {
-            $db->Execute($query, array(
-                $title,
-                $content,
-                $summary,
-                $status,
-                trim($db->DBTimeStamp($postdate), "'"),
-                $usedcategory,
-                trim($db->DBTimeStamp($startdate), "'"),
-                trim($db->DBTimeStamp($enddate), "'"),
-                trim($db->DBTimeStamp(time()), "'"),
-                $extra,
-                $news_url,
-                $searchable,
-                $articleid
-            ));
-        } else {
-            $db->Execute($query, array(
-                $title,
-                $content,
-                $summary,
-                $status,
-                trim($db->DBTimeStamp($postdate), "'"),
-                $usedcategory,
-                $startdatestr,
-                $enddatestr,
-                trim($db->DBTimeStamp(time()), "'"),
-                $extra,
-                $news_url,
-                $searchable,
-                $articleid
-            ));
+            $args[7] = $startdate;
+            $args[8] = $enddate;
+        }
+        $db->Execute($query, $args);
+        // reliable update-query check
+        if (!($db->Affected_Rows() == 1 || $db->ErrorNo() == 0)) {
+            die('FATAL SQL ERROR: ' . $db->ErrorMsg() . '<br>QUERY: ' . $db->sql);
         }
 
-        //
         //Update custom fields
-        //
 
-        // get the field types
-        $query = "SELECT id,name,type FROM " . CMS_DB_PREFIX . "module_news_fielddefs WHERE type='file'";
-        $types = $db->GetArray($query);
+        // all recorded fields' data
+        $currentfields = $db->GetArray('SELECT V.news_id,V.fielddef_id,D.type,V.value
+FROM '.CMS_DB_PREFIX.'module_news_fieldvals V
+INNER JOIN '.CMS_DB_PREFIX.'module_news_fielddefs D
+ON V.fielddef_id = D.id
+ORDER BY V.news_id,D.item_order');
+        // fields selected via 'use this field' checkboxes
+        $wantedfields = isset($params['usefield']) ? $params['usefield'] : [];
+        // all recorded 'file'-field id's
+        $query = 'SELECT id FROM ' . CMS_DB_PREFIX . "module_news_fielddefs WHERE type='file'";
+        $ffields = $db->GetCol($query);
+
+        $query = 'DELETE FROM ' . CMS_DB_PREFIX . 'module_news_fieldvals WHERE news_id=? AND fielddef_id=?';
+        foreach ($currentfields as $row) {
+            if ($row['news_id'] == $articleid && (!$wantedfields || !isset( $wantedfields[$row['fielddef_id']]))) {
+                $db->Execute($query, array($articleid, $row['fielddef_id']));
+                if ($ffields && in_array($row['fielddef_id'], $ffields)) {
+                    $p = cms_join_path($config['uploads_path'], 'news', 'id'.$articleid);  // OR 'News' if globally changed
+                    if (is_dir($p)) { recursive_delete($p); }
+                }
+            }
+        }
 
         $error = FALSE;
-        if (is_array($types)) {
-            foreach ($types as $onetype) {
-                $elem = $id . 'customfield_' . $onetype['id'];
-                if (isset($_FILES[$elem]) && $_FILES[$elem]['name'] != '') {
-                    if ($_FILES[$elem]['error'] != 0 || $_FILES[$elem]['tmp_name'] == '') {
+
+        if ($ffields) {
+            // process used and formerly-used 'file' fields, which involve an input-file element and typically an uploaded file
+            foreach ($ffields as $fid) {
+                if ($wantedfields && !empty($wantedfields[$fid])) { // use this one
+                    /*
+                     the recorded value for a 'file' field is like
+                       somefile.ext
+                     which file will have been saved as
+                       $config['uploads_path'].DIRECTORY_SEPARATOR
+                      .'news'.DIRECTORY_SEPARATOR.
+                       'id'.$articleid.DIRECTORY_SEPARATOR.
+                       somefile.ext
+                     the default displayer for that tag involves
+                       <img src="{$entry->file_location}/{$field->value}"
+                    */
+                    $elem = $id . 'customfield_' . $fid;
+                    if (isset($_FILES[$elem]) && $_FILES[$elem]['name'] != '') {
+                        // a new upload
+                        if ($_FILES[$elem]['error'] != 0 || $_FILES[$elem]['tmp_name'] == '') { // 4 = no upload, 0 might be an attack
+                            $error = $this->Lang('error_upload');
+                        } else {
+                            $error = '';
+                            $value = news_admin_ops::handle_upload($articleid, $elem, $error); //file basename or false
+                            if ($value !== FALSE) {
+                                $params['customfield'][$fid] = $value;
+                            }
+                            // was it formerly a different file?
+                            if (!empty($params['currentfile'][$fid])) {
+                                if ($params['currentfile'][$fid] != $value) { // != FALSE ok here
+                                    $p = cms_join_path($config['uploads_path'], 'news', 'id'.$articleid, $params['currentfile'][$fid]); // OR 'News' if globally changed
+                                    if (is_file($p)) { unlink($p); }
+                                }
+                            }
+                        }
+                    } elseif (isset($_FILES[$elem]) && $_FILES[$elem]['error'] != 4) {
                         $error = $this->Lang('error_upload');
                     } else {
-                        $error = '';
-                        $value = news_admin_ops::handle_upload($articleid, $elem, $error);
-                        $smarty->assign('checking', 'blah');
-                        if ($value !== FALSE)
-                            $params['customfield'][$onetype['id']] = $value;
+                        // no new upload = nothing to do
+                    }
+                } else { // (now)unwanted field
+                    if (!empty($params['currentfile'][$fid])) {
+                       // it was used before
+                       $p = cms_join_path($config['uploads_path'], 'news', 'id'.$articleid, $params['currentfile'][$fid]); // OR 'News' if globally changed
+                       if (is_file($p)) { unlink($p); }
                     }
                 }
-            } // foreach
-        }// if
+            }
+        }
 
         if (isset($params['customfield']) && !$error) {
-            $now = $db->DbTimeStamp(time());
+            // cache the potential wanted linkedfile fields
+            $query = 'SELECT id FROM ' . CMS_DB_PREFIX . "module_news_fielddefs WHERE type='linkedfile'";
+            $lfields = $db->GetCol($query);
+            $longnow = $db->DBTimeStamp($now);
             foreach ($params['customfield'] as $fldid => $value) {
-                // first check if it's available
-                $query = "SELECT value FROM " . CMS_DB_PREFIX . "module_news_fieldvals WHERE news_id = ? AND fielddef_id = ?";
-                $tmp = $db->GetOne($query, array(
-                    $articleid,
-                    $fldid
-                ));
-                $dbr = TRUE;
-                if ($tmp === FALSE) {
-                    if (!empty($value)) {
-                        $query = "INSERT INTO " . CMS_DB_PREFIX . "module_news_fieldvals (news_id,fielddef_id,value,create_date,modified_date) VALUES (?,?,?,$now,$now)";
+                if ($wantedfields && !empty($wantedfields[$fldid])) { // use this one
+                    if ($lfields && in_array($fldid, $lfields)) {
+                        /*
+                        the default FipePicker-generated value for a 'linkedfile' field is like
+                          /uploads/somepath/to/somefile.ext
+                        but the user can change that or enter/paste some other url altogether
+                        the default displayer for a 'linkedfile' field involves
+                          {file_url file=$field->value}
+                        and that tag looks for $config['uploads_path'][/dir parameter]/file parameter
+                        so the recorded value needs adjustment (strip '/uploads') as well as sanitisation
+                        */
+                        if ($value) {
+                            $tmp = news_ops::check_linkedfile($value, $config['uploads_path']);
+                            if ($tmp != $value) {
+                                //do stuff
+                                $value = $tmp;
+                            }
+                        } else {
+                            //not really wanted ...
+                            $db->Execute('DELETE FROM ' . CMS_DB_PREFIX . 'module_news_fieldvals WHERE news_id=? AND fielddef_id=?',
+                               array($articleid, $fldid));
+                            continue;
+                        }
+                    }
+
+                    $dbr = TRUE;
+                    // check whether the field is already recorded for this article
+                    $query = 'SELECT news_id FROM ' . CMS_DB_PREFIX . 'module_news_fieldvals WHERE news_id=? AND fielddef_id=?';
+                    $exists = $db->GetOne($query, array($articleid,$fldid));
+                    if (!$exists) {
+                        $query = 'INSERT INTO ' . CMS_DB_PREFIX .
+"module_news_fieldvals (news_id,fielddef_id,value,create_date,modified_date) VALUES (?,?,?,$longnow,$longnow)";
                         $dbr = $db->Execute($query, array(
                             $articleid,
                             $fldid,
                             $value
                         ));
-                    }
-                } else {
-                    if (empty($value)) {
-                        $query = 'DELETE FROM ' . CMS_DB_PREFIX . 'module_news_fieldvals WHERE news_id = ? AND fielddef_id = ?';
-                        $dbr = $db->Execute($query, array(
-                            $articleid,
-                            $fldid
-                        ));
                     } else {
-                        $query = "UPDATE " . CMS_DB_PREFIX . "module_news_fieldvals
-SET value = ?, modified_date = $now WHERE news_id = ? AND fielddef_id = ?";
-                        $dbr = $db->Execute($query, array(
+                        $query = 'UPDATE ' . CMS_DB_PREFIX .
+"module_news_fieldvals SET value=?,modified_date=$longnow WHERE news_id=? AND fielddef_id=?";
+                        $db->Execute($query, array(
                             $value,
                             $articleid,
                             $fldid
                         ));
+                        $dbr = ($db->Affected_Rows() > 0 || $db->ErrorNo() == 0);
                     }
+                    if (!$dbr) {
+                        die('FATAL SQL ERROR: ' . $db->ErrorMsg() . '<br>QUERY: ' . $db->sql);
+                    }
+                } else { // unwanted field
+                    // delete field data if any (should have been done in loop above)
+                    $db->Execute('DELETE FROM ' . CMS_DB_PREFIX . 'module_news_fieldvals WHERE news_id=? AND fielddef_id=?',
+                        array($articleid, $fldid));
                 }
-                if (!$dbr)
-                    die('FATAL SQL ERROR: ' . $db->ErrorMsg() . '<br/>QUERY: ' . $db->sql);
             }
         }
     }
 
-    if (isset($params['delete_customfield']) && is_array($params['delete_customfield']) && !$error) {
-        foreach ($params['delete_customfield'] as $k => $v) {
-            if ($v != 'delete')
-                continue;
-            $query = 'DELETE FROM ' . CMS_DB_PREFIX . 'module_news_fieldvals WHERE news_id = ? AND fielddef_id = ?';
-            $db->Execute($query, array(
-                $articleid,
-                $k
-            ));
-        }
-    }
-
     if (!$error && $status == 'published' && $news_url) {
+        // TODO this refresh only if article not expired
         news_admin_ops::delete_static_route($articleid);
         news_admin_ops::register_static_route($news_url, $articleid);
     }
@@ -218,7 +275,7 @@ SET value = ?, modified_date = $now WHERE news_id = ? AND fielddef_id = ?";
         $module = cms_utils::get_search_module();
         if (is_object($module)) {
             if ($status == 'draft' || !$searchable) {
-                $module->DeleteWords($this->GetName(), $articleid, 'article');
+                $module->DeleteWords($me, $articleid, 'article');
             } else {
                 if (!$useexp || ($enddate > time()) || $this->GetPreference('expired_searchable', 1) == 1) {
                     $text = '';
@@ -231,17 +288,18 @@ SET value = ?, modified_date = $now WHERE news_id = ? AND fielddef_id = ?";
                     }
                 }
                 $text .= $content . ' ' . $summary . ' ' . $title . ' ' . $title;
-                $module->AddWords($this->GetName(), $articleid, 'article', $text, ($useexp == 1 && $this->GetPreference('expired_searchable', 0) == 0) ? $enddate : NULL);
+                $module->AddWords($me, $articleid, 'article', $text, ($useexp == 1 && $this->GetPreference('expired_searchable', 0) == 0) ? $enddate : NULL);
             }
         }
 
-        \CMSMS\HookManager::do_hook('News::NewsArticleEdited', array(
+        CMSMS\HookManager::do_hook('News::NewsArticleEdited', array(
             'news_id' => $articleid,
             'category_id' => $usedcategory,
             'title' => $title,
             'content' => $content,
             'summary' => $summary,
             'status' => $status,
+            'icon' => $image_url,
             'start_time' => $startdate,
             'end_time' => $enddate,
             'post_time' => $postdate,
@@ -250,8 +308,8 @@ SET value = ?, modified_date = $now WHERE news_id = ? AND fielddef_id = ?";
             'news_url' => $news_url
         ));
         // put mention into the admin log
-        audit($articleid, 'News: ' . $title, 'Article edited');
-    }// no error
+        audit($articleid, $me.' article', "Edited: $title");
+    } // no error
 
     if (isset($params['apply']) && isset($params['ajax'])) {
         if (empty($error)) {
@@ -279,24 +337,55 @@ SET value = ?, modified_date = $now WHERE news_id = ? AND fielddef_id = ?";
     }
 
     if ($error) {
-        echo $this->ShowErrors($error);
+        $this->ShowErrors($error);
     }
-// end submit or apply
+    // end submit or apply
 } elseif (isset($params['preview'])) {
-    // save data for preview.
-    unset($params['apply']);
-    unset($params['preview']);
-    unset($params['submit']);
-    unset($params['cancel']);
-    unset($params['ajax']);
-
     if (empty($error)) {
-        $tmpfname = tempnam(TMP_CACHE_LOCATION, $this->GetName() . '_preview');
+        // save data for preview
+        unset($params['apply']);
+        unset($params['preview']);
+        unset($params['submit']);
+        unset($params['cancel']);
+        unset($params['ajax']);
+        // without unwanted fields
+        $wantedfields = isset($params['usefield']) ? $params['usefield'] : [];
+        $currentfields = isset($params['customfield']) ? $params['customfield'] : []; // non-'file' fields
+        foreach ($currentfields as $fid => $val) {
+            if (!$wantedfields || !isset($wantedfields[$fid])) {
+                unset($currentfields[$fid]);
+            }
+        }
+        $params['customfield'] = $currentfields;
+
+        $ffields = preg_filter('/^customfield_(\d+)$/', '$1', array_keys($params)); // new 'file' fields
+        foreach ($ffields as $i => $fid) {
+            if (!$wantedfields || !isset($wantedfields[$fid])) {
+                unset($ffields[$i]);
+                unset($params['customfield_'.$fid]);
+            }
+        }
+
+        $ffields = isset($params['currentfile']) ? $params['currentfile'] : []; // recorded 'file' fields
+        foreach ($ffields as $fid => $val) {
+            if (!$wantedfields || !isset($wantedfields[$fid])) {
+//                unset($ffields[$fid]);
+//                unset($params['currentfile'][$fid]);
+            } else {
+                $params['customfield_'.$fid] = $val;
+            }
+        }
+        unset($params['currentfile']);
+        unset($params['usefield']);
+
+        $tmpfname = tempnam(TMP_CACHE_LOCATION, $me . '_preview');
         file_put_contents($tmpfname, serialize($params));
 
         $detail_returnid = $this->GetPreference('detail_returnid', -1);
-        if ($detail_returnid <= 0)
+        if ($detail_returnid <= 0) {
+            // get the default content id.
             $detail_returnid = ContentOperations::get_instance()->GetDefaultContent();
+        }
         if (isset($params['previewpage']) && (int)$params['previewpage'] > 0)
             $detail_returnid = (int)$params['previewpage'];
 
@@ -305,8 +394,9 @@ SET value = ?, modified_date = $now WHERE news_id = ? AND fielddef_id = ?";
             'checksum' => md5_file($tmpfname)
         );
         $tparms = array('preview' => md5(serialize($_SESSION['news_preview'])));
-        if (isset($params['detailtemplate']))
+        if (isset($params['detailtemplate'])) {
             $tparms['detailtemplate'] = trim($params['detailtemplate']);
+        }
         $url = $this->create_url('_preview_', 'detail', $detail_returnid, $tparms, TRUE);
         $url = str_replace('&amp;', '&', $url);
         $out = array('response' => 'Success', 'details' => $url);
@@ -328,24 +418,25 @@ SET value = ?, modified_date = $now WHERE news_id = ? AND fielddef_id = ?";
     //
     // Load data from database
     //
-    $query = 'SELECT * FROM ' . CMS_DB_PREFIX . 'module_news WHERE news_id = ?';
+    $query = 'SELECT * FROM ' . CMS_DB_PREFIX . 'module_news WHERE news_id=?';
     $row = $db->GetRow($query, array($articleid));
 
     if ($row) {
-        $title        = $row['news_title'];
-        $content      = $row['news_data'];
-        $extra        = $row['news_extra'];
-        $summary      = $row['summary'];
+        $title        = $row['news_title'] ? news_ops::execSpecialize($row['news_title']) : (string)$row['news_title'];
+        $content      = $row['news_data'] ? news_ops::execSpecialize($row['news_data']) : (string)$row['news_data'];
+        $extra        = $row['news_extra'] ? news_ops::execSpecialize($row['news_extra']) : $row['news_extra'];
+        $summary      = $row['summary'] ? news_ops::execSpecialize($row['summary']) : (string)$row['summary'];
         $news_url     = $row['news_url'];
         $status       = $row['status'];
+        $image_url    = $row['icon'];
         $usedcategory = $row['news_category_id'];
         $postdate     = $db->UnixTimeStamp($row['news_date']);
         $startdate    = $db->UnixTimeStamp($row['start_time']);
-        $author_id    = $row['author_id'];
-        $searchable   = $row['searchable'];
-        $useexp = 0;
+        $author_id    = (int)$row['author_id'];
+        $searchable   = (bool)$row['searchable'];
+        $useexp = false;
         if (isset($row['end_time'])) {
-            $useexp  = 1;
+            $useexp  = true;
             $enddate = $db->UnixTimeStamp($row['end_time']);
         }
     }
@@ -355,21 +446,17 @@ $statusdropdown = array();
 $statusdropdown[$this->Lang('draft')] = 'draft';
 $statusdropdown[$this->Lang('published')] = 'published';
 
-$categorylist = array();
-$query = "SELECT * FROM " . CMS_DB_PREFIX . "module_news_categories ORDER BY hierarchy";
-$dbresult = $db->Execute($query);
-
-while ($dbresult && $row = $dbresult->FetchRow()) {
-    $categorylist[$row['long_name']] = $row['news_category_id'];
-}
+// Categories list
+$query = 'SELECT COALESCE(long_name,news_category_name),news_category_id FROM ' . CMS_DB_PREFIX . 'module_news_categories ORDER BY hierarchy';
+$categorylist = $db->GetAssoc($query);
 
 /*--------------------
- * Custom fields logic
+ Custom fields logic
  ---------------------*/
 
-// Get the field values
+// Get current field values (maybe none even if the next query finds fields)
 $fieldvals = array();
-$query = 'SELECT * FROM ' . CMS_DB_PREFIX . 'module_news_fieldvals WHERE news_id = ?';
+$query = 'SELECT news_id,fielddef_id,value FROM ' . CMS_DB_PREFIX . 'module_news_fieldvals WHERE news_id=?';
 $tmp = $db->GetArray($query, array($articleid));
 if (is_array($tmp)) {
     foreach ($tmp as $one) {
@@ -377,170 +464,191 @@ if (is_array($tmp)) {
     }
 }
 
-$query = 'SELECT * FROM ' . CMS_DB_PREFIX . 'module_news_fielddefs ORDER BY item_order';
-$dbr = $db->Execute($query);
+// Populate
 $custom_flds = array();
-while ($dbr && ($row = $dbr->FetchRow())) {
-    if (isset($row['extra']) && $row['extra']) $row['extra'] = unserialize($row['extra']);
-
-    $options = null;
-    if (isset($row['extra']['options'])) $options = $row['extra']['options'];
-
-    $value = '';
-    if (isset($fieldvals[$row['id']])) $value = $fieldvals[$row['id']]['value'];
-    $value = isset($params['customfield'][$row['id']]) && in_array($params['customfield'][$row['id']], $params['customfield']) ? $params['customfield'][$row['id']] : $value;
-
-    if ($row['type'] == 'file') {
-        $name = "customfield_" . $row['id'];
-    } else {
-        $name = "customfield[" . $row['id'] . "]";
-    }
-
-    $obj = new StdClass();
-
-    $obj->value    = $value;
-    $obj->nameattr = $id . $name;
-    $obj->type     = $row['type'];
-    $obj->idattr   = 'customfield_' . $row['id'];
-    $obj->prompt   = $row['name'];
-    $obj->size     = min(80, $row['max_length']);
-    $obj->max_len  = max(1, (int)$row['max_length']);
-    $obj->delete   = $id . 'delete_customfield[' . $row['id'] . ']';
-    $obj->options  = $options;
-    // FIXME - If we create inputs with hmtl markup in smarty template, whats the use of switch and form API here?
-    /*
-    switch( $row['type'] ) {
-        case 'textbox' :
-            $size = min(50, $row['max_length']);
-            $obj->field = $this->CreateInputText($id, $name, $value, $size, $row['max_length']);
-            break;
-        case 'checkbox' :
-            $obj->field = $this->CreateInputHidden($id, $name, 0) . $this->CreateInputCheckbox($id, $name, 1, (int)$value);
-            break;
-        case 'textarea' :
-            $obj->field = $this->CreateTextArea(true, $id, $value, $name);
-            break;
-        case 'file' :
-            $del = '';
-            if ($value != '') {
-                $deln = 'delete_customfield[' . $row['id'] . ']';
-                $del = '&nbsp;' . $this->Lang('delete') . $this->CreateInputCheckbox($id, $deln, 'delete');
+$query = 'SELECT id,name,type,extra FROM ' . CMS_DB_PREFIX . 'module_news_fielddefs ORDER BY item_order';
+$fldefs = $db->GetArray($query);
+if ($fldefs) {
+    foreach ($fldefs as $row) {
+        foreach (['name', 'type', 'extra'] as $fld) {
+            if ($row[$fld] === null) {
+                $row[$fld] = '';
             }
-            $obj->field = $value . '&nbsp;' . $this->CreateFileUploadInput($id, $name) . $del;
-            break;
-        case 'dropdown' :
-            $obj->field = $this->CreateInputDropdown($id, $name, array_flip($options), -1, $value);
-            break;
-    }
-    */
+        }
+        $fid = $row['id'];
+        if ($row['type'] == 'file') {
+            $name = "customfield_$fid";
+        } else {
+            $name = "customfield[$fid]";
+        }
 
-    $custom_flds[$row['name']] = $obj;
+        $obj = new stdClass();
+        $obj->id       = $fid;
+        $obj->type     = $row['type'];
+        $obj->nameattr = $id . $name;
+        $obj->idattr   = "customfield_$fid";
+        $obj->prompt   = $row['name'];
+//      $obj->delete   = $id . "delete_customfield[$fid]";
+        $value = (isset($fieldvals[$fid])) ? $fieldvals[$fid]['value'] : '';
+        $obj->value    = $value;
+        $obj->options  = []; // might be replaced below
+
+        if (!empty($row['extra'])) {
+            $row['extra'] = unserialize($row['extra'], array('allowed_classes' => false));
+            if ($row['extra'] !== false) {
+                foreach ($row['extra'] as $prop => $pval) {
+                    switch ($prop) {
+                      case 'max_length':
+                        $ms = (int)$pval;
+                        $obj->max_len = max(1, $ms); //for input text, really
+                        if (!isset($obj->size)) $obj->size = min(50, $ms);
+                        break;
+                      case 'size':
+                        $ms = (int)$pval;
+                        $obj->size = min(50, $ms);
+                        break;
+                      default:
+                        $obj->$prop = $pval;
+                    }
+                }
+            }
+        }
+        $custom_flds[$row['name']] = $obj;
+    }
 }
 
+$dir = $config['image_uploads_path']; // append /news or /News ?
+$data = $image_url;
+
+$filepicker = cms_utils::get_filepicker_module();
+$userid = get_userid(false);
+$profile = $filepicker->get_default_profile($dir, $userid);
+$parms = ['top'=>$dir, 'type'=>'image']; // aka CMSMS\FileType::TYPE_IMAGE BUT type is not enforced in the picker
+$profile->overrideWith($parms); // TODO other property-overrides ? not writability
+$input = $filepicker->get_html($id.'image_url', $data, $profile);
+preg_match('/id="(.+?)"/', $input, $matches);
+$inputid = $matches[1];
+
+CMSMS\HookManager::add_hook('admin_add_headtext', function() {
+    $root_url = CMS_ROOT_URL;
+    return "<script src=\"$root_url/lib/jquery/js/jquery.cmsms_dirtyform.js\" defer></script>\n";
+});
+
 /*--------------------
- * Pass everything to smarty
+ Pass everything to template
  ---------------------*/
 
+$tpl = $smarty->createTemplate("module_file_tpl:$me;editarticle.tpl", null, $me, $smarty);
 if ($author_id > 0) {
     $userops = $gCms->GetUserOperations();
     $theuser = $userops->LoadUserById($author_id);
-    $smarty->assign('inputauthor', $theuser->username);
-} else if ($author_id == 0) {
-    $smarty->assign('inputauthor', $this->Lang('anonymous'));
+    $tpl->assign('inputauthor', $theuser->username);
+} elseif ($author_id == 0) {
+    $tpl->assign('inputauthor', $this->Lang('anonymous'));
 } else {
-    $feu = $this->GetModuleInstance('FrontEndUsers');
-    if ($feu) {
-        $uinfo = $feu->GetUserInfo($author_id * -1);
-        if ($uinfo[0])
-            $smarty->assign('inputauthor', $uinfo[1]['username']);
+    // < 0 indicates this article was submitted by logged-in feu
+    $tmp = '';
+    $feu = $this->GetModuleInstance('MAMS');
+    if (!$feu) {
+        $feu = $this->GetModuleInstance('FrontEndUsers');
     }
+    if ($feu) {
+        $uinfo = $feu->GetUserInfo(-(int)$author_id);
+        if ($uinfo && $uinfo[0]) {
+            $tmp = $uinfo[1]['username'];
+        }
+    }
+    $tpl->assign('inputauthor', $tmp);
 }
 
-$smarty->assign('formid', $id);
-$smarty->assign('startform', $this->CreateFormStart($id, 'editarticle', $returnid, 'POST', 'multipart/form-data'));
-$smarty->assign('endform', $this->CreateFormEnd());
-$smarty->assign('hide_summary_field', $this->GetPreference('hide_summary_field', '0'));
-$smarty->assign('authortext', $this->Lang('author'));
-$smarty->assign('articleid', $articleid);
-$smarty->assign('titletext', $this->Lang('title'));
-$smarty->assign('searchable', $searchable);
-$smarty->assign('extratext', $this->Lang('extra'));
-$smarty->assign('extra', $extra);
-$smarty->assign('urltext', $this->Lang('url'));
-$smarty->assign('news_url', $news_url);
-$smarty->assign('title', $title);
-$smarty->assign('inputcontent', $this->CreateTextArea(true, $id, $content, 'content'));
-$smarty->assign('inputsummary', $this->CreateTextArea($this->GetPreference('allow_summary_wysiwyg', 1), $id, $summary, 'summary', '', '', '', '', '80', '3'));
-$smarty->assign('useexp', $useexp);
-$smarty->assign('actionid', $id);
-$smarty->assign('inputexp', $this->CreateInputCheckbox($id, 'useexp', '1', $useexp, 'class="pagecheckbox"'));
-$smarty->assign('postdate', $postdate);
-$smarty->assign('postdateprefix', $id . 'postdate_');
-$smarty->assign('startdate', $startdate);
-$smarty->assign('startdateprefix', $id . 'startdate_');
-$smarty->assign('enddate', $enddate);
-$smarty->assign('enddateprefix', $id . 'enddate_');
-$smarty->assign('status', $status);
-$smarty->assign('categorylist', array_flip($categorylist));
-$smarty->assign('category', $usedcategory);
-$smarty->assign('hidden', $this->CreateInputHidden($id, 'articleid', $articleid) . $this->CreateInputHidden($id, 'author_id', $author_id));
-$smarty->assign('submit', $this->CreateInputSubmit($id, 'submit', lang('submit')));
-$smarty->assign('apply', $this->CreateInputSubmit($id, 'apply', lang('apply')));
-$smarty->assign('cancel', $this->CreateInputSubmit($id, 'cancel', lang('cancel')));
-$smarty->assign('delete_field_val', $this->Lang('delete'));
-$smarty->assign('titletext', $this->Lang('title'));
-$smarty->assign('extratext', $this->Lang('extra'));
-$smarty->assign('categorytext', $this->Lang('category'));
-$smarty->assign('summarytext', $this->Lang('summary'));
-$smarty->assign('contenttext', $this->Lang('content'));
-$smarty->assign('postdatetext', $this->Lang('postdate'));
-$smarty->assign('useexpirationtext', $this->Lang('useexpiration'));
-$smarty->assign('startdatetext', $this->Lang('startdate'));
-$smarty->assign('enddatetext', $this->Lang('enddate'));
-$smarty->assign('select_option', $this->Lang('select_option'));
-// tab stuff.
-$smarty->assign('start_tab_headers', $this->StartTabHeaders());
-$smarty->assign('tabheader_article', $this->SetTabHeader('article', $this->Lang('article')));
-$smarty->assign('tabheader_preview', $this->SetTabHeader('preview', $this->Lang('preview')));
-$smarty->assign('end_tab_headers', $this->EndTabHeaders());
-$smarty->assign('start_tab_content', $this->StartTabContent());
-$smarty->assign('start_tab_article', $this->StartTab('article', $params));
-$smarty->assign('end_tab_article', $this->EndTab());
-$smarty->assign('end_tab_content', $this->EndTabContent());
-$smarty->assign('warning_preview', $this->Lang('warning_preview'));
+$tpl->assign('tab_preview', true); // show a preview tab
+$tpl->assign('formid', $id);
+$tpl->assign('startform', $this->CreateFormStart($id, 'editarticle', $returnid, 'post', 'multipart/form-data', false, '',
+    ['articleid'=>$articleid,
+     'author_id'=>$author_id]));
+$tpl->assign('endform', $this->CreateFormEnd());
+$tpl->assign('authortext', $this->Lang('author'));
+$tpl->assign('articleid', $articleid);
+$tpl->assign('titletext', $this->Lang('title'));
+$tpl->assign('title', $title);
+$tpl->assign('extratext', $this->Lang('extra'));
+$tpl->assign('extra', $extra);
+$tpl->assign('imagetext', $this->Lang('image'));
+$tpl->assign('imageinput', $input);
+$tpl->assign('imageinputid', $inputid);
+$tpl->assign('urltext', $this->Lang('url'));
+$tpl->assign('news_url', $news_url);
+$tpl->assign('inputcontent', CmsFormUtils::create_textarea([
+    'enablewysiwyg' => true,
+    'name' => $id . 'content',
+    'text' => $content,
+    'rows' => 10,
+    'cols' => 60
+]));
+$tpl->assign('hide_summary_field', $this->GetPreference('hide_summary_field', 0));
+$val = $this->GetPreference('allow_summary_wysiwyg', 1);
+$tpl->assign('inputsummary', CmsFormutils::create_textarea([
+    'enablewysiwyg' => (bool)$val,
+    'name' => $id . 'summary',
+    'text' => $summary,
+    'rows' => 3,
+    'cols' => 60
+]));
+$tpl->assign('useexp', $useexp);
+$tpl->assign('actionid', $id);
+$tpl->assign('inputexp', $this->CreateInputCheckbox($id, 'useexp', '1', $useexp, 'class="pagecheckbox"'));
+$tpl->assign('postdate', $postdate);
+$tpl->assign('postdateprefix', $id . 'postdate_');
+$tpl->assign('startdate', $startdate);
+$tpl->assign('startdateprefix', $id . 'startdate_');
+$tpl->assign('enddate', $enddate);
+$tpl->assign('enddateprefix', $id . 'enddate_');
+$tpl->assign('status', $status);
+$tpl->assign('categorylist', array_flip($categorylist));
+$tpl->assign('category', $usedcategory);
+$tpl->assign('submit', $this->CreateInputSubmit($id, 'submit', lang('submit')));
+$tpl->assign('apply', $this->CreateInputSubmit($id, 'apply', lang('apply')));
+$tpl->assign('cancel', $this->CreateInputSubmit($id, 'cancel', lang('cancel')));
+$tpl->assign('titletext', $this->Lang('title'));
+$tpl->assign('categorytext', $this->Lang('category'));
+$tpl->assign('summarytext', $this->Lang('summary'));
+$tpl->assign('contenttext', $this->Lang('content'));
+$tpl->assign('postdatetext', $this->Lang('postdate'));
+$tpl->assign('useexpirationtext', $this->Lang('useexpiration'));
+$tpl->assign('startdatetext', $this->Lang('startdate'));
+$tpl->assign('enddatetext', $this->Lang('enddate'));
+$tpl->assign('searchable', $searchable);
+$tpl->assign('select_option', $this->Lang('select_option'));
+$tpl->assign('warning_preview', $this->Lang('warning_preview'));
+if ($custom_flds) {
+    $tpl->assign('custom_fields', $custom_flds);
+}
 
 if ($this->CheckPermission('Approve News')) {
-    $smarty->assign('statustext', lang('status'));
-    $smarty->assign('statuses', array_flip($statusdropdown));
+    $tpl->assign('statustext', lang('status'));
+    $tpl->assign('statuses', array_flip($statusdropdown));
 }
 
-if ($custom_flds) {
-    $smarty->assign('custom_fields', $custom_flds);
-}
 $contentops = cmsms()->GetContentOperations();
-$smarty->assign('preview_page_selector', $contentops->CreateHierarchyDropdown('', $this->GetPreference('detail_returnid', -1), $id.'previewpage'));
+$tpl->assign('preview_page_selector', $contentops->CreateHierarchyDropdown(0, $this->GetPreference('detail_returnid', -1), $id.'previewpage', true, false, false, false, false, 'seldetail'));
 
-// get the list of detail templates.
 try {
-    $type = CmsLayoutTemplateType::load($this->GetName() . '::detail');
-    $templates = $type->get_template_list();
+    // detail templates for preview
     $list = array();
+    $type = CmsLayoutTemplateType::load($me . '::detail');
+    $templates = $type->get_template_list();
     if ($templates && is_array($templates)) {
         foreach ($templates as $template) {
             $list[$template->get_id()] = $template->get_name();
         }
     }
     if ($list) {
-        $smarty->assign('prompt_detail_template', $this->Lang('detail_template'));
-        $smarty->assign('prompt_detail_page', $this->Lang('detail_page'));
-        $smarty->assign('detail_templates', $list);
-        $smarty->assign('cur_detail_template', $this->GetPreference('current_detail_template'));
-        $smarty->assign('start_tab_preview', $this->StartTab('preview', $params));
-        $smarty->assign('end_tab_preview', $this->EndTab());
+        $tpl->assign('detail_templates', $list);
+        $tpl->assign('cur_detail_template', $this->GetPreference('current_detail_template'));
     }
 } catch( Exception $e ) {
-    audit('', $this->GetName(), 'No detail templates available for preview');
+    audit('', $me.':editarticle', 'No detail template available for preview');
 }
 
-// and display the template.
-echo $this->ProcessTemplate('editarticle.tpl');
+$tpl->display();
+?>

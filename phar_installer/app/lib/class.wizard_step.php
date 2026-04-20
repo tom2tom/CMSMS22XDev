@@ -62,7 +62,10 @@ abstract class wizard_step extends parent_step
       }
       return $str;
   }
-
+/* TODO Warnings: bogus ?
+ Cannot modify header information - headers already sent by (output started at path to/installer/lib/classes/base/class.session.php:78)
+ in path to /installer/app/lib/class.wizard_step.php on line 70
+*/
   protected function display()
   {
       header('Content-Type:text/html; charset=UTF-8');
@@ -75,11 +78,11 @@ abstract class wizard_step extends parent_step
       smarty()->assign('wizard_steps',$this->get_wizard()->get_nav())
         ->assign('title',$this->get_primary_title());
   }
-
+  //TODO echo'd scripts past <html/> are invalid - insert at end of <body/> then run it
   public function error($msg)
   {
-      $msg = addslashes($msg);
-      echo '<script type="text/javascript">add_error(\''.$msg.'\');</script>'."\n";
+      $msg = str_replace(['\\\\r\\\\n','\\\\n','\\\\r',"\n"],['\n','\n','\n','\n'],addslashes($msg));
+      echo "<script>add_error('$msg');</script>\n";
       flush();
   }
 
@@ -87,29 +90,30 @@ abstract class wizard_step extends parent_step
   {
       $verbose = wizard::get_instance()->get_data('verbose');
       if( $verbose ) {
-          $msg = addslashes($msg);
-          echo '<script type="text/javascript">add_verbose(\''.$msg.'\');</script>'."\n";
+          $msg = str_replace(['\\\\r\\\\n','\\\\n','\\\\r',"\n"],['\n','\n','\n','\n'],addslashes($msg));
+          echo "<script>add_verbose('$msg');</script>\n";
           flush();
       }
   }
 
   public function message($msg)
   {
-      $msg = addslashes($msg);
-      echo '<script type="text/javascript">add_message(\''.$msg.'\');</script>'."\n";
+      $msg = str_replace(['\\\\r\\\\n','\\\\n','\\\\r',"\n"],['\n','\n','\n','\n'],addslashes($msg));
+      echo "<script>add_message('$msg');</script>\n";
       flush();
   }
 
   public function set_block_html($id,$html)
   {
-      $html = addslashes($html);
-      echo '<script type="text/javascript">set_block_html(\''.$id.'\',\''.$html.'\');</script>'."\n";
+      //$id is element id attribute, nothing fancy in there
+      $html = str_replace(['\\\\r\\\\n','\\\\n','\\\\r'],["\n","\n","\n"],addslashes($html));
+      echo "<script>set_block_html('$id','$html');</script>\n";
       flush();
   }
 
   protected function finish()
   {
-      echo '<script type="text/javascript">finish();</script>'."\n";
+      echo "<script>finish();</script>\n";
       flush();
   }
 

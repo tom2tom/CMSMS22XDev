@@ -1,22 +1,22 @@
-<script type="text/javascript">
+<script>
 $(function() {
-  $('.helpicon').click(function() {
+  $('.helpicon').on('click', function() {
     var x = $(this).attr('name');
     $('#'+x).dialog({ width: 'auto' });
   });
-  $('.template_view').click(function() {
+  $('.template_view').on('click', function() {
     var row = $(this).closest('tr');
-    $('.template_content',row).dialog( {
+    $('.template_content',row).dialog({
       width: 'auto',
       close: function(ev, ui) {
-         $(this).dialog('destroy');
+        $(this).dialog('destroy');
       }
     });
     return false;
   });
-  $('.stylesheet_view').click(function() {
+  $('.stylesheet_view').on('click', function() {
     var row = $(this).closest('tr');
-    $('.stylesheet_content',row).dialog( {
+    $('.stylesheet_content',row).dialog({
       width: 'auto',
       close: function(ev, ui) {
          $(this).dialog('destroy');
@@ -33,39 +33,65 @@ $(function() {
 <div class="pageinfo">{$mod->Lang('info_import_xml_step2')}</div>
 
 <fieldset>
-  <div style="width: 49%; float: left;">
+{if !empty($currentversion)}
+ <p class="pagetext"><label>{$mod->Lang('installed_version', $currentname)}:</label></p>
+ <p class="pageinput">{$currentversion}</p>
+{/if}
+ <p class="pagetext"><label>{$mod->Lang('import_version')}:</label></p>
+ <p class="pageinput">{$importversion}</p>
+ <p class="pagetext"><label>{$mod->Lang('import_requires')}:</p>
+ <p class="pageinput">
+{if empty($importrequires)}
+  {lang('none')}
+{else}
+ <ul>
+{foreach $importrequires as $elem}
+  <li>{$elem}</li>{/foreach}
+ </ul>
+{/if}
+ </p>
+ <p class="pagetext"><label>{$mod->Lang('prompt_notes')}:</label></p>
+ <p class="pageinput">{$importnotes}</p>
+</fieldset>
+
+<fieldset>
+  <div class="startside">
     <div class="pageoverflow">
-      <p class="pagetext"><label for="import_newname">{$mod->Lang('prompt_name')}:</label></p>
+      <p class="pagetext">
+        <label>{$mod->Lang('prompt_orig_name')}:</label>
+      </p>
       <p class="pageinput">
-        <input id="import_newname" type="text" name="{$actionid}newname" value="{$new_name}" size="50" maxlength="50"/>
-        &nbsp;{admin_icon name='help_import_newname' icon='info.gif' class='helpicon'}
-        <br/>
-        {$mod->Lang('prompt_orig_name')}: {$design_info.name}
+        {$design_info.name}
       </p>
     </div>
-
     <div class="pageoverflow">
-      <p class="pagetext">{$mod->Lang('prompt_created')}:</p>
+      <p class="pagetext"><label>{$mod->Lang('prompt_created')}:</label>&nbsp;{cms_help key2='help_import_created' title=''}</p>
       <p class="pageinput">
         {$tmp=$design_info.generated|localedate_format:'%x %X'}{if $tmp == ''}{$tmp=$mod->Lang('unknown')}{/if}
-        <span style="color: red;">{$tmp}</span>&nbsp;{cms_help key2='help_import_created' title=''}
+        <span id="import_create" style="color:red">{$tmp}</span>
       </p>
     </div>
   </div>
-
-  <div style="width: 49%; float: right;">
+  <p class="startside" style="width:5%;min-width:1em"></p>
+  <div class="startside last">
     <div class="pageoverflow">
-      <p class="pagetext">{$mod->Lang('prompt_cmsversion')}:</p>
+      <p class="pagetext"><label>{$mod->Lang('prompt_cmsversion')}:</label>&nbsp;{cms_help key2='help_import_cmsversion' title=$mod->Lang('prompt_cmsversion')}</p>
       <p class="pageinput">
-        {if version_compare($design_info.cmsversion,$cms_version) < 0}
-          <span style="color: red;">{$design_info.cmsversion}</span>&nbsp;{admin_icon name='help_import_cmsversion' icon='info.gif' class='helpicon'}
-        {else}
-          {$design_info.cmsversion}
-        {/if}
+{if version_compare($design_info.cmsversion,$cms_version) < 0}
+        <span id="cmsver" style="color:red">{$design_info.cmsversion}</span>
+{else}
+        <span id="cmsver">{$design_info.cmsversion}</span>
+{/if}
       </p>
     </div>
   </div>
 </fieldset>
+<div class="pageoverflow">
+  <p class="pagetext"><label for="import_newname">{$mod->Lang('newname')}:</label> {cms_help key2='help_import_newname' title=$mod->Lang('newname')}</p>
+  <p class="pageinput">
+    <input id="import_newname" type="text" name="{$actionid}newname" value="{$new_name}" size="50" maxlength="50" placeholder="{$mod->Lang('name')}">
+  </p>
+</div>
 
 {tab_header name='description' label=$mod->Lang('prompt_description')}
 {* tab_header name='copyright' label=$mod->Lang('prompt_copyrightlicense') *}
@@ -79,10 +105,11 @@ $(function() {
 {* tab_start name='copyright' *}
 
 {tab_start name='templates'}
+{if !empty($templates) }
 <table class="pagetable">
   <thead>
     <tr>
-      <th>{$mod->Lang('name')}</th>
+      <th>{$mod->Lang('prompt_orig_name')}</th>
       <th>{$mod->Lang('newname')}</th>
       <th>{$mod->Lang('type')}</th>
       <th>{$mod->Lang('prompt_description')}</th>
@@ -100,7 +127,7 @@ $(function() {
     <td><h3>{$one.newname}</h3></td>
     <td>{$type_obj->get_langified_display_value()}</td>
     <td>{$one.desc|default:$mod->Lang('info_nodescription')|summarize:80}
-      <div id="tpl_{$one@index}" class="template_content" title="{$one.name}" style="display: none;"><textarea rows="10" cols="80">{$one.data}</textarea></div>
+      <div id="tpl_{$one@index}" class="template_content" title="{$one.name}" style="display:none"><textarea rows="10" cols="80">{$one.data}</textarea></div>
     </td>
     <td>
       {admin_icon class="template_view pointer" icon='view.gif' alt=lang('view')}
@@ -109,14 +136,15 @@ $(function() {
   {/foreach}
   </tbody>
 </table>
-
+{/if}
 
 {tab_start name='stylesheets'}
+{if !empty($stylesheets) }
 <div id="stylesheet_list">
   <table class="pagetable">
     <thead>
       <tr>
-        <th>{$mod->Lang('name')}</th>
+        <th>{$mod->Lang('prompt_orig_name')}</th>
         <th>{$mod->Lang('newname')}</th>
         <th>{$mod->Lang('prompt_media_type')}</th>
         <th>{$mod->Lang('prompt_description')}</th>
@@ -132,7 +160,7 @@ $(function() {
         </td>
         <td>{$one.mediatype}</td>
         <td>{$one.desc|default:$mod->Lang('info_nodescription')}
-           <div class="stylesheet_content" title="{$one.name}" style="display: none;">
+           <div class="stylesheet_content" title="{$one.name}" style="display:none">
              <textarea rows="10" cols="80">{$one.data}</textarea>
            </div>
         </td>
@@ -144,24 +172,25 @@ $(function() {
     </tbody>
   </table>
 </div>
+{/if}
 {tab_end}
 
 <div class="pageoverflow">
   <p class="pagetext">*{$mod->Lang('confirm_import')}:</p>
   <p class="pageinput">
-    <input type="checkbox" name="{$actionid}check1" value="1" id="check1" />&nbsp;<label for="check1" />{$mod->Lang('confirm_import_1')}</label>
+    <input type="checkbox" name="{$actionid}check1" value="1" id="check1">&nbsp;<label for="check1">{$mod->Lang('confirm_import_1')}</label>
   </p>
 </div>
+<br>
 <div class="pageoverflow">
-  <p class="pagetext"></p>
-  <p class="pageinput">
-    <input type="submit" name="{$actionid}next2" value="{$mod->Lang('next')}" />
-    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
-  </p>
+  <div class="pageinput">
+    <input type="submit" name="{$actionid}next2" data-ui-icon="ui-icon-triangle-2-e-w" value="{$mod->Lang('next')}">
+    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
+  </div>
 </div>
 {form_end}
 
-<div style="display: none;">{strip}
+<div style="display:none">{strip}
   <div id="help_import_xml_file" title="{$mod->Lang('prompt_help')}">{$mod->Lang('help_import_xml_file')}</div>
   <div id="help_import_newname" title="{$mod->Lang('prompt_help')}">{$mod->Lang('help_import_newname')}</div>
   <div id="help_import_cmsversion" title="{$mod->Lang('prompt_help')}">{$mod->Lang('help_import_cmsversion')}</div>

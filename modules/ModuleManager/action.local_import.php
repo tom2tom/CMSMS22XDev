@@ -22,7 +22,7 @@ try {
   $ops = ModuleOperations::get_instance();
   $ops->ExpandXMLPackage( $file['tmp_name'], true, false );
 
-  audit('',$this->GetName(),'Imported Module '.$file['name']);
+  audit('',$this->GetName(),'Imported module '.$file['name']);
   $this->Setmessage($this->Lang('msg_module_imported'));
 }
 catch( Exception $e ) {

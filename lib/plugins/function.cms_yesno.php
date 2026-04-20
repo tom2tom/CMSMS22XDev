@@ -1,6 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: cms_yesno
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -15,6 +15,9 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+// historically, this plugin has been specially handled
+// (triggered by its name smarty_cms_function...)
+// to ensure that it's never cached
 function smarty_cms_function_cms_yesno($params, $smarty)
 {
     $opts = array(0=>lang('no'),1=>lang('yes'));
@@ -22,14 +25,14 @@ function smarty_cms_function_cms_yesno($params, $smarty)
     $out = '';
     foreach( $opts as $k => $v ) {
         $out .= '<option value="'.$k.'"';
-        if( isset($params['selected']) && $k == $params['selected'] ) $out .= ' selected="selected"';
+        if( isset($params['selected']) && $k == $params['selected'] ) $out .= ' selected';
         $out .= '>'.$v.'</option>';
     }
     $out .= "\n";
 
     if( isset($params['assign']) ) {
         $smarty->assign(trim($params['assign']),$out);
-        return;
+        return '';
     }
     return $out;
 }

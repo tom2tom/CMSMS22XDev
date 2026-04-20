@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: DesignManager - A CMSMS addon module to provide template management.
-# (c) 2012 by Robert Campbell <calguy1000@cmsmadesimple.org>
+# Module DesignManager class dm_utils
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,61 +13,73 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
+# along with this program; if not, read tthe license online at:
+# https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
 
 final class dm_utils
 {
-    public function __construct() {}
-
-    public static function locking_enabled()
-    {
+	public static function locking_enabled()
+	{
 		$mod = cms_utils::get_module('DesignManager');
-        $timeout = $mod->GetPreference('lock_timeout');
-        if( $timeout > 0 ) return TRUE;
-        return FALSE;
-    }
+		$timeout = (int)$mod->GetPreference('lock_timeout');
+		return ($timeout > 0);
+	}
 
 	public static function get_template_locks()
 	{
-		static $_locks = null;
-		static $_locks_loaded = FALSE;
-		if( !$locks_loaded ) {
-			$_locks_loaded = TRUE;
+		static $_tlocks = [];
+		static $_tlocks_loaded = FALSE;
+		if( !$_tlocks_loaded ) {
+			$_tlocks_loaded = TRUE;
 			$tmp = CmsLockOperations::get_locks('template');
-			if( is_array($tmp) && count($tmp) ) {
-				$_locks = array();
+			if( $tmp && is_array($tmp) ) {
 				foreach( $tmp as $lock_obj ) {
-					$_locks[$lock_obj['oid']] = $lock_obj;
+					$_tlocks[$lock_obj['oid']] = $lock_obj;
 				}
 			}
 		}
-		return $_locks;
+		return $_tlocks;
 	}
 
 	public static function get_css_locks()
 	{
-		static $_locks = null;
-		static $_locks_loaded = FALSE;
-		if( !$locks_loaded ) {
-			$_locks_loaded = TRUE;
+		static $_slocks = [];
+		static $_slocks_loaded = FALSE;
+		if( !$_slocks_loaded ) {
+			$_slocks_loaded = TRUE;
 			$tmp = CmsLockOperations::get_locks('stylesheet');
-			if( is_array($tmp) && count($tmp) ) {
-				$_locks = array();
+			if( $tmp && is_array($tmp) ) {
 				foreach( $tmp as $lock_obj ) {
-					$_locks[$lock_obj['oid']] = $lock_obj;
+					$_slocks[$lock_obj['oid']] = $lock_obj;
 				}
 			}
 		}
-		return $_locks;
+		return $_slocks;
 	}
 
-} // end of class
-
-#
-# EOF
-#
-?>
+	/**
+	 * Adjust the supplied string to a form suitable for use in a
+	 * filesystem (folder) name.
+	 * The result will have only letter(s), number(s), regular bracket(s),
+	 * single-dash(es) and/or single-underscore(s)
+	 * @since 1.2.1
+	 *
+	 * @param string | null $name
+	 * @return string
+	 */
+	public static function munge_name_to_dir($name)
+	{
+		$tmp = trim((string)$name);
+		if( $tmp ) {
+			// replace/remove most unwanted chars
+			$tmp = preg_replace(
+				['/[{}[\]]/', '/[^\pL\p{Nd}_\-. ()]/u'], ['_', ''], $tmp);
+			// replace spaces, dots and remove extra dashes and underscores
+			$tmp = str_replace(
+				[' ', '.', '---', '--', '___', '__'],
+				['-', '-', '-', '-', '_', '_'], $tmp);
+		}
+		return $tmp;
+	}
+} // class

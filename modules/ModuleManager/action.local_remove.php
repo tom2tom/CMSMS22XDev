@@ -8,14 +8,14 @@ if( !isset($params['mod']) ) {
 }
 $module = get_parameter_value($params,'mod');
 
-$dir = cms_join_path($config['root_path'],'modules',$module);
+$dir = cms_join_path(CMS_ROOT_PATH,'modules',$module);
 $result = recursive_delete( $dir );
 
 if( !$result ) {
   $this->SetError($this->Lang('error_moduleremovefailed'));
 }
 else {
-  audit('',$this->GetName(),'Module '.$module.' removed');
+  audit('',$this->GetName(),'Removed module '.$module);
   $this->SetMessage($this->Lang('msg_module_removed'));
 }
 

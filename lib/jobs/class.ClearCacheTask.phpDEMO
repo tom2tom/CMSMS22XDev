@@ -1,0 +1,66 @@
+<?php
+
+use CMSMS\Async\Job;
+use CMSMS\JobOperations;
+
+class ClearCacheTask implements CmsRegularTask
+{
+    const LASTEXECUTE_PROPNAME = 'Lastrun:ClearCache'; // i.e. 'Lastrun:' . taskname
+    const CACHEDFILEAGE_SITEPREF = 'auto_clear_cache_age';
+
+    public $id = 95741; // interim unique int
+    private $_age_days;
+
+    public function get_name()
+    {
+        return 'ClearCache';
+    }
+
+    public function get_description()
+    {
+        return lang_by_realm('tasks','clearcache_description');
+    }
+
+    public function get_frequency()
+    {
+        $val = (int)cms_siteprefs::get(self::CACHEDFILEAGE_SITEPREF,0);
+        return ($val > 0) ? Job::RECUR_DAILY : Job::RECUR_NONE_CUSTOM;
+    }
+
+    public function get_custom_frequency()
+    {
+        $val = (int)cms_siteprefs::get(self::CACHEDFILEAGE_SITEPREF,0);
+        return ($val > 0) ? Job::RECUR_DAILY : lang('disabled');
+    }
+
+    // do we need to do this task?
+    public function test($time = 0)
+    {
+        $this->_age_days = (int)cms_siteprefs::get(self::CACHEDFILEAGE_SITEPREF,0);
+        if( $this->_age_days == 0 ) return FALSE;
+
+        if( !$time ) $time = time();
+        $last_execute = (int)JobOperations::retrieve_timestamp($this->id,self::LASTEXECUTE_PROPNAME); //cms_siteprefs::get_forced(self::LASTEXECUTE_PROPNAME,0);
+        return ($last_execute < ($time - 86400)); // do it 24-hourly
+    }
+
+    // do the task
+    public function execute($time = 0)
+    {
+        $gCms = CmsApp::get_instance();
+        $gCms->clear_cached_files($this->_age_days);
+        return TRUE;
+    }
+
+    public function on_success($time = 0)
+    {
+        if( !$time ) $time = time();
+        JobOperations::record_timestamp($this->id,self::LASTEXECUTE_PROPNAME,$time);
+    }
+
+    public function on_failure($time = 0)
+    {
+        // setup to try again during the next request
+        JobOperations::remove_timestamp($this->id,self::LASTEXECUTE_PROPNAME);
+    }
+}

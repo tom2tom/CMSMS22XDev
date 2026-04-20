@@ -1,10 +1,7 @@
 <?php
-# FileManager. A plugin for CMS - CMS Made Simple
-# Copyright (c) 2006-08 by Morten Poulsen <morten@poulsen.org>
-#
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+# FileManager module action
+# (c) 2006-08 Morten Poulsen <morten@poulsen.org>
+# (c) 2008 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -18,66 +15,61 @@
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
-if (!function_exists("cmsms")) exit;
-if (!$this->CheckPermission("Modify Files") && !$this->AdvancedAccessAllowed()) exit;
 
-if (isset($params["cancel"])) $this->Redirect($id,"defaultadmin",$returnid,$params);
+if( !function_exists('cmsms') ) exit;
+if( !($this->CheckPermission('Modify Files') || $this->AdvancedAccessAllowed())) exit;
 
-$selall = $params['selall'];
-if( !is_array($selall) ) {
-  $selall = unserialize($selall);
-}
-unset($params['selall']);
-
-if (count($selall)==0) {
-  $params["fmerror"]="nofilesselected";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
-}
-if (count($selall)>1) {
-  $params["fmerror"]="morethanonefiledirselected";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+if( isset($params['cancel']) ) {
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 
-$advancedmode = filemanager_utils::check_advanced_mode();
+$selall = (!empty($params['selall'])) ? $params['selall'] : '';
+if( $selall && !is_array($selall) ) {
+  $tmp = @unserialize($selall, ['allowed_classes'=>[]]); // mask possible E_WARNING
+  $selall = ($tmp !== false) ? $tmp : [$selall];
+  $params['selall'] = $selall;
+}
+if( !$selall ) {
+  $params['fmerror'] = 'nofilesselected';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
+}
+if( count($selall) > 1 ) {
+  $params['fmerror'] = 'morethanonefiledirselected';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
+}
 
-$config=cmsms()->GetConfig();
-$basedir = $config['root_path'];
-$filename=$this->decodefilename($selall[0]);
-$src = filemanager_utils::join_path($basedir,filemanager_utils::get_cwd(),$filename);
+$filename = $this->decodefilename($selall[0]);
+$src = filemanager_utils::join_path(CMS_ROOT_PATH,filemanager_utils::get_cwd(),$filename);
 if( !file_exists($src) ) {
-  $params["fmerror"]="filenotfound";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+  $params['fmerror'] = 'filenotfound';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
-$thumb = filemanager_utils::join_path($basedir,filemanager_utils::get_cwd(),'thumb_'.$filename);
 
 if( isset($params['submit']) ) {
-  //$thumb = filemanager_utils::join_path($basedir,filemanager_utils::get_cwd(),'thumb_'.$filename); // by mistake for sure... (JM)
-  $thumb = filemanager_utils::create_thumbnail($src, NULL, TRUE);
-  
-  if( !$thumb ) {
-    $params["fmerror"]="thumberror";
+  if( filemanager_utils::create_thumbnail($src,null,true) ) {
+    $params['fmmessage'] = 'thumbsuccess';
   }
   else {
-    $params["fmmessage"]="thumbsuccess";
+    $params['fmerror'] = 'thumberror';
   }
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
+
+$thumb = filemanager_utils::join_path(CMS_ROOT_PATH,filemanager_utils::get_cwd(),'thumb_'.$filename);
 
 //
 // build the form
 //
-$smarty->assign('filename',$filename);
-$smarty->assign('filespec',$src);
-$smarty->assign('thumb',$thumb);
-$smarty->assign('thumbexists',file_exists($thumb));
-if( is_array($selall) ) $params['selall'] = serialize($selall);
-$smarty->assign('startform', $this->CreateFormStart($id, 'fileaction', $returnid,"post","",false,"",$params));
-$smarty->assign('mod',$this);
-$smarty->assign('endform', $this->CreateFormEnd());
-echo $this->ProcessTemplate('filethumbnail.tpl');
+$modname = $this->GetName();
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;filethumbnail.tpl",null,$modname,$smarty);
 
-#
-# EOF
-#
+$tpl->assign('filename',$filename);
+$tpl->assign('filespec',$src);
+$tpl->assign('thumb',$thumb);
+$tpl->assign('thumbexists',file_exists($thumb));
+$params['selall'] = $selall[0]; // flat value for next pass
+$tpl->assign('startform',$this->CreateFormStart($id,'fileaction',$returnid,'post','',false,'',$params));
+$tpl->assign('endform',$this->CreateFormEnd());
+$tpl->display();
+
 ?>

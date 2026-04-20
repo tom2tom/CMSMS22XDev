@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple class autoloader
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -24,9 +23,9 @@
  */
 
 /*
-function __cms_load($filename)
+function _cms_load($filename)
 {
-  $gCms = CmsApp::get_instance(); // wierd, but this is required.
+  $gCms = CmsApp::get_instance(); // variable-existence might be checked by the included file
   require_once($filename);
 }
 */
@@ -42,124 +41,121 @@ function __cms_load($filename)
  */
 function cms_autoloader($classname)
 {
-    $gCms = CmsApp::get_instance();
+    $gCms = CmsApp::get_instance(); // in case included file checks for this
+    $rootp = CMS_ROOT_PATH;
+    $sp = DIRECTORY_SEPARATOR;
 
-    if( startswith($classname,'CMSMS\\') ) {
-        $path = str_replace('\\','/',substr($classname,6));
-        $classname = basename($path);
-        $path = dirname($path);
-        $filenames = array("class.{$classname}.php","interface.{$classname}.php","trait.{$classname}.php");
-        foreach( $filenames as $test ) {
-            $fn = cms_join_path(CMS_ROOT_PATH,'lib','classes',$path,$test);
-            if( is_file($fn) ) {
-                require_once($fn);
+    $p = strpos($classname, '\\'); //$classname will not contain the leading backslash of a fully-qualified identifier
+    if( $p !== false ) {
+        // namespaced classes - core and module
+        $space = substr($classname,0,$p);
+        if( $space == 'CMSMS' ) {
+            $sroot = "$rootp{$sp}lib{$sp}classes{$sp}";
+        }
+        elseif( $space == 'CMSAsset' ) {
+            $config = $gCms->GetConfig();
+            $astp = $config['assets_path'];
+            $sroot = "$astp{$sp}";
+        }
+        else {
+            $mpath = "$rootp{$sp}modules{$sp}{$space}{$sp}{$space}.module.php";
+            if( !is_readable($mpath) ) {
                 return;
             }
+            $sroot = "$rootp{$sp}modules{$sp}{$space}{$sp}lib{$sp}";
         }
+
+        $path = str_replace('\\',DIRECTORY_SEPARATOR,substr($classname,$p + 1));
+        $base = basename($path);
+        $path = dirname($path);
+        if( $path != '.' ) {
+            $sroot .= "$path{$sp}";
+        }
+        foreach( ['class.','interface.','trait.',''] as $test ) {
+            $fn = "$sroot{$test}$base.php";
+            if( is_file($fn) ) {
+                require_once($fn);
+                if( class_exists($classname,false) ) return;
+            }
+        }
+        return;
     }
 
     // standard classes
-    $fn = cms_join_path(CMS_ROOT_PATH,'lib','classes',"class.{$classname}.php");
+    $fn = "$rootp{$sp}lib{$sp}classes{$sp}class.{$classname}.php";
     if( is_file($fn) ) {
         require_once($fn);
         return;
     }
 
     // standard internal classes
-    $fn = cms_join_path(CMS_ROOT_PATH,'lib','classes','internal',"class.{$classname}.php");
+    $fn = "$rootp{$sp}lib{$sp}classes{$sp}internal{$sp}class.{$classname}.php";
     if( is_file($fn) ) {
         require_once($fn);
         return;
     }
 
-    // lowercase classes
-    $lowercase = strtolower($classname);
-    $fn = cms_join_path(CMS_ROOT_PATH,'lib','classes',"class.{$lowercase}.inc.php");
-    if( is_file($fn) && $classname != 'Content' ) {
-        require_once($fn);
-        return;
-    }
-
-    // lowercase internal classes
-    $lowercase = strtolower($classname);
-    $fn = cms_join_path(CMS_ROOT_PATH,'lib','classes','internal',"class.{$lowercase}.inc.php");
-    if( is_file($fn) && $classname != 'Content' ) {
-        require_once($fn);
-        return;
-    }
-
     // standard interfaces
-    $fn = cms_join_path(CMS_ROOT_PATH,'lib','classes',"interface.{$classname}.php");
+    $fn = "$rootp{$sp}lib{$sp}classes{$sp}interface.{$classname}.php";
     if( is_file($fn) ) {
         require_once($fn);
         return;
     }
 
     // internal interfaces
-    $fn = cms_join_path(CMS_ROOT_PATH,'lib','classes','internal',"interface.{$classname}.php");
+    $fn = "$rootp{$sp}lib{$sp}classes{$sp}internal{$sp}interface.{$classname}.php";
     if( is_file($fn) ) {
         require_once($fn);
         return;
     }
 
     // standard content types
-    $fn = cms_join_path(CMS_ROOT_PATH,'lib','classes','contenttypes',"{$classname}.inc.php");
+    $fn = "$rootp{$sp}lib{$sp}classes{$sp}contenttypes{$sp}class.{$classname}.php";
     if( is_file($fn) ) {
         require_once($fn);
         return;
     }
 
-    $fn = CMS_ROOT_PATH."/modules/{$classname}/{$classname}.module.php";
+    // modules
+    $fn = "$rootp{$sp}modules{$sp}{$classname}{$sp}{$classname}.module.php";
     if( is_file($fn) ) {
         require_once($fn);
         return;
     }
 
+    // background tasks and jobs
     if( endswith($classname,'Task') ) {
-        $class = substr($classname,0,-4);
-        $fn = CMS_ROOT_PATH."/lib/tasks/class.{$class}.task.php";
+        $fn = "$rootp{$sp}lib{$sp}jobs{$sp}class.{$classname}.php";
+        if( is_file($fn) ) {
+            require_once($fn);
+            return;
+        }
+        // historic naming convention (deprecated since 2.2.23F2)
+        $fn = str_replace('Task.php','.task.php',$fn);
+        if( is_file($fn) ) {
+            require_once($fn);
+            return;
+        }
+    }
+    if( endswith($classname,'Job') ) {
+        $fn = "$rootp{$sp}lib{$sp}jobs{$sp}class.{$classname}.php";
         if( is_file($fn) ) {
             require_once($fn);
             return;
         }
     }
 
-    $list = ModuleOperations::get_instance()->GetLoadedModules();
-    if( is_array($list) && count($list) ) {
-        foreach( array_keys($list) as $modname ) {
-            $fn = CMS_ROOT_PATH."/modules/$modname/lib/class.$classname.php";
-            if( is_file( $fn ) ) {
-                require_once($fn);
-                return;
-            }
-        }
-
-        // handle \ModuleName\<path>\Class
-        $tmp = ltrim(str_replace('\\','/',$classname),'/');
-        $p1 = strpos($tmp,'/');
-        if( $p1 !== FALSE ) {
-            $modname = substr($tmp,0,strpos($tmp,'/'));
-            $tmp = substr($tmp,$p1+1);
-            if( isset($list[$modname]) ) {
-                $p2 = strrpos($tmp,'/');
-                $class = basename($tmp);
-                $path = substr($tmp,0,$p2);
-                $fn = CMS_ROOT_PATH."/modules/$modname/lib/";
-                if( $path ) $fn .= $path.'/';
-                $fn .= "class.$class.php";
-                if( is_file($fn) ) {
-                    require_once($fn);
-                    return;
-                }
-            }
+    // module unspaced classes etc (whether or not the module is loaded)
+    $list = glob("$rootp{$sp}modules{$sp}?*{$sp}lib{$sp}{class,interface,trait}.$classname.php",GLOB_BRACE);
+    if( !$list ) return;
+    $ops = ModuleOperations::get_instance();
+    foreach( $list as $fn ) {
+        $modname = basename(dirname($fn,2));
+        if( $ops->IsModuleActive($modname) || !$ops->IsModuleInstalled($modname) ) { // CHECKME ok test?
+            require_once($fn);
+            if( class_exists($classname,false) ) return;
         }
     }
-    // module classes
 }
 
 spl_autoload_register('cms_autoloader');
-
-#
-# EOF
-#
-?>

@@ -1,14 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# cms_selflink (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A function for retrieving A url or link to an internal CMSMS Page.
-#  This is a rewrite of the original cms_selflink plugin by Ted Kulk and various authors.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004-2013 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# cms_selflink plugin
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A function for retrieving an url or link to an internal CMSMS Page.
 #
 #-------------------------------------------------------------------------
 #
@@ -34,26 +29,27 @@
 #
 #-------------------------------------------------------------------------
 #END_LICENSE
+# This is a rewrite of the original cms_selflink plugin by Ted Kulp and various authors.
 
 function smarty_function_cms_selflink($params, $smarty)
 {
-    $gCms = \CmsApp::get_instance();
+	$gCms = \CmsApp::get_instance();
 	$manager = $gCms->GetHierarchyManager();
 	$url = '';
 	$urlparam = '';
 	$label_side = 'left';
 	$label = '';
 	$urlonly = 0;
-	$node = null;
-	$dir = null;
-	$pageid = null;
+	$node = null; // no object
+	$dir = '';
+	$pageid = 0;
 
-	$rellink = (isset($params['rellink']) && $params['rellink'] == '1' ? true : false);
-	if ( isset($params['urlparam']) && ( strlen($params['urlparam']) > 0 ) ) $urlparam = trim($params['urlparam']);
+	$rellink = isset($params['rellink']) && $params['rellink'] == '1';
+	if( isset($params['urlparam']) && ( strlen($params['urlparam']) > 0 ) ) $urlparam = trim($params['urlparam']);
 
-	if (isset($params['page']) or isset($params['href'])) {
-		$page = null;
-		if (isset($params['href'])) {
+	if( isset($params['page']) || isset($params['href']) ) {
+		$page = ''; // mixed
+		if( isset($params['href']) ) {
 			$page = trim($params['href']);
 			$urlonly = 1;
 		}
@@ -62,19 +58,18 @@ function smarty_function_cms_selflink($params, $smarty)
 		}
 
 		if( $page ) {
-            if( (int)$page > 0 && is_numeric($page) ) {
-                $pageid = (int)$page;
-            }
-            else {
-                $page = cms_html_entity_decode($page); // decode entities (alias may be encoded if entered in WYSIWYG)
-                $node = $manager->find_by_tag('alias',$page);
-                if( $node ) $pageid = $node->get_tag('id');
-            }
+			if( (int)$page > 0 && is_numeric($page) ) {
+				$pageid = (int)$page;
+			}
+			else {
+				$page = cms_html_entity_decode($page); // decode entities (alias may be encoded if entered in WYSIWYG)
+				$node = $manager->find_by_tag('alias',$page);
+				if( $node ) $pageid = $node->get_tag('id');
+			}
 		}
 	}
-
-	else if( isset($params['dir']) ) {
-		$startpage = null;
+	elseif( isset($params['dir']) ) {
+		$startpage = 0;
 		if( $pageid ) $startpage = $pageid;
 		if( !$startpage ) $startpage = $gCms->get_content_id();
 		$dir = strtolower(trim($params['dir']));
@@ -90,7 +85,7 @@ function smarty_function_cms_selflink($params, $smarty)
 					$k = $indexes[$j];
 					$content = $flatcontent[$k]->getContent();
 					if( !is_object($content) ) continue;
-					if( !$content->Active() || !$content->HasUsableLink() || !$content->ShowInMenu() ) continue;
+					if( !$content->Active() || !$content->Navigable() || !$content->ShowInMenu() ) continue;
 					$pageid = $content->Id();
 					$label = CmsLangOperations::lang_from_realm('cms_selflink','next_label');
 					break;
@@ -102,7 +97,7 @@ function smarty_function_cms_selflink($params, $smarty)
 		case 'nextsibling':
 			// next valid peer page.
 			$node = $manager->find_by_tag('id',$startpage);
-			if( !$node ) return;
+			if( !$node ) return '';
 			$parent = $node->get_parent();
 			if( !$parent ) $parent = $manager;
 			$children = $parent->get_children();
@@ -114,7 +109,7 @@ function smarty_function_cms_selflink($params, $smarty)
 				for( $j = $i + 1; $j < count($children); $j++ ) {
 					$content = $children[$j]->getContent();
 					if( !is_object($content) ) continue;
-					if( !$content->Active() || !$content->HasUsableLink() || !$content->ShowInMenu() ) continue;
+					if( !$content->Active() || !$content->Navigable() || !$content->ShowInMenu() ) continue;
 					$pageid = $content->Id();
 					$label = CmsLangOperations::lang_from_realm('cms_selflink','next_label');
 					break;
@@ -132,7 +127,7 @@ function smarty_function_cms_selflink($params, $smarty)
 				for( $j = $i - 1; $j >= 0; $j-- ) {
 					$k = $indexes[$j];
 					$content = $flatcontent[$k]->getContent();
-					if( !is_object($content) || !$content->Active() || !$content->HasUsableLink() || !$content->ShowInMenu() ) continue;
+					if( !is_object($content) || !$content->Active() || !$content->Navigable() || !$content->ShowInMenu() ) continue;
 					$pageid = $content->Id();
 					$label = CmsLangOperations::lang_from_realm('cms_selflink','prev_label');
 					break;
@@ -144,7 +139,7 @@ function smarty_function_cms_selflink($params, $smarty)
 		case 'prevsibling':
 			// previous valid peer page.
 			$node = $manager->find_by_tag('id',$startpage);
-			if( !$node ) return;
+			if( !$node ) return '';
 			$parent = $node->get_parent();
 			if( !$parent ) $parent = $manager;
 			$children = $parent->get_children();
@@ -155,7 +150,7 @@ function smarty_function_cms_selflink($params, $smarty)
 			if( $i < count($children) ) {
 				for( $j = $i - 1; $j >= 0; $j-- ) {
 					$content = $children[$j]->getContent();
-					if( !is_object($content) || !$content->Active() || !$content->HasUsableLink() || !$content->ShowInMenu() ) continue;
+					if( !is_object($content) || !$content->Active() || !$content->Navigable() || !$content->ShowInMenu() ) continue;
 					$pageid = $content->Id();
 					$label = CmsLangOperations::lang_from_realm('cms_selflink','prev_label');
 					break;
@@ -165,36 +160,36 @@ function smarty_function_cms_selflink($params, $smarty)
 
 		case 'start':
 			// default home page
-            $contentops = ContentOperations::get_instance();
+			$contentops = ContentOperations::get_instance();
 			$pageid = $contentops->GetDefaultPageId();
 			break;
 
 		case 'up':
 			// parent page.
 			$node = $manager->find_by_tag('id',$startpage);
-			if( !$node ) return;
+			if( !$node ) return '';
 			$node = $node->get_parent();
-			if( !$node ) return;
+			if( !$node ) return '';
 			$content = $node->GetContent();
-			if( !$content ) return;
+			if( !$content ) return '';
 			$pageid = $content->Id();
 			break;
 
 		default:
 			// unknown direction... prolly should do something here.
-			return;
+			return '';
 		}
 	}
 
-	if( $pageid == '' ) return;
+	if( $pageid == '' ) return '';
 
 	// one final check to see if this page exists.
 	$node = $manager->find_by_tag('id',$pageid);
-	if( !$node ) return;
+	if( !$node ) return '';
 
 	// get the content object.
 	$content = $node->GetContent();
-	if( !$content || !is_object($content) || !$content->Active() || !$content->HasUsableLink() ) return;
+	if( !$content || !is_object($content) || !$content->Active() || !$content->Navigable() ) return '';
 
 	// get our raw display data
 	$alias = $content->Alias();
@@ -202,24 +197,24 @@ function smarty_function_cms_selflink($params, $smarty)
 	$url = $content->GetUrl();
 	$menu_text = $content->MenuText();
 	$titleattr = $content->TitleAttribute();
-	if (isset($params['anchorlink'])) $url .= '#' . ltrim($params['anchorlink'], '#');
+	if( isset($params['anchorlink']) ) $url .= '#' . ltrim($params['anchorlink'], '#');
 	if( $urlparam != '' ) $url .= $urlparam;
 
-	if( empty($url) ) return; // no url to link to, therefore nothing to do.
+	if( empty($url) ) return ''; // no url to link to, therefore nothing to do.
 
 	if( isset($params['urlonly']) ) $urlonly = cms_to_bool($params['urlonly']);
 
 	if( $urlonly ) {
 		if( isset($params['assign']) ) {
 			$smarty->assign(trim($params['assign']),$url);
-			return;
+			return '';
 		}
 		return $url;
 	}
 
 	// Now we build the output.
 	$result = "";
-	if (isset($params['label'])) {
+	if( isset($params['label']) ) {
 		$label = $params['label'];
 		$label = cms_htmlentities($label);
 	}
@@ -233,7 +228,7 @@ function smarty_function_cms_selflink($params, $smarty)
 	}
 	$title = cms_htmlentities(strip_tags($title));
 
-	if ($rellink && $dir != '' ) {
+	if($rellink && $dir ) {
 		// output a relative link.
 		$result .= '<link rel="';
 		switch($dir) {
@@ -251,7 +246,7 @@ function smarty_function_cms_selflink($params, $smarty)
 		}
 
 		$result .= '" title="'.$title.'" ';
-		$result .= 'href="'.$url.'" />';
+		$result .= 'href="'.$url.'">';
 	}
 	else {
 		if( isset($params['label_side']) ) $label_side = strtolower(trim($params['label_side']));
@@ -281,7 +276,7 @@ function smarty_function_cms_selflink($params, $smarty)
 			if( $width ) $result .= " width=\"$width\"";
 			if( $height ) $height = max(1,$height);
 			if( $height ) $result .= " height=\"$height\"";
-			$result .= "/>";
+			$result .= ">";
 			if (! (isset($params['imageonly']) && $params['imageonly'])) $result .= " $linktext";
 		} else {
 			$result .= $linktext;
@@ -294,13 +289,13 @@ function smarty_function_cms_selflink($params, $smarty)
 	$result = trim($result);
 	if( isset($params['assign']) ){
 		$smarty->assign(trim($params['assign']),$result);
-		return;
+		return '';
 	}
 	return $result;
 }
 
 function smarty_cms_help_function_cms_selflink() {
-    echo lang_by_realm('tags','help_function_cms_selflink');
+	echo lang_by_realm('tags','help_function_cms_selflink');
 }
 
 ?>

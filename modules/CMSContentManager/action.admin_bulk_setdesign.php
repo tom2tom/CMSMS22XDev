@@ -1,62 +1,50 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: Content (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A module for managing content in CMSMS.
-#
+# Module CMSContentManager action
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
-#
-#-------------------------------------------------------------------------
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
 #
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, read the license online at:
+# http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
 #END_LICENSE
+
 if( !isset($gCms) ) exit;
 $this->SetCurrentTab('pages');
-if( !$this->CheckPermission('Manage All Content') ) {
-$this->SetError($this->Lang('error_bulk_permission'));
-$this->RedirectToAdminTab();
-}
-
-if( !isset($params['multicontent']) ) {
-    $this->SetError($this->Lang('error_missingparam'));
-    $this->RedirectToAdminTab();
-}
 
 if( isset($params['cancel']) ) {
     $this->SetMessage($this->Lang('msg_cancelled'));
     $this->RedirectToAdminTab();
 }
+if( !$this->CheckPermission('Manage All Content') ) {
+    $this->SetError($this->Lang('error_bulk_permission'));
+    $this->RedirectToAdminTab();
+}
+if( !isset($params['multicontent']) ) {
+    $this->SetError($this->Lang('error_missingparam'));
+    $this->RedirectToAdminTab();
+}
+$pagelist = unserialize(base64_decode($params['multicontent']));
 
 $hm = $gCms->GetHierarchyManager();
-$pagelist = unserialize(base64_decode($params['multicontent']));
+$modname = $this->GetName();
+$userid = get_userid();
 
 $showmore = 0;
 if( isset($params['showmore']) ) {
     $showmore = (int) $params['showmore'];
-    \cms_userprefs::set('cgcm_bulk_showmore',$showmore);
+    cms_userprefs::set_for_user($userid,"{$modname}_bulk_showmore",$showmore); // never cleared
 }
 if( isset($params['submit']) ) {
     if( !isset($params['confirm1']) || !isset($params['confirm2']) ) {
@@ -82,19 +70,19 @@ if( isset($params['submit']) ) {
 
             $content->SetTemplateId((int)$params['template']);
             $content->SetPropertyValue('design_id',$params['design']);
-            $content->SetLastModifiedBy(get_userid());
+            $content->SetLastModifiedBy($userid);
             $content->Save();
             $i++;
         }
         if( $i != count($pagelist) ) {
             throw new CmsException('Bulk operation to set design did not adjust all selected pages');
         }
-        audit('','Core','Changed template and design on '.count($pagelist).' pages');
+        audit('','CMSContentManager','Changed template and design on '.count($pagelist).' pages');
         $this->SetMessage($this->Lang('msg_bulk_successful'));
         $this->RedirectToAdminTab();
     }
     catch( Exception $e ) {
-        audit('','Core','Bulk setting design and template failed: '.$e->GetMessage());
+        audit('','CMSContentManager','Bulk setting design and template failed: '.$e->GetMessage());
         $this->SetError($e->GetMessage());
         $this->RedirectToAdminTab();
     }
@@ -115,37 +103,34 @@ foreach( $pagelist as $pid ) {
     $rec['alias'] = $content->Alias();
     $displaydata[] = $rec;
 }
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_bulk_setdesign.tpl",null,$modname,$smarty);
 
-$smarty->assign('showmore',\cms_userprefs::get('cgcm_bulk_showmore'));
-$smarty->assign('multicontent',$params['multicontent']);
-$smarty->assign('displaydata',$displaydata);
-$smarty->assign('alldesigns',CmsLayoutCollection::get_list());
+$tpl->assign('showmore',cms_userprefs::get_for_user($userid,"{$modname}_bulk_showmore",0));
+$tpl->assign('multicontent',$params['multicontent']);
+$tpl->assign('displaydata',$displaydata);
+$tpl->assign('alldesigns',CmsLayoutCollection::get_list());
 $dflt_design = CmsLayoutCollection::load_default();
-$smarty->assign('dflt_design_id',$dflt_design->get_id());
+$tpl->assign('dflt_design_id',$dflt_design->get_id());
 
 $dflt_tpl_id = -1;
 try {
     $dflt_tpl = CmsLayoutTemplate::load_dflt_by_type(CmsLayoutTemplateType::CORE.'::page');
     $dflt_tpl_id = $dflt_tpl->get_id();
 }
-catch( \Exception $e ) {
+catch( Exception $e ) {
     // ignore
 }
-$smarty->assign('dflt_tpl_id',$dflt_tpl_id);
+$tpl->assign('dflt_tpl_id',$dflt_tpl_id);
 if( $showmore ) {
     $_tpl = CmsLayoutTemplate::template_query(array('as_list'=>1));
-    $smarty->assign('alltemplates',$_tpl);
+    $tpl->assign('alltemplates',$_tpl);
 }
 else {
     // gotta get the core page template type
     $_type = CmsLayoutTemplateType::load(CmsLayoutTemplateType::CORE.'::page');
     $_tpl = CmsLayoutTemplate::template_query(array('t:'.$_type->get_id(),'as_list'=>1));
-    $smarty->assign('alltemplates',$_tpl);
+    $tpl->assign('alltemplates',$_tpl);
 }
 
-echo $this->ProcessTemplate('admin_bulk_setdesign.tpl');
-
-#
-# EOF
-#
+$tpl->display();
 ?>

@@ -1,13 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: CMSMS\Database\compatibility (c) 2015 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
+# Class: CMSMS\Database\compatibility
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 # A collection of compatibility tools for the database connectivity layer.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
 #
 #-------------------------------------------------------------------------
 #
@@ -59,17 +55,26 @@ namespace CMSMS\Database {
          *
          * @internal
          * @param cms_config $config The config object
-         * @return \CMSMS\Database\Connection
+         * @return \CMSMS\Database\Connection | null
          */
         public static function init(\cms_config $config)
         {
-            $spec = new ConnectionSpec;
+            $path = private_place('db.ini',$config,['dbase'=>1]);
+            if( $path ) {
+                $tmp = parse_ini_file($path,false,INI_SCANNER_TYPED); //PHP5.6.1+
+            }
+            if( !$path || $tmp === false ) {
+                debug_to_log("Database connection error: failed to read config data");
+                return null; //TODO throw
+            }
+            $spec = new ConnectionSpec();
             $spec->type = (isset($config['dbms'])) ? $config['dbms'] : ((isset($config['type'])) ? $config['type'] : 'mysqli');
-            $spec->host = $config['db_hostname'];
-            $spec->username = $config['db_username'];
-            $spec->password = $config['db_password'];
-            $spec->dbname = $config['db_name'];
-            $spec->port = $config['db_port'];
+            $spec->host = $tmp['hostname'];
+            $spec->username = $tmp['username'];
+            $spec->password = $tmp['password'];
+            $spec->dbname = $tmp['basename'];
+            $port = (!empty($tmp['port'])) ? (int)$tmp['port'] : 0; //TODO default null (hence PHP ini value) instead of 0?
+            $spec->port = $port;
             $spec->debug = CMS_DEBUG;
 
             $tmp = [];
@@ -83,10 +88,10 @@ namespace CMSMS\Database {
                 $mins = abs((int)($offset % 3600));
                 $tmp[] = sprintf("time_zone = '%s%d:%02d'",$symbol,$hrs,$mins);
             }
-            if( count($tmp) ) $spec->auto_exec = 'SET '.implode(',',$tmp);
+            if( $tmp ) $spec->auto_exec = 'SET '.implode(',',$tmp);
 
             $obj = Connection::Initialize($spec);
-            $obj->SetErrorHandler( '\\CMSMS\Database\\compatibility::on_error' );
+            $obj->SetErrorHandler( '\CMSMS\Database\compatibility::on_error' );
             if( $spec->debug ) $obj->SetDebugCallback('debug_buffer');
             return $obj;
         }
@@ -95,8 +100,9 @@ namespace CMSMS\Database {
         {
             debug_to_log("Database Error: $errtype($error_number) - $error_msg");
             debug_bt_to_log();
-            if( !defined('CMS_DEBUG') || CMS_DEBUG == 0 ) return;
-            \CmsApp::get_instance()->add_error(debug_display($error_msg, '', false, true));
+            if( defined('CMS_DEBUG') && CMS_DEBUG ) {
+                \CmsApp::get_instance()->add_error(debug_display($error_msg,'',false,true));
+            }
         }
 
         /**
@@ -110,7 +116,7 @@ namespace CMSMS\Database {
 } // end of namespace
 
 namespace {
-    // root namespace stuff
+    // global namespace stuff
 
     /**
      * A constant to assist with date and time flags in the data dictionary.

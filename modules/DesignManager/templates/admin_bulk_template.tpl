@@ -1,6 +1,6 @@
 <h3>{$mod->Lang($bulk_op)}</h3>
 
-{if isset($templates)}
+{if !empty($templates)}
 <table class="pagetable">
   <thead>
    <tr>
@@ -23,25 +23,32 @@
   {/foreach}
   </tbody>
 </table>
+<br>
 {/if}
 
 {form_start allparms=$allparms}
 {if $bulk_op == 'bulk_action_delete'}
-  <div class="pagewarning">{$mod->Lang('warn_bulk_delete_templates')}</div>
+  <p class="pagewarning">{$mod->Lang('warn_bulk_delete_templates')}</p>
+  <br>
   <div class="pageoverflow">
-    <p class="pagetext"></p>
     <p class="pageinput">
-      <input id="check1" type="checkbox" name="{$actionid}check1" value="1" />&nbsp;<label for="check1" />{$mod->Lang('confirm_bulk_template_1')}</label><br />
-      <input id="check2" type="checkbox" name="{$actionid}check2" value="1" />&nbsp;<label for="check2" />{$mod->Lang('confirm_bulk_template_2')}</label>
+      <input id="check1" type="checkbox" name="{$actionid}check1" value="1">&nbsp;<label for="check1">{$mod->Lang('confirm_bulk_template_1')}</label><br>
+      <input id="check2" type="checkbox" name="{$actionid}check2" value="1">&nbsp;<label for="check2">{$mod->Lang('confirm_bulk_template_2')}</label>
     </p>
   </div>
+  <br>
 {/if}
 
 <div class="pageoverflow">
-  <p class="pagetext"></p>
   <p class="pageinput">
-    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}" />
-    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
+{if $bulk_op == 'bulk_action_delete'}
+    <input type="submit" name="{$actionid}submit" data-ui-icon="ui-icon-minusthick" value="{$mod->Lang('remove')}">
+{elseif $bulk_op == 'bulk_action_export'}
+    <input type="submit" name="{$actionid}submit" data-ui-icon="ui-icon-arrowreturnthick-1-s" value="{$mod->Lang('export')}">
+{else}
+    <input type="submit" name="{$actionid}submit" data-ui-icon="ui-icon-arrowreturnthick-1-n" value="{$mod->Lang('import')}">
+{/if}
+    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
   </p>
 </div>
 {form_end}

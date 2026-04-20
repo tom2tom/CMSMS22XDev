@@ -2,38 +2,36 @@
 
 {extends file='wizard_step.tpl'}
 {block name='logic'}
-    {$subtitle = 'title_step3'|tr}
+    {$subtitle = tr('title_step3')}
     {$current_step = '3'}
 {/block}
 
 {block name='contents'}
-
 {if $tests_failed}
   {if !$can_continue}
-    <div class="message red">{'step3_failed'|tr}</div>
+    <div class="message red">{tr('step3_failed')}</div>
   {else}
-    <div class="message yellow">{'sometests_failed'|tr}</div>
+    <div class="message yellow">{tr('sometests_failed')}</div>
   {/if}
 {/if}
-
 {if $tests_failed || $verbose}
   <table class="table zebra-table bordered-table installer-test-information">
     <thead class="tbhead">
         <tr>
-            <th>{'th_status'|tr}</th>
-            <th>{'th_testname'|tr}</th>
+            <th>{tr('th_status')}</th>
+            <th>{tr('th_testname')}</th>
         </tr>
     </thead>
     <tbody>
     {foreach $tests as $test}
         {cycle values='odd,even' assign='rowclass'}
         <tr class="{$rowclass}{if $test->status == 'test_fail'} error{/if}{if $test->status == 'test_warn'} warning{/if}">
-            <td class="{$test->status}">{if $test->status == 'test_fail'}<i title="{'test_failed'|tr}" class="icon-cancel-circle red"></i>{elseif $test->status == 'test_warn'}<i title="{'test_warning'|tr}" class="icon-warning yellow"></i>{else}<i title="{'test_passed'|tr|strip_tags}" class="icon-checkmark-circle green"></i>{/if}</td>
+            <td class="{$test->status}">{if $test->status == 'test_fail'}<i title="{tr('test_failed')}" class="icon-cancel-circle red"></i>{elseif $test->status == 'test_warn'}<i title="{tr('test_warning')}" class="icon-warning yellow"></i>{else}<i title="{tr('test_passed')|adjust:'strip_tags'}" class="icon-checkmark-circle green"></i>{/if}</td>
             <td>
-                {$test->name|tr}
+                {tr($test->name)}
                 {$str = $test->msg()}
                 {if $str != '' && ($verbose || $test->status != 'test_pass')}
-                  <br />
+                  <br>
                   <span class="tests-infotext">{$str}</span>
                 {/if}
             </td>
@@ -42,43 +40,50 @@
     </tbody>
   </table>
 {else}
-  <div class="message green">{'step3_passed'|tr}</div>
+  <div class="message green">{tr('step3_passed')}</div>
 {/if}
-
 {if $tests_failed}
-<table class="table bordered-table installer-test-legend small-font">
+<table class="table bordered-table installer-test-legend medium-font">
     <caption>
-        {'legend'|tr}
+        {tr('legend')}
     </caption>
-    <thead>
+    <thead class="tbhead">
         <tr>
-            <th>{'symbol'|tr}</th>
-            <th>{'meaning'|tr}</th>
+            <th>{tr('symbol')}</th>
+            <th>{tr('meaning')}</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td class="test_fail red"><i title="{'test_failed'|tr}" class="icon-cancel-circle red"></td>
-            <td>{'test_failed'|tr}</td>
+            <td class="test_fail red"><i title="{tr('test_failed')}" class="icon-cancel-circle red"></td>
+            <td>{tr('test_failed')}</td>
         </tr>
         <tr>
-            <td class="test_pass green"><i title="{'test_passed'|tr|strip_tags}" class="icon-checkmark-circle green"></i></td>
-            <td>{'test_passed'|tr}</td>
+            <td class="test_pass green"><i title="{tr('test_passed')|adjust:'strip_tags'}" class="icon-checkmark-circle green"></i></td>
+            <td>{tr('test_passed')}</td>
         </tr>
         <tr>
-            <td class="test_warn yellow"><i title="{'test_warning'|tr}" class="icon-warning yellow"></i></td>
-            <td>{'test_warning'|tr}</td>
+            <td class="test_warn yellow"><i title="{tr('test_warning')}" class="icon-warning yellow"></i></td>
+            <td>{tr('test_warning')}</td>
         </tr>
     </tbody>
 </table>
 {/if}
-<div class="message {if $tests_failed}yellow{else}blue{/if}">{'warn_tests'|tr}</div>
-
+{if !$tests_failed}
+<div class="message blue">{tr('warn_tests')}</div>
+{/if}
 <div id="bottom_nav">
 {if $tests_failed}
-  <a onclick="window.location.reload();" class="action-button orange" title="{'retry'|tr}">{'retry'|tr} <i class="icon-loop"></i></a>
+ <a id="btn_retry" class="action-button orange" title="{tr('retry')}">{tr('retry')} <i class="icon-loop"></i></a>
 {/if}
-{if $can_continue} <a href="{$next_url}" class="action-button positive" title="{'next'|tr}">{'next'|tr} &rarr;</a>{/if}
+{if $can_continue} <a href="{$next_url}" class="action-button positive" title="{tr('next')}">{tr('next')} &rarr;</a>{/if}
 </div>
-
 {/block}
+
+{if $tests_failed}
+{block name='javascript' append}
+<script>
+ document.getElementById('btn_retry').addEventListener('click',function(){ window.location.reload(); },false);
+</script>
+{/block}
+{/if}

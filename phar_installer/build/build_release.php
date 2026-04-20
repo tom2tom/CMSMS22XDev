@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 $cli = (php_sapi_name() == 'cli');
 //if( !$cli ) throw new Exception('This script must be executed via the CLI');
@@ -8,61 +8,73 @@ if( ini_get('phar.readonly') ) throw new Exception('phar.readonly must be turned
 //if( $cli ) $script_file = basename($argv[0]);
 $owd = getcwd();
 //if( !file_exists("$owd/$script_file") ) throw new Exception('This script must be executed from the same directory as the '.$script_file.' script');
-$rootdir = dirname(__DIR__);
 $repos_root='http://svn.cmsmadesimple.org/svn/cmsmadesimple';
 //$repos_branch = "/trunk";
 $repos_branch = '';
-$srcdir = $rootdir;
-$tmpdir = $rootdir.'/tmp';
-$datadir = $rootdir.'/data';
-$outdir = $rootdir.'/out';
+//these folders may be redefined from .ini file
+$installerdir = dirname(__DIR__); //assumes we're running in the build subdir of the installer
+$srcdir = $installerdir;
+$tmpdir = $installerdir.'/tmp';
+$datadir = $installerdir.'/data';
+$outdir = $installerdir.'/out';
+
 $systmpdir = sys_get_temp_dir().'/'.basename(__FILE__,'php').getmypid();
 //TODO update these lists, per the following variables
 //do not skip class.cms_config.php or Smarty files like smarty_internal_method*config.php
-$exclude_patterns = array('/\.svn\//','/^ext\//','/^build\/.*/','/.*~$/','/tmp\/.*/','/\.\#.*/','/\#.*/','/^out\//','/^README*TXT/');
-$exclude_from_zip = array('*~','tmp/','.#*','#*'.'*.bak');
-$src_excludes = array('/\/phar_installer\//','/\/config\.php$/', '/\/find-mime$/', '/\/installer\//', '/^\/tmp\/.*/', '/^#.*/', '/^\/scripts\/.*/', '/\.git/', '/\.svn/', '/svn-.*/',
-                      '/^\/tests\/.*/', '/^\/build\/.*/', '/^\.htaccess/', '/\.svn/', '/^config\.php$/','/.*~$/', '/\.\#.*/', '/\#.*/', '/.*\.bak/');
-
+//TODO some of '~\.md$~i', might be redundant
+//'~\.htaccess$~', skip if re-created by installer
+//'~web\.config$~', ditto
+$exclude_patterns = array('/\.svn\//','/\/build\/.*/','/.*~$/','/\/tmp\/.*/','/\.#[^\/]*$/','/\/out\/.*/','/^README*TXT/i'); //WAS ALSO ,'/\.\k.*/' but that looks like back reference
+$exclude_from_zip = array('*~','tmp/','.#*','*.bak'); //WAS ALSO '#*'
+//TODO this var redefined below
+//$src_excludes = array(
+//'/\/phar_installer\//','/\/config\.php$/', '/\/find-mime$/', '/\/installer\//', '/^\/tmp\/.*/', '/^\/scripts\/.*/', '/\.git/', '/\.svn/', '/svn-.*/',
+//'/^\/tests\/.*/', '/^\/build\/.*/', '/^\.htaccess/', '/\.svn/', '/^config\.php$/','/.*~$/', '/.*\.bak/'
+//); //WAS ALSO '/^#.*/', '/\.\#.*/', '/\#.*/',
 // regex patterns for source files/dirs to NOT be processed by the installer.
 // all exclusion checks are against sources-tree root-dir-relative filepaths,
 // after converting any windoze path-sep's to *NIX form
 // NOTE: otherwise empty folders retain, or are given, respective index.html's
 // so that they are not ignored by PharData when processing
+// TODO some of '~\.md$~i' might be redundant/excludable
 $all_excludes = [
 '~\.git.*~',
 '~\.svn~',
 '~svn\-~',
 '~index\.html?$~',
 '~[\\/]config\.php$~',
-'~siteuuid\.dat$~',
 '~\.htaccess$~',
 '~web\.config$~',
+'~db\.ini$~',
 '~\.bak$~',
 '/~$/',
 '~\.#~',
 '~UNUSED~',
 '~DEVELOP~',
 '~HIDE~',
+'~[\\/]configs[\\/].*\.conf~'
 ];
-//TODO some of this type might be redundant '~\.md$~i',
 
 // members of $src_excludes which need double-check before exclusion to confirm they're 'ours'
 $src_checks = ['scripts', 'tmp', 'tests'];
 
-$s = basename($rootdir);
+$s = basename($installerdir);
 $src_excludes = [
 -4 => "~$s~",
--3 => '~scripts~',
--2 => '~tmp~',
--1 => '~tests~',
+-3 => '~[\\/]scripts[\\/]~',
+-2 => '~[\\/]tmp[\\/]~',
+-1 => '~[\\/]tests[\\/]~',
 ] + $all_excludes;
 
 // root-relative sub-paths of source dirs whose actual contents are NOT for installation with sources in general.
 // instead their real contents will be handled by the site-importer, and pending that, just an empty 'index.html'
 $folder_excludes = [
+//'admin/configs', omit Smarty config files only, typically but not necessarily *.conf in $all_excludes
+//'assets/configs', omit specific files .dat etc in $all_excludes
+'assets/admin_custom',
+'assets/css',
+'assets/module_custom',
 'assets/templates',
-'assets/styles',
 'assets/themes',
 'assets/user_plugins',
 ];
@@ -82,8 +94,8 @@ $archive_only = 0;
 $checksums = 1;
 $clean = 0;
 $indir = ''; // hence default to latest release in svn
-$priv_file = __DIR__.'/priv.pem'; //seems unused
-$pub_file = __DIR__.'/pub.pem'; //seems unused
+//$priv_file = __DIR__.'/priv.pem'; //unused
+//$pub_file = __DIR__.'/pub.pem'; //unused
 $rename = 1;
 $sourceuri = 'file://'; // sources file-set locator
 $verbose = 0;
@@ -111,12 +123,32 @@ foreach( $xconfig as $k => $v ) {
         break;
     case 'sourceuri':
         $v = trim($v);
-        if( $v == "file://local" ) {
-            $indir = dirname($rootdir);
+        if( startswith($v, 'file://') ) {
+            $file = substr($v, 7);
+            if( $file === '' || $file == 'local' ) {
+                $sourceuri = 'file://local';
+                $indir = dirname($installerdir);
+            }
+            elseif (is_dir($file) && is_readable($file)) {
+                $sourceuri = $v;
+                $indir = $file;
+                //TODO confirm these dirs exist and are writable
+                $installerdir = $file.'/phar_installer';
+                $srcdir = $installerdir;
+                $tmpdir = $installerdir.'/tmp';
+                $datadir = $installerdir.'/data';
+                $outdir = $installerdir.'/out';
+            }
+            else {
+                fatal('Specified file-set source ' .$file. ' is not accessible');
+            }
+        }
+        elseif( startswith($v, 'svn://') ) {
+            //TODO retrieve sources & assign folders in tmp place
+            fatal('svn-sourced source-files not supported yet');
         }
         else {
-            //TODO parse 'file://*','svn://*','git://*'
-            //$indir =
+            fatal('Unrecognised location of source-files');
         }
         break;
     case 'verbose':
@@ -191,8 +223,10 @@ if( is_array($options) && count($options) ) {
 
 $svn_url = $repos_root;
 if( !$repos_branch ) {
-    // attempt to get repository branch from cwd.
-    $repos_branch = get_svn_branch();
+    echo "WARNING: Repository branch not available, upstream sources N/A\n";
+    $repos_branch = '';
+    // dodgy attempt to get repository branch from cwd.
+    //$repos_branch = get_svn_branch();
 }
 $svn_url = "$repos_root/$repos_branch";
 
@@ -249,16 +283,19 @@ function export_source_files()
 {
     global $svn_url,$tmpdir;
     echo "INFO: exporting data from SVN ($svn_url)\n";
+    //TODO $cmd if running on windows
     $cmd = "svn export -q $svn_url $tmpdir";
     $cmd = escapeshellcmd($cmd);
     system($cmd);
 }
 
 //this function seems useless ATM, and perhaps always so (formerly, no $svn_url)
+//and sometimes hangs e.g. repo down
 function get_svn_branch()
 {
     global $svn_url;
     echo "INFO: identifying SVN branch\n";
+    //TODO $cmd if running on windows
 //BAD TODO $cmd = "svn info $svn_url | grep '^URL:' | egrep -o '(tags|branches)/[^/]+|trunk'";
     $cmd = "svn info $svn_url | grep '^URL:'";
 //BAD $cmd = escapeshellcmd($cmd);
@@ -272,7 +309,9 @@ function copy_source_files()
   $excludes = $src_excludes;
   // contents to be skipped but not in $excludes ?
   rrmdir($indir.'/tmp/cache');
+  rrmdir($indir.'/tmp/configs');
   rrmdir($indir.'/tmp/templates_c');
+  rrmdir($indir.'/uploads'); // since 2.2.22F2 themes data not in here
   $l = strlen($indir);
   @mkdir($tmpdir);
   echo "INFO: Copying source files from $indir to $tmpdir\n";
@@ -344,8 +383,11 @@ function cleanup_source_files()
 
 function get_version_php($startdir)
 {
-    if( file_exists("$startdir/version.php") ) return "$startdir/version.php";
-    if( file_exists("$startdir/lib/version.php") ) return "$startdir/lib/version.php";
+    $fp = "$startdir/version.php";
+    if( file_exists($fp) ) return $fp;
+    $fp = "$startdir/lib/version.php";
+    if( file_exists($fp) ) return $fp;
+    return '';
 }
 
 function create_checksum_dat()
@@ -423,6 +465,7 @@ function create_source_archive()
 
     echo "INFO: Creating tar.gz archive of core files\n";
     chdir($tmpdir);
+    //TODO $cmd if running on windows
     $cmd = escapeshellcmd("tar -zcf $datadir/data.tar.gz") . ' *';
     system($cmd);
 
@@ -456,11 +499,11 @@ try {
     @mkdir($datadir);
     if( !is_dir($datadir) || !is_dir($outdir) ) throw new Exception('Problem creating working directories: '.$datadir.' and '.$outdir);
 
-    $tmp = 'cmsms-'.create_source_archive().'-install';
     if( !$archive_only ) {
-        $basename = $tmp;
-        $destname = $tmp.'.phar';
-        $destname2 = $tmp.'.php';
+        $basename = 'cmsms-'.create_source_archive().'-install';
+        $destname = $basename.'.phar';
+        $destname2 = $basename.'.php';
+        $when = date('Y-m-d H:i:s');
 
         $fn = "$srcdir/app/build.ini";
         $fh = fopen($fn,'w');
@@ -478,6 +521,7 @@ try {
 
         // change permissions
         echo "INFO: Recursively applying more-restrictive permissions\n";
+        //TODO $cmd if running on windows
         $cmd = "chmod -R g-w,o-w {$srcdir}";
         echo "DEBUG: $cmd\n";
         $junk = null;
@@ -487,7 +531,7 @@ try {
         $l = strlen($srcdir) + 1;
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
 
-        // a brand new phar file.
+        // new phar file
         $phar = new Phar("$outdir/$destname");
         $phar->startBuffering();
 
@@ -503,7 +547,7 @@ try {
             if( !is_file($fp) ) {
                 continue;
             }
-            // trivial exclusion.
+            // trivial exclusion
             foreach( $exclude_patterns as $patn ) {
                 if( preg_match($patn,$fp) ) {
                     continue 2;
@@ -552,7 +596,7 @@ try {
             }
             $phar[$relname]->setMetaData(array('mime-type'=>$mimetype));
         }
-        if( $finfo ) {
+        if( $finfo && PHP_VERSION_ID < 80500 ) {
             finfo_close($finfo);
         }
 
@@ -563,8 +607,9 @@ try {
         $phar->setSignatureAlgorithm(Phar::SHA1);
         $phar->stopBuffering();
         unset($phar);
+        if( !is_file("$outdir/$destname") ) fatal("Phar file $outdir/$destname not created");
 
-        // rename it to a php file so it's executable on pretty much all hosts
+        // rename it to a .php file so it's executable on pretty much all hosts
         if( $rename ) {
             echo "INFO: Renaming phar file to php for execution purposes\n";
             rename("$outdir/$destname","$outdir/$destname2");
@@ -576,16 +621,20 @@ try {
             $outfile = "$outdir/$basename.zip";
 
             echo "INFO: zipping phar file into $outfile\n";
-            $arch = new ZipArchive;
+            $arch = new ZipArchive();
             $arch->open($outfile,ZipArchive::OVERWRITE | ZipArchive::CREATE );
             $arch->addFile($infile,basename($infile));
             $arch->setExternalAttributesName(basename($infile), ZipArchive::OPSYS_UNIX, 0644 << 16);
-            $arch->addFile("$rootdir/README-PHAR.TXT",'README-PHAR.TXT');
+            $arch->addFile("$installerdir/README-PHAR.TXT",'README-PHAR.TXT');
             $arch->setExternalAttributesName('README-PHAR.TXT', ZipArchive::OPSYS_UNIX, 0644 << 16);
-            $arch->addFile("$rootdir/README-PHARDEBUG.TXT",'README-PHARDEBUG.TXT');
+            $arch->addFile("$installerdir/README-PHARDEBUG.TXT",'README-PHARDEBUG.TXT');
             $arch->setExternalAttributesName('README-PHARDEBUG.TXT', ZipArchive::OPSYS_UNIX, 0644 << 16);
             $arch->close();
             @unlink($infile);
+            echo "INFO: generating standard installer SHA1 signature\n";
+            $sig = sha1_file($outfile);
+            $outfile = str_replace('.zip', '.sig', $outfile);
+            file_put_contents($outfile, $sig . "\r\n" . $when);
 
             // zip up the install dir itself (uses shell zip command)
             @mkdir($systmpdir,0777,TRUE);
@@ -596,12 +645,12 @@ try {
             $zipdir = $systmpdir.'/packer';
             mkdir($zipdir,0777,TRUE);
             chdir($zipdir);
-            copy($rootdir.'/README.TXT', './README.TXT');
+            copy($installerdir.'/README.TXT', './README.TXT');
             mkdir($zipdir.'/installer',0777,TRUE);
-            copy($rootdir.'/index.php', './installer/index.php');
-            $l = strlen($rootdir);
+            copy($installerdir.'/index.php', './installer/index.php');
+            $l = strlen($installerdir);
             foreach( ['app','lib','data'] as $top ) {
-                $from = $rootdir.'/'.$top;
+                $from = $installerdir.'/'.$top;
                 $rdi = new RecursiveDirectoryIterator($from,
                   FilesystemIterator::KEY_AS_FILENAME |
                   FilesystemIterator::CURRENT_AS_PATHNAME |
@@ -627,7 +676,23 @@ try {
             $cmd = escapeshellcmd($cmd);
             system($cmd);
             rrmdir($systmpdir);
+            echo "INFO: generating expanded installer SHA1 signature\n";
+            $sig = sha1_file($outfile);
+            $outfile = str_replace('.zip', '.sig', $outfile);
+            file_put_contents($outfile, $sig . "\r\n" . $when);
         } // zip
+        else {
+            //TODO test these
+            if( $rename ) {
+                $outfile = "$outdir/$destname2";
+            }
+            else {
+                $outfile = "$outdir/$destname";
+            }
+            $sig = sha1_file($outfile);
+            $outfile .= '.sig';
+            file_put_contents($outfile, $sig . "\r\n" . $when);
+        }
         rrmdir($datadir);
     } // !archive only
     echo "INFO: Done, see files in $outdir\n";

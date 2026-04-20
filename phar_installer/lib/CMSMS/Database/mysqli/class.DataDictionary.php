@@ -232,9 +232,9 @@ class DataDictionary extends \CMSMS\Database\DataDictionary
      * The name is not checked for a reserved-word.
      * Permitted characters in unquoted identifiers are in accord with MySQL documentation.
      */
-    protected function NameQuote($name = null, $allowBrackets = false)
+    protected function NameQuote($name = '', $allowBrackets = false)
     {
-        if (!is_string($name)) {
+        if (!is_string($name) || !$name) {
             return '';
         }
 
@@ -245,6 +245,7 @@ class DataDictionary extends \CMSMS\Database\DataDictionary
 
         $name = rtrim($name);
         // if name contains special characters, quote it
+        // letters & numbers '/[a-zA-Z0-9\x83\x88\x8a\x8c\x8e\x9a\x9c\x9e\x9f\xa8\xb8\xc0-\xd6\xd8-\xf6\xf8-\xff\pL\p{Nd}]/u'
         $patn = ($allowBrackets) ? '\w$()\x80-\xff' : '\w$\x80-\xff';
         if (preg_match('/[^'.$patn.']/', $name)) {
             return '`'.$name.'`';
@@ -276,6 +277,7 @@ class DataDictionary extends \CMSMS\Database\DataDictionary
                     $val = preg_replace('/TYPE\s?=/i','ENGINE=',$val);
                 }
             }
+            unset($val);
         }
         return $opts;
     }
@@ -327,16 +329,20 @@ class DataDictionary extends \CMSMS\Database\DataDictionary
         else if( is_string($tableoptions) ) {
             $tableoptions = [ $dbtype => $tableoptions ];
         }
+        else if( is_array($tableoptions) && !isset($tableoptions[$dbtype]) && isset($tableoptions['mysqli']) ) {
+            $tableoptions[$dbtype] = $tableoptions['mysql'];
+        }
         else if( is_array($tableoptions) && !isset($tableoptions[$dbtype]) && isset($tableoptions['mysql']) ) {
             $tableoptions[$dbtype] = $tableoptions['mysql'];
         }
         else if( is_array($tableoptions) && !isset($tableoptions[$dbtype]) && isset($tableoptions['MYSQL']) ) {
-            $tableoptions[$dbtype] = $tableoptions['MYSQL'];
+            $tableoptions[$dbtype] = $tableoptions['mysql'];
         }
 
         foreach( $tableoptions as $key => &$val ) {
             if( strpos($val,'TYPE=') !== FALSE ) $val = str_replace('TYPE=','ENGINE=',$val);
         }
+        unset($val);
         if( isset($tableoptions[$dbtype]) && strpos($tableoptions[$dbtype],'CHARACTER') === FALSE &&
             strpos($tableoptions[$dbtype],'COLLATE') === FALSE ) {
             // if no character set and collate options specified, force UTF8

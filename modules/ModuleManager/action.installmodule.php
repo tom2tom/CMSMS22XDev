@@ -1,14 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: ModuleManager (c) 2008 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  An addon module for CMS Made Simple to allow browsing remotely stored
-#  modules, viewing information about them, and downloading or upgrading
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module ModuleManager action
+# (c) 2008 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -16,12 +10,6 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-#
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -39,15 +27,15 @@ if( !$this->CheckPermission('Modify Modules') ) return;
 $this->SetCurrentTab('modules');
 
 if( isset($params['cancel']) ) {
-  $this->SetMessage($this->Lang('msg_cancelled'));
-  $this->RedirectToAdminTab();
+    $this->SetMessage($this->Lang('msg_cancelled'));
+    $this->RedirectToAdminTab();
 }
 
 try {
     $module_name = get_parameter_value($params,'name');
     $module_version  = get_parameter_value($params,'version');
     $module_filename  = get_parameter_value($params,'filename');
-    $module_size = get_parameter_value($params,'size');
+    $module_size = get_parameter_value($params,'size',0);
     if( !isset($params['doinstall']) ) {
         if( $module_name == '' || $module_version == '' || $module_filename == '' || $module_size < 100 ) {
             throw new CmsInvalidDataException( $this->Lang('error_missingparams') );
@@ -68,7 +56,7 @@ try {
                 if( !isset($rec['size']) ) throw new CmsInvalidDataException( $this->Lang('error_missingparams') );
                 $filename = modmgr_utils::get_module_xml($rec['filename'],$rec['size']);
             }
-
+            unset($rec);
             // expand all of the xml files.
             $ops = cmsms()->GetModuleOperations();
             foreach( $modlist as $key => &$rec ) {
@@ -77,7 +65,7 @@ try {
                 $rec['tmpfile'] = $xml_filename;
                 $res = $ops->ExpandXMLPackage( $xml_filename, 1 );
             }
-
+            unset($rec);
             // now put this data into the session and redirect for the install part
             $key = '_'.md5(__FILE__.time());
             $_SESSION[$key] = $modlist;
@@ -168,7 +156,6 @@ try {
             return $out;
         };
 
-        $deps = null;
         list($res,$deps) = modulerep_client::get_module_dependencies($module_name,$module_version);
         if( is_array($deps) && count($deps) ) {
 
@@ -177,17 +164,16 @@ try {
 
             if( $uselatest ) {
                 // we want the latest of all of the dependencies.
-		$latest = null;
-		try {
+                try {
                     $latest = modulerep_client::get_modulelatest($dep_module_names);
                     if( $latest ) {
                         // throw new CmsInvalidDataException($this->Lang('error_dependencynotfound'));
                         $latest = $array_to_hash($latest,'name');
                         $deps = $update_latest_deps($deps,$latest);
-	            }
-		}
+                    }
+                }
                 catch( ModuleNoDataException $e ) {
-		    // nothing here
+                    // nothing here
                 }
             } else {
                 $info = modulerep_client::get_multiple_moduleinfo($deps);
@@ -228,13 +214,11 @@ try {
     //   get module info for all dependencies
 
     // recursively (depth first) get the dependencies for the module+version we specified.
-    $alldeps = array();
     $uselatest = (int) $this->GetPreference('latestdepends',1);
     $alldeps = $resolve_deps($module_name,$module_version,$uselatest);
 
     // get information for all dependencies, and make sure that they are all there.
     if( is_array($alldeps) && count($alldeps) ) {
-        $res = null;
         try {
             if( $this->GetPreference('latestdepends',1) ) {
                 // get the latest version of dependency (but not necessarily of the module we're installing)
@@ -248,13 +232,13 @@ try {
         }
         catch( \ModuleNoDataException $e ) {
             // at least one of the dependencies could not be found on the server.
+            $res = [];
             // may be a system module... if it is not a system module, throw an exception
-            audit('','ModuleManager','At least one requested module was not available on the forge ('.$this->GetName().' '.$this->GetVersion().')');
-        } 
+            audit('',$this->GetName(),'At least one requested module is not available from the forge ('.$this->GetName().' '.$this->GetVersion().')');
+        }
 
         foreach( $alldeps as $name => $row ) {
             $fnd = FALSE;
-            $tmp = null;
             if( is_array($res) && count($res) ) {
                 foreach( $res as $rec ) {
                     if( $rec['name'] != $name ) continue;
@@ -296,6 +280,7 @@ try {
                 unset($alldeps[$name]);
             }
         }
+        unset($rec);
     }
 
     // test to make sure we have the required info for each record.
@@ -312,22 +297,24 @@ try {
         $this->RedirectToAdminTab();
     }
 
-    $smarty->assign('return_url',$this->create_url($id,'defaultadmin',$returnid, array('__activetab'=>'modules')));
+    $modname = $this->GetName();
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;installinfo.tpl", null, $modname, $smarty);
+
+    $tpl->assign('return_url',$this->create_url($id,'defaultadmin',$returnid, array('__activetab'=>'modules')));
     $parms = array('name'=>$module_name,'version'=>$module_version,'filename'=>$module_filename,'size'=>$module_size);
-    $smarty->assign('form_start',$this->CreateFormStart($id, 'installmodule', $returnid, 'post', '', FALSE, '', $parms).
+    $tpl->assign('form_start',$this->CreateFormStart($id, 'installmodule', $returnid, 'post', '', FALSE, '', $parms).
                     $this->CreateInputHidden($id,'modlist',base64_encode(json_encode($alldeps))));
-    $smarty->assign('formend',$this->CreateFormEnd());
-    $smarty->assign('module_name',$module_name);
-    $smarty->assign('module_version',$module_version);
+    $tpl->assign('formend',$this->CreateFormEnd());
+    $tpl->assign('module_name',$module_name);
+    $tpl->assign('module_version',$module_version);
     $tmp = array_keys($alldeps);
     $n = count($tmp) - 1;
     $key = $tmp[$n];
     $action = $alldeps[$key]['action'];
-    $smarty->assign('is_upgrade',($action == 'u')?1:0);
+    $tpl->assign('is_upgrade',($action == 'u')?1:0);
 
-    $smarty->assign('dependencies',$alldeps);
-    echo $this->ProcessTemplate('installinfo.tpl');
-    return;
+    $tpl->assign('dependencies',$alldeps);
+    $tpl->display();
 }
 catch( Exception $e ) {
     $msg = $e->GetMessage();

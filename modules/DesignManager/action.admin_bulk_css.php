@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: DesignManager - A CMSMS addon module to provide template management.
-# (c) 2012 by Robert Campbell <calguy1000@cmsmadesimple.org>
+# Module DesignManager action
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,37 +15,37 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
+# Or read it online: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
+
 if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Manage Stylesheets') ) return;
 
-if( isset($params['allparms']) ) {
-    $params = array_merge($params,json_decode(base64_decode($params['allparms']),TRUE));
-}
-
 $this->SetCurrentTab('stylesheets');
-
-if( !isset($params['css_bulk_action']) || !isset($params['css_select']) ||
-    !is_array($params['css_select']) || count($params['css_select']) == 0 ) {
-    $this->SetError($this->Lang('error_missingparam'));
-    $this->RedirectToAdminTab();
-}
 if( isset($params['cancel']) ) {
     $this->SetMessage($this->Lang('msg_cancelled'));
     $this->RedirectToAdminTab();
 }
 
+if( isset($params['allparms']) ) {
+    $params = array_merge($params,json_decode(base64_decode($params['allparms']),TRUE));
+    unset($params['allparms']);
+}
+
+if( !isset($params['css_bulk_action']) || empty($params['css_select']) ||
+    !is_array($params['css_select']) ) {
+    $this->SetError($this->Lang('error_missingparam'));
+    $this->RedirectToAdminTab();
+}
+
 try {
-    $bulk_op = null;
     $stylesheets = CmsLayoutStylesheet::load_bulk($params['css_select']);
     switch( $params['css_bulk_action'] ) {
     case 'delete':
         $bulk_op = 'bulk_action_delete_css';
         if( isset($params['submit']) ) {
             if( !isset($params['check1']) || !isset($params['check2']) ) {
-                echo $this->ShowErrors($this->Lang('error_notconfirmed'));
+                $this->ShowErrors($this->Lang('error_notconfirmed'));
             }
             else {
                 $stylesheets = CmsLayoutStylesheet::load_bulk($params['css_select']);
@@ -116,19 +116,18 @@ try {
         break;
     }
 
-    $smarty->assign('bulk_op',$bulk_op);
-    $allparms = base64_encode(json_encode(array('css_select'=>$params['css_select'],'css_bulk_action'=>$params['css_bulk_action'])));
-    $smarty->assign('allparms',$allparms);
-    $smarty->assign('templates',$stylesheets);
+    $modname = $this->GetName();
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_bulk_css.tpl",null,$modname,$smarty);
 
-    echo $this->ProcessTemplate('admin_bulk_css.tpl');
+    $tpl->assign('bulk_op',$bulk_op);
+    $allparms = base64_encode(json_encode(['css_select'=>$params['css_select'],'css_bulk_action'=>$params['css_bulk_action']]));
+    $tpl->assign('allparms',$allparms);
+    $tpl->assign('sheets',$stylesheets);
+
+    $tpl->display();
 }
 catch( \Exception $e ) {
     // master exception
     $this->SetError($e->GetMessage());
     $this->RedirectToAdminTab();
 }
-
-#
-# EOF
-#

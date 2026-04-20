@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2013 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple class cms_config
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -17,14 +16,6 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 /**
- * This file contains the class that manages the CMSMS config.php file
- *
- * @package CMS
- * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
- */
-
-/**
  * A singleton class for interacting with the CMSMS config.php file.
  *
  * This class uses the ArrayAccess interface to behave like a PHP array.
@@ -32,7 +23,7 @@
  * @since 1.9
  * @package CMS
  * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  */
 final class cms_config implements ArrayAccess
 {
@@ -171,24 +162,25 @@ final class cms_config implements ArrayAccess
   {
     $this->_types                              = [];
     $this->_types['dbms']                      = self::TYPE_STRING;
-    $this->_types['db_hostname']               = self::TYPE_STRING;
-    $this->_types['db_username']               = self::TYPE_STRING;
-    $this->_types['db_password']               = self::TYPE_STRING;
-    $this->_types['db_name']                   = self::TYPE_STRING;
-    $this->_types['db_port']                   = self::TYPE_INT;
+    $this->_types['db_hostname']               = self::TYPE_STRING; // deprecated since 2.2.23F2
+    $this->_types['db_username']               = self::TYPE_STRING; // deprecated since 2.2.23F2
+    $this->_types['db_password']               = self::TYPE_STRING; // deprecated since 2.2.23F2
+    $this->_types['db_name']                   = self::TYPE_STRING; // deprecated since 2.2.23F2
+    $this->_types['db_port']                   = self::TYPE_INT; // deprecated since 2.2.23F2
     $this->_types['db_prefix']                 = self::TYPE_STRING;
     $this->_types['root_url']                  = self::TYPE_STRING;
-    $this->_types['ssl_url']                   = self::TYPE_STRING;
+    $this->_types['ssl_url']                   = self::TYPE_STRING; // deprecated since 2.2
     $this->_types['root_path']                 = self::TYPE_STRING;
     $this->_types['admin_dir']                 = self::TYPE_STRING;
     $this->_types['uploads_path']              = self::TYPE_STRING;
     $this->_types['uploads_url']               = self::TYPE_STRING;
-    $this->_types['ssl_uploads_url']           = self::TYPE_STRING;
+    $this->_types['ssl_uploads_url']           = self::TYPE_STRING; // deprecated since 2.2
     $this->_types['image_uploads_path']        = self::TYPE_STRING;
     $this->_types['image_uploads_url']         = self::TYPE_STRING;
-    $this->_types['ssl_image_uploads_url']     = self::TYPE_STRING;
+    $this->_types['ssl_image_uploads_url']     = self::TYPE_STRING; // deprecated since 2.2
     $this->_types['debug']                     = self::TYPE_BOOL;
     $this->_types['debug_to_log']              = self::TYPE_BOOL;
+    $this->_types['developer_mode']            = self::TYPE_BOOL; //since 2.0
     $this->_types['timezone']                  = self::TYPE_STRING;
     $this->_types['persist_db_conn']           = self::TYPE_BOOL;
     $this->_types['max_upload_size']           = self::TYPE_INT;
@@ -205,6 +197,7 @@ final class cms_config implements ArrayAccess
     $this->_types['admin_url']                 = self::TYPE_STRING;
     $this->_types['ignore_lazy_load']          = self::TYPE_BOOL;
     $this->_types['tmp_cache_location']        = self::TYPE_STRING;
+    $this->_types['tmp_config_location']       = self::TYPE_STRING; //since 2.2.21
     $this->_types['tmp_templates_c_location']  = self::TYPE_STRING;
     $this->_types['public_cache_location']     = self::TYPE_STRING;
     $this->_types['public_cache_url']          = self::TYPE_STRING;
@@ -212,6 +205,9 @@ final class cms_config implements ArrayAccess
     $this->_types['assets_path']               = self::TYPE_STRING;
     $this->_types['permissive_smarty']         = self::TYPE_BOOL;
     $this->_types['startup_mact_processing']   = self::TYPE_BOOL;
+    $this->_types['themes_dir']                = self::TYPE_STRING; // since 2.2.22F2
+    $this->_types['themes_path']               = self::TYPE_STRING; // since 2.2.22F2
+    $this->_types['themes_url']                = self::TYPE_STRING; // since 2.2.22F2
     $this->_types['host_whitelist']            = self::TYPE_MIXED; // since 2.2.17
 
     $config = array();
@@ -235,6 +231,7 @@ final class cms_config implements ArrayAccess
         }
       }
       unset(
+        $value,
         $config['max_upload_size'],
         $config['upload_max_filesize']
       );
@@ -271,9 +268,9 @@ final class cms_config implements ArrayAccess
    *
    * @return cms_config
    */
-  public static function &get_instance()
+  public static function get_instance()
   {
-    if( !isset(self::$_instance) ) {
+    if( !self::$_instance ) {
       self::$_instance = new self();
 
       // now load the config
@@ -302,7 +299,14 @@ final class cms_config implements ArrayAccess
         define('PUBLIC_CACHE_URL',self::$_instance['public_cache_url']);
 
         /**
-         * A constant containing the smarty template compile directory.
+         * A constant containing the default Smarty config-files directory.
+         *
+         * @return string
+         */
+        define('TMP_CONFIG_LOCATION',self::$_instance['tmp_config_location']);
+
+        /**
+         * A constant containing the Smarty template compile directory.
          *
          * @return string
          */
@@ -313,7 +317,7 @@ final class cms_config implements ArrayAccess
          *
          * @return bool
          */
-        define('CMS_DEBUG',self::$_instance['debug']);
+        define('CMS_DEBUG',(bool)self::$_instance['debug']);
 
         /**
          * A constant containing the directory where CMSMS is installed.
@@ -337,9 +341,12 @@ final class cms_config implements ArrayAccess
          *
          * @return string
          */
-//        global $CMS_INSTALL_PAGE;
-//stupid  if( !isset($CMS_INSTALL_PAGE) ) @
-        define('CMS_DB_PREFIX',self::$_instance['db_prefix']);
+        global $CMS_INSTALL_PAGE;
+        if( !isset($CMS_INSTALL_PAGE) ) {
+          //when installer is doing a new install, this value N/A yet
+          //this const will be defined in the installer
+          define('CMS_DB_PREFIX',self::$_instance['db_prefix']);
+        }
       }
     }
 
@@ -361,7 +368,7 @@ final class cms_config implements ArrayAccess
   /**
    * @param $key
    *
-   * @return bool|mixed|string|null
+   * @return mixed bool|string|null
    * @ignore
    */
   #[\ReturnTypeWillChange]
@@ -382,17 +389,30 @@ final class cms_config implements ArrayAccess
         return FALSE;
 
       case 'default_upload_permission':
-        $mask = octdec(cms_siteprefs::get('global_umask','0022'));
-        $val = 0666 & ~$mask;
-        return sprintf('%o',$val);
+        $mask = cms_siteprefs::get('global_umask');
+        if( $mask ) {
+            $val = octdec($mask);
+        }
+        else {
+            $val = umask(); // unreliable
+        }
+        return decoct(0666 & ~$val);
 
       case 'assume_mod_rewrite':
         // deprecated, backwards compat only
-        return $this['url_rewriting'] === 'mod_rewrite';
+        return $this['url_rewriting'] == 'mod_rewrite';
 
       case 'internal_pretty_urls':
         // deprecated, backwards compat only
-        return $this['url_rewriting'] === 'internal';
+        return $this['url_rewriting'] == 'internal';
+
+      case 'themes_path':
+        // not from config file
+        return $this->offsetGet('root_path').DIRECTORY_SEPARATOR.$this->offsetGet('themes_dir');
+
+      case 'themes_url':
+        // not from config file
+        return $this->offsetGet('root_url').'/'.strtr($this->offsetGet('themes_dir'),'\\','/');
     }
 
     // from the config file, if any.
@@ -408,7 +428,8 @@ final class cms_config implements ArrayAccess
       case 'db_username':
       case 'db_password':
       case 'db_name':
-        // these guys have to be set
+        // these guys have to be set TODO sometimes during installer before/when creating config
+        // maybe obfuscate the deprecated ones e.g. hash('md4'|'fnv1a64',uniqid().something str_shuffle(CMS_VERSION_NAME))
         stack_trace();
         die('FATAL ERROR: Could not find database connection key "'.$key.'" in the config file');
       break;
@@ -416,12 +437,17 @@ final class cms_config implements ArrayAccess
       case 'db_prefix':
         return 'cms_';
 
+      case 'db_port':
+        return 0; //NOTE mysqli default is null, not 0
+
       case 'query_var':
         return 'page';
 
       case 'permissive_smarty':
       case 'ignore_lazy_load':
       case 'debug':
+      case 'debug_to_log':
+//    case 'developer_mode': NOPE many isset() checks
       case 'persist_db_conn':
         return false;
 
@@ -464,12 +490,15 @@ final class cms_config implements ArrayAccess
         $this->_cache[$key] = $str;
         return $str;
 
-      case 'ssl_url':
-        // deprecated
+      case 'themes_dir': //relative path, often has > 1 dir
+        $this->_cache[$key] = $this->offsetGet('assets_dir').DIRECTORY_SEPARATOR.'themes';
+        return $this->_cache[$key];
+
+      case 'ssl_url': // deprecated since 2.2
         $tmp = $this->offsetGet('root_url');
         if( startswith($tmp,'http://') ) $tmp = str_replace('http://','https://',$tmp);
         $this->_cache[$key] = $tmp;
-        return $this->_cache[$key];
+        return $tmp;
 
       case 'uploads_path':
         $this->_cache[$key] = cms_join_path($this->offsetGet('root_path'),'uploads');
@@ -479,12 +508,11 @@ final class cms_config implements ArrayAccess
         $this->_cache[$key] = $this->offsetGet('root_url').'/uploads';
         return $this->_cache[$key];
 
-      case 'ssl_uploads_url':
-        // deprecated
+      case 'ssl_uploads_url': // deprecated since 2.2
         $tmp = $this->offsetGet('uploads_url');
         if( startswith($tmp,'http://') ) $tmp = str_replace('http://','https://',$tmp);
         $this->_cache[$key] = $tmp;
-        return $this->_cache[$key];
+        return $tmp;
 
       case 'image_uploads_path':
         $this->_cache[$key] = cms_join_path($this->offsetGet('uploads_path'),'images');
@@ -494,11 +522,11 @@ final class cms_config implements ArrayAccess
         $this->_cache[$key] = $this->offsetGet('uploads_url').'/images';
         return $this->_cache[$key];
 
-      case 'ssl_image_uploads_url':
+      case 'ssl_image_uploads_url': // deprecated since 2.2
         $tmp = $this->offsetGet('image_uploads_url');
         if( startswith($tmp,'http://') ) $tmp = str_replace('http://','https://',$tmp);
         $this->_cache[$key] = $tmp;
-        return $this->_cache[$key];
+        return $tmp;
 
       case 'previews_path':
         return TMP_CACHE_LOCATION;
@@ -508,7 +536,6 @@ final class cms_config implements ArrayAccess
 
       case 'locale':
       case 'page_extension':
-      case 'db_port':
       case 'timezone':
         return '';
 
@@ -516,7 +543,7 @@ final class cms_config implements ArrayAccess
         return 'assets';
 
       case 'assets_path':
-        $this->_cache[$key] = $this->OffsetGet('root_path').'/'.$this->OffsetGet('assets_dir');
+        $this->_cache[$key] = cms_join_path($this->offsetGet('root_path'),$this->offsetGet('assets_dir'));
         return $this->_cache[$key];
 
       case 'max_upload_size':
@@ -540,13 +567,12 @@ final class cms_config implements ArrayAccess
         return $this->_cache[$key];
 
       case 'css_path':
-        return PUBLIC_CACHE_LOCATION.'/';
+        return PUBLIC_CACHE_LOCATION.DIRECTORY_SEPARATOR; //TODO most paths here do not have trailing separator
 
       case 'css_url':
         return PUBLIC_CACHE_URL;
 
-      case 'ssl_css_url':
-        // deprecated
+      case 'ssl_css_url': // deprecated since 2.2
         $this->_cache[$key] = $this->offsetGet('ssl_url').'/tmp/cache/';
         return $this->_cache[$key];
 
@@ -559,13 +585,17 @@ final class cms_config implements ArrayAccess
         $this->_cache[$key] = $this->offsetGet('root_url').'/tmp/cache';
         return $this->_cache[$key];
 
+      case 'tmp_config_location': // since 2.2.21
+        $this->_cache[$key] = cms_join_path($this->offsetGet('root_path'),'tmp','config');
+        return $this->_cache[$key];
+
       case 'tmp_templates_c_location':
         $this->_cache[$key] = cms_join_path($this->offsetGet('root_path'),'tmp','templates_c');
         return $this->_cache[$key];
 
       default:
         // not a mandatory key for the config.php file... and one we don't understand.
-        return null;
+        return null; //aka mixed/unset
       }
     }
 
@@ -608,23 +638,18 @@ final class cms_config implements ArrayAccess
   {
     $type = (isset($this->_types[$key])) ? $this->_types[$key] : self::TYPE_STRING;
 
-    $ret = '';
     switch( $type ) {
       case self::TYPE_STRING:
-        $ret = "'".$value."'";
-        break;
+        return "'".addcslashes($value,"'")."'";
 
       case self::TYPE_BOOL:
-        $ret = ($value)?'true':'false';
-        break;
+        return ($value)?'true':'false';
 
       case self::TYPE_INT:
-        $ret = (int)$value;
-        break;
+        return (int)$value;
     }
-    return $ret;
+    return '';
   }
-
 
   /**
    * A function to save the current state of the config.php file.  Any existing file is backed up
@@ -647,7 +672,7 @@ final class cms_config implements ArrayAccess
     }
 
     // header for the config file.
-    $output = "<?php\n# CMS Made Simple Configuration File\n# Documentation: https://docs.cmsmadesimple.org/configuration/config-file/config-reference\n\n";
+    $output = "<?php\n// CMS Made Simple Configuration File\n// Documentation: https://docs.cmsmadesimple.org/configuration/config-file/config-reference\n\n";
     // body
     foreach( $this->_data as $key => $value ) {
       $outvalue = $this->_printable_value($key,$value);
@@ -670,7 +695,7 @@ final class cms_config implements ArrayAccess
   /**
    * Returns either the http root url or the https root url depending upon the request mode.
    *
-   * @deprecated
+   * @deprecated since 2.2
    * @return string
    */
   public function smart_root_url()
@@ -682,7 +707,7 @@ final class cms_config implements ArrayAccess
   /**
    * Returns either the http uploads url or the https uploads url depending upon the request mode.
    *
-   * @deprecated
+   * @deprecated since 2.2
    * @return string
    */
   public function smart_uploads_url()
@@ -694,7 +719,7 @@ final class cms_config implements ArrayAccess
   /**
    * Returns either the http image uploads url or the https image uploads url depending upon the request mode.
    *
-   * @deprecated
+   * @deprecated since 2.2
    * @return string
    */
   public function smart_image_uploads_url()

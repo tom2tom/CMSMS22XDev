@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple translation file
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -23,10 +22,10 @@
 #The modifications to fit it for Gallery were made by Jens Tkotz
 #(http://gallery.meanalto.com) 
 
-#Ideas from Gallery's implementation made to CMS by Ted Kulp
+#Ideas from Gallery's implementation made for CMSMS by Ted Kulp
 
 #US English
-#Created by: Ted Kulp <tedkulp@users.sf.net>
+#Created by: Ted Kulp <ted@cmsmadesimple.org>
 #Hungarian maintained by: Kozman Bálint <qzy [AT] ultramarin [DOT] hu>
 
 #Native language name
@@ -48,7 +47,7 @@ $nls['locale']['hr_HR'] = 'hr_HR,hr_HR.utf8,hr_HR.utf-8,hr_HR.UTF-8,croatian,Cro
 $nls['encoding']['hr_HR'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['hr_HR'] = array(dirname(__FILE__).'/hr_HR/admin.inc.php');
+$nls['file']['hr_HR'] = array(__DIR__.'/hr_HR/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

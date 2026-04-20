@@ -5,10 +5,11 @@ $table_ids = array(
     'admin_bookmarks'  => array('id' => 'bookmark_id'),
     'content'          => array('id' => 'content_id'),
     'content_props'    => array('id' => 'content_id'),
-    'event_handlers'   => array('id' => 'handler_id', 'seq' => 'event_handler_seq'),
+    'event_handlers'   => array('id' => 'handler_id'),
     'events'           => array('id' => 'event_id'),
     'group_perms'      => array('id' => 'group_perm_id'),
     'groups'           => array('id' => 'group_id'),
+    'jobs'             => array('id' => 'id'),
     'permissions'      => array('id' => 'permission_id'),
     'userplugins'      => array('id' => 'userplugin_id'),
     'users'            => array('id' => 'user_id')

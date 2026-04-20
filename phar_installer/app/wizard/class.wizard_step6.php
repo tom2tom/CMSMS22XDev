@@ -6,6 +6,7 @@ use __appbase\utils;
 use cms_autoinstaller\wizard_step;
 use Exception;
 use function __appbase\get_app;
+use function __appbase\joinpath;
 use function __appbase\lang;
 use function __appbase\smarty;
 use function __appbase\translator;
@@ -16,8 +17,6 @@ class wizard_step6 extends wizard_step
 
     public function run()
     {
-        $app = get_app();
-
         $tz = date_default_timezone_get();
         if( !$tz ) @date_default_timezone_set('UTC');
 
@@ -36,8 +35,23 @@ class wizard_step6 extends wizard_step
     private function validate($siteinfo)
     {
         $action = $this->get_wizard()->get_data('action');
-        if( $action !== 'freshen' ) {
+        if( $action == 'install' ) {
             if( !isset($siteinfo['sitename']) || !$siteinfo['sitename'] ) throw new Exception(lang('error_nositename'));
+        }
+    }
+
+    private function themesdir($wiz, $config)
+    {
+        $tmp = $wiz->get_data('version_info');
+        if( $tmp && !empty($tmp['config']['themes_dir']) ) {
+            return $tmp['config']['themes_dir']; // prefer value from config.php
+        }
+        elseif( !empty($config['themes_dir']) ) {
+            $tmp = trim($config['themes_dir'], ' \\/');
+            return strtr($tmp, '\\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR);
+        }
+        else {
+            return '';
         }
     }
 
@@ -45,17 +59,34 @@ class wizard_step6 extends wizard_step
     {
         $app = get_app();
         $config = $app->get_config();
+        $wiz = $this->get_wizard();
 
         if( isset($_POST['sitename']) ) $this->_siteinfo['sitename'] = trim(utils::clean_string($_POST['sitename']));
-        if( isset($_POST['languages']) && is_array($_POST['languages']) ) {
-            $tmp = array();
-            foreach ( $_POST['languages'] as $lang ) {
-                $tmp[] = utils::clean_string($lang);
-            }
-            $this->_siteinfo['languages'] = $tmp;
+
+        if( isset($_POST['theme_relpath']) ) {
+            $tmp = trim(utils::clean_string($_POST['theme_relpath']), ' \\/');
+            $this->_siteinfo['theme_relpath'] = strtr($tmp, '\\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR);
+        }
+        else {
+            //record the existing property-value
+            $this->_siteinfo['theme_relpath'] = $this->themesdir($wiz, $config);
         }
 
-        $wiz = $this->get_wizard();
+        if( !$config['nofiles'] ) {
+            if( isset($_POST['languages']) && is_array($_POST['languages']) ) {
+                $tmp = array();
+                foreach( $_POST['languages'] as $lang ) {
+                    $tmp[] = utils::clean_string($lang);
+                }
+                $this->_siteinfo['extlanguages'] = $tmp;
+                $this->_siteinfo['removelanguages'] = array_diff($this->_siteinfo['languages'], $tmp);
+            }
+            else {
+                $this->_siteinfo['extlanguages'] = [];
+                $this->_siteinfo['removelanguages'] = $this->_siteinfo['languages'];
+            }
+        }
+
         $wiz->set_data('siteinfo',$this->_siteinfo);
         try {
             $this->validate($this->_siteinfo);
@@ -74,15 +105,38 @@ class wizard_step6 extends wizard_step
         parent::display();
         $wiz = $this->get_wizard();
         $action = $wiz->get_data('action');
-        $languages = get_app()->get_language_list();
-        unset($languages['en_US']);
+        $app = get_app();
+        $config = $app->get_config();
+        if( !$config['nofiles'] ) {
+            $languages = $app->get_language_list();
+            unset($languages['en_US']);
+            if( $action != 'install') {
+                $langsused = [];
+                $patn = joinpath($app->get_destdir(),'admin','lang','ext','*.php');
+                $files = glob($patn, GLOB_NOSORT|GLOB_NOESCAPE);
+                foreach( $files as $fp ) {
+                    $langsused[] = basename($fp,'.php');
+                }
+            }
+            else {
+                $langsused = [];
+            }
+            $this->_siteinfo['languages'] = $langsused;
+            $wiz->set_data('siteinfo',$this->_siteinfo);
+        }
+        else {
+            $languages = [];
+        }
+
+        $themesplace = $this->themesdir($wiz,$config);
 
         $smarty = smarty();
         $smarty->assign('action',$action)
           ->assign('verbose',$wiz->get_data('verbose',0))
           ->assign('siteinfo',$this->_siteinfo)
-          ->assign('yesno',array('0'=>lang('no'),'1'=>lang('yes')))
+          ->assign('yesno',['0'=>lang('no'),'1'=>lang('yes')])
           ->assign('language_list',$languages)
+          ->assign('themepath',$themesplace)
           ->display('wizard_step6.tpl');
         $this->finish();
     }

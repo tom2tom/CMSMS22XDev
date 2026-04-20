@@ -1,51 +1,29 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: cms_content_tree (c) 2010 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A caching tree for CMSMS content objects.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
-#
-#-------------------------------------------------------------------------
+# Class: cms_url
+# (c) 2010 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
+# along with this program. If not, read the license online at:
+# https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
 #END_LICENSE
 
 /**
- * This file contains the cms_url class.
+ * A class for interacting with an URL.
  *
  * @package CMS
- */
-
-/**
- * A class for interacting with a URL.
- *
- * @package CMS
- * @author  Robert Campbell
- * @copyright Copyright (c) 2010, Robert Campbell <calguy1000@cmsmadesimple.org>
+ * @author Robert Campbell
  * @since 1.9
  */
 class cms_url
@@ -53,17 +31,17 @@ class cms_url
     /**
      * @ignore
      */
-    private $_orig;
+    private $_orig = null;
 
     /**
      * @ignore
      */
-    private $_parts;
+    private $_parts = [];
 
     /**
      * @ignore
      */
-    private $_query = array();
+    private $_query = [];
 
     /**
      * Constructor
@@ -76,7 +54,7 @@ class cms_url
         if( $url ) {
             $this->_orig = $url;
             $this->_parts = parse_url($url);
-            if( isset($this->_parts['query']) ) parse_str($this->_parts['query'],$this->_query);
+            if( !empty($this->_parts['query']) ) parse_str($this->_parts['query'],$this->_query);
         }
     }
 
@@ -87,6 +65,7 @@ class cms_url
     {
         $key = trim((string)$key);
         if( isset($this->_parts[$key]) ) return $this->_parts[$key];
+        return null;
     }
 
     /**
@@ -95,7 +74,7 @@ class cms_url
     private function _set_part($key,$value)
     {
         $key = trim((string)$key);
-        if( !strlen($value) && isset($this->_parts[$key]) ) {
+        if( $value === null || $value === '' ) {
             unset($this->_parts[$key]);
         }
         else {
@@ -114,7 +93,7 @@ class cms_url
     }
 
     /**
-     * Return the URL scheme.  i.e: HTTP, HTTPS, ftp etc.
+     * Return the URL scheme i.e: http, https, ftp etc.
      *
      * @return string (may be empty)
      */
@@ -122,7 +101,6 @@ class cms_url
     {
         return $this->_get_part('scheme');
     }
-
 
     /**
      * Set the URL scheme
@@ -132,7 +110,7 @@ class cms_url
     public function set_scheme($val)
     {
         $val = trim((string) $val);
-        return $this->_set_part('scheme',$val);
+        $this->_set_part('scheme',$val);
     }
 
     /**
@@ -146,7 +124,6 @@ class cms_url
         return $this->_get_part('host');
     }
 
-
     /**
      * Set the URL host
      *
@@ -157,7 +134,6 @@ class cms_url
         $val = trim((string) $val);
         $this->_set_part('host',$val);
     }
-
 
     /**
      * Return the port part of the URL
@@ -178,7 +154,7 @@ class cms_url
     public function set_port($val)
     {
         $val = (int) $val;
-        return $this->_set_part('port',$val);
+        $this->_set_part('port',$val);
     }
 
     /**
@@ -201,9 +177,8 @@ class cms_url
     public function set_user($val)
     {
         $val = trim((string) $val);
-        return $this->_set_part('user',$val);
+        $this->_set_part('user',$val);
     }
-
 
     /**
      * Retrieve the password portion of the URL, if any.
@@ -224,7 +199,7 @@ class cms_url
     public function set_pass($val)
     {
         $val = trim((string) $val);
-        return $this->_set_part('pass',$val);
+        $this->_set_part('pass',$val);
     }
 
     /**
@@ -244,14 +219,13 @@ class cms_url
      */
     public function set_path($val)
     {
-        return $this->_set_part('path',$val);
+        $this->_set_part('path',$val);
     }
 
     /**
      * Return the the query portion of the URL, if any is set.
      *
-     *
-     * @return string (may be empty)
+     * @return string (maybe empty)
      */
     public function get_query()
     {
@@ -268,11 +242,11 @@ class cms_url
     {
         $val = (string) $val;
         if( $val ) parse_str($val,$this->_query);
-        return $this->_set_part('query',$val);
+        $this->_set_part('query',$val);
     }
 
     /**
-     * Return the fragement portion of the URL
+     * Return the fragment portion of the URL
      *
      * @return string
      */
@@ -281,18 +255,16 @@ class cms_url
         return $this->_get_part('fragment');
     }
 
-
     /**
-     * Set the fragment portion of the url.
+     * Set the fragment portion of the URL.
      *
      * @param string $val
      */
     public function set_fragment($val)
     {
         $val = (string) $val;
-        return $this->_set_part('fragment',$val);
+        $this->_set_part('fragment',$val);
     }
-
 
     /**
      * Test if the named query variable exists in the URL
@@ -305,7 +277,7 @@ class cms_url
     }
 
     /**
-     * Erase a query var if it exists.
+     * Erase the named query variable if it exists.
      *
      * @since 2.0.1
      * @param string $key
@@ -320,7 +292,7 @@ class cms_url
     }
 
     /**
-     * Retrieve a query var from the url.
+     * Retrieve the named query variable in the URL.
      *
      * @param string $key
      */
@@ -331,7 +303,7 @@ class cms_url
     }
 
     /**
-     * Set a query var into the url
+     * Add a query variable to the URL
      *
      * @param string $key
      * @param string $value
@@ -360,14 +332,14 @@ class cms_url
         if( $path && $path[0] != '/' ) $path = '/'.$path;
 
         $parts = $this->_parts;
-        $url = ((!empty($parts['scheme'])) ? $parts['scheme'] . '://' : '');
+        $url = (!empty($parts['scheme'])) ? $parts['scheme'] . '://' : '';
         if( !empty($parts['user']) ) {
             $url .= $parts['user'];
             if( !empty($parts['pass']) ) $url .= ':'.$parts['pass'];
             $url .= '@';
         }
         if( !empty($parts['host']) ) $url .= $parts['host'];
-        if( !empty($params['port']) && $parts['port'] > 0 ) $url .= ':'.$parts['post'];
+        if( !empty($parts['port']) && $parts['port'] > 0 ) $url .= ':'.$parts['port'];
         if( !empty($parts['path']) ) {
             if( !startswith($parts['path'],'/') ) $url .= '/';
             $url .= $parts['path'];
@@ -376,9 +348,4 @@ class cms_url
         if( !empty($parts['fragment']) ) $url .= '#'.$parts['fragment'];
         return $url;
     }
-} // end of class
-
-#
-# EOF
-#
-?>
+} // class

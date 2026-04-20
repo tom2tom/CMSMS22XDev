@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: tab_end
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -18,13 +17,11 @@
 
 function smarty_function_tab_end($params,$template)
 {
-	$smarty = $template->smarty;
-
-	$out = cms_admin_tabs::end_tab_content();
+	$out = cms_admin_tabs::end_tab_content(true);
 	if( isset($params['assign']) )
 	{
-		$smarty->assign(trim($params['assign']),$out);
-		return;
+		$template->assign(trim($params['assign']),$out);
+		return '';
 	}
 	return $out;
 }

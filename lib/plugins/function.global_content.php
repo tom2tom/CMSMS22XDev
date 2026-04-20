@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: global_content
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -15,7 +14,7 @@
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
+//deprecated, global_content unused since CMSMS 2.2.0 instead use {include 'cms_template:thename' other params}
 function smarty_function_global_content($params, $smarty)
 {
 	$smarty->assign('gcb_params',$params);
@@ -23,7 +22,7 @@ function smarty_function_global_content($params, $smarty)
 	if( isset($params['assign']) )
 	{
 		$smarty->assign(trim($params['assign']),$txt);
-		return;
+		return '';
 	}
 	return $txt;
 }

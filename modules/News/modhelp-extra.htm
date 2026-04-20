@@ -1,0 +1,156 @@
+<h3>Template Parameters</h3>
+<h4>Variables available for use in each template used to display output of News default action</h4>
+<table>
+ <tbody>
+ <tr><td>$author_label</td><td>Translated string</td></tr>
+ <tr><td>$category_label</td><td>Translated string</td></tr>
+ <tr><td>$category_name</td><td>Translated string</td></tr>
+ <tr><td>$cats</td><td>Array of categories data</td></tr>
+ <tr><td>$count</td><td>Number of members of $cats</td></tr>
+ <tr><td>$firstpage</td><td>Label for first-page link</td></tr>
+ <tr><td>$firsturl</td><td>URL for accessing first displayable page</td></tr>
+ <tr><td>$itemcount</td><td>Number of members of $items</td></tr>
+ <tr><td>$items</td><td>Array of articles data</td></tr>
+ <tr><td>$lastpage</td><td>Label for last-page link</td></tr>
+ <tr><td>$lasturl</td><td>URL for accessing last displayable page</td></tr>
+ <tr><td>$nextpage</td><td>Label for next-page link</td></tr>
+ <tr><td>$nexturl</td><td>URL for accessing next displayable page</td></tr>
+ <tr><td>$oftext</td><td>Translated string</td></tr>
+ <tr><td>$pagecount</td><td>Number of displayable pages</td></tr>
+ <tr><td>$pagenumber</td><td>Identifier of the displayed page</td></tr>
+ <tr><td>$pagetext</td><td>Translated string</td></tr>
+ <tr><td>$param_'.$key</td><td>TBA</td></tr>
+ <tr><td>$prevpage</td><td>Label for previous-page link</td></tr>
+ <tr><td>$prevurl</td><td>URL for accessing previous displayable page</td></tr>
+ </tbody>
+</table>
+<h5>Each member of the $cats array is an object with properties:</h5>
+<table>
+ <tbody>
+  <tr><td>count</td><td>Number of articles in the category</td></tr>
+  <tr><td>create_date</td><td>Formatted like Y-m-d H:i:s or empty</td></tr>
+  <tr><td>depth</td><td>Integer</td></tr>
+  <tr><td>hierarchy</td><td>String like "001[.001[.001]...]"</td></tr>
+  <tr><td>index</td><td>Integer</td></tr>
+  <tr><td>item_order</td><td>Integer position in current level</td></tr>
+  <tr><td>long_name</td><td>String</td></tr>
+  <tr><td>modified_date</td><td>Formatted like Y-m-d H:i:s or empty</td></tr>
+  <tr><td>news_category_id</td><td>Integer</td></tr>
+  <tr><td>news_category_name</td><td>String</td></tr>
+  <tr><td>parent_id</td><td>Integer (-1 if no parent)</td></tr>
+  <tr><td>prevdepth</td><td>Integer</td></tr>
+  <tr><td>url</td><td>URL of TBA</td></tr>
+ </tbody>
+</table>
+<h5>Each member of the $items array is a news_article object with properties:</h5>
+<table>
+ <tbody>
+  <tr><td>author</td><td>Login id</td></tr>
+  <tr><td>author_id</td><td>Integer</td></tr>
+  <tr><td>authorname</td><td>Public name</td></tr>
+  <tr><td>canonical</td><td>'Pretty' urlpath</td></tr>
+  <tr><td>category</td><td>Name</td></tr>
+  <tr><td>category_id</td><td>Numeric id of category</td></tr>
+  <tr><td>category_name</td><td>Alias of category</td></tr>
+  <tr><td>content</td><td>String</td></tr>
+  <tr><td>create_date</td><td>Formatted like Y-m-d H:i:s or empty</td></tr>
+  <tr><td>detail_url</td><td>URL for displaying a detail view</td></tr>
+  <tr><td>enddate</td><td>Formatted like Y-m-d H:i:s or empty</td></tr>
+  <tr><td>extra</td><td>Extra data</td></tr>
+  <tr><td>fields</td><td>Array news_field object(s) or empty</td></tr>
+  <tr><td>fieldsbyname</td><td>Deprecated alias of fields</td></tr>
+  <tr><td>file_location</td><td>URL of uploaded file</td></tr>
+  <tr><td>id</td><td>Integer article id </td></tr>
+  <tr><td>image</td><td>Alias of image_url</td></tr>
+  <tr><td>image_url</td><td>Absolute url</td></tr>
+  <tr><td>link</td><td>URL of TBA</td></tr>
+  <tr><td>modified_date</td><td>Formatted like Y-m-d H:i:s or empty</td></tr>
+  <tr><td>morelink</td><td>Anchor elemement linking to display article detail</td></tr>
+  <tr><td>moreurl</td><td>Alias of detail_url</td></tr>
+  <tr><td>news_url</td><td>Urlpath/slug for direct access</td></tr>
+  <tr><td>postdate</td><td>Formatted like Y-m-d H:i:s or empty</td></tr>
+  <tr><td>returnid</td><td>Id of page to be displayed after 'return' click</td></tr>
+  <tr><td>startdate</td><td>Formatted like Y-m-d H:i:s or empty</td></tr>
+  <tr><td>status</td><td>Draft or published</td></tr>
+  <tr><td>summary</td><td>String</td></tr>
+  <tr><td>title</td><td>String</td></tr>
+  <tr><td>titlelink</td><td>Anchor elemement linking to display article detail</td></tr>
+  <tr><td>url</td><td>Alias of news_url</td></tr>
+  <tr><td>useexp</td><td>Whether the article has an enddate</td></tr>
+ </tbody>
+</table>
+<h5>Each member of the $fields-property array is a news_article object with properties:</h5>
+<table>
+ <tbody>
+  <tr><td>alias</td><td>Munged variant of name</td></tr>
+  <tr><td>create_date</td><td>Formatted like Y-m-d H:i:s</td></tr>
+  <tr><td>displayvalue</td><td>Displayable value, sometimes a derivative of value</td></tr>
+  <tr><td>extra</td><td>Serialised properties</td></tr>
+  <tr><td>fielddef_id</td><td>Alias of id</td></tr>
+  <tr><td>id</td><td>Field numeric id</td></tr>
+  <tr><td>item_order</td><td>Display order</td></tr>
+  <tr><td>max_length</td><td></td></tr>
+  <tr><td>modified_date</td><td>Formatted like Y-m-d H:i:s or empty</td></tr>
+  <tr><td>name</td><td>Field identifier</td></tr>
+  <tr><td>options</td><td>Dropdown field options</td></tr>
+  <tr><td>public</td><td>Whether the field is for public display</td></tr>
+  <tr><td>type</td><td>checkbox,dropdown,file,linkedfile,textarea or textbox</td></tr>
+  <tr><td>value</td><td>Field value</td></tr>
+ </tbody>
+</table>
+<h4>Variables available for use in each template used to display output of News detail action</h4>
+<table>
+ <tbody>
+ <tr><td>$author_label</td><td>Translated string</td></tr>
+ <tr><td>$category_label</td><td>Translated string</td></tr>
+ <tr><td>$category_link</td><td>URL for displaying article's category</td></tr>
+ <tr><td>$category_name</td><td></td></tr>
+ <tr><td>$entry</td><td>news_article object</td></tr>
+ <tr><td>$extra_label</td><td>Translated string</td></tr>
+ <tr><td>$return_url</td><td>URL for re-displaying page where detail-view was initiated</td></tr>
+ </tbody>
+</table>
+<h4>Variables available for use in each template used to display output of News (deprecated) feusubmit action</h4>
+<table>
+ <tbody>
+ <tr><td>$actionid</td><td>Submitted-parameters prefix</td></tr>
+ <tr><td>$allow_summary_wysiwyg</td><td>Flag whether to enable WYSIWYG use on Summary field TBA-WHERE</td></tr>
+ <tr><td>$category_id</td><td>Integer</td></tr>
+ <tr><td>$categorylist</td><td>Comma-separated names</td></tr>
+ <tr><td>$content</td><td>Text</td></tr>
+ <tr><td>$customfields</td><td></td></tr>
+ <tr><td>$enddate</td><td>Formatted like Y-m-d H:i:s or empty</td></tr>
+ <tr><td>$error</td><td></td></tr>
+ <tr><td>$extra</td><td></td></tr>
+ <tr><td>$hide_summary_field</td><td>Flag whether to hide Summary field TBA-WHERE</td></tr>
+ <tr><td>$message</td><td></td></tr>
+ <tr><td>$mod</td><td>News module object</td></tr>
+ <tr><td>$startdate</td><td>Formatted like Y-m-d H:i:s or empty</td></tr>
+ <tr><td>$status</td><td>draft, published etc</td></tr>
+ <tr><td>$summary</td><td>Text</td></tr>
+ <tr><td>$title</td><td>Text</td></tr>
+ </tbody>
+</table>
+<h4>Variables available for use in each submission-template used in News (deprecated) feusubmit action</h4>
+<table>
+ <tbody>
+ <tr><td>$content</td><td>Text</td></tr>
+ <tr><td>$enddate</td><td>Formatted like Y-m-d H:i:s or empty</td></tr>
+ <tr><td>$ipaddress</td><td>of the submitter</td></tr>
+ <tr><td>$startdate</td><td>Formatted like Y-m-d H:i:s or empty</td></tr>
+ <tr><td>$status</td><td>draft, published etc</td></tr>
+ <tr><td>$summary</td><td>Text</td></tr>
+ <tr><td>$title</td><td>Text</td></tr>
+ </tbody>
+</table>
+<h4>Variables available for use in each template used to display output of News browsecat action</h4>
+<table>
+ <tbody>
+ <tr><td>$author_label</td><td>Translated string</td></tr>
+ <tr><td>$cats</td><td>Array of categories data</td></tr>
+ <tr><td>$count</td><td>Number of members of $cats</td></tr>
+ </tbody>
+</table>
+<h5>Each member of the $cats array is an object with properties:</h5>
+<p>See above</p>
+<h4>Variables accepted and understood in News actions (if specified in the parameters of a submitted request)</h4>

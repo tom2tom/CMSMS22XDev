@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: cms_get_language
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -21,7 +20,7 @@ function smarty_function_cms_get_language($params, $smarty)
 	$lang = CmsNlsOperations::get_current_language();
 	if( isset($params['assign']) ) {
 	  $smarty->assign(trim($params['assign']),$lang);
-	  return;
+	  return '';
 	}
 	return $lang;
 }

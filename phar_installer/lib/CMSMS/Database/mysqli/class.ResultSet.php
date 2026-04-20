@@ -4,14 +4,14 @@ namespace CMSMS\Database\mysqli;
 
 class ResultSet extends \CMSMS\Database\ResultSet
 {
-    private $_connection;
-    private $_resultId;
+    private $_connection; // mysqli object
+    private $_resultId; // bool or object or null
     private $_fields;
     private $_nrows;
     private $_pos;
     private $_sql;
 
-    public function __construct(\mysqli $conn, $resultId, $sql = null)
+    public function __construct(\mysqli $conn, $resultId, $sql = '')
     {
         $this->_connection = $conn;
         $this->_resultId = $resultId;
@@ -24,20 +24,25 @@ class ResultSet extends \CMSMS\Database\ResultSet
 
     public function __destruct()
     {
-        if( $this->resultId ) mysqli_free_result( $this->resultId );
+        if( is_object($this->_resultId) ) mysqli_free_result($this->_resultId);
     }
 
     public function Close()
     {
-        if( $this->resultId ) mysqli_free_result( $this->resultId );
-        $this->_fields = $this->resultId = null;
+        if( is_object($this->_resultId) ) mysqli_free_result($this->_resultId);
+        $this->_resultId = null; // no resource
+        $this->_fields = [];
     }
 
-    public function Fields( $key = null )
+    public function Fields($key = '')
     {
-        $key = (string) $key;
-        if( empty($key) ) return $this->_fields;
-        return $this->fields[$key];
+        if( $this->_fields ) {
+            if( !$key ) return $this->_fields;
+            if( isset($this->fields[(string)$key]) ) {
+                return $this->fields[(string)$key];
+            }
+        }
+        return ( $key ) ? null : []; // no value
     }
 
     public function RecordCount()
@@ -79,5 +84,4 @@ class ResultSet extends \CMSMS\Database\ResultSet
     {
         if( !$this->EOF() ) $this->_fields = mysqli_fetch_array($this->_resultId, MYSQLI_ASSOC);
     }
-
 } // end of class

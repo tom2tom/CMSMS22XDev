@@ -1,0 +1,3 @@
+- Fixes inherited content Fields from a base templates are missing in child templates (backend edit);
+- Fixes Pages extended of a page base can't be edited if they don't contain a {content} tag;
+- Adds missing line break in class ErrorPage after #[\AllowDynamicProperties] directive;

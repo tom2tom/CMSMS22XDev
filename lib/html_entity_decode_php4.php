@@ -100,7 +100,13 @@ function __code_to_utf8($num) {
  */
 //function html_entity_decode_php4($text_to_convert) {
 function cms_html_entity_decode($text_to_convert) {
-  $htmlentities_table = [
+  static $htmlentities_table = null;
+
+  $return_text = html_entity_decode((string)$text_to_convert, (ENT_QUOTES | ENT_HTML5), 'UTF-8');
+
+  // to be on the safe side if html_entity_decode missed something
+  if ($htmlentities_table == null) {
+    $htmlentities_table = [
     '&Aacute;' => chr(195).chr(129),
     '&aacute;' => chr(195).chr(161),
     '&Acirc;' => chr(195).chr(130),
@@ -225,8 +231,8 @@ function cms_html_entity_decode($text_to_convert) {
     '&Mu;' => chr(206).chr(156),
     '&mu;' => chr(206).chr(188),
     '&nabla;' => chr(226).chr(136).chr(135),
-//  '&nbsp;' => chr(194).chr(160), // don't actually know why (Jo Morg)
-    '&nbsp;' => chr(32),
+//  '&nbsp;' => chr(194).chr(160), don't actually know why (Jo Morg)
+    '&nbsp;' => chr(160),
     '&ndash;' => chr(226).chr(128).chr(147),
     '&ne;' => chr(226).chr(137).chr(160),
     '&ni;' => chr(226).chr(136).chr(139),
@@ -354,12 +360,8 @@ function cms_html_entity_decode($text_to_convert) {
     '&quot;' => '\'',
     '&gt;' => '>',
     '&lt;' => '<'
-  ];
-
-  $return_text = html_entity_decode((string)$text_to_convert, (ENT_QUOTES | ENT_HTML5), 'UTF-8');
-
-  // just to be on the safe side if html_entity_decode still missed something
-  // and also convert &nbsp; to chr(32) which seems correct (Jo Morg)
+    ];
+  }
   $return_text = strtr($return_text, $htmlentities_table);
 
   // convert hex, and numeric entities to their character values.

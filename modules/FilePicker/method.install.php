@@ -1,14 +1,9 @@
 <?php
-#-------------------------------------------------------------------------
-# Module: FilePicker - A CMSMS addon module to provide file picking capabilities.
-# (c) 2016 by Fernando Morgado <jomorg@cmsmadesimple.org>
-# (c) 2016 by Robert Campbell <calguy1000@cmsmadesimple.org>
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2006 by Ted Kulp (wishy@cmsmadesimple.org)
-# This projects homepage is: http://www.cmsmadesimple.org
-#-------------------------------------------------------------------------
-#-------------------------------------------------------------------------
 # BEGIN_LICENSE
+# #-------------------------------------------------------------------------
+# Module FilePicker installation script
+# (c) 2016 Fernando Morgado <jomorg@cmsmadesimple.org>
+# (c) 2016 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #-------------------------------------------------------------------------
 # This file is part of FilePicker
 # FilePicker is free software; you can redistribute it and/or modify
@@ -21,30 +16,32 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
+# along with this program; if not, read the license online at:
+# https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
 # END_LICENSE
-#-------------------------------------------------------------------------
-use \FilePicker\ProfileDAO;
 
-$db = $this->GetDb();
-$taboptarray = array('mysql' => 'TYPE=MyISAM');
+use FilePicker\ProfileDAO;
+
+$taboptarray = array('mysqli' => 'ENGINE=MyISAM','mysql' => 'ENGINE=MyISAM');
 $dict = NewDataDictionary($db);
 
-try {
-    $flds = '
-        id I AUTO PRIMARY KEY,
-        name C(100) NOTNULL,
-        data X,
-        create_date I,
-        modified_date i';
+$tbl = ProfileDAO::table_name();
+$flds = '
+id I KEY AUTO,
+name C(100) NOTNULL,
+data X,
+created I,
+modified I';
 
-    $sqlarray = $dict->CreateTableSQL(ProfileDAO::table_name(), $flds, $taboptarray);
+try {
+    $sqlarray = $dict->CreateTableSQL($tbl, $flds, $taboptarray);
     $dict->ExecuteSQLArray($sqlarray);
-    $sqlarray = $dict->CreateIndexSQL(CMS_DB_PREFIX.'cmsfp_idx0', ProfileDAO::table_name(), 'name', [ 'UNIQUE' ] );
+    $sqlarray = $dict->CreateIndexSQL(CMS_DB_PREFIX.'cmsfp_idx0', $tbl, 'name', ['UNIQUE']);
     $dict->ExecuteSQLArray($sqlarray);
+
+    $db->CreateSequence("{$tbl}_seq");
+    $db->Execute("ALTER TABLE `{$tbl}_seq` MODIFY `id` int unsigned NOT NULL");
 }
 catch(Exception $e) {
     return $e->getMessage();

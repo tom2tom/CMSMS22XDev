@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: admin_icon
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -18,11 +17,9 @@
 
 function smarty_function_admin_icon($params,$template)
 {
-    $smarty = $template->smarty;
+    if( !cmsms()->test_state(CmsApp::STATE_ADMIN_PAGE) ) return '';
 
-    if( !cmsms()->test_state(CmsApp::STATE_ADMIN_PAGE) ) return;
-
-    $icon = null;
+    $icon = '';
     $tagparms = array('class'=>'systemicon');
     foreach( $params as $key => $value ) {
         switch( $key ) {
@@ -45,9 +42,9 @@ function smarty_function_admin_icon($params,$template)
         }
     }
 
-    if( !$icon ) return;
+    if( !$icon ) return '';
     $fnd = cms_admin_utils::get_icon($icon);
-    if( !$fnd ) return;
+    if( !$fnd ) return '';
 
     if( !isset($tagparms['alt']) ) $tagparms['alt'] = basename($fnd);
 
@@ -55,11 +52,11 @@ function smarty_function_admin_icon($params,$template)
     foreach( $tagparms as $key => $value ) {
         $out .= " $key=\"$value\"";
     }
-    $out .= '/>';
+    $out .= '>';
 
     if( isset($params['assign']) ) {
-        $smarty->assign(trim($params['assign']),$out);
-        return;
+        $template->assign(trim($params['assign']),$out);
+        return '';
     }
     return $out;
 }

@@ -33,6 +33,7 @@ class request implements ArrayAccess
   public function offsetGet($key)
   {
     if( isset($_REQUEST[$key]) ) return $_REQUEST[$key];
+    return null; // no value for unrecognised property
   }
 
   #[\ReturnTypeWillChange]
@@ -51,6 +52,7 @@ class request implements ArrayAccess
   {
     if( isset($_SERVER[$key]) )
       return $_SERVER[$key];
+    return '';
   }
 
   #[\ReturnTypeWillChange]

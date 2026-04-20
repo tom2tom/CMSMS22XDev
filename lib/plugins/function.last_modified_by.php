@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: last_modified_by
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -22,17 +21,17 @@ function smarty_function_last_modified_by($params, $smarty)
     $content_obj = $gCms->get_content_object();
 	$id = "";
 
-	if (isset($content_obj) && $content_obj->LastModifiedBy() > -1)	{
+	if ($content_obj && $content_obj->LastModifiedBy() > -1) {
 		$id = $content_obj->LastModifiedBy();
 	} else {
-		return;
+		return '';
 	}
 
     $format = "id";
 	if(!empty($params['format'])) $format = $params['format'];
     $userops = UserOperations::get_instance();
     $thisuser = $userops->LoadUserByID($id);
-    if( !$thisuser ) return; // could not find user record.
+    if( !$thisuser ) return ''; // could not find user record.
 
     $output = '';
     if($format==="id") {
@@ -45,18 +44,18 @@ function smarty_function_last_modified_by($params, $smarty)
 
     if( isset($params['assign']) ) {
         $smarty->assign(trim($params['assign']),$output);
-        return;
+        return '';
     }
     return $output;
 }
 
 function smarty_cms_about_function_last_modified_by() {
 ?>
-	<p>Author: Ted Kulp&lt;tedkulp@users.sf.net&gt;</p>
+	<p>Author: Ted Kulp&lt;ted@cmsmadesimple.org&gt;</p>
 
 	<p>Change History:</p>
 		<ul>
-			<li>Added assign parameter (Calguy)</li>
+			<li>Added assign parameter (Robert Campbell)</li>
         </ul>
 	</p>
 <?php

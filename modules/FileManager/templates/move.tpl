@@ -20,11 +20,11 @@
     </select>
   </p>
 </div>
+<br>
 <div class="pageoverflow">
-  <p class="pagetext"></p>
   <p class="pageinput">
-    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('move')}"/>
-    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}"/>
+    <input type="submit" name="{$actionid}submit" data-ui-icon="ui-icon-arrow-4-diag" value="{$mod->Lang('move')}">
+    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
   </p>
 </div>
 {$endform}

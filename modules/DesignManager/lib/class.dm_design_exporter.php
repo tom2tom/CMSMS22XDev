@@ -1,358 +1,337 @@
 <?php
-class dm_design_exporter
+#-------------------------------------------------------------------------
+# Module DesignManager class dm_design_exporter
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, read the license online at:
+# https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+#-------------------------------------------------------------------------
+final class dm_design_exporter
 {
-    private $_design;
-    private $_tpl_list;
-    private $_css_list;
-    private $_files;
-    private $_image = null;
-    private $_description;
-    static  $_mm_types;
-    static  $_nav_types;
+    const DTD_VERSION = '1.8';
 
-    private static $_dtd = <<<EOT
+    private $_advice = ''; // runtime addition(s) to recorded notes
+    private $_css_list;
+    private $_description;
+    private $_design;
+    private $_files;
+    private $_modnames; // currently-recognised modules
+    private $_requires = []; // modules tags cmsmsversion etc dependencies - each as [name => possible op + version]
+    private $_tpl_list;
+//  private $_pages_list;
+//  private $_pageprops_list;
+//  private $_subcss_list; // @import stylesheets
+//  private $_subtpl_list;  // {include} {extends} {cms_module X template='QQ'} etc
+//  private $_settings_list; // module and/or global
+
+    // the exported *key values are effectively func(itemtype+corresponding data),
+    // used for sorting before export and restoration during reading
+    private $_dtd = <<<EOT
 <!DOCTYPE design [
-  <!ELEMENT design (name,description,generated,cmsversion,template+,stylesheet*,file*)>
-  <!ELEMENT name (#PCDATA)>
-  <!ELEMENT description (#PCDATA)>
-  <!ELEMENT generated (#PCDATA)>
-  <!ELEMENT cmsversion (#PCDATA)>
-  <!ELEMENT template (tkey,tname,tdesc,tdata,ttype_originator,ttype_name)>
-  <!ELEMENT tkey (#PCDATA)>
-  <!ELEMENT tname (#PCDATA)>
-  <!ELEMENT tdesc (#PCDATA)>
-  <!ELEMENT tdata (#PCDATA)>
-  <!ELEMENT ttype_originator (#PCDATA)>
-  <!ELEMENT ttype_name (#PCDATA)>
-  <!ELEMENT stylesheet (csskey,cssname,cssdesc,cssmediatype,cssmediaquery,cssdata)>
-  <!ELEMENT csskey (#PCDATA)>
-  <!ELEMENT cssname (#PCDATA)>
-  <!ELEMENT cssdesc (#PCDATA)>
-  <!ELEMENT cssmediatype (#PCDATA)>
-  <!ELEMENT cssmediaquery (#PCDATA)>
-  <!ELEMENT cssdata (#PCDATA)>
-  <!ELEMENT file (fkey,fvalue,fdata?)>
-  <!ELEMENT fkey (#PCDATA)>
-  <!ELEMENT fvalue (#PCDATA)>
-  <!ELEMENT fdata (#PCDATA)>
-]>\n
+ <!ELEMENT design (dtdversion?,cmsversion,name,version?,description,notes?,generated,requires*,template*,stylesheet*,file*)>
+ <!ELEMENT dtdversion (#PCDATA)>
+ <!ELEMENT cmsversion (#PCDATA)>
+ <!ELEMENT name (#PCDATA)>
+ <!ELEMENT description (#PCDATA)>
+ <!ELEMENT version (#PCDATA)>
+ <!ELEMENT notes (#PCDATA)>
+ <!ELEMENT generated (#PCDATA)>
+ <!ELEMENT requires (rname,rdata?)>
+ <!ELEMENT rname (#PCDATA)>
+ <!ELEMENT rdata (#PCDATA)>
+ <!ELEMENT template (tkey,tname,tdesc,tdata,ttype_originator,ttype_name)>
+ <!ELEMENT tkey (#PCDATA)>
+ <!ELEMENT tname (#PCDATA)>
+ <!ELEMENT tdesc (#PCDATA)>
+ <!ELEMENT tdata (#PCDATA)>
+ <!ELEMENT ttype_originator (#PCDATA)>
+ <!ELEMENT ttype_name (#PCDATA)>
+ <!ELEMENT stylesheet (csskey,cssname,cssdesc,cssdata,cssmediatype,cssmediaquery)>
+ <!ELEMENT csskey (#PCDATA)>
+ <!ELEMENT cssname (#PCDATA)>
+ <!ELEMENT cssdesc (#PCDATA)>
+ <!ELEMENT cssdata (#PCDATA)>
+ <!ELEMENT cssmediatype (#PCDATA)>
+ <!ELEMENT cssmediaquery (#PCDATA)>
+ <!ELEMENT file (fkey,fvalue,binary?,fdata?)>
+ <!ELEMENT fkey (#PCDATA)>
+ <!ELEMENT fvalue (#PCDATA)>
+ <!ELEMENT binary (#PCDATA)>
+ <!ELEMENT fdata (#PCDATA)>
+]>
+
 EOT;
 
-    public function __construct(CmsLayoutCollection &$design)
+    public function __construct(CmsLayoutCollection $design)
     {
         $this->_design = $design;
-        if( !is_array(self::$_mm_types ) ) {
-            self::$_mm_types = CmsLayoutTemplateType::load_all_by_originator('MenuManager');
-            self::$_nav_types = CmsLayoutTemplateType::load_all_by_originator('Navigator');
-            if( (!is_array(self::$_mm_types) || count(self::$_mm_types) == 0) && (!is_array(self::$_nav_types) || count(self::$_nav_types) == 0) ) {
-                throw new CmsException('Cannot find any Navigation template types (is MenuManager or Navigator installed and enabled?');
+    }
+
+    public function get_xml()
+    {
+        $this->parse_related_files(); // do this 1st, to simplify url-processing in css etc
+        $this->parse_templates();
+        $this->parse_template_tags(); // if intra-tag template-names are not suitably handled in _parse_tpl_urls()
+        $this->parse_stylesheets();
+
+        $dname = $this->_design->get_name();
+        $space = 'dm'.hash('crc32',$dname);
+        $cache = $_SESSION[$space];
+        $vers = (!empty($cache['version'])) ? $cache['version'] : $this->_design->get_version();
+        $desc = (!empty($cache['description'])) ? $cache['description'] : $this->_design->get_description();
+        $notes = (!empty($cache['notes'])) ? $cache['notes'] : '';
+        $reqs = (!empty($cache['requires'])) ? $cache['requires'] : $this->_design->get_requires(4); // as array
+        if( $this->_requires ) {
+            $reqs = array_merge($this->_requires, $reqs);
+        }
+        if( $reqs ) {
+            ksort($reqs, SORT_NATURAL);
+        }
+        if( $this->_advice ) { $notes .= "\n". $this->_advice; }
+
+        // this generates a humungous pile of text in memory - is there a better way?
+        $output = '<?xml version="1.0" encoding="UTF-8"?>';
+        $output .= $this->_dtd;
+        $output .= $this->_open_tag('design',0);
+        $output .= $this->_output('dtdversion',self::DTD_VERSION);
+        $output .= $this->_output('cmsversion',CMS_VERSION);
+        $output .= $this->_output('name',$dname);
+        $output .= $this->_output('version',$vers);
+        $output .= $this->_output_data('description',$desc);
+        $output .= $this->_output_data('notes',$notes);
+        $output .= $this->_output('generated',time());
+
+        foreach( $reqs as $dep => $detail ) {
+            if( $detail ) {
+                $detail = implode(' ',$detail);
+            }
+            $output .= $this->_output_req($dep,$detail);
+        }
+
+        foreach( $this->_tpl_list as $rec ) {
+            $output .= $this->_output_template($rec['obj'],$rec['name'],1);
+        }
+
+        foreach( $this->_css_list as $rec ) {
+            $output .= $this->_output_stylesheet($rec['obj'],$rec['name'],1);
+        }
+
+        if( !empty($this->_files) ) {
+            // sort on 'type' (CSS, URL etc) asc and then value asc
+            $arr = &$this->_files;
+            uksort($this->_files,function($a,$b) use($arr) {
+                $n = strncmp($a,$b,5);
+                if( $n == 0 ) {
+                    $n = strcmp($arr[$a],$arr[$b]);
+                }
+                return ($n > 0) ? 1 : (($n < 0) ? -1 : 0);
+            });
+            unset($arr);
+            foreach( $this->_files as $key => $value ) {
+                $output .= $this->_output_file($key,$value);
             }
         }
+
+        //TODO other things e.g. global- and/or module-settings, pages
+        unset($_SESSION[$space]);
+
+        $output .= $this->_close_tag('design',0);
+        return $output;
     }
 
-    public function get_description()
+    private function log($msg,$sysmsg='')
     {
-        if( is_null($this->_description) ) return $this->_design->get_description();
+        if( $this->_advice ) { $this->_advice .= "\nExport: $msg"; }
+        else { $this->_advice = "Export: $msg"; }
+        $dname = $this->_design->get_name();
+        audit($this->_design->get_id(),'Export design '.$dname,rtrim($msg.' '.$sysmsg));
     }
 
-    public function set_description($text)
+    private function _get_signature($fn,$type = 'URL')
     {
-        $this->_description = $text;
-    }
-
-    /**
-     * internal
-     */
-    public function _get_signature($fn,$type = 'URL')
-    {
-        if( is_array($this->_files) ) {
-            foreach( $this->_files as $key => $data ) {
-                if( $fn == $data ) return $key;
+        if( isset($this->_files) && is_array($this->_files) ) {
+            if( ($sig = array_search($fn,$this->_files)) !== FALSE ) {
+                return $sig;
             }
         }
-        $sig = '__'.$type.',,'.md5($fn).'__';
-        if( !is_array($this->_files) ) $this->_files = array();
+        else {
+            $this->_files = [];
+        }
+        $sig = "__{$type},,".hash('md4',$fn).'__'; // md4-hashing is better-distributed than md5
         $this->_files[$sig] = $fn;
         return $sig;
     }
 
-    private function _parse_css_for_urls($content)
+    /**
+     * Compare the specified url with the site-root url
+     * @param string $url
+     * @return bool indicating (sufficient) match between the two
+     */
+    private function _is_site_url($url)
     {
-        $ob = &$this;
-        $regex='/url\s*\(\"*(.*)\"*\)/i';
-        $content = preg_replace_callback($regex,
-                                         function($matches) use ($ob) {
-                                             $config = cmsms()->GetConfig();
-                                             $url = $matches[1];
-                                             if( !startswith($url,'http') || startswith($url,$config['root_url']) || startswith($url,'[[root_url]]') ) {
-                                                 $sig = $ob->_get_signature($url);
-                                                 $sig = "url(".$sig.")";
-                                                 return $sig;
-                                             }
-                                             return $matches[0];
-                                         },
-                                         $content);
+        static $root_url = null;
 
-        return $content;
+        $chk_url = new cms_url($url);
+        if( !$chk_url ) {
+            return FALSE;
+        }
+        if( $root_url == null ) {
+            $root_url = new cms_url(CMS_ROOT_URL);
+        }
+        if( $chk_url->get_host() && $chk_url->get_host() != $root_url->get_host() ) { return FALSE; }
+        if( $chk_url->get_scheme() && $chk_url->get_scheme() != $root_url->get_scheme() ) { return FALSE; }
+        if( $chk_url->get_port() != $root_url->get_port() ) { return FALSE; }
+        $pr = $root_url->get_path();
+        $pc = $chk_url->get_path();
+        return ($pr == $pc || startswith($pc,$pr));
     }
 
+    /**
+     * Detect, record and substute an alias for urls in the supplied string
+     * No checking for url-relevance e.g. for something external to the design
+     *
+     * @param string $content
+     * @return string possibly-modified content
+     */
+    private function _parse_css_urls($content)
+    {
+        $ob = $this;
+        $out = preg_replace_callback('/url\s*\(\s*(["\']?)(.+?)\1\s*\)/is',
+            function($matches) use ($ob) {
+                $url = $matches[2];
+                if( strncasecmp($url,'data:',5) != 0 ) { // stet data url
+                    if( !preg_match('/\[\[\s*\$/',$url) ) { // stet url having Smarty variable (which we can't (yet?) intepret for content retrieval)
+                        if( !$ob->_is_site_url($url) ) {
+                            $ob->log('Detected offsite url '.$url);
+                        }
+                        if( !startswith($url,'http') || startswith($url,CMS_ROOT_URL) || startswith($url,'[[root_url]]') ) {
+                            $sig = $ob->_get_signature($url);
+                            return "url(\"$sig\")";
+                        }
+                    }
+                    else {
+                        $ob->log("Failed to process stylesheet url '$url'");
+                    }
+                }
+                return 'url('.$matches[1].$url.$matches[1].')';
+            },$content);
+        return $out;
+    }
+
+    /**
+     * Detect, record and substitute an alias for urls in the supplied string
+     * No check for url-relevance i.e. something necessary for the design
+     *
+     * @param string $content
+     * @return string possibly-modified content
+     */
     private function _parse_tpl_urls($content)
     {
-        $ob = &$this;
-
-        $temp_fix_cmsselflink = function($matches) use ($ob) {
-            // GCB (required name param)
-            $out = preg_replace_callback("/href\s*=[\\\"']{0,1}([a-zA-Z0-9._\ \:\-\/]+)[\\\"']{0,1}/i",
-                                         function($matches) use ($ob) {
-                                             return str_replace($matches[1],'ignore::'.$matches[1],$matches[0]);
-                                         },$matches[0]);
-            return $out;
-        };
-
-        $undo_fix_cmsselflink = function($matches) use ($ob) {
-            // GCB (required name param)
-            $out = preg_replace_callback("/href\s*=[\\\"']{0,1}(ignore\:\:[a-zA-Z0-9._\ \:\-\/]+)[\\\"']{0,1}/i",
-                                         function($matches) use ($ob) {
-                                             $rep = substr($matches[1],8);
-                                             return str_replace($matches[1],$rep,$matches[0]);
-                                         },$matches[0]);
-            return $out;
-        };
-
-        // replace cms_selflink stuff with an ignore
-        $regex='/\{cms_selflink.*\}/';
-        $content = preg_replace_callback( $regex, $temp_fix_cmsselflink, $content );
-
-        // compars root url to another url
-        // handle relative paths
-        // and no schema
-        $is_same_host = function(cms_url $url1,cms_url $url2) {
-            if( $url1->get_host() != $url2->get_host() && $url2->get_host() != '') return FALSE;
-            if( $url1->get_port() != $url2->get_port() ) return FALSE;
-            if( $url1->get_scheme() != $url2->get_scheme() && $url2->get_scheme() != '') return FALSE;
-            $p1 = $url1->get_path();
-            $p2 = $url2->get_path();
-            if( $p1 != $p2 && !startswith($p2,$p1) ) return FALSE;
-            return TRUE;
-        };
-
-        $ob = &$this;
-        $types = array("href", "src", "url");
-        foreach( $types as $type ) {
-            $innerT = '[a-z0-9:?=&@/._-]+?';
-            $content = preg_replace_callback("|$type\=([\"'`])(".$innerT.")\\1|i",
-                                             function($matches) use ($ob,$type,&$is_same_host) {
-                                                 $config = cmsms()->GetConfig();
-                                                 $url = $matches[2];
-                                                 $root_url = new cms_url($config['root_url']);
-                                                 $the_url = new cms_url($url);
-                                                 if( !startswith($url,'ignore::') && $is_same_host($root_url,$the_url) ) {
-                                                     $sig = $ob->_get_signature($url);
-                                                     //return $sig;
-                                                     return " $type=\"$sig\"";
-                                                 }
-                                                 return $matches[0];
-                                             },
-                                             $content);
+        $ob = $this;
+        foreach( ['href','src','url','to'] as $type ) {
+            $content = preg_replace_callback('/'.$type.'\s*=\s*(["\'`])([a-z0-9:?=&@._\-\/]+?)\1/is',
+                function($matches) use ($ob,$type) {
+                    //TODO $matches[2] == {file_url ...} etc prob. on-site
+                    if( preg_match('/(\[\[|\{)\s*\$/',$matches[2]) ) {
+                        // Smarty variable used, can't process it here
+                        $ob->log('Cannot parse url '.$matches[2],'Contains Smarty variable(s)');
+                        return $matches[0];
+                    }
+                    elseif( $ob->_is_site_url($matches[2]) ) {
+                        $sig = $ob->_get_signature($matches[2]);
+                        return "$type=\"$sig\"";
+                    }
+                    else {
+                        $ob->log('Detected offsite url '.$matches[2]);
+                        return $matches[0];
+                    }
+               },$content);
         }
-
-        // remove ignore stuff on cms_selflink
-        $regex='/\{cms_selflink.*\}/';
-        $content = preg_replace_callback( $regex, $undo_fix_cmsselflink, $content );
-
         return $content;
     }
 
-    public function parse_stylesheets()
+    private function parse_stylesheets()
     {
-        if( is_null($this->_css_list) ) {
-            $this->_css_list = array();
+        if( !isset($this->_css_list) ) {
+            $this->_css_list = [];
 
             $csslist = $this->_design->get_stylesheets();
             if( is_array($csslist) && count($csslist) > 0 ) {
                 foreach( $csslist as $css_id ) {
                     $css_ob = CmsLayoutStylesheet::load($css_id);
 
-                    $new_content = $this->_parse_css_for_urls($css_ob->get_content());
+                    //TODO interpret any @import rule(s) in stylesheet content
+                    $new_content = $this->_parse_css_urls($css_ob->get_content());
                     $sig = $this->_get_signature($css_ob->get_name(),'CSS');
                     $new_css_ob = clone $css_ob;
                     $new_css_ob->set_name($sig);
                     $new_css_ob->set_content($new_content);
 
-                    if( !is_array($this->_css_list) ) $this->_css_list = array();
-                    $this->_css_list[] = array('name'=>$css_ob->get_name(),'obj'=>$new_css_ob);
+                    if( !isset($this->_css_list) || !is_array($this->_css_list) ) $this->_css_list = [];
+                    $this->_css_list[] = ['name'=>$css_ob->get_name(),'obj'=>$new_css_ob];
                 }
             }
         }
     }
 
-    public function list_stylesheets()
+    /**
+     * Add data for the specified template to the _tpl_list array
+     * @param mixed $name object | string
+     * @return string
+     */
+    private function _add_template($name)
     {
-        $this->parse_stylesheets();
-        if( is_array($this->_css_list) && count($this->_css_list) ) {
-            $out = array();
-            foreach( $this->_css_list as $rec ) {
-                $out[] = $rec['obj']->get_name();
-            }
-            return $out;
-        }
+         if( is_object($name) ) {
+             $tpl_ob = $name;
+             $name = $tpl_ob->get_name();
+         }
+         else {
+             $tpl_ob = CmsLayoutTemplate::load($name);
+         }
+/* URL possibilities in content:
+hlml element attr for <base/> <a/> <audio/> <cite/> <embed/> <form/> <frame/>
+<iframe/> <img/> <link/> <meta/> <object/> <param/> <q/> <source/> <video/> txt/bare
+a href="{file_url file=...GENERATES AN URL
+img src="{thumbnail_url file=...GENERATES AN URL
+{embed url=...
+{form_start url=... 
+{image src=...
+{redirect_url to=...
+non-core tags ?
+*/
+         $new_content = $this->_parse_tpl_urls($tpl_ob->get_content());
+         $sig = $this->_get_signature($tpl_ob->get_name(),'TPL');
+         $new_tpl_ob = clone $tpl_ob;
+         $new_tpl_ob->set_name($sig);
+         $new_tpl_ob->set_content($new_content);
+
+         if( !is_array($this->_tpl_list) ) $this->_tpl_list = [];
+         $this->_tpl_list[$sig] = ['name'=>$name,'obj'=>$new_tpl_ob];
+         return $sig;
     }
 
-    public function _add_template($name,$type = 'TPL')
+    private function parse_templates()
     {
-        switch( $type ) {
-        case 'TPL':
-            $tpl_ob = null;
-            if( is_object($name) ) {
-                $tpl_ob = $name;
-                $name = $tpl_ob->get_name();
-            }
-            else {
-                $tpl_ob = CmsLayoutTemplate::load($name);
-            }
-            $sig = $this->_get_signature($tpl_ob->get_name(),$type);
-
-            // recursion...
-            $new_content = $this->_parse_tpl_urls($tpl_ob->get_content());
-            $new_content = $this->_get_sub_templates($new_content);
-            $sig = $this->_get_signature($tpl_ob->get_name(),'TPL');
-            $new_tpl_ob = clone $tpl_ob;
-            $new_tpl_ob->set_name($sig);
-            $new_tpl_ob->set_content($new_content);
-
-            if( !is_array($this->_tpl_list) ) $this->_tpl_list = array();
-            $this->_tpl_list[$sig] = array('name'=>$name,'obj'=>$new_tpl_ob);
-            return $sig;
-
-        case 'MM':
-            // MenuManager file template
-            $mod = cms_utils::get_module('MenuManager');
-            if( !$mod ) throw new \CmsException('MenuManager file template specified, but MenuManager could not be loaded.');
-
-            $tpl = $mod->GetTemplateFromFile($name);
-            if( !$tpl ) throw new \CmsException('Could not find MenuMaager template '.$name);
-
-            // create a new CmsLayoutTemplate object for this template
-            // and add it to the list.
-            // notice we don't recurse.
-            $tpl = $this->_parse_tpl_urls($tpl);
-            $new_tpl_ob = new CmsLayoutTemplate;
-            $new_tpl_ob->set_content($tpl);
-            $name = substr($name,0,-4);
-            $type = 'TPL';
-            $sig = $this->_get_signature($name,$type);
-            $new_tpl_ob->set_name($sig);
-            // it's a menu manager template
-            // we need to get a 'type' for this.
-            $new_tpl_ob->set_type(self::$_mm_types[0]);
-            $this->_tpl_list[$sig] = array('name'=>$name,'obj'=>$new_tpl_ob);
-            return $sig;
-        } // switch
-    }
-
-    private function _get_sub_templates($template)
-    {
-        $ob = &$this;
-
-        $replace_mm = function($matches) use ($ob) {
-            // Menu Manager (optional template param)
-            $mod = \cms_utils::get_module('MenuManager');
-            if( !$mod ) throw new \CmsException('MenuManager tag specified, but MenuManager could not be loaded.');
-
-            $have_template = false;
-            $out = preg_replace_callback("/template\s*=[\\\"']{0,1}([a-zA-Z0-9._\ \:\-\/]+)[\\\"']{0,1}/i",
-                                         function($matches) use ($ob,&$have_template) {
-                                             $the_tpl = $matches[1];
-                                             if( ($pos = strpos($matches[1],' ')) !== FALSE )  $the_tpl = substr($matches[1],0,$pos);
-                                             $type = 'TPL';
-                                             if( endswith($the_tpl,'.tpl') ) $type = 'MM';
-                                             $sig = $ob->_add_template($the_tpl,$type);
-                                             $have_template = TRUE;
-                                             $out = str_replace($the_tpl,$sig,$matches[0]);
-                                             return $out;
-                                         },$matches[0]);
-
-            if( !$have_template ) {
-                // MenuManager default template.
-                $tpl = CmsLayoutTemplate::load_dflt_by_type('MenuManager::navigation');
-                $sig = $ob->_add_template($tpl->get_name());
-                $out = substr($matches[0],0,-1).' template=\''.$sig.'\'}';
-            }
-            return $out;
-        };
-
-        $replace_navigator = function($matches) use ($ob) {
-            // Navigator (optional template param)
-            $mod = \cms_utils::get_module('Navigator');
-            if( !$mod ) throw new \CmsException('Navigator tag specified, but Navigator could not be loaded.');
-
-            $have_template = false;
-            $out = preg_replace_callback("/template\s*=[\\\"']{0,1}([a-zA-Z0-9._\ \:\-\/]+)[\\\"']{0,1}/i",
-                                         function($matches) use ($ob,&$have_template) {
-                                             $have_template = TRUE;
-                                             $sig = $ob->_add_template($matches[1]);
-                                             return str_replace($matches[1],$sig,$matches[0]);
-                                         },$matches[0]);
-            if( !$have_template ) {
-                // Navigator default template.
-                $tpl = CmsLayoutTemplate::load_dflt_by_type('Navigator::navigation');
-                $sig = $ob->_add_template($tpl->get_name());
-                $out = substr($matches[0],0,-1).' template=\''.$sig.'\'}';
-            }
-            return $out;
-        };
-
-        $replace_gcb = function($matches) use ($ob) {
-            // GCB (required name param)
-            $out = preg_replace_callback("/name\s*=[\\\"']{0,1}([a-zA-Z0-9._\ \:\-\/]+)[\\\"']{0,1}/i",
-                                         function($matches) use ($ob) {
-                                             $sig = $ob->_add_template($matches[1]);
-                                             return str_replace($matches[1],$sig,$matches[0]);
-                                         },$matches[0]);
-            return $out;
-        };
-
-        $replace_include = function($matches) use ($ob) {
-            // include (required file param)
-            $out = preg_replace_callback("/file\s*=[\\\"']{0,1}([a-zA-Z0-9._\ \:\-\/]+)[\\\"']{0,1}/i",
-                                         function($matches) use ($ob) {
-                                             if( !startswith($matches[1],'cms_template:') ) {
-                                                 throw new \CmsException('Only templates that use {include} with cms_template resources can be exported.');
-                                             }
-                                             $tpl = substr($matches[1],strlen('cms_template:'));
-                                             $sig = $ob->_add_template($tpl);
-                                             return str_replace($matches[1],'cms_template:'.$sig,$matches[0]);
-                                         },$matches[0]);
-            return $out;
-        };
-
-        $regex='/\{menu.*\}/';
-        $template = preg_replace_callback( $regex, $replace_mm, $template );
-
-        $regex='/\{.*MenuManager.*\}/';
-        $template = preg_replace_callback( $regex, $replace_mm, $template );
-
-        $regex='/\{.*Navigator.*\}/';
-        $template = preg_replace_callback( $regex, $replace_navigator, $template );
-
-        $regex='/\{global_content.*\}/';
-        $template = preg_replace_callback( $regex, $replace_gcb, $template );
-
-        $regex='/\{include.*\}/';
-        $template = preg_replace_callback( $regex, $replace_include, $template );
-
-        return $template;
-    }
-
-    public function parse_templates()
-    {
-        if( is_null($this->_tpl_list) ) {
-            $this->_tpl_list = array();
+        if( !isset($this->_tpl_list) ) {
+            $this->_tpl_list = [];
 
             $idlist = $this->_design->get_templates();
-            if( is_array($idlist) && count($idlist) > 0 ) {
-                $tpllist = \CmsLayoutTemplate::load_bulk($idlist);
-                if( count($idlist) != count($tpllist) ) throw new \CmsException('Internal error... could not directly load all of the templates associated with this design');
+            if( $idlist && is_array($idlist) ) {
+                $tpllist = CmsLayoutTemplate::load_bulk($idlist);
+                if( count($idlist) != count($tpllist) ) {
+                    throw new RuntimeException('Internal error... could not directly load all of the templates associated with this design');
+                }
                 foreach( $tpllist as $tpl ) {
                     $this->_add_template($tpl);
                 }
@@ -360,142 +339,407 @@ EOT;
         }
     }
 
-    public function list_templates()
+    /**
+     * Process missed template-names in {Smarty tags} in identified templates
+     * @since 1.3
+     */
+    private function parse_template_tags()
     {
-        $this->parse_templates();
-        if( is_array($this->_tpl_list) && count($this->_tpl_list) ) {
-            $out = array();
-            foreach( $this->_tpl_list as $rec ) {
-                $out[] = $rec['obj']->get_name();
+        if( !empty($this->_tpl_list) ) {
+            $obj = $this;
+            $dname = $this->_design->get_name();
+            foreach( $this->_tpl_list as $sig => $data ) {
+                $added = [];
+                $modified = [];
+                $content = $data['obj']->get_content();
+                //check each tag in $content and adjust as needed TODO {*_url} tags
+                $test = preg_replace_callback('~(?:\{(?![\s*/$]))(.+?)(?:(?<![\s*\\\\])\})~s',function($m) use($obj,$dname,&$added,&$modified) {
+                    if( preg_match_all(
+                        '/(?:([a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*)\s+)?(["\']?)(\S+)\2\s*=\s*(([^"\'\s]+)|(["\']?)(.+?)\6)/',
+                        $m[1],$attrs,PREG_SET_ORDER) ) {
+                        $ret = $m[0];
+                        foreach( $attrs as $one ) {
+                            $tagname = $one[1];
+                            // if $tagname is something that needs special attention, process it
+                            switch( $tagname ) { //TODO ? case '':
+                                case 'include':
+/* possibilities
+{include file='page_header.tpl'}
+{include file="$tpl_name.tpl"}
+{include 'sub_template.tpl'}
+{include 'sub_template.tpl' foo}
+{include 'sub_template.tpl' foo=bar}
+{include 'cms_template:Template Name'}
+{include "cms_template:$tpl_name"}
+*/
+                                $obj->log("Did not process tag $ret");
+                                continue 2;
+//                              case 'global_content': deprecated treat like 'include'
+
+                                case 'extends':
+/* possibilities
+{extends file='myproject.tpl'}
+{extends file="$tpl_name.tpl"}
+{extends 'parent.tpl'}
+{extends "cms_template:$tpl_name"}
+*/
+                                $obj->log("Did not process tag $ret");
+                                continue 2;
+
+/*                              case 'cms_selflink':
+attr posibilities
+page
+href
+urlonly
+image
+*/
+                                case 'cms_module':
+                                if( preg_match('/template.*=.+/',$ret) || preg_match('/tpl.*=.+/',$ret) ) {
+                                     $obj->log("Did not process tag $ret");
+                                }
+                                $n = array_search('module',array_column($attrs,3));
+                                $modname = ($attrs[$n][5]) ?: $attrs[$n][7]; // [5] if unquoted, [7] if quoted
+                                $obj->_requires[$modname] = []; // no op or version ?
+                                continue 2;
+
+                                default:
+                                if( !isset($obj->_modnames) ) {
+                                    $obj->_modnames = ModuleOperations::get_instance()->GetInstalledModules(TRUE);
+                                }
+                                if( in_array($tagname, $obj->_modnames) ) {
+                                    if( preg_match('/template.*=.+/',$ret) || preg_match('/tpl.*=.+/',$ret) ) {
+                                        $obj->log("Did not process tag $ret");
+                                    }
+                                    $obj->_requires[$tagname] = []; // no op or version ?
+                                    continue 2;
+                                }
+                                //check the value and related-content of each relevant attr
+                                $val = ($one[5] !== '') ? $one[5] : $one[7]; // [5] if unquoted, [7] if quoted
+                                if( $val || is_numeric($val) ) {
+                                    $key = $one[3];
+                                    if( $key[0] == '$' ) {
+                                        continue 2;
+                                    }
+                                    $lk = strlen($key);
+                                    if( stripos($key,'template') !== FALSE ||
+                                        stripos($key,'tpl') !== FALSE ) {
+                                        if( ($n = array_search($val,array_column($obj->_tpl_list,'name'))) !== FALSE ) {
+                                            $sig2 = key(array_slice($obj->_tpl_list,$n,1));
+                                            $ret = str_replace($one[4].$val.$one[4],"'$sig2'",$ret); // offset useful here ? e.g. could be > 1 replacement
+                                            $modified[$sig2] = $obj->_tpl_list[$sig2];
+                                        }
+                                        else {
+                                            $here = 1; //TODO anything here?
+                                        }
+                                    }
+                                    elseif( ($n = array_search($val,array_column($obj->_tpl_list,'name'))) !== FALSE ) {
+                                        $here = 1; // any relevant replacement as quoted-signature, $modified[] = X
+                                    }
+                                    elseif( strpos($dname,$val) !== FALSE ) {
+                                        $here = 1; // add to $obj->_tpl_list if relevant, $added[] = X (named-template might be unrelated to design being processed
+                                    }
+                                }
+                            } // switch
+                        }
+                        return $ret;
+                    }
+                    return $m[0];
+                }, $content);
+                foreach( $modified as $sig2 => $data ) {
+                    $here = 1; // content already changed in preg_replace_callback()
+                }
+                foreach( $added as $tplname ) {
+                    $sig2 = $this->_get_signature($tplname,'TPL');
+                    $this->_tpl_list[$sig2] = ['name'=>$tplname,'obj'=>$TODOobj];
+                }
             }
-            return $out;
         }
     }
 
-    public function list_files()
+    /**
+     * Append associated files to $this->_files
+     * @since 1.2
+     */
+    private function parse_related_files()
     {
-        $this->parse_stylesheets();
-        $this->parse_templates();
-        if( is_array($this->_files) && count($this->_files) ) return $this->_files;
+        $config = cms_config::get_instance();
+        $name = $this->_design->get_name();
+        $dirnm = dm_utils::munge_name_to_dir($name);
+        $fp = cms_join_path($config['themes_path'],$dirnm);
+        if( is_dir($fp) ) {
+            if( !isset($this->_files) ) {
+                $this->_files = [];
+            }
+            $ob = $this;
+            $pl = strlen(CMS_ROOT_PATH);
+            $sep = DIRECTORY_SEPARATOR;
+            //recursive closure c.f. get_recursive_file_list($fp,['index\.html'],-1,'FILES')
+            $filer = function($dirpath) use($ob,$pl,$sep,&$filer) {
+                $items = scandir($dirpath);
+                if( $items ) {
+                    foreach( $items as $iname ) {
+                        if( !($iname == '.' || $iname == '..' || $iname == 'index.html') ) {
+                            $sp = "$dirpath{$sep}$iname";
+                            if( is_dir($sp) ) {
+                                $filer($sp); // recurse
+                                continue;
+                            }
+                            elseif( is_link($sp) ) {
+                                $sp = readlink($sp);
+                                if( $sp && is_dir($sp) ) {
+                                    $filer($sp);
+                                    continue;
+                                }
+                                elseif( !$sp ) {
+                                    continue; //TODO
+                                }
+                            }
+                            $key = '__URL,,'.hash('md4',$iname).'__'; // md4-hashing is better-distributed than md5
+                            $ob->_files[$key] = strtr(substr($sp,$pl),'\\','/'); // always record *NIX path-seps
+                        }
+                    }
+                }
+            };
+            $filer($fp);
+        }
     }
 
     private function _open_tag($elem,$lvl = 1)
     {
-        return str_repeat('  ',$lvl)."<{$elem}>\n";
+        $indent = str_repeat("\t",$lvl);
+        return "$indent<$elem>\n";
     }
 
     private function _close_tag($elem,$lvl = 1)
     {
-        return str_repeat('  ',$lvl)."</{$elem}>\n";
+        $indent = str_repeat("\t",$lvl);
+        return "$indent</$elem>\n";
     }
 
     private function _output($elem,$txt,$lvl = 1)
     {
-        return str_repeat('  ',$lvl).'<'.$elem.'>'.$txt.'</'.$elem.">\n";
+        $indent = str_repeat("\t",$lvl);
+        return "$indent<$elem>$txt</$elem>\n"; // assume simple text, no encoding issue to handle
     }
 
-    private function _output_data($elem,$data,$lvl = 1)
+    private function _output_data($elem,$txt,$lvl = 1,$encode = FALSE)
     {
-        $data = '<![CDATA['.base64_encode((string)$data).']]>';
+        if( $txt ) {
+            if( $encode ) {
+                $data = base64_encode($txt);
+            }
+            else {
+                $encnow = mb_detect_encoding($txt,'auto',TRUE);
+                if( !($encnow == 'ASCII' || $encnow == 'UTF-8') ) {
+                    $old = $txt;
+                    $txt = mb_convert_encoding($txt,'UTF-8',$encnow);
+                    if( !$txt ) {
+                        $txt = 'String encoding-conversion failure in'."\n{$old}";
+                    }
+                }
+                $tmp = str_replace(']]>',']]/>',$txt); // $txt cannot include xml-ender ']]>'
+                $data = '<![CDATA['.$tmp.']]>';
+            }
+        }
+        else {
+            $data = (string)$txt;
+        }
         return $this->_output($elem,$data,$lvl);
     }
 
-    private function _xml_output_template(CmsLayoutTemplate $tpl,$name,$lvl = 0)
+    private function _output_req($name,$detail,$lvl = 1)
     {
-        if( $tpl->get_content() == '' ) throw new CmsException('Cannot export empty template');
+        $output = $this->_open_tag('requires',$lvl);
+        $output .= $this->_output('rname',$name,$lvl+1);
+        if( $detail ) {
+            $output .= $this->_output_data('rdata',$detail,$lvl+1);
+        }
+        else {
+            $output .= $this->_output('rdata','',$lvl+1);
+        }
+        $output .= $this->_close_tag('requires',$lvl);
+        return $output;
+    }
+
+    private function _output_template(CmsLayoutTemplate $tpl,$name,$lvl = 1)
+    {
+        if( ($tid = $tpl->get_type_id()) == 0 ) {
+            throw new RuntimeException('Cannot get template type for '.$name);
+        }
+        try {
+            $type = CmsLayoutTemplateType::load($tid);
+        }
+        catch (Exception $e) {
+            throw new RuntimeException('Cannot get template type for '.$name);
+        }
+        $orig = $type->get_originator();
+        if( !isset($this->_modnames) ) {
+            $this->_modnames = ModuleOperations::get_instance()->GetInstalledModules(TRUE);
+        }
+        if( in_array($orig, $this->_modnames) ) {
+            // if $tpl snuk into _tpl_list remove it
+            $sig = "__TPL,,".hash('md4',$name).'__'; // OR $tpl->get_name(), now a signature
+            unset($this->_tpl_list[$sig]);
+            $this->log("Did not process {$orig}-module template ".$name);
+            $this->_requires[$orig] = []; // no op or version
+            return '';
+        }
+        if( ($content = $tpl->get_content()) == '' ) {
+            throw new RuntimeException('Cannot export empty template');
+        }
         $output = $this->_open_tag('template',$lvl);
         $output .= $this->_output('tkey',$tpl->get_name(),$lvl+1);
-        $output .= $this->_output_data('tname',$name,$lvl+1);
+        $output .= $this->_output('tname',$name,$lvl+1);
         $output .= $this->_output_data('tdesc',$tpl->get_description(),$lvl+1);
-        $output .= $this->_output_data('tdata',$tpl->get_content(),$lvl+1);
-        if( !$tpl->get_type_id() ) throw new \CmsException('Cannot get template type for '.$tpl->get_name());
-
-        $type = CmsLayoutTemplateType::load($tpl->get_type_id());
-        $output .= $this->_output_data('ttype_originator',$type->get_originator(),$lvl+1);
-        $output .= $this->_output_data('ttype_name',$type->get_name(),$lvl+1);
+        $output .= $this->_output_data('tdata',$content,$lvl+1);
+        $output .= $this->_output('ttype_originator',$orig,$lvl+1);
+        $output .= $this->_output('ttype_name',$type->get_name(),$lvl+1);
         $output .= $this->_close_tag('template',$lvl);
         return $output;
     }
 
-    private function _xml_output_stylesheet(CmsLayoutStylesheet $css,$name,$lvl = 0)
+    private function _output_stylesheet(CmsLayoutStylesheet $css,$name,$lvl = 1)
     {
-        if( $css->get_content() == '' ) throw new CmsException('Cannot export empty stylesheet');
+        if( $css->get_content() == '' ) {
+            throw new RuntimeException('Cannot export empty stylesheet');
+        }
         $output = $this->_open_tag('stylesheet',$lvl);
         $output .= $this->_output('csskey',$css->get_name(),$lvl+1);
-        $output .= $this->_output_data('cssname',$name,$lvl+1);
+        $output .= $this->_output('cssname',$name,$lvl+1);
         $output .= $this->_output_data('cssdesc',$css->get_description(),$lvl+1);
-        $output .= $this->_output_data('cssmediatype',implode(',',$css->get_media_types()),$lvl+1);
-        $output .= $this->_output_data('cssmediaquery',$css->get_media_query(),$lvl+1);
         $output .= $this->_output_data('cssdata',$css->get_content(),$lvl+1);
+        $output .= $this->_output('cssmediatype',implode(',',$css->get_media_types()),$lvl+1);
+        $output .= $this->_output_data('cssmediaquery',$css->get_media_query(),$lvl+1);
         $output .= $this->_close_tag('stylesheet',$lvl);
         return $output;
     }
 
-    private function _xml_output_file($key,$value,$lvl = 0)
+    private function _output_file($key,$value,$lvl = 1)
     {
-        $config = \cms_config::get_instance();
-        if( !startswith($key,'__') || !endswith($key,'__') ) return; // invalid
+        if( !startswith($key,'__') || !endswith($key,'__') ) return ''; // invalid
         $p = strpos($key,',,');
-        $nkey = substr($key,0,$p);
-        $nkey = substr($nkey,2);
+        $nkey = substr($key,2,$p-2); // type
 
-        $mod = cms_utils::get_module('DesignManager');
-        $smarty = cmsms()->GetSmarty();
         $output = $this->_open_tag('file',$lvl);
         $output .= $this->_output('fkey',$key,$lvl+1);
-        switch($nkey) {
+
+        switch ($nkey) {
         case 'URL':
-            // javascript file or image or something.
-            // could have smarty syntax.
-            $nvalue = $value;
+            // javascript file, image, font etc
+            // might have Smarty tag(s), possibly including variable(s) which cannot be understood here.
+            $ovalue = '';
             if( strpos($value,'[[') !== FALSE ) {
-                // smarty syntax with [[ and ]] as delimiters
-                $smarty->left_delimiter = '[[';
-                $smarty->right_delimiter = ']]';
-                $nvalue = $smarty->fetch('string:'.$value);
-                $smarty->left_delimiter = '{';
-                $smarty->right_delimiter = '}';
+                if( !preg_match('/\[\[\s*\$/',$value) ) {
+                    // Smarty css left-delimiter [[ but no variable
+                    if (!isset($smarty) ) $smarty = cmsms()->GetSmarty();
+                    $ol = $smarty->left_delimiter;
+                    $or = $smarty->right_delimiter;
+                    $smarty->left_delimiter = '[[';
+                    $smarty->right_delimiter = ']]';
+                    try {
+                        $nvalue = $smarty->fetch('string:'.$value);
+                    }
+                    catch (Exception $e) {
+                        //TODO revert to self-managed interpretation
+                        $this->log('Smarty failed to parse url '.$value,$e->GetMessage());
+                        $nvalue = '';
+                        $ovalue = $value;
+                    }
+                    $smarty->left_delimiter = $ol;
+                    $smarty->right_delimiter = $or;
+                }
+                else {
+                    // Smarty variable used, can't process it here
+                    $this->log('Cannot parse url '.$value,'Contains Smarty variable(s)');
+                    $nvalue = ''; // no content-retrieval
+                    $ovalue = $value;
+                }
             }
-            else if( strpos($value,'{') !== FALSE ) {
-                // smarty syntax with { and } as delimiters
-                $nvalue = $smarty->fetch('string:'.$value);
+            elseif( strpos($value,'{') !== FALSE ) {
+                if( !preg_match('/\{\s*\$/',$value) ) { //js files should not be a problem here
+                    // Smarty syntax left delimiter { but no variable
+                    if (!isset($smarty) ) $smarty = cmsms()->GetSmarty();
+                    try {
+                        $nvalue = $smarty->fetch('string:'.$value);
+                    }
+                    catch (Exception $e) {
+                        //TODO revert to self-managed interpretation
+                        $this->log('Smarty failed to parse url '.$value,$e->GetMessage());
+                        $nvalue = '';
+                        $ovalue = $value;
+                    }
+                }
+                else {
+                    // Smarty variable used, can't process it here
+                    $this->log('Cannot parse url '.$value,$e->GetMessage());
+                    $nvalue = ''; // no content-retrieval
+                    $ovalue = $value;
+                }
+            }
+            else {
+                $nvalue = $value;
             }
 
-            // now, it should be a full URL, or start at /
-            // gotta convert it to a file.
-            // assumes it's a filename relative to root.
-            $fn = cms_join_path($config['root_path'],$nvalue);
-            if( startswith($nvalue,'/') && !startswith($nvalue,'//') ) {
-                $fn = cms_join_path($config['root_path'],$nvalue);
-            } elseif( startswith($nvalue,$config['root_url']) ) {
-                $fn = str_replace($config['root_url'],$config['root_path'],$nvalue);
+            if( $nvalue ) {
+                // should be an absolute path or URL, or start with / (or \ if it's a path)
+                // convert it to a relative filepath
+                // TODO conform separators in $nvalue
+                if( $nvalue[0] == '\\' || ($nvalue[0] == '/' && $nvalue[1] != '/') ) { // DIRECTORY_SEPARATOR either / or \
+                    $fn = cms_join_path(CMS_ROOT_PATH,$nvalue);
+                }
+                elseif( startswith($nvalue,CMS_ROOT_URL) ) {
+                    $fn = str_replace([CMS_ROOT_URL,'/'],[CMS_ROOT_PATH,DIRECTORY_SEPARATOR],$nvalue);
+                }
+                elseif( !startswith($nvalue,CMS_ROOT_PATH)) {
+                    // assume it's relative to root
+                    $fn = cms_join_path(CMS_ROOT_PATH,$nvalue);
+                }
+                if( !is_file($fn) ) {
+                    $mod = cms_utils::get_module('DesignManager');
+                    $this->log($mod->Lang('error_nophysicalfile',$value));
+                    $output .= $this->_output('fvalue',$nvalue,$lvl+1);
+                    break;
+                }
+                $data = file_get_contents($fn);
+                $nname = $this->_design->get_name();
+                if( ($p = strpos($nvalue,$nname)) !== FALSE ) {
+                    $nvalue = substr($nvalue,$p + strlen($nname) + 1); // omits leading separator
+                }
+                else {
+                    $nvalue = basename($nvalue); //TODO relative to something else ?
+                }
+                $output .= $this->_output('fvalue',$nvalue,$lvl+1);
+                //base64-encode content of 'binary' files = images, fonts ... not for js etc
+                $encode = !(endswith($fn,'.js') || endswith($fn,'.svg')); // TODO caseless checks
+                if( $encode ) {
+                    $output .= $this->_output('binary',1,$lvl+1,false);
+                }
+                $output .= $this->_output_data('fdata',$data,$lvl+1,$encode);
             }
-
-            if( !is_file($fn) ) throw new CmsException($mod->Lang('error_nophysicalfile',$value));
-
-            $data = file_get_contents($fn);
-            if( strlen($data) == 0 ) throw new CmsException('No data found for '.$value);
-
-            $nvalue = basename($nvalue);
-            $output .= $this->_output('fvalue',$nvalue,$lvl+1);
-            $output .= $this->_output_data('fdata',$data,$lvl+1);
+            elseif( $ovalue ) {
+                $output .= $this->_output('fvalue',$ovalue,$lvl+1);
+            }
+            else {
+                $this->log('Cannot parse url '.$value,$e->GetMessage());
+                return '';
+            }
             break;
 
         case 'TPL':
-            // template signature...
-            // just need the key and value.
+            // template signature
+            // just need the key and value
             $output .= $this->_output('fvalue',$value,$lvl+1);
             break;
 
         case 'CSS':
             // stylesheet signature
-            // just need the key and value.
+            // just need the key and value
             $output .= $this->_output('fvalue',$value,$lvl+1);
             break;
 
         case 'MM':
-            // menu manager file template
-            // just need the key and value.
+            // menu manager file template - probably never exist, these days
+            // just need the key and value
             $output .= $this->_output('fvalue',$value,$lvl+1);
             break;
 
@@ -505,36 +749,4 @@ EOT;
         $output .= $this->_close_tag('file',$lvl);
         return $output;
     }
-
-    public function get_xml()
-    {
-        $this->parse_stylesheets();
-        $this->parse_templates();
-
-        $output = '<?xml version="1.0" encoding="ISO-8859-1"?>';
-        $output .= self::$_dtd;
-        $output .= $this->_open_tag('design',0);
-        $output .= $this->_output('name',$this->_design->get_name());
-        $output .= $this->_output_data('description',$this->_design->get_description());
-        $output .= $this->_output_data('generated',time());
-        $output .= $this->_output_data('cmsversion',CMS_VERSION);
-        foreach( $this->_tpl_list as $rec ) {
-            $output .= $this->_xml_output_template($rec['obj'],$rec['name'],1);
-        }
-        foreach( $this->_css_list as $rec ) {
-            $output .= $this->_xml_output_stylesheet($rec['obj'],$rec['name'],1);
-        }
-        if( count($this->_files) ) {
-            foreach( $this->_files as $key => $value ) {
-                $output .= $this->_xml_output_file($key,$value,1);
-            }
-        }
-        $output .= $this->_close_tag('design',0);
-        return $output;
-    }
-} // end of class
-
-#
-# EOF
-#
-?>
+}

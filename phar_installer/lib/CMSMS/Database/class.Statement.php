@@ -1,13 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: \CMSMS\Database\Statement (c) 2015 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A class to represent a prepared SQL statement
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: CMSMS\Database\Statement
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A class to represent a prepared SQL statement
 #
 #-------------------------------------------------------------------------
 #
@@ -47,7 +43,6 @@ namespace CMSMS\Database;
  *
  * @package CMS
  * @author Robert Campbell
- * @copyright Copyright (c) 2017, Robert Campbell <calguy1000@cmsmadesimple.org>
  * @since 2.2
  * @property-read Connection $db The database connection
  * @property-read string $sql The SQL query.
@@ -70,7 +65,7 @@ abstract class Statement
      * @param Connection $conn The database connection
      * @param string $sql The SQL query
      */
-    public function __construct(Connection $conn,$sql = null)
+    public function __construct(Connection $conn,$sql = '')
     {
         $this->_conn = $conn;
         $this->_sql = $sql;
@@ -90,6 +85,7 @@ abstract class Statement
         case 'sql':
             return $this->_sql;
         }
+        return null; // no value for unrecognised property
     }
 
     /**
@@ -99,11 +95,20 @@ abstract class Statement
      */
     public function Bind(array $data)
     {
-        if( !is_array($data) || count($data) == 0 ) throw new \LogicException('Data passed to '.__METHOD__.' must be an associative array');
+        if( !$data ) {
+            $this->_conn->OnError($this->_conn::ERROR_EXECUTE,-1,'Data passed to '.__METHOD__.' must be an associative array');
+            exit;
+        }
         $first = $data[0];
-        if( !is_array($first) || count($first) == 0 ) throw new \LogicException('Data passed to '.__METHOD__.' must be an associative array');
+        if( !$first || !is_array($first) ) {
+            $this->_conn->OnError($this->_conn::ERROR_EXECUTE,-1,'Data passed to '.__METHOD__.' must be an associative array');
+            exit;
+        }
         $keys = array_keys($first);
-        if( is_numeric($keys[0]) && $keys[0] === 0 )  throw new \LogicException('Data passed to '.__METHOD__.' must be an associative array');
+        if( is_numeric($keys[0]) && $keys[0] === 0 ) {
+            $this->_conn->OnError($this->_conn::ERROR_EXECUTE,-1,'Data passed to '.__METHOD__.' must be an associative array');
+            exit;
+        }
 
         $this->set_bound_data($data);
     }
@@ -139,7 +144,7 @@ abstract class Statement
      * @param string $col The column name.  If not specified, all columns will be returned.
      * @return mixed
      */
-    abstract public function Fields($col = null);
+    abstract public function Fields($col = '');
 
     /**
      * Execute the query

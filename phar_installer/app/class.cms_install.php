@@ -39,24 +39,27 @@ class cms_install extends app
 
     public function get_tmpdir()
     {
-        // because phar uses tmpfile() we need to set the TMPDIR environment variable
-        // with whatever directory we find.
         $config = $this->get_config();
         return $config['tmpdir'];
     }
 
     private function fixup_tmpdir_environment()
     {
-        // if the system temporary directory is not the same as the config temporary directory
+        // Because phar uses tmpfile() we need to set the TMPDIR environment-variable
+        // to the appropriate directory. IS THIS CORRECT ?
+        // If the system temporary directory is not the same as the $config temporary-directory
         // then we attempt to putenv the TMPDIR environment variable
         // so that tmpfile() will work as it uses the system temporary directory which can read from environment variables
-        $sys_tmpdir = null;
-        if( function_exists('sys_get_temp_dir') ) $sys_tmpdir = rtrim(sys_get_temp_dir(),'\\/');
-        $config = $this->get_config();
-        if( (!$sys_tmpdir || !is_dir($sys_tmpdir) || !is_writable($sys_tmpdir)) && $sys_tmpdir != $config['tmpdir'] ) {
-            @putenv('TMPDIR='.$config['tmpdir']);
-            $try1 = getenv('TMPDIR');
-            if( $try1 != $config['tmpdir'] ) throw new RuntimeException('Sorry, putenv does not work on this system, and your system temporary directory is not set properly.');
+        $sys_tmpdir = (function_exists('sys_get_temp_dir')) ? rtrim(sys_get_temp_dir(),' \\/') : '';
+        if( (!$sys_tmpdir || !is_dir($sys_tmpdir) || !is_writable($sys_tmpdir)) ) {
+            $config = $this->get_config();
+            if( $config['tmpdir'] && $config['tmpdir'] != $sys_tmpdir ) {
+                @putenv('TMPDIR='.$config['tmpdir']);
+                $try1 = getenv('TMPDIR');
+                if( $try1 != $config['tmpdir'] ) throw new RuntimeException('Putenv does not work on this system');
+            } else {
+                throw new RuntimeException('The system temporary directory is not set properly.');
+            }
         }
     }
 
@@ -66,7 +69,7 @@ class cms_install extends app
 
         // initialize the session.
         $sess = session::get();
-        $junk = $sess[__CLASS__]; // this is junk, but triggers session to start.
+        $junk = $sess[__CLASS__]; // this is unused, but triggers session to start.
 
         // get the request
         $request = request::get();
@@ -88,7 +91,7 @@ class cms_install extends app
           ->assign('installer_version',$config['installer_version']);
 
         $fn = $this->get_appdir().'/build.ini';
-        $build = null;
+        $build = [];
         if( file_exists($fn) ) $build = parse_ini_file($fn);
         if( isset($build['build_time']) ) $smarty->assign('build_time',$build['build_time']);
 
@@ -126,7 +129,7 @@ class cms_install extends app
             @unlink($dest_archive);
         }
         if( $i == 2 ) throw new Exception('Checksum of temporary archive does not match... copying/permissions problem');
-        $this->_archive = $dest_archive;;
+        $this->_archive = $dest_archive;
 
         // get version details (version we are installing)
         // if not in the session, save them there.
@@ -148,7 +151,7 @@ class cms_install extends app
         }
     }
 
-    static public function autoload($classname)
+    public static function autoload($classname)
     {
         if( startswith($classname, 'cms_autoinstaller\\') ) $classname = substr($classname,strlen('cms_autoinstaller\\'));
 
@@ -164,8 +167,17 @@ class cms_install extends app
 
     protected function set_config_defaults()
     {
-        $tmp = [ 'timezone' => null, 'tmpdir' => null, 'dest' => null, 'debug' => false, 'nofiles' => false, 'nobase' => false, 'lang' => null, 'verbose' => false ];
-        $config = array_merge(parent::get_config(), $tmp);
+        $config = array_merge([
+         'timezone' => null,
+         'tmpdir' => null,
+         'dest' => null,
+         'debug' => false,
+         'nofiles' => false,
+         'nobase' => false,
+         'lang' => null,
+         'themes_dir' => null,
+         'verbose' => false
+        ], parent::get_config());
         $this->_orig_tz = $config['timezone'] = @date_default_timezone_get();
         if( !$this->_orig_tz ) $this->_orig_tz = $config['timezone'] = 'UTC';
         $config['dest'] = realpath(getcwd());
@@ -181,7 +193,7 @@ class cms_install extends app
         $config_file = realpath(getcwd()).'/custom_config.ini';
         if( is_file($config_file) && is_readable($config_file) ) {
             $tmp = parse_ini_file($config_file);
-            if( is_array($tmp) && count($tmp) ) {
+            if( $tmp && is_array($tmp) ) {
                 $config = array_merge($config,$tmp);
                 if( isset($tmp['dest']) ) $this->_custom_destdir = $tmp['dest'];
             }
@@ -324,7 +336,7 @@ class cms_install extends app
     public function get_nls()
     {
         if( is_array($this->_nls) ) return $this->_nls;
-
+        //TODO process installer-cached MANIFEST file if any before polling
         $archive = $this->get_archive();
         $archive = str_replace('\\','/',$archive); // stupid windoze
         if( !file_exists($archive) ) throw new Exception(lang('error_noarchive'));
@@ -403,22 +415,15 @@ class cms_install extends app
         // set our selected language...
         translator()->set_selected_language($lang);
 
-        // for every request we're gonna make sure it's not cached.
-        //session_cache_limiter('private');
+        // ensure no request is cached. TODO must be before session becomes active
+        //session_cache_limiter('nocache'); //WAS 'private'
 
         // and make sure we are in UTF-8
-        //TODO headers already sent header('Content-Type:text/html; charset=UTF-8');
+        header('Content-Type:text/html; charset=UTF-8',false);
 
         // and do our stuff.
         try {
-            $tmp = 'm'.substr(md5(realpath(getcwd()).session_id()),0,8);
             $wizard = wizard::get_instance(__DIR__.'/wizard','\cms_autoinstaller');
-            // this sets a custom step variable for each instance
-            // which is just one more security measure.
-            // nobody can guess an installer URL and jump to a specific step to
-            // nuke anything (even though database creds are stored in the session
-            // so are all the other parameters.
-            $wizard->set_step_var($tmp);
             $res = $wizard->process();
         }
         catch( Exception $e ) {
@@ -432,6 +437,9 @@ class cms_install extends app
     {
         if( $this->_custom_tmpdir ) {
             utils::rrmdir($this->_custom_tmpdir);
+            rmdir($this->_custom_tmpdir); //the parent too
         }
+        $sess = session::get();
+        $sess::clear();
     }
 } // end of class

@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: page_image
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -19,65 +18,152 @@
 function smarty_function_page_image($params, $smarty)
 {
     $get_bool = function(array $params,$key,$dflt) {
-        if( !isset($params[$key]) ) return (bool) $dflt;
-        if( empty($params[$key]) ) return (bool) $dflt;
-        return (bool) cms_to_bool($params[$key]);
+        if( !isset($params[$key]) ) return (bool) $dflt; // null/none value impossible here ?
+//      if( empty($params[$key]) ) return (bool) $dflt; useless set and false-valued
+        return cms_to_bool($params[$key]);
     };
 
-    $full = $get_bool($params,'full',false);
+    $full = $get_bool($params,'full',false); // whether to output an url string
+    $tag = $get_bool($params,'tag',!$full); // whether to output a <img/> tag
+    if( $tag && $full ) { $full = false; }
+    elseif( !($tag || $full) ) { $full = true; }
     $thumbnail = $get_bool($params,'thumbnail',false);
-    $tag = $get_bool($params,'tag',false);
-    $assign = trim(get_parameter_value($params,'assign'));
-    unset($params['full'], $params['thumbnail'], $params['tag'], $params['assign']);
+    $assign = get_parameter_value($params,'assign');
+    unset($params['assign'],$params['full'],$params['tag'],$params['thumbnail']);
 
-	$propname = 'image';
-    if( $thumbnail ) $propname = 'thumbnail';
-    if( $tag ) $full = true;
-
-	$contentobj = cms_utils::get_current_content();
-    $val = null;
-	if( is_object($contentobj) ) {
-		$val = $contentobj->GetPropertyValue($propname);
-		if( $val == -1 ) $val = null;
+    $contentobj = cms_utils::get_current_content();
+    if( is_object($contentobj) ) {
+        $propname = ($thumbnail) ? 'thumbnail' : 'image';
+        $val = $contentobj->GetPropertyValue($propname);
+        if( !$val || $val == -1 ) { $val = ''; }
+        else { $val = trim($val); }
+    }
+    else {
+        $val = '';
     }
 
-    $out = null;
     if( $val ) {
-        $orig_val = $val;
-        $config = \cms_config::get_instance();
-        if( $full ) $val = $config['image_uploads_url'].'/'.$val;
-        if( ! $tag ) {
-            $out = $val;
-        } else {
-            if( !isset($params['alt']) ) $params['alt'] = $orig_val;
-            // build a tag.
+        if( $tag ) { $orig_val = $val; } // preserve for alt attr etc
+        if( $val[0] == '/' ) {
+            if( $val[1] != '/' ) {
+                $val = CMS_ROOT_URL.$val;
+            }
+            //stet $val for url like '//host...'
+            $found = true;
+        }
+        elseif( parse_url($val,PHP_URL_HOST) ) {
+            // stet absolute url $val
+            $found = true;
+        }
+        else {
+            $found = false;
+            $aspath = strtr($val,'\\/',DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR);
+            $config = cms_config::get_instance();
+            $prefname = ($thumbnail) ? 'content_thumbnailfield_path' : 'content_imagefield_path';
+            $subpath = trim(cms_siteprefs::get($prefname),' \\/');
+            //TODO also poll other places e.g. among assets, themes
+            if( $subpath ) {
+                $subpath = strtr($subpath,'\\/',DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR);
+                $lookin = [
+                    $config['image_uploads_path'].DIRECTORY_SEPARATOR.$subpath,
+                    $config['image_uploads_path'],
+                    $config['uploads_path'].DIRECTORY_SEPARATOR.$subpath,
+                    $config['uploads_path']
+                ];
+            }
+            else {
+                $lookin = [
+                    $config['image_uploads_path'],
+                    $config['uploads_path']
+                ];
+            }
+            foreach( $lookin as $place ) {
+                $fp = $place.DIRECTORY_SEPARATOR.$aspath;
+                if( is_file($fp) ) {
+                    $tmp = str_replace([CMS_ROOT_PATH,'\\'],[CMS_ROOT_URL,'/'],$place);
+                    $val = $tmp.'/'.ltrim($val,'/');
+                    $found = true;
+                    break;
+                }
+            }
+        }
+    }
+    else {
+        $found = false;
+    }
+
+    if( $tag ) {
+        if( $found ) {
+            if( empty($params['alt']) ) {
+                $params['alt'] = 'Page image';
+                if( !startswith($orig_val, 'data') ) {
+                    $helper = new CMSMS\FileTypeHelper();
+                    $tmp = strtr($orig_val, '/', DIRECTORY_SEPARATOR);
+                    $ext = $helper->get_extension($tmp);
+                    if( $ext ) {
+                        $allexts = $helper->get_file_type_extensions('image');
+                        if( in_array($ext, $allexts) ) {
+                            $params['alt'] .= ' '.basename($tmp);
+                        }
+                    }
+//                  else {
+//                      $params['alt'] .= ' '.basename($tmp);
+//                  }
+                }
+            }
+            // build an img element
             $out = "<img src=\"$val\"";
             foreach( $params as $key => $val ) {
                 $key = trim($key);
-                $val = trim($val);
                 if( !$key ) continue;
+                $val = trim($val);
                 $out .= " $key=\"$val\"";
             }
-            $out .= "/>";
+            $out .= '>';
+        }
+        else { // $tag && !$found
+            $out = '<!-- No image source -->';
         }
     }
-
-	if( $assign ) {
-		$smarty->assign($assign,$out);
-		return;
+    elseif( $found ) { // $full && $found
+/* an uploads-relative string reflects this tag's help, but not actual former code
+        $tmp = $config['uploads_url'];
+        if( startswith($val,$tmp) ) {
+            $out = str_replace($tmp,'',$val);
+        }
+        else {
+            $out = $val;
+        }
+*/
+        $out = $val;
     }
-	return $out;
+    else {
+        $out = ''; // OR $orig_val ?
+    }
+
+    if( $assign ) {
+        $smarty->assign($assign,$out);
+        return '';
+    }
+    return $out;
 }
 
 function smarty_cms_about_function_page_image() {
 ?>
-	<p>Author: Ted Kulp&lt;tedkulp@users.sf.net&gt;</p>
+    <p>Author: Ted Kulp&lt;ted@cmsmadesimple.org&gt;</p>
 
-	<p>Change History:</p>
-	<ul>
-		<li>Fix for CMSMS 1.9</li>
-        <li>Jan 2016 <em>(calguy1000)</em> - Adds the full param for CMSMS 2.2</li>
-	</ul>
+    <p>Change History:</p>
+    <ul>
+        <li>Jul 2025
+          <ul>
+            <li>Support absolute and relative and protocol-relative urls</li>
+            <li>Support content-property-specific sub-folders for on-site files</li>
+            <li>Support a search-path for populating relative urls</li>
+          </ul>
+        </li>
+        <li>Jan 2016 <em>(Robert Campbell)</em> - Add the full param for CMSMS 2.2</li>
+        <li>Fix for CMSMS 1.9</li>
+    </ul>
 <?php
 }
 ?>

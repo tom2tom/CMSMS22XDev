@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: cms_lang_info
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -24,12 +23,12 @@ function smarty_function_cms_lang_info($params, $smarty)
 		$lang = trim($params['lang']);
 	}
 	$info = CmsNlsOperations::get_language_info($lang);
-	if( !$info ) return;
+	if( !$info ) return '';
 
 	if( isset($params['assign']) )
     {
 		$smarty->assign($params['assign'],$info);
-		return;
+		return '';
     }
 	
 	return $info;

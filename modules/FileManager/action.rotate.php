@@ -1,11 +1,7 @@
 <?php
-# FileManager. A plugin for CMS - CMS Made Simple
-#   Copyright (c) 2006-08 by Morten Poulsen <morten@poulsen.org>
-# This file copyright (c) 2013 by Robert Campbell <calguy1000@cmsmadesimple.org>
-#
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#FileManager module action
+#(c) 2006-8 Morten Poulsen <morten@poulsen.org>
+#(c) 2008 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -19,53 +15,67 @@
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
-if (!function_exists("cmsms")) exit;
-if (!$this->CheckPermission("Modify Files") && !$this->AdvancedAccessAllowed()) exit;
 
-if (isset($params["cancel"])) $this->Redirect($id,"defaultadmin",$returnid,$params);
+if( !function_exists('cmsms') ) exit;
+if( !($this->CheckPermission('Modify Files') || $this->AdvancedAccessAllowed()) ) exit;
 
-$selall = $params['selall'];
-if( !is_array($selall) ) {
-  $selall = unserialize($selall);
-}
-unset($params['selall']);
-
-if (count($selall)==0) {
-  $params["fmerror"]="nofilesselected";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
-}
-if (count($selall)>1) {
-  $params["fmerror"]="morethanonefiledirselected";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+if( isset($params['cancel']) ) {
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 
-$config=cmsms()->GetConfig();
-$basedir = $config['root_path'];
-$filename=$this->decodefilename($selall[0]);
-$src = filemanager_utils::join_path($basedir,filemanager_utils::get_cwd(),$filename);
+$selall = (!empty($params['selall'])) ? $params['selall'] : '';
+if( $selall && !is_array($selall) ) {
+  $tmp = @unserialize($selall, ['allowed_classes'=>[]]); // mask possible E_WARNING
+  $selall = ($tmp !== false) ? $tmp : [$selall];
+  $params['selall'] = $selall; //array of munged itemname(s), should be 1
+}
+if( !$selall ) {
+  $params['fmerror'] = 'nofilesselected';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
+}
+if( count($selall) > 1 ) {
+  $params['fmerror'] = 'morethanonefiledirselected';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
+}
+
+$filename = $this->decodefilename($selall[0]);
+$src = filemanager_utils::join_path(CMS_ROOT_PATH,filemanager_utils::get_cwd(),$filename);
 if( !file_exists($src) ) {
-  $params["fmerror"]="filenotfound";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+  $params['fmerror'] = 'filenotfound';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
+//TODO file_manager_utils::mime_content_type
 $imageinfo = getimagesize($src);
 if( !$imageinfo || !isset($imageinfo['mime']) || !startswith($imageinfo['mime'],'image') ) {
-  $params["fmerror"]="filenotimage";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+  $params['fmerror'] = 'filenotimage';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 if( !is_writable($src) ) {
-  $params["fmerror"]="notwritable";
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+  $params['fmerror'] = 'notwritable';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
-switch( $imageinfo['mime'] ) {
+// TODO c.f. FileTypeHelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','ico','webp','avif','heif','svg','apng'
+switch( $imageinfo['mime'] ) { //OR  switch(mime_content_type($src));
  case 'image/gif':
  case 'image/jpeg':
  case 'image/png':
-   break;
- default:
+ case 'image/webp':
+ case 'image/vnd.wap.wbmp':
+  break;
+ case 'image/bmp':
+ case 'image/x-ms-bmp':
+  if (PHP_VERSION_ID < 70200) {
    $params['fmerror'] = 'fileimagetype';
-   $this->Redirect($id,"defaultadmin",$returnid,$params);
-   break;
+   $this->Redirect($id,'defaultadmin',$returnid,$params);
+  }
+  break;
+ case 'image/avif':
+  if (PHP_VERSION_ID >= 80100 && function_exists('imageavif')) break;
+  // no break here
+ default:
+  $params['fmerror'] = 'fileimagetype';
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
+  break;
 }
 $width = $imageinfo[0];
 $height = $imageinfo[1];
@@ -83,12 +93,12 @@ if( isset($params['save']) ) {
   $angle = (int)$params['angle'];
   $angle = max(-180,min(180,$angle))*-1;
   $source = imagecreatefromstring(file_get_contents($src));
-  imagealphablending($source, false);
-  imagesavealpha($source, true);
+  imagealphablending($source,false);
+  imagesavealpha($source,true); //TODO for png, webp and avif only
   $bgcolor = imageColorAllocateAlpha($source, 255, 255, 255, 127);
   $rotated = imagerotate($source,$angle,$bgcolor);
-  imagealphablending($rotated, false);
-  imagesavealpha($rotated, true);
+  imagealphablending($rotated,false);
+  imagesavealpha($rotated,true); //TODO for png, webp and avif only
 
   if( $postrotate == 'crop' ) {
     // calculates crop dimensions based on center of image
@@ -103,12 +113,12 @@ if( isset($params['save']) ) {
     //die("width = $width, height = $height, new_w = $new_w, new_h = $new_h, x0 = $x0, y0 = $y0");
 
     $newimg = imagecreatetruecolor($width,$height);
-    imagealphablending($newimg,FALSE);
+    imagealphablending($newimg,false);
     imagecolortransparent($newimg,$bgcolor);
     imagefill($newimg,0,0,$bgcolor);
-    imagesavealpha($newimg,TRUE);
+    imagesavealpha($newimg,true); //TODO for png, webp and avif only
     imagecopy($newimg,$rotated,0,0,$x0,$y0,$width,$height);
-    
+
     imagedestroy($rotated);
     $rotated = $newimg;
   }
@@ -117,7 +127,7 @@ if( isset($params['save']) ) {
     $src_h = imagesy($rotated);
 
     if( $width < $height ) {
-      // height is greater... 
+      // height is greater...
       $new_h = $height;
       $new_w = round(($new_h / $src_h) * $src_w, 0);
     }
@@ -130,22 +140,20 @@ if( isset($params['save']) ) {
     $x0 = (int)(($src_w - $new_w) / 2);
     $y0 = (int)(($src_h - $new_h) / 2);
 
+    // TODO c.f. FileTypeHelper image types 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','ico','webp','avif','heif','svg','apng'
     //die("rotated={$src_w}x{$src_h} orig={$width}x{$height} new={$new_w},{$new_h} offset = $x0,$y0");
     $newimg = imagecreatetruecolor($new_w,$new_h);
-    imagealphablending($newimg,FALSE);
+    imagealphablending($newimg,false);
     imagecolortransparent($newimg,$bgcolor);
     imagefill($newimg,0,0,$bgcolor);
-    imagesavealpha($newimg,TRUE);
-
-
+    imagesavealpha($newimg,true);  //TODO for png, webp and avif only
     imagecopyresampled($newimg,$rotated,$x0,$y0,0,0,$new_w,$new_h,$src_w,$src_h);
-    
+
     imagedestroy($rotated);
     $rotated = $newimg;
   }
 
-  // save the thing.
-  $res = null;
+  // save the thing TODO c.f. imageEditor::save()
   switch( $imageinfo['mime'] ) {
   case 'image/gif':
     $res = imagegif($rotated,$src);
@@ -153,7 +161,25 @@ if( isset($params['save']) ) {
   case 'image/png':
     $res = imagepng($rotated,$src,9);
     break;
-  case 'image/jpeg':
+  case 'image/bmp':
+  case 'image/x-ms-bmp':
+    if (PHP_VERSION_ID >= 70200) {
+      $res = imagebmp($rotated,$dest);
+    }
+    break;
+  case 'image/vnd.wap.wbmp':
+    $res = imagewbmp($image, $path);
+    break;
+  case 'image/webp':
+    $res = imagewebp($rotated,$src,80);
+    break;
+  case 'image/avif':
+    if (PHP_VERSION_ID >= 80100 && function_exists('imageavif')) {
+        $res = imageavif($rotated,$src,80,6);
+        break;
+    }
+  //no break here
+//case 'image/jpeg':
   default:
     $res = imagejpeg($rotated,$src,100);
     break;
@@ -161,29 +187,31 @@ if( isset($params['save']) ) {
 
   if( $createthumb ) $thumb = filemanager_utils::create_thumbnail($src);
 
-  $this->Redirect($id,"defaultadmin",$returnid,$params);
+  $this->Redirect($id,'defaultadmin',$returnid,$params);
 }
 
 //
 // build the form
 //
-$opts = array('none'=>$this->Lang('none'),
-	      'crop'=>$this->Lang('crop'),
-	      'resize'=>$this->Lang('resize'));
-$smarty->assign('opts',$opts);
-$url = filemanager_utils::get_cwd_url()."/$filename";
-$smarty->assign('postrotate',$postrotate);
-$smarty->assign('createthumb',$createthumb);
-$smarty->assign('filename',$filename);
-$smarty->assign('width',$width);
-$smarty->assign('height',$height);
-$smarty->assign('image',$url);
-if( is_array($selall) ) $params['selall'] = serialize($selall);
-$smarty->assign('startform',$this->CreateFormStart($id,'rotate',$returnid,'post','',false,'',$params));
-$smarty->assign('endform',$this->CreateFormEnd());
-echo $this->ProcessTemplate('filerotate.tpl');
+$modname = $this->GetName();
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;filerotate.tpl",null,$modname,$smarty);
 
-#
-# EOF
-#
+$opts = array(
+ 'none'=>$this->Lang('none'),
+ 'crop'=>$this->Lang('crop'),
+ 'resize'=>$this->Lang('resize')
+);
+$url = filemanager_utils::get_cwd_url()."/$filename";
+$tpl->assign('opts',$opts);
+$tpl->assign('postrotate',$postrotate);
+$tpl->assign('createthumb',$createthumb);
+$tpl->assign('filename',$filename);
+$tpl->assign('width',$width);
+$tpl->assign('height',$height);
+$tpl->assign('image',$url);
+$params['selall'] = $selall[0]; //flat value for next pass
+$tpl->assign('startform',$this->CreateFormStart($id,'rotate',$returnid,'post','',false,'',$params));
+$tpl->assign('endform',$this->CreateFormEnd());
+$tpl->display();
+
 ?>

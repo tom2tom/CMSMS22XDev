@@ -1,300 +1,316 @@
-<script type="text/javascript">
+<script>
 $(function() {
-    var do_locking = {if !empty($tpl_id) && $tpl_id > 0 && isset($lock_timeout) && $lock_timeout > 0}1{else}0{/if};
-    $('#form_edittemplate').dirtyForm({
-        beforeUnload: function(is_dirty) {
-            if( do_locking ) $('#form_edittemplate').lockManager('unlock');
-        },
-        unloadCancel: function() {
-            if( do_locking ) $('#form_edittemplate').lockManager('relock');
-        }
+{$locker=$tpl_id > 0 && isset($lock_timeout) && $lock_timeout > 0}{if $locker}
+  $('#form_edittemplate').dirtyForm({
+    beforeUnload: function(is_dirty) {
+      $('#form_edittemplate').lockManager('unlock');
+    },
+    unloadCancel: function() {
+      $('#form_edittemplate').lockManager('relock');
+    }
+  }).lockManager({ // initialize lock manager
+    type: 'template',
+    oid: {$tpl_id}, // oid < 1 does nothing
+    uid: {$userid},
+    lock_timeout: {$lock_timeout},
+    lock_refresh: {$lock_refresh|default:0},
+    error_handler: function(err) {
+      cms_alert('Lock error '+err.type+' // '+err.msg);
+    },
+    lostlock_handler: function(err) {
+      // lost the lock on this template, prevent the user saving
+      // anything and display a message
+{*      console.debug('lost lock handler');*}
+      $('#submitbtn,#applybtn').prop('disabled',true);
+{*      $('#submitbtn,#applybtn').button({ 'disabled' : true });TODO extra .button needed?*}
+      $('#cancelbtn').fadeOut().val('{lang("close")}').fadeIn();
+      $('#form_edittemplate').dirtyForm('option','dirty',false);
+      $('.lock-warning').removeClass('hidden-item');
+      cms_alert("{$mod->Lang('msg_lostlock')|escape:'javascript'}");
+    }
+  });
+{else}
+  $('#form_edittemplate').dirtyForm();
+{/if}
+  $(document).on('cmsms_textchange',function() {
+    // editor textchange, set the form dirty
+    $('#form_edittemplate').dirtyForm('option','dirty',true);
+  });
+  // if user clicks one of these buttons, the form is no longer considered dirty for the purposes of warnings
+  $('#submitbtn,#cancelbtn,#applybtn').on('click',function() {
+    $('#form_edittemplate').dirtyForm('option','dirty',false);
+  });
+{if $locker}
+  // only one of #importbtn, #exportbtn will exist
+  // no lock-removal for #applybtn click
+  $('#submitbtn,#cancelbtn,#importbtn,#exportbtn').on('click',function(e) {
+    // async unlock might interfere with next-displayed page?
+//    $('#form_edittemplate').lockManager('unlock');
+    e.preventDefault();
+    // unlock the item before submitting the form
+    var self = this;
+    $('#form_edittemplate').lockManager('unlock').done(function() {
+      $(self).off('click').trigger('click');
     });
+  });
+{/if}
+  $('#applybtn').on('click',function(e) {
+    e.preventDefault();
+    var tform = $('#form_edittemplate'),
+      url = tform.attr('action')+'?showtemplate=false&{$actionid}apply=1',
+      data = tform.serializeArray();
 
-    // initialize lock manager
-    if( do_locking ) {
-      $('#form_edittemplate').lockManager( {
-        type: 'template',
-        oid: {$tpl_id|default:0},
-        uid: {get_userid(FALSE)},
-        lock_timeout: {$lock_timeout|default:0},
-        lock_refresh: {$lock_refresh|default:0},
-        error_handler: function(err) {
-            cms_alert('Lock Error '+err.type+' // '+err.msg);
-        },
-        lostlock_handler: function(err) {
-            // we lost the lock on this content... make sure we can't save anything.
-            // and display a nice message.
-            $('[name$=cancel]').fadeOut().val('{$mod->Lang("cancel")}').fadeIn();
-            $('#form_edittemplate').dirtyForm('option','dirty',false);
-            $('#submitbtn, #applybtn').prop('disabled',true);
-            $('#submitbtn, #applybtn').button({ 'disabled' : true });
-            $('.lock-warning').removeClass('hidden-item');
-            cms_alert('{$mod->Lang('msg_lostlock')|escape:'javascript'}');
-        }
+    $.post(url,data,function(data,textStatus) {
+      var response = $('<aside></aside>',{ 'class':'message' });
+      if (data.status === 'success') {
+        response.addClass('pagemcontainer')
+          .append($('<span></span>',{ 'class':'close-warning',text:'{lang("close")}' }))
+          .append($('<p></p>',{ text:data.message }));
+      } else if (data.status === 'error') {
+        response.addClass('pageerrorcontainer')
+          .append($('<span></span>',{ 'class':'close-warning',text:'{lang("close")}' }))
+          .append($('<p></p>',{ text:data.message }));
+      }
+
+      $('body').append(response.hide());
+      response.slideDown(1000,function() {
+        window.setTimeout(function() {
+          response.slideUp();
+          response.remove();
+        },10000);
       });
-    } // do_locking
 
-    $(document).on('cmsms_textchange',function(event) {
-        // editor textchange, set the form dirty.
-        $('#form_edittemplate').dirtyForm('option','dirty',true);
+      $('#cancelbtn').button('option','label','{$mod->Lang("cancel")}');
+      $('#tpl_modified_cont').hide();
+      $('#content').trigger('focus');
     });
-
-    $('#form_edittemplate').on('click','[name$=apply],[name$=submit],[name$=cancel]',function(){
-        // if we manually click on one of these buttons, the form is no longer considered dirty for the purposes of warnings.
-        $('#form_edittemplate').dirtyForm('option','dirty',false);
-    });
-
-/*
-    $(document).on('click', '#submitbtn, #cancelbtn, #importbtn, #exportbtn', function(ev){
-       if( ! do_locking ) return;
-       // unlock the item, and submit the form
-       var self = this;
-       ev.preventDefault();
-       var form = $(this).closest('form');
-       $('#form_edittemplate').lockManager('unlock').done(function(){
-           console.debug('item unlocked');
-           var el = $('<input type="hidden"/>');
-           el.attr('name',$(self).attr('name')).val($(self).val()).appendTo(form);
-           form.submit();
-       });
-    });
-    */
-
-    $(document).on('click', '#applybtn', function(e) {
-        e.preventDefault();
-        var url = $('#form_edittemplate').attr('action')+'?showtemplate=false&m1_apply=1',
-        data = $('#form_edittemplate').serializeArray();
-
-        $.post(url, data, function(data,textStatus,jqXHR) {
-
-            var $response = $('<aside/>').addClass('message');
-            if (data.status === 'success') {
-
-                $response.addClass('pagemcontainer')
-                    .append($('<span>').text('Close').addClass('close-warning'))
-                    .append($('<p/>').text(data.message));
-            } else if (data.status === 'error') {
-
-                $response.addClass('pageerrorcontainer')
-                    .append($('<span>').text('Close').addClass('close-warning'))
-                    .append($('<p/>').text(data.message));
-            }
-
-            $('body').append($response.hide());
-            $response.slideDown(1000, function() {
-                window.setTimeout(function() {
-                    $response.slideUp();
-                    $response.remove();
-                }, 10000);
-            });
-
-            $('#cancelbtn').button('option','label','{$mod->Lang('cancel')}');
-            $('#tpl_modified_cont').hide();
-            $('#content').focus();
-        });
-    });
-
-    $(document).on('click','#a_helptext',function(e) {
-        e.preventDefault();
-        $('#helptext_dlg').dialog({ 'width': 'auto' });
-    });
+  });
+  $('#a_helptext').on('click',function(e) {
+    e.preventDefault();
+    var dlg = $('#helptext_dlg');
+    if (dlg.length > 0) {
+      var cd = $(this).closest('div'),
+       wd = cd.innerWidth() - 20,
+       hd = cd.innerHeight() - 20;
+      dlg.dialog({
+        width: wd - 50,
+        maxWidth: wd,
+        maxHeight: hd
+      });
+    }
+  });
 });
 </script>
 
-{$helptext=$type_obj->get_template_helptext($type_obj->get_name())}
-{if !empty($helptext)}
-  <div id="helptext_dlg" title="{$mod->Lang('prompt_template_help')}" style="display: none;">
+{$helptext=$type_obj->get_template_helptext()}
+{if $helptext}
+<div id="helptext_dlg" title="{$mod->Lang('prompt_template_help')}" style="display:none">
   {$helptext}
-  </div>
+</div>
 {/if}
+
 {$get_lock = $template->get_lock()}
-
-{capture assign='disable'}
-    {if isset($get_lock) && ({get_userid(false)} != $get_lock.uid)}disabled="disabled"{/if}
-{/capture}
-
-{if isset($get_lock)}
-    <div class="warning lock-warning">
-        {$mod->Lang('lock_warning')}
-    </div>
+{if ($get_lock && $userid != $get_lock.uid)}
+{$disable=' disabled'}
+<p class="warning lock-warning">{$mod->Lang('lock_warning')}</p>
+{else}
+{$disable=''}
 {/if}
 
-{form_start id="form_edittemplate" extraparms=$extraparms}
-<fieldset class="cf">
-    <div class="grid_6">
-        <div class="pageoverflow">
-            <p class="pageinput">
-                <input type="submit" id="submitbtn" name="{$actionid}submit" value="{$mod->Lang('submit')}"{$disable|strip} />
-                <input type="submit" id="cancelbtn" name="{$actionid}cancel" value="{$mod->Lang('cancel')}" />
-                {if $template->get_id()}
-                <input type="submit" id="applybtn" name="{$actionid}apply" value="{$mod->Lang('apply')}"{$disable|strip} />
-                {/if}
-            </p>
-        </div>
+{form_start id='form_edittemplate' extraparms=$extraparms}
+<div class="cf">{*$tplid=$template->get_id()*}
+  <div class="pageoverflow">
+    <p class="pageinput">
+      <input type="submit" id="submitbtn" name="{$actionid}submit" value="{$mod->Lang('submit')}"{$disable}>
+      <input type="submit" id="cancelbtn" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
+{if $tpl_id > 0}
+      <input type="submit" id="applybtn" name="{$actionid}apply" data-ui-icon="ui-icon-caret-1-n" value="{$mod->Lang('apply')}"{$disable}>
+{/if}
+    </p>
+  </div>
+{if $tpl_id > 0}
+  <fieldset>
+  <div class="grid_6" style="margin-left:0;margin-right:0">
+{/if}
+    <div class="pageoverflow">
+      <p class="pagetext"><label for="tpl_name">*{$mod->Lang('prompt_name')}:</label>&nbsp;{cms_help key2=help_template_name title=$mod->Lang('prompt_name')}</p>
+      <p class="pageinput">
+        <input type="text" id="tpl_name" name="{$actionid}name" size="50" maxlength="90" value="{$template->get_name()}" {if $has_manage_right}placeholder="{$mod->Lang('newname')}"{else}style="border:0;pointer-events:none" readonly{/if}>
+      </p>
+    </div>
+{$usage_str=$template->get_usage_string()}
+  {if $usage_str}
+    <div class="pageoverflow">
+      <p class="pagetext"><label>{$mod->Lang('prompt_usage')}:</label>&nbsp;{cms_help key2='help_tpl_usage' title=$mod->Lang('prompt_usage')}</p>
+      <p class="pageinput">
+        {$usage_str}
+      </p>
+    </div>
+  {/if}
+{if $tpl_id > 0}
+  </div>{* column *}
+  <div class="grid_6">
+    <div class="pageoverflow">
+      <p class="pagetext"><label>{$mod->Lang('prompt_created')}:</label>&nbsp;{cms_help key2='help_tpl_created' title=$mod->Lang('prompt_created')}</p>
+      <p class="pageinput">
+        {$template->get_created()|localedate_format:'%x %X'}
+      </p>
+    </div>
+    <div class="pageoverflow" id="tpl_modified_cont">
+      <p class="pagetext"><label>{$mod->Lang('prompt_modified')}:</label>&nbsp;{cms_help key2='help_tpl_modified' title=$mod->Lang('prompt_modified')}</p>
+      <p class="pageinput">
+        {$template->get_modified()|localedate_format:'%x %X'}
+      </p>
+    </div>
+  </div>{* column *}
+  </fieldset>
+{/if}
+</div>
 
-        <div class="pageoverflow">
-            <p class="pagetext"><label for="tpl_name">*{$mod->Lang('prompt_name')}:</label>&nbsp;{cms_help key2=help_template_name title=$mod->Lang('prompt_name')}</p>
-            <p class="pageinput">
-                <input id="tpl_name" type="text" name="{$actionid}name" size="50" maxlength="90" value="{$template->get_name()}" {if !$has_manage_right}readonly="readonly"{/if} placeholder="{$mod->Lang('new_template')}"/>
-            </p>
-        </div>
-
-    {$usage_str=$template->get_usage_string()}
-    {if !empty($usage_str)}
-        <div class="pageoverflow">
-            <p class="pagetext"><label>{$mod->Lang('prompt_usage')}:</label>&nbsp;{cms_help key2='help_tpl_usage' title=$mod->Lang('prompt_usage')}</p>
-            <p class="pageinput">
-                {$usage_str}
-            </p>
-        </div>
-    {/if}
-
-    </div>{* column *}
-    <div class="grid_6">
-    {if $template->get_id()}
-        <div class="pageoverflow">
-            <p class="pagetext"><label for="tpl_created">{$mod->Lang('prompt_created')}:</label>&nbsp;{cms_help key2='help_tpl_created' title=$mod->Lang('prompt_created')}</p>
-            <p class="pageinput">
-                {$template->get_created()|cms_date_format}
-            </p>
-        </div>
-        <div class="pageoverflow" id="tpl_modified_cont">
-            <p class="pagetext"><label for="tpl_modified">{$mod->Lang('prompt_modified')}:</label>&nbsp;{cms_help key2='help_tpl_modified' title=$mod->Lang('prompt_modified')}</p>
-            <p class="pageinput">
-                {$template->get_modified()|cms_date_format}
-            </p>
-        </div>
-    {/if}
-    </div>{* column *}
-</fieldset>
-
-
-{tab_header name='template' label=$mod->Lang('prompt_template')}
+{tab_header name='content' label=lang('content')}
 {tab_header name='description' label=$mod->Lang('prompt_description')}
 {if $has_themes_right}
-    {tab_header name='designs' label=$mod->Lang('prompt_designs')}
+ {tab_header name='designs' label=$mod->Lang('prompt_designs')}
+{/if}
+{if ($has_manage_right || $template->get_owner_id() == $userid)}
+ {tab_header name='permissions' label=$mod->Lang('prompt_permissions')}
 {/if}
 {if $has_manage_right}
-    {tab_header name='advanced' label=$mod->Lang('prompt_advanced')}
+ {tab_header name='advanced' label=$mod->Lang('prompt_advanced')}
 {/if}
-{if $template->get_owner_id() == get_userid() or $has_manage_right}
-    {tab_header name='permissions' label=$mod->Lang('prompt_permissions')}
-{/if}
-
-{tab_start name='template'}
+{$isfile=$template->has_content_file()}
+{tab_start name='content'}
 <div class="pageoverflow">
-    <p class="pagetext">
-      <label for="contents">{$mod->Lang('prompt_template_content')}:</label>&nbsp;{cms_help key2=help_template_contents title=$mod->Lang('prompt_template_content')}
-      {if !empty($helptext)}
-        <a id="a_helptext" href="#" style="float: right;">{$mod->Lang('prompt_template_help')}</a>
-      {/if}
-    </p>
-    {if $template->has_content_file()}
-      <div class="information">{$mod->Lang('info_template_content_file',$template->get_content_filename())}</div>
-    {else}
-    <p class="pageinput">
-        {cms_textarea id='content' prefix=$actionid name='contents' value=$template->get_content() type='smarty' rows=20}
-    </p>
-    {/if}
+  <p class="pagetext">
+{if $isfile}
+  <label>{lang('content')}:</label>
+{else}
+  <label for="content">{lang('content')}:</label>&nbsp;{cms_help key2=help_template_contents title=lang('content')}
+{/if}
+{if !empty($helptext)}
+    <a id="a_helptext" href="javascript:void(0);" class="endside last">{$mod->Lang('prompt_template_help')}</a>
+{/if}
+  </p>
+{if $isfile}
+  <div class="information">{$mod->Lang('info_template_content_file',$template->get_content_filename())}</div>
+{else}
+  <p class="pageinput">
+    {cms_textarea id='content' prefix=$actionid name='contents' value=$template->get_content() type='smarty' rows=20}
+  </p>
+{/if}
 </div>
 
 {tab_start name='description'}
 <div class="pageoverflow">
-    <p class="pagetext"><label for="description">{$mod->Lang('prompt_description')}:</label>&nbsp;{cms_help key2=help_template_description title=$mod->Lang('prompt_description')}</p>
-    <p class="pageinput">
-        <textarea id="description" name="{$actionid}description" {if !$has_manage_right}readonly="readonly"{/if}>{$template->get_description()}</textarea>
-    </p>
+{if !$has_manage_right}
+  <input type="hidden" name="{$actionid}description" value="{$template->get_description()}">
+{/if}
+  <p class="pagetext"><label{if $has_manage_right} for="tadesc"{/if}>{$mod->Lang('prompt_description')}:</label>&nbsp;{cms_help key2=help_template_description title=$mod->Lang('prompt_description')}</p>
+  <p class="pageinput">
+{if $has_manage_right}
+    <textarea id="tadesc" name="{$actionid}description">{$template->get_description()}</textarea>
+{else}
+    {$template->get_description()}
+{/if}
+  </p>
 </div>
 
 {if $has_themes_right}
-    {tab_start name='designs'}
-    <div class="pageoverflow">
-        <p class="pagetext"><label for="designlist">{$mod->Lang('prompt_designs')}:</label>&nbsp;{cms_help key2=help_template_designlist title=$mod->Lang('prompt_designs')}</p>
-        <p class="pageinput">
-            <select id="designlist" name="{$actionid}design_list[]" multiple="multiple" size="5">
-                {html_options options=$design_list selected=$template->get_designs()}
-            </select>
-        </p>
-    </div>
+  {tab_start name='designs'}
+  <div class="pageoverflow">
+    <p class="pagetext"><label for="designlist">{$mod->Lang('prompt_designs')}:</label>&nbsp;{cms_help key2=help_template_designlist title=$mod->Lang('prompt_designs')}</p>
+    <p class="pageinput">
+      <select id="designlist" name="{$actionid}design_list[]" multiple size="5">
+        {html_options options=$design_list selected=$template->get_designs()}
+      </select>
+    </p>
+  </div>
 {/if}
 
+{if ($has_manage_right || $template->get_owner_id() == $userid)}
+  {tab_start name='permissions'}
+  {if !empty($user_list)}
+  <div class="pageoverflow">
+    <p class="pagetext"><label for="tpl_owner">{$mod->Lang('prompt_owner')}:</label>&nbsp;{cms_help key2=help_template_owner title=$mod->Lang('prompt_owner')}</p>
+    <p class="pageinput">
+      <select id="tpl_owner" name="{$actionid}owner_id">
+        {html_options options=$user_list selected=$template->get_owner_id()}
+      </select>
+    </p>
+  </div>
+  {/if}
+  {if !empty($addt_editor_list)}
+  <div class="pageoverflow">
+    <p class="pagetext"><label for="tpl_addeditor">{$mod->Lang('additional_editors')}:</label>&nbsp;{cms_help key2=help_template_addteditors title=$mod->Lang('additional_editors')}</p>
+    <p class="pageinput">
+      <select id="tpl_addeditor" name="{$actionid}addt_editors[]" multiple size="5">
+        {html_options options=$addt_editor_list selected=$template->get_additional_editors()}
+      </select>
+    </p>
+  </div>
+  {/if}
+{/if}
 {if $has_manage_right}
-    {tab_start name='advanced'}
-        <div class="pageoverflow">
-            <p class="pagetext"><label for="tpl_listable">{$mod->Lang('prompt_listable')}:</label>&nbsp;{cms_help key2=help_template_listable title=$mod->Lang('prompt_listable')}</p>
-            <p class="pageinput">
-                <select id="tpl_listable" name="{$actionid}listable"{if $type_is_readonly} readonly="readonly"{/if}>
-                {cms_yesno selected=$template->get_listable()}
-                </select>
-            </p>
-        </div>
-        {if isset($type_list)}
-            <div class="pageoverflow">
-                <p class="pagetext"><label for="tpl_type">{$mod->Lang('prompt_type')}:</label>&nbsp;{cms_help key2=help_template_type title=$mod->Lang('prompt_type')}</p>
-                <p class="pageinput">
-                    <select id="tpl_type" name="{$actionid}type"{if $type_is_readonly} readonly="readonly"{/if}>
-                        {html_options options=$type_list selected=$template->get_type_id()}
-                    </select>
-                </p>
-            </div>
-            {if $type_obj->get_dflt_flag()}
-            <div class="pageoverflow">
-                <p class="pagetext"><label for="tpl_dflt">{$mod->Lang('prompt_default')}:</label>&nbsp;{cms_help key2=help_template_dflt title=$mod->Lang('prompt_default')}</p>
-                <p class="pageinput">
-                    <select id="tpl_dflt" name="{$actionid}default" {if $template->get_type_dflt()}disabled{/if}>
-                        {cms_yesno selected=$template->get_type_dflt()}
-                    </select>
-                </p>
-            </div>
-            {/if}
-        {/if}
-        {if isset($category_list)}
-        <div class="pageoverflow">
-            <p class="pagetext"><label for="tpl_category">{$mod->Lang('prompt_category')}:</label>&nbsp;{cms_help key2=help_template_category title=$mod->Lang('prompt_category')}</p>
-            <p class="pageinput">
-                <select id="tpl_category" name="{$actionid}category_id">
-                    {html_options options=$category_list selected=$template->get_category_id()}
-                </select>
-            </p>
-        </div>
-        {/if}
-    {if $template->get_id() > 0}
-        <div class="pageoverflow">
-            <p class="pagetext">{$mod->Lang('prompt_filetemplate')}:</p>
-            <p class="pageinput">
-            {if $template->has_content_file()}
-            <input type="submit" id="importbtn" name="{$actionid}import" value="{$mod->Lang('import')}"/>
-            {elseif $template->get_id() > 0}
-            <input type="submit" id="exportbtn" name="{$actionid}export" value="{$mod->Lang('export')}"/>
-            {/if}
-        </p>
-        </div>
-    {/if}
+  {tab_start name='advanced'}
+    <div class="pageoverflow">{$tval=$template->get_listable()}
+      <p class="pagetext"><label for="tpl_listable">{$mod->Lang('prompt_listable')}:</label>&nbsp;{cms_help key2=help_template_listable title=$mod->Lang('prompt_listable')}</p>
+      <p class="pageinput">
+        <select id="tpl_listable" name="{$actionid}listable">
+          {cms_yesno selected=$tval}
+        </select>
+      </p>
+    </div>
+    {if !empty($type_list)}
+      <div class="pageoverflow">{$tval=$template->get_type_id()}
+{if $type_is_readonly}
+        <input type="hidden" name="{$actionid}type" value="{$tval}">
 {/if}
-
-{if $template->get_owner_id() == get_userid() or $has_manage_right}
-    {tab_start name='permissions'}
-    {if isset($user_list)}
-    <div class="pageoverflow">
-        <p class="pagetext"><label for="tpl_owner">{$mod->Lang('prompt_owner')}:</label>&nbsp;{cms_help key2=help_template_owner title=$mod->Lang('prompt_owner')}</p>
+        <p class="pagetext"><label{if !$type_is_readonly} for="tpl_type"{/if}>{$mod->Lang('prompt_type')}:</label>&nbsp;{cms_help key2=help_template_type title=$mod->Lang('prompt_type')}</p>
         <p class="pageinput">
-            <select id="tpl_owner" name="{$actionid}owner_id">
-                {html_options options=$user_list selected=$template->get_owner_id()}
-            </select>
+{if $type_is_readonly}
+          <span id="tpl_type">{$type_list[$tval]}</span>
+{else}
+          <select id="tpl_type" name="{$actionid}type">
+            {html_options options=$type_list selected=$tval}
+          </select>
+{/if}
         </p>
+      </div>
+      {if $type_obj->get_dflt_flag()}
+      <div class="pageoverflow">{$tval=$template->get_type_dflt()}
+        <p class="pagetext"><label for="tpl_dflt">{$mod->Lang('prompt_default')}:</label>&nbsp;{cms_help key2=help_template_dflt title=$mod->Lang('prompt_default')}</p>
+        <p class="pageinput">
+          <select id="tpl_dflt" name="{$actionid}default">
+            {cms_yesno selected=$tval}
+          </select>
+        </p>
+      </div>
+      {/if}
+    {/if}
+    {if !empty($category_list)}
+    <div class="pageoverflow">
+      <p class="pagetext"><label for="tpl_category">{$mod->Lang('prompt_category')}:</label>&nbsp;{cms_help key2=help_template_category title=$mod->Lang('prompt_category')}</p>
+      <p class="pageinput">
+        <select id="tpl_category" name="{$actionid}category_id">
+          {html_options options=$category_list selected=$template->get_category_id()}
+        </select>
+      </p>
     </div>
     {/if}
-    {if isset($addt_editor_list)}
+{if $tpl_id > 0}
+{if $isfile}{$inid='importbtn'}{else}{$inid='exportbtn'}{/if}
     <div class="pageoverflow">
-        <p class="pagetext"><label for="tpl_addeditor">{$mod->Lang('additional_editors')}:</label>&nbsp;{cms_help key2=help_template_addteditors title=$mod->Lang('additional_editors')}</p>
-        <p class="pageinput">
-            <select id="tpl_addeditor" name="{$actionid}addt_editors[]" multiple="multiple" size="5">
-                {html_options options=$addt_editor_list selected=$template->get_additional_editors()}
-            </select>
-        </p>
+      <p class="pagetext"><label style="pointer-events:none" for="{$inid}">{$mod->Lang('prompt_filetemplate')}:</label>&nbsp;{cms_help key2=help_template_file title=$mod->Lang('prompt_filetemplate')}</p>
+      <p class="pageinput">
+ {if $isfile}
+      <input type="submit" id="importbtn" name="{$actionid}import" data-ui-icon="ui-icon-arrowreturnthick-1-n" value="{$mod->Lang('import')}">
+ {else}
+      <input type="submit" id="exportbtn" name="{$actionid}export" data-ui-icon="ui-icon-arrowreturnthick-1-s" value="{$mod->Lang('export')}">
+ {/if}
+      </p>
     </div>
-    {/if}
 {/if}
+{/if}{*$has_manage_right*}
 {tab_end}
 
 {form_end}

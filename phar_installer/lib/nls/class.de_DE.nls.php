@@ -13,8 +13,6 @@ final class de_DE_nls extends nls
     $this->_encoding = 'UTF-8';
     $this->_aliases = 'german,de_DE.ISO8859-1';
   }
-
-  
 } // end of class
 
 ?>

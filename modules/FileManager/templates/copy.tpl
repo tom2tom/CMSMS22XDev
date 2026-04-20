@@ -2,7 +2,7 @@
 
 {$startform}
 <div class="pageoverflow">
-  <p class="pagetext">{$mod->Lang('itemstocopy')}:</p>
+  <p class="pagetext"><label>{$mod->Lang('itemstocopy')}:</label></p>
   <p class="pageinput">
     <ul>
     {foreach $selall as $one}
@@ -15,7 +15,7 @@
   <p class="pagetext"><label for="destdir">{$mod->Lang('copy_destdir')}:</label></p>
   <p class="pageinput">
     <select id="destdir" name="{$actionid}destdir">
-    {html_options options=$dirlist selected=$cwd}
+    {html_options options=$dirlist selected=$dirsel}
     </select>
   </p>
 </div>
@@ -23,15 +23,15 @@
 <div class="pageoverflow">
   <p class="pagetext"><label for="destname">{$mod->Lang('copy_destname')}:</label></p>
   <p class="pageinput">
-    <input type="text" id="destname" name="{$actionid}destname" size="50" maxlength="255"/>
+    <input type="text" id="destname" name="{$actionid}destname" size="50" maxlength="255">
   </p>
 </div>
 {/if}
+<br>
 <div class="pageoverflow">
-  <p class="pagetext"></p>
-  <p class="pageinput">
-    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('copy')}"/>
-    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}"/>
-  </p>
+  <div class="pageinput">
+    <input type="submit" name="{$actionid}submit" data-ui-icon="ui-icon-copy" value="{$mod->Lang('copy')}">
+    <input type="submit" name="{$actionid}cancel" data-ui-icon="ui-icon-cancel" value="{$mod->Lang('cancel')}">
+  </div>
 </div>
 {$endform}

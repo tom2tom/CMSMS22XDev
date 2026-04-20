@@ -1,22 +1,23 @@
-<script type="text/javascript">
+{if !empty($citems)}
+<script>
 $(function() {
-  $('a.del_cat').click(function(ev){
-    var self = $(this);
+  $('a.del_cat').on('click', function(ev) {
     ev.preventDefault();
-    cms_confirm('{$mod->Lang('areyousure')|escape:'javascript'}').done(function(){
-      window.location = self.attr('href');
+    var _url = $(this).attr('href');
+    cms_confirm('{$mod->Lang('areyousure')|escape:'javascript'}').done(function() {
+      window.location.href = _url;
     });
   });
 });
 </script>
-
-<div class="pageoptions"><p class="pageoptions">
-  <a href="{cms_action_url action='addcategory'}" title="{$mod->Lang('addcategory')}">{admin_icon icon='newobject.gif'} {$mod->Lang('addcategory')}</a>
-  &nbsp;
-  {if $itemcount > 1}<a href="{cms_action_url action='admin_reorder_cats'}" title="{$mod->Lang('reorder')}">{admin_icon icon='reorder.gif'} {$mod->Lang('reorder')}</a>{/if}
-</p></div>
-
-{if $itemcount > 0}
+{/if}
+<div class="pageoptions">
+	<p class="pageoptions">
+		<a href="{cms_action_url action='addcategory'}" title="{$mod->Lang('addcategory')}">{admin_icon icon='newobject.gif'} {$mod->Lang('addcategory')}</a>
+{if $citemcount > 1}&nbsp;<a href="{cms_action_url action='admin_reorder_cats'}" title="{$mod->Lang('reorder')}">{admin_icon icon='reorder.gif'} {$mod->Lang('reorder')}</a>{/if}
+	</p>
+</div>
+{if !empty($citems)}
 <table class="pagetable">
 	<thead>
 		<tr>
@@ -26,11 +27,11 @@ $(function() {
 		</tr>
 	</thead>
 	<tbody>
-{foreach $items as $entry}
+{foreach $citems as $entry}
 		<tr class="{$entry->rowclass}">
-			<td>{repeat string='&nbsp;&gt;&nbsp' times=$entry->depth}<a href="{$entry->edit_url}" title="{$mod->Lang('edit')}">{$entry->name|cms_escape}</a></td>
-			<td><a href="{$entry->edit_url}" title="{$mod->Lang('edit')}">{admin_icon icon='edit.gif'}</a></td>
-			<td><a href="{$entry->delete_url}" title="{$mod->Lang('delete')}" class="del_cat">{admin_icon icon='delete.gif'}</a></td>
+			<td>{repeat string='&nbsp;&gt;&nbsp;' times=$entry->depth}<a href="{$entry->edit_url}" title="{$mod->Lang('edit')}">{$entry->name|cms_escape}</a></td>
+			<td><a href="{$entry->edit_url}" title="{$mod->Lang('edit')}">{admin_icon icon='edit.gif' alt=$mod->Lang('edit')}</a></td>
+			<td><a href="{$entry->delete_url}" title="{$mod->Lang('delete')}" class="del_cat">{admin_icon icon='delete.gif' alt=$mod->Lang('delete')}</a></td>
 		</tr>
 {/foreach}
 	</tbody>

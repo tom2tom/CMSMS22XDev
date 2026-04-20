@@ -3,7 +3,7 @@
 class ModuleManagerModuleInfo extends CmsExtendedModuleInfo implements ArrayAccess
 {
     private static $_minfo;
-    private static $_deprecated = array('CMSMailer','MenuManager');
+    private static $_deprecated = array();
     private static $_mmkeys = array('e_status','can_install','can_upgrade','can_uninstall','missing_deps','deprecated','needs_upgrade');
     private $_mmdata = array();
 
@@ -135,13 +135,14 @@ class ModuleManagerModuleInfo extends CmsExtendedModuleInfo implements ArrayAcce
             if(in_array($this['name'], self::$_deprecated)) return TRUE;
             return FALSE;
         }
+        return null; // no value for unsupported property
     }
 
     #[\ReturnTypeWillChange]
     public function offsetSet($key,$value)
     {
         if( !in_array($key,self::$_mmkeys) ) parent::OffsetSet($key,$value);
-        if( $key != 'e_status' && $key != 'deprecated' ) return; // dynamic
+        if( $key != 'e_status' && $key != 'deprecated' ) return; // void
         $this->_mmdata[$key] = $value;
     }
 
@@ -161,8 +162,9 @@ class ModuleManagerModuleInfo extends CmsExtendedModuleInfo implements ArrayAcce
 
     public static function get_all_module_info($can_check_forge = TRUE)
     {
-        if( is_array(self::$_minfo) ) return self::$_minfo;
-
+        if( is_array(self::$_minfo) ) {
+            return self::$_minfo;
+        }
         $ops = ModuleOperations::get_instance();
         $allknownmodules = $ops->FindAllModules();
 
@@ -170,7 +172,7 @@ class ModuleManagerModuleInfo extends CmsExtendedModuleInfo implements ArrayAcce
         $out = array();
         foreach( $allknownmodules as $module_name ) {
             try {
-                $info = new ModuleManagerModuleInfo($module_name,TRUE,$can_check_forge);
+                $info = new self($module_name,TRUE,$can_check_forge);
                 $out[$module_name] = $info;
             }
             catch( \Exception $e ) {
@@ -182,13 +184,13 @@ class ModuleManagerModuleInfo extends CmsExtendedModuleInfo implements ArrayAcce
         return self::$_minfo;
     }
 
-    public static function &get_module_info($module)
+    public static function get_module_info($module)
     {
         $tmp = self::get_all_module_info();
-        if( isset($tmp[$module]) ) return $tmp[$module];
-
-        $out = null;
-        return $out;
+        if( isset($tmp[$module]) ) {
+            return $tmp[$module];
+        }
+        return [];
     }
 
 } // end of class

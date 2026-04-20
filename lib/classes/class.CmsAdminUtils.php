@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2011 by Ted Kulp (ted@cmsmadesimple.org)
-#This projects homepage is: http://cmsmadesimple.org
+#CMS Made Simple class CmsAdminUtils
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -13,25 +12,17 @@
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 #You should have received a copy of the GNU General Public License
-#along with this program; if not, write to the Free Software
-#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
-#$Id: class.admintheme.inc.php 7596 2011-12-24 22:50:52Z calguy1000 $
+#along with this program. If not, read the license online at
+#https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 /**
- * Classes and utilities for working with the CMSMS admin interface.
+ * A class of static utility-methods for assisting with admin requests
+ * @since 2.0
+ * @final
+ * @see also cms_admin_utils class having fewer methods and more usage
  *
  * @package CMS
  * @license GPL
- */
-
-/**
- * A set of static utilities for assisting with admin requests
- *
- * @package CMS
- * @version $Revision$
- * @license GPL
- * @since   2.0
  * @author  Robert Campbell
  */
 final class CmsAdminUtils
@@ -44,7 +35,10 @@ final class CmsAdminUtils
     /**
      * A regular expression to use when testing if an item has a valid name.
      */
-    const ITEMNAME_REGEX = '<^[a-zA-Z0-9_\x7f-\xff][a-zA-Z0-9_\ \/\+\-\,\.\x7f-\xff]*$>';
+    const ITEMNAME_REGEX = '#^[a-zA-Z0-9_~\x80-\xff][a-zA-Z0-9_ /+\-,.~\x80-\xff]*$#';
+    //TODO exclude non-letters & non-numbers >= \x80 i.e.
+    //#^[a-zA-Z0-9_~\x8c\x8e\x9c\x9e\x9f\xc0-\xd6\xd8-\xf6\xf8-\xff\pL\p{Nd}\p{Po}]
+    //[a-zA-Z0-9_ /+\-,.~\x8c\x8e\x9c\x9e\x9f\xc0-\xd6\xd8-\xf6\xf8-\xff\pL\p{Nd}\p{Po}]*$#u
 
     /**
      * Test if a string is suitable for use as a name of an item in CMSMS.
@@ -68,13 +62,16 @@ final class CmsAdminUtils
      * Convert an admin request URL to a generic form that is suitable for saving to a database.
      * This is useful for things like bookmarks and homepages.
      * Note it only works for admin urls with user key of the current admin user
+     * @depecated since 2.2.19 admin urls can bypass the permissions mechanism,
+     * and should be supported only with permission checking akin that used
+     * for admin-menu generation
      *
      * @param string $in_url The input URL that has the session key in it.
      * @return string A URL that is converted to a generic form.
      */
     public static function get_generic_url($in_url)
     {
-        if( !defined('CMS_USER_KEY') ) throw new \LogicException('This method can only be called for admin requests');
+        if( !defined('CMS_USER_KEY') ) throw new \LogicException('This method can only be called for admin requests');//TODO defined every request, when include.php is processed
         if( !isset($_SESSION[CMS_USER_KEY]) || !$_SESSION[CMS_USER_KEY] ) throw new \LogicException('This method can only be called for admin requests');
 
         $in_p = CMS_SECURE_PARAM_NAME. '=' . $_SESSION[CMS_USER_KEY];
@@ -88,15 +85,18 @@ final class CmsAdminUtils
     }
 
     /**
-     * Convert a generic URL into something that is suitable for this users session.
+     * Convert a generic URL into something that is suitable for this user's session.
+     * @depecated since 2.2.19 admin urls can bypass the permissions mechanism,
+     * and should be supported only with permission checking akin that used
+     * for admin-menu generation
      *
      * @param string $in_url The generic url.  usually retrieved from a preference or from the database
      * @return string A URL that has a session key in it.
      */
     public static function get_session_url($in_url)
     {
-        if( !defined('CMS_USER_KEY') ) throw new \LogicException('This method can only be called for admin requests');
-        IF( !isset($_SESSION[CMS_USER_KEY]) || !$_SESSION[CMS_USER_KEY] ) throw new \LogicException('This method can only be called for admin requests');
+        if( !defined('CMS_USER_KEY') ) throw new \LogicException('This method can only be called for admin requests'); //TODO defined every request, when include.php is processed
+        if( !isset($_SESSION[CMS_USER_KEY]) || !$_SESSION[CMS_USER_KEY] ) throw new \LogicException('This method can only be called for admin requests');
 
         $in_p = '[SECURITYTAG]';
         $out_p = CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
@@ -105,14 +105,14 @@ final class CmsAdminUtils
 
     /**
      * Get the latest available CMSMS version.
-     * This method does a remote request to the version check URL at most once per day.
+     * This method does a remote request to the version-check URL, at most once per day.
      *
      * @return string
      */
     public static function fetch_latest_cmsms_ver()
     {
-        $last_fetch = (int) cms_siteprefs::get('last_remotever_check');
         $remote_ver = cms_siteprefs::get('last_remotever');
+        $last_fetch = (int) cms_siteprefs::get('last_remotever_check');
         if( $last_fetch < (time() - 24 * 3600) ) {
             $req = new cms_http_request();
             $req->setTimeout(3);
@@ -131,20 +131,15 @@ final class CmsAdminUtils
     }
 
     /**
-     * Test if the current site is in need of upgrading (a new version of CMSMS is available)
+     * Test if the current site could be upgraded (a later version of CMSMS is available)
+     * Unused across the CMSMS-core
      *
      * @return bool
      */
     public static function site_needs_updating()
     {
         $remote_ver = self::fetch_latest_cmsms_ver();
-        if( version_compare(CMS_VERSION,$remote_ver) < 0 ) {
-            return TRUE;
-        }
-        else {
-            return FALSE;
-        }
+        return $remote_ver && cmsversion_compare(CMS_VERSION,$remote_ver) < 0;
     }
-
 }
 ?>

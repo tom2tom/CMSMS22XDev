@@ -1,5 +1,7 @@
 <?php
 
+use function __appbase\endswith;
+
 set_time_limit(3600);
 status_msg('Fixing errors with deprecated plugins in versions prior to CMSMS 2.0');
 $fn = $destdir.'/plugins/function.process_pagedata.php';
@@ -11,10 +13,10 @@ status_msg('Upgrading database for CMSMS 2.0');
 
 $gCms = cmsms();
 $dbdict = NewDataDictionary($db);
-$taboptarray = array('mysql' => 'TYPE=MyISAM');
+$taboptarray = array('mysqli' => 'ENGINE=MyISAM','mysql' => 'ENGINE=MyISAM');
 
-verbose_msg('updating structure of content tabless');
-$sqlarray = $dbdict->DropColumnSQL(CMS_DB_PREFIX.'content',array('collaapsed','markup'));
+verbose_msg('updating structure of content tables');
+$sqlarray = $dbdict->DropColumnSQL(CMS_DB_PREFIX.'content',array('collapsed','markup'));
 $return = $dbdict->ExecuteSQLArray($sqlarray);
 $sqlarray = $dbdict->AlterColumnSQL(CMS_DB_PREFIX.'content_props', 'content X2');
 $return = $dbdict->ExecuteSQLArray($sqlarray);
@@ -37,7 +39,7 @@ verbose_msg('deleting old events');
 $tmp = array('AddGlobalContentPre','AddGlobalContentPost','EditGlobalContentPre','EditGlobalContentPost',
          'DeleteGlobalContentPre','DeleteGlobalContentPost','GlobalContentPreCompile','GlobalContentPostCompile',
          'ContentStylesheet');
-$query = 'DELETE FROM '.CMS_DB_PREFIX.'events WHERE originator = \'Core\' AND event_name IN ('.implode(',',$tmp).')';
+$query = 'DELETE FROM '.CMS_DB_PREFIX.'events WHERE originator = \'Core\' AND event_name IN (\''.implode("','",$tmp).'\')';
 $return = $db->Execute($query);
 
 // create new events
@@ -58,18 +60,18 @@ Events::CreateEvent('Core','DeleteDesignPost');
 // create new tables
 verbose_msg('create table '.CmsLayoutTemplateType::TABLENAME);
 $flds = "
-         id I KEY AUTO,
-         originator C(50) NOTNULL,
-         name C(100) NOTNULL,
-         has_dflt I1,
-         dflt_contents X2,
-         description X,
-         lang_cb     C(255),
-         dflt_content_cb C(255),
-         requires_contentblocks I1,
-         owner   I,
-         created I,
-         modified I";
+id I KEY AUTO,
+originator C(50) NOTNULL,
+name C(100) NOTNULL,
+has_dflt I1,
+dflt_contents X2,
+description X,
+lang_cb     C(255),
+dflt_content_cb C(255),
+requires_contentblocks I1,
+owner   I,
+created I,
+modified I";
 $sqlarray = $dbdict->CreateTableSQL(CMS_DB_PREFIX.CmsLayoutTemplateType::TABLENAME, $flds, $taboptarray);
 $return = $dbdict->ExecuteSQLArray($sqlarray);
 
@@ -78,11 +80,11 @@ $return = $dbdict->ExecuteSQLArray($sqlarray);
 
 verbose_msg('create table '.CmsLayoutTemplateCategory::TABLENAME);
 $flds = "
-         id I KEY AUTO,
-         name C(100) NOTNULL,
-         description X,
-         item_order X,
-         modified I";
+id I KEY AUTO,
+name C(100) NOTNULL,
+description X,
+item_order X,
+modified I";
 $sqlarray = $dbdict->CreateTableSQL(CMS_DB_PREFIX.CmsLayoutTemplateCategory::TABLENAME, $flds, $taboptarray);
 $return = $dbdict->ExecuteSQLArray($sqlarray);
 $sqlarray = $dbdict->CreateIndexSQL(CMS_DB_PREFIX.'idx_layout_tpl_cat_1', CMS_DB_PREFIX.CmsLayoutTemplateCategory::TABLENAME,
@@ -91,16 +93,16 @@ $return = $dbdict->ExecuteSQLArray($sqlarray);
 
 verbose_msg('create table '.CmsLayoutTemplate::TABLENAME);
 $flds = "
-         id I KEY AUTO,
-         name C(100) NOTNULL,
-         content X2,
-         description X,
-         type_id I NOTNULL,
-         type_dflt I1,
-         category_id I,
-         owner_id I NOTNULL,
-         created I,
-         modified I";
+id I KEY AUTO,
+name C(100) NOTNULL,
+content X2,
+description X,
+type_id I NOTNULL,
+type_dflt I1,
+category_id I,
+owner_id I NOTNULL,
+created I,
+modified I";
 $sqlarray = $dbdict->CreateTableSQL(CMS_DB_PREFIX.CmsLayoutTemplate::TABLENAME, $flds, $taboptarray);
 $return = $dbdict->ExecuteSQLArray($sqlarray);
 
@@ -112,14 +114,14 @@ $return = $dbdict->ExecuteSQLArray($sqlarray);
 
 verbose_msg('create table '.CmsLayoutStylesheet::TABLENAME);
 $flds = "
-         id I KEY AUTO,
-         name C(100) NOTNULL,
-         content X2,
-         description X,
-         media_type C(255),
-         media_query X,
-         created I,
-         modified I";
+id I KEY AUTO,
+name C(100) NOTNULL,
+content X2,
+description X,
+media_type C(255),
+media_query X,
+created I,
+modified I";
 $sqlarray = $dbdict->CreateTableSQL(CMS_DB_PREFIX.CmsLayoutStylesheet::TABLENAME, $flds, $taboptarray);
 $return = $dbdict->ExecuteSQLArray($sqlarray);
 $sqlarray = $dbdict->CreateIndexSQL(CMS_DB_PREFIX.'idx_layout_css_1',CMS_DB_PREFIX.CmsLayoutStylesheet::TABLENAME, 'name', array('UNIQUE'));
@@ -127,21 +129,19 @@ $return = $dbdict->ExecuteSQLArray($sqlarray);
 
 verbose_msg('create table '.CmsLayoutTemplate::ADDUSERSTABLE);
 $flds = "
-         tpl_id I KEY,
-         user_id I KEY
-        ";
+tpl_id I KEY,
+user_id I KEY";
 $sqlarray = $dbdict->CreateTableSQL(CMS_DB_PREFIX.CmsLayoutTemplate::ADDUSERSTABLE, $flds, $taboptarray);
 $return = $dbdict->ExecuteSQLArray($sqlarray);
 
 verbose_msg('create table '.CmsLayoutCollection::TABLENAME);
 $flds = "
-         id   I KEY AUTO,
-         name C(100) NOTNULL,
-         description X,
-         dflt I1,
-         created I,
-         modified I
-        ";
+id I KEY AUTO,
+name C(100) NOTNULL,
+description X,
+dflt I1,
+created I,
+modified I";
 $sqlarray = $dbdict->CreateTableSQL(CMS_DB_PREFIX.CmsLayoutCollection::TABLENAME, $flds, $taboptarray);
 $return = $dbdict->ExecuteSQLArray($sqlarray);
 $sqlarray = $dbdict->CreateIndexSQL(CMS_DB_PREFIX.'idx_layout_dsn_1',CMS_DB_PREFIX.CmsLayoutCollection::TABLENAME, 'name', array('unique'));
@@ -150,9 +150,8 @@ $dbdict->ExecuteSQLArray($sqlarray);
 
 verbose_msg('create table '.CmsLayoutCollection::TPLTABLE);
 $flds = "
-         design_id I KEY NOTNULL,
-         tpl_id   I KEY NOTNULL
-        ";
+design_id I KEY,
+tpl_id I KEY";
 $sqlarray = $dbdict->CreateTableSQL(CMS_DB_PREFIX.CmsLayoutCollection::TPLTABLE, $flds, $taboptarray);
 $return = $dbdict->ExecuteSQLArray($sqlarray);
 $sqlarray = $dbdict->CreateIndexSQL(CMS_DB_PREFIX.'index_dsnassoc1', CMS_DB_PREFIX.CmsLayoutCollection::TPLTABLE, 'tpl_id');
@@ -160,24 +159,22 @@ $return = $dbdict->ExecuteSQLArray($sqlarray);
 
 verbose_msg('create table '.CmsLayoutCollection::CSSTABLE);
 $flds = "
-         design_id I KEY NOTNULL,
-         css_id   I KEY NOTNULL,
-         item_order I NOTNULL
-        ";
+design_id I KEY,
+css_id I KEY,
+item_order I NOTNULL";
 $sqlarray = $dbdict->CreateTableSQL(CMS_DB_PREFIX.CmsLayoutCollection::CSSTABLE, $flds, $taboptarray);
 $return = $dbdict->ExecuteSQLArray($sqlarray);
 
 verbose_msg('create table '.CmsLock::LOCK_TABLE);
 $flds = "
-         id I AUTO KEY NOTNULL,
-         type C(20) NOTNULL,
-         oid  I NOTNULL,
-         uid  I NOTNULL,
-         created I NOTNULL,
-         modified I NOTNULL,
-         lifetime I NOTNULL,
-         expires  I NOTNULL
-        ";
+id I AUTO KEY,
+type C(20) NOTNULL,
+oid I NOTNULL,
+uid I NOTNULL,
+created I NOTNULL,
+modified I NOTNULL,
+lifetime I NOTNULL,
+expires  I NOTNULL";
 $sqlarray = $dbdict->CreateTableSQL(CMS_DB_PREFIX.CmsLock::LOCK_TABLE, $flds, $taboptarray);
 $return = $dbdict->ExecuteSQLArray($sqlarray);
 
@@ -191,7 +188,7 @@ $sqlarray = $dbdict->CreateIndexSQL(CMS_DB_PREFIX.'index_locks3', CMS_DB_PREFIX.
 $return = $dbdict->ExecuteSQLArray($sqlarray);
 
 // create initial types.
-$page_template_type = $gcb_template_type = null;
+$page_template_type = $gcb_template_type = null; // no object
 for( $tries = 0; $tries < 2; $tries++ ) {
     try {
         $page_template_type = CmsLayoutTemplateType::load(CmsLayoutTemplateType::CORE.'::page');
@@ -203,26 +200,25 @@ for( $tries = 0; $tries < 2; $tries++ ) {
         // add different columns... and the save() method won't work.
         verbose_msg('create initial template types');
 
-        $contents = \CmsTemplateResource::reset_page_type_defaults();
+        $contents = \CMSMS\internal\TemplateResource::reset_page_type_defaults();
         $sql = 'INSERT INTO '.CMS_DB_PREFIX.\CmsLayoutTemplateType::TABLENAME.' (originator,name,has_dflt,dflt_contents,description,
                     lang_cb, dflt_content_cb, requires_contentblocks, owner, created, modified)
                 VALUES (?,?,?,?,?,?,?,?,?,UNIX_TIMESTAMP(),UNIX_TIMESTAMP())';
         $dbr = $db->Execute( $sql, [ \CmsLayoutTemplateType::CORE, 'page', TRUE, $contents, null,
-                                     serialize('CmsTemplateResource::page_type_lang_callback'),serialize('CmsTemplateResource::reset_page_type_default'), TRUE, null ] );
+                                     serialize('CMSMS\internal\TemplateResource::page_type_lang_callback'),serialize('CMSMS\internal\TemplateResource::reset_page_type_default'), TRUE, null ] );
         $contents = null;
         $dbr = $db->Execute( $sql, [ \CmsLayoutTemplateType::CORE, 'generic', FALSE, null, null,
-                                     serialize('CmsTemplateResource::generic_type_lang_callback'), null, FALSE, null ] );
+                                     serialize('CMSMS\internal\TemplateResource::generic_type_lang_callback'), null, FALSE, null ] );
     }
 } // tries
-
-    /*
+/*
     // if we got here.... the type does not exist.
     $page_template_type = new CmsLayoutTemplateType();
     $page_template_type->set_originator(CmsLayoutTemplateType::CORE);
     $page_template_type->set_name('page');
     $page_template_type->set_dflt_flag(TRUE);
-    $page_template_type->set_lang_callback('CmsTemplateResource::page_type_lang_callback');
-    $page_template_type->set_content_callback('CmsTemplateResource::reset_page_type_defaults');
+    $page_template_type->set_lang_callback('CMSMS\internal\TemplateResource::page_type_lang_callback');
+    $page_template_type->set_content_callback('CMSMS\internal\TemplateResource::reset_page_type_defaults');
     $page_template_type->reset_content_to_factory();
     $page_template_type->set_content_block_flag(TRUE);
     $page_template_type->save();
@@ -230,9 +226,9 @@ for( $tries = 0; $tries < 2; $tries++ ) {
     $gcb_template_type = new CmsLayoutTemplateType();
     $gcb_template_type->set_originator(CmsLayoutTemplateType::CORE);
     $gcb_template_type->set_name('generic');
-    $gcb_template_type->set_lang_callback('CmsTemplateResource::generic_type_lang_callback');
+    $gcb_template_type->set_lang_callback('CMSMS\internal\TemplateResource::generic_type_lang_callback');
     $gcb_template_type->save();
-    */
+*/
 if( !is_object($page_template_type) || !is_object($gcb_template_type) ) {
     error_msg('The page template type and/or GCB template type could not be found or created');
     throw new \LogicException('This is bad');
@@ -291,7 +287,7 @@ $fix_template_name = function($in) use (&$db,&$_fix_name) {
 verbose_msg('convert global content blocks to generic templates');
 $query = 'SELECT * FROM '.CMS_DB_PREFIX.'htmlblobs';
 $sql2 = 'INSERT INTO '.CMS_DB_PREFIX.CmsLayoutTemplate::TABLENAME.' (name,content,description,type_id,type_dflt,owner_id,created,modified) VALUES (?,?,?,?,0,?,UNIX_TIMESTAMP(),UNIX_TIMESTAMP())';
-$gcblist = null;
+$gcblist = [];
 $tmp = $db->GetArray($query);
 if( is_array($tmp) && count($tmp) ) {
     // for each gcb, come up wit a new name and if the new name does not exist in the database, create a new template by that name.
@@ -363,7 +359,7 @@ if( is_array($tmp) && count($tmp) ) {
           $stylesheet = new CmsLayoutStylesheet();
           $stylesheet->set_name($new_name);
           $stylesheet->set_content($row['css_text']);
-          $stylesheet->set_description('CMSMS Upgraded on '.$db->DbTimeStamp(time()));
+          $stylesheet->set_description('CMSMS Upgraded on '.$db->DBTimeStamp(time()));
           $stylesheet->set_media_types($row['media_type']);
           $stylesheet->set_media_query($row['media_query']);
           $stylesheet->save();
@@ -395,7 +391,7 @@ if( is_array($tmp) && count($tmp) ) {
         $tpl_id = $row['template_id'];
         $design = new CmsLayoutCollection();
         $design->set_name($row['template_name']);
-        $design->set_description('CMSMS Upgraded on '.$db->DbTimeStamp(time()));
+        $design->set_description('CMSMS Upgraded on '.$db->DBTimeStamp(time()));
         $design->set_default($is_default);
         $design->save(); // the design will now have an id.
         verbose_msg('created design '.$design->get_name());

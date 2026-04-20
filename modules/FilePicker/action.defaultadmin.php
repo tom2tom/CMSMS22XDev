@@ -1,14 +1,10 @@
 <?php
-#-------------------------------------------------------------------------
-# Module: FilePicker - A CMSMS addon module to provide file picking capabilities.
-# (c) 2016 by Fernando Morgado <jomorg@cmsmadesimple.org>
-# (c) 2016 by Robert Campbell <calguy1000@cmsmadesimple.org>
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2006 by Ted Kulp (wishy@cmsmadesimple.org)
-# This project's homepage is: http://www.cmsmadesimple.org
-#-------------------------------------------------------------------------
-#-------------------------------------------------------------------------
 # BEGIN_LICENSE
+#-------------------------------------------------------------------------
+# Module FilePicker action
+# (c) 2016 Fernando Morgado <jomorg@cmsmadesimple.org>
+# (c) 2016 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#
 #-------------------------------------------------------------------------
 # This file is part of FilePicker
 # FilePicker is free software; you can redistribute it and/or modify
@@ -26,12 +22,14 @@
 # Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
 #-------------------------------------------------------------------------
 # END_LICENSE
-#-------------------------------------------------------------------------
-use FilePicker\ProfileDAO;
+
+//use FilePicker\ProfileDAO;
 if( !defined('CMS_VERSION') ) exit;
 if( !$this->VisibleToAdminUser() ) return;
 
 $profiles = $this->_dao->loadAll();
-$smarty->assign('dflt_profile_id',$this->_dao->getDefaultProfileId());
-$smarty->assign('profiles',$profiles);
-echo $this->ProcessTemplate('defaultadmin.tpl');
+$modname = $this->GetName();
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;defaultadmin.tpl",null,$modname,$smarty);
+$tpl->assign('dflt_profile_id',$this->_dao->getDefaultProfileId());
+$tpl->assign('profiles',$profiles);
+$tpl->display();

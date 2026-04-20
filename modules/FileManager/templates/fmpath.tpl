@@ -1,4 +1,5 @@
-<h3>{$mod->Lang('currentpath')}
+<h3>{$mod->Lang('currentpath')} :
+{if $path_parts}
    <span class="pathselector">
    {foreach $path_parts as $part}
      {if !empty($part->url)}
@@ -6,7 +7,10 @@
      {else}
        {$part->name}
      {/if}
-     {if !$part@last}<span class="ds">/</span>{/if}
+     {if !$part@last} <span class="ds">/</span>{/if}
    {/foreach}
    </span>
+{else}
+( {$mod->Lang('top')} )
+{/if}
 </h3>

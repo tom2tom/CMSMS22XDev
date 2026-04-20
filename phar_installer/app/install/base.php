@@ -3,7 +3,7 @@ global $admin_user;
 
 status_msg(ilang('install_requireddata'));
 
-$query = 'INSERT INTO '.CMS_DB_PREFIX.'version VALUES (202)';
+$query = 'INSERT INTO '.CMS_DB_PREFIX.'version VALUES (203)';
 $db->Execute($query);
 verbose_msg(ilang('install_setschemaver'));
 
@@ -11,25 +11,78 @@ verbose_msg(ilang('install_setschemaver'));
 // site preferences
 //
 verbose_msg(ilang('install_initsiteprefs'));
-cms_siteprefs::set('sitedownmessage','<p>Site is currently down for maintenance</p>');
-cms_siteprefs::set('metadata',"<meta name=\"Generator\" content=\"CMS Made Simple - Copyright (C) 2004-" . date('Y') . ". All rights reserved.\" />\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\r\n");
-cms_siteprefs::set('global_umask','022');
-cms_siteprefs::set('auto_clear_cache_age',60); // cache files for only 60 days by default
-cms_siteprefs::set('adminlog_lifetime',3600*24*31); // admin log entries only live for 60 days.
+cms_siteprefs::set('adminlog_lifetime',86400*31); // admin log entries only live for 31 days.
 cms_siteprefs::set('allow_browser_cache',1); // allow browser to cache cachable pages
+cms_siteprefs::set('auto_clear_cache_age',60); // cache files for only 60 days by default
 cms_siteprefs::set('browser_cache_expiry',60); // browser can cache pages for 60 minutes.
-
+$txt = str_pad(decoct(umask()),3,'0',STR_PAD_LEFT);
+cms_siteprefs::set('global_umask',$txt); // deprecated since 2.2.19 (setting umask is bad on multi-threaded servers)
+cms_siteprefs::set('metadata',"<meta name=\"Generator\" content=\"CMS Made Simple - Copyright (C) 2004-" . date('Y') . ". All rights reserved.\">\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\r\n");
+cms_siteprefs::set('privatePath',"\$config['admin_path'],configs,private");
+cms_siteprefs::set('sitedownmessage','<p>Site is currently down for maintenance</p>');
+cms_siteprefs::set('use_smartycache',1); // cache templates
+cms_siteprefs::set('use_smartycompilecheck',0); // do not compile-check templates
+cms_siteprefs::set('SmartyAdmincacheLife',30); // Smarty admin-templates cached for 30 minutes, if at all
+cms_siteprefs::set('SmartyFrontcacheLife',60); // Smarty frontend-templates cached for 60 minutes, if at all
+/* other prefs used across the core
+'backendwysiwyg'
+'basic_attributes'
+'browser_cache_expiry'
+'cache_driver'
+'cache_filecache_autocleaning'
+'cache_filecache_blocking'
+'cache_filecache_lifetime'
+'cache_filecache_locking'
+'checkversion'
+'content_autocreate_flaturls'
+'content_autocreate_urls'
+'content_cssnameisblockname'
+'content_imagefield_path'
+'content_mandatory_urls'
+'content_thumbnailfield_path'
+'contentimage_path'
+'custom404'
+'defaultdateformat'
+'disallowed_contenttypes'
+'enablenotifications'
+'enablesitedownmessage'
+'filepickermodule'
+'frontendlang'
+'frontendwysiwyg'
+'job_maxerrs',5
+'jobs_interval',15
+'jobs_timeout',30
+'last_remotever_check'
+'last_remotever'
+'lock_timeout'
+'logintheme'
+'mail_is_set'
+'mailprefs'
+'notices_timeout'
+'searchmodule'
+'sitedown_use_wysiwyg'
+'sitedownexcludeadmins'
+'sitedownexcludes'
+'sitemask'
+'sitename'
+'template_userid' disabled
+'thumbnail_height'
+'thumbnail_width'
+'xmlmodulerepository'
+*/
 //
 // permissions
 //
 verbose_msg(ilang('install_initsiteperms'));
 $all_perms = array();
-$perms = array('Add Pages','Manage Groups','Add Templates','Manage Users','Modify Any Page',
-	       'Modify Permissions','Modify Templates','Remove Pages',
-	       'Modify Modules','Modify Files','Modify Site Preferences',
-	       'Manage Stylesheets','Manage Designs','Modify User-defined Tags','Clear Admin Log',
-	       'Modify Events','View Tag Help','Manage All Content','Reorder Content','Manage My Settings',
-               'Manage My Account', 'Manage My Bookmarks');
+$perms = array(
+	'Add Pages','Manage Groups','Add Templates','Manage Users','Modify Any Page',
+	'Modify Permissions','Modify Templates','Remove Pages',
+	'Modify Modules','Modify Files','Modify Site Preferences','Manage Jobs',
+	'Manage Stylesheets','Manage Designs','Modify User-defined Tags','Clear Admin Log',
+	'Modify Events','View Tag Help','Manage All Content','Reorder Content','Manage My Settings',
+	'Manage My Account','Manage My Bookmarks'
+	);
 foreach( $perms as $one_perm ) {
   $permission = new CmsPermission();
   $permission->source = 'Core';
@@ -80,7 +133,7 @@ $designer_group->GrantPermission('Modify User-defined Tags');
 //
 verbose_msg(ilang('install_initsiteusers'));
 $sitemask = cms_siteprefs::get('sitemask');
-$admin_user = new User;
+$admin_user = new User();
 $admin_user->username = $adminaccount['username'];
 if( isset($adminaccount['emailaddr']) && $adminaccount['emailaddr'] ) $admin_user->email = $adminaccount['emailaddr'];
 $admin_user->active = 1;
@@ -108,7 +161,10 @@ UserTagOperations::get_instance()->SetUserTag('custom_copyright',$txt,'Code to o
 // Events
 //
 verbose_msg(ilang('install_initevents'));
+Events::CreateEvent('Core','LoginPre');
+Events::CreateEvent('Core','LoginPassed');
 Events::CreateEvent('Core','LoginPost');
+Events::CreateEvent('Core','LogoutPre');
 Events::CreateEvent('Core','LogoutPost');
 Events::CreateEvent('Core','LoginFailed');
 Events::CreateEvent('Core','LostPassword');
@@ -172,6 +228,8 @@ Events::CreateEvent('Core','DeleteUserDefinedTagPost');
 Events::CreateEvent('Core','ModuleInstalled');
 Events::CreateEvent('Core','ModuleUninstalled');
 Events::CreateEvent('Core','ModuleUpgraded');
+Events::CreateEvent('Core','OnJobFailed');
+
 Events::CreateEvent('Core','ContentPreCompile');
 Events::CreateEvent('Core','ContentPostCompile');
 Events::CreateEvent('Core','ContentPreRender'); // 2.2
@@ -184,19 +242,17 @@ Events::CreateEvent('Core','StylesheetPreCompile');
 Events::CreateEvent('Core','StylesheetPostCompile');
 Events::CreateEvent('Core','StylesheetPostRender');
 
-$create_private_dir = function($relative_dir) {
-    $app = \__appbase\get_app();
-    $destdir = $app->get_destdir();
-    $relative_dir = trim($relative_dir);
+$perms = 0777; //TODO suitable new-folder permissions e.g. 0777 & ~umask()
+$create_private_dir = function($top_dir,...$relative_dir) use($perms) {
     if( !$relative_dir ) return;
-
-    $dir = $destdir.'/'.$relative_dir;
+    $sep = DIRECTORY_SEPARATOR;
+    $dn = implode($sep,$relative_dir);
+    $dir = "$top_dir{$sep}$dn";
     if( !is_dir($dir) ) {
-        @mkdir($dir,0777,true);
+        @mkdir($dir,$perms,true);
     }
-    @touch($dir.'/index.html');
+    @touch("$dir{$sep}index.html");
 };
-
 /*
 $move_directory_files = function($srcdir,$destdir) {
     $srcdir = trim($srcdir);
@@ -214,13 +270,29 @@ $move_directory_files = function($srcdir,$destdir) {
     @touch($dir.'/index.html');
 };
 */
+$app = \__appbase\get_app();
+$destdir = $app->get_destdir();
 
+// create directories excluded from sources archive cuz empty
+verbose_msg(ilang('install_createtmpdirs'));
+$create_private_dir($destdir,'tmp');
+$create_private_dir($destdir,'tmp','cache');
+$create_private_dir($destdir,'tmp','config');
+$create_private_dir($destdir,'tmp','templates_c');
+
+$create_private_dir($destdir,'uploads'); // since 2.2.22F2 not in archive if themes data not in here
+$create_private_dir($destdir,'uploads','images');
+$create_private_dir($destdir,'admin','configs'); // since 2.2.20
+$create_private_dir($destdir,'admin','configs','private'); // since 2.2.23F2
 // create the assets directory structure
 verbose_msg(ilang('install_createassets'));
-$create_private_dir('assets/templates');
-$create_private_dir('assets/configs');
-$create_private_dir('assets/admin_custom');
-$create_private_dir('assets/module_custom');
-$create_private_dir('assets/plugins');
-$create_private_dir('assets/images');
-$create_private_dir('assets/css');
+$create_private_dir($destdir,'assets');
+$create_private_dir($destdir,'assets','admin_custom');
+$create_private_dir($destdir,'assets','configs');
+$create_private_dir($destdir,'assets','css');
+$create_private_dir($destdir,'assets','images');
+$create_private_dir($destdir,'assets','jobs'); // since 2.2.23F2
+$create_private_dir($destdir,'assets','module_custom');
+$create_private_dir($destdir,'assets','plugins');
+$create_private_dir($destdir,'assets','templates');
+$create_private_dir($destdir,'assets','themes'); // since 2.2.19

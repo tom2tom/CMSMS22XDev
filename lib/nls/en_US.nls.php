@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple translation file
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -21,13 +20,12 @@
 #The basic idea and values was taken from then Horde Framework (http://horde.org)
 #The original filename was horde/config/nls.php.
 #The modifications to fit it for Gallery were made by Jens Tkotz
-#(http://gallery.meanalto.com) 
+#(http://gallery.meanalto.com)
 
-#Ideas from Gallery's implementation made to CMS by Ted Kulp
+#Ideas from Gallery's implementation made for CMSMS by Ted Kulp
 
 #US English
-#Created by: Ted Kulp <tedkulp@users.sf.net>
-#Maintained by: Ted Kulp <tedkulp@users.sf.net>
+#Created by: Ted Kulp <ted@cmsmadesimple.org>
 #This is the default language
 
 #Native language name
@@ -40,15 +38,15 @@ $nls['alias']['en'] = 'en_US';
 $nls['alias']['english'] = 'en_US' ;
 $nls['alias']['eng'] = 'en_US' ;
 $nls['alias']['en-US'] = 'en_US';
-$nls['alias']['en_CA'] = 'en_US' ;
-$nls['alias']['en_GB'] = 'en_US' ;
+//$nls['alias']['en_CA'] = 'en_US' ; other english dialects implicitly default to en_US
+//$nls['alias']['en_GB'] = 'en_US' ;
 $nls['alias']['en_US.ISO8859-1'] = 'en_US' ;
 
 #Encoding of the language
 $nls['encoding']['en_US'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['en_US'] = array(dirname(__FILE__).'/en_US/admin.inc.php');
+$nls['file']['en_US'] = array(__DIR__.'/en_US/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple translation file
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -23,7 +22,7 @@
 #The modifications to fit it for Gallery were made by Jens Tkotz
 #(http://gallery.meanalto.com) 
 
-#Ideas from Gallery's implementation made to CMS by Ted Kulp
+#Ideas from Gallery's implementation made for CMSMS by Ted Kulp
 
 #Created by: Alayn Gortazar (Zurti) < zutoin [at] gmail [dot] com >
 #Maintained by: Alayn Gortazar (Zurti) < zutoin [at] gmail [dot] com >
@@ -48,7 +47,7 @@ $nls['locale']['eu_ES'] = 'eu_ES,eu_ES.utf8,eu_ES.utf-8,eu_ES.UTF-8,eu_ES@euro,b
 $nls['encoding']['eu_ES'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['eu_ES'] = array(dirname(__FILE__).'/eu_ES/admin.inc.php');
+$nls['file']['eu_ES'] = array(__DIR__.'/eu_ES/admin.inc.php');
 
 #Language setting for HTML area
 $nls['htmlarea']['eu_ES'] = 'en';

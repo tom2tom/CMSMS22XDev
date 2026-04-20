@@ -1,0 +1,94 @@
+<?php
+#CMS Made Simple class SectionHeader
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#
+#This program is free software; you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation; either version 2 of the License, or
+#(at your option) any later version.
+#
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#You should have received a copy of the GNU General Public License
+#along with this program; if not, write to the Free Software
+#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#$Id$
+
+//namespace CMSMS\contenttypes;
+
+/**
+ * Implements the Section Header content type
+ *
+ * Section headers are logical ways to organize content.  They usually appear in navigations, but are not navigable.
+ *
+ * @package CMS
+ * @subpackage content_types
+ * @license GPL
+ */
+class SectionHeader extends ContentBase
+{
+	function FriendlyName() { return lang('contenttype_sectionheader'); }
+
+	function SetProperties()
+	{
+		parent::SetProperties();
+		$this->RemoveProperty('secure',false);
+		$this->RemoveProperty('accesskey','');
+		$this->RemoveProperty('cachable',true);
+		$this->RemoveProperty('target','');
+		$this->RemoveProperty('page_url','');
+		$this->SetURL(''); // url will be lost when going back to a content page.
+
+		// Turn off caching
+		$this->mCachable = false;
+	}
+
+	public function HasUsableLink() { return false; }
+	public function RequiresAlias() { return true; }
+	public function HasSearchableContent() { return false; }
+	public function GetURL($rewrite = true) { return '#'; }
+	public function IsViewable() { return false; }
+	public function Navigable() { return true; } //allow inclusion in page-pickers
+
+	public function TabNames()
+	{
+		$res = array(lang('main'));
+		if( check_permission(get_userid(),'Manage All Content') ) {
+			$res[] = lang('options');
+		}
+		return $res;
+	}
+
+	//this is a redundant CMSMS1 method TODO remove
+	public function EditAsArray($adding = false, $tab = 0, $showadmin = false)
+	{
+		switch($tab) {
+		case '0':
+			return $this->display_attributes($adding);
+		case '1':
+			return $this->display_attributes($adding,1);
+		default:
+			return [];
+		}
+	}
+
+	public function ValidateData()
+	{
+		$errors = parent::ValidateData();
+		if( $errors && $this->mId < 1 ) {
+			// some error occurred..
+			// reset the menu text
+			// and the alias
+			$this->mName = '';
+			$this->mMenuText = '';
+		}
+		$this->mTemplateId = -1;
+		return $errors;
+	}
+
+}
+
+?>

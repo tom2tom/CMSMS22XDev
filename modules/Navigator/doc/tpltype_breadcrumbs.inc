@@ -1,11 +1,3 @@
-<style type="text/css">
-	ul.helptext {
-	  list-style-type: disc;
-	  margin-left: 1em;
-	  margin-bottom: 1em;
-	}
-</style>
-
 <h2>Navigator breadcrumbs template help</h2>
 
 <p>The breadcrumbs template outputs a flat array of Node objects representing the path from the current page, to the top of the page hierarchy.</p>

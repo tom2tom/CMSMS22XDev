@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: Content (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A module for managing content in CMSMS.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module CMSContentManager action tab populator
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -44,6 +39,35 @@ $this->SetPreference('locktimeout',$timeout);
 $timeout = (int)$params['lockrefresh'];
 if( $timeout != 0 ) $timeout = max(30,min(3540,(int)$params['lockrefresh']));
 $this->SetPreference('lockrefresh',$timeout);
+
+foreach( $params['taborders'] as $name=>$val ) {
+    if( empty($params['deltabs'][$name]) ) {
+        //TODO sanitize & validate $name
+        $this->SetPreference('order_TAB_'.$name,(int)$val);
+    } else {
+        $this->RemovePreference('order_TAB_'.$name);
+        $this->RemovePreference('name_TAB_'.$name);
+    }
+}
+//process added custom-tab if any
+$newtab = get_parameter_value($params,'customtabid'); // TODO sanitize
+if( $newtab ) {
+    $val = (int)$params['customtaborder'];
+    if( $val < 1 ) {
+        $val = 99; //placeholder, prob. last
+    }
+    $name = get_parameter_value($params,'customtabname');
+    if( $name ) {
+        // TODO sanitize
+    } else {
+        $name = str_replace(['TAB','_'],['',''],strtoupper($newtab));
+        if( !$name ) {
+            $name = 'MissingName';
+        }
+    }
+    $this->SetPreference('order_TAB_'.$newtab,$val);
+    $this->SetPreference('name_TAB_'.$newtab,$name);
+}
 
 $template_list_mode = get_parameter_value($params,'template_list_mode','designpage');
 $this->SetPreference('template_list_mode',$template_list_mode);

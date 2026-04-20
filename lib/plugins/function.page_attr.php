@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: page_attr
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -18,10 +17,10 @@
 
 function smarty_function_page_attr($params, $smarty)
 {
-    $key = trim(get_parameter_value($params,'key'));
-    $page = trim(get_parameter_value($params,'page'));
-    $assign = trim(get_parameter_value($params,'assign'));
-    $inactive = \cms_to_bool(get_parameter_value($params,'inactive'));
+    $key = get_parameter_value($params,'key');
+    $page = get_parameter_value($params,'page');
+    $assign = get_parameter_value($params,'assign');
+    $inactive = get_parameter_value($params,'inactive',FALSE);
     $contentobj = null;
 
     if( $page ) {
@@ -30,7 +29,7 @@ function smarty_function_page_attr($params, $smarty)
             // it's an id
             $hm = CmsApp::get_instance()->GetHierarchyManager();
             $node = $hm->find_by_tag('id',$page);
-            if( $node ) $contentobj = $node->getContent(TRUE,true,$inactive);
+            if( $node ) $contentobj = $node->getContent(TRUE,TRUE,$inactive);
         }
         else {
             // this is quicker if using an alias
@@ -42,7 +41,7 @@ function smarty_function_page_attr($params, $smarty)
         $contentobj = cms_utils::get_current_content();
     }
 
-    $result = null;
+    $result = '';
     if( $contentobj && $key ) {
         switch( $key ) {
         case '_dflt_':
@@ -69,12 +68,12 @@ function smarty_function_page_attr($params, $smarty)
 
         case 'created_date':
             $result = $contentobj->GetCreationDate();
-            if( $result < 0 ) $result = null;
+            if( $result < 0 ) $result = '';
             break;
 
         case 'modified_date':
             $result = $contentobj->GetModifiedDate();
-            if( $result < 0 ) $result = null;
+            if( $result < 0 ) $result = '';
             break;
 
         case 'last_modified_by':
@@ -92,19 +91,19 @@ function smarty_function_page_attr($params, $smarty)
     }
     if( $assign ) {
         $smarty->assign($assign,$result);
-        return;
+        return '';
     }
 	return $result;
 }
 
 function smarty_cms_about_function_page_attr() {
 ?>
-	<p>Author: Ted Kulp&lt;tedkulp@users.sf.net&gt;</p>
+	<p>Author: Ted Kulp&lt;ted@cmsmadesimple.org&gt;</p>
 
 	<p>Change History:</p>
 	<ul>
 		<li>None</li>
-       <li>2015-06-02 - Added page parameter (calguy1000)</li>
+       <li>2015-06-02 - Added page parameter (Robert Campbell)</li>
 	</ul>
 <?php
 }

@@ -3,14 +3,14 @@ if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Modify Modules') ) return;
 $this->SetCurrentTab('installed');
 
-$mod = get_parameter_value($params,'mod');
-if( !$mod ) {
+$modname = get_parameter_value($params,'mod');
+if( !$modname ) {
   $this->SetError($this->Lang('error_missingparams'));
   $this->RedirectToAdminTab();
 }
 
 $ops = ModuleOperations::get_instance();
-$result = $ops->UpgradeModule($mod);
+$result = $ops->UpgradeModule($modname);
 if( !is_array($result) || !isset($result[0]) ) $result = array(FALSE,$this->Lang('error_moduleupgradefailed'));
 
 if( $result[0] == FALSE ) {
@@ -18,7 +18,7 @@ if( $result[0] == FALSE ) {
   $this->RedirectToAdminTab();
 }
 
-$this->SetMessage($this->Lang('msg_module_upgraded',$mod));
+$this->SetMessage($this->Lang('msg_module_upgraded',$modname));
 $this->RedirectToAdminTab();
 
 ?>

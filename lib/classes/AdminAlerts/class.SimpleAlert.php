@@ -1,8 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2013 by Ted Kulp (ted@cmsmadesimple.org)
-#(c)2016 by the CMSMS Dev Team
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple class CMSMS\AdminAlerts\SimpleAlert
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -19,14 +17,6 @@
 #
 #$Id$
 
-/**
- * This file contains the definition for a simple alert class that uses pre-defined values.
- *
- * @package CMS
- * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
- */
-
 namespace CMSMS\AdminAlerts;
 
 /**
@@ -35,7 +25,7 @@ namespace CMSMS\AdminAlerts;
  * @since 2.2
  * @package CMS
  * @license GPL
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @prop string[] $perms An array of permission names.  The logged in user must have at least one of these permissions to see the alert.
  * @prop string $icon The complete URL to an icon to associate with this alert
  * @prop string $msg The message to display.  Note: Since alerts are stored in the database, and can be created asynchronously you cannot rely on language strings for the message or title when using this class.
@@ -67,7 +57,7 @@ class SimpleAlert extends Alert
      *
      * @param string[] $perms An array of permission names.  Or null.
      */
-    public function __construct($perms = null)
+    public function __construct($perms = [])
     {
         if( $perms && (!is_array($perms) || !count($perms)) ) throw new \InvalidArgumentException('perms must be an array of permission name strings');
         $this->_perms = $perms;
@@ -139,7 +129,7 @@ class SimpleAlert extends Alert
     }
 
     /**
-     * Givent he admin_uid, check if the specified uid has at least one of the permissions specified in the perms array.
+     * Given the admin_uid, check if the specified uid has at least one of the permissions specified in the perms array.
      *
      * @param int $admin_uid
      * @return bool;

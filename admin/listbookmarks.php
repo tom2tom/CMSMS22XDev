@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple admin console script
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -16,97 +15,50 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: listbookmarks.php 12671 2021-12-13 03:05:01Z tomphantoo $
+#$Id$
 
-$CMS_ADMIN_PAGE=1;
+$CMS_ADMIN_PAGE = 1;
 
-require_once("../lib/include.php");
-$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+require_once '../lib/include.php';
 
 check_login();
 
-include_once("header.php");
+require_once 'header.php';
 
-?>
-<div class="pagecontainer">
-	<div class="pageoverflow">
+$page = (isset($_GET['page'])) ? (int)$_GET['page'] : 1;
+$limit = 20; // max items per page
+$showinfo = false;
 
-<?php
-
-	$userid = get_userid();
-
-	$bookops = cmsms()->GetBookmarkOperations();
-	$marklist = $bookops->LoadBookmarks($userid);
-
-	$page = 1;
-	if (isset($_GET['page'])) $page = $_GET['page'];
-	$limit = 20;
-
-	if (count($marklist) > $limit)
-	{
-		echo "<p class=\"pageshowrows\">".pagination($page, count($marklist), $limit)."</p>";
-	}
-	echo $themeObject->ShowHeader('bookmarks').'</div>';
-
-	if (count($marklist) > 0) {
-
-		echo'<p class="pagewarning visible">' . lang('show_shortcuts_message') . '</p>';
-
-		echo "<table class=\"pagetable\">\n";
-		echo '<thead>';
-		echo "<tr>\n";
-		echo "<th class=\"pagew60\">".lang('name')."</th>\n";
-		echo "<th class=\"pagew60\">".lang('url')."</th>\n";
-		echo "<th class=\"pageicon\">&nbsp;</th>\n";
-		echo "<th class=\"pageicon\">&nbsp;</th>\n";
-		echo "</tr>\n";
-		echo '</thead>';
-		echo '<tbody>';
-
-		$currow = "row1";
-
-		// construct true/false button images
-		$image_true = $themeObject->DisplayImage('icons/system/true.gif', lang('true'),'','','systemicon');
-		$image_false = $themeObject->DisplayImage('icons/system/false.gif', lang('false'),'','','systemicon');
-
-		$counter=0;
-		foreach ($marklist as $onemark){
-			if ($counter < $page*$limit && $counter >= ($page*$limit)-$limit) {
-				echo "<tr class=\"$currow\">\n";
-				echo "<td><a href=\"editbookmark.php".$urlext."&amp;bookmark_id=".$onemark->bookmark_id."\">".$onemark->title."</a></td>\n";
-				echo "<td>".$onemark->url."</td>\n";
-				echo "<td><a href=\"editbookmark.php".$urlext."&amp;bookmark_id=".$onemark->bookmark_id."\">";
-				echo $themeObject->DisplayImage('icons/system/edit.gif', lang('edit'),'','','systemicon');
-				echo "</a></td>\n";
-				echo "<td><a href=\"deletebookmark.php".$urlext."&amp;bookmark_id=".$onemark->bookmark_id."\" onclick=\"return confirm('".cms_html_entity_decode(lang('deleteconfirm', $onemark->title) )."');\">";
-				echo $themeObject->DisplayImage('icons/system/delete.gif', lang('delete'),'','','systemicon');
-				echo "</a></td>\n";
-				echo "</tr>\n";
-				($currow == "row1"?$currow="row2":$currow="row1");
-			}
-			$counter++;
+$show = [];
+$userid = get_userid();
+$bookops = cmsms()->GetBookmarkOperations();
+$marklist = $bookops->LoadBookmarks($userid);
+if ($marklist) {
+	$urlext = CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+	$gmax = $page * $limit;
+	for ($ctr = $gmax - $limit; $ctr < $gmax; $ctr++) {
+		if (isset($marklist[$ctr])) {
+			//replicate part of BookmarkOperations::_prep_for_saving()
+			$marklist[$ctr]->url = str_replace($urlext,'[SECURITYTAG]',$marklist[$ctr]->url);
+			$show[] = $marklist[$ctr];
 		}
-
-		echo '</tbody>';
-		echo "</table>\n";
-
-	} else {
-		echo'<p class="information">' . lang('no_shortcuts') . '</p>';
 	}
-?>
-	<div class="pageoptions">
-		<p class="pageoptions">
-			<a href="addbookmark.php<?php echo $urlext ?>">
-				<?php
-					echo $themeObject->DisplayImage('icons/system/newobject.gif', lang('addbookmark'),'','','systemicon').'</a>';
-					echo ' <a class="pageoptions" href="addbookmark.php'.$urlext.'">'.lang("addbookmark");
-				?>
-			</a>
-		</p>
-	</div>
-</div>
-<?php
+	$showinfo = !cms_userprefs::get_for_user($userid,'bookmarks',false);
+}
 
-include_once("footer.php");
+$themeObject->set_value('pagetitle', 'bookmarks');
 
-?>
+$smarty->changeCaching(false);
+$tpl = $smarty->createTemplate('admin_tpl:listbookmarks.tpl',null,null,$smarty,false);
+// see also $smarty-assigned var $secureparam
+$tpl->assign('showinfo',$showinfo)
+ ->assign('iconadd',$themeObject->DisplayImage('icons/system/newobject.gif',lang('addbookmark'),'','','systemicon'))
+ ->assign('iconedit',$themeObject->DisplayImage('icons/system/edit.gif',lang('editbookmark'),'','','systemicon'))
+ ->assign('icondelete',$themeObject->DisplayImage('icons/system/delete.gif',lang('delete'),'','','systemicon'));
+if (($n = count($marklist)) > $limit) {
+	$tpl->assign('pagination',pagination($page,$n,$limit));
+}
+$tpl->assign('marklist',$show);
+$tpl->display();
+
+require_once 'footer.php';

@@ -20,7 +20,7 @@ $nls['locale']['da_DK'] = 'da_DK,da_DK.utf8,da_DK.utf-8,da_DK.UTF-8,danish,Danis
 $nls['encoding']['da_DK'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['da_DK'] = array(dirname(__FILE__).'/da_DK/admin.inc.php');
+$nls['file']['da_DK'] = array(__DIR__.'/da_DK/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

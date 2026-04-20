@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: Content (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A module for managing content in CMSMS.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module CMSContentManager action
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -46,7 +41,7 @@ function cmscm_admin_bulk_delete_can_delete($node)
   // test if can delete this node (not its children)
   $mod = cms_utils::get_module('CMSContentManager');
   if( $mod->CheckPermission('Manage All Content') ) return TRUE;
-  if( $mod->CheckPermission('Modify Any Page') && $mod->CheckPermission('Remove Pages') ) return true;
+  if( $mod->CheckPermission('Modify Any Page') && $mod->CheckPermission('Remove Pages') ) return TRUE;
   if( !$mod->CheckPermission('Remove Pages') ) return FALSE;
 
   $id = (int)$node->get_tag('id');
@@ -71,7 +66,7 @@ function cmscm_get_deletable_pages($node)
             }
         }
     }
-  return $out;
+    return $out;
 }
 
 if( isset($params['cancel']) ) {
@@ -101,8 +96,8 @@ if( isset($params['submit']) ) {
         }
         if( $i > 0 ) {
             $contentops->SetAllHierarchyPositions();
-            $contentops->SetContentModified();
-            audit('','Core','Deleted '.$i.' pages');
+//          $contentops->SetContentModified(); // SetAllHierarchyPositions does this if change(s) done
+            audit('',$this->GetName(),'Bulk-deleted '.$i.' pages');
             $this->SetMessage($this->Lang('msg_bulk_successful'));
         }
     }
@@ -149,7 +144,7 @@ foreach( $pagelist as $pid ) {
   if( !is_object($content) ) continue; // this should never happen either
 
   if( $content->DefaultContent() ) {
-    echo $this->ShowErrors($this->Lang('error_delete_defaultcontent'));
+    $this->ShowErrors($this->Lang('error_delete_defaultcontent'));
     continue;
   }
 
@@ -166,10 +161,12 @@ if( count($displaydata) == 0 ) {
   $this->SetError($this->Lang('error_delete_novalidpages'));
   $this->RedirectToAdminTab();
 }
+$modname = $this->GetName();
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_bulk_delete.tpl",null,$modname,$smarty);
 
-$smarty->assign('multicontent',base64_encode(serialize($pagelist)));
-$smarty->assign('displaydata',$displaydata);
-echo $this->ProcessTemplate('admin_bulk_delete.tpl');
+$tpl->assign('multicontent',base64_encode(serialize($pagelist)));
+$tpl->assign('displaydata',$displaydata);
+$tpl->display();
 #
 # EOF
 #

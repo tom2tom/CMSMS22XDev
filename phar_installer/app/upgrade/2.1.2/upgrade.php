@@ -1,7 +1,7 @@
 <?php
 $gCms = cmsms();
 $dbdict = NewDataDictionary($db);
-$taboptarray = array('mysql' => 'TYPE=MyISAM');
+//$taboptarray = array('mysqli' => 'ENGINE=MyISAM','mysql' => 'ENGINE=MyISAM');
 
 status_msg('performing database changes for CMSMS 2.1.2');
 verbose_msg('database schema has not changed');

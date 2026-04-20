@@ -32,36 +32,36 @@ final class AdminSearch_usertag_slave extends AdminSearch_slave
 
     private function get_mod()
     {
-        static $_mod;
+        static $_mod = null;
         if( !$_mod ) $_mod = \cms_utils::get_module('AdminSearch');
         return $_mod;
     }
 
-    private function get_match_info($udtprops, &$mod)
+    private function get_match_info($udtprops, $mod)
     {
         $title = $udtprops['userplugin_name'];
         $gCms = cmsms();
         $config = $gCms->GetConfig();
-        $url = $config['root_url'].'/'.$config['admin_dir'].'/editusertag.php?userplugin_id='.$udtprops['userplugin_id'].'&amp;'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+        $url = CMS_ROOT_URL.'/'.$config['admin_dir'].'/editusertag.php?userplugin_id='.$udtprops['userplugin_id'].'&amp;'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
         $resultSet = $this->get_resultset($title,AdminSearch_tools::summarize($udtprops['description']),$url);
 
         $content = $title;
         $resultSet->count += $count = $this->get_number_of_occurrences($content);
         if ($this->show_snippets() && $count > 0) {
-            $resultSet->locations[$mod->lang('name')] = $this->generate_snippets($content);
+            $resultSet->locations[$mod->Lang('name')] = $this->generate_snippets($content);
         }
 
         $content = $udtprops['code'];
         $resultSet->count += $count = $this->get_number_of_occurrences($content);
         if ($this->show_snippets() && $count > 0) {
-            $resultSet->locations[$mod->lang('prompt_code')] = $this->generate_snippets($content);
+            $resultSet->locations[$mod->Lang('prompt_code')] = $this->generate_snippets($content);
         }
 
         if( $this->search_descriptions()) {
             $content = $udtprops['description'];
             $resultSet->count += $count = $this->get_number_of_occurrences($content);
             if ($this->show_snippets() && $count > 0) {
-                $resultSet->locations[$mod->lang('prompt_description')] = $this->generate_snippets($content);
+                $resultSet->locations[$mod->Lang('prompt_description')] = $this->generate_snippets($content);
             }
         }
         return $resultSet;

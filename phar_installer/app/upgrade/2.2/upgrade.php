@@ -1,9 +1,7 @@
 <?php
 status_msg('Performing structure changes for CMSMS 2.2');
 
-$create_private_dir = function($relative_dir) {
-    $app = \__appbase\get_app();
-    $destdir = $app->get_destdir();
+$create_private_dir = function($destdir,$relative_dir) {
     $relative_dir = trim($relative_dir);
     if( !$relative_dir ) return;
 
@@ -32,7 +30,7 @@ $move_directory_files = function($srcdir,$destdir) {
 
 //$gCms = cmsms();
 $dbdict = NewDataDictionary($db);
-$taboptarray = array('mysql' => 'TYPE=MyISAM');
+//$taboptarray = array('mysqli' => 'ENGINE=MyISAM','mysql' => 'ENGINE=MyISAM');
 
 $sqlarray = $dbdict->AddColumnSQL(CMS_DB_PREFIX.CmsLayoutTemplateType::TABLENAME,'help_content_cb C(255), one_only I1');
 $dbdict->ExecuteSQLArray($sqlarray);
@@ -42,23 +40,24 @@ $query = 'UPDATE '.CMS_DB_PREFIX.'version SET version = 202';
 $db->Execute($query);
 
 $type = \CmsLayoutTemplateType::load('__CORE__::page');
-$type->set_help_callback('CmsTemplateResource::template_help_callback');
+$type->set_help_callback('CMSMS\internal\TemplateResource::template_help_callback');
 $type->save();
 
 $type = \CmsLayoutTemplateType::load('__CORE__::generic');
-$type->set_help_callback('CmsTemplateResource::template_help_callback');
+$type->set_help_callback('CMSMS\internal\TemplateResource::template_help_callback');
 $type->save();
 
 // create the assets directory structure
 verbose_msg('Creating assets structure');
-$create_private_dir('assets/templates');
-$create_private_dir('assets/configs');
-$create_private_dir('assets/module_custom');
-$create_private_dir('assets/admin_custom');
-$create_private_dir('assets/plugins');
-$create_private_dir('assets/images');
-$create_private_dir('assets/css');
 $destdir = \__appbase\get_app()->get_destdir();
+$create_private_dir($destdir,'assets');
+$create_private_dir($destdir,'assets/templates');
+$create_private_dir($destdir,'assets/configs');
+$create_private_dir($destdir,'assets/module_custom');
+$create_private_dir($destdir,'assets/admin_custom');
+$create_private_dir($destdir,'assets/plugins');
+$create_private_dir($destdir,'assets/images');
+$create_private_dir($destdir,'assets/css');
 $srcdir = $destdir.'/module_custom';
 if( is_dir($srcdir) ) {
     $move_directory_files($srcdir,$destdir.'/assets/module_custom');
@@ -67,11 +66,27 @@ $srcdir = $destdir.'/admin/custom';
 if( is_dir($srcdir) ) {
     $move_directory_files($srcdir,$destdir.'/assets/admin_custom');
 }
-$srcdir = $destdir.'/tmp/configs';
+$srcdir = $destdir.'/tmp/configs'; //TODO might contain Smarty config files so stet?
 if( is_dir($srcdir) ) {
     $move_directory_files($srcdir,$destdir.'/assets/configs');
 }
 $srcdir = $destdir.'/tmp/templates';
 if( is_dir($srcdir) ) {
     $move_directory_files($srcdir,$destdir.'/assets/templates');
+}
+// redundant permissions
+verbose_msg('deleting old permissions');
+$tmp = array(
+'Add Global Content Blocks',
+'Modify Global Content Blocks',
+'Remove Global Content Blocks'
+);
+$query = 'SELECT permission_id FROM '.CMS_DB_PREFIX.'permissions WHERE permission_name IN('.implode(',',$tmp).')';
+$dbr = $db->GetCol($query);
+if ($dbr) {
+    //TODO ? add replacement group perms for templates generally i.e. 'Add Templates','Modify Templates'
+    $query = 'DELETE FROM '.CMS_DB_PREFIX.'group_perms WHERE permission_id IN('.implode(',',$dbr).')';
+    $db->Execute($query);
+    $query = 'DELETE FROM '.CMS_DB_PREFIX.'permissions WHERE permission_id IN('.implode(',',$dbr).')';
+    $db->Execute($query);
 }

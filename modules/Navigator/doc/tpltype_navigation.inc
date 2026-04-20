@@ -1,12 +1,3 @@
-<style type="text/css">
-	ul.helptext {
-	  list-style-type: disc;
-	  margin-left: 1em;
-	  margin-bottom: 1em;
-	}
-</style>
-
-
 <h2>Navigator menu template help</h2>
 
 <p>The Navigator template outputs an array of Nodes representing pages that match the criteria specified on the call to the Navigator module.  This is a nested array of nodes that should be displayed using a recursive algorithhm.</p>
@@ -32,7 +23,7 @@
   <li><code>parent</code> (bool) - Whether or not this node represents a parent of the content item currently being displayed.</li>
   <li><code>children_exist</code> (bool) - Whether or not the content item represented by this node has any children what-so-ever.</li>
   <li><code>has_children</code> (bool) Whether or not this node has children that can be displayed.</li>
-  <li><code>children</code> (NavigatorNode[]) - An array of Navigator node objects represnenting the children of this node that are displayable.  May not exist, or be empty.</li>
+  <li><code>children</code> (NavigatorNode[]) - An array of Navigator node objects representing the children of this node that are displayable.  May not exist, or be empty.</li>
 </ul>
 
 <p>The following properties are only ever available if &quot;deep&quot; mode is enabled:</p>

@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple translation file
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -23,10 +22,10 @@
 #The modifications to fit it for Gallery were made by Jens Tkotz
 #(http://gallery.meanalto.com) 
 
-#Ideas from Gallery's implementation made to CMS by Ted Kulp
+#Ideas from Gallery's implementation made for CMSMS by Ted Kulp
 
 #US English
-#Created by: Ted Kulp <tedkulp@users.sf.net>
+#Created by: Ted Kulp <ted@cmsmadesimple.org>
 #Maintained by: Roman Hanajik <roman.hanajik@centrum.cz>
 #This is the default language
 
@@ -49,7 +48,7 @@ $nls['locale']['sk_SK'] = 'sk_SK,sk_SK.utf8,sk_SK.UTF-8,sk_SK.utf-8,slovak,Slova
 $nls['encoding']['sk_SK'] = "UTF-8";
 
 #Location of the file(s)
-$nls['file']['sk_SK'] = array(dirname(__FILE__).'/sk_SK/admin.inc.php');
+$nls['file']['sk_SK'] = array(__DIR__.'/sk_SK/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

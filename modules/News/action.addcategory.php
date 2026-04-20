@@ -1,11 +1,17 @@
 <?php
+#CMSMS News module action: addcategory
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#The license at the top of file News.module.php applies to this file.
+
+use CMSMS\HookManager;
+
 if (!isset($gCms)) exit;
 if (!$this->CheckPermission('Modify Site Preferences')) return;
 
+if (isset($params['cancel'])) $this->RedirectToAdminTab('categories','','admin_settings');
 $parent = -1;
 if( isset($params['parent'])) $parent = (int)$params['parent'];
-if (isset($params['cancel'])) $this->RedirectToAdminTab('categories','','admin_settings');
-
+$me = $this->GetName();
 $name = '';
 if (isset($params['name'])) {
     //if( $parent == 0 ) $parent = -1;
@@ -14,7 +20,7 @@ if (isset($params['name'])) {
         $query = 'SELECT news_category_id FROM '.CMS_DB_PREFIX.'module_news_categories WHERE parent_id = ? AND news_category_name = ?';
         $tmp = $db->GetOne($query,array($parent,$name));
         if( $tmp ) {
-            echo $this->ShowErrors($this->Lang('error_duplicatename'));
+            $this->ShowErrors($this->Lang('error_duplicatename'));
         }
         else {
             $query = 'SELECT max(item_order) FROM '.CMS_DB_PREFIX.'module_news_categories WHERE parent_id = ?';
@@ -29,33 +35,35 @@ if (isset($params['name'])) {
 
             news_admin_ops::UpdateHierarchyPositions();
 
-            \CMSMS\HookManager::do_hook('News::NewsCategoryAdded', [ 'category_id'=>$catid, 'name'=>$name ] );
+            HookManager::do_hook('News::NewsCategoryAdded', [ 'category_id'=>$catid, 'name'=>$name ]);
             // put mention into the admin log
-            audit($catid, 'News category: '.$name, ' Category added');
+            audit($catid, $me.' category', "Added: $name");
 
             $this->SetMessage($this->Lang('categoryadded'));
             $this->RedirectToAdminTab('categories','','admin_settings');
         }
     }
     else {
-        echo $this->ShowErrors($this->Lang('nonamegiven'));
+        $this->ShowErrors($this->Lang('nonamegiven'));
     }
 }
 
 // Display template
 $tmp = news_ops::get_category_list();
 $tmp2 = array_flip($tmp);
-$categories = array(-1=>$this->Lang('none'));
+$categories = array(-1 => $this->Lang('none'));
 foreach( $tmp2 as $k => $v ) {
     $categories[$k] = $v;
 }
-$smarty->assign('parent',$parent);
-$smarty->assign('name',$name);
-$smarty->assign('categories',$categories);
-$smarty->assign('startform', $this->CreateFormStart($id, 'addcategory', $returnid));
-$smarty->assign('endform', $this->CreateFormEnd());
-$smarty->assign('inputname', $this->CreateInputText($id, 'name', $name, 20, 255));
-$smarty->assign('submit', $this->CreateInputSubmit($id, 'submit', lang('submit')));
-$smarty->assign('cancel', $this->CreateInputSubmit($id, 'cancel', lang('cancel')));
-$smarty->assign('mod',$this);
-echo $this->ProcessTemplate('editcategory.tpl');
+$tpl = $smarty->createTemplate("module_file_tpl:$me;editcategory.tpl", null, $me, $smarty);
+
+$tpl->assign('parent', $parent);
+$tpl->assign('name', $name);
+$tpl->assign('categories', $categories);
+$tpl->assign('startform', $this->CreateFormStart($id, 'addcategory', $returnid));
+$tpl->assign('endform', $this->CreateFormEnd());
+$tpl->assign('inputname', $this->CreateInputText($id, 'name', $name, 20, 255));
+$tpl->assign('submit', $this->CreateInputSubmit($id, 'submit', lang('submit')));
+$tpl->assign('cancel', $this->CreateInputSubmit($id, 'cancel', lang('cancel')));
+
+$tpl->display();

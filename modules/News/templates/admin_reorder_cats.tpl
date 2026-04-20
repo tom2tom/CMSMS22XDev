@@ -1,8 +1,8 @@
-<script type="text/javascript">
+<script>
 function parseTree(ul)
 {
   var tags = [];
-  ul.children('li').each(function(){
+  ul.children('li').each(function() {
      var subtree = $(this).children('ul');
      if( subtree.size() > 0 ) {
        tags.push([$(this).attr('id'), parseTree(subtree)]);
@@ -14,8 +14,8 @@ function parseTree(ul)
 }
 
 $(function() {
-  $(document).on('click','[name={$actionid}submit]',function(){
-    var tree = $.toJSON(parseTree($('ul.sortable')));
+  $('[name="{$actionid}submit"]').on('click', function() {
+    var tree = JSON.stringify(parseTree($('ul.sortable')));
     $('#submit_data').val(tree);
   });
 
@@ -30,7 +30,7 @@ $(function() {
     tolerance: 'pointer',
     listType: 'ul',
     toleranceElement: '> div'
-  })
+  });
 });
 </script>
 
@@ -50,15 +50,14 @@ $(function() {
 <h3>{$mod->Lang('reorder_categories')}</h3>
 <div class="information">{$mod->Lang('info_reorder_categories')}</div>
 {category_tree}
-
+<br>
 {form_start id="reorder_form"}
-<input type="hidden" name="{$actionid}submit_type" id="submit_type" value=""/>
-<input type="hidden" name="{$actionid}data" id="submit_data" value=""/>
-<div class="pageoverflow">
-  <p class="pagetext"></p>
-  <p class="pageinput">
-    <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}"/>
-    <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}"/>
-  </p>
-</div>
+  <input type="hidden" name="{$actionid}submit_type" id="submit_type" value="">
+  <input type="hidden" name="{$actionid}data" id="submit_data" value="">
+  <div class="pageoverflow">
+    <p class="pageinput">
+      <input type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
+      <input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
+    </p>
+  </div>
 {form_end}

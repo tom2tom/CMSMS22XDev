@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2013 by Robert Campbell (calguy1000@cmsmadesimple.org)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: cms_html_options
+#(c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -18,7 +17,7 @@
 
 function smarty_function_cms_html_options($params, $smarty)
 {
-    $options = null;
+    $options = null; //no relevant value
     if( !isset($params['options']) ) {
         if( isset($params['value']) && isset($params['label']) ) {
             $opt = array();
@@ -29,16 +28,16 @@ function smarty_function_cms_html_options($params, $smarty)
             $options = $opt;
         }
         else {
-            return;
+            return '';
         }
     }
     else {
         $options = $params['options'];
     }
 
-    $out = null;
+    $out = '';
     if( is_array($options) && count($options) ) {
-        $selected = null;
+        $selected = '';
         if( isset($params['selected']) ) {
             $selected = $params['selected'];
             if( !is_array($selected) ) $selected = explode(',',$selected);
@@ -48,7 +47,7 @@ function smarty_function_cms_html_options($params, $smarty)
 
     if( isset($params['assign']) ) {
         $smarty->assign($params['assign'],$out);
-        return;
+        return '';
     }
     return $out;
 }

@@ -1,5 +1,17 @@
 <?php
+/*
+CMSMS FilePicker module class: UploadHandler
+(C) 2016 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+The license at the top of file FilePicker.module.php applies to this file.
+*/
+
 namespace FilePicker;
+
+use CMSMS\HookManager;
+use FilePicker; //module class in global namespace
+use FilePicker\Profile;
+use cms_utils;
+use filemanager_utils;
 
 class UploadHandler extends jquery_upload_handler
 {
@@ -7,7 +19,7 @@ class UploadHandler extends jquery_upload_handler
     private $_mod;
     private $_profile;
 
-    public function __construct( \FilePicker $mod, \CMSMS\FilePickerProfile $profile, $path )
+    public function __construct( FilePicker $mod, Profile $profile, $path )
     {
         $this->_mod = $mod;
         $this->_profile = $profile;
@@ -28,7 +40,7 @@ class UploadHandler extends jquery_upload_handler
     {
         $fileobject = parent::process_error( $fileobject, $error );
         if( $fileobject->error ) {
-            $fileobject->errormsg = $this->_mod->Lang('error_upload_'.$fileobject->error);
+            $fileobject->errormsg = $this->_mod->Lang('err_upload_'.$fileobject->error);
         }
         return $fileobject;
     }
@@ -36,24 +48,27 @@ class UploadHandler extends jquery_upload_handler
     public function after_uploaded_file( $fileobject )
     {
         if( !is_object($fileobject) || !$fileobject->name ) return;
-        if( !$this->_profile->show_thumbs ) return;
         $complete_path = $this->_path.$fileobject->name;
 
         $parms['file'] = $complete_path;
-        $parms = \CMSMS\HookManager::do_hook( 'FileManager::OnFileUploaded', $parms );
+        $parms = HookManager::do_hook( 'FileManager::OnFileUploaded', $parms );
         if( is_array($parms) && isset($parms['file']) ) $file = $parms['file']; // file name could have changed.
 
         if( !is_file($complete_path) ) return;
-        if( !$this->_mod->is_image( $complete_path ) ) return;
+        $str = basename($complete_path).' uploaded to '.filemanager_utils::get_full_cwd();
+        if( !$this->_mod->is_image( $complete_path ) ) {
+            audit('',$this->_mod->GetName(),$str);
+            return;
+        }
 
-        $mod = \cms_utils::get_module('FileManager');
-        $thumb = \filemanager_utils::create_thumbnail($complete_path, NULL, TRUE);
+        if( !$this->_profile->show_thumbs ) return;
 
-        $str = basename($complete_path).' uploaded to '.\filemanager_utils::get_full_cwd();
+        $mod = cms_utils::get_module('FileManager');
+        $thumb = filemanager_utils::create_thumbnail($complete_path, NULL, TRUE);
+
         if( $thumb ) $str .= ' and a thumbnail was generated';
         audit('',$this->_mod->GetName(),$str);
-
-        /*
+/*
         $info = getimagesize($complete_path);
         if( !$info || !isset($info['mime']) ) return;
 
@@ -69,21 +84,38 @@ class UploadHandler extends jquery_upload_handler
         $color = imageColorAllocateAlpha($i_src, 255, 255, 255, 127);
         imagecolortransparent($i_dest,$color);
         imagefill($i_dest,0,0,$color);
-        imagesavealpha($i_dest,TRUE);
+        imagesavealpha($i_dest,TRUE); TODO for png, WebP and avif only
         imagecopyresampled($i_dest,$i_src,0,0,0,0,$width,$height,imagesx($i_src),imagesy($i_src));
 
-        $res = null;
+        $res = false;
         switch( $info['mime'] ) {
         case 'image/gif':
             $res = imagegif($i_dest,$complete_thumb);
             break;
-        case 'image/png':
+        case 'image/png': NOT image/apng
             $res = imagepng($i_dest,$complete_thumb,9);
             break;
         case 'image/jpeg':
-            $res = imagejpeg($i_dest,$complete_thumb,100);
+            $res = imagejpeg($i_dest,$complete_thumb,80);
+            break;
+        case 'image/bmp':
+        case 'image/x-ms-bmp':
+            if (PHP_VERSION_ID >= 70200) {
+                $res = imagebmp($i_dest,$dest);
+            }
+            break;
+        case 'image/vnd.wap.wbmp':
+            $res = imagewbmp($i_dest,$dest);
+            break;
+        case 'image/webp':
+            $res = imagewebp($i_dest,$dest,80);
+            break;
+        case 'image/avif':
+            if (PHP_VERSION_ID >= 80100) {
+                $res = imageavif($i_dest,$dest,80,6);
+            }
             break;
         }
-        */
+*/
     }
 }

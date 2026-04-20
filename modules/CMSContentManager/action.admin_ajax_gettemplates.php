@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: Content (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A module for managing content in CMSMS.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module CMSContentManager action
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -36,7 +31,7 @@
 if( !isset($gCms) ) exit;
 if( !$this->CanEditContent() ) exit;
 
-$out = null;
+$out = null; //non-result indicator
 try {
     $design_id = (int) get_parameter_value($params,'design_id',-1);
     if( $design_id > 0 ) {
@@ -85,7 +80,7 @@ try {
     }
 }
 catch( Exception $e ) {
-    $out = null;
+    $out = null; //non-result indicator
 }
 
 if( !is_array($out) || count($out) == 0 ) $out = null;

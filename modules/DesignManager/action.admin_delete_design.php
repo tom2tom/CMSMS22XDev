@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: DesignManager - A CMSMS addon module to provide template management.
-# (c) 2012 by Robert Campbell <calguy1000@cmsmadesimple.org>
+# Module DesignManager action
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,9 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
+# Or read it online: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
+
 if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Manage Designs') ) return;
 
@@ -32,9 +32,18 @@ try {
         throw new CmsException($this->Lang('error_missingparam'));
     }
     $design = CmsLayoutCollection::load($params['design']);
-
+    $topfiles = '';
+    $nm = $design->get_name();
+    if( $nm ) {
+        $dirnm = dm_utils::munge_name_to_dir($nm);
+        $fp = cms_join_path($config['themes_path'],$dirnm); //OR $config['assets_path'],'themes',$dirnm
+        if( is_dir($fp) ) { //OR $this->is_dir_unused()
+            $topfiles = $fp;
+        }
+    }
     $can_delete_stylesheets = $this->CheckPermission('Manage Stylesheets');
     $can_delete_templates = $this->CheckPermission('Modify Templates');
+    $can_delete_files = $this->CheckPermission('Modify Files');
 
     if( isset($params['submit']) ) {
         if( !isset($params['confirm_delete1']) || $params['confirm_delete1'] != 'yes' ||
@@ -46,16 +55,17 @@ try {
         if( isset($params['delete_stylesheets']) && $can_delete_stylesheets ) {
             $css_id_list = $design->get_stylesheets();
             if( is_array($css_id_list) && count($css_id_list) ) {
-                // get the designs that are attached to these stylesheets
+                // get the designs to which these stylesheets are attached
                 $css_list = CmsLayoutStylesheet::load_bulk($css_id_list);
-                if( is_array($css_list) && count($css_list) ) {
+                if( $css_list && is_array($css_list) ) {
                     foreach( $css_list as &$css ) {
                         $x = $css->get_designs();
                         if( is_array($x) && count($x) == 1 && $x[0] == $design->get_id() ) {
-                            // its orphaned
+                            // it's orphaned
                             $css->delete();
                         }
                     }
+                    unset($css);
                 }
             }
         }
@@ -63,30 +73,42 @@ try {
         if( isset($params['delete_templates']) && $can_delete_templates ) {
             $tpl_id_list = $design->get_templates();
             if( is_array($tpl_id_list) && count($tpl_id_list) ) {
-				$templates = CmsLayoutTemplate::load_bulk($tpl_id_list);
-				if( is_array($templates) && count($templates) ) {
-					foreach( $templates as &$tpl ) {
-						$x = $tpl->get_designs();
-						if( is_array($x) && count($x) == 1 && $x[0] == $design->get_id() ) {
-							// its orphaned
-							$tpl->delete();
-						}
-					}
-				}
+                $templates = CmsLayoutTemplate::load_bulk($tpl_id_list);
+                if( $templates && is_array($templates) ) {
+                    foreach( $templates as &$tpl ) {
+                        $x = $tpl->get_designs();
+                        if( is_array($x) && count($x) == 1 && $x[0] == $design->get_id() ) {
+                            // it's orphaned
+                            $tpl->delete();
+                        }
+                    }
+                    unset($tpl);
+                }
+            }
+        }
+
+        if( isset($params['delete_files']) && $can_delete_files ) {
+            if( is_dir($topfiles) ) {
+               recursive_delete($topfiles);
             }
         }
 
         // done... we 'force' the delete because we loaded the design object
-		// before deleting the templates and stylesheets.
+        // before deleting the templates and stylesheets.
         $design->delete(TRUE);
         $this->SetMessage($this->Lang('msg_design_deleted'));
         $this->RedirectToAdminTab();
     }
 
-    $smarty->assign('tpl_permission',$can_delete_templates);
-    $smarty->assign('css_permission',$can_delete_stylesheets);
-    $smarty->assign('design',$design);
-    echo $this->ProcessTemplate('admin_delete_design.tpl');
+    $modname = $this->GetName();
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_delete_design.tpl",null,$modname,$smarty);
+
+    $tpl->assign('tpl_permission',$can_delete_templates);
+    $tpl->assign('css_permission',$can_delete_stylesheets);
+    $tpl->assign('file_permission',$can_delete_files);
+    $tpl->assign('hasfiles', $topfiles != '');
+    $tpl->assign('design',$design);
+    $tpl->display();
 }
 catch( CmsException $e ) {
     $this->SetError($e->GetMessage());

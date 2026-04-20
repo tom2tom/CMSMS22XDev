@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: CMSContentManager (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A module for managing content in CMSMS.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module CMSContentManager class ContentAssistantFactory
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -43,7 +38,7 @@ class ContentAssistantFactory
 		$this->_content_obj = $content_obj;
 	}
 
-	public function &getEditContentAssistant()
+	public function getEditContentAssistant()
 	{
 		$classname = get_class($this->_content_obj);
 		$n = 0;
@@ -51,13 +46,11 @@ class ContentAssistantFactory
 			$n++;
 			$test = $classname.'EditContentAssistant';
 			if( class_exists($test) ) {
-				$obj = new $test($this->_content_obj);
-				return $obj;
+				return new $test($this->_content_obj);
 			}
 			$classname = get_parent_class($classname);
 			if( !$classname ) {
-				$obj = null;
-				return $obj;
+				return null; // no object
 			}
 		}
 		throw new CmsException('Too many levels of hierarchy without finding an assistant');

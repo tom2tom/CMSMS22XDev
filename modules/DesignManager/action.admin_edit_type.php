@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: DesignManager - A CMSMS addon module to provide template management.
-# (c) 2012 by Robert Campbell <calguy1000@cmsmadesimple.org>
+# Module DesignManager action
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,9 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
+# Or read it online: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
+
 if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Modify Templates') ) return;
 
@@ -37,8 +37,8 @@ try {
   $type = CmsLayoutTemplateType::load($params['type']);
 
   if( isset($params['reset']) ) {
-      $type->reset_content_to_factory();
-      $type->save();
+    $type->reset_content_to_factory();
+    $type->save();
   }
   else if( isset($params['submit']) ) {
     if( isset($params['dflt_contents']) ) {
@@ -50,8 +50,10 @@ try {
     $this->SetMessage($this->Lang('msg_type_saved'));
     $this->RedirectToAdminTab();
   }
-  $smarty->assign('type',$type);
-  echo $this->ProcessTemplate('admin_edit_type.tpl');
+  $modname = $this->GetName();
+  $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_edit_type.tpl",null,$modname,$smarty);
+  $tpl->assign('type',$type);
+  $tpl->display();
 }
 catch( CmsException $e ) {
   $this->SetError($e->GetMessage());

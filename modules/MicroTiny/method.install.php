@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Module MicroTiny installation script
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -17,15 +16,28 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-$obj = new microtiny_profile(array('name'=>MicroTiny::PROFILE_FRONTEND,'label'=>$this->Lang('profile_frontend'),
-				   'menubar'=>false,'allowimages'=>false,'showstatusbar'=>false,
-				   'allowresize'=>false,'system'=>true));
+$obj = new microtiny_profile(array(
+ 'name'=>MicroTiny::PROFILE_FRONTEND,
+ 'label'=>$this->Lang('profile_frontend'),
+ 'menubar'=>false,
+ 'allowimages'=>false,
+ 'showstatusbar'=>false,
+ 'allowresize'=>false,
+ 'styler'=>'Simplex',
+ 'theme'=>'Simplex',
+ 'system'=>true));
 $obj->save();
 
-
-$obj = new microtiny_profile(array('name'=>MicroTiny::PROFILE_ADMIN,'label'=>$this->Lang('profile_admin'),
-				   'menubar'=>true,'allowimages'=>true,'showstatusbar'=>true,
-				   'allowresize'=>true,'system'=>true));
+$obj = new microtiny_profile(array(
+ 'name'=>MicroTiny::PROFILE_ADMIN,
+ 'label'=>$this->Lang('profile_admin'),
+ 'menubar'=>true,
+ 'allowimages'=>true,
+ 'showstatusbar'=>true,
+ 'allowresize'=>true,
+ 'styler'=>'One11',
+ 'theme'=>'One11',
+ 'system'=>true));
 $obj->save();
 #
 # EOF

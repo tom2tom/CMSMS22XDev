@@ -1,13 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Class: cms_objlock (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A class for managing locks on various objects.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: CmsLock and related exceptions
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A class for managing locks on various objects.
 #
 #-------------------------------------------------------------------------
 #
@@ -43,7 +39,7 @@
  * An exception indicating an error creating a lock
  *
  * @package CMS
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 2.0
  */
 class CmsLockException extends CmsException {}
@@ -52,7 +48,7 @@ class CmsLockException extends CmsException {}
  * An exception indicating a uid mismatch wrt a lock (person operating on the lock is not the owner)
  *
  * @package CMS
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 2.0
  */
 class CmsLockOwnerException extends CmsLockException {}
@@ -61,7 +57,7 @@ class CmsLockOwnerException extends CmsLockException {}
  * An exception indicating an error removing a lock
  *
  * @package CMS
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 2.0
  */
 class CmsUnLockException extends CmsLockException {}
@@ -70,7 +66,7 @@ class CmsUnLockException extends CmsLockException {}
  * An exception indicating an error loading or finding a lock
  *
  * @package CMS
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 2.0
  */
 class CmsNoLockException extends CmsLockException {}
@@ -79,7 +75,7 @@ class CmsNoLockException extends CmsLockException {}
  * A simple class representing a lock on a logical object in CMSMS.
  *
  * @package CMS
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  * @since 2.0
  * @param-read int $id
  * @param string $type
@@ -117,12 +113,13 @@ final class CmsLock implements ArrayAccess
    *
    * @param string $type
    * @param int    $oid      Object Id
-   * @param int    $lifetime (in minutes) The lifetime of the lock before it can be stolen.  If not specified, the
-   *                         system default value will be used.
+   * @param int    $lifetime (in minutes) The interval from lock-creation until when it can be stolen.
+   *                         If not specified > 0, the system default value will be used. Default 0
+   * @param int    $userid   If not specified > 0, the current user's id will be used. Default 0
    *
    * @throws \CmsInvalidDataException
    */
-    public function __construct($type,$oid,$lifetime = 0)
+    public function __construct($type,$oid,$lifetime = 0,$userid = 0)
     {
         $type = trim($type);
         $oid = trim($oid);
@@ -130,8 +127,9 @@ final class CmsLock implements ArrayAccess
 
         $this->_data['type'] = $type;
         $this->_data['oid'] = $oid;
-        $this->_data['uid'] = get_userid(FALSE);
-        if( $lifetime == 0 ) { $lifetime = cms_siteprefs::get('lock_timeout',60); }
+        if( $userid < 1 ) $userid = get_userid(FALSE);
+        $this->_data['uid'] = $userid;
+        if( $lifetime < 1 ) { $lifetime = cms_siteprefs::get('lock_timeout',60); }
         $this->_data['lifetime'] = max(1,(int)$lifetime);
         $this->_dirty = TRUE;
     }
@@ -160,6 +158,7 @@ final class CmsLock implements ArrayAccess
             if( !isset($this->_data[$key]) ) throw new CmsLogicException('CMSEX_L004');
             return $this->_data[$key];
         }
+        return null; // no value for unrecognised property
     }
 
    /**
@@ -173,15 +172,28 @@ final class CmsLock implements ArrayAccess
     public function offsetSet($key,$value)
     {
         switch( $key ) {
+        case 'id':
+            // can't change this.
+            if( isset($this->_data[$key]) ) throw new CmsInvalidDataException('CMSEX_G001');
+            $this->_data[$key] = (int)$value;
+            $this->_dirty = TRUE;
+            break;
+
         case 'type':
-        case 'oid':
-            if( isset($this->_data['id']) ) throw new CmsInvalidDataException('CMSEX_G001');
+            // can't change this after id-property is set.
+           if( isset($this->_data['id']) ) throw new CmsInvalidDataException('CMSEX_G001');
             $this->_data[$key] = trim($value);
             $this->_dirty = TRUE;
             break;
 
+        case 'oid':
         case 'uid':
-        case 'id':
+            // can't change this after id-property is set.
+            if( isset($this->_data['id']) ) throw new CmsInvalidDataException('CMSEX_G001');
+            $this->_data[$key] = (int)$value;
+            $this->_dirty = TRUE;
+            break;
+
         case 'created':
         case 'modified':
         case 'expires':
@@ -241,24 +253,28 @@ final class CmsLock implements ArrayAccess
         if( !$this->_dirty ) return;
 
         $db = CmsApp::get_instance()->GetDb();
-        $dbr = null;
-        $this->_data['expires'] = time()+$this->_data['lifetime']*60;
+        $this->_data['expires'] = time() + $this->_data['lifetime'] * 60;
         if( !isset($this->_data['id']) ) {
             // insert
             $query = 'INSERT INTO '.CMS_DB_PREFIX.self::LOCK_TABLE.' (type,oid,uid,created,modified,lifetime,expires)
-                VALUES (?,?,?,?,?,?,?)';
-            $dbr = $db->Execute($query,array($this->_data['type'], $this->_data['oid'], $this->_data['uid'],
+VALUES (?,?,?,?,?,?,?)';
+            $dbr = $db->Execute($query, array($this->_data['type'], $this->_data['oid'], $this->_data['uid'],
                                              time(), time(), $this->_data['lifetime'], $this->_data['expires']));
+            if( !$dbr ) {
+                throw new CmsSqlErrorException('CMSEX_SQL001',null,$db->ErrorMsg());
+            }
             $this->_data['id'] = $db->Insert_ID();
         }
         else {
             // update
             $query = 'UPDATE '.CMS_DB_PREFIX.self::LOCK_TABLE.' SET lifetime = ?, expires = ?, modified = ?
-                WHERE type = ? AND oid = ? AND uid = ? AND id = ?';
-            $dbr = $db->Execute($query,array($this->_data['lifetime'],$this->_data['expires'],time(),
-                                             $this->_data['type'],$this->_data['oid'],$this->_data['uid'],$this->_data['id']));
+WHERE type = ? AND oid = ? AND uid = ? AND id = ?';
+            $db->Execute($query, array($this->_data['lifetime'], $this->_data['expires'], time(),
+                                             $this->_data['type'], $this->_data['oid'], $this->_data['uid'], $this->_data['id']));
+            if( $db->Affected_Rows() != 1 || $db->ErrorNo() != 0 ) {
+                throw new CmsSqlErrorException('CMSEX_SQL001',null,$db->ErrorMsg());
+            }
         }
-        if( !$dbr ) throw new CmsSqlErrorException('CMSEX_SQL001',null,$db->ErrorMsg());
         $this->_dirty = FALSE;
     }
 
@@ -271,8 +287,9 @@ final class CmsLock implements ArrayAccess
     * @throws \CmsInvalidDataException
     * @internal
     */
-    public static function &from_row($row)
+    public static function from_row($row)
     {
+        if( !isset($row['type']) ) $row['type'] = '';
         $obj = new CmsLock($row['type'],$row['oid'],$row['lifetime']);
         $obj->_dirty = TRUE;
         foreach( $row as $key => $val ) {
@@ -321,7 +338,7 @@ final class CmsLock implements ArrayAccess
     * @throws \CmsInvalidDataException
     * @throws \CmsNoLockException
     */
-    public static function &load_by_id($lock_id,$type,$oid,$uid = 0)
+    public static function load_by_id($lock_id,$type,$oid,$uid = 0)
     {
         $query = 'SELECT * FROM '.CMS_DB_PREFIX.self::LOCK_TABLE.' WHERE id = ? AND type = ? AND oid = ?';
         $db = CmsApp::get_instance()->GetDb();
@@ -331,8 +348,9 @@ final class CmsLock implements ArrayAccess
             $parms[] = $uid;
         }
         $row = $db->GetRow($query,$parms);
-        if( !is_array($row) || count($row) == 0 ) throw new CmsNoLockException('CMSEX_L005','',array($lock_id,$type,$oid,$uid));
-
+        if( !is_array($row) || count($row) == 0 ) {
+            throw new CmsNoLockException('CMSEX_L005','',array($lock_id,$type,$oid,$uid));
+        }
         return self::from_row($row);
     }
 
@@ -348,7 +366,7 @@ final class CmsLock implements ArrayAccess
     * @throws \CmsNoLockException
     * @throws \Exception
     */
-    public static function &load($type,$oid,$uid = 0)
+    public static function load($type,$oid,$uid = 0)
     {
         $query = 'SELECT * FROM '.CMS_DB_PREFIX.self::LOCK_TABLE.' WHERE type = ? AND oid = ?';
         $db = CmsApp::get_instance()->GetDb();
@@ -358,8 +376,9 @@ final class CmsLock implements ArrayAccess
             $parms[] = $uid;
         }
         $row = $db->GetRow($query,$parms);
-        if( !is_array($row) || count($row) == 0 ) throw new CmsNoLockException('CMSEX_L005','',array($type,$uid,$uid));
-
+        if( !is_array($row) || count($row) == 0 ) {
+            throw new CmsNoLockException('CMSEX_L005','',array($type,$uid,$uid));
+        }
         return self::from_row($row);
     }
 } // end of class

@@ -1,7 +1,6 @@
 <?php
-# CMS - CMS Made Simple
-# (c)2004-6 by Ted Kulp (ted@cmsmadesimple.org)
-# Visit our homepage at: http://cmsmadesimple.org
+# CMS Made Simple class CmsAdminMenuItem
+# (c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -10,29 +9,20 @@
 #
 # This program is distributed in the hope that it will be useful,
 # BUT withOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	02111-1307	USA
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
-#$Id:$
+#$Id$
 
 /**
  * Classes and utilities to provide menu items in the CMSMS admin navigation
- * @package CMS
- * @license     GPL
- */
-
-/**
- * Base module class.
- *
- * All modules should inherit and extend this class with their functionality.
- *
  * @package		CMS
  * @since		2.0
  * @license     GPL
- * @author      Robert Campbell <calguy1000@cmsmadesimple.org>
+ * @author      Robert Campbell
  * @see         CMSModule::GetAdminSection() FOO
  * @property string $module The module that hosts the destination action
  * @property string $section The admin section (from CMSModule::GetAdminSection)
@@ -79,6 +69,7 @@ final class CmsAdminMenuItem
         default:
             if( isset($this->_data[$k]) ) return $this->_data[$k];
         }
+        return null; // no value for unrecognised property
     }
 
 
@@ -130,14 +121,14 @@ final class CmsAdminMenuItem
      *
      * @param CMSModule $mod
      */
-    public static function &from_module(\CMSModule $mod)
+    public static function from_module(\CMSModule $mod)
     {
-        $obj = null;
+        $obj = null; //no object
         if( $mod->HasAdmin() ) {
-            $obj = new CmsAdminMenuItem;
+            $obj = new CmsAdminMenuItem();
             $obj->module = $mod->GetName();
             $obj->section = $mod->GetAdminSection();
-            $obj->title   = $mod->GetFriendlyName();
+            $obj->title = $mod->GetFriendlyName();
             $obj->description = $mod->GetAdminDescription();
             $obj->priority = 50;
             $obj->action = 'defaultadmin';
@@ -146,7 +137,3 @@ final class CmsAdminMenuItem
         return $obj;
     }
 } // end of class
-
-#
-# EOF
-#

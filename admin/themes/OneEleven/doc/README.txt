@@ -3,10 +3,10 @@ OneEleven CMS Made Simple Admin Theme
 
  OneEleven Theme is a simplistic and hopefully easy to use Theme for CMS Made Simple.
  Theme inspiration comes from popular systems as well as NCleanGrey Admin theme.
- There are already enough themes for CMSMS that come with a horizontal navigation so this 
+ There are already enough themes for CMSMS that come with a horizontal navigation so this
  time my choice was to choose a alternative.
 
- Theme was done in HTML5 and an attempt was taken to create it in a responsive manner 
+ Theme was done in HTML5 and an attempt was taken to create it in a responsive manner
  to some level.
  This means that you should be able to easily use it on your mobile devices to some level.
 
@@ -16,7 +16,7 @@ COPYRIGHT
 --------------------------------------------------------------------------
  OneEleven- An admin theme for CMS Made Simple
  (c) 2012 by Author: Goran Ilic (ja@ich-mach-das.at) http://dev.cmsmadesimple.org/users/uniqu3
- (c) 2012 by Robert Campbell (calguy1000@cmsmadesimple.org)
+ (c) 2012 by Robert Campbell
 
 -------------------------------------------------------------------------
  CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
@@ -40,14 +40,13 @@ COPYRIGHT
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
  You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
+ along with this program. If not, read the license online at
+ https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 
 -------------------------------------------------------------------------
 
 NOTE
 -------------------------------------------------------------------------
- If you simply cant resist from editing, altering the Theme, please do not
+ If you simply cannot resist editing, altering the theme, please do not
  remove COPYRIGHT information anywhere.
- Altering Stylesheet or Images doesn't make you owner, creator or designer of the theme ;-)
+ Altering stylesheet or image doesn't make you owner, creator or designer of the theme ;-)

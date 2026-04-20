@@ -16,7 +16,7 @@ class CmsModuleInfo implements ArrayAccess
             break;
 
         case 'ver_compatible':
-            return version_compare($this['mincmsversion'],CMS_VERSION,'<=');
+            return cmsversion_compare($this['mincmsversion'],CMS_VERSION) <= 0;
 
         case 'dir':
             return cms_join_path(CMS_ROOT_PATH,'modules',$this['name']);
@@ -32,6 +32,7 @@ class CmsModuleInfo implements ArrayAccess
             if( isset($this->_data[$key]) ) return $this->_data[$key];
             break;
         }
+        return null; // no value for unrecognised property
     }
 
     #[\ReturnTypeWillChange]
@@ -62,35 +63,30 @@ class CmsModuleInfo implements ArrayAccess
 
     private function _get_module_meta_file( $module_name )
     {
-        $config = \cms_config::get_instance();
-        $fn = $config['root_path']."/modules/$module_name/moduleinfo.ini";
-        return $fn;
+        return cms_join_path(CMS_ROOT_PATH,'modules',$module_name,'moduleinfo.ini');
     }
 
     private function _get_module_file( $module_name )
     {
-        $config = \cms_config::get_instance();
-        $fn = $config['root_path']."/modules/$module_name/$module_name.module.php";
-        return $fn;
+        return cms_join_path(CMS_ROOT_PATH,'modules',$module_name,$module_name.'.module.php');
     }
 
     public function __construct($module_name,$can_load = TRUE)
     {
-        $arr = $arr2 = $fn1 = $fn2 = $ft1 = $ft2 = null;
         $fn1 = $this->_get_module_meta_file( $module_name );
+        $ft1 = ( is_file($fn1) ) ? filemtime($fn1) : 0;
         $fn2 = $this->_get_module_file( $module_name );
-        if( is_file($fn1) ) $ft1 = filemtime($fn1);
-        if( is_file($fn2) ) $ft2 = filemtime($fn2);
+        $ft2 = ( is_file($fn2) ) ? filemtime($fn2) : 0;
         if( $ft2 >= $ft1 && $can_load ) {
             // module file is newer.
             $arr = $this->_read_from_module($module_name);
         }
         else {
-            // moduleinfo file is newer.
+            // moduleinfo file is newer, or no-module-load.
             $arr = $this->_read_from_module_meta($module_name);
         }
         if( !$arr ) {
-            $arr['name'] = $module_name;
+            $arr = ['name'=> $module_name];
             $this->_setData( $arr );
             $this->_data['notavailable'] = true;
         } else {
@@ -114,7 +110,7 @@ class CmsModuleInfo implements ArrayAccess
         $files2 = glob($dir."/lang/??_??.php");
 
         $tmp = ['has_custom' => FALSE ];
-        if( count($files1) || count($files2) ) $this->_tmp['has_custom'] = TRUE;
+        if( count($files1) || count($files2) ) $tmp['has_custom'] = TRUE;
         return $tmp;
     }
 
@@ -126,35 +122,34 @@ class CmsModuleInfo implements ArrayAccess
 
     private function _read_from_module_meta($module_name)
     {
-        $config = \cms_config::get_instance();
-        $dir = $config['root_path']."/modules/$module_name";
         $fn = $this->_get_module_meta_file( $module_name );
-        if( !is_file($fn) ) return;
+        if( !is_file($fn) ) return [];
         $inidata = @parse_ini_file($fn,TRUE);
-        if( $inidata === FALSE || count($inidata) == 0 ) return;
-        if( !isset($inidata['module']) ) return;
+        if( $inidata === FALSE || count($inidata) == 0 ) return [];
+        if( !isset($inidata['module']) ) return [];
 
         $data = $inidata['module'];
         $arr = [];
         $arr['name'] = isset($data['name'])?trim($data['name']):$module_name;
         $arr['version'] = isset($data['version'])?trim($data['version']):'0.0.1';
         $arr['description'] = isset($data['description'])?trim($data['description']):'';
-        $arr['author'] = trim(get_parameter_value($data,'author',lang('notspecified')));
-        $arr['authoremail'] = trim(get_parameter_value($data,'authoremail',lang('notspecified')));
+        $arr['author'] = get_parameter_value($data,'author',lang('notspecified'));
+        $arr['authoremail'] = get_parameter_value($data,'authoremail',lang('notspecified'));
         $arr['mincmsversion'] = isset($data['mincmsversion'])?trim($data['mincmsversion']):CMS_VERSION;
         $arr['lazyloadadmin'] = cms_to_bool(get_parameter_value($data,'lazyloadadmin',FALSE));
         $arr['lazyloadfrontend'] = cms_to_bool(get_parameter_value($data,'lazyloadfrontend',FALSE));
 
         if( isset($inidata['depends']) ) $arr['depends'] = $inidata['depends'];
 
-        $fn = cms_join_path($dir,'changelog.inc');
+        $dir = cms_join_path(CMS_ROOT_PATH,'modules',$module_name);
+        $fn = $dir.DIRECTORY_SEPARATOR.'changelog.inc';
         if( file_exists($fn) ) $arr['changelog'] = file_get_contents($fn);
-        $fn = cms_join_path($dir,'doc/changelog.inc');
+        $fn = cms_join_path($dir,'doc','changelog.inc');
         if( file_exists($fn) ) $arr['changelog'] = file_get_contents($fn);
 
-        $fn = cms_join_path($dir,'help.inc');
+        $fn = $dir.DIRECTORY_SEPARATOR.'help.inc';
         if( file_exists($fn) ) $arr['help'] = file_get_contents($fn);
-        $fn = cms_join_path($dir,'doc/help.inc');
+        $fn = cms_join_path($dir,'doc','help.inc');
         if( file_exists($fn) ) $arr['help'] = file_get_contents($fn);
 
         $arr['has_meta'] = TRUE;
@@ -166,7 +161,7 @@ class CmsModuleInfo implements ArrayAccess
         // load the module... this is more likely to result in fatal errors than exceptions
         // so we don't bother to read
         $mod = ModuleOperations::get_instance()->get_module_instance($module_name,'',TRUE);
-        if( !is_object($mod) ) return;
+        if( !is_object($mod) ) return [];
 
         $arr = [];
         $arr['name'] = $mod->GetName();
@@ -193,8 +188,8 @@ class CmsModuleInfo implements ArrayAccess
     {
         if( !$this['writable'] ) return FALSE;
 
-        $_write_ini = function($input,$filename,$depth = 0) use (&$_write_ini) {
-            if( !is_array($input) ) { return; }
+        $_write_ini = function($input,$filename,$depth = 0) use (&$_write_ini) { // : void
+            if( !is_array($input) || !$filename ) { return; }
 
             $res = '';
             foreach($input as $key => $val) {
@@ -211,12 +206,7 @@ class CmsModuleInfo implements ArrayAccess
                     }
                 }
             }
-            if( $filename ) {
-                file_put_contents($filename, $res);
-            }
-            else {
-                return $res;
-            }
+            file_put_contents($filename, $res);
         }; // _write_ini
 
         $dir = dirname(__DIR__,2)."/modules/$module_name";

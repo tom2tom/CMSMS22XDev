@@ -1,4 +1,8 @@
 <?php
+#CMSMS News module action: approvearticle
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#The license at the top of file News.module.php applies to this file.
+
 if( !isset($gCms) ) exit();
 if( !$this->CheckPermission('Approve News') ) exit();
 
@@ -29,7 +33,7 @@ if( is_object($search) ) {
     $search->DeleteWords($this->GetName(),$articleid,'article');
   }
   else if( $status == 'published' ) {
-    $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_news WHERE news_id = ?';;
+    $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_news WHERE news_id = ?';
     $article = $db->GetRow($query,array($articleid));
     if( !$article ) return;
 
@@ -40,18 +44,18 @@ if( is_object($search) ) {
       $t_end = $db->UnixTimeStamp($article['end_time']);
     }
 
-    if( $t_end > time() || $this->GetPreference('expired_searchble',1) == 1 ) {
+    if( $t_end > time() || $this->GetPreference('expired_searchable',1) == 1 ) {
       $text = $article['news_data'] . ' ' . $article['summary'] . ' ' . $article['news_title'] . ' ' . $article['news_title'];
       $query = 'SELECT value FROM '.CMS_DB_PREFIX.'module_news_fieldvals WHERE news_id = ?';
       $flds = $db->GetArray($query,array($articleid));
       if( is_array($flds) ) {
-	for( $i = 0; $i < count($flds); $i++ ) {
-	  $text .= ' '.$flds[$i]['value'];
-	}
+        for( $i = 0; $i < count($flds); $i++ ) {
+          $text .= ' '.$flds[$i]['displayvalue'];
+        }
       }
 
       $search->AddWords($this->GetName(), $articleid, 'article', $text,
-			($useexp == 1 && $this->GetPreference('expired_searchable',0) == 0) ? $t_end : NULL);
+            ($useexp == 1 && $this->GetPreference('expired_searchable',0) == 0) ? $t_end : NULL);
     }
   }
 }

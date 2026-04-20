@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: cms_textarea
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -24,7 +23,7 @@ function smarty_function_cms_textarea($params, $smarty)
   $out = CmsFormUtils::create_textarea($params);
   if( isset($params['assign']) ) {
     $smarty->assign(trim($params['assign']),$out);
-    return;
+    return '';
   }
   return $out;
 }

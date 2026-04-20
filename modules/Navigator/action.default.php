@@ -1,13 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: Navigator (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  An module for CMS Made Simple to allow building hierarchical navigations.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module Navigator action
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A module for CMS Made Simple to allow building hierarchical navigations.
 #
 #-------------------------------------------------------------------------
 #
@@ -36,18 +32,18 @@
 if( !defined('CMS_VERSION') ) exit;
 
 debug_buffer('Start Navigator default action');
-$items = null;
+$items = '';
 $nlevels = -1;
 $show_all = FALSE;
 $show_root_siblings = FALSE;
-$start_element = null;
-$start_page = null;
-$start_level = null;
-$childrenof = null;
+$start_element = '';
+$start_page = '';
+$start_level = 0;
+$childrenof = '';
 $deep = TRUE;
 $collapse = FALSE;
 
-$template = null;
+$template = '';
 if( isset($params['template']) ) {
     $template = trim($params['template']);
 }
@@ -63,7 +59,7 @@ else {
 $cache_id = '|nav'.md5(serialize($params).$returnid);
 $compile_id = '';
 
-$tpl = $smarty->CreateTemplate($this->GetTemplateResource($template),$cache_id,$compile_id,$smarty);
+$tpl = $smarty->createTemplate($this->GetTemplateResource($template),$cache_id,$compile_id,$smarty);
 if( !$tpl->isCached() ) {
     $hm = $gCms->GetHierarchyManager();
     foreach( $params as $key => $value ) {
@@ -77,10 +73,10 @@ if( !$tpl->isCached() ) {
             Nav_utils::clear_excludes();
             $items = trim($value);
             $nlevels = 1;
-            $start_element = null;
-            $start_page = null;
-            $start_level = null;
-            $childrenof = null;
+            $start_element = '';
+            $start_page = '';
+            $start_level = 0;
+            $childrenof = '';
             break;
 
         case 'includeprefix':
@@ -90,6 +86,7 @@ if( !$tpl->isCached() ) {
                 foreach( $list as &$one ) {
                     $one = trim($one);
                 }
+                unset($one);
                 $list = array_unique($list);
                 if( count($list) ) {
                     $flatlist = $hm->getFlatList();
@@ -101,20 +98,21 @@ if( !$tpl->isCached() ) {
                                 if( startswith( $alias, $t1 ) ) $tmp[] = $alias;
                             }
                         }
+                        unset($node);
                         if( is_array($tmp) && count($tmp) ) $items = implode(',',$tmp);
                     }
                 }
             }
             $nlevels = 1;
-            $start_element = null;
-            $start_page = null;
-            $start_level = null;
-            $childrenof = null;
+            $start_element = '';
+            $start_page = '';
+            $start_level = 0;
+            $childrenof = '';
             break;
 
         case 'excludeprefix':
             Nav_utils::set_excludes($value);
-            $items = null;
+            $items = '';
             break;
 
         case 'nlevels':
@@ -124,47 +122,47 @@ if( !$tpl->isCached() ) {
             break;
 
         case 'show_all':
-            // show all items, even if marked as 'not shown in menu'
+            // show all items, even if marked as 'not shown in menu' TODO all including excludes ?
             $show_all = cms_to_bool($value);
             break;
 
         case 'show_root_siblings':
-            // given a start element or start page ... show it's siblings too
+            // given a start element or start page ... show its siblings too
             $show_root_siblings = cms_to_bool($value);
             break;
 
         case 'start_element':
-            $start_element = trim($value);
-            $start_page = null;
-            $start_level = null;
-            $childrenof = null;
-            $items = null;
+            $start_element = trim((string)$value);
+            $start_page = '';
+            $start_level = 0;
+            $childrenof = '';
+            $items = '';
             break;
 
         case 'start_page':
-            $start_element = null;
-            $start_page = trim($value);
-            $start_level = null;
-            $childrenof = null;
-            $items = null;
+            $start_element = '';
+            $start_page = trim((string)$value);
+            $start_level = 0;
+            $childrenof = '';
+            $items = '';
             break;
 
         case 'start_level':
             $value = (int)$value;
             if( $value > 1 ) {
-                $start_element = null;
-                $start_page = null;
-                $items = null;
+                $start_element = '';
+                $start_page = '';
+                $items = '';
                 $start_level = $value;
             }
             break;
 
         case 'childrenof':
-            $start_page = null;
-            $start_element = null;
-            $start_level = null;
-            $childrenof = trim($value);
-            $items = null;
+            $start_page = '';
+            $start_element = '';
+            $start_level = 0;
+            $childrenof = trim((string)$value);
+            $items = '';
             break;
 
         case 'collapse':
@@ -235,11 +233,11 @@ if( !$tpl->isCached() ) {
     }
     else if( $items ) {
         if( $nlevels < 1 ) $nlevels = 1;
-        $items = explode(',',$items);
-        $items = array_unique($items);
-        foreach( $items as $item ) {
+        $aliases = explode(',',$items);
+        $aliases = array_unique($aliases);
+        foreach( $aliases as $item ) {
             $item = trim($item);
-            $tmp = $hm->sureGetNodeByAlias(trim($item));
+            $tmp = $hm->sureGetNodeByAlias($item);
             if( $tmp ) $rootnodes[] = $tmp;
         }
     }
@@ -248,18 +246,18 @@ if( !$tpl->isCached() ) {
         if( $hm->has_children() ) $rootnodes = $hm->get_children();
     }
 
-    if( count($rootnodes) == 0 ) return; // nothing to do.
-
-    // ready to fill the nodes
-    $outtree = [];
-    foreach( $rootnodes as $node ) {
-        if( Nav_utils::is_excluded($node->get_tag('alias')) ) continue;
-        $tmp = Nav_utils::fill_node($node,$deep,$nlevels,$show_all,$collapse);
-        if( $tmp ) $outtree[] = $tmp;
+    if( $rootnodes ) {
+        // fill the nodes
+        $outtree = [];
+        foreach( $rootnodes as $node ) {
+            if( Nav_utils::is_excluded($node->get_tag('alias')) ) continue;
+            $tmp = Nav_utils::fill_node($node,$deep,$nlevels,$show_all,$collapse);
+            if( $tmp ) $outtree[] = $tmp;
+        }
+        $tpl->assign('nodes',$outtree);
     }
 
     Nav_utils::clear_excludes();
-    $tpl->assign('nodes',$outtree);
 }
 
 $tpl->display();

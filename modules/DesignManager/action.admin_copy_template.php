@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: DesignManager - A CMSMS addon module to provide template management.
-# (c) 2012 by Robert Campbell <calguy1000@cmsmadesimple.org>
+# Module DesignManager action
+# (c) 2015 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,9 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
+# Or read it online: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 #-------------------------------------------------------------------------
+
 if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Modify Templates') ) {
     // no manage templates permission
@@ -43,74 +43,76 @@ if( isset($params['cancel']) ) {
 try {
     $orig_tpl = CmsLayoutTemplate::load($params['tpl']);
 
-    if( isset($params['submit']) || isset($params['submitandedit']) ) {
+    if( isset($params['submit']) || isset($params['apply']) ) {
 
         try {
             $new_tpl = clone($orig_tpl);
             $new_tpl->set_owner(get_userid());
             $new_tpl->set_name(trim($params['new_name']));
-            $new_tpl->set_additional_editors(array());
+            $new_tpl->set_additional_editors([]);
 
             // only if have manage themes right.
             if( $this->CheckPermission('Modify Designs') ) {
-				$new_tpl->set_designs($orig_tpl->get_designs());
+                $new_tpl->set_designs($orig_tpl->get_designs());
             }
             else {
-				$new_tpl->set_designs(array());
+                $new_tpl->set_designs([]);
             }
             $new_tpl->save();
 
-            if( isset($params['submitandedit']) ) {
-				$this->SetMessage($this->Lang('msg_template_copied_edit'));
-				$this->Redirect($id,'admin_edit_template',$returnid,array('tpl'=>$new_tpl->get_id()));
+            if( isset($params['apply']) ) {
+                $this->SetMessage($this->Lang('msg_template_copied_edit'));
+                $this->Redirect($id,'admin_edit_template',$returnid,['tpl'=>$new_tpl->get_id()]);
             }
             else {
-				$this->SetMessage($this->Lang('msg_template_copied'));
-				$this->RedirectToAdminTab();
+                $this->SetMessage($this->Lang('msg_template_copied'));
+                $this->RedirectToAdminTab();
             }
         }
         catch( CmsException $e ) {
-            echo $this->ShowErrors($e->GetMessage());
+            $this->ShowErrors($e->GetMessage());
         }
     }
 
     // build a display.
+    $modname = $this->GetName();
+    $tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_copy_template.tpl",null,$modname,$smarty);
+
+    $tmp = [$this->Lang('prompt_none')];
     $cats = CmsLayoutTemplateCategory::get_all();
-    $out = array();
-    $out[0] = $this->Lang('prompt_none');
     if( is_array($cats) && count($cats) ) {
         foreach( $cats as $one ) {
-            $out[$one->get_id()] = $one->get_name();
+            $tmp[$one->get_id()] = $one->get_name();
         }
     }
-    $smarty->assign('category_list',$out);
+    $tpl->assign('category_list',$tmp);
 
     $types = CmsLayoutTemplateType::get_all();
     if( is_array($types) && count($types) ) {
-        $out = array();
+        $tmp = [];
         foreach( $types as $one ) {
-            $out[$one->get_id()] = $one->get_langified_display_value();
+            $tmp[$one->get_id()] = $one->get_langified_display_value();
         }
-        $smarty->assign('type_list',$out);
+        $tpl->assign('type_list',$tmp);
     }
 
     $designs = CmsLayoutCollection::get_all();
-    if( is_array($designs) && count($designs) ) {
-        $out = array();
+    if( $designs ) {
+        $tmp = [];
         foreach( $designs as $one ) {
-            $out[$one->get_id()] = $one->get_name();
+            $tmp[$one->get_id()] = $one->get_name();
         }
-        $smarty->assign('design_list',$out);
+        $tpl->assign('design_list',$tmp);
     }
 
     $userops = cmsms()->GetUserOperations();
     $allusers = $userops->LoadUsers();
-    $tmp = array();
+    $tmp = [];
     foreach( $allusers as $one ) {
         $tmp[$one->id] = $one->username;
     }
-    if( is_array($tmp) && count($tmp) ) {
-        $smarty->assign('user_list',$tmp);
+    if( $tmp ) {
+        $tpl->assign('user_list',$tmp);
     }
 
     $new_name = $orig_tpl->get_name();
@@ -121,10 +123,10 @@ try {
         $new_name = substr($new_name,0,$p);
     }
     $new_name .= ' -- '.$n;
-    $smarty->assign('new_name',$new_name);
+    $tpl->assign('new_name',$new_name);
+    $tpl->assign('tpl',$orig_tpl);
 
-    $smarty->assign('tpl',$orig_tpl);
-    echo $this->ProcessTemplate('admin_copy_template.tpl');
+    $tpl->display();
 }
 catch( CmsException $e ) {
     $this->SetError($e->GetMessage());

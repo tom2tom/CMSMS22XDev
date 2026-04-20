@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: cms_escape
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -35,12 +34,13 @@
  * @param html|htmlall|url|quotes|hex|hexentity|javascript
  * @return string
  *
- * calguy1000: change default char-set to utf-8
+ * Robert Campbell: change default char-set to utf-8
  */
- 
+
 function smarty_modifier_cms_escape($string, $esc_type = 'html', $char_set = 'utf-8')
 {
-	$esc_type = strtolower($esc_type);
+    if (!$string) { return (string)$string; }
+    $esc_type = strtolower($esc_type);
     switch ($esc_type) {
         case 'html':
             return htmlspecialchars($string, ENT_QUOTES, $char_set);
@@ -53,7 +53,7 @@ function smarty_modifier_cms_escape($string, $esc_type = 'html', $char_set = 'ut
 
         case 'urlpathinfo':
             return str_replace('%2F','/',rawurlencode($string));
-            
+
         case 'quotes':
             // escape unescaped single quotes
             return preg_replace("%(?<!\\\\)'%", "\\'", $string);
@@ -65,7 +65,7 @@ function smarty_modifier_cms_escape($string, $esc_type = 'html', $char_set = 'ut
                 $return .= '%' . bin2hex($string[$x]);
             }
             return $return;
-            
+
         case 'hexentity':
             $return = '';
             for ($x=0; $x < strlen($string); $x++) {
@@ -83,11 +83,11 @@ function smarty_modifier_cms_escape($string, $esc_type = 'html', $char_set = 'ut
         case 'javascript':
             // escape quotes and backslashes, newlines, etc.
             return strtr($string, array('\\'=>'\\\\',"'"=>"\\'",'"'=>'\\"',"\r"=>'\\r',"\n"=>'\\n','</'=>'<\/'));
-            
+
         case 'mail':
             // safe way to display e-mail address on a web page
             return str_replace(array('@', '.'),array(' [AT] ', ' [DOT] '), $string);
-            
+
         case 'nonstd':
            // escape non-standard chars, such as ms document quotes
            $_res = '';
@@ -103,9 +103,9 @@ function smarty_modifier_cms_escape($string, $esc_type = 'html', $char_set = 'ut
            }
            return $_res;
 
-		case 'htmltiny':
-			return str_replace("<", "&lt;", $string);
-					
+        case 'htmltiny':
+            return str_replace("<", "&lt;", $string);
+
         default:
             return $string;
     }

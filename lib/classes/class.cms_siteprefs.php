@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2010 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple class cms_siteprefs
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -16,23 +15,17 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: class.global.inc.php 6939 2011-03-06 00:12:54Z calguy1000 $
+#$Id$
+
+use CMSMS\internal\global_cache;
 
 /**
  * A class and utilities for working with site preferences.
- * @package CMS
- * @license GPL
- */
-
-use \CMSMS\internal\global_cache;
-
-/**
- * A class for working with site preferences
  *
  * @package CMS
  * @license GPL
  * @since 1.10
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  */
 final class cms_siteprefs
 {
@@ -41,27 +34,25 @@ final class cms_siteprefs
 	 */
 	private function __construct() {}
 
-    /**
-     * @ignore
-     * @internal
-     */
-    public static function setup()
-    {
-        $obj = new \CMSMS\internal\global_cachable(__CLASS__,function(){
-                return self::_read();
-            });
-        global_cache::add_cachable($obj);
-    }
+	/**
+	 * @ignore
+	 * @internal
+	 */
+	public static function setup()
+	{
+		$obj = new \CMSMS\internal\global_cachable(__CLASS__,function(){
+				return self::_read();
+			});
+		global_cache::add_cachable($obj);
+	}
 
 	/**
 	 * @ignore
-     * @internal
+	 * @internal
 	 */
 	private static function _read()
 	{
 		$db = CmsApp::get_instance()->GetDb();
-
-		if( !$db ) return;
 		$query = 'SELECT sitepref_name,sitepref_value FROM '.CMS_DB_PREFIX.'siteprefs';
 		$dbr = $db->GetArray($query);
 		if( is_array($dbr) ) {
@@ -70,8 +61,9 @@ final class cms_siteprefs
 				$row = $dbr[$i];
 				$_prefs[$row['sitepref_name']] = $row['sitepref_value'];
 			}
-            return $_prefs;
+			return $_prefs;
 		}
+		return [];
 	}
 
 	/**
@@ -83,9 +75,25 @@ final class cms_siteprefs
 	 */
 	public static function get($key,$dflt = '')
 	{
-        $prefs = global_cache::get(__CLASS__);
-		if( isset($prefs[$key]) )  return $prefs[$key];
+		$prefs = global_cache::get(__CLASS__);
+		if( isset($prefs[$key]) ) return $prefs[$key];
 		return $dflt;
+	}
+
+
+	/**
+	 * Retrieve a site preference without checking the cached preference-values
+	 * @since 2.2.23F2
+	 *
+	 * @param string $key The preference name
+	 * @return mixed string | null
+	 */
+	public static function get_forced($key)
+	{
+		$db = CmsApp::get_instance()->GetDb();
+		$query = 'SELECT sitepref_value FROM '.CMS_DB_PREFIX.'siteprefs WHERE sitepref_name = ?';
+		$dbr = $db->GetOne($query,array($key));
+		return ($dbr !== FALSE) ? $dbr : null;
 	}
 
 
@@ -97,9 +105,8 @@ final class cms_siteprefs
 	 */
 	public static function exists($key)
 	{
-        $prefs = global_cache::get(__CLASS__);
-		if( is_array($prefs) && in_array($key,array_keys($prefs)) ) return TRUE;
-		return FALSE;
+		$prefs = global_cache::get(__CLASS__);
+		return ($prefs && is_array($prefs) && array_key_exists($key,$prefs));
 	}
 
 
@@ -120,7 +127,7 @@ final class cms_siteprefs
 			$query = 'UPDATE '.CMS_DB_PREFIX.'siteprefs SET sitepref_value = ? WHERE sitepref_name = ?';
 			$dbr = $db->Execute($query,array($value,$key));
 		}
-        global_cache::clear(__CLASS__);
+		global_cache::clear(__CLASS__);
 	}
 
 
@@ -138,8 +145,8 @@ final class cms_siteprefs
 			$key .= '%';
 		};
 		$db = CmsApp::get_instance()->GetDb();
-        	$db->Execute($query,array($key));
-        	global_cache::clear(__CLASS__);
+		$db->Execute($query,array($key));
+		global_cache::clear(__CLASS__);
 	}
 
 	/**
@@ -151,13 +158,11 @@ final class cms_siteprefs
 	 */
 	public static function list_by_prefix($prefix)
 	{
-		if( !$prefix ) return;
+		if( !$prefix ) return [];
 		$query = 'SELECT sitepref_name FROM '.CMS_DB_PREFIX.'siteprefs WHERE sitepref_name LIKE ?';
 		$db = CmsApp::get_instance()->GetDb();
 		$dbr = $db->GetCol($query,array($prefix.'%'));
-		if( is_array($dbr) && count($dbr) ) return $dbr;
+		if( $dbr && is_array($dbr) ) return $dbr;
+		return [];
 	}
 } // end of class
-
-#
-# EOF

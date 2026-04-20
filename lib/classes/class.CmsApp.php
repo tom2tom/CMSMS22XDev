@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2010 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple classes CmsApp, CmsContentTypePlaceHolder
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -19,13 +18,6 @@
 #$Id$
 
 /**
- * Global class for easy access to all important variables.
- *
- * @package CMS
- * @license GPL
- */
-
-/**
  * Simple singleton class that contains various functions and states
  * representing the application.
  *
@@ -35,8 +27,8 @@
  * @license GPL
  * @since 0.5
  */
-final class CmsApp {
-
+final class CmsApp
+{
 	/**
 	 * A constant indicating that the request is for a page in the CMSMS admin console
 	 */
@@ -101,6 +93,11 @@ final class CmsApp {
 	private $hrinstance;
 
 	/**
+	 * @ignore
+	 */
+	private $bookmarkoperations;
+
+	/**
 	 * Internal error array - So functions/modules can store up debug info and spit it all out at once
 	 * @ignore
 	 */
@@ -115,8 +112,8 @@ final class CmsApp {
 		switch($key) {
 		case 'config':
 			return cms_config::get_instance();
-			break;
 		}
+		return null; // no value for unrecognised property
 	}
 
 	/**
@@ -124,7 +121,7 @@ final class CmsApp {
 	 */
 	protected function __construct()
 	{
-		register_shutdown_function(array(&$this, 'dbshutdown'));
+		register_shutdown_function(array($this, 'dbshutdown'));
 	}
 
 	/**
@@ -132,9 +129,9 @@ final class CmsApp {
 	 *
 	 * @since 1.10
 	 */
-	public static function &get_instance()
+	public static function get_instance()
 	{
-		if( !isset(self::$_instance)  ) self::$_instance = new CmsApp();
+		if( !self::$_instance ) self::$_instance = new self();
 		return self::$_instance;
 	}
 
@@ -148,7 +145,7 @@ final class CmsApp {
 	{
 		if( self::test_state(self::STATE_INSTALL) ) {
 			$db = $this->GetDb();
-			$query = 'SELECT version FROM '.CmsApp::get_instance()->GetDbPrefix().'version';
+			$query = 'SELECT version FROM '.CMS_DB_PREFIX.'version';
 			return $db->GetOne($query);
 		}
 		return \CMSMS\internal\global_cache::get('schema_version');
@@ -206,7 +203,7 @@ final class CmsApp {
 	 */
 	public function set_content_type($mime_type = '')
 	{
-		$this->_content_type = null;
+		$this->_content_type = '';
 		if( isset($mime_type) ) $this->_content_type = $mime_type;
 	}
 
@@ -218,9 +215,9 @@ final class CmsApp {
 	 * @access private
 	 * @ignore
 	 */
-	public function set_content_object(ContentBase &$content)
+	public function set_content_object(ContentBase $content)
 	{
-		if( !$this->_current_content_page || $content instanceof ErrorPage ) $this->_current_content_page = $content;
+		if( empty($this->_current_content_page) || $content instanceof ErrorPage ) $this->_current_content_page = $content;
 	}
 
 	/**
@@ -230,7 +227,7 @@ final class CmsApp {
 	 */
 	public function get_content_object()
 	{
-		return $this->_current_content_page;
+		return (isset($this->_current_content_page)) ? $this->_current_content_page : null;
 	}
 
 	/**
@@ -242,6 +239,7 @@ final class CmsApp {
 	{
 		$obj = $this->get_content_object();
 		if( is_object($obj) ) return $obj->Id();
+		return 0;
 	}
 
 
@@ -262,9 +260,9 @@ final class CmsApp {
 
 
 	/**
-	 * Get a reference to an installed module instance.
+	 * Get an installed module object.
 	 *
-	 * This method will return a reference to the module object specified if it is installed, and available.
+	 * This method will return the specified module object if it is installed, and available.
 	 * Optionally, a version check can be performed to test if the version of the requested module matches
 	 * that specified.
 	 *
@@ -274,7 +272,7 @@ final class CmsApp {
 	 * @return CMSModule Reference to the module object, or null.
 	 * @deprecated
 	 */
-	public function &GetModuleInstance($module_name,$version = '')
+	public function GetModuleInstance($module_name,$version = '')
 	{
 		return ModuleOperations::get_instance()->get_module_instance($module_name,$version);
 	}
@@ -298,26 +296,27 @@ final class CmsApp {
 	 * to perform all kinds of database operations.
 	 *
 	 * @final
-	 * @return \CMSMS\Database\Connection a handle to the database Connection object
+	 * @return mixed \CMSMS\Database\Connection the global database Connection object, or null
 	 */
 	final public function GetDb()
 	{
 		/* Check to see if we have a valid instance.
 		 * If not, build the connection
 		 */
-		if (isset($this->db)) return $this->db;
+		if( isset($this->db) ) return $this->db;
 		global $DONT_LOAD_DB;
 
 		if( !isset($DONT_LOAD_DB) ) {
 			$config = \cms_config::get_instance();
 			$this->db = \CMSMS\Database\compatibility::init($config);
+			return $this->db;
 		}
-
-		return $this->db;
+		return null;
 	}
 
 	/**
 	 * Get the database prefix.
+	 * @deprecated since 2.0 instead use CMS_DB_PREFIX
 	 *
 	 * @return string
 	 */
@@ -334,7 +333,7 @@ final class CmsApp {
 	* @final
 	* @return cms_config The configuration object.
 	*/
-	public function &GetConfig()
+	public function GetConfig()
 	{
 		return cms_config::get_instance();
 	}
@@ -349,7 +348,7 @@ final class CmsApp {
 	* @return ModuleOperations handle to the ModuleOperations object
 	* @deprecated
 	*/
-	public function & GetModuleOperations()
+	public function GetModuleOperations()
 	{
 		return ModuleOperations::get_instance();
 	}
@@ -364,7 +363,7 @@ final class CmsApp {
 	* @return UserOperations handle to the UserOperations object
 	* @deprecated
 	*/
-	public function & GetUserOperations()
+	public function GetUserOperations()
 	{
 		return UserOperations::get_instance();
 	}
@@ -378,7 +377,7 @@ final class CmsApp {
 	* @return ContentOperations handle to the ContentOperations object
 	* @deprecated
 	*/
-	public function & GetContentOperations()
+	public function GetContentOperations()
 	{
 		return ContentOperations::get_instance();
 	}
@@ -392,7 +391,7 @@ final class CmsApp {
 	* @return BookmarkOperations handle to the BookmarkOperations object, useful only in the admin
 	* @deprecated
 	*/
-	public function & GetBookmarkOperations()
+	public function GetBookmarkOperations()
 	{
 		if (!isset($this->bookmarkoperations)) $this->bookmarkoperations = new BookmarkOperations();
 		return $this->bookmarkoperations;
@@ -408,7 +407,7 @@ final class CmsApp {
 	* @return GroupOperations handle to the GroupOperations object
 	* @deprecated
 	*/
-	public function & GetGroupOperations()
+	public function GetGroupOperations()
 	{
 		return GroupOperations::get_instance();
 	}
@@ -422,29 +421,28 @@ final class CmsApp {
 	* @return UserTagOperations handle to the UserTagOperations object
 	* @deprecated
 	*/
-	public function & GetUserTagOperations()
+	public function GetUserTagOperations()
 	{
 		return UserTagOperations::get_instance();
 	}
 
 	/**
-	* Get a handle to the CMS Smarty object.
+	* Get the CMS Smarty singleton.
 	* If it does not yet exist, this method will instantiate it.
 	*
 	* @final
 	* @see Smarty_CMS
-	* @link http://www.smarty.net/manual/en/
-	* @return Smarty_CMS handle to the Smarty object
+	* @link https://smarty-php.github.io/smarty/4.x
+	* @return Smarty_CMS the session Smarty instance, or null
 	*/
-	public function & GetSmarty()
+	public function GetSmarty()
 	{
-		global $CMS_PHAR_INSTALLER;
-		if( isset($CMS_PHAR_INSTALLER) ) {
-			// we can't load the CMSMS version of smarty during the installation.
-			$out = null;
-			return $out;
+		// we must not conflict with the installer version of Smarty
+		global $DONT_LOAD_SMARTY;
+		if( !isset($DONT_LOAD_SMARTY) ) { // was $CMS_PHAR_INSTALLER
+			return Smarty_CMS::get_instance();
 		}
-		return Smarty_CMS::get_instance();
+		return null; // no object
 	}
 
 	/**
@@ -453,9 +451,9 @@ final class CmsApp {
 	*
 	* @final
 	* @see HierarchyManager
-	* @return HierarchyManager handle to the HierarchyManager object
+	* @return HierarchyManager reference to the HierarchyManager object TODO check ref or object
 	*/
-	public function & GetHierarchyManager()
+	public function GetHierarchyManager()
 	{
 		/* Check to see if a HierarchyManager has been instantiated yet,
 		  and, if not, go ahead an create the instance. */
@@ -493,12 +491,16 @@ final class CmsApp {
 	 */
 	final public function clear_cached_files($age_days = 0)
 	{
-		$age_days = max(-1,(int) $age_days);
-		global $CMS_LOGIN_PAGE, $CMS_INSTALL_PAGE; // not used?... todo remove
 		if( !defined('TMP_CACHE_LOCATION') ) return;
 		$age_days = max(0,(int)$age_days);
-		\CMSMS\HookManager::do_hook('clear_cached_files', [ 'older_than' => $age_days ]);
-		$the_time = time() - $age_days * 24*60*60;
+		if ($age_days > 0) {
+			\CMSMS\HookManager::do_hook('clear_cached_files', [ 'older_than' => $age_days ]);
+			$the_time = ($age_days == 1) ? strtotime('-1 day 00:00') : strtotime("-$age_days days 00:00");
+		}
+		else {
+			\CMSMS\HookManager::do_hook('clear_cached_files', [ 'all' ]);
+			$the_time = time() + 86400; // prevent timezone interference
+		}
 
 		$dirs = array(TMP_CACHE_LOCATION,PUBLIC_CACHE_LOCATION,TMP_TEMPLATES_C_LOCATION);
 		foreach( $dirs as $start_dir ) {
@@ -513,14 +515,14 @@ final class CmsApp {
 
 
 	/**
-	 * Get handle to the Smarty parser object, meant for template parsing.
+	 * Get handle to the Smarty parser object, formerly meant for template parsing.
 	 *
 	 * @internal
 	 * @since 1.11.3
-	 * @return Smarty_Parser handle to the Smarty object
-	 * @deprecated
+	 * @deprecated since 2.0 any usage exits immediately
+	 * @return not at all - formerly Smarty_Parser handle to the Smarty object
 	 */
-	final public function &get_template_parser()
+	final public function get_template_parser()
 	{
 		return Smarty_Parser::get_instance();
 	}
@@ -664,7 +666,7 @@ final class CmsApp {
  *
  * @package CMS
  */
-class CmsContentTypePlaceholder
+class CmsContentTypePlaceHolder
 {
 	/**
 	 * @var string The type name
@@ -672,6 +674,7 @@ class CmsContentTypePlaceholder
 	public $type;
 
 	/**
+	 * @var string The name of the type's class
 	 */
 	public $class;
 
@@ -681,29 +684,30 @@ class CmsContentTypePlaceholder
 	public $filename;
 
 	/**
-	 * @var string A friendly name for the type
+	 * @var string A friendly (UI displayed) name for the type
 	 */
 	public $friendlyname;
 
 	/**
+	 * @var string Admin lang key for the type's UI-displayed name
 	 */
 	public $friendlyname_key;
 
 	/**
-	 * @var Wether the type has been loaded
+	 * @var Whether the type has been loaded
 	 */
 	public $loaded;
 }
 
 
 /**
- * Return the global cmsms() object.
+ * Return the global CmsApp object.
  *
  * @since 1.7
  * @return CmsApp
  * @see CmsApp::get_instance()
  */
-function &cmsms()
+function cmsms()
 {
 	return CmsApp::get_instance();
 }
@@ -711,12 +715,12 @@ function &cmsms()
 
 /**
  * Returns the currently configured database prefix.
- *
  * @since 0.4
+ * @deprecated since 2.0 instead use CMS_DB_PREFIX
  * @return string
- * @see CmsApp::GetDbPrefix();
  */
-function cms_db_prefix() {
+function cms_db_prefix()
+{
 	return CMS_DB_PREFIX;
 }
 

@@ -1,67 +1,56 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: CMSContentManager (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A module for managing content in CMSMS.
-#
+# Module CMSContentManager action
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2004 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
-#
-#-------------------------------------------------------------------------
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
 #
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, read the license online at:
+# http://www.gnu.org/licenses/#LicenseURLs
 #-------------------------------------------------------------------------
 #END_LICENSE
 if( !isset($gCms) ) exit;
 
+$user_id = get_userid();
+
 $this->SetCurrentTab('pages');
+
+if( isset($params['cancel']) ) {
+    unset($_SESSION['__cms_copy_id__']); // if any
+    $this->SetMessage($this->Lang('msg_cancelled'));
+    $this->RedirectToAdminTab();
+}
+
+$content_id = 0; //i.e. new-page
+$content_obj = null;
+$error = '';
+$seetab = '';
+$modname = $this->GetName();
 
 //
 // init
 //
 try {
-    $user_id = get_userid();
-    $content_id = 0;
-    $content_obj = null;
     $pagedefaults = CmsContentManagerUtils::get_pagedefaults();
     $content_type = $pagedefaults['contenttype'];
-    $error = null;
-    $active_tab = null;
 
     if( isset($params['content_id']) ) $content_id = (int)$params['content_id'];
-
-    if( isset($params['cancel']) ) {
-        unset($_SESSION['__cms_copy_obj__']);
-        $this->SetMessage($this->Lang('msg_cancelled'));
-        $this->RedirectToAdminTab();
-    }
 
     if( $content_id < 1 ) {
         // adding or copying.
         if( !$this->CheckPermission('Add Pages') ) {
-            // no permission to add pages.
-            $this->SetError($this->Lang('error_editpage_permission'));
+            // no permission to add page.
+            $this->SetError($this->Lang('error_editpage_permission')); // TODO something specific to add page
             $this->RedirectToAdminTab();
         }
     }
@@ -73,22 +62,44 @@ try {
 
     // Get a list of content types and pick a default if necessary
     $contentops = \ContentOperations::get_instance();
-    $existingtypes = $contentops->ListContentTypes(false,true);
+    $typeclasses = $contentops->ListContentTypes(true,true);
 
     //
     // load or create the initial content object
     //
-    if( $content_id === -1 && isset($_SESSION['__cms_copy_obj__']) ) {
-        // we're copying a content object.
-        $tmp = $_SESSION['__cms_copy_obj__'];
-        $type_name = get_parameter_value($tmp,'type');
-        if( !$type_name ) throw new \LogicException('Invalid session data');
-        $ph = $contentops->LoadContentType($type_name);
-        if( !class_exists($ph->class) ) throw new \LogicException('Could not find class for content type');
-        if( !$ph ) throw new \LogicException('Could not find content type named '.$type_name);
-        $content_obj = unserialize($tmp['obj']);
-        $content_type = $content_obj->Type();
-        if( isset($params['content_type']) ) $content_type = trim($params['content_type']);
+    if( $content_id === -1 ) {
+        // copying a content object
+        if( !empty($params['copy_id']) ) {
+            $from_id = (int)$params['copy_id'];
+        }
+        elseif( !empty($_SESSION['__cms_copy_id__']) ) {
+            $from_id = (int)$_SESSION['__cms_copy_id__'];
+            unset($_SESSION['__cms_copy_id__']);
+        }
+        else {
+            throw new \LogicException('Missing object-copy data');
+        }
+
+        $content_obj = $contentops->LoadContentFromId($from_id,true);
+        if( !$content_obj ) throw new RuntimeException('Could not find content object to copy');
+        $type_name = $content_obj->Type();
+        // can the following ever fail?
+        if( !$type_name ) throw new RuntimeException('Could not find content object\'s type');
+        $placeholder = $contentops->LoadContentType($type_name);
+        if( !$placeholder ) throw new RuntimeException('Could not find content type named '.$type_name);
+        if( !class_exists($placeholder->class) ) throw new RuntimeException('Could not find class for content type');
+        $content_type = $type_name;
+        if( !$_POST ) $_SESSION['__cms_copy_id__'] = $from_id; // park it for next time
+        // re-populate the content object
+        $content_obj->SetId(-1);
+        $content_obj->SetName('Copy of '.$content_obj->Name());
+        $content_obj->SetMenuText('Copy of '.$content_obj->MenuText());
+        $content_obj->SetAlias($content_obj->Alias().'_copy');
+        $content_obj->SetOldItemOrder(-1);
+        $content_obj->SetDefaultContent(false);
+        $content_obj->SetURL('');
+        $content_obj->SetOwner($user_id);
+        $content_obj->SetLastModifiedBy($user_id);
     }
     else if( $content_id === 0 ) {
         // creating a new content object
@@ -109,15 +120,15 @@ try {
         $content_obj->SetPropertyValue('extra2',$pagedefaults['extra2']);
         $content_obj->SetPropertyValue('extra3',$pagedefaults['extra3']);
         $content_obj->SetAdditionalEditors($pagedefaults['addteditors']);
-        $dflt_parent = (int) \cms_userprefs::get('default_parent');
+        $dflt_parent = (int) cms_userprefs::get_for_user($user_id,'default_parent');
         if( $dflt_parent < 1 ) $dflt_parent = -1;
-        if( !$this->CheckPermission('Modify Any Page') || !$this->CheckPermission('Manage All Content') ) {
+        if( !(check_permission($user_id,'Modify Any Page') || check_permission($user_id,'Manage All Content')) ) {
             // we get the list of pages that this user has access to.
-            // if he is not an editor of the default page, then we use the first page the user has access to, or -1
+            // if she is not an editor of the default page, then use the first page she has access to, or -1
             $list = $contentops->GetPageAccessForUser($user_id);
-            if( count($list) && !in_array($dflt_parent,$list) ) $dflt_parent = $list[0];
+            if( $list && !in_array($dflt_parent,$list) ) $dflt_parent = $list[0];
         }
-        // double check if this parent is valid... if it is not, we use -1
+        // check if this parent is valid. If not, use -1
         if( $dflt_parent > 0 ) {
             $node = $contentops->quickfind_node_by_id( $dflt_parent );
             if( !$node ) $dflt_parent = -1;
@@ -134,7 +145,8 @@ try {
     }
 
     // validate the content type.
-    if( is_array($existingtypes) && count($existingtypes) > 0 && !in_array($content_type,array_keys($existingtypes)) ) {
+    $existingtypes = array_map('strtolower',array_keys($typeclasses)); //NOTE conform this if relation between class and type ever changes
+    if( $existingtypes && !in_array($content_type,$existingtypes) ) {
         $this->SetError($this->Lang('error_editpage_contenttype'));
         $this->RedirectToAdminTab();
     }
@@ -150,7 +162,7 @@ catch( Exception $e ) {
 // or a POST
 //
 try {
-    if( $content_id != -1 && $content_type != $content_obj->Type() ) {
+    if( $content_id > 0 && $content_type != $content_obj->Type() ) {
         // content type changed. create a new content object, but preserve the id.
         $tmpobj = $contentops->CreateNewContent($content_type);
         $tmpobj->SetId($content_obj->Id());
@@ -164,23 +176,23 @@ try {
         $tmpobj->SetAlias($content_obj->Alias());
         $tmpobj->SetOwner($content_obj->Owner());
         $tmpobj->SetActive($content_obj->Active());
-        $tmpobj->SetItemOrder($content_obj->ItemOrder());
+        $tmpobj->SetItemOrder($content_obj->ItemOrder()); // hence next position
         $tmpobj->SetShowInMenu($content_obj->ShowInMenu());
         $tmpobj->SetCachable($content_obj->Cachable());
-        $tmpobj->SetHierarchy($content_obj->Hierarchy());
+        $tmpobj->SetHierarchy($content_obj->Hierarchy()); // friendly-format converted before store
         $tmpobj->SetLastModifiedBy($content_obj->LastModifiedBy());
         $tmpobj->SetAdditionalEditors($content_obj->GetAdditionalEditors());
         $tmpobj->Properties();
         $content_obj = $tmpobj;
     }
 
-    if( strtoupper($_SERVER['REQUEST_METHOD']) == 'POST' ) {
+    if( $_POST ) {
         // if we're in a POST action, another item may have changed that requires reloading the page
         // filling the params will make sure that no edited content was lost.
         $content_obj->FillParams($_POST,($content_id > 0));
     }
 
-    $active_tab = isset($params['active_tab']) ? trim($params['active_tab']) : null;
+    $seetab = isset($params['__activetab']) ? trim($params['__activetab']) : '';
     if( isset($params['submit']) || isset($params['apply']) || isset($params['preview']) ) {
         $error = $content_obj->ValidateData();
         if( $error ) {
@@ -192,10 +204,17 @@ try {
             // error, but no ajax... fall through
         }
         else if( isset($params['submit']) || isset($params['apply']) ) {
-            $content_obj->SetLastModifiedBy(get_userid());
+            $content_obj->SetLastModifiedBy($user_id);
             $content_obj->Save();
-            unset($_SESSION['__cms_copy_obj__']);
-            audit($content_obj->Id(),'Content Item: '.$content_obj->Name(),' Edited');
+            $optype = ($content_id > 0) ? 'Edited' : 'Added';
+            $tmp = $content_obj->Name();
+            if( $tmp ) {
+                $tmp = "$optype content page: $tmp";
+            }
+            else {
+                $tmp = "$optype anonymous page";
+            }
+            audit($content_obj->Id(),$modname,$tmp);
             if( isset($params['submit']) ) {
                 $this->SetMessage($this->Lang('msg_editpage_success'));
                 $this->RedirectToAdminTab();
@@ -210,7 +229,9 @@ try {
         else if( isset($params['preview']) && $content_obj->HasPreview() ) {
             $_SESSION['__cms_preview__'] = serialize($content_obj);
             $_SESSION['__cms_preview_type__'] = $content_type;
-            debug_to_log($_SESSION,'before preview');
+            if( CMS_DEBUG ) {
+                debug_to_log($_SESSION,'before preview');
+            }
             exit;
         }
     }
@@ -238,108 +259,165 @@ catch( CmsContentException $e ) {
     }
 }
 
-//
-// BUILD THE DISPLAY
-//
 if( $content_id > 0 && CmsContentManagerUtils::locking_enabled() ) {
-    try {
-        $lock_id = null;
-        for( $i = 0; $i < 3; $i++ ) {
-            // check if this thing is already locked.
-            $lock_id = CmsLockOperations::is_locked('content',$content_id);
-            if( $lock_id == 0 ) break;
-            usleep(500);
+    // check whether this page is locked
+    $lock_id = CmsLockOperations::is_locked('content',$content_id);
+    if( $lock_id > 0 ) {
+        $lock = CmsLock::load('content',$content_id);
+        if( $lock['uid'] == $user_id ) {
+            if ( $lock->expired() ) {
+                // remove it, ready to start again
+                CmsLockOperations::unlock($lock_id,'content',$content_id);
+            }
         }
-        if( $lock_id > 0 ) {
-            // it's locked... by somebody, make sure it's expired before we allow stealing it.
-            $lock = CmsLock::load('content',$content_id);
-            if( !$lock->expired() ) throw new CmsLockException('CMSEX_L010');
-            // lock is expired, we can just remove it.
-            CmsLockOperations::unlock($lock_id,'content',$content_id);
+        elseif( !empty($params['steal_lock']) ) { // the lock-id
+            // remove somebody else's lock
+            try {
+                $lock->delete();
+            }
+            catch (Exception $e) {
+                $this->SetError(lang('CMSEX_L009'));
+                $this->RedirectToAdminTab();
+            }
         }
-    }
-    catch( CmsException $e ) {
-        $this->SetError($e->getMessage());
-        $this->RedirectToAdminTab();
+        else {
+            // it's (still) owned by somebody else
+            $this->SetError(lang('CMSEX_L010'));
+            $this->RedirectToAdminTab();
+        }
     }
 }
 
-$tab_names = [];
+CMSMS\HookManager::add_hook('admin_add_headtext', function() {
+    $root_url = CMS_ROOT_URL;
+    return "<script src=\"$root_url/lib/jquery/js/jquery.cmsms_dirtyform.js\" defer></script>\n".
+      "<script src=\"$root_url/lib/jquery/js/jquery.cmsms_lock.js\" defer></script>\n";
+});
+
+//
+// BUILD THE DISPLAY
+//
 $tab_contents_array = [];
 $tab_message_array = [];
+$tabkeys = []; //members like 'TAB_MAIN' => 'aa_main_tab__'
+foreach( ['MAIN','NAV','LOGIC','OPTIONS','PERMS'] as $key ) {
+    $tabkeys['TAB_'.$key] = constant('ContentBase::TAB_'.$key);
+}
+$orders = [];
+$tmp = $this->ListPreferencesByPrefix('order_TAB_');
+foreach( $tmp as $key ) {
+    $orders['TAB_'.$key] = (int)$this->GetPreference('order_TAB_'.$key);
+}
+// position non-standard tabs somewhere near the start of the order
+$deforder = min($orders);
+do {
+   ++$deforder;
+} while( in_array($deforder, $orders) );
+
 try {
-    $tab_names = $content_obj->GetTabNames();
-
-    // the content object may not have a main tab, but we require one
-    if( !in_array($content_obj::TAB_MAIN,$tab_names) ) {
-        $tmp = array($content_obj::TAB_MAIN=>lang($content_obj::TAB_MAIN));
-        $tab_names = array_merge($tmp,$tab_names);
+    $tab_names = $content_obj->GetTabNames(); //tabs used in this object, members like 'aa_main_tab__'(i.e. ContentBase::TAB_MAIN) => 'Main' (translated)
+    // the content object might have no main tab, but we require one
+    $tmain = $tabkeys['TAB_MAIN'];
+    if( !isset($tab_names[$tmain]) ) {
+        $tab_names = [$tmain => lang($tmain)] + $tab_names;
     }
-
-    foreach( $tab_names as $currenttab => $label ) {
+    // sort $tab_names, hence displayed tabs, per preferences
+    uksort($tab_names, function($a, $b) use($tabkeys, $orders, $deforder) {
+        $key = array_search($a, $tabkeys);
+        $na = ($key !== false) ? $orders[$key] : $deforder;
+        $key = array_search($b, $tabkeys);
+        $nb = ($key !== false) ? $orders[$key] : $deforder;
+        if( $na != $nb ) return $na - $nb;
+        return strcasecmp($a, $b);
+    });
+    // populate
+    foreach( $tab_names as $currenttab => $label ) { // $label unused here, but in template
         $tmp = $content_obj->GetTabMessage($currenttab);
         if( $tmp ) $tab_message_array[$currenttab] = $tmp;
 
         $contentarray = $content_obj->GetTabElements($currenttab, $content_obj->Id() < 1 );
-        if( $currenttab == $content_obj::TAB_MAIN ) {
-            // first tab... add the content type selector.
-            if( $this->CheckPermission('Manage All Content') || $content_obj->Owner() == $user_id )  {
-                // if you're only an additional editor on this page... you don't get to change this.
-                $help = '&nbsp;'.cms_admin_utils::get_help_tag(array('key'=>'help_content_type','title'=>$this->Lang('help_title_content_type')));
-                $tmp = array('<label for="content_type">*'.$this->Lang('prompt_editpage_contenttype').':</label>'.$help);
-                $tmp2 = "<select id=\"content_type\" name=\"{$id}content_type\">";
-                foreach( $existingtypes as $type => $label ) {
-                    $tmp2 .= CmsFormUtils::create_option(array('value'=>$type,'label'=>$label),$content_type);
+        if( $currenttab == $tmain ) {
+            // main tab... prepend a content-type selector, or content-text if
+            // there's no choice or the user is merely an additional-editor
+            $tmp2 = '';
+            if( ($this->CheckPermission('Manage All Content') || $content_obj->Owner() == $user_id) ) {
+                $dflt = $content_obj->DefaultContent();
+                natcasesort($typeclasses);
+                $choices = [];
+                foreach( $typeclasses as $classname => $publicname ) {
+                    if( $dflt ) {
+                        $obj = new $classname();
+                        $opt = $obj && $obj->IsDefaultPossible();
+                    }
+                    else {
+                        $opt = true;
+                    }
+                    if( $opt ) {
+                        $choices[strtolower($classname)] = $publicname;//NOTE conform key if relation between classname and type ever changes
+                    }
                 }
-                $tmp2 .= '</select>';
-                $tmp[] = $tmp2;
-                $contentarray = array_merge(array($tmp),$contentarray);
+                if( count($choices) > 1 ) {
+                    $tmp2 = CmsFormUtils::create_dropdown($id.'content_type',$choices,$content_type,['id'=>'content_type']);
+                    $help = cms_admin_utils::get_help_tag($modname,'help_content_type',$this->Lang('help_title_content_type'));
+                    $tmp = array('<label for="content_type">*'.$this->Lang('prompt_editpage_contenttype').':</label>&nbsp;'.$help,$tmp2);
+                }
+            }
+            if( $tmp2 == '' ) {
+                foreach( $typeclasses as $classname => $publicname ) {
+                    if( $content_type == strtolower($classname) ) { break; }//NOTE conform this if relation between classname and type ever changes
+                }
+                $tmp = array('<label>'.$this->Lang('prompt_editpage_contenttype').':</label>',
+                "$publicname\n<input type=\"hidden\" name=\"{$id}content_type\" value=\"$content_type\">");
+            }
+            if( $contentarray ) {
+                array_unshift($contentarray, $tmp);
+            }
+            else {
+                $contentarray = [$tmp];
             }
         }
         $tab_contents_array[$currenttab] = $contentarray;
     }
 }
 catch( Exception $e ) {
+    if( !isset($tab_names) ) $tab_names = [];
     $error = $e->GetMessage();
 }
 
-if( $error ) echo $this->ShowErrors($error);
+if( $error ) $this->ShowErrors($error);
 
+// give stuff to Smarty.
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;admin_editcontent.tpl",null,$modname,$smarty);
 
-// give stuff to smarty.
 if( $content_obj->HasPreview() ) {
-    $config = cmsms()->GetConfig();
-    $smarty->assign('has_preview',1);
-    $smarty->assign('preview_url',"{$config['root_url']}/index.php?{$config['query_var']}=".__CMS_PREVIEW_PAGE__);
+    $tpl->assign('has_preview',1);
+    $tpl->assign('preview_url',CMS_ROOT_URL."/index.php?{$config['query_var']}=".__CMS_PREVIEW_PAGE__);
 }
 
-if( $this->GetPreference('template_list_mode','designpage') != 'all')  {
+if( $this->GetPreference('template_list_mode','designpage') != 'all') {
     $tmp = $this->create_url($id,'admin_ajax_gettemplates',$returnid);
-    $tmp = str_replace('amp;','',$tmp).'&showtemplate=false';
-    $smarty->assign('designchanged_ajax_url',$tmp);
+    $url = str_replace('&amp;','&',$tmp).'&showtemplate=false';
+    $tpl->assign('designchanged_ajax_url',$url);
 }
 
 $parms = array();
-if( $content_id > 0 ) $parms['content_id']=$content_id;
-$url = str_replace('&amp','&',$this->create_url($id,'admin_editcontent',$returnid,$parms)).'&showtemplate=false';
-$smarty->assign('apply_ajax_url',$url);
-$smarty->assign('preview_ajax_url',$this->create_url($id,'admin_editcontent',$returnid,array('preview'=>1)));
-$smarty->assign('lock_timeout',$this->GetPreference('locktimeout'));
-$smarty->assign('lock_refresh',$this->GetPreference('lockrefresh'));
-$smarty->assign('options_tab_name',$content_obj::TAB_OPTIONS);
-$smarty->assign('active_tab',$active_tab);
-$smarty->assign('content_id',$content_id);
-$smarty->assign('content_obj',$content_obj);
-$smarty->assign('tab_names',$tab_names);
-$smarty->assign('tab_contents_array',$tab_contents_array);
-$smarty->assign('tab_message_array',$tab_message_array);
-$factory = new ContentAssistantFactory($content_obj);
-/* $assistant = $factory->getEditContentAssistant(); */
-/* if( is_object($assistant) ) $smarty->assign('extra_content',$assistant->getExtraCode()); */
+if( $content_id > 0 ) $parms['content_id'] = $content_id;
+$url = str_replace('&amp;','&',$this->create_url($id,'admin_editcontent',$returnid,$parms)).'&showtemplate=false';
+$tpl->assign('apply_ajax_url',$url);
+$url = str_replace('&amp;','&',$this->create_url($id,'admin_editcontent',$returnid,array('preview'=>1)));
+$tpl->assign('preview_ajax_url',$url);
+$tpl->assign('lock_timeout',$this->GetPreference('locktimeout'));
+$tpl->assign('lock_refresh',$this->GetPreference('lockrefresh'));
+$tpl->assign('options_tab_name',$content_obj::TAB_OPTIONS);
+$tpl->assign('content_id',$content_id);
+$tpl->assign('content_obj',$content_obj);
+$tpl->assign('tab',$seetab);
+$tpl->assign('tab_names',$tab_names);
+$tpl->assign('tab_contents_array',$tab_contents_array);
+$tpl->assign('tab_message_array',$tab_message_array);
+$tpl->assign('userid',$user_id);
+/*$factory = new ContentAssistantFactory($content_obj);
+$assistant = $factory->getEditContentAssistant();
+if( is_object($assistant) ) $tpl->assign('extra_content',$assistant->getExtraCode());*/
 
-echo $this->ProcessTemplate('admin_editcontent.tpl');
-
-#
-# EOF
-#
-?>
+$tpl->display();

@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2012 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple class CmsLayoutStylesheetQuery
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -16,90 +15,112 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: class.global.inc.php 6939 2011-03-06 00:12:54Z calguy1000 $
+#$Id$
 
 /**
- * A class to perform advanced queries on the layout stylesheets.
- *
- * @since   2.0
- * @package CMS
- * @license GPL
- */
-
-/**
- * A class to represent a template query, and its results.
- * This class accepts in it's constructor an array of filter arguments.
+ * A class to represent a stylesheet query and its results.
+ * An abstraction from interacting directly with the database.
+ * This class accepts in its constructor an array of filter arguments.
  *
  * @package CMS
  * @license GPL
  * @since 2.0
- * @author Robert Campbell <calguy1000@gmail.com>
+ * @author Robert Campbell
  * @see CmsDbQueryBase
- * @property int $id The stylesheet id.  This will result in at most 1 result being returned.
- * @property string $name A stylesheet name to filter upon.  If a partial name is provided, it is assumed to be a prefix.
+ * @property int | ints[] $id Stylesheet id(s).
+ * @property string | strings[] $name Stylesheet name(s) to filter upon.  If a partial name is provided, it is assumed to be a prefix.
  * @property int $design A design id to filter upon.
- * @property string $sortby Possible values are id,item_order,design,name  Default is to sort by name.
- * @property string $sortorder Possible values are ASC, DESC.  Default is ASC.
+ * @property string $sortby Recognised values are id,item_order,design,media,name  Default is to sort by name. For use only with $design
+ * @property string $sortorder Recognised values are ASC, DESC.  Default is ASC. For use only with $design or when getting query-results only for display
  */
 class CmsLayoutStylesheetQuery extends CmsDbQueryBase
 {
-	/**
-	 * Execute the query in this object.
-	 *
+    /**
+     * Execute the query in this object.
+     *
      * @throws CmsInvalidDataException
-	 * @throws CmsSQLErrorException
-	 */
+     * @throws CmsSQLErrorException
+     */
     public function execute()
     {
         if( !is_null($this->_rs) ) return;
+        // SQL_CALC_FOUND_ROWS is deprecated. Instead execute the query with LIMIT, and then again with COUNT(*) for the FOUND_ROWS()
         $query = 'SELECT SQL_CALC_FOUND_ROWS S.id FROM '.CMS_DB_PREFIX.CmsLayoutStylesheet::TABLENAME.' S';
 
+        $have_design = !empty($this->_args['design']) || !empty($this->_args['d']);
+        $dflt_sort = empty($this->_args['sortby']);
         // if we are using a design id argument
-        // we do join, and sort by item order in the design
-        $dflt_sort = TRUE;
-        $have_design = FALSE;
-        foreach( $this->_args as $key => $val ) {
-            switch( $key ) {
-            case 'sortby':
-                $dflt_sort = FALSE;
-                break;
-
-            case 'd':
-            case 'design':
-                $have_design = TRUE;
-            }
-        }
-
+        // we default to sorting per items in the design
         if( $dflt_sort && $have_design ) $this->_args['sortby'] = 'item_order';
 
         $sortorder = 'ASC';
-        $sortby = 'S.name';
+        $sortby = ''; //S.name' TODO sort only if $have_design or querying for display only
+        $sortex = '';
+        $csort = false;
         $this->_limit = 1000;
         $this->_offset = 0;
         $db = cmsms()->GetDb();
-        $where = array();
+        $where = [];
         foreach( $this->_args as $key => $val ) {
             if( empty($val) ) continue;
             if( is_numeric($key) && $val[1] == ':' ) list($key,$val) = explode(':',$val,2);
             switch( strtolower($key) ) {
             case 'i':
             case 'id':
-                $val = (int)$val;
-                $where[] = "id = $val";
+                if( !is_array($val) ) {
+                    $val = (int)$val;
+                    $where[] = "id = $val";
+                }
+                else {
+                    $all = [];
+                    $csort = [' ORDER BY CASE'];
+                    foreach( $val as $i => $sid ) {
+                        $all[] = "id = $sid";
+                        $csort[] = " WHEN id = $sid THEN $i";
+                    }
+                    $csort[] = ' END ASC';
+                    $where[] = '('.implode(' OR ', $all).')';
+                }
                 break;
 
             case 'n': // name (prefix)
             case 'name': // name (prefix)
-                $val = trim($val);
-                $where[] = 'name LIKE '.$db->qstr($val.'%');
+                if( !is_array($val) ) {
+                    $val = trim($val);
+                    $where[] = 'name LIKE '.$db->qstr($val.'%'); //TODO parameterize
+                }
+                else {
+                    $all = [];
+                    $csort = [' ORDER BY CASE'];
+                    foreach( $val as $i => $name ) {
+                        $qn = $db->qstr(trim($name));
+                        $all[] = "name LIKE {$qn}%"; //TODO parameterize
+                        $csort[] = " WHEN name LIKE {$qn}% THEN $i";// TODO sub-order for multi-match
+                    }
+                    $csort[] = ' END ASC';
+                    $where[] = '('.implode(' OR ', $all).')';
+                }
                 break;
 
             case 'fullname':
-                $val = trim($val);
-                $where[] = 'name = '.$db->qstr($val);
+                if( !is_array($val) ) {
+                    $val = trim($val);
+                    $where[] = 'name = '.$db->qstr($val); //TODO parameterize
+                }
+                else {
+                    $all = [];
+                    $csort = [' ORDER BY CASE'];
+                    foreach( $val as $i => $name ) {
+                        $qn = $db->qstr(trim($name));
+                        $all[] = "name = $qn"; //TODO parameterize
+                        $csort[] = " WHEN name = $qn THEN $i";
+                    }
+                    $csort[] = ' END ASC';
+                    $where[] = '('.implode(' OR ', $all).')';
+                }
                 break;
 
-            case 'd': // design
+            case 'd':
             case 'design':
                 $query .= ' LEFT JOIN '.CMS_DB_PREFIX.CmsLayoutCollection::CSSTABLE.' D ON S.id = D.css_id';
                 $val = (int)$val;
@@ -125,9 +146,15 @@ class CmsLayoutStylesheetQuery extends CmsDbQueryBase
                 case 'design':
                     if( !$have_design ) throw new CmsInvalidDataException('Cannot sort by item_order/design if design_id is not known');
                     $sortby = 'D.item_order';
+                    $sortex = ',S.name';
                     break;
 
-                case 'name':
+                case 'media':
+                    $sortby = 'S.media_type';
+                    $sortex = ',S.name';
+                    break;
+
+//              case 'name':
                 default:
                     $sortby = 'S.name';
                     break;
@@ -141,7 +168,7 @@ class CmsLayoutStylesheetQuery extends CmsDbQueryBase
                     $sortorder = 'DESC';
                     break;
 
-                case 'ASC':
+//              case 'ASC':
                 default:
                     $sortorder = 'ASC';
                     break;
@@ -150,12 +177,22 @@ class CmsLayoutStylesheetQuery extends CmsDbQueryBase
             }
         }
 
-        if( count($where) ) $query .= ' WHERE '.implode(' AND ',$where);
-        $query .= ' ORDER BY '.$sortby.' '.$sortorder;
-
+        if( $where ) $query .= ' WHERE '.implode(' AND ',$where);
+        if( $csort ) {
+            $query .= implode("\n", $csort);
+            if( $sortby ) {
+                $query .= ' ,'.$sortby.' '.$sortorder.$sortex; // TODO only if querying for display
+            }
+        }
+        elseif( $sortby ) {
+            $query .= ' ORDER BY '.$sortby.' '.$sortorder.$sortex; // TODO sort only if $have_design or querying for display only
+        }
         $this->_rs = $db->SelectLimit($query,$this->_limit,$this->_offset);
-        if( $db->ErrorMsg() != '' ) throw new CmsSQLErrorException($db->sql.' -- '.$db->ErrorMsg());
-        $this->_totalmatchingrows = $db->GetOne('SELECT FOUND_ROWS()');
+        $val = $db->ErrorMsg();
+        if( $val ) throw new CmsSQLErrorException($db->sql.' -- '.$val);
+        $this->_totalmatchingrows = $db->GetOne('SELECT FOUND_ROWS()'); // deprecated
+//      $query = preg_replace(['/S\.id/','/\s*ORDER BY.*$/s'],['COUNT(*)',''],$query);
+//      $this->_totalmatchingrows = $db->GetOne($query):
     }
 
     /**
@@ -163,28 +200,27 @@ class CmsLayoutStylesheetQuery extends CmsDbQueryBase
      *
      * This method is not as efficient as the GetMatches() method when the resultset has multiple items.
      *
-	 * @throws CmsLogicException
+     * @throws CmsLogicException
      * @return CmsLayoutStylesheet
      */
-    public function &GetObject()
+    public function GetObject()
     {
         $this->execute();
         if( !$this->_rs ) throw new CmsLogicException('Cannot get stylesheet from invalid stylesheet query object');
         $id = (int) $this->fields['id'];
-        $obj = CmsLayoutStylesheet::load($id);
-        return $obj;
+        return CmsLayoutStylesheet::load($id);
     }
 
-	/**
-	 * Return all of the matches for this query
-	 *
-	 * @throws CmsLogicExceptin
-	 * @return array Array of CmsLayoutStylesheet object
-	 */
+    /**
+     * Return all of the matches for this query
+     *
+     * @throws CmsLogicExceptin
+     * @return array Array of CmsLayoutStylesheet object
+     */
     public function GetMatches()
     {
         $this->execute();
-        if( !$this->_rs ) throw new CmsLogicException('Cannot get template from invalid template query object');
+        if( !$this->_rs ) throw new CmsLogicException('Cannot get stylesheet from invalid stylesheet query object');
 
         $tmp = array();
         while( !$this->EOF() ) {
@@ -192,12 +228,9 @@ class CmsLayoutStylesheetQuery extends CmsDbQueryBase
             $this->MoveNext();
         }
 
-        $deep = (!empty($this->_args['deep']) && $this->_args['deep']) ? TRUE : FALSE;
+        $deep = !empty($this->_args['deep']);
         return CmsLayoutStylesheet::load_bulk($tmp,$deep);
     }
-} // end of class
+} // class
 
-#
-# EOF
-#
 ?>

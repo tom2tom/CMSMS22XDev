@@ -1,87 +1,95 @@
 @font-face {
 	font-family: 'cmsms-filepicker';
-	src:  url('../fonts/cmsms-filepicker.eot');
-	src:  url('../fonts/cmsms-filepicker.eot?#iefix') format('embedded-opentype'),
-		   url('../fonts/cmsms-filepicker.ttf') format('truetype'),
-		   url('../fonts/cmsms-filepicker.woff') format('woff'),
-		   url('../fonts/cmsms-filepicker.svg') format('svg');
+	src: url('../fonts/cmsms-filepicker.eot');
+	src: url('../fonts/cmsms-filepicker.woff2') format('woff2'),
+		url('../fonts/cmsms-filepicker.woff') format('woff'),
+		url('../fonts/cmsms-filepicker.ttf') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 }
 
 [class^="cmsms-fp-"], [class*=" cmsms-fp-"] {
-  font-family: 'cmsms-filepicker' !important;
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	font-family: 'cmsms-filepicker' !important;
+	speak: none;
+	margin-left: .1em;
+	margin-right: .1em;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-align: center;
+	text-transform: none;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
-.cmsms-fp-music:before {
+.cmsms-fp-music::before {
 	content: "\e600";
 }
-.cmsms-fp-th:before {
+.cmsms-fp-th::before {
 	content: "\e601";
 }
-.cmsms-fp-th-list:before {
+.cmsms-fp-th-list::before {
 	content: "\e602";
 }
-.cmsms-fp-file:before {
+.cmsms-fp-file::before {
 	content: "\e603";
 }
-.cmsms-fp-folder-open:before {
-	content: "\e605";
-}
-.cmsms-fp-folder-close:before {
-	content: "\e606";
-}
-.cmsms-fp-facetime-video:before {
-	content: "\e607";
-}
-.cmsms-fp-picture:before {
-	content: "\e608";
-}
-.cmsms-fp-reorder:before {
-	content: "\e609";
-}
-.cmsms-fp-film:before {
-	content: "\e60a";
-}
-.cmsms-fp-zip:before {
+.cmsms-fp-zip::before {
 	content: "\e604";
 }
-.cmsms-fp-file-content:before {
+.cmsms-fp-folder-open::before {
+	content: "\e605";
+}
+.cmsms-fp-folder-close::before {
+	content: "\e606";
+}
+.cmsms-fp-facetime-video::before {
+	content: "\e607";
+}
+.cmsms-fp-picture::before {
+	content: "\e608";
+}
+.cmsms-fp-reorder::before {
+	content: "\e609";
+}
+.cmsms-fp-film::before {
+	content: "\e60a";
+}
+.cmsms-fp-file-content::before {
 	content: "\e60b";
 }
-.cmsms-fp-plus:before {
-   content: "\e60c";
+.cmsms-fp-plus::before {
+	content: "\e60c";
 }
-.cmsms-fp-close:before {
-   content: "\e60d";
+.cmsms-fp-close::before {
+	content: "\e60d";
 }
-.cmsms-fp-upload:before {
-  content: "\e60e";
+.cmsms-fp-upload::before {
+	content: "\e60e";
 }
 
 html,
-body { height: 100% }
-.filepicker-container { height: 100% }
+body {
+	height: 100%
+}
+
+.filepicker-container {
+	height: 100%
+}
 
 body.cmsms-filepicker {
 	margin: 0;
 	padding: 0;
 	background-color: #f0f0f0;
 	color: #444;
-	font-family: sans-serif;
+	font-family: sans-serif; /*TODO js etc to make this inherit from outside frame */
 	font-size: 14px;
+	overflow: auto
 }
 
 body.dragging {
-    background-color: lightcyan;
+	background-color: lightcyan;
 }
 
 a img,
@@ -93,6 +101,7 @@ img {
 .visuallyhidden {
 	border: 0;
 	clip: rect(0,0,0,0);
+	clip-path: rect(0,0,0,0);
 	height: 1px;
 	margin: -1px;
 	overflow: hidden;
@@ -131,18 +140,18 @@ img {
 	line-height:18px;
 }
 .filepicker-button.make-dir .filepicker-icon-stack-1x {
-   left:-1px;
-   top:-1px;
-   width:100%;
-   font-size:18px;
+	left:-1px;
+	top:-1px;
+	width:100%;
+	font-size:18px;
 }
 .filepicker-button.make-dir .cmsms-fp-folder-plus {
 	left:1px;
-   top:-1px;
+	top:-1px;
 	color:#FFF;
 	text-shadow:none;
 	font-size:14px;
-   font-weight:bold;
+	font-weight:bold;
 }
 
 .cmsms-filepicker .btn-file {
@@ -168,9 +177,8 @@ img {
 
 .cmsms-fp-upload {
 	margin-right:4px;
-   font-size:18px;
+	font-size:18px;
 }
-
 
 .filepicker-navbar {
 	position: fixed;
@@ -342,7 +350,7 @@ img {
 	border: none;
 }
 
-#filepicker-items > li:nth-child(odd)  {
+#filepicker-items > li:nth-child(odd) {
 	background-color: #fcfcfc;
 }
 
@@ -351,7 +359,7 @@ img {
 }
 
 .filepicker-list .filepicker-thumb {
-        position: relative;
+	position: relative;
 	width: 139px;
 	overflow: hidden;
 	height: 90px;
@@ -366,7 +374,7 @@ img {
 }
 
 .filepicker-list .filepicker-thumb .icon-no-thumb {
-	font-size: 60px;
+	font-size: 2.5rem;
 	color: #fff;
 }
 
@@ -470,22 +478,22 @@ img {
 }
 
 .list-view .filepicker-thumb .icon-no-thumb {
-	font-size: 18px;
+	font-size: 1.5rem;
 	color: #777;
 }
 
 .filepicker-thumb .filepicker-cmd {
-    cursor: pointer;
-    position: absolute;
-    top: 0;
-    right: 0px;
-    width: 20px;
-    height: 20px;
-    line-height: 14px;
-    opacity: 0.6;
+	cursor: pointer;
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 20px;
+	height: 20px;
+	line-height: 14px;
+	opacity: 0.6;
 }
 
-.list-view  .filepicker-file-information {
+.list-view .filepicker-file-information {
 	padding: 0 0 0 15px;
 	font-size: 12px;
 	background-color: transparent;
@@ -539,7 +547,6 @@ img {
 	text-decoration:underline;
 }
 
-
 .filepicker-delete {
 	cursor:pointer;
 	opacity:0.7;
@@ -563,9 +570,9 @@ img {
 
 .list-view .filepicker-file-details span.filepicker-delete {
 	width:30px;
-   text-align: right;
-   font-size: 16px;
-   background-color:transparent;
+	text-align: right;
+	font-size: 16px;
+	background-color:transparent;
 }
 
 .list-view .filepicker-delete:hover {
@@ -577,13 +584,13 @@ img {
 }
 
 .dlg-options {
-    text-align: right;
-    padding-top: 0.5em;
+	text-align: right;
+	padding-top: 0.5em;
 }
 
 
 @media screen and (max-width: 430px) {
-	.list-view .filepicker-file-details span.filepicker-file-ext  {
+	.list-view .filepicker-file-details span.filepicker-file-ext {
 		display: none;
 	}
 
@@ -591,7 +598,7 @@ img {
 		width: 170px;
 	}
 
-	.list-view  .filepicker-file-information {
+	.list-view .filepicker-file-information {
 		padding-right: 185px;
 	}
 

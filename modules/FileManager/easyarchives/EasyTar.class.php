@@ -67,22 +67,28 @@ $test->extractTar('./toto.Tar', './new/');
 			file_put_contents ($tmp=TMP_CACHE_LOCATION.'/~tmp('.microtime().').tar', $src);
 			$src = $tmp;
 		}
+		$result = [];
 		$ptr = fopen($src, 'r');
-		while (!feof($ptr))
+		if ($ptr)
 		{
-			$infos = $this->readTarHeader ($ptr);
-			$name = trim($infos['name']);
-			if ($infos['type']=='5' && @mkdir($dest.$name, 0775, true)) {
-				$result[]=$dest.$infos['name'];
+// TODO prevent zip-slip NOTE temporary chage of 'open_basedir' ini setting causes problems later?  
+			while (!feof($ptr))
+			{
+				$infos = $this->readTarHeader ($ptr);
+				$name = trim($infos['name']);
+				if ($infos['type']=='5' && @mkdir($dest.$name, 0777, true)) {
+					$result[]=$dest.$infos['name'];
+				}
+				elseif (($infos['type']=='0' || $infos['type']==chr(0)) && file_put_contents($dest.$name, $infos['data'])) {
+					$result[]=$dest.$name;
+				}
+				if ($infos)
+					chmod($dest.$name, 0777);
+//					chmod(, $infos['mode']);
+//					chgrp(, $infos['uname']);
+//					chown(, $infos['gname']);
 			}
-			elseif (($infos['type']=='0' || $infos['type']==chr(0)) && file_put_contents($dest.$name, $infos['data'])) {
-				$result[]=$dest.$name;
-			}
-			if ($infos)
-				chmod($dest.$name, 0775);
-// 				chmod(, $infos['mode']);
-// 				chgrp(, $infos['uname']);
-// 				chown(, $infos['gname']);
+			fclose($ptr);
 		}
 		if (is_file($tmp)) unlink($tmp);
 		return $result;
@@ -101,8 +107,7 @@ $test->extractTar('./toto.Tar', './new/');
 			$checksum += ord(substr($block, $i, 1));
 		}
 		error_reporting($lvl);
-		if ($realchecksum==$checksum) return true;
-		return false;
+		return ($realchecksum==$checksum);
 	}
 
 	public function tarHeader512($infos)
@@ -186,9 +191,9 @@ $test->extractTar('./toto.Tar', './new/');
 		$block = fread($ptr, 512);
 		if (strlen($block)!=512) return false;
 		$hdr = unpack ("a100name/a8mode/a8uid/a8gid/a12size/a12mtime/a8checksum/a1type/a100symlink/a6magic/a2version/a32uname/a32gname/a8devmajor/a8devminor/a155prefix/a12temp", $block);
-		$hdr['mode']=$hdr['mode']+0;
-		$lvl = error_reporting();
-		error_reporting($lvl & ~E_DEPRECATED); //PHP 7.4+ silence
+//		$lvl = error_reporting();
+//		error_reporting($lvl & ~E_DEPRECATED); //PHP 7.4+ silence
+		$hdr['mode']=(int)$hdr['mode'];
 		$hdr['uid']=octdec($hdr['uid']);
 		$hdr['gid']=octdec($hdr['gid']);
 		$hdr['size']=octdec($hdr['size']);
@@ -199,7 +204,7 @@ $test->extractTar('./toto.Tar', './new/');
 		for ($i = 0; $i < 512; $i++) {
 			$checksum += ord(substr($block, $i, 1));
 		}
-		error_reporting($lvl);
+//		error_reporting($lvl);
 		if (isset($hdr['name']) && $hdr['checksum']==$checksum)
 		{
 			if ($hdr['name']=='././@LongLink' && $hdr['type']=='L')

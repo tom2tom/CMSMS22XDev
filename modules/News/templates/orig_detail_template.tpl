@@ -3,66 +3,68 @@
   {* note this syntax ensures that the canonical variable is set into global scope *}
   {$canonical=$entry->canonical scope=global}
 {/if}
-
+{*news_image src='some image url' width=30 etc*}
+{*if !empty($entry->image_url)}article-image handling stuff{/if*}
 {if $entry->postdate}
-	<div id="NewsPostDetailDate">
-		{$entry->postdate|cms_date_format}
-	</div>
+  <div id="NewsPostDetailDate">
+    {$entry->postdate|cms_date_format}
+  </div>
 {/if}
-<h3 id="NewsPostDetailTitle">{$entry->title|cms_escape:htmlall}</h3>
+<h3 id="NewsPostDetailTitle">{$entry->title|cms_escape:'htmlall'}</h3>
 
-<hr id="NewsPostDetailHorizRule" />
+<hr id="NewsPostDetailHorizRule">
 
 {if $entry->summary}
-	<div id="NewsPostDetailSummary">
-		<strong>
-			{$entry->summary}
-		</strong>
-	</div>
+{* note, for security purposes we do not pass the summary through Smarty before display. This is because articles can come from untrusted sources. *}
+  <div id="NewsPostDetailSummary">
+    <strong>
+      {$entry->summary}
+    </strong>
+  </div>
 {/if}
 
 {if $entry->category}
-	<div id="NewsPostDetailCategory">
-		{$category_label} {$entry->category}
-	</div>
+  <div id="NewsPostDetailCategory">
+    {$category_label} {$entry->category}
+  </div>
 {/if}
 {if $entry->author}
-	<div id="NewsPostDetailAuthor">
-		{$author_label} {$entry->author}
-	</div>
+  <div id="NewsPostDetailAuthor">
+    {$author_label} {$entry->author}
+  </div>
 {/if}
 
 <div id="NewsPostDetailContent">
-{* note, for security purposes we do not pass the content through smarty before displaying it.  This is incase your articles can come from untrusted sources. *}
-	{$entry->content}
+{* note, for security purposes we do not pass the content through Smarty before display. This is because articles can come from untrusted sources. *}
+  {$entry->content}
 </div>
 
 {if $entry->extra}
-	<div id="NewsPostDetailExtra">
-		{$extra_label} {$entry->extra}
-	</div>
+  <div id="NewsPostDetailExtra">
+    {$extra_label} {$entry->extra}
+  </div>
 {/if}
-
-{if $return_url != ""}
-<div id="NewsPostDetailReturnLink">{$return_url}{if $category_name != ''} - {$category_link}{/if}</div>
-{/if}
-
-{if isset($entry->fields)}
-  {foreach $entry->fields as $fieldname => $field}
-     <div class="NewsDetailField">
-        {if $field->type == 'file'}
-{* this template assumes that every file uploaded is an image of some sort, because News doesn't distinguish *}
-          {if isset($field->value) && $field->value}
-            <img src="{$entry->file_location}/{$field->value}" alt="{$field->value}"/>
-          {/if}
-        {elseif $field->type == 'linkedfile'}
-          {* also assume it's an image... *}
-          {if !empty($field->value)}
-            <img src="{file_url file=$field->value}" alt="{$field->value}"/>
-          {/if}
-        {else}
-          {$field->name}:&nbsp;{$field->value}
-        {/if}
-     </div>
+{if !empty($entry->fields)}
+  {foreach $entry->fields as $field}
+   <div class="NewsDetailField">
+    {strip}{if $field->type == 'file'}
+{* this template assumes that every file-field value is an image of some sort, because News doesn't distinguish *}
+      {if !empty($field->value)}
+      {$field->name}:&nbsp;<img src="{$entry->file_location}/{$field->value}" alt="{$field->value}">
+      {/if}
+    {elseif $field->type == 'linkedfile'}
+      {if !empty($field->value)}
+      <a href="{file_url file=$field->value}" title="{$field->displayvalue}">{$field->name}</a>
+      {/if}
+    {else}
+      {$field->name}:&nbsp;{$field->displayvalue}
+    {/if}{/strip}
+   </div>
   {/foreach}
+{/if}
+{if $return_url}
+  <br>
+  <div id="NewsPostDetailReturnLink">
+    {$return_url}{if $category_name} - {$category_link}{/if}
+  </div>
 {/if}

@@ -19,9 +19,15 @@ final class session implements ArrayAccess
       $session_key = substr(md5(__DIR__),0,10);
       @session_name('CMSIC'.$session_key);
       @session_cache_limiter('private');
-      $res = null;
-      if( !@session_id() ) $res = @session_start();
-      if( !$res ) throw new RuntimeException('Problem starting the session (system configuration problem?)');
+      $res = false;
+      if( !@session_id() ) { // NOTE result '' differs from false
+        //2.2.22 added this check (dubious merit?)
+        if( session_status() == PHP_SESSION_ACTIVE ) { // ensure we start fresh session
+          session_destroy();
+        }
+        $res = @session_start();
+      }
+      if( !$res ) throw new RuntimeException('Problem starting installer session (system configuration problem?)');
       self::$_session_id = session_id();
       self::$_key = 'k'.md5(self::$_session_id);
     }
@@ -31,7 +37,7 @@ final class session implements ArrayAccess
   {
     self::start();
     if( $this->_data ) $_SESSION[self::$_key] = serialize($this->_data);
-    $this->_data = null;
+    $this->_data = null; // aka unset
   }
 
   private function _expand()
@@ -59,7 +65,7 @@ final class session implements ArrayAccess
 
   public function reset()
   {
-    $this->_data = null;
+    $this->_data = null; // aka unset
     self::clear();
     $this->_expand();
   }
@@ -77,7 +83,7 @@ final class session implements ArrayAccess
   {
     $this->_expand();
     if( isset($this->_data[$key]) ) return $this->_data[$key];
-    return null;
+    return null; // no value for unrecognised property
   }
 
   #[\ReturnTypeWillChange]

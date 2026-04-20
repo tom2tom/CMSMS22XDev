@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: breadcrumbs
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -15,13 +14,12 @@
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
 
+// this plugin has been non-functional since CMSMS 2.0.
 function smarty_cms_function_breadcrumbs($params, $smarty)
 {
-echo '<span style="font-weight: bold; color: #f00;">WARNING:<br />The &#123breadcrumbs&#125 tag is removed from CMSMS Core<br />Instead, now use in your HTML template: &#123nav_breadcrumbs&#125 !</span>';
-
-// put mention into the admin log
-audit('', '&#123breadcrumbs&#125 tag', 'is removed from CMSMS Core. Instead, now use in your HTML template: &#123nav_breadcrumbs&#125 !');
+    echo '<span style="font-weight:bold;color:#f00;">ERROR:<br>The &#123breadcrumbs&#125 plugin has been removed from CMSMS.<br>Instead, use plugin &#123nav_breadcrumbs&#125 !</span>';
+    // put mention into the admin log
+    audit('', 'Plugin:breadcrumbs', 'Removed from CMSMS. Instead, use &#123nav_breadcrumbs&#125');
 }
 ?>

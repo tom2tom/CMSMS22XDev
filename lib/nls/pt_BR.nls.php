@@ -22,7 +22,7 @@ $nls['locale']['pt_BR'] = 'pt_BR.utf8,pt_BR.UTF-8,pt_BR.utf-8,pt_BR,portuguese-b
 $nls['encoding']['pt_BR'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['pt_BR'] = array(dirname(__FILE__).'/pt_BR/admin.inc.php');
+$nls['file']['pt_BR'] = array(__DIR__.'/pt_BR/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

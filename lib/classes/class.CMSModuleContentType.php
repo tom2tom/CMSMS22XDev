@@ -1,8 +1,6 @@
 <?php
-
-# CMS - CMS Made Simple
-# (c)2004 by Ted Kulp (tedkulp@users.sf.net)
-# Visit our homepage at: http://cmsmadesimple.org
+# CMS Made Simple class CMSModuleContentType
+# (c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,13 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: class.content.inc.php 6905 2011-02-20 22:23:40Z calguy1000 $
-
-/**
- * This file contains a class for defining additonal content types
- *
- * @package CMS
- */
+#$Id$
 
 /**
  * Class that module defined content types must extend.

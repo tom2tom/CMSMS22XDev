@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: metadata
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -18,7 +17,7 @@
 
 function smarty_function_metadata($params, $smarty)
 {
-    $gCms = CmsApp::get_instance();
+	$gCms = CmsApp::get_instance();
 	$config = \cms_config::get_instance();
 	$content_obj = $gCms->get_content_object();
 
@@ -26,34 +25,34 @@ function smarty_function_metadata($params, $smarty)
 	$showbase = true;
 
 	// Show a base tag unless showbase is false in config.php
-    // It really can't hinder, only help
-	if( isset($config['showbase']))  $showbase = $config['showbase'];
+	// It really can't hinder, only help
+	if( isset($config['showbase'])) $showbase = $config['showbase'];
 
-    // But allow a parameter to override it
-	if (isset($params['showbase']))	{
-		if ($params['showbase'] == false || $params['showbase'] == 'false')	$showbase = false;
+	// But allow a parameter to override it
+	if (isset($params['showbase'])) {
+		if ($params['showbase'] == false || $params['showbase'] == 'false') $showbase = false;
 	}
 
-    \CMSMS\HookManager::do_hook('metadata_prerender', [ 'content_id'=>$content_obj->Id(), 'showbase'=>&$showbase, 'html'=>&$result ]);
+	\CMSMS\HookManager::do_hook('metadata_prerender', [ 'content_id'=>$content_obj->Id(), 'showbase'=>&$showbase, 'html'=>&$result ]);
 
-	if ($showbase)	{
-        $base = CMS_ROOT_URL;
-        if( $gCms->is_https_request() ) $base = $config['ssl_url'];
-		$result .= "\n<base href=\"".$base."/\" />\n";
+	if ($showbase) {
+		$base = CMS_ROOT_URL;
+		if( $gCms->is_https_request() ) $base = $config['ssl_url'];
+		$result .= "\n<base href=\"".$base."/\">\n";
 	}
 
-	$result .= get_site_preference('metadata', '');
+	$result .= cms_siteprefs::get('metadata', '');
 
 	if (is_object($content_obj) && $content_obj->Metadata() != '') $result .= "\n" . $content_obj->Metadata();
 
-	if ((!strpos($result,$smarty->left_delimiter) === false) and (!strpos($result,$smarty->right_delimiter) === false))	{
-        $result = $smarty->fetch('string:'.$result);
-    }
+	if (strpos($result,$smarty->smarty->left_delimiter) !== false && strpos($result,$smarty->smarty->right_delimiter) !== false) {
+		$result = $smarty->fetch('string:'.$result);
+	}
 
-    \CMSMS\HookManager::do_hook('metadata_postrender', [ 'content_id'=>$content_obj->Id(), 'html'=>&$result ]);
-	if( isset($params['assign']) )	{
+	\CMSMS\HookManager::do_hook('metadata_postrender', [ 'content_id'=>$content_obj->Id(), 'html'=>&$result ]);
+	if( isset($params['assign']) ) {
 		$smarty->assign(trim($params['assign']),$result);
-		return;
+		return '';
 	}
 	return $result;
 }

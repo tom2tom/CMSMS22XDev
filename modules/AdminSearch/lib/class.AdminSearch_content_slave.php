@@ -16,60 +16,60 @@ final class AdminSearch_content_slave extends AdminSearch_slave
 
     public function check_permission()
     {
-        $userid = get_userid();
         $mod = cms_utils::get_module('CMSContentManager');
         return $mod->CanEditContent();
     }
 
     public function get_matches()
     {
-        #key: db colums name, value: corresponding function name to get the value from the Content Object
+        //key: db colums name, value: corresponding function name to get the value from the Content object
         $content_db_fields = array(
-            'content_name' => [ 'function_name' => 'Name', 'translation' => \CmsLangOperations::lang_from_realm('admin','name') ],
-            'menu_text' => [ 'function_name' => 'MenuText', 'translation' => \CmsLangOperations::lang_from_realm('admin','menutext') ],
-            'content_alias' => [ 'function_name' => 'Alias', 'translation' => \CmsLangOperations::lang_from_realm('admin','alias') ],
-            'metadata' => [ 'function_name' => 'Metadata', 'translation' => \CmsLangOperations::lang_from_realm('admin','metadata') ],
-            'titleattribute' => [ 'function_name' => 'TitleAttribute', 'translation' => \CmsLangOperations::lang_from_realm('admin','titleattribute') ],
-            'page_url'  => [ 'function_name' => 'URL', 'translation' => \CmsLangOperations::lang_from_realm('admin','page_url') ]
+            'content_name' => [ 'function_name' => 'Name', 'translation' => CmsLangOperations::lang_from_realm('admin','name') ],
+            'menu_text' => [ 'function_name' => 'MenuText', 'translation' => CmsLangOperations::lang_from_realm('admin','menutext') ],
+            'content_alias' => [ 'function_name' => 'Alias', 'translation' => CmsLangOperations::lang_from_realm('admin','alias') ],
+            'metadata' => [ 'function_name' => 'Metadata', 'translation' => CmsLangOperations::lang_from_realm('admin','metadata') ],
+            'titleattribute' => [ 'function_name' => 'TitleAttribute', 'translation' => CmsLangOperations::lang_from_realm('admin','titleattribute') ],
+            'page_url'  => [ 'function_name' => 'URL', 'translation' => CmsLangOperations::lang_from_realm('admin','page_url') ]
         );
 
         $userid = get_userid();
+        $all = $this->include_inactive_items();
 
         $content_manager = cms_utils::get_module('CMSContentManager');
         $db = cmsms()->GetDb();
-        $where_clause = implode(' LIKE ? OR ', array_keys($content_db_fields));
 
-        #content table
-        $query = 'SELECT DISTINCT content_id FROM '.CMS_DB_PREFIX.'content WHERE ' . $where_clause . ' LIKE ?';
-        #content_props table
-        $query2 = 'SELECT DISTINCT content_id,prop_name,content FROM '.CMS_DB_PREFIX.'content_props WHERE content LIKE ?';
+        //content table
+        $query = 'SELECT DISTINCT content_id FROM '.CMS_DB_PREFIX.'content WHERE ';
+        $where_clause = implode(' LIKE ? OR ', array_keys($content_db_fields));
+        if( $all ) {
+            $query .= $where_clause . ' LIKE ?'; //assumes content-field value can be matched regardless of case
+        } else {
+            $query .= ' active=1 AND (' . $where_clause . ' LIKE ?)';
+        }
+
         $txt = '%'.$this->get_text().'%';
 
         $output = array();
 
         $resultSets = array();
 
-        $urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
-
-        #checking the content table
+        //check the table
         $this->process_query_string($query);
 
-        $dbr = $db->GetArray($query, array_fill(0,count($content_db_fields),$txt));
+        $dbr = $db->GetCol($query, array_fill(0,count($content_db_fields),$txt));
         if( is_array($dbr) && count($dbr) ) {
-
-
-            foreach( $dbr as $row ) {
-                $content_id = $row['content_id'];
-                if( !check_permission($userid,'Manage All Content') && !check_permission($userid,'Modify Any Page') &&
-                    !cmsms()->GetContentOperations()->CheckPageAuthorship($userid,$content_id) ) {
-                    // no access to this content page.
+            $pmod = check_permission($userid,'Manage All Content') || check_permission($userid,'Modify Any Page');
+            $ops = cmsms()->GetContentOperations();
+            foreach( $dbr as $content_id ) {
+                if( !($pmod || $ops->CheckPageAuthorship($userid,$content_id)) ) {
+                    // no access to this content page TODO why so? we're viewing, not editing
                     continue;
                 }
 
-                $content_obj = cmsms()->GetContentOperations()->LoadContentFromId($content_id);
+                $content_obj = $ops->LoadContentFromId($content_id);
                 if( !is_object($content_obj) ) continue;
 
-                if (!$this->include_inactive_items() && !$content_obj->Active()) continue;
+                if (!$all && !$content_obj->Active()) continue; //TODO already filtered in query
 
                 if (!isset($resultSets[$content_id])) {
                     $resultSets[$content_id] = $this->get_resultset($content_obj->Name(),$content_obj->Name(),$content_manager->create_url('m1_','admin_editcontent','',array('content_id'=>$content_id)));
@@ -92,25 +92,32 @@ final class AdminSearch_content_slave extends AdminSearch_slave
             }
         }
 
-        #checking the content_props table
+        //content_props table
+        if( $all ) {
+            $query2 = 'SELECT DISTINCT content_id,prop_name,content FROM '.CMS_DB_PREFIX.'content_props WHERE content LIKE ?';
+        } else {
+            $query2 = 'SELECT DISTINCT P.content_id,P.prop_name,P.content FROM '.CMS_DB_PREFIX.'content_props P JOIN '.CMS_DB_PREFIX.'content C ON P.content_id=C.content_id WHERE C.active=1 AND P.content LIKE ?';
+        }
+
+        //check the table
         $this->process_query_string($query2);
         $dbr = $db->GetArray($query2, [$txt]);
         if( is_array($dbr) && count($dbr) ) {
 
-
+            if( !isset($pmod) ) { $pmod = check_permission($userid,'Manage All Content') || check_permission($userid,'Modify Any Page'); }
+            if( !isset($ops) ) { $ops = cmsms()->GetContentOperations(); }
             foreach( $dbr as $row ) {
                 $content_id = $row['content_id'];
-                if( !check_permission($userid,'Manage All Content') && !check_permission($userid,'Modify Any Page') &&
-                    !cmsms()->GetContentOperations()->CheckPageAuthorship($userid,$content_id) ) {
-                    // no access to this content page.
+                if( !($pmod || !$ops->CheckPageAuthorship($userid,$content_id)) ) {
+                    // no access to this content page TODO why so? we're viewing, not editing
                     continue;
                 }
 
-                $content_obj = cmsms()->GetContentOperations()->LoadContentFromId($content_id);
+                $content_obj = $ops->LoadContentFromId($content_id);
                 if( !is_object($content_obj) ) continue;
                 //if( !$content_obj->HasSearchableContent() ) continue;
 
-                if (!$this->include_inactive_items() && !$content_obj->Active()) continue;
+                if (!$all && !$content_obj->Active()) continue; //TODO already filtered in query
 
                 if (!isset($resultSets[$content_id])) {
                     $resultSets[$content_id] = $this->get_resultset($content_obj->Name(),$content_obj->Name(),$content_manager->create_url('m1_','admin_editcontent','',array('content_id'=>$content_id)));
@@ -126,9 +133,9 @@ final class AdminSearch_content_slave extends AdminSearch_slave
                 if( $count > 0 ) {
                     $snippets = $this->generate_snippets($content);
                     if ($row['prop_name'] == 'content_en') {
-                        $prop_name = \CmsLangOperations::lang_from_realm('admin','content');
-                    } elseif (\CmsLangOperations::key_exists($row['prop_name'],'admin')) {
-                      $prop_name = \CmsLangOperations::lang_from_realm('admin',$row['prop_name']);
+                        $prop_name = CmsLangOperations::lang_from_realm('admin','content');
+                    } elseif (CmsLangOperations::key_exists($row['prop_name'],'admin')) {
+                      $prop_name = CmsLangOperations::lang_from_realm('admin',$row['prop_name']);
                     } else {
                       $prop_name = $row['prop_name'];
                     }
@@ -138,7 +145,7 @@ final class AdminSearch_content_slave extends AdminSearch_slave
             }
         }
 
-        #processing the results
+        //process the results
         foreach ($resultSets as $cId => $result_object) {
             $output[] = json_encode($result_object);
         }

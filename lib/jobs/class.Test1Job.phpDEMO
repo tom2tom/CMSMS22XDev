@@ -1,0 +1,30 @@
+<?php
+
+namespace CMSMS\jobs;
+
+use CMSMS\Async\Job;
+
+class Test1Job extends Job
+{
+    public function __construct()
+    {
+        parent::__construct();
+        $this->name = 'Test1Job';
+        $this->start = strtotime('+1 day',time());
+        //etc
+    }
+
+//  public function fill_description() {}
+
+    public function execute($time = 0)
+    {
+        if( !$time ) $time = time();
+        $this->record_exec_time($time);
+        if( $this->start > $time ) return true;
+        $this->force_start = $time;
+//      some_unktimen_function(); // intentionally generate an error
+        \audit('',$this->module,'Job Test1 complete');
+        \debug_to_log('Job Test1 complete');
+        return true;
+    }
+}

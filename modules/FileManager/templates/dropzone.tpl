@@ -1,11 +1,9 @@
 {if !isset($is_ie)}
 {* IE sucks... we only get here for REAL browsers. *}
-<script type="text/javascript">{literal}
+<script>{literal}
 $(function() {
-
     var thediv = '#theme_dropzone';
-
-    $(document).on('dialogopen', '.drop .dialog', function(event,ui){
+    $('.drop .dialog').on('dialogopen', function(event,ui) {
         var url = '{/literal}{$chdir_url}{literal}';
             url = url.replace(/amp;/g,'')+'&showtemplate=false';
 
@@ -14,25 +12,25 @@ $(function() {
         });
     });
 
-    $('#chdir_form').submit(function(e){
+    $('#chdir_form').on('submit', function(e) {
         var data = $(this).serialize();
         var url = '{/literal}{$chdir_url}{literal}';
         url = url.replace(/amp;/g,'')+'&showtemplate=false';
 
-        $.post(url,data,function(data,textStatus,jqXHR){
+        $.post(url,data,function(data,textStatus,jqXHR) {
             // stuff to do on post finishing.
             $('#chdir_form').trigger('dropzone_chdir');
             $('.dialog').dialog('close');
         });
 
-    e.preventDefault();
-});
+        e.preventDefault();
+    });
 
-// prevent browser default drag/drop handling
-$(document).on('drop dragover', function(e) {
-    // prevent default drag/drop stuff.
-    e.preventDefault();
-});
+    // prevent browser default drag/drop handling
+    $(document).on('drop dragover', function(e) {
+        // prevent default drag/drop stuff.
+        e.preventDefault();
+    });
 
     $(thediv+'_i').fileupload({
         dataType: 'json',
@@ -51,23 +49,23 @@ $(document).on('drop dragover', function(e) {
            $(thediv).trigger('dropzone_stop');
          }
     });
-});
-{/literal}</script>
+});{/literal}
+</script>
 <div class="drop">
 	<div class="drop-inner cf">
-	{if isset($dirlist)}
-		<span class="folder-selection open" title="{'open'|lang}"></span>
+	{if !empty($dirlist)}
+		<span class="folder-selection open" title="{lang('open')}"></span>
 		<div class="dialog invisible" role="dialog" title="{$FileManager->Lang('change_working_folder')}">
 			<form id="chdir_form" class="cms_form" action="{$chdir_url}" method="post">
 				<fieldset>
 					<legend>{$FileManager->Lang('change_working_folder')}</legend>
-					<label>{$FileManager->Lang('folder')}: </label>
-                                        <input type="hidden" name="m1_path" value="{$cwd}"/>
-                                        <input type="hidden" name="m1_ajax" value="1"/>
-					<select class="cms_dropdown" id="fm_newdir" name="m1_newdir">
-                                          {html_options options=$dirlist selected="/`$cwd`"}
+					<label for="fm_newdir">{$FileManager->Lang('folder')}: </label>
+					<input type="hidden" name="{$actionid}path" value="{$cwd}">
+					<input type="hidden" name="{$actionid}ajax" value="1">
+					<select class="cms_dropdown" id="fm_newdir" name="{$actionid}newdir">
+						{html_options options=$dirlist selected="/`$cwd`"}
 					</select>
-					<input type="submit" name="m1_submit" value="{$FileManager->lang('submit')}" />
+					<input type="submit" name="{$actionid}submit" value="{$FileManager->Lang('submit')}">
 				</fieldset>
 				</form>
 		</div>
@@ -75,13 +73,13 @@ $(document).on('drop dragover', function(e) {
 		<div class="zone">
 			<div id="theme_dropzone">
 				{$formstart}
-				<input type="hidden" name="disable_buffer" value="1"/>
-				<input type="file" id="theme_dropzone_i" name="{$actionid}files[]" multiple style="display: none;"/>
+				<input type="hidden" name="disable_buffer" value="1">
+				<input type="file" id="theme_dropzone_i" name="{$actionid}files[]" multiple style="display:none">
 				{$prompt_dropfiles}
 				{$formend}
 			</div>
 		</div>
 	</div>
-	<a href="#" title="{'open'|lang}/{'close'|lang}" class="toggle-dropzone">{'open'|lang}/{'close'|lang}</a>
+	<a href="javascript:void(0);" title="{lang('open')}/{lang('close')}" class="toggle-dropzone">{lang('open')}/{lang('close')}</a>
 </div>
 {/if}

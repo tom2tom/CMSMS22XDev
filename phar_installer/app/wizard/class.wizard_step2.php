@@ -2,9 +2,9 @@
 
 namespace cms_autoinstaller;
 
-use __appbase\utils;
-use cms_autoinstaller\utils as utils2;
-use cms_autoinstaller\wizard_step;
+use __appbase\utils as utils2;
+//use cms_autoinstaller\utils;
+//use cms_autoinstaller\wizard_step;
 use Exception;
 use function __appbase\get_app;
 use function __appbase\lang;
@@ -15,34 +15,41 @@ class wizard_step2 extends wizard_step
     private function get_cmsms_info($dir)
     {
         if( !$dir ) return [];
-        if( !is_dir($dir.'/modules') ) return [];
-        if( !is_file($dir.'/version.php') && !is_file("$dir/lib/version.php") ) return [];
-        if( !is_file($dir.'/include.php') && !is_file("$dir/lib/include.php") ) return [];
-        if( !is_file($dir.'/config.php') ) return [];
-        if( !is_file($dir.'/moduleinterface.php') ) return [];
+        if( !is_dir("$dir/modules") ) return [];
+        if( !(is_file("$dir/version.php") || is_file("$dir/lib/version.php")) ) return [];
+        if( !(is_file("$dir/include.php") || is_file("$dir/lib/include.php")) ) return [];
+        if( !(is_file("$dir/config.php") || is_file("$dir/lib/config.php")) ) return [];
+        if( !is_file("$dir/moduleinterface.php") ) return [];
 
         $info = array();
         if( is_file("$dir/version.php") ) {
-            include($dir.'/version.php');
-            $info['mtime'] = filemtime($dir.'/version.php');
+            include("$dir/version.php");
+            $info['mtime'] = filemtime("$dir/version.php");
         } else {
             include("$dir/lib/version.php");
-            $info['mtime'] = filemtime($dir.'/lib/version.php');
+            $info['mtime'] = filemtime("$dir/lib/version.php");
         }
         $info['version'] = $CMS_VERSION;
         $info['version_name'] = $CMS_VERSION_NAME;
         $info['schema_version'] = $CMS_SCHEMA_VERSION;
-        $info['config_file'] = $dir.'/config.php';
+        if( is_file("$dir/lib/config.php") ) {
+            $info['config_file'] = "$dir/lib/config.php";
+        } else {
+            $info['config_file'] = "$dir/config.php";
+        }
 
         $app = get_app();
         $app_config = $app->get_config();
         if( !isset($app_config['min_upgrade_version']) ) throw new Exception(lang('error_missingconfigvar','min_upgrade_version'));
-        if( version_compare($info['version'],$app_config['min_upgrade_version']) < 0 ) $info['error_status'] = 'too_old';
-        if( version_compare($info['version'],$app->get_dest_version()) == 0 ) $info['error_status'] = 'same_ver';
-        if( version_compare($info['version'],$app->get_dest_version()) > 0 ) $info['error_status'] = 'too_new';
+        if( utils::cms_version_compare($info['version'],$app_config['min_upgrade_version']) < 0 ) {
+            $info['error_status'] = 'too_old';
+        } else {
+            $dvc = utils::cms_version_compare($info['version'],$app->get_dest_version());
+            if( $dvc == 0 ) { $info['error_status'] = 'same_ver'; }
+            elseif( $dvc > 0 ) { $info['error_status'] = 'too_new'; }
+        }
 
-        $fn = $dir.'/config.php';
-        require_once $fn;
+        require_once $info['config_file'];
         $info['config'] = $config;
         if( isset($config['admin_dir']) ) {
             if( $config['admin_dir'] != 'admin' ) throw new Exception(lang('error_admindirrenamed'));
@@ -64,7 +71,7 @@ class wizard_step2 extends wizard_step
         else {
             throw new Exception(lang('error_internal',200));
         }
-        utils::redirect($this->get_wizard()->next_url());
+        utils2::redirect($this->get_wizard()->next_url());
     }
 
     protected function display()
@@ -74,7 +81,7 @@ class wizard_step2 extends wizard_step
         $app = get_app();
         $config = $app->get_config();
 
-        $rpwd = get_app()->get_destdir();
+        $rpwd = $app->get_destdir();
         $info = $this->get_cmsms_info($rpwd);
         $wizard = $this->get_wizard();
         $smarty = smarty();
@@ -82,16 +89,16 @@ class wizard_step2 extends wizard_step
         $smarty->assign('nofiles',$config['nofiles']);
 
         if( $info ) {
-            // it's an upgrade
+            // it's a refresh or upgrade
             $wizard->set_data('version_info',$info);
             $smarty->assign('cmsms_info',$info);
             if( !isset($info['error_status']) || $info['error_status'] != 'same_ver' ) {
-                $versions = utils2::get_upgrade_versions();
+                $versions = utils::get_upgrade_versions();
                 $out = array();
                 foreach( $versions as $version ) {
-                    if( version_compare($version,$info['version']) < 1 ) continue;
-                    $readme = utils2::get_upgrade_readme($version);
-                    $changelog = utils2::get_upgrade_changelog($version);
+                    if( utils::cms_version_compare($version,$info['version']) < 1 ) continue;
+                    $readme = utils::get_upgrade_readme($version);
+                    $changelog = utils::get_upgrade_changelog($version);
                     if( $readme || $changelog ) $out[$version] = array('readme'=>$readme,'changelog'=>$changelog);
                 }
                 $smarty->assign('upgrade_info',$out);
@@ -127,8 +134,8 @@ class wizard_step2 extends wizard_step
             };
             $list_files = function($dir,$n = 5) {
                 $n = max(1,min(100,$n));
-                if( !$dir ) return;
-                if( !is_dir($dir) ) return;
+                if( !$dir ) return [];
+                if( !is_dir($dir) ) return [];
                 $files = glob($dir.'/*');
                 $files = array_slice($files,0,$n);
                 foreach( $files as &$file ) {

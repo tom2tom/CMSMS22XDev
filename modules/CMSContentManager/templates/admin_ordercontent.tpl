@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script>
     function parseTree(ul) {
         var tags = [];
         ul.children('li').each(function() {
@@ -11,20 +11,19 @@
         return tags;
     }
 
-
     $(function() {
-        $(document).on('click', '#btn_submit', function(ev) {
+        $('#btn_submit').on('click', function(ev) {
             ev.preventDefault();
             var form = $(this).closest('form');
-            cms_confirm('{$mod->Lang('confirm_reorder')|escape:'javascript'}').done(function(){
-                var tree = $.toJSON(parseTree($('#masterlist')));
+            cms_confirm('{$mod->Lang('confirm_reorder')|escape:'javascript'}').done(function() {
+                var tree = JSON.stringify(parseTree($('#masterlist')));
                 var ajax_res = false;
                 $('#orderlist').val(tree);
-                form.submit();
+                form.trigger('submit');
             });
         });
 
-        $('ul.sortable').nestedSortable( {
+        $('ul.sortable').nestedSortable({
             disableNesting : 'no-nest',
             forcePlaceholderSize : true,
             handle : 'div',
@@ -41,9 +40,9 @@
 
 {function display_tree depth=0}
 	{foreach $list as $node}
-		{$obj=$node->getContent(false,true,false)}
-		<li id="page_{$obj->Id()}" {if !$obj->WantsChildren()}class="no-nest"{/if}>
-			<div class="label" {if !$obj->Active()}style="color: red;"{/if}>
+		{$obj=$node->getContent(false,true,false)}{$pid=$obj->Id()}
+		<li id="page_{$pid}"{if !$obj->WantsChildren()} class="no-nest"{/if}>
+			<div class="label"{if !$obj->Active()} style="color:red"{/if}>
 				<span>&nbsp;</span>{$obj->Hierarchy()}:&nbsp;{$obj->Name()|cms_escape}{if !$obj->Active()}&nbsp;({$mod->Lang('prompt_inactive')}){/if} <em>({$obj->MenuText()|cms_escape})</em>
 			</div>
 			{if $node->has_children()}
@@ -58,16 +57,16 @@
 
 <h3>{$mod->Lang('prompt_ordercontent')}</h3>
 {form_start action='admin_ordercontent' id="theform"}
-<input type="hidden" id="orderlist" name="{$actionid}orderlist" value=""/>
+<input type="hidden" id="orderlist" name="{$actionid}orderlist" value="">
 <div class="information">
 	{$mod->Lang('info_ordercontent')}
 </div>
+<br>
 <div class="pageoverflow">
-	<p class="pagetext"></p>
 	<p class="pageinput">
-		<input id="btn_submit" type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}"/>
-		<input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}"/>
-		<input id="btn_revert" type="submit" name="revert" value="{$mod->Lang('revert')}"/>
+		<input id="btn_submit" type="submit" name="{$actionid}submit" value="{$mod->Lang('submit')}">
+		<input type="submit" name="{$actionid}cancel" value="{$mod->Lang('cancel')}">
+		<input id="btn_revert" type="submit" name="revert" data-ui-icon="ui-icon-arrowrefresh-1-n" value="{$mod->Lang('revert')}">
 	</p>
 </div>
 <div class="pageoverflow">

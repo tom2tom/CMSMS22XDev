@@ -1,13 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: cms_tree (c) 2010 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  A simple php tree class.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: content_assistant
+# (c) 2010 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+# A content managment assister class.
 #
 #-------------------------------------------------------------------------
 #
@@ -43,8 +39,7 @@
  *
  * @package CMS
  * @internal
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
- * @copyright Copyright (c) 2010, Robert Campbell <calguy1000@cmsmadesimple.org>
+ * @author Robert Campbell
  * @since 1.9
  */
 class content_assistant
@@ -56,31 +51,33 @@ class content_assistant
    */
   public static function auto_create_url()
   {
-    return get_site_preference('content_autocreate_urls',0);
+    return cms_siteprefs::get('content_autocreate_urls',0);
   }
 
 
   /**
-   * A utility function to test if the supplied url path is valid for the supplied content id
+   * A utility function to test if the supplied urlpath is acceptable
+   * for the supplied content id. Checks content and uniqueness.
+   * @see also cms_utils::validate_url()
    *
-   * @param string The partial url path to test
+   * @param string The url path to test
+   * @param mixed int | numeric string | '' $content_id Default ''
    * @return bool
    */
   public static function is_valid_url($url,$content_id = '')
   {
-    // check for starting or ending slashes
-    if( startswith($url,'/') || endswith($url,'/') ) return FALSE;
+    if( $url[0] == '/') return FALSE; // trailing '/' ok
 
-    // first check for invalid chars.
-	if( munge_string_to_url($url,TRUE,TRUE) != $url ) return FALSE;
+    // check for invalid char(s).
+    if( $url != cms_utils::cleanUrlPath($url) ) return FALSE;
 
-     // now check for duplicates.
     cms_route_manager::load_routes();
+    // check for duplicate. See also $contentops->CheckAliasUsed($url,(int)$content_id)
     $route = cms_route_manager::find_match($url,TRUE);
     if( !$route ) return TRUE;
     if( $route->is_content() ) {
-		if($content_id == '' || ($route->get_content() == $content_id)) return TRUE;
-	}
+      if( $content_id == '' || $content_id == $route->get_content() ) return TRUE;
+    }
     return FALSE;
   }
 } // end of class

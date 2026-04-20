@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2012 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple class Smarty_Parser
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -16,45 +15,40 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: content.functions.php 6863 2011-01-18 02:34:48Z calguy1000 $
-
-/**
- * @package CMS
- */
+#$Id$
 
 /**
  * Extends the Smarty class for content.
- *
+ * Should never be used
  * @package CMS
  * @author Tapio Löytty
  * @since 1.11.3
+ * @deprecated since 2.0 constructor exits immediately
  */
 class Smarty_Parser extends Smarty_CMS
 {
 	public $id; // <- triggers error without | do search why this is needed
 	public $params; // <- triggers error without | do search why this is needed
 	private static $_instance;
-	private static $_allowed_static_plugins = array('global_content');
+	private static $_allowed_static_plugins = array('global_content'); //deprecated since CMSMS 2.2.0
 
 	/**
 	* Constructor
-	*
-	* @param array The hash of CMSMS config settings
 	*/
 	public function __construct()
 	{
 		stack_trace(); die();
 		parent::__construct();
 
-		$this->setTemplateDir(cms_join_path(CMS_ROOT_PATH,'tmp','templates'));
-		$this->setConfigDir(cms_join_path(CMS_ROOT_PATH,'tmp','templates'));
+//		$this->setTemplateDir(cms_join_path(CMS_ROOT_PATH,'tmp','templates')); TODO
+//		$this->setConfigDir(cms_join_path(CMS_ROOT_PATH,'tmp','templates'));
 
-		$this->setCaching(false);
+		$this->setCaching(Smarty::CACHING_OFF);
 		$this->force_compile = true;
 		$this->compile_id = 'parser' . time();
 
 		// register default plugin handler
-		$this->registerDefaultPluginHandler(array(&$this, 'defaultPluginHandler'));
+		$this->registerDefaultPluginHandler(array($this, 'defaultPluginHandler'));
 
 		// Register plugins
 		$this->registerPlugin('compiler','content',array('CMS_Content_Block','smarty_compiler_contentblock'),false);
@@ -67,7 +61,7 @@ class Smarty_Parser extends Smarty_CMS
 	*
 	* @return object $this
 	*/
-	public static function &get_instance()
+	public static function get_instance()
 	{
 		if( !is_object(self::$_instance) ) {
 			self::$_instance = new self();
@@ -107,20 +101,22 @@ class Smarty_Parser extends Smarty_CMS
 	}
 
 	/* *
-	 * Takes unknown classes and loads plugin files for them
-	 * class name format: Smarty_PluginType_PluginName
-	 * plugin filename format: plugintype.pluginname.php
-	 *
+	 * Try to load the handler for the specified plugin or class
 	 * Note: this method overrides the one in the smarty base class and provides more testing.
 	 *
-	 * @param string $plugin_name    class plugin name to load
-	 * @param bool   $check          check if already loaded
-	 * @return string |boolean filepath of loaded file or false
-	 */
-/*
+	 * @param string $plugin_name wanted callable or filename or classname
+	 *   callable format: Smarty_PluginType_PluginName (any case) e.g. smarty_function_fixit
+	 *   filename format: plugintype.pluginname.php e.g. function.fixit.php
+	 *   classname format: same as callable
+	 *   [Pp]lugintype may be 'internal' to identify a system-plugin class
+	 * @param bool   $check check if already loaded Default true
+	 *
+	 * @return string | bool filepath or true (if already loaded) or false (if not found)
+	 * @throws \SmartyException if format of $plugin_name is invalid
+	 * /
 	public function loadPlugin($plugin_name, $check = true)
 	{
-		// if function or class exists, exit silently (already loaded)
+		// if function or class exists, nothing more to do
 		if ($check && (is_callable($plugin_name) || class_exists($plugin_name, false))) {
 			return true;
 		}
@@ -132,19 +128,16 @@ class Smarty_Parser extends Smarty_CMS
 		// count($_name_parts) < 3 === !isset($_name_parts[2])
 		if (!isset($_name_parts[2]) || strtolower($_name_parts[0]) !== 'smarty') {
 			throw new SmartyException("plugin {$plugin_name} is not a valid name format");
-			return false;
+			return false; useless here
 		}
 
 		// if type is "internal", get plugin from sysplugins
 		if (strtolower($_name_parts[1]) == 'internal') {
-
 			$file = SMARTY_SYSPLUGINS_DIR . strtolower($plugin_name) . '.php';
 			if (file_exists($file)) {
-
 				require_once($file);
 				return $file;
 			} else {
-
 				return false;
 			}
 		}
@@ -179,22 +172,20 @@ class Smarty_Parser extends Smarty_CMS
 
 					// try PHP include_path
 					if ($_stream_resolve_include_path) {
-
 						$file = stream_resolve_include_path($file);
 					} else {
-
 						$file = Smarty_Internal_Get_Include_Path::getIncludePath($file);
 					}
 
-					if ($file !== false) {
-						require_once($file);
+					if ($file) {
+						require_once $file;
 						if( is_callable($plugin_name) || class_exists($plugin_name, false) )
 							return $file;
 					}
 				}
 			}
 		}
-		// no plugin loaded
+		// no match found
 		return false;
 	}
 */
@@ -228,11 +219,11 @@ class CMSMS_Dummy_Smarty_Variable
 	 */
 	public $nocache = false;
 	/**
-	 * the scope the variable will have  (local,parent or root)
+	 * the scope the variable will have (see Smarty SCOPE_* consts - local 1,parent 2, root 8, etc )
 	 *
-	 * @var int
+	 * @var int, 0 for unspecified
 	 */
-	public $scope = null;
+	public $scope = 0;
 
 	/**
 	 * create Smarty variable object

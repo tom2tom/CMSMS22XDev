@@ -15,6 +15,7 @@ const SVNROOT = 'http://svn.cmsmadesimple.org/svn/cmsmadesimple';
 
 $_cli = php_sapi_name() == 'cli';
 $_scriptname = basename(__FILE__);
+$resep = strpos(__FILE__, '\\') !== false;
 // default config params
 $do_md5 = false;
 $mode = 'f';
@@ -47,11 +48,8 @@ $src_excludes = [
 '~svn\-.*~',
 '~index\.html?$~',
 '~[\\/]config\.php$~',
-'~siteuuid\.dat$~',
-'~master\.dat$~',
-'~master\.ini$~',
-'~\.htccess$~',
-'~web\.config$~i',
+'~[\\/]ext[\\/].*\.php~',
+'~[\\/]configs[\\/].*\.conf~',
 '~phar_installer~',
 '~installer~',
 '~scripts~',
@@ -65,12 +63,16 @@ $src_excludes = [
 '~#.*~',
 '~\.#.*~',
 ];
-//TODO root-dir etc '~\.htaccess$~',
+//TODO keep files like .htaccess unless installer recreates them
+//'~\.htccess$~',
+//'~web\.config$~i',
 
 // TODO completely ignore some places c.f. build_release script:
 $folder_excludes = [
+'assets/admin_custom',
+'assets/css',
+'assets/module_custom',
 'assets/templates',
-'assets/styles',
 'assets/themes',
 'assets/user_plugins',
 'uploads', // needed ?
@@ -397,8 +399,14 @@ try {
 if (!$res) {
     fatal('Retrieving files from ' .$uri_from. ' failed');
 }
-if (!is_file(joinpath($_fromdir, 'lib', 'version.php')) || !is_dir(joinpath($_fromdir, 'lib', 'classes', 'Database'))) {
-    fatal('The files retrieved from ' .$uri_from. 'do not appear to be for a CMSMS installation');
+if (0) { //TODO from-version < 2.1 ?
+    if (!is_file(joinpath($_fromdir, 'version.php')) || !is_dir(joinpath($_fromdir, 'lib', 'adodb_lite'))) {
+        fatal('The files retrieved from ' .$uri_from. ' do not appear to be for a CMSMS installation');
+    }
+} else {
+    if (!is_file(joinpath($_fromdir, 'lib', 'version.php')) || !is_dir(joinpath($_fromdir, 'lib', 'classes', 'Database'))) {
+        fatal('The files retrieved from ' .$uri_from. ' do not appear to be for a CMSMS installation');
+    }
 }
 
 try {
@@ -410,8 +418,14 @@ try {
 if (!$res) {
     fatal('Retrieving files from ' .$uri_to. ' failed');
 }
-if (!is_file(joinpath($_todir, 'lib', 'version.php')) || !is_dir(joinpath($_todir, 'lib', 'classes', 'Database'))) {
-    fatal('The files retrieved from ' .$uri_to. 'do not appear to be for a CMSMS installation');
+if (0) { //TODO to-version < 2.1 ?
+    if (!is_file(joinpath($_todir, 'version.php')) || !is_dir(joinpath($_todir, 'lib', 'adodb_lite'))) {
+        fatal('The files retrieved from ' .$uri_to. ' do not appear to be for a CMSMS installation');
+    }
+} else {
+    if (!is_file(joinpath($_todir, 'lib', 'version.php')) || !is_dir(joinpath($_todir, 'lib', 'classes', 'Database'))) {
+        fatal('The files retrieved from ' .$uri_to. ' do not appear to be for a CMSMS installation');
+    }
 }
 
 try {
@@ -444,8 +458,14 @@ if ($mode == 'd' || $mode == 'f') {
         if (is_dir($file)) {
             continue;
         }
+        if ($resep) { $fn = strtr($fn, '\\', '/'); }
         if ($mode == 'd') {
-            $str = "DELETED :: $fn";
+            if ($do_md5) {
+                $md5 = md5_file($file);
+                $str = "DELETED :: $md5 :: $fn";
+            } else {
+                $str = "DELETED :: $fn";
+            }
         } else {
             $md5 = md5_file($file);
             $str = "DELETED :: $md5 :: $fn";
@@ -461,6 +481,7 @@ if ($mode == 'c' || $mode == 'f') {
         if (is_dir($file)) {
             continue;
         }
+        if ($resep) { $fn = strtr($fn, '\\', '/'); }
         if ($mode == 'c') {
             $str = "CHANGED :: $fn";
         } else {
@@ -478,6 +499,7 @@ if ($mode == 'n' || $mode == 'f') {
         if (is_dir($file)) {
             continue;
         }
+        if ($resep) { $fn = strtr($fn, '\\', '/'); }
         if ($mode == 'n') {
             $str = "ADDED :: $fn";
         } else {
@@ -494,7 +516,7 @@ if ($_compress) {
         case 'zip':
           $_cfile = $_tmpfile.'.zip';
           $zip = new ZipArchive();
-          if ($zip->open($$_cfile, ZipArchive::CREATE) !== true) {
+          if ($zip->open($_cfile, ZipArchive::CREATE) !== true) {
               fatal("Cannot open <$_cfile> for zip compression");
           }
           $zip->addFromString($_tmpfile, file_get_contents($_tmpfile));
@@ -526,6 +548,8 @@ if ($_compress) {
     @unlink($_cfile);
 }
 
+//TODO generate separate nls-files manifest from files in .../lib/nsl >> ...phar_installer/app/assets/MANIFEST.NLS
+
 if (defined('STDOUT') && $_outfile == STDOUT) {
     readfile($_tmpfile);
 } else {
@@ -533,13 +557,16 @@ if (defined('STDOUT') && $_outfile == STDOUT) {
     if ($_to_ver) {
         $dir = __DIR__;
         $base = basename($dir);
-        //the topmost reachable dirname is not '.' if there is any slash in the path
+        //vanilla CMSMS2.2 uses foldername phar-installer, CMSMS2.99+ uses phar_installer
+        //and topmost reachable dirname is not '.' if there is any slash in the path
         while ($dir != '.' && $dir != '/' && $base != 'phar_installer') {
             $dir = dirname($dir);
             $base = basename($dir);
         }
         if ($dir !== '.' && $dir !== '/') {
-//2.99+     $file = joinpath($dir, 'lib', 'upgrade', $_to_ver);
+//2.99+
+//           $file = joinpath($dir, 'lib', 'upgrade', $_to_ver);
+//2.2
             $file = joinpath($dir, 'app', 'upgrade', $_to_ver);
             if (is_dir($file)) {
                 if (!is_file($file.DIRECTORY_SEPARATOR.'changelog.txt')) {
@@ -756,7 +783,7 @@ function sighandler($signum)
     exit(1);
 }
 
-function cleanup($signum = null)
+function cleanup()
 {
     global $_tmpdir;
     debug('Clean up');
@@ -778,7 +805,7 @@ function ask_string($prompt, $dflt = null, $allow_empty = false)
         }
 
         if ($allow_empty) {
-            return;
+            return '';
         }
         if ($dflt) {
             return $dflt;
@@ -996,7 +1023,7 @@ class compare_dirs
     private $_list_a;
     private $_list_b;
     private $_do_md5;
-    private $_has_run = null;
+    private $_has_run = false;
     private $_base_dir;
     private $_ignored = [];
     private $_donotdelete = [];
@@ -1118,8 +1145,18 @@ class compare_dirs
                 continue; // deleted/moved in b.
             }
             $rec_b = $this->_list_b[$path];
-            if ($rec_a['size'] != $rec_b['size'] || $rec_a['mtime'] != $rec_b['mtime'] ||
-            (isset($rec_a['md5']) && isset($rec_b['md5']) && $rec_a['md5'] != $rec_b['md5'])) {
+            $changed = $rec_a['size'] != $rec_b['size'];
+            if (!$changed) {
+                if (isset($rec_a['md5']) && isset($rec_b['md5'])) {
+                    if ($rec_a['md5'] != $rec_b['md5']) {
+                        $changed = true;
+                    }
+                } elseif (isset($rec_a['md5']) || isset($rec_b['md5'])) {
+                    $changed = true;
+                }
+                //else TODO some other default comparison
+            }
+            if ($changed) {
                 $out[] = $path;
             }
         }
@@ -1146,7 +1183,7 @@ class compare_dirs
         return false;
     }
 
-    private function _read_dir($dir = null)
+    private function _read_dir($dir = '')
     {
         global $uninstallmodules;
 
@@ -1187,7 +1224,7 @@ class compare_dirs
                 $rec = [];
                 $rec['size'] = @filesize($fn);
                 $rec['mtime'] = @filemtime($fn);
-                if ($this->_do_md5) {
+                if ($this->_do_md5 && !is_dir($fn)) {
                     $rec['md5'] = md5_file($fn);
                 }
                 $out[$base] = $rec;
@@ -1202,7 +1239,7 @@ class compare_dirs
             $rec = [];
             $rec['size'] = @filesize($fn);
             $rec['mtime'] = @filemtime($fn);
-            if ($this->_do_md5) {
+            if ($this->_do_md5 && !is_dir($fn)) {
                 $rec['md5'] = md5_file($fn);
             }
             $out[$base] = $rec;

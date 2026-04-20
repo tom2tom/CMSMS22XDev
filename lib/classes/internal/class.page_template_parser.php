@@ -4,7 +4,7 @@ namespace CMSMS\internal;
 
 class page_template_parser extends \Smarty_Internal_Template
 {
-    private static $_allowed_static_plugins = array('global_content');
+    private static $_allowed_static_plugins = array('global_content'); //deprecated since CMSMS 2.2.0
 
     public function __construct($template_resource, $smarty, $_parent = null, $_cache_id = null, $_compile_id = null, $_caching = null, $_cache_lifetime = null)
     {
@@ -14,16 +14,16 @@ class page_template_parser extends \Smarty_Internal_Template
         parent::__construct($template_resource, $smarty, $_parent, $_cache_id, $_compile_id, $_caching, $_cache_lifetime);
 
         $this->registerDefaultPluginHandler(array($this,'defaultPluginHandler'));
-        $this->merge_compiled_includes = TRUE;
+        $this->smarty->merge_compiled_includes = TRUE;
 
         try {
-            $this->registerPlugin('compiler','content',array('CMS_Content_Block','smarty_compiler_contentblock'),false);
-            $this->registerPlugin('compiler','content_image',array('CMS_Content_Block','smarty_compiler_imageblock'),false);
-            $this->registerPlugin('compiler','content_module',array('CMS_Content_Block','smarty_compiler_moduleblock'),false);
+            $this->registerPlugin('compiler','content',array('CMS_Content_Block','smarty_compiler_contentblock'),false); // Smarty_Parser class also does this
+            $this->registerPlugin('compiler','content_image',array('CMS_Content_Block','smarty_compiler_imageblock'),false); // ibid
+            $this->registerPlugin('compiler','content_module',array('CMS_Content_Block','smarty_compiler_moduleblock'),false); // ibid
         }
         catch( \SmartyException $e ) {
-            // ignore these... throws an error in Smarty 3.1.16 if plugin is already registered
-            // because plugin registration is global.
+            // ignore these... throws an error if plugin is already registered
+            // because plugin registration is global (or because it was done elswhere).
         }
     }
 
@@ -34,7 +34,7 @@ class page_template_parser extends \Smarty_Internal_Template
      */
     public static function _dflt_plugin($params,$smarty)
     {
-		return '';
+        return '';
     }
 
     /**
@@ -45,12 +45,11 @@ class page_template_parser extends \Smarty_Internal_Template
      */
     public function defaultPluginHandler($name, $type, $template, &$callback, &$script, &$cachable)
     {
-		if($type == 'compiler') {
-			$callback = array(__CLASS__,'_dflt_plugin');
-			$cachable = false;
-			return TRUE;
-		}
-
+        if($type == 'compiler') {
+            $callback = array(__CLASS__,'_dflt_plugin');
+            $cachable = false;
+            return TRUE;
+        }
         return FALSE;
     }
 

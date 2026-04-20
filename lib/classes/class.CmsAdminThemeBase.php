@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2012 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple class CmsAdminThemeBase
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -16,14 +15,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: class.admintheme.inc.php 7596 2011-12-24 22:50:52Z calguy1000 $
-
-/**
- * Classes and utilities for the base CMS Admin theme
- * @package CMS
- * @license GPL
- */
-
+#$Id$
 
 /**
  * Base class for CMSMS Admin themes.
@@ -69,32 +61,32 @@ abstract class CmsAdminThemeBase
 	/**
 	 * @ignore
 	 */
-	private $_errors;
+	protected $_errors;
 
 	/**
 	 * @ignore
 	 */
-	private $_messages;
+	protected $_messages;
 
 	/**
 	 * @ignore
 	 */
-	private $_imageLink;
+	protected $_imageLink;
 
 	/**
 	 * @ignore
 	 */
-	private $_script;
+	protected $_script;
 
 	/**
 	 * @ignore
 	 */
-	private $_url;
+	protected $_url;
 
 	/**
 	 * @ignore
 	 */
-	private $_query;
+	protected $_query;
 
 	/**
 	 * @ignore
@@ -104,7 +96,7 @@ abstract class CmsAdminThemeBase
 	/**
 	 * @ignore
 	 */
-	private $_action_module;
+	protected $_action_module;
 
 	// meta information
 
@@ -126,22 +118,27 @@ abstract class CmsAdminThemeBase
 	/**
 	 * @ignore
 	 */
-	private $_activetab;
+	protected $_activetab;
 
 	/**
 	 * @ignore
 	 */
-	private $_title;
+	protected $_title;
 
 	/**
 	 * @ignore
 	 */
-	private $_subtitle;
+	protected $_subtitle;
 
 	/**
 	 * @ignore
 	 */
-	private $_headtext;
+	protected $_headtext = '';
+
+	/**
+	 * @ignore
+	 */
+	protected $_foottext = '';
 
 	/**
 	 * @ignore
@@ -161,8 +158,8 @@ abstract class CmsAdminThemeBase
 			$tmp = explode(',',$_POST['mact']);
 			$this->_query = 'module='.$tmp[0];
 		}
-		if ($this->_query == '' && isset($_POST['module']) && $_POST['module'] != '') $this->_query = 'module='.$_POST['module'];
-		if (strpos( $this->_url, '/' ) === false) {
+		if( $this->_query == '' && isset($_POST['module']) && $_POST['module'] != '' ) $this->_query = 'module='.$_POST['module'];
+		if( strpos( $this->_url, '/' ) === false ) {
 			$this->_script = $this->_url;
 		}
 		else {
@@ -178,14 +175,20 @@ abstract class CmsAdminThemeBase
 	#[\ReturnTypeWillChange]
 	public function __get($key)
 	{
-		if( $key == 'themeName' ) {
+		switch ($key) {
+		case 'themeName':
 			$class = get_class($this);
-			if( endswith($class,'Theme') ) $class = substr($class,0,strlen($class)-5);
+			if( endswith($class,'Theme') ) $class = substr($class,0,-5);
 			return $class;
+		case 'userid':
+			return get_userid();
+		case 'title':
+			if( isset($this->_title) ) return $this->_title;
+			break;
+		case 'subtitle':
+			if( isset($this->_subtitle) ) return $this->_subtitle;
 		}
-		if( $key == 'userid' ) return get_userid();
-		if( $key == 'title' ) return $this->_title;
-		if( $key == 'subtitle' ) return $this->_subtitle;
+		return null; // no value
 	}
 
 	/**
@@ -225,15 +228,15 @@ abstract class CmsAdminThemeBase
 	/**
 	 * _get_user_module_info
 	 *
-	 * Given the currently logged in user, this will read cache information representing info for all avallable modules
-	 * for that particular user.   If cache information is not available, then modules will be loaded and the information
-	 * will be gleaned from the module for that user.
-	 *
+	 * This will read cache information representing info for all
+	 * avallable modules for the currently logged in user.
+	 * If cache information is not available, then modules will be loaded
+	 * and the information will be gleaned from the module for that user.
 	 *
 	 * @since 1.10
 	 * @access private
 	 * @ignore
-	 * @author calguy1000
+	 * @author Robert Campbell
 	 */
 	private function _get_user_module_info()
 	{
@@ -276,12 +279,11 @@ abstract class CmsAdminThemeBase
 		return $data;
 	}
 
-
 	/**
 	 * _SetModuleAdminInterfaces
 	 *
-	 * This function sets up data structures to place modules in the proper Admin sections
-	 * for display on section pages and menus.
+	 * This function sets up data structures to place modules in the
+	 * proper Admin sections for display on section pages and menus.
 	 *
 	 * @since 1.10
 	 * @access private
@@ -298,7 +300,7 @@ abstract class CmsAdminThemeBase
 		$usermoduleinfo = $this->_get_user_module_info();
 		if( !is_array($usermoduleinfo) ) {
 			// put mention into the admin log
-			audit(get_userid(FALSE),'Admin Theme','No module information found for user');
+			audit(get_userid(FALSE),'Admin theme','No module information found for user');
 		}
 		else {
 			// Are there any modules with an admin interface?
@@ -332,7 +334,6 @@ abstract class CmsAdminThemeBase
 			}
 		}
 	}
-
 
 	/**
 	 * SetAggregatePermissions
@@ -374,6 +375,7 @@ abstract class CmsAdminThemeBase
 			(isset($this->_sectionCount['siteadmin']) && $this->_sectionCount['siteadmin'] > 0);
 		$this->_perms['siteAdminPerms'] = $this->_perms['sitePrefPerms'] |
 			$this->_perms['adminPerms'] | (isset($this->_sectionCount['siteadmin']) && $this->_sectionCount['siteadmin'] > 0);
+		$this->_perms['jobPerms'] = check_permission($this->userid, 'Manage Jobs');
 
 		// extensions
 		$this->_perms['codeBlockPerms'] = check_permission($this->userid, 'Modify User-defined Tags');
@@ -389,7 +391,6 @@ abstract class CmsAdminThemeBase
 		$this->_perms['bookmarks'] = check_permission($this->userid,'Manage My Bookmarks');
 		$this->_perms['myprefs'] = $this->_perms['myaccount'] | $this->_perms['bookmarks'];
 	}
-
 
 	/**
 	 * PopulateAdminNavigation
@@ -428,7 +429,7 @@ abstract class CmsAdminThemeBase
 								 'description'=>'','show_in_menu'=>true);
 		// base content menu ---------------------------------------------------------
 		$items['content'] = array('url'=>'index.php?section=content','parent'=>-1,'priority'=>2,
-								 'title'=>$this->_FixSpaces(lang('content')),'description'=>lang('contentdescription'),
+								  'title'=>$this->_FixSpaces(lang('content')),'description'=>lang('contentdescription'),
 								  'show_in_menu'=>$this->HasPerm('contentPerms'));
 
 		// base layout menu ---------------------------------------------------------
@@ -438,8 +439,8 @@ abstract class CmsAdminThemeBase
 
 		// base filest menu --------------------------------------------------------------
 		$items['files'] = array('url'=>'index.php?section=files','parent'=>-1,'priority'=>4,
-								 'title'=>$this->_FixSpaces(lang('files')),'description'=>lang('filesdescription'),
-								 'show_in_menu'=>$this->HasPerm('filePerms'));
+								'title'=>$this->_FixSpaces(lang('files')),'description'=>lang('filesdescription'),
+								'show_in_menu'=>$this->HasPerm('filePerms'));
 
 		// base user/groups menu ---------------------------------------------------------
 		$items['usersgroups'] = array('url'=>'index.php?section=usersgroups','parent'=>-1,
@@ -522,6 +523,10 @@ abstract class CmsAdminThemeBase
 								   'title'=>$this->_FixSpaces(lang('adminlog')),
 								   'description'=>lang('adminlogdescription'),
 								   'show_in_menu'=>$this->HasPerm('adminPerms'));
+		$items['asyncjobs'] = array('url'=>'listjobs.php','parent'=>'siteadmin','priority'=>11,
+								   'title'=>$this->_FixSpaces(lang('jobsmenu')),
+								   'description'=> lang('jobsmenudescription'),
+								   'show_in_menu'=>$this->HasPerm('jobPerms'));
 		// base my prefs menu ---------------------------------------------------------
 		$items['myprefs'] = array('url'=>'index.php?section=myprefs','parent'=>-1,'priority'=>8,
 								  'title'=>$this->_FixSpaces(lang('myprefs')),
@@ -550,7 +555,7 @@ abstract class CmsAdminThemeBase
 									'show_in_menu'=>true);
 
 		// adjust all the urls to include the session key
-		// and set an icon if we can. also mark them as system items.
+		// and set an icon if we can and mark them as system items.
 		foreach( $this->_menuItems as $sectionKey => $sectionArray ) {
 			if( isset($sectionArray['url']) && (!isset($sectionArray['type']) || $sectionArray['type'] != 'external' )) {
 				$this->_menuItems[$sectionKey]['url'] = $this->_fix_url_userkey($this->_menuItems[$sectionKey]['url']);
@@ -579,9 +584,12 @@ abstract class CmsAdminThemeBase
 					}
 				}
 
-				$this->_menuItems[$key]=array('url'=>$menuItem->url,'parent'=>$sectionKey,'title'=>$this->_FixSpaces($menuItem->title),
-											  'description'=>$menuItem->description,'show_in_menu'=>true,'system'=>1,
-											  'module'=>$menuItem->module,'priority'=>1);
+				$this->_menuItems[$key] = array(
+				'url'=>$menuItem->url,'parent'=>$sectionKey,
+				'title'=>$this->_FixSpaces($menuItem->title),
+				'description'=>$menuItem->description,
+				'show_in_menu'=>true,'system'=>1,
+				'module'=>$menuItem->module,'priority'=>1);
 			}
 		}
 
@@ -607,9 +615,12 @@ abstract class CmsAdminThemeBase
 					}
 				}
 
-				$this->_menuItems[$key]=array('url'=>$menuItem->url,'parent'=>$sectionKey,'title'=>$this->_FixSpaces($menuItem->title),
-											  'description'=>$menuItem->description, 'show_in_menu'=>true,'module'=>$menuItem->module,
-											  'priority'=>($menuItem->priority > 0)?max(2,$menuItem->priority):999);
+				$this->_menuItems[$key] = array(
+				'url'=>$menuItem->url,'parent'=>$sectionKey,
+				'title'=>$this->_FixSpaces($menuItem->title),
+				'description'=>$menuItem->description,
+				'show_in_menu'=>true,'module'=>$menuItem->module,
+				'priority'=>($menuItem->priority > 0)?max(2,$menuItem->priority):999);
 			}
 		}
 
@@ -675,8 +686,8 @@ abstract class CmsAdminThemeBase
 		}
 
 		// find the selected menu item.
-		$selected_key = null;
-		$pending_selected_key = null;
+		$selected_key = '';
+		$pending_selected_key = '';
 		$req_url = new cms_url($_SERVER['REQUEST_URI']);
 		$req_vars = array();
 		if( $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['mact']) && !isset($_GET['mact']) ) {
@@ -737,7 +748,7 @@ abstract class CmsAdminThemeBase
 			// and build breadcrumbs
 			$item =& $this->_menuItems[$selected_key];
 			$item['selected'] = TRUE;
-			$this->_title .= $item['title'];
+			$this->_title .= $item['title']; //TODO ensure $this->_title exists
 			$this->_active_item = $selected_key;
 			$this->_breadcrumbs[] = array('title'=>$item['title'],'url'=>$item['url']);
 			if( $item['parent'] != -1 ) {
@@ -751,25 +762,22 @@ abstract class CmsAdminThemeBase
 				}
 
 			}
-			else
-			{
+			else {
 				// so we are in a section?
 				// if it's the cms / home section we'll have to force it
 				// otherwise no need to do anything...
 
-				if($selected_key == 'main')
-				{
+				if( $selected_key == 'main' ) {
 					$item                 =& $this->_menuItems[$selected_key];
 					$item['selected']     = TRUE;
 					$this->_active_item   = $selected_key;
-						$this->_menuItems[$item['parent']]['selected'] = TRUE;
+					$this->_menuItems[$item['parent']]['selected'] = TRUE;
 				}
 			}
 
 			$this->_breadcrumbs = array_reverse($this->_breadcrumbs);
 		}
-		else
-		{
+		else {
 			// we didn't get anything? we most likelly are in admin home right after loggin in
 			// we'll have to force the default settings
 			$selected_key         = 'home';
@@ -783,10 +791,9 @@ abstract class CmsAdminThemeBase
 		}
 
 		// fix subtitle, if any
-		if ($subtitle != '') $this->_title .= ': '.$subtitle;
+		if ($subtitle) $this->_title .= ': '.(string)$subtitle; //TODO ensure $this->_title exists
 		debug_buffer('after populate admin navigation');
 	}
-
 
 	/**
 	 * Set the page title.
@@ -798,10 +805,9 @@ abstract class CmsAdminThemeBase
 	 */
 	public function SetTitle($str)
 	{
-		if( $str == '' ) $str = null;
+		if( (string)$str == '' ) $str = '';
 		$this->_title = $str;
 	}
-
 
 	/**
 	 * Set the page subtitle.
@@ -813,10 +819,9 @@ abstract class CmsAdminThemeBase
 	 */
 	public function SetSubTitle($str)
 	{
-		if( $str == '' ) $str = null;
+		if( (string)$str == '' ) $str = '';
 		$this->_subtitle = $str;
 	}
-
 
 	/**
 	 * HasPerm
@@ -829,9 +834,7 @@ abstract class CmsAdminThemeBase
 	protected function HasPerm($permission)
 	{
 		$this->_SetAggregatePermissions();
-
-		if (isset($this->_perms[$permission]) && $this->_perms[$permission]) return true;
-		return false;
+		return !empty($this->_perms[$permission]);
 	}
 
 	/**
@@ -845,11 +848,10 @@ abstract class CmsAdminThemeBase
 	protected function get_admin_navigation()
 	{
 		$smarty = \Smarty_CMS::get_instance();
-		$smarty->assign('secureparam', CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY]);
+		$smarty->assign('secureparam', CMS_SECURE_PARAM_NAME . '=' . $_SESSION[CMS_USER_KEY], true);
 		$this->_populate_admin_navigation();
 		return $this->_menuItems;
 	}
-
 
 	/**
 	 * Return the menu items as a nested tree using recursion.
@@ -876,7 +878,6 @@ abstract class CmsAdminThemeBase
 		}
 		return $result;
 	}
-
 
 	/**
 	 * Retrieve the admin navigation tree
@@ -923,14 +924,15 @@ abstract class CmsAdminThemeBase
 	 * @since 2.0
 	 * @access protected
 	 * @param string $module_name
+	 * @return string maybe empty
 	 */
-	protected function get_module_help_url($module_name = null)
+	protected function get_module_help_url($module_name = '')
 	{
 		if( !$module_name ) $module_name = $this->get_action_module();
-		if( !$module_name ) return;
+		if( !$module_name ) return '';
 
 		$modman = cms_utils::get_module('ModuleManager');
-		if( !is_object($modman) ) return;
+		if( !is_object($modman) ) return '';
 		return $modman->create_url('m1_','defaultadmin','',array('modulehelp'=>$module_name));
 	}
 
@@ -940,7 +942,7 @@ abstract class CmsAdminThemeBase
 	 *
 	 * @access protected
 	 * @param string $title The title to search for
-	 * @return string The matching key, or null
+	 * @return string The matching key, or empty
 	 */
 	protected function find_menuitem_by_title($title)
 	{
@@ -948,32 +950,39 @@ abstract class CmsAdminThemeBase
 		foreach( $nav as $key => $rec ) {
 			if( isset($rec['title']) && $rec['title'] == $title ) return $key;
 		}
+		return '';
 	}
-
 
 	/**
 	 * Return the list of bookmarks
 	 *
-	 * @param bool $pure if False the shortcuts for adding and managing bookmarks are added to the list.
-	 * @return array Array of Bookmark objects
+	 * @param bool $pure if false the shortcuts for adding and managing bookmarks are added to the list. Default false
+	 * @return array Bookmark objects
 	 */
 	public function get_bookmarks($pure = FALSE)
 	{
 		$bookops = CmsApp::get_instance()->GetBookmarkOperations();
-		$marks = array_reverse($bookops->LoadBookmarks($this->userid));
+		$marks = $bookops->LoadBookmarks($this->userid);
 
 		if( !$pure ) {
-			$source = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-			//$url = str_replace(CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY], '', $source);
-			$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
-			$mark= new Bookmark();
-			$mark->title = lang('addbookmark');
-			$mark->url = 'makebookmark.php'.$urlext.'&amp;title='.urlencode($this->_title).'&amp;ref='.base64_encode($source);
+			if( $marks ) {
+				$marks[] = new Bookmark(); //unpopulated == spacer
+			}
+			$path = substr(realpath($_SERVER['SCRIPT_FILENAME']),strlen(CMS_ROOT_PATH));
+			$source = CMS_ROOT_URL . strtr($path,'\\','/'); // c.f. $this->_url which has no scheme or host
+			if( !empty($_SERVER['QUERY_STRING']) ) { $source .= '?'.$_SERVER['QUERY_STRING']; }
+			$urlext = CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+			$source = str_replace($urlext,'[SECURITYTAG]',$source);
+			$mark = new Bookmark();
+			$mark->title = lang('addthismark');
+			$mark->url = 'addbookmark.php?'.$urlext;
+			if( !empty($this->_title) ) { $mark->url .= '&title='.rawurlencode($this->_title); }
+			$mark->url .= '&ref='.base64_encode($source);
 			$marks[] = $mark;
 
 			$mark = new Bookmark();
 			$mark->title = lang('managebookmarks');
-			$mark->url = 'listbookmarks.php'.$urlext;
+			$mark->url = 'listbookmarks.php?'.$urlext;
 			$marks[] = $mark;
 		}
 		return $marks;
@@ -982,7 +991,7 @@ abstract class CmsAdminThemeBase
 	/**
 	 * Return list of breadcrumbs
 	 *
-	 * @return array Array of menu nodes representing the breadcrumb trail.
+	 * @return array menu nodes representing the breadcrumb trail.
 	 */
 	public function get_breadcrumbs()
 	{
@@ -990,16 +999,16 @@ abstract class CmsAdminThemeBase
 		return $this->_breadcrumbs;
 	}
 
-
 	/**
-	 * Return the title of the active item.
+	 * Return the title of the active menu-item.
 	 *
-	 * @return string
+	 * @return string maybe empty
 	 */
 	public function get_active_title()
 	{
 		$this->_populate_admin_navigation();
 		if( $this->_active_item ) return $this->_menuItems[$this->_active_item]['title'];
+		return '';
 	}
 
 	/**
@@ -1007,7 +1016,7 @@ abstract class CmsAdminThemeBase
 	 *
 	 * @param string $key
 	 * @param mixed $value
-	 * @returns void
+	 * @return void
 	 */
 	public function set_value($key,$value)
 	{
@@ -1021,18 +1030,16 @@ abstract class CmsAdminThemeBase
 		}
 	}
 
-
 	/**
 	 * Return attached data
 	 *
 	 * @param string $key
-	 * @returns void
+	 * @return void
 	 */
 	public function get_value($key)
 	{
 		if( is_array($this->_data) && isset($this->_data[$key]) ) return $this->_data[$key];
 	}
-
 
 	/**
 	 * HasDisplayableChildren
@@ -1046,57 +1053,58 @@ abstract class CmsAdminThemeBase
 	public function HasDisplayableChildren($section)
 	{
 		$displayableChildren=false;
-		foreach($this->_menuItems[$section]['children'] as $thisChild) {
+		foreach( $this->_menuItems[$section]['children'] as $thisChild ) {
 			$thisItem = $this->_menuItems[$thisChild];
-			if ($thisItem['show_in_menu']) {
-				$displayableChildren = true;
+			if( $thisItem['show_in_menu'] ) {
+				$displayableChildren = TRUE;
 				break;
 			}
 		}
 		return $displayableChildren;
 	}
 
-
 	/**
-	 * DisplayImage will display the themed version of an image (if it exists),
-	 * @param string $imageName name of image
-	 * @param string $alt alt text
-	 * @param int $width width
-	 * @param int $height height
-	 * @param string $class class
+	 * Generate html for the themed version of an image (if it exists)
+	 *
+	 * @param string $imageName images-relative path of wanted image, including '/' separators
+	 * @param string $alt optional alt (and title) text
+	 * @param int $width optional width
+	 * @param int $height optional height
+	 * @param string $class optional class name(s)
+	 * @return string representing an img element including admindir-relative src attribute
 	 */
-	public function DisplayImage($imageName, $alt='', $width='', $height='', $class='')
+	public function DisplayImage($imageName, $alt='', $width=0, $height=0, $class='')
 	{
-		// @todo: fix me...
-		if( !is_array($this->_imageLink) ) $this->_imageLink = array();
-		if (! isset($this->_imageLink[$imageName])) {
+		if( !is_array($this->_imageLink) ) { $this->_imageLink = array(); }
+		if( !isset($this->_imageLink[$imageName]) ) {
 			$imagePath = '';
-			if (strpos($imageName,'/') !== false) {
-				$imagePath = substr($imageName,0,strrpos($imageName,'/')+1);
-				$imageName = substr($imageName,strrpos($imageName,'/')+1);
+			if( ($p = strrpos($imageName,'/')) !== FALSE ) {
+				$tmp = substr($imageName,0,$p); //probably contains separator(s)
+				$imagePath = strtr($tmp,'\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR);
+				$imageName = substr($imageName,$p + 1);
 			}
-
-			$config = \cms_config::get_instance();
-			$str = dirname(CMS_ROOT_PATH.'/'.$config['admin_dir']."/themes/{$this->themeName}/images/{$imagePath}{$imageName}");
-			if (file_exists("{$str}/{$imageName}")) {
-				$str = "themes/{$this->themeName}/images/{$imagePath}{$imageName}";
-				$this->_imageLink[$imageName] = $str;
+			$rel = ($imagePath) ? cms_join_path('themes',$this->themeName,'images',$imagePath,$imageName) :
+				cms_join_path('themes',$this->themeName,'images',$imageName);
+			$config = cms_config::get_instance();
+			$parent = $config['admin_path'].DIRECTORY_SEPARATOR.dirname($rel);
+			if( file_exists($parent.DIRECTORY_SEPARATOR.$imageName) ) {
+				$this->_imageLink[$imageName] = strtr($rel,'\\','/');
 			}
 			else {
-				// todo: uses default theme.
-				$this->_imageLink[$imageName] = 'themes/OneEleven/images/' . $imagePath . $imageName;
+				$name = self::GetDefaultTheme();
+				$tmp = strtr($imagePath,'\\','/');
+				$this->_imageLink[$imageName] = "themes/$name/images/$tmp/$imageName";
 			}
 		}
 
 		$retStr = '<img src="'.$this->_imageLink[$imageName].'"';
-		if ($class != '') $retStr .= ' class="'.$class.'"';
-		if ($width != '') $retStr .= ' width="'.$width.'"';
-		if ($height != '') $retStr .= ' height="'.$height.'"';
-		if ($alt != '') $retStr .= ' alt="'.$alt.'" title="'.$alt.'"';
-		$retStr .= ' />';
+		if( $class ) $retStr .= ' class="'.$class.'"';
+		if( $width > 0 ) $retStr .= ' width="'.$width.'"';
+		if( $height > 0 ) $retStr .= ' height="'.$height.'"';
+		if( $alt ) $retStr .= ' alt="'.$alt.'" title="'.$alt.'"';
+		$retStr .= '>';
 		return $retStr;
 	}
-
 
 	/**
 	 * Abstract function for showing errors in the admin theme.
@@ -1104,129 +1112,140 @@ abstract class CmsAdminThemeBase
 	 * @abstract
 	 * @param mixed $errors The errors, either a string, or an array of strings
 	 * @param string $get_var An optional get variable name that can contain an error string key.  If specified, errors is ignored.
+	 * @return string a html comment about this method-call
 	 */
 	abstract public function ShowErrors($errors,$get_var='');
 
 	/**
-	 * Abstrct function for showing messages in the admin theme.
+	 * Abstract function for showing messages in the admin theme.
 	 *
 	 * @abstract
-	 * @param mixed $message The message, either a string, or an array of stri9ngs
+	 * @param mixed $message The message, either a string, or an array of strings
 	 * @param string $get_var An optional get variable name that can contain an error string key.  If specified, message param is ignored.
+	 * @return void
 	 */
 	abstract public function ShowMessage($message,$get_var='');
 
 	/**
-	 * Abstract method for showing a header in the content area of a theme
-	 * This is usually an advanced function with some special behaviour based on the module_help_type
+	 * Abstract method for showing a themed header in the content area of a page.
+	 * This is usually an advanced function with some special behaviour based on
+	 *  the $module_help_type parameter
 	 *
 	 * @abstract
-	 * @deprecated
-	 * @param string $title_name The name to show on the header.  This will not be passed through the lang process if module_help_type is not FALSE.
-	 * @param array  $extra_lang_params Extra language parameters to pass to the title_name.  Ignored if module_help_type is not FALSE
-	 * @param string $link_text Text to show in the module help link (depends on the module_help_type param)
-	 * @param mixed  $module_help_type Flag for how to display module help types.   Possible values are TRUE to display a simple link, FALSE for no help, and 'both' for both types of links
+	 * @deprecated since 1.11
+	 * @param string $title_name The name (translation-key or verbatim) to show
+	 *  in the header. This will be processed as verbatim unless $module_help_type is FALSE.
+	 * @param array  $extra_lang_params Optional extra strings to populate
+	 *  placeholders in $title_name key.  Ignored unless module_help_type is FALSE
+	 * @param string $link_text Text to show in the module help link (depends on $module_help_type)
+	 * @param mixed  $module_help_type Indicates how to display module help.
+	 *  Recognized values are: TRUE to display a simple link, FALSE for no help,
+	 *  and 'both' for 'both types of links'
+	 * (ancient doco refers to "wiki and module help and 'builtin'")
+	 * TODO 'both' seems unused now
+	 * @return void
 	 */
 	abstract public function ShowHeader($title_name,$extra_lang_params = array(),$link_text = '',$module_help_type = FALSE);
 
-
 	/**
-	 * A function to return the name of the default admin theme.
+	 * Retrieve the name of the default admin theme.
 	 *
-	 * @returns string
+	 * @return string maybe empty
 	 */
-	static public function GetDefaultTheme()
+	public static function GetDefaultTheme()
 	{
 		$tmp = self::GetAvailableThemes();
 		if( is_array($tmp) && count($tmp) ) {
 			$tmp = array_keys($tmp);
-			$logintheme = get_site_preference('logintheme');
-			if( $logintheme && in_array($logintheme,$tmp) )	return $logintheme;
+			$logintheme = cms_siteprefs::get('logintheme');
+			if( $logintheme && in_array($logintheme,$tmp) ) return $logintheme;
 			return $tmp[0];
 		}
+		return '';
 	}
 
-
 	/**
-	 * Retrieve a list of the available admin themes.
+	 * Retrieve all available admin themes.
 	 *
-	 * @return array A hash of strings.
+	 * @return array string(s).
 	 */
-	static public function GetAvailableThemes()
+	public static function GetAvailableThemes()
 	{
-		$config = \cms_config::get_instance();
+		$config = cms_config::get_instance();
 
-		$files = glob(cms_join_path($config['admin_path'],'themes').'/*');
+		$res = array();
+		$files = glob(cms_join_path($config['admin_path'],'themes','*'));
 		if( is_array($files) && count($files) ) {
-			$res = array();
 			foreach( $files as $file ) {
 				if( !is_dir($file) ) continue;
 				$name = basename($file);
 				if( !is_readable(cms_join_path($file,"{$name}Theme.php")) ) continue;
 				$res[$name] = $name;
 			}
-			return $res;
 		}
+		return $res;
 	}
 
-
 	/**
-	 * A function to retrieve the global admin theme object.
-	 * This method will create the admin theme object if has not yet been created.  It will read the cms preferences and cross reference with available themes.
+	 * Retrieve the global admin theme object.
+	 * This method will create the admin theme object if has not yet been created.
+	 * It will read the cms preferences and cross-reference with available themes.
 	 *
 	 * @param string $name optional theme name.
 	 * @return CmsAdminThemeBase Reference to the initialized admin theme.
 	 */
-	static public function GetThemeObject($name = '')
+	public static function GetThemeObject($name = '')
 	{
 		if( is_object(self::$_instance) ) return self::$_instance;
 
-		if( !$name ) $name = cms_userprefs::get_for_user(get_userid(FALSE),'admintheme',self::GetDefaultTheme());
-		if( class_exists($name) ) {
-			self::$_instance = new $name;
+		if( !$name ) $name = cms_userprefs::get_for_user(get_userid(FALSE),'admintheme');
+		if( $name && class_exists($name) ) {
+			self::$_instance = new $name();
 		}
 		else {
-			$gCms = CmsApp::get_instance();
-			$config = $gCms->GetConfig();
-			$themeObjName = $name."Theme";
-			$fn = $config['admin_path']."/themes/$name/{$themeObjName}.php";
-			if( file_exists($fn) ) {
-				include_once($fn);
-				self::$_instance = new $themeObjName($gCms,get_userid(FALSE),$name);
+			$config = cms_config::get_instance();
+			if( $name ) {
+				$fn = cms_join_path($config['admin_path'],'themes',$name,"{$name}Theme.php");
+				if( file_exists($fn) ) {
+					include_once $fn;
+					$themeObjName = $name.'Theme';
+					self::$_instance = new $themeObjName();
+				}
+				else {
+					$name = ''; //trigger a retry
+				}
 			}
-			else {
+			if( !$name ) {
 				// theme not found... use default
 				$name = self::GetDefaultTheme();
-				$themeObjName = $name."Theme";
-				$fn = $config['admin_path']."/themes/$name/{$themeObjName}.php";
+				$fn = cms_join_path($config['admin_path'],'themes',$name,"{$name}Theme.php");
 				if( file_exists($fn) ) {
-					include_once($fn);
-					self::$_instance = new $themeObjName($gCms,get_userid(FALSE),$name);
+					include_once $fn;
+					$themeObjName = $name.'Theme';
+					self::$_instance = new $themeObjName();
 				}
 				else {
 					// still not found
-					$res = null;
-					return $res;
+					return null;
 				}
 			}
 		}
 		return self::$_instance;
 	}
 
-
 	/**
-	 * A public function to add a notification for display in the theme.
+	 * Add a notification for display in the theme.
 	 *
-	 * @param CmsAdminThemeNotification $notification A reference to the new notification
+	 * @param CmsAdminThemeNotification $notification The new notification object
 	 */
-	public function add_notification(CmsAdminThemeNotification &$notification)
+	public function add_notification(CmsAdminThemeNotification $notification)
 	{
 		if( !is_array($this->_notifications) ) $this->_notifications = array();
 		$this->_notifications[] = $notification;
 	}
 
 	/**
-	 * A public function to add a notification for display in the theme.
+	 * Add a notification for display in the theme.
 	 * This is simply a compatibility wrapper around the add_notification method.
 	 *
 	 * @deprecated
@@ -1236,13 +1255,12 @@ abstract class CmsAdminThemeBase
 	 */
 	public function AddNotification($priority,$module,$html)
 	{
-	  $notification = new CmsAdminThemeNotification;
+	  $notification = new CmsAdminThemeNotification();
 	  $notification->priority = max(1,min(3,$priority));
 	  $notification->module = $module;
 	  $notification->html = $html;
 	  $this->add_notification($notification);
 	}
-
 
 	/**
 	 * Retrieve the current list of notifications.
@@ -1254,27 +1272,30 @@ abstract class CmsAdminThemeBase
 		return $this->_notifications;
 	}
 
-
 	/**
-	 * Return an array of admin pages, suitable for use in a dropdown.
+	 * Retrieve the site's admin pages, suitably-formatted for use in a dropdown.
 	 *
 	 * @internal
 	 * @since 1.12
-	 * @param bool $none A flag indicating wether 'none' should be the first option.
-	 * @return array The keys of the array are langified strings to display to the user.  The values are URLS.
+	 * @param bool $none Flag whether to prepend a 'None' option. Default true.
+	 * @return array Each member like 'menu-label' => 'action-urlpath'
+	 * The labels are adapted from the admin menu: section-titles and descendants like
+	 * 'Site&nbsp;Admin' or '&nbsp;&nbsp;Tags'
+	 * The urlpaths are site-root-url-relative, like
+	 *  index.php?section=content&amp;[SECURITYTAG] or
+	 *  moduleinterface.php?mact=CMSContentManager,m1_,admin_settings,0&amp;[SECURITYTAG]
 	 */
 	public function GetAdminPages($none = TRUE)
 	{
 		$opts = array();
 		if( $none ) $opts[ucfirst(lang('none'))] = '';
 
-		$depth = 0;
 		$menuItems = $this->get_admin_navigation();
 		foreach( $menuItems as $sectionKey=>$menuItem ) {
 			if( $menuItem['parent'] != -1 ) continue; // only parent pages
 			if( !$menuItem['show_in_menu'] || strlen($menuItem['url']) < 1 ) continue; // only visible stuff
 
-			$opts[$menuItem['title']] = CmsAdminUtils::get_generic_url($menuItem['url']);
+			$opts[$menuItem['title']] = CmsAdminUtils::get_generic_url($menuItem['url']); // deprecated, do not use without suitable permission-checks are done
 
 			if( is_array($menuItem['children']) && count($menuItem['children']) ) {
 				foreach( $menuItem['children'] as $thisChild ) {
@@ -1289,7 +1310,7 @@ abstract class CmsAdminThemeBase
 
 					//$opts['&nbsp;&nbsp;'.$menuChild['title']] = cms_htmlentities($menuChild['url']);
 					$url = $menuChild['url'];
-					$url = CmsAdminUtils::get_generic_url($url);
+					$url = CmsAdminUtils::get_generic_url($url); // deprecated ibid
 					$opts['&nbsp;&nbsp;'.$menuChild['title']] = $url;
 				}
 			}
@@ -1298,45 +1319,69 @@ abstract class CmsAdminThemeBase
 	}
 
 	/**
-	 * Returns a select list of the pages in the system for use in
-	 * various admin pages.
+	 * Return a <select/> element having options for all of the site's
+	 * admin pages (derived from the admin-console menu).
 	 *
 	 * @internal
-	 * @param string $name - The html name of the select box
-	 * @param string $selected - If a matching id is found in the list, that item
-	 *						   is marked as selected.
-	 * @return string The select list of pages
+	 * @param string $name The name-attribute of the created select
+	 * @param string $selected An urlpath (like listusertags.php?[SECURITYTAG])
+	 *  If that value is present in the pages list, the corresponding option
+	 *  will be selected in the created <select>.
+	 *  See CmsAdminThemeBase::GetAdminPages() for more detail about the urlpaths.
+	 * @param string $id Optional id-attribute of the created select. Default ''
+	 * @return string html
 	 */
 	public function GetAdminPageDropdown($name,$selected,$id = '')
 	{
-		$opts = $this->GetAdminPages();
-		$attrs = array('name'=>trim((string)$name));
-		if( $id ) $attrs['id'] = trim((string)$id);
-		$output = '<select ';
+		$attrs = array('name' => trim((string)$name));
+		if( $id ) { $attrs['id'] = trim((string)$id); }
+		else { $attrs['id'] = $attrs['name']; }
+		$output = '<select';
 		foreach( $attrs as $key => $val ) {
-			$output .= ' '.$key.'='.$val;
+			if( $val ) { $output .= " $key=\"$val\""; }
 		}
-		$output .= '>';
+		$output .= ">\n";
 
-		foreach( $opts as $key => $value ) {
-			if( $value == $selected ) {
-				$output .= sprintf("<option selected=\"selected\" value=\"%s\">%s</option>\n",
-								   $value,$key);
+		$opts = $this->GetAdminPages();
+		foreach( $opts as $key => $val ) {
+			if( $val == $selected ) {
+				$output .= sprintf("<option value=\"%s\" selected>%s</option>\n",
+								   $val,$key);
 			}
 			else {
 				$output .= sprintf("<option value=\"%s\">%s</option>\n",
-								   $value,$key);
+								   $val,$key);
 			}
 		}
-		$output .= '</select>'."\n";
+		$output .= "</select>\n";
 		return $output;
 	}
 
+	/**
+	 * Return a resource identifier for a theme-specific template
+	 * @final
+	 * @since 2.2.23F2
+	 *
+	 * @param string $template The template name.
+	 * @return string
+	 */
+	public final function GetTemplateResource($template)
+	{
+		if( strpos($template,':') !== false ) {
+			if( startswith($template,'string:') || startswith($template,'eval:') || startswith($template,'extends:') ) {
+				throw new \LogicException('Invalid Smarty resource specified for a theme template.');
+			}
+//			elseif( startswith($template,'file:') ) { MAYBE validate the filepath? }
+			return $template;
+		}
+		if( endswith($template,'.tpl') ) return 'theme_file_tpl:'.$this->themeName.';'.$template;
+		return 'cms_template:'.$template;
+	}
 
 	/**
-	 *  BackUrl
-	 *  "Back" Url - link to the next-to-last item in the breadcrumbs
-	 *  for the back button.
+	 * Generate a link to the next-to-last item in the breadcrumbs
+	 * for the back button.
+	 * @return string
 	 */
 	public function BackUrl()
 	{
@@ -1353,11 +1398,11 @@ abstract class CmsAdminThemeBase
 
 	/**
 	 * Add text to the head section of the output
-	 *
-	 * The CMSMS core code calls this method to add text and javascript to output in the head section required for various functionality.
+	 * The CMSMS core code calls this method to add text and javascript
+	 * to be output in the head section required for various functionality.
+	 * @since 2.2
 	 *
 	 * @param string $txt The text to add to the head section.
-	 * @since 2.2
 	 * @author Robert Campbell
 	 */
 	public function add_headtext($txt)
@@ -1367,12 +1412,11 @@ abstract class CmsAdminThemeBase
 	}
 
 	/**
-	 * Get text that needs to be injected into the head section of the output.
-	 *
+	 * Get text that needs to be injected into the generated <head/> element.
 	 * This method is typically called by the admin theme itself to get the text to render.
+	 * @since 2.2
 	 *
 	 * @return string
-	 * @since 2.2
 	 * @author Robert Campbell
 	 */
 	public function get_headtext()
@@ -1382,29 +1426,28 @@ abstract class CmsAdminThemeBase
 
 	/**
 	 * Add text to the footer of the output, immediately before the </body> tag.
+	 * @since 2.2
 	 *
 	 * @param string $txt The text to add to the end of the output.
-	 * @since 2.2
 	 * @author Robert Campbell
 	 */
 	public function add_footertext($txt)
 	{
 		$txt = trim($txt);
-		if( $txt ) $this->_footertext .= "\n".$txt;
+		if( $txt ) $this->_foottext .= "\n".$txt;
 	}
 
 	/**
-	 * Get text that needs to be injected into the footer section of the output.
-	 *
+	 * Get text that needs to be injected into the bottom of the generated <body/>.
 	 * This method is typically called by the admin theme itself to get the text to render.
+	 * @since 2.2
 	 *
 	 * @return string
-	 * @since 2.2
 	 * @author Robert Campbell
 	 */
 	public function get_footertext()
 	{
-		return $this->_footertext;
+		return $this->_foottext;
 	}
 
 	/**
@@ -1535,14 +1578,14 @@ abstract class CmsAdminThemeBase
 	 * @param array $params Parameters
 	 * @return string
 	 */
-	public final function StartTab($tabid, $params = array())
+	public final function StartTab($tabid,$params = array())
 	{
 		$message = '';
-		if (FALSE == empty($this->_activetab) && $tabid == $this->_activetab && FALSE == empty($params['tab_message'])) {
-			$message = $this->ShowMessage($this->Lang($params['tab_message']));
+		if (!empty($this->_activetab) && $tabid == $this->_activetab && !empty($params['tab_message'])) {
+			$this->ShowMessage($this->Lang($params['tab_message']));
 		}
 
-		return '<div id="' . strtolower(str_replace(' ', '_', $tabid)) . '_c">'.$message;
+		return '<div id="' . strtolower(str_replace(' ', '_', $tabid)) . '_c">';
 	}
 
 	/**
@@ -1575,17 +1618,17 @@ class CmsAdminThemeNotification
 	/**
 	 * @ignore
 	 */
-	private $_module;
+	private $module;
 
 	/**
 	 * @ignore
 	 */
-	private $_priority;
+	private $priority;
 
 	/**
 	 * @ignore
 	 */
-	private $_html;
+	private $html;
 
 
 	/**
@@ -1601,7 +1644,7 @@ class CmsAdminThemeNotification
 			return $this->$key;
 		}
 
-		throw new CmsInvalidDataException('Attempt to retrieve invalid property from CmsAdminThemeNotification');
+		throw new CmsInvalidDataException('Attempt to retrieve invalid property of CmsAdminThemeNotification');
 	}
 
 
@@ -1619,11 +1662,6 @@ class CmsAdminThemeNotification
 			return;
 		}
 
-		throw new CmsInvalidDataException('Attempt to set invalid property from CmsAdminThemeNotification');
+		throw new CmsInvalidDataException('Attempt to set invalid property of CmsAdminThemeNotification');
 	}
 } // end of class
-
-#
-# EOF
-#
-?>

@@ -1,13 +1,13 @@
 <?php
 // $USE_THEME inherited from parent scope.
-if (! isset($USE_THEME) || $USE_THEME ) {
+if (!isset($USE_THEME) || $USE_THEME ) {
     // if using the theme... echo the footer to stdout
     $themeObject->do_footer();
 }
 
-$gCms = \CmsApp::get_instance();
-$config = \cms_config::get_instance();
-if ($config["debug"] == true) {
+$gCms = CmsApp::get_instance();
+$config = cms_config::get_instance();
+if ($config['debug']) { // aka CMS_DEBUG
     // echo debug output to stdout
     echo '<div id="DebugFooter">';
     $arr = $gCms->get_errors();
@@ -18,26 +18,22 @@ if ($config["debug"] == true) {
 }
 
 // Pull the stuff out of the buffer...
+// $bodycontent should contain what goes in the main content area of the page.
 $bodycontent = '';
 if (!(isset($USE_OUTPUT_BUFFERING) && $USE_OUTPUT_BUFFERING == false)) {
   $bodycontent = @ob_get_contents();
   @ob_end_clean();
 }
-// bodycontent should contain what goes in the main content area of the page.
 
-#Do any header replacements (this is for WYSIWYG stuff)
-$formtext = '';
-$formsubmittext = '';
-$bodytext = '';
+// Do any header replacements (this is for WYSIWYG stuff)
 $userid = get_userid();
-
+$modops = ModuleOperations::get_instance();
 // initialize the requested wysiwyg modules
-// because this can change based on module actions etc... it's done in the footer.
+// because those can change during module action etc, it's done here in the footer.
 $list = CmsFormUtils::get_requested_wysiwyg_modules();
-if( is_array($list) && count($list) ) {
+if( $list && is_array($list) ) {
     foreach( $list as $module_name => $info ) {
-
-        $obj = cms_utils::get_module($module_name);
+        $obj = $modops->get_module_instance($module_name);
         if( !is_object($obj) ) {
             audit('','Core','WYSIWYG module '.$module_name.' requested, but could not be instantiated');
             continue;
@@ -64,7 +60,7 @@ if( is_array($list) && count($list) ) {
             $cssnames = $tmpnames;
         }
         else {
-            $cssnames = null;
+            $cssnames = [];
         }
 
         // initialize each 'specialized' textarea.
@@ -73,7 +69,7 @@ if( is_array($list) && count($list) ) {
             $selector = $rec['id'];
             $cssname = $rec['stylesheet'];
 
-            if( $cssname == CmsFormUtils::NONE ) $cssname = null;
+            if( $cssname == CmsFormUtils::NONE ) $cssname = '';
             if( !$cssname || !is_array($cssnames) || !in_array($cssname,$cssnames) || $selector == CmsFormUtils::NONE ) {
                 $need_generic = TRUE;
                 continue;
@@ -92,16 +88,16 @@ if( is_array($list) && count($list) ) {
 
 // initialize the requested syntax hilighter modules
 $list = CmsFormUtils::get_requested_syntax_modules();
-if( is_array($list) && count($list) ) {
+if( $list && is_array($list) ) {
     foreach( $list as $one ) {
-        $obj = cms_utils::get_module($one);
+        $obj = $modops->get_module_instance($one);
         if( is_object($obj) ) $themeObject->add_headtext($obj->SyntaxGenerateHeader());
     }
 }
 
-$out = \CMSMS\HookManager::do_hook_accumulate('admin_add_footertext');
-if( $out && !empty($out) ) {
-    foreach( $out as $one ) {
+$list = CMSMS\HookManager::do_hook_accumulate('admin_add_footertext');
+if( $list && is_array($list) ) {
+    foreach( $list as $one ) {
         $one = trim($one);
         if( $one ) $themeObject->add_footertext($one);
     }
@@ -110,20 +106,20 @@ if( $out && !empty($out) ) {
 $bodycontent = $themeObject->postprocess($bodycontent);
 echo $bodycontent;
 
-if (!isset($USE_THEME) || $USE_THEME != false) {
+if (!isset($USE_THEME) || $USE_THEME) {
     if( strpos($bodycontent,'</body') === FALSE ) echo '</body></html>';
-}
-
-if (!isset($USE_THEME) || $USE_THEME != false) {
     if( isset($config['show_performance_info']) ) {
-        $db = \Cmsapp::get_instance()->GetDb();
-        $endtime = microtime();
         $memory = (function_exists('memory_get_usage')?memory_get_usage():0);
         $memory_net = 'n/a';
         if( isset($orig_memory) ) $memory_net = $memory - $orig_memory;
         $memory_peak = (function_exists('memory_get_peak_usage')?memory_get_peak_usage():0);
+        $endtime = microtime();
+        $db = $gCms->GetDb();
         echo '<div style="clear: both;">'.microtime_diff($starttime,$endtime)." / ".(isset($db->query_count)?$db->query_count:'')." queries / Net Memory: {$memory_net} / End: {$memory} / Peak: {$memory_peak}</div>\n";
     }
 }
+
+$obj = new CMSMS\JobCheck();
+$obj->initiate_background_processing();
 
 ?>

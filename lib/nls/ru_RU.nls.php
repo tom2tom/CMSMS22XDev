@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple translation file
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -23,7 +22,7 @@
 #The modifications to fit it for Gallery were made by Jens Tkotz
 #(http://gallery.meanalto.com) 
 
-#Ideas from Gallery's implementation made to CMS by Ted Kulp
+#Ideas from Gallery's implementation made for CMSMS by Ted Kulp
 
 #RU Russian
 #Created by: Alexey Tyagunov <webmaster@superhonda.ru>
@@ -46,7 +45,7 @@ $nls['locale']['ru_RU'] = 'ru_RU,ru_RU.cp1251,ru_RU.CP1251,ru_RU.CP866,ru_RU.koi
 $nls['encoding']['ru_RU'] = "utf-8";
 
 #Location of the file(s)
-$nls['file']['ru_RU'] = array(dirname(__FILE__).'/ru_RU/admin.inc.php');
+$nls['file']['ru_RU'] = array(__DIR__.'/ru_RU/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

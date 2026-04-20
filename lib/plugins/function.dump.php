@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: dump
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -24,7 +23,7 @@ function smarty_function_dump($params, $smarty)
 		function build_accessor($parent_str,$parent_type,$childname) {
 			$str = $parent_str;
 			if( $parent_type == 'object' ) {
-                $str .= '-&gt;';
+				$str .= '-&gt;';
 			}
 			else if( $parent_type == 'array' ) {
 				$str .= '.';
@@ -33,54 +32,54 @@ function smarty_function_dump($params, $smarty)
 			return $str;
 		}
 
-		function dump_object($params,&$obj,$level=1,$ignore=array(),$accessor = '')
+		function dump_object($params,$obj,$level=1,$ignore=array(),$accessor = '')
 		{
 			$maxlevel = 3;
 			if( isset($params['maxlevel']) ) {
-                $maxlevel = (int)$params['maxlevel'];
-                $maxlevel = max(1,$maxlevel);
-                $maxlevel = min(10,$maxlevel);
-            }
+				$maxlevel = (int)$params['maxlevel'];
+				$maxlevel = max(1,$maxlevel);
+				$maxlevel = min(10,$maxlevel);
+			}
 
-			if( $level > $maxlevel ) return;
+			if( $level > $maxlevel ) return '';
 
 			$objname = get_class($obj);
 			$str = '';
-			$str .= str_repeat('  ',$level).'Object Name: '.$objname.'<br/>';
-			$str .= str_repeat('  ',$level).'Parent: '.get_parent_class($obj)."<br/>";
+			$str .= str_repeat('  ',$level).'Object Name: '.$objname.'<br>';
+			$str .= str_repeat('  ',$level).'Parent: '.get_parent_class($obj).'<br>';
 
 			if( !isset($params['nomethods']) ) {
 				$methods = get_class_methods($objname);
 				if( count($methods) ) {
-					$str .= str_repeat('  ',$level).'Methods: <br/>';
-					foreach( $methods as $one )	{
-						$str .= str_repeat('  ',$level).'- '.$one.'<br/>';
+					$str .= str_repeat('  ',$level).'Methods:<br>';
+					foreach( $methods as $one ) {
+						$str .= str_repeat('  ',$level).'- '.$one.'<br>';
 					}
 				}
 			}
 
-			if( !isset($params['novars']) )	{
+			if( !isset($params['novars']) ) {
 				$vars = get_object_vars($obj);
 				if( is_array($vars) && count($vars) ) {
-					$str .= str_repeat('  ',$level).'Properties: <br/>';
-					foreach( $vars as $name => $value )	{
+					$str .= str_repeat('  ',$level).'Properties:<br>';
+					foreach( $vars as $name => $value ) {
 						if( in_array($name,$ignore) ) continue;
 						$acc = build_accessor($accessor,'object',$name);
 
 						$type = gettype($value);
-						if( $type == 'object' )	{
-							$str .= str_repeat('  ',$level).'- '.'<u>'.$name.': Object</u> <em>{$'.$acc.'}</em><br/>';
-							if( isset($params['recurse']) )	$str .= dump_object($params,$value,$level+1,$ignore,$acc);
+						if( $type == 'object' ) {
+							$str .= str_repeat('  ',$level).'- '.'<u>'.$name.': Object</u> <em>{$'.$acc.'}</em><br>';
+							if( isset($params['recurse']) ) $str .= dump_object($params,$value,$level+1,$ignore,$acc);
 						}
 						else if( $type == 'array' ) {
-							$str .= str_repeat('  ',$level).'- '.'<u>'.$name.': Array ('.count($value).')</u> <em>{$'.$acc.'}</em><br/>';
-							if( isset($params['recurse']) )	$str .= dump_array($params,$value,$level+1,$ignore,$acc);
+							$str .= str_repeat('  ',$level).'- '.'<u>'.$name.': Array ('.count($value).')</u> <em>{$'.$acc.'}</em><br>';
+							if( isset($params['recurse']) ) $str .= dump_array($params,$value,$level+1,$ignore,$acc);
 						}
 						else if( $type == 'NULL' ) {
-							$str .= str_repeat('  ',$level).'- '.$name.': NULL <em>{$'.$acc.'}</em><br/>';
+							$str .= str_repeat('  ',$level).'- '.$name.': NULL <em>{$'.$acc.'}</em><br>';
 						}
 						else {
-							$str .= str_repeat('  ',$level).'- '.$name.' = '.cms_htmlentities($value).' <em>{$'.$acc.'}</em><br/>';
+							$str .= str_repeat('  ',$level).'- '.$name.' = '.cms_htmlentities($value).' <em>{$'.$acc.'}</em><br>';
 						}
 					}
 				}
@@ -97,25 +96,25 @@ function smarty_function_dump($params, $smarty)
 				$maxlevel = min(10,$maxlevel);
 			}
 
-			if( $level > $maxlevel ) return;
+			if( $level > $maxlevel ) return '';
 			$str = '';
 
 			foreach( $data as $key => $value ) {
 				$acc = build_accessor($accessor,'array',$key);
 				$type = gettype($value);
-				if( is_object($value) )	{
-					$str .= str_repeat('  ',$level).'- <u>'.$key.' = Object</u> <em>{$'.$acc.'}</em><br/>';
-					if( isset($params['recurse']) )	$str .= dump_object($params,$value,$level+1,$ignore,$acc);
+				if( is_object($value) ) {
+					$str .= str_repeat('  ',$level).'- <u>'.$key.' = Object</u> <em>{$'.$acc.'}</em><br>';
+					if( isset($params['recurse']) ) $str .= dump_object($params,$value,$level+1,$ignore,$acc);
 				}
-				else if( is_array($value) )	{
-					$str .= str_repeat('  ',$level)."- <u>$key = Array (".count($value).')</u> <em>{$'.$acc.'}</em><br/>';
-					if( isset($params['recurse']) )	$str .= dump_array($params,$value,$level+1,$ignore,$acc);
+				else if( is_array($value) ) {
+					$str .= str_repeat('  ',$level)."- <u>$key = Array (".count($value).')</u> <em>{$'.$acc.'}</em><br>';
+					if( isset($params['recurse']) ) $str .= dump_array($params,$value,$level+1,$ignore,$acc);
 				}
 				else if( $type == 'NULL' ) {
-					$str .= str_repeat('  ',$level).'- '.$name.': NULL <em>{$'.$acc.'\}</em><br/>';
+					$str .= str_repeat('  ',$level).'- '.$name.': NULL <em>{$'.$acc.'\}</em><br>';
 				}
 				else {
-					$str .= str_repeat('  ',$level)."- $key = ".cms_htmlentities($value).' {$'.$acc.'}<br/>';
+					$str .= str_repeat('  ',$level)."- $key = ".cms_htmlentities($value).' {$'.$acc.'}<br>';
 				}
 			}
 			return $str;
@@ -123,7 +122,7 @@ function smarty_function_dump($params, $smarty)
 	}
 
 	// get the item name (without any $)
-	if( !isset($params['item']) ) return;
+	if( !isset($params['item']) ) return '';
 
 	$item = trim($params['item']);
 	if( startswith($item,'$') ) $item = substr($item,1);
@@ -137,7 +136,7 @@ function smarty_function_dump($params, $smarty)
 	if( $pos2 < $pos1 && $pos2 !== FALSE ) {
 		$pos = $pos2;
 		$len = 1;
-    }
+	}
 
 	$str = substr($item,0,$pos);
 	$work = substr($item,$pos+$len);
@@ -148,7 +147,7 @@ function smarty_function_dump($params, $smarty)
 
 	$str = '$baseobj';
 	$done = false;
-	$tmpobj =& $baseobj->modules['Album'];
+//	$tmpobj = $baseobj->modules['Album'];
 	$count = 0;
 	while( $done == false ) {
 		$count++;
@@ -158,7 +157,7 @@ function smarty_function_dump($params, $smarty)
 		if( $pos2 === FALSE ) $pos2 = 1000000;
 		$pos = $pos1;
 		$len = 2;
-		if( $pos2 < $pos1 )	{
+		if( $pos2 < $pos1 ) {
 			$pos = $pos2;
 			$len = 1;
 		}
@@ -181,39 +180,39 @@ function smarty_function_dump($params, $smarty)
 			$tmp2 = '$obj =& '.$str.';';
 			eval($tmp2);
 			$type = gettype($obj);
-			if( $count > 4 ) { print_r( $obj ); echo '<hr/>'; }
+			if( $count > 4 ) { print_r( $obj ); echo '<hr>'; }
 		}
 		else {
 			$done = true;
 		}
-    }
+	}
 
 	$parenttype = gettype($obj);
 	$str = '<pre>';
 	$str .= '<strong>Dump of: $'.$item;
-	$str .= '</strong> ('.ucwords($parenttype).')<br/>';
+	$str .= '</strong> ('.ucwords($parenttype).')<br>';
 
 	if( is_object($obj) ) {
 		$str .= dump_object($params,$obj,0,$ignore,$item);
-    }
+	}
 	else if( is_array($obj) ) {
 		$str .= dump_array($params,$obj,0,$ignore,$item);
-    }
+	}
 	else {
-		$str .= $obj.'<br/>';
-    }
+		$str .= $obj.'<br>';
+	}
 	$str.='</pre>';
 
 	if( isset($params['assign']) ) {
-	    $smarty->assign(trim($params['assign']),$str);
-	    return;
-    }
+		$smarty->assign(trim($params['assign']),$str);
+		return '';
+	}
 	return $str;
 }
 
 function smarty_cms_about_function_dump() {
 ?>
-	<p>Author: Robert Campbell &lt;calguy1000@hotmail.com&gt;</p>
+	<p>Author: Robert Campbell</p>
 
 	<p>Change History:</p>
 	<ul>

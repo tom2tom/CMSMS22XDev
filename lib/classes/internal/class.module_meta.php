@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2010 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple class module_meta
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -19,10 +18,6 @@
 #$Id$
 
 /**
- * @package CMS
- */
-
-/**
  * A singleton class for managing meta data acquired from modules.
  *
  * This class caches information from modules as needed.
@@ -30,12 +25,11 @@
  * @package CMS
  * @internal
  * @since 1.10
- * @author  Robert Campbell
- * @copyright Copyright (c) 2010, Robert Campbell <calguy1000@cmsmadesimple.org>
+ * @author Robert Campbell
  */
 final class module_meta
 {
-    static private $_instance = null;
+    private static $_instance;
     private $_data = array();
 
     private function __construct() {}
@@ -45,11 +39,10 @@ final class module_meta
      *
      * @return object
      */
-    public static function &get_instance()
+    public static function get_instance()
     {
-        if( !isset(self::$_instance) ) {
-            $c = __CLASS__;
-            self::$_instance = new $c;
+        if( !self::$_instance ) {
+            self::$_instance = new self();
         }
         return self::$_instance;
     }
@@ -86,7 +79,7 @@ final class module_meta
      */
     public function module_list_by_capability($capability,$params = array(),$returnvalue = TRUE)
     {
-        if( empty($capability) ) return;
+        if( empty($capability) ) return [];
 
         $this->_load_cache();
         $sig = md5($capability.serialize($params));
@@ -99,10 +92,9 @@ final class module_meta
             $loaded_modules = $modops->GetLoadedModules();
             $this->_data['capability'][$sig] = array();
             foreach( $installed_modules as $onemodule ) {
-                $loaded_it = FALSE;
-                $object = null;
                 if( isset($loaded_modules[$onemodule]) ) {
                     $object = $loaded_modules[$onemodule];
+                    $loaded_it = FALSE;
                 }
                 else {
                     $object = $modops->get_module_instance($onemodule);
@@ -120,9 +112,8 @@ final class module_meta
             $this->_save_cache();
         }
 
-        $res = null;
+        $res = [];
         if( is_array($this->_data['capability'][$sig]) && count($this->_data['capability'][$sig]) ) {
-            $res = array();
             foreach( $this->_data['capability'][$sig] as $key => $value ) {
                 if( $value == $returnvalue ) $res[] = $key;
             }
@@ -144,7 +135,7 @@ final class module_meta
      */
     public function module_list_by_method($method,$returnvalue = TRUE)
     {
-        if( empty($method) ) return;
+        if( empty($method) ) return [];
 
         $this->_load_cache();
         if( !isset($this->_data['methods']) || !isset($this->_data['methods'][$method]) ) {
@@ -156,10 +147,9 @@ final class module_meta
             $loaded_modules = $modops->GetLoadedModules();
             $this->_data['methods'][$method] = array();
             foreach( $installed_modules as $onemodule ) {
-                $loaded_it = FALSE;
-                $object = null;
                 if( isset($loaded_modules[$onemodule]) ) {
                     $object = $loaded_modules[$onemodule];
+                    $loaded_it = FALSE;
                 }
                 else {
                     $object = $modops->get_module_instance($onemodule);
@@ -178,9 +168,8 @@ final class module_meta
             $this->_save_cache();
         }
 
-        $res = null;
+        $res = [];
         if( is_array($this->_data['methods'][$method]) && count($this->_data['methods'][$method]) ) {
-            $res = array();
             foreach( $this->_data['methods'][$method] as $key => $value ) {
                 if( $value == $returnvalue ) $res[] = $key;
             }

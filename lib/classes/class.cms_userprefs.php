@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2010 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://cmsmadesimple.org
+#CMS Made Simple class cms_userprefs
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -16,22 +15,15 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: class.global.inc.php 6939 2011-03-06 00:12:54Z calguy1000 $
+#$Id$
 
 /**
- * Classes and utilities for working with user preferences.
- * @package CMS
- * @license GPL
- */
-
-
-/**
- * A static class for preferences stored with admin user accounts
+ * Class and utilities for working with admin user preferences.
  *
  * @package CMS
  * @license GPL
  * @since 1.10
- * @author Robert Campbell (calguy1000@gmail.com)
+ * @author Robert Campbell
  */
 final class cms_userprefs
 {
@@ -78,7 +70,7 @@ final class cms_userprefs
 	 */
 	private static function _reset()
 	{
-		self::$_prefs = null;
+		self::$_prefs = null; // aka unset
 	}
 
 	/**

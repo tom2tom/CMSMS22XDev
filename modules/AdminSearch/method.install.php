@@ -18,7 +18,7 @@
 #
 #-------------------------------------------------------------------------
 
-$this->CreatePermission('Use Admin Search','Use Admin Search');
+$this->CreatePermission('Use Admin Search',$this->Lang('perm_Use_Admin_Search'));
 
 $groupops = GroupOperations::get_instance();
 $groups = $groupops->LoadGroups();

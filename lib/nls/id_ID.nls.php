@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple translation file
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -23,7 +22,7 @@
 #The modifications to fit it for Gallery were made by Jens Tkotz
 #(http://gallery.menalto.com) 
 
-#Ideas from Gallery's implementation made to CMS by Ted Kulp
+#Ideas from Gallery's implementation made for CMSMS by Ted Kulp
 
 #Indonesian (Bahasa Indonesia)
 #Created by: Prihantoosa Supraja  < pht854 [at]  yahoo [dot] com >
@@ -45,7 +44,7 @@ $nls['locale']['id_ID'] = 'id_ID,id_ID.utf8,id_ID.utf-8,id_ID.UTF-8,indonesian,I
 $nls['encoding']['id_ID'] = 'UTF-8';
 
 #Location of the file(s)
-$nls['file']['id_ID'] = array(dirname(__FILE__).'/id_ID/admin.inc.php');
+$nls['file']['id_ID'] = array(__DIR__.'/id_ID/admin.inc.php');
 
 #Language setting for HTML area
 # Only change this when translations exist in HTMLarea and plugin dirs

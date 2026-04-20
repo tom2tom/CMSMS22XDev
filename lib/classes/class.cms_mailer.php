@@ -1,11 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
-# Module: CMSMailer - a simple wrapper around phpmailer
-# copyright (c) Robert Campbell <rob@techcom.dyndns.org>
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: cms_mailer - a simple wrapper around phpmailer
+# (c) 2011 Made Simple Foundation <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -33,7 +29,7 @@ use PHPMailer\PHPMailer\PHPMailer;
  * @package CMS
  * @license GPL
  * @since 2.0
- * @author Robert Campbell (calguy1000@cmsmadesimple.org)
+ * @author Robert Campbell
  */
 class cms_mailer
 {
@@ -49,19 +45,28 @@ class cms_mailer
   /**
    * Constructor
    *
-   * @param bool $exceptions Optionally enable PHPMailer exceptions.
+   * @param bool $exceptions Optionally enable PHPMailer and spl_autoload() exceptions.
+   *   Since PHP 8.0, spl_autoload() always throws, and trying to set a
+   *   false value for spl_autoload() would trigger a warning, so that's
+   *   blocked here.
    * @since 2.2.17 Default false
    */
   public function __construct($exceptions = false)
   {
     static $regdone = false;
+    if (!$exceptions && PHP_VERSION_ID >= 80000) {
+        $flag = true;
+//      if (!$regdone) audit('', 'cms_mailer', 'spl_autoload always throws upon error');
+    } else {
+        $flag = $exceptions;
+    }
     $this->exceptions = $exceptions;
-    if ($regdone || @spl_autoload_register([__CLASS__, 'MailerAutoload'], $exceptions)) {
+    if ($regdone || @spl_autoload_register([__CLASS__, 'MailerAutoload'], $flag)) {
       $this->_mailer = new PHPMailer($exceptions);
       $this->reset();
       $regdone = true;
     } else {
-      $this->_mailer = null;
+      $this->_mailer = null; // no object
       //TODO handle error more-publicly e.g. throw
       audit('', 'cms_mailer', 'PHPMailer-autoload registration failed');
     }
@@ -81,7 +86,7 @@ class cms_mailer
     if( method_exists($this->_mailer, $method) ) {
       return call_user_func_array([$this->_mailer,$method], $args);
     }
-    return null;
+    return null; //nothing to call
   }
 
   /**
@@ -106,7 +111,7 @@ class cms_mailer
     if( property_exists($this->_mailer, $name) ) {
       return $this->_mailer->$name;
     }
-    return null;
+    return null; // no value for unrecognised property
   }
 
   /**
@@ -126,7 +131,7 @@ class cms_mailer
    */
   public function MailerAutoload($classname)
   {
-    if ($classname[0] === 'P' && strpos($classname, 'PHPMailer') === 0) {
+    if ($classname[0] == 'P' && strpos($classname, 'PHPMailer') === 0) {
       $class = basename(strtr($classname, '\\', DIRECTORY_SEPARATOR));
       //NOTE sources include a composer-compatible 'src' folder below 'phpmailer'
       $filename = cms_join_path(dirname(__DIR__), 'phpmailer', 'src', $class.'.php');
@@ -136,7 +141,7 @@ class cms_mailer
       return;
     }
     //support some oauth2 providers
-    if ($classname[0] === 'L' && strpos($classname, 'League\OAuth2\Client') === 0) {
+    if ($classname[0] == 'L' && strpos($classname, 'League\OAuth2\Client') === 0) {
       //League\OAuth2\Client\A\class
       $sp = str_replace('League\OAuth2\Client\\', '', $classname);
       $bp = strtr($sp, '\\', DIRECTORY_SEPARATOR);
@@ -154,7 +159,7 @@ class cms_mailer
    */
   public function reset()
   {
-    $prefs = unserialize(cms_siteprefs::get('mailprefs'), ['allowed_classes' => false]);
+    $prefs = unserialize(cms_siteprefs::get('mailprefs'));
     $this->_mailer->Mailer = get_parameter_value($prefs, 'mailer', 'mail');
     $this->_mailer->Sendmail = get_parameter_value($prefs, 'sendmail', '/usr/sbin/sendmail');
     $this->_mailer->Timeout = get_parameter_value($prefs, 'timeout', 60);

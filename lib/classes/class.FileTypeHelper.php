@@ -5,18 +5,21 @@
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell <calguy1000@cmsmadesimple.org>
+ * @author Robert Campbell
  * @since  2.2
  */
 
 namespace CMSMS;
+
+use cms_config;
+use function startswith;
 
 /**
  * A class to provide utilities for manipulating files by their type.
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell <calguy1000@cmsmadesimple.org>
+ * @author Robert Campbell
  * @since  2.2
  */
 class FileTypeHelper
@@ -36,11 +39,12 @@ class FileTypeHelper
     /**
      * @ignore
      */
-    private $_image_extensions = ['jpg','jpeg','bmp','wbmp','gif','png','webp', 'svg'];
+    private $_image_extensions = ['jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','ico','webp','avif','heif','svg','apng']; // heif and heic are for iOS
     /**
      * @ignore
+     * TODO formerly supported 'gz' alone, reinstate? if so, 'bz2' and its aliases? 'xz'?
      */
-    private $_archive_extensions = ['.zip', '.tar.gz', '.tar.bz2', '.7z', '.rar', '.s7z', '.gz', '.z' ];
+    private $_archive_extensions = ['zip','tar.gz','tar.bz2','tar.xz','7z','rar','s7z','z','tar'];
     /**
      * @ignore
      */
@@ -48,7 +52,7 @@ class FileTypeHelper
     /**
      * @ignore
      */
-    private $_video_extensions = ['swf','mov','mpg','mp4','mpeg','wmv','rm','avi'];
+    private $_video_extensions = ['swf','mov','mpg','mp4','mpeg','wmv','rm','avi','webm']; //c.f. 'mov','mpeg','mp4','avi','mpg',wma','flv','webm','wmv','qt','ogg'
     /**
      * @ignore
      */
@@ -59,32 +63,42 @@ class FileTypeHelper
     private $_document_extensions = ['doc','docx','odt','ods','odp','odg','odf','txt','pdf','text','xls','xlsx','ppt','pptx'];
     /**
      * @ignore
-     * browser-executable text-file extensions (also text)
+     * browser-executable text-file extensions (also text) and non-text
+     * Although phps is not browser-executable, we do not want the content
+     * of scripts displayed (if the current browser supports that)
      */
-    private $_exe_extensions = ['php','php4','php5','phps','phtml'];
+    private $_exe_extensions = ['php','php4','php5','phps','phtml','phar'];
 
     /**
      * Constructor
      *
-     * @param cms_config $config
+     * @param mixed $config cms_config | null
      */
-    public function __construct( \cms_config $config )
+    public function __construct(/*?cms_config */$config = null) // uncomment for PHP 7.1+ .. 8.4+
     {
-        $this->_use_mimetype = $this->_mime_ok = (function_exists('finfo_open') && function_exists('finfo_file'));
-        $this->_use_mimetype = $this->_use_mimetype && !$config['FileTypeHelper_usemimetype'];
+        if (!$config) { $config = cms_config::get_instance(); }
+        $this->_mime_ok = (function_exists('finfo_open') && function_exists('finfo_file'));
+        //TODO extension tailoring etc for this class should be a site administrator
+        //responsibility (and use data recorded in site-preferences, not in config
+        //which are essentially developer-specified)
+        $this->_use_mimetype = $this->_mime_ok && !$config['FileTypeHelper_usemimetype'];
 
         $this->update_config_extensions('_image_extensions', $config['FileTypeHelper_image_extensions']);
         $this->update_config_extensions('_audio_extensions', $config['FileTypeHelper_audio_extensions']);
         $this->update_config_extensions('_video_extensions', $config['FileTypeHelper_video_extensions']);
         $this->update_config_extensions('_xml_extensions', $config['FileTypeHelper_xml_extensions']);
         $this->update_config_extensions('_document_extensions', $config['FileTypeHelper_document_extensions']);
+        $this->update_config_extensions('_exe_extensions', $config['FileTypeHelper_executable_extensions']);
+        //CHECKME also support extra archive-extensions?
     }
 
     /**
-     * A utility method to allow overriding the extensions used to identify files of a specific type
+     * A utility method to allow supplementing the filename-extensions
+     * used to identify files of a specific type
      *
-     * @param string $member One of (_archive_extensions, _audio_extensions, _video_extensions, _xml_extensions, _document_extensions)
-     * @param string $str A comma separated string of extensions for that file type
+     * @param string $member One of (_image_extensions, _audio_extensions,
+     *  _video_extensions, _xml_extensions, _document_extensions, _exe_extensions)
+     * @param string $str Comma-separated (case-insensitive) extensions for that file type
      */
     protected function update_config_extensions( $member, $str = '' )
     {
@@ -92,10 +106,10 @@ class FileTypeHelper
         if( !$str ) return;
 
         $out = $this->$member;
-        $list = explode(',',$str);
+        $list = explode(',', strtolower($str));
         foreach( $list as $one ) {
-            $one = strtolower(trim($one));
-            if( !$one || in_array($one,$out) ) continue;
+            $one = trim($one);
+            if( !$one || in_array($one, $out) ) continue;
             $out[] = $one;
         }
         $this->$member = $out;
@@ -115,19 +129,24 @@ class FileTypeHelper
     }
 
     /**
-     * Get the extension of a filename
+     * Get the lower-cased extension of the specified file, or empty string.
      *
      * @param string $filename
      * @return string
      */
     public function get_extension( $filename )
     {
-        return strtolower(substr($filename,strrpos($filename,'.')+1));
+        $bn = basename($filename);
+        $p = (int)strrpos($bn,'.');
+        if( $p > 0 ) { //hidden files ignored
+            return strtolower(substr($bn,$p + 1));
+        }
+        return '';
     }
 
     /**
-     * Get the mime type of a filename.
-     * requires the finfo_open function.
+     * Get the mime-type of the specified file, or empty string.
+     * Uses PHP's finfo_open function.
      *
      * @param string $filename
      * @return string
@@ -138,7 +157,7 @@ class FileTypeHelper
         $fh = finfo_open(FILEINFO_MIME_TYPE);
         if( $fh ) {
             $mime_type = finfo_file($fh,$filename);
-            finfo_close($fh);
+            if( PHP_VERSION_ID < 80500 ) { finfo_close($fh); }
             return $mime_type;
         }
         return '';
@@ -146,35 +165,38 @@ class FileTypeHelper
 
     /**
      * Test if the file specified is an image.
-     * This method will use the mime type if possible, otherwise an extension is used to determine if the file is an image.
+     * Uses the file's mime type if possible, otherwise
+     * filename-extension is used to determine if the file is an image.
      *
      * @param string $filename
      * @return bool
      */
     public function is_image( $filename )
     {
-        if( $this->_use_mimetype && $this->is_readable( $filename ) ) {
-            $type = $this->get_mime_type( $filename );
-            $res = startswith( $type, 'image/');
-            if( $res ) return TRUE;
+        if( $this->_use_mimetype && $this->is_readable($filename) ) {
+            $type = $this->get_mime_type($filename);
+            if( startswith($type, 'image/') ) return TRUE;
         }
 
         // fall back to extensions
-        $ext = $this->get_extension( $filename );
-        return in_array( $ext, $this->_image_extensions );
+        $ext = $this->get_extension($filename);
+        return $ext && in_array($ext, $this->_image_extensions);
     }
 
     /**
-     * Test if the file specified is a thumbnail
-     * This method first tests if the file is an image, and then if it is also a thumbnail.
+     * Test if the file specified is a thumbnail.
+     * This method first tests if the file is an image, and then if it is
+     * named like a thumbnail.
      *
      * @param string $filename
      * @return bool
      */
     public function is_thumb( $filename )
     {
-        $bn = basename( $filename );
-        return $this->is_image( $filename ) && startswith($bn,'thumb_');
+        if( $this->is_image($filename) ) {
+            return startswith(basename($filename), 'thumb_');
+        }
+        return FALSE;
     }
 
     /**
@@ -185,9 +207,9 @@ class FileTypeHelper
      */
     public function is_archive( $filename )
     {
-        // extensions only.
-        $ext = $this->get_extension( $filename );
-        return in_array( $ext, $this->_archive_extensions );
+        $ext = $this->get_extension($filename);
+        if( $ext && in_array($ext, $this->_archive_extensions) ) return TRUE;
+        return in_array('tar.'.$ext, $this->_archive_extensions);
     }
 
     /**
@@ -205,7 +227,7 @@ class FileTypeHelper
         }
 
         $ext = $this->get_extension( $filename );
-        return in_array($ext, $this->_audio_extensions );
+        return $ext && in_array($ext, $this->_audio_extensions );
     }
 
     /**
@@ -223,7 +245,7 @@ class FileTypeHelper
         }
 
         $ext = $this->get_extension( $filename );
-        return in_array($ext, $this->_video_extensions );
+        return $ext && in_array($ext, $this->_video_extensions );
     }
 
     /**
@@ -251,14 +273,14 @@ class FileTypeHelper
         if( $this->_use_mimetype && $this->is_readable( $filename ) ) {
             $type = $this->get_mime_type( $filename );
             switch( $type ) {
-            case 'text/xml';
+            case 'text/xml':
             case 'application/xml':
             case 'application/rss+xml':
                 return TRUE;
             }
         }
-        $ext = strtolower(substr($filename,strrpos($filename,'.')+1));
-        return in_array($ext, $this->_video_extensions );
+        $ext = $this->get_extension( $filename );
+        return $ext && in_array($ext, $this->_video_extensions);
     }
 
     /**
@@ -269,14 +291,13 @@ class FileTypeHelper
      */
     public function is_document( $filename )
     {
-        // extensions only
-        $ext = strtolower(substr($filename,strrpos($filename,'.')+1));
-        return in_array($ext, $this->_document_extensions );
+        $ext = $this->get_extension($filename);
+        return $ext && in_array($ext, $this->_document_extensions);
     }
 
     /**
      * Using the file extension, test whether the file name specified is
-     *  a known browser-executable file.
+     * a known browser-executable file.
      * @since 2.2.17
      *
      * @param string $filename At least the basename of a file
@@ -284,16 +305,16 @@ class FileTypeHelper
      */
     public function is_executable( $filename )
     {
-        // extensions only
-        $ext = strtolower(substr($filename,strrpos($filename,'.')+1));
-        return in_array($ext, $this->_exe_extensions);
+        $ext = $this->get_extension( $filename );
+        return $ext && in_array($ext, $this->_exe_extensions);
     }
 
     /**
-     * Atempt to find a file type for the given filename.
+     * Attempt to find a file type for the given filename.
      *
      * @param string $filename
-     * @return string A FileType type constant describing the file type, if found.
+     * @return string A FileType type constant describing the file type
+     *  if found. Otherwise ''.
      */
     public function get_file_type( $filename )
     {
@@ -303,5 +324,35 @@ class FileTypeHelper
         if( $this->is_xml( $filename ) ) return FileType::TYPE_XML;
         if( $this->is_document( $filename ) ) return FileType::TYPE_DOCUMENT;
         if( $this->is_archive( $filename ) ) return FileType::TYPE_ARCHIVE;
+        if( $this->is_executable( $filename ) ) return FileType::TYPE_EXECUTABLE;
+        return '';
     }
+
+    /**
+     * Get recorded file-extensions for the given type
+     * @since 2.2.22F2
+     *
+     * @param string $type FileType-class constant or explicit 'image' etc
+     * @param bool $sort Whether to sort the returned array. Default false.
+     * @return array maybe empty
+     */
+    public function get_file_type_extensions( $type, $sort = false )
+    {
+        if ($type != FileType::TYPE_EXECUTABLE) {
+            $propname = "_{$type}_extensions";
+        }
+        else {
+            $propname = '_exe_extensions'; //alias needed
+        }
+        if (!empty($this->$propname)) {
+            if ($sort) {
+                $res = $this->$propname;
+                sort($res, SORT_NATURAL|SORT_FLAG_CASE);
+                return $res;
+            }
+            return $this->$propname;
+        }
+        return [];
+    }
+
 } // end of class

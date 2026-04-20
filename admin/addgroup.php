@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple admin console script
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -16,106 +15,69 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: addgroup.php 12671 2021-12-13 03:05:01Z tomphantoo $
+#$Id$
 
-$CMS_ADMIN_PAGE=1;
+use CMSMS\HookManager;
 
-require_once("../lib/include.php");
-require_once("../lib/classes/class.group.inc.php");
-$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+$CMS_ADMIN_PAGE = 1;
 
+require_once '../lib/include.php';
 check_login();
+$urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
-$error = "";
-
-$group= "";
-if (isset($_POST["group"])) $group = cleanValue($_POST["group"]);
-
-$description= "";
-if (isset($_POST["description"])) $description = cleanValue($_POST["description"]);
-
-$active = 1;
-if (!isset($_POST["active"]) && isset($_POST["addgroup"])) $active = 0;
-
-if (isset($_POST["cancel"])) {
-    redirect("listgroups.php".$urlext);
-    return;
+if (isset($_POST['cancel'])) {
+    redirect('listgroups.php'.$urlext);
 }
 
 $userid = get_userid();
 $access = check_permission($userid, 'Manage Groups');
-
-if ($access) {
-    if (isset($_POST["addgroup"])) {
-        try {
-            if ($group == '') throw new \CmsInvalidDataException(lang('nofieldgiven', lang('groupname')));
-
-            $groupobj = new Group();
-            $groupobj->name = $group;
-            $groupobj->description = $description;
-            $groupobj->active = $active;
-
-            \CMSMS\HookManager::do_hook('Core::AddGroupPre', [ 'group'=>&$groupobj ] );
-
-            $result = $groupobj->save();
-            if( !$result ) throw new \RuntimeException(lang('errorinsertinggroup'));
-
-            \CMSMS\HookManager::do_hook('Core::AddGroupPost', [ 'group'=>&$groupobj ] );
-            // put mention into the admin log
-            audit($groupobj->id, 'Admin User Group: '.$groupobj->name, 'Added');
-            redirect("listgroups.php".$urlext);
-            return;
-        }
-        catch( \Exception $e ) {
-            $error .= '<li>'.$e->GetMessage().'</li>';
-        }
-    }
-}
-
-include_once("header.php");
-
 if (!$access) {
-    echo "<div class=\"pageerrorcontainer\"><p class=\"pageerror\">".lang('noaccessto', array(lang('addgroup')))."</p></div>";
+    exit(lang('no_permission')); //TODO throw if can be caught
 }
-else {
-    if ($error != "") {
-        echo "<div class=\"pageerrorcontainer\"><ul class=\"pageerror\">".$error."</ul></div>";
+
+$error = '';
+$group = (isset($_POST['group'])) ? cleanValue($_POST['group']) : '';
+$description = (isset($_POST['description'])) ? cleanValue($_POST['description']) : '';
+$active = (isset($_POST['addgroup']) && empty($_POST['active'])) ? 0 : 1;
+
+if (isset($_POST['addgroup'])) {
+    try {
+        if ($group == '') throw new CmsInvalidDataException(lang('nofieldgiven', lang('groupname')));
+
+        require_once '../lib/classes/class.Group.php'; //don't bother autoloading
+        $groupobj = new Group();
+        $groupobj->name = $group;
+        $groupobj->description = $description;
+        $groupobj->active = $active;
+
+        HookManager::do_hook('Core::AddGroupPre', ['group'=>$groupobj]);
+
+        $result = $groupobj->save();
+        if( !$result ) throw new RuntimeException(lang('errorinsertinggroup'));
+
+        HookManager::do_hook('Core::AddGroupPost', ['group'=>$groupobj]);
+        // put mention into the admin log
+        audit($groupobj->id, 'Admin users group', "Added: $groupobj->name");
+        redirect('listgroups.php'.$urlext);
+//      return;
     }
-?>
-
-<div class="pagecontainer">
-  <?php echo $themeObject->ShowHeader('addgroup'); ?>
-  <form method="post" action="addgroup.php">
-  <div>
-    <input type="hidden" name="<?php echo CMS_SECURE_PARAM_NAME ?>" value="<?php echo $_SESSION[CMS_USER_KEY] ?>" />
-  </div>
-     <div class="pagewarning"><?php echo lang('warn_addgroup'); ?></div>
-  <div class="pageoverflow">
-    <p class="pagetext"><label for="groupname">*<?php echo lang('name')?>:</label></p>
-    <p class="pageinput"><input type="text" id="groupname" name="group" maxlength="255" value="<?php echo $group?>" /></p>
-  </div>
-  <div class="pageoverflow">
-    <p class="pagetext"><label for="description"><?php echo lang('description')?>:</label></p>
-    <p class="pageinput"><input type="text" id="description" name="description" maxlength="255" size="80" value="<?php echo $description?>" /></p>
-  </div>
-  <div class="pageoverflow">
-    <p class="pagetext"><label for="active"><?php echo lang('active')?>:</label></p>
-    <p class="pageinput"><input class="pagecheckbox" type="checkbox" id="active" name="active" <?php echo ($active == 1?"checked=\"checked\"":"")?> /></p>
-  </div>
-  <div class="pageoverflow">
-    <p class="pagetext">&nbsp;</p>
-    <p class="pageinput">
-      <input type="hidden" name="addgroup" value="true" />
-      <input type="submit" value="<?php echo lang('submit')?>" class="pagebutton" />
-      <input type="submit" name="cancel" value="<?php echo lang('cancel')?>" class="pagebutton" />
-    </p>
-  </div>
-  </form>
-</div>
-
-<?php
+    catch( Exception $e ) {
+        $error .= '<li>'.$e->GetMessage().'</li>';
+    }
 }
 
-include_once("footer.php");
+require_once 'header.php';
+$themeObject->set_value('pagetitle', 'addgroup');
 
-?>
+$tpl = $smarty->createTemplate('admin_tpl:addgroup.tpl', null, null, $smarty, false);
+// see also $smarty-assigned var $secureparam
+$tpl->assign('securename', CMS_SECURE_PARAM_NAME)
+ ->assign('secureval', $_SESSION[CMS_USER_KEY])
+ ->assign('access', $access)
+ ->assign('active', (bool)$active)
+ ->assign('error', $error)
+ ->assign('group', $group)
+ ->assign('description', $description);
+$tpl->display();
+
+require_once 'footer.php';

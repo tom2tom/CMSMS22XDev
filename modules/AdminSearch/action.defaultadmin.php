@@ -20,19 +20,6 @@
 if( !isset($gCms) ) exit;
 if( !$this->VisibleToAdminUser() ) exit;
 
-// echo $this->StartTabHeaders();
-// if( $this->can_search() ) echo $this->SetTabHeader('search',$this->Lang('search'));
-// echo $this->EndTabHeaders();
-
-//echo $this->StartTabContent();
 if( $this->can_search() ) {
-  //echo $this->StartTab('search', $params);
-  include(dirname(__FILE__).'/function.admin_search_tab.php');
-  //echo $this->EndTab();
+  include __DIR__.DIRECTORY_SEPARATOR.'function.admin_search_tab.php';
 }
-
-//echo $this->EndTabContent();
-#
-# EOF
-#
-?>

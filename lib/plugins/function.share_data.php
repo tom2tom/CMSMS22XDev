@@ -1,6 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: share_data
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -15,12 +15,15 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+// historically, this plugin has been specially handled
+// (triggered by its name smarty_cms_function...)
+// to ensure that it's never cached
 function smarty_cms_function_share_data($params,$template)
 {
     $dest = trim(strtolower(get_parameter_value($params,'scope','parent')));
-    $vars = (isset($params['data']))?$params['data']:null;
-    $vars = (isset($params['vars']))?$params['vars']:$vars;
-    if( !$vars ) return; // nothing to do.
+    $vars = (isset($params['data']))?$params['data']:
+      ((isset($params['vars']))?$params['vars']:'');
+    if( !$vars ) return ''; // nothing to do.
 
     if( is_string($vars) ) {
         $t_list = explode(',',$vars);
@@ -32,19 +35,19 @@ function smarty_cms_function_share_data($params,$template)
         $vars = $t_list_2;
     }
 
-    if( !count($vars) ) return;
+    if( !count($vars) ) return '';
 
-    $scope = null;
+    $scope = null; // no object
     $fn = 'assign';
     switch( $dest ) {
     case 'global':
         $scope = $template->smarty;
-        $fn = 'assignGlobal';
+        $fn = 'assignGlobal'; //deprecated method Smarty5+
         break;
 
-    default: /* parent scope */
+    default: // parent scope
         $scope = $template->parent;
-        if( !is_object($scope) ) return;
+        if( !is_object($scope) ) return '';
         if( $scope == $template->smarty ) {
             // a bit of a trick... if our parent is the global smarty object
             // we assume we want this variable available through the rest of the templates

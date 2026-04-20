@@ -1,14 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: ModuleManager (c) 2011 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  An addon module for CMS Made Simple to allow browsing remotely stored
-#  modules, viewing information about them, and downloading or upgrading
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module ModuleManager class modmgr_cached_request
+# (c) 2011 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -52,37 +46,34 @@ final class modmgr_cached_request
 
   public function execute($target = '',$data = array(), $age = '')
   {
-    $mod = cms_utils::get_module('ModuleManager');
-    $config = cmsms()->GetConfig();
-    if( !$age ) $age = get_site_preference('browser_cache_expiry',60);
-    if( $age ) $age = max(1,(int)$age);
-
     // build a signature
     $this->_signature = md5(serialize(array($target,$data)));
     $fn = $this->_getCacheFile();
     if( !$fn ) return;
 
-    // check for the cached file
+    if( !$age ) $age = cms_siteprefs::get('browser_cache_expiry',60);
+    if( $age ) $age = max(1,(int)$age);
     $atime = time() - ($age * 60);
-    $status = '';
-    $resutl = '';
-    if( (isset($config['developer_mode']) && $mod->GetPreference('disable_caching',0)) ||
+    $mod = cms_utils::get_module('ModuleManager');
+    $config = cmsms()->GetConfig();
+    // check for the cached file
+    if( (!empty($config['developer_mode']) && $mod->GetPreference('disable_caching',0)) ||
         !file_exists($fn) || filemtime($fn) <= $atime ) {
         // execute the request
         $req = new cms_http_request();
         if( $this->_timeout ) $req->setTimeout($this->_timeout);
-        $req->execute($target,'','POST',$data);
+        $res = $req->execute($target,'','POST',$data);
         $this->_status = $req->getStatus();
-        $this->_result = $req->getResult();
+        $this->_result = $req->getResult(); // aka $res
 
-        @unlink($fn);
+        if( file_exists($fn) ) @unlink($fn);
         if( $this->_status == 200 ) {
             // create a cache file
             $fh = fopen($fn,'w');
             fwrite($fh,serialize(array($this->_status,$this->_result)));
             fclose($fh);
         } else {
-            audit('','ModuleManager','Request to module repository resulted in status '.$this->_status);
+            audit('',$mod->GetName(),'Request to module repository resulted in status '.$this->_status);
         }
     }
     else {

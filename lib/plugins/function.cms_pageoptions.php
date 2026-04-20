@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: cms_pageoptions
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -18,18 +17,18 @@
 
 function smarty_function_cms_pageoptions($params, $smarty)
 {
-  if( !isset($params['numpages']) ) return;
+  if( !isset($params['numpages']) ) return '';
   $numpages = (int)$params['numpages'];
-  if( $numpages < 1 ) return;
+  if( $numpages < 1 ) return '';
   $curpage = get_parameter_value($params,'curpage',1);
   $curpage = (int)$curpage;
   $curpage = max(1,min($numpages,$curpage));
   $surround = 3;
   if( isset($params['surround']) ) $surround = (int)$params['surround'];
-  $surrund = max(1,min(20,$surround));
-  $elipsis = get_parameter_value($params,'elipsis','');
-  $bare = cms_to_bool(get_parameter_value($params,'bare',0));
-  
+  $surround = max(1,min(20,$surround));
+  $elipsis = get_parameter_value($params,'elipsis');
+  $bare = get_parameter_value($params,'bare',FALSE);
+
   $list = array();
   for( $i = 1; $i <= min($surround,$numpages); $i++ ) {
     $list[] = (int)$i;
@@ -61,7 +60,7 @@ function smarty_function_cms_pageoptions($params, $smarty)
   else {
     $out = '';
     $fmt = '<option value="%d">%s</option>';
-    $fmt2 = '<option value="%d" selected="selected">%s</option>';
+    $fmt2 = '<option value="%d" selected>%s</option>';
     foreach( $list as $pagenum ) {
       if( $pagenum == $curpage ) {
 	$out .= sprintf($fmt2,$pagenum,$pagenum);
@@ -74,7 +73,7 @@ function smarty_function_cms_pageoptions($params, $smarty)
 
   if( isset($params['assign']) ) {
     $smarty->assign($params['assign'],$out);
-    return;
+    return '';
   }
   return $out;
 }

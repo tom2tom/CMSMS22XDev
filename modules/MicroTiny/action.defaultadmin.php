@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (ted@cmsmadesimple.org)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Module MicroTiny action
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -15,28 +14,18 @@
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
-if( !cmsms() ) exit;
-if(!$this->VisibleToAdminUser() ) return;
 
-echo $this->StartTabHeaders();
-echo $this->SetTabHeader("example",$this->Lang("example"));
-echo $this->SetTabHeader("settings",$this->Lang("settings"));
-echo $this->EndTabHeaders();
+if( !function_exists('cmsms') ) exit;
+if( !$this->VisibleToAdminUser() ) return;
 
-echo $this->StartTabContent();
+$modname = $this->GetName();
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;defaultadmin.tpl", null, $modname, $smarty);
 
-echo $this->StartTab("example");
-include(dirname(__FILE__).'/function.admin_example.php');
-echo $this->EndTab();
+//require __DIR__.DIRECTORY_SEPARATOR.'function.admin_example.php'; nothing in there
+require __DIR__.DIRECTORY_SEPARATOR.'function.admin_settings.php';
 
-echo $this->StartTab("settings");
-include(dirname(__FILE__).'/function.admin_settings.php');
-echo $this->EndTab();
+$seetab = (!empty($params['__activetab'])) ? $params['__activetab'] : '';
+$tpl->assign('tab', $seetab);
+$tpl->assign('imgbase_url', $this->GetModuleURLPath().'/images');
 
-echo $this->EndTabContent();
-
-#
-# EOF
-#
-?>
+$tpl->display();

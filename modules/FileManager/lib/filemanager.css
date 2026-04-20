@@ -1,0 +1,61 @@
+/* upload-related styles */
+.upload-wrapper {
+  margin: 10px 0
+}
+.hcentered {
+  text-align: center
+}
+.vcentered {
+  display: table-cell;
+  vertical-align: middle
+}
+#dropzone {
+  margin: 1em 0;
+  border-radius: 4px;
+  background: #14b6fd
+}
+#dropzonetext {
+  margin-left: 2em;
+  margin-right: 2em
+}
+#dropzone.in {
+  background: #147fdb;
+  border: 2px dashed #fff;
+  color: #fff;
+  font-size: larger;
+  cursor: move
+}
+#dropzone.fade {
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -ms-transition: all 0.3s ease-out;
+  -o-transition: all 0.3s ease-out;
+  transition: all 0.3s ease-out;
+  opacity: 1
+}
+#dropcol {
+  display: table;
+  height: 4em
+}
+#progressarea {
+  margin: 15px;
+  height: 2em;
+  line-height: 2em;
+  text-align: center;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  display: none
+}
+/* fileslist styles */
+a.filelink:visited {
+  color: #000 /* TODO default text color */
+}
+/* image-rotation styles */
+#rotimg {
+  position: relative;
+  z-index: 0
+}
+/* settings style */
+.cms_helpicon {
+  vertical-align: text-bottom
+}

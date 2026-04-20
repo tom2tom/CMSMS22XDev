@@ -29,10 +29,10 @@ class wizard_step5 extends wizard_step
         if( !isset($acct['repeatpw']) || $acct['repeatpw'] != $acct['password'] ) {
             throw new Exception(lang('error_adminacct_repeatpw'));
         }
-        if( isset($acct['emailaddr']) && $acct['emailaddr'] != '' && !utils::is_email($acct['emailaddr']) ) {
+        if( !empty($acct['emailaddr']) && !utils::is_email($acct['emailaddr']) ) {
             throw new Exception(lang('error_adminacct_emailaddr'));
         }
-        if( (!isset($acct['emailaddr']) || $acct['emailaddr'] == '') && $acct['emailaccountinfo'] ) {
+        if( empty($acct['emailaddr']) && $acct['emailaccountinfo'] ) {
             throw new Exception(lang('error_adminacct_emailaddrrequired'));
         }
     }

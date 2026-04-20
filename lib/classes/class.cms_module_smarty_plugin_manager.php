@@ -1,12 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: cms_content_tree (c) 2010 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Class: cms_module_smarty_plugin_manager
+# (c) 2010 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -46,7 +42,7 @@
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell <calguy1000@cmsmadesimple.org>
+ * @author Robert Campbell
  * @internal
  * @access private
  * @since  1.11
@@ -91,9 +87,9 @@ final class cms_module_smarty_plugin_manager
 	/**
 	 * Get the single allowed instance of this class
 	 */
-	public static function &get_instance()
+	public static function get_instance()
 	{
-		if( !self::$_instance ) self::$_instance = new cms_module_smarty_plugin_manager();
+		if( !self::$_instance ) self::$_instance = new self();
 		return self::$_instance;
 	}
 
@@ -145,14 +141,14 @@ final class cms_module_smarty_plugin_manager
 
 	/**
 	 * Attempt to load a specific plugin
-	 * This is called by the smarty class when looking for an unknwon plugin.
+	 * This is called by the smarty class when looking for an unknown plugin.
 	 *
 	 * @internal
 	 */
 	public static function load_plugin($name,$type)
 	{
 		$row = self::get_instance()->find($name,$type);
-		if( !is_array($row) ) return;
+		if( !is_array($row) ) return [];
 
 		// load the module
 		$module = cms_utils::get_module($row['module']);
@@ -167,7 +163,7 @@ final class cms_module_smarty_plugin_manager
 				else {
 					// an array with only one item?
 					audit('','cms_module_smarty_plugin_manager','Cannot load plugin '.$row['name'].' from module '.$row['module'].' because of errors in the callback');
-					return;
+					return [];
 				}
 			}
 			else if( startswith($row['callback'],'::') ) {

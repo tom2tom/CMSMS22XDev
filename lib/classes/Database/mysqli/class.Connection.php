@@ -17,19 +17,27 @@ class Connection extends \CMSMS\Database\Connection
         if( !class_exists('\mysqli') ) throw new \LogicException("Configuration error... mysqli functions are not available");
 
         mysqli_report(MYSQLI_REPORT_STRICT);
+        $port = ($this->_connectionSpec->port === null) ? null : (int)$this->_connectionSpec->port; // null (the mysqli default) means use ini value
         try {
-            $this->_mysql = new \mysqli( $this->_connectionSpec->host, $this->_connectionSpec->username,
-                                         $this->_connectionSpec->password,
-                                         $this->_connectionSpec->dbname,
-                                         (int) $this->_connectionSpec->port );
+            $this->_mysql = new \mysqli($this->_connectionSpec->host,
+                                        $this->_connectionSpec->username,
+                                        $this->_connectionSpec->password,
+                                        $this->_connectionSpec->dbname,
+                                        $port);
+            // prevent sensitive-information display
+            $this->_connectionSpec->password = 'restricted';
             if( $this->_mysql->connect_error ) {
                 $this->_mysql = null;
                 $this->OnError(self::ERROR_CONNECT,mysqli_connect_errno(),mysqli_connect_error());
                 return FALSE;
             }
+            // prevent sensitive-information display during any crash
+            $this->_connectionSpec->username = 'restricted';
+            $this->_connectionSpec->dbname = 'restricted';
             return TRUE;
         }
         catch( \Exception $e ) {
+            $this->_connectionSpec->password = 'restricted';
             $this->_mysql = null;
             $this->OnError(self::ERROR_CONNECT,mysqli_connect_errno(),mysqli_connect_error());
             return FALSE;
@@ -91,10 +99,11 @@ class Connection extends \CMSMS\Database\Connection
 
     public function Concat()
     {
-		$arr = func_get_args();
-		$list = implode(', ', $arr);
+        $arr = func_get_args();
+        $list = implode(', ', $arr);
 
-		if (strlen($list) > 0) return "CONCAT($list)";
+        if (strlen($list) > 0) return "CONCAT($list)";
+        return '';
     }
 
     public function IfNull( $field, $ifNull )
@@ -102,41 +111,45 @@ class Connection extends \CMSMS\Database\Connection
         return " IFNULL($field, $ifNull)";
     }
 
+    /*
+     * This is an extension of the legacy ADODB API
+     * @param string $sql semi-colon-separated database commands
+     * @return the last-retrieved recordset
+     */
     protected function do_multisql($sql)
     {
         // no error checking for this stuff
-        // and no return data
-        $_t = $this->_mysql->multi_query($sql);
-        if( $_t ) {
+        $ret = null;
+        if( $this->_mysql->multi_query($sql) ) {
             do {
-                $res = $this->_mysql->store_result();
+                if( ($res = $this->_mysql->store_result()) ) {
+                    if( $ret ) { $ret->close(); }
+                    $ret = $res;
+                }
             } while( $this->_mysql->more_results() && $this->_mysql->next_result() );
         }
+        return $ret; // TODO array of all results
     }
 
     public function do_sql($sql)
     {
         // execute all queries, but only need the resultset from the last one.
-        $resultset = null;
         $this->sql = $sql;
         $time_start = microtime(TRUE);
-        $resultid = $this->_mysql->query( $sql );
-        $time_total = microtime(TRUE) - $time_start;
-        $this->query_time_total += $time_total;
-        if( !$resultid ) {
-            $this->FailTrans();
-            $this->OnError(self::ERROR_EXECUTE,$this->_mysql->errno, $this->_mysql->error);
-            return $resultset;
+        $res = $this->_mysql->query($sql);
+        $this->query_time_total += microtime(TRUE) - $time_start;
+        if( $res ) {
+            $this->add_debug_query($sql);
+            return new ResultSet($this->_mysql, $res, $sql);
         }
-        $this->add_debug_query($sql);
-        $resultset = new ResultSet( $this->_mysql, $resultid, $sql );
-        return $resultset;
+        $this->FailTrans();
+        $this->OnError(self::ERROR_EXECUTE,$this->_mysql->errno,$this->_mysql->error);
+        return null; // no object
     }
 
     public function Prepare($sql)
     {
-        $stmt = new Statement($this,$sql);
-        return $stmt;
+        return new Statement($this,$sql);
     }
 
     public function BeginTrans()
@@ -152,22 +165,23 @@ class Connection extends \CMSMS\Database\Connection
     {
         if( $this->_in_smart_transaction ) {
             $this->_in_smart_transaction++;
-            return;
+            return; //TODO return value?
         }
 
         if( $this->_in_transaction ) {
-            $this->OnError( self::ERROR_TRANSACTION, -1, 'Bad Transaction: StartTrans called within BeginTrans');
-            return FALSE;
+            $this->OnError(self::ERROR_TRANSACTION, -1, 'Bad Transaction: StartTrans called within BeginTrans');
+            return; //TODO return value? FALSE
         }
         $this->_transaction_status = TRUE;
         $this->_in_smart_transaction++;
         $this->BeginTrans();
+         //TODO return value?
     }
 
     public function RollbackTrans()
     {
         if( !$this->_in_transaction ) {
-            $this->OnError( self::ERROR_TRANSACTION, -1, 'BeginTrans has not been called');
+            $this->OnError(self::ERROR_TRANSACTION, -1, 'BeginTrans has not been called');
             return FALSE;
         }
 
@@ -176,19 +190,19 @@ class Connection extends \CMSMS\Database\Connection
         return TRUE;
     }
 
-	function CommitTrans($ok=true)
-	{
-		if (!$ok) return $this->RollbackTrans();
+    function CommitTrans($ok=true)
+    {
+        if (!$ok) return $this->RollbackTrans();
 
         if( !$this->_in_transaction ) {
-            $this->OnError( self::ERROR_TRANSACTION, -1, 'BeginTrans has not been called');
+            $this->OnError(self::ERROR_TRANSACTION, -1, 'BeginTrans has not been called');
             return FALSE;
         }
 
         $this->_in_transaction--;
-		$this->Execute('COMMIT');
-		return TRUE;
-	}
+        $this->Execute('COMMIT');
+        return TRUE;
+    }
 
     public function CompleteTrans($autoComplete = true)
     {
@@ -221,25 +235,38 @@ class Connection extends \CMSMS\Database\Connection
 
     public function GenID($seqname)
     {
-        $sql = sprintf('UPDATE %s SET id=id+1;',$seqname);
-        $this->Execute($sql);
-        $sql = sprintf('SELECT id FROM %s',$seqname);
-        return (int) $this->GetOne($sql);
+        // this should be as race-resistant as reasonably possible
+        if( $this->_mysql->multi_query("LOCK TABLE `$seqname` WRITE;UPDATE `$seqname` SET id = (@seq_value := id) + 1;SELECT @seq_value;UNLOCK TABLE") ) {
+            for( $i = 0; $i < 4; ++$i ) {
+                if( $i == 2 ) {
+                    $res = $this->_mysql->store_result();
+                    if( $res ) {
+                        $row = $res->fetch_row();
+                        $res->close();
+                    }
+                }
+                $this->_mysql->next_result();
+            }
+            if( isset($row) ) { return (int)$row[0] + 1; }
+        }
+        if( $this->_mysql->errno ) $this->OnError(self::ERROR_EXECUTE,$this->_mysql->errno,$this->_mysql->error);
+        return 0;
     }
 
     public function CreateSequence($seqname,$startID=0)
     {
-        $out = array();
-        $startID = (int) $startID;
-        $out[] = sprintf('CREATE TABLE %s (id int not null) ENGINE MyISAM',$seqname);
-        $out[] = sprintf('INSERT INTO %s (id) values (%s)',$seqname,$startID);
+        $startID = (int)$startID;
         $dict = $this->NewDataDictionary();
-        $dict->ExecuteSQLArray($out);
+        $dict->ExecuteSQLArray([
+        "DROP TABLE IF EXISTS `$seqname`",
+        "CREATE TABLE `$seqname` (id integer NOT NULL) ENGINE MyISAM CHARSET ascii COLLATE ascii_bin MAX_ROWS 1",
+        "INSERT INTO `$seqname` (id) VALUES ($startID)"
+        ]);
         return TRUE;
     }
 
     public function DropSequence($seqname)
     {
-        return $this->Execute(sprintf('DROP TABLE %s',$seqname));
+        return $this->Execute("DROP TABLE `$seqname`");
     }
 } // end of class

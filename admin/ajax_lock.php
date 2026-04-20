@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2013 by Robert Campbell (calguy1000@cmsmadesimple.org)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple admin console script
+#(c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -9,24 +8,24 @@
 #(at your option) any later version.
 #
 #This program is distributed in the hope that it will be useful,
-#but WITHOUT ANY WARRANthe TY; without even the implied warranty of
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: moduleinterface.php 8558 2012-12-10 00:59:49Z calguy1000 $
+#$Id$
 
 $handlers = ob_list_handlers();
 for ($cnt = 0; $cnt < count($handlers); $cnt++) { ob_end_clean(); }
 
-$CMS_ADMIN_PAGE=1;
+$CMS_ADMIN_PAGE = 1;
 require_once("../lib/include.php");
 $ruid = get_userid(FALSE);
 if( !$ruid ) return;
 
-$fh = fopen('php://input','r');
+$fh = fopen('php://input','r'); // TODO don't assume stream is enabled
 $txt = fread($fh,8192);
 $data = '';
 if( $txt ) {
@@ -38,10 +37,11 @@ if( !is_array($data) ) {
 
 $opt = get_parameter_value($data,'opt','setup');
 $type = get_parameter_value($data,'type');
-$oid = get_parameter_value($data,'oid');
-$uid = get_parameter_value($data,'uid');
-$lock_id = get_parameter_value($data,'lock_id');
-$lifetime = (int) get_parameter_value($data,'lifetime',cms_siteprefs::get('lock_timeout',60));
+$oid = get_parameter_value($data,'oid',0); // might be 0 or -1
+$uid = get_parameter_value($data,'uid',0);
+$lock_id = get_parameter_value($data,'lock_id',0);
+$lifetime = get_parameter_value($data,'lifetime',-1);
+if ($lifetime == -1) $lifetime = (int)cms_siteprefs::get('lock_timeout',60);
 
 $out = array();
 $out['status'] = 'success';
@@ -65,46 +65,46 @@ try {
   case 'test':      // alias for check
   case 'is_locked': // alias for check
   case 'check':
-      if( !$type ) throw new CmsInvalidDataException(lang('missingparams'));
-      if( $oid ) {
-          $out['lock_id'] = CmsLockOperations::is_locked($type,$oid) ? 1 : 0;
-      }
-      else {
-          $tmp = CmsLockOperations::get_locks($type);
-          if( $tmp && is_array($tmp) ) $out['lock_id'] = -1;
-      }
-      break;
+    if( !$type ) throw new CmsInvalidDataException(lang('missingparams'));
+    if( $oid != 0 ) { // TODO if $oid == -1?
+      $out['lock_id'] = CmsLockOperations::is_locked($type,$oid) ? 1 : 0;
+    }
+    else {
+      $tmp = CmsLockOperations::get_locks($type); // typed locks for all users
+      if( $tmp && is_array($tmp) ) $out['lock_id'] = -1;
+    }
+    break;
 
   case 'lock':
-      if( $lifetime < 1 ) break; // do not lock, basically a noop
-      if( !$type || !$oid || !$uid ) throw new CmsInvalidDataException(lang('missingparams'));
-      if( $uid != $ruid ) throw new CmsLockOwnerException(lang('CMSEX_L006'));
+    if( $lifetime < 1 ) break; // do not lock, basically a noop
+    if( !$type || $oid == 0 || $uid < 1 ) throw new CmsInvalidDataException(lang('missingparams')); // TODO if $oid == -1?
+    if( $uid != $ruid ) throw new CmsLockOwnerException(lang('CMSEX_L006'));
 
-      // see if we can get this lock... if we can, it's just a touch
-      try {
-          $lock = CmsLock::load($type,$oid,$uid);
-      }
-      catch( CmsNoLockException $e ) {
-          // lock doesn't exist, gotta create one.
-          $lock = new CmsLock($type,$oid,$lifetime);
-      }
-      $lock->save();
-      $out['lock_id'] = $lock['id'];
-      $out['lock_expires'] = $lock['expires'];
-      // and we're done.
-      break;
+    // see if we can get this lock... if we can, it's just a touch
+    try {
+      $lock = CmsLock::load($type,$oid,$uid);
+    }
+    catch( CmsNoLockException $e ) {
+      // lock doesn't exist, gotta create one.
+      $lock = new CmsLock($type,$oid,$lifetime);
+    }
+    $lock->save();
+    $out['lock_id'] = $lock['id'];
+    $out['lock_expires'] = $lock['expires'];
+    // and we're done.
+    break;
 
   case 'touch':
-      if( !$type || !$oid || !$uid || $lock_id < 1 ) throw new CmsInvalidDataException(lang('missingparams'));
-      if( $uid != $ruid ) throw new CmsLockOwnerException(lang('CMSEX_L006'));
-      $out['lock_expires'] = CmsLockOperations::touch($lock_id,$type,$oid);
-      break;
+    if( !$type || $oid == 0 || $uid < 1 || $lock_id < 1 ) throw new CmsInvalidDataException(lang('missingparams')); // TODO if $oid == -1?
+    if( $uid != $ruid ) throw new CmsLockOwnerException(lang('CMSEX_L006'));
+    $out['lock_expires'] = CmsLockOperations::touch($lock_id,$type,$oid);
+    break;
 
   case 'unlock':
-      if( !$type || !$oid || !$uid || $lock_id < 1 ) throw new CmsInvalidDataException(lang('missingparams'));
-      if( $uid != $ruid ) throw new CmsLockOwnerException(lang('CMSEX_L006'));
-      CmsLockOperations::delete($lock_id,$type,$oid);
-      break;
+    if( !$type || $oid == 0 || $uid < 1 || $lock_id < 1 ) throw new CmsInvalidDataException(lang('missingparams')); // TODO if oid == -1?
+    if( $uid != $ruid ) throw new CmsLockOwnerException(lang('CMSEX_L006'));
+    CmsLockOperations::delete($lock_id,$type,$oid);
+    break;
   }
 }
 catch( CmsNoLockException $e ) {

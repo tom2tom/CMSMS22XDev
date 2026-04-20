@@ -1,0 +1,21 @@
+#status_area,
+#searchresults_cont,
+#workarea {
+ display: none
+}
+#searchresults {
+ max-height: 25em;
+ overflow: auto
+}
+#searchresults > li {
+ cursor: pointer
+}
+#searchresults > li * {
+ cursor: initial
+}
+#searchresults > li a {
+ cursor: pointer
+}
+.search_oneresult {
+ color: red
+}

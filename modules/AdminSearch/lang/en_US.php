@@ -38,18 +38,18 @@ $lang['help'] = <<<EOT
 <p>As per the GPL, this software is provided as-is. Please read the text of the license for the full disclaimer.</p>
 
 <h3>License</h3>
-<p>This module has been released under the <a href="http://www.gnu.org/licenses/licenses.html#GPL">GNU Public License</a>. This module may not be used otherwise than in accordance with that license, or a later version of it if such is granted by the module's distributor.</p>
+<p>This module has been released under the <a href="http://www.gnu.org/licenses/licenses.html#GPL">GNU General Public License</a>. This module may not be used otherwise than in accordance with that license, or a later version of it if such is granted by the module's distributor.</p>
 EOT;
 
-// I 
+// I
 
 // L
 $lang['lbl_content_search'] = 'Search Content Pages';
 $lang['lbl_css_search'] = 'Search Stylesheets';
-$lang['lbl_gcb_search'] = 'Search Global Content Blocks';
-$lang['lbl_oldmodtemplate_search'] = 'Search module templates';
-$lang['lbl_include_inactive_items'] = 'Include inactive items';
-$lang['lbl_search_casesensitive'] = 'Search is case-sensitive';
+//$lang['lbl_gcb_search'] = 'Search Global Content Blocks'; no such thing now
+$lang['lbl_oldmodtemplate_search'] = 'Search Module Templates';
+$lang['lbl_include_inactive_items'] = 'Include Inactive Pages';
+$lang['lbl_search_casesensitive'] = 'Search is Case-Sensitive';
 $lang['lbl_search_desc'] = 'Search Descriptions <em>(where applicable)</em>';
 $lang['lbl_show_snippets'] = 'Show snippets with the results';
 $lang['lbl_template_search'] = 'Search Templates';
@@ -62,7 +62,8 @@ $lang['moddescription'] = 'A utility to search the database tables for rows cont
 $lang['name'] = 'Name';
 
 // P
-$lang['placeholder_search_text'] = 'Enter Search Text';
+$lang['perm_Use_Admin_Search'] = 'Use Admin Search'; //migrated from admin-lang
+$lang['placeholder_search_text'] = 'Enter search text'; //also used in Search module
 $lang['prompt_code'] = 'Code';
 $lang['prompt_description'] = 'Description';
 $lang['postinstall'] = 'Admin Search module installed';
@@ -73,7 +74,7 @@ $lang['search'] = 'Search';
 $lang['search_text'] = 'Search Text';
 $lang['search_results'] = 'Search Results';
 $lang['sectiondesc_oldmodtemplates'] = 'Results in this section are not clickable, as each module provides its own Admin panel interface for editing templates';
-$lang['settings'] = 'Settings';
+//$lang['settings'] = 'Settings';
 $lang['starting'] = 'Starting';
 
 // W

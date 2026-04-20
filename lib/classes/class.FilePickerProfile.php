@@ -1,68 +1,99 @@
 <?php
 
-/**
- * A class that defines a base profile of information needed to display a filepicker
- * @package CMS
- * @license GPL
- *
- */
-
 namespace CMSMS;
 
+use CmsInvalidDataException;
+use CMSMS\FileType;
+
+//This class might be better conceived as and more useful as something
+//not picker-specific e.g. 'FileSystemProfile' or 'ControlsSet'
 /**
- * A simple class that defines a profile of information used by the filepicker to indicate how it should
- * behave and what functionality should be provided.
+ * A class that defines a suite of properties to dictate behavior and
+ * available functionality.
  *
- * This is an immutable class.
- *
- * The constructor and overrideWith methods of this class accept an associative array of parameters (see the properties below)
- * to allow building or altering a profile object.  Ths is the only time when properties of a profile can be adjusted.
+ * The constructor and overrideWith methods of this class accept an
+ * associative array of parameters (see the properties below) to
+ * establish or alter a profile object.
  *
  * ```php
- * $obj = new \CMSMS\FilePickerProfile( [ 'type'=>FileType::TYPE_IMAGE,
- *    'exclude_prefix'=>'foo' ] );
+ * $obj = new \CMSMS\FilePickerProfile([
+ *  'type'=>FileType::TYPE_IMAGE,
+ *  'exclude_prefix'=>'foo'
+ * ]);
  *
  * @package CMS
  * @license GPL
- * @author Robert Campbell <calguy1000@cmsmadesimple.org>
+ * @author Robert Campbell
  * @since  2.2
- * @property-read string $top The top directory for the filepicker (relative to the CMSMS uploads directory)
- * @property-read FileType $type The CMSMS FileType representing what files can be selected.
- * @property-read string $match_prefix List only files/items that have the specified prefix.
- * @property-read string exclude_prefix  Exclude any files/items that have the specified prefix.
- * @property-read bool $can_mkdir  Users of the filepicker can create new directories.
- * @property-read bool $can_upload  Users of the filepicker can upload new files (of the specified type)
- * @property-read bool $can_delete  Users of the filepicker can remove files.
- * @property-read bool $show_thumbs Whether thumbnail images should be shown in place of normal icons for images.
- * @property-read bool $show_hidden Indicates that hidden files should be shown in the filepicker.
- * @property-read bool $sort Indicates whether files should be sorted before listing them in the filepicker.
+ *
+ * Default properties:
+ * @property int $can_delete The user can remove files.
+ * @property int $can_mkdir The user can create new directories.
+ * @property int $can_upload The user can upload files (of the specified type)
+ * @property string $exclude_prefix Exclude any files/items that have the specified prefix. fnmatch() wildcards allowed.
+ * @property string $match_prefix Include only files/items that have the specified prefix (and also match $type). fnmatch() wildcards allowed.
+ * @property bool $show_hidden Whether to show hidden files.
+ * @property bool $show_thumbs Whether to show thumbnail images instead of normal icons for images.
+ * @property bool $sort Whether to sort files before showing.
+ * @property string $top The top directory (relative to the CMSMS uploads directory).
+ * @property FileType $type The CMSMS FileType representing displayable files.
+ * Other property(ies) may be added during construction but not after.
  */
 class FilePickerProfile
 {
     const FLAG_NONE = 0;
     const FLAG_YES = 1;
-    const FLAG_BYGROUP = 2;
+    const FLAG_BYGROUP = 2; // group-authority to avoid backend-js permission-check ? if so, which group(s) for each relevant property ?
 
     /**
      * @ignore
      */
-    private $_data = [ 'top'=>null, 'type'=>FileType::TYPE_ANY, 'can_upload'=>self::FLAG_YES, 'show_thumbs'=>1, 'can_delete'=>self::FLAG_YES,
-                       'match_prefix'=>null, 'show_hidden'=>FALSE, 'exclude_prefix'=>null, 'sort'=>TRUE, 'can_mkdir'=>TRUE ];
+    protected $_data = [
+     'can_delete' => self::FLAG_YES, // override to NONE when user doesn't have 'Modify Files' permission
+     'can_mkdir' => self::FLAG_YES, // ditto
+     'can_upload' => self::FLAG_YES, // ditto
+     'exclude_prefix' => '',
+     'match_prefix' => '',
+     'show_hidden' => FALSE,
+     'show_thumbs' => TRUE,
+     'sort' => TRUE,
+     'top' => '',
+     'type' => FileType::TYPE_ANY];
 
     /**
-     * Set a value into this profile
-     *
-     * @param string $key The key to set
-     * @param mixed $val The value to set.
+     * @ignore
      */
-    protected function setValue( $key, $val )
+    protected $_controls = [
+     'setall' => FALSE,
+     'userid' => 0 // override if/when group-specific properties are deployed
+    ];
+
+    /**
+     * Constructor
+     *
+     * @param array $params Optional property-names and their values
+     */
+    public function __construct(array $params = [])
+    {
+        if( $params ) {
+            $this->_controls['setall'] = TRUE;
+            foreach( $params as $key => $val ) {
+                $this->__set($key, $val);
+            }
+            $this->_controls['setall'] = FALSE;
+        }
+    }
+
+    /**
+     * @ignore
+     * @param string $key The property name
+     * @param mixed $val The property value
+     */
+    #[\ReturnTypeWillChange]
+    public function __set($key, $val)
     {
         switch( $key ) {
         case 'top':
-            $val = trim((string)$val);
-            $this->_data[$key] = $val;
-            break;
-
         case 'match_prefix':
         case 'exclude_prefix':
             $this->_data[$key] = trim((string)$val);
@@ -81,53 +112,49 @@ class FilePickerProfile
             case FileType::TYPE_ANY:
                 $this->_data[$key] = $val;
                 break;
+            case '':
             case 'file':
                 $this->_data[$key] = FileType::TYPE_ANY;
                 break;
             default:
-                throw new \CmsInvalidDataException("$val is an invalid value for type in ".__CLASS__);
+                throw new CmsInvalidDataException("$val is an invalid value for type in ".__CLASS__);
             }
             break;
 
         case 'can_mkdir':
         case 'can_delete':
         case 'can_upload':
-            $val = (int) $val;
             switch( $val ) {
-            case self::FLAG_NONE:
-            case self::FLAG_YES:
+            case self::FLAG_NONE: // or false
+            case self::FLAG_YES: // or true
             case self::FLAG_BYGROUP:
                 $this->_data[$key] = $val;
                 break;
             default:
-                die('val is '.$val);
-                throw new \CmsInvalidDataException("$val is an invalid value for $key in ".__CLASS__);
+                throw new CmsInvalidDataException("$val is an invalid value for $key in ".__CLASS__);
             }
             break;
 
         case 'show_thumbs':
         case 'show_hidden':
         case 'sort':
-            $this->_data[$key] = (bool) $val;
+            $this->_data[$key] = (bool) $val; // OR cms_to_bool($val)
             break;
-        }
-    }
 
-    /**
-     * Constructor
-     *
-     * @param array $params An associative array of parameters suitable for the setValue method.
-     */
-    public function __construct( array $params = null )
-    {
-        if( !is_array($params) || !count($params) ) return;
-        foreach( $params as $key => $val ) {
-            $this->setValue($key,$val);
+        default:
+            if( $this->_controls['setall'] ) { //anything else allowed only during construction
+                $this->_data[$key] = $val;
+            }
+            else {
+                throw new CmsInvalidDataException("$key is not a post-creation-settable property in ".__CLASS__);
+            }
         }
     }
 
     /**
      * @ignore
+     * @param string $key The key to get
+     * @return mixed
      */
     #[\ReturnTypeWillChange]
     public function __get($key)
@@ -142,32 +169,64 @@ class FilePickerProfile
         case 'can_mkdir':
         case 'can_upload':
         case 'can_delete':
-            return (int) $this->_data[$key];
+            return (int)$this->_data[$key];
 
         case 'show_thumbs':
         case 'show_hidden':
         case 'sort':
-            return (bool) $this->_data[$key];
+            return (bool)$this->_data[$key];
+
+        default:
+            return array_key_exists($key, $this->_data) ? $this->_data[$key] : null;
         }
     }
 
     /**
-     * Create a new profile object based on the current one, with various aadjusments.
-     *
-     * @param array $params Associative array of paramaters for the setValue method.
-     * @return FilePickerProfile
+     * @ignore
      */
-    public function overrideWith( array $params )
+    #[\ReturnTypeWillChange]
+    public function __serialize()
     {
-        $obj = clone $this;
-        foreach( $params as $key => $val ) {
-            $obj->setValue( $key, $val );
-        }
-        return $obj;
+         return $this->_data;
     }
 
     /**
-     * Get the raw data of the profile.
+     * @ignore
+     */
+    #[\ReturnTypeWillChange]
+    public function __unserialize(array $params)
+    {
+        $this->__construct($params);
+    }
+
+    /**
+     * Set a property of this object
+     * This is a deprecated alias of __set()
+     *
+     * @param string $key The property name
+     * @param mixed $val The property value
+     */
+    protected function setValue($key, $val)
+    {
+        $this->__set($key, $val);
+    }
+
+    /**
+     * Change the specified properties of this object.
+     *
+     * @param array $params Optional property-names and their values
+     * @return self for API back-compatibility (or chaining)
+     */
+    public function overrideWith(array $params = [])
+    {
+        foreach( $params as $key => $val ) {
+            $this->__set($key, $val);
+        }
+        return $this;
+    }
+
+    /**
+     * Get all the properties of this object.
      *
      * @internal
      * @return array
@@ -176,4 +235,4 @@ class FilePickerProfile
     {
         return $this->_data;
     }
-} // end of class
+} // class

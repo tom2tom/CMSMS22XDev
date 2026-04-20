@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple admin console script
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -16,103 +15,106 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: addbookmark.php 12671 2021-12-13 03:05:01Z tomphantoo $
+#$Id$
 
-$CMS_ADMIN_PAGE=1;
+$CMS_ADMIN_PAGE = 1;
 
-require_once("../lib/include.php");
-$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+require_once '../lib/include.php';
+$secureparm = CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 
 check_login();
 
-$error = "";
-
-$title= "";
-if (isset($_POST["title"])) $title = trim(cleanValue($_POST["title"]));
-$url = "";
-if (isset($_POST["url"])) $url = trim(cleanValue($_POST["url"]));
-
-if (isset($_POST["cancel"])) {
-	redirect("listbookmarks.php".$urlext);
-	return;
+if (isset($_POST['cancel'])) {
+	redirect('listbookmarks.php?'.$secureparm);
 }
 
-$userid = get_userid();
+$title = '';
+if (isset($_POST['title'])) {
+	$title = trim(cleanValue($_POST['title']));
+}
+elseif (isset($_GET['title'])) {
+	// adding an admin url from the bookmarks popup
+	$tmp = trim($_GET['title']); //TODO support cleanValue()
+	$title = urldecode($tmp);
+}
 
-if (isset($_POST["addbookmark"]))
-	{
+$error = '';
+$url = '';
+if (isset($_POST['url'])) {
+	$url = trim(cleanValue($_POST['url']));
+}
+elseif (isset($_GET['ref'])) {
+	// adding an admin url
+	$tmp = trim(cleanValue($_GET['ref']));
+	$url = base64_decode($tmp, true);
+}
+if ($url) {
+	$url = html_entity_decode($url);
+	$url = urldecode($url);
+	$url = str_replace('[ROOT_URL]', CMS_ROOT_URL, $url);
+	if (strpos($url, '[SECURITYTAG]') !== false) { // deprecated
+		$url = str_replace('[SECURITYTAG]', $secureparm, $url); // allow parsing
+	}
+
+	$res = cms_utils::validate_url($url, '!'.CMSMS\FileType::TYPE_EXECUTABLE);
+	if ($res !== true) {
+		$error = $res;
+		unset($_POST['addbookmark']);
+	}
+
+	// reinstate placeholder if any
+	$url = str_replace($secureparm, '[SECURITYTAG]', $url);
+	$config = cms_config::get_instance();
+	if (startswith($url, $config['admin_url'])) {
+		//TODO somewhere apply a permission-check akin to admin menu generation
+		if (strpos($url, '[SECURITYTAG]') === false) {
+			unset($_POST['addbookmark']);
+			$error = lang('error_badfield', lang('url')); //repetition ok
+		}
+	}
+	elseif (strpos($url, '[SECURITYTAG]') !== false) {
+		unset($_POST['addbookmark']);
+		$error = lang('error_badfield', lang('url')); //repetition ok
+	}
+} // url
+
+if (isset($_POST['addbookmark'])) {
 	$validinfo = true;
-
-	if ( $title == "" )
-		{
-		$error .= lang('nofieldgiven', array(lang('title')));
+	if ($title == '') {
+		$error .= lang('nofieldgiven', lang('title'));
 		$validinfo = false;
-		}
-		else if ( $url == "" )
-		{
-		$error .= lang('nofieldgiven', array(lang('url')));
+	}
+	elseif ($url == '') {
+		$error .= lang('nofieldgiven', lang('url')); // joined error string?
 		$validinfo = false;
-		}
+	}
 
-	if ($validinfo)
-		{
-		  $gCms = cmsms();
-		$gCms->GetBookmarkOperations();
+	if ($validinfo) {
 		$markobj = new Bookmark();
 		$markobj->title = $title;
-		$markobj->url = $url;
-		$markobj->user_id=$userid;
+		$markobj->url = $url; // revert any encoding removed during parsing ?
+		$markobj->user_id = get_userid();
 
 		$result = $markobj->save();
 
-		if ($result)
-			{
-			redirect("listbookmarks.php".$urlext);
-			return;
-			}
-		else
-			{
+		if ($result) {
+			redirect('listbookmarks.php?'.$secureparm);
+		}
+		else {
 			$error .= lang('errorinsertingbookmark');
-			}
 		}
 	}
+}
 
-include_once("header.php");
+require_once 'header.php';
+$themeObject->set_value('pagetitle', 'addbookmark');
 
-if ($error != "")
-	{
-		echo '<div class="pageerrorcontainer"><p class="pageerror">'.$error.'</p></div>';
-	}
-?>
+$tpl = $smarty->createTemplate('admin_tpl:addbookmark.tpl', null, null, $smarty, false);
+$tpl->assign('error', $error);
+$tpl->assign('securename', CMS_SECURE_PARAM_NAME); // see also $smarty-assigned var $secureparam
+$tpl->assign('secureval', $_SESSION[CMS_USER_KEY]);
+$tpl->assign('title', $title);
+$tpl->assign('url', $url);
+$tpl->display();
 
-<div class="pagecontainer">
-	<div class="pageoverflow">
-		<?php echo $themeObject->ShowHeader('addbookmark'); ?>
-		<form method="post" action="addbookmark.php<?php echo $urlext?>">
-			<div>
-				<input type="hidden" name="<?php echo CMS_SECURE_PARAM_NAME ?>" value="<?php echo $_SESSION[CMS_USER_KEY] ?>" />
-			</div>
-			<div class="pageoverflow">
-				<p class="pagetext"><?php echo lang('title')?>:</p>
-				<p class="pageinput"><input type="text" name="title" maxlength="255" value="<?php echo $title?>" /></p>
-			</div>
-			<div class="pageoverflow">
-				<p class="pagetext"><?php echo lang('url')?>:</p>
-				<p class="pageinput"><input type="text" name="url" size="50" maxlength="255" value="<?php echo $url ?>" class="standard" /></p>
-			</div>
-			<div class="pageoverflow">
-				<p class="pagetext">&nbsp;</p>
-				<p class="pageinput">
-					<input type="hidden" name="addbookmark" value="true" />
-					<input type="submit" value="<?php echo lang('submit')?>" class="pagebutton" />
-					<input type="submit" name="cancel" value="<?php echo lang('cancel')?>" class="pagebutton" />
-				</p>
-			</div>
-		</form>
-	</div>
-</div>
-
-<?php
-include_once("footer.php");
-
-?>
+require_once 'footer.php';

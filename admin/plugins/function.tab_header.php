@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: tab_header
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -18,9 +17,7 @@
 
 function smarty_function_tab_header($params,$template)
 {
-	$smarty = $template->smarty;
-
-	if( !isset($params['name']) ) return;
+	if( !isset($params['name']) ) return '';
 	$name = trim($params['name']);
 	$label = $name;
 	$active = FALSE;
@@ -35,10 +32,10 @@ function smarty_function_tab_header($params,$template)
 		}
 	}
 
-	$out = cms_admin_tabs::set_tab_header($name,$label,$active);
+	$out = cms_admin_tabs::set_tab_header($name,$label,$active,TRUE);
 	if( isset($params['assign']) ) {
-		$smarty->assign(trim($params['assign']),$out);
-		return;
+		$template->assign(trim($params['assign']),$out);
+		return '';
 	}
 	return $out;
 }

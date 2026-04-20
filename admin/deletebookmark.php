@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple admin console script
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -16,19 +15,17 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: deletebookmark.php 10298 2015-11-01 23:00:32Z calguy1000 $
+#$Id$
 
-$CMS_ADMIN_PAGE=1;
+$CMS_ADMIN_PAGE = 1;
 
-require_once("../lib/include.php");
-require_once("../lib/classes/class.bookmark.inc.php");
-$urlext='?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
+require_once '../lib/include.php';
+//require_once '../lib/classes/class.Bookmark.php';
 
 check_login();
 
 $bookmark_id = -1;
-if (isset($_GET["bookmark_id"]))
-{
+if (isset($_GET["bookmark_id"])) {
 	$bookmark_id = $_GET["bookmark_id"];
 
 	$result = false;
@@ -36,13 +33,12 @@ if (isset($_GET["bookmark_id"]))
 	$bookops = cmsms()->GetBookmarkOperations();
 	$markobj = $bookops->LoadBookmarkByID($bookmark_id);
 
-	if ($markobj)
-	{
+	if ($markobj) {
 		$result = $markobj->Delete();
 	}
-
 }
 
+$urlext = '?'.CMS_SECURE_PARAM_NAME.'='.$_SESSION[CMS_USER_KEY];
 redirect("listbookmarks.php".$urlext);
 
 ?>

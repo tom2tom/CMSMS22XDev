@@ -2,7 +2,7 @@
 /**
  * Smarty2 back compatibility class adapted from SmartyBC.class.php
  * Project:     Smarty: the PHP compiling template engine
- * SVN:         $Id: $
+ * SVN:         $Id$
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -39,21 +39,6 @@ class CMSSmartyBase extends Smarty
      * @var string
      */
     public $_version = Smarty::SMARTY_VERSION;
-
-    /* *
-     * This is an array of directories where trusted php scripts reside.
-     *
-     * @var array
-     */
-//see smarty_security class   public $trusted_dir = array();
-
-    /**
-     * Pass any child-constructor up the tree
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
     /**
      * wrapper for assign_by_ref

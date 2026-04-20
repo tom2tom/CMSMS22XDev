@@ -1,13 +1,8 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module: Navigator (c) 2013 by Robert Campbell
-#         (calguy1000@cmsmadesimple.org)
-#  An module for CMS Made Simple to allow building hierarchical navigations.
-#
-#-------------------------------------------------------------------------
-# CMS - CMS Made Simple is (c) 2005 by Ted Kulp (wishy@cmsmadesimple.org)
-# Visit our homepage at: http://www.cmsmadesimple.org
+# Module Navigator uninstallation script
+# (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #-------------------------------------------------------------------------
 #
@@ -33,7 +28,7 @@
 #
 #-------------------------------------------------------------------------
 #END_LICENSE
-#$Id: News.module.php 2114 2005-11-04 21:51:13Z wishy $
+#$Id$
 
 $this->RemovePreference();
 $this->DeleteTemplate();
@@ -51,14 +46,14 @@ try {
           }
       }
       catch( Exception $e ) {
-          audit('',$this->GetName(),'Uninstall Error: '.$e->GetMessage());
+          audit('',$this->GetName(),'Uninstallation error: '.$e->GetMessage());
       }
       $type->delete();
   }
 }
 catch( CmsException $e ) {
     // log it
-    audit('',$this->GetName(),'Uninstall Error: '.$e->GetMessage());
+    audit('',$this->GetName(),'Uninstallation error: '.$e->GetMessage());
     return FALSE;
 }
 

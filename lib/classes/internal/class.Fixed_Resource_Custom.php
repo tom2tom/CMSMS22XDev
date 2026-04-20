@@ -1,0 +1,55 @@
+<?php
+#CMS Made Simple class Fixed_Resource_Custom
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#
+#This program is free software; you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation; either version 2 of the License, or
+#(at your option) any later version.
+#
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#You should have received a copy of the GNU General Public License
+#along with this program; if not, write to the Free Software
+#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#$Id$
+
+namespace CMSMS\internal;
+
+/**
+ * A class that fixes a problem with the Smarty_Resource_Custom class
+ * TODO check whether overriding
+ *  $this->generateSafeName($source->name)
+ *  i.e. substr(preg_replace('/[^a-zA-Z0-9_.]/', '', (string) $name), 0, 127)
+ * is still relevant
+ *
+ * @ignore
+ * @since 1.11
+ * @internal
+ * @ignore
+ * @package CMS
+ */
+abstract class Fixed_Resource_Custom extends \Smarty_Resource_Custom
+{
+    public function populate(\Smarty_Template_Source $source, /*?Smarty_Internal_Template */$_template = null)  // uncomment for PHP 7.1+ .. 8.4+
+    {
+        $source->filepath = $source->type . ':' . $source->name;
+        $source->uid = hash('fnv164', $source->filepath); //c.f. Smarty6 id_hash()
+
+        $mtime = $this->fetchTimestamp($source->name);
+        if ($mtime !== null) { //smarty defaults to null
+            $source->timestamp = $mtime; //might be 0
+        } else {
+            $content = $timestamp = null;
+            $this->fetch($source->name, $content, $timestamp);
+            $source->timestamp = ($timestamp !== null) ? (int)$timestamp : false;
+            if ($content !== null) $source->content = $content;
+        }
+        $source->exists = !!$source->timestamp;
+    }
+}
+class_alias(Fixed_Resource_Custom::class, 'CMS_Fixed_Resource_Custom', false);
+

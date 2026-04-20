@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004-2012 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#CMS Made Simple admin console script
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -16,7 +15,7 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-#$Id: style.php 10940 2016-12-28 01:19:00Z calguy1000 $
+#$Id$
 
 $CMS_ADMIN_PAGE = 1;
 $CMS_STYLESHEET = TRUE;
@@ -57,6 +56,7 @@ if( is_array($allmodules) && count($allmodules) ) {
         if( !is_object($object) ) continue;
         if( $object->HasAdmin() ) echo $object->AdminStyle();
     }
+    unset($object);
 }
 
 ?>

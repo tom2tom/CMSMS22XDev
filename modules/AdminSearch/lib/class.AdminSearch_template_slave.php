@@ -41,9 +41,8 @@ final class AdminSearch_template_slave extends AdminSearch_slave
         $one = $tpl->get_id();
         $title = $tpl->get_name();
         if( $tpl->has_content_file() ) {
-            $config = \cms_config::get_instance();
             $file = $tpl->get_content_filename();
-            $title = $tpl->get_name().' ('.cms_relative_path($file,$config['root_path']).')';
+            $title = $tpl->get_name().' ('.cms_relative_path($file,CMS_ROOT_PATH).')';
         }
         $resultSet = $this->get_resultset($title,AdminSearch_tools::summarize($this->get_description()),$this->get_mod()->create_url( 'm1_','admin_edit_template','', [ 'tpl'=>$one ] ));
 

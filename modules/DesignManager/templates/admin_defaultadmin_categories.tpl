@@ -1,59 +1,57 @@
-{if isset($list_categories)}
-<script type="text/javascript">
+{if !empty($list_categories)}
+<script>
 $(function () {
     $('#categorylist tbody').cmsms_sortable_table({
         actionurl: '{cms_action_url action='ajax_order_cats' forjs=1}&showtemplate=false',
         callback: function(data) {
 
-            var $response = $('<aside/>').addClass('message');
+            var response = $('<aside></aside>',{ 'class':'message' });
 
             if (data.status === 'success') {
-
-                $response.addClass('pagemcontainer')
-                    .append($('<span>').text('Close').addClass('close-warning'))
-                    .append($('<p/>').text(data.message));
+                response.addClass('pagemcontainer')
+                    .append($('<span></span>',{ 'class':'close-warning',text:'Close' }))
+                    .append($('<p></p>',{ text:data.message }));
             } else if (data.status === 'error') {
-
-                $response.addClass('pageerrorcontainer')
-                    .append($('<span>').text('Close').addClass('close-warning'))
-                    .append($('<p/>').text(data.message));
+                response.addClass('pageerrorcontainer')
+                    .append($('<span></span>',{ 'class':'close-warning',text:'Close' }))
+                    .append($('<p></p>',{ text:data.message }));
             }
 
-            $('body').append($response).slideDown(1000, function() {
+            $('body').append(response).slideDown(1000, function() {
                 window.setTimeout(function() {
-                    $response.slideUp();
-                    $response.remove();
+                    response.slideUp();
+                    response.remove();
                 }, 10000);
             });
-    	}
+        }
     });
-    $('#categorylist a.del_cat').click(function(ev){
-       var self = $(this);
-       ev.preventDefault();
-       cms_confirm('{$mod->Lang('confirm_delete_category')|escape:'javascript'}').done(function(){
-          window.location = self.attr('href');
-       });
+    $('#categorylist .del_cat').on('click', function(ev) {
+        ev.preventDefault();
+        var _url = $(this).attr('href');
+        cms_confirm('{$mod->Lang('confirm_delete_category')|escape:'javascript'}').done(function() {
+            window.location.href = _url;
+        });
     });
 });
 </script>
 
 {if count($list_categories) > 1}
-  <div class="pagewarning" style="display: block;">{$mod->Lang('warning_category_dragdrop')}</div>
+  <div class="pagewarning" style="display:block">{$mod->Lang('warning_category_dragdrop')}</div>
 {/if}
 
 {/if}
 
-<div class="information">{$mod->lang('info_about_categories')}</div>
+<div class="information">{$mod->Lang('info_about_categories')}</div>
 <div class="pageoptions">
 	{cms_action_url action='admin_edit_category' assign='url'}
 	<a id="addcategory" href="{$url}" title="{$mod->Lang('create_category')}">{admin_icon icon='newobject.gif'} {$mod->Lang('create_category')}</a>
 </div>
 
-{if isset($list_categories)}
+{if !empty($list_categories)}
 <table id="categorylist" class="pagetable">
 	<thead>
 		<tr>
-			<th width="5%" title="{$mod->Lang('title_cat_id')}">{$mod->Lang('prompt_id')}</th>
+			<th style="width:5%" title="{$mod->Lang('title_cat_id')}">{$mod->Lang('prompt_id')}</th>
 			<th title="{$mod->Lang('title_cat_name')}">{$mod->Lang('prompt_name')}</th>
 			<th class="pageicon"></th>
 			<th class="pageicon"></th>

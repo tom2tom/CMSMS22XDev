@@ -1,7 +1,6 @@
 <?php
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+#Plugin handler: uploads_url
+#(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -20,10 +19,10 @@ function smarty_function_uploads_url($params, $smarty)
 {
 	$config = CmsApp::get_instance()->GetConfig();
 
-    $out = $config->smart_uploads_url();
+    $out = $config->smart_uploads_url(); //TODO root deprecated since 2.2
 	if( isset($params['assign']) ) {
 		$smarty->assign(trim($params['assign']),$out);
-		return;
+		return '';
 	}
 
 	return $out;

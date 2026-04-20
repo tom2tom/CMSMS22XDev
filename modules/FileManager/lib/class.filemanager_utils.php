@@ -1,10 +1,7 @@
 <?php
-# FileManager. A plugin for CMS - CMS Made Simple
-# Copyright (c) 2006-08 by Morten Poulsen <morten@poulsen.org>
-#
-#CMS - CMS Made Simple
-#(c)2004 by Ted Kulp (wishy@users.sf.net)
-#Visit our homepage at: http://www.cmsmadesimple.org
+# FileManager module class
+# (c) 2006-08 Morten Poulsen <morten@poulsen.org>
+# (c) 2008 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -20,95 +17,157 @@
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
+use CMSMS\FileTypeHelper;
+
 final class filemanager_utils
 {
-    static private $_can_do_advanced = -1;
+    private static $helper;
 
     protected function __construct() {}
 
+    /**
+     * Report whether $name contains invalid char(s)
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
     public static function is_valid_filename($name)
     {
         if( $name == '' ) return FALSE;
-        if( strpos($name,'/') !== false ) return FALSE;
-        if( strpos($name,'\\') !== false ) return FALSE;
-        if( strpos($name,'..') !== false ) return FALSE;
+        if( strpos($name,'/') !== FALSE ) return FALSE;
+        if( strpos($name,'\\') !== FALSE ) return FALSE;
+        if( strpos($name,'..') !== FALSE ) return FALSE;
         if( $name[0] == '.' || $name[0] == ' ' ) return FALSE;
-	      if( endswith( $name, '.' ) ) return FALSE;
-  
-        $ext = strtolower(substr(strrchr($name, '.'), 1));
-        if( startswith($ext,'php') || endswith($ext,'php') ) return FALSE;
-
+        if( endswith( $name, '.' ) ) return FALSE;
+        // minimal executable filename-extension check formerly here is
+        // now in self::is_restricted() and nothing about a restricted
+        // file's name per se renders the filename invalid
         if( preg_match('/[\n\r\t\[\]\&\?\<\>\!\@\#\$\%\*\(\)\{\}\|\"\'\:\;\+]/',$name) ) {
             return FALSE;
         }
         return TRUE;
     }
 
+    /**
+     * Unless $config property 'developer_mode' exists and is true,
+     * report whether the current user has 'Use FileManager Advanced'
+     * permission. No involvement of FileManager 'advancedmode' preference.
+     * Evaluated only once per request.
+     *
+     * @return int
+     *  2 if 'developer_mode' is configured
+     *  1 if current user has 'Use FileManager Advanced' permission
+     *  0 otherwise
+     *  i.e .1 or 2 indicating 'advanced' is enabled for the current user
+     */
     public static function can_do_advanced()
     {
-        if( self::$_can_do_advanced < 0 ) {
-            $filemod = cms_utils::get_module('FileManager');
+        static $_can_do_advanced = null;
+        if( $_can_do_advanced === null ) {
             $config = cmsms()->GetConfig();
-            if( startswith($config['uploads_path'],$config['root_path']) && $filemod->AdvancedAccessAllowed() ) {
-                self::$_can_do_advanced = 1;
+            if( !empty($config['developer_mode']) ) {
+                $_can_do_advanced = 2;
             }
             else {
-                self::$_can_do_advanced = 0;
+                $mod = cms_utils::get_module('FileManager');
+                if( $mod->AdvancedAccessAllowed() && //user-permission test
+                    startswith($config['uploads_path'],CMS_ROOT_PATH) ) { //should never fail i.e. useless
+                    $_can_do_advanced = 1;
+                }
+                else {
+                    $_can_do_advanced = 0;
+                }
             }
         }
-        return self::$_can_do_advanced;
+        return $_can_do_advanced;
     }
 
+    /**
+     * Report whether 'developer_mode' is currently configured or else
+     * the current user has 'Use FileManager Advanced' permission and
+     * also FileManager-module 'advancedmode' preference is true.
+     *
+     * @return bool indicating both tests were passed
+     */
     public static function check_advanced_mode()
     {
-        $filemod = cms_utils::get_module('FileManager');
-        $a = self::can_do_advanced();
-        $b = $filemod->GetPreference('advancedmode',0);
-        if( $a && $b ) return TRUE;
-        return FALSE;
+        // site-configuration test and current-user 'Use FileManager Advanced' permission test
+        $val = self::can_do_advanced();
+        switch ($val) {
+            case 2:
+                return TRUE; //$config['developer_mode']
+            case 1:
+                // module-property test to supplement current-user test
+                $mod = cms_utils::get_module('FileManager');
+                return $mod->GetPreference('advancedmode',FALSE) != FALSE;
+            default:
+                return FALSE;
+        }
     }
 
+    /**
+     * Get the cwd value, a site-root-relative filepath with leading separator
+     * @return string, maybe empty (in advanced mode)
+     */
     public static function get_default_cwd()
     {
-        $config = \cms_config::get_instance();
-        $advancedmode=filemanager_utils::check_advanced_mode();
-        $dir = $config['uploads_path'];
-        if( !startswith($dir,CMS_ROOT_PATH) ) $dir = self::join_path(CMS_ROOT_PATH, 'uploads');
-        if( $advancedmode ) $dir = CMS_ROOT_PATH;
+        if( self::check_advanced_mode() ) {
+            $dir = CMS_ROOT_PATH;
+        }
+        else {
+            $config = cms_config::get_instance();
+            $dir = $config['uploads_path'];
+            if( !startswith($dir,CMS_ROOT_PATH) ) {
+                $dir = self::join_path(CMS_ROOT_PATH,'uploads');
+            }
+        }
 
-        $dir = cms_relative_path( $dir, CMS_ROOT_PATH );
+        $dir = cms_relative_path($dir,CMS_ROOT_PATH);
         return $dir;
     }
 
+    /**
+     *
+     * @param string $path Site-rootpath-relative filepath
+     *  with leading separator or maybe empty
+     *
+     * @return bool indicating $path validity
+     */
     public static function test_valid_path($path)
     {
-        // returns false if invalid.
-        $config = \cms_config::get_instance();
-        $advancedmode = filemanager_utils::check_advanced_mode();
-
-        $prefix = CMS_ROOT_PATH;
-        if( $path === '/' ) $path = null;
-        $path = self::join_path($prefix,$path);
-        $rpath = realpath($path);
-        if( $rpath === FALSE ) return false;
-
-        if (!$advancedmode) {
-            // uploading in 'non advanced mode', path has to start with the upload dir.
-            $uprp = realpath($config['uploads_path']);
-            if (startswith($rpath,$uprp)) return true;
+        if( !($path == '/' || $path == '\\' || $path == '') ) {
+            $path = self::join_path(CMS_ROOT_PATH,$path);
         }
         else {
-            // advanced mode, path has to start with the root path.
-            $rprp = realpath($config['root_path']);
-            if (startswith($path,$rprp)) return true;
+            $path = CMS_ROOT_PATH;
         }
-        return false;
+        $rpath = realpath($path);
+        if( !$rpath ) return FALSE;
+
+        if( !self::check_advanced_mode() ) {
+            // 'non advanced mode', path must start with the uploads path.
+            $config = cms_config::get_instance();
+            $uprp = realpath($config['uploads_path']);
+            if( startswith($rpath,$uprp) ) return TRUE;
+        }
+        else {
+            // advanced mode, path must start with the root path.
+            $rprp = realpath(CMS_ROOT_PATH);
+            if( startswith($rpath,$rprp) ) return TRUE;
+        }
+        return FALSE;
     }
 
+    /**
+     *
+     * @return string
+     */
     public static function get_cwd()
     {
         // check the path
-        $path = cms_userprefs::get('filemanager_cwd',self::get_default_cwd());
+        $path = cms_userprefs::get('filemanager_cwd');
+        if( !$path ) $path = self::get_default_cwd();
         if( !self::test_valid_path($path) ) {
             $path = self::get_default_cwd();
         }
@@ -116,455 +175,719 @@ final class filemanager_utils
         return $path;
     }
 
+    /**
+     * Record current user's cwd preference
+     * A site-root-relative filepath with leading separator or maybe empty
+     *
+     * @param string $path filesystem path absolute or site-root-relative
+     */
     public static function set_cwd($path)
     {
-        if( startswith($path,CMS_ROOT_PATH) ) $path = cms_relative_path($path,CMS_ROOT_PATH);
-        $advancedmode = self::check_advanced_mode();
-
+        if( startswith($path,CMS_ROOT_PATH) ) {
+            $rpath = realpath($path);
+        }
+        else {
+            $tmp = self::join_path(CMS_ROOT_PATH,$path);
+            $rpath = realpath($tmp);
+        }
         // validate the path.
-        $tmp = self::join_path(CMS_ROOT_PATH,$path);
-        $tmp = realpath($tmp);
-        if( !$tmp || !is_dir($tmp) ) throw new Exception('Cannot set current working directory to an invalid path');
-        $newpath = cms_relative_path($tmp,CMS_ROOT_PATH);
+        if( !$rpath || !is_dir($rpath) ) throw new Exception('Cannot set current working directory to an invalid path');
+        $newpath = cms_relative_path($rpath,CMS_ROOT_PATH);
         if( !self::test_valid_path($newpath) ) throw new Exception('Cannot set current working directory to an invalid path');
 
-        $newpath = str_replace('\\','/',$newpath);
         cms_userprefs::set('filemanager_cwd',$newpath);
+        cms_userprefs::set('filemanager_cwd_recorded',time()); // support timeout
     }
 
-
-    public static function join_path()
+    /**
+     * This is NOT for constructing URLs
+     * See also cms_join_path()
+     *
+     * @param varargs $args
+     * @return string, maybe empty
+     */
+    public static function join_path(...$args)
     {
-        $args = func_get_args();
-        if( count($args) < 1 ) return;
+        if( !$args ) return '';
         if( count($args) < 2 ) return $args[0];
 
-        $args2 = array();
-        for( $i = 0; $i < count($args); $i++ ) {
-            if( $args[$i] == '' ) continue;
-            if( $i != 0 && (startswith($args[$i],'/') || startswith($args[$i],'\\')) ) $args[$i] = substr($args[$i],1);
-            if( endswith($args[$i],'/') || endswith($args[$i],'\\') ) $args[$i] = substr($args[$i],0,-1);
-            $args2[] = $args[$i];
-        }
-
-        return implode(DIRECTORY_SEPARATOR,$args2);
+        $tmp = cms_join_path(...$args);
+        return preg_replace('~[\\\\/]+~',DIRECTORY_SEPARATOR,$tmp); // scrub adjacent separators
     }
 
+    /**
+     *
+     * @return string
+     */
     public static function get_full_cwd()
     {
         $path = self::get_cwd();
-        $config = cmsms()->GetConfig();
         if( !self::test_valid_path($path) ) $path = self::get_default_cwd();
-        $base = $config['root_path'];
-        $realpath = self::join_path($base,$path);
-        return $realpath;
+        return self::join_path(CMS_ROOT_PATH,$path);
     }
 
+    /**
+     *
+     * @return string
+     */
     public static function get_cwd_url()
     {
         $path = self::get_cwd();
-        $config = cmsms()->GetConfig();
         if( !self::test_valid_path($path) ) $path = self::get_default_cwd();
-        $url = $config['root_url'].'/'.$path;
-        return $url;
+        return CMS_ROOT_URL.'/'.strtr($path,'\\','/');
     }
 
-    public static function is_image_file($file)
+    /**
+     *
+     * @param string $path
+     * @return bool
+     */
+    public static function is_hidden_file($path)
     {
-        // it'd be nice to check mime type here.
-        $ext = substr(strrchr($file, '.'), 1);
-        if( !$ext ) return FALSE;
+        static $macos; // whether running on some flavour of MacOS
+        static $winos; // whether running on some flavour of Windows
+        if( !isset($macos) ) {
+            if( function_exists('php_uname') && ($tmp = php_uname('s')) ) { //might return null (undocumented)
+                $winos = stripos($tmp,'windo') !== FALSE;
+                $macos = !$winos && stripos($tmp,'darwin') !== FALSE;
+            }
+            else {
+                $winos = (PATH_SEPARATOR == ';');
+                $macos = !$winos && (PHP_EOL == "\r" || 0); // TODO robust fallack mechanism for OS X+
+            }
+        }
 
-        $tmp = array('gif','jpg','jpeg','png');
-        if( in_array(strtolower($ext),$tmp) ) return TRUE;
-        return FALSE;
+        $tmp = basename($path);
+        switch( $tmp[0] ) {
+            case '.':
+                return !$winos;
+            case '_':
+                return $macos;
+            case '~':
+                return $winos;
+            default:
+                if( $winos ) {
+                    if( (int)ini_get('safe_mode_exec_dir') == 0 ) { //exec() not blocked
+                        $path = str_replace('/','\\',$path);
+                        if( ($res1 = exec('attrib ' . escapeshellarg($path),$outlines,$res)) !== FALSE ) {
+                            $res2 = reset($outlines); //TODO is the wanted member first? or use $res1?
+                            if( ($p = strpos($res2,'H')) !== FALSE ) {
+                                return preg_match('~ ([A-Z]{1,2}:)?\\~',$res2,null,0,$p + 1); //want whitespace after 'H' and before path-start
+                            }
+                        }
+                    }
+                }
+                return FALSE;
+        }
     }
 
-    public static function is_archive_file($file)
+    /**
+     *
+     * @param string $path
+     * @return bool
+     */
+    public static function is_image_file($path)
     {
-        $tmp = array('.tar.gz','.tar.bz2','.zip','.tgz');
-        foreach( $tmp as $t2 ) {
-            if( endswith(strtolower($file),$t2) ) return TRUE;
+        if( !isset(self::$helper) ) {
+            self::$helper = new FileTypeHelper();
+        }
+        return self::$helper->is_image($path);
+    }
+
+    /**
+     *
+     * @param string $path
+     * @return bool
+     */
+    public static function is_archive_file($path)
+    {
+        if( !isset(self::$helper) ) {
+            self::$helper = new FileTypeHelper();
+        }
+        return self::$helper->is_archive($path);
+    }
+
+    /**
+     *
+     * @since 1.6.14
+     * @param string $path
+     * @return bool
+     */
+    public static function is_restricted_file($path)
+    {
+        $bn = basename($path);
+        $a = strrpos($bn,'.'); //is_executable() checks file-extension
+        if( $a > 0 ) { //also exclude hidden file
+            if( !isset(self::$helper) ) {
+                self::$helper = new FileTypeHelper();
+            }
+            if( self::$helper->is_executable($path)) {
+                return TRUE;
+            }
+            if( substr_compare($bn,'.js',$a,3,TRUE) == 0 ) {
+                return TRUE;
+            }
         }
         return FALSE;
     }
 
-    public static function get_file_list($path = '')
+    /**
+     *
+     * @param string $path CMS_ROOT_PATH-relative, maybe empty. Default ''
+     * @param string $sortby Optional sort-type
+     *  'name','size' etc with 'asc' or 'desc' suffix. Or 'none'.
+     *  Default '' hence $_SESSION['FMsortby'] or 'nameasc'
+     * @return array
+     */
+    public static function get_file_list($path = '',$sortby ='')//: array
     {
         if( !$path ) $path = self::get_cwd();
         $advancedmode = self::check_advanced_mode();
-        $filemod = cms_utils::get_module('FileManager');
-        $showhiddenfiles=$filemod->GetPreference('showhiddenfiles','1');
-        $result=array();
-        $config = \cms_config::get_instance();
+        $mod = cms_utils::get_module('FileManager');
+        $showhiddenfiles = (bool)$mod->GetPreference('showhiddenfiles');
+        $result = [];
 
-        // convert the cwd into a real path... slightly different for advanced mode.
-        $realpath = self::join_path($config['root_path'],$path);
+        // convert the path|cwd to an absolute path
+        $basepath = self::join_path(CMS_ROOT_PATH,$path);
 
-        $dir=@opendir($realpath);
-        if (!$dir) return false;
-        while ($file=readdir($dir)) {
-            if ($file=='.') continue;
-            if ($file=='..') {
+        $dir = @opendir($basepath);
+        if (!$dir) return [];
+        while ($file = readdir($dir)) {
+            if ($file == '.') continue;
+            if ($file == '..') {
                 // can we go up.
-                if( $path == self::get_default_cwd() || $path == '/' ) continue;
-            } else {
-                if ($file[0]=='.' || $file[0] == '_' || $file[0] == '~') {
-                    if (($showhiddenfiles!=1) || (!$advancedmode)) continue;
-                }
+                if( $path == '/' || $path == self::get_default_cwd() ) continue;
+            } elseif( !($advancedmode || $showhiddenfiles) ) {
+                if( self::is_hidden_file($basepath.DIRECTORY_SEPARATOR.$file)) continue;
             }
 
             if (substr($file,0,6)=='thumb_') {
-                //Ignore thumbnail files of showing thumbnails is off
-                if ($filemod->GetPreference('showthumbnails','1')=='1') continue;
+                //ignore thumbnail files if showing thumbnails is off
+                if (!$mod->GetPreference('showthumbnails',1)) continue;
             }
 
             // build the file info array.
-            $fullname = self::join_path($realpath,$file);
-            $info=array();
-            $info['name']=$file;
-            $info['dir'] = FALSE;
-            $info['image'] = FALSE;
-            $info['archive'] = FALSE;
+            $info = [
+                'name' => $file,
+                'image' => FALSE,
+                'archive' => FALSE
+            ];
+            $fullname = self::join_path($basepath,$file);
             $info['mime'] = self::mime_content_type($fullname);
-            $statinfo=stat($fullname);
+            $statinfo = stat($fullname); //array | false
+            $info['size'] = $statinfo ? $statinfo['size'] : 0;
+            $info['date'] = $statinfo ? $statinfo['mtime'] : ''; //default no display
 
             if (is_dir($fullname)) {
-                $info['dir']=true;
-                $info['ext']='';
-                $info['fileinfo']=GetFileInfo($fullname,'',true);
+                $info['dir'] = TRUE;
+                $info['ext'] = '';
+                $info['fileinfo'] = GetFileInfo($fullname,'',TRUE);
             } else {
-                $info['size']=$statinfo['size'];
-                $info['date']=$statinfo['mtime'];
-                $info['url']=self::join_path($config['root_url'], $path, $file);
-                $info['url'] = str_replace('\\','/',$info['url']); // windoze both sucks, and blows.
-                $explodedfile=explode('.', $file); $info['ext']=array_pop($explodedfile);
-                $info['fileinfo']=GetFileInfo(self::join_path($realpath,$file),$info['ext'],false);
+                $info['dir'] = FALSE;
+                $tmp = trim(strtr($path,'\\','/'),' /');
+                $info['url'] = implode('/',[CMS_ROOT_URL,$tmp,$file]);
+                $info['exec'] = self::is_restricted_file($fullname);
+                $a = strrpos($file,'.');
+                $info['ext'] = ($a > 0) ? substr($file,$a + 1) : '';
+                $info['fileinfo'] = GetFileInfo($fullname,$info['ext']);
             }
 
             // test for archive
-            $info['archive'] = self::is_archive_file($file);
+            $info['archive'] = self::is_archive_file($fullname);
 
             // test for image
-            $info['image'] = self::is_image_file($file);
+            $info['image'] = self::is_image_file($fullname);
 
-            if (function_exists('posix_getpwuid')) {
-                $userinfo = @posix_getpwuid($statinfo['uid']);
-                $info['fileowner']= isset($userinfo['name'])?$userinfo['name']:$filemod->Lang('unknown');
+            $info['writable'] = is_writable($fullname);
+            if ($statinfo) {
+                $mode = $statinfo['mode'];
+            } elseif ($info['writable']) {
+                $mode = is_readable($fullname) ? 0600 : 0400; //TOO BAD about access/execute, other users
+            } elseif (is_readable($fullname)) {
+                $mode = 0400;
             } else {
-                $info['fileowner']='N/A';
+                $mode = 0;
             }
+            $info['permissions'] = self::format_permissions($mode,$mod->GetPreference('permissionstyle','xxx'));
 
-            $info['writable']=is_writable(self::join_path($realpath,$file));
-            if (function_exists('posix_getpwuid')) {
-                $info['permissions']=filemanager_utils::format_permissions($statinfo['mode'],$filemod->GetPreference('permissionstyle','xxx'));
-            } else {
-                if ($info['writable']) {
-                    $info['permissions']='R';
-                } else {
-                    $info['permissions']='R';
-                }
+            $result[] = $info;
+        }
+        closedir($dir);
+
+        if (!$sortby) {
+            if (!empty($_SESSION['FMsortby'])) {
+                $sortby = $_SESSION['FMsortby'];
             }
-
-            $result[]=$info;
+            else {
+                $sortby = 'nameasc';
+            }
         }
 
-        $tmp = usort($result,'filemanager_utils::_FileManagerCompareFiles');
+        usort($result, function ($a, $b) use ($sortby) {
+            if ($a['name'] == '..') return -1;
+            if ($b['name'] == '..') return 1;
+/*          print_r($a);
+            print_r($b);*/
+            //Handle if only one is a dir
+            if ($a['dir'] xor $b['dir']) {
+                return ($a['dir']) ? -1 : 1;
+            }
+
+            switch($sortby) {
+            case 'sizeasc':
+                if (!$a['dir'] || !$b['dir']) {
+                    $n = (int)($a['size'] - $b['size']);
+                    if ($n !== 0) return $n;
+                }
+                return strncasecmp($a['name'],$b['name'],strlen($a['name']));
+
+            case 'sizedesc':
+                if (!$a['dir'] || !$b['dir']) {
+                    $n = (int)($b['size'] - $a['size']);
+                    if ($n !== 0) return $n;
+                }
+                return strncasecmp($a['name'],$b['name'],strlen($a['name']));
+
+            case 'datedasc':
+                $n = (int)($a['date'] - $b['date']);
+                return ($n !== 0) ? $n : strncasecmp($a['name'],$b['name'],strlen($a['name']));
+
+            case 'datedesc':
+                $n = (int)($b['date'] - $a['date']);
+                return ($n !== 0) ? $n : strncasecmp($a['name'],$b['name'],strlen($a['name']));
+
+            case 'typeasc':
+                $n = strcasecmp($a['mime'], $b['mime']);
+                return ($n !== 0) ? $n : strncasecmp($a['name'],$b['name'],strlen($a['name']));
+
+            case 'typedesc':
+                $n = strcasecmp($b['mime'], $a['mime']);
+                return ($n !== 0) ? $n : strncasecmp($a['name'],$b['name'],strlen($a['name']));
+
+            case 'namedesc':
+                return strncasecmp($b['name'],$a['name'],strlen($b['name']));
+
+            case 'none':
+                return 0;
+
+            default:
+                return strncasecmp($a['name'],$b['name'],strlen($a['name']));
+            }
+        });
         return $result;
     }
 
-    private static function _FileManagerCompareFiles($a,$b,$forcesort="") {
-        $filemod = cms_utils::get_module('FileManager');
-        $sortby=$filemod->GetPreference("sortby","nameasc");
-        if ($forcesort!="") $sortby=$forcesort;
-        if ($a["name"]=="..") return -1;
-        if ($b["name"]=="..") return 1;
-        /*print_r($a);
-          print_r($b);*/
-        //Handle if only one is a dir
-        if ($a["dir"] XOR $b["dir"]) {
-            if ($a["dir"]) return -1; else return 1;
-        }
-
-        switch($sortby) {
-        case "nameasc" : return strncasecmp($a["name"],$b["name"],strlen($a["name"]));
-        case "namedesc" : return strncasecmp($b["name"],$a["name"],strlen($b["name"]));
-        case "sizeasc" : {
-            if ($a["dir"] && $b["dir"]) return self::_FileManagerCompareFiles($a,$b,"nameasc");
-            return ($a["size"]>$b["size"]);
-        }
-        case "sizedesc" : {
-            if ($a["dir"] && $b["dir"]) return self::_FileManagerCompareFiles($a,$b,"nameasc");
-            return ($b["size"]>$a["size"]);
-        }
-        default : strncasecmp($a["name"],$b["name"],strlen($a["name"]));
-        }
-        return 0;
-    }
-
+    /**
+     *
+     * @return string maybe empty
+     */
     public static function mime_content_type($filename)
     {
-        $mime_type = null;
-        if( version_compare(phpversion(),'5.3','ge') && function_exists('finfo_open') ) {
+        if( function_exists('mime_content_type') ) {
+            $mime_type = mime_content_type($filename);
+            if( $mime_type ) return $mime_type;
+        }
+        // this is effectively the same as FileTypeHelper->get_mime_type()
+        if( function_exists('finfo_open') ) {
             $fh = finfo_open(FILEINFO_MIME_TYPE);
             if( $fh ) {
                 $mime_type = finfo_file($fh,$filename);
-                finfo_close($fh);
-                return $mime_type;
+                if( PHP_VERSION_ID < 80500 ) finfo_close($fh);
+                if( $mime_type ) return $mime_type;
             }
         }
+        // fall back to a simple extension-based mechanism
+        $a = strrpos($filename,'.');
+        $ext = ($a > 0) ? substr($filename,$a + 1) : '';
+        if( $ext ) {
+            $ext = strtolower($ext);
+            $mime_types = [
+                'txt' => 'text/plain',
+                'htm' => 'text/html',
+                'html' => 'text/html',
+                'php' => 'text/html',
+                'css' => 'text/css',
+                'js' => 'application/javascript',
+                'json' => 'application/json',
+                'xml' => 'application/xml',
+                'swf' => 'application/x-shockwave-flash',
+                'flv' => 'video/x-flv',
 
-        if(!function_exists('mime_content_type')) {
+                // images
+                'png' => 'image/png',
+                'jpeg' => 'image/jpeg',
+                'jpe' => 'image/jpeg',
+                'jpg' => 'image/jpeg',
+                'gif' => 'image/gif',
+                'webp' => 'image/webp',
+                'avif' => 'image/avif',
+                'bmp' => 'image/bmp',
+                'wbmp' => 'image/vnd.wap.wbmp',
+                'ico' => 'image/vnd.microsoft.icon',
+                'tiff' => 'image/tiff',
+                'tif' => 'image/tiff',
+                'svg' => 'image/svg+xml',
+                'svgz' => 'image/svg+xml',
+                'apng' => 'image/apng',
+//              'heic' => 'image/heic', //iOS
+//              'heif' => 'image/heif',
 
-            // Try to recreate a "very" simple mechanism for mime_content_type($filename);
-            function mime_content_type($filename) {
+                // archives
+                'zip' => 'application/zip',
+                'rar' => 'application/x-rar-compressed',
+                'exe' => 'application/x-msdownload',
+                'msi' => 'application/x-msdownload',
+                'cab' => 'application/vnd.ms-cab-compressed',
 
-                $mime_types = array(
-                    'txt' => 'text/plain',
-                    'htm' => 'text/html',
-                    'html' => 'text/html',
-                    'php' => 'text/html',
-                    'css' => 'text/css',
-                    'js' => 'application/javascript',
-                    'json' => 'application/json',
-                    'xml' => 'application/xml',
-                    'swf' => 'application/x-shockwave-flash',
-                    'flv' => 'video/x-flv',
+                // audio/video
+                'mp3' => 'audio/mpeg',
+                'qt' => 'video/quicktime',
+                'mov' => 'video/quicktime',
+                'webm' => 'video/webm',
 
-                    // images
-                    'png' => 'image/png',
-                    'jpe' => 'image/jpeg',
-                    'jpeg' => 'image/jpeg',
-                    'jpg' => 'image/jpeg',
-                    'gif' => 'image/gif',
-                    'bmp' => 'image/bmp',
-                    'ico' => 'image/vnd.microsoft.icon',
-                    'tiff' => 'image/tiff',
-                    'tif' => 'image/tiff',
-                    'svg' => 'image/svg+xml',
-                    'svgz' => 'image/svg+xml',
+                // adobe
+                'pdf' => 'application/pdf',
+                'psd' => 'image/vnd.adobe.photoshop',
+                'ai' => 'application/postscript',
+                'eps' => 'application/postscript',
+                'ps' => 'application/postscript',
 
-                    // archives
-                    'zip' => 'application/zip',
-                    'rar' => 'application/x-rar-compressed',
-                    'exe' => 'application/x-msdownload',
-                    'msi' => 'application/x-msdownload',
-                    'cab' => 'application/vnd.ms-cab-compressed',
+                // ms office
+                'doc' => 'application/msword',
+                'rtf' => 'application/rtf',
+                'xls' => 'application/vnd.ms-excel',
+                'ppt' => 'application/vnd.ms-powerpoint',
 
-                    // audio/video
-                    'mp3' => 'audio/mpeg',
-                    'qt' => 'video/quicktime',
-                    'mov' => 'video/quicktime',
-
-                    // adobe
-                    'pdf' => 'application/pdf',
-                    'psd' => 'image/vnd.adobe.photoshop',
-                    'ai' => 'application/postscript',
-                    'eps' => 'application/postscript',
-                    'ps' => 'application/postscript',
-
-                    // ms office
-                    'doc' => 'application/msword',
-                    'rtf' => 'application/rtf',
-                    'xls' => 'application/vnd.ms-excel',
-                    'ppt' => 'application/vnd.ms-powerpoint',
-
-                    // open office
-                    'odt' => 'application/vnd.oasis.opendocument.text',
-                    'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
-                    );
-
-                $ext = explode('.',$filename);
-                $ext = strtolower(array_pop($ext));
-                if (array_key_exists($ext, $mime_types)) {
-                    return $mime_types[$ext];
-                }
-                elseif (function_exists('finfo_open')) {
-                    $finfo = finfo_open(FILEINFO_MIME);
-                    $mimetype = finfo_file($finfo, $filename);
-                    finfo_close($finfo);
-                    return $mimetype;
-                }
-                else {
-                    //Nothing instead of "application/octet-stream"
-                    return '';
-                }
+                // open office
+                'odt' => 'application/vnd.oasis.opendocument.text',
+                'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
+            ];
+            if (array_key_exists($ext, $mime_types)) {
+                 return $mime_types[$ext];
             }
         }
-
-        // Now we can call this function
-        return mime_content_type($filename);
+        //empty instead of "application/octet-stream"
+        return '';
     }
 
-    // get post max size and give a portion of it to smarty for max chunk size.
+    /**
+     *
+     * @param mixed $val
+     * @return int
+     */
     public static function str_to_bytes($val)
     {
-        if(is_string($val) && $val != '') {
+        if( $val && is_string($val) ) {
             $val = trim($val);
             $last = strtolower($val[strlen($val)-1]);
             if( $last < '<' || $last > 9 ) $val = substr($val,0,-1);
-            $val = (int) $val;
+            $val = (int)$val;
             switch($last) {
             case 'g':
                 $val *= 1024;
+                //no break here
             case 'm':
                 $val *= 1024;
+                //no break here
             case 'k':
                 $val *= 1024;
             }
         }
-
         return (int) $val;
     }
 
+    /**
+     * Recursively get directories in and descendent from $startdir
+     *
+     * @param string $startdir absolute filepath
+     * @param bool $showhiddenfiles
+     * @param string $prefix e.g. DIRECTORY_SEPARATOR
+     *
+     * @return array each member having key and value like prefix.startdir-rel-subdir
+     * or maybe empty
+     */
+    private static function get_dirs($startdir,$showhiddenfiles,$prefix)
+    {
+        if( !is_dir($startdir) ) return [];
+
+        $res = [];
+        $dh = opendir($startdir);
+        while( FALSE !== ($entry = readdir($dh)) ) {
+            if( $entry == '.' || $entry == '..' || $entry == '.svn' || $entry == '.git' ) continue;
+            $full = self::join_path($startdir,$entry);
+            if( !is_dir($full) ) continue;
+            if( !$showhiddenfiles && self::is_hidden_file($full) ) continue;
+
+            $res[$prefix.$entry] = $prefix.$entry;
+            $tmp = self::get_dirs($full,$showhiddenfiles,$prefix.$entry.DIRECTORY_SEPARATOR); //recurse
+            if( $tmp && is_array($tmp) ) $res = array_merge($res,$tmp);
+        }
+        closedir($dh);
+        return $res;
+    }
+
+    /**
+     *
+     * @return array each member having key and value like dir-sep.startdir-relative-subdir
+     */
     public static function get_dirlist()
     {
-        $config = CmsApp::get_instance()->GetConfig();
         $mod = cms_utils::get_module('FileManager');
-        $showhiddenfiles = $mod->GetPreference('showhiddenfiles');
-        $startdir = $config['uploads_path'];
+        $showhiddenfiles = (bool)$mod->GetPreference('showhiddenfiles');
         $advancedmode = self::check_advanced_mode();
-        if( $advancedmode ) $startdir = $config['root_path'];
-
-        // now get a simple list of all of the directories we have 'write' access to.
-        function fmutils_get_dirs($startdir,$prefix = '/') {
-            $res = array();
-            if( !is_dir($startdir) ) return;
-
-            global $showhiddenfiles;
-            $dh = opendir($startdir);
-            while( false !== ($entry = readdir($dh)) ) {
-                if( $entry == '.' ) continue;
-                $full = filemanager_utils::join_path($startdir,$entry);
-                if( !is_dir($full) ) continue;
-                if( !$showhiddenfiles && ($entry[0] == '.' || $entry[0] == '_') ) continue;
-
-                if( $entry == '.svn' || $entry == '.git' ) continue;
-                $res[$prefix.$entry] = $prefix.$entry;
-                $tmp = fmutils_get_dirs($full,$prefix.$entry.'/');
-                if( is_array($tmp) && count($tmp) ) $res = array_merge($res,$tmp);
-            }
-            closedir($dh);
-            return $res;
+        if( $advancedmode ) {
+            $startdir = CMS_ROOT_PATH;
         }
-
-        $output = fmutils_get_dirs($startdir,'/');
-        if( is_array($output) && count($output) ) {
+        else {
+            $config = cms_config::get_instance();
+            $startdir = $config['uploads_path'];
+        }
+        $output = self::get_dirs($startdir,$showhiddenfiles,DIRECTORY_SEPARATOR);
+        if( $output && is_array($output) ) {
             ksort($output);
             $tmp = [];
+            $sep = DIRECTORY_SEPARATOR;
             if( $advancedmode ) {
-                $tmp['/'] = '/'.basename($startdir).' ('.$mod->Lang('site_root').')';
+                $tmp[$sep] = $sep.basename($startdir).' ('.$mod->Lang('site_root').')';
             }
             else {
-                $tmp['/'] = '/'.basename($startdir).' ('.$mod->Lang('top').')';
+                $tmp[$sep] = $sep.basename($startdir).' ('.$mod->Lang('top').')';
             }
             $output = array_merge($tmp,$output);
         }
         return $output;
     }
 
-    public static function create_thumbnail($src, $dest = null, $force = FALSE)
+    /**
+     *
+     * @param string $src Filepath
+     * @param string $dest Default ''
+     * @param bool $force Default false
+     *
+     * @return bool
+     */
+    public static function create_thumbnail($src,$dest = '',$force = FALSE)
     {
         if( !file_exists($src) ) return FALSE;
         if( !$dest ) {
             $bn = basename($src);
             $dn = dirname($src);
-            $dest = $dn.'/thumb_'.$bn;
+            $dest = $dn.DIRECTORY_SEPARATOR.'thumb_'.$bn;
         }
 
         if( !$force && (file_exists($dest) && !is_writable($dest) ) ) return FALSE;
-        
+
+        $mime = self::mime_content_type($src);
+        if( !$mime ) return FALSE;
+
+        if( $mime == 'image/svg+xml' || $mime == 'image/svg' ) {
+            if( $force ) {
+                if( is_file($dest) ) {
+                    unlink($dest);
+                }
+                copy($src,$dest); //TODO suitably replicate content as $dest
+            }
+            elseif( !is_file($dest) ) {
+                copy($src,$dest);
+            }
+            return TRUE;
+        }
+
         $info = getimagesize($src);
-        if( !$info || !isset($info['mime']) ) return FALSE;
+        if( !$info ) return FALSE;
+
+        $src_width = $info[0];
+        $src_height = $info[1];
+        $thumb_width = cms_siteprefs::get('thumbnail_width',96);
+        $thumb_height = cms_siteprefs::get('thumbnail_height',96);
+        $src_x = 0;
+        $src_y = 0;
+        self::get_thumbnail_size($src_width,$src_height,$thumb_width,$thumb_height,$src_x,$src_y);
+
+        // if suitably-sized for thumbnail, copy it
+        if( $info[0] <= $thumb_width && $info[1] <= $thumb_height ) {
+            if( $force ) {
+                if( is_file($dest) ) {
+                    unlink($dest);
+                }
+                copy($src,$dest);
+            }
+            elseif( !is_file($dest) ) {
+                copy($src,$dest);
+            }
+            return TRUE;
+        }
 
         $i_src = imagecreatefromstring(file_get_contents($src));
-        $width = cms_siteprefs::get('thumbnail_width',96);
-        $height = cms_siteprefs::get('thumbnail_height',96);
+        $i_dest = imagecreatetruecolor($thumb_width,$thumb_height);
 
-        $i_dest = imagecreatetruecolor($width,$height);
-        imagealphablending($i_dest,FALSE);
-        $color = imageColorAllocateAlpha($i_src, 255, 255, 255, 127);
+        //TODO some of the following are type-spacific
+        imagealphablending($i_dest,FALSE); //TODO relevant if format has alpha channel
+        $color = imageColorAllocateAlpha($i_src,255,255,255,127); // ditto
         imagecolortransparent($i_dest,$color);
         imagefill($i_dest,0,0,$color);
-        imagesavealpha($i_dest,TRUE);
-        imagecopyresampled($i_dest,$i_src,0,0,0,0,$width,$height,imagesx($i_src),imagesy($i_src));
+        imagesavealpha($i_dest,TRUE); //TODO for png, webp and avif only
 
-        $res = null;
-        switch( $info['mime'] ) {
+        imagecopyresampled($i_dest,$i_src,0,0,$src_x,$src_y,$thumb_width,$thumb_height,$src_width,$src_height);
+        // c.f. FileTypeHelper image-file extensions 'jpg','jpeg','jpe','bmp','wbmp','gif','png','tiff','tif','ico','webp','avif','heif','svg','apng'
+        switch( $mime ) {
         case 'image/gif':
             $res = imagegif($i_dest,$dest);
             break;
         case 'image/png':
+        case 'image/apng': //ok here ?
             $res = imagepng($i_dest,$dest,9);
             break;
         case 'image/jpeg':
-            $res = imagejpeg($i_dest,$dest,100);
+            $res = imagejpeg($i_dest,$dest,80);
             break;
+        case 'image/bmp':
+        case 'image/x-ms-bmp':
+            if (PHP_VERSION_ID >= 70200) {
+                $res = imagebmp($i_dest,$dest);
+            } else {
+                $res = FALSE;
+            }
+            break;
+        case 'image/vnd.wap.wbmp':
+            $res = imagewbmp($i_dest,$dest); // black foreground
+            break;
+        case 'image/webp':
+            $res = imagewebp($i_dest,$dest,80);
+            break;
+        case 'image/avif':
+            if (PHP_VERSION_ID >= 80100 && function_exists('imageavif')) {
+                $res = imageavif($i_dest,$dest,80,6);
+            } else {
+                $res = FALSE;
+            }
+            break;
+        default:
+            $res = FALSE;
         }
-
-        if( !$res ) return FALSE;
-        return TRUE;
+        return ($res != FALSE);
     }
 
-    public static function format_filesize($_size) {
+    /**
+     * Alters some/all of the provided parameters, based on their supplied values
+     * Size will be cropped to retain image ratio
+     * @since 2.2.21F2
+     *
+     * @param int $src_width width of the source image > 0
+     * @param int $src_height height of the source image > 0
+     * @param int $thumb_width optional width of thumbnail to be created Default 0 hence sitepref
+     * @param int $thumb_height optional height of thumbnail to be created Default 0 hence sitepref
+     * @param int $src_x optional x-coordinate of source point Default 0
+     * @param int $src_y optional y-coordinate of source point Default 0
+     */
+    private static function get_thumbnail_size(
+        &$src_width,
+        &$src_height,
+        &$thumb_width = 0,
+        &$thumb_height = 0,
+        &$src_x = 0,
+        &$src_y = 0)
+    {
+        // if one dimension not set, calculate width/height ratio
+        if ($thumb_width > 0 && $thumb_height > 0) {
+            $thumb_width = (int)$thumb_width;
+            $thumb_height = (int)$thumb_height;
+        } elseif ($thumb_width == 0) {  // but not $thumb_height
+            if ($src_height == 0) {
+                return;
+            }
+            $thumb_width = (int)($src_width / $src_height * $thumb_height);
+        } else { // $thumb_height == 0 but not $thumb_width
+            if ($src_width == 0) {
+                return;
+            }
+            $thumb_height = (int)($src_height / $src_width * $thumb_width);
+        }
+        if ($thumb_height == 0) {
+            return;
+        }
+        // set $src_x|$src_y, $src_width|$src_height to crop-related values if required
+        $ratio_src = $src_width / $src_height;
+        $ratio_thumb = $thumb_width / $thumb_height;
+        if ($ratio_src >= $ratio_thumb) { // width to be clipped
+            $src_x = (int)(($src_width - $src_height * $ratio_thumb) / 2);
+            $src_width = (int)($src_height * $ratio_thumb);
+        } else { // height to be clipped
+            $src_y = (int)(($src_height - $src_width / $ratio_thumb) / 2);
+            $src_height = (int)($src_width / $ratio_thumb);
+        }
+    }
+
+    /**
+     *
+     * @param int $size
+     * @return array
+     */
+    public static function format_filesize($size)
+    {
         $mod = cms_utils::get_module('FileManager');
-        $unit=$mod->Lang("bytes");
-        $size=$_size;
-
-        if ($size>10000 && $size<(1024*1024)) {
-            $size=round($size/1024);
-            $unit=$mod->Lang("kb");
+        if ($size < 2048) {
+            $unit = ($size > 0) ? $mod->Lang('bytes') : '';
+            $size = trim((string)$size);
         }
-
-        if ($size>(1024*1024)) {
-            $size=round($size/(1024*1024),1);
-            $unit=$mod->Lang("mb");
+        elseif ($size <= 1048576) { //aka 1024*1024
+            $lcc = localeconv();
+            $size = round($size/1024,1);
+            $size = number_format($size, 1, $lcc['decimal_point'], $lcc['thousands_sep']);
+            $size = trim($size, '0'.$lcc['decimal_point']);
+            $unit = $mod->Lang('kb');
         }
-
-        $lcc = localeconv();
-        $size = number_format($size,0,$lcc['decimal_point'],$lcc['thousands_sep']);
-
-        $result=array();
-        $result["size"]=$size;
-        $result["unit"]=$unit;
-        return $result;
+        else {
+            $lcc = localeconv();
+            $size = round($size/1048576,1);
+            $size = number_format($size, 1, $lcc['decimal_point'], $lcc['thousands_sep']);
+            $size = trim($size, '0'.$lcc['decimal_point']);
+            $unit = $mod->Lang('mb');
+        }
+        return ['size' => $size, 'unit' => $unit];
     }
 
-    public static function format_permissions($mode,$style='xxx') {
+    /**
+     *
+     * @param int $mode
+     * @param string $style Default 'xxx'
+     * @return string
+     */
+    public static function format_permissions($mode, $style='xxx')
+    {
         switch ($style) {
         case 'xxx':
-            $owner=0;
-            if ($mode & 0400) $owner+=4;
-            if ($mode & 0200) $owner+=2;
-            if ($mode & 0100) $owner+=1;
-            $group=0;
-            if ($mode & 0040) $group+=4;
-            if ($mode & 0020) $group+=2;
-            if ($mode & 0010) $group+=1;
-            $others=0;
-            if ($mode & 0004) $others+=4;
-            if ($mode & 0002) $others+=2;
-            if ($mode & 0001) $others+=1;
+            $owner = 0;
+            if ($mode & 0400) $owner += 4;
+            if ($mode & 0200) $owner += 2;
+            if ($mode & 0100) $owner ++;
+            $group = 0;
+            if ($mode & 0040) $group += 4;
+            if ($mode & 0020) $group += 2;
+            if ($mode & 0010) $group ++;
+            $others = 0;
+            if ($mode & 0004) $others += 4;
+            if ($mode & 0002) $others += 2;
+            if ($mode & 0001) $others ++;
             return $owner.$group.$others;
 
         case 'xxxxxxxxx':
-            $owner="";
-            if ($mode & 0400) $owner.="r"; else $owner.="-";
-            if ($mode & 0200) $owner.="w"; else $owner.="-";
-            if ($mode & 0100) $owner.="x"; else $owner.="-";
-            $group="";
-            if ($mode & 0040) $group.="r"; else $group.="-";
-            if ($mode & 0020) $group.="w"; else $group.="-";
-            if ($mode & 0010) $group.="x"; else $group.="-";
-            $others="";
-            if ($mode & 0004) $others.="r"; else $others.="-";
-            if ($mode & 0002) $others.="w"; else $others.="-";
-            if ($mode & 0001) $others.="x"; else $others.="-";
+            $owner = '';
+            if ($mode & 0400) $owner.='r'; else $owner.='-';
+            if ($mode & 0200) $owner.='w'; else $owner.='-';
+            if ($mode & 0100) $owner.='x'; else $owner.='-';
+            $group = '';
+            if ($mode & 0040) $group.='r'; else $group.='-';
+            if ($mode & 0020) $group.='w'; else $group.='-';
+            if ($mode & 0010) $group.='x'; else $group.='-';
+            $others = '';
+            if ($mode & 0004) $others.='r'; else $others.='-';
+            if ($mode & 0002) $others.='w'; else $others.='-';
+            if ($mode & 0001) $others.='x'; else $others.='-';
             return $owner.$group.$others;
+
+        default:
+            return (string)$mode;
         }
     }
-} // end of class
-
-#
-# EOF
-#
+} // class

@@ -19,29 +19,32 @@ if( !is_object($modinstance) ) {
 $theme = cms_utils::get_theme_object();
 $theme->SetTitle('module_help');
 
+$modname = $this->GetName();
+$tpl = $smarty->createTemplate("module_file_tpl:$modname;local_help.tpl",null,$modname,$smarty);
+
 $our_lang = CmsNlsOperations::get_current_language();
-$smarty->assign('our_lang',$our_lang);
+$tpl->assign('our_lang',$our_lang);
 
 if( $our_lang != 'en_US' ) {
     if( $lang != '' ) {
-        $smarty->assign('mylang_text',$this->Lang('display_in_mylanguage'));
-        $smarty->assign('mylang_url',$this->create_url($id,'local_help',$returnid,array('mod'=>$module)));
+        $tpl->assign('mylang_text',$this->Lang('display_in_mylanguage'));
+        $tpl->assign('mylang_url',$this->create_url($id,'local_help',$returnid,array('mod'=>$module)));
         CmsNlsOperations::set_language('en_US');
     }
     else {
         $yourlang_url = $this->create_url($id,'local_help',$returnid,array('mod'=>$module,'lang'=>'en_US'));
-        $smarty->assign('our_lang',$our_lang);
-        $smarty->assign('englang_url',$yourlang_url);
-        $smarty->assign('englang_text',$this->Lang('display_in_english'));
+        $tpl->assign('our_lang',$our_lang);
+        $tpl->assign('englang_url',$yourlang_url);
+        $tpl->assign('englang_text',$this->Lang('display_in_english'));
     }
 }
 
-$smarty->assign('module_name',$modinstance->GetName());
-$smarty->assign('friendly_name',$modinstance->GetFriendlyName());
+$tpl->assign('module_name',$modinstance->GetName());
+$tpl->assign('friendly_name',$modinstance->GetFriendlyName());
 
-$smarty->assign('help_page',$modinstance->GetHelpPage());
+$tpl->assign('help_page',$modinstance->GetHelpPage());
 if( $our_lang != 'en_US' && $lang != '' ) {
     CmsNlsOperations::set_language($our_lang);
 }
 
-echo $this->ProcessTemplate('local_help.tpl');
+$tpl->display();
