@@ -366,9 +366,17 @@ if( isset($_POST['editsiteprefs']) ) {
         $sitedownexcludeadmins = (int)$_POST['sitedownexcludeadmins'];
         cms_siteprefs::set('sitedownexcludeadmins',$sitedownexcludeadmins);
       }
+      if( isset($_POST['use_wysiwyg']) ) {
+        $use_wysiwyg = (int)$_POST['use_wysiwyg'];
+        cms_siteprefs::set('sitedown_use_wysiwyg',$use_wysiwyg);
+      }
       $tmp = false;
       if( isset($_POST['sitedownmessage']) ) {
-        $tmp = trim(strip_tags($_POST['sitedownmessage']));
+        // if $use_wysiwyg record the entered HTML otherwise strip tags
+        // per https://github.com/tom2tom/CMSMS22XDev/pull/1
+        $tmp = ($use_wysiwyg) ?
+          trim($_POST['sitedownmessage']):
+          trim(strip_tags($_POST['sitedownmessage']));
         if( $tmp ) {
           $sitedownmessage = $tmp;
           cms_siteprefs::set('sitedownmessage',$sitedownmessage);
@@ -390,10 +398,6 @@ if( isset($_POST['editsiteprefs']) ) {
       }
       elseif( $prevsitedown && !$enablesitedownmessage ) {
         audit('','Global settings','Sitedown disabled');
-      }
-      if( isset($_POST['use_wysiwyg']) ) {
-        $use_wysiwyg = (int)$_POST['use_wysiwyg'];
-        cms_siteprefs::set('sitedown_use_wysiwyg',$use_wysiwyg);
       }
       break;
 
