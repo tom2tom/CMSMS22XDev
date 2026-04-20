@@ -23,7 +23,7 @@ while( ob_get_level() ) {
     @ob_end_clean();
 }
 ignore_user_abort();
-header('Connection: close');
+header('Connection: close'); // HTTP/1.1 only
 header('X-CMSMS: Processing');
 echo ' '; // single character
 flush();
