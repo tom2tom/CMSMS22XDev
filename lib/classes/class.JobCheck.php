@@ -95,6 +95,8 @@ class JobCheck
 				$transport = 'tls';
 			} elseif (in_array('ssl', $opts)) { // try sslv2 and sslv3
 				$transport = 'ssl';
+			} else {
+				return; //TODO abort message
 			}
 		}
 
