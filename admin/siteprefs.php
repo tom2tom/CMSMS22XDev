@@ -368,7 +368,8 @@ if( isset($_POST['editsiteprefs']) ) {
       }
       $tmp = false;
       if( isset($_POST['sitedownmessage']) ) {
-        $tmp = trim(strip_tags($_POST['sitedownmessage']));
+        $sitedownmessage = $_POST['sitedownmessage'];
+        $tmp = trim(empty($_POST['use_wysiwyg']) ? strip_tags($sitedownmessage) : $sitedownmessage);
         if( $tmp ) {
           $sitedownmessage = $tmp;
           cms_siteprefs::set('sitedownmessage',$sitedownmessage);
