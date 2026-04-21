@@ -17,7 +17,7 @@ $lang['cleaning_files'] = 'Cleaning files that are no longer applicable to the r
 $lang['config_writable'] = 'Check for writeable config file';
 $lang['confirm_freshen'] = 'Are you sure you want to freshen (repair) the existing installation of CMSMS? Use with extreme caution!';
 $lang['confirm_upgrade'] = 'Are you sure you want to begin the upgrade process?';
-$lang['curl_extension'] = 'Checking for the cURL extension';
+$lang['curl_extension'] = 'Check for the cURL extension';
 $lang['create_assets_structure'] = 'Creating a location for file resources';
 
 # D
@@ -33,7 +33,7 @@ $lang['desc_wizard_step8'] = 'Create or update the database schema, write or rew
 $lang['desc_wizard_step9'] = 'Install and/or upgrade modules as necessary, clean up';
 $lang['dest_writable'] = 'Write permission in destination directory';
 $lang['destination_directory'] = 'Destination Directory';
-$lang['disable_functions'] = 'Checking disabled functions';
+$lang['disable_functions'] = 'Check disabled functions';
 $lang['done'] = 'Done';
 
 # E
@@ -139,8 +139,8 @@ $lang['error_notimezone'] = 'Please enter a valid timezone for this server';
 $lang['error_overwrite'] = 'Permissions problem: cannot overwrite %s';
 $lang['error_sendingmail'] = 'Error sending mail';
 $lang['error_tzlist'] = 'A problem occurred retrieving the timezone identifiers list';
-$lang['errorlevel_edeprecated'] = 'Checking for E_DEPRECATED';
-$lang['errorlevel_estrict'] = 'Checking for E_STRICT';
+$lang['errorlevel_edeprecated'] = 'Check for E_DEPRECATED';
+$lang['errorlevel_estrict'] = 'Check for E_STRICT';
 $lang['estrict_enabled'] = 'E_STRICT is enabled in PHP\'s error_reporting. Although this will not prevent CMSMS from operating, it might result in warnings being displayed in the HTML output, particularly arising from older non-core modules';
 
 # F
@@ -179,7 +179,7 @@ $lang['fail_xml_functions'] = 'The XML extension was not found. Please enable th
 $lang['failed'] = 'failed';
 $lang['file_get_contents'] = 'Testing for the file_get_contents function';
 $lang['file_installed'] = 'Installed %s';
-$lang['file_uploads'] = 'Checking for file upload support';
+$lang['file_uploads'] = 'Check for file upload support';
 $lang['finished_custom_freshen_msg'] = 'The site\'s installation has been freshened! The core files have been updated, and any property-change(s) have been applied. Please visit the website to ensure that everything is functioning correctly.';
 $lang['finished_custom_install_msg'] = 'Done! Please visit the website and log in to its CMSMS Admin Console.';
 $lang['finished_custom_upgrade_msg'] = 'Done! Please visit the site\'s CMSMS Admin Console, and frontend, to ensure that everything is working properly.<br><strong>Hint:</strong> Now is a good time to create another backup.';
@@ -187,8 +187,8 @@ $lang['finished_freshen_msg'] = 'The site\'s installation has been freshened! Th
 $lang['finished_install_msg'] = 'All done! You can now <a href="%s">visit your website</a> or log in to its <a href="%s">CMSMS Admin Console</a>.';
 $lang['finished_upgrade_msg'] = 'All done! Please visit the <a href="%s">website frontend</a> and its <a href="%s">CMSMS Admin Console</a> to verify correct behavior. You might also need to upgrade some third party modules.<br><strong>Hint:</strong> Remember to create another backup after verifying correct behavior.';
 $lang['freshen'] = 'Freshen (repair) installation';
-$lang['func_json'] = 'Checking for json encoding and decoding functionality';
-$lang['func_md5'] = 'Checking for md5 functionality';
+$lang['func_json'] = 'Check for json encoding and decoding functionality';
+$lang['func_md5'] = 'Check for md5 functionality';
 $lang['func_tempnam'] = 'Check for tempnam function';
 $lang['func_gzopen'] = 'Check for gzopen function';
 $lang['func_ziparchive'] = 'Check for ziparchive function';
@@ -265,9 +265,9 @@ $lang['legend'] = 'Legend';
 
 # M
 $lang['magic_quotes_runtime'] = 'Ensure magic quotes are disabled';
-$lang['max_execution_time'] = 'Checking PHP script max execution time';
+$lang['max_execution_time'] = 'Check PHP script max execution time';
 $lang['meaning'] = 'Meaning';
-$lang['memory_limit'] = 'Checking for a sufficient PHP memory limit';
+$lang['memory_limit'] = 'Check for a sufficient PHP memory limit';
 $lang['msg_clearedcache'] = 'Clear server cache';
 $lang['msg_configsaved'] = 'Existing config file saved to %s';
 $lang['msg_upgrade_module'] = 'Upgrading module %s';
@@ -300,7 +300,7 @@ $lang['password'] = 'Password';
 $lang['ph_path'] = 'Enter a path';
 $lang['ph_sitename'] = 'Enter a site name';
 $lang['php_version'] = 'PHP Version';
-$lang['post_max_size'] = 'Checking maximum amount of data that can be posted in one request';
+$lang['post_max_size'] = 'Check maximum amount of data that can be posted in one request';
 $lang['prompt_addlanguages'] = 'Additional Languages';
 $lang['prompt_createtables'] = 'Create Database Tables';
 $lang['prompt_dbhost'] = 'Database Hostname';
@@ -400,14 +400,14 @@ $lang['title_step9'] = 'Step 9 - Finish';
 $lang['title_welcome_full'] = 'Welcome to CMS Made Simple&trade; %s'; // populated with version info, if available
 $lang['title_welcome'] = 'Welcome';
 $lang['tmp_dirs_empty'] = 'Ensure that temporary directories are empty or do not exist';
-$lang['tmpfile'] = 'Checking for working tmpfile()';
+$lang['tmpfile'] = 'Check for working tmpfile()';
 $lang['to'] = 'to';
 
 # U
 $lang['upgrade'] = 'Upgrade';
 $lang['upgrade_deleteoldevents'] = 'Deleting old events';
 $lang['upgrading_schema'] = 'Updating database schema';
-$lang['upload_max_filesize'] = 'Checking maximum size of uploaded files';
+$lang['upload_max_filesize'] = 'Check maximum size of uploaded files';
 $lang['username'] = 'User name';
 
 # V
@@ -433,7 +433,7 @@ $lang['wizard_step8'] = 'Database work';
 $lang['wizard_step9'] = 'Finish';
 
 # X
-$lang['xml_functions'] = 'Checking for XML functionality';
+$lang['xml_functions'] = 'Check for XML functionality';
 
 # Y
 $lang['yes'] = 'Yes';
