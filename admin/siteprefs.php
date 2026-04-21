@@ -266,7 +266,7 @@ if( isset($_POST['editsiteprefs']) ) {
                   $val = str_replace($matches[1][0], $s, $val);
                   $merr[] = 'unqouted data';
                 }
-                //filter per meta name TODO deal with all oWASP examples
+                //filter per meta name TODO deal with all OWASP examples
                 switch ($matches[2][0]) {
                   case 'content':
                     $s = trim($matches[3][0], '"\'');
@@ -366,25 +366,47 @@ if( isset($_POST['editsiteprefs']) ) {
         $sitedownexcludeadmins = (int)$_POST['sitedownexcludeadmins'];
         cms_siteprefs::set('sitedownexcludeadmins',$sitedownexcludeadmins);
       }
-      if( isset($_POST['use_wysiwyg']) ) {
-        $use_wysiwyg = (int)$_POST['use_wysiwyg'];
-        cms_siteprefs::set('sitedown_use_wysiwyg',$use_wysiwyg);
-      }
-      $tmp = false;
+      $s = '';
       if( isset($_POST['sitedownmessage']) ) {
-        // if $use_wysiwyg record the entered HTML otherwise strip tags
-        // per https://github.com/tom2tom/CMSMS22XDev/pull/1
-        $tmp = ($use_wysiwyg) ?
-          trim($_POST['sitedownmessage']):
-          trim(strip_tags($_POST['sitedownmessage']));
-        if( $tmp ) {
-          $sitedownmessage = $tmp;
+        $s = trim($_POST['sitedownmessage']);
+        if( $s ) {
+          // see also news_ops::execSpecialize(), UserGuideUtils::cleanContent(), not cleanValue()
+          // TODO remove any risky char(s)-combination ?
+          $clean = preg_replace(
+           ['~<html.+?/html>~is',
+            '~<head.+?/head>~is',
+            '~<body.+?/body>~is',
+            '~<form.+?/form>~is',
+            '~<button.+?/button>~is',
+            '~<input.+?>~is',
+            '~<select.+?/select>~is',
+            '~<textarea.+?/textarea>~is',
+            '~<dialog.+?/dialog>~is',
+            '~<base.*?>~is',
+            '~<meta.*?>~is',
+            '~<embed.*?>~is',
+            '~<title.*?/title>~is',
+            '~<script.*?/script>~is',
+            '~<noscript.*?/noscript>~is',
+            '~<\?(?:=|php).*\?>~isu',
+            '~`.+?`~s',
+            '~[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]~' // no need for g modifier here
+           ],[],$s);
+          if( $clean == $s ) {
+            $sitedownmessage = $s;
+            cms_siteprefs::set('sitedownmessage',$sitedownmessage);
+          }
+          else {
+            $error .= lang('error_sitedownmessage');
+          }
+        }
+        else {
+          $sitedownmessage = '';
           cms_siteprefs::set('sitedownmessage',$sitedownmessage);
         }
-        else { $error .= lang('error_sitedownmessage'); }
       }
       $prevsitedown = $enablesitedownmessage;
-      if( $tmp ) {
+      if( $s ) {
         if( isset($_POST['enablesitedownmessage']) ) {
           $enablesitedownmessage = (int)$_POST['enablesitedownmessage'];
           cms_siteprefs::set('enablesitedownmessage',$enablesitedownmessage);
@@ -398,6 +420,10 @@ if( isset($_POST['editsiteprefs']) ) {
       }
       elseif( $prevsitedown && !$enablesitedownmessage ) {
         audit('','Global settings','Sitedown disabled');
+      }
+      if( isset($_POST['use_wysiwyg']) ) {
+        $use_wysiwyg = (int)$_POST['use_wysiwyg'];
+        cms_siteprefs::set('sitedown_use_wysiwyg',$use_wysiwyg);
       }
       break;
 
