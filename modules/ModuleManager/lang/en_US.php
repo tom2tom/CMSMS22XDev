@@ -130,6 +130,9 @@ $lang['install_submit'] = 'Install';
 $lang['install_with_deps'] = 'Evaluate all Dependencies and Install';
 $lang['instcount'] = 'Modules currently installed';
 
+// J
+$lang['jobclear_description'] = 'Clears old request-data caches';
+
 // L
 $lang['latestdepends'] = 'Always install the newest dependency module';
 $lang['lbl_module'] = 'Module';
@@ -155,6 +158,7 @@ $lang['msg_module_uninstall'] = '<strong>Warning:</strong> Uninstalling a module
 $lang['msg_module_uninstalled'] = 'Module %s successfully uninstalled. Templates and data associated with this module has been deleted';
 $lang['msg_module_upgraded'] = 'Module %s successfully upgraded';
 $lang['msg_nodependencies'] = 'This file has not listed any dependencies';
+$lang['msg_noinfo'] = 'No information is available';
 $lang['msg_prefssaved'] = 'Preferences updated'; // see also 'preferencessaved'
 $lang['msg_urlreset'] = 'The ModuleRepository URL has been reset to the default value';
 
@@ -169,7 +173,6 @@ $lang['notice'] = 'Notice';
 $lang['notinstalled'] = 'Not installed';
 
 // O
-$lang['onlynewesttext'] = 'Show only newest version';
 $lang['operation_results'] = 'Operation Results';
 
 // P
