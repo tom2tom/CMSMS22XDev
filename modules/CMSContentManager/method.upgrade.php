@@ -4,6 +4,7 @@
 #The license at the top of file CMSContentManager.module.php applies to this file.
 
 if( !isset($gCms) ) exit;
+if( !($gCms->test_state(CmsApp::STATE_INSTALL) || $this->CheckPermission('Modify Modules')) ) exit;
 
 if( version_compare($oldversion,'1.1.12') < 0 ) {
 	// default page-edit tabs display order

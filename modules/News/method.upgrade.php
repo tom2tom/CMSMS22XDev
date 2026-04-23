@@ -3,16 +3,18 @@
 #(c) 2004 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #The license at the top of file News.module.php applies to this file.
 
-if (!isset($gCms)) exit;
+if( !isset($gCms) ) exit;
+if( $gCms->test_state(CmsApp::STATE_INSTALL) ) {
+    $uid = 1; // hardcode to first user
+}
+elseif( $this->CheckPermission('Modify Modules') ) {
+    $uid = get_userid();
+}
+else {
+    exit;
+}
 
 if( version_compare($oldversion,'2.50') < 0 ) {
-    if( cmsms()->test_state(CmsApp::STATE_INSTALL) ) {
-        $uid = 1; // hardcode to first user
-    }
-    else {
-        $uid = get_userid();
-    }
-
     $_fix_name = function($str) {
         if( CmsAdminUtils::is_valid_itemname($str) ) return $str;
         $orig = $str;
@@ -188,7 +190,7 @@ if( version_compare($oldversion,'2.51.14') < 0 ) {
         }
         unset($one);
         $val = implode('.',$parts);
-        $db->execute($query,[$val,$row['news_category_id']]);
+        $db->Execute($query,[$val,$row['news_category_id']]);
     }
     //CMSMS 2.2 DataDictionary can't handle extra field properties, so fallback to literal SQL for MySQL
     $query = <<<EOS

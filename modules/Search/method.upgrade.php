@@ -1,7 +1,14 @@
 <?php
-if (!isset($gCms)) exit;
-
-$uid = 1;
+if( !isset($gCms) ) exit;
+if( $gCms->test_state(CmsApp::STATE_INSTALL) ) {
+  $uid = 1;
+}
+elseif( $this->CheckPermission('Modify Modules') ) {
+  $uid = get_userid();
+}
+else {
+  exit;
+}
 
 if( version_compare($oldversion,'1.50') < 1 ) {
   $this->RegisterModulePlugin(true);
@@ -95,3 +102,4 @@ if( version_compare($oldversion,'1.53') < 1 ) {
     $db->Execute(sprintf($sql_i,$table));
   }
 }
+?>

@@ -11,12 +11,14 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
 #
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, read the license online at:
+# https://www.gnu.org/licenses/#LicenseURLs
 #-------------------------------------------------------------------------
+
+if( !isset($gCms) ) exit;
+if( !($gCms->test_state(CmsApp::STATE_INSTALL) || $this->CheckPermission('Modify Modules')) ) exit;
 
 $this->CreatePermission('Use Admin Search',$this->Lang('perm_Use_Admin_Search'));
 
@@ -28,7 +30,4 @@ if( is_array($groups) && count($groups) ) {
     $one_group->GrantPermission('Use Admin Search');
   }
 }
-#
-# EOF
-#
 ?>

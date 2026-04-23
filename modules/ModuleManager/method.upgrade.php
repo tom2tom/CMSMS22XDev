@@ -6,9 +6,9 @@ The license at the top of file ModuleManager.module.php applies to this file.
 */
 
 if (!isset($gCms)) exit;
-if (!$this->CheckPermission('Modify Modules')) exit;
+if (!($gCms->test_state(CmsApp::STATE_INSTALL) || $this->CheckPermission('Modify Modules'))) exit;
 
-if (version_compare($oldversion, '2.1.12') < 0) {
+if (version_compare($oldversion,'2.1.12') < 0) {
     // remove trailing '/' from recorded url
     $this->SetPreference('module_repository',ModuleManager::_dflt_request_url);
     // record setting if N/A

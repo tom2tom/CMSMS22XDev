@@ -13,18 +13,23 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, read the license online at:
-# https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+# https://www.gnu.org/licenses/#LicenseURLs
 #-------------------------------------------------------------------------
 #END_LICENSE
 #$Id$
-if (!isset($gCms)) exit;
 
-if( cmsms()->test_state(CmsApp::STATE_INSTALL) ) {
+if( !isset($gCms) ) exit;
+if( $gCms->test_state(CmsApp::STATE_INSTALL) ) {
     $uid = 1; // hardcode to first user
-} else {
+}
+elseif( $this->CheckPermission('Modify Modules') )  {
     $uid = get_userid();
+}
+else {
+    exit;
 }
 
 try {
@@ -162,3 +167,4 @@ catch( \Exception $e ) {
 // register plugins
 $this->RegisterModulePlugin(true);
 $this->RegisterSmartyPlugin('nav_breadcrumbs','function','nav_breadcrumbs');
+?>

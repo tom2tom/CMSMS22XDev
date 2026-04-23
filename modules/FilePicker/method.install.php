@@ -15,13 +15,17 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, read the license online at:
-# https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+# https://www.gnu.org/licenses/#LicenseURLs
 #-------------------------------------------------------------------------
 # END_LICENSE
 
 use FilePicker\ProfileDAO;
+
+if (!isset($gCms)) exit;
+if (!($gCms->test_state(CmsApp::STATE_INSTALL) || $this->CheckPermission('Modify Modules'))) exit;
 
 $taboptarray = array('mysqli' => 'ENGINE=MyISAM','mysql' => 'ENGINE=MyISAM');
 $dict = NewDataDictionary($db);
@@ -46,3 +50,4 @@ try {
 catch(Exception $e) {
     return $e->getMessage();
 }
+?>

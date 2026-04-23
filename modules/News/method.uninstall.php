@@ -4,6 +4,7 @@
 #The license at the top of file News.module.php applies to this file.
 
 if (!isset($gCms)) exit;
+if (!$this->CheckPermission('Modify Modules')) exit;
 
 $dict = NewDataDictionary( $db );
 

@@ -14,13 +14,17 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
+#
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, read the license online at:
-# https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+# https://www.gnu.org/licenses/#LicenseURLs
 #-------------------------------------------------------------------------
 # END_LICENSE
 
 use FilePicker\ProfileDAO;
+
+if( !isset($gCms) ) exit;
+if( !($gCms->test_state(CmsApp::STATE_INSTALL) || $this->CheckPermission('Modify Modules')) ) exit;
 
 if( version_compare($oldversion, '1.1') < 0 ) {
     // consistent names for datestamp (I) fields
@@ -52,3 +56,4 @@ RENAME COLUMN `modified_date` TO `modified`");
     $db->CreateSequence("{$tbl}_seq");
     $db->Execute("ALTER TABLE `{$tbl}_seq` MODIFY `id` int unsigned NOT NULL");
 }
+?>

@@ -1,10 +1,13 @@
 <?php
-if (!isset($gCms)) exit;
-
-if( cmsms()->test_state(CmsApp::STATE_INSTALL) ) {
+if( !isset($gCms) ) exit;
+if( $gCms->test_state(CmsApp::STATE_INSTALL) ) {
     $uid = 1; // hardcode to first user
-} else {
+}
+elseif( $this->CheckPermission('Modify Modules') )  {
     $uid = get_userid();
+}
+else {
+    exit;
 }
 
 $dict = NewDataDictionary($db);
@@ -140,3 +143,4 @@ $this->RegisterModulePlugin(TRUE);
 $this->RegisterSmartyPlugin('search','function','function_plugin');
 
 $this->Reindex();
+?>

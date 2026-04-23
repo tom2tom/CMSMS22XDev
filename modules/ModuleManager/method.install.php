@@ -6,12 +6,11 @@ The license at the top of file ModuleManager.module.php applies to this file.
 */
 
 if (!isset($gCms)) exit;
-if (!$this->CheckPermission('Modify Modules')) exit;
+if (!($gCms->test_state(CmsApp::STATE_INSTALL) || $this->CheckPermission('Modify Modules'))) exit;
 
 $this->SetPreference('allowuninstall',0);
 $this->SetPreference('disable_caching',0);
 $this->SetPreference('dl_chunksize',256);
 $this->SetPreference('latestdepends',1);
 $this->SetPreference('module_repository',ModuleManager::_dflt_request_url);
-$this->SetPreference('onlynewest',1); // what is this?
-
+?>

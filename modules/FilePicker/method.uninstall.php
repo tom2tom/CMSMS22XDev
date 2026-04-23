@@ -15,13 +15,16 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, read the license online at:
-# https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+# https://www.gnu.org/licenses/#LicenseURLs
 #-------------------------------------------------------------------------
 # END_LICENSE
 
 use FilePicker\ProfileDAO;
+
+if (!$this->CheckPermission('Modify Modules')) exit;
 
 $dict = NewDataDictionary($db);
 $tbl = ProfileDAO::table_name();
@@ -30,3 +33,4 @@ $dict->ExecuteSQLArray($sqlarray);
 $db->DropSequence("{$tbl}_seq");
 
 $this->RemovePreference();
+?>

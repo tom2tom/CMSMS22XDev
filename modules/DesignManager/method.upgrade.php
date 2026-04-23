@@ -12,12 +12,14 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, read the license online at:
-# https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+# https://www.gnu.org/licenses/#LicenseURLs
 #-------------------------------------------------------------------------
 
 if( !isset($gCms) ) exit;
+if( !($gCms->test_state(CmsApp::STATE_INSTALL) || $this->CheckPermission('Modify Modules')) ) exit;
 
 if( version_compare($oldversion,'1.2') < 0 ) {
     // migrate stored files
@@ -55,7 +57,7 @@ $pref = CMS_DB_PREFIX;
 if( version_compare($oldversion,'1.2.1') < 0 ) {
     // remove (all users') redundant filter-preferences
     $modname = $this->GetName();
-    $sql = "DELETE FROM {$pref}userprefs WHERE preference LIKE $modname%";
+    $sql = "DELETE FROM {$pref}userprefs WHERE preference LIKE '$modname%'";
     $db->Execute($sql);
 }
 
@@ -63,7 +65,7 @@ if( version_compare($oldversion,'1.3') < 0 ) {
     $dbr = $db->GetOne("SELECT version FROM {$pref}layout_designs LIMIT 1");
     if( $db->ErrorNo() != 0 ) {
         $db->Execute("ALTER TABLE `{$pref}layout_designs`
-ADD COLUMN `version` varchar(20) default '1.0' after `description`,
-ADD COLUMN `requires` varchar(320) after `version`");
+ADD COLUMN `version` varchar(20) default '1.0' AFTER `description`,
+ADD COLUMN `requires` varchar(320) AFTER `version`");
     }
 }

@@ -4,6 +4,7 @@
 #The license at the top of file CMSContentManager.module.php applies to this file.
 
 if( !isset($gCms) ) exit;
+if( !$this->CheckPermission('Modify Modules') ) exit;
 
 $this->RemovePreference();
 
@@ -14,3 +15,4 @@ $db->Execute($sql);
 
 $sql = 'DELETE FROM '.CMS_DB_PREFIX."userprefs WHERE preference='{$me}_bulk_showmore'";
 $db->Execute($sql);
+?>

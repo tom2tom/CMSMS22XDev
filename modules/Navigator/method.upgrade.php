@@ -1,5 +1,6 @@
 <?php
 if( !isset($gCms) ) exit;
+if( !($gCms->test_state(CmsApp::STATE_INSTALL) || $this->CheckPermission('Modify Modules')) ) exit;
 
 if( version_compare($oldversion,'1.0.5') < 0 ) {
     try {
