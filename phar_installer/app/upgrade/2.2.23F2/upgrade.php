@@ -165,11 +165,11 @@ foreach ($data as $id => $type) {
         if ($exp) {
             $newtype = implode(',', $exp);
             if ($newtype != $type) {
-                $db->execute($sql, [$newtype, $id]);
+                $db->Execute($sql, [$newtype, $id]);
             }
         } else {
-            $db->execute($sql2, [$id]);
-            $db->execute($sql3, [$id]);
+            $db->Execute($sql2, [$id]);
+            $db->Execute($sql3, [$id]);
         }
     }
 }
@@ -192,7 +192,7 @@ foreach ($data as $id => $row) {
     $v2 = ($tmp) ? serialize(str_replace('Cms', 'CMSMS\internal\\', $tmp)) : null;
     $tmp = ($row['help_content_cb']) ? unserialize($row['help_content_cb']) : null;
     $v3 = ($tmp) ? serialize(str_replace('Cms', 'CMSMS\internal\\', $tmp)) : null;
-    $db->execute($sql, [$v1, $v2, $v3, $id]);
+    $db->Execute($sql, [$v1, $v2, $v3, $id]);
 }
 
 // migrate jobs-permission source

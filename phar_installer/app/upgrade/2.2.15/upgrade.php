@@ -35,6 +35,6 @@ if (is_array($homepages) && count($homepages))  {
 
         unset($tmp2,$tmp3);
 
-        $db->execute($update_statement,[$url,$homepage['user_id'],'homepage']);
+        $db->Execute($update_statement,[$url,$homepage['user_id'],'homepage']);
     }
 }

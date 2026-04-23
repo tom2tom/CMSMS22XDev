@@ -337,9 +337,9 @@ class wizard_step8 extends wizard_step
         $havelangs = [-3 => '',-2 => 'en_US'] + $siteinfo['extlanguages'];
         $filler = str_repeat('?,',count($havelangs) - 1);
         $sql = 'UPDATE '.CMS_DB_PREFIX."siteprefs SET sitepref_value='' WHERE sitepref_name='frontendlang' AND sitepref_value NOT IN({$filler}?)";
-        $db->execute($sql,$havelangs);
+        $db->Execute($sql,$havelangs);
         $sql = 'UPDATE '.CMS_DB_PREFIX."userprefs SET value='' WHERE preference='default_cms_language' AND value NOT IN({$filler}?)";
-        $db->execute($sql,$havelangs);
+        $db->Execute($sql,$havelangs);
     }
 /* for this to work properly, we need rigorous distinction between designs and non-design-themes
     private function conform_themes($wiz,$db,$destdir)
