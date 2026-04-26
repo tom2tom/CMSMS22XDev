@@ -18,12 +18,14 @@ class Connection extends \CMSMS\Database\Connection
 
         mysqli_report(MYSQLI_REPORT_STRICT);
         $port = ($this->_connectionSpec->port === null) ? null : (int)$this->_connectionSpec->port; // null (the mysqli default) means use ini value
+        $old = error_reporting(0); // rely on exceptions for error processing
         try {
             $this->_mysql = new \mysqli($this->_connectionSpec->host,
                                         $this->_connectionSpec->username,
                                         $this->_connectionSpec->password,
                                         $this->_connectionSpec->dbname,
                                         $port);
+            error_reporting($old);
             // prevent sensitive-information display
             $this->_connectionSpec->password = 'restricted';
             if( $this->_mysql->connect_error ) {
@@ -37,6 +39,7 @@ class Connection extends \CMSMS\Database\Connection
             return TRUE;
         }
         catch( \Exception $e ) {
+            error_reporting($old);
             $this->_connectionSpec->password = 'restricted';
             $this->_mysql = null;
             $this->OnError(self::ERROR_CONNECT,mysqli_connect_errno(),mysqli_connect_error());
