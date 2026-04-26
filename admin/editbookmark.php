@@ -146,3 +146,4 @@ $tpl->assign('error', $error)
 $tpl->display();
 
 require_once 'footer.php';
+?>
