@@ -1,11 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module ModuleManager action
+# Module ModuleManager action: setprefs
 # (c) 2008 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
-#
 #-------------------------------------------------------------------------
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -15,40 +13,40 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
 #
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, read the license online at:
+# https://www.gnu.org/licenses/#LicenseURLs
 #-------------------------------------------------------------------------
 #END_LICENSE
+
 if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Modify Site Preferences' ) ) return;
 
 $this->SetCurrentTab('prefs');
 
-if( !empty($config['developer_mode']) && !empty($params['reseturl']) ) {
-    $this->SetPreference('module_repository',ModuleManager::_dflt_request_url);
-    $this->SetMessage($this->Lang('msg_urlreset'));
-    $this->RedirectToAdminTab();
-}
-if( isset($params['dl_chunksize']) ) $this->SetPreference('dl_chunksize',(int)trim($params['dl_chunksize']));
-$latestdepends = (int)get_parameter_value($params,'latestdepends');
-$this->SetPreference('latestdepends',$latestdepends);
-
-
 if( !empty($config['developer_mode']) ) {
-    if( isset($params['url']) ) {
+    if( !empty($params['reseturl']) ) {
+        $this->SetPreference('module_repository',ModuleManager::_dflt_request_url);
+        $this->SetMessage($this->Lang('msg_urlreset'));
+        $this->RedirectToAdminTab();
+    }
+    if( !empty($params['url']) ) {
         $tmp = ltrim($params['url']);
         $this->SetPreference('module_repository',rtrim($tmp,"/ \t"));
     }
-    $disable_caching = (int)get_parameter_value($params,'disable_caching');
-    $this->SetPreference('disable_caching',$disable_caching);
     $this->SetPreference('allowuninstall',(int)get_parameter_value($params,'allowuninstall'));
+    $this->SetPreference('disable_caching',(int)get_parameter_value($params,'disable_caching'));
 }
 else {
     $this->SetPreference('allowuninstall',0);
 }
+
+if( isset($params['dl_chunksize']) ) {
+    $size = (int)get_parameter_value($params,'dl_chunksize');
+    $this->SetPreference('dl_chunksize',max(1, $size));
+}
+$this->SetPreference('latestdepends',(int)get_parameter_value($params,'latestdepends'));
 
 $this->SetMessage($this->Lang('msg_prefssaved'));
 $this->RedirectToAdminTab();
