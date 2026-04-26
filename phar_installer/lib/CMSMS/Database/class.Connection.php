@@ -674,10 +674,10 @@ abstract class Connection
     /**
      * Create a new database connection object.
      * This is the preferred way to open a new database connection.
+     * @todo  Move this into a factory class
      *
      * @param \CMSMS\Database\Connectionspec $spec An object describing the database to connect to.
-     * @return \CMSMS\Database\Connection
-     * @todo  Move this into a factory class
+     * @return \CMSMS\Database\Connection | null
      */
     public static function Initialize(ConnectionSpec $spec)
     {
@@ -688,10 +688,11 @@ abstract class Connection
         $obj = new $connection_class($spec);
         if( !($obj instanceof Connection) ) throw new \LogicException("$connection_class is not derived from the primary database class.");
         if( $spec->debug ) $obj->SetDebugMode();
-        $obj->Connect();
-
-        if( $spec->auto_exec ) $obj->Execute($spec->auto_exec);
-        return $obj;
+        if( $obj->Connect() ) {
+             if( $spec->auto_exec ) $obj->Execute($spec->auto_exec);
+             return $obj;
+        }
+        return null; // OR throw ?
     }
 
 } // class

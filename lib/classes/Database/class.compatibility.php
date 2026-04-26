@@ -90,10 +90,12 @@ namespace CMSMS\Database {
             }
             if( $tmp ) $spec->auto_exec = 'SET '.implode(',',$tmp);
 
-            $obj = Connection::Initialize($spec);
-            $obj->SetErrorHandler( '\CMSMS\Database\compatibility::on_error' );
-            if( $spec->debug ) $obj->SetDebugCallback('debug_buffer');
-            return $obj;
+            $db = Connection::Initialize($spec);
+            if( $db ) {
+                $db->SetErrorHandler('\CMSMS\Database\compatibility::on_error');
+                if( $spec->debug ) $db->SetDebugCallback('debug_buffer');
+            }
+            return $db;
         }
 
         public static function on_error( Connection $conn, $errtype, $error_number, $error_msg )

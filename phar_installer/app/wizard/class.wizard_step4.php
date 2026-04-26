@@ -87,7 +87,9 @@ class wizard_step4 extends wizard_step
         $action = $this->get_wizard()->get_data('action');
         if( $action != 'freshen' ) {
             foreach(['dbtype','dbhost','dbname','dbuser','dbpass'] as $key) {
-                if( empty($config[$key]) ) { throw new Exception(lang("error_no{$key}")); }
+                if( empty($config[$key]) ) {
+                    throw new Exception(lang("error_no{$key}"));
+                }
             }
             if( $action == 'install' && empty($config['dbprefix']) ) {
                 throw new Exception(lang('error_nodbprefix'));
@@ -95,7 +97,8 @@ class wizard_step4 extends wizard_step
             $longnames = ['host','name','user','password','tables-prefix'];
             foreach(['dbhost','dbname','dbuser','dbpass','dbprefix'] as $i => $key) {
                 if( !empty($config[$key]) && preg_match('/[\\\']/',$config[$key]) ) {
-                    throw new Exception(lang('error_invalidtypedvar',lang('database').' '.$longnames[$i]));
+                    $detail = lang('database').' '.$longnames[$i];
+                    throw new Exception(lang('error_invalidparam',$detail));
                 }
             }
         }
@@ -121,7 +124,10 @@ class wizard_step4 extends wizard_step
             $spec->dbname = $config['dbname'];
             $spec->port = isset($config['dbport']) ? $config['dbport'] : null;
             $spec->prefix = $config['dbprefix'];
-            $db = Connection::initialize($spec);
+            $db = Connection::initialize($spec); // might throw
+            if( !$db ) {
+                throw new Exception(lang('error_dbconnect'));
+            }
             $db->Execute("SET NAMES 'utf8'");
 
             // see if we can create and drop a table.
@@ -217,5 +223,5 @@ class wizard_step4 extends wizard_step
           ->display('wizard_step4.tpl');
         $this->finish();
     }
-
-} // end of class
+} // class
+?>

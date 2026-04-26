@@ -50,6 +50,7 @@ class wizard_step8 extends wizard_step
             define('CMS_DB_PREFIX',$spec->prefix);
         }
         $db = Connection::initialize($spec);
+        if( !$db ) { return null; }
         //when debugging $app=get_app();$destdir=$app->get_destdir();$logfile=$destdir.'/installer.log';
         $db->SetErrorHandler(function() { //when debugging use ($db, $logfile)
             // normally do nothing
@@ -326,6 +327,7 @@ class wizard_step8 extends wizard_step
             }
         }
         $db = $this->db_connect($choices);
+        if( !$db ) throw new Exception(lang('error_internal',830));
         $this->conform_langs($wiz,$db);
 //      $this->conform_themes($wiz,$db,$destdir);
     }
