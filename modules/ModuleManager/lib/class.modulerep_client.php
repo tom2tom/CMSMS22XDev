@@ -3,121 +3,145 @@
 #-------------------------------------------------------------------------
 # Class: modulerep_client
 # (c) 2011 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
-#
 #-------------------------------------------------------------------------
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
 #
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, read the license online at:
+# https://www.gnu.org/licenses/#LicenseURLs
 #-------------------------------------------------------------------------
 #END_LICENSE
 
+namespace ModuleManager;
+
+use cms_http_request;
+use cms_utils;
+use CmsCommunicationException;
+//use CmsException;
+use CmsInvalidDataException;
+use ModuleOperations;
+use const CMS_VERSION;
+use const PUBLIC_CACHE_LOCATION;
+
+/**
+ * All results from upstream are json-encoded except for: 'modulegetpart' 'modulexml'
+ * Some status codes from upstream are 400 when no suitable data are found, which might be correct, not 'bad'
+ */
 final class modulerep_client
 {
     private static $_latest_installed_modules;
 
-    protected function __construct() {}
+    private function __construct() {}
 
+    /**
+     * @return array tuple [0] bool [1] message | request result
+     */
     public static function get_repository_version()
     {
         $mod = cms_utils::get_module('ModuleManager');
         $url = $mod->GetPreference('module_repository');
-        if( !$url ) return array(false,$mod->Lang('error_norepositoryurl'));
+        if( !$url ) return [false,$mod->Lang('error_norepositoryurl')];
         $url .= '/version';
 
-        $req = new modmgr_cached_request();
-        $req->execute($url);
+        $req = new cached_http_request();
+        $req->send($url);
         $status = $req->getStatus();
         $result = $req->getResult();
-        if( $status != 200 || $result == '' ) { // or some 300's ?
-            return array(FALSE,$mod->Lang('error_request_problem'));
+        if( $status != 200 || $result == '' ) { // or some 300's ok?
+            $req->clear();
+            return array(false,$mod->Lang('error_request_problem'));
         }
         $data = json_decode($result,true);
         return array(true,$data);
     }
 
-
     /**
      * Given an array of hashes with name/version members return module info for all matches.
      * maximum of 25 rows, and no guarantee that there will be results for each request.
+     *
+     * @param mixed $input should be array
+     * @return mixed array (maybe empty, maybe tuple[false,error-message] | null
+     * @throws CmsInvalidDataException or CmsCommunicationException
      */
     public static function get_multiple_moduleinfo($input)
     {
         $mod = cms_utils::get_module('ModuleManager');
-        if( !is_array($input) || count($input) == 0 ) throw new CmsInvalidDataException($mod->Lang('error_missingparam'));
+        if( !$input || !is_array($input) ) throw new CmsInvalidDataException($mod->Lang('error_missingparam'));
 
-        $out = array();
+        $out = [];
         foreach( $input as $key => $data ) {
-            if( is_array($data) && isset($data['name']) && isset($data['version']) && $data['name'] && $data['version'] ) {
-                $out[] = array('name'=>$data['name'],'version'=>$data['version']);
+            if( is_array($data) && !empty($data['name']) && !empty($data['version']) ) {
+                $out[] = array('name' => $data['name'],'version' => $data['version']);
             }
-            else if( is_string($key) && (int)$key == 0 ) {
-                $out[] = array('name'=>$key,'version'=>$data);
+            elseif( is_string($key) && (int)$key == 0 ) {
+                $out[] = array('name' => $key,'version' => $data);
             }
             else {
                 throw new CmsInvalidDataException($mod->Lang('error_missingparam'));
             }
         }
-        if( count($out) == 0 ) throw new CmsInvalidDataException($mod->Lang('error_missingparam'));
+        if( !$out ) throw new CmsInvalidDataException($mod->Lang('error_missingparam'));
 
-        $url = $mod->GetPreference('module_repository');
-        if( !$url ) return array(false,$mod->Lang('error_norepositoryurl'));
+        $url = self::get_repourl($mod);
+        if( !$url ) return [false,$mod->Lang('error_norepositoryurl')];
         $url .= '/multimoduleinfo';
-        $data = array('data'=>json_encode($out));
+        $qparms = ['data' => json_encode($out)];
 
-        $req = new modmgr_cached_request();
-        $req->execute($url,$data);
+        $req = new cached_http_request();
+        $req->send($url,$qparms);
         $status = $req->getStatus();
         $result = $req->getResult();
-        if( $status == 400 ) { // TODO is this an error?
-            return;
+        if( $status == 200 && $result == '' ) {
+            return [];
         }
-        else if( $status != 200 || $result == '' ) { // or some 300's ok?
+        if( $status == 400 ) {
+            return [];
+        }
+        if( $status != 200 || $result == '' ) { // or some 300's ok? empty result ok?
+            $req->clear();
             throw new CmsCommunicationException($mod->Lang('error_request_problem'));
         }
-
         return json_decode($result,true);
     }
 
-    public static function get_repository_modules($prefix = '',$newest = 1,$exact = FALSE)
+    /**
+     * @return array tuple [0] bool [1] error-message | request result
+     */
+    public static function get_repository_modules($prefix = '',$newest = true,$exact = false)
     {
         $mod = cms_utils::get_module('ModuleManager');
-        $url = $mod->GetPreference('module_repository');
-        if( !$url ) return array(false,$mod->Lang('error_norepositoryurl'));
+        $url = self::get_repourl($mod);
+        if( !$url ) return [false,$mod->Lang('error_norepositoryurl')];
         $url .= '/moduledetailsgetall';
 
-        global $CMS_VERSION;
-        $data = array('newest'=>$newest);
-        if( $prefix ) $data['prefix'] = ltrim($prefix);
-        if( $exact ) $data['exact'] = 1;
-        $data['clientcmsversion'] = $CMS_VERSION;
+        $qparms = [
+         'newest' => ($newest) ? 1:0,
+         'clientcmsversion' => CMS_VERSION //TODO adjust if needed for version_compare()
+        ];
+        if( $prefix ) $qparms['prefix'] = ltrim($prefix);
+        if( $exact ) $qparms['exact'] = 1;
 
-        $req = new modmgr_cached_request();
-        $req->execute($url,$data);
+        $req = new cached_http_request();
+        $req->send($url,$qparms);
         $status = $req->getStatus();
         $result = $req->getResult();
-        if( $status == 400 ) { // > 400 is error per below
-            return array(true,array());
+        if( $status == 200 && $result == '' ) {
+            return [true,[]];
         }
-        else if( $status != 200 || $result == '' ) { // some 300-range codes ok?
-            return array(FALSE,$mod->Lang('error_request_problem'));
+        if( $status == 400 ) {
+            return [true,[]];
+        }
+        if( $status != 200 || $result == '' ) { // some 300's ok? empty result ok?
+            $req->clear();
+            return [false,$mod->Lang('error_request_problem')];
         }
 
         $data = json_decode($result,true);
@@ -128,21 +152,24 @@ final class modulerep_client
     {
         $mod = cms_utils::get_module('ModuleManager');
         if( !$module_name ) throw new CmsInvalidDataException($mod->Lang('error_missingparams'));
-        $url = $mod->GetPreference('module_repository');
+        $url = self::get_repourl($mod);
         if( !$url ) throw new CmsInvalidDataException($mod->Lang('error_norepositoryurl'));
         $url .= '/moduledependencies';
 
-        $parms = array('name'=>$module_name);
-        if( $module_version ) $parms['version'] = $module_version;
-        $req = new modmgr_cached_request();
-        $req->execute($url,$parms);
+        $qparms = ['name' => $module_name];
+        if( $module_version ) $qparms['version'] = $module_version;
+        $req = new cached_http_request();
+        $req->send($url,$qparms);
         $status = $req->getStatus();
         $result = $req->getResult();
-        if( $status == 400 ) { // > 400 becomes error, below
-            // no dependency found
-            return;
+        if( $status == 200 && $result == '' ) {
+            return [true,'']; // no dep
         }
-        else if( $status != 200 || $result == '' ) { // or some 300's ok?
+        if( $status == 400 ) { //  not found
+            return [false,'']; // failed but don't throw
+        }
+        if( $status != 200 || $result == '' ) { // or some 300's ok? empty result ok if no dep?
+            $req->clear();
             throw new CmsCommunicationException($mod->Lang('error_request_problem'));
         }
 
@@ -150,33 +177,39 @@ final class modulerep_client
         return $data;
     }
 
-    // old...
     public static function get_module_depends($xmlfile)
     {
         $mod = cms_utils::get_module('ModuleManager');
         if( !$xmlfile ) throw new CmsInvalidDataException($mod->Lang('error_nofilename'));
-        $url = $mod->GetPreference('module_repository');
+        $url = self::get_repourl($mod);
         if( $url == '' ) throw new CmsInvalidDataException($mod->Lang('error_norepositoryurl'));
         $url .= '/moduledepends';
 
-        $req = new modmgr_cached_request();
-        $req->execute($url,array('name'=>$xmlfile));
+        $req = new cached_http_request();
+        $req->setMethod('POST');
+        $req->send($url,array('name'=>$xmlfile));
         $status = $req->getStatus();
         $result = $req->getResult();
+        if( $status == 200 && $result == '' ) { //400 might be not found or no dep?
+            return []; // no dep
+        }
         if( $status != 200 || $result == '' ) {
+            $req->clear();
             throw new CmsCommunicationException($mod->Lang('error_request_problem'));
         }
         $data = json_decode($result,true);
         return $data;
     }
 
-
+    /**
+     * @return mixed filename string | false
+     */
     public static function get_repository_xml($xmlfile, $size = -1)
     {
-        if( !$xmlfile ) return FALSE;
+        if( !$xmlfile ) return false;
 
-        // this is manually cached.
-        $tmpname = TMP_CACHE_LOCATION.'/modmgr_'.md5(__DIR__.$xmlfile).'.dat';
+        // this is 'manually' cached - no age-related cleanup
+        $tmpname = PUBLIC_CACHE_LOCATION.DIRECTORY_SEPARATOR.'modmgr_'.md5(__DIR__.$xmlfile).'.dat';
         $mod = cms_utils::get_module('ModuleManager');
         if( !file_exists($tmpname) || $mod->GetPreference('disable_caching',0) || (time() - filemtime($tmpname)) > 7200 ) {
             @unlink($tmpname);
@@ -184,99 +217,100 @@ final class modulerep_client
             // must download
             $orig_chunksize = $mod->GetPreference('dl_chunksize',256);
             $chunksize = $orig_chunksize * 1024;
-            $url = $mod->GetPreference('module_repository');
-            if( $url == '' ) return FALSE;
+            $url = self::get_repourl($mod);
+            if( $url == '' ) return false;
 
             if( $size <= $chunksize ) {
                 // downloading the whole file at one shot.
                 $url .= '/modulexml';
                 $req = new cms_http_request();
-                $result = $req->execute($url,'','POST',array('name'=>$xmlfile));
+                $req->setMethod('POST');
+                $req->send($url,array('name'=>$xmlfile));
                 $status = $req->GetStatus();
-//              $result = $req->GetResult();
+                $result = $req->GetResult();
                 if( $status != 200 || $result == '' ) { // or some 300's ok?
-                    $req->clear();
-                    return FALSE;
+                    return false;
                 }
-                $fh = fopen($tmpname,'w');
+                $fh = fopen($tmpname,'wb');
                 fwrite($fh,$result);
                 fclose($fh);
                 return $tmpname;
-                $req->clear();
             }
 
             // download in chunks
             $url .= '/modulegetpart';
             $nchunks = (int)ceil($size / $chunksize);
             $req = new cms_http_request();
+            $req->setMethod('POST');
             for( $i = 0; $i < $nchunks; $i++ ) {
-                $result = $req->execute($url,'','POST', array('name'=>$xmlfile,'partnum'=>$i,'sizekb'=>$orig_chunksize));
+                $result = $req->send($url, array('name'=>$xmlfile,'partnum'=>$i,'sizekb'=>$orig_chunksize));
                 $status = $req->GetStatus();
-//              $result = $req->GetResult(); redundant, debug
                 if( $status != 200 || $result == '' ) { // or some 300's ok?
                     unlink($tmpname);
-                    $req->clear();
-                    return FALSE;
+                    return false;
                 }
 
                 $fh = fopen($tmpname,'a');
                 fwrite($fh,base64_decode($result));
                 fclose($fh);
-                $req->clear();
             }
         }
-
         return $tmpname;
     }
 
-
+    /**
+     * @return string
+     * @throws CmsInvalidDataException or CmsCommunicationException
+     */
     public static function get_module_md5($xmlfile)
     {
         $mod = cms_utils::get_module('ModuleManager');
         if( !$xmlfile ) throw new CmsInvalidDataException($mod->Lang('error_nofilename'));
-        $url = $mod->GetPreference('module_repository');
+        $url = self::get_repourl($mod);
         if( $url == '' ) throw new CmsInvalidDataException($mod->Lang('error_norepositoryurl'));
         $url .= '/modulemd5sum';
 
-        $req = new modmgr_cached_request();
-        $req->execute($url,array('name'=>$xmlfile));
+        $req = new cached_http_request();
+        $req->send($url,['name'=>$xmlfile]);
         $status = $req->getStatus();
         $result = $req->getResult();
         if( $status != 200 || $result == '' ) { // or some 300's ok?
+            $req->clear();
             throw new CmsCommunicationException($mod->Lang('error_request_problem'));
         }
         $data = json_decode($result,true);
         return $data;
     }
 
-
-    public static function search($term,$advanced)
+    public static function search($term, $advanced)
     {
-        $qparms = array();
-        $filter = array();
-        $filter['term'] = $term;
-        $filter['advanced'] = (int)$advanced;
-        $filter['newest'] = 1;
-        $filter['sortby'] = 'score';
-        $qparms['filter'] = $filter;
-        $qparms['clientcmsversion'] = CMS_VERSION;
-
         $mod = cms_utils::get_module('ModuleManager');
-        $url = $mod->GetPreference('module_repository');
+        $url = self::get_repourl($mod);
         if( $url == '' ) {
-            return array(FALSE,$mod->Lang('error_norepositoryurl'));
+            return [false,$mod->Lang('error_norepositoryurl')];
         }
         $url .= '/modulesearch';
 
-        $req = new modmgr_cached_request();
-        $req->execute($url,array('json'=>json_encode($qparms)));
+        $qparms = [
+         'filter' => [
+          'term' => $term,
+          'advanced' => (int)$advanced,
+          'newest' => 1,
+          'sortby' => 'score'
+          ],
+         'clientcmsversion' => CMS_VERSION //TODO adjust if needed for version_compare()
+        ];
+
+        $req = new cached_http_request();
+        $req->send($url,array('json'=>json_encode($qparms)));
         $status = $req->getStatus();
         $result = $req->getResult();
         if( $status == 200 && $result == '' ) {
             return array(TRUE,''); // no result
         }
         if( $status != 200 || $result == '' ) {
-            return array(FALSE,$mod->Lang('error_request_problem'));
+            $req->clear();
+            return array(false,$mod->Lang('error_request_problem'));
         }
 
         $data = json_decode($result,true);
@@ -284,33 +318,35 @@ final class modulerep_client
     }
 
     /**
-     * returns the latest info about all specified modules
-     * on success returns associative array of info about modules
-     * on error throws an exception.
-     * @return array
+     * Return the latest info about specified modules.
+     *
+     * @param array $modules module-names
+     * @return array info about modules or empty
+     * @throws CmsInvalidDataException or CmsCommunicationException
      */
     public static function get_modulelatest($modules)
     {
         $mod = cms_utils::get_module('ModuleManager');
-        if( !is_array($modules) || count($modules) == 0 ) throw new CmsInvalidDataException($mod->Lang('error_missingparam'));
+        if( !$modules || !is_array($modules) ) throw new CmsInvalidDataException($mod->Lang('error_missingparam'));
 
-        $url = $mod->GetPreference('module_repository');
+        $url = self::get_repourl($mod);
         if( $url == '' ) throw new CmsInvalidDataException($mod->Lang('error_norepositoryurl'));
         $url .= '/upgradelistgetall';
-        $qparms = array();
-        $qparms['names'] =  implode(',',$modules);
-        $qparms['newest'] = '1';
-        $qparms['clientcmsversion'] = CMS_VERSION;
+        $qparms = [
+         'names' =>  implode(',',$modules),
+         'newest' => 1,
+         'clientcmsversion' => CMS_VERSION //TODO adjust if needed for version_compare()
+        ];
 
-        $req = new modmgr_cached_request();
-        $req->execute($url,$qparms);
+        $req = new cached_http_request();
+        $req->send($url,$qparms);
         $status = $req->getStatus();
-        if( $status != 200 ) {
+        if( $status != 200 ) { // 400 aka nil upgrades can be valid
             throw new CmsCommunicationException($mod->Lang('error_request_problem'));
         }
         $result = $req->getResult();
-        if( !$result ) {
-            throw new ModuleNoDataException();
+        if( !$result ) { // nil upgrades can be valid
+            return []; //throw new ModuleNoDataException();
         }
 
         $data = json_decode($result,true);
@@ -321,15 +357,16 @@ final class modulerep_client
     }
 
     /**
-     * returns the latest info about installed modules.
+     * Return the latest info about installed modules.
      * on success returns associative array of info about modules
      * on error throw exception.
      * @return array
      */
     public static function get_allmoduleversions()
     {
-        if( is_array(self::$_latest_installed_modules) ) return self::$_latest_installed_modules;
-
+        if( is_array(self::$_latest_installed_modules) ) {
+            return self::$_latest_installed_modules;
+        }
         $modules = ModuleOperations::get_instance()->GetInstalledModules();
         self::$_latest_installed_modules = self::get_modulelatest($modules);
         return self::$_latest_installed_modules;
@@ -337,43 +374,50 @@ final class modulerep_client
 
     /**
      * Return info about installed modules that have newer versions available.
-     * return mixed (FALSE on error, associative array maybe empty on success
+     * @return mixed false on error, associative array maybe empty on success
      */
     public static function get_newmoduleversions()
     {
         $versions = self::get_allmoduleversions();
-        if( !is_array($versions) ) return FALSE;
-        if( count($versions) == 2 && $versions[0] === FALSE ) return FALSE;
+        if( !is_array($versions) ) return false;
+        if( count($versions) == 2 && $versions[0] === false ) return false;
 
         $out = array();
         foreach( $versions as $row ) {
-            $info = ModuleManagerModuleInfo::get_module_info( $row['name'] );
+            $info = ModuleInfo::get_module_info($row['name']);
             if( version_compare($row['version'],$info['version']) > 0 ) {
-                $data = array();
                 $out[$row['name']] = $row;
             }
         }
         return $out;
     }
 
-    //TODO return mixed bool|array
+    /**
+     * @return mixed array | false
+     */
     public static function get_upgrade_module_info($module_name)
     {
         $versions = self::get_allmoduleversions();
-        if( !is_array($versions) ) return FALSE;
-        if( count($versions) == 2 && $versions[0] === FALSE ) return FALSE;
+        if( !is_array($versions) ) return false;
+        if( count($versions) == 2 && $versions[0] == false ) return false;
 
         foreach( $versions as $row ) {
             if( $row['name'] == $module_name ) return $row;
         }
-        return FALSE;
+        return false;
     }
-} // end of class
 
-class ModuleManagerException extends \CmsException {}
-class ModuleNoDataException extends ModuleManagerException {}
-class ModuleNotFoundException extends ModuleManagerException {}
-
-#
-# EOF
-#
+    /**
+     * @return string maybe empty
+     */
+    private static function get_repourl($mod = null)
+    {
+        static $url = null;
+        if( $url == null ) {
+            if( !$mod ) { $mod = cms_utils::get_module('ModuleManager'); }
+            $url = $mod->GetPreference('module_repository');
+        }
+        return $url;
+    }
+} // class
+?>
