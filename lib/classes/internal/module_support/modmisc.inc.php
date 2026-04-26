@@ -70,17 +70,17 @@ function cms_module_GetHelpPage($modinstance)
 		$done = [];
 		$str .= "\n".'<h3>'.lang('frontendparameters').'</h3><ul>';
 		foreach ($parameters as $oneparam) {
-			if( isset($done[$oneparam['name']]) ) {
+			if (isset($done[$oneparam['name']])) {
 				continue; // ignore duplicates by 'name' property
 			}
 			$done[$oneparam['name']] = 1;
 			$str .= '<li>';
 			if ($oneparam['optional']) { $str .= '<em>(optional)</em> '; }
 			$dflt = $oneparam['default'];
-			if (!(is_numeric($dflt) ||
-				strcasecmp($dflt, 'null') == 0 //CHECKME
-// || strcasecmp($dflt, 'true') == 0 || strcasecmp($dflt, 'false') == 0 nicer but incompatible
-				) ) {
+			if ($dflt === null || // workaround malformed parameter init
+				!(is_numeric($dflt) || strcasecmp($dflt, 'null') == 0 //CHECKME
+//				|| strcasecmp($dflt, 'true') == 0 || strcasecmp($dflt, 'false') == 0 nicer but incompatible
+				)) {
 				$dflt = "'$dflt'";
 			}
 			$help = (!empty($oneparam['help'])) ? ' - '.$oneparam['help'] : '';
