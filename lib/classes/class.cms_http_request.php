@@ -2,10 +2,9 @@
 /**
  * cms_http_request class
  *
- * This is a wrapper class that uses either cURL or fsockopen to
- * interact with the www. This class can be used by scripts that
- * need to communicate via various APIs which support REST.
- * If cURL is to be used, version 7.19.7 (Nov 2009) or higher is required.
+ * This is a wrapper class that uses either cURL or stream_socket_client
+ * to interact with the www. If cURL is to be used, version 7.19.7 (Nov 2009)
+ * or higher is required.
  *
  * Adapted from HTTP class <http://www.phpfour.com/lib/http>
  * by Emran Hasan <phpfour@gmail.com>
@@ -20,7 +19,7 @@
  * $httpConfig['timeout']    = 30;
  * $httpConfig['params']     = ['var1' => 'testvalue', 'var2' => 'somevalue'];
  * $http = new cms_http_request($httpConfig);
- * $res = $http->execute();
+ * $result = $http->send();
  * </pre>
  *
  * @package     CMS
@@ -30,240 +29,250 @@
 class cms_http_request
 {
     /**
-     * Contains the target URL
+     * Request target (URL)
      *
      * @var string
      */
-    private $target;
+    protected $target;
 
     /**
-     * socket
-     *
-     */
-    private $_socket;
-
-    /**
-     * Contains the target host
+     * Target host
      *
      * @var string
      */
-    private $host;
+    protected $host;
 
     /**
-     * Contains the target port
+     * Target port
      *
      * @var int
      */
-    private $port;
+    protected $port;
 
     /**
-     * Contains the target path
+     * Target path
      *
      * @var string
      */
-    private $path;
+    protected $path;
 
     /**
-     * Contains the target schema
+     * Target schema
      *
      * @var string
      */
-    private $schema;
+    protected $schema;
 
     /**
-     * Contains the http method ('GET', 'POST' or 'HEAD')
+     * Request http method ('GET', 'POST' or 'HEAD')
      *
      * @var string
      */
-    private $method;
+    protected $method;
 
     /**
-     * Contains raw post data
+     * Raw POST data
      *
      * @var urlencoded string like 'para1=val1&para2=val2&...' or empty
      */
-    private $rawPostData;
+    protected $rawPostData;
 
     /**
-     * Contains the parameters for request
+     * Parameters for the request
+     * (not for this object's setup)
      *
      * @var array
      */
-    private $params;
+    protected $params;
 
     /**
-     * Contains the cookies for request
+     * Cookies for the request, supplied via addCookie()
      *
      * @var array
      */
-    private $cookies;
+    protected $cookies;
 
     /**
-     * Contains the cookies retrieved from response
+     * Cookie headers parsed from request response, populated via _setCookie()
      *
      * @var array
      */
-    private $_cookies;
+    protected $_cookies;
 
     /**
      * Number of seconds to timeout
      *
      * @var int
      */
-    private $timeout;
+    protected $timeout;
 
     /**
-     * Whether to use cURL or not
-     * If TRUE, but a sufficient cURL version is not installed,
-     * cURL will not be used.
+     * Socket identifier
+     *
+     * @var string
+     */
+    protected $socket;
+
+    /**
+     * Whether to use cURL
+     * If true, but a sufficient cURL version is not installed, cURL
+     * will not be used.
      *
      * @var bool
      */
-    private $useCurl;
+    protected $useCurl;
 
     /**
-     * Contains the referrer URL
-     *
-     * @var string
-     */
-    private $referrer;
-
-    /**
-     * Contains the User agent string
-     *
-     * @var string
-     */
-    private $userAgent;
-
-    /**
-     * Contains the cookie path (to be used with cURL)
-     *
-     * @var string
-     */
-    private $cookiePath;
-
-    /**
-     * Whether to use cookie at all
+     * Whether to do certificate-checks when using a secure url
+     * @since 2.2.23F2
      *
      * @var bool
      */
-    private $useCookie;
+    protected $checkSecure;
 
     /**
-     * Whether to store cookie for subsequent requests
+     * Referrer URL
+     *
+     * @var string
+     */
+    protected $referrer;
+
+    /**
+     * User agent string
+     *
+     * @var string
+     */
+    protected $userAgent;
+
+    /**
+     * Cookie path (to be used with cURL)
+     *
+     * @var string
+     */
+    protected $cookiePath;
+
+    /**
+     * Whether to use cookies at all
      *
      * @var bool
      */
-    private $saveCookie;
+    protected $useCookie;
 
     /**
-     * Contains the Username (for authentication)
-     *
-     * @var string
-     */
-    private $username;
-
-    /**
-     * Contains the Password (for authentication)
-     *
-     * @var string
-     */
-    private $password;
-
-    /**
-     * Contains the fetched web source
-     *
-     * @var string
-     */
-    private $result;
-
-    /**
-     * Contains the last headers
-     *
-     * @var string
-     */
-    private $headers;
-
-    /**
-     * Contains the last call's http status code
-     *
-     * @var string
-     */
-    private $status;
-
-    /**
-     * Whether to follow http redirect or not
+     * Whether to store cookies for subsequent requests
      *
      * @var bool
      */
-    private $redirect;
+    protected $saveCookie;
 
     /**
-     * The maximum number of redirect to follow
+     * Username (for authentication)
+     *
+     * @var string
+     */
+    protected $username;
+
+    /**
+     * Password (for authentication)
+     *
+     * @var string
+     */
+    protected $password;
+
+    /**
+     * Fetched target content
+     *
+     * @var string
+     */
+    protected $result;
+
+    /**
+     * Latest headers
+     *
+     * @var string
+     */
+    protected $headers;
+
+    /**
+     * Latest call's http status code
+     *
+     * @var string
+     */
+    protected $status;
+
+    /**
+     * Whether to follow http redirects
+     *
+     * @var bool
+     */
+    protected $redirect;
+
+    /**
+     * Maximum number of redirect to follow
      *
      * @var integer
      */
-    private $maxRedirect;
+    protected $maxRedirect;
 
     /**
      * The current number of redirects
      *
      * @var int
      */
-    private $curRedirect;
+    protected $curRedirect;
 
     /**
-     * Contains any error occurred
+     * Error message if any
      *
      * @var string
      */
-    private $error;
+    protected $error;
 
     /**
-     * Store the next token
+     * Next portion of a string to be tokenised
      *
      * @var string
      */
-    private $nextToken;
+    protected $nextToken;
 
     /**
-     * Whether to keep debug messages
+     * Whether debugging is enabled
      *
      * @var bool
      */
-    private $debug;
+    protected $debug;
 
     /**
-     * Stores optional http headers
+     * Optional http headers
      *
      * @var array
      */
-    private $headerArray;
+    protected $headerArray;
 
     /**
-     * Stores the debug messages
+     * Debug messages
      *
      * @var array
      * @todo will keep debug messages
      */
-    private $debugMsg;
+    protected $debugMsg;
 
     /**
-     * Stores proxy information (host:port)
+     * Proxy information (host:port)
      *
      * @var string
      */
-    private $proxy;
+    protected $proxy;
 
     /**
      * Constructor
      *
-     * @param array $config Optional settings
+     * @param array $params Optional settings
      */
-    public function __construct($config = [])
+    public function __construct($params = [])
     {
-        if ($config) {
-            $this->initialize($config);
+        if ($params) {
+            $this->initialize($params);
         }
         else {
             $this->clear();
@@ -271,20 +280,18 @@ class cms_http_request
     }
 
     /**
-     * Initialize preferences
+     * Set this object's properties in acccord with class defaults and
+     * the supplied $params, if any.
+     * Values might be set directly, or via a corresponding 'set*' method.
      *
-     * This function will take an associative array of config values and
-     * initialize the class variables using them.
-     *
-     * @param array $config Optional settings
+     * @param array $params Optional settings
      */
-    public function initialize($config = [])
+    public function initialize($params = [])
     {
         $this->clear();
-        foreach ($config as $key => $val) {
+        foreach ($params as $key => $val) {
             if (isset($this->$key)) {
                 $method = 'set' . ucfirst(str_replace('_', '', $key));
-
                 if (method_exists($this, $method)) {
                     $this->$method($val);
                 }
@@ -296,47 +303,44 @@ class cms_http_request
     }
 
     /**
-     * Clear everything
-     *
-     * Clears all the properties of the class and sets the object to
-     * the beginning state. Handy for doing subsequent requests with
-     * different data.
+     * Revert all object-properties to their default value.
      */
     public function clear()
     {
         // Set the request defaults
-        $this->host         = '';
-        $this->port         = 0;
-        $this->path         = '';
-        $this->target       = '';
-        $this->method       = 'GET';
-        $this->schema       = 'http';
-        $this->params       = [];
-        $this->headers      = [];
-        $this->cookies      = [];
-        $this->_cookies     = [];
-        $this->headerArray  = [];
-        $this->proxy        = null; // mixed bool|int|string|array|resource
+        $this->host        = '';
+        $this->port        = 0;
+        $this->path        = '';
+        $this->target      = '';
+        $this->method      = 'GET';
+        $this->schema      = 'http';
+        $this->params      = [];
+        $this->headers     = [];
+        $this->headerArray = [];
+        $this->proxy       = null; // mixed bool|int|string|array|resource
 
         // Set the config details
-        $this->debug        = FALSE;
-        $this->error        = '';
-        $this->status       = 0;
-        $this->timeout      = 25;
-        $this->useCurl      = TRUE;
-        $this->referrer     = CMS_ROOT_URL.'::'.CMS_VERSION;
-        $this->username     = '';
-        $this->password     = '';
-        $this->redirect     = TRUE;
-        $this->maxRedirect  = 3;
-        $this->result       = null; // mixed
+        $this->debug       = FALSE;
+        $this->error       = '';
+        $this->status      = 0;
+        $this->timeout     = 25;
+        $this->useCurl     = TRUE; // and if a suitable version is present
+        $this->checkSecure = TRUE;
+        $this->referrer    = CMS_ROOT_URL;
+        $this->username    = '';
+        $this->password    = '';
+        $this->redirect    = TRUE;
+        $this->maxRedirect = 3;
+        $this->result      = null; // mixed
+        $this->nextToken   = '';
 
         // Set the cookie and agent defaults
-        $this->nextToken    = '';
-        $this->useCookie    = TRUE;
-        $this->saveCookie   = TRUE;
-        $this->cookiePath   = PUBLIC_CACHE_LOCATION.'/c'.md5(session_id().__CLASS__).'.dat'; // by default, use a session-specific cookie file.
-        $this->userAgent    = $_SERVER['HTTP_USER_AGENT'] .' CMSMS:'.CMS_VERSION;
+        $this->_cookies    = [];
+        $this->cookies     = [];
+        $this->useCookie   = TRUE;
+        $this->saveCookie  = TRUE;
+        $this->cookiePath  = PUBLIC_CACHE_LOCATION.'/c'.md5(session_id().__CLASS__).'.dat'; // by default, use a session-specific cookie file
+        $this->userAgent   = $_SERVER['HTTP_USER_AGENT'] .' CMSMS/'.CMS_VERSION;
     }
 
     /**
@@ -403,6 +407,26 @@ class cms_http_request
     public function setTimeout($seconds)
     {
         if ($seconds > 0) { $this->timeout = (int)$seconds; }
+    }
+
+    /**
+     * Set whether to use cURL
+     *
+     * @param bool $value Whether or not to use cURL
+     */
+    public function useCurl($value = TRUE)
+    {
+        if (is_bool($value)) { $this->useCurl = $value; }
+    }
+
+    /**
+     * Set whether to check certificate status
+     *
+     * @param bool $value Whether or not to check
+     */
+    public function checkSecure($value = TRUE)
+    {
+        if (is_bool($value)) { $this->checkSecure = $value; }
     }
 
     /**
@@ -485,16 +509,6 @@ class cms_http_request
     public function addCookie($name, $value)
     {
         if ($name && $value) { $this->cookies[$name] = $value; }
-    }
-
-    /**
-     * Set whether to use cURL
-     *
-     * @param bool $value Whether to use cURL or not
-     */
-    public function useCurl($value = TRUE)
-    {
-        if (is_bool($value)) { $this->useCurl = $value; }
     }
 
     /**
@@ -728,22 +742,35 @@ class cms_http_request
 
     /**
      * Execute a HTTP request
+     * @deprecated since 2.2.23F2 Instead use send()
      *
-     * Automatically uses fsockopen if a suitable cURL is not available.
-     * And follows redirects (if enabled and needed).
-     *
-     * @param string $target URL of the target page (optional)
-     * @param string $referrer URL of the referrer page (optional)
-     * @param string $method The request method (GET, POST or HEAD) (optional)
-     * @param array $data Parameters array for GET, POST or HEAD (optional)
-     * @return mixed string Response body of the target page or (post-HEAD) 'OK'/'' or FALSE
+     * @param string $target URL of the target page Default ''
+     * @param string $referrer URL of the referrer page Default ''
+     * @param string $method Request method (GET, POST or HEAD) Default ''
+     * @param array $data Parameters array for GET, POST or HEAD Default []
+     * @return mixed
      */
     public function execute($target = '', $referrer = '', $method = '', $data = [])
     {
+       if ($referrer) { $this->referrer = $referrer; }
+       if ($method) { $this->setMethod($method); }
+       return $this->send($target, $data);
+    }
+
+    /**
+     * Execute a HTTP request.
+     * Automatically uses fsockopen if a suitable cURL is not available.
+     * And follows redirects (if enabled and needed).
+     * @since 2.2.23F2
+     *
+     * @param string $target URL of the target page Default ''
+     * @param array $data Parameters for GET, POST or HEAD Default []
+     * @return mixed string Response body generated by target or (post-HEAD) 'OK'/'' or FALSE
+     */
+    public function send($target = '', $data = [])
+    {
         // Populate the properties
         if ($target) { $this->target = $target; }
-        if ($method) { $this->method = $method; }
-        if ($referrer) { $this->referrer = $referrer; }
 
         // Add the new params
         if ($data && is_array($data)) {
@@ -775,11 +802,11 @@ class cms_http_request
         $this->host = $urlParsed['host'];
         if ($urlParsed['scheme'] == 'https') {
             $this->port = ($this->port != 0) ? $this->port : 443;
-            $this->_socket = 'ssl://'.$urlParsed['host'].':'.$this->port;
+            $this->socket = 'ssl://'.$urlParsed['host'].':'.$this->port;
         }
         else {
             $this->port = ($this->port != 0) ? $this->port : 80;
-            $this->_socket = 'tcp://'.$urlParsed['host'].':'.$this->port;
+            $this->socket = 'tcp://'.$urlParsed['host'].':'.$this->port;
         }
 
         // Finalize the target path
@@ -864,9 +891,9 @@ class cms_http_request
              CURLOPT_HEADER         => TRUE, // No writefunction callback BUT we want to parse the headers in $content, below
              CURLOPT_RETURNTRANSFER => TRUE
             ]);
-            if ($urlParsed['scheme'] == 'https') {
-                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);  // No certificate-match DEBUG-only?
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); // No certificate check DEBUG-only?
+            if (($this->debug || !$this->checkSecure) && $urlParsed['scheme'] == 'https') {
+                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);  // No certificate-match
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); // No certificate check
             }
 
             // Get the target contents
@@ -918,9 +945,40 @@ class cms_http_request
             // Close PHP cURL handle
             if (PHP_VERSION_ID < 80500) curl_close($ch);
         }
-        else { // Not using cURL
-            // Get a file pointer
-            $filePointer = @stream_socket_client($this->_socket, $errorNumber, $errorString, $this->timeout);
+        else {// Not using cURL
+            if (!function_exists('stream_socket_client')) {
+                // Allegedly, some sitehosts disable that function
+                $this->_setError('Cannot access stream socket');
+                return FALSE;
+            }
+            if ($urlParsed['scheme'] != 'https') {
+                $context = stream_context_create();
+            }
+            else {
+                $opts = stream_get_transports();
+                if (in_array('tls', $opts)) {
+                    $transport = 'tls';
+                }
+                elseif (in_array('ssl', $opts)) {
+                    $transport = 'ssl'; // try sslv2 and sslv3
+                }
+                else {
+                    $this->_setError('No suitable stream transport');
+                    return FALSE;
+                }
+                $check = !($this->debug || !$this->checkSecure);
+                $opts = [
+                    $transport => [
+                        'allow_self_signed' => true,
+                        'verify_host' => $check,
+                        'verify_peer' => $check
+                    ]
+                ];
+                $context = stream_context_create($opts);
+            }
+
+            // Try to get a connection
+            $filePointer = @stream_socket_client($this->socket, $errorNumber, $errorString, $this->timeout, STREAM_CLIENT_ASYNC_CONNECT, $context);
 
             // Error if pointer is not there
             if (!$filePointer) {
@@ -929,9 +987,11 @@ class cms_http_request
             }
 
             // Set http headers with host, user-agent and content type
-            $this->addRequestHeader($this->method .' '. $this->path. '  HTTP/1.1', TRUE);
+            $this->addRequestHeader($this->method .' '. $this->path. ' HTTP/1.1', TRUE);
             $this->addRequestHeader('Host: ' . $this->host);
-            $this->addRequestHeader('Accept: */*');
+            if (!$this->requestHeaderExists('Accept')) {
+                $this->addRequestHeader('Accept: */*');
+            }
             $this->addRequestHeader('User-Agent: ' . $this->userAgent);
             if (!$this->requestHeaderExists('Content-Type')) {
                 $this->addRequestHeader('Content-Type: application/x-www-form-urlencoded');
@@ -957,27 +1017,27 @@ class cms_http_request
                 $this->addRequestheader('Authorization: Basic ' . base64_encode($this->username . ':' . $this->password));
             }
 
-            $this->addRequestHeader('Connection: close');
+            $this->addRequestHeader('Connection: close'); // HTTP/1.1 only
 
-            $requestHeader = implode("\r\n", $this->headerArray) . "\r\n\r\n";
+            $requestContent = implode("\r\n", $this->headerArray) . "\r\n\r\n";
             // POST method configuration
-            if ($this->method == 'POST') {
-                $requestHeader .= $queryString;
+            if ($this->method == 'POST' && ($queryString || is_numeric($queryString))) {
+                $requestContent .= $queryString ."\r\n";
             }
 
             // We're ready to launch
-            fwrite($filePointer, $requestHeader);
+            fwrite($filePointer, $requestContent);
 
-
-            // Clean the slate
             $responseHeader = '';
-            $responseContent = '';
-
-            // 3...2...1...Launch !
-            $n = 0;
             do {
-                $responseHeader .= fread($filePointer, 1);
-            } while (!preg_match('/\\r\\n\\r\\n$/', $responseHeader) && !feof($filePointer));
+                $line = fgets($filePointer);
+                if ($line[0] != "\r") {
+                    $responseHeader .= $line;
+                }
+                else {
+                    break;
+                }
+            } while (!feof($filePointer));
 
             // Parse the headers
             $this->_parseHeaders($responseHeader);
@@ -1006,7 +1066,7 @@ class cms_http_request
                     $this->curRedirect++;
 
                     // Let's go, go, go !
-                    $this->result = $this->execute($newTarget);
+                    $this->result = $this->send($newTarget);
                 }
                 else {
                     $this->_setError('Too many redirects.');
@@ -1016,6 +1076,7 @@ class cms_http_request
             else {
                 // Nope...so unless it's a HEAD request, get the rest of the contents (non-chunked)
                 if ($this->method != 'HEAD') {
+                    $responseContent = '';
                     if (!isset($this->headers['transfer-encoding']) || $this->headers['transfer-encoding'] != 'chunked') {
                         while (!feof($filePointer)) {
                             $responseContent .= fgets($filePointer, 128);
@@ -1038,8 +1099,8 @@ class cms_http_request
                     }
 
                     // Store the retrieved content
-                    $this->result = chop($responseContent);
-                    $this->status = (isset($this->result[0])) ? 200 : 400; //TODO OR other func(responseContent)
+                    $this->result = rtrim($responseContent);
+//                  $this->status = (isset($this->result[0])) ? 200 : 400; 0-length result might be valid
                 }
                 elseif (preg_match('/Connection:[ \t]*close/i', $responseHeader) &&
                     (!preg_match('/Content\-Length:[ \t](\d+)/i', $responseHeader, $matches) ||
@@ -1055,37 +1116,36 @@ class cms_http_request
                 fclose($filePointer);
             }
         }
-
-        // There it is! We have it!! Return to base !!!
         return $this->result;
     }
 
     /**
-     * Parse headers
+     * Parse the response headers and store them for finding the response
+     * status, redirection location, cookies, etc.
      * @access private
      * @internal
-     *
-     * Parse the response headers and store them for finding the resposne
-     * status, redirection location, cookies, etc.
      *
      * @param string $responseHeader Raw header response
      */
     private function _parseHeaders($responseHeader)
     {
-        // Break up the headers
-        $headers = explode("\r\n", $responseHeader);
-
         // Clear the header array
         $this->_clearHeaders();
 
+        if (!$responseHeader) {
+            $this->_setError('Unexpected HTTP response no header');
+            return;
+        }
+        // Break up the headers
+        $headers = explode("\r\n", $responseHeader);
+
         // Get response status
         if ($this->status == 0) {
-            // Oooops !
             if (!preg_match('/HTTP\/\d+(?:\.\d+)?[ \t]+(\d+)[ \t]/i', $headers[0], $matches)) {
+                // Oooops !
                 $this->_setError('Unexpected HTTP response status');
-                return FALSE;
+                return;
             }
-
             // Gotcha!
             $this->status = $matches[1];
             array_shift($headers);
@@ -1094,10 +1154,12 @@ class cms_http_request
         // Prepare all the other headers
         foreach ($headers as $header) {
             // Get name and value
-            $headerName  = strtolower($this->_tokenize($header, ':'));
-            $headerValue = trim(chop($this->_tokenize("\r\n")));
+            $headerName = strtolower($this->_tokenize($header, ':'));
+            if ($headerName == '') continue;
+            $headerValue = trim(rtrim($this->_tokenize("\r\n")));
+            if ($headerValue == '') continue;
 
-            // If it's already there, then add as an array. Otherwise, just keep there
+            // If it's already there, then add as an array. Otherwise, just add
             if (isset($this->headers[$headerName])) {
                 if (!is_array($this->headers[$headerName])) {
                     $this->headers[$headerName] = [$this->headers[$headerName]];
@@ -1175,11 +1237,9 @@ class cms_http_request
     }
 
     /**
-     * Set cookie
-     *
-     * Populate the internal _cookies array for future inclusion in
-     * subsequent requests. This validates and then populates the
-     * object properties with an associative array for cookie.
+     * Populate the internal _cookies array for inclusion in subsequent
+     * requests. This validates and then populates the object properties
+     * with an associative array for cookie.
      * @access private
      * @internal
      *
@@ -1220,12 +1280,14 @@ class cms_http_request
         $value = $this->_encodeCookie($value, FALSE);
         $secure = (int)$secure;
 
-        $this->_cookies[] = ['name'    => $name,
-                             'value'   => $value,
-                             'domain'  => $domain,
-                             'path'    => $path,
-                             'expires' => $expires,
-                             'secure'  => $secure];
+        $this->_cookies[] = [
+         'name'    => $name,
+         'value'   => $value,
+         'domain'  => $domain,
+         'path'    => $path,
+         'expires' => $expires,
+         'secure'  => $secure
+        ];
     }
 
     /**
@@ -1246,8 +1308,6 @@ class cms_http_request
     }
 
     /**
-     * Pass cookies (internal)
-     *
      * Get the cookies which are valid for the current request. Checks
      * domain and path to decide the return.
      *
@@ -1302,9 +1362,9 @@ class cms_http_request
     }
 
     /**
-     * Tokenize string for various internal usage. Omit the second parameter
-     * to tokenize the previous string that was provided in the prior call to
-     * the function.
+     * Tokenize the supplied string.
+     * Omit the $separator argument to tokenize the string that was
+     * provided to the prior call to this function.
      * @access private
      * @internal
      *
