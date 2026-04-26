@@ -108,10 +108,10 @@ function getTestValues( $property )
 
 /**
  * Test a php global.
-
- * @return array
+ *
  * @param mixed   $result
  * @param boolean $set Default false
+ * @return array
  */
 function testGlobal( $result, $set = false )
 {
@@ -138,8 +138,8 @@ function testGlobal( $result, $set = false )
 }
 
 /**
- * @return boolean
  * @param string $test
+ * @return bool
  */
 function extension_loaded_or( $test )
 {
@@ -149,12 +149,12 @@ function extension_loaded_or( $test )
 }
 
 /**
- * @return string
  * @param object  $test
  * @param boolean $required
  * @param string  $message Default ''
  * @param string  $error_fragment Default ''
  * @param string  $error Default ''
+ * @return bool true always
  */
 function getTestReturn( $test, $required, $message = '', $error_fragment = '', $error = '' )
 {
@@ -169,16 +169,17 @@ function getTestReturn( $test, $required, $message = '', $error_fragment = '', $
 		list($test->continueon, $test->special_failed) = testGlobal($required);
 		if($test->res == 'yellow') {
 			$test->res_text = $lang_fn('caution');
+			$test->value = '';
 		}
 		elseif($test->res == 'red') {
 			$test->res_text = $lang_fn('failure');
+			$test->value = 'Failed';
 		}
-		if(trim($message) != '') $test->message = $message;
-		if(trim($error_fragment) != '') $test->error_fragment = $error_fragment;
-		if(trim($error) != '') $test->error = $error;
+		if(trim($message)) $test->message = $message;
+		if(trim($error_fragment)) $test->error_fragment = $error_fragment;
+		if(trim($error)) $test->error = $error;
 		break;
 	}
-
 	return true;
 }
 
@@ -242,12 +243,11 @@ function testSupportedDatabase( $required, $title, $db = null, $message = '' )
 		$test->res = 'red';
 		getTestReturn($test, $required, $message, 'DB_driver_missing', $lang_fn('no_db_driver'));
 	}
-
 	return $test;
 }
 
 /**
- * @param int $flags Default INFO_ALL 
+ * @param int $flags Default INFO_ALL
  * @return string
  */
 function getEmbedPhpInfo( $flags = INFO_ALL )
@@ -1047,6 +1047,7 @@ function testFileWritable( $required, $title, $file, $message = '', $debug = fal
 }
 
 /**
+ * Check operation of fsockopen() and fopen() on url-derived stream
  * @param bool   $required
  * @param string $title
  * @param string $url Default '' hence CMS_DEFAULT_VERSIONCHECK_URL
@@ -1066,7 +1067,7 @@ function testRemoteFile( $required, $title, $url = '', $message = '',
 	$test->title = $title;
 	$test->value = $lang_fn('success');
 
-	if(! $url_info = parse_url($url)) {
+	if(!($url_info = parse_url($url))) {
 		// Relative or invalid URL?
 		$test->res = 'red';
 		$test->value = $lang_fn('failure');
@@ -1074,7 +1075,7 @@ function testRemoteFile( $required, $title, $url = '', $message = '',
 		return $test;
 	}
 
-	if( !isset($url_info['scheme']) || !isset($url_info['host']) ) {
+	if(empty($url_info['scheme']) || empty($url_info['host'])) {
 		$test->res = 'red';
 		$test->value = $lang_fn('failure');
 		getTestReturn($test, $required, '', '', $lang_fn('invalid_url'));
@@ -1086,39 +1087,39 @@ function testRemoteFile( $required, $title, $url = '', $message = '',
 			$scheme = 'ssl://';
 			$port = (isset($url_info['port'])) ? $url_info['port'] : 443;
 			break;
-		case 'http':
+//		case 'http':
 		default:
 			$scheme = '';
 			$port = (isset($url_info['port'])) ? $url_info['port'] : 80;
 		}
-		$complete_url  = (isset($url_info['path'])) ? $url_info['path'] : '/';
-		$complete_url .= (isset($url_info['query'])) ? '?'.$url_info['query'] : '';
+		$complete_url = (!empty($url_info['path'])) ? $url_info['path'] : '/';
+		if( !empty($url_info['query']) ) $complete_url .= '?'.$url_info['query'];
 
-		// TEST FSOCKOPEN TODO this does not work reliably
-		if($debug) $handle = fsockopen($scheme . $url_info['host'], $port, $errno, $errstr, $timeout);
-		else       $handle = @fsockopen($scheme . $url_info['host'], $port, $errno, $errstr, $timeout);
+		// test fsockopen() TODO this does not work reliably
+		if($debug) { $handle = fsockopen($scheme . $url_info['host'], $port, $errno, $errstr, $timeout); }
+		else       { $handle = @fsockopen($scheme . $url_info['host'], $port, $errno, $errstr, $timeout); }
 		if($handle) {
 			$out = 'GET ' . $complete_url . " HTTP/1.1\r\n"
-			 . 'Host:' . $url_info['host'] . "\r\n"
-			 . "Connection:Close\r\n\r\n";
+			 . 'Host: ' . $url_info['host'] . "\r\n"
+			 . "Connection: close\r\n\r\n"; // HTTP/1.1 only
 			if($debug) {
-				fwrite($handle, $out);
-				stream_set_blocking($handle, 1);
+				stream_set_blocking($handle, true);
 				stream_set_timeout($handle, $timeout);
+				fwrite($handle, $out);
 				$_info = stream_get_meta_data($handle);
 			}
 			else {
-				@fwrite($handle, $out);
-				@stream_set_blocking($handle, 1);
+				@stream_set_blocking($handle, true);
 				@stream_set_timeout($handle, $timeout);
+				@fwrite($handle, $out);
 				$_info = @stream_get_meta_data($handle);
 			}
 
 			$content_fsockopen = '';
-			while( (! feof($handle)) && (! $_info['timed_out']) ) {
-				if($debug) $content_fsockopen .= fgets($handle, 128);
-				else       $content_fsockopen .= @fgets($handle, 128);
-				$_info = stream_get_meta_data($handle);
+			while(!(feof($handle) || $_info['timed_out'])) {
+				if($debug) { $content_fsockopen .= fgets($handle, 128); }
+				else       { $content_fsockopen .= @fgets($handle, 128); }
+				$_info = stream_get_meta_data($handle); // might be different now?
 			}
 			@fclose($handle);
 
@@ -1166,12 +1167,13 @@ function testRemoteFile( $required, $title, $url = '', $message = '',
 			}
 		}
 
-		// TEST FOPEN TODO this does not work reliably
+		// test fopen() TODO this does not work reliably
+		// ignores ini 'open_basedir' setting
 		$test->opt['fopen']['ok'] = 2;
 		$result = testBoolean('', '', 'allow_url_fopen', '', true, false);
 		if($result->res == 'green') {
-			if($debug) $handle = fopen($url, 'r');
-			else       $handle = @fopen($url, 'r');
+			if($debug) { $handle = fopen($url, 'r'); }
+			else       { $handle = @fopen($url, 'r'); }
 			if(false == $handle) {
 				$test->opt['fopen']['ok'] = 2;
 				$test->opt['fopen']['res'] = 'red';
@@ -1191,9 +1193,9 @@ function testRemoteFile( $required, $title, $url = '', $message = '',
 				}
 
 				$content_fopen = '';
-				while( (! feof($handle)) && (! $_info['timed_out']) ) {
-					if($debug) $content_fopen .= fgets($handle, 128);
-					else       $content_fopen .= @fgets($handle, 128);
+				while(!feof($handle) && !$_info['timed_out']) {
+					if($debug) { $content_fopen .= fgets($handle, 128); }
+					else       { $content_fopen .= @fgets($handle, 128); }
 					$_info = stream_get_meta_data($handle);
 				}
 				@fclose($handle);
