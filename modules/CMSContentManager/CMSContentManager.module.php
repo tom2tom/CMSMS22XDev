@@ -24,7 +24,7 @@
 final class CMSContentManager extends CMSModule
 {
     public function GetFriendlyName() { return $this->Lang('friendlyname'); }
-    public function GetVersion() { return '1.1.14'; }
+    public function GetVersion() { return '1.2'; } // must be sufficient to trigger upgrade from all relevant official (i.e. 1.1.x) and F2 versions
     public function GetHelp() { return CmsLangOperations::lang_from_realm('help','help_cmscontentmanager_help'); }
     public function GetAuthor() { return 'Robert Campbell'; }
     public function GetAuthorEmail() { return ''; }
@@ -35,7 +35,7 @@ final class CMSContentManager extends CMSModule
     public function LazyLoadFrontend() { return TRUE; }
     public function GetAdminSection() { return 'content'; }
     public function GetAdminDescription() { return $this->Lang('moddescription'); }
-    public function MinimumCMSVersion() { return '2.0'; }
+    public function MinimumCMSVersion() { return '2.2.23F2'; } // for namespaced-classes autoloading
     public function InstallPostMessage() { return $this->Lang('postinstall'); }
     public function UninstallPostMessage() { return $this->Lang('postuninstall'); }
     public function UninstallPreMessage() { return $this->Lang('preuninstall'); }
