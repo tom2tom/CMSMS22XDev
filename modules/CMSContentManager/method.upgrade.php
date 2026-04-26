@@ -6,6 +6,10 @@
 if( !isset($gCms) ) exit;
 if( !($gCms->test_state(CmsApp::STATE_INSTALL) || $this->CheckPermission('Modify Modules')) ) exit;
 
+if( $this->GetPreference('order_TAB_MAIN', -99) == -99 ) {
+	$oldversion = '1.1.11'; // force changes when upgrading an 'official' release
+}
+
 if( version_compare($oldversion,'1.1.12') < 0 ) {
 	// default page-edit tabs display order
 	$this->SetPreference('order_TAB_MAIN', 2);
@@ -22,3 +26,4 @@ if( version_compare($oldversion,'1.1.14') < 0 ) {
 ('{$modname}_pagelimit','{$modname}_userfilter','cgcm_bulk_showmore','opened_pages')";
 	$db->Execute($sql);
 }
+?>
