@@ -11,26 +11,25 @@
 #but WITHOUT ANY WARRANTY; without even the implied warranty of
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
+#
 #You should have received a copy of the GNU General Public License
-#along with this program; if not, write to the Free Software
-#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#along with this program. If not, read the license online at:
+#https://www.gnu.org/licenses/#LicenseURLs
 
-function smarty_function_form_start($params, $smarty)
+function smarty_function_form_start($params, $tpl)
 {
-    $gCms = CmsApp::get_instance();
-    $tagparms = array();
     $mactparms = array();
-    $mactparms['module'] = $smarty->getTemplateVars('actionmodule');
-    $mactparms['mid'] = $smarty->getTemplateVars('actionid');
-    $mactparms['returnid'] = $smarty->getTemplateVars('returnid');
+    $mactparms['module'] = $tpl->getTemplateVars('actionmodule');
+    $mactparms['mid'] = $tpl->getTemplateVars('actionid');
+    $mactparms['returnid'] = $tpl->getTemplateVars('returnid');
     $mactparms['inline'] = 0;
 
-    $tagparms['method'] = 'post';
-    $tagparms['enctype'] = 'multipart/form-data';
+    $tagparms = ['method' => 'post','enctype' => 'multipart/form-data'];
+    $gCms = CmsApp::get_instance();
     if( $gCms->test_state(CmsApp::STATE_ADMIN_PAGE) ) {
         // check if it's a module action
         if( $mactparms['module'] ) {
-            $tmp = $smarty->getTemplateVars('actionparams');
+            $tmp = $tpl->getTemplateVars('actionparams');
             if( is_array($tmp) && isset($tmp['action']) ) $mactparms['action'] = $tmp['action'];
 
             $tagparms['action'] = 'moduleinterface.php';
@@ -39,9 +38,9 @@ function smarty_function_form_start($params, $smarty)
             if( !$mactparms['mid'] ) $mactparms['mid'] = 'm1_';
         }
     }
-    else if( $gCms->is_frontend_request() ) {
+    elseif( $gCms->is_frontend_request() ) {
         if( $mactparms['module'] ) {
-            $tmp = $smarty->getTemplateVars('actionparams');
+            $tmp = $tpl->getTemplateVars('actionparams');
             if( is_array($tmp) && isset($tmp['action']) ) $mactparms['action'] = $tmp['action'];
 
             $tagparms['action'] = 'moduleinterface.php';
@@ -95,7 +94,7 @@ function smarty_function_form_start($params, $smarty)
 
         case 'extraparms':
             if( $value && is_array($value) ) {
-                foreach( $value as $key=>$value2 ) {
+                foreach( $value as $key => $value2 ) {
                     $parms[$key] = $value2;
                 }
             }
@@ -115,10 +114,26 @@ function smarty_function_form_start($params, $smarty)
         }
     }
 
+    $htmlit = function($value)
+    {
+        if( is_string($value) ) {
+            $tmp = trim($value,"\" \n\r\t\v\0");
+            return ($tmp && !is_numeric($tmp) ) ? addcslashes($tmp,'"') : $tmp;
+        }
+        if( is_scalar($value) || $value === null ) {
+            return (string)$value;
+        }
+        if( is_object($value) && method_exists($value,'__toString') ) {
+            $tmp = trim((string)$value,"\" \n\r\t\v\0");
+            return ($tmp && !is_numeric($tmp) ) ? addcslashes($tmp,'"') : $tmp;
+        }
+        return 'Unusable value';
+    };
+
     $out = "\n<form";
     foreach( $tagparms as $key => $value ) {
         if( $value ) {
-            $out .= " $key=\"$value\"";
+            $out .= " $key=\"".$htmlit($value).'"';
         } else {
             $out .= " $key";
         }
@@ -137,19 +152,20 @@ function smarty_function_form_start($params, $smarty)
         }
     }
     foreach( $parms as $key => $value ) {
-        if( is_scalar($value) ) {
-            $out .= '  <input type="hidden" name="'.$mactparms['mid'].$key.'" value="'.$value."\">\n";
+        if( !is_array($value) ) {
+            $out .= '  <input type="hidden" name="'.$mactparms['mid'].$key.'" value="'.$htmlit($value)."\">\n";
         } else {
             foreach( $value as $value2 ) {
-                $out .= '  <input type="hidden" name="'.$mactparms['mid'].$key.'"[] value="'.$value2."\">\n";
+                $out .= '  <input type="hidden" name="'.$mactparms['mid'].$key.'"[] value="'.$htmlit($value2)."\">\n";
             }
         }
     }
     $out .= ' </div>'."\n";
 
-    if( isset($params['assign']) ) {
-        $smarty->assign($params['assign'],$out);
+    if( !empty($params['assign']) ) {
+        $tpl->assign(trim($params['assign']),$out);
         return '';
     }
     return $out;
 }
+?>
