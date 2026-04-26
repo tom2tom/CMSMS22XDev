@@ -370,39 +370,53 @@ if( isset($_POST['editsiteprefs']) ) {
       if( isset($_POST['sitedownmessage']) ) {
         $s = trim($_POST['sitedownmessage']);
         if( $s ) {
+          // validate provided html
           // see also news_ops::execSpecialize(), UserGuideUtils::cleanContent(), not cleanValue()
-          // TODO remove any risky char(s)-combination ?
-          $clean = preg_replace(
-           ['~<html.+?/html>~is',
-            '~<head.+?/head>~is',
-            '~<body.+?/body>~is',
-            '~<form.+?/form>~is',
-            '~<button.+?/button>~is',
-            '~<input.+?>~is',
-            '~<select.+?/select>~is',
-            '~<textarea.+?/textarea>~is',
-            '~<dialog.+?/dialog>~is',
-            '~<base.*?>~is',
-            '~<meta.*?>~is',
-            '~<embed.*?>~is',
-            '~<title.*?/title>~is',
-            '~<script.*?/script>~is',
-            '~<noscript.*?/noscript>~is',
-            '~<\?(?:=|php).*\?>~isu',
-            '~`.+?`~s',
-            '~[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]~' // no need for g modifier here
-           ],[],$s);
-          if( $clean == $s ) {
-            $sitedownmessage = $s;
+          $flag = false;
+          // TODO other risky char(s)-combinations ?
+          foreach( [
+            '~<(input).+?>~is',
+            '~<(button).+?/button>~is',
+            '~<(select).+?/select>~is',
+            '~<(textarea).+?/textarea>~is',
+            '~<(script).*?/script>~is',
+            '~<(noscript).*?/noscript>~is',
+            '~(<\?(=|php)).*\?>~isu',
+            '~(`.+?`)~s',
+            '~<(dialog).+?/dialog>~is',
+            '~<(form).+?/form>~is',
+            '~<(base).*?>~is',
+            '~<(meta).*?>~is',
+            '~<(embed).*?>~is',
+            '~<(title).*?/title>~is',
+            '~<(html).+?/html>~is',
+            '~<(head).+?/head>~is',
+            '~<(body).+?/body>~is',
+            '~[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]~'
+           ] as $patn ) {
+            if( preg_match($patn,$s,$m) ) {
+              $flag = true;
+              break;
+            }
+          }
+          $sitedownmessage = $s;
+          if( !$flag ) {
             cms_siteprefs::set('sitedownmessage',$sitedownmessage);
           }
           else {
-            $error .= lang('error_sitedownmessage');
+            if( !empty($m[1]) ) {
+              $detail = "'" . htmlspecialchars($m[1]) . "'";
+            }
+            else {
+              $detail = 'character';
+            }
+            $error .= lang('error_sitedowndetail', $detail);
           }
         }
         else {
           $sitedownmessage = '';
           cms_siteprefs::set('sitedownmessage',$sitedownmessage);
+          $error .= lang('error_sitedownmessage');
         }
       }
       $prevsitedown = $enablesitedownmessage;
