@@ -1,6 +1,14 @@
 <?php
 
-class ModuleManagerModuleInfo extends CmsExtendedModuleInfo implements ArrayAccess
+namespace ModuleManager;
+
+use ArrayAccess;
+use CmsExtendedModuleInfo;
+use Exception;
+use ModuleOperations;
+use function debug_display;
+
+class ModuleInfo extends CmsExtendedModuleInfo implements ArrayAccess
 {
     private static $_minfo;
     private static $_deprecated = array();
@@ -175,7 +183,7 @@ class ModuleManagerModuleInfo extends CmsExtendedModuleInfo implements ArrayAcce
                 $info = new self($module_name,TRUE,$can_check_forge);
                 $out[$module_name] = $info;
             }
-            catch( \Exception $e ) {
+            catch( Exception $e ) {
                 debug_display($e->GetMessage(),$module_name);
             }
         }
