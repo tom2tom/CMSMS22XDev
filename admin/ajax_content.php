@@ -31,7 +31,7 @@ if( isset($_GET['allow_all']) && !cms_to_bool($_GET['allow_all']) ) $allow_all =
 
 $display = 'title';
 $mod = cms_utils::get_module('CMSContentManager');
-if( $mod ) $display = CmsContentManagerUtils::get_pagenav_display();
+if( $mod ) $display = CMSContentManager\Utils::get_pagenav_display();
 
 $ruid = get_userid(FALSE);
 try {

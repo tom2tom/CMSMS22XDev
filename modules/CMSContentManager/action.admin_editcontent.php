@@ -19,6 +19,7 @@
 # https://www.gnu.org/licenses/#LicenseURLs
 #-------------------------------------------------------------------------
 #END_LICENSE
+
 if( !isset($gCms) ) exit;
 
 $user_id = get_userid();
@@ -41,7 +42,7 @@ $modname = $this->GetName();
 // init
 //
 try {
-    $pagedefaults = CmsContentManagerUtils::get_pagedefaults();
+    $pagedefaults = CMSContentManager\Utils::get_pagedefaults();
     $content_type = $pagedefaults['contenttype'];
 
     if( isset($params['content_id']) ) $content_id = (int)$params['content_id'];
@@ -259,7 +260,7 @@ catch( CmsContentException $e ) {
     }
 }
 
-if( $content_id > 0 && CmsContentManagerUtils::locking_enabled() ) {
+if( $content_id > 0 && CMSContentManager\Utils::locking_enabled() ) {
     // check whether this page is locked
     $lock_id = CmsLockOperations::is_locked('content',$content_id);
     if( $lock_id > 0 ) {
@@ -421,3 +422,4 @@ $assistant = $factory->getEditContentAssistant();
 if( is_object($assistant) ) $tpl->assign('extra_content',$assistant->getExtraCode());*/
 
 $tpl->display();
+?>

@@ -188,7 +188,7 @@ $tpl->assign('pagelimits',$pagelimits);
 $tpl->assign('pagelimit',$pagelimit); // for <select/> selection
 $have_locks = ($builder->get_locks($userid)) ? 1 : 0; // ignore any held by current user (this value used in js only)
 $tpl->assign('have_locks',$have_locks);
-$tpl->assign('locking',CmsContentManagerUtils::locking_enabled());
+$tpl->assign('locking',CMSContentManager\Utils::locking_enabled());
 // selectable admin users
 $tpl->assign('user_list',UserOperations::get_instance()->GetList());
 // selectable designs

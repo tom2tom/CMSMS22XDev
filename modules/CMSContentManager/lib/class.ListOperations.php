@@ -26,7 +26,7 @@ use cms_config;
 use cms_tree;
 use CmsApp;
 use CMSContentManager; //module class in global space
-use CmsContentManagerUtils;
+use CMSContentManager\Utils;
 use CmsLayoutTemplate;
 use CmsLockOperations;
 use CMSMS\internal\global_cache;
@@ -904,7 +904,7 @@ final class ListOperations
 				case 'page':
 					if( $content->MenuText() != CMS_CONTENT_HIDDEN_NAME ) {
 						$rec[$column] = strip_tags($content->MenuText());
-						if( CmsContentManagerUtils::get_pagenav_display() == 'title' ) $rec[$column] = strip_tags($content->Name());
+						if( Utils::get_pagenav_display() == 'title' ) $rec[$column] = strip_tags($content->Name());
 					}
 					break;
 

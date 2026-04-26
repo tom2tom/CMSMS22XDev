@@ -3,9 +3,7 @@
 #-------------------------------------------------------------------------
 # Module CMSContentManager tab populator
 # (c) 2013 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
-#
 #-------------------------------------------------------------------------
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -15,17 +13,18 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 # Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
 #-------------------------------------------------------------------------
 #END_LICENSE
 
-$page_prefs = CmsContentManagerUtils::get_pagedefaults();
+$page_prefs = CMSContentManager\Utils::get_pagedefaults();
 $tpl->assign('page_prefs',$page_prefs);
 $tpl->assign('all_contenttypes',ContentOperations::get_instance()->ListContentTypes(FALSE,FALSE));
 $tpl->assign('design_list',CmsLayoutCollection::get_list());
 $tpl->assign('template_list',CmsLayoutTemplate::template_query(array('as_list'=>1)));
 $tpl->assign('addteditor_list',ContentBase::GetAdditionalEditorOptions());
+?>

@@ -64,7 +64,7 @@ try {
     $editinfo = $builder->get_content_list();
     $npages = $builder->get_numpages();
 
-    $dolock = CmsContentManagerUtils::locking_enabled();
+    $dolock = CMSContentManager\Utils::locking_enabled();
     if( $dolock ) {
         $userid = get_userid(false);
         $other_locks = CmsLockOperations::get_locks('content',0,$userid); //lock(s) held by other users
@@ -123,7 +123,7 @@ try {
     $tpl->assign('template_list',CmsLayoutTemplate::template_query(array('as_list'=>1))); // this is just to aid loading
 
     if( $self_locks && $itemstip ) { $tpl->assign('which_selflocks',$itemstip); }
-    if( CmsContentManagerUtils::get_pagenav_display() == 'title' ) {
+    if( CMSContentManager\Utils::get_pagenav_display() == 'title' ) {
         $tpl->assign('colhdr_page',$this->Lang('colhdr_name'));
         $tpl->assign('coltitle_page',$this->Lang('coltitle_name'));
     }
