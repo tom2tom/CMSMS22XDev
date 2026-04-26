@@ -561,9 +561,8 @@ final class cms_utils
 						}
 					}
 					else {
-						$req = new cms_http_request(['timeout' => 3]);
-						//TODO ->execute() reports 403 for some valid urls, can vary per 'www.' inclusion
-						$response = $req->execute($url2,CMS_ROOT_URL,'HEAD');// for a GET, add nocache header
+						$req = new cms_http_request(['method' => 'HEAD','timeout' => 3]);
+						$response = $req->send($url2);
 						if ($response != 'OK') {
 							$status = $req->getStatus();
 							$error = cms_http_request::http_message($status);

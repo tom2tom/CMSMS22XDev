@@ -81,9 +81,8 @@ class CmsVersionCheckJob extends ConditionalJob
     private function fetch_latest_cmsms_ver()
     {
         $remote_ver = 'error';
-        $req = new cms_http_request();
-        $req->setTimeout(10);
-        $req->execute(CMS_DEFAULT_VERSIONCHECK_URL);
+        $req = new cms_http_request(['method' => 'POST','timeout' => 10]);
+        $req->send(CMS_DEFAULT_VERSIONCHECK_URL);
         if( $req->getStatus() == 200 ) {
             $remote_ver = trim($req->getResult());
             if( strpos($remote_ver,':') !== FALSE ) {

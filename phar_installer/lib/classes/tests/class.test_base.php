@@ -2,7 +2,7 @@
 
 namespace __appbase\tests;
 
-use __appbase\http_request;
+use __appbase\cms_http_request;
 use __appbase\utils;
 use Exception;
 use function __appbase\lang;
@@ -40,10 +40,9 @@ function test_is_true($val)
 function test_remote_file($url,$timeout = 3,$searchString = '')
 {
   $timeout = max(1,min(360,$timeout));
-  $req = new http_request();
-  $req->setTarget($url);
+  $req = new cms_http_request();
   $req->setTimeout($timeout);
-  $req->execute();
+  $req->send($url);
   if( $req->getStatus() != 200 ) return FALSE;
   if( $searchString && strpos($req->getResult(),$searchString) === FALSE ) return FALSE;
   return TRUE;
