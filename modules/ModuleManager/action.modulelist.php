@@ -1,11 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module ModuleManager action
+# Module ModuleManager action: modulelist
 # (c) 2008 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
-#
 #-------------------------------------------------------------------------
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -15,13 +13,16 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 # Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
 #-------------------------------------------------------------------------
 #END_LICENSE
+
+use ModuleManager\utils;
+
 if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Modify Modules') ) exit;
 
@@ -31,12 +32,13 @@ $_SESSION[$modname]['active_tab'] = 'modules'; //TODO '__activetab' ?
 if( !isset($params['name']) ) $this->Redirect($id, 'defaultadmin');
 
 $prefix = trim($params['name']);
-$repmodules = modulerep_client::get_repository_modules($prefix, FALSE, TRUE);
-if( !is_array($repmodules) || $repmodules[0] === FALSE ) $this->Redirect($id, 'defaultadmin'); // for some reason, nothing matched
-
+$repmodules = ModuleManager\modulerep_client::get_repository_modules($prefix, true, true);
+if( !is_array($repmodules) || $repmodules[0] === false ) {
+  $this->Redirect($id, 'defaultadmin'); // nothing matched
+}
 $repmodules = $repmodules[1];
 
-$result = modmgr_utils::get_installed_modules();
+$result = utils::get_installed_modules();
 if( !$result[0] ) {
   $this->_DisplayErrorPage($id, $params, $returnid, $result[1]);
   return;
@@ -47,7 +49,7 @@ $caninstall = can_admin_upload();
 
 $tpl = $smarty->createTemplate("module_file_tpl:$modname;showmodule.tpl", null, $modname, $smarty);
 
-$data = modmgr_utils::build_module_data($repmodules,$instmodules,false);
+$data = utils::build_module_data($repmodules, $instmodules, false);
 if( $data ) {
   $size = count($data);
 
@@ -57,11 +59,10 @@ if( $data ) {
 
   // build the table
   $rowarray = array();
-  $newestdisplayed="";
   foreach( $data as $row ) {
     $onerow = new stdClass();
     $onerow->date = $row['date'];
-    $onerow->age = modmgr_utils::get_status($row['date']);
+    $onerow->age = utils::get_status($row['date']);
     $onerow->downloads = $row['downloads'];
     $onerow->name = $row['name'];
     $onerow->version = $row['version'];
@@ -136,10 +137,11 @@ else {
   $tpl->assign('errmessage2', $this->Lang('error_missingmoduleinfo', $prefix));
 }
 
-modmgr_utils::get_images($tpl);
+utils::get_images($tpl);
 
 $tpl->assign('title', $this->Lang('versionsformodule', $prefix));
 if( !$caninstall ) {
   $tpl->assign('errmessage1', $this->Lang('error_permissions'));
 }
 $tpl->display();
+?>
