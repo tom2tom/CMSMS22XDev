@@ -178,6 +178,7 @@ $template->set_content(<<<'EOT'
     {cms_selflink dir='next' rellink=1}
 
 {* The {literal} below and the matching {/literal} are needed whenever there are {"curly brackets"} without surrounding whitespace, otherwise Smarty will try to process and will throw an error *}
+{* The min and max page width for Internet Explorer is set here. For other browsers those are in the stylesheet "Layout Top menu + 2 columns" *}
 {literal}
     <script>
 <!--
@@ -195,13 +196,10 @@ function P7_MinMaxW(a,b) {
     </style>
     <![endif]-->
 {/literal}
-{* The min and max page width for Internet Explorer is set here. For other browsers those are in the stylesheet "Layout Top menu + 2 columns" *}
-
+{* If we need to support ancient IE6, javascript is required for CSSMenu to work *}
     <!--[if lte IE 6]>
-    <script src="TODO"></script>
+    <script src="{$themes_url}/NCleanBlue/js/CSSMenu.js"></script>
     <![endif]-->
-{* The above javascript is required for CSSMenu to work in IE6 *}
-
   </head>
   <body>
     <div id="pagewrapper">
@@ -346,6 +344,7 @@ $template->set_content(<<<'EOT'
     {cms_selflink dir='next' rellink=1}
 
 {* The {literal} below and the matching {/literal} are needed whenever there are {"curly brackets"} without surrounding whitespace otherwise Smarty will try to process and will throw an error *}
+{* The min and max page width for Internet Explorer is set here. For other browsers those are in the stylesheet "Layout Top menu + 2 columns" *}
 {literal}
     <script>
 <!--
@@ -363,12 +362,10 @@ function P7_MinMaxW(a,b) {
     </style>
     <![endif]-->
 {/literal}
-{* The min and max page width for Internet Explorer is set here. For other browsers those are in the stylesheet "Layout Top menu + 2 columns" *}
-
+{* If we need to support ancient IE6, javascript required for CSSMenu to work *}
     <!--[if lte IE 6]>
-    <script src="TODO"></script>
+    <script src="{$themes_url}/NCleanBlue/js/CSSMenu.js"></script>
     <![endif]-->
-{* The above javascript is required for CSSMenu to work in IE6 *}
   </head>
   <body>
     <div id="pagewrapper">
@@ -848,6 +845,7 @@ $template->set_content(<<<'EOT'
     {cms_selflink dir='next' rellink=1}
 
 {* The {literal} below and the matching {/literal} are needed whenever there are {"curly brackets"} without surrounding whitespace otherwise Smarty will try to process and will throw an error *}
+{* The min and max page width for Internet Explorer is set here. For other browsers those are in the stylesheet "Layout Top menu + 2 columns" *}
 {literal}
     <script>
 <!--
@@ -865,12 +863,10 @@ function P7_MinMaxW(a,b) {
     </style>
     <![endif]-->
 {/literal}
-{* The min and max page width for Internet Explorer is set here. For other browsers those are in the stylesheet "Layout Top menu + 2 columns" *}
-
+{* If we need to support ancient IE6, javascript required for CSSMenu to work *}
     <!--[if lte IE 6]>
-    <script src="TODO"></script>
+    <script src="{$themes_url}/NCleanBlue/js/CSSMenu.js"></script>
     <![endif]-->
-{* The above javascript is required for CSSMenu to work in IE6 *}
 
   </head>
   <body>
@@ -1017,6 +1013,7 @@ $template->set_content(<<<'EOT'
     {cms_selflink dir='next' rellink=1}
 
 {* The {literal} below and the matching {/literal} are needed whenever there are {"curly brackets"} without surrounding whitespace otherwise Smarty will try to process and will throw an error *}
+{* The min and max page width for Internet Explorer is set here. For other browsers those are in the stylesheet "Layout Top menu + 2 columns" *}
 {literal}
     <script>
 <!--
@@ -1034,13 +1031,10 @@ function P7_MinMaxW(a,b) {
     </style>
     <![endif]-->
 {/literal}
-{* The min and max page width for Internet Explorer is set here. For other browsers those are in the stylesheet "Layout Top menu + 2 columns" *}
-
+{* If we need to support ancient IE6, javascript required for CSSMenu to work *}
     <!--[if lte IE 6]>
-    <script src="TODO"></script>
+    <script src="{$themes_url}/NCleanBlue/js/CSSMenu.js"></script>
     <![endif]-->
-{* The above javascript is required for CSSMenu to work in IE6 *}
-
   </head>
   <body>
     <div id="pagewrapper">
@@ -1183,14 +1177,14 @@ $template->set_content(<<<'EOT'
     {cms_selflink dir='prev' rellink=1}
     {cms_selflink dir='next' rellink=1}
 
-<!--[if IE 6]>
-    <script src="TODO"></script>
-<![endif]-->
-{* The above javascript is required for Menu - NCleanBlue-css to work in IE6 *}
+{* If we need to support ancient IE6, javascript is required for Menu - NCleanBlue-css to work *}
+    <!--[if IE 6]>
+    <script src="{$themes_url}/NCleanBlue/js/CSSMenu.js"></script>
+    <![endif]-->
 
 {* the {literal} in the following and the matching {/literal} are needed whenever there are {"curly brackets"} without surrounding whitespace otherwise Smarty will try to process and will throw an error *}
 {* IE6 png fix *}
-<!--[if IE 6]>
+    <!--[if IE 6]>
     <script src="{$themes_url}/NCleanBlue/js/ie6fix.js"></script>
     <script>
       // argument is a CSS selector
@@ -1202,7 +1196,7 @@ $template->set_content(<<<'EOT'
       html { filter: expression(document.execCommand("BackgroundImageCache", false, true)); }
 {/literal}
     </style>
-<![endif]-->
+    <![endif]-->
 
   </head>
   <body>
