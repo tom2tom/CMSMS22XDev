@@ -1,4 +1,10 @@
 <?php
+/*
+CMSMS ModuleManger module action: local_help
+(C) 2008 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+The license at the top of file ModuleManager.module.php applies to this file.
+*/
+
 if( !isset($gCms) ) exit;
 //if( !$this->CheckPermission('Modify Modules') ) return;
 $this->SetCurrentTab('installed');
@@ -48,3 +54,4 @@ if( $our_lang != 'en_US' && $lang != '' ) {
 }
 
 $tpl->display();
+?>

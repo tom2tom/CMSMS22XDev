@@ -1,4 +1,10 @@
 <?php
+/*
+CMSMS ModuleManger module action: local_uninstall
+(C) 2008 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+The license at the top of file ModuleManager.module.php applies to this file.
+*/
+
 if( !isset($gCms) ) exit;
 if( !$this->CheckPermission('Modify Modules') ) return;
 $this->SetCurrentTab('installed');
@@ -32,7 +38,7 @@ try {
             $this->SetMessage($postmsg);
             $this->RedirectToAdminTab();
         }
-        catch( \Exception $e ) {
+        catch( Exception $e ) {
             $this->ShowErrors($e->GetMessage());
         }
     }
@@ -46,6 +52,7 @@ try {
     $tpl->assign('msg',$msg);
     $tpl->display();
 }
-catch( \Exception $e ) {
+catch( Exception $e ) {
     $this->ShowErrors($e->GetMessage());
 }
+?>
