@@ -1,35 +1,37 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Class: modmgr_utils
+# Class: utils
 # (c) 2011 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
-#
 #-------------------------------------------------------------------------
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-# However, as a special exception to the GPL, this software is distributed
-# as an addon module to CMS Made Simple.  You may not use this software
-# in any Non GPL version of CMS Made simple, or in any version of CMS
-# Made simple that does not indicate clearly and obviously in its admin
-# section that the site was built with CMS Made simple.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
 #
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, read the license online at:
+# https://www.gnu.org/licenses/#LicenseURLs
 #-------------------------------------------------------------------------
 #END_LICENSE
 
-final class modmgr_utils
+namespace ModuleManager;
+
+use cms_http_request;
+use cms_utils;
+use CmsCommunicationException;
+use CmsInvalidDataException;
+use ModuleOperations;
+use const MINIMUM_REPOSITORY_VERSION;
+use function audit;
+use function cmsversion_compare;
+
+final class utils
 {
     protected function __construct() {}
 
@@ -94,17 +96,16 @@ final class modmgr_utils
         if( !is_array($xmldetails) ) return [];
 
         // sort
-        uasort( $xmldetails, array('modmgr_utils','uasort_cmp_details') );
+        uasort( $xmldetails, [__CLASS__, 'uasort_cmp_details'] );
 
         $mod = cms_utils::get_module('ModuleManager');
 
-        //
         // Process the xmldetails, and only keep the latest version
         // of each (according to a preference)
         //
-        // Note: should be redundant with 1.2, but kept in here for
-        // a while just in case..
-        if( $newest && $mod->GetPreference('onlynewest',1) == 1 ) {
+        // Note: 'onlynewest' preference should be redundant since 1.2,
+        //  but kept here for a while just in case..
+        if( $newest/* && $mod->GetPreference('onlynewest',1) == 1*/ ) {
             $thexmldetails = array();
             $prev = '';
             foreach( $xmldetails as $det ) {
@@ -163,7 +164,7 @@ final class modmgr_utils
 
         // now we have everything
         // let's try sorting it
-        uasort( $results, array('modmgr_utils','uasort_cmp_details') );
+        uasort( $results, [__CLASS__,'uasort_cmp_details'] );
         return $results;
     }
 
@@ -193,29 +194,25 @@ final class modmgr_utils
         $url = $mod->GetPreference('module_repository');
         if( $url ) {
             $url .= '/version';
-            $req = new modmgr_cached_request($url);
-            $req->setTimeout(3);
-            $req->execute($url);
+            $req = new cms_http_request(['method'=>'POST','timeout'=>3]);
+            $req->addRequestHeader('Accept: application/json');
+            $result = $req->send($url);
             if( ($status = $req->getStatus()) == 200 ) { // or some 300's ok?
-                $tmp = $req->getResult();
-                if( !$tmp ) {
-                    $req->clearCache();
+                if( !$result ) {
                     $ok = FALSE;
                     return FALSE;
                 }
 
-                $data = json_decode($tmp,true);
+                $data = json_decode($result,true);
                 if( $data && version_compare($data,MINIMUM_REPOSITORY_VERSION) >= 0 ) {
                     $ok = TRUE;
                     return TRUE;
                 }
                 if( !$data ) {
                     audit('',$mod->GetName(),'Invalid data from module repository');
-                    $req->clearCache();
                 }
             }
             else {
-                $req->clearCache();
                 audit($status,$mod->GetName(),'Cannot connect to module repository');
             }
         }
