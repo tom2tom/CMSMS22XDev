@@ -727,7 +727,7 @@ abstract class CMSModule
      * @see CMSModule::SetParameterType
      * @final
      * @param string $param Parameter name;
-     * @param string $defaultval Default parameter value
+     * @param string $defaultval Default parameter value (consistent with the parameter's type)
      * @param string $helpstring Help String
      * @param bool $optional Flag indicating whether this parameter is optional. Default true.
      */
