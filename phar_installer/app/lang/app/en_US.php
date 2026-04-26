@@ -128,10 +128,10 @@ $lang['error_noarchive'] = 'Problem finding archive file. Please restart';
 $lang['error_nodatabases'] = 'No compatible database extensions could be found';
 $lang['error_nodbhost'] = 'Please enter a valid hostname (or IP address) for the database connection';
 $lang['error_nodbname'] = 'Please enter the name of a valid database on the host specified above';
-$lang['error_nodbpass'] = 'Please enter a valid password for authenticating to the database';
+$lang['error_nodbpass'] = 'Please enter a valid password for authenticating access to the database';
 $lang['error_nodbprefix'] = 'Please enter a valid prefix for database tables';
 $lang['error_nodbtype'] = 'Please select a database type';
-$lang['error_nodbuser'] = 'Please enter a valid username for authenticating to the database';
+$lang['error_nodbuser'] = 'Please enter a valid username for authenticating access to the database';
 $lang['error_nodestdir'] = 'Destination directory not set';
 $lang['error_nositename'] = 'Sitename is a required parameter. Please enter a suitable name for the website.';
 $lang['error_nothemedir'] = 'Destination directory for themes data not set';
@@ -197,8 +197,6 @@ $lang['func_ziparchive'] = 'Check for ziparchive function';
 $lang['gd_version'] = 'GD Version';
 $lang['goback'] = 'Back';
 
-# H
-
 # I
 $lang['info_addlanguages'] = '[De]select language(s) (in addition to English) to install. <strong>Note:</strong> not all translations are complete.';
 $lang['info_adminaccount'] = 'Please provide credentials for the initial administrator account. This account will have access to all of the functionality of the CMSMS Admin Console.';
@@ -255,10 +253,6 @@ $lang['install_updateseq'] = 'Update sequence for %s';
 $lang['install_upgrade'] = 'Assistant Step'; //TODO useful default installer-page title
 $lang['installer_ver'] = 'Installer Version';
 $lang['intl_support'] = 'Check for internationalization capabilities';
-
-# J
-
-# K
 
 # L
 $lang['legend'] = 'Legend';
@@ -410,8 +404,6 @@ $lang['upgrading_schema'] = 'Updating database schema';
 $lang['upload_max_filesize'] = 'Check maximum size of uploaded files';
 $lang['username'] = 'User name';
 
-# V
-
 # W
 $lang['warn_disable_functions'] = 'Note: one or more PHP core functions are disabled. This can have negative impact on your CMSMS installation, particularly with third party extensions. Please keep an eye on your error log. The disabled functions are:<br><br>%s';
 $lang['warn_email'] = 'Note: for security reasons, the sent email will not include the recorded password.<br>You\'ll need to communicate that to the user separately.<br>Or an experienced user might initiate a lost-password process.';
@@ -437,7 +429,5 @@ $lang['xml_functions'] = 'Check for XML functionality';
 
 # Y
 $lang['yes'] = 'Yes';
-
-# Z
 
 ?>
