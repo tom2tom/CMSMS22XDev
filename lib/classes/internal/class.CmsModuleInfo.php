@@ -25,7 +25,7 @@ class CmsModuleInfo implements ArrayAccess
             return is_directory_writable($this['dir']);
 
         case 'root_writable':
-            // move this into ModuleManagerModuleInfo
+            // TODO move this to ModuleManager\ModuleInfo class
             return is_writable($this['dir']);
 
         default:
