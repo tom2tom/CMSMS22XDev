@@ -1,11 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module ModuleManager action
+# Module ModuleManager action: installmodule
 # (c) 2008 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
-#
 #-------------------------------------------------------------------------
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -15,13 +13,17 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 # Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
 #-------------------------------------------------------------------------
 #END_LICENSE
+
+use ModuleManager\modulerep_client;
+use ModuleManager\utils;
+
 if (!isset($gCms)) exit;
 if( !$this->CheckPermission('Modify Modules') ) return;
 $this->SetCurrentTab('modules');
@@ -54,14 +56,14 @@ try {
                 if( $rec['action'] != 'i' && $rec['action'] != 'u' ) continue;
                 if( !isset($rec['filename']) ) throw new CmsInvalidDataException( $this->Lang('error_missingparams') );
                 if( !isset($rec['size']) ) throw new CmsInvalidDataException( $this->Lang('error_missingparams') );
-                $filename = modmgr_utils::get_module_xml($rec['filename'],$rec['size']);
+                $filename = utils::get_module_xml($rec['filename'],$rec['size']);
             }
             unset($rec);
             // expand all of the xml files.
             $ops = cmsms()->GetModuleOperations();
             foreach( $modlist as $key => &$rec ) {
                 if( $rec['action'] != 'i' && $rec['action'] != 'u' ) continue;
-                $xml_filename = modmgr_utils::get_module_xml($rec['filename'],$rec['size'],(isset($rec['md5sum']))?$rec['md5sum']:'');
+                $xml_filename = utils::get_module_xml($rec['filename'],$rec['size'],(isset($rec['md5sum']))?$rec['md5sum']:'');
                 $rec['tmpfile'] = $xml_filename;
                 $res = $ops->ExpandXMLPackage( $xml_filename, 1 );
             }
@@ -172,7 +174,7 @@ try {
                         $deps = $update_latest_deps($deps,$latest);
                     }
                 }
-                catch( ModuleNoDataException $e ) {
+                catch( Exception $e ) {
                     // nothing here
                 }
             } else {
@@ -230,7 +232,7 @@ try {
                 $res = modulerep_client::get_multiple_moduleinfo($alldeps);
             }
         }
-        catch( \ModuleNoDataException $e ) {
+        catch( Exception $e ) {
             // at least one of the dependencies could not be found on the server.
             $res = [];
             // may be a system module... if it is not a system module, throw an exception
@@ -259,7 +261,7 @@ try {
     // remove items that are already installed (where installed version is greater or equal)
     // and create actions as to what we're going to do.
     if( count($alldeps) ) {
-        $allmoduleinfo = ModuleManagerModuleInfo::get_all_module_info(FALSE);
+        $allmoduleinfo = ModuleManager\ModuleInfo::get_all_module_info(FALSE);
         foreach( $alldeps as $name => &$rec ) {
             $rec['has_custom'] = FALSE;
             if( isset($allmoduleinfo[$name]) ) $rec['has_custom'] = ($allmoduleinfo[$name]['has_custom']) ? TRUE : FALSE;
@@ -322,6 +324,3 @@ catch( Exception $e ) {
     $this->SetError($msg);
     $this->RedirectToAdminTab();
 }
-#
-# EOF
-#

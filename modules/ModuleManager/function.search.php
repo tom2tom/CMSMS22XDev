@@ -1,11 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module ModuleManager function
+# Module ModuleManager function: search
 # (c) 2008 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
-#
 #-------------------------------------------------------------------------
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -15,13 +13,15 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
 #
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, read the license online at:
+# https://www.gnu.org/licenses/#LicenseURLs
 #-------------------------------------------------------------------------
 #END_LICENSE
+
+use ModuleManager\utils;
+
 if( !isset($gCms) ) exit;
 
 global $CMS_VERSION;
@@ -44,7 +44,7 @@ $clear_search = function() use (&$search_data) {
 // get the modules that are already installed
 $instmodules = '';
 {
-    $result = modmgr_utils::get_installed_modules();
+    $result = utils::get_installed_modules();
     if( ! $result[0] ) {
         $this->_DisplayErrorPage( $id, $params, $returnid, $result[1] );
         return;
@@ -60,13 +60,13 @@ if( isset($params['submit']) ) {
         if( strlen($term) < 3 ) throw new \Exception($this->Lang('error_searchterm'));
         $advanced = (int)$params['advanced'];
 
-        $res = modulerep_client::search($term,$advanced);
+        $res = ModuleManager\modulerep_client::search($term,$advanced);
         if( !is_array($res) || !$res[0] ) throw new \Exception($this->Lang('error_search').' '.$res[1]);
         if( !is_array($res[1]) ) throw new \Exception($this->Lang('search_noresults'));
 
 //      $data = array(); UNUSED
         if( $res[1] ) {
-            $res = modmgr_utils::build_module_data($res[1], $instmodules);
+            $res = utils::build_module_data($res[1], $instmodules);
             $moduledir = CMS_ROOT_PATH.DIRECTORY_SEPARATOR.'modules';
             $writable = is_writable($moduledir);
         }
@@ -98,7 +98,7 @@ if( isset($params['submit']) ) {
             $obj->aboutlink = $this->CreateLink( $id, 'moduleabout', $returnid,
                                                  $this->Lang('abouttxt'),
                                                  array('name' => $row['name'],'version' => $row['version'],'filename' => $row['filename']));
-            $obj->age = modmgr_utils::get_status($row['date']);
+            $obj->age = utils::get_status($row['date']);
             $obj->date = $row['date'];
             $obj->downloads = isset($row['downloads'])?$row['downloads']:$this->Lang('unknown');
             $obj->candownload = FALSE;
@@ -152,7 +152,7 @@ if( isset($params['submit']) ) {
         $_SESSION['mogmgr_searchterm'] = $term;
         $_SESSION['modmgr_searchadv'] = $advanced;
     }
-    catch( \Exception $e ) {
+    catch( Exception $e ) {
         $clear_search();
         $nonemsg = $e->GetMessage();
     }
@@ -171,3 +171,4 @@ $tpl->assign('term',$term);
 $tpl->assign('advanced',$advanced);
 $tpl->assign('formstart',$this->CreateFormStart($id,'defaultadmin','','post','',false,'',array('__activetab'=>'search')));
 $tpl->assign('formend',$this->CreateFormEnd());
+?>
