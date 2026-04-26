@@ -1,11 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module ModuleManager action tab populator
+# Module ModuleManager tab populator
 # (c) 2008 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
-#
 #-------------------------------------------------------------------------
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -15,13 +13,16 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 # Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
-#
 #-------------------------------------------------------------------------
 #END_LICENSE
+
+use ModuleManager\utils;
+
 if( !isset($gCms) ) exit;
 
 global $CMS_VERSION;
@@ -62,10 +63,10 @@ if( !empty($newversions) ) {
                 $modinst2 = cms_utils::get_module($row['name']);
                 if( is_object($modinst2) ) $onerow->haveversion = $modinst2->GetVersion();
 
-                $onerow->age = modmgr_utils::get_status($row['date']);
+                $onerow->age = utils::get_status($row['date']);
                 $onerow->downloads = $row['downloads'];
                 $onerow->date = $row['date'];
-                $onerow->age = modmgr_utils::get_status($row['date']);
+                $onerow->age = utils::get_status($row['date']);
 
                 $onerow->name = $this->CreateLink( $id, 'modulelist', $returnid, $row['name'], array('name'=>$row['name']));
                 $onerow->version = $row['version'];
@@ -123,3 +124,4 @@ if( $results ) {
 else {
     $tpl->assign('nvmessage',$this->Lang('all_modules_up_to_date'));
 }
+?>

@@ -1,11 +1,9 @@
 <?php
 #BEGIN_LICENSE
 #-------------------------------------------------------------------------
-# Module ModuleManager function
+# Module ModuleManager tab populator
 # (c) 2008 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
-#
 #-------------------------------------------------------------------------
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -15,17 +13,19 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-# Or read it online: http://www.gnu.org/licenses/licenses.html#GPL
 #
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, read tthe licence online at:
+# https://www.gnu.org/licenses/#LicenseURLs
 #-------------------------------------------------------------------------
 #END_LICENSE
+
+use ModuleManager\utils;
+
 if (!isset($gCms)) exit;
 if( !$this->CheckPermission('Modify Modules') ) exit;
 
-if( !modmgr_utils::is_connection_ok() ) {
+if( !utils::is_connection_ok() ) {
   $this->ShowErrors($this->Lang('error_request_problem'));
   return;
 }
@@ -39,8 +39,8 @@ else if( isset($_SESSION['mm_curletter']) ) {
   $curletter = $_SESSION['mm_curletter'];
 }
 
-// get the modules available in the repository
-$result = modulerep_client::get_repository_modules($curletter);
+// get the modules available in the repository (newest, not exact)
+$result = ModuleManager\modulerep_client::get_repository_modules($curletter);
 if( !$result[0] ) {
   $this->_DisplayErrorPage($id, $params, $returnid, $result[1]);
   return;
@@ -48,7 +48,7 @@ if( !$result[0] ) {
 $repmodules = $result[1];
 
 // get the modules that are already installed
-$result = modmgr_utils::get_installed_modules();
+$result = utils::get_installed_modules();
 if( !$result[0] ) {
   $this->_DisplayErrorPage($id, $params, $returnid, $result[1]);
   return;
@@ -66,7 +66,7 @@ foreach( $tmp as $i ) {
 
 // cross reference them
 $data = array();
-if( $repmodules ) $data = modmgr_utils::build_module_data($repmodules, $instmodules);
+if( $repmodules ) $data = utils::build_module_data($repmodules, $instmodules);
 if( $data ) {
   $size = count($data);
 
@@ -76,7 +76,6 @@ if( $data ) {
 
   // build the table
   $rowarray = array();
-  $newestdisplayed = '';
   foreach( $data as $row ) {
     $onerow = new stdClass();
     foreach( $row as $key => $value ) {
@@ -104,7 +103,7 @@ if( $data ) {
     $onerow->aboutlink = $this->CreateLink( $id, 'moduleabout', $returnid,
                         $this->Lang('abouttxt'),
                         array('name' => $row['name'],'version' => $row['version'],'filename' => $row['filename']));
-    $onerow->age = modmgr_utils::get_status($row['date']);
+    $onerow->age = utils::get_status($row['date']);
     $onerow->date = $row['date'];
     $onerow->downloads = isset($row['downloads'])?$row['downloads']:$this->Lang('unknown');
     $onerow->candownload = FALSE;
