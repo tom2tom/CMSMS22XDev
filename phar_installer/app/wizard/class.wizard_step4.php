@@ -86,14 +86,17 @@ class wizard_step4 extends wizard_step
     {
         $action = $this->get_wizard()->get_data('action');
         if( $action != 'freshen' ) {
-            foreach(['dbtype','dbhost','dbname','dbuser','dbpass'] as $key) {
+/* these checks never used - the respective input-fields have attribute 'required'
+            foreach( ['dbtype','dbhost','dbname','dbuser','dbpass'] as $key ) {
                 if( empty($config[$key]) ) {
                     throw new Exception(lang("error_no{$key}"));
                 }
             }
+
             if( $action == 'install' && empty($config['dbprefix']) ) {
                 throw new Exception(lang('error_nodbprefix'));
             }
+*/
             $longnames = ['host','name','user','password','tables-prefix'];
             foreach(['dbhost','dbname','dbuser','dbpass','dbprefix'] as $i => $key) {
                 if( !empty($config[$key]) && preg_match('/[\\\']/',$config[$key]) ) {
