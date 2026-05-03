@@ -84,7 +84,7 @@
                 <label for="tblprefin">{tr('prompt_dbprefix')}</label>
             </div>
             <div class="eight-col">
-                <input id="tblprefin" class="form-field full-width" type="text" name="dbprefix" value="{$config.dbprefix}">
+                <input id="tblprefin" class="form-field full-width" type="text" name="dbprefix" value="{$config.dbprefix}" required>
             </div>
         </div>
         {/if}
