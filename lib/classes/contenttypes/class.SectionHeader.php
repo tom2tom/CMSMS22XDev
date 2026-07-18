@@ -11,9 +11,10 @@
 #but WITHOUT ANY WARRANTY; without even the implied warranty of
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
+#
 #You should have received a copy of the GNU General Public License
-#along with this program; if not, write to the Free Software
-#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#along with this program; if not, read the license online at:
+#https://www.gnu.org/licenses/#LicenseURLs
 #
 #$Id$
 
@@ -30,9 +31,9 @@
  */
 class SectionHeader extends ContentBase
 {
-	function FriendlyName() { return lang('contenttype_sectionheader'); }
+	public function FriendlyName() { return lang('contenttype_sectionheader'); }
 
-	function SetProperties()
+	public function SetProperties()
 	{
 		parent::SetProperties();
 		$this->RemoveProperty('secure',false);
@@ -47,7 +48,6 @@ class SectionHeader extends ContentBase
 	}
 
 	public function HasUsableLink() { return false; }
-	public function RequiresAlias() { return true; }
 	public function HasSearchableContent() { return false; }
 	public function GetURL($rewrite = true) { return '#'; }
 	public function IsViewable() { return false; }
