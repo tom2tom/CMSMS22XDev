@@ -1,7 +1,7 @@
 <script>
 $(function() {
   $('#runbtn').button({
-    icons: { primary: 'ui-icon-gear' }
+    icon: 'ui-icon-gear'
   })
   .on('click', function(ev) {
     // get the data
