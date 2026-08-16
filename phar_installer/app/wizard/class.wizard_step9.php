@@ -70,8 +70,10 @@ class wizard_step9 extends wizard_step
         cmsms()->clear_cached_files();
         $this->message(lang('msg_clearedcache'));
 
-        // write protect config.php
+        // write protect config files
         @chmod($version_info['config_file'],0444); //TODO 0440 better c.f. global_umask site-preference
+        $fp = private_place('',null,['dbase'=>1]);
+        @chmod("$fp/db.ini",0444);
 
         audit('','CMSMS version','Upgraded to '.CMS_VERSION);
 
@@ -126,8 +128,10 @@ class wizard_step9 extends wizard_step
             }
         }
 
-        // write protect config.php
+        // write protect config files
         @chmod("$destdir/lib/config.php",0444); // TODO 0440 better c.f. global_umask site-preference
+        $fp = private_place('',null,['dbase'=>1]);
+        @chmod("$fp/db.ini",0444);
 
         $root_url = $app->get_root_url();
         if( endswith($root_url,'/') ) $root_url = rtrim($root_url,' /');
@@ -205,11 +209,13 @@ class wizard_step9 extends wizard_step
         @mkdir($destdir.'/tmp/config',0777,TRUE);
         @mkdir($destdir.'/tmp/templates_c',0777,TRUE);
 
-        // write protect config.php
+        // write protect config files
         @chmod("$destdir/lib/config.php",0444); // TODO 0440 better c.f. global_umask site-preference
 
-        // clear the cache
         $this->connect_to_cmsms($destdir);
+        $fp = private_place('',null,['dbase'=>1]);
+        @chmod("$fp/db.ini",0444);
+        // clear the cache
         cmsms()->clear_cached_files();
         $this->message(lang('msg_clearedcache'));
 
