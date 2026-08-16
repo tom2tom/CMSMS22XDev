@@ -19,7 +19,7 @@
 					</div>
 					<div class="filepicker-options">
 						<p>
-							{if $profile->can_mkdir}
+							{if $pmkdir}
 							<span class="filepicker-button make-dir filepicker-cmd" data-cmd="mkdir" title="{$mod->Lang('create_dir')}">
 								<span class="filepicker-icon-stack">
 									<i class="cmsms-fp-folder-close filepicker-icon-stack-1x"></i>
@@ -27,7 +27,7 @@
 								</span>
 							</span>
 							{/if}
-							{if $profile->can_upload}
+							{if $pupload}
 							<span class="filepicker-button upload-file btn-file">
 								<i class="cmsms-fp-upload"></i> {$mod->Lang('upload')}
 								<input id="filepicker-file-upload" type="file" multiple title="{$mod->Lang('select_upload_files')}">
@@ -76,7 +76,7 @@
 						{foreach $files as $file}
 						<li class="filepicker-item{if $file.isdir} dir{else} {$file.filetype}{/if}" title="{if $file.isdir}{$mod->Lang('changedir')}: {/if}{$file.name}" data-fb-ext="{$file.ext}" data-fb-fname="{$file.name}">
 							<div class="filepicker-thumb{if ($profile->show_thumbs && !empty($file.thumbnail)) || $file.isdir || ($profile->show_thumbs && $file.is_thumb)} no-background{/if}">
-							{if !$file.isdir && $profile->can_delete && !$file.isparent}
+							{if $pdel && !($file.isdir || $file.isparent)}
 								<span class="filepicker-delete filepicker-cmd cmsms-fp-delete" data-cmd="del" title="{$mod->Lang('delete')}">
 									<i class="cmsms-fp-close"></i>
 								</span>
@@ -123,7 +123,7 @@
 								<span class="filepicker-file-ext">
 									{if !$file.isdir}{$file.ext}{else}dir{/if}
 								</span>
-								{if !$file.isdir && $profile->can_delete && !$file.isparent}
+								{if $pdel && !($file.isdir || $file.isparent)}
 									<span class="filepicker-delete filepicker-cmd cmsms-fp-delete" data-cmd="del" title="{$mod->Lang('delete')}">
 										<i class="cmsms-fp-close"></i>
 									</span>
@@ -136,13 +136,17 @@
 			</div>
 		</div>
 {/strip}
-		<div id="mkdir_dlg" title="{$mod->Lang('title_mkdir')}" style="display:none" data-oklbl="{$mod->Lang('ok')}">
+{if $pmkdir}
+		<div id="mkdir_dlg" title="{$mod->Lang('title_mkdir')}" style="display:none">
 			<div class="dlg-options">
-				<label for="txtmkdir">{$mod->Lang('name')}:</label>
+				<label for="txtmkdir">{$mod->Lang('name')}:</label>&nbsp;
 				<input type="text" id="txtmkdir" size="40">
 			</div>
 		</div>
+{/if}
+{if $pupload}
 		<script src="{$baseurl}/lib/js/jquery.fileupload.min.js"></script>
+{/if}
 		<script src="{$baseurl}/lib/js/filebrowser.min.js"></script>
 		<script>
 		$(function() {
