@@ -280,7 +280,7 @@ class cms_http_request
     }
 
     /**
-     * Set this object's properties in acccord with class defaults and
+     * Set this object's properties in accord with class defaults and
      * the supplied $params, if any.
      * Values might be set directly, or via a corresponding 'set*' method.
      *
