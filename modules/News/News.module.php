@@ -15,6 +15,8 @@
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+use News\CreateDraftAlertJob;
+
 class News extends CMSModule
 {
     public function AllowSmartyCaching() { return TRUE; }
@@ -206,8 +208,7 @@ EOS;
 
     public function SearchReindex($module)
     {
-        $db = $this->GetDb();
-
+        $db = CmsApp::get_instance()->GetDb();
         $query = 'SELECT * FROM '.CMS_DB_PREFIX.'module_news WHERE searchable = 1 AND status = ? ORDER BY news_date';
         $result = $db->Execute($query,array('published'));
         if( $result ) {
@@ -243,7 +244,7 @@ EOS;
         return $this->CreateInputDropdown($id, $name, array_flip($items), -1, $selected);
     }
 
-    public function get_tasks()
+    public function get_tasks() // TODO GetTasks($aspaths)
     {
         if( !$this->GetPreference('alert_drafts',1) ) return [];
         $fp = cms_join_path(__DIR__,'lib','class.CreateDraftAlertJob.php');
@@ -252,7 +253,7 @@ EOS;
                 return [$fp];
             } else {
                 require_once $fp;
-                return [new News\CreateDraftAlertJob()];
+                return [new CreateDraftAlertJob()];
             }
         }
         return [];
@@ -267,7 +268,7 @@ EOS;
         if( $priority >= 2 ) {
             $output = array();
             if( $this->CheckPermission('Approve News') ) {
-                $db = $this->GetDb();
+                $db = CmsApp::get_instance()->GetDb();
                 $query = 'SELECT COUNT(news_id) FROM '.CMS_DB_PREFIX.'module_news WHERE status != \'published\'
                   AND (end_time IS NULL OR end_time > NOW())';
                 $count = $db->GetOne($query);
@@ -287,7 +288,7 @@ EOS;
     {
         cms_route_manager::del_static('',$this->GetName());
 
-        $db = \CmsApp::get_instance()->GetDb();
+        $db = CmsApp::get_instance()->GetDb();
         $str = $this->GetName();
         $c = strtoupper($str[0]);
         $x = substr($str,1);
@@ -368,7 +369,6 @@ EOS;
     {
         switch( $capability ) {
         case CmsCoreCapabilities::PLUGIN_MODULE:
-        case CmsCoreCapabilities::SEARCH_MODULE:
         case CmsCoreCapabilities::ADMINSEARCH:
         case CmsCoreCapabilities::TASKS:
             return TRUE;
