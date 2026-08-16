@@ -360,7 +360,7 @@ $(function() {
 			<p class="pagetext"><label for="smartycache">{lang('prompt_use_smartycaching')}:</label> {cms_help key2='settings_smartycaching' title=lang('prompt_use_smartycaching')}</p>
 			<p class="pageinput">
 				<select id="smartycache" name="use_smartycache">
-					{html_options options=$yesno selected=$use_smartycache}
+					{cms_yesno selected=$use_smartycache}
 				</select>
 			</p>
 		</div>
@@ -380,7 +380,7 @@ $(function() {
 			<p class="pagetext"><label for="compilecheck">{lang('prompt_smarty_compilecheck')}:</label> {cms_help key2='settings_smartycompilecheck' title=lang('prompt_smarty_compilecheck')}</p>
 			<p class="pageinput">
 				<select id="compilecheck" name="use_smartycompilecheck">
-					{html_options options=$yesno selected=$use_smartycompilecheck}
+					{cms_yesno selected=$use_smartycompilecheck}
 				</select>
 			</p>
 		</div>
@@ -460,7 +460,7 @@ $(function() {
 				<p class="pagetext"><label for="checkversion">{lang('checkversion')}:</label> {cms_help key2='settings_checkversion' title=lang('checkversion')}</p>
 				<p class="pageinput">
 					<select id="checkversion" name="checkversion">
-						{cms_yesno options=$checkversion selected=$checkversion}
+						{cms_yesno selected=$checkversion}
 					</select>
 				</p>
 			</div>
