@@ -48,7 +48,6 @@ Version 2.2.22F2 - Whitehorse
  - BR #12701 etc Include section-header pages in content-parent-page selector
  - Update all uses of deprecated templates-API in modules and actions
  - Block FileManager operations on executable files unless sufficiently authorized
- - Deprecate Search collaboration with other search-capable modules which do not declare SEARCH_MODULE capability
  - More admin pages' content displayed via respective Smarty templates
  - Change more &lt;p/&gt;'s to &lt;label/&gt;'s
  - Add missing button-icons
