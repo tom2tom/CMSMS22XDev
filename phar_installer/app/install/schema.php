@@ -8,7 +8,6 @@ if (isset($CMS_INSTALL_DROP_TABLES)) {
 	'admin_bookmarks',
 	'adminlog',
 	'content',
-	'content_props',
 	'event_handlers',
 	'events',
 	'group_perms',

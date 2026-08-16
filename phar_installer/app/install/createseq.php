@@ -4,7 +4,6 @@ $table_ids = array(
     'additional_users' => array('id' => 'additional_users_id'),
     'admin_bookmarks'  => array('id' => 'bookmark_id'),
     'content'          => array('id' => 'content_id'),
-    'content_props'    => array('id' => 'content_id'),
     'event_handlers'   => array('id' => 'handler_id'),
     'events'           => array('id' => 'event_id'),
     'group_perms'      => array('id' => 'group_perm_id'),

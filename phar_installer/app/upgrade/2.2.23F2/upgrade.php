@@ -40,8 +40,10 @@ Events::CreateEvent('Core','LoginPassed');
 Events::CreateEvent('Core','LoginPre');
 Events::CreateEvent('Core','LogoutPre');
 
-//backup users table
 $pref = CMS_DB_PREFIX;
+$db->Execute("DROP TABLE IF EXISTS `{$pref}content_props_seq`");
+
+//backup users table
 $db->Execute("DROP TABLE IF EXISTS `{$pref}users_oldhashbackup`");
 $db->Execute("SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO'");
 $db->Execute("CREATE TABLE `{$pref}users_oldhashbackup` LIKE `{$pref}users`");
