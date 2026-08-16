@@ -64,10 +64,10 @@ class ErrorPage extends Content
         $this->RemoveProperty('page_url','');
         $this->RemoveProperty('wantschildren',false);
         $this->RemoveProperty('alias',''); //change priority (to last position)
-        $this->AddProperty('alias',20,parent::TAB_OPTIONS,true);
+        $this->AddProperty('alias',20,parent::TAB_OPTIONS); // optional
     }
 
-    public function HandlesAlias() { return true; }
+    public function HandlesAlias() { return true; } // TODO if any is provided
     public function HasUsableLink() { return false; }
     public function WantsChildren() { return false; }
     public function IsDefaultPossible() { return false; }
