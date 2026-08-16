@@ -718,7 +718,6 @@ $tmp = [
 $tpl->assign('adminlog_options',$tmp);
 $tpl->assign('smarty_cacheoptions',['always'=>lang('always'),'never'=>lang('never'),'moduledecides'=>lang('moduledecides')]);
 $tpl->assign('smarty_cacheoptions2',['always'=>lang('always'),'never'=>lang('never')]);
-$tpl->assign('yesno',[0=>lang('no'),1=>lang('yes')]);
 $tpl->assign('titlemenu',[0=>lang('menutext'),1=>lang('title')]);
 $tpl->assign('backurl',$themeObject->backUrl());
 $tpl->assign('formurl',basename(__FILE__).$urlext);
