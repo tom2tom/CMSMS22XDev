@@ -60,7 +60,7 @@ final class CmsAdminMenuItem
             if( $this->module && $this->action ) {
                 $mod = \cms_utils::get_module($this->module);
                 if( $mod ) {
-                    $url = $mod->create_url('m1_',$this->action);
+                    $url = $mod->GetUrl('m1_',$this->action);
                     return $url;
                 }
             }
@@ -132,7 +132,7 @@ final class CmsAdminMenuItem
             $obj->description = $mod->GetAdminDescription();
             $obj->priority = 50;
             $obj->action = 'defaultadmin';
-            //$obj->url = $mod->create_url('m1_',$obj->action);
+            //$obj->url = $mod->GetUrl('m1_',$obj->action);
         }
         return $obj;
     }

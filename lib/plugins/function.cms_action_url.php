@@ -77,7 +77,7 @@ function smarty_cms_function_cms_action_url($params, $smarty)
     $obj = cms_utils::get_module($module);
     if( !$obj ) return '';
 
-    $url = $obj->create_url($mid,$action,$returnid,$actionparms);
+    $url = $obj->GetUrl($mid,$action,$returnid,$actionparms);
     if( !$url ) return '';
 
     if( $forjs ) {
