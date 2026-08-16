@@ -12,7 +12,7 @@
       <p class="pagetext"><label for="autocreate_urls">{lang('content_autocreate_urls')}:</label> {cms_help realm='help' key='settings_autocreate_url' title=lang('content_autocreate_urls')}</p>
       <p class="pageinput">
         <select id="autocreate_urls" name="{$actionid}content_autocreate_urls">
-          {html_options options=$yesno selected=$content_autocreate_urls}
+          {cms_yesno selected=$content_autocreate_urls}
         </select>
       </p>
     </div>
@@ -20,7 +20,7 @@
       <p class="pagetext"><label for="autocreate_flaturls">{lang('content_autocreate_flaturls')}:</label> {cms_help realm='help' key='settings_autocreate_flaturls' title=lang('content_autocreate_flaturls')}</p>
       <p class="pageinput">
         <select id="autocreate_flaturls" name="{$actionid}content_autocreate_flaturls">
-          {html_options options=$yesno selected=$content_autocreate_flaturls}
+          {cms_yesno selected=$content_autocreate_flaturls}
         </select>
       </p>
     </div>
@@ -28,7 +28,7 @@
       <p class="pagetext"><label for="mandatory_urls">{lang('content_mandatory_urls')}:</label> {cms_help realm='help' key='settings_mandatory_urls' title=lang('content_mandatory_urls')}</p>
       <p class="pageinput">
         <select id="mandatory_urls" name="{$actionid}content_mandatory_urls">
-          {html_options options=$yesno selected=$content_mandatory_urls}
+          {cms_yesno selected=$content_mandatory_urls}
         </select>
       </p>
     </div>
