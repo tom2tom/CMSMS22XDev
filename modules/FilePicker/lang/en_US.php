@@ -3,6 +3,7 @@
 // A
 $lang['add_profile'] = 'Add a new Profile';
 $lang['allowed_type'] = 'Allowed Filetype';
+$lang['apply'] = 'Apply';
 
 // C
 $lang['can_delete'] = 'Allow File Deletion';
