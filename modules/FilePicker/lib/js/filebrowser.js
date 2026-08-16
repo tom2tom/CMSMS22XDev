@@ -1,3 +1,13 @@
+/*
+ * File-browser object v.1.1
+ * Copyright 2016-2026 CMs Made Simple Foundation
+ * Licensed under the GNU GPL v.3 or later
+ */
+/**
+File-browser object v.1.1
+(C) 2016-2026 CMs Made Simple Foundation
+License GPL3+
+*/
 /*jslint nomen: true , devel: true*/
 function CMSFileBrowser(_settings) {
   var self = this;
@@ -223,13 +233,12 @@ function CMSFileBrowser(_settings) {
     $('#mkdir_dlg').dialog({
       modal: true,
       width: 'auto',
-      buttons: [{
-        text: $('#mkdir_dlg').data('oklbl'),
-        icons: {
-          primary: 'ui-icon-check'
-        },
+      buttons: [
+       {
+        text: settings.lang.apply,
+        icon: 'ui-icon-caret-1-n',
         click: function() {
-          var val = $('#fld_mkdir').val().trim();
+          var val = $('#txtmkdir').val().trim();
           // ajax call to create the directory
           // then refresh the screen
           // then close the dialog
@@ -240,7 +249,15 @@ function CMSFileBrowser(_settings) {
             console.debug('filepicker mkdir failed: ' + msg);
           });
         }
-      }]
+       },
+       {
+        text: cms_lang('cancel'),
+        icon: 'ui-icon-cancel',
+        click: function() {
+         $(this).dialog('close');
+        }
+       }
+      ]
     });
   };
 
