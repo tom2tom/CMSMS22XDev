@@ -11,9 +11,9 @@ $(function() {
 </script>
 
 <div class="pagecontainer">
-    <div class="pageoptions">
-       <a href="{$addurl}">{admin_icon icon='newobject.gif'} {lang('addusertag')}</a>
-    </div>
+  <div class="pageoptions">
+    <a href="{$addurl}">{admin_icon icon='newobject.gif'} {lang('addusertag')}</a>
+  </div>
 </div>
 
 {if !empty($tags)}
@@ -27,19 +27,20 @@ $(function() {
        </tr>
      </thead>
      <tbody>
-     {foreach $tags as $tag_id => $tag}
-       {$edit_url="editusertag.php?userplugin_id={$tag_id}&{$secureparam}"}
+  {foreach $tags as $tag_id => $tag}
        <tr class="{cycle values='row1,row2'}">
-          <td><a href="{$edit_url}" title="{lang('editusertag')}">{$tag.name}</a></td>
-          <td>{$tag.description}</td>
-          <td>
-             <a href="{$edit_url}">{admin_icon icon='edit.gif' title=lang('editusertag')}</a>
-          </td>
-          <td>
-             <a class="delusertag" href="deleteuserplugin.php?userplugin_id={$tag_id}&{$secureparam}">{admin_icon icon='delete.gif' title=lang('delete')}</a>
-          </td>
+         <td>
+           <a href="editusertag.php?userplugin_id={$tag_id}&{$secureparam}" title="{lang('editusertag')}">{$tag.name}</a>
+         </td>
+         <td>{$tag.description}</td>
+         <td>
+           <a href="editusertag.php?userplugin_id={$tag_id}&{$secureparam}">{admin_icon icon='edit.gif' title=lang('editusertag')}</a>
+         </td>
+         <td>
+           <a class="delusertag" href="deleteuserplugin.php?userplugin_id={$tag_id}&{$secureparam}">{admin_icon icon='delete.gif' title=lang('delete')}</a>
+         </td>
        </tr>
-     {/foreach}
+  {/foreach}
      </tbody>
   </table>
 {/if}
