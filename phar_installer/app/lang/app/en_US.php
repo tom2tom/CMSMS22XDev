@@ -328,7 +328,7 @@ $lang['retry'] = 'Retry';
 
 # S
 $lang['safe_mode'] = 'Testing to ensure &quot;safe mode&quot; is disabled';
-$lang['saltpasswords'] = 'Salt Passwords';
+//$lang['saltpasswords'] = 'Salt Passwords';
 $lang['select_language'] = 'The first thing for you to do is select your preferred language from the list below. This will be used to enhance your experience during this installer session, but will not affect your CMSMS installation.';
 $lang['send_admin_email'] = 'Send installation-complete email to administrator.<br>No password was provided. <strong>Remember</strong> to securely communicate the password as soon as possible.';
 $lang['session_capabilities'] = 'Testing for proper session capabilities (sessions are using cookies and session save path is writeable, etc)';

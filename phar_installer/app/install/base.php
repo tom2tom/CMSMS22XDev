@@ -132,16 +132,15 @@ $designer_group->GrantPermission('Modify User-defined Tags');
 // initial user account
 //
 verbose_msg(ilang('install_initsiteusers'));
-$sitemask = cms_siteprefs::get('sitemask');
 $admin_user = new User();
 $admin_user->username = $adminaccount['username'];
-if( isset($adminaccount['emailaddr']) && $adminaccount['emailaddr'] ) $admin_user->email = $adminaccount['emailaddr'];
+if( !empty($adminaccount['emailaddr']) ) $admin_user->email = $adminaccount['emailaddr'];
 $admin_user->active = 1;
 $admin_user->adminaccess = 1;
-$admin_user->password = md5($sitemask.$adminaccount['password']);
+$admin_user->password = password_hash($adminaccount['password'],PASSWORD_BCRYPT); //PASSWORD_ARGON2I or PASSWORD_ARGON2ID might be relevant in future
 $admin_user->Save();
 UserOperations::get_instance()->AddMemberGroup($admin_user->id,$admin_group->id);
-cms_userprefs::set_for_user($admin_user->id,'wysiwyg','MicroTiny'); // the one, and only user preference we need.
+cms_userprefs::set_for_user($admin_user->id,'wysiwyg','MicroTiny'); // the only user-preference needed now.
 
 //
 // User Tags

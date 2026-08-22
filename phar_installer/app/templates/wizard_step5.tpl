@@ -61,7 +61,7 @@
                 </div>
             </div>
         </div>
-        {if $verbose}
+{*      {if $verbose}
         <div class="row form-row">
             <div class="four-col">
                 <label for="saltsel">{tr('saltpasswords')}</label>
@@ -73,6 +73,7 @@
             </div>
         </div>
         {/if}
+*}
         <div class="row form-row">
             <div class="four-col">
                 <label for="emailacctinfo">{tr('emailaccountinfo')}</label>

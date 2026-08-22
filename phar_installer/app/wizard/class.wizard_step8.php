@@ -144,13 +144,13 @@ class wizard_step8 extends wizard_step
             // install sequence tables
             $this->verbose(lang('install_setsequence'));
             require_once $dir.'/createseq.php';
-
+/* redundant for new installs
             if( $adminaccount['saltpw'] ) {
                 $this->verbose(lang('install_passwordsalt'));
                 $salt = substr(str_shuffle(md5($destdir).time()),0,16);
                 cms_siteprefs::set('sitemask',$salt);
             }
-
+*/
             require_once $dir.'/base.php';
 
             if( $choices['samplecontent'] ) {
