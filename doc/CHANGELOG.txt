@@ -4,6 +4,7 @@ Version 2.2.23F2 - Regina
  - BR #12791 Core::Log[in/out]Pre events not created
  - Revert Core::LoginPre event to pre-2.2.7 operation (sent before any authentication) see FR #12792
  - Add Core::LoginPassed event, sent after password-check success and before Core::LoginPost
+ - Refactor login.php and class.LoginOperations.php to accommodate login-related events changes
  - Add support for event-handling by a callable 
  - Add to cms_http_request class support for HEAD requests, for use in url validation etc
  - Add method cms_utils::find_content() for finding pages with a wanted value in the whole, or part, of any content field
