@@ -868,13 +868,13 @@ VALUES (?,?,?,?,?,?,?,?,?,?)';
 	/**
 	 * Load a bulk list of templates
 	 *
-	 * @param int[] $list Array of integer template ids
-	 * @param bool $deep Optionally load attached data.
-	 * @return array Array of CmsLayoutTemplate objects
+	 * @param array $list integer template id(s)
+	 * @param bool $deep Optionally load attached data. Default true
+	 * @return array CmsLayoutTemplate object(s) or empty
 	 */
 	public static function load_bulk($list,$deep = TRUE)
 	{
-		if( !is_array($list) || count($list) == 0 ) return [];
+		if( !$list || !is_array($list) ) return [];
 
 		$list2 = array();
 		foreach( $list as $one ) {
@@ -886,7 +886,7 @@ VALUES (?,?,?,?,?,?,?,?,?,?)';
 		}
 		$list2 = array_unique($list2);
 
-		if( count($list2) ) {
+		if( $list2 ) {
 			// get the data and populate the cache.
 			$db = CmsApp::get_instance()->GetDb();
 			$designs_by_tpl = array();
@@ -905,7 +905,7 @@ VALUES (?,?,?,?,?,?,?,?,?,?)';
 
 			$query = 'SELECT * FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE id IN ('.implode(',',$list2).')';
 			$dbr = $db->GetArray($query);
-			if( is_array($dbr) && count($dbr) ) {
+			if( $dbr && is_array($dbr) ) {
 				foreach( $dbr as $row ) {
 					self::_load_from_data($row,(isset($designs_by_tpl[$row['id']]))?$designs_by_tpl[$row['id']]:[]);
 				}

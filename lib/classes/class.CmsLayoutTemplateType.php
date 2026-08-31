@@ -789,7 +789,7 @@ WHERE id = ?';
      */
     public static function load_bulk($list)
     {
-        if( !is_array($list) || count($list) == 0 ) return [];
+        if( !$list || !is_array($list) ) return [];
 
         $list2 = array();
         foreach( $list as $one ) {

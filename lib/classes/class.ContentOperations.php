@@ -668,7 +668,7 @@ WHERE C.content_id = ?";
 	 * @param array   $explicit_ids (optional) array of explicit content ids to load
 	 * @author Ted Kulp
 	 */
-	public function LoadChildren($id,$loadprops = false,$all = false,$explicit_ids = array() )
+	public function LoadChildren($id,$loadprops = false,$all = false,$explicit_ids = array())
 	{
 		$db = CmsApp::get_instance()->GetDb();
 
@@ -688,8 +688,9 @@ WHERE C.content_id = ?";
 		else {
 			if( !$id ) $id = -1;
 			// get the content rows
-			$query = "SELECT * FROM ".CMS_DB_PREFIX."content WHERE parent_id = ? AND active = 1 ORDER BY hierarchy";
-			if( $all ) $query = "SELECT * FROM ".CMS_DB_PREFIX."content WHERE parent_id = ? ORDER BY hierarchy";
+			$query = ($all) ?
+			'SELECT * FROM '.CMS_DB_PREFIX.'content WHERE parent_id = ? ORDER BY hierarchy':
+			'SELECT * FROM '.CMS_DB_PREFIX.'content WHERE parent_id = ? AND active = 1 ORDER BY hierarchy';
 			$contentrows = $db->GetArray($query, array($id));
 		}
 
