@@ -12,10 +12,8 @@
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #GNU General Public License for more details.
 #You should have received a copy of the GNU General Public License
-#along with this program; if not, write to the Free Software
-#Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
-#$Id$
+#along with this program. If not, read the license online at:
+#https://www.gnu.org/licenses/#LicenseURLs
 
 $CMS_ADMIN_PAGE = 1;
 require_once("../lib/include.php");
@@ -23,12 +21,11 @@ check_login();
 
 $realm = 'admin';
 $key = 'help';
-$out = 'NO HELP KEY SPECIFIED';
 if( isset($_GET['key']) ) $key = cms_htmlentities(trim($_GET['key']));
 if( strstr($key,'__') !== FALSE ) {
   list($realm,$key) = explode('__',$key,2);
+  if( strtolower($realm) == 'core' ) $realm = 'admin';
 }
-if( strtolower($realm) == 'core' ) $realm = 'admin';
 $out = CmsLangOperations::lang_from_realm($realm,$key);
 
 echo $out;
