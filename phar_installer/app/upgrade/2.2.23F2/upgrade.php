@@ -36,6 +36,12 @@ if (!is_dir($dir)) {
 //new preference related to database config
 cms_siteprefs::set('privatePath',"\$config['admin_path'],configs,private");
 
+//new preference related to user login
+$c = mt_rand(0, 15);
+$prime = [211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281, 283, 293][$c];
+$xorer = mt_rand(200, 300);
+cms_siteprefs::set('fuscint', "$prime.$xorer");
+
 Events::CreateEvent('Core','LoginPassed');
 Events::CreateEvent('Core','LoginPre');
 Events::CreateEvent('Core','LogoutPre');

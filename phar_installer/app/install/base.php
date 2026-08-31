@@ -15,6 +15,10 @@ cms_siteprefs::set('adminlog_lifetime',86400*31); // admin log entries only live
 cms_siteprefs::set('allow_browser_cache',1); // allow browser to cache cachable pages
 cms_siteprefs::set('auto_clear_cache_age',60); // cache files for only 60 days by default
 cms_siteprefs::set('browser_cache_expiry',60); // browser can cache pages for 60 minutes.
+$idx = mt_rand(0,15);
+$prime = [211,223,227,229,233,239,241,251,257,263,269,271,277,281,283,293][$idx];
+$xorer = mt_rand(200,300);
+cms_siteprefs::set('fuscint',"$prime.$xorer"); // userid obfuscation params
 $txt = str_pad(decoct(umask()),3,'0',STR_PAD_LEFT);
 cms_siteprefs::set('global_umask',$txt); // deprecated since 2.2.19 (setting umask is bad on multi-threaded servers)
 cms_siteprefs::set('metadata',"<meta name=\"Generator\" content=\"CMS Made Simple - Copyright (C) 2004-" . date('Y') . ". All rights reserved.\">\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\r\n");
