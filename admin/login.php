@@ -1,6 +1,6 @@
 <?php
 #CMS Made Simple admin console script
-#(c) 2004-2025 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
+#(c) 2004-2026 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ $db = $gCms->GetDb();
 // module registers itself as 'admin login module' in the constructor
 // getloginModule
 // call the module's getLoginForm() action
-//
+
 $login_ops = LoginOperations::get_instance();
 
 $error = "";
@@ -43,7 +43,7 @@ $changepwhash = "";
  * @internal
  *
  * @param User $user
- * @return results from the attempt to send a message.
+ * @return bool result from the attempt to send a message.
  */
 function send_recovery_email(User $user)
 {
@@ -54,9 +54,9 @@ function send_recovery_email(User $user)
     $obj->IsHTML(TRUE);
     $obj->AddAddress($user->email, html_entity_decode($user->firstname . ' ' . $user->lastname));
     $obj->SetSubject(lang('lostpwemailsubject',html_entity_decode(cms_siteprefs::get('sitename','CMSMS Site'))));
-
+    //$code = anything unique and useless-if-broken and fast
     $code = md5(md5(__FILE__ . '--' . $user->username . md5($user->password.time())));
-    cms_userprefs::set_for_user( $user->id, 'pwreset', $code );
+    cms_userprefs::set_for_user($user->id,'pwreset',$code);
     $url = $config['admin_url'] . '/login.php?recoverme=' . $code;
     $body = lang('lostpwemail',html_entity_decode(cms_siteprefs::get('sitename','CMSMS Site')), $user->username, $url, $url);
     $obj->SetBody($body);
@@ -73,7 +73,7 @@ function send_recovery_email(User $user)
  * Find a user matching the given recovery hash
  * @internal
  *
- * @param string the hash
+ * @param string hash to match
  * @return mixed The matching User object if found, or null otherwise.
  */
 function find_recovery_user($hash)
@@ -83,7 +83,7 @@ function find_recovery_user($hash)
         $userops = $gCms->GetUserOperations();
         // TODO avoid creating all User-objects merely to try to find one of them
         foreach ($userops->LoadUsers() as $user) {
-            $code = cms_userprefs::get_for_user( $user->id, 'pwreset' );
+            $code = cms_userprefs::get_for_user($user->id, 'pwreset');
             if( $code && $hash === $code ) { //timing attack, hence hash_equals($hash, $code), not a factor here
                 return $user;
             }
@@ -93,7 +93,7 @@ function find_recovery_user($hash)
 }
 
 //Redirect to the normal login screen if we hit cancel on the forgot pw one
-//Otherwise, see if we have a forgotpw hit
+//Otherwise, see if we have a forgot pw hit
 if ((isset($_REQUEST['forgotpwform']) || isset($_REQUEST['forgotpwchangeform'])) && isset($_REQUEST['logincancel'])) {
     redirect('login.php');
 }
@@ -136,30 +136,28 @@ else if (isset($_REQUEST['forgotpwchangeform']) && $_REQUEST['forgotpwchangeform
     if ($user == null) {
         $error = lang('usernotfound');
     }
-    else {
-        if ($_REQUEST['password']) {
-            if ($_REQUEST['password'] == $_REQUEST['passwordagain']) {
-                $user->SetPassword($_REQUEST['password']);
-                $user->Save();
-                // put mention into the admin log
-                cms_userprefs::remove_for_user( $user->id, 'pwreset' );
-                $ip_passw_recovery = cms_utils::get_real_ip();
-                audit($user->id,'Core','Completed lost password recovery for '.$user->username.' (IP: '.$ip_passw_recovery.')');
-                HookManager::do_hook('Core::LostPasswordReset', [ 'uid'=>$user->id, 'username'=>$user->username, 'ip'=>$ip_passw_recovery ]);
-                $acceptLogin = lang('passwordchangedlogin');
-                $changepwhash = '';
-            }
-            else {
-                $error = lang('nopasswordmatch');
-                $changepwhash = $_REQUEST['changepwhash'];
-            }
+    else if ($_REQUEST['password']) {
+        if ($_REQUEST['password'] == $_REQUEST['passwordagain']) {
+            $user->SetPassword($_REQUEST['password']);
+            $user->Save();
+            cms_userprefs::remove_for_user($user->id, 'pwreset');
+            $ip_passw_recovery = cms_utils::get_real_ip();
+            // put mention into the admin log
+            audit($user->id,'Core','Completed lost password recovery for '.$user->username.' (IP: '.$ip_passw_recovery.')');
+            HookManager::do_hook('Core::LostPasswordReset', [ 'uid'=>$user->id, 'username'=>$user->username, 'ip'=>$ip_passw_recovery ]);
+            $acceptLogin = lang('passwordchangedlogin');
+            $changepwhash = '';
         }
         else {
-            $error = lang('nofieldgiven', lang('password'));
+            $error = lang('nopasswordmatch');
             $changepwhash = $_REQUEST['changepwhash'];
         }
     }
-    sleep(2);
+    else {
+        $error = lang('nofieldgiven', lang('password'));
+        $changepwhash = $_REQUEST['changepwhash'];
+    }
+    if ($error) sleep(2);
 }
 
 if (isset($_SESSION['logout_user_now'])) {
@@ -175,8 +173,8 @@ if (isset($_SESSION['logout_user_now'])) {
 }
 
 if( isset($_POST['logincancel']) ) {
-    debug_buffer("Login cancelled.  Returning to content.");
-    redirect($config["root_url"].'/index.php', true);
+    debug_buffer("Login cancelled.  Transferring to frontend.");
+    redirect(CMS_ROOT_URL.'/index.php', true);
 }
 else if( isset($_POST['loginsubmit']) ) {
     // login form submitted
@@ -187,61 +185,22 @@ else if( isset($_POST['loginsubmit']) ) {
     if( isset($_POST["password"]) ) $password = $_POST["password"];
     unset($_POST['username'],$_POST['password'],$_REQUEST['username'],$_REQUEST['password']);
 
-    $userops = $gCms->GetUserOperations();
-
     class CmsLoginError extends CmsException {}
 
     try {
         if( !$username || !$password ) throw new LogicException(lang('usernameincorrect'));
 
+        $userops = $gCms->GetUserOperations();
+        $user = $userops->LoadUserByUsername($username, $password, true, true);
+        if( !$user ) throw new CmsLoginError(lang('usernameincorrect'));
+        $login_ops->preserve_user($user);
+
         // send a pre-login event (pre-2.2.7 used key 'user' instead of 'username')
         HookManager::do_hook('Core::LoginPre', [ 'username'=>$username, 'password'=>$password ]);
-        // if a LoginPre handler doesn't return here, it must locally perform all the following
+        // if a LoginPre handler doesn't return here, it must locally perform the following, to resume login
+        // $user = $login_ops->retrieve_user(); if ($user) { $login_ops->initialize_authentication($user); }
 
-        // load user by name
-        $oneuser = $userops->LoadUserByUsername($username, $password, TRUE, TRUE);
-        if( !$oneuser ) throw new CmsLoginError(lang('usernameincorrect'));
-
-        $login_ops->save_authentication($oneuser);
-
-        // send a post-pw-check event (in case MFA is deployed)
-        HookManager::do_hook('Core::LoginPassed', [ 'user'=>$oneuser ]);
-        // if a LoginPassed handler doesn't return here, it must locally perform all the following
-
-        // put mention into the admin log
-        audit($oneuser->id, 'Admin user', 'Logged in');
-
-        // send a post-login event
-        HookManager::do_hook('Core::LoginPost', [ 'user'=>$oneuser ]);
-
-        // redirect outa here somewhere
-        if( isset($_SESSION['login_redirect_to']) ) {
-            // we previously attempted a URL but didn't have the user key in the request.
-            $url_ob = new cms_url($_SESSION['login_redirect_to']);
-            unset($_SESSION['login_redirect_to']);
-            $url_ob->erase_queryvar('_s_');
-            $url_ob->erase_queryvar('sp_');
-            $url_ob->set_queryvar(CMS_SECURE_PARAM_NAME,$_SESSION[CMS_USER_KEY]);
-            $url = (string) $url_ob;
-            redirect($url);
-        }
-        else {
-            // find the user's homepage, if any, and redirect there.
-            $homepage = cms_userprefs::get_for_user($oneuser->id,'homepage');
-            if( !$homepage ) {
-                $homepage = $config['admin_url'];
-            }
-/*          elseif( 0 ) {
-                url should be rel. to $config['admin_url']
-                //TODO somewhere, efficiently check page ok (FR#12400)
-                //e.g. after each system upgrade and after each module-uninstall or -deactivate
-                $homepage = $config['admin_url'];
-            }
-*/
-            $homepage = CmsAdminUtils::get_session_url($homepage); // involves deprecated conversion of 'placeholders'. instead use verbatim
-            $homepage = html_entity_decode($homepage);
-            redirect($homepage);
-        }
+        $login_ops->initialize_authentication($user);
     }
     catch( Exception $e ) {
         $error = $e->GetMessage();
