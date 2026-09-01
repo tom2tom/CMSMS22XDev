@@ -54,8 +54,9 @@ function send_recovery_email(User $user)
     $obj->IsHTML(TRUE);
     $obj->AddAddress($user->email, html_entity_decode($user->firstname . ' ' . $user->lastname));
     $obj->SetSubject(lang('lostpwemailsubject',html_entity_decode(cms_siteprefs::get('sitename','CMSMS Site'))));
-    //$code = anything unique and useless-if-broken and fast
-    $code = md5(md5(__FILE__ . '--' . $user->username . md5($user->password.time())));
+    // $code = anything unique and useless-if-broken
+    $t = function_exists('microtime') ? microtime() : mt_rand(100000,999999) . time();
+    $code = hash('fnv1a64',sha1(__FILE__ . '--' . $user->username . $t));
     cms_userprefs::set_for_user($user->id,'pwreset',$code);
     $url = $config['admin_url'] . '/login.php?recoverme=' . $code;
     $body = lang('lostpwemail',html_entity_decode(cms_siteprefs::get('sitename','CMSMS Site')), $user->username, $url, $url);
