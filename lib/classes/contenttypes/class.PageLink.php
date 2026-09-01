@@ -43,7 +43,7 @@ class PageLink extends ContentBase
 		parent::SetProperties();
 		$this->RemoveProperty('cachable',true);
 		$this->RemoveProperty('secure',false);
-//TODO	$this->AddProperty('default',2,parent::TAB_OPTIONS,true); c.f. IsDefaultPossible()
+//		$this->AddProperty('default',2,parent::TAB_OPTIONS,true); consistent with IsDefaultPossible()
 		$this->AddProperty('page',3,parent::TAB_MAIN,true,true);
 		$this->AddProperty('params',4,parent::TAB_OPTIONS,true,true);
 

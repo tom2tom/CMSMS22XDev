@@ -70,7 +70,7 @@ class ModuleManager extends CMSModule
     }
   }
 
-  public function get_tasks()
+  public function get_tasks() // TODO GetTasks($aspaths)
   {
     $fp = cms_join_path(__DIR__,'lib','class.ClearCacheJob.php');
     if (is_file($fp)) {

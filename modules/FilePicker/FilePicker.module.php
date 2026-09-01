@@ -74,7 +74,7 @@ final class FilePicker extends CMSModule implements FilePickerInterface
     public function MinimumCMSVersion() { return '2.2'; }
     public function VisibleToAdminUser() { return $this->CheckPermission('Modify Site Preferences'); }
 
-    public function HasCapability( $capability, $params = array() )
+    public function HasCapability($capability, $params = array())
     {
         switch( $capability ) {
             case CmsCoreCapabilities::CONTENT_BLOCKS:
@@ -99,7 +99,7 @@ final class FilePicker extends CMSModule implements FilePickerInterface
         return [];
     }
 
-    public function get_tasks()
+    public function get_tasks() // TODO GetTasks($aspaths)
     {
         $fp = cms_join_path(__DIR__,'lib','class.ResetCounterJob.php');
         if( is_file($fp) ) {
@@ -282,7 +282,7 @@ final class FilePicker extends CMSModule implements FilePickerInterface
     }
 
     /**
-     *
+     * Interface method
      * @staticvar bool $scripted
      * @param string $name
      * @param string $value

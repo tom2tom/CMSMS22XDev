@@ -69,8 +69,8 @@ abstract class CmsDbQueryBase
 	/**
 	 * Constructor
 	 *
-	 * @param mixed $args associative? array (key=>value?) with arguments
-	 *  for the query, or a comma-separated string of those arguments.
+	 * @param mixed $args optional associative? array (key=>value?) with
+	 *  arguments for the query, or a comma-separated string of those arguments.
 	 */
 	public function __construct($args = [])
 	{
