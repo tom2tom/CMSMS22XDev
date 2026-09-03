@@ -1078,7 +1078,8 @@ abstract class ContentBase
 
 	/**
 	 * Indicates whether this content type requires an alias.
-	 * Some content types that are not directly navigable do not require page aliases.
+	 * Content types that are not directly navigable and have no child(ren)
+	 * do not require an alias.
 	 *
 	 * @abstract
 	 * @return bool
@@ -2651,12 +2652,12 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 	/**
 	 * Remove a named property-definition from this object's property-definitions.
-	 * Specify a default value to use if that property is called for.
+	 * Specify a default value to use if that property is used anyway.
 	 *
 	 * @param string $name The property name
-	 * @param string $dflt The default value.
+	 * @param mixed $dflt The default value. Default ''.
 	 */
-	protected function RemoveProperty($name,$dflt)
+	protected function RemoveProperty($name,$dflt = '')
 	{
 		if( empty($this->_attributes) ) return;
 		$tmp = [];
@@ -2673,10 +2674,10 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 	 *
 	 * @since 1.11
 	 * @param string $name The property name
-	 * @param int $priority The property priority, for sorting.
-	 * @param string $tab The tab for the property (see tab constants)
-	 * @param bool $required (whether the property is required)
-	 * @param bool $basic Whether or not the property is a basic property (editable by even restricted editors)
+	 * @param int $priority The property priority (>= 0, for intra-tab positioning)
+	 * @param string $tab The tab for the property (a ContentBase::TAB_* constant) Default TAB_MAIN
+	 * @param bool $required Whether the property is required Default false
+	 * @param bool $basic Whether the property is basic (editable by even restricted editors) Default false
 	 */
 	protected function AddProperty($name,$priority,$tab = self::TAB_MAIN,$required = false,$basic = false)
 	{
@@ -2769,7 +2770,7 @@ modified_date) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		case 'parent':
 			if( $pmac || $pown ) { // this is partial response to BR #12789
 				$contentops = ContentOperations::get_instance();
-				$tmp = $contentops->CreateHierarchyDropdown($this->mId,$this->mParentId,'parent_id',false,false,false,false,false,'selparent'); //CHANGES: was allow_all (hence inactive pages selection) was use_perms (when selecting not editing)
+				$tmp = $contentops->CreateHierarchyDropdown($this->mId,$this->mParentId,'parent_id',false,false,false,false,true,'selparent'); //CHANGES: was allow_all (hence inactive pages selection) was use_perms (when selecting not editing) was not for_child
 				if( $tmp ) {
 					$help = cms_admin_utils::get_help_tag('core','help_content_parent',lang('help_title_content_parent'));
 					return array('<label for="selparent_0">*'.lang('parent').':</label>&nbsp;'.$help,$tmp);
