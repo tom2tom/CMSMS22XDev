@@ -266,13 +266,10 @@ final class JobOperations
                 $one = $ops->get_module_instance($one);
             }
             if (!is_object($one)) {
-                continue; // for some reason the module exists but cannot be loaded
-            }
-            if (!method_exists($one, 'get_tasks')) {
-                continue;
+                continue; // module exists but for some reason cannot be loaded
             }
 
-            $tasks = $one->get_tasks();
+            $tasks = $one->GetTasks(); // will use get_tasks() if relevant
             if (!$tasks) {
                 continue;
             }
