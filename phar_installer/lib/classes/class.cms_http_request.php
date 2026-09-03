@@ -68,7 +68,7 @@ final class cms_http_request
 
     /**
      * Parameters for the request
-     * (not for this object's setup) 
+     * (not for this object's setup)
      *
      * @var array
      */
