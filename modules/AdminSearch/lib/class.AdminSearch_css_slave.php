@@ -84,7 +84,7 @@ final class AdminSearch_css_slave extends AdminSearch_slave
         if( count($all_ids) ) {
             $chunks = array_chunk($all_ids,15);
             foreach( $chunks as $chunk ) {
-                $css_list = \CmsLayoutStylesheet::load_bulk($chunk);
+                $css_list = CmsLayoutStylesheet::load_bulk($chunk);
                 foreach( $css_list as $css ) {
                     if( $this->check_css_matches($css) ) $resultSets[] = $this->get_css_match_info($css,$mod);
                 }
