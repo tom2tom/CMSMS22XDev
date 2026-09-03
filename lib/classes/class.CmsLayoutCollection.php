@@ -747,8 +747,9 @@ class CmsLayoutCollection
             $ids = array();
             $cache = array();
             foreach( $dbr as $row ) {
-                $ids[] = $row['id'];
-                $cache[$row['id']] = $row;
+                $rid = (int)$row['id'];
+                $ids[] = $rid;
+                $cache[$rid] = $row;
             }
 
             if( !$quick ) {
