@@ -12,6 +12,7 @@ use cms_utils;
 use CMSMS\FilePickerProfile;
 use CmsDataException;
 use Exception;
+use function cms_join_path;
 use function endswith;
 use function is_absolute_path;
 use function startswith;
@@ -165,11 +166,15 @@ class Profile extends FilePickerProfile
      */
     public function validate()
     {
-        if( !$this->_data['name'] ) throw new ProfileException('err_profile_name');
+        if( !$this->_data['name'] ) { throw new ProfileException('err_profile_name'); }
         // like munge_string_to_url without space etc, with utf8 numbers
         $tmp = preg_replace(['/[^\pL_\p{Nd}]/u', '/_{2,}/'], ['', ''], trim($this->name));
-        if( $tmp != $this->_data['name'] ) throw new ProfileException('err_profile_name');
-        if( $this->reltop && !is_dir($this->_data['top']) ) throw new ProfileException('err_profile_topdir');
+        if( $tmp != $this->_data['name'] ) { throw new ProfileException('err_profile_name'); }
+        if( $this->reltop ) {
+            $config = cms_config::get_instance();
+            $tmp = cms_join_path($config['uploads_path'],$this->_data['top']);
+            if( !is_dir($tmp) ) { throw new ProfileException('err_profile_topdir'); }
+        }
         if( $this->_data['file_extensions'] && preg_match('/[ A-Z]/', $this->_data['file_extensions']) ) {
             throw new ProfileException('err_profile_extensions');
         }
