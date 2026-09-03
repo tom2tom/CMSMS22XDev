@@ -57,16 +57,27 @@ class PathAssistant
         }
     }
 
+    /**
+     * Get the trailing portion of dir|file-path $path_a that is relative to (i.e. after) $path_b
+     * @param mixed $path_a dir|file path string suitable for realpath() or falsy
+     * @param mixed $path_b ibid
+     * @param bool $forurl whether to return a relative-url instead of filepath. Default false.
+     * @return string (without leading separator)
+     * @throws LogicException if either path is missing or invalid or $path_a is not relative to $path_b
+     */
     protected function to_relative_sub( $path_a, $path_b, $forurl = FALSE )
     {
-        if( !$path_a || !$path_b ) throw new LogicException('Invalid path(s)_a passed to '.__METHOD__);
-        $path_a = realpath( $path_a );
-        $path_b = realpath( $path_b );
-        if( !is_dir($path_a) && !is_file($path_a) ) throw new LogicException('Invalid path_a passed to '.__METHOD__.': '.$path_a);
-        if( !is_dir($path_b) ) throw new LogicException('Invalid path_b passed to '.__METHOD__.': '.$path_b);
+        if( !$path_a || !$path_b ) { throw new LogicException('Invalid path(s) passed to '.__METHOD__); }
+        $ra = realpath($path_a);
+        if( !$ra || !(is_dir($ra) || is_file($ra)) ) { throw new LogicException('Invalid path_a passed to '.__METHOD__.': '.$path_a); }
+        $rb = realpath($path_b);
+        if( !$rb || !is_dir($rb) ) { throw new LogicException('Invalid path_b passed to '.__METHOD__.': '.$path_b); }
+        if( $ra == $rb ) { return ''; }
 
-        if( !$this->is_relative_to( $path_a, $path_b ) ) throw new LogicException("$path_a is not relative to $path_b");
-        $out = substr($path_a, strlen($path_b));
+        if( !$this->is_relative_to($ra, $rb) ) {
+            throw new LogicException("$path_a is not relative to $path_b");
+        }
+        $out = substr($ra, strlen($rb));
         $out = ltrim($out, ' \\/');
         if( $forurl ) {
             $out = strtr($out, '\\', '/');
@@ -88,53 +99,72 @@ class PathAssistant
         return $this->_topdir;
     }
 
-    //$patha, $path_b = filepath string (suitable for realpath) or falsy
+    /**
+     * Report whether $path_a is relative to (i.e. starts with) $path_b
+     * @param mixed $path_a filepath string suitable for realpath() or falsy
+     * @param mixed $path_b ibid
+     * @return bool
+     */
     public function is_relative_to( $path_a, $path_b )
     {
         if( $path_a ) {
-            $path_a = realpath( $path_a );
+            $path_a = realpath($path_a);
         }
-        else {
+        if( !$path_a ) {
             return FALSE;
         }
         if( $path_b ) {
-            $path_b = realpath( $path_b );
+            $path_b = realpath($path_b);
         }
-        if( !$path_a || !$path_b ) {
+        if( !$path_b ) {
             return FALSE;
         }
-        return startswith( $path_a, $path_b);
+        return startswith($path_a, $path_b);
     }
 
-    //$path = filepath string (suitable for realpath) or falsy
+    /**
+     * Report whether $path is relative to (i.e. starts with) this object's topdir property
+     * @param mixed $path filepath string suitable for realpath() or falsy
+     * @return bool
+     */
     public function is_relative( $path )
     {
-        return $this->is_relative_to( $path, $this->_topdir );
+        return $this->is_relative_to($path, $this->_topdir);
     }
 
-    //returns filepath string
+    /**
+     * @param mixed $path filepath string suitable for realpath() or falsy
+     * @return string filepath
+     */
     public function to_relative( $path )
     {
-        return $this->to_relative_sub( $path, $this->_topdir, FALSE );
+        return $this->to_relative_sub($path, $this->_topdir, FALSE);
     }
 
-    //$relative = filepath string (with leading separator or not) or empty
-    //return filepath string
+    /**
+     * @param mixed $relative filepath string suitable for realpath() maybe including '..' or falsy
+     * @return string filepath maybe ending with '/..'
+     */
     public function to_absolute( $relative )
     {
-        if( $relative && is_absolute_path($relative) ) {
-            return $relative; // throw ?
-        }
+        //TODO handle $relative already an absolute path
+//      if( $relative && is_absolute_path() or preg_match('~^ *(?:\/|\\\\|\w:\\\\|\w:\/)~',$relative) ) { return TODO; }
         $relative = ltrim((string)$relative,' \\/');
         if( $relative ) {
             $relative = strtr($relative,'\\/',DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR); // just in case
-            return $this->_topdir.DIRECTORY_SEPARATOR.$relative;
+            $tmp = $this->_topdir.DIRECTORY_SEPARATOR.$relative;
+            if( !\endswith($tmp, '..') ) {
+                return $tmp;
+            }
+            return dirname($tmp,2);
         }
         return $this->_topdir;
     }
 
-    //$relative = filepath sub-string or URL sub-string (with leading separator or not) or empty
-    //return URL string
+    /**
+     * @param string $relative filepath sub-string or URL sub-string (with leading separator or not) or empty
+     * @return string URL
+     */
     public function relative_path_to_url( $relative )
     {
         $prefix = rtrim($this->_topurl,' /'); // prob. irrelevant, but just in case
@@ -146,8 +176,11 @@ class PathAssistant
         return $prefix;
     }
 
-    //$relative = filepath [sub-]string (with leading separator or not) or empty
-    public function is_valid_relative_path( $relative )
+    /**
+     * @param string $relative filepath [sub-]string (with leading separator or not) or empty
+     * @return bool
+     */
+    public function is_valid_relative_path($relative)
     {
         $relative = trim((string)$relative);
         if( $relative && is_absolute_path($relative) ) {
@@ -156,6 +189,6 @@ class PathAssistant
         else {
             $absolute = $this->to_absolute($relative); //NOTE forces TRUE return always
         }
-        return $this->is_relative($absolute);
+        return $this->is_relative_to($absolute,$this->_topdir);
     }
 } // class
