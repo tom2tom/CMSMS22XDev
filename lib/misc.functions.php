@@ -224,17 +224,19 @@ function cms_relative_path($path,$relative_to = '')
  * (no path-leading \) will be reported as absolute, in case the caller
  * needs to strip the drive
  * @see https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file#fully-qualified-vs-relative-paths
- * Any leading whitespace will be ignored. Any leading './' or '.\' will
- * be ignored. Any '../' or '..\' will cause a false return.
+ * Any leading whitespace will be ignored. Any leading '../' or '..\'
+ * will cause a false return. Any later '..' or '..' will be ignored.
+ * Any './' or '.\' will be ignored.
+ * TODO handle /A/B/C or \A\B\C where A is not CMS_ROOT_PATH
  *
  * @since 2.2.23F2
- * @param string $path The filesystem path to check.
+ * @param string $path The filesystem path to check. Can be empty.
  * @return bool indicating absolute
  */
 function is_absolute_path($path)
 {
     if( $path ) {
-        if( preg_match('~\\.\\.[/\\\\]~', $path) ) {
+        if( preg_match('~^\s*\\.\\.[/\\\\]~', $path) ) {
             return false;
         }
         $test = preg_quote($path, '~');
@@ -302,10 +304,10 @@ function private_place($fn='',$config=null,$context=[])
 /**
  * Perform HTML entity conversion on a string.
  *
- * @see htmlentities
+ * @see also cleanValue() and PHP's htmlentities() and htmlspecialchars()
  * @param string $val The input string
- * @param string $param A flag indicating how quotes should be handled (see htmlentities) (ignored)
- * @param string $charset $val The input character set (ignored)
+ * @param int $param Bit-flags indicating how quotes should be handled (see htmlentities) (UNUSED)
+ * @param string $charset $val The input character set (UNUSED)
  * @param bool $convert_single_quotes A flag indicating wether single quotes should be converted to entities.
  * @return string the converted string.
  */
@@ -321,9 +323,9 @@ function cms_htmlentities($val,$param = ENT_QUOTES,$charset = 'UTF-8',$convert_s
     $val = str_replace(">"       , "&gt;"        , $val);
     $val = str_replace("<"       , "&lt;"        , $val);
     $val = str_replace("\""      , "&quot;"      , $val);
-    $val = preg_replace("/\\$/"  , "&#036;"      , $val);
+    $val = preg_replace("/\\$/"  , "&#36;"       , $val); // TODO no need for regex?
     $val = str_replace("!"       , "&#33;"       , $val);
-    $val = str_replace("'"       , "&#39;"       , $val);
+    $val = str_replace("'"       , "&#39;"       , $val); // BUT see below
 
     if( $convert_single_quotes ) {
         $val = str_replace("\\'", "&apos;", $val);
@@ -1445,7 +1447,6 @@ function cms_get_jquery($exclude = '',$ssl = false,$cdn = false,$append = '',$cu
     foreach( $scripts as $script ) {
         //TODO check logic here
         if( !empty($script['css']) && $include_css ) {
-            $url = $script['css'];
             if( $cdn && !empty($script['css_cdn']) ) {
                 $url = $script['css_cdn'];
                 if( isset($script['css_sri']) ) {
@@ -1455,6 +1456,10 @@ function cms_get_jquery($exclude = '',$ssl = false,$cdn = false,$append = '',$cu
                 else {
                     $output .= sprintf($fmt_css,$url)."\n";
                 }
+            }
+            else {
+                $url = $script['css'];
+                $output .= sprintf($fmt_css,$url)."\n";
             }
         }
         if( $cdn && !empty($script['cdn']) ) {
