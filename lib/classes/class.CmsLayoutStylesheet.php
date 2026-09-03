@@ -804,47 +804,61 @@ VALUES (?,?,?,?,?,?,?)';
 	 *
 	 * This method does not throw exceptions if one requested id, or name does not exist.
 	 *
-	 * @param array $ids Array of integer stylesheet ids or an array of string stylesheet names.
-	 * @param bool $deep wether or not to load associated data. Default true.
-	 * @return array Array of CmsLayoutStylesheet objects
+	 * @param array $ids integer stylesheet id(s) or string stylesheet name(s).
+	 * @param bool $deep whether to load associated data. Default true.
+	 * @return array CmsLayoutStylesheet object(s) or empty
 	 * @throws CmsInvalidDataException
 	 */
 	public static function load_bulk($ids,$deep = TRUE)
 	{
-		if( !is_array($ids) || count($ids) == 0 ) return [];
+		if( !$ids || !is_array($ids) ) return [];
 
 		// clean up the input data
-		$is_ints = FALSE;
-		if( is_numeric($ids[0]) && (int)$ids[0] > 0 ) {
-			$is_ints = TRUE;
+		if( is_numeric($ids[0]) ) {
 			for( $i = 0, $n = count($ids); $i < $n; $i++ ) {
-				$ids[$i] = (int)$ids[$i];
+				if( is_numeric($ids[$i]) ) {
+					$ids[$i] = (int)$ids[$i];
+					if( $ids[$i] < 1 ) { unset($ids[$i]); }
+				}
+				else {
+					throw new CmsInvalidDataException('Invalid data passed to '.__CLASS__.'::'.__METHOD__);
+				}
 			}
+			$selfield = 'id';
 		}
-		elseif( is_string($ids[0]) && strlen($ids[0]) > 0 ) {
+		elseif( is_string($ids[0]) ) {
 			for( $i = 0, $n = count($ids); $i < $n; $i++ ) {
-				$ids[$i] = "'".trim($ids[$i])."'";
+				if( $ids[$i] || $ids[$i] === '0' ) { //TODO best check, name '0' valid?
+					$ids[$i] = "'".addcslashes(trim($ids[$i]), "'")."'";
+					if( $ids[$i] == '') { unset($ids[$i]); }
+				}
+				else {
+					throw new CmsInvalidDataException('Invalid data passed to '.__CLASS__.'::'.__METHOD__);
+				}
 			}
+			$selfield = 'name';
 		}
 		else {
-			// what ??
 			throw new CmsInvalidDataException('Invalid data passed to '.__CLASS__.'::'.__METHOD__);
 		}
+
 		$ids = array_unique($ids);
+		if( !$ids ) return [];
 
 		$db = CmsApp::get_instance()->GetDb();
-		$query = 'SELECT id,name,content,description,media_type,media_query,created,modified FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE id IN ('.implode(',',$ids).')';
-		if( !$is_ints ) $query = 'SELECT id,name,content,description,media_type,media_query,created,modified FROM '.CMS_DB_PREFIX.self::TABLENAME.' WHERE name IN ('.implode(',',$ids).')';
+		$query = 'SELECT id,name,content,description,media_type,media_query,created,modified FROM '.
+			CMS_DB_PREFIX.self::TABLENAME." WHERE $selfield IN (".implode(',',$ids).')';
 
 		$dbr = $db->GetArray($query);
 		$out = array();
-		if( is_array($dbr) && count($dbr) ) {
+		if( $dbr && is_array($dbr) ) {
 			$designs_by_css = array();
 			if( $deep ) {
 				$ids2 = array();
 				foreach( $dbr as $row ) {
-					$ids2[] = $row['id'];
-					$designs_by_css[$row['id']] = array();
+					$rid = (int)$row['id'];
+					$ids2[] = $rid;
+					$designs_by_css[$rid] = array();
 				}
 				$dquery = 'SELECT design_id,css_id FROM '.CMS_DB_PREFIX.CmsLayoutCollection::CSSTABLE.' WHERE css_id IN ('.implode(',',$ids2).') ORDER BY css_id';
 				$dbr2 = $db->GetArray($dquery);
@@ -853,10 +867,10 @@ VALUES (?,?,?,?,?,?,?)';
 				}
 			}
 
-			// this makes sure that the returned array matches the order specified.
+			// ensure that the returned array matches the order specified.
 			foreach( $ids as $one ) {
 				$found = [];
-				if( $is_ints ) {
+				if( $selfield == 'id' ) { // processing integer sheet-ids
 					// find item in $dbr by id
 					foreach( $dbr as $row ) {
 						if( $row['id'] == $one ) {
@@ -866,7 +880,7 @@ VALUES (?,?,?,?,?,?,?)';
 					}
 				}
 				else {
-					$one = trim($one,"'");
+					$one = addcslashes(trim($one),"'"); // TODO sheet name char ' invalid?
 					// find item in $dbr by name
 					foreach( $dbr as $row ) {
 						if( $row['name'] == $one ) {
@@ -876,9 +890,11 @@ VALUES (?,?,?,?,?,?,?)';
 					}
 				}
 
-				$id = $found['id'];
-				$tmp = self::_load_from_data($found,(isset($designs_by_css[$id]))?$designs_by_css[$id]:[]);
-				if( is_object($tmp) ) $out[] = $tmp;
+				if( $found ) {
+					$id = $found['id'];
+					$tmp = self::_load_from_data($found,(isset($designs_by_css[$id]))?$designs_by_css[$id]:[]);
+					if( is_object($tmp) ) $out[] = $tmp;
+				}
 			}
 		}
 
