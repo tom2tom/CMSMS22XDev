@@ -54,23 +54,24 @@ final class cms_utils
 	private function __construct() {}
 
 	/**
-	 * Get data that was stored elsewhere in the application.
+	 * Get data that was cached for the duration of the current request.
 	 *
 	 * @since 1.9
-	 * @param string $key The key to get.
+	 * @param string $key The wanted-data identifier.
 	 * @return mixed The stored data, or null
 	 */
 	public static function get_app_data($key)
 	{
-		if( is_array( self::$_vars ) && isset(self::$_vars[$key]) ) return self::$_vars[$key];
-		return null;
+		return (is_array(self::$_vars) && array_key_exists($key,self::$_vars)) ?
+			self::$_vars[$key] : null;
 	}
 
 	/**
-	 * Set data for later use.
+	 * Cache data for use in the current request.
 	 *
-	 * This method is typically used to store data for later use by another part of the application.
-	 * This data is not stored in the session, so it only exists for one request.
+	 * This method is typically used to store data for later use by another
+     * part of the application.
+	 * That data only exists for the remainder of the current request.
 	 *
 	 * @since 1.9
 	 * @param string $key The name of this data.
