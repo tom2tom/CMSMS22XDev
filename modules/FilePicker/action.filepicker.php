@@ -1,6 +1,5 @@
 <?php
 #Module FilePicker action
-#(c) 2016 Fernando Morgado <jomorg@cmsmadesimple.org>
 #(c) 2016 CMS Made Simple Foundation Inc <foundation@cmsmadesimple.org>
 #
 #This program is free software; you can redistribute it and/or modify
@@ -15,7 +14,6 @@
 #You should have received a copy of the GNU General Public License
 #along with this program; if not, write to the Free Software
 #Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-#
 
 use CMSMS\FilePickerProfile;
 use CMSMS\FileType;
@@ -27,7 +25,7 @@ if( !isset($gCms) ) exit;
 if( !check_login(FALSE) ) exit; // admin only.... but any admin
 
 //$handlers = ob_list_handlers();
-//for ($cnt = 0; $cnt < count($handlers); $cnt++) { ob_end_clean(); }
+//for( $cnt = 0; $cnt < count($handlers); $cnt++ ) { ob_end_clean(); }
 
 $clean_str = function($in) {
     if( $in ) {
@@ -78,12 +76,17 @@ and/or none|some|all profile properties, some of which may override correspondin
 //
 // initialization
 //
-if( count($params) == 1 && reset($params) == 'filepicker' ) { $params = $_GET; } // back-compatibility, process unprefixed params in $_GET[] instead
+if( count($params) == 1 && reset($params) == 'filepicker' ) {
+    $params = $_GET; // back-compatibility, process unprefixed params in $_GET[] instead
+}
 if( isset($params['_enc']) ) {
     $diropts = json_decode(base64_decode($params['_enc']),TRUE);
     unset($params['_enc']);
     if( $diropts && is_array($diropts) ) {
-        $params = array_merge($params,$diropts);
+        // $diropts = ["subdir"=>string,"inst"=>string,"sig"=>string]
+        foreach( $diropts as $key => $val ) {
+            $params[$key] = $clean_str($val);
+        }
         $params['useprefix'] = true;
     }
 }
@@ -122,22 +125,23 @@ $profile->overrideWith($custom);
 
 // get our absolute top directory
 $topdir = $profile->top;
-if( !$topdir ) $topdir = $config['uploads_path'];
+if( !$topdir ) { $topdir = $config['uploads_path']; }
 $assistant = new PathAssistant($config,$topdir);
 
 // get our current working directory relative to $topdir
+$cwd = '';
 // try cwd stored in session first... then if necessary the profile topdir, then if necessary, the absolute topdir
 $sesskey = md5(__FILE__);
-$cwd = '';
 if( isset($_SESSION[$sesskey]) ) {
     $cwd = trim($_SESSION[$sesskey]);
 }
 if( !$cwd && $profile->top ) {
     $cwd = $assistant->to_relative($profile->top);
 }
-if( !$nosub && isset($params['subdir']) ) {
+if( !$nosub && isset($params['subdir']) ) { // param value might be '..' or ''
+    $cwd .= DIRECTORY_SEPARATOR . $params['subdir']; // can include '..'
+    $cwd = ltrim($cwd, '\\/'); // prevent an empty $cwd yielding e.g. '/sub' i.e. treated as absolute
     try {
-        $cwd .= DIRECTORY_SEPARATOR . cms_html_entity_decode(trim($params['subdir']));
         $cwd = $assistant->to_relative($assistant->to_absolute($cwd));
     }
     catch( Exception $e ) {
@@ -145,7 +149,7 @@ if( !$nosub && isset($params['subdir']) ) {
     }
 }
 // failsafe - if we don't have a valid working directory, set it to the $topdir
-if( $cwd && !$assistant->is_valid_relative_path( $cwd ) ) {
+if( $cwd && !$assistant->is_valid_relative_path($cwd) ) {
     $cwd = '';
 }
 //if( $cwd ) $_SESSION[$sesskey] = $cwd;
@@ -255,6 +259,15 @@ foreach( $css_files as $file ) {
     }
 }
 
+// ui strings
+$lang = [];
+$lang['apply'] = $this->Lang('apply');
+$lang['confirm_delete'] = $this->Lang('confirm_delete');
+$lang['err_problem_upload'] = $this->Lang('err_problem_upload');
+$lang['err_failed_ajax'] = $this->Lang('err_failed_ajax');
+$lang['ok'] = $this->Lang('ok');
+
+//TODO no Smarty-cache (esp. for admin request)
 $baseurl = $this->GetModuleURLPath();
 $modname = $this->GetName();
 $tpl = $smarty->createTemplate("module_file_tpl:$modname;filepicker.tpl",null,$modname,$smarty);
@@ -263,16 +276,13 @@ $tpl->assign('cssurl',(($sel_file) ? $baseurl.$sel_file : ''));
 $tpl->assign('cwd_for_display',$cwd_for_display);
 $tpl->assign('cwd',$cwd);
 $tpl->assign('files',$files);
+$tpl->assign('lang_js',json_encode($lang)); // mebbe plain array for CMSFileBrowser property ?
 $tpl->assign('sig',$sig);
 $tpl->assign('inst',$inst);
-//$tpl->assign('mod',$this);
 $tpl->assign('prefix',$prefix);
 $tpl->assign('profile',$profile);
-$tpl->assign('type',FileType::TYPE_ANY); //$type);
-$lang = [];
-$lang['confirm_delete'] = $this->Lang('confirm_delete');
-$lang['ok'] = $this->Lang('ok');
-$lang['err_problem_upload'] = $this->Lang('err_problem_upload');
-$lang['err_failed_ajax'] = $this->Lang('err_failed_ajax');
-$tpl->assign('lang_js',json_encode($lang));
+$tpl->assign('pdel',$profile->can_delete != FilePickerProfile::FLAG_NONE);
+$tpl->assign('pmkdir',$profile->can_mkdir != FilePickerProfile::FLAG_NONE);
+$tpl->assign('pupload',$profile->can_upload != FilePickerProfile::FLAG_NONE);
+$tpl->assign('type',FileType::TYPE_ANY); //mebbe enable $type usage ?
 $tpl->display();
