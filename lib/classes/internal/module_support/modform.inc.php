@@ -18,7 +18,8 @@
 #$Id$
 
 /**
- * Methods for modules to do form related functions; included in the module class when needed
+ * Backend functions for modules to do form related functions.
+ * Included in the module class when needed.
  * @see CMSModule
  * @since   1.0
  * @package CMS
@@ -111,8 +112,8 @@ function cms_module_CreateInputText($modinstance, $id, $name, $value='', $size='
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
-  $size = cms_htmlentities($size);
-  $maxlength = cms_htmlentities($maxlength);
+  $size = (int)$size;
+  $maxlength = (int)$maxlength;
 
   $value = str_replace('"', '&quot;', $value);
 
@@ -130,8 +131,8 @@ function cms_module_CreateInputTextWithLabel($modinstance, $id, $name, $value=''
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
   $value = cms_htmlentities($value);
-  $size = cms_htmlentities($size);
-  $maxlength = cms_htmlentities($maxlength);
+  $size = (int)$size;
+  $maxlength = (int)$maxlength;
 
   if( $label == '' ) { $label = $name; }
   $text = '<label class="cms_label" for="'.$id.$name.'" '.$labeladdtext.'>'.$label.'</label>'."\n";
@@ -174,6 +175,7 @@ function cms_module_CreateInputDate($modinstance, $id, $name, $value='', $addtex
 
 /**
  * @access private
+ * Obsolete
  */
 function cms_module_CreateInputDatetime($modinstance, $id, $name, $value='', $addtext='')
 {
@@ -292,8 +294,8 @@ function cms_module_CreateInputEmail($modinstance, $id, $name, $value='', $size=
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
-  $size = cms_htmlentities($size);
-  $maxlength = cms_htmlentities($maxlength);
+  $size = (int)$size;
+  $maxlength = (int)$maxlength;
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="email" class="cms_emailfield" name="'.$id.$name.'" id="'.$id.$name.'" value="'.$value.'" size="'.$size.'" maxlength="'.$maxlength.'"';
@@ -310,8 +312,8 @@ function cms_module_CreateInputTel($modinstance, $id, $name, $value='', $size='1
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
-  $size = cms_htmlentities($size);
-  $maxlength = cms_htmlentities($maxlength);
+  $size = (int)$size;
+  $maxlength = (int)$maxlength;
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="tel" class="cms_telfield" name="'.$id.$name.'" id="'.$id.$name.'" value="'.$value.'" size="'.$size.'" maxlength="'.$maxlength.'"';
@@ -328,8 +330,8 @@ function cms_module_CreateInputSearch($modinstance, $id, $name, $value='', $size
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
-  $size = cms_htmlentities($size);
-  $maxlength = cms_htmlentities($maxlength);
+  $size = (int)$size;
+  $maxlength = (int)$maxlength;
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="search" class="cms_searchfield" name="'.$id.$name.'" id="'.$id.$name.'" value="'.$value.'" size="'.$size.'" maxlength="'.$maxlength.'"';
@@ -346,8 +348,8 @@ function cms_module_CreateInputUrl($modinstance, $id, $name, $value='', $size='1
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
-  $size = cms_htmlentities($size);
-  $maxlength = cms_htmlentities($maxlength);
+  $size = (int)$size;
+  $maxlength = (int)$maxlength;
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="url" class="cms_urlfield" name="'.$id.$name.'" id="'.$id.$name.'" value="'.$value.'" size="'.$size.'" maxlength="'.$maxlength.'"';
@@ -358,15 +360,15 @@ function cms_module_CreateInputUrl($modinstance, $id, $name, $value='', $size='1
 
 /**
  * @access private
+ * @see also cms_module_CreateFileUploadInput()
  */
-function cms_module_CreateInputFile($modinstance, $id, $name, $accept='', $size='10',$addtext='')
+function cms_module_CreateInputFile($modinstance, $id, $name, $accept='', $addtext='')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
   $accept = cms_htmlentities($accept);
-  $size = cms_htmlentities($size);
 
-  $text='<input type="file" class="cms_browse" name="'.$id.$name.'" size="'.$size.'"';
+  $text='<input type="file" class="cms_browse" name="'.$id.$name.'"';
   if( $accept ) { $text .= ' accept="' . $accept.'"'; }
   if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= ">\n";
@@ -381,8 +383,8 @@ function cms_module_CreateInputPassword($modinstance, $id, $name, $value='', $si
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
   $value = cms_htmlentities($value);
-  $size = cms_htmlentities($size);
-  $maxlength = cms_htmlentities($maxlength);
+  $size = (int)$size;
+  $maxlength = (int)$maxlength;
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="password" class="cms_password" id="'.$id.$name.'" name="'.$id.$name.'" value="'.$value.'" size="'.$size.'" maxlength="'.$maxlength.'"';
@@ -466,13 +468,14 @@ function cms_module_CreateInputReset($modinstance, $id, $name, $value='Reset', $
 
 /**
  * @access private
+ * @see also cms_module_CreateInputFile()
  */
-function cms_module_CreateFileUploadInput($modinstance, $id, $name, $addtext='', $size='10')
+function cms_module_CreateFileUploadInput($modinstance, $id, $name, $addtext='')
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
 
-  $text = '<input type="file" class="cms_browse" name="'.$id.$name.'" size="'.$size.'"';
+  $text = '<input type="file" class="cms_browse" name="'.$id.$name.'"';
   if( $addtext ) { $text .= ' ' . $addtext; }
   $text .= '>';
   return $text . "\n";
@@ -515,8 +518,8 @@ function cms_module_CreateInputDataList($modinstance, $id, $name, $value='', $it
   $value = cms_htmlentities($value);
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
-  $size = cms_htmlentities($size);
-  $maxlength = cms_htmlentities($maxlength);
+  $size = (int)$size;
+  $maxlength = (int)$maxlength;
 
   $value = str_replace('"', '&quot;', $value);
   $text = '<input type="text" class="cms_datalistfield" name="'.$id.$name.'" list="'.$id.$name.'" value="'.$value.'" size="'.$size.'" maxlength="'.$maxlength.'"';
@@ -547,8 +550,8 @@ function cms_module_CreateInputSelectList($modinstance, $id, $name, $items, $sel
 {
   $id = cms_htmlentities($id);
   $name = cms_htmlentities($name);
-  $size = cms_htmlentities($size);
-  $multiple = cms_htmlentities($multiple);
+  $size = (int)$size;
+  $multiple = (bool)$multiple;
 
   if( strstr($name,'[]') === FALSE && $multiple ) { $name.='[]'; }
   $text = '<select class="cms_select" name="'.$id.$name.'"';
@@ -600,7 +603,7 @@ function cms_module_CreateInputRadioGroup($modinstance, $id, $name, $items, $sel
  * @access private
  */
 function cms_module_CreateLink($modinstance, $id, $action, $returnid='', $contents='', $params=array(), $warn_message='',
-							   $onlyhref=false, $inline=false, $addtext='', $targetcontentonly=false, $prettyurl='')
+                               $onlyhref=false, $inline=false, $addtext='', $targetcontentonly=false, $prettyurl='')
 {
   if( !is_array($params) && $params == '' ) { $params = array(); }
   $id = cms_htmlentities($id);
@@ -609,8 +612,8 @@ function cms_module_CreateLink($modinstance, $id, $action, $returnid='', $conten
   $prettyurl = cms_htmlentities($prettyurl);
 
   // create url
-  //TODO $text = cms_module_create_url($modinstance,$id,$action,$returnid,params,$inline,$targetcontentonly,$prettyurl);
-  $text = $modinstance->create_url($id,$action,$returnid,$params,$inline,$targetcontentonly,$prettyurl);
+  //TODO $text = cms_module_CreateUrl($modinstance,$id,$action,$returnid,params,$inline,$targetcontentonly,$prettyurl);
+  $text = $modinstance->create_url($id,$action,$returnid,$params,$inline,$targetcontentonly,$prettyurl); //TODO deprecated use ->GetUrl()
 
   if( !$onlyhref ) {
     $beginning = '<a';
@@ -626,22 +629,19 @@ function cms_module_CreateLink($modinstance, $id, $action, $returnid='', $conten
   return $text;
 }
 
-
 /**
  * @access private
  */
-function cms_module_create_url($modinstance,$id,$action,$returnid='',$params=array(),
-							   $inline=false,$targetcontentonly=false,$prettyurl='')
+function cms_module_CreateUrl($modinstance,$id,$action,$returnid='',$params=array(),
+                               $inline=false,$targetcontentonly=false,$prettyurl='')
 {
   $config = \cms_config::get_instance();
-
-  $text = '';
   if( !$prettyurl && $config['url_rewriting'] != 'none' ) {
     // attempt to get a pretty url from the module... this is useful
     // if this method is being called from outside the source module
     // e.g. comments module wants a link to the article the comments are about
     // or something.
-    $prettyurl = $modinstance->get_pretty_url($id,$action,$returnid,$params,$inline);
+    $prettyurl = $modinstance->GetPrettyUrl($id,$action,$returnid,$params,$inline);
   }
 
   $base_url = CMS_ROOT_URL;
@@ -652,6 +652,7 @@ function cms_module_create_url($modinstance,$id,$action,$returnid='',$params=arr
     if( is_object($content_obj) && $content_obj->Secure() ) { $base_url = $config['ssl_url']; }
   }
 
+  $text = '';
   if( $prettyurl && $config['url_rewriting'] == 'mod_rewrite' ) {
     $text = $base_url . '/' . $prettyurl . $config['page_extension'];
   }
@@ -776,9 +777,11 @@ function cms_module_CreateFieldsetStart($modinstance, $id, $name, $legend_text='
   $legend_text = cms_htmlentities($legend_text);
 
   $text = '<fieldset class="cms_fieldset" '. $addtext. '>'."\n";
-  $text .= '<legend class="cms_legend" '. $addtext_legend .'>'."\n";
-  $text .= $legend_text;
-  $text .= '</legend>';
+  if( $legend_text ) {
+    $text .= '<legend class="cms_legend" '. $addtext_legend .'>'."\n";
+    $text .= $legend_text;
+    $text .= '</legend>';
+  }
   return $text;
 }
 
