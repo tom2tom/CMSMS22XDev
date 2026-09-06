@@ -498,12 +498,13 @@ class Smarty_Security
     }
 
     /**
-     * Check if directory of file resource is trusted.
+     * Check if the immediate- or an ancestor-directory of a file
+     * resource is trusted.
      *
-     * @param string    $filepath
-     * @param bool|null $isConfig Default null
+     * @param string $filepath
+     * @param mixed  $isConfig boolean|null Default null
      *
-     * @return bool true if directory is trusted
+     * @return bool whether $filepath is in a trusted place
      */
     public function isTrustedResourceDir($filepath, $isConfig = null)
     {
@@ -539,14 +540,13 @@ class Smarty_Security
             $this->_updateResourceDir($this->_secure_dir, $this->secure_dir);
             $this->_secure_dir = $this->secure_dir;
         }
-
         $nc = strtr($needle,'\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
         $props = ($isConfig) ? ['_include_dir', '_config_dir'] : ['_include_dir', '_template_dir', '_secure_dir'];
         foreach ($props as $propval) {
             if ($this->$propval) {
                 foreach ($this->$propval as $one) {
                     $oc = strtr($one, '\/', DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR);
-                    if (strpos($oc, $nc) === 0) {
+                    if (strpos($nc, $oc) === 0) { // needle startswith trusted
                         if (!isset($this->_resource_dir[$nc])) {
                             $this->_resource_dir[$nc] = true;
                         }
